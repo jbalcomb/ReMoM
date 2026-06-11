@@ -13,6 +13,9 @@ MoO2
 #include "DOS.h"
 #include "MOX_DEF.h"
 #include "MOX_TYPE.h"
+#include "random.h"  /* g_random_call_count for CALL_TRACE */
+
+#include "../../STU/src/STU_LOG.h"  /* CALL_TRACE */
 #include "Mouse.h"
 #include "Video.h"
 
@@ -338,7 +341,9 @@ static void VGA_ReadScreenLine(int line, char *scanline_buffer)
 // MoO2  Module: capture  Release_Version()  Address: 01:00110B34
 void Release_Version(void)
 {
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     release_flag = ST_TRUE;
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
 
 // WZD s24p06

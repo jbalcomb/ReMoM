@@ -14,6 +14,7 @@
 #define STU_LOG_H
 
 #include <stdarg.h>
+#include <stdint.h>   /* uint64_t for g_random_call_count */
 
 #ifdef __cplusplus
 extern "C" {
@@ -74,8 +75,14 @@ enum log_category
     LOG_CAT_RANDOM       = 42,
     LOG_CAT_EXIT         = 43,
     LOG_CAT_FONTS        = 44,
-    LOG_CAT_MOX2         = 45
+    LOG_CAT_MOX2         = 45,
+    LOG_CAT_CALL_TRACE   = 46
 };
+
+/* CALL_TRACE rng-call ordinal -- read by the [FN-ENTER]/[FN-EXIT] log lines.
+   Defined in STU_LOG.c so libSTU's CALL_TRACE wrappers (stu_compat.c) link
+   without dragging libMOX in.  Random_at() in MoX/src/random.c increments it. */
+extern uint64_t g_random_call_count;
 
 /* ini_path: path to an INI file with a [Logging] section, or NULL for built-in defaults. Missing file or missing section is non-fatal — defaults apply. */
 void STU_Log_Startup(const char * ini_path);

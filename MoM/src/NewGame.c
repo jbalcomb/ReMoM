@@ -1646,7 +1646,7 @@ int16_t Newgame_Screen_0(void)
     int16_t leave_screen = 0;
     int16_t First_Draw_Done = 0;
     int16_t input_field_idx = 0;  // _SI_
-    FILE * file_pointer = 0;  // _DI_
+    FILE * file_pointer = 0;
 #ifdef STU_DEBUG
     struct s_MAGIC_SET magic_set_snapshot;
 #endif
@@ -1806,10 +1806,8 @@ int16_t Newgame_Screen_0(void)
 #endif
 
             file_pointer = stu_fopen_ci(str_MAGIC_SET__ovr050, str_wb__ovr050);
-
-            fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
-
-            fclose(file_pointer);
+            stu_fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
+            stu_fclose(file_pointer);
 
             Deactivate_Auto_Function();
 
@@ -3163,23 +3161,23 @@ Module: RACESEL
  */
 int16_t Newgame_Screen_6__WIP(void)
 {
-    int8_t Arcanus_Races[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0 };  // TODO  DEDU  check Dasm for 1-byte, signed
+    int16_t Arcanus_Races[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };  // TODO  DEDU  check Dasm for 1-byte, signed
     int16_t hotkey_ESC = 0;
     int8_t * wsa_ptr = 0;
     uint8_t * Shadow_Color = 0;
     uint8_t * Available_Color = 0;
     uint8_t * Not_Available_Color = 0;
-    uint8_t Font_Colors[8] = {0, 0, 0, 0, 0, 0, 0, 0 };
-    int8_t Myrran_Races[5] = { 0, 0, 0, 0, 0 };
+    uint8_t Font_Colors[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Myrran_Races[5] = { 0, 0, 0, 0, 0 };
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
     int16_t First_Draw_Done = 0;
     int16_t itr = 0;
     int16_t itr2 = 0;
 
-    memcpy(Arcanus_Races, TBL_Arcanian_Races, 9);
+    memcpy(Arcanus_Races, TBL_Arcanian_Races, sizeof(TBL_Arcanian_Races));
 
-    memcpy(Myrran_Races, TBL_Myrran_Races, 5);
+    memcpy(Myrran_Races, TBL_Myrran_Races, sizeof(TBL_Myrran_Races));
 
     memcpy(Font_Colors, RP_COL_NEWG_Font4, 8);
 

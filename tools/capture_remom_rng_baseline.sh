@@ -141,6 +141,20 @@ if [ -f "${RMR_FILE}" ]; then
     echo "  saved RMR replay  → ${RMR_FILE}"
 fi
 
+# Also populate the analysis/remom/ directory so tools/parity_check.py can pick
+# up the SAVE files / MAGIC.SET / stderr.log from this run without rerunning
+# ReMoMber.
+ANALYSIS_REMOM="${BIN_DIR}/analysis/remom"
+mkdir -p "${ANALYSIS_REMOM}"
+for name in SAVE9.GAM SAVE2.GAM MAGIC.SET ; do
+    if [ -f "${BIN_DIR}/${name}" ]; then
+        cp -f "${BIN_DIR}/${name}" "${ANALYSIS_REMOM}/${name}"
+    fi
+done
+cp -f "${REMOM_STDERR_LOG}" "${ANALYSIS_REMOM}/stderr.log"
+cp -f "${BASELINE_RNG_LOG}"  "${ANALYSIS_REMOM}/rng.log"
+echo "  populated ${ANALYSIS_REMOM#${REPO_ROOT}/}/ for tools/parity_check.py"
+
 echo
 echo "=== Done ==="
 cat <<EOF

@@ -15,6 +15,9 @@ NOTE(JimBalcomb,20260409): Last night, I started a new effort with Codex+GPT54 t
 #include "../EXIT.h"
 #include "../MOX_BASE.h"
 #include "../MOX_TYPE.h"
+#include "../random.h"   /* g_random_call_count for CALL_TRACE */
+
+#include "../../../STU/src/STU_LOG.h"  /* CALL_TRACE */
 
 #include <ctype.h>
 #include <stdlib.h>
@@ -489,11 +492,17 @@ SAMB_ptr EMM_GetHandle(int16_t page_count, const char *handle_name, int16_t rese
 // WZD s13p25
 SAMB_ptr EMMDATAH_Map(void)
 {
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     if (_EMMDATAH_seg == NULL) {
+        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu (NULL early)", __func__, (unsigned long long)g_random_call_count);
         return NULL;
     }
 
     EMM_MapFourPages(0, _EMMDATAH_seg);
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    
     return EMS_PFBA;
 }
 
@@ -567,7 +576,9 @@ void UU_EMM_Data_Undo(void)
 // WZD s13p31
 void EMM_Set_Minimum(int amount)
 {
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     EMM_MinKB = amount;
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
 
 // WZD s13p32

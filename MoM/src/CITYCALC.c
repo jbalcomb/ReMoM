@@ -7,6 +7,7 @@
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
@@ -56,6 +57,9 @@
 */
 void Do_City_Calculations(int16_t city_idx)
 {
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     EMMDATAH_Map();
     CITIES_FOOD_UNITS(city_idx, (int8_t)City_Food_Production(city_idx));
     CITIES_PRODUCTION_UNITS(city_idx, (int8_t)City_Production_Production(city_idx));
@@ -76,6 +80,9 @@ void Do_City_Calculations(int16_t city_idx)
         CITIES_RESEARCH_UNITS(city_idx,       ( ( _CITIES[city_idx].research_units       * difficulty_modifiers_table[_difficulty].research             ) / 100 ) );
         CITIES_BUILDING_MAINTENANCE(city_idx, ( ( _CITIES[city_idx].building_maintenance * difficulty_modifiers_table[_difficulty].maintenance          ) / 100 ) );
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
 }
 
 
@@ -99,9 +106,10 @@ void Players_Update_Magic_Power(void)
 {
     int16_t NIU_players_power_base_array[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
     int16_t node_owner_idx = 0;
+    int16_t itr = 0;
+    int16_t node_magic_power_points = 0;
 
-    int16_t itr = 0;  // _SI_
-    int16_t node_magic_power_points = 0;  // _DI_
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     for(itr = 0; itr < _num_players; itr++)
     {
@@ -198,6 +206,8 @@ void Players_Update_Magic_Power(void)
             SETMIN(_players[itr].Power_Base, 0);
         }
     }
+    
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
 
@@ -1166,8 +1176,10 @@ int16_t Hero_Slot_Open(int16_t player_idx)
 // drake178: CTY_GetGoldUpkeep()
 int16_t City_Gold_Mainanence(int16_t city_idx)
 {
-    int16_t gold_units;  // _DI_
-    int16_t itr;  //  _SI_
+    int16_t gold_units = 0;
+    int16_t itr = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     gold_units = 0;
 
@@ -1184,6 +1196,8 @@ int16_t City_Gold_Mainanence(int16_t city_idx)
             }
         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     return gold_units;
 }
@@ -1692,8 +1706,10 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
     int16_t square_x_max = 0;
     int16_t square_x_min = 0;
     int16_t map_square_count = 0;
-    int16_t itr_city_area_squares = 0;  // _DI_
-    int16_t square_x = 0;  // _SI_
+    int16_t itr_city_area_squares = 0;
+    int16_t square_x = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     map_square_count = 0;
 
@@ -1765,6 +1781,8 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
 
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     return map_square_count;
 
 }
@@ -1776,6 +1794,8 @@ int16_t City_Food_Production(int16_t city_idx)
 {
     int16_t city_area_food_units = 0;
     int16_t food_units = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     if(_CITIES[city_idx].population == 0)
     {
@@ -1876,6 +1896,8 @@ int16_t City_Food_Production(int16_t city_idx)
 
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     return food_units;
 }
 
@@ -1946,7 +1968,9 @@ int16_t City_Production_Production(int16_t city_idx)
     int16_t worker_count = 0;
     int16_t itr = 0;
     int16_t useable_map_squares = 0;
-    int16_t production_modifier = 0;  // _DI_
+    int16_t production_modifier = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     if(_CITIES[city_idx].population == 0)
     {
@@ -2049,6 +2073,8 @@ int16_t City_Production_Production(int16_t city_idx)
 
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     return production_units;
 }
 
@@ -2067,7 +2093,9 @@ int16_t City_Gold_Production(int16_t city_idx)
     int16_t city_owner_idx = 0;
     int16_t itr = 0;
     int16_t useable_map_squares = 0;
-    int16_t gold_units = 0;  // _DI_
+    int16_t gold_units = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     if(_CITIES[city_idx].population == 0)
     {
@@ -2179,6 +2207,8 @@ int16_t City_Gold_Production(int16_t city_idx)
 
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     return gold_units;
 }
 
@@ -2187,9 +2217,10 @@ int16_t City_Gold_Production(int16_t city_idx)
 // drake178: CTY_GetResearch()
 int16_t City_Research_Production(int16_t city_idx)
 {
-    int16_t city_owner_idx;
+    int16_t city_owner_idx = 0;
+    int16_t research_units = 0;
 
-    int16_t research_units;  // _SI_
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
@@ -2239,6 +2270,8 @@ int16_t City_Research_Production(int16_t city_idx)
         research_units = 0;
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     return research_units;
 }
 
@@ -2258,7 +2291,9 @@ int16_t City_Mana_Production(int16_t city_idx)
     int16_t building_magic_power_modifier = 0;
     int16_t city_owner_idx = 0;
     int16_t itr = 0;
-    int16_t mana_units = 0;  // _DI_
+    int16_t mana_units = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
@@ -2447,6 +2482,8 @@ int16_t City_Mana_Production(int16_t city_idx)
     {
         mana_units = 0;
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     return mana_units;
 }
@@ -3465,6 +3502,8 @@ int16_t City_Rebel_Count(int16_t city_idx)
     int16_t unrest_races = 0;  // DNE in Dasm
     int16_t unrest_taxes = 0;  // DNE in Dasm
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
     city_wx = _CITIES[city_idx].wx;
@@ -3711,7 +3750,10 @@ int16_t City_Rebel_Count(int16_t city_idx)
 
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     return rebel_count;
+
 }
 
 

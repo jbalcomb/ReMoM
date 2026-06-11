@@ -21,6 +21,7 @@ MoO2  Module: fonts     Load_Font_File()
 #include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/MOX2.h"  /* CLAUDE 2026-05-27: _cmd_line_seed for the MAGIC-side new-game Randomize bypass */
+#include "../../STU/src/STU_LOG.h"  /* CALL_TRACE */
 #include "../../platform/include/Platform.h"
 #include "../../MoX/src/Video2.h"
 
@@ -44,9 +45,10 @@ char DEFAULT_FONT_FILE[] = "FONTS.LBX";
 // void Init_Drivers(int input_type, char * font_file)
 void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi_driver, int MIDI_IO, int MIDI_IRQ, int MIDI_DMA, int digi_driver, int Digi_IO, int Digi_IRQ, int Digi_DMA)
 {
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     /* NEWCODE */  // DBG_Open_ERROR_LOG();
-    
+
     EMS_Startup();
 
     // TODO  Create_IO_Buffer();  /* MoO2 */
@@ -95,6 +97,7 @@ void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi
 
     Set_Page_Off();  // initializes `current_video_page`
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
 
 // WZD s014p02

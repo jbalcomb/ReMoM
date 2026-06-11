@@ -13,6 +13,9 @@
 #include "Input.h"
 #include "Mouse.h"
 #include "Timer.h"
+#include "random.h"  /* g_random_call_count for CALL_TRACE */
+
+#include "../../STU/src/STU_LOG.h"  /* CALL_TRACE */
 #include "Video.h"
 #include "Util.h"
 #include "FLIC_Draw.h"
@@ -584,7 +587,9 @@ void UU_GUI_ExtClear(void);
 // TODO  void Set_Global_Esc(void);
 void Disable_Cancel(void)
 {
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     mouse_cancel_disabled = ST_TRUE;
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
 
 

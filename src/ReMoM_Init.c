@@ -81,8 +81,8 @@ void ReMoM_Init_Engine(void)
     else
     {
         file_handle = stu_fopen_ci(str_CONFIG_MOM, str_RB);
-        fread(&config_mom, sizeof(struct s_CONFIG_MOM_18), 1, file_handle);
-        fclose(file_handle);
+        stu_fread(&config_mom, sizeof(struct s_CONFIG_MOM_18), 1, file_handle);
+        stu_fclose(file_handle);
     }
 
     Load_MAGIC_SET();
@@ -286,11 +286,12 @@ void ReMoM_Init_Engine(void)
     magic_set.input_type = 1;
     magic_set.sound_channels = 2;
     Init_Drivers(magic_set.input_type, magic_set.sound_channels, MOM_FONT_FILE, MIDI_DRV, MIDI_IO, MIDI_IRQ, MIDI_DMA, DIGI_DRV, DIGI_IO, DIGI_IRQ, DIGI_DMA);
+
     Release_Version();
 
-    Disable_Cancel();
-
     Allocate_Data_Space(6100);
+    
+    Disable_Cancel();
 
     Load_Palette(0, ST_UNDEFINED, 0);
     Apply_Palette();
@@ -300,5 +301,11 @@ void ReMoM_Init_Engine(void)
     Load_TERRSTAT();
     Load_SPELLDAT();
 
-    Load_WZD_Resources();
+    /*
+        Load_WZD_Resources() relocated -- this is the line that turned the MGC path into the merged path.
+        It belongs in a WIZARDS.EXE-path function that --load/--continue will
+        dispatch to. Until that Run_WIZARDS() split lands, --load/--continue
+        are broken: no WZD resources loaded.
+        Readded in the section case scr_Continue in MOM_SCR.c
+    */
 }

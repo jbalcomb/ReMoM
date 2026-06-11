@@ -16,6 +16,7 @@
 
 #include "../platform/include/Platform.h"
 #include "../platform/include/Platform_Keys.h"
+#include "../MoX/src/Mouse.h"  /* Set_Pointer_Position — warps the SDL cursor so HMS clicks survive the next SDL_GetMouseState poll */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -733,8 +734,12 @@ void HeMoM_Player_Frame(void)
                 scale = Platform_Get_Scale();
                 wx = act->x * (int16_t)scale;
                 wy = act->y * (int16_t)scale;
-                pointer_x = act->x;
-                pointer_y = act->y;
+                /* Warp the OS cursor — Platform_Event_Handler polls SDL_GetMouseState
+                   every Get_Input cycle and overwrites pointer_x/y with the OS cursor
+                   position.  Without warping, the second click in a row gets reverted
+                   to wherever the user's real mouse is, breaking Scroll Field reads
+                   (Find_Bar_Position uses Pointer_X at call time, not click coords). */
+                Set_Pointer_Position(act->x, act->y);
                 if (act->type == act_CLICK)
                 {
                     platform_frame_mouse_buttons |= ST_LEFT_BUTTON;

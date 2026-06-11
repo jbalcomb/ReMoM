@@ -9,6 +9,9 @@
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _screen_seg */
+#include "../../MoX/src/random.h"   /* g_random_call_count for CALL_TRACE */
+
+#include "../../STU/src/STU_LOG.h"  /* CALL_TRACE */
 
 #include "Combat.h"
 
@@ -36,7 +39,8 @@ char EmmHndlNm_CONTXXX[] = "CONTXXX";
 // Allocate_Data_Space()
 void Allocate_Data_Space(int16_t gfx_buff_nparas)
 {
-    
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     // TODO  EmmHndl_FIGUREX = EMM_GetHandle(28, EmmHndlNm_FIGUREX, 1);
     // TODO  EmmHndl_TILEXXX = EMM_GetHandle( 3, EmmHndlNm_TILEXXX, 1);
     EmmHndl_FIGUREX = Allocate_Space(28672);  // 28 * 16384 EMM Page Size = 458752 B / 16 = 28672 PR
@@ -264,4 +268,5 @@ so, 300 PRs, + 1 for the SAMB header
     // TODO  EMM_ContXXX_H = EMM_GetHandle(4, cnst_EMM_ContH_Name, 1)
     EmmHndl_CONTXXX = Allocate_Space(4096);   //  4 * 16384 EMM Page Size = 65536 B / 16 = 4096 PR
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
