@@ -15,6 +15,8 @@
 
 #include "../../platform/include/Platform.h"  /* Platform_Palette_Update(), Platform_Video_Update() */
 
+#include <string.h>     /* memcpy() */
+
 
 
 /*

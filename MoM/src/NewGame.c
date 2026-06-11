@@ -35,7 +35,7 @@
 
 #include <assert.h>
 #include <stdio.h>      /* FILE; fclose(), fread(), frite(), fseek(); */
-#include <string.h>
+#include <string.h>     /* memcpy() */
 
 #include "NewGame.h"
 #include "../../STU/src/STU_LOG.h"
