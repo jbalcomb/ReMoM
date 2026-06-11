@@ -1094,6 +1094,21 @@ char cnst_And__ovr050[] = " and ";
 // struct Default_Spells UU_TBL_Spells_P5;
 
 // MGC  dseg:8A42
+/*
+6 players
+5 realms
+13 spells
+¿ spell number, not spell index ?
+{Nature, Death, Life, Sorcery, Chaos}
+_players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr].spells[((0 * 13) + 10)] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+_players[itr].spells_list[((_player_start_spells[itr].realms[sbr].spells[IDK_itr_10] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+_player_start_spells[0].realms[sbr_Nature].spells[itr] = 0;
+
+uses enum e_PLAYER_START_SPELL_REALM
+not enum e_MAGIC_REALM
+not enum e_SPELL_BOOK_REALM
+
+*/
 struct s_Init_Base_Realms _player_start_spells[PLAYER_COUNT_MAX];
 
 // MGC  dseg:8D4E
