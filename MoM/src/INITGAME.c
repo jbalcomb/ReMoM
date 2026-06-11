@@ -751,18 +751,6 @@ void Init_Players(void)
 
 
 // MGC o56p9
-// drake178: AI_CreateWizards()
-/*
-; generates the main traits of the AI wizards by
-; randomly selecting and then modifying default
-; profiles to an extent specified by the difficulty
-; setting
-*/
-/*
-
-OON XREF j_Init_Computer_Players() <-| Init_New_Game() <-| Init_Computer_Players()
-
-*/
 void Init_Computer_Players_Wizard_Profile(void)
 {
     int16_t Realm_Retort_Available = 0;
@@ -784,136 +772,85 @@ void Init_Computer_Players_Wizard_Profile(void)
     int16_t itr1 = 0;
     int16_t itr2 = 0;
 
-    // ; clear the taken banner indicators
+
+    /* Phase 1: Initialize local banner tracking */
     for(itr1 = 0; itr1 < NUM_BANNER_SELECTIONS; itr1++)
     {
         banners[itr1] = ST_FALSE;
     }
+    banners[_players[HUMAN_PLAYER_IDX].banner_id] = ST_TRUE;
 
-    /* WTF */ banners[_players[HUMAN_PLAYER_IDX].banner_id] = ST_TRUE;
 
-    // ; choose a different random portrait for each AI wizard
+BeginTopLevelPlayerLoop:
+
+
+    /* Phase 2 */
     for(itr2 = 1; itr2 < _num_players; itr2++)
     {
-
-        Portrait_Taken = ST_FALSE;
-
-        Random_Result = Random(14);
-
-        // ; check if the rolled portrait is already taken
-        for(itr3 = 0; itr3 < itr2; itr3++)
-        {
-
-            if(_players[itr3].wizard_id == Random_Result)
+        do {
+            Portrait_Taken = ST_FALSE;
+            Random_Result = Random(14) - 1; /* {0,...,13} */
+            for(itr3 = 0; itr3 < itr2; itr3++)
             {
-
-                Portrait_Taken = ST_TRUE;
-
+                if(_players[itr3].wizard_id == Random_Result)
+                {
+                    Portrait_Taken = ST_TRUE;
+                }
             }
-
-        }
-
-        if(Portrait_Taken != ST_TRUE)
-        {
-
-            _players[itr2].wizard_id = (uint8_t)Random_Result;
-
-        }
+        } while(Portrait_Taken != ST_FALSE);
+        _players[itr2].wizard_id = (uint8_t)Random_Result;
     }
-
-    // ; copy the names corresponding to the chosen portraits
-    // ; into the wizard records of each AI player
     for(itr2 = 1; itr2 < _num_players; itr2++)
     {
-
         stu_strcpy(_players[itr2].name, _wizard_presets_table[_players[itr2].wizard_id].name);
-
     }
 
-    // ; copy the default profile traits into each AI wizard's
-    // ; record, and if the difficulty is above normal, roll
-    // ; a 20% chance to combine the books of any 2-realm
-    // ; wizard into a single realm
+
+    /* Phase 3 */
     for(itr2 = 1; itr2 < _num_players; itr2++)
     {
-        
         _players[itr2].spellranks[sbr_Life] = _wizard_presets_table[_players[itr2].wizard_id].life;
         _players[itr2].spellranks[sbr_Death] = _wizard_presets_table[_players[itr2].wizard_id].death;
         _players[itr2].spellranks[sbr_Chaos] = _wizard_presets_table[_players[itr2].wizard_id].chaos;
         _players[itr2].spellranks[sbr_Nature] = _wizard_presets_table[_players[itr2].wizard_id].nature;
         _players[itr2].spellranks[sbr_Sorcery] = _wizard_presets_table[_players[itr2].wizard_id].sorcery;
-
         if(
             (Random(5) == 1)  // 1:5, 20%
             &&
             (_difficulty > god_Normal)
         )
         {
-
             Consolidate_Spell_Book_Realms(itr2);
-
         }
-
         wsa_ptr = &_players[itr2].alchemy;
-
-        // ; clear the wizard's retorts
         for(itr1 = 0; itr1 < NUM_WIZARD_SPECIAL_ABILITIES; itr1++)
         {
-
             wsa_ptr[itr1] = 0;
-
         }
-
         if(_wizard_presets_table[_players[itr2].wizard_id].special != ST_UNDEFINED)
         {
-
             wsa_ptr[_wizard_presets_table[_players[itr2].wizard_id].special] = ST_TRUE;
-
         }
-
     }
 
-    // ; if the difficulty is normal or above, roll to try and
-    // ; remove some of the default profile traits
+
+    /* Phase 4 */
     for(itr2 = 1; itr2 < _num_players; itr2++)
     {
-
+        /* Calculate "Erasure Dice" to randomize/reduce AI starting power */
         switch(_difficulty)
         {
-            case 0:
-            case 1:
-            {
-                Erasure_Dice = 0;
-            } break;
-            case 2:
-            {
-                Erasure_Dice = Random(3);
-            } break;
-            case 3:
-            {
-                Erasure_Dice = (Random(3) + Random(3));
-            } break;
-            case 4:
-            {
-                Erasure_Dice = (Random(5) + Random(5));
-            } break;
-            case 5:
-            {
-                Erasure_Dice = (Random(8) + Random(8));
-            } break;
-            
+            case 0: { Erasure_Dice = 0; } break;
+            case 1: { Erasure_Dice = 0; } break;
+            case 2: { Erasure_Dice = Random(3); } break;
+            case 3: { Erasure_Dice = (Random(3) + Random(3)); } break;
+            case 4: { Erasure_Dice = (Random(5) + Random(5)); } break;
+            case 5: { Erasure_Dice = (Random(8) + Random(8)); } break;
         }
-
         wsa_ptr = &_players[itr2].alchemy;
-
-        // ; for each erasure die, roll a type (N-C-S-L-D book or
-        // ; retort), and if the wizard has such an asset, remove
-        // ; one of them
         for(itr1 = 0; itr1 < Erasure_Dice; itr1++)
         {
-
             Trait_Type = Random(6);
-
             switch(Trait_Type)  // - 1; <= 5;
             {
                 case 1: { if(_players[itr2].spellranks[sbr_Life]    > 1) { _players[itr2].spellranks[sbr_Life]    -= 1; } } break;
@@ -925,24 +862,19 @@ void Init_Computer_Players_Wizard_Profile(void)
                     wsa_ptr = &_players[itr2].alchemy;
                     for(itr3 = 0; itr3 < NUM_WIZARD_SPECIAL_ABILITIES; itr3++)
                     {
+                        /* OGBUG  should use itr3, not itr1 */
                         wsa_ptr[itr1] = ST_FALSE;
                     }
                 } break;
             }
-
         }
-
     }
 
-    // ; if the AI wizards have any picks left, spend them on
-    // ; random profile traits, up to the predefined maximum
-    // ; of 11 on Normal and below, 13 on Hard, or 15 on the
-    // ; Impossible difficulty
+
+    /* Phase 5 */
     for(itr2 = 1; itr2 < _num_players; itr2++)
     {
-
         wsa_ptr = &_players[itr2].alchemy;
-
         Picks_Used = (
             _players[itr2].spellranks[sbr_Life]
             +
@@ -954,332 +886,196 @@ void Init_Computer_Players_Wizard_Profile(void)
             +
             _players[itr2].spellranks[sbr_Sorcery]
         );
-
         Book_Count = Picks_Used;
-
-        // ; calculate the total cost of the retorts in the
-        // ; wizard's profile
         for(itr1 = 0; itr1 < NUM_WIZARD_SPECIAL_ABILITIES; itr1++)
         {
-
-            if(wsa_ptr[itr1] != 0)
+            if(wsa_ptr[itr1] == 0)
             {
-
-                if(itr1 == wsa_Myrran)
-                {
-
-                    Picks_Used += 3;
-
-                }
-                else if(
-                    (itr1 == wsa_Warlord)
-                    ||
-                    (itr1 == wsa_Infernal_Power)
-                    ||
-                    (itr1 == wsa_Divine_Power)
-                    ||
-                    (itr1 == wsa_Famous)
-                    ||
-                    (itr1 == wsa_Channeller)
-                )
-                {
-
-                    Picks_Used += 2;
-
-                }
-                else
-                {
-
-                    Picks_Used += 1;
-
-                }
-
+                continue;
             }
-
+            if(itr1 == wsa_Myrran)
+            {
+                Picks_Used += 3;
+            }
+            else if(
+                (itr1 == wsa_Warlord)
+                ||
+                (itr1 == wsa_Infernal_Power)
+                ||
+                (itr1 == wsa_Divine_Power)
+                ||
+                (itr1 == wsa_Famous)
+                ||
+                (itr1 == wsa_Channeller)
+            )
+            {
+                Picks_Used += 2;
+            }
+            else
+            {
+                Picks_Used += 1;
+            }
         }
-
         Picks_Left = 11;
-
         if(_difficulty == god_Hard)
         {
             Picks_Left = 13;
         }
-
         if(_difficulty == god_Impossible)
         {
             Picks_Left = 15;
         }
-
-        // ; spend any remaining picks on random profile traits
         while(Picks_Used < Picks_Left)
         {
-
             Trait_Type = Random(8);
-
-            Trait_Value = Random(4);  // NOTE: used to index wsa_ptr[]
-
+            Trait_Value = (1 + Random(4));  // NOTE: used to index wsa_ptr[]
+            /* clamps: Trait_Value vs (Picks_Left-Picks_Used) and vs (12-Book_Count) */
+            /* if Trait_Value <= 0 -> Trait_Type = 6 ; if Trait_Type == 6 -> Trait_Value = 1 */
             if((Trait_Value + Picks_Used) > Picks_Left)
             {
-
                 Trait_Value = (Picks_Left - Picks_Used);
-
             }
-
             if((Trait_Value + Book_Count) > 12)
             {
-
                 Trait_Value = (12 - Book_Count);
-
             }
-
             if(Trait_Value <= 0)
             {
-
                 Trait_Type = 6;
-
             }
-
             if(Trait_Type == 6)
             {
-
                 Trait_Value = 1;
-
             }
-
-            switch(Trait_Type)  // - 1; <= 7
+            switch(Trait_Type)
             {
-
-                // DNE  case 0:
-
                 case 1:  // add books to Life
                 {
-
                     if(
                         (_players[itr2].spellranks[sbr_Life] < 11)
                         &&
                         (_players[itr2].spellranks[sbr_Death] == 0)
                     )
                     {
-
                         _players[itr2].spellranks[sbr_Life] += Trait_Value;
-
                     }
-
                     if(_players[itr2].spellranks[sbr_Life] > 11)
                     {
-
                         _players[itr2].spellranks[sbr_Life] = 11;
-
                     }
-
                 } break;
 
                 case 2:  // add books to Death
                 {
-
                     if(
                         (_players[itr2].spellranks[sbr_Death] < 11)
                         &&
                         (_players[itr2].spellranks[sbr_Life] == 0)
                     )
                     {
-
                         _players[itr2].spellranks[sbr_Death] += Trait_Value;
-
                     }
-
                     if(_players[itr2].spellranks[sbr_Death] > 11)
                     {
-
                         _players[itr2].spellranks[sbr_Death] = 11;
-
                     }
-
                 } break;
 
                 case 3:  // add books to Nature
                 {
-
                     if(
                         (_players[itr2].spellranks[sbr_Nature] < 11)
                     )
                     {
-
                         _players[itr2].spellranks[sbr_Nature] += Trait_Value;
-
                     }
-
                     if(_players[itr2].spellranks[sbr_Nature] > 11)
                     {
-
                         _players[itr2].spellranks[sbr_Nature] = 11;
-
                     }
-
                 } break;
 
                 case 4:  // add books to Sorcery
                 {
-
                     if(
                         (_players[itr2].spellranks[sbr_Sorcery] < 11)
                     )
                     {
-
                         _players[itr2].spellranks[sbr_Sorcery] += Trait_Value;
-
                     }
-
                     if(_players[itr2].spellranks[sbr_Sorcery] > 11)
                     {
-
                         _players[itr2].spellranks[sbr_Sorcery] = 11;
-
                     }
-
                 } break;
 
                 case 5:  // add books to Chaos
                 {
-
                     if(
                         (_players[itr2].spellranks[sbr_Chaos] < 11)
                     )
                     {
-
                         _players[itr2].spellranks[sbr_Chaos] += Trait_Value;
-
                     }
-
                     if(_players[itr2].spellranks[sbr_Chaos] > 11)
                     {
-
                         _players[itr2].spellranks[sbr_Chaos] = 11;
-
                     }
-
                 } break;
 
                 case 6:
                 case 7:
                 case 8:
                 {
-
                     Trait_Value = (Random(NUM_WIZARD_SPECIAL_ABILITIES) - 1);
-
-                    if(
-                        (Trait_Value >= wsa_Chaos_Mastery)
-                        &&
-                        (Trait_Value <= wsa_Divine_Power)
-                    )
+                    if( (Trait_Value >= wsa_Chaos_Mastery) && (Trait_Value <= wsa_Divine_Power))
                     {
-
-                        // ; copy the wizard's bookshelf into the local array
-                        for(Realm_Index = 0; Realm_Index < 4; Realm_Index++)
+                        for(Realm_Index = 0; Realm_Index <= 4; Realm_Index++)
                         {
-
                             Bookshelf[Realm_Index] = _players[itr2].spellranks[Realm_Index];
-
                         }
-
                         if(_players[itr2].chaos_mastery > 0)
                         {
-
                             Bookshelf[sbr_Chaos] = 0;
-
                         }
-
                         if(_players[itr2].nature_mastery > 0)
                         {
-
                             Bookshelf[sbr_Nature] = 0;
-
                         }
-
                         if(_players[itr2].sorcery_mastery > 0)
                         {
-
                             Bookshelf[sbr_Sorcery] = 0;
-
                         }
-
-                        if(_players[itr2].divine_power <= 0)
+                        /* Semantically reads as "drop this realm from the weighted retort pool if the wizard already has the ability, or if picks are too tight to afford it" */
+                        if((_players[itr2].divine_power > 0) || ((Picks_Left - 2) < Picks_Used))
                         {
-
-                            if((Picks_Left - 2) < Picks_Used)
-                            {
-
-                                Bookshelf[sbr_Life] = 0;
-
-                            }
-
+                            Bookshelf[sbr_Life] = 0;
                         }
-
-                        if(_players[itr2].infernal_power <= 0)
+                        if((_players[itr2].infernal_power > 0) || ((Picks_Left - 2) < Picks_Used))
                         {
-
-                            if((Picks_Left - 2) < Picks_Used)
-                            {
-
-                                Bookshelf[sbr_Death] = 0;
-
-                            }
-
+                            Bookshelf[sbr_Death] = 0;
                         }
-
                         Realm_Retort_Available = 0;
-
-                        for(Realm_Index = 0; Realm_Index < 4; Realm_Index++)
+                        for(Realm_Index = 0; Realm_Index <= 4; Realm_Index++)
                         {
-
                             Realm_Retort_Available += Bookshelf[Realm_Index];
-
                         }
-
                         if(Realm_Retort_Available != 0)
                         {
-
-                            Trait_Value = Get_Weighted_Choice(&Bookshelf[0], 5);
-
-                            if(Trait_Value == 2)
+                            Trait_Value = (2 + Get_Weighted_Choice(&Bookshelf[0], 5));
+                            switch(Trait_Value)
                             {
-                                
-                                Trait_Value = wsa_Nature_Mastery;
-
+                                case 2: { Trait_Value = wsa_Nature_Mastery;  } break;
+                                case 3: { Trait_Value = wsa_Sorcery_Mastery; } break;
+                                case 4: { Trait_Value = wsa_Chaos_Mastery;   } break;
+                                case 5: { Trait_Value = wsa_Divine_Power;    } break;
+                                case 6: { Trait_Value = wsa_Infernal_Power;  } break;
                             }
-                            else if(Trait_Value == 3)
-                            {
-
-                                Trait_Value = wsa_Sorcery_Mastery;
-
-                            }
-                            else if(Trait_Value == 4)
-                            {
-
-                                Trait_Value = wsa_Chaos_Mastery;
-
-                            }
-                            else if(Trait_Value == 5)
-                            {
-
-                                Trait_Value = wsa_Divine_Power;
-
-                            }
-                            else if(Trait_Value == 6)
-                            {
-
-                                Trait_Value = wsa_Infernal_Power;
-
-                            }
-
                             wsa_ptr[Trait_Value] = ST_TRUE;
-
                         }
-
                     }
                     else
                     {
-
                         if(
                             (Trait_Value == wsa_Warlord)
                             ||
@@ -1288,35 +1084,28 @@ void Init_Computer_Players_Wizard_Profile(void)
                             (Trait_Value == wsa_Famous)
                         )
                         {
-
                             if((Picks_Left - 1) > Picks_Used)
                             {
-
                                 wsa_ptr[Trait_Value] = ST_TRUE;
-
                             }
-
                         }
                         else if(Trait_Value == wsa_Myrran)
                         {
-
                             if((Picks_Left - 2) > Picks_Used)
                             {
-
                                 wsa_ptr[Trait_Value] = ST_TRUE;
-
                             }
-
                         }
-
+                        else
+                        {
+                            wsa_ptr[Trait_Value] = ST_TRUE;
+                        }
                     }
+                } break;  /* END  case {6,7,8}: */
 
+            }  /* END:  switch(Trait_Type) */
 
-                } break;
-
-            }
-
-            // after ... switch(Trait_Type)  // - 1; <= 7 ```dasm @@AfterSwitchTrait_Type:                  ; default ```
+            /* after ... switch(Trait_Type) ... ```dasm @@AfterSwitchTrait_Type:  ; default ``` */
 
             Picks_Used = (
                 _players[itr2].spellranks[sbr_Life]
@@ -1329,169 +1118,117 @@ void Init_Computer_Players_Wizard_Profile(void)
                 +
                 _players[itr2].spellranks[sbr_Sorcery]
             );
-
             Book_Count = Picks_Used;
-
             for(itr1 = 0; itr1 < NUM_WIZARD_SPECIAL_ABILITIES; itr1++)
             {
-
-                if(wsa_ptr[itr1] != ST_FALSE)
+                if(wsa_ptr[itr1] == ST_FALSE)
                 {
-
-                    if(itr1 == wsa_Myrran)
-                    {
-
-                        Picks_Used += 3;
-
-                    }
-                    else if(
-                            (Trait_Value == wsa_Warlord)
-                            ||
-                            (Trait_Value == wsa_Infernal_Power)
-                            ||
-                            (Trait_Value == wsa_Divine_Power)
-                            ||
-                            (Trait_Value == wsa_Famous)
-                            ||
-                            (Trait_Value == wsa_Channeller)
-                    )
-                    {
-
-                        Picks_Used += 3;
-
-                    }
-                    else
-                    {
-
-                        Picks_Used += 1;
-
-                    }
-
+                    continue;
                 }
-
+                if(itr1 == wsa_Myrran)
+                {
+                    Picks_Used += 3;
+                }
+                else if(
+                        (itr1 == wsa_Warlord)
+                        ||
+                        (itr1 == wsa_Infernal_Power)
+                        ||
+                        (itr1 == wsa_Divine_Power)
+                        ||
+                        (itr1 == wsa_Famous)
+                        ||
+                        (itr1 == wsa_Channeller)
+                )
+                {
+                    Picks_Used += 2;
+                }
+                else
+                {
+                    Picks_Used += 1;
+                }
             }
 
         }
-
-        /*
-            KNOWNBUG  dead-code for changing Sss'ra
-            I don't see how this doesn't cause other issues
-        */
-        myrran_count = 0;
-        for(itr1 = 1; itr1 < _num_players; itr1++)
-        {
-            if(_players[itr1].myrran != ST_FALSE)
-            {
-                myrran_count++;
-            }
-        }
-        // if(
-        //     (
-        //         myrran_count < 1
-        //         ||
-        //         myrran_count > 2
-        //     )
-        //     &&
-        //     _difficulty > god_Normal
-        //     &&
-        //     _num_players > 3
-        // )
-        // {
-        //     continue;
-        // }
-        // // 9Ah 154d / sizeof(s_WIZARD_PRESET) = 7
-        // // {"Sss'ra",  4,  0,  0, 0,  4, wsa_Myrran},
-        // _wizard_presets_table[7].special = ST_UNDEFINED;
-        // _wizard_presets_table[7].chaos = 7;
-        // break;
 
     }
-// MGC  ovr056:15B0 C7 46 DE 00 00                                  mov     [bp+myrran_count], 0
-// MGC  ovr056:15B5 BF 01 00                                        mov     itr1, 1
-// MGC  ovr056:15B8 EB 14                                           jmp     short loc_538AE
-// MGC  ovr056:15BA                                                 ; ---------------------------------------------------------------------------
-// MGC  ovr056:15BA                                                 loc_5389A:                              ; CODE XREF: Init_Computer_Players_Wizard_Profile+894j
-// MGC  ovr056:15BA 8B C7                                           mov     ax, itr1
-// MGC  ovr056:15BC BA C8 04                                        mov     dx, size s_WIZARD
-// MGC  ovr056:15BF F7 EA                                           imul    dx
-// MGC  ovr056:15C1 8B D8                                           mov     bx, ax
-// MGC  ovr056:15C3 80 BF 6D 69 00                                  cmp     [_players.myrran+bx], e_ST_FALSE
-// MGC  ovr056:15C8 74 03                                           jz      short loc_538AD
-// MGC  ovr056:15CA FF 46 DE                                        inc     [bp+myrran_count]
-// MGC  ovr056:15CD                                                 loc_538AD:                              ; CODE XREF: Init_Computer_Players_Wizard_Profile+88Aj
-// MGC  ovr056:15CD 47                                              inc     itr1
-// MGC  ovr056:15CE                                                 loc_538AE:                              ; CODE XREF: Init_Computer_Players_Wizard_Profile+87Aj
-// MGC  ovr056:15CE 3B 3E D2 87                                     cmp     itr1, [_num_players]            ; NewGame: magic.opponents + 1
-// MGC  ovr056:15D2 7C E6                                           jl      short loc_5389A
-// MGC  ovr056:15D4 83 7E DE 01                                     cmp     [bp+myrran_count], 1
-// MGC  ovr056:15D8 7C 06                                           jl      short loc_538C0
-// MGC  ovr056:15DA 83 7E DE 02                                     cmp     [bp+myrran_count], 2
-// MGC  ovr056:15DE 7E 1D                                           jle     short loc_538DD
-// MGC  ovr056:15E0                                                 loc_538C0:                              ; CODE XREF: Init_Computer_Players_Wizard_Profile+89Aj
-// MGC  ovr056:15E0 83 3E CC 87 02                                  cmp     [_difficulty], god_Normal
-// MGC  ovr056:15E5 7E 16                                           jle     short loc_538DD
-// MGC  ovr056:15E7 83 3E D2 87 03                                  cmp     [_num_players], 3               ; NewGame: magic.opponents + 1
-// MGC  ovr056:15EC 7E 0F                                           jle     short loc_538DD
-// MGC  ovr056:15EE E9 7D F7                                        jmp     @@BeginTopLevelPlayerLoop
-// MGC  ovr056:15F1                                                 ; ---------------------------------------------------------------------------
-// MGC  ovr056:15F1 C7 06 7E 2B FF FF                               mov     [_wizard_presets_table.special+9Ah], e_ST_UNDEFINED
-// MGC  ovr056:15F7 C7 06 7C 2B 07 00                               mov     [_wizard_presets_table.chaos+9Ah], 7
-// MGC  ovr056:15FD                                                 loc_538DD:                              ; CODE XREF: Init_Computer_Players_Wizard_Profile+8A0j ...
 
+
+    /* Phase 6: Myrran count sanity check */
+    myrran_count = 0;
+    for(itr1 = 1; itr1 < _num_players; itr1++)
+    {
+        if(_players[itr1].myrran != ST_FALSE)
+        {
+            myrran_count++;
+        }
+    }
+    /* Requirement: At least 1 (but no more than 2) Myrrans on high difficulty / player counts */
+    if((myrran_count < 1 || myrran_count > 2) && (_difficulty > god_Normal && _num_players > 3))
+    {
+        goto BeginTopLevelPlayerLoop;
+    }
+    /* dead-code for changing Sss'ra */
+    /* Patch for specific preset table index if logic fails? */
+    /* 9Ah 154d / sizeof(s_WIZARD_PRESET) = 7 */
+    /* {"Sss'ra",  4,  0,  0, 0,  4, wsa_Myrran}, */
+    /* _wizard_presets_table[7].special = ST_UNDEFINED; */
+    /* _wizard_presets_table[7].chaos = 7; */
 
 
 /*
 END:  ¿ jmp     @@BeginTopLevelPlayerLoop ?
 */
 
-    // ; assign a banner to each wizard, trying first the
-    // ; color corresponding to the first realm they have at
-    // ; least 4 books in, and choosing randomly if that one
-    // ; is already taken
+
+    /* Phase ? */
     for(itr2 = 1; itr2 < _num_players; itr2++)
     {
-        if(_players[itr2].spellranks[sbr_Nature] > 3)
+        if(
+            (_players[itr2].spellranks[sbr_Nature] > 3)
+            &&
+            (banners[BNR_Green] == ST_FALSE)
+        )
         {
-            if(banners[BNR_Green] == ST_FALSE)
-            {
-                _players[itr2].banner_id = BNR_Green;
-                banners[BNR_Green] = ST_TRUE;
-            }
+            _players[itr2].banner_id = BNR_Green;
+            banners[BNR_Green] = ST_TRUE;
         }
-        else if(_players[itr2].spellranks[sbr_Chaos] > 3)
+        else if(
+            (_players[itr2].spellranks[sbr_Chaos] > 3)
+            &&
+            (banners[BNR_Red] == ST_FALSE)
+        )
         {
-            if(banners[BNR_Red] == ST_FALSE)
-            {
-                _players[itr2].banner_id = BNR_Red;
-                banners[BNR_Red] = ST_TRUE;
-            }
+            _players[itr2].banner_id = BNR_Red;
+            banners[BNR_Red] = ST_TRUE;
         }
-        else if(_players[itr2].spellranks[sbr_Sorcery] > 3)
+        else if(
+            (_players[itr2].spellranks[sbr_Sorcery] > 3)
+            &&
+            (banners[BNR_Blue] == ST_FALSE)
+        )
         {
-            if(banners[BNR_Blue] == ST_FALSE)
-            {
-                _players[itr2].banner_id = BNR_Blue;
-                banners[BNR_Blue] = ST_TRUE;
-            }
+            _players[itr2].banner_id = BNR_Blue;
+            banners[BNR_Blue] = ST_TRUE;
         }
-        else if(_players[itr2].spellranks[sbr_Death] > 3)
+        else if(
+            (_players[itr2].spellranks[sbr_Death] > 3)
+            &&
+            (banners[BNR_Purple] == ST_FALSE)
+        )
         {
-            if(banners[BNR_Purple] == ST_FALSE)
-            {
-                _players[itr2].banner_id = BNR_Purple;
-                banners[BNR_Purple] = ST_TRUE;
-            }
+            _players[itr2].banner_id = BNR_Purple;
+            banners[BNR_Purple] = ST_TRUE;
         }
         else
         {
-            random_banner = (Random(5) - 1);
-            if(banners[random_banner] != ST_TRUE)
-            {
-                banners[random_banner] = ST_TRUE;
-                _players[itr2].banner_id = (uint8_t)random_banner;
-            }
+            /* Pick random available banner */
+            do {
+                random_banner = (Random(5) - 1);
+            } while(banners[random_banner] == ST_TRUE);
+            banners[random_banner] = ST_TRUE;
+            _players[itr2].banner_id = (uint8_t)random_banner;
         }
-
     }
 
     // @@Done
