@@ -87,7 +87,7 @@ Dispel chance against the first spell:
 
 
 
-Cast_Spell_Overland__WIP()
+Cast_Spell_Overland()
         // "Tries to prevent, with a strength 500 dispelling force, all enemy overland spells and enchantments."
 
         // To calculate Suppress Magic's dispelling potency against the target spell, the game uses the following formula:

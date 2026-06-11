@@ -249,7 +249,7 @@ int16_t Cast_Black_Wind(int16_t player_idx)
         )
         {
             
-            AI_Eval_After_Spell = ST_TRUE;
+            g_ai_recompute_needed = ST_TRUE;
 
             Allocate_Reduced_Map();
 
@@ -600,7 +600,7 @@ int16_t Cast_Change_Terrain(int16_t player_idx)
         )
         {
 
-            AI_Eval_After_Spell = ST_TRUE;
+            g_ai_recompute_needed = ST_TRUE;
 
             Allocate_Reduced_Map();
 
@@ -989,7 +989,7 @@ int16_t Cast_Raise_Volcano(int16_t player_idx)
             )
             {
 
-                AI_Eval_After_Spell = ST_TRUE;
+                g_ai_recompute_needed = ST_TRUE;
 
                 Allocate_Reduced_Map();
 

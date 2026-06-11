@@ -722,7 +722,7 @@ spl_Holy_Arms           -  5  12
 
 XREF:
     Cast_Spell_Overland_Do()
-    Cast_Spell_Overland__WIP()
+    Cast_Spell_Overland()
     WIZ_ProcessGlobals()
 
 

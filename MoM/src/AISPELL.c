@@ -788,8 +788,8 @@ XREF:
         Cast_Earthquake()
         Cast_WallOfStone()
         Cast_SpellOfReturn()
-        Cast_Spell_Overland__WIP()
-        Cast_Spell_Overland__WIP()
+        Cast_Spell_Overland()
+        Cast_Spell_Overland()
 
 */
 int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t * city_idx, int16_t spell_idx, int16_t player_idx)

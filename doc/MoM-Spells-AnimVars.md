@@ -8,7 +8,7 @@ GAME_MP_SpellVar_3  ==>  _temp_sint_1
 ¿ both, but only ovr136 and ovr137 ?
 No.
 ...Learn_Spell_Animation() is in ovr118
-...Cast_Spell_Overland__WIP() is in ovr135
+...Cast_Spell_Overland() is in ovr135
 ...SoM_Started()?
 
 Tighter boundaries?
@@ -21,12 +21,12 @@ LBX strings?
 
 
 
-Cast_Spell_Overland__WIP()
+Cast_Spell_Overland()
     if(spell_idx == spl_Spell_Binding)
         Cast_Successful = Cast_SpellBinding(player_idx)
             IDK_Spell_DisjunctOrBind(spl_Spell_Binding, player_idx)
 
-Cast_Spell_Overland__WIP()
+Cast_Spell_Overland()
 switch(spell_data_table[spell_idx].type)
     case scc_Disjunction_Spell:  // 20
         if(player_idx == HUMAN_PLAYER_IDX)
@@ -205,7 +205,7 @@ XREF:
     Learn_Spell_Animation+C                   mov     [SBK_Spell_Index], ax                        
     Learn_Spell_Animation+3B3                 push    [SBK_Spell_Index]               ; Spell_Index
     Learn_Spell_Animation+3EF                 mov     ax, [SBK_Spell_Index]                        
-    Cast_Spell_Overland__WIP:loc_BAF16        mov     [SBK_Spell_Index], _DI_spell_idx             
+    Cast_Spell_Overland:loc_BAF16        mov     [SBK_Spell_Index], _DI_spell_idx             
     SBK_SliderRedraw+76                       mov     ax, [SBK_Spell_Index]                        
     SBK_SliderRedraw+18C                      mov     ax, [SBK_Spell_Index]                        
     SBK_SliderRedraw+1B5                      push    [SBK_Spell_Index]               ; Spell_Index

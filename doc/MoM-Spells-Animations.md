@@ -17,7 +17,7 @@ void OVL_DrawGlobalAnim(void)
 void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
 ...Learn_Spell_Animation() in ovr118
-...Cast_Spell_Overland__WIP() in ovr135
+...Cast_Spell_Overland() in ovr135
 
 
 
@@ -28,7 +28,7 @@ void IDK_Spell_Cityscape_1(int16_t city_idx, int16_t spell_idx, int16_t player_i
 // WZD o137p07
 void IDK_Spell_Cityscape_2(int16_t city_idx, int16_t spell_idx, int16_t player_idx)
 
-Cast_Spell_Overland__WIP()
+Cast_Spell_Overland()
     switch(spell_data_table[spell_idx].type)
     case scc_City_Enchantment:  //  2
     Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_City, &G_Have_Targets, &RetY, &RetP, &var_12, &var_10, &spell_name);

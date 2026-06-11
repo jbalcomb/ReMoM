@@ -276,7 +276,7 @@
 - [ ] WIZ_MatchManaUpkeep__WIP
 
 ## OverSpel
-- [ ] Cast_Spell_Overland__WIP
+- [x] Cast_Spell_Overland — done-done 2026-06-10 (walkthrough doc, Nature's Wrath wired, GEMINI variant deleted, `__WIP` suffix dropped)
 - [ ] IDK_Get_Global_Enchant_Index__STUB
 
 ## ProdScr

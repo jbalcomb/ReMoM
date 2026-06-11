@@ -71,5 +71,5 @@ Spellbook_Screen()
 Left-Click Spellbook Page Spell Fields
 ...
 Cast_Spell_Overland_Do()
-Cast_Spell_Overland__WIP()
+Cast_Spell_Overland()
 switch(spell_data_table[spell_idx].type)

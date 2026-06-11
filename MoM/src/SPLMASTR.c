@@ -173,7 +173,7 @@ char monster_lbx_file__ovr138[] = "Monster";
 
 // WZD dseg:C9EE                                                 ¿ END:  ovr127 - Uninitialized Data ?
 // WZD dseg:C9EE
-// WZD dseg:C9F0 00 00                                           AI_Eval_After_Spell dw 0                ; DATA XREF: UNIT_ConvSpellATK+Bw ...
+// WZD dseg:C9F0 00 00                                           g_ai_recompute_needed dw 0                ; DATA XREF: UNIT_ConvSpellATK+Bw ...
 // WZD dseg:C9F2 00                                              db    0
 // WZD dseg:C9F3 00                                              db    0
 

@@ -107,11 +107,11 @@ XREF:
         Cast_Lycantrophy+47
         Cast_WallOfStone+49
         Cast_SpellOfReturn+3A
-        Cast_Spell_Overland__WIP+49B
-        Cast_Spell_Overland__WIP+6A3
-        Cast_Spell_Overland__WIP+DCC
-        Cast_Spell_Overland__WIP+11E5
-        Cast_Spell_Overland__WIP+19BA
+        Cast_Spell_Overland+49B
+        Cast_Spell_Overland+6A3
+        Cast_Spell_Overland+DCC
+        Cast_Spell_Overland+11E5
+        Cast_Spell_Overland+19BA
 
 
 // WZD o70p01

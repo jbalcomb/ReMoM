@@ -42,7 +42,7 @@ Where is the update to casting_cost_remaining?
     Update_Units_MvsSts();
     o62p01_empty_function(_human_player_idx);
     o59p10_empty_function();
-    Cast_Spell_Overland__WIP(_human_player_idx);
+    Cast_Spell_Overland(_human_player_idx);
     all_units_moved = ST_FALSE;
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
     Reset_Draw_Active_Stack();
@@ -57,7 +57,7 @@ Delete_Dead_Units();  All_Units_In_Towers();
 if g_bldg_msg_ctr > 0  g_bldg_msg_ctr = 0;
 current_screen = scr_Main_Screen;
 *** Update_Units_MvsSts(); ***
-*** Cast_Spell_Overland__WIP(_human_player_idx); ***
+*** Cast_Spell_Overland(_human_player_idx); ***
 all_units_moved = ST_FALSE;  WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);  Reset_Draw_Active_Stack();
 
 

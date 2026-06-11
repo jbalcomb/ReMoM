@@ -609,11 +609,6 @@ int16_t Square_Has_Disenchant_Target(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD o135p05
-// drake178: ¿ G_OVL_Cast() ?
-// MoO2  N/A
-// 1oom  N/A
-/*
-*/
 /*
 
 IDA Group Colors
@@ -629,14 +624,14 @@ IDA Group Colors
     scc_Direct_Damage_Variable     (22)  #31 redish purple
 
 */
-void Cast_Spell_Overland__WIP(int16_t player_idx)
+void Cast_Spell_Overland(int16_t player_idx)
 {
     char spell_name[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t show_message_flag = 0;
     int16_t var_1A = 0;
     int16_t item_list[1] = { 0 };
     int16_t MultiPurpose_Local_Var = 0;
-    int16_t Cast_Successful = 0;
+    int16_t cast_can_continue = 0;
     int16_t target_wy = 0;
     int16_t target_wp = 0;
     int16_t wp = 0;
@@ -648,10 +643,8 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
     int16_t threshold = 0;
     int16_t enchantments_idx = 0;  // DNE in Dasm, uses Dispel_Chance
     uint8_t * ptr_enchantments = 0;  // (uint8_t *)&_CITIES[].enchantments[0]
-    int16_t spell_idx = 0;  // _DI_
-    struct s_SPELL_DATA * DBG_spell_data_table;
-    // int8_t * DBG_spell_data_table__Param0;
-    int16_t DBG_spell_data_table__Param0;
+    int16_t spell_idx = 0;
+
 
     if(player_idx == HUMAN_PLAYER_IDX)
     {
@@ -662,9 +655,9 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
         show_message_flag = ST_FALSE;
     }
 
-    Cast_Successful = ST_TRUE;
+    cast_can_continue = ST_TRUE;
 
-    AI_Eval_After_Spell = ST_FALSE;
+    g_ai_recompute_needed = ST_FALSE;
 
     spell_idx = _players[player_idx].casting_spell_idx;
 
@@ -687,7 +680,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
         // Potency = (500 / (500 + TSCC)) * 100
         // Where TSCC is the total Casting Cost of the targeted enemy spell.
 
-        for(itr_players = 0; ((itr_players < _num_players) && (Cast_Successful == ST_TRUE)); itr_players++)
+        for(itr_players = 0; ((itr_players < _num_players) && (cast_can_continue == ST_TRUE)); itr_players++)
         {
 
             if(
@@ -706,7 +699,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                     Fizzle_Notification(player_idx, itr_players, spell_idx, str_SuppressMagic);
 
-                    Cast_Successful = ST_FALSE;
+                    cast_can_continue = ST_FALSE;
 
                 }
 
@@ -726,11 +719,11 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
         if(
             (spell_data_table[spell_idx].magic_realm == sbr_Chaos)
             &&
-            (Cast_Successful == ST_TRUE)
+            (cast_can_continue == ST_TRUE)
         )
         {
 
-            for(itr_players = 0; ((itr_players < _num_players) && (Cast_Successful == ST_TRUE)); itr_players++)
+            for(itr_players = 0; ((itr_players < _num_players) && (cast_can_continue == ST_TRUE)); itr_players++)
             {
 
                 if(
@@ -749,7 +742,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                         Fizzle_Notification(player_idx, itr_players, spell_idx, str_Tranquility);
 
-                        Cast_Successful = ST_FALSE;
+                        cast_can_continue = ST_FALSE;
 
                     }
 
@@ -772,11 +765,11 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
         if(
             (spell_data_table[spell_idx].magic_realm == sbr_Death)
             &&
-            (Cast_Successful == ST_TRUE)
+            (cast_can_continue == ST_TRUE)
         )
         {
 
-            for(itr_players = 0; ((itr_players < _num_players) && (Cast_Successful == ST_TRUE)); itr_players++)
+            for(itr_players = 0; ((itr_players < _num_players) && (cast_can_continue == ST_TRUE)); itr_players++)
             {
 
                 if(
@@ -795,7 +788,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                         Fizzle_Notification(player_idx, itr_players, spell_idx, str_LifeForce);
 
-                        Cast_Successful = ST_FALSE;
+                        cast_can_continue = ST_FALSE;
 
                     }
 
@@ -810,30 +803,22 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
     */
 
 
-    if(Cast_Successful == ST_TRUE)
+    if(cast_can_continue == ST_TRUE)
     {
-
         SBK_Spell_Index = spell_idx;
-
         if(spell_idx == spl_Spell_Of_Mastery)
         {
-
             Spell_Of_Mastery(player_idx);
-
-            AI_Eval_After_Spell = ST_TRUE;
-            
+            g_ai_recompute_needed = ST_TRUE;
         }
         else
         {
-
             switch(spell_data_table[spell_idx].type)
             {
-
                 // Air Elemental, Angel, Arch Angel, Basilisk, Behemoth, Chaos Spawn, Chimeras, Cockatrices, Colossus, Death Knights, Demon Lord, Djinn, Doom Bat, Earth Elemental, Efreet, Fire Elemental, Fire Giant, Floating Island, Gargoyles, Ghouls, Giant Spiders, Gorgons, Great Drake, Great Wyrm, Guardian Spirit, Hell Hounds, Hydra, Magic Spirit, Nagas, Night Stalker, Phantom Beast, Phantom Warriors, Shadow Demons, Skeletons, Sky Drake, Sprites, Stone Giant, Storm Giant, Unicorns, War Bears, Wraiths
                 case scc_Summoning:
                 {
-
-                    // ¿ BUG should be ((player_idx == HUMAN_PLAYER_IDX) && (_units < 950)) ?
+                    /* ¿ OGBUG should be ((player_idx == HUMAN_PLAYER_IDX) && (_units < 950)) ? */
                     if(
                         (_units < 980)
                         ||
@@ -846,28 +831,18 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                         )
                     )
                     {
-
                         if(spell_idx == spl_Floating_Island)
                         {
-
-                            AI_Eval_After_Spell = ST_TRUE;
-
+                            g_ai_recompute_needed = ST_TRUE;
                             Cast_Floating_Island(player_idx);
-
                         }
                         else
                         {
-
                             Create_Unit__WIP(spell_data_table[spell_idx].Param0, player_idx, _players[player_idx].summon_wx, _players[player_idx].summon_wy, _players[player_idx].summon_wp, ST_UNDEFINED);
-
                             UNIT_RemoveExcess((_units - 1));
-
                         }
-
                         MultiPurpose_Local_Var = ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM);
-
                         MultiPurpose_Local_Var = (MultiPurpose_Local_Var / 10);
-
                         if(spell_idx != spl_Floating_Island)
                         {
 
@@ -883,56 +858,30 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                                 )
                             )
                             {
-
-                                DBG_spell_data_table = &spell_data_table[spell_idx];
-
-                                // DBG_spell_data_table__Param0 = spell_data_table[spell_idx].Param0;
-                                DBG_spell_data_table__Param0 = GET_2B_OFS(DBG_spell_data_table, 0x20);
-
-                                // DBG_spell_data_table__Param0 = GET_1B_OFS(DBG_spell_data_table, (0x20 - 1));
-
-                                // IDK_SummonAnim(spell_data_table[spell_idx].Param0, MultiPurpose_Local_Var, player_idx);
-                                IDK_SummonAnim(DBG_spell_data_table__Param0, MultiPurpose_Local_Var, player_idx);
-
-                                AI_Eval_After_Spell = ST_TRUE;
-
+                                IDK_SummonAnim(spell_data_table[spell_idx].Param0, MultiPurpose_Local_Var, player_idx);
+                                g_ai_recompute_needed = ST_TRUE;
                             }
-
                         }
                         UNITS_FINISHED((_units - 1), ST_FALSE);
                         _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;
-
                         if(player_idx == HUMAN_PLAYER_IDX)
                         {
-
                             _active_world_x = _UNITS[_units].wx;
                             _active_world_y = _UNITS[_units].wy;
                             _map_plane = _UNITS[_units].wp;
-
-                            // ; BUG: this function has a parameter!
-                            /* HACK */ /* WASBUG */ Select_Stack_At_Unit((_units - 1));  // how to reproduce calling this without the unit_idx parameter?
-
+                            /* HACK */ /* WASBUG */ Select_Stack_At_Unit((_units - 1));  /* OGBUG  missing parameter*/   // how to reproduce calling this without the unit_idx parameter?
                         }
-
-                        Cast_Successful = ST_TRUE;
-
+                        cast_can_continue = ST_TRUE;
                     }
                     else
                     {
-                        
                         if(player_idx == HUMAN_PLAYER_IDX)
                         {
-
                             LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 21, 1, 150);  // "Maximum unit count exceeded.  Summons fails."
-
                             Warn0(GUI_NearMsgString);
-
                         }
-
-                        Cast_Successful = ST_FALSE;
-
+                        cast_can_continue = ST_FALSE;
                     }
-
                 } break;  /* case scc_Summoning: */
                 
                 // Berserk, Black Channels, Bless, Cloak of Fear, Elemental Armor, Endurance, Flight, Giant Strength, Guardian Wind, Haste, Immolation, Invisibility, Invulnerability, Iron Skin, Lionheart, Magic Immunity, Path Finding, Planar Travel, Regeneration, Resist Elements, Resist Magic, Righteousness, Spell Lock, Stone Skin, True Sight, Water Walking, Wind Walking, Wraith Form
@@ -944,23 +893,23 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                     if(player_idx != HUMAN_PLAYER_IDX)
                     {
 
-                        /* SPELLY */  Cast_Successful = IDK_Pick_Target_For_Unit_Enchantment__STUB(stt_Friendly_Unit, &spell_target_idx, spell_idx, player_idx);
+                        /* SPELLY */  cast_can_continue = IDK_Pick_Target_For_Unit_Enchantment__STUB(stt_Friendly_Unit, &spell_target_idx, spell_idx, player_idx);
 
                     }
                     else
                     {
 
                         MultiPurpose_Local_Var = ST_FALSE;
-                        Cast_Successful = ST_TRUE;
+                        cast_can_continue = ST_TRUE;
 
-                        while((MultiPurpose_Local_Var == ST_FALSE) && (Cast_Successful == ST_TRUE))
+                        while((MultiPurpose_Local_Var == ST_FALSE) && (cast_can_continue == ST_TRUE))
                         {
 
                             MultiPurpose_Local_Var = ST_TRUE;
 
-                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_Unit, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
+                            cast_can_continue = Spell_Casting_Screen__WIP(stt_Friendly_Unit, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
 
-                            if(Cast_Successful == ST_TRUE)
+                            if(cast_can_continue == ST_TRUE)
                             {
 
                                 if((_UNITS[spell_target_idx].enchantments & spell_data_table[spell_idx].enchantments) != 0)
@@ -1167,9 +1116,9 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                                     Warn0(GUI_NearMsgString);
                                 }
 
-                            }  /* if(Cast_Successful == ST_TRUE)  */
+                            }  /* if(cast_can_continue == ST_TRUE)  */
 
-                        }  /* while((MultiPurpose_Local_Var == ST_FALSE) && (Cast_Successful == ST_TRUE)) */
+                        }  /* while((MultiPurpose_Local_Var == ST_FALSE) && (cast_can_continue == ST_TRUE)) */
 
                     }
 
@@ -1211,30 +1160,20 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                 // Altar of Battle, Astral Gate, Cloud of Shadow, Consecration, Dark Rituals, Earth Gate, Flying Fortress, Gaias Blessing, Heavenly Light, Inspirations, Natures Eye, Prosperity, Stream of Life, Summoning Circle, Wall of Darkness, Wall of Fire
                 case scc_City_Enchantment_Positive:  //  2
                 {
-
                     if(player_idx != HUMAN_PLAYER_IDX)
                     {
-
-                        /* SPELLY */  Cast_Successful = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &spell_target_idx, spell_idx, player_idx);
-
+                        /* SPELLY */  cast_can_continue = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &spell_target_idx, spell_idx, player_idx);
                     }
                     else
                     {
-
                         MultiPurpose_Local_Var = ST_FALSE;
-
-                        Cast_Successful = ST_TRUE;
-
-                        while((MultiPurpose_Local_Var == ST_FALSE) && (Cast_Successful == ST_TRUE))
+                        cast_can_continue = ST_TRUE;
+                        while((MultiPurpose_Local_Var == ST_FALSE) && (cast_can_continue == ST_TRUE))
                         {
-
                             MultiPurpose_Local_Var = ST_TRUE;
-
-                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_City, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
-
-                            if(Cast_Successful == ST_TRUE)
+                            cast_can_continue = Spell_Casting_Screen__WIP(stt_Friendly_City, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
+                            if(cast_can_continue == ST_TRUE)
                             {
-
                                 if(
                                     (spell_idx == spl_Summoning_Circle)
                                     &&
@@ -1245,46 +1184,27 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                                     (_CITIES[spell_target_idx].wp == _players[HUMAN_PLAYER_IDX].summon_wp)
                                 )
                                 {
-
                                     MultiPurpose_Local_Var = ST_FALSE;
-
                                     Full_Draw_Main_Screen();
-
                                     LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 25, 1, 150);
-
                                     Warn0(GUI_NearMsgString);
-
                                 }
-
                                 ptr_enchantments = (uint8_t *)&_CITIES[spell_target_idx].enchantments[0];
-
                                 if(ptr_enchantments[spell_data_table[spell_idx].ce_idx] > 0)
                                 {
-
                                     MultiPurpose_Local_Var = ST_FALSE;
-
                                     Full_Draw_Main_Screen();
-
                                     stu_strcpy(GUI_NearMsgString, aThatCityAlread);  // "That city already has "
-
                                     stu_strcat(GUI_NearMsgString, spell_name);
-
                                     stu_strcat(GUI_NearMsgString, cnst_SpellError_2_2);  // " cast on it"
-
                                     Warn0(GUI_NearMsgString);
-
                                 }
-
                             }
-
                         }
-
                     }
-
                     // ovr135:18D3  @@CE2AfterWhileCityEnchantmentAndPlayerIdx:
-                    if(Cast_Successful == ST_TRUE)  // ...else @@END_CityEnchantment
+                    if(cast_can_continue == ST_TRUE)  // ...else @@END_CityEnchantment
                     {
-
                         if(
                             (player_idx == HUMAN_PLAYER_IDX)
                             ||
@@ -1299,33 +1219,21 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                             )
                         )
                         {
-
-                            AI_Eval_After_Spell = ST_TRUE;
-
+                            g_ai_recompute_needed = ST_TRUE;
                             Cast_Spell_City_Enchantment_Animation_1__WIP(spell_target_idx, spell_idx, player_idx);
-
                         }
-
                         if(spell_idx == spl_Summoning_Circle)
                         {
-
                             _players[player_idx].summon_wx = _CITIES[spell_target_idx].wx;
-
                             _players[player_idx].summon_wy = _CITIES[spell_target_idx].wy;
-
                             _players[player_idx].summon_wp = _CITIES[spell_target_idx].wp;
-
                         }
                         else
                         {
-
                             ptr_enchantments = (uint8_t *)&_CITIES[spell_target_idx].enchantments[0];
-
                             enchantments_idx = spell_data_table[spell_idx].ce_idx;
-
                             ptr_enchantments[enchantments_idx] = (player_idx + 1);
                         }
-
                         if(
                             (player_idx == HUMAN_PLAYER_IDX)
                             ||
@@ -1338,35 +1246,21 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                             )
                         )
                         {
-
                             Cast_Spell_City_Enchantment_Animation_2__WIP(spell_target_idx, spell_idx, player_idx);
-
                         }
-
                         if(
                             (player_idx == HUMAN_PLAYER_IDX)
                             &&
                             (spell_idx == spl_Natures_Eye)
                         )
                         {
-                            // Nature's Eye:
-                            // Nature. City Enchantment. Casting Cost: 75 mana;
-                            // Upkeep: 1 mana/turn. Uncommon.
-                            // Extends the scouting range of a friendly target city to five squares
-                            // in any direction, revealing all lands and all non-invisible enemy
-                            // troops within that radius.
                             Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[spell_target_idx].wx, _CITIES[spell_target_idx].wy, _CITIES[spell_target_idx].wp, 5);
                         }
-
                         if(spell_idx == spl_Consecration)
                         {
-
                             Apply_Consecration(spell_target_idx);
-
                         }
-
                     }
-
                 } break;  /* case scc_City_Enchantment_Positive: */
 
                 // Chaos Rift, Cursed Lands, Evil Presence, Famine, Pestilence
@@ -1374,20 +1268,20 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                 {
                     if(player_idx != HUMAN_PLAYER_IDX)
                     {
-                        /* SPELLY */  Cast_Successful = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &spell_target_idx, spell_idx, player_idx);
+                        /* SPELLY */  cast_can_continue = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &spell_target_idx, spell_idx, player_idx);
                     }
                     else
                     {
 
                         MultiPurpose_Local_Var = ST_FALSE;
 
-                        Cast_Successful = ST_TRUE;
+                        cast_can_continue = ST_TRUE;
 
-                        while((MultiPurpose_Local_Var == ST_FALSE) && (Cast_Successful == ST_TRUE))
+                        while((MultiPurpose_Local_Var == ST_FALSE) && (cast_can_continue == ST_TRUE))
                         {
                             MultiPurpose_Local_Var = ST_TRUE;
-                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Enemy_City, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
-                            if(Cast_Successful == ST_TRUE)
+                            cast_can_continue = Spell_Casting_Screen__WIP(stt_Enemy_City, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
+                            if(cast_can_continue == ST_TRUE)
                             {
                                 ptr_enchantments = (uint8_t *)&_CITIES[spell_target_idx].enchantments[0];
                                 if(ptr_enchantments[spell_data_table[spell_idx].ce_idx] > 0)
@@ -1420,11 +1314,11 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                             }
                         }
                     }
-                    if(Cast_Successful == ST_TRUE)
+                    if(cast_can_continue == ST_TRUE)
                     {
-                        Cast_Successful = Apply_Automatic_Spell_Counters(spell_idx, spell_target_idx, player_idx, show_message_flag);
+                        cast_can_continue = Apply_Automatic_Spell_Counters(spell_idx, spell_target_idx, player_idx, show_message_flag);
                     }
-                    if(Cast_Successful == ST_TRUE)
+                    if(cast_can_continue == ST_TRUE)
                     {
                         if(
                             (player_idx == HUMAN_PLAYER_IDX)
@@ -1440,7 +1334,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                             )
                         )
                         {
-                            AI_Eval_After_Spell = ST_TRUE;
+                            g_ai_recompute_needed = ST_TRUE;
                             Allocate_Reduced_Map();
                             Mark_Block(_screen_seg);
                             Cast_Spell_City_Enchantment_Animation_1__WIP(spell_target_idx, spell_idx, player_idx);
@@ -1469,26 +1363,18 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                 // BOTH:  Doom Bolt, Fire Storm, Ice Storm, Star Fires, Warp Lightning
                 case scc_Direct_Damage_Fixed:  //  4
                 {
-                    
                     if(player_idx == HUMAN_PLAYER_IDX)
                     {
-
-                        Cast_Successful = Spell_Casting_Screen__WIP(stt_Enemy_Group, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
-
+                        cast_can_continue = Spell_Casting_Screen__WIP(stt_Enemy_Group, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
                     }
                     else
                     {
-
-                        Cast_Successful = Get_Map_Square_Target_For_Spell(stt_Enemy_Group, &spell_target_idx, &wy, &wp, spell_idx, player_idx);
-
+                        cast_can_continue = Get_Map_Square_Target_For_Spell(stt_Enemy_Group, &spell_target_idx, &wy, &wp, spell_idx, player_idx);
                     }
-
-                    if(Cast_Successful == ST_TRUE)
+                    if(cast_can_continue == ST_TRUE)
                     {
-
                         for(itr_cities = 0; itr_cities < _cities; itr_cities++)
                         {
-
                             if(
                                 (_CITIES[itr_cities].wx == _UNITS[spell_target_idx].wx)
                                 &&
@@ -1497,18 +1383,12 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                                 (_CITIES[itr_cities].wp == _UNITS[spell_target_idx].wp)
                             )
                             {
-
-                                Cast_Successful = Apply_Automatic_Spell_Counters(spell_idx, itr_cities, player_idx, show_message_flag);
-
+                                cast_can_continue = Apply_Automatic_Spell_Counters(spell_idx, itr_cities, player_idx, show_message_flag);
                             }
-
                         }
-
                     }
-
-                    if(Cast_Successful == ST_TRUE)
+                    if(cast_can_continue == ST_TRUE)
                     {
-
                         if(
                             (player_idx == HUMAN_PLAYER_IDX)
                             ||
@@ -1521,241 +1401,53 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                             )
                         )
                         {
-
-                            AI_Eval_After_Spell = ST_TRUE;
-                            
+                            g_ai_recompute_needed = ST_TRUE;
                             Allocate_Reduced_Map();
-
                             Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
-
                             Spell_Animation_Load_Graphics(spell_idx);
-
                             Spell_Animation_Screen__WIP(_UNITS[spell_target_idx].wx, _UNITS[spell_target_idx].wy, _UNITS[spell_target_idx].wp);
-
                             Full_Draw_Main_Screen();
-
                         }
-
                         /* SPELLY */  Change_Relations__WIP(-3, player_idx, _UNITS[spell_target_idx].owner_idx, 8, 0, spell_target_idx);
-
                         /* SPELLY */  Cast_Attack_Spell_On_Enemy_Stack(spell_target_idx, spell_idx);
-
                     }
-
                 } break;  /* case scc_Fixed_Dmg_Spell: */
 
                 // Animate Dead, Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Cracks Call, Death Wish, Disrupt, Earth Lore, Earth to Mud, Earthquake, Enchant Road, Great Unsummoning, Healing, Incarnation, Lycanthropy, Magic Vortex, Move Fortress, Natures Cures, Plane Shift, Raise Dead, Raise Volcano, Recall Hero, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Wall of Stone, Warp Creature, Warp Node, Warp Wood, Word of Recall
                 case scc_Special_Spell:  //  5
                 {
-                    
-                    AI_Eval_After_Spell = ST_TRUE;
-
+                    g_ai_recompute_needed = ST_TRUE;
                     switch(spell_idx)
                     {
-
-                        case spl_Spell_Of_Return:
-                        {
-
-                            Cast_Successful = Cast_Spell_Of_Return(player_idx);
-
-                        } break;
-
-                        case spl_Corruption:
-                        {
-
-                            Cast_Successful = Cast_Corruption(player_idx);
-
-                        } break;
-
-                        case spl_Earth_Lore:
-                        {
-
-                            Cast_Successful = Cast_Earth_Lore(player_idx);
-
-                        } break;
-
-                        case spl_Change_Terrain:
-                        {
-
-                            Cast_Successful = Cast_Change_Terrain(player_idx);
-
-                        } break;
-
-                        case spl_Stasis:
-                        {
-
-                            Cast_Successful = Cast_Stasis(player_idx);
-
-                        } break;
-
-                        case spl_Natures_Cures:
-                        {
-
-                            Cast_Successful = Cast_Natures_Cures(player_idx);
-
-                        } break;
-
-                        case spl_Move_Fortress:
-                        {
-
-                            Cast_Successful = Cast_Move_Fortress(player_idx);
-
-                        } break;
-
-                        case spl_Transmute:
-                        {
-
-                            Cast_Successful = Cast_Transmute(player_idx);
-
-                        } break;
-
-                        case spl_Wall_Of_Stone:
-                        {
-
-                            Cast_Successful = Cast_Wall_Of_Stone(player_idx);
-
-                        } break;
-
-                        case spl_Earthquake:
-                        {
-
-                            Cast_Successful = Cast_Earthquake(player_idx);
-
-                        } break;
-
-                        case spl_Word_Of_Recall:
-                        {
-
-                            Cast_Successful = Cast_Word_Of_Recall(player_idx);
-
-                        } break;
-
-                        case spl_Enchant_Road:
-                        {
-
-                            Cast_Successful = Cast_Enchant_Road(player_idx);
-
-                        } break;
-
-                        case spl_Spell_Ward:
-                        {
-
-                            Cast_Successful = Cast_Spell_Ward(player_idx);
-
-                        } break;
-
-                        case spl_Spell_Binding:
-                        {
-
-                            // BUGBUG  no return_value  Cast_Successful = Cast_Spell_Binding(player_idx);
-                            Cast_Spell_Binding(player_idx);
-
-                        } break;
-
-                        case spl_Chaos_Channels:
-                        {
-
-                            Cast_Successful = Cast_Chaos_Channels(player_idx);
-
-                        } break;
-
-                        case spl_Warp_Node:
-                        {
-
-                            Cast_Successful = Cast_Warp_Node(player_idx);
-
-                        } break;
-
-                        case spl_Raise_Volcano:
-                        {
-
-                            Cast_Successful = Cast_Raise_Volcano(player_idx);
-
-                        } break;
-
-                        case spl_Call_The_Void:
-                        {
-
-                            Cast_Successful = Cast_Call_The_Void(player_idx);
-
-                        } break;
-
-                        case spl_Plane_Shift:
-                        {
-
-                            Cast_Successful = Cast_Plane_Shift(player_idx);
-
-                        } break;
-
-                        case spl_Resurrection:
-                        {
-
-                            // BUGBUG  no return value  Cast_Successful = Cast_Resurrection(player_idx);
-                            Cast_Resurrection(player_idx);
-
-                        } break;
-
-                        case spl_Incarnation:
-                        {
-
-                            // BUGBUG  no return value  Cast_Successful = Cast_Incarnation(player_idx);
-                            Cast_Incarnation(player_idx);
-
-                        } break;
-
-                        case spl_Great_Unsummoning:
-                        {
-
-                            Cast_Successful = Cast_GreatUnsummoning(player_idx);
-
-                        } break;
-
-                        case spl_Death_Wish:
-                        {
-
-                            Cast_Successful = Cast_DeathWish(player_idx);
-
-                        } break;
-
-                        case spl_Black_Wind:
-                        {
-
-                            Cast_Successful = Cast_Black_Wind(player_idx);
-
-                        } break;
-
-                        case spl_Lycanthropy:
-                        {
-                            
-                            Cast_Successful = Cast_Lycantrophy(player_idx);
-
-                        } break;
-
-                        case spl_Summon_Hero:
-                        {
-
-                            // BUGBUG  no return value  Cast_Successful = Cast_Summon_Hero(player_idx, 1);
-                            Cast_Summon_Hero(player_idx, 1);
-
-                        } break;
-
-                        case spl_Summon_Champion:
-                        {
-
-                            // BUGBUG  no return value  Cast_Successful = Cast_Summon_Hero(player_idx, 2);
-                            Cast_Summon_Hero(player_idx, 2);
-
-                        } break;
-
-                        default:
-                        {
-
-                            STU_DEBUG_BREAK();
-
-                        } break;
-
+                        case spl_Spell_Of_Return:   { cast_can_continue = Cast_Spell_Of_Return(player_idx); } break;
+                        case spl_Corruption:        { cast_can_continue = Cast_Corruption(player_idx);      } break;
+                        case spl_Earth_Lore:        { cast_can_continue = Cast_Earth_Lore(player_idx); } break;
+                        case spl_Change_Terrain:    { cast_can_continue = Cast_Change_Terrain(player_idx); } break;
+                        case spl_Stasis:            { cast_can_continue = Cast_Stasis(player_idx); } break;
+                        case spl_Natures_Cures:     { cast_can_continue = Cast_Natures_Cures(player_idx); } break;
+                        case spl_Move_Fortress:     { cast_can_continue = Cast_Move_Fortress(player_idx); } break;
+                        case spl_Transmute:         { cast_can_continue = Cast_Transmute(player_idx); } break;
+                        case spl_Wall_Of_Stone:     { cast_can_continue = Cast_Wall_Of_Stone(player_idx); } break;
+                        case spl_Earthquake:        { cast_can_continue = Cast_Earthquake(player_idx); } break;
+                        case spl_Word_Of_Recall:    { cast_can_continue = Cast_Word_Of_Recall(player_idx); } break;
+                        case spl_Enchant_Road:      { cast_can_continue = Cast_Enchant_Road(player_idx); } break;
+                        case spl_Spell_Ward:        { cast_can_continue = Cast_Spell_Ward(player_idx); } break;
+                        case spl_Spell_Binding:     { Cast_Spell_Binding(player_idx);  /* OGBUG  no return_value  cast_can_continue = Cast_Spell_Binding(player_idx); */ } break;
+                        case spl_Chaos_Channels:    { cast_can_continue = Cast_Chaos_Channels(player_idx); } break;
+                        case spl_Warp_Node:         { cast_can_continue = Cast_Warp_Node(player_idx); } break;
+                        case spl_Raise_Volcano:     { cast_can_continue = Cast_Raise_Volcano(player_idx); } break;
+                        case spl_Call_The_Void:     { cast_can_continue = Cast_Call_The_Void(player_idx); } break;
+                        case spl_Plane_Shift:       { cast_can_continue = Cast_Plane_Shift(player_idx); } break;
+                        case spl_Resurrection:      { Cast_Resurrection(player_idx);  /* OGBUG  no return value  cast_can_continue = Cast_Resurrection(player_idx); */ } break;
+                        case spl_Incarnation:       { Cast_Incarnation(player_idx);  /* OGBUG  no return value  cast_can_continue = Cast_Incarnation(player_idx); */ } break;
+                        case spl_Great_Unsummoning: { cast_can_continue = Cast_GreatUnsummoning(player_idx); } break;
+                        case spl_Death_Wish:        { cast_can_continue = Cast_DeathWish(player_idx); } break;
+                        case spl_Black_Wind:        { cast_can_continue = Cast_Black_Wind(player_idx); } break;
+                        case spl_Lycanthropy:       { cast_can_continue = Cast_Lycantrophy(player_idx); } break;
+                        case spl_Summon_Hero:       { Cast_Summon_Hero(player_idx, 1);  /* OGBUG  no return value  cast_can_continue = Cast_Summon_Hero(player_idx, 1); */ } break;
+                        case spl_Summon_Champion:   { Cast_Summon_Hero(player_idx, 2);  /* OGBUG  no return value  cast_can_continue = Cast_Summon_Hero(player_idx, 2); */ } break;
+                        default: { STU_DEBUG_BREAK(); } break;
                     }
-
                 } break;  /* case scc_Special_Spell:  //  5 */
 
                 // WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion
@@ -1763,8 +1455,8 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                 {
                     if(player_idx != HUMAN_PLAYER_IDX)
                     {
-                        /* SPELLY */  Cast_Successful = IDK_AITP_Target_Wizard__STUB(&spell_target_idx, spell_idx, player_idx);
-                        if(Cast_Successful == ST_TRUE)
+                        /* SPELLY */  cast_can_continue = IDK_AITP_Target_Wizard__STUB(&spell_target_idx, spell_idx, player_idx);
+                        if(cast_can_continue == ST_TRUE)
                         {
                             switch(spell_data_table[spell_idx].Param0)
                             {
@@ -1842,12 +1534,12 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                         }
                         if(spell_target_idx == ST_TRUE)
                         {
-                            Cast_Successful = ST_TRUE;
+                            cast_can_continue = ST_TRUE;
                             spell_target_idx = Target_Wizard_Screen(spell_idx);
                         }
                         else
                         {
-                            Cast_Successful = ST_FALSE;
+                            cast_can_continue = ST_FALSE;
                             LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)&GUI_NearMsgString[0], 27, 1, 150);  // "You have no contact with any other wizards. Your "
                             // ; already copied here...
                             _fstrcpy(&spell_name[0], spell_data_table[spell_idx].name);
@@ -1862,11 +1554,11 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                 case scc_Global_Enchantment:  // 9
                 {
 
-                    AI_Eval_After_Spell = ST_TRUE;
+                    g_ai_recompute_needed = ST_TRUE;
 
                     WIZ_GlobalSpellAnim(player_idx, spell_idx);
 
-                    Cast_Successful = ST_TRUE;
+                    cast_can_continue = ST_TRUE;
 
                     ptr_enchantments = &_players[player_idx].Globals[0];
 
@@ -1947,7 +1639,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                     current_screen = scr_Main_Screen;
 
-                    Cast_Successful = ST_TRUE;
+                    cast_can_continue = ST_TRUE;
 
                 } break;
 
@@ -1964,7 +1656,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                     if(player_idx != HUMAN_PLAYER_IDX)
                     {
 
-                        Cast_Successful = Get_Map_Square_Target_For_Spell(stt_Map_Square, &spell_target_idx, &wy, &wp, spell_idx, player_idx);
+                        cast_can_continue = Get_Map_Square_Target_For_Spell(stt_Map_Square, &spell_target_idx, &wy, &wp, spell_idx, player_idx);
 
                     }
                     else
@@ -1972,18 +1664,18 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                         MultiPurpose_Local_Var = ST_FALSE;
 
-                        Cast_Successful = ST_TRUE;
+                        cast_can_continue = ST_TRUE;
 
                         Allocate_Reduced_Map();
 
                         Mark_Block(_screen_seg);
 
-                        while((MultiPurpose_Local_Var == ST_FALSE) && (Cast_Successful == ST_TRUE))
+                        while((MultiPurpose_Local_Var == ST_FALSE) && (cast_can_continue == ST_TRUE))
                         {
 
-                            Cast_Successful = Spell_Casting_Screen__WIP(stt_Map_Square, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name);
+                            cast_can_continue = Spell_Casting_Screen__WIP(stt_Map_Square, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name);
 
-                            if(Cast_Successful == ST_TRUE)
+                            if(cast_can_continue == ST_TRUE)
                             {
 
                                 MultiPurpose_Local_Var = Square_Has_Disenchant_Target(spell_target_idx, wy, wp);
@@ -2004,7 +1696,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                     }
 
-                    if(Cast_Successful == ST_TRUE)
+                    if(cast_can_continue == ST_TRUE)
                     {
 
                         MultiPurpose_Local_Var = ST_FALSE;
@@ -2046,7 +1738,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                                     )
                                     {
 
-                                        AI_Eval_After_Spell = ST_TRUE;
+                                        g_ai_recompute_needed = ST_TRUE;
 
                                         MultiPurpose_Local_Var = ST_TRUE;
 
@@ -2090,7 +1782,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                                     MultiPurpose_Local_Var = ST_TRUE;
 
-                                    AI_Eval_After_Spell = ST_TRUE;
+                                    g_ai_recompute_needed = ST_TRUE;
 
                                     Allocate_Reduced_Map();
 
@@ -2107,7 +1799,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                     if(MultiPurpose_Local_Var == ST_TRUE)
                     {
-                        AI_Eval_After_Spell = ST_TRUE;
+                        g_ai_recompute_needed = ST_TRUE;
                         Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
                         Spell_Animation_Load_Graphics(spell_idx);
                         Spell_Animation_Screen__WIP(spell_target_idx, wy, wp);
@@ -2140,15 +1832,15 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                     if(player_idx == HUMAN_PLAYER_IDX)
                     {
 
-                        Cast_Successful = Spell_Target_Global_Enchantment_Screen(spell_idx, player_idx);
+                        cast_can_continue = Spell_Target_Global_Enchantment_Screen(spell_idx, player_idx);
 
                     }
                     else
                     {
 
-                        /* SPELLY */  Cast_Successful = IDK_AITP_Disjunction__STUB(&spell_target_idx, &wy, spell_idx, player_idx);
+                        /* SPELLY */  cast_can_continue = IDK_AITP_Disjunction__STUB(&spell_target_idx, &wy, spell_idx, player_idx);
 
-                        if(Cast_Successful == ST_TRUE)
+                        if(cast_can_continue == ST_TRUE)
                         {
 
                             if(_players[player_idx].runemaster > 0)
@@ -2211,7 +1903,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
 
 
-    if(Cast_Successful == ST_TRUE)
+    if(cast_can_continue == ST_TRUE)
     {
         MultiPurpose_Local_Var = ST_UNDEFINED;
 
@@ -2248,11 +1940,8 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
             )
         )
         {
-
-            AI_Eval_After_Spell = ST_TRUE;
-
-            // TODO  Call_Forth_The_Force_Of_Nature
-
+            g_ai_recompute_needed = ST_TRUE;
+            Call_Forth_The_Force_Of_Nature(player_idx);
         }
     }
     /*
@@ -2261,9 +1950,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
 
     _players[player_idx].casting_cost_remaining = 0;
-
     _players[player_idx].casting_cost_original = 0;
-
     _players[player_idx].casting_spell_idx = 0;
 
 }

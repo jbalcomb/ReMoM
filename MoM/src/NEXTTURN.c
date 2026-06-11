@@ -403,7 +403,7 @@ void Next_Turn_Proc(void)
         (_players[_human_player_idx].casting_spell_idx > spl_NONE))
     {
 
-        Cast_Spell_Overland__WIP(_human_player_idx);
+        Cast_Spell_Overland(_human_player_idx);
 
     }
 

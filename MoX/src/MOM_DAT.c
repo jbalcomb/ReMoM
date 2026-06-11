@@ -3467,7 +3467,7 @@ int16_t _scroll_text_top;
 // WZD dseg:C9F0
 /*
 CLAUDE
-AI_Eval_After_Spell is a one-shot "spell altered the world state, AI must re-evaluate" flag.
+g_ai_recompute_needed is a one-shot "spell altered the world state, AI must re-evaluate" flag.
 Lifecycle:
 Cleared (ST_FALSE) at the top of Cast_Spell_Overland (OverSpel.c:667) — the start of any overland casting cycle.
 Set (ST_TRUE) by spell handlers whose effects materially change what the AI sees: enemy unit attack spells (Spells129.c:251 and many others in Spells129.c/Spells130.c/Spells132.c), most overland spell branches in OverSpel.c (Disjunction, Spell of Mastery, summons, city/unit-affecting enchantments, etc.), and when the human picks a new spell from the spellbook (SBookScr.c:713).
@@ -3475,7 +3475,7 @@ Consumed in AI_Turn (AIDUDES.c:249): right after an AI player completes casting 
 Purpose: avoid recomputing the AI's expensive world-evaluation tables on every turn — only refresh them when a spell that just resolved would have invalidated them (new units appeared, units died, treaties/diplomacy shifted, global enchantments changed, etc.). It's effectively a dirty-bit on the AI's cached view of the world.
 The original disassembly comment at SPLMASTR.c:176 confirms its first observed cross-reference was UNIT_ConvSpellATK (unit attack spells), consistent with how it's used today.
 */
-int16_t AI_Eval_After_Spell;
+int16_t g_ai_recompute_needed;
 
 
 

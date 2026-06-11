@@ -459,7 +459,7 @@ void Spellbook_Screen(void)
 /*
 handles spl_Enchant_Item, spl_Create_Artifact, spl_Spell_Of_Mastery
 
-if "Instant", calls Cast_Spell_Overland__WIP()  (same as called from Next_Turn_Proc())
+if "Instant", calls Cast_Spell_Overland()  (same as called from Next_Turn_Proc())
 
 Spellbook_Screen() has only set _players[].casting_spell_idx...
 
@@ -608,7 +608,7 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
                     /* SPELLY */  OVL_MosaicFlip__STUB();
                 }
                 did_cast_spell__iff_human_player = ST_TRUE;
-                Cast_Spell_Overland__WIP(player_idx);
+                Cast_Spell_Overland(player_idx);
             }
         }
     }
@@ -712,7 +712,7 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
 
     Copy_On_To_Off_Page();
 
-    AI_Eval_After_Spell = ST_TRUE;
+    g_ai_recompute_needed = ST_TRUE;
 
     Stop_All_Sounds__STUB();
 

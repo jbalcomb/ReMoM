@@ -35,7 +35,7 @@ void Cast_Disenchant(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int
 int16_t Square_Has_Disenchant_Target(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o135p05
-void Cast_Spell_Overland__WIP(int16_t player_idx);
+void Cast_Spell_Overland(int16_t player_idx);
 
 // WZD o135p06
 int16_t IDK_Get_Global_Enchant_Index__STUB(int16_t value);

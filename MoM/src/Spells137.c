@@ -247,7 +247,7 @@ SAMB_ptr IDK_wizard_id_thing_seg;
 
 ¿ parameter is spell index or unit type / index into MONSTER.LBX ?
 
-Cast_Spell_Overland__WIP()
+Cast_Spell_Overland()
     IDK_SummonAnim(spell_data_table[spell_idx].Param0, MultiPurpose_Local_Var, player_idx);
 e.g.,
     'Magic Spirit'  (201)

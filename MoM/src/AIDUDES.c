@@ -23,6 +23,7 @@
 #include "AISPELL.h"
 #include "CITYCALC.h"
 #include "NEXTTURN.h"
+#include "OverSpel.h"
 #include "RACETYPE.h"
 #include "SETTLE.h"
 #include "Spellbook.h"
@@ -260,10 +261,10 @@ void AI_Next_Turn(void)
         /* Handle Overland Casting Completion */
         if (_players[player_idx].casting_cost_remaining <= 0 && _players[player_idx].casting_spell_idx != spl_NONE)
         {
-            // Cast_Spell_Overland__WIP(player_idx);
+            PHASE(Cast_Spell_Overland(player_idx));
             PHASE(EMMDATAH_Map());
             _players[player_idx].casting_spell_idx = spl_NONE;
-            if (AI_Eval_After_Spell == ST_TRUE)
+            if (g_ai_recompute_needed == ST_TRUE)
             {
                 PHASE(Allocate_AI_Data());
                 PHASE(Player_Hostile_Opponents(player_idx));

@@ -20,7 +20,7 @@ Very Rare                                   Cruel Unminding                     
 
 
 
-Cast_Spell_Overland__WIP()
+Cast_Spell_Overland()
     spl_Spell_Of_Return
     spl_Corruption
     spl_Earth_Lore

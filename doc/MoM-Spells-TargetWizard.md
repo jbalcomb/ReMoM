@@ -7,7 +7,7 @@
  58  spl_Spell_Blast
 177  spl_Subversion
 
-Cast_Spell_Overland__WIP()
+Cast_Spell_Overland()
     // WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion
     case scc_Target_Wiz_Spell:  //  06
 

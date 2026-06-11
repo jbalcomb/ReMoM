@@ -35,7 +35,7 @@ gets you player_idx from the field_num
 
 
 
-Cast_Spell_Overland__WIP()
+Cast_Spell_Overland()
     // OVERLAND:  Disjunction, Disjunction True
     case scc_Disjunctions:  // 20
         if(player_idx == HUMAN_PLAYER_IDX)

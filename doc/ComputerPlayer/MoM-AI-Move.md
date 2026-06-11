@@ -185,11 +185,11 @@ Definitely Done-Done:
 [ ] |-> Next_Turn_Calc()
 [ ]     |-> AI_Next_Turn()
 [x]          |-> AI_Execute_Orders()
-[ ]             |-> AI_Unit_Army_Do_Move()
-[ ]                 |-> Allocate_Reduced_Map()
-[ ]                 |-> MainScr_Create_Reduced_Map_Picture()
-[ ]                 |-> Stack_Move_To()
-[ ]                     |-> Build_RoadBuilder_Stack()
+[x]             |-> AI_Unit_Army_Do_Move()
+[x]                 |-> Allocate_Reduced_Map()
+[x]                 |-> MainScr_Create_Reduced_Map_Picture()
+[x]                 |-> Stack_Move_To()
+[x]                     |-> Build_RoadBuilder_Stack()
 
 [x]     AI_Unit_Army_Do_Road(unit_idx);
 

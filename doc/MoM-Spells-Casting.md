@@ -92,7 +92,7 @@ spell_idx == spl_Animate_Dead
 ## Cast Spell - Overland
 
 Next_Turn_Proc()
-    |-> Cast_Spell_Overland__WIP()
+    |-> Cast_Spell_Overland()
 
 Spellbook_Screen()
     |-> Cast_Spell_Overland_Do
@@ -107,7 +107,7 @@ Next_Turn_Proc()
         &&
         (_players[_human_player_idx].casting_spell_idx > spl_NONE))
     {
-        Cast_Spell_Overland__WIP(_human_player_idx);
+        Cast_Spell_Overland(_human_player_idx);
     }
 }
 ```
@@ -119,7 +119,7 @@ Spellbook_Screen()
     {
         Cast_Spell_Overland_Do(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
             ...
-            Cast_Spell_Overland__WIP(player_idx);
+            Cast_Spell_Overland(player_idx);
     }
 }
 ```
@@ -169,7 +169,7 @@ Next_Turn_Proc()
         &&
         (_players[_human_player_idx].casting_spell_idx > spl_NONE))
     {
-        Cast_Spell_Overland__WIP(_human_player_idx);
+        Cast_Spell_Overland(_human_player_idx);
     }
 
 
@@ -229,7 +229,7 @@ Spellbook_Screen()
     {
         Cast_Spell_Overland_Do(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
             ...
-            Cast_Spell_Overland__WIP(player_idx);
+            Cast_Spell_Overland(player_idx);
     }
 }
 ```
@@ -277,7 +277,7 @@ Cast_Spell_Target_Error(spell_idx)
 
 
 
-## Cast_Spell_Overland__WIP()
+## Cast_Spell_Overland()
 
 BEGIN:  Suppress Magic
 BEGIN:  Tranquility  (~== Suppress Chaos Magic)

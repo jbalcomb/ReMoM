@@ -1252,7 +1252,7 @@ void Cast_Floating_Island(int16_t player_idx)
     )
     {
         
-        AI_Eval_After_Spell = ST_TRUE;
+        g_ai_recompute_needed = ST_TRUE;
 
         // DOMSDOS  Allocate_Reduced_Map__1();
         Allocate_Reduced_Map();

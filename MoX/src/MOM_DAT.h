@@ -4666,7 +4666,7 @@ extern int16_t _scroll_text_top;
 // WZD dseg:C9EE                                                 ¿ END:  ovr127 - Uninitialized Data ?
 
 // WZD dseg:C9F0
-extern int16_t AI_Eval_After_Spell;
+extern int16_t g_ai_recompute_needed;
 
 
 
@@ -4687,7 +4687,7 @@ extern int16_t _osc_anim_ctr;
 
 XREF:
     Learn_Spell_Animation()
-    Cast_Spell_Overland__WIP()
+    Cast_Spell_Overland()
     SBK_SliderRedraw()
     SBK_SpellSlider()
     Combat_Spellbook_Mana_Adder_Draw()

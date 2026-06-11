@@ -173,7 +173,7 @@ int16_t Apply_Cruel_Unminding(int16_t player_idx)
 
 ...not just cast spell...
 ...only called in two places...
-...directly from Aplly_Call_The_Void() and Cast_Spell_Overland__WIP(), for scc_Direct_Damage_Fixed (4), Human Player Only
+...directly from Aplly_Call_The_Void() and Cast_Spell_Overland(), for scc_Direct_Damage_Fixed (4), Human Player Only
 
 */
 void Cast_Attack_Spell_On_Enemy_Stack(int16_t unit_idx, int16_t spell_idx)
@@ -721,7 +721,7 @@ XREF:
         Cast_RaiseVolcano()
         Cast_Corruption()
         WIZ_MeteorStorm()
-        Cast_Spell_Overland__WIP()
+        Cast_Spell_Overland()
 
 "Having nightshade as a resource in your city (see Terrain Specials) and a building that can make use of this resource (religious institutions, see Buildings), significantly increases a city’s ability to resist enemy city enchantments."
 
@@ -1800,6 +1800,34 @@ int16_t Apply_Earthquake(int16_t city_idx, int16_t * item_count, int16_t item_li
 
 
 // WZD o129p16
+/**
+ * @brief Executes the Nature's Wrath global-event effect against a target player.
+ *
+ * This routine is the visual and statistical resolution of the Nature's Wrath
+ * overland event. It targets all cities owned by @p player_idx and applies the
+ * following effects to each:
+ *
+ * - Each non-flying, non-non-corporeal unit stationed in the city has a 15%
+ *   chance of being destroyed outright. Hero item slots are stripped and pooled
+ *   before the kill.
+ * - Buildings receive 5 points of spell damage via Apply_Damage_To_City().
+ * - Lost buildings for the human player are recorded in @c MSG_BldLost_Array
+ *   for the summary screen (capped at 20 entries).
+ * - Items recovered from killed heroes are deposited via Player_Process_Item_Pool().
+ *
+ * The function also plays the Force of Nature spell music, loads spell
+ * graphics, and runs a 120-frame screen-shake animation. The animation can be
+ * skipped by user input.
+ *
+ * @param player_idx Index of the player whose cities and units are targeted.
+ *
+ * @return This function does not return a value.
+ *
+ * @note Hero item slots are incorrectly cleared to 0 instead of the canonical
+ *       empty-slot sentinel -1 (marked @c OGBUG in code).
+ * @note The function unconditionally plays the animation regardless of whether
+ *       the human player can see the affected cities.
+ */
 void Call_Forth_The_Force_Of_Nature(int16_t player_idx)
 {
     int16_t item_list_array[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };

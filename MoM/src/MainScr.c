@@ -2583,7 +2583,7 @@ XREF:
     Cast_SummonHero()
     Cast_Incarnation()
     Cast_Resurrection()
-    Cast_Spell_Overland__WIP()
+    Cast_Spell_Overland()
         ¿ scc_Summoning, but not 'Floating Island' ?
 
 */

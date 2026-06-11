@@ -4,7 +4,7 @@ Single producer: [`AI_Player_Calculate_Target_Values`](../MoM/src/AIDUDES.c) ([A
 
 Drake178 disassembly name: `AI_OVL_Eval_Assets`.
 
-Once per AI turn (and again after a spell finishes casting if `AI_Eval_After_Spell == ST_TRUE`), this walks every city and every unit in the world and writes seven global arrays plus one scalar. Those outputs feed everything from continent-balance scoring to ship-build weighting.
+Once per AI turn (and again after a spell finishes casting if `g_ai_recompute_needed == ST_TRUE`), this walks every city and every unit in the world and writes seven global arrays plus one scalar. Those outputs feed everything from continent-balance scoring to ship-build weighting.
 
 ## High-level fan-out
 
