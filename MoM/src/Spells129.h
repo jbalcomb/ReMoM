@@ -66,8 +66,7 @@ int16_t Cast_Earthquake(int16_t player_idx);
 int16_t Apply_Earthquake(int16_t city_idx, int16_t * item_count, int16_t item_list[]);
 
 // WZD o129p16
-// sub_AEDB1()
-
+void Call_Forth_The_Force_Of_Nature(int16_t player_idx);
 
 
 #ifdef __cplusplus

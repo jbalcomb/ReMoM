@@ -11,20 +11,21 @@
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/GENDRAW.h"
 #include "../../MoX/src/Graphics.h"
-#include "../../MoX/src/MOX_T4.h"
-#include "../../MoX/src/Timer.h"
-#include "../../MoX/src/Video.h"
+#include "../../MoX/src/Help.h"
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_DAT.h"
+#include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_SET.h"
+#include "../../MoX/src/MOX_T4.h"
 #include "../../MoX/src/MOX_TYPE.h"
-#include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/paragrph.h"
+#include "../../MoX/src/random.h"
+#include "../../MoX/src/SOUND.h"
+#include "../../MoX/src/Timer.h"
+#include "../../MoX/src/Video.h"
 
-#include "../../MoX/src/Help.h"
-#include "../../MoX/src/MOM_DEF.h"
 #include "NEXTTURN.h"
 #include "SCastScr.h"
 #include "Spells129.h"
@@ -806,37 +807,23 @@ void Cast_Spell_City_Enchantment_Animation_1__WIP(int16_t city_idx, int16_t spel
 
         if(spell_idx == spl_Earthquake)
         {
-
             Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
-
             Set_Page_Off();
-
             Cast_Spell_City_Enchantment_Animation_Draw();
-
             Copy_Off_To_Back();
-
             if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
             {
                 Play_Sound(SND_SpellCast, SND_SpellCast_size);
             }
-
             for(itr = 35; itr > 5; itr--)
             {
-            
-                // TODO  SPELLY  GRRRFUCKS  VGA_PartCopyFromF3((Random(itr) / 5), (Random(itr) / 5));
-            
+                VGA_PartCopyFromF3((Random(itr) / 5), (Random(itr) / 5));
                 PageFlip_FX();
-            
             }
-
             Set_Page_Off();
-
             Cast_Spell_City_Enchantment_Animation_Draw();
-
             PageFlip_FX();
-
             SND_SpellCast = (SAMB_ptr)ST_UNDEFINED;
-
         }
         else
         {

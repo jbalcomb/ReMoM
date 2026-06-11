@@ -18,6 +18,7 @@
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/GENDRAW.h"
+#include "../../MoX/src/paragrph.h"
 #include "../../MoX/src/Timer.h"
 
 #include "MOM_SCR.h"

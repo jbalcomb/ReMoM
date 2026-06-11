@@ -84,7 +84,7 @@ void Toggle_Pages_No_Draw_Fields(void);
 */
 
 // WZD s27p01
-// VGA_PartCopyFromF3()
+void VGA_PartCopyFromF3(int16_t x, int16_t y);
 
 // WZD s27p02
 // UU_VGA_SliceFlip()

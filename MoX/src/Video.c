@@ -8,9 +8,9 @@
         seg028
 */
 
-#include "Video.h"
-
+#include "MOX_DEF.h"
 #include "Mouse.h"
+#include "Video.h"
 #include "Video2.h"
 
 #include "../../platform/include/Platform.h"  /* Platform_Palette_Update(), Platform_Video_Update() */
@@ -30,7 +30,7 @@ int16_t draw_page_num = 0;
 uint8_t * current_video_page;
 // uint8_t * video_page_buffer[4];  // On, Off, Back, ¿ Back2 ?
 uint8_t * video_memory;
-uint8_t * video_page_buffer[4];  // On, Off, Back, ¿ Back2 ?
+uint8_t * video_page_buffer[4];  // On, Off, Back, ¿ Back2 ? {0A000h,0A400h,0A800h,0AC00h}
 uint8_t * draw_page;
 
 
@@ -72,6 +72,7 @@ uint8_t * draw_page;
 // seg026:018E 00 00                                           VGA_Read_Mask dw 0                      ; DATA XREF: UU_VGA_CopyLine+102w ...
 // seg026:0190 00 00                                           VGA_Line_Offset dw 0                    ; DATA XREF: VGA_ShiftCopyFromF3+27w ...
 // seg026:0192 00 00                                           VGA_Origin_Offset dw 0                  ; DATA XREF: VGA_ShiftCopyFromF3+36w ...
+
 
 // WZD s26p01
 void VGA_MosaicFlip__STUB(void)
@@ -179,9 +180,37 @@ void Toggle_Pages_No_Draw_Fields(void)
 // UU_VGA_ColWipeRight()
 
 // WZD s26p14
-// VGA_ShiftCopyFromF3()
+// drake178: VGA_ShiftCopyFromF3()
+/* GEMINI */
+void VGA_ShiftCopyFromF3(int16_t x, int16_t y)
+{
+    int row;
+    
+    /* 1. Shifted Copy */
+    /* Copy row by row, skipping the bottom-most 'y' rows */
+    for (row = 0; row < SCREEN_HEIGHT - y; row++) {
+        /* dest: current_page + offset row + offset x */
+        /* src:  page2 + normal row */
+        memcpy(current_video_page + ((row + y) * SCREEN_WIDTH) + x,
+               video_page_buffer[2] + (row * SCREEN_WIDTH),
+               SCREEN_WIDTH - x);
+    }
 
+    /* 2. Gap Cleanup */
+    /* If you have a custom Fill() function, use it here. Otherwise: */
+    
+    if (x > 0) {
+        /* Black out the left edge */
+        for (row = 0; row < SCREEN_HEIGHT; row++) {
+            memset(current_video_page + (row * SCREEN_WIDTH), 0, x);
+        }
+    }
 
+    if (y > 0) {
+        /* Black out the top edge */
+        memset(current_video_page, 0, SCREEN_WIDTH * y);
+    }
+}
 
 
 /*
@@ -189,7 +218,36 @@ void Toggle_Pages_No_Draw_Fields(void)
 */
 
 // WZD s27p01
-// VGA_PartCopyFromF3()
+// drake178: VGA_PartCopyFromF3()
+/*
+; copies the contents of the 3rd VGA frame ($A800) into
+; the current draw frame with the top teft of the
+; saved screen matching the specified coordinates, and
+; clears any borders created at the top or left side
+*/
+void VGA_PartCopyFromF3(int16_t x, int16_t y)
+{
+
+/*
+; copies the contents of the 3rd VGA frame ($A800) into
+; the current draw frame starting at the specified
+; location
+*/
+    VGA_ShiftCopyFromF3(x,y);
+
+    /* cleanup tearing */
+//     if(x != 0)
+//     {
+//         Fill(SCREEN_XMIN, SCREEN_YMIN, (x - 1), SCREEN_YMAX, ST_TRANSPARENT);
+//     }
+// 
+//     if(y != 0)
+//     {
+//         Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, (y - 1), ST_TRANSPARENT);
+//     }
+
+}
+
 
 // WZD s27p02
 // UU_VGA_SliceFlip()

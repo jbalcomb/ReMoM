@@ -8,24 +8,31 @@
 #endif
 
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/Fields.h"
+#include "../../MoX/src/FLIC_Draw.h"
+#include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/GENDRAW.h"
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOX_DEF.h"
-#include "../../MoX/src/random.h"
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/MOX_SET.h"
-
 #include "../../MoX/src/MOM_DEF.h"
-#include "MainScr.h"
-#include "SCastScr.h"
+#include "../../MoX/src/paragrph.h"
+#include "../../MoX/src/random.h"
+#include "../../MoX/src/SOUND.h"
+#include "../../MoX/src/Video.h"
+
 #include "CMBTDEF.h"
 #include "CITYCALC.h"
 #include "City_ovr55.h"
+#include "MainScr.h"
+#include "MainScr_Maps.h"
 #include "NEXTTURN.h"
 #include "OverSpel.h"
 #include "SBookScr.h"
+#include "SCastScr.h"
 #include "SPELLDEF.h"
 #include "Spellbook.h"
 #include "Spells128.h"
@@ -248,7 +255,7 @@ void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_
     struct s_BATTLE_UNIT * battleunit;
 
 
-    AI_Eval_After_Spell = ST_TRUE;
+    g_ai_recompute_needed = ST_TRUE;
 
 
     for(itr1 = 0; itr1 < 3; itr1++)
@@ -358,7 +365,7 @@ void Apply_Black_Wind(int16_t wx, int16_t wy, int16_t wp, int16_t spell_idx)
     int16_t unit_idx = 0;  // _SI_
     int16_t itr = 0;  // _DI_
 
-    AI_Eval_After_Spell = ST_TRUE;
+    g_ai_recompute_needed = ST_TRUE;
 
     Mark_Block(_screen_seg);
 
@@ -474,7 +481,7 @@ int16_t Cast_Call_The_Void(int16_t player_idx)
     int16_t wy = 0;
     int16_t city_idx = 0;
 
-    AI_Eval_After_Spell = ST_TRUE;
+    g_ai_recompute_needed = ST_TRUE;
 
     Allocate_Reduced_Map();
 
@@ -512,7 +519,7 @@ int16_t Cast_Call_The_Void(int16_t player_idx)
         )
         {
 
-            AI_Eval_After_Spell = ST_TRUE;
+            g_ai_recompute_needed = ST_TRUE;
 
             Spell_Animation_Load_Sound_Effect__WIP(spl_Call_The_Void);
 
@@ -987,7 +994,7 @@ int16_t Cast_Chaos_Channels(int16_t player_idx)
 
             Mark_Block(_screen_seg);
 
-            AI_Eval_After_Spell = ST_TRUE;
+            g_ai_recompute_needed = ST_TRUE;
 
             Spell_Animation_Load_Sound_Effect__WIP(spl_Chaos_Channels);
 
@@ -1102,7 +1109,7 @@ int16_t Cast_Warp_Node(int16_t player_idx)
         )
         {
 
-            AI_Eval_After_Spell = ST_TRUE;
+            g_ai_recompute_needed = ST_TRUE;
 
             Allocate_Reduced_Map();
 
@@ -1261,7 +1268,7 @@ int16_t Cast_Stasis(int16_t player_idx)
 
             Allocate_Reduced_Map();
 
-            AI_Eval_After_Spell = ST_TRUE;
+            g_ai_recompute_needed = ST_TRUE;
 
             Mark_Block(_screen_seg);
 
@@ -1370,7 +1377,7 @@ int16_t Cast_Natures_Cures(int16_t player_idx)
         )
         {
 
-            AI_Eval_After_Spell = ST_TRUE;
+            g_ai_recompute_needed = ST_TRUE;
 
             Mark_Block(_screen_seg);
 
@@ -1500,7 +1507,7 @@ int16_t Cast_Move_Fortress(int16_t player_idx)
         )
         {
 
-            AI_Eval_After_Spell = ST_TRUE;
+            g_ai_recompute_needed = ST_TRUE;
 
             Cast_Spell_City_Enchantment_Animation_1__WIP(city_idx, spl_Move_Fortress, player_idx);
 
@@ -1602,7 +1609,7 @@ int16_t Cast_Earthquake(int16_t player_idx)
         )
         {
 
-            AI_Eval_After_Spell = ST_TRUE;
+            g_ai_recompute_needed = ST_TRUE;
 
             Allocate_Reduced_Map();
 
@@ -1793,5 +1800,191 @@ int16_t Apply_Earthquake(int16_t city_idx, int16_t * item_count, int16_t item_li
 
 
 // WZD o129p16
-// sub_AEDB1()
+void Call_Forth_The_Force_Of_Nature(int16_t player_idx)
+{
+    int16_t item_list_array[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t bldg_list[NUM_BUILDINGS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t item_list_count = 0;
+    int16_t troop_count = 0;
+    int16_t itr = 0;
+    int16_t itr2 = 0;  // _DI_
+    int16_t some_var = 0;  // _SI_
+    uint32_t sound_seg_size = 0;  // DNE in Dasm
+    int16_t hero_slot = 0;
+    int16_t item_idx = 0;
 
+    g_ai_recompute_needed = ST_TRUE;
+
+    Stop_All_Sounds__STUB();
+
+    /* Load and play spell music */
+    SND_Spell_Music = LBX_Reload(music_lbx_file__ovr129, MUSIC_Force_of_Nature, SND_Music_Segment);
+    sound_seg_size = lbxload_entry_length;
+    if(magic_set.background_music == ST_TRUE)
+    {
+        Play_Sound(SND_Spell_Music, sound_seg_size);
+    }
+
+    /* Build message */
+    strcpy(GUI_NearMsgString, aNatureSWrathSt); /* "Nature's Wrath strikes " */
+    if(player_idx == HUMAN_PLAYER_IDX)
+    {
+        strcat(GUI_NearMsgString, aYou); /* "you" */
+    }
+    else
+    {
+        strcat(GUI_NearMsgString, _players[player_idx].name);
+    }
+
+    /* Prepare visual effects */
+    Allocate_Reduced_Map();
+    /* Allocate battle unit buffer */
+    // TODO  battle_units = (void far *)SA_MK_FP0(Allocate_Next_Block(_screen_seg, 8));
+    battle_units = (struct s_BATTLE_UNIT * )Allocate_Next_Block(_screen_seg, 8);
+    
+    spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr129, 23, _screen_seg);
+    diplomacy_mirror_seg = LBX_Reload_Next(backgrnd__ovr129, 18, _screen_seg);
+    
+    Spell_Animation_Load_Sound_Effect__WIP(26);
+
+    if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
+    {
+        Play_Sound(SND_SpellCast, SND_SpellCast_size);
+    }
+
+    /* Initial Draw */
+    Set_Page_Off();
+    Reset_Map_Draw();
+    Main_Screen_Draw();
+    FLIC_Draw(58, 33, diplomacy_mirror_seg);
+    FLIC_Draw(68, 41, spell_animation_seg);
+    
+    Set_Outline_Color(0);
+    Set_Font_Style_Outline(5, 0, 0, 0);
+    Print_Paragraph(45, 166, 152, GUI_NearMsgString, 2);
+    
+    Copy_Off_To_Back();
+    PageFlip_FX();
+    Clear_Fields();
+    
+    /* Add a full-screen hidden field to allow clicking past animation */
+    some_var = Add_Hidden_Field(0, 0, 319, 199, 0, 0); 
+
+    /* Animation Loop (Screen Shaking) */
+    for(itr = 0; itr < 120; itr++)
+    {
+        if(Get_Input() != 0) break;
+
+        if(itr < 16)
+        {
+            /* Random VGA offset copy for shaking effect */
+            VGA_PartCopyFromF3(Random(4) + 1, Random(3) + 1);
+        }
+        else
+        {
+            /* Static Refresh */
+            Set_Page_Off();
+            Reset_Map_Draw();
+            Main_Screen_Draw();
+            FLIC_Draw(58, 33, diplomacy_mirror_seg);
+            FLIC_Draw(68, 41, spell_animation_seg);
+            Set_Outline_Color(0);
+            Set_Font_Style_Outline(5, 0, 0, 0);
+            Print_Paragraph(45, 166, 152, GUI_NearMsgString, 2);
+        }
+        PageFlip_FX();
+    }
+
+    /* Process Cities for the target player */
+    for(itr = 0; itr < _cities; itr++)
+    {
+        item_list_count = 0;
+        
+        /* Check city owner */
+        if(_CITIES[itr].owner_idx != (int8_t)player_idx)
+        {
+            continue;
+        }
+
+        /* Check units at the city */
+        Army_At_City(itr, &troop_count, troops);
+        
+        for(some_var = 0; some_var < troop_count; some_var++)
+        {
+
+            Load_Battle_Unit(troops[some_var], battle_units);
+            
+            if(
+                ((battle_units[0].Move_Flags & MV_FLYING) != 0)
+                ||
+                ((battle_units[0].Abilities & UA_NONCORPOREAL) != 0)
+            )
+            {
+                continue;
+            }
+
+            /* 15% chance of destruction */
+            if(Random(100) > 15)
+            {
+                continue;
+            }
+
+            /* Check if Hero (Hero_Slot != 0xFF) */
+            if(_UNITS[troops[some_var]].Hero_Slot > -1)
+            {
+                /* Strip items from hero and pool them */
+                for(itr2 = 0; itr2 < 3; itr2++)
+                {
+                    hero_slot = _UNITS[troops[some_var]].Hero_Slot;
+                    item_idx = _players[player_idx].Heroes[hero_slot].Items[itr2];
+                    
+                    if(item_idx > -1)
+                    {
+                        item_list_array[item_list_count] = item_idx;
+                        item_list_count++;
+                    }
+                    /* Mark item slot as empty/deleted */
+                    _players[player_idx].Heroes[hero_slot].Items[itr2] = 0;  /* OGBUG  empty slots are -1, not 0 */
+                }
+            }
+            
+            Kill_Unit(troops[some_var], 0);
+        }
+
+        /* Damage Buildings in the city */
+        for(some_var = 0; some_var < NUM_BUILDINGS; some_var++)
+        {
+            bldg_list[some_var] = 0;
+        }
+        
+        /* Apply 5 points of damage to buildings */
+        Apply_Damage_To_City(itr, 0, 5, bldg_list);
+
+        /* Log lost buildings for summary screen */
+        if(_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX)
+        {
+            for(itr2 = 0; itr2 < NUM_BUILDINGS; itr2++)
+            {
+                if(bldg_list[itr2] > 0 && MSG_BldLost_Count < 20)
+                {
+                    MSG_BldLost_Array[MSG_BldLost_Count].city_idx = (int8_t)itr;
+                    MSG_BldLost_Array[MSG_BldLost_Count].bldg_type_idx = bldg_list[itr2];
+                    MSG_BldLost_Count++;
+                }
+            }
+        }
+
+        /* Process any items recovered from killed heroes */
+        item_pool_in_process = ST_TRUE;
+        m_item_wx = _CITIES[itr].wx;
+        m_item_wy = _CITIES[itr].wy;
+        m_item_wp = _CITIES[itr].wp;
+        
+        Player_Process_Item_Pool(player_idx, item_list_count, item_list_array);
+    }
+
+    Stop_All_Sounds__STUB();
+    Play_Background_Music();
+
+}
