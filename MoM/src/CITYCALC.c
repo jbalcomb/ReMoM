@@ -966,7 +966,7 @@ XREF:
     Main_Screen()
     Main_Screen_Draw_Summary_Window()
     AI_Tax_And_Farmers()
-    AI_OVL_SpellPicker()
+    AI_Spell_Select()
     AI_Balance_Upkeep()
 */
 /*

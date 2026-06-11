@@ -221,7 +221,7 @@ if >= scc_Infusable_Spell
 XREF:
     Spellbook_Screen()
     j_Cast_Spell_Overland_Do()
-        AI_Spell_Select__STUB()
+        AI_Spell_Select()
 ```c
 Spellbook_Screen()
 {
@@ -238,7 +238,7 @@ Spellbook_Screen()
 
 
 
-## AI_Spell_Select__STUB()
+## AI_Spell_Select()
 
 XREF:
     j_AI_Spell_Select__STUB()

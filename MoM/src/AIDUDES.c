@@ -275,7 +275,7 @@ void AI_Next_Turn(void)
         /* Handle New Spell Selection if not casting */
         if (_players[player_idx].casting_spell_idx == spl_NONE)
         {
-            PHASE(AI_Spell_Select__STUB(player_idx));
+            PHASE(AI_Spell_Select(player_idx));
         }
 
         PHASE(EMMDATAH_Map());

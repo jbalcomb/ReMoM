@@ -21,7 +21,7 @@ Next_Turn_Proc()
 Called once per (player, turn) when `_players[player_idx].casting_cost_remaining <= 0 && casting_spell_idx != spl_NONE` — i.e., the player has accumulated enough mana to finish casting whatever spell they queued. The function:
 
 1. Runs the spell against any active counter-spell defenses (other wizards' Suppress Magic, Tranquility if Chaos, Life Force if Death) — each can fizzle the cast probabilistically.
-2. If the cast survives the counter-spells, executes the spell's effect — which for the AI requires knowing the target (which the AI's target-picker subsystem in `AI_Spell_Select__STUB` and the `AITP_*` / `Pick_Target_For_*` helpers chose).
+2. If the cast survives the counter-spells, executes the spell's effect — which for the AI requires knowing the target (which the AI's target-picker subsystem in `AI_Spell_Select` and the `AITP_*` / `Pick_Target_For_*` helpers chose).
 3. Sets `g_ai_recompute_needed` if the spell would invalidate the AI's hostility/target-value caches — caller (`AI_Next_Turn`) then re-runs `Allocate_AI_Data` + `Player_Hostile_Opponents` + `AI_Player_Calculate_Target_Values`.
 4. Triggers Nature's Wrath retaliation against the caster if any opposing wizard has it active and the cast was Chaos- or Death-realm.
 
@@ -271,6 +271,6 @@ Zero out the casting-progress fields so the caster is ready to start a new cast.
 
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr135\Cast_Spell_Overland.asm` — IDA Pro 5.5 disassembly.
 - [SBookScr.c:476 — `Cast_Spell_Overland_Do`](../../MoM/src/SBookScr.c#L476) — human-side completion path; same shape, different trigger.
-- [AISPELL.c:300 — `AI_Spell_Select__STUB`](../../MoM/src/AISPELL.c#L300) — picks WHICH spell the AI will cast (next Wave 4 todo item).
+- [AISPELL.c:300 — `AI_Spell_Select`](../../MoM/src/AISPELL.c#L300) — picks WHICH spell the AI will cast (next Wave 4 todo item).
 - [AISPELL.c — `AITP_*` + `Pick_Target_For_*` cluster](../../MoM/src/AISPELL.c) — picks WHO/WHAT to cast on (Wave 4C/4D todo items).
 - [doc/__TODO-AiTurn.md](../__TODO-AiTurn.md) — overall AI_Next_Turn done-done plan.

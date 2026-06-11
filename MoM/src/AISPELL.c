@@ -284,122 +284,93 @@ to lower the odds; store the highest of the results
 
 
 // WZD o156p02
-// drake178: AI_OVL_SpellPicker()
-/*
-; selects the next overland spell to cast for the
-; specified wizard
-;
-; multiple BUGs and unexplored sub-functions,
-; RE-EXPLORE!
-*/
-/*
-
-
-
-*/
-void AI_Spell_Select__STUB(int16_t player_idx)
+/**
+ * @brief Selects the AI wizard's next overland spell to cast.
+ *
+ * This routine rebuilds the AI's current overland spell list, asks the spell
+ * category picker which class of spell to prefer, and then resolves that
+ * category into a concrete spell index using the category-specific picker.
+ * After a spell is chosen, it performs a coarse affordability check using the
+ * wizard's perceived mana-per-turn income. If the spell is estimated to take
+ * too long to cast, the selection is cancelled and the AI casts nothing.
+ *
+ * The final spell index is handed off to Cast_Spell_Overland_Do().
+ *
+ * @param player_idx Index of the AI-controlled player whose spell choice is
+ *                   being evaluated.
+ *
+ * @return This function does not return a value. It delegates the selected
+ *         spell to Cast_Spell_Overland_Do() after applying the mana check.
+ *
+ * @note The local spellbook-page index is currently hard-coded to zero.
+ * @note The function relies on AI_Compute_Spells_Info() and AI_OVL_SplCat_Picker()
+ *       to populate the available-spell set and high-level category decision.
+ */
+void AI_Spell_Select(int16_t player_idx)
 {
-    int16_t Mana_Income = 0;
-    int16_t Food_Income = 0;
-    int16_t Gold_Income = 0;
+    int16_t mana_income = 0;
+    int16_t food_income = 0;
+    int16_t gold_income = 0;
     uint8_t * ptr_players_spells_known = 0;
-    int16_t Mana_Per_Turn = 0;
+    int16_t mana_per_turn = 0;
     int16_t spellbook_page_spell_index = 0;
-    int16_t Selected_Category = 0;
-    int16_t spell_idx = 0;  // _DI_
+    int16_t spell_category = 0;
+    int16_t spell_idx = 0;
 
+    /* OGBUG  somehow, the Dasm shows -1 for the spell index */
     ptr_players_spells_known = &_players[player_idx].spells_list[0];
 
     AI_Compute_Spells_Info(player_idx);
 
-// TODO  Selected_Category = AI_OVL_SplCat_Picker(player_idx);
-// ; selects a spell category for the AI to use next:
-// ;   0 - no spell
-// ;   1 - summon
-// ;   2 - unit enchantment
-// ;   3 - city enchantment
-// ;   4 - disenchant / true
-// ;   5 - disjunction / true
-// ;   6 - summoning circle
-// ;   7 - overland curse / damage
-// ;   8 - suppression global
-// ;   9 - global enchantment
-// ;  10 - spell of mastery
-// ;
-// ; contains a number of BUGs - re-examine and fix later
-Selected_Category = 0;
+    spell_category = AI_OVL_SplCat_Picker(player_idx);
 
-    switch(Selected_Category)
+    switch(spell_category)
     {
-
         case 0:
-        {
-
             spell_idx = 0;
-
-        } break;
-
+            break;
         case 1:
-        {
-
-        } break;
-
+            spell_idx = AI_OVL_PickSummon(player_idx);
+            break;
         case 2:
-        {
-
-        } break;
-
+            spell_idx = AI_OVL_PickUnitBuff(player_idx);
+            break;
         case 3:
-        {
-
-        } break;
-
+            spell_idx = AI_OVL_PickCityBuff(player_idx);
+            break;
         case 4:
-        {
-
-        } break;
-
+            spell_idx = AI_OVL_PickDise(player_idx);
+            break;
         case 5:
-        {
-
-        } break;
-
+            spell_idx = AI_OVL_PickDisj(player_idx);
+            break;
         case 6:
-        {
-
-        } break;
-
+            spell_idx = spl_Summoning_Circle;
+            break;
         case 7:
-        {
-
-        } break;
-
+            spell_idx = AI_OVL_PickCurse(player_idx);
+            break;
         case 8:
-        {
-
-        } break;
-
+            spell_idx = AI_OVL_PickRealmSupr(player_idx);
+            break;
         case 9:
-        {
-
-        } break;
-
+            spell_idx = AI_OVL_PickGlobal(player_idx);
+            break;
         case 10:
-        {
-
-        } break;
-
+            spell_idx = spl_Spell_Of_Mastery;
+            break;
+        default:
+            spell_idx = 0;
+            break;
     }
 
-    Player_Resource_Income_Total(player_idx, &Gold_Income, &Food_Income, &Mana_Income);
-
-    Mana_Per_Turn = ((_players[player_idx].mana_reserve / 10) + Mana_Income);
-
-    if((spell_data_table[spell_idx].casting_cost / 50) > Mana_Per_Turn)
+    /* Calculate perceived mana availability: 10% of reserve + current turn income */
+    /* Turn-based cost check: If spell takes more than ~50 turns of "perceived" mana, cancel it */
+    Player_Resource_Income_Total(player_idx, &gold_income, &food_income, &mana_income);
+    mana_per_turn = ((_players[player_idx].mana_reserve / 10) + mana_income);
+    if((spell_data_table[spell_idx].casting_cost / 50) > mana_per_turn)
     {
-
         spell_idx = 0;
-
     }
 
     Cast_Spell_Overland_Do(player_idx, spell_idx, spellbook_page_spell_index);
@@ -408,7 +379,11 @@ Selected_Category = 0;
 
 
 // WZD o156p03
-// AI_OVL_SplCat_Picker()
+int16_t AI_OVL_SplCat_Picker(int16_t player_idx)
+{
+    return 0;
+}
+
 
 // WZD o156p04
 // drake178: AI_OVL_GetSpellList()
@@ -493,22 +468,40 @@ void AI_Compute_Spells_Info(int16_t player_idx)
 
 
 // WZD o156p05
-// drake178: AI_OVL_PickSummon()
+int16_t AI_OVL_PickSummon(int16_t player_idx)
+{
+    return 0;
+}
 
 // WZD o156p06
-// drake178: AI_OVL_PickUnitBuff()
+int16_t AI_OVL_PickUnitBuff(int16_t player_idx)
+{
+    return 0;
+}
 
 // WZD o156p07
-// drake178: AI_OVL_PickRealmSupr()
+int16_t AI_OVL_PickRealmSupr(int16_t player_idx)
+{
+    return 0;
+}
 
 // WZD o156p08
-// drake178: AI_OVL_PickGlobal()
+int16_t AI_OVL_PickGlobal(int16_t player_idx)
+{
+    return 0;
+}
 
 // WZD o156p09
-// drake178: AI_OVL_PickCurse()
+int16_t AI_OVL_PickCurse(int16_t player_idx)
+{
+    return 0;
+}
 
 // WZD o156p10
-// drake178: AI_OVL_PickCityBuff()
+int16_t AI_OVL_PickCityBuff(int16_t player_idx)
+{
+    return 0;
+}
 
 // WZD o156p11
 // drake178: SPL_IsLifeSupressed()
@@ -523,10 +516,16 @@ void AI_Compute_Spells_Info(int16_t player_idx)
 // drake178: CRP_SPL_IsNatSuppressed()
 
 // WZD o156p15
-// drake178: AI_OVL_PickDise()
+int16_t AI_OVL_PickDise(int16_t player_idx)
+{
+    return 0;
+}
 
 // WZD o156p16
-// drake178: AI_OVL_PickDisj()
+int16_t AI_OVL_PickDisj(int16_t player_idx)
+{
+    return 0;
+}
 
 // WZD o156p17
 // drake178: AITP_WallofStone()

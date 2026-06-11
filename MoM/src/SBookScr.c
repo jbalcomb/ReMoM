@@ -470,7 +470,7 @@ Spellbook_Screen() has only set _players[].casting_spell_idx...
 XREF:
     Spellbook_Screen()
     j_Cast_Spell_Overland_Do()
-        AI_Spell_Select__STUB()
+        AI_Spell_Select()
 
 */
 int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t spellbook_page_spell_index)

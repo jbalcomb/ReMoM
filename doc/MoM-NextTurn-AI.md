@@ -17,7 +17,7 @@ AI_GetThreat_UNIT__WIP() ==>  Effective_Unit_Strength()
 AI_OVL_Eval_Assets__WIP()  ==>  AI_Player_Calculate_Target_Values()
 AI_Landmass_Values_And_Strengths()
 AI_OVL_GetSpellList__WIP()  ==>  AI_Compute_Spells_Info()
-AI_OVL_SpellPicker() ==> AI_Spell_Select()
+AI_Spell_Select() ==> AI_Spell_Select()
 AI_Alchemy()  ==>  AI_Update_Gold_And_Mana_Reserves()
 AI_Tax_And_Farmers()  ==> AI_Update_Gold_Income_And_Food_Income()
 AI_Balance_Upkeep() == AI_Disband_To_Balance_Budget()
@@ -312,7 +312,7 @@ Continent_Values_2[]
 
 
 
-## AI_Spell_Select__STUB()
+## AI_Spell_Select()
 
 AI_OVL_SpellPicker__STUB()
     |-> AI_Compute_Spells_Info()

@@ -114,31 +114,31 @@ extern "C" {
 int16_t AI_Spell_Research_Select(int16_t player_idx);
 
 // WZD o156p02
-void AI_Spell_Select__STUB(int16_t player_idx);
+void AI_Spell_Select(int16_t player_idx);
 
 // WZD o156p03
-// AI_OVL_SplCat_Picker()
+int16_t AI_OVL_SplCat_Picker(int16_t player_idx);
 
 // WZD o156p04
 void AI_Compute_Spells_Info(int16_t player_idx);
 
 // WZD o156p05
-// AI_OVL_PickSummon()
+int16_t AI_OVL_PickSummon(int16_t player_idx);
 
 // WZD o156p06
-// AI_OVL_PickUnitBuff()
+int16_t AI_OVL_PickUnitBuff(int16_t player_idx);
 
 // WZD o156p07
-// AI_OVL_PickRealmSupr()
+int16_t AI_OVL_PickRealmSupr(int16_t player_idx);
 
 // WZD o156p08
-// AI_OVL_PickGlobal()
+int16_t AI_OVL_PickGlobal(int16_t player_idx);
 
 // WZD o156p09
-// AI_OVL_PickCurse()
+int16_t AI_OVL_PickCurse(int16_t player_idx);
 
 // WZD o156p10
-// AI_OVL_PickCityBuff()
+int16_t AI_OVL_PickCityBuff(int16_t player_idx);
 
 // WZD o156p11
 // SPL_IsLifeSupressed()
@@ -153,10 +153,10 @@ void AI_Compute_Spells_Info(int16_t player_idx);
 // CRP_SPL_IsNatSuppressed()
 
 // WZD o156p15
-// AI_OVL_PickDise()
+int16_t AI_OVL_PickDise(int16_t player_idx);
 
 // WZD o156p16
-// AI_OVL_PickDisj()
+int16_t AI_OVL_PickDisj(int16_t player_idx);
 
 // WZD o156p17
 // AITP_WallofStone()
