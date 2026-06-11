@@ -2170,7 +2170,7 @@ void Init_Heroes(void)
                     } break;
                     case 9:  /* Noble */
                     {
-                        if(((abilities & HSA_NOBLE) == 0) && (itr_hero_types = ut_Chosen)) { abilities |= HSA_NOBLE; warrior_picks--; mage_picks--; }
+                        if(((abilities & HSA_NOBLE) == 0) && (itr_hero_types == ut_Chosen)) { abilities |= HSA_NOBLE; warrior_picks--; mage_picks--; }
                     } break;
                     case 10:  /* Charm */
                     {
