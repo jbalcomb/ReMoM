@@ -654,12 +654,6 @@ SAVE_GAM_TOTAL = 123300  # LEN_SAVE_GAM_FILE
 #
 #   1. Outer loop iterates `itr_players = 0; itr_players < 5; itr_players++` —
 #      _HEROES2[5] is NEVER written.
-#   2. OG bug at INITGAME.c:2177: `if(... && (itr_hero_types = ut_Chosen))` is an
-#      assignment, not comparison. When case 9 (Noble) fires for the random ability
-#      pick, itr_hero_types is clobbered to ut_Chosen (=34) mid-loop, and the
-#      surrounding for(;itr_hero_types < NUM_HERO_TYPES;itr_hero_types++) then
-#      terminates after writing ht=34. So every player skips a contiguous middle
-#      block of hero types.
 #
 # _HEROES2[] is allocated with malloc() (MoX/src/Allocate.c:341), not calloc(), so
 # the skipped slots contain whatever was on the heap. Those bytes are uninitialized
@@ -679,32 +673,44 @@ INIT_HEROES_SKIPPED_SLOTS: dict[int, set[int]] = {
     5: set(range(35)),          # player 5 outer-loop bound (`< 5`) — never iterated
 }
 
-def _mask_heroes2_garbage(data: bytes) -> bytes:
-    """Zero out garbage bytes in the s_HERO slots Init_Heroes touches.
+def _mask_uninitialized_data(data: bytes) -> bytes:
+    """Zero out heap-garbage bytes in a SAVE*.GAM.
 
-    Two flavors of garbage:
-      1. Slots Init_Heroes skips entirely (see INIT_HEROES_SKIPPED_SLOTS) —
-         the whole 12-byte slot is heap garbage.
-      2. Byte 11 of EVERY slot is the trailing padding byte of struct s_HERO
-         (Level=2 + abilities=4 + Casting_Skill=1 + Spells[4]=4 = 11 B used,
-         12 B with #pragma pack(2)). Init_Heroes never writes it, so it stays
-         heap garbage even in slots Init_Heroes wrote.
+    The game saves several structs that contain trailing #pragma pack(2)
+    padding or skipped-slot regions. Those bytes are never written by game
+    code, so they hold whatever the heap allocator returned when the block
+    was malloc'd — that's process-local and won't agree across two binaries
+    even with identical seed/inputs. We zero them before byte-compare.
 
-    Operates on the first 2520 bytes of a SAVE*.GAM (the _HEROES2[0..5] block).
-    Each player is 420 B = 35 * sizeof(s_HERO=12)."""
+    Covered regions:
+      1. _HEROES2[0..5] — slots Init_Heroes skips entirely (the per-player
+         set in INIT_HEROES_SKIPPED_SLOTS) are zeroed whole (12 B). Slot 11
+         (the pad of struct s_HERO: Level=2 + abilities=4 + Casting_Skill=1
+         + Spells[4]=4 = 11 B used, 12 B packed) is zeroed in every slot
+         on every player.
+      2. _TOWERS[0..5] — byte 3 of each 4-byte slot is pad2B_03h on
+         struct s_TOWER (wx, wy, owner_idx, pad), zeroed everywhere.
+
+    Operates on raw SAVE*.GAM bytes. Each player's hero block is 420 B
+    starting at offset 0; the towers region is 24 B starting at 26128."""
     if len(data) < 2520:
         return data
     buf = bytearray(data)
+    # _HEROES2 — skipped slots and trailing pad byte.
     for player_idx, skipped in INIT_HEROES_SKIPPED_SLOTS.items():
         player_base = player_idx * 420
         for ht in skipped:
             slot_base = player_base + ht * 12
             buf[slot_base:slot_base + 12] = b"\x00" * 12
-    # Pad byte 11 of every slot — even slots Init_Heroes did write.
     for player_idx in range(6):
         player_base = player_idx * 420
         for ht in range(35):
             buf[player_base + ht * 12 + 11] = 0
+    # _TOWERS — trailing pad byte of every 4-byte slot. Offset and count
+    # come from SAVE_GAM_REGIONS: (26128, 24, "_TOWERS[6 × 4 B]", 4).
+    if len(buf) >= 26128 + 24:
+        for tower_idx in range(6):
+            buf[26128 + tower_idx * 4 + 3] = 0
     return bytes(buf)
 
 # MAGIC.SET layout, from MoX/src/MOX_SET.h (struct s_MAGIC_SET, packed(2)).
@@ -780,8 +786,8 @@ def compare_save_gam(name: str, hemom_path: Path, remom_path: Path) -> Comparato
     # before comparing. See INIT_HEROES_SKIPPED_SLOTS for the why.
     masked_save = name.startswith("SAVE2.GAM") or name.startswith("SAVE9.GAM")
     if masked_save:
-        h_bytes = _mask_heroes2_garbage(h_raw)
-        r_bytes = _mask_heroes2_garbage(r_raw)
+        h_bytes = _mask_uninitialized_data(h_raw)
+        r_bytes = _mask_uninitialized_data(r_raw)
         h_md5 = hashlib.md5(h_bytes).hexdigest()
         r_md5 = hashlib.md5(r_bytes).hexdigest()
     else:

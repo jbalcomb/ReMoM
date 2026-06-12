@@ -65,13 +65,16 @@ restart_sum:
     max_weight = 0;
     
     /* 1. Sum up all the weights in the array */
-    for (j = 0; j < weight_count; j++) {
+    for(j = 0; j < weight_count; j++)
+    {
         max_weight += weight_array[j];
         
         /* 2. THE NORMALIZATION HACK */
-        if (max_weight >= 512) {
+        if(max_weight >= 512)
+        {
             /* If the total weight gets dangerously high, divide EVERY weight in the array by 2 (bit-shift right) */
-            for (i = 0; i < weight_count; i++) {
+            for(i = 0; i < weight_count; i++)
+            {
                 weight_array[i] >>= 1; 
             }
             /* Start the summation completely over! */
@@ -80,19 +83,23 @@ restart_sum:
     }
 
     /* 3. Safety Check: If the max weight is 0, default to the first element */
-    if (max_weight == 0) {
+    if(max_weight == 0)
+    {
+        LOG_TRACE(LOG_CAT_GENERAL, "max_weight: %d", max_weight);
         return 0;
     }
 
     /* 4. Roll the dice */
-    weight_remainder = Random(max_weight);
-    
+    // weight_remainder = Random(max_weight);
+    /* CLAUDE */ weight_remainder = Random_at(max_weight, __FILE__, __LINE__);
+
     /* 5. Find the winning index */
     weight_remainder -= weight_array[0];
     choice = 0;
 
     /* Subtract weights until the random value dips below zero */
-    while (weight_remainder > 0 && choice < weight_count - 1) {
+    while(weight_remainder > 0 && choice < weight_count - 1)
+    {
         choice++;
         weight_remainder -= weight_array[choice];
     }
@@ -115,6 +122,8 @@ int16_t Get_Weighted_Choice_Long(int32_t * weight_array, int16_t weight_count)
     int16_t j = 0;
     int32_t max_weight = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
 restart_sum:
     max_weight = 0;
     
@@ -135,11 +144,13 @@ restart_sum:
 
     /* 3. Safety Check: If the max weight is 0, default to the first element */
     if (max_weight == 0) {
+        LOG_TRACE(LOG_CAT_GENERAL, "max_weight: %d", max_weight);
         return 0;
     }
 
     /* 4. Roll the dice */
-    weight_remainder = Random(max_weight);
+    // weight_remainder = Random(max_weight);
+    /* CLAUDE */ weight_remainder = Random_at(max_weight, __FILE__, __LINE__);
     
     /* 5. Find the winning index */
     weight_remainder -= weight_array[0];
@@ -150,6 +161,8 @@ restart_sum:
         choice++;
         weight_remainder -= weight_array[choice];
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     return choice;
 
