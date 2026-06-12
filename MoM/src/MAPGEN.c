@@ -428,6 +428,8 @@ void Set_Upper_Lair_Guardian_Count(void)
 {
     int16_t itr_lairs = 0;  // _SI_
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(itr_lairs = 0; itr_lairs < NUM_LAIRS; itr_lairs++)
     {
 
@@ -437,6 +439,7 @@ void Set_Upper_Lair_Guardian_Count(void)
 
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Set_Upper_Lair_Guardian_Count rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -491,6 +494,9 @@ void Extend_Islands(int16_t wp)
     int16_t terrain_type = 0;
     int16_t itr_wy = 0;
     int16_t itr_wx = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(itr_wy = 1; itr_wy < 39; itr_wy++)
     {
         for(itr_wx = 1; itr_wx < 59; itr_wx++)
@@ -640,6 +646,8 @@ void Extend_Islands(int16_t wp)
             }
         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Extend_Islands rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -668,6 +676,8 @@ void Generate_Towers(void)
     int16_t wx = 0;
     int16_t itr1 = 0;  // _DI_
     int16_t itr2 = 0;  // _SI_
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     Min_Distance = 10;
 
@@ -742,6 +752,7 @@ void Generate_Towers(void)
 
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Towers rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -1345,8 +1356,8 @@ void Rebalance_Node_Types(int16_t wp)
     int16_t Chaos_Count = 0;
     int16_t random_node_idx = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    /* Phase 1: Count existing nodes of each type on the specified plane */
     Chaos_Count = 0;
     Sorcery_Count = 0;
     Nature_Count = 0;
@@ -1445,6 +1456,8 @@ void Rebalance_Node_Types(int16_t wp)
             }
         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Rebalance_Node_Types rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -1504,6 +1517,8 @@ void Generate_Climate_Terrain_Types(int16_t wp)
     int16_t next_wy = 0;  // _SI_
     int16_t itr_wx = 0;  // _DI_
     int16_t itr_wy = 0;  // _SI_
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 /*
     BEGIN:  tt_Tundra1
 */
@@ -1620,6 +1635,7 @@ void Generate_Climate_Terrain_Types(int16_t wp)
 /*
     END:  tt_Swamp1
 */
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Climate_Terrain_Types rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 // MGC o51p09
@@ -1658,6 +1674,8 @@ void Translate_Heightmap_To_Base_Terrain_Types(int16_t wp)
     int16_t itr_wy = 0;
     int16_t itr_wx = 0;  // _SI_
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
     {
         for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
@@ -1693,6 +1711,7 @@ void Translate_Heightmap_To_Base_Terrain_Types(int16_t wp)
 
     Add_Tundra(wp);
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Translate_Heightmap_To_Base_Terrain_Types rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 /*
 second half of basic terrain generation
@@ -1984,6 +2003,8 @@ void Generate_Nodes(void)
     int16_t itr = 0;
     int16_t itr2 = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(itr = 0; itr < 16; itr++)
     {
         while(1)
@@ -2097,6 +2118,8 @@ Attempt_Myrror:
             }
         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Nodes rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -2110,6 +2133,9 @@ void Make_Aura(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t wx, 
     int16_t curr_wx = 0;
     int16_t itr = 0;
     int16_t itr2 = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     wx_array[0] = (int8_t)wx;
     wy_array[0] = (int8_t)wy;
     /* ¿ 9, because within 1 map square ? */
@@ -2185,6 +2211,8 @@ void Make_Aura(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t wx, 
         wx_array[itr] = (int8_t)curr_wx;
         wy_array[itr] = (int8_t)curr_wy;
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Make_Aura rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -2231,6 +2259,8 @@ void Set_Node_Type(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t 
     int16_t chaos_bias = 0;
     int16_t sorcery_bias = 0;
     int16_t itr = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     sorcery_bias = 0;
     chaos_bias = 0;
@@ -2287,6 +2317,8 @@ void Set_Node_Type(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t 
         }
         Build_Landmass(wp, wx_array[0], wy_array[0]);
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Set_Node_Type rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -2475,6 +2507,8 @@ void Generate_Lairs(void)
     int16_t tail_start = 0;
     int16_t generate_lair_budget_value = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     strong_lair_count = NUM_STRONG_LAIRS;
 
     for(itr = 0; itr < NUM_TOWERS; itr++)
@@ -2590,6 +2624,8 @@ void Generate_Lairs(void)
 #ifdef STU_DEBUG
     assert(Validate_All_Lairs() == ST_TRUE);
 #endif
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Lairs rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -2644,6 +2680,8 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
     int16_t race_type = 0;
     int16_t unit_type = 0;
     int16_t unknown_create_lair_value;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 #ifdef STU_DEBUG
     assert(lair_idx >= 0);
@@ -3009,6 +3047,8 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
 #ifdef STU_DEBUG
     assert(Validate_Lair_Record(lair_idx) == ST_TRUE);
 #endif
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Create_Lair rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -3269,6 +3309,9 @@ void Simex_Autotiling(void)
     int16_t wx = 0;
     int16_t wy = 0;
     int16_t terrain_subtype_index = 0;  // DNE in Dasm
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     terrtype = (int16_t *)Near_Allocate_First((5 * 512));
     LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, (SAMB_ptr)terrtype, 0, 5, 512);
 /*
@@ -3900,6 +3943,7 @@ void Simex_Autotiling(void)
 /*
     END:  Hills
 */
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Simex_Autotiling rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 // MGC o51p21
@@ -4104,7 +4148,9 @@ int16_t River_Path(int16_t wp)
     int16_t base_wy = 0;
     int16_t base_wx = 0;
     int16_t length = 0;
-    
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     base_wx = (4 + Random((WORLD_WIDTH  - 8)));
     base_wy = (4 + Random((WORLD_HEIGHT - 8)));
 
@@ -4205,8 +4251,8 @@ int16_t River_Path(int16_t wp)
         p_world_map[wp][wy_array[itr]][wx_array[itr]] = 1000;
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=River_Path rng_call=%llu", (unsigned long long)g_random_call_count);
     return ST_TRUE;
-
 }
 
 
@@ -5394,6 +5440,9 @@ void Generate_Roads(int16_t wp)
     int16_t Invalid_Road = 0;
     int16_t dst_city_idx = 0;
     int16_t src_city_idx = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
         for(wx = 0; wx < WORLD_WIDTH; wx++)
@@ -5523,6 +5572,8 @@ Roads beneath captured neutral cities and original Fortress sites on Myrror lack
 // BUGBUG             );
 // BUGBUG         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Roads rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -5602,6 +5653,8 @@ void Generate_Terrain_Specials(int16_t wp)
     int16_t DBG_wy_size = 0;  // DNE in Dasm
     int16_t DBG_wx_size = 0;  // DNE in Dasm
     int16_t DBG_offset = 0;  // DNE in Dasm
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
@@ -5728,6 +5781,8 @@ void Generate_Terrain_Specials(int16_t wp)
             if(Square_Is_Desert_NewGame(  wx, wy, wp)  == ST_TRUE)  {   SET_TERRAIN_SPECIAL(wx, wy, wp, Desert_Terrain_Special(wp)      );  }
         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Terrain_Specials rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -5942,6 +5997,8 @@ void Init_Square_Explored(void)
     int16_t wy = 0;  // _DI_
     int16_t wx = 0;  // _SI_
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(wp = 0; wp < 2; wp++)
     {
 
@@ -6020,6 +6077,7 @@ void Init_Square_Explored(void)
 
     Set_Square_Explored_Bits(wp, (wx + 1), (wy - 1), (SCT_BottomLeft | SCT_TopLeft | SCT_BottomRight));
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Square_Explored rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -6375,6 +6433,8 @@ void Animate_Oceans(void)
     int16_t wy = 0;
     int16_t wp = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
 
@@ -6416,6 +6476,7 @@ void Animate_Oceans(void)
 
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Animate_Oceans rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
