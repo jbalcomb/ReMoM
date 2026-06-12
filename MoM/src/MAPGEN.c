@@ -1304,20 +1304,36 @@ void Init_Landmasses(int16_t wp)
 
 
 // MGC o51p07
-// drake178: NEWG_EqualizeNodes()
-/*
-; reduces the amount of sorcery nodes on the plane if
-; there are too many, converting random ones to chaos
-; and nature until there's at least a set amount of
-; each of those
-;
-; INCONSISTENT: will almost always yield a fixed
-;  configuration (4-6-6 or 8-3-3) if there are excess
-;  sorcery nodes, due to ignoring their actual amount
-*/
-/*
-
-*/
+/**
+ * @brief Rebalances node types on one plane by converting excess Sorcery nodes.
+ *
+ * @details
+ * Counts Chaos, Nature, and Sorcery nodes on the selected plane, computes how
+ * many Sorcery nodes should be converted, then performs randomized in-place
+ * conversions from Sorcery to Chaos and Sorcery to Nature.
+ *
+ * Plane-specific targets are:
+ * - Arcanus: if Sorcery exceeds 9, attempt to raise Chaos and Nature to at least 6 each.
+ * - Myrror: if Sorcery exceeds 4, attempt to raise Chaos and Nature to at least 3 each.
+ *
+ * Conversion is done by repeatedly picking random node indices and converting
+ * only nodes that are both on the selected plane and currently Sorcery. For
+ * each successful conversion, the node type in `_NODES[]` and the map tile in
+ * `p_world_map` are updated, and `Build_Landmass()` is called for the node
+ * coordinate.
+ *
+ * @param wp World plane index to process (for example Arcanus or Myrror).
+ *
+ * @return void
+ *
+ * @note This routine mutates global node records and terrain map state.
+ * @note Preserves original historical behavior where `Excess_Sorcery` is not
+ *       decremented while computing conversion counts.
+ * @warning Uses randomized index selection (`Random(30) - 1`), so selection
+ *          order and retries are nondeterministic.
+ *
+ * @see Build_Landmass
+ */
 void Rebalance_Node_Types(int16_t wp)
 {
     int16_t Excess_Sorcery = 0;
@@ -1328,6 +1344,9 @@ void Rebalance_Node_Types(int16_t wp)
     int16_t Sorcery_Count = 0;
     int16_t Chaos_Count = 0;
     int16_t random_node_idx = 0;
+
+
+    /* Phase 1: Count existing nodes of each type on the specified plane */
     Chaos_Count = 0;
     Sorcery_Count = 0;
     Nature_Count = 0;
@@ -1343,17 +1362,14 @@ void Rebalance_Node_Types(int16_t wp)
             }
         }
     }
+
+
+    /* Phase 2 */
     Chaos_Convert = 0;
     Nature_Convert = 0;
     if(wp == ARCANUS_PLANE)
     {
-        // ; if there are more than 9 sorcery nodes, set the
-        // ; convert amounts such that there will be at least 6
-        // ; each of chaos and nature ones
-        // ; 
-        // ; INCONSISTENT: does not decrement the excess sorcery
-        // ;  count despite setting up the value, so 1 has the
-        // ;  same result as 7
+        /* OGBUG does not decrement the excess sorcery count */
         if(Sorcery_Count > 9)
         {
             Excess_Sorcery = (Sorcery_Count - 9);
@@ -1375,13 +1391,7 @@ void Rebalance_Node_Types(int16_t wp)
     }
     else  /* MYRROR_PLANE */
     {
-        // ; if there are more than 4 sorcery nodes, set the
-        // ; convert amounts such that there will be at least 3
-        // ; each of chaos and nature ones
-        // ; 
-        // ; INCONSISTENT: does not decrement the excess sorcery
-        // ;  count despite setting up the value, so 1 has the
-        // ;  same result as 10
+        /* OGBUG does not decrement the excess sorcery count */
         if(Sorcery_Count > 4)
         {
             Excess_Sorcery = (Sorcery_Count - 4);
@@ -1401,8 +1411,8 @@ void Rebalance_Node_Types(int16_t wp)
             Nature_Convert++;
         }
     }
-    // ; convert the specified amount of random sorcery nodes
-    // ; on the plane to chaos
+
+    /* Convert Sorcery nodes to Chaos nodes until target reached */
     while(Chaos_Convert > 0)
     {
         random_node_idx = (Random(30) - 1);
@@ -1418,8 +1428,8 @@ void Rebalance_Node_Types(int16_t wp)
             }
         }
     }
-    // ; convert the specified amount of random sorcery nodes
-    // ; on the plane to nature
+
+    /* Convert Sorcery nodes to Nature nodes until target reached */
     while(Nature_Convert > 0)
     {
         random_node_idx = (Random(30) - 1);
@@ -1944,8 +1954,6 @@ void Generate_Landmasses(int16_t wp)
  * rejected and retried if it is too close to the world edge, conflicts with an
  * existing node, or fails aura overlap validation.
  *
- * COPILOT: Doxygen documentation added for this function.
- *
  * For each accepted node, the function records its coordinates and plane,
  * assigns a random power value, builds the node aura footprint with
  * `Make_Aura()`, and then derives the node type with `Set_Node_Type()` after
@@ -2093,9 +2101,6 @@ Attempt_Myrror:
 
 
 // MGC o51p12
-/*
-
-*/
 void Make_Aura(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t wx, int16_t wy)
 {
     int16_t invalid = 0;
