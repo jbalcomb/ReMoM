@@ -20,6 +20,8 @@ Init_New_Game()
 
 Verified faithful to the disassembly `Rebalance_Node_Types.asm` throughout, carrying one deliberately-preserved OG oddity (the `Excess_Sorcery` count is never decremented — see below).
 
+**RNG parity:** this function is 1:1 with the asm but its two `Random(30)-1` rejection-sampling loops are hyper-sensitive to the incoming node state, so its `Random()` count amplifies any upstream desync. Its FN-ENTER `rng_call` is therefore the useful checkpoint confirming the whole node phase (landmasses → `Generate_Nodes` incl. `Make_Aura`/`Set_Node_Type` → here) matches OG's stream — measure parity at this entry, not inside the loops.
+
 ## Purpose
 
 Called once per plane immediately after `Generate_Nodes` (`Set_Node_Type` tends to over-assign Sorcery). It guarantees a minimum spread of node realms on the plane:

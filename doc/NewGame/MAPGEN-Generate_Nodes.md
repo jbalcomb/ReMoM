@@ -23,6 +23,8 @@ Init_New_Game()
 
 Verified faithful to the disassembly `Generate_Nodes.asm` throughout, carrying two deliberately-preserved OG bugs (B1/B2) and an OG margin asymmetry.
 
+**RNG parity:** the per-node `Random()` sequence (jitter ×2 → terrain gate → power → `Make_Aura` → `Set_Node_Type`) is 1:1 with the asm. The Myrror-loop fixes — `base_wy ×20` and the `wp == MYRROR_PLANE` spacing filter — were what restored the node-phase `Random()` call count; with them in place the cumulative `rng_call` at the downstream `Rebalance_Node_Types(0)` FN-ENTER checkpoint matches OG. (A bad `base_wy` scale or a missing spacing filter changes the placement-retry count and desyncs the stream from here on.)
+
 ## Purpose
 
 Called once during map generation (after both planes' terrain is built). It fills `_NODES[0..29]`:
