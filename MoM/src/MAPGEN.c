@@ -1285,6 +1285,9 @@ void Init_Landmasses(int16_t wp)
 {
     int16_t wy = 0;  // _SI_
     int16_t wx = 0;  // _CX_
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     m_landmasses_ctr = 1;
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
@@ -1293,6 +1296,8 @@ void Init_Landmasses(int16_t wp)
             SET_LANDMASS(wx, wy, wp, 0);  /* landmass_idx of NO_LANDMASS */
         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
 
 
@@ -1802,6 +1807,9 @@ void Generate_Landmasses(int16_t wp)
     int16_t n_generated = 0;
     int16_t itr_wy = 0;  // _DI_
     int16_t itr_wx = 0;  // _SI_
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     // base-line, set the whole world to Ocean
     for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
     {
@@ -1923,6 +1931,8 @@ void Generate_Landmasses(int16_t wp)
             }
         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Landmasses rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 

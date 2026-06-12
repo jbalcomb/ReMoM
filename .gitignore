@@ -40,6 +40,8 @@ enc_temp_folder/
 
 CppProperties.json
 
+**/__pycache__/
+
 # ¿ CMake ?
 _deps/
 out/
