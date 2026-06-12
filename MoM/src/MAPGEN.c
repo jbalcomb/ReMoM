@@ -266,8 +266,7 @@ void Init_New_Game(void)
     int16_t rivers = 0;
     int16_t tries = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu",
-              __func__, (unsigned long long)g_random_call_count);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     bldg_data_table = (struct s_BLDG_DATA *)LBX_Load_Data(builddat_lbx_file__MGC_ovr051, 0, 0, 36, 52);
     
@@ -1800,7 +1799,7 @@ void Generate_Landmasses(int16_t wp)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    
+
     /* Phase 1: Init */
     /* Initialize map plane to zero (Ocean) */
     for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
@@ -1930,88 +1929,44 @@ void Generate_Landmasses(int16_t wp)
     }
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Landmasses rng_call=%llu", (unsigned long long)g_random_call_count);
+
 }
 
 
 // MGC o51p11
-/*
-//Gemini3('ReMoM Dasm Chat')
-*/
-static void Generate_Nodes_AIgenerated(void)
-{
-    int16_t wy = 0;
-    int16_t wx = 0;
-    int16_t base_wy = 0;
-    int16_t base_wx = 0;
-    int16_t itr = 0;
-    int16_t itr2 = 0;
-    struct s_NODE *node_ptr = { 0 };
-    struct s_NODE *other_node = { 0 };
-
-    for (itr = 0; itr < 16; ) {
-        /* @@Attempt_Arcanus */
-        int accepted = 0;
-        
-        do {
-            /* 1. Calculate Grid Sector */
-            base_wx = (itr % 5) * 12;
-            base_wy = (itr / 5) * 10;
-
-            /* 2. Randomize within sector (Random(n) is 1..n) */
-            wx = base_wx + (Random(24) - 1);
-            wy = base_wy + (Random(20) - 1);
-
-            /* 3. Handle World Wrap */
-            if (wx >= WORLD_WIDTH)  wx -= WORLD_WIDTH;
-            if (wy >= WORLD_HEIGHT) wy -= WORLD_HEIGHT;
-            if (wx < 0)             wx += WORLD_WIDTH;
-            if (wy < 0)             wy += WORLD_HEIGHT;
-
-            /* 4. Edge Padding Checks */
-            if (wx < 3 || wy < 2 || wx >= 57 || wy >= 37) continue;
-
-            /* 5. Terrain Check (Ocean has 1/40 chance) */
-            if (p_world_map[ARCANUS_PLANE][wy][wx] == tt_Ocean) {
-                if (Random(40) != 1) continue;
-            }
-
-            /* 6. Distance Check against existing nodes */
-            accepted = 1; /* Assume valid until proven otherwise */
-            for (itr2 = 0; itr2 < itr; itr2++) {
-                if (Delta_XY_With_Wrap(wx, wy, _NODES[itr2].wx, _NODES[itr2].wy, WORLD_WIDTH) < 3) {
-                    accepted = 0;
-                    break;
-                }
-            }
-            if (!accepted) continue;
-
-            /* 7. Initialize Node Data */
-            node_ptr = &_NODES[itr];
-            node_ptr->wx = (char)wx;
-            node_ptr->wy = (char)wy;
-            node_ptr->wp = 0;
-            node_ptr->flags = 0;
-            node_ptr->owner_idx = ST_UNDEFINED;
-            node_ptr->power = Random(6) + 4;
-
-            Make_Aura(node_ptr->power, node_ptr->Aura_Xs, node_ptr->Aura_Ys, wx, wy);
-
-            /* 8. Aura Unique Check */
-            if (Aura_Overlap(itr) == ST_TRUE) {
-                accepted = 0; /* Assembly jmps to @@Attempt_Arcanus if True */
-                continue;
-            }
-
-            /* Finalize */
-            Set_Node_Type(node_ptr->power, node_ptr->Aura_Xs, node_ptr->Aura_Ys, node_ptr->wp, &node_ptr->type);
-            accepted = 1;
-
-        } while (!accepted);
-
-        itr++; /* Move to next node */
-    }
-    
-}
+/**
+ * @brief Generates all node locations, auras, and node types for both planes.
+ *
+ * @details
+ * Places the full set of world nodes in two passes: the first pass creates the
+ * 16 Arcanus nodes, and the second pass creates the Myrror nodes. Each node is
+ * assigned a randomized candidate location inside a coarse section grid, then
+ * rejected and retried if it is too close to the world edge, conflicts with an
+ * existing node, or fails aura overlap validation.
+ *
+ * COPILOT: Doxygen documentation added for this function.
+ *
+ * For each accepted node, the function records its coordinates and plane,
+ * assigns a random power value, builds the node aura footprint with
+ * `Make_Aura()`, and then derives the node type with `Set_Node_Type()` after
+ * confirming the aura does not overlap an earlier node via `Aura_Overlap()`.
+ *
+ * Arcanus node placement uses the local Arcanus terrain map as the primary
+ * acceptance check, while Myrror placement preserves the historical behavior
+ * of probing against the Arcanus plane map when deciding whether a square is
+ * allowed. This routine is intentionally RNG-driven and may loop until a valid
+ * placement is found.
+ *
+ * @return void
+ *
+ * @note Mutates the global `_NODES[]` table in place.
+ * @note The helper `somehow1` and `Attempt_Myrror` labels are retry anchors
+ *       used by the original control flow.
+ *
+ * @see Make_Aura
+ * @see Aura_Overlap
+ * @see Set_Node_Type
+ */
 void Generate_Nodes(void)
 {
     int16_t wy = 0;
@@ -2020,6 +1975,7 @@ void Generate_Nodes(void)
     int16_t base_wx = 0;
     int16_t itr = 0;
     int16_t itr2 = 0;
+
     for(itr = 0; itr < 16; itr++)
     {
         while(1)
@@ -2031,8 +1987,8 @@ somehow1:
             wy = (base_wy + (Random(20) - 1));  // { 0, ..., 49 }
             if(wx >= WORLD_WIDTH)  { wx -= WORLD_WIDTH;  }
             if(wy >= WORLD_HEIGHT) { wy -= WORLD_HEIGHT; }
-            if(wx < 0) { wx += WORLD_WIDTH;  }
-            if(wy < 0) { wy += WORLD_HEIGHT; }
+            if(wx <  WORLD_XSTART) { wx += WORLD_WIDTH;  }
+            if(wy <  WORLD_YSTART) { wy += WORLD_HEIGHT; }
             // BUGBUG  should be consistent? 2 or 3 from poles? 2 or 3 from edges?
             if(
                 (wx < 3)
@@ -2074,20 +2030,22 @@ somehow1:
             }
         }
     }
+    /* Myrror Nodes Generation (Indices 16-29) */
     for(itr = 16; itr < NUM_NODES; itr++)
     {
         while(1)
         {
-somehow2:
-            base_wx = (((itr - 20) % 5) * 12);  // BUGBUG  should be (itr - 16)?
-            base_wy = (((itr - 20) / 5) * 10);  // BUGBUG  should be (itr - 16)?
+Attempt_Myrror:
+            /* OGBUG  base offset, should be (itr - 16), not - 20 */
+            base_wx = (((itr - 20) % 5) * 12);  
+            base_wy = (((itr - 20) / 5) * 20);
             wx = (base_wx + (Random(24) - 1));
             wy = (base_wy + (Random(40) - 1));
-            if(wx >= WORLD_XMAX) { wx -= WORLD_WIDTH;  }
-            if(wy >= WORLD_YMAX) { wy -= WORLD_HEIGHT; }
-            if(wx < WORLD_XMIN)  { wx += WORLD_WIDTH;  }
-            if(wy < WORLD_YMIN)  { wy += WORLD_HEIGHT; }
-            // BUGBUG  should be consistent? 2 or 3 from poles? 2 or 3 from edges?
+            if(wx >= WORLD_WIDTH)  { wx -= WORLD_WIDTH;  }
+            if(wy >= WORLD_HEIGHT) { wy -= WORLD_HEIGHT; }
+            if(wx <  WORLD_XSTART) { wx += WORLD_WIDTH;  }
+            if(wy <  WORLD_YSTART) { wy += WORLD_HEIGHT; }
+            /* OGBUG  north-pole margin is 2 (wy<2) while west/east/south are 3 — asm cmp wy,2 / cmp wy,37; preserved */
             if(
                 (wx < 3)
                 ||
@@ -2101,16 +2059,19 @@ somehow2:
                 continue;
             }
             if(
-                (p_world_map[ARCANUS_PLANE][wy][wx] != tt_Ocean)  // BUGBUG  should be MYRROR_PLANE, not ARCANUS_PLANE
+                (p_world_map[ARCANUS_PLANE][wy][wx] != tt_Ocean)  /* OGBUG  should be MYRROR_PLANE, not ARCANUS_PLANE */
                 ||
                 (Random(25) == 1)  // 4.0%
             )
             {
                 for(itr2 = 0; itr2 < itr; itr2++)
                 {
-                    if(Delta_XY_With_Wrap(wx, wy, _NODES[itr2].wx, _NODES[itr2].wy, WORLD_WIDTH) < 3)
+                    if(_NODES[itr2].wp == MYRROR_PLANE)
                     {
-                        goto somehow2;
+                        if(Delta_XY_With_Wrap(wx, wy, _NODES[itr2].wx, _NODES[itr2].wy, WORLD_WIDTH) < 3)
+                        {
+                            goto Attempt_Myrror;
+                        }
                     }
                 }
                 _NODES[itr].wx = (int8_t)wx;
