@@ -197,6 +197,8 @@ void Init_Diplomatic_Relations(void)
     int16_t itr_players2 = 0;  // _SI_
     int16_t IDK = 0;  // _CX_
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(itr_players1 = 0; itr_players1 < _num_players; itr_players1++)
     {
 
@@ -276,6 +278,7 @@ void Init_Diplomatic_Relations(void)
         }
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Diplomatic_Relations rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -283,6 +286,9 @@ void Init_Diplomatic_Relations(void)
 void Initialize_Items(void)
 {
     int16_t itr = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(itr = 0; itr < 138; itr++)
     {
         _ITEMS[itr].cost = 0;
@@ -291,6 +297,8 @@ void Initialize_Items(void)
     {
         TBL_Premade_Items[itr] = 0;
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Initialize_Items rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -307,6 +315,8 @@ research cost into the record of every wizard
 void Init_Summoning_Circle_And_Spell_Of_Mastery(void)
 {
     int16_t itr_players = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
@@ -330,9 +340,10 @@ void Init_Summoning_Circle_And_Spell_Of_Mastery(void)
         {
             _players[itr_players].som_research_cost -= 3000;
         }
-        
+
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Summoning_Circle_And_Spell_Of_Mastery rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -368,7 +379,9 @@ void Init_Magic_Personalities_Objectives(void)
     int16_t spellranks = 0;
     int16_t itr = 0;  // _SI_
     int16_t itr_players = 0;  // _DI_
-    
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     // ; loop through the human player's bookshelf to find
     // ; the realm they have the most books of
     Primary_Realm = 0;
@@ -613,6 +626,7 @@ void Init_Magic_Personalities_Objectives(void)
 
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Magic_Personalities_Objectives rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -643,6 +657,9 @@ void Init_CP_Strategy(void)
 {
     int16_t player_idx = 0;
     int16_t other_player_idx = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(player_idx = 0; player_idx < _num_players; player_idx++)
     {
         _players[player_idx].reevaluate_hostility_countdown = 0;
@@ -658,6 +675,7 @@ void Init_CP_Strategy(void)
         _players[player_idx].niu_cp_target_4 = ST_UNDEFINED;
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_CP_Strategy rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -691,6 +709,9 @@ void Init_Players(void)
     int16_t itr_heroes = 0;
     int16_t itr_players = 0;
     int16_t spell_skill = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
         if(_players[itr_players].famous == ST_TRUE)
@@ -758,6 +779,8 @@ void Init_Players(void)
             _players[itr_players].Heroes[itr_heroes].unit_idx = ST_UNDEFINED;
         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Players rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -1942,6 +1965,7 @@ void Init_Computer_Players_Spell_Library__GEMINI(void)
 */
 void Initialize_Events(void)
 {
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     events_table->last_event_turn = 50;
     events_table->Meteor_Status = 0;
     events_table->Gift_Status = 0;
@@ -1961,6 +1985,7 @@ void Initialize_Events(void)
     events_table->Conjunction_Nature_Status = 0;
     events_table->Conjunction_Sorcery_Status = 0;
     events_table->Mana_Short_Status = 0;
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Initialize_Events rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 // MGC o56p12
@@ -2146,6 +2171,7 @@ message types, clearing all event messages
 */
 void Initialize_Messages(void)
 {
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     MSG_UnitLost_Count = 0;
     MSG_UnitKilled_Count = 0;
     MSG_UEsLost_Count = 0;
@@ -2156,6 +2182,7 @@ void Initialize_Messages(void)
     MSG_BldLost_Count = 0;
     MSG_CityLost_Count = 0;
     MSG_CityGained_Count = 0;
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Initialize_Messages rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
