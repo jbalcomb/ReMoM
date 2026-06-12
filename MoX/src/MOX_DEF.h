@@ -729,6 +729,8 @@ enum enum_BANNER_COLOR_ID
 
 
 // World (Grid) Dimensions, in Map Sqaures
+#define WORLD_XSTART         0
+#define WORLD_YSTART         0
 #define WORLD_WIDTH         60
 #define WORLD_HEIGHT        40
 #define MAP_WIDTH           12

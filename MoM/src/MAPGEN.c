@@ -101,8 +101,8 @@ used for Node Auras
 used for River Paths
 
 */
-// int16_t dir_chg_tbl_wx[5] = { 0, -1, 0, 1, 0 };
-// int16_t dir_chg_tbl_wy[5] = { 1, 0, -1, 0, 0 };
+int16_t dir_chg_step_tbl_wx[5] = { 0, -1, 0, 1, 0 };
+int16_t dir_chg_step_tbl_wy[5] = { 1, 0, -1, 0, 0 };
 
 // MGC  dseg:3348
 // {1:W,3:E}
@@ -112,6 +112,9 @@ int16_t upstream[4] = { 2, 3, 0, 1 };  // ¿ N, E, S, W ?
 // int16_t TILE_Cardinal_XMod2[5] = { 0, -1, 0, 1, 0 };
 // int16_t TILE_Cardinal_YMod2[5] = { 1, 0, -1, 0, 0 };
 
+int16_t dir_chg_start_tbl_wx[5] = { 0, -1, 0, 1, 0 };
+int16_t dir_chg_start_tbl_wy[5] = { 1, 0, -1, 0, 0 };
+// TODO  figure out which should be start or step
 int16_t dir_chg_tbl_wx[5] = { 0, -1, 0, 1, 0 };
 int16_t dir_chg_tbl_wy[5] = { 1, 0, -1, 0, 0 };
 
@@ -1728,32 +1731,19 @@ void Add_Tundra(int16_t wp)
 }
 
 // MGC o51p10
-// drake178: NEWG_CreateLands()
-/*
-; PATCHED / rewritten in the worldgen customizer to
-; allow fine tuning the desired land map squares and set
-; continent size limits, as well as to override the
-; origin coordinate constraints to support more
-; combinations of those two settings
-;
-; clears the map square map of the selected plane, and then
-; generates continents according to the land size
-; settings
-*/
 /*
 ¿ populates _landmass[] ?
 per plane
 ~ MoO2 "map"
-
+*/
+/*
+Gemini:
 We aren't going to waste cycles on complex noise functions; we’re going to use a "Random Walk" or "Drunkard’s Walk" algorithm. It’s memory-efficient and creates organic-looking blobs.
-
 The Walk: For each of the 8 landmasses, pick a random starting $x, y$. For $N$ steps (your size parameter), move one square in a random cardinal direction.
 The Accumulation: Every time a walker lands on a square, increment its value in the array.
 The Render: Iterate through the array. Low counts stay Ocean; high counts become Mountains or Deserts.
-
 Terrain Logic Table
 By tracking the number of "hits," we are essentially creating a heightmap or a "density map." The more a walker revisits a spot, the more "significant" that terrain becomes.
-
 */
 /**
  * @brief Creates base land distribution for the selected world plane.
@@ -1789,20 +1779,24 @@ void Generate_Landmasses(int16_t wp)
     int16_t section_height = 0;
     int16_t section_width = 0;
     int16_t n_sections = 0;
-    int16_t Same_Dir_Steps = 0;
+    int16_t straight_run_length = 0;
     int16_t new_direction = 0;
     int16_t dir_chg = 0;  /* (Random(4) - 1), used to index dir_chg_tbl_wx/wy */
-    int16_t Steps_Taken = 0;
-    int16_t Steps_To_Take = 0;
+    int16_t steps_walked = 0;
+    int16_t segment_length = 0;
     int16_t next_wy = 0;
     int16_t next_wx = 0;
     int16_t curr_wy = 0;
     int16_t curr_wx = 0;
     int16_t n_needed = 0;
     int16_t n_generated = 0;
-    int16_t itr_wy = 0;  // _DI_
-    int16_t itr_wx = 0;  // _SI_
-    // base-line, set the whole world to Ocean
+    int16_t itr_wy = 0;
+    int16_t itr_wx = 0;
+
+
+    /* Phase 1: Init */
+
+    /* Initialize map plane to zero (Ocean) */
     for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
     {
         for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
@@ -1810,10 +1804,7 @@ void Generate_Landmasses(int16_t wp)
             p_world_map[wp][itr_wy][itr_wx] = tt_Ocean;
         }
     }
-    // ; clear the map section array
-    // ; 
-    // ; INCONSISTENT: the array is 5 by 5 in size, yet the
-    // ; divisions result in only 4 by 3 being used
+    /* Initialize section grid for seed distribution */
     for(itr_wy = 0; itr_wy < 5; itr_wy++)
     {
         for(itr_wx = 0; itr_wx < 5; itr_wx++)
@@ -1821,22 +1812,26 @@ void Generate_Landmasses(int16_t wp)
             map_sections[itr_wy][itr_wx] = 0;
         }
     }
-    n_sections = 8;
+    n_sections = 8;  /* a spatial-spread quota */
     section_width  = 16;  // DEDU  shouldn't this be WORLD_WIDTH / 5 = 12 ?  alt. world map was 16 * 5 = 80 wide at some point?  or 48 or x / 2,3,4 32,48,64
     section_height = 11;  // DEDU shouldn't this be WORLD_HEIGHT / 5 =  8 ?  alt. world map was 11 * 5 = 55 high at some point?  or 33 or y / 2,3,4 22,33,44
     n_generated = 0;
-    // ~ galaxy size, _NUM_STARS
+    /* Set target land budget based on world settings */
+    /* MoO2  ~ galaxy size, _NUM_STARS */
     switch(_landsize)
     {
         case gol_Small:  { n_needed = 360; } break;  // ¿ 3 * 120 ?            ¿ 360 of 2400 is 15% ?
         case gol_Medium: { n_needed = 480; } break;  // ¿ 4 * 120 ?  + 1 of 3  ¿ 480 of 2400 is 20% ?
         case gol_Large:  { n_needed = 720; } break;  // ¿ 6 * 120 ?  + 2 of 4  ¿ 720 of 2400 is 30% ?
     }
-    // ~ _num_maps_to_generate, _n_maps_generated
+
+
+    /* Phase 2: Main landmass generation loop */
+    /* MoO2  ~ _num_maps_to_generate, _n_maps_generated */
     while(n_generated <= n_needed)
     {
         new_direction = ST_UNDEFINED;
-        Same_Dir_Steps = 1;
+        straight_run_length = 1;
         while(1)
         {
             base_wx = (6 + Random(46));  // { 7, ..., 52}
@@ -1859,67 +1854,71 @@ void Generate_Landmasses(int16_t wp)
         {
             switch(_landsize)
             {
-                case gol_Small:  { Steps_To_Take = ( 5 + Random(10)); } break;
-                case gol_Medium: { Steps_To_Take = (10 + Random(10)); } break;
-                case gol_Large:  { Steps_To_Take = (20 + Random(10)); } break;
+                case gol_Small:  { segment_length = ( 5 + Random(10)); } break;
+                case gol_Medium: { segment_length = (10 + Random(10)); } break;
+                case gol_Large:  { segment_length = (20 + Random(10)); } break;
             }
-            curr_wx = (base_wx + dir_chg_tbl_wx[direction]);
-            curr_wy = (base_wy + dir_chg_tbl_wy[direction]);
-            for(Steps_Taken = 0; ((Steps_Taken < Steps_To_Take) && (n_generated <= n_needed)); Steps_Taken++)
+            curr_wx = (base_wx + dir_chg_start_tbl_wx[direction]);
+            curr_wy = (base_wy + dir_chg_start_tbl_wy[direction]);
+            steps_walked = 0;
+            while((steps_walked < segment_length) && (n_generated <= n_needed))
             {
                 if(p_world_map[wp][curr_wy][curr_wx] == tt_Ocean)
                 {
                     n_generated++;
                 }
                 p_world_map[wp][curr_wy][curr_wx] = (p_world_map[wp][curr_wy][curr_wx] + 1);
-                Build_Landmass(wp, curr_wx, curr_wy);
-                /*
-                
-                    WTF  DEDU  What is the loop here?
-                    ...looks like `new_direction = ST_UNDEFINED;` should be a breaking condition
 
-                */
+                /* Call procedural expansion logic */
+                Build_Landmass(wp, curr_wx, curr_wy);
+                
+                /* Direction-retry: re-roll until a direction passes the anti-straight bias AND stays in bounds */
+
+                /* Direction selection with persistence logic */
                 while(1)
                 {
                     dir_chg = (Random(4) - 1);  // ¿ choose next direction with anti-straight-line bias ?
                     if(dir_chg == new_direction)
                     {
-                        if(Random((Same_Dir_Steps * 2)) != 1)
+                        /* Probability to keep going in same direction decreases over time */
+                        if(Random((straight_run_length * 2)) != 1)
                         {
-                            continue;
+                            continue;  /* Pick a different direction */
                         }
                         else
                         {
-                            Same_Dir_Steps++;
+                            straight_run_length++;
                         }
                     }
                     else
                     {
-                        Same_Dir_Steps = 1;  // different direction, reset bias weight
+                        straight_run_length = 1;  // different direction, reset bias weight
                     }
                     new_direction = dir_chg;
-                    next_wx = (curr_wx + dir_chg_tbl_wx[dir_chg]);
-                    next_wy = (curr_wy + dir_chg_tbl_wy[dir_chg]);
-                    // too close to the edge
+                    next_wx = (curr_wx + dir_chg_step_tbl_wx[dir_chg]);
+                    next_wy = (curr_wy + dir_chg_step_tbl_wy[dir_chg]);
+                    /* Bounds check (padding for map edges) */
                     if(
-                        (next_wx <  (WORLD_XMIN + 2))
+                        (next_wx <  (WORLD_XSTART + 2))
                         ||
-                        (next_wy <  (WORLD_YMIN + 4))
+                        (next_wy <  (WORLD_YSTART + 4))
                         ||
-                        (next_wx >= (WORLD_XMAX - 2))
+                        (next_wx >= (WORLD_WIDTH - 2))
                         ||
-                        (next_wy >= (WORLD_YMAX - 4))
+                        (next_wy >= (WORLD_HEIGHT - 4))
                     )
                     {
+                        /* Out of bounds, reset and try again from current tile */
                         new_direction = ST_UNDEFINED;
                     }
                     else
                     {
-                        break;
+                        curr_wx = next_wx;
+                        curr_wy = next_wy;
+                        steps_walked++;
+                        break;  /* only 'Exit Condition' of main loop */
                     }
                 }
-                curr_wx = next_wx;
-                curr_wy = next_wy;
             }
         }
     }
