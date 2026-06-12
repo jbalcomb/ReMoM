@@ -491,6 +491,9 @@ void Extend_Islands(int16_t wp)
     int16_t terrain_type = 0;
     int16_t itr_wy = 0;
     int16_t itr_wx = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(itr_wy = 1; itr_wy < 39; itr_wy++)
     {
         for(itr_wx = 1; itr_wx < 59; itr_wx++)
@@ -640,6 +643,8 @@ void Extend_Islands(int16_t wp)
             }
         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Extend_Islands rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -668,6 +673,8 @@ void Generate_Towers(void)
     int16_t wx = 0;
     int16_t itr1 = 0;  // _DI_
     int16_t itr2 = 0;  // _SI_
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     Min_Distance = 10;
 
@@ -742,6 +749,7 @@ void Generate_Towers(void)
 
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Towers rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -1328,6 +1336,9 @@ void Rebalance_Node_Types(int16_t wp)
     int16_t Sorcery_Count = 0;
     int16_t Chaos_Count = 0;
     int16_t random_node_idx = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     Chaos_Count = 0;
     Sorcery_Count = 0;
     Nature_Count = 0;
@@ -1435,6 +1446,8 @@ void Rebalance_Node_Types(int16_t wp)
             }
         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Rebalance_Node_Types rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -1494,6 +1507,8 @@ void Generate_Climate_Terrain_Types(int16_t wp)
     int16_t next_wy = 0;  // _SI_
     int16_t itr_wx = 0;  // _DI_
     int16_t itr_wy = 0;  // _SI_
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 /*
     BEGIN:  tt_Tundra1
 */
@@ -1610,6 +1625,7 @@ void Generate_Climate_Terrain_Types(int16_t wp)
 /*
     END:  tt_Swamp1
 */
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Climate_Terrain_Types rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 // MGC o51p09
@@ -1648,6 +1664,8 @@ void Translate_Heightmap_To_Base_Terrain_Types(int16_t wp)
     int16_t itr_wy = 0;
     int16_t itr_wx = 0;  // _SI_
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
     {
         for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
@@ -1683,6 +1701,7 @@ void Translate_Heightmap_To_Base_Terrain_Types(int16_t wp)
 
     Add_Tundra(wp);
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Translate_Heightmap_To_Base_Terrain_Types rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 /*
 second half of basic terrain generation
@@ -1976,6 +1995,8 @@ void Generate_Nodes(void)
     int16_t itr = 0;
     int16_t itr2 = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(itr = 0; itr < 16; itr++)
     {
         while(1)
@@ -2089,6 +2110,8 @@ Attempt_Myrror:
             }
         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Nodes rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -2105,6 +2128,9 @@ void Make_Aura(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t wx, 
     int16_t curr_wx = 0;
     int16_t itr = 0;
     int16_t itr2 = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     wx_array[0] = (int8_t)wx;
     wy_array[0] = (int8_t)wy;
     /* ¿ 9, because within 1 map square ? */
@@ -2180,6 +2206,8 @@ void Make_Aura(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t wx, 
         wx_array[itr] = (int8_t)curr_wx;
         wy_array[itr] = (int8_t)curr_wy;
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Make_Aura rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -2226,6 +2254,8 @@ void Set_Node_Type(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t 
     int16_t chaos_bias = 0;
     int16_t sorcery_bias = 0;
     int16_t itr = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     sorcery_bias = 0;
     chaos_bias = 0;
@@ -2282,6 +2312,8 @@ void Set_Node_Type(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t 
         }
         Build_Landmass(wp, wx_array[0], wy_array[0]);
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Set_Node_Type rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -2470,6 +2502,8 @@ void Generate_Lairs(void)
     int16_t tail_start = 0;
     int16_t generate_lair_budget_value = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     strong_lair_count = NUM_STRONG_LAIRS;
 
     for(itr = 0; itr < NUM_TOWERS; itr++)
@@ -2585,6 +2619,8 @@ void Generate_Lairs(void)
 #ifdef STU_DEBUG
     assert(Validate_All_Lairs() == ST_TRUE);
 #endif
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Lairs rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -2639,6 +2675,8 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
     int16_t race_type = 0;
     int16_t unit_type = 0;
     int16_t unknown_create_lair_value;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 #ifdef STU_DEBUG
     assert(lair_idx >= 0);
@@ -3004,6 +3042,8 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
 #ifdef STU_DEBUG
     assert(Validate_Lair_Record(lair_idx) == ST_TRUE);
 #endif
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Create_Lair rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
