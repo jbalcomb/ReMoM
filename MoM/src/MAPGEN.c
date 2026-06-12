@@ -444,19 +444,6 @@ void Set_Upper_Lair_Guardian_Count(void)
 
 
 // MGC o51p03
-// drake178: NEWG_TileIsleExtend()
-/*
-; PATCHED / rewritten in the worldgen customizer
-;
-; attempts to extend some of the single map square islands
-; created by the node and tower generator functions
-;
-; BUG: the switch values are botched, resulting in
-; significantly less added map squares
-*/
-/*
-
-*/
 /**
  * @brief Attempts to expand isolated node/tower island map squares into nearby land.
  *
@@ -497,9 +484,9 @@ void Extend_Islands(int16_t wp)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    for(itr_wy = 1; itr_wy < 39; itr_wy++)
+    for(itr_wy = 1; itr_wy < (WORLD_HEIGHT - 1); itr_wy++)
     {
-        for(itr_wx = 1; itr_wx < 59; itr_wx++)
+        for(itr_wx = 1; itr_wx < (WORLD_WIDTH - 1); itr_wx++)
         {
             terrain_type = p_world_map[wp][itr_wy][itr_wx];
             square_has_tower = ST_FALSE;
@@ -553,13 +540,26 @@ void Extend_Islands(int16_t wp)
                                     (Square_Is_Node_NewGame((itr_wx + rnd_wx), (itr_wy + rnd_wy), wp) == ST_FALSE)
                                 )
                                 {
-                                    // NOTE(drake189): PATCHED here previously to fix the BUG below
-                                    Grid_Index = ((rnd_wy * 3) + rnd_wx + 1);  // {-3, ..., 3} + {-1, 0, 1} + 1 {-3, ..., 5}
-                                    convert = ST_FALSE;
-                                    // NOTE(drake189): BUG: the actual range is -3 to +5, not 1 to 9
                                     /*
-                                        9 for current and eight adjacent squares:
-                                        Dasm shows (Grid_Index - 1), so it though the range {1,...,9}
+                                        OGBUG (preserved, faithful to Dasm):
+                                        Grid_Index was meant to map the 3x3 neighborhood (current + 8 adjacent
+                                        squares) to {1,...,9}, which needs ((rnd_wy + 1) * 3) + (rnd_wx + 1) + 1.
+                                        The OG instead uses the formula below, whose range is {-3,...,5}, NOT
+                                        {1,...,9}  (BUG observed by drake189).
+
+                                        Effect: only rnd values that land on Grid_Index 2/3/4/5 reach the switch,
+                                        so an island extends only toward E (case 2), S (case 4), and conditionally
+                                        SW (case 3).  N/NE/NW/W produce a negative Grid_Index (no matching case,
+                                        skipped) and SE produces case 5 (never converts).  switch cases 1 and 6-9
+                                        are therefore dead code.  Do NOT "fix" the formula -- preserve as-is.
+                                    */
+                                    Grid_Index = ((rnd_wy * 3) + rnd_wx + 1);  // {-3,...,3} + {-1,0,1} + 1 = {-3,...,5}
+                                    convert = ST_FALSE;
+                                    /*
+                                        The Dasm dispatches on (Grid_Index - 1) through a jump table guarded by an
+                                        unsigned `cmp 8; jbe`.  Switching on Grid_Index directly with cases 1-9
+                                        (below) is equivalent: case N == Dasm jump-table index (N - 1), and a
+                                        negative Grid_Index falls through to no conversion in both forms.
                                     */
                                     switch(Grid_Index)
                                     {
@@ -599,7 +599,7 @@ void Extend_Islands(int16_t wp)
                                             }
                                         } break;
                                         case 4: { convert = ST_TRUE;  } break;
-                                        case 5: { convert = ST_FALSE; } break;  /* can't convert current square */
+                                        case 5: { convert = ST_FALSE; } break;  /* intended "current square" (never convert); under the OGBUG, Grid_Index 5 is actually the SE neighbor */
                                         case 6: { convert = ST_TRUE;  } break;
                                         case 7:
                                         {
@@ -649,6 +649,153 @@ void Extend_Islands(int16_t wp)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Extend_Islands rng_call=%llu", (unsigned long long)g_random_call_count);
 }
+/* GEMINI */
+#if 0
+void /* far */ Extend_Islands__GEMINI(int wp)
+{
+    int Grid_Index;
+    int convert;
+    int Random_Y_Modifier;
+    int Random_X_Modifier;
+    int Convert_Attempts;
+    int square_has_tower;
+    int itr_towers;
+    int terrain_type;
+    int itr_wy;
+    int itr_wx;
+
+    for (itr_wy = 1; itr_wy < 39; itr_wy++)
+    {
+        for (itr_wx = 1; itr_wx < 59; itr_wx++)
+        {
+            terrain_type = _world_maps[wp][itr_wy][itr_wx];
+            square_has_tower = e_ST_FALSE;
+            
+            for (itr_towers = 0; itr_towers < 6; itr_towers++)
+            {
+                if (_TOWERS[itr_towers].wy == itr_wy && _TOWERS[itr_towers].wx == itr_wx)
+                {
+                    square_has_tower = e_ST_TRUE;
+                }
+            }
+
+            if (terrain_type == tt_SorceryNode ||
+                terrain_type == tt_NatureNode ||
+                terrain_type == tt_ChaosNode ||
+                square_has_tower == e_ST_TRUE)
+            {
+                if (Square_Is_Ocean_NewGame(itr_wx, itr_wy - 1, wp) == 1)
+                {
+                    if (Square_Is_Ocean_NewGame(itr_wx - 1, itr_wy, wp) == 1)
+                    {
+                        if (Square_Is_Ocean_NewGame(itr_wx + 1, itr_wy, wp) == 1)
+                        {
+                            if (Square_Is_Ocean_NewGame(itr_wx, itr_wy + 1, wp) == 1)
+                            {
+                                /* Random returns 0..n-1; so Random(3) returns 0, 1, or 2. Only 2 continues execution */
+                                if (Random(3) <= 1)
+                                {
+                                    continue;
+                                }
+
+                                Convert_Attempts = Random(8) + 1;
+                                
+                                for (itr_towers = 0; itr_towers < Convert_Attempts; itr_towers++)
+                                {
+                                    Random_X_Modifier = Random(3) - 2;
+                                    Random_Y_Modifier = Random(3) - 2;
+
+                                    if (Random_X_Modifier == 0 && Random_Y_Modifier == 0)
+                                    {
+                                        continue;
+                                    }
+
+                                    if (Square_Has_Tower_NewGame(itr_wx + Random_X_Modifier, itr_wy + Random_Y_Modifier) != 0)
+                                    {
+                                        continue;
+                                    }
+
+                                    if (Square_Has_Node_NewGame(itr_wx + Random_X_Modifier, itr_wy + Random_Y_Modifier, wp) != 0)
+                                    {
+                                        continue;
+                                    }
+
+                                    /* Note: This is an original game bug. Negative modifiers can produce a Grid_Index outside the 1..9 range, skipping the switch statement entirely. */
+                                    Grid_Index = (Random_Y_Modifier * 3) + Random_X_Modifier + 1;
+                                    convert = 0;
+
+                                    switch (Grid_Index)
+                                    {
+                                        case 1:
+                                            if (_world_maps[wp][itr_wy + Random_Y_Modifier + 1][itr_wx + Random_X_Modifier] != tt_Ocean1 ||
+                                                _world_maps[wp][itr_wy + Random_Y_Modifier][itr_wx + Random_X_Modifier + 1] != tt_Ocean1)
+                                            {
+                                                convert = e_ST_TRUE;
+                                            }
+                                            else
+                                            {
+                                                convert = e_ST_FALSE;
+                                            }
+                                            break;
+                                        case 2:
+                                        case 4:
+                                        case 6:
+                                        case 8:
+                                            convert = e_ST_TRUE;
+                                            break;
+                                        case 3:
+                                            if (_world_maps[wp][itr_wy + Random_Y_Modifier + 1][itr_wx + Random_X_Modifier] != tt_Ocean1 ||
+                                                _world_maps[wp][itr_wy + Random_Y_Modifier][itr_wx + Random_X_Modifier - 1] != tt_Ocean1)
+                                            {
+                                                convert = 1;
+                                            }
+                                            else
+                                            {
+                                                convert = 0;
+                                            }
+                                            break;
+                                        case 5:
+                                            convert = 0;
+                                            break;
+                                        case 7:
+                                            if (_world_maps[wp][itr_wy + Random_Y_Modifier - 1][itr_wx + Random_X_Modifier] != tt_Ocean1 ||
+                                                _world_maps[wp][itr_wy + Random_Y_Modifier][itr_wx + Random_X_Modifier + 1] != tt_Ocean1)
+                                            {
+                                                convert = 1;
+                                            }
+                                            else
+                                            {
+                                                convert = 0;
+                                            }
+                                            break;
+                                        case 9:
+                                            if (_world_maps[wp][itr_wy + Random_Y_Modifier - 1][itr_wx + Random_X_Modifier] != tt_Ocean1 ||
+                                                _world_maps[wp][itr_wy + Random_Y_Modifier][itr_wx + Random_X_Modifier - 1] != tt_Ocean1)
+                                            {
+                                                convert = 1;
+                                            }
+                                            else
+                                            {
+                                                convert = 0;
+                                            }
+                                            break;
+                                    }
+
+                                    if (convert == e_ST_TRUE) /* Also catches instances where convert was set to 1 directly */
+                                    {
+                                        Build_Landmass(wp, itr_wx + Random_X_Modifier, itr_wy + Random_Y_Modifier);
+                                        _world_maps[wp][itr_wy + Random_Y_Modifier][itr_wx + Random_X_Modifier] = tt_Grasslands1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+#endif
 
 
 // MGC o51p04
