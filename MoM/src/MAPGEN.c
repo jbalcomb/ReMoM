@@ -428,6 +428,8 @@ void Set_Upper_Lair_Guardian_Count(void)
 {
     int16_t itr_lairs = 0;  // _SI_
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(itr_lairs = 0; itr_lairs < NUM_LAIRS; itr_lairs++)
     {
 
@@ -437,6 +439,7 @@ void Set_Upper_Lair_Guardian_Count(void)
 
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Set_Upper_Lair_Guardian_Count rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -3304,6 +3307,9 @@ void Simex_Autotiling(void)
     int16_t wx = 0;
     int16_t wy = 0;
     int16_t terrain_subtype_index = 0;  // DNE in Dasm
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     terrtype = (int16_t *)Near_Allocate_First((5 * 512));
     LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, (SAMB_ptr)terrtype, 0, 5, 512);
 /*
@@ -3935,6 +3941,7 @@ void Simex_Autotiling(void)
 /*
     END:  Hills
 */
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Simex_Autotiling rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 // MGC o51p21
@@ -4139,7 +4146,9 @@ int16_t River_Path(int16_t wp)
     int16_t base_wy = 0;
     int16_t base_wx = 0;
     int16_t length = 0;
-    
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     base_wx = (4 + Random((WORLD_WIDTH  - 8)));
     base_wy = (4 + Random((WORLD_HEIGHT - 8)));
 
@@ -4240,8 +4249,8 @@ int16_t River_Path(int16_t wp)
         p_world_map[wp][wy_array[itr]][wx_array[itr]] = 1000;
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=River_Path rng_call=%llu", (unsigned long long)g_random_call_count);
     return ST_TRUE;
-
 }
 
 
@@ -5429,6 +5438,9 @@ void Generate_Roads(int16_t wp)
     int16_t Invalid_Road = 0;
     int16_t dst_city_idx = 0;
     int16_t src_city_idx = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
         for(wx = 0; wx < WORLD_WIDTH; wx++)
@@ -5558,6 +5570,8 @@ Roads beneath captured neutral cities and original Fortress sites on Myrror lack
 // BUGBUG             );
 // BUGBUG         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Roads rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -5637,6 +5651,8 @@ void Generate_Terrain_Specials(int16_t wp)
     int16_t DBG_wy_size = 0;  // DNE in Dasm
     int16_t DBG_wx_size = 0;  // DNE in Dasm
     int16_t DBG_offset = 0;  // DNE in Dasm
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
@@ -5763,6 +5779,8 @@ void Generate_Terrain_Specials(int16_t wp)
             if(Square_Is_Desert_NewGame(  wx, wy, wp)  == ST_TRUE)  {   SET_TERRAIN_SPECIAL(wx, wy, wp, Desert_Terrain_Special(wp)      );  }
         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Terrain_Specials rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -5977,6 +5995,8 @@ void Init_Square_Explored(void)
     int16_t wy = 0;  // _DI_
     int16_t wx = 0;  // _SI_
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(wp = 0; wp < 2; wp++)
     {
 
@@ -6055,6 +6075,7 @@ void Init_Square_Explored(void)
 
     Set_Square_Explored_Bits(wp, (wx + 1), (wy - 1), (SCT_BottomLeft | SCT_TopLeft | SCT_BottomRight));
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Square_Explored rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
@@ -6410,6 +6431,8 @@ void Animate_Oceans(void)
     int16_t wy = 0;
     int16_t wp = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
 
@@ -6451,6 +6474,7 @@ void Animate_Oceans(void)
 
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Animate_Oceans rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 
 
