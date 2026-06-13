@@ -1428,6 +1428,7 @@ void Init_Computer_Players_Spell_Library(void)
 
                 // IDA purple #32
                 Available_Spells = (_players[itr].spellranks[sbr] - 1);
+                LOG_TRACE(LOG_CAT_GENERAL, "[ICPSL] @before-common    p=%d sbr=%d rank=%d limit=%d  rng_call=%llu", itr, sbr, _players[itr].spellranks[sbr], Availability_Limit, (unsigned long long)g_random_call_count);
                 while(Available_Spells < Availability_Limit)
                 {
                     itr2 = (Random(NUM_SPELLS_PER_MAGIC_RARITY) - 1);
@@ -1444,6 +1445,7 @@ void Init_Computer_Players_Spell_Library(void)
                         }
                     }
                 }
+                LOG_TRACE(LOG_CAT_GENERAL, "[ICPSL] @after-common     p=%d sbr=%d rank=%d limit=%d  rng_call=%llu", itr, sbr, _players[itr].spellranks[sbr], Availability_Limit, (unsigned long long)g_random_call_count);
 
 /*
 BEGIN: Knowable - Uncommon
@@ -1476,6 +1478,7 @@ BEGIN: Knowable - Uncommon
                         case 10: { Availability_Limit = 10; } break;
                     }
                     itr2 = 0;
+                    LOG_TRACE(LOG_CAT_GENERAL, "[ICPSL] @before-uncommon  p=%d sbr=%d rank=%d limit=%d  rng_call=%llu", itr, sbr, _players[itr].spellranks[sbr], Availability_Limit, (unsigned long long)g_random_call_count);
                     while(itr2 < Availability_Limit)
                     {
                         InRarity_Index = (Random(NUM_SPELLS_PER_MAGIC_RARITY) - 1);
@@ -1485,6 +1488,7 @@ BEGIN: Knowable - Uncommon
                             itr2++;
                         }
                     }
+                    LOG_TRACE(LOG_CAT_GENERAL, "[ICPSL] @after-uncommon   p=%d sbr=%d rank=%d limit=%d  rng_call=%llu", itr, sbr, _players[itr].spellranks[sbr], Availability_Limit, (unsigned long long)g_random_call_count);
                     for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_RARITY; itr2++)
                     {
                         if(Availability_Array[itr2] == 1)
@@ -1529,6 +1533,7 @@ BEGIN: Knowable - Rare
                         // WTF  DNE  case 10: { Availability_Limit = ; } break;
                     }
                     itr2 = 0;
+                    LOG_TRACE(LOG_CAT_GENERAL, "[ICPSL] @before-rare      p=%d sbr=%d rank=%d limit=%d  rng_call=%llu", itr, sbr, _players[itr].spellranks[sbr], Availability_Limit, (unsigned long long)g_random_call_count);
                     while(itr2 < Availability_Limit)
                     {
                         InRarity_Index = (Random(NUM_SPELLS_PER_MAGIC_RARITY) - 1);
@@ -1538,6 +1543,7 @@ BEGIN: Knowable - Rare
                             itr2++;
                         }
                     }
+                    LOG_TRACE(LOG_CAT_GENERAL, "[ICPSL] @after-rare       p=%d sbr=%d rank=%d limit=%d  rng_call=%llu", itr, sbr, _players[itr].spellranks[sbr], Availability_Limit, (unsigned long long)g_random_call_count);
                     for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_RARITY; itr2++)
                     {
                         if(Availability_Array[itr2] == 1)
@@ -1582,6 +1588,7 @@ BEGIN: Knowable - Very Rare
                         // WTF  DNE  case 10: { Availability_Limit = ; } break;
                     }
                     itr2 = 0;
+                    LOG_TRACE(LOG_CAT_GENERAL, "[ICPSL] @before-very_rare p=%d sbr=%d rank=%d limit=%d  rng_call=%llu", itr, sbr, _players[itr].spellranks[sbr], Availability_Limit, (unsigned long long)g_random_call_count);
                     while(itr2 < Availability_Limit)
                     {
                         InRarity_Index = (Random(NUM_SPELLS_PER_MAGIC_RARITY) - 1);
@@ -1591,6 +1598,7 @@ BEGIN: Knowable - Very Rare
                             itr2++;
                         }
                     }
+                    LOG_TRACE(LOG_CAT_GENERAL, "[ICPSL] @after-very_rare  p=%d sbr=%d rank=%d limit=%d  rng_call=%llu", itr, sbr, _players[itr].spellranks[sbr], Availability_Limit, (unsigned long long)g_random_call_count);
                     for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_RARITY; itr2++)
                     {
                         if(Availability_Array[itr2] == 1)
