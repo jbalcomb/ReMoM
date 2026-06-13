@@ -799,107 +799,115 @@ void /* far */ Extend_Islands__GEMINI(int wp)
 
 
 // MGC o51p04
-// drake178: NEWG_CreateTowers()
-/*
-; PATCHED / rewritten in the worldgen customizer
-;
-; creates the six towers of wizardry connecting the
-; planes, which need to be at least 4 map squares away from
-; any nodes, and at least 10 map squares away from each other
-; if possible
-;
-; BUG: fails to initialize the attempt counter,
-;  effectively resulting in the first 500 tries being
-;  either discarded or becoming more than 500
-*/
-/*
-
-*/
+/**
+ * @brief Places all towers of wizardry and ensures tower tiles are land on both planes.
+ *
+ * @details
+ * Repeatedly samples candidate map squares and accepts a location only when all
+ * placement constraints pass. Accepted constraints include minimum separation
+ * from previously placed towers and minimum distance from all existing nodes.
+ *
+ * The candidate acceptance gate intentionally preserves original behavior:
+ * a location is retried when the sampled square is ocean on both planes and
+ * the random escape roll does not trigger. As a result, rare ocean placements
+ * can still be accepted via the escape path.
+ *
+ * Once a valid location is found, the function writes tower coordinates and
+ * owner state into `_TOWERS`, calls `Build_Landmass()` for Arcanus and Myrror
+ * at that coordinate, and sets both plane tiles to `tt_Grasslands1`.
+ *
+ * @return void
+ *
+ * @note Mutates global tower records and world terrain state.
+ * @note Preserves historical retry/relaxation behavior where `tries` grows,
+ *       then relaxes `min_distance` after threshold pressure.
+ * @warning Uses RNG-driven placement and may perform many retries before
+ *          placing all towers.
+ *
+ * @see Build_Landmass
+ * @see Delta_XY_With_Wrap
+ */
 void Generate_Towers(void)
 {
     int16_t tries = 0;
-    int16_t Min_Distance = 0;
+    int16_t min_distance = 0;
     int16_t wy = 0;
     int16_t wx = 0;
-    int16_t itr1 = 0;  // _DI_
-    int16_t itr2 = 0;  // _SI_
+    int16_t itr1 = 0;
+    int16_t itr2 = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    Min_Distance = 10;
+    min_distance = 10;
 
-    for(itr1 = 0; itr1 < NUM_TOWERS; itr1++)
+    itr1 = 0;
+    while(itr1 < NUM_TOWERS)
     {
 
-        while(1)
+        tries++;  /* OGBUG  uninitialized */
+        if(tries > 500)
         {
-
-            tries++;  // BUGBUG uninitialized!
-
-            if(tries > 500)
-            {
-
-                tries = 450;
-
-                Min_Distance--;
-
-            }
-
-            wx = (2 + Random(54));
-            wy = (2 + Random(34));
-
-            if(
-                (p_world_map[ARCANUS_PLANE][wy][wx] != tt_Ocean)
-                ||
-                (p_world_map[MYRROR_PLANE][wy][wx] != tt_Ocean)
-                ||
-                (Random(40) == 1)
-            )
-            {
-
-                for(itr2 = 0; itr2 < itr1; itr2++)
-                {
-
-                    if(Delta_XY_With_Wrap(wx, wy, _TOWERS[itr2].wx, _TOWERS[itr2].wy, WORLD_WIDTH) < Min_Distance)
-                    {
-
-                        break;
-
-                    }
-
-                }
-
-                for(itr2 = 0; itr2 < NUM_NODES; itr2++)
-                {
-
-                    if(Delta_XY_With_Wrap(wx, wy, _NODES[itr2].wx, _NODES[itr2].wy, WORLD_WIDTH) < 4)
-                    {
-
-                        break;
-
-                    }
-
-                }
-
-                _TOWERS[itr1].wx = (int8_t)wx;
-                _TOWERS[itr1].wy = (int8_t)wy;
-                _TOWERS[itr1].owner_idx = ST_UNDEFINED;
-
-                Build_Landmass(ARCANUS_PLANE, wx, wy);
-                Build_Landmass(MYRROR_PLANE, wx, wy);
-
-                p_world_map[ARCANUS_PLANE][wy][wx] = tt_Grasslands1;
-                p_world_map[MYRROR_PLANE][wy][wx] = tt_Grasslands1;
-
-                break;
-
-            }
-
+            tries = 450;
+            min_distance--;
         }
 
+        /* Generate random coordinates within map margins */
+        wx = (2 + Random(54));
+        wy = (2 + Random(34));
+
+        /* Check if selected tile is Ocean on both planes (Arcanus and Myrror) */
+        if(
+            (p_world_map[ARCANUS_PLANE][wy][wx] == tt_Ocean)
+            &&
+            (p_world_map[MYRROR_PLANE][wy][wx] == tt_Ocean)
+            &&
+            (Random(40) > 1)  /* 2.5%  1:40 */
+        )
+        {
+            continue;
+        }
+
+        for(itr2 = 0; itr2 < itr1; itr2++)
+        {
+            if(Delta_XY_With_Wrap(wx, wy, _TOWERS[itr2].wx, _TOWERS[itr2].wy, WORLD_WIDTH) < min_distance)
+            {
+                break;
+            }
+        }
+        if (itr2 < itr1)
+        {
+            continue;
+        }
+        for(itr2 = 0; itr2 < NUM_NODES; itr2++)
+        {
+            if(Delta_XY_With_Wrap(wx, wy, _NODES[itr2].wx, _NODES[itr2].wy, WORLD_WIDTH) < 4)
+            {
+                break;
+            }
+        }
+        if (itr2 < NUM_NODES)
+        {
+            continue;
+        }
+
+        /* Successfully found a location; update tower data */
+        _TOWERS[itr1].wx = (int8_t)wx;
+        _TOWERS[itr1].wy = (int8_t)wy;
+        _TOWERS[itr1].owner_idx = ST_UNDEFINED;
+
+        /* Ensure tower is placed on land by generating landmass around it */
+        Build_Landmass(ARCANUS_PLANE, wx, wy);
+        Build_Landmass(MYRROR_PLANE, wx, wy);
+
+        /* Set the specific tower tile to Grasslands on both planes */
+        p_world_map[ARCANUS_PLANE][wy][wx] = tt_Grasslands1;
+        p_world_map[MYRROR_PLANE][wy][wx] = tt_Grasslands1;
+
+        itr1++;
     }
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Generate_Towers rng_call=%llu", (unsigned long long)g_random_call_count);
+
 }
 
 
@@ -1476,7 +1484,7 @@ void Init_Landmasses(int16_t wp)
  *
  * Conversion is done by repeatedly picking random node indices and converting
  * only nodes that are both on the selected plane and currently Sorcery. For
- * each successful conversion, the node type in `_NODES[]` and the map tile in
+ * each successful conversion, the node type in `_NODES[]` and the map square in
  * `p_world_map` are updated, and `Build_Landmass()` is called for the node
  * coordinate.
  *
@@ -2089,7 +2097,7 @@ void Generate_Landmasses(int16_t wp)
                         (next_wy >= (WORLD_HEIGHT - 4))
                     )
                     {
-                        /* Out of bounds, reset and try again from current tile */
+                        /* Out of bounds, reset and try again from current square */
                         new_direction = ST_UNDEFINED;
                     }
                     else
