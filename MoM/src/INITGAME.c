@@ -743,7 +743,7 @@ void Init_Players(void)
         _players[itr_players].research_cost_remaining = 0;
         _players[itr_players].skill_ratio = 33;
         _players[itr_players].mana_ratio = 33;
-        _players[itr_players].research_ratio = 33;
+        _players[itr_players].research_ratio = 34;
         _players[itr_players].spells_list[spl_Spell_Of_Mastery] = 3;
         _players[itr_players].casting_spell_idx = spl_NONE;
         _players[itr_players].casting_cost_remaining = 0;
