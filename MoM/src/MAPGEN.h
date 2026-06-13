@@ -123,7 +123,7 @@ void Set_Square_Explored_Bits(int16_t wp, int16_t wx, int16_t wy, int16_t bits);
 void Movement_Mode_Cost_Maps(int16_t wp);
 
 // MGC o51p35
-int16_t TILE_InvalidOutflow(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Is_Bad_River_Mouth(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p36
 void Draw_Building_The_Worlds(int16_t percent);

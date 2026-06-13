@@ -4139,7 +4139,7 @@ void Shuffle_Terrains(void)
  * 6) Enforces hard limits: more than 30 attempts, path length > 28, or outflow
  *    reached with length < 4 all fail.
  * 7) Validates the endpoint and its cardinal neighborhood with
- *    `TILE_InvalidOutflow`; any invalid side fails the whole path.
+ *    `Square_Is_Bad_River_Mouth`; any invalid side fails the whole path.
  * 8) On success, writes `1000` river placeholders for each stored path square.
  *
  * Final river graphic selection and shore outlet shaping are deferred to
@@ -4162,7 +4162,7 @@ int16_t River_Path(int16_t wp)
     int16_t next_wy = 0;
     int16_t next_wx = 0;
     int16_t attemps = 0;
-    int16_t Have_Outflow = 0;
+    int16_t reached_mouth = 0;
     int16_t direction = 0;
     int16_t itr = 0;
     int16_t same_dir = 0;  /* BUGBUG  as coded, should just be a 'first run' flag; looks like new_direction from Generate_Landmasses(), c&p error? */
@@ -4194,15 +4194,16 @@ int16_t River_Path(int16_t wp)
     wx_array[0] = base_wx;
     wy_array[0] = base_wy;
     length = 1;
-    Have_Outflow = ST_FALSE;
+    reached_mouth = ST_FALSE;
     attemps = 0;
     downstream = (Random(4) - 1);
     same_dir = ST_UNDEFINED;
     niu_directions_array[0] = downstream;
 
-    while(Have_Outflow == ST_FALSE)
+    while(reached_mouth == ST_FALSE)
     {
 
+        /* Determine next direction */
         if(
             (Random(2) > 1)
             ||
@@ -4213,6 +4214,7 @@ int16_t River_Path(int16_t wp)
         }
         else
         {
+            /* Randomly pick direction that isn't the opposite of downstream */
             do
             {
                 direction = (Random(4) - 1);
@@ -4223,6 +4225,7 @@ int16_t River_Path(int16_t wp)
 
         same_dir = direction;
 
+        /* Calculate next tile coordinates based on direction */
         next_wx = wx_array[(length - 1)] + dir_chg_tbl_wx[direction];
         next_wy = wy_array[(length - 1)] + dir_chg_tbl_wy[direction];
 
@@ -4231,53 +4234,85 @@ int16_t River_Path(int16_t wp)
         attemps++;
         if(attemps > 30)
         {
-            LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=River_Path rng_call=%llu", (unsigned long long)g_random_call_count);
+            LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
             return ST_FALSE;
         }
 
+        /* Ensure next tile is clear of terrain specials */
         if(_map_square_terrain_specials[((wp * WORLD_SIZE) + (next_wy * WORLD_WIDTH) + next_wx)] != 0) { continue; }
+        /* Check for invalid terrain on next tile */
         if(Square_Is_Mountain_NewGame(next_wx, next_wy, wp) == ST_TRUE) { continue; }
         if(Square_Is_Hills_NewGame(next_wx, next_wy, wp)    == ST_TRUE) { continue; }
         if(Square_Is_Node_NewGame(next_wx, next_wy, wp)    == ST_TRUE) { continue; }
         if(Square_Is_Desert_NewGame(next_wx, next_wy, wp)   == ST_TRUE) { continue; }
 
-        if(Square_Is_River_NewGame(next_wx, next_wy, wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
+        /* If we hit another river, we have an outflow */
+        if(Square_Is_River_NewGame(next_wx, next_wy, wp) == ST_TRUE) { reached_mouth = ST_TRUE; }
 
         wx_array[length] = next_wx;
         wy_array[length] = next_wy;
 
         length++;
 
-        if(Square_Is_Ocean_NewGame((next_wx    ), (next_wy - 1), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
-        if(Square_Is_Ocean_NewGame((next_wx - 1), (next_wy    ), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
-        if(Square_Is_Ocean_NewGame((next_wx    ), (next_wy    ), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
-        if(Square_Is_Ocean_NewGame((next_wx + 1), (next_wy    ), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
-        if(Square_Is_Ocean_NewGame((next_wx    ), (next_wy + 1), wp) == ST_TRUE) { Have_Outflow = ST_TRUE; }
+        if(Square_Is_Ocean_NewGame((next_wx    ), (next_wy - 1), wp) == ST_TRUE) { reached_mouth = ST_TRUE; }
+        if(Square_Is_Ocean_NewGame((next_wx - 1), (next_wy    ), wp) == ST_TRUE) { reached_mouth = ST_TRUE; }
+        if(Square_Is_Ocean_NewGame((next_wx    ), (next_wy    ), wp) == ST_TRUE) { reached_mouth = ST_TRUE; }
+        if(Square_Is_Ocean_NewGame((next_wx + 1), (next_wy    ), wp) == ST_TRUE) { reached_mouth = ST_TRUE; }
+        if(Square_Is_Ocean_NewGame((next_wx    ), (next_wy + 1), wp) == ST_TRUE) { reached_mouth = ST_TRUE; }
 
-        if(length > 28) { return ST_FALSE; }
+        if(length > 28)
+        {
+            LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+            return ST_FALSE;
+        }
 
         same_dir = direction;
 
     }
 
-    if((Have_Outflow != ST_FALSE) && (length < 4)) { return ST_FALSE; }
+    /* Post-generation validation */
+    if(length < 4)
+    {
+        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        return ST_FALSE;
+    }
 
+    /* Ensure outflow point isn't invalid */
     end_wx = wx_array[(length - 1)];
     end_wy = wy_array[(length - 1)];
+    if(Square_Is_Bad_River_Mouth((end_wx    ), (end_wy - 1), wp) == ST_TRUE)  /* N */
+    {
+        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        return ST_FALSE;
+    }
+    if(Square_Is_Bad_River_Mouth((end_wx - 1), (end_wy    ), wp) == ST_TRUE)  /* W */
+    {
+        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        return ST_FALSE;
+    }
+    if(Square_Is_Bad_River_Mouth((end_wx    ), (end_wy    ), wp) == ST_TRUE)  /* C */
+    {
+        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        return ST_FALSE;
+    }
+    if(Square_Is_Bad_River_Mouth((end_wx + 1), (end_wy    ), wp) == ST_TRUE)  /* E */
+    {
+        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        return ST_FALSE;
+    }
+    if(Square_Is_Bad_River_Mouth((end_wx    ), (end_wy + 1), wp) == ST_TRUE)  /* S */
+    {
+        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        return ST_FALSE;
+    }
 
-    // NOTE(drake178): BUG? some shore types are excluded from becoming a river outflow despite having the right surface
-    if(TILE_InvalidOutflow((end_wx    ), (end_wy - 1), wp) == ST_TRUE) { return ST_FALSE; }  /* N */
-    if(TILE_InvalidOutflow((end_wx - 1), (end_wy    ), wp) == ST_TRUE) { return ST_FALSE; }  /* W */
-    if(TILE_InvalidOutflow((end_wx    ), (end_wy    ), wp) == ST_TRUE) { return ST_FALSE; }  /* C */
-    if(TILE_InvalidOutflow((end_wx + 1), (end_wy    ), wp) == ST_TRUE) { return ST_FALSE; }  /* E */
-    if(TILE_InvalidOutflow((end_wx    ), (end_wy + 1), wp) == ST_TRUE) { return ST_FALSE; }  /* S */
-
+    /* Write river tiles to world map */
     for(itr = 0; itr < length; itr++)
     {
         p_world_map[wp][wy_array[itr]][wx_array[itr]] = 1000;
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=River_Path rng_call=%llu", (unsigned long long)g_random_call_count);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     return ST_TRUE;
 }
@@ -6279,21 +6314,30 @@ void Movement_Mode_Cost_Maps(int16_t wp)
 
 
 // MGC o51p35
-// drake178: TILE_InvalidOutflow()
-/*
-; returns 1 if the square is not a valid river outflow
-; square, or 0 otherwise
-;
-; BUG?: why are these shore tiles excluded, and why
-;  are land tiles included?
-*/
-/*
-Something with which directions rivers flow or just the random walker?
-
-_Shore10111000  0x062   98
-_Shore10101111  0x0A1  161
-*/
-int16_t TILE_InvalidOutflow(int16_t wx, int16_t wy, int16_t wp)
+/**
+ * @brief Checks whether a square is an invalid river-mouth terrain for endpoint validation.
+ *
+ * @details
+ * Reads the map-square terrain on the specified plane, normalizes it with
+ * `TerType_Count` modulo, and returns `ST_TRUE` only when the resulting terrain
+ * id falls within the blocked shore subtype range
+ * `_Shore10111000.._Shore10101111`.
+ *
+ * This helper is used by river generation endpoint checks to reject river mouths
+ * that terminate on incompatible shore topology.
+ *
+ * @param wx World X coordinate to test.
+ * @param wy World Y coordinate to test.
+ * @param wp World plane index containing the square.
+ *
+ * @return int16_t
+ * @retval ST_TRUE  The square terrain is in the disallowed river-mouth range.
+ * @retval ST_FALSE The square terrain is acceptable for river-mouth validation.
+ *
+ * @note Accesses `p_world_map` directly and assumes caller-provided coordinates
+ *       are valid for the selected plane.
+ */
+int16_t Square_Is_Bad_River_Mouth(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
     terrain_type = (p_world_map[wp][wy][wx] % TerType_Count);

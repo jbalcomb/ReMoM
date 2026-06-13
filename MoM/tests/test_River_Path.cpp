@@ -58,7 +58,7 @@
 
     Step 5 -- Final validation.
         - If the path has outflow but length < 4, reject.  Rivers must be at least 4 squares long.
-        - Check the 5-square cardinal cross around the endpoint for invalid outflow shore types via TILE_InvalidOutflow().
+        - Check the 5-square cardinal cross around the endpoint for invalid outflow shore types via Square_Is_Bad_River_Mouth().
 
     Step 6 -- Commit the path.
         For each recorded square, write the placeholder value TT_RIVER_PLACEHOLDER (1000) into p_world_map[wp][wy][wx].
