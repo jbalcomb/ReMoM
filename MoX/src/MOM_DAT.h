@@ -1392,7 +1392,46 @@ struct s_WIZ_DIPL
 
 #pragma pack(push)
 #pragma pack(2)
-// sizeof:  4C8h  1224d
+/**
+ * @brief Per-player Wizard record: identity, magical resources, AI strategy, and diplomatic state.
+ *
+ * One slot per player (human or AI) in the game. Backs the global array
+ * `_players[NUM_PLAYERS]` (see MOX_DAT.c). Aggregates everything that
+ * persists about a Wizard across turns: name and banner, spellbook / retort
+ * picks, mana / research / skill economy, the spell currently being cast and
+ * the spell currently being researched, the Heroes roster and Vault items,
+ * overland enchantments, diplomatic stance toward the other players, and the
+ * AI's evolving strategy counters.
+ *
+ * Layout is `#pragma pack(2)` to match the on-disk save format. Field offsets
+ * in the leading comments are byte offsets within the struct (sizeof == 0x4C8 == 1224).
+ *
+ * @note Manifest-constant dependencies:
+ *  - @c LEN_WIZARD_NAME           — MOX_BASE.h
+ *  - @c NUM_PLAYERS               — MOM_DEF.h
+ *  - @c NUM_RESEARCH_SPELLS       — MOM_DEF.h
+ *  - @c NUM_HEROES                — MOM_DEF.h
+ *  - @c NUM_VAULT_ITEM_SLOTS      — MOM_DEF.h
+ *  - @c NUM_SPELLS                — MOM_DEF.h
+ *  - @c NUM_OVERLAND_ENCHANTMENTS — MOM_DEF.h
+ *
+ * @note Enum dependencies:
+ *  - @c enum_BANNER_COLOR_ID  — MOX_DEF.h  (banner_id)
+ *  - @c e_AI_Personality      — MOM_DAT.h  (Personality)
+ *  - @c AI_Objective          — MOM_DAT.h  (Objective)
+ *  - @c e_SPELL_BOOK_REALM    — MOM_DAT.h  (spellranks[] is indexed by sbr_* in {Nature, Sorcery, Chaos, Life, Death})
+ *
+ * @note Embedded struct types (all defined earlier in this file):
+ *  - @c s_OWNED_HERO   — Heroes[NUM_HEROES] roster
+ *  - @c s_WIZ_DIPL     — diplomatic relations vector
+ *  - @c s_Astr_Data    — historian/astrologer snapshot
+ *
+ * @note Retorts block at offset 0x64..0x75 is laid out as 18 individual int8_t
+ *       fields (alchemy, warlord, ..., artificer) rather than an array; preserve
+ *       the order — it is observed by save/load and by retort-iteration code.
+ *
+ * sizeof: 4C8h  1224d
+ */
 struct s_WIZARD
 {
     /* 0000 */ uint8_t wizard_id;               /* 1-byte, signed;  player_idx  MoO2: player_num, player_id */
