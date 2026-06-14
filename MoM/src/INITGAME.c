@@ -348,24 +348,44 @@ void Init_Summoning_Circle_And_Spell_Of_Mastery(void)
 
 
 // MGC o56p6
-// drake178: WIZ_SetPersonalities()
 // MoO2  Module: KEN  Init_NPC_Personalities_Objectives_Themes_()
 /*
-sets the primary and secondary realms into each
-player's wizard record, then rolls out the AI
-personalities and objectives based on that and the
-retorts already stored
-BUG: the guaranteed AI researchable spells for Hard
- and Impossible will also remove those spells if
- the wizard already has them
-BUG: 2+ realm wizards with Nature as the primary will
- also always set that as the secondary
+sets the primary and secondary realms into each player's wizard record, then rolls out the AI personalities and objectives based on that and the retorts already stored
+BUG: the guaranteed AI researchable spells for Hard and Impossible will also remove those spells if the wizard already has them
+BUG: 2+ realm wizards with Nature as the primary will also always set that as the secondary
 */
 /*
     sets Primary_Realm and Secondary_Realm for all players
     sets starting spells for AI players
     sets Personality and Object for AI players
 */
+/**
+ * @brief Derives primary/secondary realms, seeds AI starting spells, and assigns AI personality/objective.
+ *
+ * @details
+ * Performs new-game magic-profile initialization in two stages:
+ * - Human player: determines `Prim_Realm` and `Sec_Realm` from spellbook ranks,
+ *   with secondary collapsing to primary when no second realm rank exists.
+ * - AI players (`1 .. _num_players-1`):
+ *   - determines primary/secondary realms from spellbook ranks,
+ *   - grants realm-based starting summon spells,
+ *   - on hard+ difficulty applies additional realm-based spell seeding,
+ *   - builds weighted personality/objective pools from realm tables,
+ *   - applies retort-based weight modifiers,
+ *   - draws weighted random `Personality` and `Objective` assignments.
+ *
+ * The function also enforces realm-ethic constraints in weighting
+ * (`Life` cannot be maniacal, `Death` cannot be peaceful) before weighted picks.
+ *
+ * @return void
+ *
+ * @note Mutates `_players[]` fields including `Prim_Realm`, `Sec_Realm`,
+ *       `spells_list`, `Personality`, and `Objective`.
+ * @note Uses global weighting tables `TBL_AI_Realm_PRS` and
+ *       `TBL_AI_Realm_OBJ`.
+ * @warning Preserves legacy behaviors and known quirks documented in nearby
+ *          comments (including realm/spell mismatch checks in hard+ seeding).
+ */
 void Init_Magic_Personalities_Objectives(void)
 {
     int16_t AI_OBJ_Weights[6] = { 0, 0, 0, 0, 0, 0 };
@@ -377,13 +397,13 @@ void Init_Magic_Personalities_Objectives(void)
     int16_t Picked_Objective = 0;
     int16_t Picked_Personality = 0;
     int16_t spellranks = 0;
-    int16_t itr = 0;  // _SI_
-    int16_t itr_players = 0;  // _DI_
+    int16_t itr = 0;
+    int16_t itr_players = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    // ; loop through the human player's bookshelf to find
-    // ; the realm they have the most books of
+    /* Phase 1 */
+    /* Determine human player's primary and secondary realms */
     Primary_Realm = 0;
     spellranks = _players[HUMAN_PLAYER_IDX].spellranks[0];
     for(itr = 1; itr < NUM_MAGIC_TYPES; itr++)
@@ -394,29 +414,29 @@ void Init_Magic_Personalities_Objectives(void)
             spellranks = _players[HUMAN_PLAYER_IDX].spellranks[itr];
         }
     }
-
-    // ; loop through the human player's bookshelf to find
-    // ; the realm they have the second most books of
     Secondary_Realm = 0;
     spellranks = _players[HUMAN_PLAYER_IDX].spellranks[0];
     for(itr = 1; itr < NUM_MAGIC_TYPES; itr++)
     {
         if(_players[HUMAN_PLAYER_IDX].spellranks[itr] > spellranks)
         {
-            Secondary_Realm = itr;
-            spellranks = _players[HUMAN_PLAYER_IDX].spellranks[itr];
+            if(itr != Primary_Realm)
+            {
+                Secondary_Realm = itr;
+                spellranks = _players[HUMAN_PLAYER_IDX].spellranks[itr];
+            }
         }
     }
-
     if(_players[HUMAN_PLAYER_IDX].spellranks[Secondary_Realm] == 0)
     {
         Secondary_Realm = Primary_Realm;
     }
-
     _players[HUMAN_PLAYER_IDX].Prim_Realm = Primary_Realm;
-
     _players[HUMAN_PLAYER_IDX].Sec_Realm = Secondary_Realm;
 
+
+    /* Phase 2 */
+    /* Loop through AI players */
     for(itr_players = 1; itr_players < _num_players; itr_players++)
     {
         Primary_Realm = 0;
@@ -503,8 +523,11 @@ void Init_Magic_Personalities_Objectives(void)
         {
             if(_players[itr_players].spellranks[itr] > spellranks)
             {
-                Secondary_Realm = itr;
-                spellranks = _players[itr_players].spellranks[itr];
+                if(itr != Primary_Realm)
+                {
+                    Secondary_Realm = itr;
+                    spellranks = _players[itr_players].spellranks[itr];
+                }
             }
         }
     
@@ -517,12 +540,12 @@ void Init_Magic_Personalities_Objectives(void)
     
         _players[itr_players].Sec_Realm = Secondary_Realm;
     
-        for(itr = 1; itr < 6; itr++)
+        for(itr = 0; itr < 6; itr++)
         {
             AI_PRS_Weights[itr] = TBL_AI_Realm_PRS[Primary_Realm][itr];
         }
 
-        for(itr = 1; itr < 5; itr++)
+        for(itr = 0; itr < 5; itr++)
         {
             AI_OBJ_Weights[itr] = TBL_AI_Realm_OBJ[Primary_Realm][itr];
         }
@@ -562,25 +585,31 @@ void Init_Magic_Personalities_Objectives(void)
             AI_PRS_Weights[AI_PRS_AGGRESSIVE] += 2;
         }
 
+/*
+    BEGIN:  OBJ
+*/
         if(_players[itr_players].alchemy == 1)
         {
-            AI_PRS_Weights[AI_OBJ_PERFECTIONIST] += 2;
+            AI_OBJ_Weights[AI_OBJ_PERFECTIONIST] += 2;
         }
 
         if(_players[itr_players].archmage == 1)
         {
-            AI_PRS_Weights[AI_OBJ_THEURGIST] += 4;
+            AI_OBJ_Weights[AI_OBJ_THEURGIST] += 4;
         }
 
         if(_players[itr_players].myrran == 1)
         {
-            AI_PRS_Weights[AI_OBJ_EXPANSIONIST] += 4;
+            AI_OBJ_Weights[AI_OBJ_EXPANSIONIST] += 4;
         }
 
         if(_players[itr_players].conjurer == 1)
         {
-            AI_PRS_Weights[AI_OBJ_MILITARIST] += 3;
+            AI_OBJ_Weights[AI_OBJ_MILITARIST] += 3;
         }
+/*
+    END:  OBJ
+*/
 
         if(Primary_Realm == sbr_Life)
         {
@@ -607,17 +636,17 @@ void Init_Magic_Personalities_Objectives(void)
         }
 
         Max_Value = 0;
-        for(itr = 0; itr < 6; itr++)
+        for(itr = 0; itr < 5; itr++)
         {
             Max_Value += AI_OBJ_Weights[itr];
         }
         Random_Result = Random(Max_Value);
         Picked_Objective = 0;
-        Random_Result -= AI_OBJ_Weights[AI_PRS_MANIACAL];
-        while((Random_Result > 0) && (Picked_Objective < 5))
+        Random_Result -= AI_OBJ_Weights[AI_OBJ_PRAGMATIST];
+        while((Random_Result > 0) && (Picked_Objective < 4))
         {
             Picked_Objective++;
-            Random_Result -= AI_OBJ_Weights[Picked_Personality];
+            Random_Result -= AI_OBJ_Weights[Picked_Objective];
         }
 
         _players[itr_players].Personality = Picked_Personality;
@@ -626,7 +655,8 @@ void Init_Magic_Personalities_Objectives(void)
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Magic_Personalities_Objectives rng_call=%llu", (unsigned long long)g_random_call_count);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
 }
 
 
@@ -1388,7 +1418,7 @@ void Init_Computer_Players_Spell_Library(void)
                                         (
                                             (sbr * NUM_SPELLS_PER_MAGIC_REALM)
                                             +
-                                            (_player_start_spells[itr].realms[pssr_Nature].spells[itr2])
+                                            (_player_start_spells[itr].realms[sbr_Nature].spells[itr2])
                                         )
                                     - 1
                                     ) % NUM_SPELLS_PER_MAGIC_REALM
@@ -1400,28 +1430,28 @@ void Init_Computer_Players_Spell_Library(void)
                     {
                         for(itr2 = 0; (_players[itr].spellranks[sbr] - 1) > itr2; itr2++)
                         {
-                            _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + (_player_start_spells[itr].realms[pssr_Sorcery].spells[itr2] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                            _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + (_player_start_spells[itr].realms[sbr_Sorcery].spells[itr2] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
                         }
                     } break;
                     case sbr_Chaos:
                     {
                         for(itr2 = 0; (_players[itr].spellranks[sbr] - 1) > itr2; itr2++)
                         {
-                            _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + (_player_start_spells[itr].realms[pssr_Chaos].spells[itr2] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                            _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + (_player_start_spells[itr].realms[sbr_Chaos].spells[itr2] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
                         }
                     } break;
                     case sbr_Life:
                     {
                         for(itr2 = 0; (_players[itr].spellranks[sbr] - 1) > itr2; itr2++)
                         {
-                            _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + (_player_start_spells[itr].realms[pssr_Life].spells[itr2] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                            _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + (_player_start_spells[itr].realms[sbr_Life].spells[itr2] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
                         }
                     } break;
                     case sbr_Death:
                     {
                         for(itr2 = 0; (_players[itr].spellranks[sbr] - 1) > itr2; itr2++)
                         {
-                            _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + (_player_start_spells[itr].realms[pssr_Death].spells[itr2] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                            _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + (_player_start_spells[itr].realms[sbr_Death].spells[itr2] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
                         }
                     } break;
                 }
@@ -1628,9 +1658,9 @@ END: Knowable - Very Rare
                         {
                             _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + Common_Index)] = sls_Known;
                         }
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Nature].spells[10] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Nature].spells[11] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Nature].spells[12] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Nature].spells[10] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Nature].spells[11] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Nature].spells[12] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
                     } break;
                     case sbr_Sorcery:
                     {
@@ -1638,9 +1668,9 @@ END: Knowable - Very Rare
                         {
                             _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + Common_Index)] = sls_Known;
                         }
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Sorcery].spells[10] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Sorcery].spells[11] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Sorcery].spells[12] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Sorcery].spells[10] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Sorcery].spells[11] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Sorcery].spells[12] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
                     } break;
                     case sbr_Chaos:
                     {
@@ -1648,9 +1678,9 @@ END: Knowable - Very Rare
                         {
                             _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + Common_Index)] = sls_Known;
                         }
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Chaos].spells[10] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Chaos].spells[11] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Chaos].spells[12] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Chaos].spells[10] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Chaos].spells[11] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Chaos].spells[12] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
                     } break;
                     case sbr_Life:
                     {
@@ -1658,9 +1688,9 @@ END: Knowable - Very Rare
                         {
                             _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + Common_Index)] = sls_Known;
                         }
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Life].spells[10] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Life].spells[11] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Life].spells[12] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Life].spells[10] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Life].spells[11] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Life].spells[12] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
                     } break;
                     case sbr_Death:
                     {
@@ -1668,9 +1698,9 @@ END: Knowable - Very Rare
                         {
                             _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + Common_Index)] = sls_Known;
                         }
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Death].spells[10] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Death].spells[11] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
-                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[pssr_Death].spells[12] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Death].spells[10] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Death].spells[11] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
+                        _players[itr].spells_list[sbr * NUM_SPELLS_PER_MAGIC_REALM + ((_player_start_spells[itr].realms[sbr_Death].spells[12] - 1) % NUM_SPELLS_PER_MAGIC_REALM)] = sls_Known;
                     } break;
                 }
 
@@ -1687,278 +1717,10 @@ END: Knowable - Very Rare
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Computer_Players_Spell_Library rng_call=%llu", (unsigned long long)g_random_call_count);
-    
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
 }
-/* GEMINI */
-#if 0
-void Init_Computer_Players_Spell_Library__GEMINI(void)
-{
-    int availability_array[10]; /* [bp-22h] Availability_Array */
-    int available_spells;       /* [bp-0Eh] Available_Spells */
-    int common_index;           /* [bp-0Ch] Common_Index */
-    int in_rarity_index;        /* [bp-0Ah] InRarity_Index */
-    int availability_limit;     /* [bp-08h] Availability_Limit */
-    int sri;                    /* [bp-06h] sri - spell realm index */
-    int sbr;                    /* [bp-04h] sbr - spell book realm index */
-    int itr;                    /* [bp-02h] itr - player iterator */
-    int idk_itr_10;             /* di      itr2 */
 
-    for (itr = 0; itr < _num_players; itr++)
-    {
-        /* Clear all spell library entries for this player */
-        for (sbr = 0; sbr < 6; sbr++)
-        {
-            for (sri = 0; sri < 40; sri++)
-            {
-                /* _players[itr].spells_list[(sbr * 40) + sri] = 0; */
-                _players[itr].spells_list[sbr * 40 + sri] = 0;
-            }
-        }
-
-        for (sbr = 0; sbr < NUM_MAGIC_REALMS; sbr++)
-        {
-            if (sbr == SBR_ARCANE)
-            {
-                /* Arcane spells 0-11 are researchable (1), 13 is starting (2) */
-                _players[itr].spells_list[sbr * 40 + 0] = 1;
-                _players[itr].spells_list[sbr * 40 + 1] = 1;
-                _players[itr].spells_list[sbr * 40 + 2] = 1;
-                _players[itr].spells_list[sbr * 40 + 3] = 1;
-                _players[itr].spells_list[sbr * 40 + 4] = 1;
-                _players[itr].spells_list[sbr * 40 + 5] = 1;
-                _players[itr].spells_list[sbr * 40 + 6] = 1;
-                _players[itr].spells_list[sbr * 40 + 7] = 1;
-                _players[itr].spells_list[sbr * 40 + 8] = 1;
-                _players[itr].spells_list[sbr * 40 + 9] = 1;
-                _players[itr].spells_list[sbr * 40 + 10] = 1;
-                _players[itr].spells_list[sbr * 40 + 11] = 1;
-                _players[itr].spells_list[sbr * 40 + 13] = 2;
-                continue;
-            }
-
-            if (_players[itr].spellranks[sbr] == 0)
-            {
-                continue;
-            }
-
-            if (_players[itr].spellranks[sbr] == 11) /* Max books/special case */
-            {
-                for (idk_itr_10 = 0; idk_itr_10 < 40; idk_itr_10++)
-                {
-                    _players[itr].spells_list[sbr * 40 + idk_itr_10] = 1;
-                }
-
-                /* Grant all common spells as starting spells */
-                for (common_index = 0; common_index < 10; common_index++)
-                {
-                    _players[itr].spells_list[sbr * 40 + common_index] = 2;
-                }
-
-                /* Grant additional starting spells based on realm */
-                switch (sbr)
-                {
-                    case 0: /* Nature */
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[10] - 1) % 40)] = 2;
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[11] - 1) % 40)] = 2;
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[12] - 1) % 40)] = 2;
-                        break;
-                    case 1: /* Sorcery */
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[62] - 1) % 40)] = 2;
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[63] - 1) % 40)] = 2;
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[64] - 1) % 40)] = 2;
-                        break;
-                    case 2: /* Chaos */
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[36] - 1) % 40)] = 2;
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[37] - 1) % 40)] = 2;
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[38] - 1) % 40)] = 2;
-                        break;
-                    case 3: /* Life */
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[49] - 1) % 40)] = 2;
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[50] - 1) % 40)] = 2;
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[51] - 1) % 40)] = 2;
-                        break;
-                    case 4: /* Death */
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[23] - 1) % 40)] = 2;
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[24] - 1) % 40)] = 2;
-                        _players[itr].spells_list[sbr * 40 + ((_player_start_spells.realms[itr].spells[25] - 1) % 40)] = 2;
-                        break;
-                }
-            }
-            else
-            {
-                /* Standard initialization for Rank 1-10 */
-                for (idk_itr_10 = 0; idk_itr_10 < 10; idk_itr_10++) availability_array[idk_itr_10] = 0;
-
-                /* Determine starting common spells limit */
-                switch (_players[itr].spellranks[sbr])
-                {
-                    case 1: availability_limit = 3; break;
-                    case 2: availability_limit = 5; break;
-                    case 3: availability_limit = 6; break;
-                    case 4: availability_limit = 7; break;
-                    case 5: availability_limit = 8; break;
-                    case 6: availability_limit = 9; break;
-                    default: availability_limit = 10; break;
-                }
-
-                /* Select starting common spells from predefined list */
-                for (idk_itr_10 = 0; idk_itr_10 < (_players[itr].spellranks[sbr] - 1); idk_itr_10++)
-                {
-                    int spell_idx;
-                    switch (sbr)
-                    {
-                        case 0: spell_idx = (_player_start_spells.realms[itr].spells[0 + idk_itr_10] - 1) % 40; break;
-                        case 1: spell_idx = (_player_start_spells.realms[itr].spells[39 + idk_itr_10] - 1) % 40; break;
-                        case 2: spell_idx = (_player_start_spells.realms[itr].spells[52 + idk_itr_10] - 1) % 40; break;
-                        case 3: spell_idx = (_player_start_spells.realms[itr].spells[26 + idk_itr_10] - 1) % 40; break;
-                        case 4: spell_idx = (_player_start_spells.realms[itr].spells[13 + idk_itr_10] - 1) % 40; break;
-                        default: spell_idx = 0; break;
-                    }
-                    _players[itr].spells_list[sbr * 40 + spell_idx] = 2;
-                }
-
-                /* Fill out the library until availability_limit commons are present */
-                available_spells = _players[itr].spellranks[sbr] - 1;
-                while (available_spells < availability_limit)
-                {
-                    idk_itr_10 = (Random(10) - 1);
-                    if (_players[itr].spells_list[sbr * 40 + idk_itr_10] == 0)
-                    {
-                        _players[itr].spells_list[sbr * 40 + idk_itr_10] = 1;
-                    }
-                    
-                    /* Re-count library size */
-                    available_spells = 0;
-                    for (idk_itr_10 = 0; idk_itr_10 < 10; idk_itr_10++)
-                    {
-                        if (_players[itr].spells_list[sbr * 40 + idk_itr_10] != 0)
-                            available_spells++;
-                    }
-                }
-
-                /* Process Uncommon Spells (10-19) */
-                if (_players[itr].spellranks[sbr] > 7)
-                {
-                    for (idk_itr_10 = 0; idk_itr_10 < 10; idk_itr_10++)
-                        _players[itr].spells_list[sbr * 40 + 10 + idk_itr_10] = 1;
-                }
-                else
-                {
-                    for (idk_itr_10 = 0; idk_itr_10 < 10; idk_itr_10++) availability_array[idk_itr_10] = 0;
-                    switch (_players[itr].spellranks[sbr])
-                    {
-                        case 1: availability_limit = 1; break;
-                        case 2: availability_limit = 2; break;
-                        case 3: availability_limit = 3; break;
-                        case 4: availability_limit = 4; break;
-                        case 5: availability_limit = 5; break;
-                        case 6: availability_limit = 6; break;
-                        case 7: availability_limit = 8; break;
-                        default: availability_limit = 10; break;
-                    }
-                    for (idk_itr_10 = 0; idk_itr_10 < availability_limit; )
-                    {
-                        in_rarity_index = (Random(10) - 1);
-                        if (availability_array[in_rarity_index] != 1)
-                        {
-                            availability_array[in_rarity_index] = 1;
-                            idk_itr_10++;
-                        }
-                    }
-                    for (idk_itr_10 = 0; idk_itr_10 < 10; idk_itr_10++)
-                    {
-                        if (availability_array[idk_itr_10] == 1)
-                            _players[itr].spells_list[sbr * 40 + 10 + idk_itr_10] = 1;
-                    }
-                }
-
-                /* Process Rare Spells (20-29) */
-                if (_players[itr].spellranks[sbr] > 9)
-                {
-                    for (idk_itr_10 = 0; idk_itr_10 < 10; idk_itr_10++)
-                        _players[itr].spells_list[sbr * 40 + 20 + idk_itr_10] = 1;
-                }
-                else
-                {
-                    for (idk_itr_10 = 0; idk_itr_10 < 10; idk_itr_10++) availability_array[idk_itr_10] = 0;
-                    switch (_players[itr].spellranks[sbr])
-                    {
-                        case 1: availability_limit = 0; break;
-                        case 2: availability_limit = 1; break;
-                        case 3: availability_limit = 2; break;
-                        case 4: availability_limit = 3; break;
-                        case 5: availability_limit = 4; break;
-                        case 6: availability_limit = 5; break;
-                        case 7: availability_limit = 6; break;
-                        case 8: availability_limit = 7; break;
-                        case 9: availability_limit = 9; break;
-                    }
-                    for (idk_itr_10 = 0; idk_itr_10 < availability_limit; )
-                    {
-                        in_rarity_index = (Random(10) - 1);
-                        if (availability_array[in_rarity_index] != 1)
-                        {
-                            availability_array[in_rarity_index] = 1;
-                            idk_itr_10++;
-                        }
-                    }
-                    for (idk_itr_10 = 0; idk_itr_10 < 10; idk_itr_10++)
-                    {
-                        if (availability_array[idk_itr_10] == 1)
-                            _players[itr].spells_list[sbr * 40 + 20 + idk_itr_10] = 1;
-                    }
-                }
-
-                /* Process Very Rare Spells (30-39) */
-                if (_players[itr].spellranks[sbr] > 9)
-                {
-                    for (idk_itr_10 = 0; idk_itr_10 < 10; idk_itr_10++)
-                        _players[itr].spells_list[sbr * 40 + 30 + idk_itr_10] = 1;
-                }
-                else
-                {
-                    for (idk_itr_10 = 0; idk_itr_10 < 10; idk_itr_10++) availability_array[idk_itr_10] = 0;
-                    switch (_players[itr].spellranks[sbr])
-                    {
-                        case 1:
-                        case 2: availability_limit = 0; break;
-                        case 3: availability_limit = 1; break;
-                        case 4: availability_limit = 2; break;
-                        case 5: availability_limit = 3; break;
-                        case 6: availability_limit = 4; break;
-                        case 7: availability_limit = 5; break;
-                        case 8: availability_limit = 6; break;
-                        case 9: availability_limit = 7; break;
-                    }
-                    for (idk_itr_10 = 0; idk_itr_10 < availability_limit; )
-                    {
-                        in_rarity_index = (Random(10) - 1);
-                        if (availability_array[in_rarity_index] != 1)
-                        {
-                            availability_array[in_rarity_index] = 1;
-                            idk_itr_10++;
-                        }
-                    }
-                    for (idk_itr_10 = 0; idk_itr_10 < 10; idk_itr_10++)
-                    {
-                        if (availability_array[idk_itr_10] == 1)
-                            _players[itr].spells_list[sbr * 40 + 30 + idk_itr_10] = 1;
-                    }
-                }
-            }
-        }
-
-        /* Fixed spell indices (e.g., Spell of Mastery, special traits) */
-        _players[itr].spells_list[200] = 2; /* 0xC8 */
-        if (_players[itr].artificer != 0)
-        {
-            _players[itr].spells_list[206] = 2; /* 0xCE */
-            _players[itr].spells_list[210] = 2; /* 0xD2 */
-        }
-    }
-}
-#endif
 
 
 // MGC o56p11

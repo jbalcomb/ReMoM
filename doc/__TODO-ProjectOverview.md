@@ -117,7 +117,7 @@ New Game
     [ ] Init_Heroes
     [ ] Init_Players
     [x] Init_CP_Strategy
-    [ ] Init_Magic_Personalities_Objectives
+    [x] Init_Magic_Personalities_Objectives
     [ ] Init_Summoning_Circle_And_Spell_Of_Mastery
     [ ] Initialize_Messages
     [ ] _players.capital_race

@@ -712,14 +712,7 @@ enum e_MAGIC_REALM
     mr_Nature   = 3,
     mr_Sorcery  = 4
 };
-enum e_PLAYER_START_SPELL_REALM
-{
-    pssr_Nature  = 0,
-    pssr_Death   = 1,
-    pssr_Life    = 2,
-    pssr_Sorcery = 3,
-    pssr_Chaos   = 4
-};
+
 
 /*
     s_WIZARD.spellranks

@@ -357,9 +357,14 @@ int16_t Validate_City_Record(int16_t city_idx)
         return Validate_City_Fail_Range(city_idx, "size", city->size, 0, 127);
     }
 
-    if((city->farmer_count < 0) || (city->farmer_count > city->population))
+    /* OG-MoM never sets farmer_count for neutral-player cities, so the field carries
+       uninitialized data for them — only validate it for player-owned cities. */
+    if(city->owner_idx != NEUTRAL_PLAYER_IDX)
     {
-        return Validate_City_Fail_Range(city_idx, "farmer_count", city->farmer_count, 0, city->population);
+        if((city->farmer_count < 0) || (city->farmer_count > city->population))
+        {
+            return Validate_City_Fail_Range(city_idx, "farmer_count", city->farmer_count, 0, city->population);
+        }
     }
 
     return ST_TRUE;

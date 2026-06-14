@@ -305,7 +305,7 @@ After Stage 1 the RNG cursor sits at the seed Init_Drivers established. Any subs
 | 5.3 | [Init_Heroes()](../MoM/src/INITGAME.c#L2058) | **many** | For each of 5 players × `NUM_HERO_TYPES` heroes: rolls hero abilities via `Random(14)` / `Random(8)` / `Random(NUM_WIZARD_SPECIAL_ABILITIES)` loops ([INITGAME.c:2111, 1017, 1168](../MoM/src/INITGAME.c#L2111)). |
 | 5.4 | `Init_Players()` | varies | Per-player runtime field reset (gold, mana, fame, etc.). |
 | 5.5 | `Init_CP_Strategy()` | varies | AI strategy timers. |
-| 5.6 | [Init_Magic_Personalities_Objectives()](../MoM/src/INITGAME.c#L347) | **many** | Weights-based `Random(Max_Value)` ([INITGAME.c:576, 590](../MoM/src/INITGAME.c#L576)) to pick each AI's personality + objective. Also adds guaranteed researchable spells to AI libraries (Hard/Impossible). |
+| 5.6 | [Init_Magic_Personalities_Objectives()](../MoM/src/INITGAME.c#L369) | **many** | Weights-based `Random(Max_Value)` ([INITGAME.c:609, 623](../MoM/src/INITGAME.c#L609)) to pick each AI's personality + objective. Also adds guaranteed researchable spells to AI libraries (Hard/Impossible). |
 | 5.7 | [Init_Summoning_Circle_And_Spell_Of_Mastery()](../MoM/src/INITGAME.c#L296) | 0 | Copies fortress `wp/wx/wy` into per-player `summon_*`; sets `som_research_cost` (− 3000 if all 5 spellranks == 11). |
 | 5.8 | `Initialize_Messages()` | 0 | Zeros per-player message counters. |
 | 5.9 | [Init_Diplomatic_Relations()](../MoM/src/INITGAME.c#L178) | 0 | Pairwise `Dipl.Visible_Rel` / `Default_Rel` from spellbook diffs (Life/Death/Chaos/Sorcery). |

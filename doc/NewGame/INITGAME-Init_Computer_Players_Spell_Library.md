@@ -34,15 +34,15 @@ Runs once at new-game setup, after `Init_Computer_Players_Wizard_Profile` has se
 
 ## The `_player_start_spells` indexing convention
 
-`_player_start_spells[itr]` is one `s_Init_Base_Realms` per player (`0x82` = 130 bytes = 65 `int16_t`): five 13-word realm blocks. **Those blocks are stored in their own order — `[Nature, Death, Life, Sorcery, Chaos]` — not `sbr` order.** So `realms[]` is indexed by `e_PLAYER_START_SPELL_REALM` ([MOM_DAT.h:715](../../MoX/src/MOM_DAT.h#L715)), *not* by `sbr`:
+`_player_start_spells[itr]` is one `s_Init_Base_Realms` per player (`0x82` = 130 bytes = 65 `int16_t`): five 13-word realm blocks. **Those blocks are stored in their own order — `[Nature, Death, Life, Sorcery, Chaos]` — not `sbr` order.** So `realms[]` is indexed by `e_SPELL_BOOK_REALM` ([MOM_DAT.h:715](../../MoX/src/MOM_DAT.h#L715)), *not* by `sbr`:
 
 | Realm | `sbr_*` | `pssr_*` = `realms[]` index | word base |
 |---|---|---|---|
-| Nature  | 0 | `pssr_Nature` = 0 | 0 |
-| Sorcery | 1 | `pssr_Sorcery` = 3 | 39 |
-| Chaos   | 2 | `pssr_Chaos` = 4 | 52 |
-| Life    | 3 | `pssr_Life` = 2 | 26 |
-| Death   | 4 | `pssr_Death` = 1 | 13 |
+| Nature  | 0 | `sbr_Nature` = 0 | 0 |
+| Sorcery | 1 | `sbr_Sorcery` = 3 | 39 |
+| Chaos   | 2 | `sbr_Chaos` = 4 | 52 |
+| Life    | 3 | `sbr_Life` = 2 | 26 |
+| Death   | 4 | `sbr_Death` = 1 | 13 |
 
 Each stored value is a 1-based global spell id; the realm-local slot is `(value - 1) % 40`, written at `spells_list[sbr*40 + (value-1) % 40]`. The key asymmetry: **the `_player_start_spells` read indexes by `pssr_*`, the `spells_list` write indexes by `sbr`.** Both `switch(sbr)` blocks below use the matching `pssr_*` constant per case, so the permutation is self-documenting and can't drift.
 
@@ -117,8 +117,7 @@ All 40 realm spells `Knowable`, then per realm all 10 commons `Known`, then 3 bo
 
 The `#if 0` `__GEMINI` block (= Piethawn `*.c`) is a raw IDA→C translation — a useful cross-check, not truth:
 
-- **Index math.** GEMINI uses the flat `_player_start_spells.realms[itr].spells[base+idk]` addressing with the correct realm bases `{0,39,52,26,13}`, the `% 40`, and the `sbr*40 +` destination. This reconstruction expresses the same thing through `realms[pssr_X]` + the `e_PLAYER_START_SPELL_REALM` enum.
-- **Rank-11 realm map — GEMINI is wrong here.** Its `switch` labels don't match the offsets it transcribed (it lists Sorcery `62-64`, Chaos `36-38`, Life `49-51`). The asm order is Sorcery `49-51`, Chaos `62-64`, Life `36-38` — i.e. `realms[pssr_Sorcery/pssr_Chaos/pssr_Life]`. GEMINI transcribed the asm case-blocks in memory order without resolving the jump table; **don't trust its rank-11 cases.**
+- **Rank-11 realm map — GEMINI is wrong here.** Its `switch` labels don't match the offsets it transcribed (it lists Sorcery `62-64`, Chaos `36-38`, Life `49-51`). The asm order is Sorcery `49-51`, Chaos `62-64`, Life `36-38` — i.e. `realms[sbr_Sorcery/sbr_Chaos/sbr_Life]`. GEMINI transcribed the asm case-blocks in memory order without resolving the jump table; **don't trust its rank-11 cases.**
 - **Rarity fills / commons die.** GEMINI rolls `Random(10)` and uses the collision-retry `idx++`-inside-`if`, both matching the asm.
 
 ## Sub-functions / external calls
@@ -132,4 +131,4 @@ The `#if 0` `__GEMINI` block (= Piethawn `*.c`) is a raw IDA→C translation —
 - [INITGAME.c:1664-1929](../../MoM/src/INITGAME.c#L1664-L1929) — `__GEMINI` reference translation (`#if 0`).
 - [INITGAME.c:73 — `Init_Computer_Players`](../../MoM/src/INITGAME.c#L73) — caller.
 - [INITGAME-Init_Computer_Players_Wizard_Profile.md](INITGAME-Init_Computer_Players_Wizard_Profile.md) — the preceding AI-setup step; populates the `spellranks[]` this function reads.
-- `NewGame.h` — `s_Init_Base_Realms` / `s_Init_Base_Spells` (`_player_start_spells` layout); `MOM_DAT.h` — `e_PLAYER_START_SPELL_REALM` (`pssr_*`).
+- `NewGame.h` — `s_Init_Base_Realms` / `s_Init_Base_Spells` (`_player_start_spells` layout); `MOM_DAT.h` — `e_SPELL_BOOK_REALM` (`sbr_*`).
