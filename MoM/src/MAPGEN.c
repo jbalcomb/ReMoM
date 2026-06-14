@@ -1287,13 +1287,6 @@ Done_Done:
 
 
 // MGC o51p06
-// drake178: NEWG_ClearLandmasses()
-/*
-; PATCHED / rewritten in the worldgen customizer to
-; block clear both planes at once
-;
-; clears the landmass array for the selected plane
-*/
 /**
  * @brief Clears all landmass identifiers for a single world plane.
  *
@@ -1313,8 +1306,8 @@ Done_Done:
  */
 void Init_Landmasses(int16_t wp)
 {
-    int16_t wy = 0;  // _SI_
-    int16_t wx = 0;  // _CX_
+    int16_t wy = 0;
+    int16_t wx = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
