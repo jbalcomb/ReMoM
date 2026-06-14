@@ -5131,6 +5131,10 @@ int16_t Newgame_Screen_5(void)
                     case 1: { stu_strcpy(message, cnst_Pick_Error_0); } break;
                     case 2: { stu_strcpy(message, cnst_Pick_Error_6); } break;
                 }
+                Deactivate_Auto_Function();
+                Warn0(message);
+                Assign_Auto_Function(Newgame_Screen_5_Draw, 1);
+                NEWG_PickError = 0;
             }
 
             if(leave_screen == ST_FALSE)
@@ -5152,10 +5156,303 @@ int16_t Newgame_Screen_5(void)
 
     Deactivate_Auto_Function();
 
+    /* CLAUDE */
+    /* Diagnostic dump of the realm-slot ordering, so the next reader can see exactly how this screen lays out the
+       human's picks. Realm slots are dumped in this function's own (sbr / identity) order: 0=Nature, 1=Sorcery,
+       2=Chaos, 3=Life, 4=Death. Compare against Init_Computer_Players_Spell_Library, which reads realms[] in pssr
+       order — see doc/NewGame/NEWGAME-Newgame_Screen_5.md "Cross-function observation (DEDU)". Remove once settled. */
+    {
+        int16_t dbg_realm = 0;
+        static const char * dbg_realm_names[5] = { "Nature", "Sorcery", "Chaos", "Life", "Death" };
+        LOG_INFO(LOG_CAT_NEWGAME, "Newgame_Screen_5 end: _players[0].spellranks[0..4] = %d, %d, %d, %d, %d", _players[0].spellranks[0], _players[0].spellranks[1], _players[0].spellranks[2], _players[0].spellranks[3], _players[0].spellranks[4]);
+        for(dbg_realm = 0; dbg_realm < 5; dbg_realm++)
+        {
+            LOG_INFO(LOG_CAT_NEWGAME, "  slot %d (%-7s) _player_start_spells[0].realms[%d].spells[0..12] = %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", dbg_realm, dbg_realm_names[dbg_realm], dbg_realm, _player_start_spells[0].realms[dbg_realm].spells[0], _player_start_spells[0].realms[dbg_realm].spells[1], _player_start_spells[0].realms[dbg_realm].spells[2], _player_start_spells[0].realms[dbg_realm].spells[3], _player_start_spells[0].realms[dbg_realm].spells[4], _player_start_spells[0].realms[dbg_realm].spells[5], _player_start_spells[0].realms[dbg_realm].spells[6], _player_start_spells[0].realms[dbg_realm].spells[7], _player_start_spells[0].realms[dbg_realm].spells[8], _player_start_spells[0].realms[dbg_realm].spells[9], _player_start_spells[0].realms[dbg_realm].spells[10], _player_start_spells[0].realms[dbg_realm].spells[11], _player_start_spells[0].realms[dbg_realm].spells[12]);
+            LOG_INFO(LOG_CAT_NEWGAME, "  slot %d (%-7s) _default_spells[%d].spells[0..12]            = %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", dbg_realm, dbg_realm_names[dbg_realm], dbg_realm, _default_spells[dbg_realm].spells[0], _default_spells[dbg_realm].spells[1], _default_spells[dbg_realm].spells[2], _default_spells[dbg_realm].spells[3], _default_spells[dbg_realm].spells[4], _default_spells[dbg_realm].spells[5], _default_spells[dbg_realm].spells[6], _default_spells[dbg_realm].spells[7], _default_spells[dbg_realm].spells[8], _default_spells[dbg_realm].spells[9], _default_spells[dbg_realm].spells[10], _default_spells[dbg_realm].spells[11], _default_spells[dbg_realm].spells[12]);
+        }
+    }
+
     // NOTE(drake178); BUG: prevents moving backwards if there are no spells to select
     return ngscr_Race;
 
 }
+/* GEMINI */
+#if 0
+int Newgame_Screen_5__GEMINI(void)
+{
+    char Error_Message[186];       /* [bp-0BAh] */
+    int Realm_Order_Array[10];     /* [bp-24h] */
+    int /* far */ *p_default_spells; /* [bp-1Ah] */
+    int Click_Processed;           /* [bp-18h] */
+    int /* far */ *p_start_spells;   /* [bp-16h] */
+    int spell_idx;                 /* [bp-14h] */
+    int Selection_Realm;           /* [bp-12h] */
+    int spellrank_idx;             /* [bp-10h] */
+    int Common_Spells;             /* [bp-0Eh] */
+    int LabelBox_Index;            /* [bp-0Ch] */
+    int itr2;                      /* [bp-0Ah] */
+    int itr3;                      /* [bp-8h] */
+    int input_field_idx;           /* [bp-6h] */
+    int leave_screen;              /* [bp-4h] */
+    int First_Draw_Done;           /* [bp-2h] */
+    int itr;                       /* si */
+    int itr4;                      /* di */
+
+    /* Copy realm order from table to local array */
+    /* SCOPY@(10, TBL_Realm_Order, Realm_Order_Array) */
+    for (itr = 0; itr < 10; itr++) {
+        Realm_Order_Array[itr] = TBL_Realm_Order[itr];
+    }
+
+    /* Load UI resources from LBX file 50 */
+    newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
+    IMG_NewG_RgtOverlay@ = LBX_Reload_Next(newgame_lbx_file__ovr050, 47, _screen_seg);
+    m_shared_pict_segs[0] = LBX_Reload_Next(newgame_lbx_file__ovr050, 48, _screen_seg);
+    m_shared_pict_segs[1] = LBX_Reload_Next(newgame_lbx_file__ovr050, 49, _screen_seg);
+    m_shared_pict_segs[2] = LBX_Reload_Next(newgame_lbx_file__ovr050, 50, _screen_seg);
+    m_shared_pict_segs[3] = LBX_Reload_Next(newgame_lbx_file__ovr050, 51, _screen_seg);
+    newgame_ok_button_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 42, _screen_seg);
+    _ok_inactive_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 43, _screen_seg);
+
+    for (itr = 0; itr < 15; itr++) {
+        /* [bx-111001000011010b] -> likely m_spell_icon_segs based on context */
+        m_spell_icon_segs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, itr + 24, _screen_seg);
+    }
+
+    m_warning_box_top_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 44, _screen_seg);
+    m_warning_box_bottom_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 45, _screen_seg);
+    _selection_marker_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 52, _screen_seg);
+
+    spellpicks_count = 0;
+    NEWG_PickError = 0;
+
+    /* Set up background drawing function */
+    Assign_Auto_Function(j_Newgame_Screen_5_Draw, 1);
+
+    /* Initialize player starting spells to 0 (none selected) */
+    for (itr = 0; itr < 13; itr++) {
+        _player_start_spells.realms[2].spells[itr] = 0; /* Chaos: offset 34h */
+        _player_start_spells.realms[0].spells[itr] = 0; /* Nature: offset 00h */
+        _player_start_spells.realms[1].spells[itr] = 0; /* Sorcery: offset 1Ah */
+        _player_start_spells.realms[3].spells[itr] = 0; /* Life: offset 4Eh */
+        _player_start_spells.realms[4].spells[itr] = 0; /* Death: offset 68h */
+    }
+
+    /* Load static help data */
+    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 36, (unsigned char far *)_help_entries, 0, 30, 10);
+
+    /* Loop through each magic realm to select spells */
+    for (itr2 = 0; itr2 < 5; itr2++) {
+        leave_screen = 1; /* e_ST_TRUE */
+        Selection_Realm = Realm_Order_Array[itr2];
+        NEWG_SpellSel_Realm = Selection_Realm;
+        NEWG_ProfileComplete = 0; /* e_ST_FALSE */
+
+        Clear_Fields();
+        _quit_button = Add_Hot_Key(str_ESC__ovr050);
+        _ok_button = Add_Hidden_Field(251, 181, 282, 196, empty_string__ovr050, -1);
+
+        for (itr = 0; itr < 30; itr++) {
+            m_newgame_fields[itr] = -1; /* e_INVALID_FIELD */
+        }
+
+        /* Check if player has books in this realm */
+        if (_players[0].spellranks[Selection_Realm] > 1) {
+            /* Setup UI fields for spells */
+            Newgame_Screen_5_Spell_Fields(); /* pascal call */
+            leave_screen = 0; /* e_ST_FALSE */
+            First_Draw_Done = 0;
+
+            /* Set pointers based on realm */
+            if (NEWG_SpellSel_Realm == 2) { /* sbr_Chaos */
+                p_start_spells = &_player_start_spells.realms[2].spells[0];
+                p_default_spells = &_default_spells.spells[26]; /* offset 34h */
+                Selection_Realm = 2;
+            }
+            if (NEWG_SpellSel_Realm == 1) { /* sbr_Sorcery */
+                p_start_spells = &_player_start_spells.realms[1].spells[0];
+                p_default_spells = &_default_spells.spells[13]; /* offset 1Ah */
+                Selection_Realm = 1;
+            }
+            if (NEWG_SpellSel_Realm == 0) { /* sbr_Nature */
+                p_start_spells = &_player_start_spells.realms[0].spells[0];
+                p_default_spells = &_default_spells.spells[0];
+                Selection_Realm = 0;
+            }
+            if (NEWG_SpellSel_Realm == 3) { /* sbr_Life */
+                p_start_spells = &_player_start_spells.realms[3].spells[0];
+                p_default_spells = &_default_spells.spells[39]; /* offset 4Eh */
+                Selection_Realm = 3;
+            }
+            if (NEWG_SpellSel_Realm == 4) { /* sbr_Death */
+                p_start_spells = &_player_start_spells.realms[4].spells[0];
+                p_default_spells = &_default_spells.spells[52]; /* offset 68h */
+                Selection_Realm = 4;
+            }
+
+            Common_Spells = _players[0].spellranks[NEWG_SpellSel_Realm] - 1;
+            spellrank_idx = Common_Spells - 1;
+
+            /* Assign default Common spells */
+            for (itr = 0; itr < TBL_SpellsPerBook_C[spellrank_idx]; itr++) {
+                p_start_spells[itr] = p_default_spells[itr];
+            }
+            /* Assign default Uncommon spells */
+            for (itr = 0; itr < TBL_SpellsPerBook_U[spellrank_idx]; itr++) {
+                p_start_spells[itr + 10] = p_default_spells[itr + 10];
+            }
+            /* Assign default Rare spells */
+            for (itr = 0; itr < TBL_SpellsPerBook_R[spellrank_idx]; itr++) {
+                p_start_spells[itr + 12] = p_default_spells[itr + 12];
+            }
+        }
+
+        /* Input loop for the current realm's spell selection */
+        while (leave_screen == 0) {
+            Mark_Time();
+            input_field_idx = Get_Input();
+
+            if (input_field_idx == _quit_button) {
+                return 4; /* Quit */
+            }
+
+            if (input_field_idx == _ok_button) {
+                if (NEWG_ProfileComplete != 0) {
+                    leave_screen = 1;
+                }
+            }
+
+            if (Common_Spells > 0 && First_Draw_Done != 0 && input_field_idx != 0) {
+                LabelBox_Index = 0;
+                spellrank_idx = Common_Spells - 1;
+
+                /* Handle Common Spells interaction */
+                if (TBL_SpellsPerBook_C[spellrank_idx] > 0 && TBL_SpellsPerBook_C[spellrank_idx] < 10) {
+                    for (itr = 0; itr < 2; itr++) {
+                        for (itr3 = 0; itr3 < 5; itr3++) {
+                            spell_idx = (Selection_Realm * 40) + (itr * 5) + itr3 + 1;
+                            if (m_newgame_fields[itr3 + (itr * 5)] == input_field_idx) {
+                                Click_Processed = 0;
+                                /* Check if spell is already selected to toggle it off */
+                                for (itr4 = 0; itr4 < TBL_SpellsPerBook_C[spellrank_idx]; itr4++) {
+                                    if (p_start_spells[itr4] == spell_idx && Click_Processed == 0) {
+                                        p_start_spells[itr4] = 0;
+                                        Click_Processed = 1;
+                                    }
+                                }
+                                /* If not already selected, try to find an empty slot */
+                                if (Click_Processed == 0) {
+                                    for (itr4 = 0; itr4 < TBL_SpellsPerBook_C[spellrank_idx]; itr4++) {
+                                        if (p_start_spells[itr4] == 0 || TBL_SpellsPerBook_C[spellrank_idx] == 1) {
+                                            p_start_spells[itr4] = spell_idx;
+                                            Click_Processed = 1;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (Click_Processed == 0) {
+                                    NEWG_PickError = 2; /* Too many spells selected */
+                                }
+                            }
+                        }
+                    }
+                    LabelBox_Index++;
+                }
+
+                /* Handle Uncommon Spells interaction */
+                if (TBL_SpellsPerBook_U[spellrank_idx] > 0) {
+                    for (itr = 0; itr < 2; itr++) {
+                        for (itr3 = 0; itr3 < 5; itr3++) {
+                            spell_idx = (Selection_Realm * 40) + (itr * 5) + itr3 + 11;
+                            if (m_newgame_fields[itr3 + (itr * 5) + (LabelBox_Index * 10)] == input_field_idx) {
+                                Click_Processed = 0;
+                                for (itr4 = 0; itr4 < TBL_SpellsPerBook_U[spellrank_idx]; itr4++) {
+                                    if (p_start_spells[itr4 + 10] == spell_idx && Click_Processed == 0) {
+                                        p_start_spells[itr4 + 10] = 0;
+                                        Click_Processed = 1;
+                                    }
+                                }
+                                if (Click_Processed == 0) {
+                                    for (itr4 = 0; itr4 < TBL_SpellsPerBook_U[spellrank_idx]; itr4++) {
+                                        if (p_start_spells[itr4 + 10] == 0 || TBL_SpellsPerBook_U[spellrank_idx] == 1) {
+                                            p_start_spells[itr4 + 10] = spell_idx;
+                                            Click_Processed = 1;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (Click_Processed == 0) {
+                                    NEWG_PickError = 2;
+                                }
+                            }
+                        }
+                    }
+                    LabelBox_Index++;
+                }
+
+                /* Handle Rare Spells interaction */
+                if (TBL_SpellsPerBook_R[spellrank_idx] > 0) {
+                    for (itr = 0; itr < 2; itr++) {
+                        for (itr3 = 0; itr3 < 5; itr3++) {
+                            spell_idx = (Selection_Realm * 40) + (itr * 5) + itr3 + 21;
+                            if (m_newgame_fields[itr3 + (itr * 5) + (LabelBox_Index * 10)] == input_field_idx) {
+                                Click_Processed = 0;
+                                for (itr4 = 0; itr4 < TBL_SpellsPerBook_R[spellrank_idx]; itr4++) {
+                                    if (p_start_spells[itr4 + 12] == spell_idx && Click_Processed == 0) {
+                                        p_start_spells[itr4 + 12] = 0;
+                                        Click_Processed = 1;
+                                    }
+                                }
+                                if (Click_Processed == 0) {
+                                    for (itr4 = 0; itr4 < TBL_SpellsPerBook_R[spellrank_idx]; itr4++) {
+                                        if (p_start_spells[itr4 + 12] == 0 || TBL_SpellsPerBook_R[spellrank_idx] == 1) {
+                                            p_start_spells[itr4 + 12] = spell_idx;
+                                            Click_Processed = 1;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (Click_Processed == 0) {
+                                    NEWG_PickError = 2;
+                                }
+                            }
+                        }
+                    }
+                    LabelBox_Index++;
+                }
+            }
+
+            /* Handle UI Errors */
+            if (NEWG_PickError > 0) {
+                if (NEWG_PickError == 1) {
+                    strcpy(Error_Message, cnst_Pick_Error_0); /* "You must select more spells." */
+                } else if (NEWG_PickError == 2) {
+                    strcpy(Error_Message, cnst_Pick_Error_6); /* "You have already selected the maximum number of spells." */
+                }
+                Deactivate_Auto_Function();
+                j_Warn0(Error_Message);
+                Assign_Auto_Function(j_Newgame_Screen_5_Draw, 1);
+                NEWG_PickError = 0;
+            }
+
+            /* Rendering block */
+            if (leave_screen == 0) {
+                Newgame_Screen_5_Draw(); /* pascal call */
+                Apply_Palette();
+                Toggle_Pages();
+                if (First_Draw_Done == 0) {
+                    First_Draw_Done = 1;
+                    Copy_On_To_Off_Page();
+                }
+                Release_Time(2);
+            }
+        }
+    }
+
+    Deactivate_Auto_Function();
+    return 6; /* Proceed to next screen */
+}
+#endif
 
 
 // MGC  o50p22
