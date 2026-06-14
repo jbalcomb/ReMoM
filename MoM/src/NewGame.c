@@ -1434,6 +1434,8 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
     int16_t custom_game_flag = 0;  // _DI_
     int16_t newgame_state = 0;  // _SI_
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     _landsize = 1;
     _magic = 1;
     _num_players = 1;  // ; NewGame: magic.opponents + 1
@@ -1455,6 +1457,7 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
             case ST_UNDEFINED:
             {
                 // return;  // ¿ cancel ?
+                LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
                 /* HACK */  return ST_FALSE;
             } break;
             case ngscr_Options:
@@ -1561,6 +1564,8 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
 #ifdef PLATFORM
     LOG_INFO(LOG_CAT_NEWGAME, "SUCCESS: PLATFORM is #defined");
 #endif
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     /* HACK */  return ST_TRUE;
 

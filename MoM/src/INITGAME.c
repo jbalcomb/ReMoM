@@ -74,27 +74,64 @@ void Draw_Building_The_Worlds(int16_t percent);
  */
 void Init_Computer_Players(void)
 {
-    int16_t itr_num_players = 0;
+    int16_t itr_players = 0;
     int16_t itr2 = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     Init_Computer_Players_Wizard_Profile();
 
-    for(itr_num_players = 1; itr_num_players < _num_players; itr_num_players++)
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: _players[%d].spellranks[]: N%d, S%d, C%d, L%d, D%d",
+                itr_players,
+                _players[itr_players].spellranks[sbr_Nature],
+                _players[itr_players].spellranks[sbr_Sorcery],
+                _players[itr_players].spellranks[sbr_Chaos],
+                _players[itr_players].spellranks[sbr_Life],
+                _players[itr_players].spellranks[sbr_Death]);
+    }
+    // HERE:  We have logged and verified the spellranks values betwen OG-MoM and ReMoM, 100% match.
+
+    for(itr2 = 0; itr2 < 13; itr2++)
+    {
+        LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: _default_spells[%d]: N%d, S%d, C%d, L%d, D%d",
+                itr2,
+                _default_spells[sbr_Nature].spells[itr2],
+                _default_spells[sbr_Sorcery].spells[itr2],
+                _default_spells[sbr_Chaos].spells[itr2],
+                _default_spells[sbr_Life].spells[itr2],
+                _default_spells[sbr_Death].spells[itr2]);
+    }
+
+    for(itr_players = 1; itr_players < _num_players; itr_players++)
     {
 
         for(itr2 = 0; itr2 < 13; itr2++)
         {
 
-            _player_start_spells[itr_num_players].realms[sbr_Nature].spells[itr2]   = _default_spells[sbr_Nature].spells[itr2];
-            _player_start_spells[itr_num_players].realms[sbr_Sorcery].spells[itr2]  = _default_spells[sbr_Sorcery].spells[itr2];
-            _player_start_spells[itr_num_players].realms[sbr_Chaos].spells[itr2]    = _default_spells[sbr_Chaos].spells[itr2];
-            _player_start_spells[itr_num_players].realms[sbr_Life].spells[itr2]     = _default_spells[sbr_Life].spells[itr2];
-            _player_start_spells[itr_num_players].realms[sbr_Death].spells[itr2]    = _default_spells[sbr_Death].spells[itr2];
+            _player_start_spells[itr_players].realms[sbr_Nature].spells[itr2]   = _default_spells[sbr_Nature].spells[itr2];
+            _player_start_spells[itr_players].realms[sbr_Sorcery].spells[itr2]  = _default_spells[sbr_Sorcery].spells[itr2];
+            _player_start_spells[itr_players].realms[sbr_Chaos].spells[itr2]    = _default_spells[sbr_Chaos].spells[itr2];
+            _player_start_spells[itr_players].realms[sbr_Life].spells[itr2]     = _default_spells[sbr_Life].spells[itr2];
+            _player_start_spells[itr_players].realms[sbr_Death].spells[itr2]    = _default_spells[sbr_Death].spells[itr2];
 
         }
 
+    }
+
+    for(itr_players = 1; itr_players < _num_players; itr_players++)
+    {
+        for(itr2 = 0; itr2 < 13; itr2++)
+        {
+            LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: _player_start_spells[%d]: N%d, S%d, C%d, L%d, D%d",
+                    itr_players,
+                    _player_start_spells[itr_players].realms[sbr_Nature].spells[itr2],
+                    _player_start_spells[itr_players].realms[sbr_Sorcery].spells[itr2],
+                    _player_start_spells[itr_players].realms[sbr_Chaos].spells[itr2],
+                    _player_start_spells[itr_players].realms[sbr_Life].spells[itr2],
+                    _player_start_spells[itr_players].realms[sbr_Death].spells[itr2]);
+        }
     }
 
     Init_Computer_Players_Spell_Library();
@@ -822,9 +859,6 @@ void Init_Computer_Players_Wizard_Profile(void)
     int16_t Bookshelf[5] = { 0, 0, 0, 0, 0 };
     int16_t myrran_count = 0;
     int16_t Picks_Left = 0;
-
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-
     int16_t banners[5] = { 0, 0, 0, 0, 0 };
     int8_t * wsa_ptr = 0;  // Pointer to 'Wizard Special Abilities'
     int16_t Book_Count = 0;
@@ -839,6 +873,7 @@ void Init_Computer_Players_Wizard_Profile(void)
     int16_t itr1 = 0;
     int16_t itr2 = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     /* Phase 1: Initialize local banner tracking */
     for(itr1 = 0; itr1 < NUM_BANNER_SELECTIONS; itr1++)
@@ -1300,7 +1335,8 @@ END:  ¿ jmp     @@BeginTopLevelPlayerLoop ?
 
     // @@Done
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Computer_Players_Wizard_Profile rng_call=%llu", (unsigned long long)g_random_call_count);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
 }
 
 
@@ -1457,8 +1493,22 @@ void Init_Computer_Players_Spell_Library(void)
                 }
 
                 // IDA purple #32
-                Available_Spells = (_players[itr].spellranks[sbr] - 1);
-                LOG_TRACE(LOG_CAT_GENERAL, "[ICPSL] @before-common    p=%d sbr=%d rank=%d limit=%d  rng_call=%llu", itr, sbr, _players[itr].spellranks[sbr], Availability_Limit, (unsigned long long)g_random_call_count);
+                /* DIVBUG  the original assumed (rank - 1) pre-fill spells
+                 * always land in common-rarity slots (0..9), but the
+                 * `case sbr_X:` pre-fill above uses `% NUM_SPELLS_PER_MAGIC_REALM`
+                 * (40), so spells can land in any rarity.  When fewer than
+                 * (rank - 1) pre-filled spells actually land in common,
+                 * the while loop below over-iterates.  Count the actual
+                 * common-rarity non-Unknown slots instead. */
+                Available_Spells = 0;
+                for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_RARITY; itr2++)
+                {
+                    if(_players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + itr2)] != sls_Unknown)
+                    {
+                        Available_Spells++;
+                    }
+                }
+                LOG_TRACE(LOG_CAT_GENERAL, "[ICPSL] @before-common    p=%d sbr=%d rank=%d limit=%d  initial=%d  rng_call=%llu", itr, sbr, _players[itr].spellranks[sbr], Availability_Limit, Available_Spells, (unsigned long long)g_random_call_count);
                 while(Available_Spells < Availability_Limit)
                 {
                     itr2 = (Random(NUM_SPELLS_PER_MAGIC_RARITY) - 1);
@@ -1476,6 +1526,10 @@ void Init_Computer_Players_Spell_Library(void)
                     }
                 }
                 LOG_TRACE(LOG_CAT_GENERAL, "[ICPSL] @after-common     p=%d sbr=%d rank=%d limit=%d  rng_call=%llu", itr, sbr, _players[itr].spellranks[sbr], Availability_Limit, (unsigned long long)g_random_call_count);
+
+/*
+END: Knowable - Common
+*/
 
 /*
 BEGIN: Knowable - Uncommon

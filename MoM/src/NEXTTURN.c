@@ -268,9 +268,7 @@ void Next_Turn_Proc(void)
     int16_t curr_prod_idx = 0;
     int16_t DBG_itr_cities = 0;
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Next_Turn_Proc()", __FILE__, __LINE__);
-#endif
 
 
     Delete_Dead_Units();
@@ -309,9 +307,7 @@ void Next_Turn_Proc(void)
     if(g_bldg_msg_ctr > 0)
     {
 
-#ifdef STU_DEBUG
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Next_Turn_Proc(): if(g_bldg_msg_ctr > 0)", __FILE__, __LINE__);
-#endif
+        LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Next_Turn_Proc(): if(g_bldg_msg_ctr > 0)", __FILE__, __LINE__);
 
         o62p01_empty_function(_human_player_idx);
 
@@ -319,17 +315,17 @@ void Next_Turn_Proc(void)
         {
             if(MSG_Building_Complete[itr_msg].city_idx != ST_UNDEFINED)
             {
-#ifdef STU_DEBUG
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Next_Turn_Proc(): if(MSG_Building_Complete[itr_msg].city_idx != ST_UNDEFINED)", __FILE__, __LINE__);
-#endif
+
+                LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Next_Turn_Proc(): if(MSG_Building_Complete[itr_msg].city_idx != ST_UNDEFINED)", __FILE__, __LINE__);
+
                 _city_idx = MSG_Building_Complete[itr_msg].city_idx;
                 orig_map_plane = _map_plane;
                 _map_plane = _CITIES[_city_idx].wp;
                 if(MSG_Building_Complete[itr_msg].bldg_type_idx >= bt_NONE)
                 {
-#ifdef STU_DEBUG
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Next_Turn_Proc(): if(MSG_Building_Complete[itr_msg].bldg_type_idx >= bt_NONE)", __FILE__, __LINE__);
-#endif
+
+                    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Next_Turn_Proc(): if(MSG_Building_Complete[itr_msg].bldg_type_idx >= bt_NONE)", __FILE__, __LINE__);
+
                     city_built_bldg_idx = MSG_Building_Complete[itr_msg].bldg_type_idx;
                     Center_Map(&_map_x, &_map_y, _CITIES[_city_idx].wx, _CITIES[_city_idx].wy, _map_plane);
                     City_Built_Building_Message(5, 101, _city_idx, city_built_bldg_idx);
@@ -342,9 +338,9 @@ void Next_Turn_Proc(void)
                     }
                     else
                     {
-#ifdef STU_DEBUG
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Next_Turn_Proc(): (MSG_Building_Complete[itr_msg].bldg_type_idx < bt_NONE)", __FILE__, __LINE__);
-#endif
+
+                        LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Next_Turn_Proc(): (MSG_Building_Complete[itr_msg].bldg_type_idx < bt_NONE)", __FILE__, __LINE__);
+
                         stu_strcpy(GUI_NearMsgString, "The ");
                         stu_strcat(GUI_NearMsgString, _city_size_names[_CITIES[_city_idx].size]);
                         stu_strcat(GUI_NearMsgString, " of ");
@@ -415,9 +411,7 @@ void Next_Turn_Proc(void)
     Reset_Draw_Active_Stack();
 
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Next_Turn_Proc()", __FILE__, __LINE__);
-#endif
 
 }
 
