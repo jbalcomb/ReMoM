@@ -2069,16 +2069,14 @@ void Input_Box_Popup(int16_t field_num)
     int16_t String_Modified = 0;
     int16_t max_characters = 0;
     int16_t Allowed_Char = 0;
-    int16_t string_pos = 0;  // _SI_
-    int16_t itr = 0;  // _DI_
-
-#ifdef _STU_SDL2
-    Hw_Textinput_Start();
-#endif
+    int16_t string_pos = 0;
+    int16_t itr = 0;
 
     Timeout_Counter = 4;
 
     Clear_Fields();
+
+    Hw_Textinput_Start();
 
     if(mouse_installed != ST_FALSE)
     {
@@ -2377,9 +2375,8 @@ ST_KEY_ENTER            = 0x0C
         END:  
     */
 
-#ifdef _STU_SDL2
+    /* CLAUDE 2026-06-14: was #ifdef _STU_SDL2 — see note at Hw_Textinput_Start above. */
     Hw_Textinput_Stop();
-#endif
 
     stu_strcpy(p_fields[field_num].string, input_string);
 
@@ -2432,28 +2429,22 @@ NameStartingCity_Dialog_Popup()
 */
 int16_t Setup_Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t colors[], int16_t help)
 {
-    char input_string[63];
-    char key;
-    int16_t input_field_idx;
-    int16_t Control_Change;
-    int16_t Timeout_Counter;
-    int16_t Font_Height;
-    int16_t String_Modified;
-    int16_t Allowed_Char;
-    int16_t string_pos;  // _SI_
-    int16_t itr;  // _DI_
-
-
-
-#ifdef _STU_SDL2
-    Hw_Textinput_Start();
-#endif
-
-
+    char input_string[63] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char key = 0;
+    int16_t input_field_idx = 0;
+    int16_t Control_Change = 0;
+    int16_t Timeout_Counter = 0;
+    int16_t Font_Height = 0;
+    int16_t String_Modified = 0;
+    int16_t Allowed_Char = 0;
+    int16_t string_pos = 0;
+    int16_t itr = 0;
 
     Timeout_Counter = 4;
 
     Clear_Fields();
+
+    Hw_Textinput_Start();
 
     if(mouse_installed != ST_FALSE)
     {
@@ -2726,10 +2717,8 @@ ST_KEY_ENTER            = 0x0C
     */
 
 
-#ifdef _STU_SDL2
+    /* CLAUDE 2026-06-14: was #ifdef _STU_SDL2 — see note at Hw_Textinput_Start above. */
     Hw_Textinput_Stop();
-#endif
-
 
     stu_strcpy(string, input_string);
 
