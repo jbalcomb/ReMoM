@@ -12,7 +12,7 @@ Usage:
     tools/parity_check.py \\
         [--config assets/matchup_hemom.ini] \\
         [--seed 12345] \\
-        [--rmr   assets/menu_baseline_seed12345.RMR] \\
+        [--hms   assets/matchup_hemom.hms] \\
         [--preset clang-debug]
 
 Scratch lives under out/build/<preset>/analysis/{hemom,remom}/ and is
@@ -323,35 +323,40 @@ def filter_rng_log(stderr_log: Path, rng_log: Path) -> tuple[int, int]:
     return total, rng
 
 
-def run_hemom(layout: BuildLayout, config: Path, seed: int) -> dict[str, Path]:
+import lib_run  # local sibling module; see tools/lib_run.py
+
+
+def run_hemom(layout: BuildLayout, config: Path, seed: int,
+              hms: Optional[Path] = None, rmr: Optional[Path] = None) -> dict[str, Path]:
+    """Launch HeMoM --newgame via lib_run, then snapshot artifacts into analysis/hemom/."""
     print()
     print("  Run HeMoM --newgame")
     if not config.exists():
         raise Phase1Error(f"config not found: {config}")
     clean_workspace(layout.bin_dir)
     layout.hemom_out.mkdir(parents=True, exist_ok=True)
-    stderr_log = layout.bin_dir / "stderr.log"
-    import time
-    t_start = time.time()
-    rc = run(
-        [str(layout.hemom_exe), "--newgame", str(config), "--seed", str(seed)],
+
+    result = lib_run.run_hemom(
+        ini=config,
+        seed=seed,
+        hms=hms,
+        rmr=rmr,
         cwd=layout.bin_dir,
-        stderr_to=stderr_log,
+        stderr_path=layout.bin_dir / "stderr.log",
+        save_slot=1,            # matchup writes to SAVE2.GAM
     )
-    if rc != 0:
-        # Surface the tail so user can see why.
-        print(f"    HeMoM exited {rc}. Last 20 lines of stderr:")
-        if stderr_log.exists():
-            tail = stderr_log.read_text(errors="replace").splitlines()[-20:]
-            for line in tail:
+    if result.exit_status != 0:
+        print(f"    HeMoM exited {result.exit_status}. Last 20 lines of stderr:")
+        if result.stderr_path.exists():
+            for line in result.stderr_path.read_text(errors="replace").splitlines()[-20:]:
                 print(f"      {line}")
-        raise Phase1Error(f"HeMoM run failed (exit {rc})")
-    # Copy stderr first, then the data artifacts.
-    if not stderr_log.exists():
-        raise Phase1Error(f"HeMoM produced no stderr.log at {stderr_log}")
-    shutil.copy2(str(stderr_log), str(layout.hemom_out / "stderr.log"))
-    moved = collect_artifacts(layout.bin_dir, layout.hemom_out, HEMOM_PRODUCED, since_ts=t_start)
-    # Filter to rng.log alongside.
+        raise Phase1Error(f"HeMoM run failed (exit {result.exit_status})")
+
+    if not result.stderr_path.exists():
+        raise Phase1Error(f"HeMoM produced no stderr.log at {result.stderr_path}")
+    shutil.copy2(str(result.stderr_path), str(layout.hemom_out / "stderr.log"))
+    moved = collect_artifacts(layout.bin_dir, layout.hemom_out, HEMOM_PRODUCED,
+                              since_ts=result.t_start)
     rng_log = layout.hemom_out / "rng.log"
     total, rng = filter_rng_log(layout.hemom_out / "stderr.log", rng_log)
     print(f"    artifacts in {relpath(layout.hemom_out)}/: "
@@ -363,34 +368,41 @@ def run_hemom(layout: BuildLayout, config: Path, seed: int) -> dict[str, Path]:
     }
 
 
-def run_remom(layout: BuildLayout, seed: int, rmr: Path) -> dict[str, Path]:
+def run_remom(layout: BuildLayout, seed: int,
+              hms: Optional[Path] = None, rmr: Optional[Path] = None) -> dict[str, Path]:
+    """Launch ReMoMber via lib_run (HMS by default, RMR if given), then snapshot."""
     print()
-    print("  Run ReMoMber --replay (headless)")
-    if not rmr.exists():
+    drv_label = "--scenario HMS" if hms else "--replay RMR"
+    print(f"  Run ReMoMber {drv_label} (headless)")
+    if hms is None and rmr is None:
+        raise Phase1Error("run_remom needs hms= or rmr= to drive ReMoMber non-interactively")
+    if hms is not None and not hms.exists():
+        raise Phase1Error(f"HMS file not found: {hms}")
+    if rmr is not None and not rmr.exists():
         raise Phase1Error(f"RMR file not found: {rmr}")
     clean_workspace(layout.bin_dir)
     layout.remom_out.mkdir(parents=True, exist_ok=True)
-    stderr_log = layout.bin_dir / "stderr.log"
-    env = os.environ.copy()
-    env.setdefault("SDL_VIDEODRIVER", "offscreen")
-    import time
-    t_start = time.time()
-    rc = run(
-        [str(layout.remom_exe), "--seed", str(seed), "--replay", str(rmr)],
+
+    result = lib_run.run_remomber(
+        seed=seed,
+        hms=hms,
+        rmr=rmr,
         cwd=layout.bin_dir,
-        env=env,
-        stderr_to=stderr_log,
+        stderr_path=layout.bin_dir / "stderr.log",
+        save_slot=1,            # matchup writes to SAVE2.GAM
     )
-    # ReMoMber exit code on replay can be non-zero for benign reasons (user-quit).
-    # We rely on artifact presence below to decide if the run was usable.
-    if rc != 0:
-        print(f"    ReMoMber exited {rc} (often benign on --replay quit; checking artifacts)")
-    if not stderr_log.exists():
-        raise Phase1Error(f"ReMoMber produced no stderr.log at {stderr_log}")
-    shutil.copy2(str(stderr_log), str(layout.remom_out / "stderr.log"))
-    moved = collect_artifacts(layout.bin_dir, layout.remom_out, REMOM_PRODUCED, since_ts=t_start)
+    # ReMoMber exit code on driver-quit can be non-zero for benign reasons.
+    # Rely on artifact presence below to decide if the run was usable.
+    if result.exit_status != 0:
+        print(f"    ReMoMber exited {result.exit_status} "
+              f"(often benign on driver quit; checking artifacts)")
+    if not result.stderr_path.exists():
+        raise Phase1Error(f"ReMoMber produced no stderr.log at {result.stderr_path}")
+    shutil.copy2(str(result.stderr_path), str(layout.remom_out / "stderr.log"))
+    moved = collect_artifacts(layout.bin_dir, layout.remom_out, REMOM_PRODUCED,
+                              since_ts=result.t_start)
     if not (layout.remom_out / "SAVE2.GAM").exists():
-        raise Phase1Error("ReMoMber did not produce SAVE2.GAM — RMR may be incompatible")
+        raise Phase1Error("ReMoMber did not produce SAVE2.GAM — driver may be incompatible")
     rng_log = layout.remom_out / "rng.log"
     total, rng = filter_rng_log(layout.remom_out / "stderr.log", rng_log)
     print(f"    artifacts in {relpath(layout.remom_out)}/: "
@@ -426,8 +438,11 @@ def phase1_collect(args: argparse.Namespace, layout: BuildLayout) -> tuple[dict[
         hemom_artifacts = run_hemom(layout, Path(args.config), args.seed)
 
     if args.run_remom:
+        # --rmr overrides --hms when both are set.
+        hms = None if args.rmr else Path(args.hms)
+        rmr = Path(args.rmr) if args.rmr else None
         try:
-            remom_artifacts = run_remom(layout, args.seed, Path(args.rmr))
+            remom_artifacts = run_remom(layout, args.seed, hms=hms, rmr=rmr)
         except Phase1Error as e:
             print(f"    {YELLOW}headless ReMoMber failed: {e}{RESET}")
             print(f"    falling back to whatever is already in {relpath(layout.remom_out)}/")
@@ -1323,15 +1338,18 @@ def parse_args() -> argparse.Namespace:
                    help="HeMoM newgame .ini (default: assets/matchup_hemom.ini)")
     p.add_argument("--seed", type=int, default=12345,
                    help="Deterministic seed (default: 12345)")
-    p.add_argument("--rmr", default=str(ASSETS_DIR / "menu_baseline_seed12345.RMR"),
-                   help="Recorded menu-click sequence for ReMoMber --replay")
+    p.add_argument("--hms", default=str(ASSETS_DIR / "matchup_hemom.hms"),
+                   help="HMS scenario for ReMoMber --scenario (default: assets/matchup_hemom.hms)")
+    p.add_argument("--rmr", default=None,
+                   help="RMR recorded-input for ReMoMber --replay "
+                        "(if set, overrides --hms)")
     p.add_argument("--preset", default=None,
                    help="CMake preset (auto-detected: clang-debug on Linux, MSVC-headless-debug on Windows)")
     p.add_argument("--skip-build", action="store_true",
                    help="Skip cmake --build; use existing binaries")
     p.add_argument("--run-remom", action="store_true",
-                   help="Attempt to run ReMoMber --replay headlessly (may segfault; "
-                        "default is to require analysis/remom/ populated by the bash capture script).")
+                   help="Launch ReMoMber headlessly via --scenario --hms (or --replay --rmr); "
+                        "default is to use the most recent ReMoMber output already in bin/Debug/.")
     p.add_argument("--skip-hemom", action="store_true",
                    help="Skip running HeMoM; reuse existing analysis/hemom/ artifacts")
     return p.parse_args()
@@ -1346,7 +1364,10 @@ def main() -> int:
     print(f"  preset = {preset}")
     print(f"  config = {relpath(Path(args.config))}")
     print(f"  seed   = {args.seed}")
-    print(f"  rmr    = {relpath(Path(args.rmr))}")
+    if args.rmr:
+        print(f"  rmr    = {relpath(Path(args.rmr))}  (overrides --hms)")
+    else:
+        print(f"  hms    = {relpath(Path(args.hms))}")
     print(f"  out    = {relpath(layout.analysis_dir)}/{{hemom,remom}}/")
 
     try:
