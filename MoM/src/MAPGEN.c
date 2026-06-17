@@ -854,6 +854,16 @@ Loop_Distances:
 
         max_pop_failures = 0;
 
+        /* CLAUDE 2026-06-14: reset per-reason counters at the top of each
+           distance attempt so the [LOC_GIVEUP_*] tables reflect just this
+           attempt rather than every retry since the function started. */
+        DBG_Invalid_Reason_1_Count = 0;
+        DBG_Invalid_Reason_2_Count = 0;
+        DBG_Invalid_Reason_3_Count = 0;
+        DBG_Invalid_Reason_4_Count = 0;
+        DBG_Invalid_Reason_5_Count = 0;
+        DBG_Invalid_Reason_6_Count = 0;
+
         while(1)
         {
 Loop_MaxPopTries:
@@ -876,6 +886,11 @@ Loop_Location_1:
                     wy = (2 + Random((WORLD_HEIGHT - 6)));  // { 3, ..., 36}
 
                     Invalid = ST_FALSE;
+                    /* CLAUDE 2026-06-14: reset per-iteration so the [LOC_PICK] trace
+                       doesn't carry a stale reason from a previous rejection when
+                       this iteration accepts (invalid=0).  Counters DBG_Invalid_Reason_N_Count
+                       intentionally remain cumulative across the distance loop. */
+                    DBG_Invalid_Reason = 0;
 
                     if(GET_TERRAIN_TYPE(wx, wy, wp) == tt_Ocean)
                     {
@@ -1019,6 +1034,14 @@ Loop_Location_1:
                         max_pop_failures++;
                         if(max_pop_failures > 500)
                         {
+                            /* CLAUDE 2026-06-14: bail out of the max-pop retry loop. */
+                            LOG_INFO(LOG_CAT_GENERAL,
+                                "[LOC_GIVEUP_POP] player=%d max_pop_failures>%d  min_fortress_dist=%d min_site_dist=%d  reasons: Ocean=%d Fortress=%d Node=%d Tower=%d Lair=%d PopTooLow=%d",
+                                (int)player_idx, 500,
+                                (int)minimum_fortress_distance, (int)minimum_site_distance,
+                                (int)DBG_Invalid_Reason_1_Count, (int)DBG_Invalid_Reason_2_Count,
+                                (int)DBG_Invalid_Reason_3_Count, (int)DBG_Invalid_Reason_4_Count,
+                                (int)DBG_Invalid_Reason_5_Count, (int)DBG_Invalid_Reason_6_Count);
                             STU_DEBUG_BREAK();
                             goto Loop_MaxPopTries;
                         }
@@ -1046,7 +1069,15 @@ Loop_Location_1:
 
             if(Tries_Per_Distance >= 1000)
             {
-
+                /* CLAUDE 2026-06-14: failed to place at this distance — log reasons
+                   then shrink min distances and try again at Loop_Distances. */
+                LOG_INFO(LOG_CAT_GENERAL,
+                    "[LOC_GIVEUP_DIST] tries>=%d at player=%d  min_fortress_dist=%d min_site_dist=%d  reasons: Ocean=%d Fortress=%d Node=%d Tower=%d Lair=%d PopTooLow=%d",
+                    1000, (int)player_idx,
+                    (int)minimum_fortress_distance, (int)minimum_site_distance,
+                    (int)DBG_Invalid_Reason_1_Count, (int)DBG_Invalid_Reason_2_Count,
+                    (int)DBG_Invalid_Reason_3_Count, (int)DBG_Invalid_Reason_4_Count,
+                    (int)DBG_Invalid_Reason_5_Count, (int)DBG_Invalid_Reason_6_Count);
                 goto Loop_Distances;
 
             }
@@ -1208,6 +1239,8 @@ Loop_Location_1:
 
 
 Done_Done:
+
+    LOG_INFO(LOG_CAT_GENERAL, "Done_Done:");
 
     // ; create a corresponding spearmen unit in the capital
     // ; of each wizard whose starting race is not dwarf

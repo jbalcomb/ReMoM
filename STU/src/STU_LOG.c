@@ -38,9 +38,18 @@
 #define LOG_VSNPRINTF vsnprintf
 #endif
 
-#define LOG_RING_SIZE        ((size_t)(2 * 1024 * 1024))  /* 2 MB */
+/* CLAUDE 2026-06-14: ring sized to absorb worst-case bursty workloads
+   (worldgen, init-time CALL_TRACE flood, long combat turns) without
+   exceeding the per-frame pump drain rate.  Old values (2 MB ring,
+   4 KB/pump) were dropping thousands of messages: init-time burst hit
+   ~8000 drops before the SDL main loop came online to pump; worldgen
+   added more.  At ~150 B per LOG_INFO line, 16 MB ≈ 110k lines of
+   headroom — plenty for worst-case worldgen.  Pump cap bumped to 64 KB
+   so the ring also drains 16x faster once pumping is online; covers the
+   sync between worldgen finishing and the main loop pumping. */
+#define LOG_RING_SIZE        ((size_t)(16 * 1024 * 1024))  /* 16 MB */
 #define LOG_FMT_BUF_LEN      ((size_t)1024)
-#define LOG_PUMP_MAX_BYTES   ((size_t)4096)
+#define LOG_PUMP_MAX_BYTES   ((size_t)(64 * 1024))         /* 64 KB */
 #define LOG_FILE_NEW         "remom_log_new.txt"
 #define LOG_FILE_CURRENT     "remom_log_current.txt"
 #define LOG_FILE_PREVIOUS    "remom_log_previous.txt"
