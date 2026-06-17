@@ -710,6 +710,7 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
     // newgame_BUILDWOR_map_build_bar_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 53, _screen_seg);
     newgame_BUILDWOR_map_build_bar_seg = LBX_Load(newgame_lbx_file__ovr050, 53);
 
+    /* Newgame_Control() |-> Init_New_Game() */
     Init_New_Game();
     Initialize_Events();
     Init_Runtime();

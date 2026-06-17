@@ -19,6 +19,10 @@ extern "C" {
         ovr056
 */
 
+/* CaptureGameData Phase 4 (ReMoM side): dump _players in [GD] format,
+ * matching the OG STU-DOSBox probe. Defined in INITGAME.c. */
+void gd_dump_players(const char* point);
+
 // MGC o56p1
 void Init_Computer_Players(void);
 

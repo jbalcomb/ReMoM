@@ -22,6 +22,68 @@ Module: INITGAME
 #include "../../ext/stu_compat.h"
 
 #include <string.h>
+#include <stdio.h>
+
+/* ---- Game-data capture (CaptureGameData PRD/PLAN, Phase 4, ReMoM side) ----
+ * Dump _players in the SAME [GD] format as the OG-side STU-DOSBox probe,
+ * driven by the SAME generated field map (gd_wizard_fields.h from
+ * gen-fieldmap.py), so the two logs diff field-for-field. Decode mirrors the
+ * OG gd_decode_record exactly. */
+enum { GD_U8 = 0, GD_I8, GD_U16, GD_I16, GD_U32, GD_I32, GD_STR, GD_BYTES };
+typedef struct { uint16_t off; uint8_t kind; uint16_t count; const char* name; } gd_field_t;
+#include "gd_wizard_fields.h"
+
+static int gd_es(int kind) {
+    return (kind == GD_U16 || kind == GD_I16) ? 2
+         : (kind == GD_U32 || kind == GD_I32) ? 4 : 1;
+}
+static long gd_rd(const uint8_t* r, int kind) {
+    switch (kind) {
+        case GD_I8:  return (long)(int8_t)r[0];
+        case GD_U16: return (long)(uint16_t)(r[0] | (r[1] << 8));
+        case GD_I16: return (long)(int16_t)(uint16_t)(r[0] | (r[1] << 8));
+        case GD_U32: return (long)((uint32_t)r[0] | ((uint32_t)r[1] << 8)
+                                 | ((uint32_t)r[2] << 16) | ((uint32_t)r[3] << 24));
+        case GD_I32: return (long)(int32_t)((uint32_t)r[0] | ((uint32_t)r[1] << 8)
+                                 | ((uint32_t)r[2] << 16) | ((uint32_t)r[3] << 24));
+        default:     return (long)r[0];   /* U8 */
+    }
+}
+void gd_dump_players(const char* point) {
+    int p, i, k;
+    char val[1100];
+    for (p = 0; p < _num_players; p++) {
+        const uint8_t* base = (const uint8_t*)&_players[p];
+        for (i = 0; i < WIZARD_FIELD_COUNT; i++) {
+            const gd_field_t* f = &wizard_fields[i];
+            const uint8_t* fp = base + f->off;
+            int q = 0;
+            if (f->kind == GD_STR) {
+                val[q++] = '"';
+                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
+                    uint8_t c = fp[k];
+                    if (c == 0) break;
+                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
+                }
+                val[q++] = '"'; val[q] = 0;
+            } else if (f->kind == GD_BYTES) {
+                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
+                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
+                val[q] = 0;
+            } else {
+                int es = gd_es(f->kind);
+                for (k = 0; k < f->count; k++) {
+                    long v = gd_rd(fp + k * es, f->kind);
+                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
+                    if (q > (int)sizeof(val) - 16) break;
+                }
+            }
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _players[%d].%s = %s",
+                      point, p, f->name, val);
+        }
+    }
+}
+/* ---- end game-data capture ---- */
 
 
 
@@ -80,6 +142,7 @@ void Init_Computer_Players(void)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     Init_Computer_Players_Wizard_Profile();
+    gd_dump_players("Wizard_Profile");
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
@@ -135,6 +198,7 @@ void Init_Computer_Players(void)
     }
 
     Init_Computer_Players_Spell_Library();
+    gd_dump_players("Spell_Library");
 
     _players[NEUTRAL_PLAYER_IDX].Defeated_Wizards = 0;
 
@@ -189,16 +253,22 @@ void Init_Runtime(void)
     Draw_Building_The_Worlds(100);
     Initialize_Items();
     Init_Heroes();
+    gd_dump_players("Init_Heroes");
     Init_Players();
+    gd_dump_players("Init_Players");
     Init_CP_Strategy();
+    gd_dump_players("Init_CP_Strategy");
     Init_Magic_Personalities_Objectives();
+    gd_dump_players("Init_Magic_Pers_Obj");
     Init_Summoning_Circle_And_Spell_Of_Mastery();
+    gd_dump_players("Init_Summoning_Circle");
     Initialize_Messages();
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
         _players[itr_players].capital_race = _CITIES[itr_players].race;
     }
     Init_Diplomatic_Relations();
+    gd_dump_players("Init_Diplomatic_Relations");
     _players[HUMAN_PLAYER_IDX].gold_reserve = ((5 - _difficulty) * 25);
     for(itr_players = 1; itr_players < _num_players; itr_players++)
     {
