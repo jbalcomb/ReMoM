@@ -87,104 +87,127 @@ void Do_City_Calculations(int16_t city_idx)
 
 
 // WZD o120p02
-/*
-    sets
-    _players[].magic_power
-
-    nodes
-        conjunctions
-        mastery
-
-    sum of s_CITY.mana_units
-
-    _players[].volcanoes
-
-    _players.casting_spell_idx Spell_Of_Return
-
-*/
+/**
+ * @brief Recomputes each player's base magic power from nodes, cities, and global effects.
+ *
+ * @details
+ * This routine fully rebuilds `_players[].Power_Base` each turn in ordered phases:
+ * 1) reset per-player power to 0;
+ * 2) early-out during active Mana Short;
+ * 3) accumulate node power with warped-node penalties, conjunction modifiers,
+ *    and mastery multipliers;
+ * 4) apply AI difficulty mana bonus to non-human players;
+ * 5) add city mana production for non-neutral city owners;
+ * 6) apply final state adjustments (Spell of Return and volcanoes), then clamp
+ *    to a minimum of 0.
+ *
+ * Node power starts from `(node_power * (magic_strength + 1)) / 2` and is then
+ * transformed by conjunction and mastery rules. Warped nodes contribute a flat
+ * `-5` instead of normal node output.
+ *
+ * @note A global Mana Short event (status == 2) cancels all node/city power by
+ *       returning after the reset phase.
+ * @note The difficulty modifier is applied only to players in range
+ *       `[1, _num_players)`, preserving human-player baseline.
+ *
+ * @warning This function mutates global player state in `_players[]` and relies
+ *          on globally shared world/event tables.
+ */
 void Players_Update_Magic_Power(void)
 {
-    int16_t NIU_players_power_base_array[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t niu_players_power_base_array[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
     int16_t node_owner_idx = 0;
     int16_t itr = 0;
     int16_t node_magic_power_points = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
+
+    /* Phase 1 */
     for(itr = 0; itr < _num_players; itr++)
     {
         _players[itr].Power_Base = 0;
-        NIU_players_power_base_array[itr] = 0;
+        niu_players_power_base_array[itr] = 0;
     }
 
-    if(events_table->Mana_Short_Status == 2)
+
+    /* Phase 2 */
+    /* Global Mana Short event cancels all node and city power */
+    if(events_table->Mana_Short_Status == 2)  /* ¿ 2 means "active" ? */
     {
+        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
         return;
     }
 
+
+    /* Phase 3 */
+    /* Calculate Power from Magic Nodes */
     for(itr = 0; itr < NUM_NODES; itr++)
     {
-        if(_NODES[itr].owner_idx > -1)
+
+        /* Phase 3a */
+        if(_NODES[itr].owner_idx <= ST_UNDEFINED)
         {
-            node_owner_idx = _NODES[itr].owner_idx;
+            continue;
+        }
+    
+        /* Phase 3b */
+        node_owner_idx = _NODES[itr].owner_idx;
 
-            if((_NODES[itr].flags & NF_WARPED) > 0)
-            {
-                _players[node_owner_idx].Power_Base -= 5;
-                continue;
-            }
+        /* Phase 3c */
+        /* Warped nodes drain power instead of providing it */
+        if((_NODES[itr].flags & NF_WARPED) > 0)
+        {
+            _players[node_owner_idx].Power_Base -= 5;
+            continue;
+        }
 
-            node_magic_power_points = ((_NODES[itr].power * (_magic + 1)) / 2);
+        /* Phase 3d */
+        /* Base Node Power Calculation: (Node Power * (Magic Strength + 1)) / 2 */
+        node_magic_power_points = ((_NODES[itr].power * (_magic + 1)) / 2);
 
-            if(events_table->Conjunction_Chaos_Status == 2)
-            {
-                if(_NODES[itr].type == nt_Sorcery)
-                    node_magic_power_points /= 2;
-                if(_NODES[itr].type == nt_Nature)
-                    node_magic_power_points /= 2;
-                if(_NODES[itr].type == nt_Chaos)
-                    node_magic_power_points *= 2;
-            }
+        /* Phase 3e: Conjunction Modifiers */
+        if(events_table->Conjunction_Chaos_Status == 2)  /* ¿ 2 means "active" ? */
+        {
+            if(_NODES[itr].type == nt_Sorcery) { node_magic_power_points /= 2; }
+            if(_NODES[itr].type == nt_Nature ) { node_magic_power_points /= 2; }
+            if(_NODES[itr].type == nt_Chaos  ) { node_magic_power_points *= 2; }
+        }
+        if(events_table->Conjunction_Sorcery_Status == 2)  /* ¿ 2 means "active" ? */
+        {
+            if(_NODES[itr].type == nt_Sorcery) { node_magic_power_points *= 2; }
+            if(_NODES[itr].type == nt_Nature ) { node_magic_power_points /= 2; }
+            if(_NODES[itr].type == nt_Chaos  ) { node_magic_power_points /= 2; }
+        }
+        if(events_table->Conjunction_Nature_Status == 2)  /* ¿ 2 means "active" ? */
+        {
+            if(_NODES[itr].type == nt_Sorcery) { node_magic_power_points /= 2; }
+            if(_NODES[itr].type == nt_Nature ) { node_magic_power_points *= 2; }
+            if(_NODES[itr].type == nt_Chaos  ) { node_magic_power_points /= 2; }
+        }
 
-            if(events_table->Conjunction_Sorcery_Status == 2)
-            {
-                if(_NODES[itr].type == nt_Sorcery)
-                    node_magic_power_points *= 2;
-                if(_NODES[itr].type == nt_Nature)
-                    node_magic_power_points /= 2;
-                if(_NODES[itr].type == nt_Chaos)
-                    node_magic_power_points /= 2;
-            }
+        /* Phase 3f: Mastery Modifiers */
+        if((_NODES[itr].type == nt_Sorcery) && (_players[node_owner_idx].sorcery_mastery > ST_FALSE)) { node_magic_power_points *= 2; }
+        if((_NODES[itr].type == nt_Chaos  ) && (_players[node_owner_idx].chaos_mastery   > ST_FALSE)) { node_magic_power_points *= 2; }
+        if((_NODES[itr].type == nt_Nature ) && (_players[node_owner_idx].nature_mastery  > ST_FALSE)) { node_magic_power_points *= 2; }
+        if(_players[node_owner_idx].node_mastery > ST_FALSE) { node_magic_power_points *= 2; }
 
-            if(events_table->Conjunction_Nature_Status == 2)
-            {
-                if(_NODES[itr].type == nt_Sorcery)
-                    node_magic_power_points /= 2;
-                if(_NODES[itr].type == nt_Nature)
-                    node_magic_power_points *= 2;
-                if(_NODES[itr].type == nt_Chaos)
-                    node_magic_power_points /= 2;
-            }
-
-            if((_NODES[itr].type == nt_Sorcery) && (_players[node_owner_idx].sorcery_mastery))
-                node_magic_power_points *= 2;
-            if((_NODES[itr].type == nt_Chaos) && (_players[node_owner_idx].chaos_mastery))
-                node_magic_power_points *= 2;
-            if((_NODES[itr].type == nt_Nature) && (_players[node_owner_idx].nature_mastery))
-                node_magic_power_points *= 2;
-            if(_players[node_owner_idx].node_mastery)
-                node_magic_power_points *= 2;
-
-            _players[node_owner_idx].Power_Base += node_magic_power_points;
-
-        }  /* if(_NODES[itr].owner_idx > -1) */
+        /* Phase 3g */
+        _players[node_owner_idx].Power_Base += node_magic_power_points;
+        
     }  /* for(itr = 0; itr < NUM_NODES; itr++) */
 
+
+    /* Phase 4 */
+    /* Apply AI Difficulty Modifiers (Skip human player 0) */
+    /* e.g., * 150 / 100 ~== * 1.5 ~== +50% */
     for(itr = 1; itr < _num_players; itr++)
     {
-        _players[itr].Power_Base = ((_players[itr].Power_Base * (difficulty_modifiers_table[_difficulty].mana)) / 100);  // e.g., * 150 / 100 ~== * 1.5 ~== +50%
+        _players[itr].Power_Base = ((_players[itr].Power_Base * (difficulty_modifiers_table[_difficulty].mana)) / 100);
     }
 
+    /* Phase 5 */
+    /* Calculate Power from Cities */
     for(itr = 0; itr < _cities; itr++)
     {
         if((_CITIES[itr].owner_idx > -1) && (_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX))
@@ -193,6 +216,9 @@ void Players_Update_Magic_Power(void)
         }
     }
 
+
+    /* Phase 6 */
+    /* Final Adjustments: Volcanoes and Special States */
     for(itr = 0; itr < _num_players; itr++)
     {
         if(_players[itr].casting_spell_idx == spl_Spell_Of_Return)

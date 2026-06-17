@@ -8,6 +8,9 @@ New_Game / Map setup
     |-> Init_Computer_Players_Wizard_Profile()
     |-> Init_Computer_Players_Spell_Library()     [INITGAME.c:100]
 
+NOTE:
+does not set _players[].Power_Base, it gets set in the 'Load Game' AoC - Loaded_Game_Update() |-> Init_Overland() |-> PreInit_Overland() |-> Players_Update_Magic_Power()
+
 ---
 
 # `Init_Computer_Players_Spell_Library` — Walkthrough

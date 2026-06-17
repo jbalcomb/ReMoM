@@ -1023,7 +1023,7 @@ MoO2
     }
 
 
-    Players_Update_Magic_Power();
+    Players_Update_Magic_Power();  /* first set of _players[].Power_Base */
     SBK_SomePageSaveVar = 0;
     CMB_SpellBookPage = 0;
     SBK_Candidate_Page = 0;

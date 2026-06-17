@@ -1444,7 +1444,7 @@ struct s_WIZARD
     /* 001C */ uint8_t Unknown_01Ch[6];         /* ¿  ? */
     /* 0022 */ uint16_t som_research_cost;                 /* in Init_Summoning_Circle_And_Spell_Of_Mastery(), sets to spell_data_table[spl_Spell_Of_Mastery].research_cost;  DEDU  What is this? ¿ 'Spell of Mastery' Research Cost ? ¿ Is it dynamic / why is it not just in the spell data table or a formula/function ? */
     /* 0024 */ uint16_t fame;
-    /* 0026 */ uint16_t Power_Base;
+    /* 0026 */ int16_t Power_Base;              /* 2-byte, signed */
     /* 0028 */ uint16_t volcanoes;              /* count of volcanoes created by the Wizard  (NOTE: stored as a 3-bit member in the _map_square_flags bitfield) */
     /* 002A */ uint8_t research_ratio;
     /* 002B */ uint8_t mana_ratio;
@@ -1751,7 +1751,7 @@ struct s_CITY
     /* 5E */ int16_t Prod_Accu;
     /* 60 */ uint8_t gold_units;  // AKA Income
     /* 61 */ int8_t building_maintenance;  // AKA Upkeep
-    /* 62 */ int8_t mana_units;
+    /* 62 */ uint8_t mana_units;             /* 1-byte, unsigned */
     /* 63 */ int8_t research_units;
     /* 64 */ int8_t food_units;
     /* 65 */ int8_t road_connections[13];  // Bit-Field; use Test_Bit_Field(); bit_idx is city_idx;
@@ -2222,19 +2222,19 @@ struct s_EVENT_DATA
     /* 0x02 */ int16_t Bad_Moon_Duration;
 
     // /* 0x54 */  struct CON_EVENT Conjunction_Chaos;
-    /* 0x00 */ int16_t Conjunction_Chaos_Status;
+    /* 0x00 */ int16_t Conjunction_Chaos_Status;    /* ¿ 2 means "active" ? */
     /* 0x02 */ int16_t Conjunction_Chaos_Duration;
 
     // /* 0x58 */  struct CON_EVENT Conjunction_Nature;
-    /* 0x00 */ int16_t Conjunction_Nature_Status;
+    /* 0x00 */ int16_t Conjunction_Nature_Status;    /* ¿ 2 means "active" ? */
     /* 0x02 */ int16_t Conjunction_Nature_Duration;
 
     // /* 0x5C */  struct CON_EVENT Conjunction_Sorcery;
-    /* 0x00 */ int16_t Conjunction_Sorcery_Status;
+    /* 0x00 */ int16_t Conjunction_Sorcery_Status;    /* ¿ 2 means "active" ? */
     /* 0x02 */ int16_t Conjunction_Sorcery_Duration;
 
     // /* 0x60 */  struct CON_EVENT Mana_Short;
-    /* 0x00 */ int16_t Mana_Short_Status;
+    /* 0x00 */ int16_t Mana_Short_Status;   /* ¿ 2 means "active" ? */
     /* 0x02 */ int16_t Mana_Short_Duration;
 
     /* 0x64 */
