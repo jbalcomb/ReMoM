@@ -1047,19 +1047,23 @@ int16_t _cp_hostile_opponents[NUM_PLAYERS];
 // WZD dseg:911A
 int16_t _cp_hostile_opponent_count;
 
-// ; redundant - filled out but never used
 // WZD dseg:911C
-// allocated in Allocate_AI_Data()
-SAMB_ptr CRP_AI_OVL_SpellList;
+/*
+50 bytes
+allocated in Allocate_AI_Data()
+OON XREF: AI_Compute_Spells_Info()
+*/
+SAMB_ptr g_niu_ai_spell_info_list;
 // WZD dseg:911E
-int16_t CRP_AI_OVL_SpellCount;
+int16_t g_niu_ai_spell_info_count;
 // WZD dseg:9120
 /*
+1-byte, signed
 92 bytes
 allocated in Allocate_AI_Data()
-AI_OVL_GetSpellList__WIP() only clears 90 bytes; uses byte ptr
+AI_Compute_Spells_Info() only clears 91 bytes; uses byte ptr
 */
-SAMB_ptr AI_OVL_Spell_Cats;
+SAMB_ptr g_ai_spell_group_flags;
 
 // WZD dseg:9122
 /*

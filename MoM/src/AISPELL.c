@@ -386,33 +386,45 @@ int16_t AI_OVL_SplCat_Picker(int16_t player_idx)
 
 
 // WZD o156p04
-// drake178: AI_OVL_GetSpellList()
-/*
-; recalculates the overland spells available to the
-; selected player, setting AI_OVL_SpellCount,
-; AI_OVL_Spell_Cats, and AI_OVL_SpellList accordingly
-*/
-/*
-
-
-
-*/
+/**
+ * @brief Builds the AI overland-casting spell list and category-availability flags.
+ *
+ * @details
+ * Scans every spell slot across all magic realms for the specified player and
+ * keeps only spells marked `sls_Known`. For each known spell, this routine
+ * reads `spell_data_table[spell_idx].AI_Group` and filters out combat-only,
+ * dispel/lock, scouting, and specific legacy groups that are not intended for
+ * overland category selection. Accepted spells are appended to
+ * `g_niu_ai_spell_info_list[]`, while `g_ai_spell_group_flags[group]` is set to
+ * `ST_TRUE` so downstream pickers can quickly test category presence.
+ *
+ * Before scanning, the function resets global outputs by clearing
+ * `g_niu_ai_spell_info_count` and initializing `g_ai_spell_group_flags[0..SGRP_SoM]`
+ * to `ST_FALSE`.
+ *
+ * @param player_idx Index of the player whose known-spell table is evaluated.
+ *
+ * @return This function returns no value.
+ *
+ * @note `spell_idx` is computed as a 1-based global spell id:
+ *       `(realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_in_realm + 1`.
+ * @warning The function writes to global buffers (`g_niu_ai_spell_info_list`,
+ *          `g_ai_spell_group_flags`, `g_niu_ai_spell_info_count`) and assumes
+ *          they are sized for all accepted entries.
+ */
 void AI_Compute_Spells_Info(int16_t player_idx)
 {
     int16_t spell_idx = 0;
     int16_t itr = 0;
-    int16_t itr_spells = 0;  // _DI_
-    int16_t itr_realms = 0;  // _SI_
-    int16_t ai_spell_group = 0;  // _CX_
+    int16_t itr_spells = 0;
+    int16_t itr_realms = 0;
+    int16_t ai_spell_group = 0;
 
-    CRP_AI_OVL_SpellCount = 0;  // ; redundant - calculated but never used
+    g_niu_ai_spell_info_count = 0;
 
-
-    for(itr = 0; itr < 90; itr++)
+    for(itr = 0; itr <= SGRP_SoM ; itr++)
     {
-
-        AI_OVL_Spell_Cats[itr] = 0;
-
+        g_ai_spell_group_flags[itr] = ST_FALSE;
     }
 
     for(itr_realms = 0; itr_realms < NUM_MAGIC_REALMS; itr_realms++)
@@ -421,44 +433,44 @@ void AI_Compute_Spells_Info(int16_t player_idx)
         for(itr_spells = 0; itr_spells < NUM_SPELLS_PER_MAGIC_REALM; itr_spells++)
         {
 
-            if(_players[player_idx].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == 2 /* S_Known */)
+            if(_players[player_idx].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] != sls_Known)
             {
-
-                spell_idx = ((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells);
-
-                ai_spell_group = spell_data_table[spell_idx].AI_Group;
-
-                if(ai_spell_group ==  5) { continue; }  // ; combat damage spells
-                if(ai_spell_group == 24) { continue; }
-                if(ai_spell_group == 47) { continue; }
-                if(ai_spell_group == 70) { continue; }
-                if(ai_spell_group == 12) { continue; }
-                if(ai_spell_group == 31) { continue; }
-                if(ai_spell_group == 55) { continue; }
-                if(ai_spell_group == 77) { continue; }
-                if(ai_spell_group == 16) { continue; }
-                if(ai_spell_group == 35) { continue; }
-                if(ai_spell_group == 59) { continue; }
-                if(ai_spell_group == 81) { continue; }
-                if(ai_spell_group == 17) { continue; }
-                if(ai_spell_group == 36) { continue; }
-                if(ai_spell_group == 60) { continue; }
-                if(ai_spell_group == 82) { continue; }
-                if(ai_spell_group ==  1) { continue; }  // ; Dispel Magic
-                if(ai_spell_group == 20) { continue; }
-                if(ai_spell_group == 43) { continue; }
-                if(ai_spell_group == 19) { continue; }
-                if(ai_spell_group ==  0) { continue; }  // ¿ NONE ?
-
-                // ; redundant - filled out but never used
-                // ; redundant - calculated but never used
-                CRP_AI_OVL_SpellList[CRP_AI_OVL_SpellCount] = (unsigned char)spell_idx;
-
-                AI_OVL_Spell_Cats[ai_spell_group] = 1;
-
-                CRP_AI_OVL_SpellCount++;
-
+                continue;
             }
+            
+            spell_idx = ((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells + 1);
+
+            ai_spell_group = spell_data_table[spell_idx].AI_Group;
+
+            /* Filter out combat-specific and special utility spell groups */
+            if(ai_spell_group == SGRP_CombatHarm_1)   { continue; }
+            if(ai_spell_group == SGRP_CombatCurse)    { continue; }
+            if(ai_spell_group == SGRP_CombatHarm_2)   { continue; }
+            if(ai_spell_group == SGRP_CombatHarm_3)   { continue; }
+            if(ai_spell_group == SGRP_Disrupt)        { continue; }
+            if(ai_spell_group == SGRP_CombatMisc)     { continue; }
+            if(ai_spell_group == SGRP_Haste)          { continue; }
+            if(ai_spell_group == SGRP_AnimateDead)    { continue; }
+            if(ai_spell_group == SGRP_CombatSummon_1) { continue; }
+            if(ai_spell_group == SGRP_CombatSummon_2) { continue; }
+            if(ai_spell_group == SGRP_CombatSummon_3) { continue; }
+            if(ai_spell_group == 81) { continue; }
+            if(ai_spell_group == SGRP_CE_1)           { continue; }
+            if(ai_spell_group == SGRP_CE_2)           { continue; }
+            if(ai_spell_group == SGRP_CE_3)           { continue; }
+            if(ai_spell_group == SGRP_CE_4)           { continue; }
+            if(ai_spell_group == SGRP_Dispel)         { continue; }
+            if(ai_spell_group == SGRP_DispelTrue)     { continue; }
+            if(ai_spell_group == 43) { continue; }
+            if(ai_spell_group == SGRP_SpellLock)      { continue; }
+            if(ai_spell_group == SGRP_Scouting)       { continue; }
+
+            g_niu_ai_spell_info_list[g_niu_ai_spell_info_count] = (unsigned char)spell_idx;
+
+            /* Mark this spell category as available for the AI */
+            g_ai_spell_group_flags[ai_spell_group] = ST_TRUE;
+
+            g_niu_ai_spell_info_count++;
 
         }
 

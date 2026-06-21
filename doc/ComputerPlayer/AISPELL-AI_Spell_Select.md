@@ -7,6 +7,12 @@ Next_Turn_Proc()
 |-> Next_Turn_Calc()
     |-> AI_Next_Turn()
          |-> Cast_Spell_Overland()
+
+XREF:
+    Spellbook_Screen()
+    j_Cast_Spell_Overland_Do()
+        AI_Spell_Select()
+
 AI_Spell_Select()
     |-> AI_Compute_Spells_Info()
     |-> AI_OVL_SplCat_Picker()
@@ -56,7 +62,7 @@ The decision flow:
 ```mermaid
 flowchart TD
     Entry(["AI_Spell_Select(player_idx)"])
-    Compute["AI_Compute_Spells_Info(player_idx)<br/>(populate AI_OVL_Spell_Cats[])"]
+    Compute["AI_Compute_Spells_Info(player_idx)<br/>(populate g_ai_spell_group_flags[])"]
     PickCat["spell_category = AI_OVL_SplCat_Picker(player_idx)<br/>returns 0..10"]
     Switch{"switch(spell_category)"}
 
@@ -117,7 +123,7 @@ void AI_Spell_Select(int16_t player_idx)
 
 - **`ptr_players_spells_known` is set but never read** in the rest of the function — a dead store carried over from the OG asm. Production writes `&...spells_list[0]` but the inline OGBUG comment at [line 320](../../MoM/src/AISPELL.c#L320) notes that the IDA disassembly actually shows `[-1]` (off-by-one index, OG-faithful). Since the value is never used the divergence is harmless; preserve the production form and the OGBUG flag.
 - **`spellbook_page_spell_index` is zero-initialized but never reassigned** before being passed to `Cast_Spell_Overland_Do` at [line 376](../../MoM/src/AISPELL.c#L376) — the variable is just `0` at the call. AI path doesn't need it; that field matters for the spellbook UI on human casts.
-- `AI_Compute_Spells_Info` ([AISPELL.c:400](../../MoM/src/AISPELL.c#L400)) populates `AI_OVL_Spell_Cats[]` and related per-spell metadata that the picker will consult.
+- `AI_Compute_Spells_Info` ([AISPELL.c:415](../../MoM/src/AISPELL.c#L415)) populates `g_ai_spell_group_flags[]` and related per-spell metadata that the picker will consult.
 
 ### Phase 2 — Pick category ([325-326](../../MoM/src/AISPELL.c#L325-L326))
 
@@ -216,7 +222,7 @@ None warrant a code change in this function.
 
 ## Sub-functions / external calls
 
-- **`AI_Compute_Spells_Info`** ([AISPELL.c:400](../../MoM/src/AISPELL.c#L400)) — populates `AI_OVL_Spell_Cats[]` from the player's known-spells inventory, filtering out combat-only AI-groups (5, 12, 24, 47, 70, etc.). RECONSTRUCTED.
+- **`AI_Compute_Spells_Info`** ([AISPELL.c:415](../../MoM/src/AISPELL.c#L415)) — populates `g_ai_spell_group_flags[]` from the player's known-spells inventory, filtering out combat-only AI-groups (5, 12, 24, 47, 70, etc.). RECONSTRUCTED. See [AISPELL-AI_Compute_Spells_Info.md](AISPELL-AI_Compute_Spells_Info.md).
 - **`AI_OVL_SplCat_Picker`** ([AISPELL.c:382](../../MoM/src/AISPELL.c#L382)) — category chooser (0-10). STUB `return 0;`.
 - **`AI_OVL_PickSummon` / `AI_OVL_PickUnitBuff` / `AI_OVL_PickCityBuff` / `AI_OVL_PickDise` / `AI_OVL_PickDisj` / `AI_OVL_PickCurse` / `AI_OVL_PickRealmSupr` / `AI_OVL_PickGlobal`** — per-category spell choosers. ALL STUBS `return 0;`. See [Stubbed leaves](#stubbed-leaves) for line refs.
 - **`Player_Resource_Income_Total`** ([CITYCALC.c](../../MoM/src/CITYCALC.c)) — computes per-turn gold/food/mana income. RECONSTRUCTED (XREF at [CITYCALC.c:969](../../MoM/src/CITYCALC.c#L969)).

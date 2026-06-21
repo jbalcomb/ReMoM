@@ -3023,11 +3023,11 @@ extern int16_t _cp_hostile_opponent_count;
 
 // ; redundant - filled out but never used
 // WZD dseg:911C
-extern SAMB_ptr CRP_AI_OVL_SpellList;
+extern SAMB_ptr g_niu_ai_spell_info_list;
 // WZD dseg:911E
-extern int16_t CRP_AI_OVL_SpellCount;
+extern int16_t g_niu_ai_spell_info_count;
 // WZD dseg:9120
-extern SAMB_ptr AI_OVL_Spell_Cats;
+extern SAMB_ptr g_ai_spell_group_flags;
 
 // WZD dseg:9122
 extern int16_t * _ai_all_enemy_garrison_strengths;

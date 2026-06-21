@@ -740,8 +740,8 @@ void Allocate_AI_Data(void)
     _ai_all_enemy_garrison_strengths = (int16_t *)Near_Allocate_Next(200);
     _ai_all_own_stacks = (struct s_AI_STACK_DATA *)Near_Allocate_Next(800);
     _ai_all_enemy_stacks = (struct s_AI_TARGET *)Near_Allocate_Next(1440);
-    AI_OVL_Spell_Cats = Near_Allocate_Next(92);
-    CRP_AI_OVL_SpellList = Near_Allocate_Next(50);
+    g_ai_spell_group_flags = Near_Allocate_Next(92);
+    g_niu_ai_spell_info_list = Near_Allocate_Next(50);
     _ai_landmass_own_strengths[0] = (int16_t *)Near_Allocate_Next(120);
     _ai_landmass_own_strengths[1] = (int16_t *)Near_Allocate_Next(120);
     _ai_landmass_enemy_strengths[0] = (int16_t *)Near_Allocate_Next(120);

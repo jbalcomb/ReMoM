@@ -107,7 +107,7 @@ static void AI_Log_Metrics(void)
 
     for (itr = 0; itr < _units; itr++)
     {
-        if (_UNITS[itr].owner_idx >= 0 && _UNITS[itr].owner_idx < NUM_PLAYERS)
+        if(_UNITS[itr].owner_idx >= 0 && _UNITS[itr].owner_idx < NUM_PLAYERS)
         {
             unit_counts[_UNITS[itr].owner_idx]++;
         }
@@ -115,7 +115,7 @@ static void AI_Log_Metrics(void)
 
     for (itr = 0; itr < _cities; itr++)
     {
-        if (_CITIES[itr].owner_idx >= 0 && _CITIES[itr].owner_idx < NUM_PLAYERS)
+        if(_CITIES[itr].owner_idx >= 0 && _CITIES[itr].owner_idx < NUM_PLAYERS)
         {
             city_counts[_CITIES[itr].owner_idx]++;
         }
@@ -184,21 +184,21 @@ void AI_Next_Turn(void)
     for (i = 0; i < _units; i++)
     {
         /* Sanity check Plane (wp) */
-        if (_UNITS[i].wp < 0 || _UNITS[i].wp > 1)
+        if(_UNITS[i].wp < 0 || _UNITS[i].wp > 1)
         {
             _UNITS[i].wp = 0;
             _UNITS[i].owner_idx = ST_UNDEFINED;
         }
 
         /* Sanity check World X (wx) */
-        if (_UNITS[i].wx < 0 || _UNITS[i].wx >= WORLD_WIDTH)
+        if(_UNITS[i].wx < 0 || _UNITS[i].wx >= WORLD_WIDTH)
         {
             _UNITS[i].wx = 0;
             _UNITS[i].owner_idx = ST_UNDEFINED;
         }
 
         /* Sanity check World Y (wy) */
-        if (_UNITS[i].wy < 0 || _UNITS[i].wy >= WORLD_HEIGHT)
+        if(_UNITS[i].wy < 0 || _UNITS[i].wy >= WORLD_HEIGHT)
         {
             _UNITS[i].wy = 0;
             _UNITS[i].owner_idx = ST_UNDEFINED;
@@ -216,9 +216,9 @@ void AI_Next_Turn(void)
     for (player_idx = 1; player_idx < _num_players; player_idx++)
     {
         /* Check for Time Stop effect */
-        if (g_timestop_player_num != 0)
+        if(g_timestop_player_num != 0)
         {
-            if ((g_timestop_player_num - 1) != player_idx)
+            if((g_timestop_player_num - 1) != player_idx)
             {
 #ifdef STU_DEBUG
                 LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Player %d (%s) SKIPPED (Time Stop)", player_idx, _players[player_idx].name);
@@ -229,7 +229,7 @@ void AI_Next_Turn(void)
 
         /* Check if Wizard is active or returning */
         /* MoO2 ~ `s_PLAYER.eliminated == ST_FALSE` */
-        if (_FORTRESSES[player_idx].active != ST_TRUE && _players[player_idx].casting_spell_idx != spl_Spell_Of_Return)
+        if(_FORTRESSES[player_idx].active != ST_TRUE && _players[player_idx].casting_spell_idx != spl_Spell_Of_Return)
         {
 #ifdef STU_DEBUG
             LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Player %d (%s) SKIPPED (inactive)", player_idx, _players[player_idx].name);
@@ -259,12 +259,12 @@ void AI_Next_Turn(void)
         PHASE(AI_Choose_War_Landmass(player_idx));  /* populates _ai_landmass_war_targets[]; uses the arrays just populated in AI_Landmass_Values_And_Strengths() */
 
         /* Handle Overland Casting Completion */
-        if (_players[player_idx].casting_cost_remaining <= 0 && _players[player_idx].casting_spell_idx != spl_NONE)
+        if(_players[player_idx].casting_cost_remaining <= 0 && _players[player_idx].casting_spell_idx != spl_NONE)
         {
             PHASE(Cast_Spell_Overland(player_idx));
             PHASE(EMMDATAH_Map());
             _players[player_idx].casting_spell_idx = spl_NONE;
-            if (g_ai_recompute_needed == ST_TRUE)
+            if(g_ai_recompute_needed == ST_TRUE)
             {
                 PHASE(Allocate_AI_Data());
                 PHASE(Player_Hostile_Opponents(player_idx));
@@ -273,7 +273,7 @@ void AI_Next_Turn(void)
         }
 
         /* Handle New Spell Selection if not casting */
-        if (_players[player_idx].casting_spell_idx == spl_NONE)
+        if(_players[player_idx].casting_spell_idx == spl_NONE)
         {
             PHASE(AI_Spell_Select(player_idx));
         }
@@ -290,7 +290,7 @@ void AI_Next_Turn(void)
         /* Decrement peace treaties durations */
         for (other_player_idx = 0; other_player_idx < _num_players; other_player_idx++)
         {
-            if (_players[player_idx].peace_duration[other_player_idx] != 0)
+            if(_players[player_idx].peace_duration[other_player_idx] != 0)
             {
                 _players[player_idx].peace_duration[other_player_idx]--;
             }
@@ -314,7 +314,7 @@ void AI_Next_Turn(void)
     /* Reset Move_Failed flag for all non-human units */
     for (i = 0; i < _units; i++)
     {
-        if (_UNITS[i].owner_idx != HUMAN_PLAYER_IDX)
+        if(_UNITS[i].owner_idx != HUMAN_PLAYER_IDX)
         {
             _UNITS[i].Move_Failed = ST_FALSE;
         }
@@ -327,16 +327,16 @@ void AI_Next_Turn(void)
     for (player_idx = 1; player_idx < _num_players; player_idx++)
     {
         /* Check for Time Stop effect */
-        if (g_timestop_player_num != 0)
+        if(g_timestop_player_num != 0)
         {
-            if ((g_timestop_player_num - 1) != player_idx)
+            if((g_timestop_player_num - 1) != player_idx)
             {
                 continue;
             }
         }
 
         /* Check if Wizard is active or returning */
-        if (_FORTRESSES[player_idx].active == ST_TRUE || _players[player_idx].casting_spell_idx == spl_Spell_Of_Return)
+        if(_FORTRESSES[player_idx].active == ST_TRUE || _players[player_idx].casting_spell_idx == spl_Spell_Of_Return)
         {
 #ifdef STU_DEBUG
             LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Moving units for Player %d (%s)", player_idx, _players[player_idx].name);
@@ -2028,7 +2028,7 @@ void NPC_Farmers(void)
     int16_t temp_val = 0;
     for (city_idx = 0; city_idx < _cities; city_idx++)
     {
-        if (_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
+        if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
         {
             /* Calculate base farmers needed for population */
             min_farmers = City_Minimum_Farmers(city_idx);
@@ -2036,13 +2036,13 @@ void NPC_Farmers(void)
             unit_count = Map_Square_Unit_Count(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp);
             /* Check for production bonus (Halflings or Granary). */
             /* OGBUG:  wrong calculation */
-            if (_CITIES[city_idx].race == rt_Halfling || _CITIES[city_idx].bldg_status[GRANARY] == bs_Built)
+            if(_CITIES[city_idx].race == rt_Halfling || _CITIES[city_idx].bldg_status[GRANARY] == bs_Built)
             {
                 /* Halfling/Granary logic (3 food per farmer) */
                 temp_val = min_farmers + unit_count;
                 _CITIES[city_idx].farmer_count = (temp_val / 3);
                 /* Round up if there is a remainder */
-                if ((temp_val % 3) != 0)
+                if((temp_val % 3) != 0)
                 {
                     _CITIES[city_idx].farmer_count++;
                 }
@@ -2053,13 +2053,13 @@ void NPC_Farmers(void)
                 temp_val = min_farmers + unit_count;
                 _CITIES[city_idx].farmer_count = (temp_val / 2);
                 /* Round up if there is a remainder */
-                if ((temp_val % 2) != 0)
+                if((temp_val % 2) != 0)
                 {
                     _CITIES[city_idx].farmer_count++;
                 }
             }
             /* Ensure farmer count does not exceed total population */
-            if (_CITIES[city_idx].farmer_count > _CITIES[city_idx].population)
+            if(_CITIES[city_idx].farmer_count > _CITIES[city_idx].population)
             {
                 _CITIES[city_idx].farmer_count = _CITIES[city_idx].population;
             }
@@ -2170,15 +2170,15 @@ void AI_Hopeless_Stasis(void)
     int16_t unit_idx = 0;
     for (unit_idx = 0; unit_idx < _units; unit_idx++)
     {
-        if (_UNITS[unit_idx].owner_idx == HUMAN_PLAYER_IDX)
+        if(_UNITS[unit_idx].owner_idx == HUMAN_PLAYER_IDX)
         {
             continue;
         }
-        if (!(_UNITS[unit_idx].mutations & (C_STASISINIT | C_STASISLINGER)))
+        if(!(_UNITS[unit_idx].mutations & (C_STASISINIT | C_STASISLINGER)))
         {
             continue;
         }
-        if (_unit_type_table[_UNITS[unit_idx].type].Resist < 7)
+        if(_unit_type_table[_UNITS[unit_idx].type].Resist < 7)
         {
             Kill_Unit(unit_idx, kt_Normal);
         }
