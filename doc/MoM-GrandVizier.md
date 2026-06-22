@@ -118,8 +118,8 @@ max 10 for HP, max 8 for CP
 XREF:
     AI_OVL_Eval_Assets+1262   mov     [ai_transport_count], 0 
     AI_OVL_Eval_Assets+12A2   inc     [ai_transport_count]    
-    AI_OVL_PickSummon+107     cmp     [ai_transport_count], 10
-    AI_OVL_PickSummon+117     cmp     ax, [ai_transport_count]
+    AI_Select_Spell_Group_Summon+107     cmp     [ai_transport_count], 10
+    AI_Select_Spell_Group_Summon+117     cmp     ax, [ai_transport_count]
     AI_CTY_SetProduction+688  cmp     ax, [ai_transport_count]
     AI_CTY_SetProduction+68E  cmp     [ai_transport_count], 8 
     AI_CTY_SetProduction+6AB  sub     ax, [ai_transport_count]

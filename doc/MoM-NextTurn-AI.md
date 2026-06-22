@@ -318,7 +318,7 @@ AI_OVL_SpellPicker__STUB()
     |-> AI_Compute_Spells_Info()
     |-> AI_Select_Spell_Group()
     ...
-    |-> AI_OVL_PickSummon()
+    |-> AI_Select_Spell_Group_Summon()
     |-> AI_OVL_PickUnitBuff()
     |-> AI_OVL_PickCityBuff()
     |-> AI_OVL_PickDise()

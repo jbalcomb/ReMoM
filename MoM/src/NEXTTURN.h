@@ -84,7 +84,7 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx);
 int16_t Player_Hero_Count(int16_t player_idx);
 
 // WZD o121p06
-// Player_Dead_Hero_Count()
+int16_t Player_Dead_Hero_Count(int16_t player_idx);
 
 // WZD o121p07
 int16_t Pick_Random_Hero(int16_t player_idx, int16_t zero_cost, int16_t hero_type_class);

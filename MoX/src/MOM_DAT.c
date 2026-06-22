@@ -958,7 +958,7 @@ int16_t _ai_targets_count;
 
 // WZD dseg:9094
 /*
-used to help decide on casting spl_Floating_Island, in AI_OVL_PickSummon()
+used to help decide on casting spl_Floating_Island, in AI_Select_Spell_Group_Summon()
 */
 int16_t ai_transport_count;
 // WZD dseg:9096

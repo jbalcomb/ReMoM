@@ -1324,10 +1324,10 @@ int16_t Player_Hero_Count(int16_t player_idx)
 /*
 ; returns the amount of dead, but not disintegrated heroes formerly in the player's service
 */
-static int16_t Player_Dead_Hero_Count(int16_t player_idx)
+int16_t Player_Dead_Hero_Count(int16_t player_idx)
 {
-    int16_t itr_hero_types;  // _SI_
-    int16_t hero_count;  // _DI_
+    int16_t itr_hero_types = 0;
+    int16_t hero_count = 0;
 
     hero_count = 0;
 

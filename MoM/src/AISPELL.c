@@ -325,14 +325,14 @@ void AI_Spell_Select(int16_t player_idx)
     int16_t mana_income = 0;
     int16_t food_income = 0;
     int16_t gold_income = 0;
-    uint8_t * ptr_players_spells_known = 0;
+    uint8_t * players_spell_list = NULL;
     int16_t mana_per_turn = 0;
     int16_t spellbook_page_spell_index = 0;
     int16_t spell_category = 0;
     int16_t spell_idx = 0;
 
-    /* OGBUG  somehow, the Dasm shows -1 for the spell index */
-    ptr_players_spells_known = &_players[player_idx].spells_list[0];
+    /* Treat spell list as 1-based index by shifting pointer */
+    players_spell_list = (uint8_t *)&_players[player_idx].spells_list[0] - 1;
 
     AI_Compute_Spells_Info(player_idx);
 
@@ -344,7 +344,7 @@ void AI_Spell_Select(int16_t player_idx)
             spell_idx = 0;
             break;
         case 1:
-            spell_idx = AI_OVL_PickSummon(player_idx);
+            spell_idx = AI_Select_Spell_Group_Summon(player_idx);
             break;
         case 2:
             spell_idx = AI_OVL_PickUnitBuff(player_idx);
@@ -393,6 +393,20 @@ void AI_Spell_Select(int16_t player_idx)
 
 
 // WZD o156p03
+/*
+selects a spell category for the AI to use next:
+  0 - no spell
+  1 - summon
+  2 - unit enchantment
+  3 - city enchantment
+  4 - disenchant / true
+  5 - disjunction / true
+  6 - summoning circle
+  7 - overland curse / damage
+  8 - suppression global
+  9 - global enchantment
+ 10 - spell of mastery
+*/
 /**
  * @brief Selects the high-level overland spell category the AI should prioritize casting.
  *
@@ -452,7 +466,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
     int16_t itr = 0;
 
     /* Treat spell list as 1-based index by shifting pointer */
-    players_spell_list = (uint8_t *)_players[player_idx].spells_list - 1;
+    players_spell_list = (uint8_t *)&_players[player_idx].spells_list[0] - 1;
 
     for(itr = 0; itr <= 10; itr++)
     {
@@ -957,10 +971,386 @@ void AI_Compute_Spells_Info(int16_t player_idx)
 
 
 // WZD o156p05
-int16_t AI_OVL_PickSummon(int16_t player_idx)
+/**
+ * @brief Selects an overland summoning spell for the AI player to cast.
+ *
+ * @details
+ * This function evaluates which summoning spell the AI should prioritize based on:
+ *   - Known summoning spells in the player's spellbook
+ *   - Spell casting costs (normalized by division and squared for non-linear weighting)
+ *   - Special unit types (War Bears, Sprites, Giants, Dragons, Demons, etc.)
+ *   - Hero summoning capability (via Summon Hero, Conjurer trait, or Channeler trait)
+ *   - Special enchantment spells (Resurrection, Guardian Spirit, Magic Spirit, Enchant Item, Create Artifact)
+ *   - Current hero count vs. available hero slots
+ *
+ * The function populates the global `AI_OVL_SplPriorities[]` array with weighted values
+ * for each summoning spell, then uses weighted random selection to pick one. Spell costs
+ * are squared to apply non-linear scaling, making higher-cost spells disproportionately
+ * more likely (with the exception of Storm Giant at index 11, which is not squared due
+ * to a historical quirk in the original disassembly).
+ *
+ * If the AI player has no valid summoning spell available, or if mana constraints prevent
+ * casting, the function returns 0 (no spell).
+ *
+ * @param player_idx Index of the AI-controlled player evaluating summoning options.
+ *
+ * @return The spell index of the selected summoning spell (e.g., spl_War_Bears, spl_Colossus),
+ *         or 0 if no summoning spell should be cast.
+ *
+ * @note The global array `AI_OVL_SplPriorities[]` is used for weight computation and is
+ *       reused across calls; it must be re-initialized at the start of this function.
+ * @note Storm Giant (index 11) is intentionally NOT squared due to a quirk in the original
+ *       disassembly code; all other summons are squared for non-linear weighting.
+ * @note Hero summoning is conditional on trait presence and available hero slots.
+ * @note Floating Island summon has additional logic based on transport count and turn number.
+ * @warning Some indices (26, 30) in the priority array are reserved or have special handling
+ *          that may reflect legacy spell organization.
+ */
+int16_t AI_Select_Spell_Group_Summon(int16_t player_idx)
 {
-    return 0;
+    int16_t choice = 0;
+    int16_t have_the_chosen = 0;
+    int16_t unit_idx = 0;
+    uint8_t * players_spell_list = NULL;
+    int16_t spell_idx = 0;  // DNE in Dasm
+
+    /* Treat spell list as 1-based index by shifting pointer */
+    players_spell_list = (uint8_t *)&_players[player_idx].spells_list[0] - 1;
+
+    /* Initialize AI_OVL_SplPriorities array to 0 */
+    for(unit_idx = 0; unit_idx < 50; unit_idx++)
+    {
+        AI_OVL_SplPriorities[unit_idx] = 0;
+    }
+
+    if(players_spell_list[spl_War_Bears] == sls_Known) {
+        AI_OVL_SplPriorities[1] = spell_data_table[spl_War_Bears].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Sprites] == sls_Known) {
+        AI_OVL_SplPriorities[2] = spell_data_table[spl_Sprites].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Giant_Spiders] == sls_Known) {
+        AI_OVL_SplPriorities[3] = spell_data_table[spl_Giant_Spiders].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Basilisk] == sls_Known) {
+        AI_OVL_SplPriorities[4] = spell_data_table[spl_Basilisk].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Stone_Giant] == sls_Known) {
+        AI_OVL_SplPriorities[5] = spell_data_table[spl_Stone_Giant].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Gorgons] == sls_Known) {
+        AI_OVL_SplPriorities[6] = spell_data_table[spl_Gorgons].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Behemoth] == sls_Known) {
+        AI_OVL_SplPriorities[7] = spell_data_table[spl_Behemoth].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Colossus] == sls_Known) {
+        AI_OVL_SplPriorities[8] = spell_data_table[spl_Colossus].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Great_Wyrm] == sls_Known) {
+        AI_OVL_SplPriorities[9] = spell_data_table[spl_Great_Wyrm].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Floating_Island] == sls_Known) {
+        if(ai_transport_count < 10 && (_turn / 60) > ai_transport_count) {
+            AI_OVL_SplPriorities[10] = spell_data_table[spl_Floating_Island].casting_cost / 5;
+        }
+    }
+    if(players_spell_list[spl_Storm_Giant] == sls_Known) {
+        AI_OVL_SplPriorities[11] = spell_data_table[spl_Storm_Giant].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Djinn] == sls_Known) {
+        AI_OVL_SplPriorities[12] = spell_data_table[spl_Djinn].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Sky_Drake] == sls_Known) {
+        AI_OVL_SplPriorities[13] = spell_data_table[spl_Sky_Drake].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Hell_Hounds] == sls_Known) {
+        AI_OVL_SplPriorities[14] = spell_data_table[spl_Hell_Hounds].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Gargoyles] == sls_Known) {
+        AI_OVL_SplPriorities[15] = spell_data_table[spl_Gargoyles].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Doom_Bat] == sls_Known) {
+        AI_OVL_SplPriorities[16] = spell_data_table[spl_Doom_Bat].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Chaos_Spawn] == sls_Known) {
+        AI_OVL_SplPriorities[17] = spell_data_table[spl_Chaos_Spawn].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Fire_Giant] == sls_Known) {
+        AI_OVL_SplPriorities[18] = spell_data_table[spl_Fire_Giant].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Chimeras] == sls_Known) {
+        AI_OVL_SplPriorities[19] = spell_data_table[spl_Chimeras].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Efreet] == sls_Known) {
+        AI_OVL_SplPriorities[20] = spell_data_table[spl_Efreet].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Hydra] == sls_Known) {
+        AI_OVL_SplPriorities[21] = spell_data_table[spl_Hydra].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Great_Drake] == sls_Known) {
+        AI_OVL_SplPriorities[22] = spell_data_table[spl_Great_Drake].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Unicorns] == sls_Known) {
+        AI_OVL_SplPriorities[23] = spell_data_table[spl_Unicorns].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Angel] == sls_Known) {
+        AI_OVL_SplPriorities[24] = spell_data_table[spl_Angel].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Arch_Angel] == sls_Known) {
+        AI_OVL_SplPriorities[25] = spell_data_table[spl_Arch_Angel].casting_cost / 10;
+    }
+
+    AI_OVL_SplPriorities[26] = 0;
+
+    if(players_spell_list[spl_Skeletons] == sls_Known) {
+        AI_OVL_SplPriorities[27] = spell_data_table[spl_Skeletons].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Ghouls] == sls_Known) {
+        AI_OVL_SplPriorities[28] = spell_data_table[spl_Ghouls].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Night_Stalker] == sls_Known) {
+        AI_OVL_SplPriorities[29] = spell_data_table[spl_Night_Stalker].casting_cost / 10;
+    }
+    /* Note: Index 30 is skipped */
+    if(players_spell_list[spl_Wraiths] == sls_Known) {
+        AI_OVL_SplPriorities[31] = spell_data_table[spl_Wraiths].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Shadow_Demons] == sls_Known) {
+        AI_OVL_SplPriorities[32] = spell_data_table[spl_Shadow_Demons].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Death_Knights] == sls_Known) {
+        AI_OVL_SplPriorities[33] = spell_data_table[spl_Death_Knights].casting_cost / 10;
+    }
+    if(players_spell_list[spl_Demon_Lord] == sls_Known) {
+        AI_OVL_SplPriorities[34] = spell_data_table[spl_Demon_Lord].casting_cost / 10;
+    }
+
+    /* Square weights for non-linear scale choice */
+    AI_OVL_SplPriorities[1] = AI_OVL_SplPriorities[1] * AI_OVL_SplPriorities[1];
+    AI_OVL_SplPriorities[2] = AI_OVL_SplPriorities[2] * AI_OVL_SplPriorities[2];
+    AI_OVL_SplPriorities[3] = AI_OVL_SplPriorities[3] * AI_OVL_SplPriorities[3];
+    AI_OVL_SplPriorities[4] = AI_OVL_SplPriorities[4] * AI_OVL_SplPriorities[4];
+    AI_OVL_SplPriorities[5] = AI_OVL_SplPriorities[5] * AI_OVL_SplPriorities[5];
+    AI_OVL_SplPriorities[6] = AI_OVL_SplPriorities[6] * AI_OVL_SplPriorities[6];
+    AI_OVL_SplPriorities[7] = AI_OVL_SplPriorities[7] * AI_OVL_SplPriorities[7];
+    AI_OVL_SplPriorities[8] = AI_OVL_SplPriorities[8] * AI_OVL_SplPriorities[8];
+    AI_OVL_SplPriorities[9] = AI_OVL_SplPriorities[9] * AI_OVL_SplPriorities[9];
+    AI_OVL_SplPriorities[10] = AI_OVL_SplPriorities[10] * AI_OVL_SplPriorities[10];
+    /* Note: AI_OVL_SplPriorities[11] (Storm Giant) is NOT squared in the original disassembly */
+    AI_OVL_SplPriorities[12] = AI_OVL_SplPriorities[12] * AI_OVL_SplPriorities[12];
+    AI_OVL_SplPriorities[13] = AI_OVL_SplPriorities[13] * AI_OVL_SplPriorities[13];
+    AI_OVL_SplPriorities[14] = AI_OVL_SplPriorities[14] * AI_OVL_SplPriorities[14];
+    AI_OVL_SplPriorities[15] = AI_OVL_SplPriorities[15] * AI_OVL_SplPriorities[15];
+    AI_OVL_SplPriorities[16] = AI_OVL_SplPriorities[16] * AI_OVL_SplPriorities[16];
+    AI_OVL_SplPriorities[17] = AI_OVL_SplPriorities[17] * AI_OVL_SplPriorities[17];
+    AI_OVL_SplPriorities[18] = AI_OVL_SplPriorities[18] * AI_OVL_SplPriorities[18];
+    AI_OVL_SplPriorities[19] = AI_OVL_SplPriorities[19] * AI_OVL_SplPriorities[19];
+    AI_OVL_SplPriorities[20] = AI_OVL_SplPriorities[20] * AI_OVL_SplPriorities[20];
+    AI_OVL_SplPriorities[21] = AI_OVL_SplPriorities[21] * AI_OVL_SplPriorities[21];
+    AI_OVL_SplPriorities[22] = AI_OVL_SplPriorities[22] * AI_OVL_SplPriorities[22];
+    AI_OVL_SplPriorities[23] = AI_OVL_SplPriorities[23] * AI_OVL_SplPriorities[23];
+    AI_OVL_SplPriorities[24] = AI_OVL_SplPriorities[24] * AI_OVL_SplPriorities[24];
+    AI_OVL_SplPriorities[25] = AI_OVL_SplPriorities[25] * AI_OVL_SplPriorities[25];
+    AI_OVL_SplPriorities[26] = AI_OVL_SplPriorities[26] * AI_OVL_SplPriorities[26];
+    AI_OVL_SplPriorities[27] = AI_OVL_SplPriorities[27] * AI_OVL_SplPriorities[27];
+    AI_OVL_SplPriorities[28] = AI_OVL_SplPriorities[28] * AI_OVL_SplPriorities[28];
+    AI_OVL_SplPriorities[29] = AI_OVL_SplPriorities[29] * AI_OVL_SplPriorities[29];
+    /* Note: AI_OVL_SplPriorities[30] is NOT squared */
+    AI_OVL_SplPriorities[31] = AI_OVL_SplPriorities[31] * AI_OVL_SplPriorities[31];
+    AI_OVL_SplPriorities[32] = AI_OVL_SplPriorities[32] * AI_OVL_SplPriorities[32];
+    AI_OVL_SplPriorities[33] = AI_OVL_SplPriorities[33] * AI_OVL_SplPriorities[33];
+    AI_OVL_SplPriorities[34] = AI_OVL_SplPriorities[34] * AI_OVL_SplPriorities[34];
+
+    if(players_spell_list[spl_Resurrection] == sls_Known) {
+        if(Player_Hero_Count(player_idx) < NUM_HEROES) {
+            if(Player_Dead_Hero_Count(player_idx) > 0) {
+                AI_OVL_SplPriorities[35] = 100;
+            }
+        }
+    }
+
+    AI_OVL_SplPriorities[36] = 0;
+    AI_OVL_SplPriorities[37] = 0;
+    if(players_spell_list[spl_Guardian_Spirit] == sls_Known)
+    {
+        if(AI_NodeOpportunity == ST_TRUE)
+        {
+            AI_OVL_SplPriorities[36] = 200;
+        }
+        else
+        {
+            AI_OVL_SplPriorities[36] = 0;
+        }
+    }
+    else if(players_spell_list[spl_Magic_Spirit] == sls_Known)
+    {
+        if(AI_NodeOpportunity == ST_TRUE)
+        {
+            AI_OVL_SplPriorities[37] = 100;
+        }
+        else
+        {
+            AI_OVL_SplPriorities[37] = 0;
+        }
+    }
+
+    if(players_spell_list[spl_Enchant_Item] == sls_Known)
+    {
+        if(_players[player_idx].artificer != 0)
+        {
+            AI_OVL_SplPriorities[38] = 30;
+        }
+        else
+        {
+            AI_OVL_SplPriorities[38] = 20;
+        }
+    }
+
+    if(players_spell_list[spl_Create_Artifact] == sls_Known)
+    {
+        if(_players[player_idx].artificer != 0)
+        {
+            AI_OVL_SplPriorities[39] = 40;
+        }
+        else
+        {
+            AI_OVL_SplPriorities[39] = 30;
+        }
+    }
+
+    have_the_chosen = ST_FALSE;
+    for(unit_idx = 0; unit_idx < _units; unit_idx++)
+    {
+        if(_UNITS[unit_idx].owner_idx == player_idx && _UNITS[unit_idx].type == ut_BarbSpearmen)  /* OGBUG  should be The Chosen, Barbarian Spearmen */
+        {
+            have_the_chosen = ST_TRUE;
+        }
+    }
+
+    if(Player_Hero_Count(player_idx) < NUM_HERO_SLOTS)
+    {
+        /* OGBUG  test inverted, should be `have_the_chosen != ST_TRUE` */
+        if(players_spell_list[spl_Incarnation] == sls_Known && have_the_chosen == ST_TRUE)
+        {
+            AI_OVL_SplPriorities[40] = 500;
+        }
+        else if(players_spell_list[spl_Summon_Champion] == sls_Known)
+        {
+            AI_OVL_SplPriorities[41] = 400;
+        }
+        else if(players_spell_list[spl_Summon_Hero] == sls_Known)
+        {
+            AI_OVL_SplPriorities[42] = 200;
+        }
+    }
+
+    if(players_spell_list[spl_Cockatrices] == sls_Known) {
+        AI_OVL_SplPriorities[43] = spell_data_table[spl_Cockatrices].casting_cost / 5;
+    }
+
+    /* Apply global spell suppression modifiers */
+    if(SPL_IsLifeSupressed() == 1) {
+        AI_OVL_SplPriorities[23] = (AI_OVL_SplPriorities[23] * 2) / 3;
+        AI_OVL_SplPriorities[24] = (AI_OVL_SplPriorities[24] * 2) / 3;
+        AI_OVL_SplPriorities[25] = (AI_OVL_SplPriorities[25] * 2) / 3;
+        AI_OVL_SplPriorities[26] = (AI_OVL_SplPriorities[26] * 2) / 3;
+        AI_OVL_SplPriorities[35] = (AI_OVL_SplPriorities[35] * 2) / 3;
+        AI_OVL_SplPriorities[36] = (AI_OVL_SplPriorities[36] * 2) / 3;
+        AI_OVL_SplPriorities[40] = (AI_OVL_SplPriorities[40] * 2) / 3;
+    }
+
+    if(CRP_SPL_IsNatSuppressed() == 1) {
+        AI_OVL_SplPriorities[1] = (AI_OVL_SplPriorities[1] * 2) / 3;
+        AI_OVL_SplPriorities[2] = (AI_OVL_SplPriorities[2] * 2) / 3;
+        AI_OVL_SplPriorities[3] = (AI_OVL_SplPriorities[3] * 2) / 3;
+        AI_OVL_SplPriorities[4] = (AI_OVL_SplPriorities[4] * 2) / 3;
+        AI_OVL_SplPriorities[5] = (AI_OVL_SplPriorities[5] * 2) / 3;
+        AI_OVL_SplPriorities[6] = (AI_OVL_SplPriorities[6] * 2) / 3;
+        AI_OVL_SplPriorities[7] = (AI_OVL_SplPriorities[7] * 2) / 3;
+        AI_OVL_SplPriorities[8] = (AI_OVL_SplPriorities[8] * 2) / 3;
+        AI_OVL_SplPriorities[9] = (AI_OVL_SplPriorities[9] * 2) / 3;
+        AI_OVL_SplPriorities[10] = (AI_OVL_SplPriorities[10] * 2) / 3;
+        AI_OVL_SplPriorities[43] = (AI_OVL_SplPriorities[43] * 2) / 3;
+    }
+
+    if(SPL_IsDthSuppressed() == 1) {
+        for(unit_idx = 27; unit_idx <= 34; unit_idx++) {
+            if(AI_OVL_SplPriorities[unit_idx] < 20) {
+                AI_OVL_SplPriorities[unit_idx] = 0;
+            } else if(AI_OVL_SplPriorities[unit_idx] < 50) {
+                AI_OVL_SplPriorities[unit_idx] = AI_OVL_SplPriorities[unit_idx] / 3;
+            } else {
+                AI_OVL_SplPriorities[unit_idx] = AI_OVL_SplPriorities[unit_idx] / 2;
+            }
+        }
+    }
+
+    if(SPL_IsChsSuppressed() == 1) {
+        for(unit_idx = 14; unit_idx <= 22; unit_idx++) {
+            if(AI_OVL_SplPriorities[unit_idx] < 20) {
+                AI_OVL_SplPriorities[unit_idx] = 0;
+            } else if(AI_OVL_SplPriorities[unit_idx] < 50) {
+                AI_OVL_SplPriorities[unit_idx] = AI_OVL_SplPriorities[unit_idx] / 3;
+            } else {
+                AI_OVL_SplPriorities[unit_idx] = AI_OVL_SplPriorities[unit_idx] / 2;
+            }
+        }
+    }
+
+    choice = Get_Weighted_Choice(AI_OVL_SplPriorities, 50);
+
+    switch(choice - 1)
+    {
+        case  0: { spell_idx = spl_War_Bears;     } break;
+        case  1: { spell_idx = spl_Sprites;       } break;
+        case  2: { spell_idx = spl_Giant_Spiders; } break;
+        case  3: { spell_idx = spl_Basilisk; } break;
+        case  4: { spell_idx = spl_Stone_Giant; } break;
+        case  5: { spell_idx = spl_Gorgons; } break;
+        case  6: { spell_idx = spl_Behemoth; } break;
+        case  7: { spell_idx = spl_Colossus; } break;
+        case  8: { spell_idx = spl_Great_Wyrm; } break;
+        case  9: { spell_idx = spl_Floating_Island; } break;
+        case 10: { spell_idx = spl_Storm_Giant; } break;
+        case 11: { spell_idx = spl_Djinn; } break;
+        case 12: { spell_idx = spl_Sky_Drake; } break;
+        case 13: { spell_idx = spl_Hell_Hounds; } break;
+        case 14: { spell_idx = spl_Gargoyles; } break;
+        case 15: { spell_idx = spl_Doom_Bat; } break;
+        case 16: { spell_idx = spl_Chaos_Spawn; } break;
+        case 17: { spell_idx = spl_Fire_Giant; } break;
+        case 18: { spell_idx = spl_Chimeras; } break;
+        case 19: { spell_idx = spl_Efreet; } break;
+        case 20: { spell_idx = spl_Hydra; } break;
+        case 21: { spell_idx = spl_Great_Drake; } break;
+        case 22: { spell_idx = spl_Unicorns; } break;
+        case 23: { spell_idx = spl_Angel; } break;
+        case 24: { spell_idx = spl_Arch_Angel; } break;
+        case 25: { spell_idx = spl_Skeletons; } break;
+        case 26: { spell_idx = spl_Skeletons; } break;
+        case 27: { spell_idx = spl_Ghouls; } break;
+        case 28: { spell_idx = spl_Night_Stalker; } break;
+        case 29: { spell_idx = 0; } break;
+        case 30: { spell_idx = spl_Wraiths; } break;
+        case 31: { spell_idx = spl_Shadow_Demons; } break;
+        case 32: { spell_idx = spl_Death_Knights; } break;
+        case 33: { spell_idx = spl_Demon_Lord; } break;
+        case 34: { spell_idx = spl_Resurrection; } break;
+        case 35: { spell_idx = spl_Guardian_Spirit; } break;
+        case 36: { spell_idx = spl_Magic_Spirit; } break;
+        case 37: { spell_idx = spl_Enchant_Item; } break;
+        case 38: { spell_idx = spl_Create_Artifact; } break;
+        case 39: { spell_idx = spl_Incarnation; } break;
+        case 40: { spell_idx = spl_Summon_Champion; } break;
+        case 41: { spell_idx = spl_Summon_Hero; } break;
+        case 42: { spell_idx = spl_Cockatrices; } break;
+        default: { spell_idx = 0; } break;
+    }
+
+    return spell_idx;
 }
+
 
 // WZD o156p06
 int16_t AI_OVL_PickUnitBuff(int16_t player_idx)
@@ -992,17 +1382,69 @@ int16_t AI_OVL_PickCityBuff(int16_t player_idx)
     return 0;
 }
 
+
 // WZD o156p11
-// drake178: SPL_IsLifeSupressed()
+int16_t SPL_IsLifeSupressed(void)
+{
+    int16_t itr_players = 0;
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        if(_players[itr_players].Globals[EVIL_OMENS] != ST_FALSE)
+        {
+            return ST_TRUE;
+        }
+    }
+    return ST_FALSE;
+}
 
 // WZD o156p12
-// drake178: SPL_IsChsSuppressed()
+int16_t SPL_IsChsSuppressed(void)
+{
+    int16_t itr_players = 0;
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        if(_players[itr_players].Globals[NATURES_WRATH] != ST_FALSE)
+        {
+            return ST_TRUE;
+        }
+    }
+    return ST_FALSE;
+}
+
 
 // WZD o156p13
-// drake178: SPL_IsDthSuppressed()
+int16_t SPL_IsDthSuppressed(void)
+{
+    int16_t itr_players = 0;
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        if(_players[itr_players].Globals[LIFE_FORCE] != ST_FALSE)
+        {
+            return ST_TRUE;
+        }
+        if(_players[itr_players].Globals[NATURES_WRATH] != ST_FALSE)
+        {
+            return ST_TRUE;
+        }
+    }
+    return ST_FALSE;
+}
+
 
 // WZD o156p14
-// drake178: CRP_SPL_IsNatSuppressed()
+int16_t CRP_SPL_IsNatSuppressed(void)
+{
+    int16_t itr_players = 0;
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        if(_players[itr_players].Globals[EVIL_OMENS] != ST_FALSE)
+        {
+            return ST_TRUE;
+        }
+    }
+    return ST_FALSE;
+}
+
 
 // WZD o156p15
 int16_t AI_OVL_PickDise(int16_t player_idx)

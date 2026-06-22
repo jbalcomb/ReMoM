@@ -123,7 +123,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx);
 void AI_Compute_Spells_Info(int16_t player_idx);
 
 // WZD o156p05
-int16_t AI_OVL_PickSummon(int16_t player_idx);
+int16_t AI_Select_Spell_Group_Summon(int16_t player_idx);
 
 // WZD o156p06
 int16_t AI_OVL_PickUnitBuff(int16_t player_idx);
@@ -141,16 +141,16 @@ int16_t AI_OVL_PickCurse(int16_t player_idx);
 int16_t AI_OVL_PickCityBuff(int16_t player_idx);
 
 // WZD o156p11
-// SPL_IsLifeSupressed()
+int16_t SPL_IsLifeSupressed(void);
 
 // WZD o156p12
-// SPL_IsChsSuppressed()
+int16_t SPL_IsChsSuppressed(void);
 
 // WZD o156p13
-// SPL_IsDthSuppressed()
+int16_t SPL_IsDthSuppressed(void);
 
 // WZD o156p14
-// CRP_SPL_IsNatSuppressed()
+int16_t CRP_SPL_IsNatSuppressed(void);
 
 // WZD o156p15
 int16_t AI_OVL_PickDise(int16_t player_idx);

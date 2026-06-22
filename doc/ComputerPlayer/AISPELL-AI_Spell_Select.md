@@ -16,7 +16,7 @@ XREF:
 AI_Spell_Select()
     |-> AI_Compute_Spells_Info()
     |-> AI_Select_Spell_Group()
-    |-> AI_OVL_PickSummon()
+    |-> AI_Select_Spell_Group_Summon()
     |-> AI_OVL_PickUnitBuff()
     |-> AI_OVL_PickCityBuff()
     |-> AI_OVL_PickDise()
@@ -67,7 +67,7 @@ flowchart TD
     Switch{"switch(spell_category)"}
 
     C0["0: no spell<br/>spell_idx = 0"]
-    C1["1: summon<br/>AI_OVL_PickSummon"]
+    C1["1: summon<br/>AI_Select_Spell_Group_Summon"]
     C2["2: unit enchant<br/>AI_OVL_PickUnitBuff"]
     C3["3: city enchant<br/>AI_OVL_PickCityBuff"]
     C4["4: disenchant<br/>AI_OVL_PickDise"]
@@ -147,7 +147,7 @@ All other non-zero categories delegate to a picker. The default branch and categ
 | Category | Picker | What it picks |
 |---|---|---|
 | 0 | (none) | No spell |
-| 1 | `AI_OVL_PickSummon` | Summoning spells |
+| 1 | `AI_Select_Spell_Group_Summon` | Summoning spells |
 | 2 | `AI_OVL_PickUnitBuff` | Unit enchantments |
 | 3 | `AI_OVL_PickCityBuff` | City enchantments |
 | 4 | `AI_OVL_PickDise` | Disenchant / Disenchant True |
@@ -195,7 +195,7 @@ The 9 `AI_OVL_*` picker functions are present in [AISPELL.c](../../MoM/src/AISPE
 | Picker | Location | Status |
 |---|---|---|
 | `AI_Select_Spell_Group` | [AISPELL.c:382-385](../../MoM/src/AISPELL.c#L382-L385) | Stub `return 0;` |
-| `AI_OVL_PickSummon` | [AISPELL.c:471-474](../../MoM/src/AISPELL.c#L471-L474) | Stub `return 0;` |
+| `AI_Select_Spell_Group_Summon` | [AISPELL.c:471-474](../../MoM/src/AISPELL.c#L471-L474) | Stub `return 0;` |
 | `AI_OVL_PickUnitBuff` | [AISPELL.c:477-480](../../MoM/src/AISPELL.c#L477-L480) | Stub `return 0;` |
 | `AI_OVL_PickRealmSupr` | [AISPELL.c:483-486](../../MoM/src/AISPELL.c#L483-L486) | Stub `return 0;` |
 | `AI_OVL_PickGlobal` | [AISPELL.c:489-492](../../MoM/src/AISPELL.c#L489-L492) | Stub `return 0;` |
@@ -224,7 +224,7 @@ None warrant a code change in this function.
 
 - **`AI_Compute_Spells_Info`** ([AISPELL.c:415](../../MoM/src/AISPELL.c#L415)) — populates `g_ai_spell_group_flags[]` from the player's known-spells inventory, filtering out combat-only AI-groups (5, 12, 24, 47, 70, etc.). RECONSTRUCTED. See [AISPELL-AI_Compute_Spells_Info.md](AISPELL-AI_Compute_Spells_Info.md).
 - **`AI_Select_Spell_Group`** ([AISPELL.c:382](../../MoM/src/AISPELL.c#L382)) — category chooser (0-10). STUB `return 0;`.
-- **`AI_OVL_PickSummon` / `AI_OVL_PickUnitBuff` / `AI_OVL_PickCityBuff` / `AI_OVL_PickDise` / `AI_OVL_PickDisj` / `AI_OVL_PickCurse` / `AI_OVL_PickRealmSupr` / `AI_OVL_PickGlobal`** — per-category spell choosers. ALL STUBS `return 0;`. See [Stubbed leaves](#stubbed-leaves) for line refs.
+- **`AI_Select_Spell_Group_Summon` / `AI_OVL_PickUnitBuff` / `AI_OVL_PickCityBuff` / `AI_OVL_PickDise` / `AI_OVL_PickDisj` / `AI_OVL_PickCurse` / `AI_OVL_PickRealmSupr` / `AI_OVL_PickGlobal`** — per-category spell choosers. ALL STUBS `return 0;`. See [Stubbed leaves](#stubbed-leaves) for line refs.
 - **`Player_Resource_Income_Total`** ([CITYCALC.c](../../MoM/src/CITYCALC.c)) — computes per-turn gold/food/mana income. RECONSTRUCTED (XREF at [CITYCALC.c:969](../../MoM/src/CITYCALC.c#L969)).
 - **`Cast_Spell_Overland_Do`** ([SBookScr.c:476](../../MoM/src/SBookScr.c#L476)) — begins or instant-completes the cast. Shared with the human spellbook screen path.
 
@@ -233,6 +233,6 @@ None warrant a code change in this function.
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr156\AI_Spell_Select.asm` — IDA Pro 5.5 disassembly source.
 - [SETTLE-Cast_Spell_Overland.md](SETTLE-Cast_Spell_Overland.md) — Wave 4A: the cast-completion function that consumes what this function queues.
 - [doc/MoM-NextTurn-AI.md](../MoM-NextTurn-AI.md) — IDA raw-asm extracts for `AI_Select_Spell_Group` and the leaf pickers; primary reference for reconstructing them.
-- [doc/MoM-GrandVizier.md](../MoM-GrandVizier.md) — `AI_OVL_PickSummon` Floating Island branch IDA extracts.
+- [doc/MoM-GrandVizier.md](../MoM-GrandVizier.md) — `AI_Select_Spell_Group_Summon` Floating Island branch IDA extracts.
 - [MOX_TYPE.h `s_PLAYER`](../../MoX/src/MOM_DAT.h#L1484) — `cp_target_3` field set as a side effect by `AI_Select_Spell_Group`.
 - [doc/__TODO-AiTurn.md](../__TODO-AiTurn.md) — overall AI_Next_Turn done-done plan.
