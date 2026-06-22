@@ -1102,7 +1102,7 @@ Loop_Location_1:
                 else
                 {
                         
-                    if(_players[itr].myrran == ST_FALSE)
+                    if(_players[itr].myrran != ST_FALSE)
                     {
 
                         switch((Random(5) - 1))
