@@ -2,7 +2,7 @@ CITYCALC-Players_Update_Magic_Power.md
 
 ~ 'New Game' |-> 'Load Game'
 
-NOTE: set _players[].Power_Base is not set in the 'New Game' AoC, its first set is here in the 'Load Game' AoC - Loaded_Game_Update() |-> Init_Overland() |-> PreInit_Overland() |-> Players_Update_Magic_Power()
+NOTE: _players[].Power_Base is not set in the 'New Game' AoC, its first set is here in the 'Load Game' AoC - Loaded_Game_Update() |-> Init_Overland() |-> PreInit_Overland() |-> Players_Update_Magic_Power()
 
 depends on
     ((_NODES[itr].power * (_magic + 1)) / 2)

@@ -28,9 +28,20 @@ extern "C" {
 extern int32_t _cmd_line_seed;
 
 /*
+    Second command-line seed override, for the SECOND reseed point in the
+    new-game->load flow: PreInit_Overland (the Load-Game code) re-Randomize()s
+    off the system clock in OG, producing a value independent of the first
+    (Init_Drivers) seed.  --seed alone cannot reproduce it, so the matchup
+    harness captures OG's second seed_set and injects it here via --seed2.
+    Default 0 = "fall back to --seed / Randomize()" (single-seed behaviour).
+*/
+extern int32_t _cmd_line_seed2;
+
+/*
     Walks argv once and sets the _cmd_line_* globals based on recognised
     flags.  Currently handles:
         --seed N
+        --seed2 N
 
     Unrecognised arguments are ignored at this layer; per-target main()
     parsers will keep handling target-specific flags during the incremental

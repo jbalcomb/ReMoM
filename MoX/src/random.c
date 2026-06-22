@@ -41,6 +41,15 @@ uint32_t random_seed = 0x35683568;  /* 896021864d  00110101011010000011010101101
    in the MOX2 module alongside Check_Command_Line_Parameters_(); we mirror
    that placement.  random.c now only owns the RNG itself. */
 
+/* CLAUDE: RNG segment tracking, mirroring the OG STU probe (og_rng_segment /
+   og_rng_seg_idx in og_sort_trace.h).  Every Set_Random_Seed()/Randomize()
+   reseed begins a new segment; Random_at() counts draws within it.  The OG
+   side and this side delimit the SAME segments (OG's Randomize() points vs
+   our matching Set_Random_Seed() injections), so the streams align per
+   (segment, seg_idx) for the comparator -- robust to global-count drift. */
+unsigned long g_rng_segment = 0;   /* which reseed we are in (1 after first) */
+unsigned long g_rng_seg_idx = 0;   /* Random() draws since that reseed       */
+
 
 
 /*
@@ -91,7 +100,7 @@ restart_sum:
 
     /* 4. Roll the dice */
     // weight_remainder = Random(max_weight);
-    /* CLAUDE */ weight_remainder = Random_at(max_weight, __FILE__, __LINE__);
+    /* CLAUDE */ weight_remainder = Random_at(max_weight, __FILE__, __LINE__, __func__);
 
     /* 5. Find the winning index */
     weight_remainder -= weight_array[0];
@@ -150,7 +159,7 @@ restart_sum:
 
     /* 4. Roll the dice */
     // weight_remainder = Random(max_weight);
-    /* CLAUDE */ weight_remainder = Random_at(max_weight, __FILE__, __LINE__);
+    /* CLAUDE */ weight_remainder = Random_at(max_weight, __FILE__, __LINE__, __func__);
     
     /* 5. Find the winning index */
     weight_remainder -= weight_array[0];
@@ -190,8 +199,11 @@ void Set_Random_Seed(uint32_t n)
     /* CLAUDE: log every explicit seed assignment so we can see WHO sets it
        (config parse, save-load, etc.) and confirm it matches what the .ini
        requested. */
-    LOG_INFO(LOG_CAT_RANDOM, "[RNG] Set_Random_Seed(0x%08X = %u)  (was 0x%08X)  random_calls=%llu",
-        (unsigned)n, (unsigned)n, (unsigned)random_seed, (unsigned long long)g_random_call_count);
+    /* A reseed starts a new RNG segment (mirrors OG's Randomize/Set_Random_Seed). */
+    g_rng_segment++;
+    g_rng_seg_idx = 0;
+    LOG_INFO(LOG_CAT_RANDOM, "[RNG] Set_Random_Seed(0x%08X = %u)  (was 0x%08X)  seg=%lu  random_calls=%llu",
+        (unsigned)n, (unsigned)n, (unsigned)random_seed, g_rng_segment, (unsigned long long)g_random_call_count);
     random_seed = n;
 }
 
@@ -212,8 +224,11 @@ void Randomize(void)
        this AFTER the .ini-driven Set_Random_Seed() would clobber the
        deterministic seed with a wall-clock-derived one — exactly the kind
        of bug we are looking for.  Log every call. */
-    LOG_INFO(LOG_CAT_RANDOM, "[RNG] Randomize() called  timer=0x%08X  (clobbers prior seed 0x%08X)  random_calls=%llu",
-        (unsigned)timer_value, (unsigned)random_seed, (unsigned long long)g_random_call_count);
+    /* A reseed starts a new RNG segment (mirrors OG's Randomize/Set_Random_Seed). */
+    g_rng_segment++;
+    g_rng_seg_idx = 0;
+    LOG_INFO(LOG_CAT_RANDOM, "[RNG] Randomize() called  timer=0x%08X  (clobbers prior seed 0x%08X)  seg=%lu  random_calls=%llu",
+        (unsigned)timer_value, (unsigned)random_seed, g_rng_segment, (unsigned long long)g_random_call_count);
     random_seed = timer_value;
 }
 
@@ -333,25 +348,27 @@ int16_t Random(int16_t n)
  * The `at=` field is what makes call-by-call comparison with the OG
  * trace useful: when ReMoM and OG diverge in call ordinality, this
  * tells us which ReMoM source line is responsible for the extra call. */
-int16_t Random_at(int16_t n, const char *file, int line)
+int16_t Random_at(int16_t n, const char *file, int line, const char *func)
 {
     uint32_t seed_before;
     int16_t  ret;
 
     g_random_call_count++;
+    g_rng_seg_idx++;               /* Random draws since the current reseed */
     seed_before = random_seed;
 
     ret = Random(n);   /* RANDOM_C_NO_AUTOTRACE is still in effect here */
 
     if (_cmd_line_seed != 0) {
-        // TODO  use LOG_INFO(LOG_CAT_RANDOM, "[RNG] Set_Random_Seed(0x%08X = %u)  (was 0x%08X)  random_calls=%llu", (unsigned)n, (unsigned)n, (unsigned)random_seed, (unsigned long long)g_random_call_count);
         fprintf(stderr,
-            "[RNG-CALL] call=%llu  n=%d  before=0x%08X  after=0x%08X  result=%d  at=%s:%d\n",
+            "[RNG-CALL] seg=%lu  sidx=%lu  call=%llu  n=%d  before=0x%08X  after=0x%08X  result=%d  func=%s  at=%s:%d\n",
+            g_rng_segment, g_rng_seg_idx,
             (unsigned long long)g_random_call_count,
             (int)n,
             (unsigned)seed_before,
             (unsigned)random_seed,
             (int)ret,
+            func ? func : "?",
             file, (int)line);
     }
 

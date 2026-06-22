@@ -64,10 +64,10 @@ int16_t Random(int16_t max);
  * invoked.  random.c itself defines RANDOM_C_NO_AUTOTRACE before
  * including this header so its own Random() definition isn't
  * accidentally rewritten to Random_at(). */
-int16_t Random_at(int16_t n, const char *file, int line);
+int16_t Random_at(int16_t n, const char *file, int line, const char *func);
 
 #ifndef RANDOM_C_NO_AUTOTRACE
-#define Random(n) Random_at((n), __FILE__, __LINE__)
+#define Random(n) Random_at((n), __FILE__, __LINE__, __func__)
 #endif
 
 /* CLAUDE: diagnostic — running count of calls to Random() since process start. */

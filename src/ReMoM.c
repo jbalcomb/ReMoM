@@ -223,9 +223,7 @@ int main(int argc, char * argv[])
 #endif
 
     STU_Log_Startup("ReMoM.ini");
-    LOG_INFO(LOG_CAT_GENERAL, "BEGIN: ReMoM main() [STU_LOG tracer bullet]");
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: ReMoM main()", __FILE__, __LINE__);
-    LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: BEGIN: ReMoM main()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 #ifdef STU_DEBUG
     AI_Metrics_Startup();
@@ -413,12 +411,7 @@ int main(int argc, char * argv[])
     AI_Metrics_Shutdown();
 #endif
 
-    LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: END: ReMoM main()", __FILE__, __LINE__);
-
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: ReMoM main()", __FILE__, __LINE__);
-
-    LOG_INFO(LOG_CAT_GENERAL, "END: ReMoM main() [STU_LOG tracer bullet]");
-
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     STU_Log_Shutdown();
 
     return 0;
@@ -453,6 +446,8 @@ int MOM_main(int argc, char** argv)
 {
     SAMB_ptr main_menu_music_seg;  // MGC
     uint32_t main_menu_music_seg_size = 0;  // DNE in Dasm
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     /* Core engine initialization (shared with HeMoM) */
     ReMoM_Init_Engine();
@@ -526,6 +521,8 @@ int MOM_main(int argc, char** argv)
     }
 
     Screen_Control();
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     return 0;
 

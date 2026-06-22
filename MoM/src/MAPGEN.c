@@ -261,6 +261,30 @@ and their order of execution
  * @see Generate_Roads
  * @see Init_Square_Explored
  */
+
+/* CLAUDE: capture the world map (a [GD] dump) so it can be byte-compared against
+ * OG -- Generate_Towers reads p_world_map, so this tells us whether the map
+ * going INTO the tower/lair phase already differs, or whether Generate_Towers
+ * reads an identical map+seed and still draws differently.  One [GD] line per
+ * (plane,row): "[GD] <point> _world_maps[<plane>].y<NN> = csv int16 tiles". */
+static void gd_dump_world_map(const char* point)
+{
+    int plane, y, x, q;
+    char row[WORLD_WIDTH * 8];
+    for (plane = 0; plane < NUM_PLANES; plane++) {
+        for (y = 0; y < WORLD_HEIGHT; y++) {
+            q = 0;
+            for (x = 0; x < WORLD_WIDTH; x++) {
+                int16_t v = p_world_map[plane][y][x];
+                q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", (int)v);
+            }
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _world_maps[%d].y%02d = %s",
+                      point, plane, y, row);
+        }
+        STU_Log_Flush_All();   /* drain the async ring between planes (flood fix) */
+    }
+}
+
 void Init_New_Game(void)
 {
     int16_t rivers = 0;
@@ -308,6 +332,8 @@ void Init_New_Game(void)
 
     Generate_Landmasses(MYRROR_PLANE);
 
+    gd_dump_world_map("Landmasses");   /* CLAUDE: bisect map-divergence checkpoint */
+
     Draw_Building_The_Worlds(25);
 
     Translate_Heightmap_To_Base_Terrain_Types(ARCANUS_PLANE);
@@ -315,6 +341,8 @@ void Init_New_Game(void)
     Draw_Building_The_Worlds(30);
 
     Translate_Heightmap_To_Base_Terrain_Types(MYRROR_PLANE);
+
+    gd_dump_world_map("BaseTerrain");   /* CLAUDE: bisect map-divergence checkpoint */
 
     Draw_Building_The_Worlds(35);
 
@@ -324,16 +352,32 @@ void Init_New_Game(void)
 
     Generate_Climate_Terrain_Types(MYRROR_PLANE);
 
+    /* CLAUDE: full map now built (both planes climate-terraformed) -- capture
+     * for OG byte-compare before Nodes/Towers/Lairs run. */
+    gd_dump_world_map("ClimateTerrain");
+
     Draw_Building_The_Worlds(45);
 
     Generate_Nodes();
+
+    gd_dump_nodes("Generate_Nodes");   /* CLAUDE: _NODES at end of Generate_Nodes */
 
     Draw_Building_The_Worlds(50);
 
     Rebalance_Node_Types(ARCANUS_PLANE);
     Rebalance_Node_Types(MYRROR_PLANE);
 
+    gd_dump_nodes("Rebalance_Node_Types");   /* CLAUDE: _NODES after Rebalance */
+
+    /* CLAUDE: map state immediately AFTER Rebalance_Node_Types -- does the tower
+     * loop read an identical map (so the divergence is internal to it) or not? */
+    gd_dump_world_map("PreTowers1");
+
     Draw_Building_The_Worlds(55);
+
+    /* CLAUDE: map state immediately BEFORE Generate_Towers -- does the tower
+     * loop read an identical map (so the divergence is internal to it) or not? */
+    gd_dump_world_map("PreTowers2");
 
     Generate_Towers();
 
@@ -2303,6 +2347,7 @@ int16_t Aura_Overlap(int16_t node_idx)
                     (wy_array[itr3] == _NODES[itr1].Aura_Ys[itr2])
                 )
                 {
+                    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
                     return ST_TRUE;
                 }
             }

@@ -25,6 +25,12 @@
 */
 int32_t _cmd_line_seed = 0;
 
+/*
+    Second seed: the PreInit_Overland (Load-Game) reseed.  See MOX2.h.
+    Default 0 = fall back to _cmd_line_seed / Randomize().
+*/
+int32_t _cmd_line_seed2 = 0;
+
 
 
 void Check_Command_Line_Parameters_(int argc, char *argv[])
@@ -33,7 +39,16 @@ void Check_Command_Line_Parameters_(int argc, char *argv[])
 
     for (argi = 1; argi < argc; argi++)
     {
-        if (stu_strcmp(argv[argi], "--seed") == 0 && (argi + 1) < argc)
+        /* --seed2 must be tested before --seed: stu_strcmp is exact, but
+         * keep the more specific flag first as a matter of habit. */
+        if (stu_strcmp(argv[argi], "--seed2") == 0 && (argi + 1) < argc)
+        {
+            argi++;
+            _cmd_line_seed2 = (int32_t)stu_strtol(argv[argi], NULL, 0);
+            LOG_INFO(LOG_CAT_MOX2, "[MOX2] CLI: --seed2 %d (0x%08X)",
+                (int)_cmd_line_seed2, (unsigned)_cmd_line_seed2);
+        }
+        else if (stu_strcmp(argv[argi], "--seed") == 0 && (argi + 1) < argc)
         {
             argi++;
             /* CLAUDE 2026-05-28: was stu_atoi (decimal only, int-sized

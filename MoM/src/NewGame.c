@@ -32,6 +32,7 @@
 #include "RACETYPE.h"
 #include "Settings.h"
 #include "Spellbook.h"
+#include "INITGAME.h"   /* gd_dump_players() */
 
 #include <assert.h>
 #include <stdio.h>      /* FILE; fclose(), fread(), frite(), fseek(); */
@@ -1532,6 +1533,7 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
             case ngscr_Banner:
             {
                 newgame_state = Newgame_Screen_7__WIP();
+                gd_dump_players("Newgame_Screen_7");
             } break;
             case 99:  /* What sets 99? */
             {
@@ -1673,7 +1675,7 @@ int16_t Newgame_Screen_0(void)
     struct s_MAGIC_SET magic_set_snapshot;
 #endif
 
-    LOG_INFO(LOG_CAT_NEWGAME, "BEGIN: Newgame_Screen_0()");
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     screen_changed = ST_TRUE;
     
@@ -1921,6 +1923,8 @@ int16_t Newgame_Screen_0(void)
         }
 
     }
+    
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 // Non-void function does not return a value in all control paths
 /* HACK */  return 0;
@@ -2107,7 +2111,7 @@ void Randomize_Book_Heights(void)
     int32_t itr = 0;
     int32_t niu = 0;
 
-    LOG_INFO(LOG_CAT_NEWGAME, "BEGIN: Randomize_Book_Heights()");
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     /* OGBUG  niu is leftover, should be remnoved */
     niu = ((((magic_set.MagicPower * magic_set.Opponents) * (magic_set.Difficulty * magic_set.LandSize)) * 123) + 1234);
@@ -2121,6 +2125,8 @@ void Randomize_Book_Heights(void)
         TBL_Realm1_Books[itr]    = (Random(3) - 1);
         TBL_Bookshelf_Books[itr] = (Random(3) - 1);
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
 

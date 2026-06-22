@@ -44,6 +44,8 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     FILE * file_pointer = NULL;
     long file_pointer_position = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     if(save_gam_idx == ST_UNDEFINED)
     {
         stu_strcpy(file_name, "SAVETEST.GAM");
@@ -201,6 +203,8 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
         }
     }
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
 }
 
 
@@ -214,10 +218,8 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     int16_t file_size_flag = 0;
     long file_pointer_position = 0;
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_LOADSAVE, "BEGIN: Load_SAVE_GAM(%d)", save_gam_idx);
-    LOG_DEBUG(LOG_CAT_SAVE, "BEGIN: Load_SAVE_GAM(%d)", save_gam_idx);
-    LOG_TRACE(LOG_CAT_SAVE, "BEGIN: Load_SAVE_GAM(%d)", save_gam_idx);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     /* _unit trajectory: snapshot BEFORE Load_SAVE_GAM does anything,
      * so we can compare against OG-MoM trace where _unit's first
      * write is DOS reading the saved value via INT 21h.  Per
@@ -226,7 +228,6 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
      * see (a) _unit's value before, (b) immediately after the
      * _unit-specific fread, and (c) after the whole function. */
     LOG_INFO(LOG_CAT_LOADSAVE, "Load_SAVE_GAM _unit BEFORE = %d", _unit);
-#endif
 
     if(save_gam_idx == ST_UNDEFINED)
     {
@@ -394,11 +395,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
     stu_fclose(file_pointer);
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_LOADSAVE, "END: Load_SAVE_GAM(%d)", save_gam_idx);
-    LOG_DEBUG(LOG_CAT_SAVE, "END: Load_SAVE_GAM(%d)", save_gam_idx);
-    LOG_TRACE(LOG_CAT_SAVE, "END: Load_SAVE_GAM(%d)", save_gam_idx);
-#endif
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
 

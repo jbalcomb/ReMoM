@@ -32,6 +32,7 @@ Module: INITGAME
 enum { GD_U8 = 0, GD_I8, GD_U16, GD_I16, GD_U32, GD_I32, GD_STR, GD_BYTES };
 typedef struct { uint16_t off; uint8_t kind; uint16_t count; const char* name; } gd_field_t;
 #include "gd_wizard_fields.h"
+#include "gd_node_fields.h"
 
 static int gd_es(int kind) {
     return (kind == GD_U16 || kind == GD_I16) ? 2
@@ -81,6 +82,48 @@ void gd_dump_players(const char* point) {
             LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _players[%d].%s = %s",
                       point, p, f->name, val);
         }
+        /* gd_dump_players emits a large [GD] burst in a tight loop with no
+         * main-loop pump in between, which overruns the async logger's ring
+         * and drops messages.  Drain it per player so nothing is lost. */
+        STU_Log_Flush_All();
+    }
+}
+
+/* _NODES capture: mirror of gd_dump_players for the s_NODE array (node_fields).
+ * Emits [GD] <point> _NODES[n].<field> = <value> for byte-compare vs OG. */
+void gd_dump_nodes(const char* point) {
+    int n, i, k;
+    char val[1100];
+    for (n = 0; n < NUM_NODES; n++) {
+        const uint8_t* base = (const uint8_t*)&_NODES[n];
+        for (i = 0; i < NODE_FIELD_COUNT; i++) {
+            const gd_field_t* f = &node_fields[i];
+            const uint8_t* fp = base + f->off;
+            int q = 0;
+            if (f->kind == GD_STR) {
+                val[q++] = '"';
+                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
+                    uint8_t c = fp[k];
+                    if (c == 0) break;
+                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
+                }
+                val[q++] = '"'; val[q] = 0;
+            } else if (f->kind == GD_BYTES) {
+                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
+                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
+                val[q] = 0;
+            } else {
+                int es = gd_es(f->kind);
+                for (k = 0; k < f->count; k++) {
+                    long v = gd_rd(fp + k * es, f->kind);
+                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
+                    if (q > (int)sizeof(val) - 16) break;
+                }
+            }
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _NODES[%d].%s = %s",
+                      point, n, f->name, val);
+        }
+        STU_Log_Flush_All();
     }
 }
 /* ---- end game-data capture ---- */
@@ -450,7 +493,8 @@ void Init_Summoning_Circle_And_Spell_Of_Mastery(void)
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Summoning_Circle_And_Spell_Of_Mastery rng_call=%llu", (unsigned long long)g_random_call_count);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    
 }
 
 
@@ -1879,6 +1923,7 @@ void Initialize_Events(void)
     events_table->Conjunction_Nature_Status = 0;
     events_table->Conjunction_Sorcery_Status = 0;
     events_table->Mana_Short_Status = 0;
+    gd_dump_players("Initialize_Events");
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Initialize_Events rng_call=%llu", (unsigned long long)g_random_call_count);
 }
 

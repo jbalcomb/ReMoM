@@ -736,11 +736,7 @@ void Loaded_Game_Update(void)
     int16_t itr = 0;
     int16_t itr_players = 0;
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_LOADSCR, "DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()", __FILE__, __LINE__);
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()", __FILE__, __LINE__);
-    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()", __FILE__, __LINE__);
-#endif
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     /* seg001 */ GAME_RazeCity = ST_FALSE;
 
@@ -841,11 +837,7 @@ void Loaded_Game_Update(void)
         END:  STU Debug
     */
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_LOADSCR, "DEBUG: [%s, %d]: END: Loaded_Game_Update()", __FILE__, __LINE__);
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Loaded_Game_Update()", __FILE__, __LINE__);
-    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Loaded_Game_Update()", __FILE__, __LINE__);
-#endif
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
 
@@ -865,9 +857,7 @@ void Init_Overland(void)
     int16_t itr_cities = 0;  // _SI_
     int16_t itr_units = 0;  // _SI_
 
-#ifdef STU_DEBUG
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Init_Overland()", __FILE__, __LINE__);
-#endif
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 
     PreInit_Overland();
@@ -952,9 +942,8 @@ void Init_Overland(void)
         Set_Random_Seed(10039);  // 0x2737
     }
 
-#ifdef STU_DEBUG
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Init_Overland()", __FILE__, __LINE__);
-#endif
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
 }
 
 // WZD o51p02
@@ -999,8 +988,17 @@ MoO2
     /* CLAUDE: matches MoO2's pattern (see disassembly comment above) -- honour
        a CLI-provided seed when non-zero, otherwise fall back to the original
        Randomize() behaviour.  This is the minimum-divergence way to make
-       --continue runs deterministic when the test harness passes --seed. */
-    /* CLAUDE */  if(_cmd_line_seed != 0)
+       --continue runs deterministic when the test harness passes --seed.
+
+       PreInit_Overland is the SECOND reseed point: OG re-Randomize()s here off
+       the system clock, producing a value independent of Init_Drivers' seed.
+       So prefer _cmd_line_seed2 (OG's captured second seed_set) here; fall back
+       to _cmd_line_seed, then Randomize().  See MOX2.h / OG seed_set #2. */
+    /* CLAUDE */  if(_cmd_line_seed2 != 0)
+    /* CLAUDE */  {
+    /* CLAUDE */      Set_Random_Seed((uint32_t)_cmd_line_seed2);
+    /* CLAUDE */  }
+    /* CLAUDE */  else if(_cmd_line_seed != 0)
     /* CLAUDE */  {
     /* CLAUDE */      Set_Random_Seed((uint32_t)_cmd_line_seed);
     /* CLAUDE */  }

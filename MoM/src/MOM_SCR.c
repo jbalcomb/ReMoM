@@ -76,11 +76,7 @@ void Screen_Control(void)
     int16_t DBG_food_total = 0;
     int16_t DBG_mana_total = 0;
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_MOM_SCR, "DEBUG: [%s, %d]: BEGIN: Screen_Control()", __FILE__, __LINE__);
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Screen_Control()", __FILE__, __LINE__);
-    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Screen_Control()", __FILE__, __LINE__);
-#endif
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     quit_flag = ST_FALSE;
 
@@ -391,10 +387,6 @@ void Screen_Control(void)
 
     }  /* while(quit_flag == ST_FALSE) */
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_MOM_SCR, "DEBUG: [%s, %d]: END: Screen_Control()", __FILE__, __LINE__);
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Screen_Control()", __FILE__, __LINE__);
-    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Screen_Control()", __FILE__, __LINE__);
-#endif
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
