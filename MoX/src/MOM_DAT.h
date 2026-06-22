@@ -1522,7 +1522,7 @@ struct s_WIZARD
     /* 04B0 */ uint8_t  peace_duration[NUM_PLAYERS];  /* decremented in AI_Next_Turn() */
     /* 04B6 */ int16_t  niu_cp_target_1;  /* set in Init_CP_Strategy(), never xref'd again */
     /* 04B8 */ int16_t  niu_cp_target_2;  /* set in Init_CP_Strategy(), never xref'd again */
-    /* 04BA */ int16_t  cp_target_3;  /* set to hostile, target player_idx in AI_OVL_SplCat_Picker()  OVL_TargetWiz AKA IDK_AI_Strategy_3 */
+    /* 04BA */ int16_t  cp_target_3;  /* set to hostile, target player_idx in AI_Select_Spell_Group()  OVL_TargetWiz AKA IDK_AI_Strategy_3 */
     /* 04BC */ int16_t  niu_cp_target_4;  /* set in Init_CP_Strategy(), never xref'd again */
     /* 04BE */ uint8_t  field_4BE[NUM_PLAYERS];  /* AKA Unknown_4BEh */
     /* 04C4 */ uint16_t Prim_Realm;

@@ -26,11 +26,11 @@ Called once per AI overland-spell decision. It rebuilds three globals from `_pla
 
 | Global | Allocation | Role | Consequential? |
 |---|---|---|---|
-| `g_ai_spell_group_flags[]` | `Near_Allocate_Next(92)` — [AIDATA.c:743](../../MoM/src/AIDATA.c#L743) | byte-per-group flag: `ST_TRUE` if the player knows a non-filtered spell in that AI-group | **Yes** — read by `AI_OVL_SplCat_Picker` |
+| `g_ai_spell_group_flags[]` | `Near_Allocate_Next(92)` — [AIDATA.c:743](../../MoM/src/AIDATA.c#L743) | byte-per-group flag: `ST_TRUE` if the player knows a non-filtered spell in that AI-group | **Yes** — read by `AI_Select_Spell_Group` |
 | `g_niu_ai_spell_info_list[]` | `Near_Allocate_Next(50)` — [AIDATA.c:744](../../MoM/src/AIDATA.c#L744) | packed list of accepted `spell_idx` bytes | No — "filled out but never used" (OG-dead, preserved; `niu` in the name) |
 | `g_niu_ai_spell_info_count` | — [MOM_DAT.c:1058](../../MoX/src/MOM_DAT.c#L1058) | count of accepted spells | No — "calculated but never used" (OG-dead, preserved; `niu` in the name) |
 
-Only `g_ai_spell_group_flags[]` is actually consumed downstream (`AI_OVL_SplCat_Picker`, [AISPELL.c:382](../../MoM/src/AISPELL.c#L382), currently a `return 0` stub). The list/count pair is dead output that the OG still maintains, so production preserves it — the `g_niu_` prefix records that it is "not in use."
+Only `g_ai_spell_group_flags[]` is actually consumed downstream (`AI_Select_Spell_Group`, [AISPELL.c:382](../../MoM/src/AISPELL.c#L382), currently a `return 0` stub). The list/count pair is dead output that the OG still maintains, so production preserves it — the `g_niu_` prefix records that it is "not in use."
 
 ## How it's reached
 
@@ -103,7 +103,7 @@ The asm tests *for* equality and branches into the accept path (`cmp …, sls_Kn
 - **`spell_data_table[]`** ([MOM_DAT.h:3054](../../MoX/src/MOM_DAT.h#L3054)) — 1-based spell records; `.AI_Group` read here.
 - **`_players[].spells_list[]`** — per-player spell-state flags (`sls_Known`), 0-based.
 - **`g_ai_spell_group_flags[]` / `g_niu_ai_spell_info_list[]` / `g_niu_ai_spell_info_count`** — the three outputs (only the flags array is consumed); allocated in [AIDATA.c:743-744](../../MoM/src/AIDATA.c#L743-L744), declared in [MOM_DAT.c:1056-1066](../../MoX/src/MOM_DAT.c#L1056-L1066).
-- **`AI_OVL_SplCat_Picker`** ([AISPELL.c:382](../../MoM/src/AISPELL.c#L382)) — the downstream consumer of `g_ai_spell_group_flags[]` (currently a `return 0` stub).
+- **`AI_Select_Spell_Group`** ([AISPELL.c:382](../../MoM/src/AISPELL.c#L382)) — the downstream consumer of `g_ai_spell_group_flags[]` (currently a `return 0` stub).
 
 ## Related references
 

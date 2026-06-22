@@ -711,7 +711,7 @@ spl_Herb_Mastery           0  12
 spl_Chaos_Surge         - 10  12
 spl_Doom_Mastery        -  8  12
 spl_Great_Wasting       - 20  12
-spl_Meteor_Storm        - 15  12
+spl_Meteor_Storms        - 15  12
 spl_Armageddon          - 25  12
 spl_Tranquility         - 20  12
 spl_Life_Force          - 20  12

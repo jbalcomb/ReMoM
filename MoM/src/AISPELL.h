@@ -117,7 +117,7 @@ int16_t AI_Spell_Research_Select(int16_t player_idx);
 void AI_Spell_Select(int16_t player_idx);
 
 // WZD o156p03
-int16_t AI_OVL_SplCat_Picker(int16_t player_idx);
+int16_t AI_Select_Spell_Group(int16_t player_idx);
 
 // WZD o156p04
 void AI_Compute_Spells_Info(int16_t player_idx);
@@ -277,7 +277,7 @@ int16_t IDK_AITP_Target_Wizard__STUB(int16_t * spell_target_idx, int16_t spell_i
 int16_t AITP_SpellWard_Wrapper__STUB(int16_t * city_idx, int16_t * magic_realm, int16_t player_idx);
 
 // WZD o156p56
-// AI_MyrrorAdvantage()
+int16_t AI_Has_More_Myrror_Cities(int16_t player_idx);
 
 // WZD o156p57
 int16_t Square_Is_Legal_For_Floating_Island(int16_t wx, int16_t wy, int16_t wp);
@@ -286,7 +286,7 @@ int16_t Square_Is_Legal_For_Floating_Island(int16_t wx, int16_t wy, int16_t wp);
 // AITP_Summoning_Circle()
 
 // WZD o156p59
-// WIZ_SummonInFortress()
+int16_t Player_Summon_City_Is_Fortress_City(int16_t player_idx);
 
 
 

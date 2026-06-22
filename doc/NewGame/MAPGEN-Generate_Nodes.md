@@ -3,11 +3,19 @@ MAPGEN-Generate_Nodes.md
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\Generate_Nodes.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\Generate_Nodes.c
 
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\Make_Aura.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\Aura_Overlap.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\Set_Node_Type.asm
+
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\Rebalance_Node_Types.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\Rebalance_Node_Types.c
 
 Init_New_Game()
     |-> Generate_Nodes();                     [MAPGEN.c:330]
+        |-> Make_Aura()
+        |-> Aura_Overlap()
+        |-> Set_Node_Type()                     ...changes _world_maps[]
+            |-> Build_Landmass()                ...changes _landmasses[]
     |-> Draw_Building_The_Worlds(50);
     |-> Rebalance_Node_Types(ARCANUS_PLANE);
     |-> Rebalance_Node_Types(MYRROR_PLANE);

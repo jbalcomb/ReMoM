@@ -182,9 +182,9 @@ XREF:
     AI_Count_Active_Wars+7         mov     [AI_Active_War_Count], 0                      
     AI_Count_Active_Wars+3D        mov     bx, [AI_Active_War_Count]                     
     AI_Count_Active_Wars+47        inc     [AI_Active_War_Count]                         
-    AI_OVL_SplCat_Picker:loc_E4359 cmp     [AI_Active_War_Count], 0                      
-    AI_OVL_SplCat_Picker:loc_E4423 cmp     di, [AI_Active_War_Count]                     
-    AI_OVL_SplCat_Picker:loc_E442C push    [AI_Active_War_Count]           ; weight_count
+    AI_Select_Spell_Group:loc_E4359 cmp     [AI_Active_War_Count], 0                      
+    AI_Select_Spell_Group:loc_E4423 cmp     di, [AI_Active_War_Count]                     
+    AI_Select_Spell_Group:loc_E442C push    [AI_Active_War_Count]           ; weight_count
     sub_E882B+F                    cmp     [AI_Active_War_Count], 0                      
     sub_E882B:loc_E885C            push    [AI_Active_War_Count]           ; n           
     sub_EA43C+B                    cmp     [AI_Active_War_Count], 0                      
@@ -193,10 +193,10 @@ XREF:
 AI_AtWarWith_Players[]
 XREF:
     AI_Count_Active_Wars+43  mov     [AI_AtWarWith_Players+bx], _CX_itr_players
-    AI_OVL_SplCat_Picker+826 add     ax, [AI_AtWarWith_Players+bx]             
-    AI_OVL_SplCat_Picker+843 add     ax, [AI_AtWarWith_Players+bx]             
-    AI_OVL_SplCat_Picker+885 add     ax, [AI_AtWarWith_Players+bx]             
-    AI_OVL_SplCat_Picker+8A2 cmp     [AI_AtWarWith_Players+bx], 0              
+    AI_Select_Spell_Group+826 add     ax, [AI_AtWarWith_Players+bx]             
+    AI_Select_Spell_Group+843 add     ax, [AI_AtWarWith_Players+bx]             
+    AI_Select_Spell_Group+885 add     ax, [AI_AtWarWith_Players+bx]             
+    AI_Select_Spell_Group+8A2 cmp     [AI_AtWarWith_Players+bx], 0              
     sub_EA43C+40             mov     ax, [AI_AtWarWith_Players]                
 
 
@@ -316,7 +316,7 @@ Continent_Values_2[]
 
 AI_OVL_SpellPicker__STUB()
     |-> AI_Compute_Spells_Info()
-    |-> AI_OVL_SplCat_Picker()
+    |-> AI_Select_Spell_Group()
     ...
     |-> AI_OVL_PickSummon()
     |-> AI_OVL_PickUnitBuff()
@@ -335,7 +335,7 @@ sets CRP_AI_OVL_SpellList[], CRP_AI_OVL_SpellCount, and AI_OVL_Spell_Cats[]
 
 CRP_AI_OVL_SpellList[] and CRP_AI_OVL_SpellCount are defunct
 
-AI_OVL_Spell_Cats{} is used in AI_OVL_SplCat_Picker()
+AI_OVL_Spell_Cats{} is used in AI_Select_Spell_Group()
 
 
 

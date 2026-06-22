@@ -15,7 +15,7 @@ XREF:
 
 AI_Spell_Select()
     |-> AI_Compute_Spells_Info()
-    |-> AI_OVL_SplCat_Picker()
+    |-> AI_Select_Spell_Group()
     |-> AI_OVL_PickSummon()
     |-> AI_OVL_PickUnitBuff()
     |-> AI_OVL_PickCityBuff()
@@ -63,7 +63,7 @@ The decision flow:
 flowchart TD
     Entry(["AI_Spell_Select(player_idx)"])
     Compute["AI_Compute_Spells_Info(player_idx)<br/>(populate g_ai_spell_group_flags[])"]
-    PickCat["spell_category = AI_OVL_SplCat_Picker(player_idx)<br/>returns 0..10"]
+    PickCat["spell_category = AI_Select_Spell_Group(player_idx)<br/>returns 0..10"]
     Switch{"switch(spell_category)"}
 
     C0["0: no spell<br/>spell_idx = 0"]
@@ -128,10 +128,10 @@ void AI_Spell_Select(int16_t player_idx)
 ### Phase 2 — Pick category ([325-326](../../MoM/src/AISPELL.c#L325-L326))
 
 ```c
-spell_category = AI_OVL_SplCat_Picker(player_idx);
+spell_category = AI_Select_Spell_Group(player_idx);
 ```
 
-`AI_OVL_SplCat_Picker` returns a category code 0-10 (table below). It also has a documented side effect: it sets `_players[].cp_target_3` (hostile target wizard) — see [MOM_DAT.h:1484](../../MoX/src/MOM_DAT.h#L1484) — which feeds `OVL_TargetWiz` / `IDK_AI_Strategy_3` downstream.
+`AI_Select_Spell_Group` returns a category code 0-10 (table below). It also has a documented side effect: it sets `_players[].cp_target_3` (hostile target wizard) — see [MOM_DAT.h:1484](../../MoX/src/MOM_DAT.h#L1484) — which feeds `OVL_TargetWiz` / `IDK_AI_Strategy_3` downstream.
 
 Currently stubbed to `return 0;` — see [Stubbed leaves](#stubbed-leaves).
 
@@ -194,7 +194,7 @@ The 9 `AI_OVL_*` picker functions are present in [AISPELL.c](../../MoM/src/AISPE
 
 | Picker | Location | Status |
 |---|---|---|
-| `AI_OVL_SplCat_Picker` | [AISPELL.c:382-385](../../MoM/src/AISPELL.c#L382-L385) | Stub `return 0;` |
+| `AI_Select_Spell_Group` | [AISPELL.c:382-385](../../MoM/src/AISPELL.c#L382-L385) | Stub `return 0;` |
 | `AI_OVL_PickSummon` | [AISPELL.c:471-474](../../MoM/src/AISPELL.c#L471-L474) | Stub `return 0;` |
 | `AI_OVL_PickUnitBuff` | [AISPELL.c:477-480](../../MoM/src/AISPELL.c#L477-L480) | Stub `return 0;` |
 | `AI_OVL_PickRealmSupr` | [AISPELL.c:483-486](../../MoM/src/AISPELL.c#L483-L486) | Stub `return 0;` |
@@ -204,7 +204,7 @@ The 9 `AI_OVL_*` picker functions are present in [AISPELL.c](../../MoM/src/AISPE
 | `AI_OVL_PickDise` | [AISPELL.c:519-522](../../MoM/src/AISPELL.c#L519-L522) | Stub `return 0;` |
 | `AI_OVL_PickDisj` | [AISPELL.c:525-528](../../MoM/src/AISPELL.c#L525-L528) | Stub `return 0;` |
 
-**Runtime behavior of `AI_Spell_Select` today:** `AI_OVL_SplCat_Picker` returns 0 → `spell_category = 0` → switch case 0 → `spell_idx = 0` → affordability check sees `spell_data_table[0].casting_cost / 50` (typically 0) and either clears `spell_idx` to 0 again or leaves it at 0 → `Cast_Spell_Overland_Do(player_idx, 0, 0)` is called. Net effect: the AI never starts an overland cast. Per Wave 4A's `Cast_Spell_Overland`, an idle `casting_spell_idx == spl_NONE` short-circuits the cast-completion path too — so the entire overland spell-AI subsystem is currently inert.
+**Runtime behavior of `AI_Spell_Select` today:** `AI_Select_Spell_Group` returns 0 → `spell_category = 0` → switch case 0 → `spell_idx = 0` → affordability check sees `spell_data_table[0].casting_cost / 50` (typically 0) and either clears `spell_idx` to 0 again or leaves it at 0 → `Cast_Spell_Overland_Do(player_idx, 0, 0)` is called. Net effect: the AI never starts an overland cast. Per Wave 4A's `Cast_Spell_Overland`, an idle `casting_spell_idx == spl_NONE` short-circuits the cast-completion path too — so the entire overland spell-AI subsystem is currently inert.
 
 The leaves are tracked separately in [doc/__TODO-AiTurn.md](../__TODO-AiTurn.md) under Wave 4C/4D/4E and are out of scope for this function.
 
@@ -223,7 +223,7 @@ None warrant a code change in this function.
 ## Sub-functions / external calls
 
 - **`AI_Compute_Spells_Info`** ([AISPELL.c:415](../../MoM/src/AISPELL.c#L415)) — populates `g_ai_spell_group_flags[]` from the player's known-spells inventory, filtering out combat-only AI-groups (5, 12, 24, 47, 70, etc.). RECONSTRUCTED. See [AISPELL-AI_Compute_Spells_Info.md](AISPELL-AI_Compute_Spells_Info.md).
-- **`AI_OVL_SplCat_Picker`** ([AISPELL.c:382](../../MoM/src/AISPELL.c#L382)) — category chooser (0-10). STUB `return 0;`.
+- **`AI_Select_Spell_Group`** ([AISPELL.c:382](../../MoM/src/AISPELL.c#L382)) — category chooser (0-10). STUB `return 0;`.
 - **`AI_OVL_PickSummon` / `AI_OVL_PickUnitBuff` / `AI_OVL_PickCityBuff` / `AI_OVL_PickDise` / `AI_OVL_PickDisj` / `AI_OVL_PickCurse` / `AI_OVL_PickRealmSupr` / `AI_OVL_PickGlobal`** — per-category spell choosers. ALL STUBS `return 0;`. See [Stubbed leaves](#stubbed-leaves) for line refs.
 - **`Player_Resource_Income_Total`** ([CITYCALC.c](../../MoM/src/CITYCALC.c)) — computes per-turn gold/food/mana income. RECONSTRUCTED (XREF at [CITYCALC.c:969](../../MoM/src/CITYCALC.c#L969)).
 - **`Cast_Spell_Overland_Do`** ([SBookScr.c:476](../../MoM/src/SBookScr.c#L476)) — begins or instant-completes the cast. Shared with the human spellbook screen path.
@@ -232,7 +232,7 @@ None warrant a code change in this function.
 
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr156\AI_Spell_Select.asm` — IDA Pro 5.5 disassembly source.
 - [SETTLE-Cast_Spell_Overland.md](SETTLE-Cast_Spell_Overland.md) — Wave 4A: the cast-completion function that consumes what this function queues.
-- [doc/MoM-NextTurn-AI.md](../MoM-NextTurn-AI.md) — IDA raw-asm extracts for `AI_OVL_SplCat_Picker` and the leaf pickers; primary reference for reconstructing them.
+- [doc/MoM-NextTurn-AI.md](../MoM-NextTurn-AI.md) — IDA raw-asm extracts for `AI_Select_Spell_Group` and the leaf pickers; primary reference for reconstructing them.
 - [doc/MoM-GrandVizier.md](../MoM-GrandVizier.md) — `AI_OVL_PickSummon` Floating Island branch IDA extracts.
-- [MOX_TYPE.h `s_PLAYER`](../../MoX/src/MOM_DAT.h#L1484) — `cp_target_3` field set as a side effect by `AI_OVL_SplCat_Picker`.
+- [MOX_TYPE.h `s_PLAYER`](../../MoX/src/MOM_DAT.h#L1484) — `cp_target_3` field set as a side effect by `AI_Select_Spell_Group`.
 - [doc/__TODO-AiTurn.md](../__TODO-AiTurn.md) — overall AI_Next_Turn done-done plan.

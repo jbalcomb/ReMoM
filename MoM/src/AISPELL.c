@@ -24,10 +24,12 @@ Module: AITECH
 
 #include "AIDUDES.h"
 #include "CITYCALC.h"
+#include "NEXTTURN.h"
 #include "SBookScr.h"
 #include "Spellbook.h"
 #include "SPELLDEF.h"
 #include "TerrType.h"
+#include "UNITTYPE.h"
 
 #include "../../ext/stu_compat.h"
 
@@ -46,6 +48,18 @@ char CRP_AI_SpellTargetError[] = " could not be found for CP.";
 // WZD dseg:7115 00                                              db    0
 
 // WZD dseg:7115                                                 END:  ovr156 - Initialized Data
+
+
+
+// WZD 36AA:D386                                                 BEGIN:  ovr156 - Uninitialized Data
+
+// WZD 36AA:D386
+int16_t AI_OVL_SplPriorities[50];
+// WZD 36AA:D3EA
+int16_t AI_NodeOpportunity;
+
+// WZD 36AA:D3EA                                                 END:  ovr156 - Uninitialized Data
+
 
 
 
@@ -86,13 +100,13 @@ int16_t AI_Spell_Research_Select(int16_t player_idx)
 
     candidate_count = 0;
 
-    for (itr = 0; itr < 8; itr++) {
-        if (research_spells[itr] != 0) {
+    for(itr = 0; itr < 8; itr++) {
+        if(research_spells[itr] != 0) {
             candidate_count++;
         }
     }
 
-    if (candidate_count == 0) {
+    if(candidate_count == 0) {
 #ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] candidate_count=0, no spells to research", player_idx);
 #endif
@@ -113,10 +127,10 @@ int16_t AI_Spell_Research_Select(int16_t player_idx)
     /* Calculate adjusted research costs based on traits/bonuses */
     /* OGBUG: #3 research-related traits are now applied twice (if it wasn't for BUGs #1 & #2) */
     /* Gemini rearranged the logic here quite a bit */
-    for (itr = 0; itr < candidate_count; itr++) {
+    for(itr = 0; itr < candidate_count; itr++) {
         spell_idx = research_spells[itr];
 
-        if (spell_idx == spl_Spell_Of_Mastery) {
+        if(spell_idx == spl_Spell_Of_Mastery) {
             base_cost = _players[player_idx].som_research_cost;
         } else {
             base_cost = spell_data_table[spell_idx].research_cost;
@@ -131,13 +145,13 @@ int16_t AI_Spell_Research_Select(int16_t player_idx)
 
     /* Determine which spell categories (AI_Groups) the wizard already knows */
     /* NOTE: Dasm definitely shows <= 90 */
-    for (itr = 0; itr <= 90; itr++) {
+    for(itr = 0; itr <= 90; itr++) {
         possessed_categories[itr] = 0;
     }
 
-    for (itr = 0; itr < 6; itr++) { /* 6 Realms */
-        for (itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_REALM; itr2++) {
-            if (_players[player_idx].spells_list[((itr * NUM_SPELLS_PER_MAGIC_REALM) + itr2)] == sls_Known) {
+    for(itr = 0; itr < 6; itr++) { /* 6 Realms */
+        for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_REALM; itr2++) {
+            if(_players[player_idx].spells_list[((itr * NUM_SPELLS_PER_MAGIC_REALM) + itr2)] == sls_Known) {
                 known_spell_idx = ((itr * NUM_SPELLS_PER_MAGIC_REALM) + itr2 + 1);
                 possessed_categories[spell_data_table[known_spell_idx].AI_Group] = ST_TRUE;
             }
@@ -153,7 +167,7 @@ to lower the odds; store the highest of the results
     highest_cost = 0L;
 
     /* Assign weights based on category possession and personality */
-    for (itr = 0; itr < candidate_count; itr++) {
+    for(itr = 0; itr < candidate_count; itr++) {
         spell_idx = research_spells[itr];
         cnd_category = spell_data_table[spell_idx].AI_Group;
         
@@ -161,17 +175,17 @@ to lower the odds; store the highest of the results
         original_cost = candidate_costs[itr];
 
         /* If we already have a spell in this category, heavily penalize weight (by multiplying cost) */
-        if (possessed_categories[cnd_category] == ST_TRUE) {
+        if(possessed_categories[cnd_category] == ST_TRUE) {
             weights_long[itr] *= 4;
         } 
         else {
             /* Prioritize first spell in specific combat/utility categories */
-            if (cnd_category == SGRP_CombatSummon_1 || cnd_category == SGRP_CombatSummon_2 || cnd_category == SGRP_CombatSummon_3 || cnd_category == SGRP_IDK) {
+            if(cnd_category == SGRP_CombatSummon_1 || cnd_category == SGRP_CombatSummon_2 || cnd_category == SGRP_CombatSummon_3 || cnd_category == SGRP_IDK) {
                 weights_long[itr] /= 10;
             }
             
             /* Various priority categories (Combat, Summons, City Buffs) */
-            if (cnd_category == SGRP_CombatHarm_1  || cnd_category == SGRP_CombatCurse || cnd_category == SGRP_CombatHarm_2 || cnd_category == SGRP_CombatHarm_3 ||
+            if(cnd_category == SGRP_CombatHarm_1  || cnd_category == SGRP_CombatCurse || cnd_category == SGRP_CombatHarm_2 || cnd_category == SGRP_CombatHarm_3 ||
                 cnd_category == SGRP_CE_1 || cnd_category == SGRP_CE_2 || cnd_category == SGRP_CE_3 || cnd_category == SGRP_CE_4 ||
                 cnd_category == SGRP_Disrupt || cnd_category == SGRP_CombatMisc || cnd_category == SGRP_Haste || cnd_category == SGRP_AnimateDead ||
                 cnd_category == SGRP_CombatSummon_1 || cnd_category == SGRP_CombatSummon_2 || cnd_category == SGRP_CombatSummon_3 || cnd_category == SGRP_IDK) {
@@ -180,75 +194,75 @@ to lower the odds; store the highest of the results
         }
 
         /* Militarist objective prioritizes specific combat categories */
-        if (_players[player_idx].Objective == OBJ_Militarist) {
-            if (cnd_category == SGRP_CombatSummon_1 || cnd_category == SGRP_CombatSummon_2 || cnd_category == SGRP_CombatSummon_3 || cnd_category == SGRP_IDK) {
+        if(_players[player_idx].Objective == OBJ_Militarist) {
+            if(cnd_category == SGRP_CombatSummon_1 || cnd_category == SGRP_CombatSummon_2 || cnd_category == SGRP_CombatSummon_3 || cnd_category == SGRP_IDK) {
                 weights_long[itr] /= 2;
             }
         }
 
         /* Specific category prioritization for first-time acquisition */
-        if (possessed_categories[cnd_category] == 0) {
-            if (cnd_category == SGRP_CombatSummon_1) weights_long[itr] /= 10;
-            if (cnd_category == SGRP_CombatSummon_2) weights_long[itr] /= 7;
-            if (cnd_category == SGRP_CombatSummon_3) weights_long[itr] /= 5;
-            if (cnd_category == SGRP_IDK) weights_long[itr] /= 3;
+        if(possessed_categories[cnd_category] == 0) {
+            if(cnd_category == SGRP_CombatSummon_1) weights_long[itr] /= 10;
+            if(cnd_category == SGRP_CombatSummon_2) weights_long[itr] /= 7;
+            if(cnd_category == SGRP_CombatSummon_3) weights_long[itr] /= 5;
+            if(cnd_category == SGRP_IDK) weights_long[itr] /= 3;
         }
 
         /* Realm-specific counter-spell prioritization (Consecration, Spell Ward) */
-        if (_players[player_idx].Prim_Realm == 1 || _players[player_idx].Prim_Realm == 2) { /* Death or Chaos */
-            if (spell_idx == spl_Consecration || spell_idx == spl_Spell_Ward) {
+        if(_players[player_idx].Prim_Realm == 1 || _players[player_idx].Prim_Realm == 2) { /* Death or Chaos */
+            if(spell_idx == spl_Consecration || spell_idx == spl_Spell_Ward) {
                 weights_long[itr] /= 2;
             }
         } else {
-            if (spell_idx == spl_Spell_Ward) { /* Spell Ward */
+            if(spell_idx == spl_Spell_Ward) { /* Spell Ward */
                 weights_long[itr] /= 2;
             }
         }
 
         /* Utility/Meta-magic prioritization */
-        if (spell_idx == spl_Disenchant_Area)  weights_long[itr] /= 2;
-        if (spell_idx == spl_Disjunction)      weights_long[itr] /= 2;
-        if (spell_idx == spl_Disenchant_True)  weights_long[itr] /= 5;
-        if (spell_idx == spl_Disjunction_True) weights_long[itr] /= 5;
-        if (spell_idx == spl_Summon_Hero)      weights_long[itr] /= 5;
+        if(spell_idx == spl_Disenchant_Area)  weights_long[itr] /= 2;
+        if(spell_idx == spl_Disjunction)      weights_long[itr] /= 2;
+        if(spell_idx == spl_Disenchant_True)  weights_long[itr] /= 5;
+        if(spell_idx == spl_Disjunction_True) weights_long[itr] /= 5;
+        if(spell_idx == spl_Summon_Hero)      weights_long[itr] /= 5;
 
         /* De-prioritize Summoning Circle */
-        if (spell_idx == spl_Summoning_Circle) { 
+        if(spell_idx == spl_Summoning_Circle) { 
             weights_long[itr] <<= 1;
         }
 
         /* If we already have this category, de-prioritize more */
-        if (possessed_categories[cnd_category] == 1) {
+        if(possessed_categories[cnd_category] == 1) {
             weights_long[itr] *= 3;
         }
 
         /* High cost vs current research income checks */
-        if ((candidate_costs[itr] / 20) > research_income) {
+        if((candidate_costs[itr] / 20) > research_income) {
             weights_long[itr] *= 2;
         }
-        if ((candidate_costs[itr] / 50) > research_income) {
+        if((candidate_costs[itr] / 50) > research_income) {
             weights_long[itr] *= 5;
         }
 
         /* Minimum weight clamping */
-        if (weights_long[itr] < 1L && original_cost > 0) {
+        if(weights_long[itr] < 1L && original_cost > 0) {
             weights_long[itr] = 1L;
         }
 
         /* Categories with group 0 are not researchable or invalid candidates */
-        if (spell_data_table[spell_idx].AI_Group == 0) {
+        if(spell_data_table[spell_idx].AI_Group == 0) {
             weights_long[itr] = 0L;
         }
 
-        if (weights_long[itr] > highest_cost) {
+        if(weights_long[itr] > highest_cost) {
             highest_cost = weights_long[itr];
         }
     }
 
     /* Convert costs to selection weights: Weight = 52 - (AdjCost * 50 / Highest) */
     weights_long_total = 0L;
-    for (itr = 0; itr < candidate_count; itr++) {
-        if (weights_long[itr] != 0L) {
+    for(itr = 0; itr < candidate_count; itr++) {
+        if(weights_long[itr] != 0L) {
             w = 52L - (weights_long[itr] * 50L / highest_cost);
             weights_long[itr] = (w < 1L) ? 1L : w;
         }
@@ -257,7 +271,7 @@ to lower the odds; store the highest of the results
 
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] candidates=%d highest_cost=%d research_income=%d", player_idx, candidate_count, highest_cost, research_income);
-    for (itr = 0; itr < candidate_count; itr++) {
+    for(itr = 0; itr < candidate_count; itr++) {
         LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d]   [%d] spell=%3d cost=%4d adj_cost=%4d weight=%4ld category=%d %s", player_idx, itr, research_spells[itr], (research_spells[itr] == spl_Spell_Of_Mastery) ? _players[player_idx].som_research_cost : spell_data_table[research_spells[itr]].research_cost, candidate_costs[itr], weights_long[itr], spell_data_table[research_spells[itr]].AI_Group, possessed_categories[spell_data_table[research_spells[itr]].AI_Group] ? "(have)" : "");
     }
     LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] weights_total=%d", player_idx, weights_long_total);
@@ -303,7 +317,7 @@ to lower the odds; store the highest of the results
  *         spell to Cast_Spell_Overland_Do() after applying the mana check.
  *
  * @note The local spellbook-page index is currently hard-coded to zero.
- * @note The function relies on AI_Compute_Spells_Info() and AI_OVL_SplCat_Picker()
+ * @note The function relies on AI_Compute_Spells_Info() and AI_Select_Spell_Group()
  *       to populate the available-spell set and high-level category decision.
  */
 void AI_Spell_Select(int16_t player_idx)
@@ -322,7 +336,7 @@ void AI_Spell_Select(int16_t player_idx)
 
     AI_Compute_Spells_Info(player_idx);
 
-    spell_category = AI_OVL_SplCat_Picker(player_idx);
+    spell_category = AI_Select_Spell_Group(player_idx);
 
     switch(spell_category)
     {
@@ -379,9 +393,472 @@ void AI_Spell_Select(int16_t player_idx)
 
 
 // WZD o156p03
-int16_t AI_OVL_SplCat_Picker(int16_t player_idx)
+/**
+ * @brief Selects the high-level overland spell category the AI should prioritize casting.
+ *
+ * @details
+ * This function evaluates the AI player's current game state and computes weighted modifier values
+ * for 11 distinct overland spell categories:
+ *   0. Early-game bonus (turns < 50)
+ *   1. Summoning (including hero/unit summoning priority)
+ *   2. Unit buffs and movement enhancements (turn-dependent)
+ *   3. City buffs and protective spells
+ *   4. Disenchant spells (targets specific enchantments)
+ *   5. Disjunction spells (counters opponent's global enchantments)
+ *   6. Summoning Circle
+ *   7. Curse spells (offense against hostile opponents)
+ *   8. Realm supremacy (specific realm-based curses and enhancements)
+ *   9. Global enchantments (Awareness, Wind Mastery, etc.)
+ *   10. Spell of Mastery
+ *
+ * Modifiers are adjusted based on:
+ *   - Current turn count
+ *   - Player traits (conjurer, channeler)
+ *   - Fortress vs. summon city alignment
+ *   - Friendly vs. hostile army values
+ *   - Known spells and active global enchantments
+ *   - Opponent diplomatic status and realm composition
+ *   - Mana reserves
+ *   - Various strategic conditions
+ *
+ * The function returns a weighted random choice from the modifier array, ensuring that
+ * categories with higher modifiers are more likely to be selected.
+ *
+ * @param player_idx Index of the AI player whose spell category preference is being evaluated.
+ *
+ * @return Index (0–10) of the selected spell category to prioritize. The selection is weighted
+ *         by the computed modifiers, so high-priority categories are more likely to be chosen.
+ *
+ * @note The function modifies the global variable `_players[player_idx].cp_target_3` to
+ *       store the selected opponent target index if hostile opponents exist.
+ * @note Some modifiers are hard-coded (e.g., offset 0x53 in Historian for Death Wish),
+ *       reflecting legacy assembly code patterns.
+ * @note `modifiers[9]` (global enchantments) is capped at a maximum value of 300 after
+ *       all individual checks to prevent over-weighting.
+ */
+int16_t AI_Select_Spell_Group(int16_t player_idx)
 {
-    return 0;
+    int16_t modifiers[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Opponent_Weights[6] = { 0, 0, 0, 0, 0, 0 };
+    uint8_t * players_spell_list = 0;
+    int32_t Hostile_Army_Value = 0;
+    int32_t Own_Army_Value = 0;
+    int16_t Own_City_Count = 0;
+    int16_t fortress_landmass_idx = 0;
+    int16_t Have_Spirit = 0;
+    int16_t summon_city_idx = 0;
+    int16_t summon_wp = 0;
+    int16_t niu_summon_landmass_idx = 0;
+    int16_t itr = 0;
+
+    /* Treat spell list as 1-based index by shifting pointer */
+    players_spell_list = (uint8_t *)_players[player_idx].spells_list - 1;
+
+    for(itr = 0; itr <= 10; itr++)
+    {
+        modifiers[itr] = 0;
+    }
+
+    if(_turn < 50)
+    {
+        modifiers[0] = (50 - _turn);
+    }
+
+    summon_wp = _players[player_idx].summon_wp;
+    niu_summon_landmass_idx = _landmasses[summon_wp * 960 + _players[player_idx].summon_wy * 60 + _players[player_idx].summon_wx];
+    summon_city_idx = 0;
+
+    for(itr = 0; itr < _cities; itr++)
+    {
+        if(
+            (_CITIES[itr].wx == _players[player_idx].summon_wx)
+            &&
+            (_CITIES[itr].wy == _players[player_idx].summon_wy)
+            &&
+            (_CITIES[itr].wp == _players[player_idx].summon_wp)
+        )
+        {
+            summon_city_idx = itr;
+        }
+    }
+
+    modifiers[1] = 100;
+    modifiers[1] += (6 - Player_Hero_Count(player_idx)) * 10;
+
+    if(_players[player_idx].magic_power_strategy == 3)
+    {
+        modifiers[1] += 30;
+    }
+
+    Have_Spirit = ST_FALSE;
+    AI_NodeOpportunity = ST_FALSE;
+
+    for(itr = 0; itr < _units; itr++)
+    {
+        if(_UNITS[itr].owner_idx == player_idx && _UNITS[itr].wp == summon_wp)
+        {
+            if(_unit_type_table[_UNITS[itr].type].Abilities & UA_MELD)
+            {
+                Have_Spirit = ST_TRUE;
+            }
+        }
+    }
+
+    if(Have_Spirit != ST_TRUE)
+    {
+        for(itr = 0; itr < NUM_NODES; itr++)
+        {
+            if(_NODES[itr].wp == summon_wp && _NODES[itr].owner_idx != player_idx)
+            {
+                AI_NodeOpportunity = ST_TRUE;
+            }
+        }
+        if(AI_NodeOpportunity == ST_TRUE)
+        {
+            modifiers[1] += 30;
+        }
+    }
+
+    Own_Army_Value = 0;
+    for(itr = 0; itr < _ai_all_own_stack_count; itr++)
+    {
+        Own_Army_Value += _ai_all_own_stacks[itr].value;
+    }
+
+    Hostile_Army_Value = 0;
+    for(itr = 0; itr < _ai_all_enemy_stack_count; itr++)
+    {
+        Hostile_Army_Value += _ai_all_enemy_stacks[itr].value;
+    }
+
+    if(_players[player_idx].conjurer != 0 || _players[player_idx].channeler != 0)
+    {
+        modifiers[1] = (modifiers[1] * 3) / 2;
+    }
+
+    if(Player_Summon_City_Is_Fortress_City(player_idx) == 0)
+    {
+        modifiers[1] *= 5;
+    }
+
+    if(players_spell_list[spl_Disenchant_Area] == sls_Known || players_spell_list[spl_Disenchant_True] == sls_Known)
+    {
+        for(itr = 0; itr < _cities; itr++)
+        {
+            if(_CITIES[itr].owner_idx == player_idx)
+            {
+                if(_CITIES[itr].enchantments[CHAOS_RIFT] != 0) modifiers[4] += 40;
+                if(_CITIES[itr].enchantments[EVIL_PRESENCE] != 0) modifiers[4] += 40;
+                if(_CITIES[itr].enchantments[CURSED_LANDS] != 0) modifiers[4] += 40;
+                if(_CITIES[itr].enchantments[PESTILENCE] != 0) modifiers[4] += 40;
+                if(_CITIES[itr].enchantments[FAMINE] != 0) modifiers[4] += 40;
+            }
+            else if(_CITIES[itr].owner_idx == 0)
+            {
+                if(_CITIES[itr].enchantments[FLYING_FORTRESS] != 0) modifiers[4] += 300;
+            }
+        }
+
+        for(itr = 0; itr < NUM_NODES; itr++)
+        {
+            if(_NODES[itr].owner_idx == player_idx)
+            {
+                if(_NODES[itr].flags & NF_WARPED) modifiers[4] += 100;
+            }
+        }
+
+        fortress_landmass_idx = _landmasses[_FORTRESSES[player_idx].wp * 960 + _FORTRESSES[player_idx].wy * 60 + _FORTRESSES[player_idx].wx];
+
+        for(itr = 0; itr < _units; itr++)
+        {
+            if(_UNITS[itr].owner_idx == 0)
+            {
+                if(((unsigned int *)&_UNITS[itr].enchantments)[0] != 0 || ((unsigned int *)&_UNITS[itr].enchantments)[1] != 0)
+                {
+                    if(_landmasses[_UNITS[itr].wp * 960 + _UNITS[itr].wy * 60 + _UNITS[itr].wx] == fortress_landmass_idx)
+                    {
+                        modifiers[4] += 5;
+                    }
+                }
+            }
+        }
+    }
+
+    if(players_spell_list[spl_Disjunction] == sls_Known || players_spell_list[spl_Disjunction_True] == sls_Known)
+    {
+        for(itr = 0; itr < _num_players; itr++)
+        {
+            if(itr == player_idx)
+            {
+                continue;
+            }
+
+            if(_players[player_idx].Prim_Realm != sbr_Death && _players[itr].Globals[ETERNAL_NIGHT] != 0)
+            {
+                modifiers[5] += 100;
+            }
+            if(_players[itr].Globals[EVIL_OMENS] != 0)
+            {
+                if(_players[itr].Prim_Realm == sbr_Life || _players[itr].Prim_Realm == sbr_Nature)
+                {
+                    modifiers[5] += 300;
+                }
+            }
+            if(_players[itr].Globals[EVIL_OMENS] != 0)
+            {
+                if(_players[itr].Sec_Realm == sbr_Life || _players[itr].Sec_Realm == sbr_Nature)
+                {
+                    modifiers[5] += 150;
+                }
+            }
+            if(_players[itr].Globals[ZOMBIE_MASTERY] != 0) modifiers[5] += 100;
+            if(_players[itr].Globals[AURA_OF_MAJESTY] != 0) modifiers[5] += 25;
+            if(_players[itr].Globals[WIND_MASTERY] != 0) modifiers[5] += 25;
+            if(_players[itr].Globals[SUPPRESS_MAGIC] != 0) modifiers[5] += 2000;
+            if(_players[itr].Globals[AURA_OF_MAJESTY] != 0) modifiers[5] += 25;
+            
+            if(_players[itr].Globals[NATURES_WRATH] != 0) {
+                if(_players[itr].Prim_Realm == sbr_Death || _players[itr].Prim_Realm == sbr_Chaos) {
+                    modifiers[5] += 400;
+                }
+            }
+            if(_players[itr].Globals[NATURES_WRATH] != 0) {
+                if(_players[itr].Sec_Realm == sbr_Death || _players[itr].Sec_Realm == sbr_Chaos) {
+                    modifiers[5] += 200;
+                }
+            }
+            
+            if(_players[itr].Globals[HERB_MASTERY] != 0) modifiers[5] += 50;
+            if(_players[itr].Globals[CHAOS_SURGE] != 0) {
+                if(_players[itr].Prim_Realm != sbr_Chaos && _players[itr].Sec_Realm != sbr_Chaos) {
+                    modifiers[5] += 100;
+                }
+            }
+            if(_players[itr].Globals[DOOM_MASTERY] != 0) modifiers[5] += 200;
+            if(_players[itr].Globals[GREAT_WASTING] != 0) modifiers[5] += 50;
+            if(_players[itr].Globals[METEOR_STORM] != 0) modifiers[5] += 100;
+            if(_players[itr].Globals[ARMAGEDDON] != 0) modifiers[5] += 200;
+            
+            if(_players[itr].Globals[TRANQUILITY] != 0) {
+                if(_players[itr].Prim_Realm == sbr_Chaos) modifiers[5] += 500;
+            }
+            if(_players[itr].Globals[TRANQUILITY] != 0) {
+                if(_players[itr].Sec_Realm == sbr_Chaos) modifiers[5] += 250;
+            }
+            if(_players[itr].Globals[LIFE_FORCE] != 0) {
+                if(_players[itr].Prim_Realm == sbr_Death) modifiers[5] += 500;
+            }
+            if(_players[itr].Globals[LIFE_FORCE] != 0) {
+                if(_players[itr].Sec_Realm == sbr_Death) modifiers[5] += 250;
+            }
+            
+            if(_players[itr].Globals[CRUSADE] != 0) modifiers[5] += 100;
+            if(_players[itr].Globals[JUST_CAUSE] != 0) modifiers[5] += 10;
+            if(_players[itr].Globals[HOLY_ARMS] != 0) modifiers[5] += 100;
+            if(_players[itr].Globals[PLANAR_SEAL] != 0)
+            {
+                if(itr == 0 || Random(5) == 1)
+                {
+                    modifiers[5] += 200;
+                }
+            }
+            if(_players[itr].Globals[PLANAR_SEAL] != 0) modifiers[5] += 25;
+            if(_players[itr].Globals[CHARM_OF_LIFE] != 0) modifiers[5] += 200;
+        }
+    }
+
+    if(players_spell_list[spl_Spell_Of_Mastery] == sls_Known)
+    {
+        modifiers[10] = 500;
+    }
+
+    if(_cp_hostile_opponent_count > 0)
+    {
+        for(itr = 0; itr < NUM_PLAYERS; itr++)
+        {
+            Opponent_Weights[itr] = 0;
+        }
+        for(itr = 0; itr < _cp_hostile_opponent_count; itr++)
+        {
+            Opponent_Weights[itr] = (
+                (100 - _players[player_idx].Dipl.Visible_Rel[_cp_hostile_opponents[itr]]) -
+                (_players[player_idx].Dipl.Hidden_Rel[_cp_hostile_opponents[itr]] * 2)
+            );
+            SETMIN(Opponent_Weights[itr],0);
+            if(_players[player_idx].Dipl.Dipl_Status[_cp_hostile_opponents[itr]] >= 3)
+            {
+                Opponent_Weights[itr] += 50;
+            }
+            if(_cp_hostile_opponents[itr] == 0)
+            {
+                Opponent_Weights[itr] *= (_difficulty + 1);
+            }
+        }
+        _players[player_idx].cp_target_3 = Get_Weighted_Choice(Opponent_Weights, _cp_hostile_opponent_count);
+    }
+    else
+    {
+        _players[player_idx].cp_target_3 = ST_UNDEFINED;
+    }
+
+    if(_players[player_idx].cp_target_3 != ST_UNDEFINED)
+    {
+        /* Checks trait flags via hardcoded offset to trait array */
+        if(g_ai_spell_group_flags[SGRP_Corruption] == 1 ||
+            g_ai_spell_group_flags[SGRP_Famine] == 1 ||
+            g_ai_spell_group_flags[SGRP_RaiseVolcano] == 1 ||
+            g_ai_spell_group_flags[SGRP_DestroyCity] == 1 ||
+            g_ai_spell_group_flags[SGRP_WarpNode] == 1 ||
+            g_ai_spell_group_flags[SGRP_Stasis] == 1 ||
+            g_ai_spell_group_flags[9] == 1 ||
+            g_ai_spell_group_flags[SGRP_OVL_Damage] == 1 ||
+            g_ai_spell_group_flags[SGRP_Earthquake] == 1 ||
+            g_ai_spell_group_flags[0x4A] == 1 ||
+            g_ai_spell_group_flags[SGRP_TimeStop] == 1 ||
+            ((unsigned char *)&_players[player_idx].Historian)[0x53] == 1 ||
+            g_ai_spell_group_flags[SGRP_DeathWish] == 1 ||
+            g_ai_spell_group_flags[SGRP_HarmWizard] == 1) {
+
+            modifiers[7] = (Opponent_Weights[_players[player_idx].cp_target_3] + TBL_AI_PRS_War_Mod[_players[player_idx].Personality]) / 4;
+        }
+    }
+
+    if(modifiers[7] < 0) modifiers[7] = 0;
+
+    if(g_ai_spell_group_flags[SGRP_WallsRituals] == 1 || g_ai_spell_group_flags[0x1B] == 1)
+    {
+        if(_players[HUMAN_PLAYER_IDX].Dipl.Contacted[player_idx] == ST_TRUE)
+        {
+            modifiers[3] = 50;
+        }
+        else
+        {
+            modifiers[3] = 5;
+        }
+    }
+
+    if(g_ai_spell_group_flags[SGRP_CityBuff_1] == 1 ||
+        g_ai_spell_group_flags[SGRP_CityBuff_3] == 1 ||
+        g_ai_spell_group_flags[SGRP_TerrainMod] == 1 ||
+        g_ai_spell_group_flags[SGRP_CityBuff_2] == 1
+    )
+    {
+        modifiers[3] = 150;
+    }
+
+    if(g_ai_spell_group_flags[SGRP_MoveBuff_1] == 1 ||
+        g_ai_spell_group_flags[SGRP_MoveBuff_2] == 1 ||
+        g_ai_spell_group_flags[SGRP_MoveBuff_3] == 1 ||
+        g_ai_spell_group_flags[SGRP_Gates] == 1
+    )
+    {
+        if(_turn < 50) modifiers[2] = 0;
+        else if(_turn < 200) modifiers[2] = 100;
+        else modifiers[2] = 200;
+    }
+
+    if(g_ai_spell_group_flags[SGRP_AttackBuff_1] == 1 ||
+        g_ai_spell_group_flags[SGRP_AttackBuff_2] == 1 ||
+        g_ai_spell_group_flags[0x32] == 1 ||
+        g_ai_spell_group_flags[0x48] == 1 ||
+        g_ai_spell_group_flags[SGRP_DefenseBuff_1] == 1 ||
+        g_ai_spell_group_flags[SGRP_ImmolInvuln] == 1 ||
+        g_ai_spell_group_flags[SGRP_DefenseBuff_2] == 1 ||
+        g_ai_spell_group_flags[SGRP_RegenMassInvis] == 1 ||
+        g_ai_spell_group_flags[SGRP_Heals] == 1
+    )
+    {
+        if(_turn > 20 && _turn < 200)
+        {
+            modifiers[2] += (250 - _turn) / 2;
+        }
+        else
+        {
+            modifiers[2] += 25;
+        }
+    }
+
+    if(players_spell_list[spl_Herb_Mastery] == sls_Known && _players[player_idx].Globals[HERB_MASTERY] == 0) modifiers[9] += 100;
+
+    if(players_spell_list[spl_Natures_Wrath] == sls_Known && _players[player_idx].Globals[NATURES_WRATH] == 0)
+    {
+        /* Assembly checks against human player's realms (player 0) */
+        if(_players[0].Prim_Realm == sbr_Death || _players[0].Sec_Realm == sbr_Death ||
+            _players[0].Prim_Realm == sbr_Chaos || _players[0].Sec_Realm == sbr_Chaos) {
+            modifiers[8] += 100;
+        }
+    }
+
+    if(players_spell_list[spl_Wind_Mastery] == sls_Known && _players[player_idx].Globals[WIND_MASTERY] == 0) modifiers[9] += 75;
+    if(players_spell_list[spl_Awareness] == sls_Known && _players[player_idx].Globals[AWARENESS] == 0) modifiers[9] += 500;
+    if(players_spell_list[spl_Aura_Of_Majesty] == sls_Known && _players[player_idx].Globals[AURA_OF_MAJESTY] == 0) modifiers[9] += 100;
+    if(players_spell_list[spl_Suppress_Magic] == sls_Known && _players[player_idx].Globals[SUPPRESS_MAGIC] == 0) modifiers[8] += 100;
+    if(players_spell_list[spl_Spell_Binding] == sls_Known) modifiers[9] += 100;
+    if(players_spell_list[spl_Great_Wasting] == sls_Known && _players[player_idx].Globals[GREAT_WASTING] == 0) modifiers[9] += 100;
+    if(players_spell_list[spl_Chaos_Surge] == sls_Known && _players[player_idx].Globals[CHAOS_SURGE] == 0) modifiers[9] += 100;
+    if(players_spell_list[spl_Doom_Mastery] == sls_Known && _players[player_idx].Globals[DOOM_MASTERY] == 0) modifiers[9] += 100;
+    if(players_spell_list[spl_Meteor_Storms] == sls_Known && _players[player_idx].Globals[METEOR_STORM] == 0) modifiers[9] += 100;
+    if(players_spell_list[spl_Armageddon] == sls_Known && _players[player_idx].Globals[ARMAGEDDON] == 0) modifiers[9] += 100;
+    if(players_spell_list[spl_Just_Cause] == sls_Known && _players[player_idx].Globals[JUST_CAUSE] == 0) modifiers[9] += 100;
+    if(players_spell_list[spl_Holy_Arms] == sls_Known && _players[player_idx].Globals[HOLY_ARMS] == 0) modifiers[9] += 100;
+    if(players_spell_list[spl_Charm_Of_Life] == sls_Known && _players[player_idx].Globals[CHARM_OF_LIFE] == 0) modifiers[9] += 100;
+    if(players_spell_list[spl_Crusade] == sls_Known && _players[player_idx].Globals[CRUSADE] == 0) modifiers[9] += 100;
+    if(players_spell_list[spl_Great_Unsummoning] == sls_Known) modifiers[9] += 100;
+    if(players_spell_list[spl_Death_Wish] == sls_Known) modifiers[9] += 100;
+
+    if(players_spell_list[spl_Life_Force] == sls_Known && _players[player_idx].Globals[LIFE_FORCE] == 0)
+    {
+        if(_players[0].Prim_Realm == sbr_Death || _players[0].Sec_Realm == sbr_Death) modifiers[8] += 100;
+    }
+    if(players_spell_list[spl_Tranquility] == sls_Known && _players[player_idx].Globals[TRANQUILITY] == 0)
+    {
+        if(_players[0].Prim_Realm == sbr_Chaos || _players[0].Sec_Realm == sbr_Chaos) modifiers[8] += 100;
+    }
+
+    if(players_spell_list[spl_Eternal_Night] == sls_Known && _players[player_idx].Globals[ETERNAL_NIGHT] == 0) modifiers[9] += 100;
+
+    if(players_spell_list[spl_Evil_Omens] == sls_Known && _players[player_idx].Globals[EVIL_OMENS] == 0) {
+        if(_players[0].Prim_Realm == sbr_Life || _players[0].Sec_Realm == sbr_Life ||
+            _players[0].Prim_Realm == sbr_Nature || _players[0].Sec_Realm == sbr_Nature) {
+            modifiers[8] += 100;
+        }
+    }
+
+    if(players_spell_list[spl_Zombie_Mastery] == sls_Known && _players[player_idx].Globals[ZOMBIE_MASTERY] == 0) modifiers[9] += 100;
+
+    if(modifiers[9] > 400) modifiers[9] = 300;
+
+    if(players_spell_list[spl_Planar_Seal] == sls_Known && _players[player_idx].Globals[PLANAR_SEAL] == 0)
+    {
+        if(AI_Has_More_Myrror_Cities(player_idx) == 1) modifiers[9] += 50;
+    }
+
+    if(_players[player_idx].mana_reserve < 200)
+    {
+        modifiers[9] = 0;
+        modifiers[8] = 0;
+    }
+
+    if(players_spell_list[spl_Summoning_Circle] == sls_Known)
+    {
+        if(AI_SCircle_Reevals[player_idx] < 0) {
+            Own_City_Count = 0;
+            for(itr = 0; itr < _cities; itr++) {
+                if(_CITIES[itr].owner_idx == player_idx)
+                {
+                    Own_City_Count++;
+                }
+            }
+            if(Own_City_Count > 0)
+            {
+                modifiers[6] = 100;
+            }
+        }
+    }
+
+    modifiers[0] = 1;
+
+    return Get_Weighted_Choice(modifiers, 11);
 }
 
 
@@ -1374,7 +1851,69 @@ int16_t AITP_SpellWard_Wrapper__STUB(int16_t * city_idx, int16_t * magic_realm, 
 
 
 // WZD o156p56
-// drake178: AI_MyrrorAdvantage()
+/**
+ * @brief Determines whether the AI player has a Myrror-side city-count advantage over the human player.
+ *
+ * Counts cities owned by the human player on Arcanus and Myrror, then counts cities owned by the
+ * specified AI player on Arcanus and Myrror. The function currently evaluates only the Myrror-side
+ * comparison to decide whether a Myrror advantage exists.
+ *
+ * @param player_idx Index of the AI player being evaluated.
+ *
+ * @return ST_TRUE if the AI player's Myrror city count is greater than the human player's Myrror city count;
+ *         otherwise ST_FALSE.
+ *
+ * @note human_arcanus_count and player_arcanus_count are collected but not used by the current return condition.
+ */
+int16_t AI_Has_More_Myrror_Cities(int16_t player_idx)
+{
+    int16_t myrror_count = 0;
+    int16_t human_arcanus_count = 0;
+    int16_t human_myrror_count = 0;
+    int16_t player_arcanus_count = 0;
+    int16_t player_myrror_count = 0;
+    int16_t city_idx = 0;
+
+    player_arcanus_count = 0;
+    player_myrror_count = 0;
+
+    for(city_idx = 0; city_idx < _cities; city_idx++)
+    {
+        if(_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+        {
+            if(_CITIES[city_idx].wp == ARCANUS_PLANE)
+            {
+                human_arcanus_count++;
+            }
+            else
+            {
+                human_myrror_count++;
+            }
+        }
+        else if(_CITIES[city_idx].owner_idx == player_idx)
+        {
+            if(_CITIES[city_idx].wp == ARCANUS_PLANE)
+            {
+                player_arcanus_count++;
+            }
+            else
+            {
+                player_myrror_count++;
+            }
+        }
+    }
+
+    if(player_myrror_count > human_myrror_count)
+    {
+        return ST_TRUE;
+    }
+    else
+    {
+        return ST_FALSE;
+    }
+
+}
+
 
 // WZD o156p57
 // drake178: TILE_IsOcean()
@@ -1420,5 +1959,71 @@ int16_t Square_Is_Legal_For_Floating_Island(int16_t wx, int16_t wy, int16_t wp)
 // drake178: sub_EA61E()
 // int16_t AITP_Summoning_Circle(int16_t player_idx, int16_t * city_idx)
 
+
 // WZD o156p59
-// drake178: WIZ_SummonInFortress()
+/**
+ * @brief Determines whether the player's designated summon city is the same as their fortress city.
+ *
+ * Iterates through all cities on the map, identifying both the player's fortress city and their
+ * designated summon city. Returns true only if both cities exist and are at the same location.
+ *
+ * @param player_idx Index of the player to evaluate.
+ *
+ * @return ST_TRUE if the player has both a valid fortress city and summon city, and they are located
+ *         at the same coordinates; otherwise ST_FALSE.
+ *
+ * @note Uses ST_UNDEFINED to indicate that a city was not found. The function compares plane (wp),
+ *       x-coordinate (wx), and y-coordinate (wy) to determine city identity.
+ */
+int16_t Player_Summon_City_Is_Fortress_City(int16_t player_idx)
+{
+    int16_t summon_city_idx = 0;
+    int16_t fortress_city_idx = 0;
+    int16_t city_idx = 0;
+
+    fortress_city_idx = ST_UNDEFINED;
+    summon_city_idx = ST_UNDEFINED;
+
+    for(city_idx = 0; city_idx < _cities; city_idx++)
+    {
+        /* Check if city is player's fortress city */
+        if(
+            (_CITIES[city_idx].wx == _FORTRESSES[player_idx].wx)
+            &&
+            (_CITIES[city_idx].wy == _FORTRESSES[player_idx].wy)
+            &&
+            (_CITIES[city_idx].wp == _FORTRESSES[player_idx].wp)
+        )
+        {
+            fortress_city_idx = city_idx;
+        }
+
+        /* Check if city is player's summon city */
+        if(
+            (_CITIES[city_idx].wx == _players[player_idx].summon_wx)
+            &&
+            (_CITIES[city_idx].wy == _players[player_idx].summon_wy)
+            &&
+            (_CITIES[city_idx].wp == _players[player_idx].summon_wp)
+        )
+        {
+            summon_city_idx = city_idx;
+        }
+    }
+
+    if(
+        (fortress_city_idx != ST_UNDEFINED)
+        &&
+        (summon_city_idx != ST_UNDEFINED)
+        &&
+        (summon_city_idx == fortress_city_idx)
+    )
+    {
+        return ST_TRUE;
+    }
+    else
+    {
+        return ST_FALSE;
+    }
+
+}

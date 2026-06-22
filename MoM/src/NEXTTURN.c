@@ -4293,7 +4293,7 @@ void Diplomacy_Growth_For_Enchantments__WIP(void)
 // ovr140:2B93 59                                              pop     cx
 // ovr140:2B94 B8 0A 00                                        mov     ax, 10
 // ovr140:2B97 50                                              push    ax                              ; Divisor
-// ovr140:2B98 B8 71 00                                        mov     ax, spl_Meteor_Storm
+// ovr140:2B98 B8 71 00                                        mov     ax, spl_Meteor_Storms
 // ovr140:2B9B 50                                              push    ax                              ; Spell_Index
 // ovr140:2B9C 56                                              push    _SI_itr_players                 ; Player_Index
 // ovr140:2B9D 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
