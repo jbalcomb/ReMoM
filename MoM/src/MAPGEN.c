@@ -1799,7 +1799,7 @@ void Add_Tundra(int16_t wp)
         if(Random(4) == 1)  // 25%
         {
             num = Random(4);
-            for(itr = 0; ((itr < num) & ((itr_wx + itr) < WORLD_WIDTH)); itr++)
+            for(itr = 0; ((itr < num) && ((itr_wx + itr) < WORLD_WIDTH)); itr++)
             {
                 p_world_map[wp][(WORLD_YMIN + 1)][(itr_wx + itr)] = tt_Tundra1;
             }
@@ -1807,7 +1807,7 @@ void Add_Tundra(int16_t wp)
         if(Random(4) == 1)  // 25%
         {
             num = Random(4);
-            for(itr = 0; ((itr < num) & ((itr_wx + itr) < WORLD_WIDTH)); itr++)
+            for(itr = 0; ((itr < num) && ((itr_wx + itr) < WORLD_WIDTH)); itr++)
             {
                 p_world_map[wp][(WORLD_YMAX - 1)][(itr_wx + itr)] = tt_Tundra1;
             }
