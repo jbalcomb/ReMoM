@@ -365,7 +365,7 @@ void AI_Spell_Select(int16_t player_idx)
             spell_idx = AI_Select_Spell_Group_Attack(player_idx);
             break;
         case 8:
-            spell_idx = AI_OVL_PickRealmSupr(player_idx);
+            spell_idx = AI_Select_Spell_Group_Suppression(player_idx);
             break;
         case 9:
             spell_idx = AI_OVL_PickGlobal(player_idx);
@@ -708,7 +708,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
                 Opponent_Weights[itr] *= (_difficulty + 1);
             }
         }
-        _players[player_idx].cp_target_3 = Get_Weighted_Choice(Opponent_Weights, _cp_hostile_opponent_count);
+        _players[player_idx].cp_target_3 = Get_Weighted_Choice(&Opponent_Weights[0], _cp_hostile_opponent_count);
     }
     else
     {
@@ -872,7 +872,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
 
     modifiers[0] = 1;
 
-    return Get_Weighted_Choice(modifiers, 11);
+    return Get_Weighted_Choice(&modifiers[0], 11);
 }
 
 
@@ -1250,7 +1250,7 @@ int16_t AI_Select_Spell_Group_Summon(int16_t player_idx)
     }
 
     /* Apply global spell suppression modifiers */
-    if(SPL_IsLifeSupressed() == 1) {
+    if(SPL_IsLifeSupressed() == ST_TRUE) {
         AI_OVL_SplPriorities[23] = (AI_OVL_SplPriorities[23] * 2) / 3;
         AI_OVL_SplPriorities[24] = (AI_OVL_SplPriorities[24] * 2) / 3;
         AI_OVL_SplPriorities[25] = (AI_OVL_SplPriorities[25] * 2) / 3;
@@ -1260,7 +1260,7 @@ int16_t AI_Select_Spell_Group_Summon(int16_t player_idx)
         AI_OVL_SplPriorities[40] = (AI_OVL_SplPriorities[40] * 2) / 3;
     }
 
-    if(CRP_SPL_IsNatSuppressed() == 1) {
+    if(CRP_SPL_IsNatSuppressed() == ST_TRUE) {
         AI_OVL_SplPriorities[1] = (AI_OVL_SplPriorities[1] * 2) / 3;
         AI_OVL_SplPriorities[2] = (AI_OVL_SplPriorities[2] * 2) / 3;
         AI_OVL_SplPriorities[3] = (AI_OVL_SplPriorities[3] * 2) / 3;
@@ -1274,7 +1274,7 @@ int16_t AI_Select_Spell_Group_Summon(int16_t player_idx)
         AI_OVL_SplPriorities[43] = (AI_OVL_SplPriorities[43] * 2) / 3;
     }
 
-    if(SPL_IsDthSuppressed() == 1) {
+    if(SPL_IsDthSuppressed() == ST_TRUE) {
         for(unit_idx = 27; unit_idx <= 34; unit_idx++) {
             if(AI_OVL_SplPriorities[unit_idx] < 20) {
                 AI_OVL_SplPriorities[unit_idx] = 0;
@@ -1286,7 +1286,7 @@ int16_t AI_Select_Spell_Group_Summon(int16_t player_idx)
         }
     }
 
-    if(SPL_IsChsSuppressed() == 1) {
+    if(SPL_IsChsSuppressed() == ST_TRUE) {
         for(unit_idx = 14; unit_idx <= 22; unit_idx++) {
             if(AI_OVL_SplPriorities[unit_idx] < 20) {
                 AI_OVL_SplPriorities[unit_idx] = 0;
@@ -1298,7 +1298,7 @@ int16_t AI_Select_Spell_Group_Summon(int16_t player_idx)
         }
     }
 
-    choice = Get_Weighted_Choice(AI_OVL_SplPriorities, 50);
+    choice = Get_Weighted_Choice(&AI_OVL_SplPriorities[0], 50);
 
     switch(choice - 1)
     {
@@ -1556,7 +1556,7 @@ int16_t AI_Select_Spell_Group_Unit_Enchantment(int16_t player_idx)
         }
     }
 
-    choice = Get_Weighted_Choice(AI_OVL_SplPriorities, 50);
+    choice = Get_Weighted_Choice(&AI_OVL_SplPriorities[0], 50);
 
     switch(choice)
     {
@@ -1647,9 +1647,93 @@ int16_t AI_Select_Spell_Group_Unit_Enchantment(int16_t player_idx)
 }
 
 // WZD o156p07
-int16_t AI_OVL_PickRealmSupr(int16_t player_idx)
+int16_t AI_Select_Spell_Group_Suppression(int16_t player_idx)
 {
-    return 0;
+    int16_t choice = 0;
+    int16_t itr = 0;
+    uint8_t * players_spell_list = NULL;
+
+    /* Treat spell list as 1-based index by shifting pointer */
+    players_spell_list = (uint8_t *)&_players[player_idx].spells_list[0] - 1;
+
+    for(itr = 0; itr < 50; itr++)
+    {
+        AI_OVL_SplPriorities[itr] = 0;
+    }
+
+    if(players_spell_list[spl_Natures_Wrath] == sls_Known)
+    {
+        AI_OVL_SplPriorities[1] = spell_data_table[spl_Natures_Wrath].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Life_Force] == sls_Known)
+    {
+        AI_OVL_SplPriorities[2] = spell_data_table[spl_Life_Force].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Tranquility] == sls_Known)
+    {
+        AI_OVL_SplPriorities[3] = spell_data_table[spl_Tranquility].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Evil_Omens] == sls_Known)
+    {
+        AI_OVL_SplPriorities[4] = spell_data_table[spl_Evil_Omens].casting_cost / 10;
+    }
+
+    if(SPL_IsLifeSupressed() == ST_TRUE)
+    {
+        for(itr = 2; itr <= 3; itr++)
+        {
+            AI_OVL_SplPriorities[itr] = (AI_OVL_SplPriorities[itr] * 2) / 3;
+        }
+    }
+
+    if(CRP_SPL_IsNatSuppressed() == ST_TRUE)
+    {
+        for(itr = 1; itr <= 1; itr++)
+        {
+            AI_OVL_SplPriorities[itr] = (AI_OVL_SplPriorities[itr] * 2) / 3;
+        }
+    }
+
+    if(SPL_IsDthSuppressed() == ST_TRUE)
+    {
+        for(itr = 4; itr <= 4; itr++)
+        {
+            if(AI_OVL_SplPriorities[itr] < 20)
+            {
+                AI_OVL_SplPriorities[itr] = 0;
+            }
+            else if(AI_OVL_SplPriorities[itr] < 50)
+            {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 3;
+            }
+            else
+            {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 2;
+            }
+        }
+    }
+
+    /* Perform weighted selection */
+    choice = Get_Weighted_Choice(&AI_OVL_SplPriorities[0], 50);
+
+    /* Map selection back to spell identifier */
+    switch(choice)
+    {
+        case 1:
+            return spl_Natures_Wrath;
+        case 2:
+            return spl_Life_Force;
+        case 3:
+            return spl_Tranquility;
+        case 4:
+            return spl_Evil_Omens;
+        default:
+            return 0;
+    }
+
 }
 
 // WZD o156p08
@@ -1870,7 +1954,7 @@ int16_t AI_Select_Spell_Group_Attack(int16_t player_idx)
     }
 
     /* Apply suppressions to realm-specific curse selections */
-    if(CRP_SPL_IsNatSuppressed() == 1)
+    if(CRP_SPL_IsNatSuppressed() == ST_TRUE)
     {
         for(itr = 1; itr <= 2; itr++)
         {
@@ -1878,7 +1962,7 @@ int16_t AI_Select_Spell_Group_Attack(int16_t player_idx)
         }
     }
 
-    if(SPL_IsDthSuppressed() == 1)
+    if(SPL_IsDthSuppressed() == ST_TRUE)
     {
         for(itr = 12; itr <= 20; itr++)
         {
@@ -1897,7 +1981,7 @@ int16_t AI_Select_Spell_Group_Attack(int16_t player_idx)
         }
     }
 
-    if(SPL_IsChsSuppressed() == 1)
+    if(SPL_IsChsSuppressed() == ST_TRUE)
     {
         for(itr = 7; itr <= 11; itr++)
         {
@@ -1917,7 +2001,7 @@ int16_t AI_Select_Spell_Group_Attack(int16_t player_idx)
     }
 
     /* Perform weighted selection */
-    choice = Get_Weighted_Choice(AI_OVL_SplPriorities, 50);
+    choice = Get_Weighted_Choice(&AI_OVL_SplPriorities[0], 50);
 
     /* Map selection back to spell identifier */
     switch(choice)
@@ -2130,7 +2214,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
         }
     }
 
-    if(SPL_IsLifeSupressed() == 1) {
+    if(SPL_IsLifeSupressed() == ST_TRUE) {
         for(itr = 10; itr <= 14; itr++) {
             AI_OVL_SplPriorities[itr] = (AI_OVL_SplPriorities[itr] * 2) / 3;
         }
@@ -2138,13 +2222,13 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
         AI_OVL_SplPriorities[20] = (AI_OVL_SplPriorities[20] * 2) / 3;
     }
 
-    if(CRP_SPL_IsNatSuppressed() == 1) {
+    if(CRP_SPL_IsNatSuppressed() == ST_TRUE) {
         for(itr = 1; itr <= 7; itr++) {
             AI_OVL_SplPriorities[itr] = (AI_OVL_SplPriorities[itr] * 2) / 3;
         }
     }
 
-    if(SPL_IsDthSuppressed() == 1) {
+    if(SPL_IsDthSuppressed() == ST_TRUE) {
         for(itr = 15; itr <= 16; itr++) {
             if(AI_OVL_SplPriorities[itr] < 20) {
                 AI_OVL_SplPriorities[itr] = 0;
@@ -2164,7 +2248,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
         }
     }
 
-    if(SPL_IsChsSuppressed() == 1) {
+    if(SPL_IsChsSuppressed() == ST_TRUE) {
         /* index 9 (spl_Wall_Of_Fire) */
         if(AI_OVL_SplPriorities[9] < 20) {
             AI_OVL_SplPriorities[9] = 0;
@@ -2175,7 +2259,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
         }
     }
 
-    choice = Get_Weighted_Choice(AI_OVL_SplPriorities, 50);
+    choice = Get_Weighted_Choice(&AI_OVL_SplPriorities[0], 50);
 
     switch(choice)
     {

@@ -324,7 +324,7 @@ AI_OVL_SpellPicker__STUB()
     |-> AI_Select_Spell_Group_Disenchant()
     |-> AI_OVL_PickDisj()
     |-> AI_Select_Spell_Group_Attack()
-    |-> AI_OVL_PickRealmSupr()
+    |-> AI_Select_Spell_Group_Suppression()
     |-> AI_OVL_PickGlobal()
     ...
     |-> Cast_Spell_Overland_Do()
