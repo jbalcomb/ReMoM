@@ -350,7 +350,7 @@ void AI_Spell_Select(int16_t player_idx)
             spell_idx = AI_Select_Spell_Group_Unit_Enchantment(player_idx);
             break;
         case 3:
-            spell_idx = AI_OVL_PickCityBuff(player_idx);
+            spell_idx = AI_Select_Spell_Group_City_Enchantment(player_idx);
             break;
         case 4:
             spell_idx = AI_OVL_PickDise(player_idx);
@@ -1665,9 +1665,229 @@ int16_t AI_OVL_PickCurse(int16_t player_idx)
 }
 
 // WZD o156p10
-int16_t AI_OVL_PickCityBuff(int16_t player_idx)
+int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
 {
-    return 0;
+    int16_t choice = 0;
+    int16_t Target_Realm = 0;
+    int16_t target_wp = 0;
+    int16_t target_city_idx = 0;
+    int16_t target_wy = 0;
+    int16_t target_wx = 0;
+    int16_t itr = 0;
+    uint8_t * players_spell_list = NULL;
+
+    /* Treat spell list as 1-based index by shifting pointer */
+    players_spell_list = (uint8_t *)&_players[player_idx].spells_list[0] - 1;
+
+    for(itr = 0; itr < 50; itr++) {
+        AI_OVL_SplPriorities[itr] = 0;
+    }
+
+    if(players_spell_list[spl_Wall_Of_Stone] == sls_Known) {
+        if(AITP_WallofStone(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[1] = _turn / 6;
+        }
+    }
+
+    if(players_spell_list[spl_Transmute] == sls_Known) {
+        if(AITP_Transmute(player_idx, &target_wx, &target_wy, &target_wp) == 1) {
+            AI_OVL_SplPriorities[2] = 200;
+        }
+    }
+
+    if(players_spell_list[spl_Change_Terrain] == sls_Known) {
+        if(AITP_ChangeTerrain__WIP(player_idx, &target_wx, &target_wy, &target_wp) == 1) {
+            AI_OVL_SplPriorities[3] = 50;
+        }
+    }
+
+    if(players_spell_list[spl_Move_Fortress] == sls_Known) {
+        if(AITP_MoveFortress(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[5] = _turn / 15;
+        }
+    }
+
+    if(players_spell_list[spl_Earth_Gate] == sls_Known) {
+        if(AITP_EarthGate(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[6] = _turn / 15;
+        }
+    }
+
+    if(players_spell_list[spl_Gaias_Blessing] == sls_Known) {
+        if(AITP_GaiasBlessing(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[7] = 300;
+        }
+    }
+
+    if(players_spell_list[spl_Flying_Fortress] == sls_Known) {
+        if(AITP_FlyingFortress(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[8] = 100;
+        }
+    }
+
+    if(players_spell_list[spl_Wall_Of_Fire] == sls_Known) {
+        if(AITP_WallofFire(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[9] = _turn / 20;
+        }
+    }
+
+    if(players_spell_list[spl_Heavenly_Light] == sls_Known) {
+        if(AITP_HeavenlyLight(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[10] = _turn / 25;
+        }
+    }
+
+    if(players_spell_list[spl_Stream_Of_Life] == sls_Known) {
+        if(AITP_StreamofLife(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[11] = _turn / 10;
+        }
+    }
+
+    if(players_spell_list[spl_Inspirations] == sls_Known) {
+        if(AITP_Inspirations(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[12] = 300;
+        }
+    }
+
+    if(players_spell_list[spl_Prosperity] == sls_Known) {
+        if(AITP_Prosperity(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[13] = 300;
+        }
+    }
+
+    if(players_spell_list[spl_Astral_Gate] == sls_Known) {
+        if(AITP_AstralGate(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[14] = 0;
+        }
+    }
+
+    if(players_spell_list[spl_Dark_Rituals] == sls_Known) {
+        if(AITP_DarkRituals(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[15] = 100;
+        }
+    }
+
+    if(players_spell_list[spl_Cloud_Of_Shadow] == sls_Known) {
+        if(AITP_CloudofShadow(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[16] = _turn / 20;
+        }
+    }
+
+    if(players_spell_list[spl_Spell_Ward] == sls_Known) {
+        if(AITP_SpellWard__STUB(player_idx, &target_city_idx, &Target_Realm) == 1) {
+            AI_OVL_SplPriorities[17] = 100;
+        }
+    }
+
+    if(players_spell_list[spl_Consecration] == sls_Known) {
+        if(AITP_Consecration(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[18] = 100;
+        }
+    }
+
+    if(players_spell_list[spl_Wall_Of_Darkness] == sls_Known) {
+        if(AITP_WallofDarkness(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[19] = _turn / 20;
+        }
+    }
+
+    if(players_spell_list[spl_Altar_Of_Battle] == sls_Known) {
+        if(AITP_AltarofBattle(player_idx, &target_city_idx) == 1) {
+            AI_OVL_SplPriorities[20] = 50;
+        }
+    }
+
+    if(SPL_IsLifeSupressed() == 1) {
+        for(itr = 10; itr <= 14; itr++) {
+            AI_OVL_SplPriorities[itr] = (AI_OVL_SplPriorities[itr] * 2) / 3;
+        }
+        AI_OVL_SplPriorities[18] = (AI_OVL_SplPriorities[18] * 2) / 3;
+        AI_OVL_SplPriorities[20] = (AI_OVL_SplPriorities[20] * 2) / 3;
+    }
+
+    if(CRP_SPL_IsNatSuppressed() == 1) {
+        for(itr = 1; itr <= 7; itr++) {
+            AI_OVL_SplPriorities[itr] = (AI_OVL_SplPriorities[itr] * 2) / 3;
+        }
+    }
+
+    if(SPL_IsDthSuppressed() == 1) {
+        for(itr = 15; itr <= 16; itr++) {
+            if(AI_OVL_SplPriorities[itr] < 20) {
+                AI_OVL_SplPriorities[itr] = 0;
+            } else if(AI_OVL_SplPriorities[itr] < 50) {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 3;
+            } else {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 2;
+            }
+        }
+        /* index 19 (spl_Wall_of_Darkness) */
+        if(AI_OVL_SplPriorities[19] < 20) {
+            AI_OVL_SplPriorities[19] = 0;
+        } else if(AI_OVL_SplPriorities[19] < 50) {
+            AI_OVL_SplPriorities[19] = AI_OVL_SplPriorities[19] / 3;
+        } else {
+            AI_OVL_SplPriorities[19] = AI_OVL_SplPriorities[19] / 2;
+        }
+    }
+
+    if(SPL_IsChsSuppressed() == 1) {
+        /* index 9 (spl_Wall_Of_Fire) */
+        if(AI_OVL_SplPriorities[9] < 20) {
+            AI_OVL_SplPriorities[9] = 0;
+        } else if(AI_OVL_SplPriorities[9] < 50) {
+            AI_OVL_SplPriorities[9] = AI_OVL_SplPriorities[9] / 3;
+        } else {
+            AI_OVL_SplPriorities[9] = AI_OVL_SplPriorities[9] / 2;
+        }
+    }
+
+    choice = Get_Weighted_Choice(AI_OVL_SplPriorities, 50);
+
+    switch(choice)
+    {
+        case 1:
+            return spl_Wall_Of_Stone;
+        case 2:
+            return spl_Transmute;
+        case 3:
+            return spl_Change_Terrain;
+        case 5:
+            return spl_Move_Fortress;
+        case 6:
+            return spl_Earth_Gate;
+        case 7:
+            return spl_Gaias_Blessing;
+        case 8:
+            return spl_Flying_Fortress;
+        case 9:
+            return spl_Wall_Of_Fire;
+        case 10:
+            return spl_Heavenly_Light;
+        case 11:
+            return spl_Stream_Of_Life;
+        case 12:
+            return spl_Inspirations;
+        case 13:
+            return spl_Prosperity;
+        case 14:
+            return spl_Astral_Gate;
+        case 15:
+            return spl_Dark_Rituals;
+        case 16:
+            return spl_Cloud_Of_Shadow;
+        case 17:
+            return spl_Spell_Ward;
+        case 18:
+            return spl_Consecration;
+        case 19:
+            return spl_Wall_Of_Darkness;
+        case 20:
+            return spl_Altar_Of_Battle;
+        default:
+            return 0;
+    }
+
 }
 
 
@@ -1747,10 +1967,16 @@ int16_t AI_OVL_PickDisj(int16_t player_idx)
 }
 
 // WZD o156p17
-// drake178: AITP_WallofStone()
+int16_t AITP_WallofStone(int16_t player_idx, int16_t * city)
+{
+    return 0;
+}
 
 // WZD o156p18
-// drake178: AITP_Transmute()
+int16_t AITP_Transmute(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp)
+{
+    return 0;
+}
 
 // WZD o156p19
 // drake178: AITP_ChangeTerrain()
@@ -1767,20 +1993,20 @@ int16_t AI_OVL_PickDisj(int16_t player_idx)
 */
 int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp)
 {
-    int16_t Target_Plane = 0;
-    int16_t Target_Y = 0;
-    int16_t Target_X = 0;
+    int16_t target_wp = 0;
+    int16_t target_wy = 0;
+    int16_t target_wx = 0;
     int16_t Tile_Y = 0;
     int16_t Plane = 0;
     int16_t Y_Modifier = 0;
     int16_t X_Modifier = 0;
     int16_t Highest_Value = 0;
-    int16_t Target_City = 0;
+    int16_t target_city_idx = 0;
     int16_t itr_cities = 0;  // _SI_
 
     STU_DEBUG_BREAK();
 
-    Target_City = ST_UNDEFINED;
+    target_city_idx = ST_UNDEFINED;
 
     Highest_Value = 0;
 
@@ -1791,7 +2017,7 @@ int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, 
 
 
 
-    if(Target_City == ST_UNDEFINED)
+    if(target_city_idx == ST_UNDEFINED)
     {
         return ST_FALSE;
     }
@@ -1804,49 +2030,90 @@ int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, 
 
 
 // WZD o156p20
-// AITP_MoveFortress()
+int16_t AITP_MoveFortress(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p21
-// AITP_FlyingFortress()
+int16_t AITP_FlyingFortress(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p22
-// AITP_EarthGate()
+int16_t AITP_EarthGate(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p23
-// AITP_GaiasBlessing()
+int16_t AITP_GaiasBlessing(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p24
-// AITP_WallofFire()
+int16_t AITP_WallofFire(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p25
-// AITP_WallofDarkness()
+int16_t AITP_WallofDarkness(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p26
-// AITP_HeavenlyLight()
+int16_t AITP_HeavenlyLight(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p27
-// AITP_AltarofBattle()
+int16_t AITP_AltarofBattle(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p28
-// AITP_StreamofLife()
+int16_t AITP_StreamofLife(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p29
-// AITP_Inspirations()
+int16_t AITP_Inspirations(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p30
-// drake178: AITP_Prosperity()
+int16_t AITP_Prosperity(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p31
-// drake178: AITP_AstralGate()
+int16_t AITP_AstralGate(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p32
-// drake178: AITP_DarkRituals()
+int16_t AITP_DarkRituals(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p33
-// drake178: AITP_CloudofShadow()
+int16_t AITP_CloudofShadow(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p34
-// drake178: AITP_SpellWard()
 int16_t AITP_SpellWard__STUB(int16_t player_idx, int16_t * city_idx, int16_t * magic_realm)
 {
     *city_idx = ST_UNDEFINED;
@@ -1856,27 +2123,24 @@ int16_t AITP_SpellWard__STUB(int16_t player_idx, int16_t * city_idx, int16_t * m
 
 
 // WZD o156p35
-// drake178: AITP_Consecration()
+int16_t AITP_Consecration(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 // WZD o156p36
 // drake178: UU_DBG_GetKnownSpells()
 
 // WZD o156p37
-// drake178: CRP_DBG_SpellTargetError()
 void Cast_Spell_Target_Error(int16_t spell_idx)
 {
-
     if(Check_Release_Version() == ST_TRUE)
     {
         return;
     }
-
     _fstrcpy(near_buffer, spell_data_table[spell_idx].name);
-
-    stu_strcat(near_buffer, CRP_AI_SpellTargetError);  // " could not be found for CP."
-
+    stu_strcat(near_buffer, CRP_AI_SpellTargetError);  /* " could not be found for CP." */
     Exit_With_Message(near_buffer);
-
 }
 
 
@@ -2025,22 +2289,22 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
         sw1_spell_idx = spell_idx;
         switch(sw1_spell_idx)
         {
-            // case spl_Wall_Of_Stone:    { return AITP_WallofStone(player_idx, city_idx);      } break;
-            // case spl_Move_Fortress:    { return AITP_MoveFortress(player_idx, city_idx);     } break;
-            // case spl_Earth_Gate:       { return AITP_EarthGate(player_idx, city_idx);        } break;
-            // case spl_Flying_Fortress:  { return AITP_FlyingFortress(player_idx, city_idx);   } break;
-            // case spl_Wall_Of_Fire:     { return AITP_WallofFire(player_idx, city_idx);       } break;
-            // case spl_Heavenly_Light:   { return AITP_HeavenlyLight(player_idx, city_idx);    } break;
-            // case spl_Altar_Of_Battle:  { return AITP_AltarofBattle(player_idx, city_idx);    } break;
-            // case spl_Inspirations:     { return AITP_Inspirations(player_idx, city_idx);     } break;
-            // case spl_Stream_Of_Life:   { return AITP_StreamofLife(player_idx, city_idx);     } break;
-            // case spl_Astral_Gate:      { return AITP_AstralGate(player_idx, city_idx);       } break;
-            // case spl_Prosperity:       { return AITP_Prosperity(player_idx, city_idx);       } break;
-            // case spl_Consecration:     { return AITP_Consecration(player_idx, city_idx);     } break;
-            // case spl_Cloud_Of_Shadow:  { return AITP_CloudofShadow(player_idx, city_idx);    } break;
-            // case spl_Summoning_Circle: { return AITP_Summoning_Circle(player_idx, city_idx); } break;
-            // case spl_Dark_Rituals:     { return AITP_DarkRituals(player_idx, city_idx);      } break;
-            // case spl_Gaias_Blessing:   { return AITP_GaiasBlessing(player_idx, city_idx);    } break;
+            case spl_Wall_Of_Stone:    { return AITP_WallofStone(player_idx, city_idx);      } break;
+            case spl_Move_Fortress:    { return AITP_MoveFortress(player_idx, city_idx);     } break;
+            case spl_Earth_Gate:       { return AITP_EarthGate(player_idx, city_idx);        } break;
+            case spl_Flying_Fortress:  { return AITP_FlyingFortress(player_idx, city_idx);   } break;
+            case spl_Wall_Of_Fire:     { return AITP_WallofFire(player_idx, city_idx);       } break;
+            case spl_Heavenly_Light:   { return AITP_HeavenlyLight(player_idx, city_idx);    } break;
+            case spl_Altar_Of_Battle:  { return AITP_AltarofBattle(player_idx, city_idx);    } break;
+            case spl_Inspirations:     { return AITP_Inspirations(player_idx, city_idx);     } break;
+            case spl_Stream_Of_Life:   { return AITP_StreamofLife(player_idx, city_idx);     } break;
+            case spl_Astral_Gate:      { return AITP_AstralGate(player_idx, city_idx);       } break;
+            case spl_Prosperity:       { return AITP_Prosperity(player_idx, city_idx);       } break;
+            case spl_Consecration:     { return AITP_Consecration(player_idx, city_idx);     } break;
+            case spl_Cloud_Of_Shadow:  { return AITP_CloudofShadow(player_idx, city_idx);    } break;
+            case spl_Summoning_Circle: { return AITP_Summoning_Circle(player_idx, city_idx); } break;
+            case spl_Dark_Rituals:     { return AITP_DarkRituals(player_idx, city_idx);      } break;
+            case spl_Gaias_Blessing:   { return AITP_GaiasBlessing(player_idx, city_idx);    } break;
             default: { Cast_Spell_Target_Error(spell_idx); } break;
         }
     }
@@ -2686,8 +2950,10 @@ int16_t Square_Is_Legal_For_Floating_Island(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD o156p58
-// drake178: sub_EA61E()
-// int16_t AITP_Summoning_Circle(int16_t player_idx, int16_t * city_idx)
+int16_t AITP_Summoning_Circle(int16_t player_idx, int16_t * city_idx)
+{
+    return 0;
+}
 
 
 // WZD o156p59

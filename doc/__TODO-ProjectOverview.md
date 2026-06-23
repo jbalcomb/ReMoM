@@ -104,6 +104,54 @@ Back Around To The Beginning
 
 
 
+
+## AI Spell
+8 functions for group selections
+
+Why AITP_Transmute under AI_Select_Spell_Group_City_Enchantment()?
+Why AITP_Transmute under AI_Select_Spell_Group_City_Enchantment() and Get_Map_Square_Target_For_Spell()?
+...
+enum e_OVERLAND_SPELL_TARGET_TYPE
+enum e_COMBAT_SPELL_TARGET_TYPE
+Get_Map_Square_Target_For_Spell()
+Pick_Target_For_City_Enchantment__WIP()
+...
+
+Next_Turn_Proc()
+    |-> Next_Turn_Calc()
+        |-> AI_Next_Turn()
+            |-> Cast_Spell_Overland()
+            |-> AI_Spell_Select()
+                |-> AI_Compute_Spells_Info()
+                |-> AI_Select_Spell_Group()
+                |-> AI_Select_Spell_Group_Summon()
+                |-> AI_Select_Spell_Group_Unit_Enchantment()
+                |-> AI_Select_Spell_Group_City_Enchantment()
+...
+                |-> AI_Select_Spell_Group_City_Enchantment
+[ ]                 |-> AITP_WallofStone()
+[ ]                 |-> AITP_Transmute()
+[ ]                 |-> AITP_ChangeTerrain__WIP()
+[ ]                 |-> AITP_MoveFortress()
+[ ]                 |-> AITP_EarthGate()
+[ ]                 |-> AITP_GaiasBlessing()
+[ ]                 |-> AITP_FlyingFortress()
+[ ]                 |-> AITP_WallofFire()
+[ ]                 |-> AITP_HeavenlyLight()
+[ ]                 |-> AITP_StreamofLife()
+[ ]                 |-> AITP_Inspirations()
+[ ]                 |-> AITP_Prosperity()
+[ ]                 |-> AITP_AstralGate()
+[ ]                 |-> AITP_DarkRituals()
+[ ]                 |-> AITP_CloudofShadow()
+[ ]                 |-> AITP_SpellWard__STUB()
+[ ]                 |-> AITP_Consecration()
+[ ]                 |-> AITP_WallofDarkness()
+[ ]                 |-> AITP_AltarofBattle()
+
+
+
+
 New Game
 
 [ ] Init_New_Game()

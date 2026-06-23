@@ -138,7 +138,7 @@ int16_t AI_OVL_PickGlobal(int16_t player_idx);
 int16_t AI_OVL_PickCurse(int16_t player_idx);
 
 // WZD o156p10
-int16_t AI_OVL_PickCityBuff(int16_t player_idx);
+int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx);
 
 // WZD o156p11
 int16_t SPL_IsLifeSupressed(void);
@@ -159,61 +159,64 @@ int16_t AI_OVL_PickDise(int16_t player_idx);
 int16_t AI_OVL_PickDisj(int16_t player_idx);
 
 // WZD o156p17
-// AITP_WallofStone()
+int16_t AITP_WallofStone(int16_t player_idx, int16_t * city);
 
 // WZD o156p18
-// AITP_Transmute()
+int16_t AITP_Transmute(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp);
 
 // WZD o156p19
 int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp);
 
 // WZD o156p20
-// AITP_MoveFortress()
+int16_t AITP_MoveFortress(int16_t player_idx, int16_t * city_idx);
+
+// WZD o156p20
+int16_t AITP_MoveFortress(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p21
-// AITP_FlyingFortress()
+int16_t AITP_FlyingFortress(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p22
-// AITP_EarthGate()
+int16_t AITP_EarthGate(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p23
-// AITP_GaiasBlessing()
+int16_t AITP_GaiasBlessing(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p24
-// AITP_WallofFire()
+int16_t AITP_WallofFire(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p25
-// AITP_WallofDarkness()
+int16_t AITP_WallofDarkness(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p26
-// AITP_HeavenlyLight()
+int16_t AITP_HeavenlyLight(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p27
-// AITP_AltarofBattle()
+int16_t AITP_AltarofBattle(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p28
-// AITP_StreamofLife()
+int16_t AITP_StreamofLife(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p29
-// AITP_Inspirations()
+int16_t AITP_Inspirations(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p30
-// AITP_Prosperity()
+int16_t AITP_Prosperity(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p31
-// AITP_AstralGate()
+int16_t AITP_AstralGate(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p32
-// AITP_DarkRituals()
+int16_t AITP_DarkRituals(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p33
-// AITP_CloudofShadow()
+int16_t AITP_CloudofShadow(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p34
 int16_t AITP_SpellWard__STUB(int16_t player_idx, int16_t * city_idx, int16_t * magic_realm);
 
 // WZD o156p35
-// AITP_Consecration()
+int16_t AITP_Consecration(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p36
 // UU_DBG_GetKnownSpells()
@@ -283,7 +286,7 @@ int16_t AI_Has_More_Myrror_Cities(int16_t player_idx);
 int16_t Square_Is_Legal_For_Floating_Island(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o156p58
-// AITP_Summoning_Circle()
+int16_t AITP_Summoning_Circle(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p59
 int16_t Player_Summon_City_Is_Fortress_City(int16_t player_idx);
