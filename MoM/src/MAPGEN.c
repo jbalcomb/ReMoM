@@ -285,6 +285,25 @@ static void gd_dump_world_map(const char* point)
     }
 }
 
+/* CLAUDE: capture _landmasses (uint8 landmass-id per tile) for OG byte-compare. */
+static void gd_dump_landmasses(const char* point)
+{
+    int plane, y, x, q;
+    char row[WORLD_WIDTH * 5];
+    for (plane = 0; plane < NUM_PLANES; plane++) {
+        for (y = 0; y < WORLD_HEIGHT; y++) {
+            q = 0;
+            for (x = 0; x < WORLD_WIDTH; x++) {
+                int v = GET_LANDMASS(x, y, plane);
+                q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
+            }
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _landmasses[%d].y%02d = %s",
+                      point, plane, y, row);
+        }
+        STU_Log_Flush_All();
+    }
+}
+
 void Init_New_Game(void)
 {
     int16_t rivers = 0;
@@ -324,6 +343,8 @@ void Init_New_Game(void)
 
     Init_Landmasses(MYRROR_PLANE);
 
+    gd_dump_landmasses("01_Init_Landmasses_L");   /* CLAUDE: _landmasses after Init_Landmasses */
+
     Draw_Building_The_Worlds(15);
 
     Generate_Landmasses(ARCANUS_PLANE);
@@ -332,7 +353,8 @@ void Init_New_Game(void)
 
     Generate_Landmasses(MYRROR_PLANE);
 
-    gd_dump_world_map("Landmasses");   /* CLAUDE: bisect map-divergence checkpoint */
+    gd_dump_landmasses("02_Generate_Landmasses_L");   /* CLAUDE: _landmasses after Generate_Landmasses */
+    gd_dump_world_map("03_Landmasses_W");   /* CLAUDE: bisect map-divergence checkpoint */
 
     Draw_Building_The_Worlds(25);
 
@@ -342,7 +364,7 @@ void Init_New_Game(void)
 
     Translate_Heightmap_To_Base_Terrain_Types(MYRROR_PLANE);
 
-    gd_dump_world_map("BaseTerrain");   /* CLAUDE: bisect map-divergence checkpoint */
+    gd_dump_world_map("04_BaseTerrain_W");   /* CLAUDE: bisect map-divergence checkpoint */
 
     Draw_Building_The_Worlds(35);
 
@@ -354,37 +376,38 @@ void Init_New_Game(void)
 
     /* CLAUDE: full map now built (both planes climate-terraformed) -- capture
      * for OG byte-compare before Nodes/Towers/Lairs run. */
-    gd_dump_world_map("ClimateTerrain");
+    gd_dump_world_map("05_ClimateTerrain_W");
 
     Draw_Building_The_Worlds(45);
 
     Generate_Nodes();
 
-    gd_dump_nodes("Generate_Nodes");   /* CLAUDE: _NODES at end of Generate_Nodes */
+    gd_dump_nodes("06_Generate_Nodes_N");   /* CLAUDE: _NODES at end of Generate_Nodes */
 
     Draw_Building_The_Worlds(50);
 
     Rebalance_Node_Types(ARCANUS_PLANE);
     Rebalance_Node_Types(MYRROR_PLANE);
 
-    gd_dump_nodes("Rebalance_Node_Types");   /* CLAUDE: _NODES after Rebalance */
-
-    /* CLAUDE: map state immediately AFTER Rebalance_Node_Types -- does the tower
-     * loop read an identical map (so the divergence is internal to it) or not? */
-    gd_dump_world_map("PreTowers1");
+    gd_dump_nodes("07_Rebalance_Node_Types_N");   /* CLAUDE: _NODES after Rebalance */
 
     Draw_Building_The_Worlds(55);
 
     /* CLAUDE: map state immediately BEFORE Generate_Towers -- does the tower
      * loop read an identical map (so the divergence is internal to it) or not? */
-    gd_dump_world_map("PreTowers2");
+    gd_dump_world_map("08_PreTowers_W");
 
     Generate_Towers();
+
+    gd_dump_towers("09_Generate_Towers_T");   /* CLAUDE: _TOWERS after Generate_Towers */
 
     Draw_Building_The_Worlds(60);
 
     Extend_Islands(ARCANUS_PLANE);
     Extend_Islands(MYRROR_PLANE);
+
+    gd_dump_landmasses("10_Extend_Islands_L");
+    gd_dump_world_map("11_Extend_Islands_W");
 
     Generate_Lairs();
 
@@ -743,6 +766,8 @@ void Generate_Towers(void)
     int16_t itr2 = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
+    /* HACK */ tries = 13173;  /* automatic (stack) local variable */
 
     min_distance = 10;
 
