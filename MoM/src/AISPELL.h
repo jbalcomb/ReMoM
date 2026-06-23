@@ -159,16 +159,13 @@ int16_t AI_Select_Spell_Group_Disenchant(int16_t player_idx);
 int16_t AI_Select_Spell_Group_Disjunction(int16_t player_idx);
 
 // WZD o156p17
-int16_t AITP_WallofStone(int16_t player_idx, int16_t * city);
+int16_t AITP_WallofStone(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p18
 int16_t AITP_Transmute(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp);
 
 // WZD o156p19
 int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp);
-
-// WZD o156p20
-int16_t AITP_MoveFortress(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p20
 int16_t AITP_MoveFortress(int16_t player_idx, int16_t * city_idx);

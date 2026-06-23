@@ -2647,8 +2647,8 @@ void CRP_NEWG_CreatePathGrids__STUB(void)
     |-> CRP_NEWG_CreatePathGrid(movement_mode_cost_maps[wp]->sailing[0], UU_TBL_2[wp]);
 
 */
-SAMB_ptr UU_TBL_2;
-SAMB_ptr UU_TBL_1;
+int8_t *  UU_TBL_2;
+int8_t *  UU_TBL_1;
 
 // WZD dseg:9CDC
 // AKA TBL_Maps;

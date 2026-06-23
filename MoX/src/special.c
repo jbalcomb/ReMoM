@@ -46,9 +46,8 @@
 // drake178: UU_VGA_GetPointInDir()
 
 // WZD s23p02
-// drake178: TILE_GetDistance()
-// MoO2  Module: special  Range()
 /*
+MoO2  Module: special  Range()
     function (0 bytes) Range
     Address: 01:00134637
         Num params: 4
@@ -66,62 +65,57 @@
             signed integer (2 bytes) delta_y
             signed integer (2 bytes) range
 */
-/*
-a somewhat better approximation than
-TILE_SimpleDistance, this adds half of the smaller
-distance to the larger, but it does not account for
-the map wrapping around
-*/
-/*
-looks like assembly code
-
-*/
+/**
+ * @brief Estimates the distance between two points using an octagonal approximation.
+ *
+ * @details
+ * Computes an approximation of the Euclidean distance between `(x1, y1)` and
+ * `(x2, y2)` without map wrapping, using the formula:
+ *
+ * - If `abs(dx) > abs(dy)`: `range = abs(dx) + abs(dy) / 2`
+ * - Otherwise:              `range = abs(dy) + abs(dx) / 2`
+ *
+ * This is the standard octagonal distance approximation (sometimes called
+ * "MoM distance" or "hex-style range"), which over-estimates the true Euclidean
+ * distance by at most ~12% but is cheap to compute with integer arithmetic only.
+ * It matches the range used by the original WIZARDS.EXE for spell-range and
+ * movement calculations.
+ *
+ * @param x1 Source X coordinate.
+ * @param y1 Source Y coordinate.
+ * @param x2 Destination X coordinate.
+ * @param y2 Destination Y coordinate.
+ *
+ * @return int16_t Octagonal distance approximation between the two points.
+ *
+ * @note No map-wrapping is applied; for wrapped-map distance, use
+ *       Delta_XY_With_Wrap() instead.
+ * @note The result is always non-negative.
+ */
 int16_t Range(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
-    int16_t delta_x = 0;  // _BX_
-    int16_t delta_y = 0;  // _CX_
-    int16_t range = 0;  // _DX_, _SI_
-
+    int16_t delta_x = 0;
+    int16_t delta_y = 0;
+    int16_t range = 0;
     delta_x = (x2 - x1);
-    
     delta_y = (y2 - y1);
-
-    if(delta_x < 0)
-    {
-
-        delta_x = -(delta_x);
-
-    }
-
-    if(delta_y < 0)
-    {
-        
-        delta_y = -(delta_y);
-
-    }
-
+    SETABS(delta_x);
+    SETABS(delta_y);
     if(delta_x > delta_y)
     {
-
         range = delta_x;
         range += (delta_y / 2);
-
     }
     else
     {
-
         range = delta_y;
         range += (delta_x / 2);
-
     }
-
     return range;
-
 }
 
 
 // WZD s23p03
-/* COPILOT */
 /**
  * @brief Computes wrapped-grid delta distance between two points.
  *

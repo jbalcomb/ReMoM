@@ -906,7 +906,6 @@ void Generate_Home_Cities(void)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     minimum_fortress_distance = 16;
-
     minimum_site_distance = 8;
 
     while(1)
@@ -914,24 +913,13 @@ void Generate_Home_Cities(void)
 Loop_Distances:
 
         minimum_fortress_distance--;
-
         minimum_site_distance--;
-
         SETMIN(minimum_site_distance, 1);
-
         SETMIN(minimum_fortress_distance, 10);
-
         Tries_Per_Distance = 0;
-
         niu_fortresses[ARCANUS_PLANE] = 0;
-
         niu_fortresses[MYRROR_PLANE] = 0;
-
         max_pop_failures = 0;
-
-        /* CLAUDE 2026-06-14: reset per-reason counters at the top of each
-           distance attempt so the [LOC_GIVEUP_*] tables reflect just this
-           attempt rather than every retry since the function started. */
         DBG_Invalid_Reason_1_Count = 0;
         DBG_Invalid_Reason_2_Count = 0;
         DBG_Invalid_Reason_3_Count = 0;
@@ -943,7 +931,8 @@ Loop_Distances:
         {
 Loop_MaxPopTries:
 
-            for(player_idx = 0; player_idx < NUM_PLAYERS; player_idx++)  // ; BUG: there are only at most 5 players
+            /* OGBUG  there are only at most 5 players, should iter over _num_players */
+            for(player_idx = 0; player_idx < NUM_PLAYERS; player_idx++)
             {
 
                 if(Tries_Per_Distance < 1000)
@@ -961,19 +950,13 @@ Loop_Location_1:
                     wy = (2 + Random((WORLD_HEIGHT - 6)));  // { 3, ..., 36}
 
                     Invalid = ST_FALSE;
-                    /* CLAUDE 2026-06-14: reset per-iteration so the [LOC_PICK] trace
-                       doesn't carry a stale reason from a previous rejection when
-                       this iteration accepts (invalid=0).  Counters DBG_Invalid_Reason_N_Count
-                       intentionally remain cumulative across the distance loop. */
                     DBG_Invalid_Reason = 0;
 
                     if(GET_TERRAIN_TYPE(wx, wy, wp) == tt_Ocean)
                     {
-
                         Invalid = ST_TRUE;
                         DBG_Invalid_Reason = 1;
                         DBG_Invalid_Reason_1_Count++;
-                        
                     }
 
                     for(bldg_idx = 0; bldg_idx < player_idx; bldg_idx++)
@@ -989,45 +972,25 @@ Loop_Location_1:
                         }
                     }
 
-                    // ; invalidate the attempt if any node is closer than the
-                    // ; minimum distance
-                    // ; 
-                    // ; BUG: the lair check below will also catch
-                    // ;  these
-                    // ; BUG: because the distance is halved, same map square is not
-                    // ; excluded
-
+                    /* ¿ OGBUG  because the distance is halved, same map square is not excluded ? */
                     for(bldg_idx = 0; bldg_idx < NUM_NODES; bldg_idx++)
                     {
-
                         if(_NODES[bldg_idx].wp == wp)
                         {
-
-                            if(Delta_XY_With_Wrap(wx, wy, _NODES[bldg_idx].wx, _NODES[bldg_idx].wy, WORLD_WIDTH) < minimum_site_distance)
+                            if(Delta_XY_With_Wrap(wx, wy, _NODES[bldg_idx].wx, _NODES[bldg_idx].wy, WORLD_WIDTH) < (minimum_site_distance / 2))
                             {
-
                                 Invalid = ST_TRUE;
                                 DBG_Invalid_Reason = 3;
                                 DBG_Invalid_Reason_3_Count++;
-
                             }
-
                         }
-
                     }
 
-                    // ; invalidate the attempt if any tower is closer than
-                    // ; the minimum distance
-                    // ; 
-                    // ; BUG: the lair check below will also catch
-                    // ;  these
-                    // ; BUG: because the distance is halved, same map square is not
-                    // ; excluded
-
+                    /* ¿ OGBUG  because the distance is halved, same map square is not excluded ? */
                     for(bldg_idx = 0; bldg_idx < NUM_TOWERS; bldg_idx++)
                     {
 
-                        if(Range(wx, wy, _TOWERS[bldg_idx].wx, _TOWERS[bldg_idx].wy) < minimum_site_distance)  // BUGBUG  should be Delta_XY_With_Wrap()
+                        if(Range(wx, wy, _TOWERS[bldg_idx].wx, _TOWERS[bldg_idx].wy) < (minimum_site_distance / 2))  /* OGBUG  should be Delta_XY_With_Wrap() */
                         {
 
                             Invalid = ST_TRUE;
@@ -1038,28 +1001,18 @@ Loop_Location_1:
 
                     }
 
-                    // ; invalidate the attempt if any site is
-                    // ; closer than the minimum distance
-                    // ; BUG: because the distance is halved, same map square is not
-                    // ; excluded
-
+                    /* ¿ OGBUG  because the distance is halved, same map square is not excluded ? */
                     for(bldg_idx = 0; bldg_idx < NUM_LAIRS; bldg_idx++)
                     {
-
                         if(_LAIRS[bldg_idx].wp == wp)
                         {
-
-                            if(Delta_XY_With_Wrap(wx, wy, _LAIRS[bldg_idx].wx, _LAIRS[bldg_idx].wy, WORLD_WIDTH) < minimum_site_distance)
+                            if(Delta_XY_With_Wrap(wx, wy, _LAIRS[bldg_idx].wx, _LAIRS[bldg_idx].wy, WORLD_WIDTH) < (minimum_site_distance / 2))
                             {
-
                                 Invalid = ST_TRUE;
                                 DBG_Invalid_Reason = 5;
                                 DBG_Invalid_Reason_5_Count++;
-
                             }
-
                         }
-
                     }
 
                     /* CLAUDE 2026-06-01: per-iteration trace of the
@@ -1080,11 +1033,7 @@ Loop_Location_1:
                      *                4=NearTower, 5=NearLair, 6=PopTooLow,
                      *                0=accepted
                      */
-                    LOG_INFO(LOG_CAT_GENERAL,
-                        "[LOC_PICK] player=%d try=%d wp=%d wx=%d wy=%d invalid=%d reason=%d",
-                        (int)player_idx, (int)Tries_Per_Distance, (int)wp,
-                        (int)wx, (int)wy,
-                        (int)Invalid, (int)DBG_Invalid_Reason);
+                    LOG_INFO(LOG_CAT_GENERAL, "[LOC_PICK] player=%d try=%d wp=%d wx=%d wy=%d invalid=%d reason=%d", (int)player_idx, (int)Tries_Per_Distance, (int)wp, (int)wx, (int)wy, (int)Invalid, (int)DBG_Invalid_Reason);
 
                     if(
                         (Tries_Per_Distance < 1000)
@@ -1109,14 +1058,7 @@ Loop_Location_1:
                         max_pop_failures++;
                         if(max_pop_failures > 500)
                         {
-                            /* CLAUDE 2026-06-14: bail out of the max-pop retry loop. */
-                            LOG_INFO(LOG_CAT_GENERAL,
-                                "[LOC_GIVEUP_POP] player=%d max_pop_failures>%d  min_fortress_dist=%d min_site_dist=%d  reasons: Ocean=%d Fortress=%d Node=%d Tower=%d Lair=%d PopTooLow=%d",
-                                (int)player_idx, 500,
-                                (int)minimum_fortress_distance, (int)minimum_site_distance,
-                                (int)DBG_Invalid_Reason_1_Count, (int)DBG_Invalid_Reason_2_Count,
-                                (int)DBG_Invalid_Reason_3_Count, (int)DBG_Invalid_Reason_4_Count,
-                                (int)DBG_Invalid_Reason_5_Count, (int)DBG_Invalid_Reason_6_Count);
+                            LOG_INFO(LOG_CAT_GENERAL, "[LOC_GIVEUP_POP] player=%d max_pop_failures>%d  min_fortress_dist=%d min_site_dist=%d  reasons: Ocean=%d Fortress=%d Node=%d Tower=%d Lair=%d PopTooLow=%d", (int)player_idx, 500, (int)minimum_fortress_distance, (int)minimum_site_distance, (int)DBG_Invalid_Reason_1_Count, (int)DBG_Invalid_Reason_2_Count, (int)DBG_Invalid_Reason_3_Count, (int)DBG_Invalid_Reason_4_Count, (int)DBG_Invalid_Reason_5_Count, (int)DBG_Invalid_Reason_6_Count);
                             STU_DEBUG_BREAK();
                             goto Loop_MaxPopTries;
                         }
@@ -1132,7 +1074,6 @@ Loop_Location_1:
                         _FORTRESSES[player_idx].wx = (int8_t)wx;
                         _FORTRESSES[player_idx].wy = (int8_t)wy;
                         _FORTRESSES[player_idx].wp = (int8_t)wp;
-                        _FORTRESSES[player_idx].wx = (int8_t)wx;
                         _FORTRESSES[player_idx].active = ST_TRUE;
                         niu_fortresses[wp]++;
 
@@ -1146,15 +1087,8 @@ Loop_Location_1:
             {
                 /* CLAUDE 2026-06-14: failed to place at this distance — log reasons
                    then shrink min distances and try again at Loop_Distances. */
-                LOG_INFO(LOG_CAT_GENERAL,
-                    "[LOC_GIVEUP_DIST] tries>=%d at player=%d  min_fortress_dist=%d min_site_dist=%d  reasons: Ocean=%d Fortress=%d Node=%d Tower=%d Lair=%d PopTooLow=%d",
-                    1000, (int)player_idx,
-                    (int)minimum_fortress_distance, (int)minimum_site_distance,
-                    (int)DBG_Invalid_Reason_1_Count, (int)DBG_Invalid_Reason_2_Count,
-                    (int)DBG_Invalid_Reason_3_Count, (int)DBG_Invalid_Reason_4_Count,
-                    (int)DBG_Invalid_Reason_5_Count, (int)DBG_Invalid_Reason_6_Count);
+                LOG_INFO(LOG_CAT_GENERAL, "[LOC_GIVEUP_DIST] tries>=%d at player=%d  min_fortress_dist=%d min_site_dist=%d  reasons: Ocean=%d Fortress=%d Node=%d Tower=%d Lair=%d PopTooLow=%d", 1000, (int)player_idx, (int)minimum_fortress_distance, (int)minimum_site_distance, (int)DBG_Invalid_Reason_1_Count, (int)DBG_Invalid_Reason_2_Count, (int)DBG_Invalid_Reason_3_Count, (int)DBG_Invalid_Reason_4_Count, (int)DBG_Invalid_Reason_5_Count, (int)DBG_Invalid_Reason_6_Count);
                 goto Loop_Distances;
-
             }
 
 
@@ -1163,23 +1097,22 @@ Loop_Location_1:
 
 
 
-            _cities = 0;
+            _cities = 0;  /* NOTE: first settings of _cities */
 
             for(itr = 0; itr < _num_players; itr++)
             {
 
+/*
+    BEGIN:  City Race
+*/
                 if(itr == 0)
                 {
-
                     _CITIES[_cities].race = (int8_t)NEWG_Clicked_Race;
-
                 }
                 else
                 {
-                        
                     if(_players[itr].myrran != ST_FALSE)
                     {
-
                         switch((Random(5) - 1))
                         {
                             case 0: { _CITIES[_cities].race = rt_Beastmen;  } break;
@@ -1188,14 +1121,11 @@ Loop_Location_1:
                             case 3: { _CITIES[_cities].race = rt_Dwarf;     } break;
                             case 4: { _CITIES[_cities].race = rt_Troll;     } break;
                         }
-
                     }
                     else
                     {
-
                         if(_difficulty <= god_Normal)
                         {
-
                             switch((Random(9) - 1))
                             {
                                 case 0: { _CITIES[_cities].race = rt_Barbarian; } break;
@@ -1208,11 +1138,9 @@ Loop_Location_1:
                                 case 7: { _CITIES[_cities].race = rt_Nomad;     } break;
                                 case 8: { _CITIES[_cities].race = rt_Orc;       } break;
                             }
-
                         }
                         else
                         {
-
                             switch((Random(5) - 1))
                             {
                                 case 0: { _CITIES[_cities].race = rt_Klackon;  } break;
@@ -1221,29 +1149,22 @@ Loop_Location_1:
                                 case 3: { _CITIES[_cities].race = rt_High_Men; } break;
                                 case 4: { _CITIES[_cities].race = rt_Nomad;    } break;
                             }
-
                         }
-
                     }
-
-                    /*
-                    HERE:
-                    fucks off because it requires a Forest square for High Elves
-                    definitely is not just falling through the loop
-                    otherwise, it does through the balance of the loop in a perfectly normal looking manner
-                    */
+                    /* OGBUG  wx/wy/wp here are leftover from the last fortress placed in the location loop, NOT this city's own square (_FORTRESSES[itr]); so for every city except the last-placed one, the High Elf forest requirement is tested against the wrong tile. Faithful to the asm (loc_44375 pushes [bp+wx]/[bp+wy]/[bp+wp]). */
                     if(
                         (_CITIES[_cities].race == rt_High_Elf)
                         &&
                         (Square_Is_Forest_NewGame(wx, wy, wp) == ST_FALSE)
                     )
                     {
-
+                        /* OGBUG  taking this jump lands in a bad state: the location loop has already run to completion, so player_idx == NUM_PLAYERS (6) here (this loop iterates itr, not player_idx). Re-entering Loop_Location_1 does a junk location pick for the nonexistent 6th slot (_players[6] / _FORTRESSES[6] — the B1 over-iteration) before the whole city loop restarts at _cities=0. Faithful to the asm (jmp @@Loop_Location with player_idx left at 6). */
                         goto Loop_Location_1;
-
                     }
-
                 }
+/*
+    END:  City Race
+*/
 
                 _CITIES[_cities].wx = _FORTRESSES[itr].wx;
                 _CITIES[_cities].wy = _FORTRESSES[itr].wy;
@@ -1317,12 +1238,8 @@ Done_Done:
 
     LOG_INFO(LOG_CAT_GENERAL, "Done_Done:");
 
-    // ; create a corresponding spearmen unit in the capital
-    // ; of each wizard whose starting race is not dwarf
-
     for(itr = 0; itr < _num_players; itr++)
     {
-    
         switch(_CITIES[itr].race)
         {
             case rt_Barbarian: { unit_type = ut_BarbSpearmen;   } break;
@@ -1340,24 +1257,13 @@ Done_Done:
             case rt_Orc:       { unit_type = ut_OrcSpearmen;    } break;
             case rt_Troll:     { unit_type = ut_TrlSpearmen;    } break;
         }
-    
-        // Dwarves get two Swordsmen
         if(_CITIES[itr].race != rt_Dwarf)
         {
-
             Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
-
         }
-
     }
-
-    // ; create a corresponding swordsmen unit in the capital
-    // ; of each wizard, with an additional one if their
-    // ; starting race is dwarf
-
     for(itr = 0; itr < _num_players; itr++)
     {
-    
         switch(_CITIES[itr].race)
         {
             case rt_Barbarian: { unit_type = ut_BarbSwordsmen;  } break;
@@ -1375,16 +1281,11 @@ Done_Done:
             case rt_Orc:       { unit_type = ut_OrcSwordsmen;   } break;
             case rt_Troll:     { unit_type = ut_TrlSwordsmen;   } break;
         }
-    
         if(_CITIES[itr].race == rt_Dwarf)
         {
-
             Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
-
         }
-
         Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
-
     }
 
     // @@Done
@@ -1392,6 +1293,363 @@ Done_Done:
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
+/* GEMINI */
+#if 0
+void Generate_Home_City__GEMINI(void)
+{
+    int max_pop_failures;           /* [bp-18h] */
+    int minimum_site_distance;      /* [bp-16h] */
+    int minimum_fortress_distance;  /* [bp-14h] */
+    int itr;                        /* [bp-12h] */
+    int Invalid;                    /* [bp-10h] */
+    int Tries_Per_Distance;         /* [bp-0Eh] */
+    int wy;                         /* [bp-0Ch] */
+    int wx;                         /* [bp-0Ah] */
+    int wp;                         /* [bp-08h] */
+    int UU_Fortresses[2];           /* [bp-06h] */
+    int player_idx;                 /* [bp-02h] */
+    int unit_type;                  /* di */
+    int bldg_idx;                   /* si */
+
+    minimum_fortress_distance = 16;
+    minimum_site_distance = 8;
+
+@@Loop_Distances:
+    minimum_fortress_distance--;
+    minimum_site_distance--;
+
+    if (minimum_site_distance < 1)
+    {
+        minimum_site_distance = 1;
+    }
+
+    if (minimum_fortress_distance < 10)
+    {
+        minimum_fortress_distance = 10;
+    }
+
+    Tries_Per_Distance = 0;
+    UU_Fortresses[0] = 0;
+    UU_Fortresses[1] = 0;
+    max_pop_failures = 0;
+
+@@Loop_CapitalTries:
+    player_idx = 0;
+
+@@Loop_Players:
+    while (player_idx < 6)
+    {
+@@Loop_Location:
+        Tries_Per_Distance++;
+        wp = 0;
+
+        /* Check if player starts on Myrror */
+        if (_players[player_idx].myrran != e_ST_FALSE)
+        {
+            wp = 1;
+        }
+
+        wx = Random(54) + 2;
+        wy = Random(34) + 2;
+        Invalid = e_ST_FALSE;
+
+        /* Check if terrain is Ocean */
+        if (_world_maps[wp * (e_WORLD_WIDTH * e_WORLD_HEIGHT) + wy * e_WORLD_WIDTH + wx] == tt_Ocean1)
+        {
+            Invalid = e_ST_TRUE;
+        }
+
+        /* Check distance to other players' fortresses */
+        if (Invalid == e_ST_FALSE)
+        {
+            for (bldg_idx = 0; bldg_idx < player_idx; bldg_idx++)
+            {
+                if (_FORTRESSES[bldg_idx].wp == wp)
+                {
+                    if (Delta_XY_With_Wrap(wx, wy, _FORTRESSES[bldg_idx].wx, _FORTRESSES[bldg_idx].wy, e_WORLD_WIDTH) < minimum_fortress_distance)
+                    {
+                        Invalid = e_ST_TRUE;
+                        break;
+                    }
+                }
+            }
+        }
+
+        /* Check distance to Magic Nodes */
+        if (Invalid == e_ST_FALSE)
+        {
+            for (bldg_idx = 0; bldg_idx < NUM_NODES; bldg_idx++)
+            {
+                if (_NODES[bldg_idx].wp == wp)
+                {
+                    if (Delta_XY_With_Wrap(wx, wy, _NODES[bldg_idx].wx, _NODES[bldg_idx].wy, e_WORLD_WIDTH) < (minimum_site_distance / 2))
+                    {
+                        Invalid = e_ST_TRUE;
+                        break;
+                    }
+                }
+            }
+        }
+
+        /* Check distance to Towers of Wizardry */
+        if (Invalid == e_ST_FALSE)
+        {
+            for (bldg_idx = 0; bldg_idx < NUM_TOWERS; bldg_idx++)
+            {
+                /* Towers exist on both planes, no wp check? */
+                if (Range(wx, wy, _TOWERS[bldg_idx].wx, _TOWERS[bldg_idx].wy) < (minimum_site_distance / 2))
+                {
+                    Invalid = e_ST_TRUE;
+                    break;
+                }
+            }
+        }
+
+        /* Check distance to Lairs */
+        if (Invalid == e_ST_FALSE)
+        {
+            for (bldg_idx = 0; bldg_idx < NUM_LAIRS; bldg_idx++)
+            {
+                if (_LAIRS[bldg_idx].wp == wp)
+                {
+                    if (Delta_XY_With_Wrap(wx, wy, _LAIRS[bldg_idx].wx, _LAIRS[bldg_idx].wy, e_WORLD_WIDTH) < (minimum_site_distance / 2))
+                    {
+                        Invalid = e_ST_TRUE;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (Tries_Per_Distance < 1000 && Invalid == e_ST_TRUE)
+        {
+            goto @@Loop_Location;
+        }
+
+        /* Verify city maximum potential size */
+        if (City_Maximum_Size_NewGame(wx, wy, wp) < (8 - (player_idx / 3)))
+        {
+            max_pop_failures++;
+            if (max_pop_failures <= 500)
+            {
+                goto @@Loop_Location;
+            }
+            else
+            {
+                goto @@Loop_CapitalTries;
+            }
+        }
+
+@@AddFortress:
+        _FORTRESSES[player_idx].wx = (unsigned char)wx;
+        _FORTRESSES[player_idx].wy = (unsigned char)wy;
+        _FORTRESSES[player_idx].wp = (unsigned char)wp;
+        _FORTRESSES[player_idx].active = e_ST_TRUE;
+
+        UU_Fortresses[wp]++;
+        player_idx++;
+
+        if (Tries_Per_Distance >= 1000)
+        {
+            break;
+        }
+    }
+
+    if (Tries_Per_Distance >= 1000)
+    {
+        goto @@Loop_Distances;
+    }
+
+@@Do_The_Cities:
+    _cities = 0;
+    for (itr = 0; itr < _num_players; itr++)
+    {
+        /* Determine Race for the city */
+        if (itr == 0)
+        {
+            _CITIES[_cities].race = (unsigned char)NEWG_Clicked_Race;
+        }
+        else
+        {
+            if (_players[itr].myrran != 0)
+            {
+                /* Myrran AI Races */
+                switch (Random(5) - 1)
+                {
+                case 0: _CITIES[_cities].race = rt_Beastmen; break;
+                case 1: _CITIES[_cities].race = rt_Dark_Elf; break;
+                case 2: _CITIES[_cities].race = rt_Draconian; break;
+                case 3: _CITIES[_cities].race = rt_Dwarf; break;
+                case 4: _CITIES[_cities].race = rt_Troll; break;
+                }
+            }
+            else if (_difficulty > god_Normal)
+            {
+                /* Arcanus Hard AI Races */
+                switch (Random(5) - 1)
+                {
+                case 0: _CITIES[_cities].race = rt_Klackon; break;
+                case 1: _CITIES[_cities].race = rt_High_Elf; break;
+                case 2: _CITIES[_cities].race = rt_Halfling; break;
+                case 3: _CITIES[_cities].race = rt_High_Man; break;
+                case 4: _CITIES[_cities].race = rt_Nomad; break;
+                }
+            }
+            else
+            {
+                /* Arcanus Normal AI Races */
+                switch (Random(9) - 1)
+                {
+                case 0: _CITIES[_cities].race = rt_Barbarian; break;
+                case 1: _CITIES[_cities].race = rt_Gnoll; break;
+                case 2: _CITIES[_cities].race = rt_Halfling; break;
+                case 3: _CITIES[_cities].race = rt_High_Elf; break;
+                case 4: _CITIES[_cities].race = rt_High_Man; break;
+                case 5: _CITIES[_cities].race = rt_Klackon; break;
+                case 6: _CITIES[_cities].race = rt_Lizardman; break;
+                case 7: _CITIES[_cities].race = rt_Nomad; break;
+                case 8: _CITIES[_cities].race = rt_Orc; break;
+                }
+            }
+
+            /* High Elves must start in a Forest */
+            if (_CITIES[_cities].race == rt_High_Elf)
+            {
+                if (!Square_Is_Forest_NewGame(_FORTRESSES[itr].wx, _FORTRESSES[itr].wy, _FORTRESSES[itr].wp))
+                {
+                    /* Failed forest check, restart placement for all players */
+                    goto @@Loop_Location;
+                }
+            }
+        }
+
+        /* Initialize City Structure */
+        _CITIES[_cities].wx = _FORTRESSES[itr].wx;
+        _CITIES[_cities].wy = _FORTRESSES[itr].wy;
+        _CITIES[_cities].wp = _FORTRESSES[itr].wp;
+        _CITIES[_cities].owner_idx = (unsigned char)itr;
+        _CITIES[_cities].size = CTY_Hamlet;
+        _CITIES[_cities].population = 4;
+        _CITIES[_cities].Building_Count = 0;
+        _CITIES[_cities].Prod_Accu = 0;
+        _CITIES[_cities].Pop_10s = 0;
+
+        if (itr == 0)
+        {
+            _CITIES[_cities].construction = bt_Housing;
+        }
+        else
+        {
+            _CITIES[_cities].construction = bt_AUTOBUILD;
+        }
+
+        /* Clear Enchantments */
+        _CITIES[_cities].Enchants.Wall_of_Fire = 0;
+        _CITIES[_cities].Enchants.Wall_of_Darkness = 0;
+        _CITIES[_cities].Enchants._Chaos_Rift = 0;
+        _CITIES[_cities].Enchants.Dark_Rituals = 0;
+        _CITIES[_cities].Enchants._Evil_Presence = 0;
+        _CITIES[_cities].Enchants._Cursed_Lands = 0;
+        _CITIES[_cities].Enchants._Pestilence = 0;
+        _CITIES[_cities].Enchants.Cloud_of_Shadow = 0;
+        _CITIES[_cities].Enchants.Altar_of_Battle = 0;
+        _CITIES[_cities].Enchants._Famine = 0;
+        _CITIES[_cities].Enchants.Flying_Fortress = 0;
+        _CITIES[_cities].Enchants.Death_Ward = 0;
+        _CITIES[_cities].Enchants.Chaos_Ward = 0;
+        _CITIES[_cities].Enchants.Life_Ward = 0;
+        _CITIES[_cities].Enchants.Sorcery_Ward = 0;
+        _CITIES[_cities].Enchants.Nature_Ward = 0;
+        _CITIES[_cities].Enchants.Natures_Eye = 0;
+        _CITIES[_cities].Enchants.Earth_Gate = 0;
+        _CITIES[_cities].Enchants.Stream_of_Life = 0;
+        _CITIES[_cities].Enchants.Gaias_Blessing = 0;
+        _CITIES[_cities].Enchants.Inspirations = 0;
+        _CITIES[_cities].Enchants.Prosperity = 0;
+        _CITIES[_cities].Enchants.Astral_Gate = 0;
+        _CITIES[_cities].Enchants.Heavenly_Light = 0;
+        _CITIES[_cities].Enchants.Consecration = 0;
+        _CITIES[_cities].Nightshade = 0;
+        _CITIES[_cities].farmer_count = 3;
+
+        for (bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
+        {
+            _CITIES[_cities].Buildings[bldg_idx] = bs_NotBuilt;
+        }
+        _CITIES[_cities].Buildings[0] = bs_Replaced; /* None/PlaceHolder */
+        _CITIES[_cities].Buildings[bt_Smithy] = bs_Built;
+        _CITIES[_cities].Buildings[bt_Barracks] = bs_Built;
+        _CITIES[_cities].Buildings[bt_BuildersHall] = bs_Built;
+
+        Random_City_Name_By_Race_NewGame(_CITIES[_cities].race, &_CITIES[_cities]);
+
+        _cities++;
+    }
+
+    /* Create Starting Units - Loop 1 (Spearmen/Early Unit) */
+    for (itr = 0; itr < _num_players; itr++)
+    {
+        switch (_CITIES[itr].race)
+        {
+        case rt_Barbarian: unit_type = _BarbSpearmen; break;
+        case rt_Beastmen:  unit_type = _BeastSpearmen; break;
+        case rt_Dark_Elf:  unit_type = _DrowSpearmen; break;
+        case rt_Draconian: unit_type = _DracSpearmen; break;
+        case rt_Dwarf:     unit_type = _DwarfSwordsmen; break;
+        case rt_Gnoll:     unit_type = _GnollSpearmen; break;
+        case rt_Halfling:  unit_type = _HflngSpearmen; break;
+        case rt_High_Elf:  unit_type = _HElfSpearmen; break;
+        case rt_High_Man:  unit_type = _HMenSpearmen; break;
+        case rt_Klackon:   unit_type = _KlckSpearmen; break;
+        case rt_Lizardman: unit_type = _LizSpearmen; break;
+        case rt_Nomad:     unit_type = _NmdSpearmen; break;
+        case rt_Orc:       unit_type = _OrcSpearmen; break;
+        case rt_Troll:     unit_type = _TrlSpearmen; break;
+        default:           unit_type = _OrcSpearmen; break;
+        }
+
+        /* Dwarves don't get spearmen in the first pass */
+        if (_CITIES[itr].race != rt_Dwarf)
+        {
+            Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
+        }
+    }
+
+    /* Create Starting Units - Loop 2 (Swordsmen/Second Unit) */
+    for (itr = 0; itr < _num_players; itr++)
+    {
+        switch (_CITIES[itr].race)
+        {
+        case rt_Barbarian: unit_type = ut_BarbSwordsmen; break;
+        case rt_Beastmen:  unit_type = _BeastSwordsmen; break;
+        case rt_Dark_Elf:  unit_type = _DrowSwordsmen; break;
+        case rt_Draconian: unit_type = _DracSwordsmen; break;
+        case rt_Dwarf:     unit_type = _DwarfSwordsmen; break;
+        case rt_Gnoll:     unit_type = _GnollSwordsmen; break;
+        case rt_Halfling:  unit_type = _HflngSwordsmen; break;
+        case rt_High_Elf:  unit_type = _HElfSwordsmen; break;
+        case rt_High_Man:  unit_type = _HMenSwordsmen; break;
+        case rt_Klackon:   unit_type = _KlckSwordsmen; break;
+        case rt_Lizardman: unit_type = _LizSwordsmen; break;
+        case rt_Nomad:     unit_type = _NmdSwordsmen; break;
+        case rt_Orc:       unit_type = _OrcSwordsmen; break;
+        case rt_Troll:     unit_type = _TrlSwordsmen; break;
+        default:           unit_type = _OrcSwordsmen; break;
+        }
+
+        /* Dwarves get two swordsmen */
+        if (_CITIES[itr].race == rt_Dwarf)
+        {
+            Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
+        }
+
+        Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
+    }
+
+@@Done:
+    return;
+}
+#endif
 
 
 // MGC o51p06
@@ -5633,6 +5891,7 @@ attempt:
     stu_strcpy(name, &city_names_buffer[(city_name_idx * LEN_CITY_NAME)]);
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
+
 
 // MGC o51p26
 /**

@@ -503,7 +503,8 @@ void Init_Diplomatic_Relations(void)
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Diplomatic_Relations rng_call=%llu", (unsigned long long)g_random_call_count);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
 }
 
 
@@ -523,7 +524,8 @@ void Initialize_Items(void)
         TBL_Premade_Items[itr] = 0;
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Initialize_Items rng_call=%llu", (unsigned long long)g_random_call_count);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    
 }
 
 

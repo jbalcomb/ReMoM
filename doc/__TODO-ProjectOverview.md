@@ -132,6 +132,8 @@ Next_Turn_Proc()
 [x]             |-> AI_Select_Spell_Group_Attack()
 [x]             |-> AI_Select_Spell_Group_Suppression()
 [x]             |-> AI_Select_Spell_Group_Global()
+            |-> Player_Resource_Income_Total()
+            |-> Cast_Spell_Overland_Do()
 ...
 [x] AI_Has_Targetable_City()
 [x] AI_Has_More_Myrror_Cities()
