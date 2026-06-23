@@ -31,12 +31,6 @@
 #define INVALID_FIELD       -1000
 
 
-/*
-
-#define ABS(x) (((x) < 0) ? -(x) : (x))
-https://wiki.sei.cmu.edu/confluence/display/c/PRE12-C.+Do+not+define+unsafe+macros
-*/
-#define AbsVal(_val_) ( (_val_) < 0 ? (-(_val_)) : (_val_) )
 
 // Define macro to swap two numbers
 // #define SWAP(x, y, temp) temp = x; x = y; y = temp;  ... macro expansion(temp = x; x = y; y = temp;)
@@ -60,7 +54,7 @@ https://wiki.sei.cmu.edu/confluence/display/c/PRE12-C.+Do+not+define+unsafe+macr
 #define MIN(a, b) (((a) <= (b)) ? (a) : (b))
 #define MIN(a, b) (((a) <  (b)) ? (a) : (b))
 ...JL vs. JLE...
-...JL would take b when a is equal to be
+...JL would take b when a is equal to b
 ...that does not *feel* logical
 
 */
@@ -73,6 +67,14 @@ Eh?
     Min(), Max(), Clamp()
     SetMin(), SetMax(), SetRange()
 */
+/*
+#define ABS(x) (((x) < 0) ? -(x) : (x))
+https://wiki.sei.cmu.edu/confluence/display/c/PRE12-C.+Do+not+define+unsafe+macros
+#define AbsVal(_val_) ( (_val_) < 0 ? (-(_val_)) : (_val_) )
+*/
+#ifndef ABS
+#define ABS(x) (((x) < 0) ? -(x) : (x))
+#endif
 #ifndef MIN
 #define MIN(a, b)           ( ((a) <= (b)) ? (a) : (b) )
 // #define MIN(a, b) (((a) <  (b)) ? (a) : (b))
@@ -85,6 +87,9 @@ Eh?
 #endif
 #ifndef IS_ODD
 #define IS_ODD(_number_)    ( ((_number_) % 2 == 1) )
+#endif
+#ifndef SETABS
+#define SETABS(x) do { if ((x) < 0) { (x) = -(x); } } while (0)
 #endif
 #ifndef SETMIN
 #define SETMIN(a, b) do { if ((b) > (a)) { (a) = (b); } } while (0)
