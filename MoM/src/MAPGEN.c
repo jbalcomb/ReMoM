@@ -735,7 +735,7 @@ void Extend_Islands(int16_t wp)
  */
 void Generate_Towers(void)
 {
-    int16_t tries = 0;
+    int16_t tries = 13173;  /* CLAUDE  OG leaves Tries (auto stack local [bp-8]) uninitialized; it comes up as 13173 leftover stack memory (captured from DosBox). Seeding it reproduces OG's immediate min_distance relaxation. Path-dependent value. */
     int16_t min_distance = 0;
     int16_t wy = 0;
     int16_t wx = 0;
@@ -750,7 +750,7 @@ void Generate_Towers(void)
     while(itr1 < NUM_TOWERS)
     {
 
-        tries++;  /* OGBUG  uninitialized */
+        tries++;  /* OGBUG  Tries is uninitialized in the OG (stack leftover 13173, not 0) — see init above */
         if(tries > 500)
         {
             tries = 450;
@@ -761,18 +761,20 @@ void Generate_Towers(void)
         wx = (2 + Random(54));
         wy = (2 + Random(34));
 
-        /* Check if selected tile is Ocean on both planes (Arcanus and Myrror) */
+        /* Check if selected square is Ocean on both planes (Arcanus and Myrror) */
         if(
             (p_world_map[ARCANUS_PLANE][wy][wx] == tt_Ocean)
             &&
             (p_world_map[MYRROR_PLANE][wy][wx] == tt_Ocean)
-            &&
-            (Random(40) > 1)  /* 2.5%  1:40 */
         )
         {
-            continue;
+            if(Random(40) > 1)  /* 2.5%  1:40 */
+            {
+                continue;
+            }
         }
 
+        /* Distance check against previously placed towers */
         for(itr2 = 0; itr2 < itr1; itr2++)
         {
             if(Delta_XY_With_Wrap(wx, wy, _TOWERS[itr2].wx, _TOWERS[itr2].wy, WORLD_WIDTH) < min_distance)
@@ -780,10 +782,12 @@ void Generate_Towers(void)
                 break;
             }
         }
-        if (itr2 < itr1)
+        if(itr2 < itr1)
         {
             continue;
-        }
+        }   /* too close to a tower -> re-roll */
+
+        /* Distance check against special Nodes */
         for(itr2 = 0; itr2 < NUM_NODES; itr2++)
         {
             if(Delta_XY_With_Wrap(wx, wy, _NODES[itr2].wx, _NODES[itr2].wy, WORLD_WIDTH) < 4)
@@ -791,10 +795,10 @@ void Generate_Towers(void)
                 break;
             }
         }
-        if (itr2 < NUM_NODES)
+        if(itr2 < NUM_NODES)
         {
             continue;
-        }
+        }  /* too close to a node -> re-roll */
 
         /* Successfully found a location; update tower data */
         _TOWERS[itr1].wx = (int8_t)wx;
@@ -5116,7 +5120,7 @@ void Generate_Neutral_Cities(int16_t wp)
             {
                 if(_CITIES[itr2].wp == wp)
                 {
-                    if (Delta_XY_With_Wrap(wx, wy, _CITIES[itr2].wx, _CITIES[itr2].wy, WORLD_WIDTH) < 4)
+                    if(Delta_XY_With_Wrap(wx, wy, _CITIES[itr2].wx, _CITIES[itr2].wy, WORLD_WIDTH) < 4)
                     {
                         Invalid = ST_TRUE;
                     }
