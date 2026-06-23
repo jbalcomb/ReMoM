@@ -1783,7 +1783,7 @@ BEGIN: Knowable - Rare
                 
                 if(_players[itr].spellranks[sbr] > 9)
                 {
-                    for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_REALM; itr2++)
+                    for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_RARITY; itr2++)
                     {
                         _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 20 + itr2)] = sls_Knowable;
                     }
@@ -1838,7 +1838,7 @@ BEGIN: Knowable - Very Rare
                 
                 if(_players[itr].spellranks[sbr] > 9)
                 {
-                    for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_REALM; itr2++)
+                    for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_RARITY; itr2++)
                     {
                         _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 30 + itr2)] = sls_Knowable;
                     }
