@@ -3006,27 +3006,46 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
     }
     
     unknown_create_lair_value = (_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost * _LAIRS[lair_idx].guard1_count);
+    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=init_guard1                          value=%d  (g1_cost=%d * g1_count=%d)",
+        (int)lair_idx, (int)unknown_create_lair_value,
+        (int)_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost,
+        (int)_LAIRS[lair_idx].guard1_count);
     // KNOWNBUG: this is not always the smaller part of the treasure budget
     unknown_create_lair_value += ((_unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost * _LAIRS[lair_idx].guard2_count) / 2);
+    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=add_guard2                           value=%d  (g2_cost=%d * g2_count=%d / 2)",
+        (int)lair_idx, (int)unknown_create_lair_value,
+        (int)_unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost,
+        (int)_LAIRS[lair_idx].guard2_count);
     if(_difficulty != god_Impossible)
     {
         unknown_create_lair_value = ((unknown_create_lair_value * 4) / (_difficulty + 1));
+        LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=difficulty_scale                 value=%d  (* 4 / (difficulty+1) where difficulty=%d)",
+            (int)lair_idx, (int)unknown_create_lair_value, (int)_difficulty);
     }
     if(wp == ARCANUS_PLANE)
     {
         unknown_create_lair_value = ((unknown_create_lair_value * (49 + Random(76))) / 100);
+        LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=plane_scale_arcanus              value=%d  (* (49 + Random(76)) / 100)",
+            (int)lair_idx, (int)unknown_create_lair_value);
     }
     else
     {
         unknown_create_lair_value = ((unknown_create_lair_value * (75 + Random(100))) / 100);
+        LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=plane_scale_myrror               value=%d  (* (75 + Random(100)) / 100)",
+            (int)lair_idx, (int)unknown_create_lair_value);
     }
     SETMIN(unknown_create_lair_value, 50);
+    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=floor_50                             value=%d  (SETMIN max(value,50))",
+        (int)lair_idx, (int)unknown_create_lair_value);
     if(lair_type == 0)  // New Game Lair Type - Temple
     {
         Price = Random(4);
         unknown_create_lair_value -= (((Price * Price) * 50) - 100);
         _LAIRS[lair_idx].Spell_n_Special = (int8_t)Price;
+        LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=temple_subtract                  value=%d  (-= (Price^2 * 50) - 100 where Price=%d)",
+            (int)lair_idx, (int)unknown_create_lair_value, (int)Price);
     }
+
     if(unknown_create_lair_value >= 50)
     {
         switch((Random(15) - 1))
@@ -3039,6 +3058,8 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
                 Price = ((Price / 10) * 10);
                 unknown_create_lair_value -= 200;
                 _LAIRS[lair_idx].Loot_Gold = Price;
+                LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_0_1_gold              value=%d  (-= 200, Loot_Gold=%d)",
+                    (int)lair_idx, (int)unknown_create_lair_value, (int)Price);
             } break;
             case 2:
             case 3:
@@ -3048,6 +3069,8 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
                 Price = ((Price / 10) * 10);
                 unknown_create_lair_value -= 200;
                 _LAIRS[lair_idx].Loot_Mana = Price;
+                LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_2_3_mana              value=%d  (-= 200, Loot_Mana=%d)",
+                    (int)lair_idx, (int)unknown_create_lair_value, (int)Price);
             } break;
             case 4:
             case 5:
@@ -3072,12 +3095,19 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
                     unknown_create_lair_value -= Price;
                     _LAIRS[lair_idx].Item_Values[_LAIRS[lair_idx].Item_Count] = Price;
                     _LAIRS[lair_idx].Item_Count += 1;
+                    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_4_5_6_7_8_item       value=%d  (-= Price=%d, Item_Count=%d)",
+                        (int)lair_idx, (int)unknown_create_lair_value, (int)Price, (int)_LAIRS[lair_idx].Item_Count);
+                }
+                else
+                {
+                    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_4_5_6_7_8_item_skip  value=%d  (no qualify: Item_Count=%d, value<300)",
+                        (int)lair_idx, (int)unknown_create_lair_value, (int)_LAIRS[lair_idx].Item_Count);
                 }
             } break;
             case 9:  /* Misc Flags (e.g. Prisoner/Hero) */
             {
                 // ; prisoner hero
-                // ; 
+                // ;
                 // ; qualify:  400
                 // ; value:    1000
                 // ; max:      1
@@ -3089,6 +3119,13 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
                 {
                     _LAIRS[lair_idx].Misc_Flags = 1;  /* Prisoner */
                     unknown_create_lair_value -= 1000;
+                    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_9_prisoner          value=%d  (-= 1000, Misc_Flags=Prisoner)",
+                        (int)lair_idx, (int)unknown_create_lair_value);
+                }
+                else
+                {
+                    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_9_prisoner_skip     value=%d  (no qualify: value<400 or Misc_Flags!=0)",
+                        (int)lair_idx, (int)unknown_create_lair_value);
                 }
             } break;
             case 10:
@@ -3112,6 +3149,13 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
                     unknown_create_lair_value -= ((Price * Price) * 50);
                     _LAIRS[lair_idx].Spell_n_Special += Price;
                     SETMAX(_LAIRS[lair_idx].Spell_n_Special, 4);
+                    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_10_11_12_spell      value=%d  (-= (Price^2 * 50) where Price=%d, Spell_n_Special=%d)",
+                        (int)lair_idx, (int)unknown_create_lair_value, (int)Price, (int)_LAIRS[lair_idx].Spell_n_Special);
+                }
+                else
+                {
+                    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_10_11_12_spell_skip value=%d  (no qualify: Price=%d, Spell_n_Special=%d)",
+                        (int)lair_idx, (int)unknown_create_lair_value, (int)Price, (int)_LAIRS[lair_idx].Spell_n_Special);
                 }
             } break;
             case 13:
@@ -3132,19 +3176,37 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
                 {
                     _LAIRS[lair_idx].Spell_n_Special = 6;
                     unknown_create_lair_value -= 3000;
+                    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_13_14_retort        value=%d  (-= 3000, Spell_n_Special=6, Price==1 path)",
+                        (int)lair_idx, (int)unknown_create_lair_value);
                 }
                 else if(unknown_create_lair_value >= 2000)
                 {
                     _LAIRS[lair_idx].Spell_n_Special = 6;
                     unknown_create_lair_value -= 3000;
+                    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_13_14_retort        value=%d  (-= 3000, Spell_n_Special=6, value>=2000 path)",
+                        (int)lair_idx, (int)unknown_create_lair_value);
                 }
                 else if(unknown_create_lair_value >= 1000)
                 {
                     _LAIRS[lair_idx].Spell_n_Special = 5;
                     unknown_create_lair_value -= 3000;
+                    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_13_14_spellbook     value=%d  (-= 3000, Spell_n_Special=5, value>=1000 path)",
+                        (int)lair_idx, (int)unknown_create_lair_value);
+                }
+                else
+                {
+                    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_13_14_skip          value=%d  (no qualify: value<1000)",
+                        (int)lair_idx, (int)unknown_create_lair_value);
                 }
             } break;
         }
+        LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=final                                 value=%d",
+            (int)lair_idx, (int)unknown_create_lair_value);
+    }
+    else
+    {
+        LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=skip_switch_below_50                value=%d  (switch skipped: value<50)",
+            (int)lair_idx, (int)unknown_create_lair_value);
     }
 
     /* Final capping and cleanup: if reward is very high, it may replace other loot */
@@ -3163,7 +3225,6 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
-/* GEMINI */
 
 
 // MGC o51p18
