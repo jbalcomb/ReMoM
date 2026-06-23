@@ -356,7 +356,7 @@ void AI_Spell_Select(int16_t player_idx)
             spell_idx = AI_Select_Spell_Group_Disenchant(player_idx);
             break;
         case 5:
-            spell_idx = AI_OVL_PickDisj(player_idx);
+            spell_idx = AI_Select_Spell_Group_Disjunction(player_idx);
             break;
         case 6:
             spell_idx = spl_Summoning_Circle;
@@ -2056,9 +2056,53 @@ int16_t AI_Select_Spell_Group_Disenchant(int16_t player_idx)
 }
 
 // WZD o156p16
-int16_t AI_OVL_PickDisj(int16_t player_idx)
+/**
+ * @brief Selects a disjunction spell for the AI to cast.
+ *
+ * @details
+ * Evaluates known disjunction spells available to the AI player and selects
+ * the highest-priority available spell. The selection follows a fixed priority
+ * order:
+ *
+ * 1. Disjunction_True (target-specific disjunction)
+ * 2. Disjunction (standard disjunction)
+ *
+ * The function does not apply weighted prioritization; it simply checks each
+ * spell in priority order and returns the first one the player has learned.
+ * If neither disjunction spell is known, the function returns spl_NONE.
+ *
+ * @param player_idx Index of the AI-controlled player evaluating disjunction
+ *                   spell availability.
+ *
+ * @return int16_t Spell index of the selected disjunction spell
+ *                  (spl_Disjunction_True or spl_Disjunction), or spl_NONE
+ *                  if no disjunction spell is available.
+ *
+ * @note The player's spell list is treated as 1-based indexed by shifting the
+ *       pointer one position back: `spells_list - 1`.
+ * @note This function does not use the global `AI_OVL_SplPriorities[]` array
+ *       or weighted selection; it applies a deterministic priority check.
+ * @note Both disjunction spells are checked in order; Disjunction_True is
+ *       preferred over the standard Disjunction spell.
+ */
+int16_t AI_Select_Spell_Group_Disjunction(int16_t player_idx)
 {
-    return 0;
+    uint8_t * players_spell_list = NULL;
+
+    /* Treat spell list as 1-based index by shifting pointer */
+    players_spell_list = (uint8_t *)&_players[player_idx].spells_list[0] - 1;
+
+    if(players_spell_list[spl_Disjunction_True] == sls_Known)
+    {
+        return spl_Disjunction_True;
+    }
+
+    if(players_spell_list[spl_Disjunction] == sls_Known)
+    {
+        return spl_Disjunction;
+    }
+
+    return spl_NONE;
 }
 
 // WZD o156p17

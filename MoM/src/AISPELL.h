@@ -156,7 +156,7 @@ int16_t CRP_SPL_IsNatSuppressed(void);
 int16_t AI_Select_Spell_Group_Disenchant(int16_t player_idx);
 
 // WZD o156p16
-int16_t AI_OVL_PickDisj(int16_t player_idx);
+int16_t AI_Select_Spell_Group_Disjunction(int16_t player_idx);
 
 // WZD o156p17
 int16_t AITP_WallofStone(int16_t player_idx, int16_t * city);
