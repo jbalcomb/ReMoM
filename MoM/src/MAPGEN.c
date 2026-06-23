@@ -409,6 +409,8 @@ void Init_New_Game(void)
     gd_dump_landmasses("10_Extend_Islands_L");
     gd_dump_world_map("11_Extend_Islands_W");
 
+    gd_dump_lairs("11b_PreLairs_LR");   /* CLAUDE: _LAIRS BEFORE Generate_Lairs (phantom-item check) */
+
     Generate_Lairs();
 
     gd_dump_lairs("12_Generate_Lairs_LR");   /* CLAUDE: _LAIRS after Generate_Lairs */
@@ -418,6 +420,8 @@ void Init_New_Game(void)
     _units = 0;
 
     Generate_Home_Cities();
+
+    // TODO  gd_dump_cities("13_Generate_Home_Cities_C");
 
 #ifdef STU_DEBUG
     assert(Validate_All_Cities() == ST_TRUE);
@@ -3077,7 +3081,7 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
     int16_t Price = 0;
     int16_t race_type = 0;
     int16_t unit_type = 0;
-    int16_t unknown_create_lair_value = 0;
+    int16_t loot_budget = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
@@ -3099,11 +3103,11 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
     _LAIRS[lair_idx].intact = ST_TRUE;
     switch(lair_type)
     {
-        case 0:  { _LAIRS[lair_idx].type = lt_Tower;                    } break;
-        case 1:  { _LAIRS[lair_idx].type = lt_Chaos_Node;               } break;
-        case 2:  { _LAIRS[lair_idx].type = lt_Nature_Node;              } break;
-        case 3:  { _LAIRS[lair_idx].type = lt_Sorcery_Node;             } break;
-        default: { _LAIRS[lair_idx].type = (lt_Cave + (Random(7) - 1)); } break;
+        case 0:                { _LAIRS[lair_idx].type = lt_Tower;                    } break;
+        case (nt_Sorcery + 1): { _LAIRS[lair_idx].type = lt_Sorcery_Node;             } break;
+        case (nt_Nature  + 1): { _LAIRS[lair_idx].type = lt_Nature_Node;              } break;
+        case (nt_Chaos   + 1): { _LAIRS[lair_idx].type = lt_Chaos_Node;               } break;
+        default:               { _LAIRS[lair_idx].type = (lt_Cave + (Random(7) - 1)); } break;
     }
 
     _LAIRS[lair_idx].Loot_Gold = 0;
@@ -3263,72 +3267,78 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
         _LAIRS[lair_idx].guard2_count = 0;
     }
     
-    unknown_create_lair_value = (_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost * _LAIRS[lair_idx].guard1_count);
+    loot_budget = (_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost * _LAIRS[lair_idx].guard1_count);
     LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=init_guard1                          value=%d  (g1_cost=%d * g1_count=%d)",
-        (int)lair_idx, (int)unknown_create_lair_value,
+        (int)lair_idx, (int)loot_budget,
         (int)_unit_type_table[_LAIRS[lair_idx].guard1_unit_type].cost,
         (int)_LAIRS[lair_idx].guard1_count);
     // KNOWNBUG: this is not always the smaller part of the treasure budget
-    unknown_create_lair_value += ((_unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost * _LAIRS[lair_idx].guard2_count) / 2);
+    loot_budget += ((_unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost * _LAIRS[lair_idx].guard2_count) / 2);
     LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=add_guard2                           value=%d  (g2_cost=%d * g2_count=%d / 2)",
-        (int)lair_idx, (int)unknown_create_lair_value,
+        (int)lair_idx, (int)loot_budget,
         (int)_unit_type_table[_LAIRS[lair_idx].guard2_unit_type].cost,
         (int)_LAIRS[lair_idx].guard2_count);
     if(_difficulty != god_Impossible)
     {
-        unknown_create_lair_value = ((unknown_create_lair_value * 4) / (_difficulty + 1));
+        loot_budget = ((loot_budget * 4) / (_difficulty + 1));
         LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=difficulty_scale                 value=%d  (* 4 / (difficulty+1) where difficulty=%d)",
-            (int)lair_idx, (int)unknown_create_lair_value, (int)_difficulty);
+            (int)lair_idx, (int)loot_budget, (int)_difficulty);
     }
     if(wp == ARCANUS_PLANE)
     {
-        unknown_create_lair_value = ((unknown_create_lair_value * (49 + Random(76))) / 100);
+        loot_budget = ((loot_budget * (49 + Random(76))) / 100);
         LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=plane_scale_arcanus              value=%d  (* (49 + Random(76)) / 100)",
-            (int)lair_idx, (int)unknown_create_lair_value);
+            (int)lair_idx, (int)loot_budget);
     }
     else
     {
-        unknown_create_lair_value = ((unknown_create_lair_value * (75 + Random(100))) / 100);
+        loot_budget = ((loot_budget * (75 + Random(100))) / 100);
         LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=plane_scale_myrror               value=%d  (* (75 + Random(100)) / 100)",
-            (int)lair_idx, (int)unknown_create_lair_value);
+            (int)lair_idx, (int)loot_budget);
     }
-    SETMIN(unknown_create_lair_value, 50);
+    SETMIN(loot_budget, 50);
     LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=floor_50                             value=%d  (SETMIN max(value,50))",
-        (int)lair_idx, (int)unknown_create_lair_value);
+        (int)lair_idx, (int)loot_budget);
     if(lair_type == 0)  // New Game Lair Type - Temple
     {
         Price = Random(4);
-        unknown_create_lair_value -= (((Price * Price) * 50) - 100);
+        loot_budget -= (((Price * Price) * 50) - 100);
         _LAIRS[lair_idx].Spell_n_Special = (int8_t)Price;
         LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=temple_subtract                  value=%d  (-= (Price^2 * 50) - 100 where Price=%d)",
-            (int)lair_idx, (int)unknown_create_lair_value, (int)Price);
+            (int)lair_idx, (int)loot_budget, (int)Price);
     }
 
-    if(unknown_create_lair_value >= 50)
+    while(loot_budget >= 50)
     {
         switch((Random(15) - 1))
         {
             case 0:
             case 1:
             {
-                Price = (Random(20) * 10);
-                SETMAX(Price, unknown_create_lair_value);
+                int16_t raw_price = (int16_t)(Random(20) * 10);
+                int16_t budget_at_clamp = loot_budget;
+                Price = raw_price;
+                SETMAX(Price, loot_budget);
                 Price = ((Price / 10) * 10);
-                unknown_create_lair_value -= 200;
-                _LAIRS[lair_idx].Loot_Gold = Price;
-                LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_0_1_gold              value=%d  (-= 200, Loot_Gold=%d)",
-                    (int)lair_idx, (int)unknown_create_lair_value, (int)Price);
+                loot_budget -= 200;
+                _LAIRS[lair_idx].Loot_Gold += Price;
+                LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_0_1_gold              value=%d  (-= 200, Loot_Gold=%d, raw_Random20x10=%d, budget_at_clamp=%d, clamped=%d)",
+                    (int)lair_idx, (int)loot_budget, (int)Price,
+                    (int)raw_price, (int)budget_at_clamp, (raw_price > budget_at_clamp) ? 1 : 0);
             } break;
             case 2:
             case 3:
             {
-                Price = (Random(20) * 10);
-                SETMAX(Price, unknown_create_lair_value);
+                int16_t raw_price = (int16_t)(Random(20) * 10);
+                int16_t budget_at_clamp = loot_budget;
+                Price = raw_price;
+                SETMAX(Price, loot_budget);
                 Price = ((Price / 10) * 10);
-                unknown_create_lair_value -= 200;
-                _LAIRS[lair_idx].Loot_Mana = Price;
-                LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_2_3_mana              value=%d  (-= 200, Loot_Mana=%d)",
-                    (int)lair_idx, (int)unknown_create_lair_value, (int)Price);
+                loot_budget -= 200;
+                _LAIRS[lair_idx].Loot_Mana += Price;
+                LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_2_3_mana              value=%d  (-= 200, Loot_Mana=%d, raw_Random20x10=%d, budget_at_clamp=%d, clamped=%d)",
+                    (int)lair_idx, (int)loot_budget, (int)Price,
+                    (int)raw_price, (int)budget_at_clamp, (raw_price > budget_at_clamp) ? 1 : 0);
             } break;
             case 4:
             case 5:
@@ -3344,22 +3354,25 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
                 if(
                     (_LAIRS[lair_idx].Item_Count < 3)
                     &&
-                    (unknown_create_lair_value >= 300)
+                    (loot_budget >= 300)
                 )
                 {
-                    Price = (300 + (Random(27) * 100));
-                    SETMAX(Price, unknown_create_lair_value);
+                    int16_t raw_price = (int16_t)(300 + (Random(27) * 100));
+                    int16_t budget_at_clamp = loot_budget;
+                    Price = raw_price;
+                    SETMAX(Price, loot_budget);
                     Price = ((Price / 10) * 10);
-                    unknown_create_lair_value -= Price;
+                    loot_budget -= Price;
                     _LAIRS[lair_idx].Item_Values[_LAIRS[lair_idx].Item_Count] = Price;
                     _LAIRS[lair_idx].Item_Count += 1;
-                    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_4_5_6_7_8_item       value=%d  (-= Price=%d, Item_Count=%d)",
-                        (int)lair_idx, (int)unknown_create_lair_value, (int)Price, (int)_LAIRS[lair_idx].Item_Count);
+                    LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_4_5_6_7_8_item       value=%d  (-= Price=%d, Item_Count=%d, raw_300pRandom27x100=%d, budget_at_clamp=%d, clamped=%d)",
+                        (int)lair_idx, (int)loot_budget, (int)Price, (int)_LAIRS[lair_idx].Item_Count,
+                        (int)raw_price, (int)budget_at_clamp, (raw_price > budget_at_clamp) ? 1 : 0);
                 }
                 else
                 {
                     LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_4_5_6_7_8_item_skip  value=%d  (no qualify: Item_Count=%d, value<300)",
-                        (int)lair_idx, (int)unknown_create_lair_value, (int)_LAIRS[lair_idx].Item_Count);
+                        (int)lair_idx, (int)loot_budget, (int)_LAIRS[lair_idx].Item_Count);
                 }
             } break;
             case 9:  /* Misc Flags (e.g. Prisoner/Hero) */
@@ -3370,20 +3383,20 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
                 // ; value:    1000
                 // ; max:      1
                 if(
-                    (unknown_create_lair_value >= 400)
+                    (loot_budget >= 400)
                     &&
                     (_LAIRS[lair_idx].Misc_Flags == 0)  /* Prisoner */
                 )
                 {
                     _LAIRS[lair_idx].Misc_Flags = 1;  /* Prisoner */
-                    unknown_create_lair_value -= 1000;
+                    loot_budget -= 1000;
                     LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_9_prisoner          value=%d  (-= 1000, Misc_Flags=Prisoner)",
-                        (int)lair_idx, (int)unknown_create_lair_value);
+                        (int)lair_idx, (int)loot_budget);
                 }
                 else
                 {
                     LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_9_prisoner_skip     value=%d  (no qualify: value<400 or Misc_Flags!=0)",
-                        (int)lair_idx, (int)unknown_create_lair_value);
+                        (int)lair_idx, (int)loot_budget);
                 }
             } break;
             case 10:
@@ -3399,21 +3412,21 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
                 // ; rarities to be awarded cheaper than they should be
                 Price = Random(4);
                 if(
-                    (((Price * Price) * 50) < unknown_create_lair_value)
+                    (((Price * Price) * 50) <= loot_budget)
                     &&
                     (_LAIRS[lair_idx].Spell_n_Special < 4)
                 )
                 {
-                    unknown_create_lair_value -= ((Price * Price) * 50);
+                    loot_budget -= ((Price * Price) * 50);
                     _LAIRS[lair_idx].Spell_n_Special += Price;
                     SETMAX(_LAIRS[lair_idx].Spell_n_Special, 4);
                     LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_10_11_12_spell      value=%d  (-= (Price^2 * 50) where Price=%d, Spell_n_Special=%d)",
-                        (int)lair_idx, (int)unknown_create_lair_value, (int)Price, (int)_LAIRS[lair_idx].Spell_n_Special);
+                        (int)lair_idx, (int)loot_budget, (int)Price, (int)_LAIRS[lair_idx].Spell_n_Special);
                 }
                 else
                 {
                     LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_10_11_12_spell_skip value=%d  (no qualify: Price=%d, Spell_n_Special=%d)",
-                        (int)lair_idx, (int)unknown_create_lair_value, (int)Price, (int)_LAIRS[lair_idx].Spell_n_Special);
+                        (int)lair_idx, (int)loot_budget, (int)Price, (int)_LAIRS[lair_idx].Spell_n_Special);
                 }
             } break;
             case 13:
@@ -3429,42 +3442,37 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
                 if(
                     (Price == 1)
                     &&
-                    (unknown_create_lair_value >= 3000)
+                    (loot_budget >= 3000)
                 )
                 {
                     _LAIRS[lair_idx].Spell_n_Special = 6;
-                    unknown_create_lair_value -= 3000;
+                    loot_budget -= 3000;
                     LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_13_14_retort        value=%d  (-= 3000, Spell_n_Special=6, Price==1 path)",
-                        (int)lair_idx, (int)unknown_create_lair_value);
+                        (int)lair_idx, (int)loot_budget);
                 }
-                else if(unknown_create_lair_value >= 2000)
+                else if(loot_budget >= 2000)
                 {
                     _LAIRS[lair_idx].Spell_n_Special = 6;
-                    unknown_create_lair_value -= 3000;
+                    loot_budget -= 3000;
                     LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_13_14_retort        value=%d  (-= 3000, Spell_n_Special=6, value>=2000 path)",
-                        (int)lair_idx, (int)unknown_create_lair_value);
+                        (int)lair_idx, (int)loot_budget);
                 }
-                else if(unknown_create_lair_value >= 1000)
+                else if(loot_budget >= 1000)
                 {
                     _LAIRS[lair_idx].Spell_n_Special = 5;
-                    unknown_create_lair_value -= 3000;
+                    loot_budget -= 3000;
                     LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_13_14_spellbook     value=%d  (-= 3000, Spell_n_Special=5, value>=1000 path)",
-                        (int)lair_idx, (int)unknown_create_lair_value);
+                        (int)lair_idx, (int)loot_budget);
                 }
                 else
                 {
                     LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=switch_case_13_14_skip          value=%d  (no qualify: value<1000)",
-                        (int)lair_idx, (int)unknown_create_lair_value);
+                        (int)lair_idx, (int)loot_budget);
                 }
             } break;
         }
         LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=final                                 value=%d",
-            (int)lair_idx, (int)unknown_create_lair_value);
-    }
-    else
-    {
-        LOG_INFO(LOG_CAT_GENERAL, "[LAIR_VAL] lair=%d step=skip_switch_below_50                value=%d  (switch skipped: value<50)",
-            (int)lair_idx, (int)unknown_create_lair_value);
+            (int)lair_idx, (int)loot_budget);
     }
 
     /* Final capping and cleanup: if reward is very high, it may replace other loot */
