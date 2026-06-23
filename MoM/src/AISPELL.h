@@ -132,7 +132,7 @@ int16_t AI_Select_Spell_Group_Unit_Enchantment(int16_t player_idx);
 int16_t AI_Select_Spell_Group_Suppression(int16_t player_idx);
 
 // WZD o156p08
-int16_t AI_OVL_PickGlobal(int16_t player_idx);
+int16_t AI_Select_Spell_Group_Global(int16_t player_idx);
 
 // WZD o156p09
 int16_t AI_Select_Spell_Group_Attack(int16_t player_idx);

@@ -325,7 +325,7 @@ AI_OVL_SpellPicker__STUB()
     |-> AI_OVL_PickDisj()
     |-> AI_Select_Spell_Group_Attack()
     |-> AI_Select_Spell_Group_Suppression()
-    |-> AI_OVL_PickGlobal()
+    |-> AI_Select_Spell_Group_Global()
     ...
     |-> Cast_Spell_Overland_Do()
 

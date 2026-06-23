@@ -368,7 +368,7 @@ void AI_Spell_Select(int16_t player_idx)
             spell_idx = AI_Select_Spell_Group_Suppression(player_idx);
             break;
         case 9:
-            spell_idx = AI_OVL_PickGlobal(player_idx);
+            spell_idx = AI_Select_Spell_Group_Global(player_idx);
             break;
         case 10:
             spell_idx = spl_Spell_Of_Mastery;
@@ -1737,9 +1737,224 @@ int16_t AI_Select_Spell_Group_Suppression(int16_t player_idx)
 }
 
 // WZD o156p08
-int16_t AI_OVL_PickGlobal(int16_t player_idx)
+int16_t AI_Select_Spell_Group_Global(int16_t player_idx)
 {
-    return 0;
+    int16_t choice = 0;
+    uint8_t * players_spell_list = NULL;
+    int16_t itr = 0;
+
+    /* Treat spell list as 1-based index by shifting pointer */
+    players_spell_list = (uint8_t *)&_players[player_idx].spells_list[0] - 1;
+
+    for(itr = 0; itr < 50; itr++)
+    {
+        AI_OVL_SplPriorities[itr] = 0;
+    }
+
+    if(players_spell_list[spl_Herb_Mastery] == sls_Known && _players[player_idx].Globals[HERB_MASTERY] == 0)
+    {
+        AI_OVL_SplPriorities[1] = spell_data_table[spl_Herb_Mastery].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Wind_Mastery] == sls_Known && _players[player_idx].Globals[WIND_MASTERY] == 0)
+    {
+        AI_OVL_SplPriorities[2] = spell_data_table[spl_Wind_Mastery].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Aura_Of_Majesty] == sls_Known && _players[player_idx].Globals[AURA_OF_MAJESTY] == 0)
+    {
+        AI_OVL_SplPriorities[3] = spell_data_table[spl_Aura_Of_Majesty].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Great_Unsummoning] == sls_Known)
+    {
+        AI_OVL_SplPriorities[4] = spell_data_table[spl_Great_Unsummoning].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Suppress_Magic] == sls_Known && _players[player_idx].Globals[SUPPRESS_MAGIC] == 0)
+    {
+        AI_OVL_SplPriorities[5] = spell_data_table[spl_Suppress_Magic].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Spell_Binding] == sls_Known)
+    {
+        AI_OVL_SplPriorities[6] = spell_data_table[spl_Spell_Binding].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Great_Wasting] == sls_Known && _players[player_idx].Globals[GREAT_WASTING] == 0)
+    {
+        AI_OVL_SplPriorities[7] = spell_data_table[spl_Great_Wasting].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Chaos_Surge] == sls_Known && _players[player_idx].Globals[CHAOS_SURGE] == 0)
+    {
+        AI_OVL_SplPriorities[8] = spell_data_table[spl_Chaos_Surge].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Doom_Mastery] == sls_Known && _players[player_idx].Globals[DOOM_MASTERY] == 0)
+    {
+        AI_OVL_SplPriorities[9] = spell_data_table[spl_Doom_Mastery].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Meteor_Storms] == sls_Known && _players[player_idx].Globals[METEOR_STORM] == 0)
+    {
+        AI_OVL_SplPriorities[10] = spell_data_table[spl_Meteor_Storms].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Armageddon] == sls_Known && _players[player_idx].Globals[ARMAGEDDON] == 0)
+    {
+        AI_OVL_SplPriorities[11] = spell_data_table[spl_Armageddon].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Just_Cause] == sls_Known && _players[player_idx].Globals[JUST_CAUSE] == 0)
+    {
+        AI_OVL_SplPriorities[12] = spell_data_table[spl_Just_Cause].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Planar_Seal] == sls_Known &&
+        _players[player_idx].Globals[PLANAR_SEAL] == 0 &&
+        AI_Has_More_Myrror_Cities(player_idx) != 0)
+    {
+        AI_OVL_SplPriorities[13] = spell_data_table[spl_Planar_Seal].casting_cost / 20;
+    }
+
+    if(players_spell_list[spl_Holy_Arms] == sls_Known && _players[player_idx].Globals[HOLY_ARMS] == 0)
+    {
+        AI_OVL_SplPriorities[14] = spell_data_table[spl_Holy_Arms].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Charm_Of_Life] == sls_Known && _players[player_idx].Globals[CHARM_OF_LIFE] == 0)
+    {
+        AI_OVL_SplPriorities[15] = spell_data_table[spl_Charm_Of_Life].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Crusade] == sls_Known && _players[player_idx].Globals[CRUSADE] == 0)
+    {
+        AI_OVL_SplPriorities[16] = spell_data_table[spl_Crusade].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Eternal_Night] == sls_Known && _players[player_idx].Globals[ETERNAL_NIGHT] == 0)
+    {
+        AI_OVL_SplPriorities[17] = spell_data_table[spl_Eternal_Night].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Death_Wish] == sls_Known)
+    {
+        AI_OVL_SplPriorities[18] = spell_data_table[spl_Death_Wish].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Zombie_Mastery] == sls_Known && _players[player_idx].Globals[ZOMBIE_MASTERY] == 0)
+    {
+        AI_OVL_SplPriorities[19] = spell_data_table[spl_Zombie_Mastery].casting_cost / 10;
+    }
+
+    if(players_spell_list[spl_Awareness] == sls_Known && _players[player_idx].Globals[AWARENESS] == 0)
+    {
+        AI_OVL_SplPriorities[20] = spell_data_table[spl_Awareness].casting_cost / 10;
+    }
+
+    if(SPL_IsLifeSupressed() == 1)
+    {
+        for(itr = 12; itr <= 16; itr++)
+        {
+            AI_OVL_SplPriorities[itr] = (AI_OVL_SplPriorities[itr] * 2) / 3;
+        }
+    }
+
+    if(CRP_SPL_IsNatSuppressed() == 1)
+    {
+        for(itr = 1; itr <= 1; itr++)
+        {
+            AI_OVL_SplPriorities[itr] = (AI_OVL_SplPriorities[itr] * 2) / 3;
+        }
+    }
+
+    if(SPL_IsDthSuppressed() == 1)
+    {
+        for(itr = 17; itr <= 19; itr++)
+        {
+            if(AI_OVL_SplPriorities[itr] < 20)
+            {
+                AI_OVL_SplPriorities[itr] = 0;
+            }
+            else if(AI_OVL_SplPriorities[itr] < 50)
+            {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 3;
+            }
+            else
+            {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 2;
+            }
+        }
+    }
+
+    if(SPL_IsChsSuppressed() == 1)
+    {
+        for(itr = 7; itr <= 11; itr++)
+        {
+            if(AI_OVL_SplPriorities[itr] < 20)
+            {
+                AI_OVL_SplPriorities[itr] = 0;
+            }
+            else if(AI_OVL_SplPriorities[itr] < 50)
+            {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 3;
+            }
+            else
+            {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 2;
+            }
+        }
+    }
+
+    choice = Get_Weighted_Choice(AI_OVL_SplPriorities, 50);
+
+    switch (choice)
+    {
+        case 1:
+            return spl_Herb_Mastery;
+        case 2:
+            return spl_Wind_Mastery;
+        case 3:
+            return spl_Aura_Of_Majesty;
+        case 4:
+            return spl_Great_Unsummoning;
+        case 5:
+            return spl_Suppress_Magic;
+        case 6:
+            return spl_Spell_Binding;
+        case 7:
+            return spl_Great_Wasting;
+        case 8:
+            return spl_Chaos_Surge;
+        case 9:
+            return spl_Doom_Mastery;
+        case 10:
+            return spl_Meteor_Storms;
+        case 11:
+            return spl_Armageddon;
+        case 12:
+            return spl_Just_Cause;
+        case 13:
+            return spl_Planar_Seal;
+        case 14:
+            return spl_Holy_Arms;
+        case 15:
+            return spl_Charm_Of_Life;
+        case 16:
+            return spl_Crusade;
+        case 17:
+            return spl_Eternal_Night;
+        case 18:
+            return spl_Death_Wish;
+        case 19:
+            return spl_Zombie_Mastery;
+        case 20:
+            return spl_Awareness;
+        default:
+            return spl_NONE;
+    }
+
 }
 
 // WZD o156p09
