@@ -411,6 +411,8 @@ void Init_New_Game(void)
 
     Generate_Lairs();
 
+    gd_dump_lairs("12_Generate_Lairs_LR");   /* CLAUDE: _LAIRS after Generate_Lairs */
+
     Draw_Building_The_Worlds(65);
 
     _units = 0;

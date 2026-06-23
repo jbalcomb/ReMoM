@@ -24,6 +24,7 @@ extern "C" {
 void gd_dump_players(const char* point);
 void gd_dump_nodes(const char* point);
 void gd_dump_towers(const char* point);
+void gd_dump_lairs(const char* point);
 
 // MGC o56p1
 void Init_Computer_Players(void);

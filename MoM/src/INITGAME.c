@@ -34,6 +34,7 @@ typedef struct { uint16_t off; uint8_t kind; uint16_t count; const char* name; }
 #include "gd_wizard_fields.h"
 #include "gd_node_fields.h"
 #include "gd_tower_fields.h"
+#include "gd_lair_fields.h"
 
 static int gd_es(int kind) {
     return (kind == GD_U16 || kind == GD_I16) ? 2
@@ -159,6 +160,42 @@ void gd_dump_towers(const char* point) {
                 }
             }
             LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _TOWERS[%d].%s = %s",
+                      point, n, f->name, val);
+        }
+        STU_Log_Flush_All();
+    }
+}
+
+void gd_dump_lairs(const char* point) {
+    int n, i, k;
+    char val[1100];
+    for (n = 0; n < NUM_LAIRS_102; n++) {
+        const uint8_t* base = (const uint8_t*)&_LAIRS[n];
+        for (i = 0; i < LAIR_FIELD_COUNT; i++) {
+            const gd_field_t* f = &lair_fields[i];
+            const uint8_t* fp = base + f->off;
+            int q = 0;
+            if (f->kind == GD_STR) {
+                val[q++] = '"';
+                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
+                    uint8_t c = fp[k];
+                    if (c == 0) break;
+                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
+                }
+                val[q++] = '"'; val[q] = 0;
+            } else if (f->kind == GD_BYTES) {
+                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
+                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
+                val[q] = 0;
+            } else {
+                int es = gd_es(f->kind);
+                for (k = 0; k < f->count; k++) {
+                    long v = gd_rd(fp + k * es, f->kind);
+                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
+                    if (q > (int)sizeof(val) - 16) break;
+                }
+            }
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _LAIRS[%d].%s = %s",
                       point, n, f->name, val);
         }
         STU_Log_Flush_All();
