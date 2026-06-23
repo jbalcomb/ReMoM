@@ -153,7 +153,7 @@ int16_t SPL_IsDthSuppressed(void);
 int16_t CRP_SPL_IsNatSuppressed(void);
 
 // WZD o156p15
-int16_t AI_OVL_PickDise(int16_t player_idx);
+int16_t AI_Select_Spell_Group_Disenchant(int16_t player_idx);
 
 // WZD o156p16
 int16_t AI_OVL_PickDisj(int16_t player_idx);

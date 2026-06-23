@@ -353,7 +353,7 @@ void AI_Spell_Select(int16_t player_idx)
             spell_idx = AI_Select_Spell_Group_City_Enchantment(player_idx);
             break;
         case 4:
-            spell_idx = AI_OVL_PickDise(player_idx);
+            spell_idx = AI_Select_Spell_Group_Disenchant(player_idx);
             break;
         case 5:
             spell_idx = AI_OVL_PickDisj(player_idx);
@@ -1665,6 +1665,57 @@ int16_t AI_OVL_PickCurse(int16_t player_idx)
 }
 
 // WZD o156p10
+/**
+ * @brief Selects a city-enchantment spell for the AI to cast.
+ *
+ * @details
+ * Evaluates known city-enchantment spells available to the AI player and assigns
+ * weighted priorities based on target viability and game state. The function:
+ *
+ * - Iterates through known city-enchantment spells (Wall of Stone, Transmute,
+ *   Change Terrain, Move Fortress, Earth Gate, Gaias Blessing, Flying Fortress,
+ *   Wall of Fire, Heavenly Light, Stream of Life, Inspirations, Prosperity,
+ *   Astral Gate, Dark Rituals, Cloud of Shadow, Spell Ward, Consecration,
+ *   Wall of Darkness, Altar of Battle)
+ *
+ * - Calls spell-specific targeting routines (AITP_*) to determine if each spell
+ *   has a valid target on the current game state
+ *
+ * - Assigns priorities in the global `AI_OVL_SplPriorities[]` array based on
+ *   target validity and turn count (e.g., Wall of Stone = _turn / 6,
+ *   Gaias Blessing = 300 static, Inspirations/Prosperity = 300)
+ *
+ * - Applies suppression modifiers if Life, Nature, Death, or Chaos realms have
+ *   global suppression active, reducing relevant spell weights by 2/3 or tiered
+ *   reductions (1/3 or 1/2) depending on priority threshold
+ *
+ * - Uses weighted random selection to pick the final spell category from the
+ *   priority array
+ *
+ * The switch statement following the weighted choice maps category indices to
+ * concrete spell indices for dispatch to the casting system. Note the slot-4 gap
+ * (no case 4) reflecting the original jump-table structure.
+ *
+ * @param player_idx Index of the AI-controlled player evaluating city enchantments.
+ *
+ * @return int16_t Spell index of the selected city-enchantment spell, or 0 if
+ *                  no valid enchantment target is available.
+ *
+ * @note The global array `AI_OVL_SplPriorities[]` is reinitialized on each call
+ *       and contains weighted entries indexed by spell category (1–20).
+ * @note All city-enchantment spells rely on separate AITP_* targeting functions;
+ *       if a targeting function returns 0, that spell's priority remains 0.
+ * @note Suppression checks via SPL_IsLifeSupressed(), CRP_SPL_IsNatSuppressed(),
+ *       SPL_IsDthSuppressed(), and SPL_IsChsSuppressed() reduce weights for spells
+ *       incompatible with active global suppressions:
+ *       - Life suppression affects Heavenly Light, Stream of Life, Inspirations,
+ *         Prosperity, Spell Ward, and Consecration
+ *       - Nature suppression affects Wall of Stone through Gaias Blessing
+ *       - Death suppression affects Dark Rituals and Wall of Darkness
+ *       - Chaos suppression affects Wall of Fire
+ * @note The switch statement includes a slot-4 gap (no case 4) for historical
+ *       compatibility with the original assembly jump table.
+ */
 int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
 {
     int16_t choice = 0;
@@ -1955,9 +2006,53 @@ int16_t CRP_SPL_IsNatSuppressed(void)
 
 
 // WZD o156p15
-int16_t AI_OVL_PickDise(int16_t player_idx)
+/**
+ * @brief Selects a disenchantment spell for the AI to cast.
+ *
+ * @details
+ * Evaluates known disenchantment spells available to the AI player and selects
+ * the highest-priority available spell. The selection follows a fixed priority
+ * order:
+ *
+ * 1. Disenchant_True (target-specific disenchantment)
+ * 2. Disenchant_Area (area-of-effect disenchantment)
+ *
+ * The function does not apply weighted prioritization; it simply checks each
+ * spell in priority order and returns the first one the player has learned.
+ * If neither disenchantment spell is known, the function returns spl_NONE.
+ *
+ * @param player_idx Index of the AI-controlled player evaluating disenchantment
+ *                   spell availability.
+ *
+ * @return int16_t Spell index of the selected disenchantment spell
+ *                  (spl_Disenchant_True or spl_Disenchant_Area), or spl_NONE
+ *                  if no disenchantment spell is available.
+ *
+ * @note The player's spell list is treated as 1-based indexed by shifting the
+ *       pointer one position back: `spells_list - 1`.
+ * @note This function does not use the global `AI_OVL_SplPriorities[]` array
+ *       or weighted selection; it applies a deterministic priority check.
+ * @note Both disenchantment spells are checked in order; Disenchant_True is
+ *       preferred over Disenchant_Area.
+ */
+int16_t AI_Select_Spell_Group_Disenchant(int16_t player_idx)
 {
-    return 0;
+    uint8_t * players_spell_list = NULL;
+
+    players_spell_list = (uint8_t *)&_players[player_idx].spells_list[0] - 1;
+
+    if(players_spell_list[spl_Disenchant_True] == sls_Known)
+    {
+        return spl_Disenchant_True;
+    }
+
+    if(players_spell_list[spl_Disenchant_Area] == sls_Known)
+    {
+        return spl_Disenchant_Area;
+    }
+
+    return spl_NONE;
+
 }
 
 // WZD o156p16

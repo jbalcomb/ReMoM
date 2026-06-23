@@ -19,7 +19,7 @@ AI_Spell_Select()
     |-> AI_Select_Spell_Group_Summon()
     |-> AI_Select_Spell_Group_Unit_Enchantment()
     |-> AI_Select_Spell_Group_City_Enchantment()
-    |-> AI_OVL_PickDise()
+    |-> AI_Select_Spell_Group_Disenchant()
     |-> AI_OVL_PickDisj()
     |-> AI_OVL_PickCurse()
     |-> AI_OVL_PickRealmSupr()
@@ -70,7 +70,7 @@ flowchart TD
     C1["1: summon<br/>AI_Select_Spell_Group_Summon"]
     C2["2: unit enchant<br/>AI_Select_Spell_Group_Unit_Enchantment"]
     C3["3: city enchant<br/>AI_Select_Spell_Group_City_Enchantment"]
-    C4["4: disenchant<br/>AI_OVL_PickDise"]
+    C4["4: disenchant<br/>AI_Select_Spell_Group_Disenchant"]
     C5["5: disjunction<br/>AI_OVL_PickDisj"]
     C6["6: summoning circle<br/>spell_idx = spl_Summoning_Circle"]
     C7["7: overland curse/dmg<br/>AI_OVL_PickCurse"]
@@ -150,7 +150,7 @@ All other non-zero categories delegate to a picker. The default branch and categ
 | 1 | `AI_Select_Spell_Group_Summon` | Summoning spells |
 | 2 | `AI_Select_Spell_Group_Unit_Enchantment` | Unit enchantments |
 | 3 | `AI_Select_Spell_Group_City_Enchantment` | City enchantments |
-| 4 | `AI_OVL_PickDise` | Disenchant / Disenchant True |
+| 4 | `AI_Select_Spell_Group_Disenchant` | Disenchant / Disenchant True |
 | 5 | `AI_OVL_PickDisj` | Disjunction / Disjunction True |
 | 6 | (constant) | `spl_Summoning_Circle` |
 | 7 | `AI_OVL_PickCurse` | Overland curses / direct damage |
@@ -201,7 +201,7 @@ The 9 `AI_OVL_*` picker functions are present in [AISPELL.c](../../MoM/src/AISPE
 | `AI_OVL_PickGlobal` | [AISPELL.c:489-492](../../MoM/src/AISPELL.c#L489-L492) | Stub `return 0;` |
 | `AI_OVL_PickCurse` | [AISPELL.c:495-498](../../MoM/src/AISPELL.c#L495-L498) | Stub `return 0;` |
 | `AI_Select_Spell_Group_City_Enchantment` | [AISPELL.c:501-504](../../MoM/src/AISPELL.c#L501-L504) | Stub `return 0;` |
-| `AI_OVL_PickDise` | [AISPELL.c:519-522](../../MoM/src/AISPELL.c#L519-L522) | Stub `return 0;` |
+| `AI_Select_Spell_Group_Disenchant` | [AISPELL.c:519-522](../../MoM/src/AISPELL.c#L519-L522) | Stub `return 0;` |
 | `AI_OVL_PickDisj` | [AISPELL.c:525-528](../../MoM/src/AISPELL.c#L525-L528) | Stub `return 0;` |
 
 **Runtime behavior of `AI_Spell_Select` today:** `AI_Select_Spell_Group` returns 0 → `spell_category = 0` → switch case 0 → `spell_idx = 0` → affordability check sees `spell_data_table[0].casting_cost / 50` (typically 0) and either clears `spell_idx` to 0 again or leaves it at 0 → `Cast_Spell_Overland_Do(player_idx, 0, 0)` is called. Net effect: the AI never starts an overland cast. Per Wave 4A's `Cast_Spell_Overland`, an idle `casting_spell_idx == spl_NONE` short-circuits the cast-completion path too — so the entire overland spell-AI subsystem is currently inert.
@@ -224,7 +224,7 @@ None warrant a code change in this function.
 
 - **`AI_Compute_Spells_Info`** ([AISPELL.c:415](../../MoM/src/AISPELL.c#L415)) — populates `g_ai_spell_group_flags[]` from the player's known-spells inventory, filtering out combat-only AI-groups (5, 12, 24, 47, 70, etc.). RECONSTRUCTED. See [AISPELL-AI_Compute_Spells_Info.md](AISPELL-AI_Compute_Spells_Info.md).
 - **`AI_Select_Spell_Group`** ([AISPELL.c:382](../../MoM/src/AISPELL.c#L382)) — category chooser (0-10). STUB `return 0;`.
-- **`AI_Select_Spell_Group_Summon` / `AI_Select_Spell_Group_Unit_Enchantment` / `AI_Select_Spell_Group_City_Enchantment` / `AI_OVL_PickDise` / `AI_OVL_PickDisj` / `AI_OVL_PickCurse` / `AI_OVL_PickRealmSupr` / `AI_OVL_PickGlobal`** — per-category spell choosers. ALL STUBS `return 0;`. See [Stubbed leaves](#stubbed-leaves) for line refs.
+- **`AI_Select_Spell_Group_Summon` / `AI_Select_Spell_Group_Unit_Enchantment` / `AI_Select_Spell_Group_City_Enchantment` / `AI_Select_Spell_Group_Disenchant` / `AI_OVL_PickDisj` / `AI_OVL_PickCurse` / `AI_OVL_PickRealmSupr` / `AI_OVL_PickGlobal`** — per-category spell choosers. ALL STUBS `return 0;`. See [Stubbed leaves](#stubbed-leaves) for line refs.
 - **`Player_Resource_Income_Total`** ([CITYCALC.c](../../MoM/src/CITYCALC.c)) — computes per-turn gold/food/mana income. RECONSTRUCTED (XREF at [CITYCALC.c:969](../../MoM/src/CITYCALC.c#L969)).
 - **`Cast_Spell_Overland_Do`** ([SBookScr.c:476](../../MoM/src/SBookScr.c#L476)) — begins or instant-completes the cast. Shared with the human spellbook screen path.
 
