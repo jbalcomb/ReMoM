@@ -323,7 +323,7 @@ AI_OVL_SpellPicker__STUB()
     |-> AI_Select_Spell_Group_City_Enchantment()
     |-> AI_Select_Spell_Group_Disenchant()
     |-> AI_OVL_PickDisj()
-    |-> AI_OVL_PickCurse()
+    |-> AI_Select_Spell_Group_Attack()
     |-> AI_OVL_PickRealmSupr()
     |-> AI_OVL_PickGlobal()
     ...

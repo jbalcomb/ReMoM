@@ -362,7 +362,7 @@ void AI_Spell_Select(int16_t player_idx)
             spell_idx = spl_Summoning_Circle;
             break;
         case 7:
-            spell_idx = AI_OVL_PickCurse(player_idx);
+            spell_idx = AI_Select_Spell_Group_Attack(player_idx);
             break;
         case 8:
             spell_idx = AI_OVL_PickRealmSupr(player_idx);
@@ -1659,9 +1659,291 @@ int16_t AI_OVL_PickGlobal(int16_t player_idx)
 }
 
 // WZD o156p09
-int16_t AI_OVL_PickCurse(int16_t player_idx)
+/**
+ * @brief Selects an overland attack spell for the AI player to cast.
+ *
+ * @details
+ * Evaluates known attack spells available to the AI player and assigns weighted
+ * priorities based on spell casting costs. The function evaluates 19 overland
+ * offensive spells organized into three primary categories:
+ *
+ * **Direct Damage Spells** (nature/chaos realms):
+ *   - Ice Storm, Earthquake, Fire Storm, Black Wind (cost / 10)
+ *   - Stasis (cost / 5)
+ *
+ * **Mana/Special Spells** (universal):
+ *   - Spell Blast (cost / 2)
+ *   - Time Stop (cost / 10, requires 3000+ mana reserve)
+ *   - Chaos Rift (cost / 3), Call The Void (cost / 2)
+ *   - Warp Node (cost / 3)
+ *   - Drain Power (cost / 5)
+ *
+ * **Corruption/City-Targeting Spells** (death realm):
+ *   - Corruption (cost / 5), Raise Volcano (cost / 10)
+ *   - Famine, Pestilence, Cursed Lands, Cruel Unminding (cost / 5)
+ *   - Subversion, Evil Presence (cost / 10 or 5, cost-dependent)
+ *
+ * Priority weights are derived from spell casting costs via division (lower divisor
+ * = higher weight). City-targeting spells are nullified if the player has no
+ * targetable cities. Special conditions apply: Time Stop requires sufficient mana
+ * reserve (3000+), and Raise Volcano is blocked if ARMAGEDDON global is active.
+ *
+ * Realm suppression modifiers reduce weights:
+ *   - Nature suppression: Ice Storm and Earthquake (2/3 reduction)
+ *   - Death suppression: Famine through Cruel Unminding (tiered: 0/<20, /3/<50, /2/>=50)
+ *   - Chaos suppression: Fire Storm through Call The Void (same tiered reductions)
+ *
+ * Uses weighted random selection to pick the final spell, then maps the choice
+ * index to a concrete spell via switch statement. Note: priority index 9 is
+ * skipped; indices jump from 8 to 10.
+ *
+ * @param player_idx Index of the AI-controlled player evaluating attack options.
+ *
+ * @return int16_t Spell index of the selected attack spell (e.g., spl_Ice_Storm,
+ *                  spl_Earthquake, spl_Time_Stop), or spl_NONE if no attack
+ *                  spell is available or all priorities are zero.
+ *
+ * @note The global array `AI_OVL_SplPriorities[]` is reinitialized on each call
+ *       and contains weighted entries indexed by spell category (1–20, skipping 9).
+ * @note City-targeting spells are disabled entirely if AI_Has_Targetable_City()
+ *       returns false; this affects 10 spells: Evil Presence, Cursed Lands,
+ *       Pestilence, Famine, Earthquake, Chaos Rift, Corruption, Raise Volcano,
+ *       Call The Void, and Warp Node.
+ * @note Time Stop is only available if mana_reserve >= 3000; without sufficient
+ *       mana, its priority remains 0.
+ * @note Raise Volcano is only available if _players[player_idx].Globals[ARMAGEDDON] == 0;
+ *       if ARMAGEDDON is active, Raise Volcano's priority remains 0.
+ * @note Death suppression (tiered reduction) applies only to spells with priority >= 1;
+ *       spells with priority < 20 are zeroed, 20-49 are divided by 3, >= 50 divided by 2.
+ * @note Chaos suppression uses the same tiered reduction pattern as Death suppression
+ *       for Fire Storm through Call The Void (indices 7–11).
+ * @warning The switch statement includes a gap at index 9 (no case 9), reflecting
+ *          the original jump-table structure in the disassembly.
+ */
+int16_t AI_Select_Spell_Group_Attack(int16_t player_idx)
 {
-    return 0;
+    int16_t choice = 0;
+    uint8_t * players_spell_list = NULL;
+    int16_t itr = 0;
+
+    /* Treat spell list as 1-based index by shifting pointer */
+    players_spell_list = (uint8_t *)&_players[player_idx].spells_list[0] - 1;
+
+    for(itr = 0; itr < 50; itr++)
+    {
+        AI_OVL_SplPriorities[itr] = 0;
+    }
+
+    /* 1. Ice Storm */
+    if(players_spell_list[spl_Ice_Storm] == sls_Known)
+    {
+        AI_OVL_SplPriorities[1] = spell_data_table[spl_Ice_Storm].casting_cost / 10;
+    }
+
+    /* 2. Earthquake */
+    if(players_spell_list[spl_Earthquake] == sls_Known)
+    {
+        AI_OVL_SplPriorities[2] = spell_data_table[spl_Earthquake].casting_cost / 10;
+    }
+
+    /* 3. Spell Blast */
+    if(players_spell_list[spl_Spell_Blast] == sls_Known)
+    {
+        AI_OVL_SplPriorities[3] = spell_data_table[spl_Spell_Blast].casting_cost / 2;
+    }
+
+    /* 4. Stasis */
+    if(players_spell_list[spl_Stasis] == sls_Known)
+    {
+        AI_OVL_SplPriorities[4] = spell_data_table[spl_Stasis].casting_cost / 5;
+    }
+
+    /* 5. Time Stop */
+    if(players_spell_list[spl_Time_Stop] == sls_Known)
+    {
+        if(_players[player_idx].mana_reserve >= 3000)
+        {
+            AI_OVL_SplPriorities[5] = spell_data_table[spl_Time_Stop].casting_cost / 10;
+        }
+    }
+
+    /* 6. Corruption */
+    if(players_spell_list[spl_Corruption] == sls_Known)
+    {
+        AI_OVL_SplPriorities[6] = spell_data_table[spl_Corruption].casting_cost / 5;
+    }
+
+    /* 7. Fire Storm */
+    if(players_spell_list[spl_Fire_Storm] == sls_Known)
+    {
+        AI_OVL_SplPriorities[7] = spell_data_table[spl_Fire_Storm].casting_cost / 10;
+    }
+
+    /* 8. Raise Volcano */
+    if(players_spell_list[spl_Raise_Volcano] == sls_Known)
+    {
+        if(_players[player_idx].Globals[ARMAGEDDON] == 0)
+        {
+            AI_OVL_SplPriorities[8] = spell_data_table[spl_Raise_Volcano].casting_cost / 10;
+        }
+    }
+
+    /* 10. Chaos Rift */
+    if(players_spell_list[spl_Chaos_Rift] == sls_Known)
+    {
+        AI_OVL_SplPriorities[10] = spell_data_table[spl_Chaos_Rift].casting_cost / 3;
+    }
+
+    /* 11. Call The Void */
+    if(players_spell_list[spl_Call_The_Void] == sls_Known)
+    {
+        AI_OVL_SplPriorities[11] = spell_data_table[spl_Call_The_Void].casting_cost / 2;
+    }
+
+    /* 12. Famine */
+    if(players_spell_list[spl_Famine] == sls_Known)
+    {
+        AI_OVL_SplPriorities[12] = spell_data_table[spl_Famine].casting_cost / 5;
+    }
+
+    /* 13. Warp Node */
+    if(players_spell_list[spl_Warp_Node] == sls_Known)
+    {
+        AI_OVL_SplPriorities[13] = spell_data_table[spl_Warp_Node].casting_cost / 3;
+    }
+
+    /* 14. Black Wind */
+    if(players_spell_list[spl_Black_Wind] == sls_Known)
+    {
+        AI_OVL_SplPriorities[14] = spell_data_table[spl_Black_Wind].casting_cost / 10;
+    }
+
+    /* 15. Drain Power */
+    if(players_spell_list[spl_Drain_Power] == sls_Known)
+    {
+        AI_OVL_SplPriorities[15] = spell_data_table[spl_Drain_Power].casting_cost / 5;
+    }
+
+    /* 16. Evil Presence */
+    if(players_spell_list[spl_Evil_Presence] == sls_Known)
+    {
+        AI_OVL_SplPriorities[16] = spell_data_table[spl_Evil_Presence].casting_cost / 5;
+    }
+
+    /* 17. Subversion */
+    if(players_spell_list[spl_Subversion] == sls_Known)
+    {
+        AI_OVL_SplPriorities[17] = spell_data_table[spl_Subversion].casting_cost / 10;
+    }
+
+    /* 18. Pestilence */
+    if(players_spell_list[spl_Pestilence] == sls_Known)
+    {
+        AI_OVL_SplPriorities[18] = spell_data_table[spl_Pestilence].casting_cost / 2;
+    }
+
+    /* 19. Cursed Lands */
+    if(players_spell_list[spl_Cursed_Lands] == sls_Known)
+    {
+        AI_OVL_SplPriorities[19] = spell_data_table[spl_Cursed_Lands].casting_cost / 5;
+    }
+
+    /* 20. Cruel Unminding */
+    if(players_spell_list[spl_Cruel_Unminding] == sls_Known)
+    {
+        AI_OVL_SplPriorities[20] = spell_data_table[spl_Cruel_Unminding].casting_cost / 5;
+    }
+
+    /* Validate if player is capable of targeting cities */
+    if(AI_Has_Targetable_City(player_idx) == 0)
+    {
+        AI_OVL_SplPriorities[16] = 0;
+        AI_OVL_SplPriorities[19] = 0;
+        AI_OVL_SplPriorities[18] = 0;
+        AI_OVL_SplPriorities[12] = 0;
+        AI_OVL_SplPriorities[2] = 0;
+        AI_OVL_SplPriorities[10] = 0;
+        AI_OVL_SplPriorities[6] = 0;
+        AI_OVL_SplPriorities[8] = 0;
+        AI_OVL_SplPriorities[11] = 0;
+        AI_OVL_SplPriorities[13] = 0;
+    }
+
+    /* Apply suppressions to realm-specific curse selections */
+    if(CRP_SPL_IsNatSuppressed() == 1)
+    {
+        for(itr = 1; itr <= 2; itr++)
+        {
+            AI_OVL_SplPriorities[itr] = (AI_OVL_SplPriorities[itr] * 2) / 3;
+        }
+    }
+
+    if(SPL_IsDthSuppressed() == 1)
+    {
+        for(itr = 12; itr <= 20; itr++)
+        {
+            if(AI_OVL_SplPriorities[itr] < 20)
+            {
+                AI_OVL_SplPriorities[itr] = 0;
+            }
+            else if(AI_OVL_SplPriorities[itr] < 50)
+            {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 3;
+            }
+            else
+            {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 2;
+            }
+        }
+    }
+
+    if(SPL_IsChsSuppressed() == 1)
+    {
+        for(itr = 7; itr <= 11; itr++)
+        {
+            if(AI_OVL_SplPriorities[itr] < 20)
+            {
+                AI_OVL_SplPriorities[itr] = 0;
+            }
+            else if(AI_OVL_SplPriorities[itr] < 50)
+            {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 3;
+            }
+            else
+            {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 2;
+            }
+        }
+    }
+
+    /* Perform weighted selection */
+    choice = Get_Weighted_Choice(AI_OVL_SplPriorities, 50);
+
+    /* Map selection back to spell identifier */
+    switch(choice)
+    {
+        case 1:  return spl_Ice_Storm;
+        case 2:  return spl_Earthquake;
+        case 3:  return spl_Spell_Blast;
+        case 4:  return spl_Stasis;
+        case 5:  return spl_Time_Stop;
+        case 6:  return spl_Corruption;
+        case 7:  return spl_Fire_Storm;
+        case 8:  return spl_Raise_Volcano;
+        case 10: return spl_Chaos_Rift;
+        case 11: return spl_Call_The_Void;
+        case 12: return spl_Famine;
+        case 13: return spl_Warp_Node;
+        case 14: return spl_Black_Wind;
+        case 15: return spl_Drain_Power;
+        case 16: return spl_Evil_Presence;
+        case 17: return spl_Subversion;
+        case 18: return spl_Pestilence;
+        case 19: return spl_Cursed_Lands;
+        case 20: return spl_Cruel_Unminding;
+        default: return spl_NONE;
+    }
+
 }
 
 // WZD o156p10
@@ -2636,7 +2918,43 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
 
 
 // WZD o156p40
-// drake178: AI_CanTargetCities()
+/**
+ * @brief Determines whether the AI player has access to at least one targetable city.
+ *
+ * @details
+ * Iterates through all cities on the map and tests whether the specified player
+ * has established contact (diplomatic knowledge) with at least one city using the
+ * Test_Bit_Field() function on the city's contacts field. A player with targetable
+ * cities can cast city-targeting spells such as city enchantments and curses.
+ *
+ * @param player_idx Index of the AI-controlled player being evaluated.
+ *
+ * @return ST_TRUE if the player has contact with at least one city (i.e., has
+ *         targetable cities available); ST_FALSE if the player has no contact
+ *         with any city on the map.
+ *
+ * @note The function uses Test_Bit_Field() to check the contacts bitfield
+ *       for each city; this tests whether the player has discovered or made
+ *       contact with that city.
+ * @note This function is commonly called before spell-targeting operations
+ *       to validate that the player can actually target a city for curses
+ *       or enchantments (see AI_Select_Spell_Group_Attack for example usage).
+ * @note The global `_cities` variable specifies the total number of cities
+ *       to iterate through; iteration stops immediately upon finding the first
+ *       city with which the player has contact.
+ */
+int16_t AI_Has_Targetable_City(int16_t player_idx)
+{
+    int16_t itr_cities = 0;
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(Test_Bit_Field(player_idx, (uint8_t *)&_CITIES[itr_cities].contacts) != ST_FALSE)
+        {
+            return ST_TRUE;
+        }
+    }
+    return ST_FALSE;
+}
 
 // WZD o156p41
 // drake178: sub_E8070()

@@ -135,7 +135,7 @@ int16_t AI_OVL_PickRealmSupr(int16_t player_idx);
 int16_t AI_OVL_PickGlobal(int16_t player_idx);
 
 // WZD o156p09
-int16_t AI_OVL_PickCurse(int16_t player_idx);
+int16_t AI_Select_Spell_Group_Attack(int16_t player_idx);
 
 // WZD o156p10
 int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx);
@@ -231,7 +231,7 @@ void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx);
 int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t * city_idx, int16_t spell_idx, int16_t player_idx);
 
 // WZD o156p40
-// AI_CanTargetCities()
+int16_t AI_Has_Targetable_City(int16_t player_idx);
 
 // WZD o156p41
 int16_t IDK_Pick_Target_For_Unit_Enchantment__STUB(int16_t spell_target_type, int16_t * unit_idx, int16_t spell_idx, int16_t player_idx);
@@ -246,7 +246,7 @@ int16_t IDK_Pick_Target_For_Unit_Enchantment__STUB(int16_t spell_target_type, in
 int16_t IDK_AITP_Disjunction__STUB(int16_t * wx, int16_t * wy, int16_t spell_idx, int16_t player_idx);
 
 // WZD o156p45
-int16_t Get_Map_Square_Target_For_Spell(int16_t spell_arget_type, int16_t * wx, int16_t * wy, int16_t * wp, int16_t spell_idx, int16_t player_idx);
+int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx, int16_t * wy, int16_t * wp, int16_t spell_idx, int16_t player_idx);
 
 // WZD o156p46
 // AITP_OVL_HarmStack()
