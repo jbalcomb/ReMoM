@@ -329,7 +329,7 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
 
     Allocate_Reduced_Map();
 
-    OVL_MosaicFlip__STUB();
+    Dissolve_Main_Screen();
 
     // DOMSDOS  Play_Background_Music__STUB();
     Play_Background_Music();

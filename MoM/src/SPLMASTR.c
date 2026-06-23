@@ -1388,7 +1388,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
 
     }
 
-    /* SPELLY */  OVL_MosaicFlip__STUB();
+    Dissolve_Main_Screen();
 
     Release_Block(_screen_seg);
 
@@ -1983,6 +1983,7 @@ void SoM_Started_Draw__STUB(void)
 }
 
 // WZD o138p05
+// Cast_Spell_Of_Mastery
 void SoM_Started__STUB(int16_t player_idx)
 {
     int16_t full_screen_ESC_field = 0;

@@ -239,7 +239,7 @@ void PageFlip_FX(void)
         case pfe_Dissolve:
         {
             Apply_Palette();
-            /* SPELLY */  VGA_MosaicFlip__STUB();  // s026p01;  |-> Toggle_Pages_No_Draw_Fields() |-> Page_Flip()
+            PageFlip_Dissolve();  // s026p01;  |-> Toggle_Pages_No_Draw_Fields() |-> Page_Flip()
             Toggle_Pages();  // |-> Page_Flip()
         } break;
         case pfe_GrowOut:

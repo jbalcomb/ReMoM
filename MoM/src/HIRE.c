@@ -288,7 +288,7 @@ void Merchant_Popup(void)
 
             _players[HUMAN_PLAYER_IDX].gold_reserve -= GAME_AssetCost;
 
-            OVL_MosaicFlip__STUB();
+            Dissolve_Main_Screen();
 
             Process_Item_Pool(1, &GUI_InHeroNaming);
 
@@ -580,7 +580,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     Apply_Palette();
 
-    VGA_MosaicFlip__STUB();
+    PageFlip_Dissolve();
 
     // ~== Set_Hire_Hero_Popup_Help_List()
     LBX_Load_Data_Static(hlpentry_lbx_file__ovr127, 23, (SAMB_ptr)_help_entries, 0, 23, 10);

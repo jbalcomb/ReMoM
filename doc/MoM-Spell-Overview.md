@@ -50,7 +50,7 @@ if(Abort_Spell__YN == ST_TRUE)
 if(did_select_spell == ST_TRUE)
     Cast_Spell_Overland_Do(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
 else
-    OVL_MosaicFlip__STUB();
+    Dissolve_Main_Screen();
 
 
 

@@ -561,13 +561,12 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
 
     Deactivate_Auto_Function();
 
-    OVL_MosaicFlip__STUB();
+    Dissolve_Main_Screen();
 
     Stop_All_Sounds__STUB();
 
     Release_Block(_screen_seg);
 
-    // DOMSDOS  Play_Background_Music__STUB();
     Play_Background_Music();
 
     if(player_idx == HUMAN_PLAYER_IDX)
@@ -955,7 +954,7 @@ void Cast_Spell_City_Enchantment_Animation_2__WIP(int16_t city_idx, int16_t spel
 
     Allocate_Reduced_Map();
 
-    OVL_MosaicFlip__STUB();
+    Dissolve_Main_Screen();
 
 }
 
@@ -1392,7 +1391,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
     // DOMSDOS  Play_Background_Music__STUB();
     Play_Background_Music();
 
-    OVL_MosaicFlip__STUB();
+    Dissolve_Main_Screen();
 
 }
 
@@ -1877,9 +1876,9 @@ int16_t Target_Wizard_Screen(int16_t spell_idx)
 
     }
 
-    /* SPELLY */  OVL_MosaicFlip__STUB();
+    Dissolve_Main_Screen();
 
-    // BUG  Release_Block();
+    /* OGBUG  called Release_Block() without seg parameter */
     Release_Block(_screen_seg);
 
     Deactivate_Auto_Function();

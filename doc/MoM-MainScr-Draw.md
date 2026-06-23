@@ -994,7 +994,7 @@ Main_Screen_Reset+53
 
 OVL_DisplayMainScrn+8          
 OVL_DrawMapSection+93
-OVL_MosaicFlip+8              
+Dissolve_Main_Screen+8              
 OVL_MoveUnitStack+103         
 OVL_MoveUnitStack+130         
 OVL_MoveUnitStack+4E6         

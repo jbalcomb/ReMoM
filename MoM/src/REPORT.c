@@ -491,7 +491,7 @@ void Chancellor_Screen__WIP(int16_t flag)
 
             Apply_Palette();
 
-            VGA_MosaicFlip__STUB();
+            PageFlip_Dissolve();
 
         }
         else

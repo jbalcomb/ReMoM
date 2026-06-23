@@ -59,13 +59,13 @@ void Player_Process_Item_Pool(int16_t player_idx, int16_t item_count, int16_t it
 
             Warn0(GUI_NearMsgString);
             
-            /* TODO */  OVL_MosaicFlip__STUB();
+            Dissolve_Main_Screen();
 
             Process_Item_Pool(item_count, item_list);
 
             current_screen = scr_Main_Screen;
 
-            /* TODO */  OVL_MosaicFlip__STUB();
+            Dissolve_Main_Screen();
         }
         else
         {

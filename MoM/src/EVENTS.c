@@ -1699,7 +1699,7 @@ void Show_Event_Message(void)
 
     if(m_current_event != et_Gift)
     {
-        OVL_MosaicFlip__STUB();
+        Dissolve_Main_Screen();
     }
 
 }

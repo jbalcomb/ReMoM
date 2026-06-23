@@ -424,7 +424,7 @@ int16_t Cast_Earth_Lore(int16_t player_idx)
 
     Play_Sound(soundfx_seg, soundfx_seg_size);
 
-    OVL_MosaicFlip__STUB();
+    Dissolve_Main_Screen();
 
     Release_Block(_screen_seg);
 
@@ -1223,7 +1223,7 @@ int16_t Cast_Transmute(int16_t player_idx)
 
     }
 
-    OVL_MosaicFlip__STUB();
+    Dissolve_Main_Screen();
 
     Release_Block(_screen_seg);
 
@@ -1729,7 +1729,7 @@ int16_t Cast_Enchant_Road(int16_t player_idx)
 
 
     
-    OVL_MosaicFlip__STUB();
+    Dissolve_Main_Screen();
 
     Release_Block(_screen_seg);
 

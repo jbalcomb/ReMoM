@@ -3077,7 +3077,7 @@ int16_t Get_Input_Delay(void)
 /*
 ¿ how to explain ?
 
-Elsewhere, `GUI_PageFlipPrep(); ... GUI_PageFlip();`
+Elsewhere, `Toggle_Pages_No_Draw_Fields_Pre(); ... GUI_PageFlip();`
 same procedure, except no Draw_Fields() call
 
 */

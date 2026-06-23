@@ -440,7 +440,7 @@ void Spellbook_Screen(void)
     }
     else
     {
-        OVL_MosaicFlip__STUB();
+        Dissolve_Main_Screen();
     }
 
 }
@@ -605,7 +605,7 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
                 // ; BUG  already tested, only true in this path
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
-                    /* SPELLY */  OVL_MosaicFlip__STUB();
+                    Dissolve_Main_Screen();
                 }
                 did_cast_spell__iff_human_player = ST_TRUE;
                 Cast_Spell_Overland(player_idx);
@@ -619,7 +619,7 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
         {
             if(player_idx == HUMAN_PLAYER_IDX)
             {
-                OVL_MosaicFlip__STUB();
+                Dissolve_Main_Screen();
             }
         }
     }
@@ -665,12 +665,12 @@ void Full_Draw_Main_Screen(void)
 
 
 // WZD o134p07
-void OVL_MosaicFlip__STUB(void)
+void Dissolve_Main_Screen(void)
 {
     Set_Page_Off();
     Reset_Map_Draw();
     Main_Screen_Draw();
-    VGA_MosaicFlip__STUB();
+    PageFlip_Dissolve();
 }
 
 // WZD o134p08

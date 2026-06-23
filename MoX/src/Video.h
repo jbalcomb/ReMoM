@@ -36,7 +36,9 @@ extern uint8_t * draw_page;
 
 
 // WZD s26p01
-void VGA_MosaicFlip__STUB(void);
+/* CLAUDE: per-pass delay (ms) for PageFlip_Dissolve; 0 = original instant behavior */
+extern int16_t g_pageflip_dissolve_pass_delay;
+void PageFlip_Dissolve(void);
 
 // WZD s26p02
 // UU_VGA_SlowMosaicFlip()
@@ -63,7 +65,7 @@ void VGA_MosaicFlip__STUB(void);
 // UU_VGA_CopyLine()
 
 // WZD s26p10
-void GUI_PageFlipPrep(void);
+void Toggle_Pages_No_Draw_Fields_Pre(void);
 
 // WZD s26p11
 void Toggle_Pages_No_Draw_Fields(void);

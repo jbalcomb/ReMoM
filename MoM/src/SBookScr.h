@@ -43,7 +43,7 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
 void Full_Draw_Main_Screen(void);
 
 // WZD o134p07
-void OVL_MosaicFlip__STUB(void);
+void Dissolve_Main_Screen(void);
 
 // WZD o134p08
 void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t spell_idx, char * counter_spell_name);

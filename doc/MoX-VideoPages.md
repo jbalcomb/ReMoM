@@ -1,4 +1,5 @@
 
+SEEALSO: C:\STU\devel\ReMoM\doc\VideoEffects\VGA_Mosaic_PageFlip.md
 
 
 
@@ -57,7 +58,7 @@ XREF:
 ## PageFlip_FX
     switch(PageFlipEffect)
     1: RP_VGA_CutRight()  ...GUI_PageFlipPrep(); GUI_PageFlip();
-    3: VGA_MosaicFlip__STUB()
+    3: PageFlip_Dissolve()
     4: RP_VGA_GrowOutFlip()  ... Toggle_Pages()
 
 
@@ -70,13 +71,13 @@ GUI_PageFlipPrep()
 GUI_PageFlip()
 
 XREF:
-    VGA_MosaicFlip__STUB()
+    PageFlip_Dissolve()
     UU_VGA_SlowMosaicFlip()
     RP_VGA_CutRight()
     UU_VGA_SplitCutOut()
 
 // WZD s26p01
-void VGA_MosaicFlip__STUB(void)
+void PageFlip_Dissolve(void)
 // WZD s26p02
 // UU_VGA_SlowMosaicFlip()
 
@@ -84,37 +85,6 @@ void VGA_MosaicFlip__STUB(void)
 // RP_VGA_CutRight()
 // WZD s26p08
 // UU_VGA_SplitCutOut()
-
-VGA_MosaicFlip__STUB()
-XREF:
-    PageFlip_FX()
-    Chancellor_Screen()
-    Hire_Hero_Popup()
-    OVL_MosaicFlip__STUB()
-
-OVL_MosaicFlip__STUB()
-    Set_Page_Off()
-    j_Reset_Map_Draw()
-    j_Main_Screen_Draw()
-    VGA_MosaicFlip__STUB()
-XREF:
-    Spellbook_Screen()
-    Cast_Spell_Overland_Do()
-    Cast_Spell_Overland_Do()
-    j_OVL_MosaicFlip__STUB()
-        EVNT_ShowMessage()
-        Hero_LevelUp_Popup()
-        Player_Process_Item_Pool()
-        Player_Process_Item_Pool()
-        Merchant_Popup()
-        sAFA06_Anim_EarthLore()
-        sub_B0692()
-        Cast_EnchantRoad()
-        IDK_Spell_DisjunctOrBind()
-        IDK_SummonAnim()
-        IDK_Spell_Cityscape_2()
-        WIZ_GlobalSpellAnim()
-        IDK_DiploScrn()
 
 
 UU_VGA_InterleavedFlip()

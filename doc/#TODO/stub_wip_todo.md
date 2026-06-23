@@ -287,7 +287,7 @@
 - [ ] Chancellor_Screen_Scroll_Draw__WIP
 
 ## SBookScr
-- [ ] OVL_MosaicFlip__STUB
+- [ ] Dissolve_Main_Screen
 - [ ] Spell_Animation_Load_Sound_Effect__WIP
 - [ ] Spell_Animation_Screen__WIP
 
@@ -375,7 +375,7 @@
 - [x] Draw_Expanding_Bitmap()
 
 ## Video
-- [ ] VGA_MosaicFlip__STUB
+- [ ] PageFlip_Dissolve
 
 ## WZD_o059
 - [ ] Do_Plane_Button__WIP
