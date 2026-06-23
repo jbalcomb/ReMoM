@@ -347,7 +347,7 @@ void AI_Spell_Select(int16_t player_idx)
             spell_idx = AI_Select_Spell_Group_Summon(player_idx);
             break;
         case 2:
-            spell_idx = AI_OVL_PickUnitBuff(player_idx);
+            spell_idx = AI_Select_Spell_Group_Unit_Enchantment(player_idx);
             break;
         case 3:
             spell_idx = AI_OVL_PickCityBuff(player_idx);
@@ -1353,9 +1353,297 @@ int16_t AI_Select_Spell_Group_Summon(int16_t player_idx)
 
 
 // WZD o156p06
-int16_t AI_OVL_PickUnitBuff(int16_t player_idx)
+int16_t AI_Select_Spell_Group_Unit_Enchantment(int16_t player_idx)
 {
-    return 0;
+    int16_t choice = 0;
+    uint8_t * players_spell_list = NULL;
+    int16_t itr = 0;
+
+    /* Treat spell list as 1-based index by shifting pointer */
+    players_spell_list = (uint8_t *)&_players[player_idx].spells_list[0] - 1;
+
+    for(itr = 0; itr < 50; itr++) {
+        AI_OVL_SplPriorities[itr] = 0;
+    }
+
+    if(players_spell_list[spl_Resist_Elements] == sls_Known) {
+        AI_OVL_SplPriorities[1] = 5;
+    }
+    if(players_spell_list[spl_Stone_Skin] == sls_Known) {
+        AI_OVL_SplPriorities[2] = 15;
+    }
+    if(players_spell_list[spl_Elemental_Armor] == sls_Known) {
+        AI_OVL_SplPriorities[3] = 5;
+    }
+    if(players_spell_list[spl_Iron_Skin] == sls_Known) {
+        AI_OVL_SplPriorities[4] = 30;
+    }
+    if(players_spell_list[spl_Regeneration] == sls_Known) {
+        AI_OVL_SplPriorities[5] = 10;
+    }
+    if(players_spell_list[spl_Resist_Magic] == sls_Known) {
+        AI_OVL_SplPriorities[6] = 5;
+    }
+    if(players_spell_list[spl_Blur] == sls_Known) {
+        AI_OVL_SplPriorities[7] = 0;
+    }
+    if(players_spell_list[spl_Magic_Immunity] == sls_Known) {
+        AI_OVL_SplPriorities[9] = 20;
+    }
+    if(players_spell_list[spl_Flame_Blade] == sls_Known) {
+        AI_OVL_SplPriorities[10] = 30;
+    }
+    if(players_spell_list[spl_Eldritch_Weapon] == sls_Known) {
+        AI_OVL_SplPriorities[11] = 15;
+    }
+    if(players_spell_list[spl_Immolation] == sls_Known) {
+        AI_OVL_SplPriorities[12] = 10;
+    }
+    if(players_spell_list[spl_Holy_Weapon] == sls_Known) {
+        AI_OVL_SplPriorities[13] = 10;
+    }
+    if(players_spell_list[spl_Bless] == sls_Known) {
+        AI_OVL_SplPriorities[14] = 5;
+    }
+    if(players_spell_list[spl_Holy_Armor] == sls_Known) {
+        AI_OVL_SplPriorities[15] = 10;
+    }
+    if(players_spell_list[spl_Heroism] == sls_Known) {
+        AI_OVL_SplPriorities[16] = 10;
+    }
+    if(players_spell_list[spl_True_Sight] == sls_Known) {
+        AI_OVL_SplPriorities[17] = 5;
+    }
+    if(players_spell_list[spl_Invulnerability] == sls_Known) {
+        AI_OVL_SplPriorities[18] = 20;
+    }
+    if(players_spell_list[spl_Lionheart] == sls_Known) {
+        AI_OVL_SplPriorities[19] = 30;
+    }
+    if(players_spell_list[spl_Righteousness] == sls_Known) {
+        AI_OVL_SplPriorities[20] = 5;
+    }
+    if(players_spell_list[spl_Cloak_Of_Fear] == sls_Known) {
+        AI_OVL_SplPriorities[21] = 10;
+    }
+    if(players_spell_list[spl_Wraith_Form] == sls_Known) {
+        AI_OVL_SplPriorities[23] = 5;
+    }
+    if(players_spell_list[spl_Water_Walking] == sls_Known) {
+        AI_OVL_SplPriorities[24] = 30;
+    }
+    if(players_spell_list[spl_Path_Finding] == sls_Known) {
+        AI_OVL_SplPriorities[25] = 5;
+    }
+    if(players_spell_list[spl_Entangle] == sls_Known) {
+        AI_OVL_SplPriorities[26] = 0;
+    }
+    if(players_spell_list[spl_Flight] == sls_Known) {
+        AI_OVL_SplPriorities[27] = 25;
+    }
+    if(players_spell_list[spl_Wind_Walking] == sls_Known) {
+        AI_OVL_SplPriorities[28] = 50;
+    }
+    if(players_spell_list[spl_Endurance] == sls_Known) {
+        AI_OVL_SplPriorities[29] = 10;
+    }
+    /* OGBUG: fails to check all wizards, should iter over _num_players */
+    if(players_spell_list[spl_Plane_Shift] == sls_Known &&
+        _players[0].Globals[PLANAR_SEAL] == 0 &&
+        _players[1].Globals[PLANAR_SEAL] == 0 &&
+        _players[2].Globals[PLANAR_SEAL] == 0 &&
+        _players[3].Globals[PLANAR_SEAL] == 0) {
+        AI_OVL_SplPriorities[30] = 20;
+    }
+    if(players_spell_list[spl_Planar_Travel] == sls_Known) {
+        AI_OVL_SplPriorities[31] = 5;
+    }
+    if(players_spell_list[spl_Natures_Cures] == sls_Known) {
+        AI_OVL_SplPriorities[32] = 5;
+    }
+    if(players_spell_list[spl_Enchant_Road] == sls_Known) {
+        AI_OVL_SplPriorities[33] = 10;
+    }
+    if(players_spell_list[spl_Spell_Lock] == sls_Known) {
+        AI_OVL_SplPriorities[34] = 10;
+    }
+    if(players_spell_list[spl_Invisibility] == sls_Known) {
+        AI_OVL_SplPriorities[35] = 40;
+    }
+    if(players_spell_list[spl_Chaos_Channels] == sls_Known &&
+        _players[player_idx].Globals[DOOM_MASTERY] == 0) {
+        AI_OVL_SplPriorities[36] = 25;
+    }
+    if(players_spell_list[spl_Lycanthropy] == sls_Known &&
+        _players[player_idx].Globals[ZOMBIE_MASTERY] == 0) {
+        AI_OVL_SplPriorities[37] = 25;
+    }
+    if(players_spell_list[spl_Black_Channels] == sls_Known) {
+        AI_OVL_SplPriorities[38] = 25;
+    }
+    if(players_spell_list[spl_Guardian_Wind] == sls_Known) {
+        AI_OVL_SplPriorities[39] = 10;
+    }
+    if(players_spell_list[spl_Giant_Strength] == sls_Known) {
+        AI_OVL_SplPriorities[40] = 10;
+    }
+
+    if(SPL_IsLifeSupressed() == ST_TRUE) {
+        for(itr = 13; itr <= 20; itr++) {
+            AI_OVL_SplPriorities[itr] = (AI_OVL_SplPriorities[itr] * 2) / 3;
+        }
+        AI_OVL_SplPriorities[29] = (AI_OVL_SplPriorities[29] * 2) / 3; /* spl_Endurance */
+        AI_OVL_SplPriorities[30] = (AI_OVL_SplPriorities[30] * 2) / 3; /* spl_Plane_Shift */
+        AI_OVL_SplPriorities[31] = (AI_OVL_SplPriorities[31] * 2) / 3; /* spl_Planar_Travel */
+    }
+
+    if(CRP_SPL_IsNatSuppressed() == ST_TRUE) {
+        for(itr = 1; itr <= 5; itr++) {
+            AI_OVL_SplPriorities[itr] = (AI_OVL_SplPriorities[itr] * 2) / 3;
+        }
+        AI_OVL_SplPriorities[24] = (AI_OVL_SplPriorities[24] * 2) / 3; /* spl_Water_Walking */
+        AI_OVL_SplPriorities[25] = (AI_OVL_SplPriorities[25] * 2) / 3; /* spl_Path_Finding */
+        AI_OVL_SplPriorities[26] = (AI_OVL_SplPriorities[26] * 2) / 3; /* spl_Entangle */
+        AI_OVL_SplPriorities[32] = (AI_OVL_SplPriorities[32] * 2) / 3; /* spl_Natures_Cures */
+        AI_OVL_SplPriorities[40] = AI_OVL_SplPriorities[40] / 2;       /* spl_Giant_Strength */
+    }
+
+    if(SPL_IsDthSuppressed() == ST_TRUE) {
+        for(itr = 21; itr <= 23; itr++) {
+            if(AI_OVL_SplPriorities[itr] < 20) {
+                AI_OVL_SplPriorities[itr] = 0;
+            } else if(AI_OVL_SplPriorities[itr] < 50) {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 3;
+            } else {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 2;
+            }
+        }
+        /* index 37 (spl_Lycanthropy) */
+        if(AI_OVL_SplPriorities[37] < 20) {
+            AI_OVL_SplPriorities[37] = 0;
+        } else if(AI_OVL_SplPriorities[37] < 50) {
+            AI_OVL_SplPriorities[37] = AI_OVL_SplPriorities[37] / 3;
+        } else {
+            AI_OVL_SplPriorities[37] = AI_OVL_SplPriorities[37] / 2;
+        }
+        /* index 38 (spl_Black_Channels) */
+        if(AI_OVL_SplPriorities[38] < 20) {
+            AI_OVL_SplPriorities[38] = 0;
+        } else if(AI_OVL_SplPriorities[38] < 50) {
+            AI_OVL_SplPriorities[38] = AI_OVL_SplPriorities[38] / 3;
+        } else {
+            AI_OVL_SplPriorities[38] = AI_OVL_SplPriorities[38] / 2;
+        }
+    }
+
+    if(SPL_IsChsSuppressed() == ST_TRUE) {
+        for(itr = 10; itr <= 12; itr++) {
+            if(AI_OVL_SplPriorities[itr] < 20) {
+                AI_OVL_SplPriorities[itr] = 0;
+            } else if(AI_OVL_SplPriorities[itr] < 50) {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 3;
+            } else {
+                AI_OVL_SplPriorities[itr] = AI_OVL_SplPriorities[itr] / 2;
+            }
+        }
+        /* index 36 (spl_Chaos_Channels) */
+        if(AI_OVL_SplPriorities[36] < 20) {
+            AI_OVL_SplPriorities[36] = 0;
+        } else if(AI_OVL_SplPriorities[36] < 50) {
+            AI_OVL_SplPriorities[36] = AI_OVL_SplPriorities[36] / 3;
+        } else {
+            AI_OVL_SplPriorities[36] = AI_OVL_SplPriorities[36] / 2;
+        }
+    }
+
+    choice = Get_Weighted_Choice(AI_OVL_SplPriorities, 50);
+
+    switch(choice)
+    {
+        case 1:
+            return spl_Resist_Elements;
+        case 2:
+            return spl_Stone_Skin;
+        case 3:
+            return spl_Elemental_Armor;
+        case 4:
+            return spl_Iron_Skin;
+        case 5:
+            return spl_Regeneration;
+        case 6:
+            return spl_Resist_Magic;
+        case 7:
+            return 0;
+        case 8:
+            return 0;
+        case 9:
+            return spl_Magic_Immunity;
+        case 10:
+            return spl_Flame_Blade;
+        case 11:
+            return spl_Eldritch_Weapon;
+        case 12:
+            return spl_Immolation;
+        case 13:
+            return spl_Holy_Weapon;
+        case 14:
+            return spl_Bless;
+        case 15:
+            return spl_Holy_Armor;
+        case 16:
+            return spl_Heroism;
+        case 17:
+            return spl_True_Sight;
+        case 18:
+            return spl_Invulnerability;
+        case 19:
+            return spl_Lionheart;
+        case 20:
+            return spl_Righteousness;
+        case 21:
+            return spl_Cloak_Of_Fear;
+        case 22:
+            return 0;
+        case 23:
+            return spl_Wraith_Form;
+        case 24:
+            return spl_Water_Walking;
+        case 25:
+            return spl_Path_Finding;
+        case 26:
+            return spl_Entangle;
+        case 27:
+            return spl_Flight;
+        case 28:
+            return spl_Wind_Walking;
+        case 29:
+            return spl_Endurance;
+        case 30:
+            return spl_Plane_Shift;
+        case 31:
+            return spl_Planar_Travel;
+        case 32:
+            return spl_Natures_Cures;
+        case 33:
+            return spl_Enchant_Road;
+        case 34:
+            return spl_Spell_Lock;
+        case 35:
+            return spl_Invisibility;
+        case 36:
+            return spl_Chaos_Channels;
+        case 37:
+            return spl_Lycanthropy;
+        case 38:
+            return spl_Black_Channels;
+        case 39:
+            return spl_Guardian_Wind;
+        case 40:
+            return spl_Giant_Strength;
+        default:
+            return 0;
+    }
+
 }
 
 // WZD o156p07

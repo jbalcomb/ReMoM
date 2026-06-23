@@ -319,7 +319,7 @@ AI_OVL_SpellPicker__STUB()
     |-> AI_Select_Spell_Group()
     ...
     |-> AI_Select_Spell_Group_Summon()
-    |-> AI_OVL_PickUnitBuff()
+    |-> AI_Select_Spell_Group_Unit_Enchantment()
     |-> AI_OVL_PickCityBuff()
     |-> AI_OVL_PickDise()
     |-> AI_OVL_PickDisj()

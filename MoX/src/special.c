@@ -29,6 +29,7 @@
 
 */
 
+#include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_TYPE.h"
 
 #include <stdlib.h>

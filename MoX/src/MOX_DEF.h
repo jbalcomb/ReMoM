@@ -70,8 +70,8 @@ Eh?
 /*
 #define ABS(x) (((x) < 0) ? -(x) : (x))
 https://wiki.sei.cmu.edu/confluence/display/c/PRE12-C.+Do+not+define+unsafe+macros
-#define AbsVal(_val_) ( (_val_) < 0 ? (-(_val_)) : (_val_) )
 */
+#define AbsVal(_val_) ( (_val_) < 0 ? (-(_val_)) : (_val_) )
 #ifndef ABS
 #define ABS(x) (((x) < 0) ? -(x) : (x))
 #endif
