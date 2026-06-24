@@ -1066,9 +1066,9 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
         {
             Item_Pickup = ST_TRUE;
             
-            if (hero_slot_idx != VAULT_HERO_SLOT_IDX)
+            if(hero_slot_idx != VAULT_HERO_SLOT_IDX)
             {
-                if (Check_Wont_Drown(hero_slot_idx, item_slots_ptr[item_slot_idx]) == ST_FALSE)
+                if(Check_Wont_Drown(hero_slot_idx, item_slots_ptr[item_slot_idx]) == ST_FALSE)
                 {
                     Item_Pickup = ST_FALSE;
                 }

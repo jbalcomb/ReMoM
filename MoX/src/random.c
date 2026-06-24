@@ -141,7 +141,7 @@ restart_sum:
         max_weight += weight_array[j];
         
         /* 2. THE NORMALIZATION HACK */
-        if (max_weight >= 512) {
+        if(max_weight >= 512) {
             /* If the total weight gets dangerously high, divide EVERY weight in the array by 2 (bit-shift right) */
             for (i = 0; i < weight_count; i++) {
                 weight_array[i] >>= 1; 
@@ -152,7 +152,7 @@ restart_sum:
     }
 
     /* 3. Safety Check: If the max weight is 0, default to the first element */
-    if (max_weight == 0) {
+    if(max_weight == 0) {
         LOG_TRACE(LOG_CAT_GENERAL, "max_weight: %d", max_weight);
         return 0;
     }
@@ -166,7 +166,7 @@ restart_sum:
     choice = 0;
 
     /* Subtract weights until the random value dips below zero */
-    while (weight_remainder > 0 && choice < weight_count - 1) {
+    while(weight_remainder > 0 && choice < weight_count - 1) {
         choice++;
         weight_remainder -= weight_array[choice];
     }
@@ -303,7 +303,7 @@ int16_t Random(int16_t n)
     uint16_t carry_bit;
     int16_t  ret;
 
-    if (n == 0) Exit_With_Message("RND no 0's");
+    if(n == 0) Exit_With_Message("RND no 0's");
 
     low_seed  = (uint16_t)(random_seed & 0xFFFF);
     high_seed = (uint16_t)(random_seed >> 16);
@@ -323,7 +323,7 @@ int16_t Random(int16_t n)
         high_seed = (uint16_t)((high_seed >> 1) | (new_bit   << 15));
     }
 
-    if (low_seed == 0 && high_seed == 0) {
+    if(low_seed == 0 && high_seed == 0) {
         low_seed = 12478;
     }
 
@@ -359,7 +359,7 @@ int16_t Random_at(int16_t n, const char *file, int line, const char *func)
 
     ret = Random(n);   /* RANDOM_C_NO_AUTOTRACE is still in effect here */
 
-    if (_cmd_line_seed != 0) {
+    if(_cmd_line_seed != 0) {
         fprintf(stderr,
             "[RNG-CALL] seg=%lu  sidx=%lu  call=%llu  n=%d  before=0x%08X  after=0x%08X  result=%d  func=%s  at=%s:%d\n",
             g_rng_segment, g_rng_seg_idx,
@@ -395,7 +395,7 @@ int16_t Random_at(int16_t n, const char *file, int line, const char *func)
 //     low_seed = (uint16_t)(random_seed & 0xFFFF);
 //     high_seed = (uint16_t)(random_seed >> 16);
 // 
-//     if (n == 0) Exit_With_Message("RND no 0's");
+//     if(n == 0) Exit_With_Message("RND no 0's");
 // 
 //     /* 9-bit LFSR bit-shifting loop */
 //     for (i = 0; i < 9; i++) {
@@ -431,7 +431,7 @@ int16_t Random_at(int16_t n, const char *file, int line, const char *func)
 //         high_seed = (high_seed >> 1) | (new_bit << 15);
 //     }
 // 
-//     if (low_seed == 0 && high_seed == 0) {
+//     if(low_seed == 0 && high_seed == 0) {
 //         low_seed = 12478; /* Prevent the LFSR from getting stuck at 0 */
 //     }
 // 

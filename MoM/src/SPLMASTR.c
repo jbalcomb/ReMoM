@@ -1198,7 +1198,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
         STARMAP_UIOBJ_CLEAR_COMMON(); \
         oi_accept = UIOBJI_INVALID; \
         oi_cancel = UIOBJI_INVALID; \
-    } while (0)
+    } while(0)
 
     UIOBJ_CLEAR_LOCAL();
 */

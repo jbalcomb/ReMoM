@@ -98,7 +98,7 @@ uint8_t Read_Key(void)
     packed_key_code = KBD_GET_KEY(packed_key_value);
     packed_character = KBD_GET_CHAR(packed_key_value);
 
-    if (packed_character)
+    if(packed_character)
     {
         key_num = packed_character;
     }
@@ -108,10 +108,10 @@ uint8_t Read_Key(void)
     }
 
     /* CLAUDE */  /* DOS Alt+key scancodes are UPPERCASE(character) + 95; match that for multi-hotkey support (e.g., Alt+R,V,L cheat codes) */
-    /* CLAUDE */  if ((packed_key_value & MOX_MOD_ALT) && packed_character >= 'A' && packed_character <= 'z')
+    /* CLAUDE */  if((packed_key_value & MOX_MOD_ALT) && packed_character >= 'A' && packed_character <= 'z')
     /* CLAUDE */  {
     /* CLAUDE */      char alt_char = packed_character;
-    /* CLAUDE */      if (alt_char >= 'a' && alt_char <= 'z') { alt_char -= 32; }
+    /* CLAUDE */      if(alt_char >= 'a' && alt_char <= 'z') { alt_char -= 32; }
     /* CLAUDE */      key_num = (uint16_t)alt_char + 95;
     /* CLAUDE */  }
 

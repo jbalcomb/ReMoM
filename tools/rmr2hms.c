@@ -73,7 +73,7 @@ static uint64_t pending_type_start_ms = 0;
 
 static void Flush_Pending_Type(FILE *out)
 {
-    if (pending_type_len > 0)
+    if(pending_type_len > 0)
     {
         pending_type[pending_type_len] = '\0';
         fprintf(out, "type %s\n", pending_type);
@@ -92,10 +92,10 @@ static uint64_t last_event_ms = 0;
 static void Emit_Wait(FILE *out, uint64_t now_ms)
 {
     uint64_t gap;
-    if (last_event_ms == 0) { last_event_ms = now_ms; return; }
+    if(last_event_ms == 0) { last_event_ms = now_ms; return; }
     gap = now_ms - last_event_ms;
     /* Suppress trivial gaps (<= 1 frame at 18 Hz) — they're just frame jitter. */
-    if (gap >= 60)
+    if(gap >= 60)
     {
         fprintf(out, "wait %llums\n", (unsigned long long)gap);
     }
@@ -152,15 +152,15 @@ static void Emit_Key(FILE *out, uint64_t now_ms, uint32_t packed)
     }
 
     /* Printable character → group into a `type` run. */
-    if (key_char >= 0x20 && key_char <= 0x7e)
+    if(key_char >= 0x20 && key_char <= 0x7e)
     {
-        if (pending_type_len == 0)
+        if(pending_type_len == 0)
         {
             /* Insert the wait before the first character of a new run. */
             Emit_Wait(out, now_ms);
             pending_type_start_ms = now_ms;
         }
-        if (pending_type_len < (int)sizeof(pending_type) - 1)
+        if(pending_type_len < (int)sizeof(pending_type) - 1)
         {
             pending_type[pending_type_len++] = (char)key_char;
         }
@@ -171,7 +171,7 @@ static void Emit_Key(FILE *out, uint64_t now_ms, uint32_t packed)
        if printable, else the raw key code as a hex literal in a comment. */
     Flush_Pending_Type(out);
     Emit_Wait(out, now_ms);
-    if (key_char >= 0x20 && key_char <= 0x7e)
+    if(key_char >= 0x20 && key_char <= 0x7e)
     {
         fprintf(out, "key %c\n", (char)key_char);
     }
@@ -239,7 +239,7 @@ int main(int argc, char *argv[])
     int prev_key_pressed = 0;
     uint32_t prev_key0 = 0;
 
-    if (argc < 2 || argc > 3 || strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0)
+    if(argc < 2 || argc > 3 || strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0)
     {
         Print_Usage(argv[0]);
         return 1;
@@ -247,20 +247,20 @@ int main(int argc, char *argv[])
 
     input_path = argv[1];
 
-    if (argc == 3)
+    if(argc == 3)
     {
         output_path = argv[2];
     }
     else
     {
         size_t len = strlen(input_path);
-        if (len >= sizeof(derived_path) - 5)
+        if(len >= sizeof(derived_path) - 5)
         {
             fprintf(stderr, "rmr2hms: input path too long\n");
             return 1;
         }
         memcpy(derived_path, input_path, len + 1);
-        if (len >= 4
+        if(len >= 4
             && (derived_path[len - 4] == '.')
             && (derived_path[len - 3] == 'R' || derived_path[len - 3] == 'r')
             && (derived_path[len - 2] == 'M' || derived_path[len - 2] == 'm')
@@ -278,14 +278,14 @@ int main(int argc, char *argv[])
     }
 
     fin = fopen(input_path, "r");
-    if (fin == NULL)
+    if(fin == NULL)
     {
         fprintf(stderr, "rmr2hms: cannot open input '%s'\n", input_path);
         return 2;
     }
 
     fout = fopen(output_path, "w");
-    if (fout == NULL)
+    if(fout == NULL)
     {
         fprintf(stderr, "rmr2hms: cannot open output '%s'\n", output_path);
         fclose(fin);
@@ -296,7 +296,7 @@ int main(int argc, char *argv[])
     fprintf(fout, "# Review for correctness before using as a canonical scenario.\n");
     fprintf(fout, "\n");
 
-    while (fgets(line, sizeof(line), fin) != NULL)
+    while(fgets(line, sizeof(line), fin) != NULL)
     {
         uint32_t idx;
         uint64_t timestamp_ms, delta_ms;
@@ -304,12 +304,12 @@ int main(int argc, char *argv[])
         uint32_t key0;
 
         /* Skip header / comment lines. */
-        if (line[0] == '#' || line[0] == '\n' || line[0] == '\r' || line[0] == '\0')
+        if(line[0] == '#' || line[0] == '\n' || line[0] == '\r' || line[0] == '\0')
         {
             continue;
         }
 
-        if (!Parse_Frame(line, &idx, &timestamp_ms, &delta_ms,
+        if(!Parse_Frame(line, &idx, &timestamp_ms, &delta_ms,
                          &mouse_x, &mouse_y, &mouse_buttons, &key_pressed, &key_count, &key0))
         {
             continue;
@@ -318,7 +318,7 @@ int main(int argc, char *argv[])
         frame_count_total++;
 
         /* Mouse-button edge: 0 -> nonzero is a click. */
-        if (mouse_buttons != 0 && prev_mouse_buttons == 0)
+        if(mouse_buttons != 0 && prev_mouse_buttons == 0)
         {
             Emit_Click(fout, timestamp_ms, mouse_x, mouse_y);
             actions_emitted++;
@@ -326,10 +326,10 @@ int main(int argc, char *argv[])
 
         /* Key event: emitted when key_pressed transitions 0->1, or when held
            and the key0 value changes (next key in the buffer). */
-        if (key_pressed == 1 && key_count > 0)
+        if(key_pressed == 1 && key_count > 0)
         {
             int is_new_event = (prev_key_pressed == 0) || (key0 != prev_key0);
-            if (is_new_event)
+            if(is_new_event)
             {
                 Emit_Key(fout, timestamp_ms, key0);
                 actions_emitted++;

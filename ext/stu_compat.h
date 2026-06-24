@@ -239,7 +239,7 @@ char *stu_itoa(int value, char *dst, int radix)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=itoa rng_call=%llu",
               (unsigned long long)g_random_call_count);
 
-    if (radix < 2 || radix > 36)
+    if(radix < 2 || radix > 36)
     {
         dst[0] = '\0';
         LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=itoa rng_call=%llu",
@@ -248,7 +248,7 @@ char *stu_itoa(int value, char *dst, int radix)
     }
 
     sign = (radix == 10 && value < 0);
-    if (sign)
+    if(sign)
     {
         v = (unsigned int)(-(value + 1)) + 1u; /* handles INT_MIN safely */
     }
@@ -257,19 +257,19 @@ char *stu_itoa(int value, char *dst, int radix)
         v = (unsigned int)value;
     }
 
-    while (v || tp == tmp)
+    while(v || tp == tmp)
     {
         unsigned int digit = v % (unsigned int)radix;
         *tp++ = (char)(digit < 10 ? '0' + digit : 'a' + digit - 10);
         v /= (unsigned int)radix;
     }
 
-    if (sign)
+    if(sign)
     {
         *out++ = '-';
     }
 
-    while (tp > tmp)
+    while(tp > tmp)
     {
         *out++ = *--tp;
     }
@@ -291,14 +291,14 @@ char *stu_ltoa(long value, char *dst, int radix)
     int sign;
     unsigned long v;
 
-    if (radix < 2 || radix > 36)
+    if(radix < 2 || radix > 36)
     {
         dst[0] = '\0';
         return dst;
     }
 
     sign = (radix == 10 && value < 0);
-    if (sign)
+    if(sign)
     {
         v = (unsigned long)(-(value + 1)) + 1uL;
     }
@@ -307,19 +307,19 @@ char *stu_ltoa(long value, char *dst, int radix)
         v = (unsigned long)value;
     }
 
-    while (v || tp == tmp)
+    while(v || tp == tmp)
     {
         unsigned long digit = v % (unsigned long)radix;
         *tp++ = (char)(digit < 10 ? '0' + digit : 'a' + digit - 10);
         v /= (unsigned long)radix;
     }
 
-    if (sign)
+    if(sign)
     {
         *out++ = '-';
     }
 
-    while (tp > tmp)
+    while(tp > tmp)
     {
         *out++ = *--tp;
     }
@@ -337,20 +337,20 @@ char *stu_ultoa(unsigned long value, char *dst, int radix)
     char *tp = tmp;
     char *out = dst;
 
-    if (radix < 2 || radix > 36)
+    if(radix < 2 || radix > 36)
     {
         dst[0] = '\0';
         return dst;
     }
 
-    while (value || tp == tmp)
+    while(value || tp == tmp)
     {
         unsigned long digit = value % (unsigned long)radix;
         *tp++ = (char)(digit < 10 ? '0' + digit : 'a' + digit - 10);
         value /= (unsigned long)radix;
     }
 
-    while (tp > tmp)
+    while(tp > tmp)
     {
         *out++ = *--tp;
     }
@@ -369,7 +369,7 @@ int stu_stricmp(const char *s1, const char *s2)
     {
         c1 = tolower((unsigned char)*s1++);
         c2 = tolower((unsigned char)*s2++);
-    } while (c1 == c2 && c1 != 0);
+    } while(c1 == c2 && c1 != 0);
     return c1 - c2;
 }
 
@@ -379,7 +379,7 @@ int stu_stricmp(const char *s1, const char *s2)
 int stu_strnicmp(const char *s1, const char *s2, size_t n)
 {
     int c1, c2;
-    if (n == 0)
+    if(n == 0)
     {
         return 0;
     }
@@ -387,15 +387,15 @@ int stu_strnicmp(const char *s1, const char *s2, size_t n)
     {
         c1 = tolower((unsigned char)*s1++);
         c2 = tolower((unsigned char)*s2++);
-        if (c1 != c2)
+        if(c1 != c2)
         {
             return c1 - c2;
         }
-        if (c1 == 0)
+        if(c1 == 0)
         {
             break;
         }
-    } while (--n > 0);
+    } while(--n > 0);
     return 0;
 }
 
@@ -436,7 +436,7 @@ int stu_getch(void)
 char *stu_getcwd(char *buf, size_t size)
 {
     DWORD result = GetCurrentDirectoryA((DWORD)size, buf);
-    if (result == 0 || result >= (DWORD)size)
+    if(result == 0 || result >= (DWORD)size)
     {
         return NULL;
     }
@@ -586,7 +586,7 @@ FILE *stu_fopen_ci(const char *filename, const char *mode)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=fopen rng_call=%llu",
               (unsigned long long)g_random_call_count);
     FILE *fp = fopen(filename, mode);
-    if (fp != NULL)
+    if(fp != NULL)
     {
         LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=fopen rng_call=%llu",
                   (unsigned long long)g_random_call_count);
@@ -597,10 +597,10 @@ FILE *stu_fopen_ci(const char *filename, const char *mode)
     const char *last_slash = strrchr(filename, '/');
     char dir_path[512];
     const char *basename;
-    if (last_slash != NULL)
+    if(last_slash != NULL)
     {
         size_t dir_len = (size_t)(last_slash - filename);
-        if (dir_len >= sizeof(dir_path))
+        if(dir_len >= sizeof(dir_path))
         {
             LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=fopen rng_call=%llu",
                       (unsigned long long)g_random_call_count);
@@ -618,7 +618,7 @@ FILE *stu_fopen_ci(const char *filename, const char *mode)
     }
 
     DIR *dir = opendir(dir_path);
-    if (dir == NULL)
+    if(dir == NULL)
     {
         LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=fopen rng_call=%llu",
                   (unsigned long long)g_random_call_count);
@@ -626,14 +626,14 @@ FILE *stu_fopen_ci(const char *filename, const char *mode)
     }
 
     struct dirent *entry;
-    while ((entry = readdir(dir)) != NULL)
+    while((entry = readdir(dir)) != NULL)
     {
-        if (strcasecmp(entry->d_name, basename) == 0)
+        if(strcasecmp(entry->d_name, basename) == 0)
         {
             char matched_path[512];
             int written = snprintf(matched_path, sizeof(matched_path), "%s/%s", dir_path, entry->d_name);
             closedir(dir);
-            if (written < 0 || (size_t)written >= sizeof(matched_path))
+            if(written < 0 || (size_t)written >= sizeof(matched_path))
             {
                 LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=fopen rng_call=%llu",
                           (unsigned long long)g_random_call_count);
@@ -667,7 +667,7 @@ struct tm *stu_localtime(const time_t *timer, struct tm *result)
     return localtime_r(timer, result);
 #else
     struct tm *tmp = localtime(timer);
-    if (tmp)
+    if(tmp)
     {
         *result = *tmp;
         return result;
@@ -694,7 +694,7 @@ int stu_sscanf(const char *str, const char *format, ...)
  * -------------------------------------------------------------------------- */
 char *stu_strcpy(char *dst, const char *src)
 {
-    if (dst == NULL || src == NULL)
+    if(dst == NULL || src == NULL)
     {
         return dst;
     }
@@ -706,7 +706,7 @@ char *stu_strcpy(char *dst, const char *src)
  * -------------------------------------------------------------------------- */
 char *stu_strcat(char *dst, const char *src)
 {
-    if (dst == NULL || src == NULL)
+    if(dst == NULL || src == NULL)
     {
         return dst;
     }
@@ -718,7 +718,7 @@ char *stu_strcat(char *dst, const char *src)
  * -------------------------------------------------------------------------- */
 char *stu_strncpy(char *dst, const char *src, size_t count)
 {
-    if (dst == NULL || src == NULL)
+    if(dst == NULL || src == NULL)
     {
         return dst;
     }
@@ -730,7 +730,7 @@ char *stu_strncpy(char *dst, const char *src, size_t count)
  * -------------------------------------------------------------------------- */
 char *stu_strchr(const char *str, int ch)
 {
-    if (str == NULL)
+    if(str == NULL)
     {
         return NULL;
     }
@@ -742,15 +742,15 @@ char *stu_strchr(const char *str, int ch)
  * -------------------------------------------------------------------------- */
 int stu_strcmp(const char *lhs, const char *rhs)
 {
-    if (lhs == NULL && rhs == NULL)
+    if(lhs == NULL && rhs == NULL)
     {
         return 0;
     }
-    if (lhs == NULL)
+    if(lhs == NULL)
     {
         return -1;
     }
-    if (rhs == NULL)
+    if(rhs == NULL)
     {
         return 1;
     }
@@ -762,7 +762,7 @@ int stu_strcmp(const char *lhs, const char *rhs)
  * -------------------------------------------------------------------------- */
 int stu_atoi(const char *str)
 {
-    if (str == NULL)
+    if(str == NULL)
     {
         return 0;
     }
@@ -774,9 +774,9 @@ int stu_atoi(const char *str)
  * -------------------------------------------------------------------------- */
 long stu_strtol(const char *str, char **endptr, int base)
 {
-    if (str == NULL)
+    if(str == NULL)
     {
-        if (endptr != NULL) *endptr = NULL;
+        if(endptr != NULL) *endptr = NULL;
         return 0;
     }
     return strtol(str, endptr, base);

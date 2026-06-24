@@ -58,6 +58,7 @@ MoO2
 #include "MAPGEN.h"
 
 #include "../../MoM/src/MovePath.h"  /* struct s_MOVE_MODE_COST_MAPS */
+#include "../../MoX/src/EMS/EMS.h"   /* CLAUDE  SAMB_ptr EMMDATAH_Map(void) prototype (was implicit -> C4013) */
 // MOM_Data.c./h but also MovePath.h
 // WZD dseg:9CAC
 // drake178: TBL_MoveMaps_EMS
@@ -65,10 +66,8 @@ extern struct s_MOVE_MODE_COST_MAPS * movement_mode_cost_maps;
 
 
 
-// forward declate to shut up VS can be made static, because NIU
-static void CRP_NEWG_CreatePathGrid__STUB(void * moves2, void * move_path_chunks);
-// forward declate to shut up VS can be made static, because NIU
-// fix 'static' on Desert_Autotile() and CRP_NEWG_CreatePathGrid__STUB()
+// forward declare; non-static to match the definition and the MAPGEN.h prototype (was erroneously static -> C4211)
+void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map);
 
 
 
@@ -210,6 +209,23 @@ int16_t m_landmasses_ctr;
 
 
 
+// MGC 31D1:9118                                                 BEGIN:  ovr054 - Uninitialized Data
+
+/* CLAUDE  INF ("impassable tile / infinite cost") now comes from the shared MOX_TYPE.h (already included above). Per the asm (ovr054), cost bytes are UNSIGNED: reads are `mov al,[Costs+bx] / mov ah,0` (zero-extend, not cbw) and the cost compare is `jbe` (unsigned) -- so CRP_SPATH_Costs must be uint8_t, and a stored INF reads back as 255 (matching `cmp ...,0FFh`). Reverse/SourceTiles are word arrays (int16_t), matching the asm's `shl bx,1` word accesses. */
+
+// MGC 31D1:9118
+int16_t CRP_SPATH_Reverse[100];
+// MGC 31D1:91E0
+uint8_t CRP_SPATH_Costs[225];           /* 1-byte, unsigned;  read is mov ah, 0 (zero-extend, not cbw), cost comparison is jbe (unsigned) */
+// MGC 31D1:92C1 00                                              align 2
+// MGC 31D1:92C2
+int16_t CRP_SPATH_SourceTiles[225];
+
+// MGC 31D1:92C2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+END:  ovr054 - Uninitialized Data
+
+
+
+
 
 
 // MGC o51p01
@@ -271,10 +287,10 @@ static void gd_dump_world_map(const char* point)
 {
     int plane, y, x, q;
     char row[WORLD_WIDTH * 8];
-    for (plane = 0; plane < NUM_PLANES; plane++) {
-        for (y = 0; y < WORLD_HEIGHT; y++) {
+    for(plane = 0; plane < NUM_PLANES; plane++) {
+        for(y = 0; y < WORLD_HEIGHT; y++) {
             q = 0;
-            for (x = 0; x < WORLD_WIDTH; x++) {
+            for(x = 0; x < WORLD_WIDTH; x++) {
                 int16_t v = p_world_map[plane][y][x];
                 q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", (int)v);
             }
@@ -290,10 +306,10 @@ static void gd_dump_landmasses(const char* point)
 {
     int plane, y, x, q;
     char row[WORLD_WIDTH * 5];
-    for (plane = 0; plane < NUM_PLANES; plane++) {
-        for (y = 0; y < WORLD_HEIGHT; y++) {
+    for(plane = 0; plane < NUM_PLANES; plane++) {
+        for(y = 0; y < WORLD_HEIGHT; y++) {
             q = 0;
-            for (x = 0; x < WORLD_WIDTH; x++) {
+            for(x = 0; x < WORLD_WIDTH; x++) {
                 int v = GET_LANDMASS(x, y, plane);
                 q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
             }
@@ -1308,8 +1324,8 @@ void Generate_Home_City__GEMINI(void)
     int wp;                         /* [bp-08h] */
     int UU_Fortresses[2];           /* [bp-06h] */
     int player_idx;                 /* [bp-02h] */
-    int unit_type;                  /* di */
-    int bldg_idx;                   /* si */
+    int unit_type;                  /* itr2 */
+    int bldg_idx;                   /* itr1 */
 
     minimum_fortress_distance = 16;
     minimum_site_distance = 8;
@@ -1318,12 +1334,12 @@ void Generate_Home_City__GEMINI(void)
     minimum_fortress_distance--;
     minimum_site_distance--;
 
-    if (minimum_site_distance < 1)
+    if(minimum_site_distance < 1)
     {
         minimum_site_distance = 1;
     }
 
-    if (minimum_fortress_distance < 10)
+    if(minimum_fortress_distance < 10)
     {
         minimum_fortress_distance = 10;
     }
@@ -1337,14 +1353,14 @@ void Generate_Home_City__GEMINI(void)
     player_idx = 0;
 
 @@Loop_Players:
-    while (player_idx < 6)
+    while(player_idx < 6)
     {
 @@Loop_Location:
         Tries_Per_Distance++;
         wp = 0;
 
         /* Check if player starts on Myrror */
-        if (_players[player_idx].myrran != e_ST_FALSE)
+        if(_players[player_idx].myrran != e_ST_FALSE)
         {
             wp = 1;
         }
@@ -1354,19 +1370,19 @@ void Generate_Home_City__GEMINI(void)
         Invalid = e_ST_FALSE;
 
         /* Check if terrain is Ocean */
-        if (_world_maps[wp * (e_WORLD_WIDTH * e_WORLD_HEIGHT) + wy * e_WORLD_WIDTH + wx] == tt_Ocean1)
+        if(_world_maps[wp * (e_WORLD_WIDTH * e_WORLD_HEIGHT) + wy * e_WORLD_WIDTH + wx] == tt_Ocean1)
         {
             Invalid = e_ST_TRUE;
         }
 
         /* Check distance to other players' fortresses */
-        if (Invalid == e_ST_FALSE)
+        if(Invalid == e_ST_FALSE)
         {
-            for (bldg_idx = 0; bldg_idx < player_idx; bldg_idx++)
+            for(bldg_idx = 0; bldg_idx < player_idx; bldg_idx++)
             {
-                if (_FORTRESSES[bldg_idx].wp == wp)
+                if(_FORTRESSES[bldg_idx].wp == wp)
                 {
-                    if (Delta_XY_With_Wrap(wx, wy, _FORTRESSES[bldg_idx].wx, _FORTRESSES[bldg_idx].wy, e_WORLD_WIDTH) < minimum_fortress_distance)
+                    if(Delta_XY_With_Wrap(wx, wy, _FORTRESSES[bldg_idx].wx, _FORTRESSES[bldg_idx].wy, e_WORLD_WIDTH) < minimum_fortress_distance)
                     {
                         Invalid = e_ST_TRUE;
                         break;
@@ -1376,13 +1392,13 @@ void Generate_Home_City__GEMINI(void)
         }
 
         /* Check distance to Magic Nodes */
-        if (Invalid == e_ST_FALSE)
+        if(Invalid == e_ST_FALSE)
         {
-            for (bldg_idx = 0; bldg_idx < NUM_NODES; bldg_idx++)
+            for(bldg_idx = 0; bldg_idx < NUM_NODES; bldg_idx++)
             {
-                if (_NODES[bldg_idx].wp == wp)
+                if(_NODES[bldg_idx].wp == wp)
                 {
-                    if (Delta_XY_With_Wrap(wx, wy, _NODES[bldg_idx].wx, _NODES[bldg_idx].wy, e_WORLD_WIDTH) < (minimum_site_distance / 2))
+                    if(Delta_XY_With_Wrap(wx, wy, _NODES[bldg_idx].wx, _NODES[bldg_idx].wy, e_WORLD_WIDTH) < (minimum_site_distance / 2))
                     {
                         Invalid = e_ST_TRUE;
                         break;
@@ -1392,12 +1408,12 @@ void Generate_Home_City__GEMINI(void)
         }
 
         /* Check distance to Towers of Wizardry */
-        if (Invalid == e_ST_FALSE)
+        if(Invalid == e_ST_FALSE)
         {
-            for (bldg_idx = 0; bldg_idx < NUM_TOWERS; bldg_idx++)
+            for(bldg_idx = 0; bldg_idx < NUM_TOWERS; bldg_idx++)
             {
                 /* Towers exist on both planes, no wp check? */
-                if (Range(wx, wy, _TOWERS[bldg_idx].wx, _TOWERS[bldg_idx].wy) < (minimum_site_distance / 2))
+                if(Range(wx, wy, _TOWERS[bldg_idx].wx, _TOWERS[bldg_idx].wy) < (minimum_site_distance / 2))
                 {
                     Invalid = e_ST_TRUE;
                     break;
@@ -1406,13 +1422,13 @@ void Generate_Home_City__GEMINI(void)
         }
 
         /* Check distance to Lairs */
-        if (Invalid == e_ST_FALSE)
+        if(Invalid == e_ST_FALSE)
         {
-            for (bldg_idx = 0; bldg_idx < NUM_LAIRS; bldg_idx++)
+            for(bldg_idx = 0; bldg_idx < NUM_LAIRS; bldg_idx++)
             {
-                if (_LAIRS[bldg_idx].wp == wp)
+                if(_LAIRS[bldg_idx].wp == wp)
                 {
-                    if (Delta_XY_With_Wrap(wx, wy, _LAIRS[bldg_idx].wx, _LAIRS[bldg_idx].wy, e_WORLD_WIDTH) < (minimum_site_distance / 2))
+                    if(Delta_XY_With_Wrap(wx, wy, _LAIRS[bldg_idx].wx, _LAIRS[bldg_idx].wy, e_WORLD_WIDTH) < (minimum_site_distance / 2))
                     {
                         Invalid = e_ST_TRUE;
                         break;
@@ -1421,16 +1437,16 @@ void Generate_Home_City__GEMINI(void)
             }
         }
 
-        if (Tries_Per_Distance < 1000 && Invalid == e_ST_TRUE)
+        if(Tries_Per_Distance < 1000 && Invalid == e_ST_TRUE)
         {
             goto @@Loop_Location;
         }
 
         /* Verify city maximum potential size */
-        if (City_Maximum_Size_NewGame(wx, wy, wp) < (8 - (player_idx / 3)))
+        if(City_Maximum_Size_NewGame(wx, wy, wp) < (8 - (player_idx / 3)))
         {
             max_pop_failures++;
-            if (max_pop_failures <= 500)
+            if(max_pop_failures <= 500)
             {
                 goto @@Loop_Location;
             }
@@ -1449,29 +1465,29 @@ void Generate_Home_City__GEMINI(void)
         UU_Fortresses[wp]++;
         player_idx++;
 
-        if (Tries_Per_Distance >= 1000)
+        if(Tries_Per_Distance >= 1000)
         {
             break;
         }
     }
 
-    if (Tries_Per_Distance >= 1000)
+    if(Tries_Per_Distance >= 1000)
     {
         goto @@Loop_Distances;
     }
 
 @@Do_The_Cities:
     _cities = 0;
-    for (itr = 0; itr < _num_players; itr++)
+    for(itr = 0; itr < _num_players; itr++)
     {
         /* Determine Race for the city */
-        if (itr == 0)
+        if(itr == 0)
         {
             _CITIES[_cities].race = (unsigned char)NEWG_Clicked_Race;
         }
         else
         {
-            if (_players[itr].myrran != 0)
+            if(_players[itr].myrran != 0)
             {
                 /* Myrran AI Races */
                 switch (Random(5) - 1)
@@ -1483,7 +1499,7 @@ void Generate_Home_City__GEMINI(void)
                 case 4: _CITIES[_cities].race = rt_Troll; break;
                 }
             }
-            else if (_difficulty > god_Normal)
+            else if(_difficulty > god_Normal)
             {
                 /* Arcanus Hard AI Races */
                 switch (Random(5) - 1)
@@ -1513,9 +1529,9 @@ void Generate_Home_City__GEMINI(void)
             }
 
             /* High Elves must start in a Forest */
-            if (_CITIES[_cities].race == rt_High_Elf)
+            if(_CITIES[_cities].race == rt_High_Elf)
             {
-                if (!Square_Is_Forest_NewGame(_FORTRESSES[itr].wx, _FORTRESSES[itr].wy, _FORTRESSES[itr].wp))
+                if(!Square_Is_Forest_NewGame(_FORTRESSES[itr].wx, _FORTRESSES[itr].wy, _FORTRESSES[itr].wp))
                 {
                     /* Failed forest check, restart placement for all players */
                     goto @@Loop_Location;
@@ -1534,7 +1550,7 @@ void Generate_Home_City__GEMINI(void)
         _CITIES[_cities].Prod_Accu = 0;
         _CITIES[_cities].Pop_10s = 0;
 
-        if (itr == 0)
+        if(itr == 0)
         {
             _CITIES[_cities].construction = bt_Housing;
         }
@@ -1572,7 +1588,7 @@ void Generate_Home_City__GEMINI(void)
         _CITIES[_cities].Nightshade = 0;
         _CITIES[_cities].farmer_count = 3;
 
-        for (bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
+        for(bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
         {
             _CITIES[_cities].Buildings[bldg_idx] = bs_NotBuilt;
         }
@@ -1587,7 +1603,7 @@ void Generate_Home_City__GEMINI(void)
     }
 
     /* Create Starting Units - Loop 1 (Spearmen/Early Unit) */
-    for (itr = 0; itr < _num_players; itr++)
+    for(itr = 0; itr < _num_players; itr++)
     {
         switch (_CITIES[itr].race)
         {
@@ -1609,14 +1625,14 @@ void Generate_Home_City__GEMINI(void)
         }
 
         /* Dwarves don't get spearmen in the first pass */
-        if (_CITIES[itr].race != rt_Dwarf)
+        if(_CITIES[itr].race != rt_Dwarf)
         {
             Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
         }
     }
 
     /* Create Starting Units - Loop 2 (Swordsmen/Second Unit) */
-    for (itr = 0; itr < _num_players; itr++)
+    for(itr = 0; itr < _num_players; itr++)
     {
         switch (_CITIES[itr].race)
         {
@@ -1638,7 +1654,7 @@ void Generate_Home_City__GEMINI(void)
         }
 
         /* Dwarves get two swordsmen */
-        if (_CITIES[itr].race == rt_Dwarf)
+        if(_CITIES[itr].race == rt_Dwarf)
         {
             Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
         }
@@ -5381,7 +5397,7 @@ void Generate_Neutral_Cities(int16_t wp)
 
             // ; select a random Arcanian race except high elves, with
             // ; high men having double chance, and save its index
-            // ; into the element of the array corresponding to di
+            // ; into the element of the array corresponding to itr2
 
             // BUGBUG  cmp     bx, 12                            ; switch 13 cases
             switch((Random(NUM_RACES_ARCANUS) - 1))
@@ -5407,7 +5423,7 @@ void Generate_Neutral_Cities(int16_t wp)
         {
 
             // ; select a random Myrran race and save its index into
-            // ; the element of the array corresponding to di
+            // ; the element of the array corresponding to itr2
 
             switch((Random(NUM_RACES_MYRROR) - 1))
             {
@@ -6083,17 +6099,11 @@ MGC  ovr055 OON function  CRP_NEWG_CreatePathGrid__STUB()
 */
 void CRP_NEWG_CreatePathGrids__WIP(int16_t wp)
 {
-
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-
-    // TODO  EMM_Map4_EMMDATAH()
-
+    EMMDATAH_Map();
     CRP_NEWG_CreatePathGrid__STUB(&movement_mode_cost_maps[wp].walking.moves2[0], &UU_TBL_1[wp]);
-
     CRP_NEWG_CreatePathGrid__STUB(&movement_mode_cost_maps[wp].sailing.moves2[0], &UU_TBL_2[wp]);
-
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-
 }
 
 
@@ -6643,7 +6653,7 @@ void Movement_Mode_Cost_Maps(int16_t wp)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    // TODO  EMM_Map4_EMMDATAH();
+    EMMDATAH_Map();
 
     for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
     {
@@ -7646,7 +7656,381 @@ void o51p54_empty_function(void)
 
 // MGC o54p01
 // drake178: CRP_SPATH_Arbitrary()
-// CRP_SPATH_Arbitrary()
+/*
+; the arrays created by this function are never used
+; by the game, and can be repurposed even though they
+; are part of the save game file
+;
+; a brute force shortest path algorithm that fills the
+; passed arrays with the result, returning the length
+; of the path in tiles, or 0 if none found
+;
+; WARNING: uses global arrays limited to a maximum map
+; size of 225 tiles and path length of 100, with no
+; wrapping possible on either axis
+*/
+/*
+    Structure map — see doc/PathFinding/MoM-MovePath-Compare.md
+
+    All three MoM shortest-path solvers share a 5-step skeleton (that doc, "The shared skeleton").
+    This variant (NIU, fully parameterized) maps to it as follows; the inline [Prelude] / [Skeleton step N]
+    labels below mark each section:
+
+        [Prelude]        rebuild 9 edge/corner adjacency-offset tables from Wdt (recomputed every call)
+        [Skeleton 2]     bail if target / source tile is impassable
+        [Skeleton 1]     init parallel arrays: predecessor (SourceTiles) = self, cost (Costs) = INF, source = 0
+        [Skeleton 3]     relaxation sweep to fixed point — single fixed-direction raster (while Map_Changed)
+        [Skeleton 4]     back-trace target -> predecessor self-link; success iff self-link == source
+        [Skeleton 5]     reverse collected indices and convert 1-D index -> (x, y)
+*/
+int16_t CRP_SPATH_Arbitrary(int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Wdt, int16_t Hgt, uint8_t * Map, uint8_t * Xs, uint8_t * Ys)
+{
+    int16_t Bottom_Row_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Top_Row_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Bottom_Right_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Bottom_Left_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Top_Right_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Top_Left_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Right_Col_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Left_Col_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Mid_Tile_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Path_Length = 0;
+    uint8_t Cost_From_Adjacent = 0;
+    int16_t Total_Tiles = 0;
+    int16_t Current_Tile_Cost = 0;
+    int16_t Inner_Col_Height = 0;
+    int16_t Adjacent_Tile_Cost = 0;
+    int16_t Inner_Row_Length = 0;
+    int16_t Row_LoopVar = 0;
+    int16_t Col_LoopVar = 0;
+    int16_t Current_Source = 0;
+    int16_t Adjacent_Tile_Offset = 0;
+    int16_t Map_Changed = 0;
+    int16_t Loop_Var = 0;
+    int16_t cx = 0;
+    int16_t si = 0;
+
+    /* [Prelude]  Rebuild the 9 edge/corner adjacency-offset tables from Wdt — recomputed every call (MoM-MovePath-Compare.md, "CRP_SPATH_Arbitrary"). */
+    /* Initializing Adjacency lists offsets based on Wdt */
+    Mid_Tile_Adjacents[0] = -Wdt - 1;
+    Mid_Tile_Adjacents[1] = -Wdt;
+    Mid_Tile_Adjacents[2] = -Wdt + 1;
+    Mid_Tile_Adjacents[3] = -1;
+    Mid_Tile_Adjacents[4] = 1;
+    Mid_Tile_Adjacents[5] = Wdt - 1;
+    Mid_Tile_Adjacents[6] = Wdt;
+    Mid_Tile_Adjacents[7] = Wdt + 1;
+
+    Left_Col_Adjacents[0] = -Wdt;
+    Left_Col_Adjacents[1] = -Wdt + 1;
+    Left_Col_Adjacents[2] = 1;
+    Left_Col_Adjacents[3] = Wdt;
+    Left_Col_Adjacents[4] = Wdt + 1;
+
+    Right_Col_Adjacents[0] = -Wdt - 1;
+    Right_Col_Adjacents[1] = -Wdt;
+    Right_Col_Adjacents[2] = -1;
+    Right_Col_Adjacents[3] = Wdt;
+    Right_Col_Adjacents[4] = Wdt - 1;
+
+    Top_Left_Adjacents[0] = 1;
+    Top_Left_Adjacents[1] = Wdt;
+    Top_Left_Adjacents[2] = Wdt + 1;
+
+    Top_Right_Adjacents[0] = -1;
+    Top_Right_Adjacents[1] = Wdt;
+    Top_Right_Adjacents[2] = Wdt - 1;
+
+    Bottom_Left_Adjacents[0] = 1;
+    Bottom_Left_Adjacents[1] = -Wdt;
+    Bottom_Left_Adjacents[2] = -Wdt + 1;
+
+    Bottom_Right_Adjacents[0] = -1;
+    Bottom_Right_Adjacents[1] = -Wdt;
+    Bottom_Right_Adjacents[2] = -Wdt - 1;
+
+    Top_Row_Adjacents[0] = -1;
+    Top_Row_Adjacents[1] = 1;
+    Top_Row_Adjacents[2] = Wdt;
+    Top_Row_Adjacents[3] = Wdt - 1;
+    Top_Row_Adjacents[4] = Wdt + 1;
+
+    Bottom_Row_Adjacents[0] = -1;
+    Bottom_Row_Adjacents[1] = 1;
+    Bottom_Row_Adjacents[2] = -Wdt;
+    Bottom_Row_Adjacents[3] = -Wdt - 1;
+    Bottom_Row_Adjacents[4] = -Wdt + 1;
+
+    Path_Length = 0;
+
+    /* [Skeleton step 2]  Bail if the target or source tile is impassable (MoM-MovePath-Compare.md, "The shared skeleton"). */
+    /* Verify target tile is passable */
+    if(Map[TgtY * Wdt + TgtX] == INF)
+    {
+        return 0;
+    }
+
+    /* Verify source tile is passable */
+    if(Map[SrcY * Wdt + SrcX] == INF)
+    {
+        return 0;
+    }
+
+    /* [Skeleton step 1]  Two parallel arrays: predecessor CRP_SPATH_SourceTiles[] init to self; cost CRP_SPATH_Costs[] init INF, source = 0 (MoM-MovePath-Compare.md, "The shared skeleton"). */
+    Total_Tiles = Wdt * Hgt;
+
+    for (Loop_Var = 0; Loop_Var < Total_Tiles; Loop_Var++)
+    {
+        CRP_SPATH_SourceTiles[Loop_Var] = Loop_Var;
+    }
+
+    for (Loop_Var = 0; Loop_Var < Total_Tiles; Loop_Var++)
+    {
+        CRP_SPATH_Costs[Loop_Var] = INF;
+    }
+
+    CRP_SPATH_Costs[SrcY * Wdt + SrcX] = 0;
+
+    /* [Skeleton step 3]  Relaxation sweep to fixed point — single fixed-direction raster (MoM-MovePath-Compare.md, "The shared skeleton" / "CRP_SPATH_Arbitrary").
+       Per pass the raster walks: top-left corner, top row, top-right corner, then each middle row (left column, inner tiles, right column), bottom-left corner, bottom row, bottom-right corner. */
+    Map_Changed = ST_TRUE;
+    while(Map_Changed == ST_TRUE)
+    {
+        Map_Changed = 0;
+        Inner_Row_Length = Wdt - 2;
+        Inner_Col_Height = Hgt - 2;
+        si = 0;
+
+        /* Top-Left Corner (si = 0) */
+        Current_Tile_Cost = Map[si];
+        if(Current_Tile_Cost != INF)
+        {
+            Current_Source = CRP_SPATH_SourceTiles[si];
+            for (cx = 0; cx < 3; cx++)
+            {
+                Adjacent_Tile_Offset = si + Top_Left_Adjacents[cx];
+                Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+                if(Adjacent_Tile_Cost != INF)
+                {
+                    Cost_From_Adjacent = (uint8_t)(Adjacent_Tile_Cost + Current_Tile_Cost);
+                    if(CRP_SPATH_Costs[si] > Cost_From_Adjacent)
+                    {
+                        CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
+                        CRP_SPATH_Costs[si] = Cost_From_Adjacent;
+                        if(CRP_SPATH_SourceTiles[si] != Current_Source)
+                        {
+                            Map_Changed = 1;
+                        }
+                    }
+                }
+            }
+        }
+        si++;
+
+        /* Top Row Inner Tiles (si = 1 to Wdt - 2) */
+        for (Row_LoopVar = 0; Row_LoopVar < Inner_Row_Length; Row_LoopVar++) {
+            Current_Tile_Cost = Map[si];
+            if(Current_Tile_Cost != INF) {
+                Current_Source = CRP_SPATH_SourceTiles[si];
+                for (cx = 0; cx < 5; cx++) {
+                    Adjacent_Tile_Offset = si + Top_Row_Adjacents[cx];
+                    Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+                    if(Adjacent_Tile_Cost != INF) {
+                        Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
+                        if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
+                            CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
+                            CRP_SPATH_Costs[si] = Cost_From_Adjacent;
+                            if(CRP_SPATH_SourceTiles[si] != Current_Source) {
+                                Map_Changed = 1;
+                            }
+                        }
+                    }
+                }
+            }
+            si++;
+        }
+
+        /* Top-Right Corner (si = Wdt - 1) */
+        Current_Tile_Cost = Map[si];
+        if(Current_Tile_Cost != INF) {
+            Current_Source = CRP_SPATH_SourceTiles[si];
+            for (cx = 0; cx < 3; cx++) {
+                Adjacent_Tile_Offset = si + Top_Right_Adjacents[cx];
+                Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+                if(Adjacent_Tile_Cost != INF) {
+                    Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
+                    if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
+                        CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
+                        CRP_SPATH_Costs[si] = Cost_From_Adjacent;
+                        if(CRP_SPATH_SourceTiles[si] != Current_Source) {
+                            Map_Changed = 1;
+                        }
+                    }
+                }
+            }
+        }
+        si++;
+
+        /* Middle Rows (row 1 to Hgt - 2) */
+        for (Col_LoopVar = 0; Col_LoopVar < Inner_Col_Height; Col_LoopVar++) {
+            /* Left Column */
+            Current_Tile_Cost = Map[si];
+            if(Current_Tile_Cost != INF) {
+                Current_Source = CRP_SPATH_SourceTiles[si];
+                for (cx = 0; cx < 5; cx++) {
+                    Adjacent_Tile_Offset = si + Left_Col_Adjacents[cx];
+                    Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+                    if(Adjacent_Tile_Cost != INF) {
+                        Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
+                        if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
+                            CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
+                            CRP_SPATH_Costs[si] = Cost_From_Adjacent;
+                            if(CRP_SPATH_SourceTiles[si] != Current_Source) {
+                                Map_Changed = 1;
+                            }
+                        }
+                    }
+                }
+            }
+            si++;
+
+            /* Inner Row Tiles */
+            for (Row_LoopVar = 0; Row_LoopVar < Inner_Row_Length; Row_LoopVar++) {
+                Current_Tile_Cost = Map[si];
+                if(Current_Tile_Cost != INF) {
+                    Current_Source = CRP_SPATH_SourceTiles[si];
+                    for (cx = 0; cx < 8; cx++) {
+                        Adjacent_Tile_Offset = si + Mid_Tile_Adjacents[cx];
+                        Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+                        if(Adjacent_Tile_Cost != INF) {
+                            Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
+                            if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
+                                CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
+                                CRP_SPATH_Costs[si] = Cost_From_Adjacent;
+                                if(CRP_SPATH_SourceTiles[si] != Current_Source) {
+                                    Map_Changed = 1;
+                                }
+                            }
+                        }
+                    }
+                }
+                si++;
+            }
+
+            /* Right Column */
+            Current_Tile_Cost = Map[si];
+            if(Current_Tile_Cost != INF) {
+                Current_Source = CRP_SPATH_SourceTiles[si];
+                for (cx = 0; cx < 5; cx++) {
+                    Adjacent_Tile_Offset = si + Right_Col_Adjacents[cx];
+                    Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+                    if(Adjacent_Tile_Cost != INF) {
+                        Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
+                        if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
+                            CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
+                            CRP_SPATH_Costs[si] = Cost_From_Adjacent;
+                            if(CRP_SPATH_SourceTiles[si] != Current_Source) {
+                                Map_Changed = 1;
+                            }
+                        }
+                    }
+                }
+            }
+            si++;
+        }
+
+        /* Bottom-Left Corner */
+        Current_Tile_Cost = Map[si];
+        if(Current_Tile_Cost != INF) {
+            Current_Source = CRP_SPATH_SourceTiles[si];
+            for (cx = 0; cx < 3; cx++) {
+                Adjacent_Tile_Offset = si + Bottom_Left_Adjacents[cx];
+                Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+                if(Adjacent_Tile_Cost != INF) {
+                    Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
+                    if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
+                        CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
+                        CRP_SPATH_Costs[si] = Cost_From_Adjacent;
+                        if(CRP_SPATH_SourceTiles[si] != Current_Source) {
+                            Map_Changed = 1;
+                        }
+                    }
+                }
+            }
+        }
+        si++;
+
+        /* Bottom Row Inner Tiles */
+        for (Row_LoopVar = 0; Row_LoopVar < Inner_Row_Length; Row_LoopVar++) {
+            Current_Tile_Cost = Map[si];
+            if(Current_Tile_Cost != INF) {
+                Current_Source = CRP_SPATH_SourceTiles[si];
+                for (cx = 0; cx < 5; cx++) {
+                    Adjacent_Tile_Offset = si + Bottom_Row_Adjacents[cx];
+                    Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+                    if(Adjacent_Tile_Cost != INF) {
+                        Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
+                        if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
+                            CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
+                            CRP_SPATH_Costs[si] = Cost_From_Adjacent;
+                            if(CRP_SPATH_SourceTiles[si] != Current_Source) {
+                                Map_Changed = 1;
+                            }
+                        }
+                    }
+                }
+            }
+            si++;
+        }
+
+        /* Bottom-Right Corner */
+        Current_Tile_Cost = Map[si];
+        if(Current_Tile_Cost != INF) {
+            Current_Source = CRP_SPATH_SourceTiles[si];
+            for (cx = 0; cx < 3; cx++) {
+                Adjacent_Tile_Offset = si + Bottom_Right_Adjacents[cx];
+                Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+                if(Adjacent_Tile_Cost != INF) {
+                    Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
+                    if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
+                        CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
+                        CRP_SPATH_Costs[si] = Cost_From_Adjacent;
+                        if(CRP_SPATH_SourceTiles[si] != Current_Source) {
+                            Map_Changed = ST_TRUE;
+                        }
+                    }
+                }
+            }
+        }
+        si++;
+    }
+
+    /* [Skeleton step 4]  Back-trace from the target through predecessor links until a self-link; success iff that self-link == source (MoM-MovePath-Compare.md, "The shared skeleton"). */
+    Path_Length = 0;
+    si = TgtY * Wdt + TgtX;
+
+    while(CRP_SPATH_SourceTiles[si] != si)
+    {
+        CRP_SPATH_Reverse[Path_Length] = si;
+        si = CRP_SPATH_SourceTiles[si];
+        Path_Length++;
+    }
+
+    if(si != SrcY * Wdt + SrcX)
+    {
+        return 0;
+    }
+
+    /* [Skeleton step 5]  Reverse the collected indices and convert each 1-D tile index back to (x, y) (MoM-MovePath-Compare.md, "The shared skeleton"). */
+    for (Loop_Var = 0; Loop_Var < Path_Length; Loop_Var++) {
+        Xs[Loop_Var] = (unsigned char)(CRP_SPATH_Reverse[Path_Length - 1 - Loop_Var] % Wdt);
+        Ys[Loop_Var] = (unsigned char)(CRP_SPATH_Reverse[Path_Length - 1 - Loop_Var] / Wdt);
+    }
+
+    return Path_Length;
+}
+
+
 // MGC o54p02
 // drake178: UU_SPATH_Segmented()
 // UU_SPATH_Segmented()
@@ -7670,12 +8054,335 @@ void o51p54_empty_function(void)
 
 // drake178: CRP_NEWG_CreatePathGrid()
 /*
+; the arrays created by this function are never used
+; by the game, and can be repurposed even though they
+; are part of the save game file
+;
+; creates a road map type structure slicing the passed
+; map into 5 by 5 segments, and representing the
+; available paths out of each one as a single byte
+; bitflag
+;
+; WARNING: matching the connections in the end means
+; that they may be present even if the original
+; criteria are not actually satisfied from a direction
 */
 /*
+12x8 of 5x5 = 60x40
+
 */
-static void CRP_NEWG_CreatePathGrid__STUB(void * moves2, void * move_path_chunks)
+void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map)
 {
+    /* CLAUDE  uint8_t (was int8_t) to match CRP_SPATH_Arbitrary's uint8_t* Map/Xs/Ys params (C4057). Section maps hold unsigned cost bytes (impassable 0xFF); Retn arrays hold small coords. */
+    uint8_t Y_Retn_Array[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t X_Retn_Array[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t LeftRight_Section_Map[35] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t TopBottom_Section_Map[35] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t Passable_Direction_Flags = 0;
+    int16_t TgtY = 0;
+    int16_t Target_X = 0;
+    int16_t Adjacent_Section_X = 0;
+    int16_t Path_Length = 0;
+    int16_t Y_Modifier = 0;
+    int16_t SrcY = 0;
+    int16_t Source_X = 0;
+    int16_t X_LoopVar = 0;
+    int16_t Y_LoopVar = 0;
+    int16_t Y_GridIndex_2 = 0;
+    int16_t X_GridIndex_2 = 0;
+    int16_t X_GridBase = 0;
+    int16_t X_GridIndex = 0;
+    int16_t Y_GridIndex = 0;
+    int16_t itr1 = 0;
+    int16_t itr2 = 0;
 
+    itr1 = 0;
+    for(Y_GridIndex = 0; Y_GridIndex < 8; Y_GridIndex++)
+    {
+        X_GridBase = 0;
+        for(X_GridIndex = 0; X_GridIndex < 12; X_GridIndex++)
+        {
+            Passable_Direction_Flags = 0;
+            if(Y_GridIndex != 0)
+            {
+                if(move_map[itr1 * WORLD_WIDTH + X_GridBase] != (char)-1)
+                {
+                    if(move_map[(itr1 - 1) * WORLD_WIDTH + X_GridBase] != (char)-1 ||
+                        move_map[(itr1 - 1) * WORLD_WIDTH + X_GridBase + 1] != (char)-1)
+                    {
+                        Passable_Direction_Flags |= 1;
+                    }
+                }
+                for(X_LoopVar = X_GridBase + 1; X_LoopVar < X_GridBase + 4 && !(Passable_Direction_Flags & 1); X_LoopVar++)
+                {
+                    if(move_map[itr1 * WORLD_WIDTH + X_LoopVar] != (char)-1)
+                    {
+                        if(move_map[(itr1 - 1) * WORLD_WIDTH + X_LoopVar - 1] != (char)-1 ||
+                            move_map[(itr1 - 1) * WORLD_WIDTH + X_LoopVar] != (char)-1 ||
+                            move_map[(itr1 - 1) * WORLD_WIDTH + X_LoopVar + 1] != (char)-1)
+                        {
+                            Passable_Direction_Flags |= 1;
+                        }
+                    }
+                }
+                if(move_map[itr1 * WORLD_WIDTH + X_GridBase + 4] != (char)-1 && !(Passable_Direction_Flags & 1))
+                {
+                    if(move_map[(itr1 - 1) * WORLD_WIDTH + X_GridBase + 4] != (char)-1 ||
+                        move_map[(itr1 - 1) * WORLD_WIDTH + X_GridBase + 3] != (char)-1)
+                    {
+                        Passable_Direction_Flags |= 1;
+                    }
+                }
+                if(Passable_Direction_Flags & 1)
+                {
+                    Passable_Direction_Flags |= 0x10;
+                }
+                Path_Length = 0;
+                for(Y_Modifier = 0; Y_Modifier < 7; Y_Modifier++)
+                {
+                    for(itr2 = 0; itr2 < 5; itr2++)
+                    {
+                        TopBottom_Section_Map[Y_Modifier * 5 + itr2] = move_map[(itr1 + Y_Modifier - 1) * WORLD_WIDTH + X_GridBase + itr2];
+                    }
+                }
+                if(Y_GridIndex == 7)
+                {
+                    for(itr2 = 0; itr2 < 5; itr2++)
+                    {
+                        TopBottom_Section_Map[30 + itr2] = (char)-1;
+                    }
+                }
+                for(Source_X = 0; Source_X < 5 && Path_Length == 0; Source_X++)
+                {
+                    for(Target_X = 0; Target_X < 5 && Path_Length == 0; Target_X++)
+                    {
+                        Path_Length += CRP_SPATH_Arbitrary(Source_X, 4, Target_X, 0, 5, 7, TopBottom_Section_Map, X_Retn_Array, Y_Retn_Array);
+                    }
+                }
+                if(Path_Length == 0)
+                {
+                    Passable_Direction_Flags &= ~1;
+                }
+            }
 
+            if(Y_GridIndex != 7)
+            {
+                if(move_map[(itr1 + 4) * WORLD_WIDTH + X_GridBase] != (char)-1)
+                {
+                    if(move_map[(itr1 + 5) * WORLD_WIDTH + X_GridBase] != (char)-1 ||
+                        move_map[(itr1 + 5) * WORLD_WIDTH + X_GridBase + 1] != (char)-1)
+                    {
+                        Passable_Direction_Flags |= 4;
+                    }
+                }
+                for(X_LoopVar = X_GridBase + 1; X_LoopVar < X_GridBase + 4 && !(Passable_Direction_Flags & 4); X_LoopVar++)
+                {
+                    if(move_map[(itr1 + 4) * WORLD_WIDTH + X_LoopVar] != (char)-1)
+                    {
+                        if(move_map[(itr1 + 5) * WORLD_WIDTH + X_LoopVar - 1] != (char)-1 ||
+                            move_map[(itr1 + 5) * WORLD_WIDTH + X_LoopVar] != (char)-1 ||
+                            move_map[(itr1 + 5) * WORLD_WIDTH + X_LoopVar + 1] != (char)-1)
+                        {
+                            Passable_Direction_Flags |= 4;
+                        }
+                    }
+                }
+                if(move_map[(itr1 + 4) * WORLD_WIDTH + X_GridBase + 4] != (char)-1 && !(Passable_Direction_Flags & 4))
+                {
+                    if(move_map[(itr1 + 5) * WORLD_WIDTH + X_GridBase + 4] != (char)-1 ||
+                        move_map[(itr1 + 5) * WORLD_WIDTH + X_GridBase + 3] != (char)-1)
+                    {
+                        Passable_Direction_Flags |= 4;
+                    }
+                }
+                if(Passable_Direction_Flags & 4)
+                {
+                    Passable_Direction_Flags |= 0x40;
+                }
+                Path_Length = 0;
+                for(Y_Modifier = 0; Y_Modifier < 7; Y_Modifier++)
+                {
+                    for(itr2 = 0; itr2 < 5; itr2++)
+                    {
+                        TopBottom_Section_Map[Y_Modifier * 5 + itr2] = move_map[(itr1 + Y_Modifier - 1) * WORLD_WIDTH + X_GridBase + itr2];
+                    }
+                }
+                if(Y_GridIndex == 0)
+                {
+                    for(itr2 = 0; itr2 < 5; itr2++)
+                    {
+                        TopBottom_Section_Map[itr2] = (char)-1;
+                    }
+                }
+                for(Source_X = 0; Source_X < 5 && Path_Length == 0; Source_X++)
+                {
+                    for(Target_X = 0; Target_X < 5 && Path_Length == 0; Target_X++)
+                    {
+                        Path_Length += CRP_SPATH_Arbitrary(Source_X, 2, Target_X, 6, 5, 7, TopBottom_Section_Map, X_Retn_Array, Y_Retn_Array);
+                    }
+                }
+                if(Path_Length == 0)
+                {
+                    Passable_Direction_Flags &= ~4;
+                }
+            }
+
+            Adjacent_Section_X = X_GridBase - 1;
+            if(Adjacent_Section_X < 0)
+            {
+                Adjacent_Section_X += WORLD_WIDTH;
+            }
+            if(move_map[itr1 * WORLD_WIDTH + X_GridBase] != (char)-1)
+            {
+                if(move_map[itr1 * WORLD_WIDTH + Adjacent_Section_X] != (char)-1 ||
+                    move_map[(itr1 + 1) * WORLD_WIDTH + Adjacent_Section_X] != (char)-1)
+                {
+                    Passable_Direction_Flags |= 8;
+                }
+            }
+            for(Y_LoopVar = itr1 + 1; Y_LoopVar < itr1 + 4 && !(Passable_Direction_Flags & 8); Y_LoopVar++)
+            {
+                if(move_map[Y_LoopVar * WORLD_WIDTH + X_GridBase] != (char)-1)
+                {
+                    if(move_map[(Y_LoopVar - 1) * WORLD_WIDTH + Adjacent_Section_X] != (char)-1 ||
+                        move_map[Y_LoopVar * WORLD_WIDTH + Adjacent_Section_X] != (char)-1 ||
+                        move_map[(Y_LoopVar + 1) * WORLD_WIDTH + Adjacent_Section_X] != (char)-1)
+                    {
+                        Passable_Direction_Flags |= 8;
+                    }
+                }
+            }
+            if(move_map[(itr1 + 4) * WORLD_WIDTH + X_GridBase] != (char)-1 && !(Passable_Direction_Flags & 8))
+            {
+                if(move_map[(itr1 + 4) * WORLD_WIDTH + Adjacent_Section_X] != (char)-1 ||
+                    move_map[(itr1 + 3) * WORLD_WIDTH + Adjacent_Section_X] != (char)-1)
+                {
+                    Passable_Direction_Flags |= 8;
+                }
+            }
+            if(Passable_Direction_Flags & 8)
+            {
+                Passable_Direction_Flags |= 0x80;
+            }
+            Path_Length = 0;
+            for(Y_Modifier = 0; Y_Modifier < 5; Y_Modifier++)
+            {
+                for(itr2 = 0; itr2 < 7; itr2++)
+                {
+                    LeftRight_Section_Map[Y_Modifier * 7 + itr2] = move_map[(itr1 + Y_Modifier) * WORLD_WIDTH + X_GridBase + itr2 - 1];
+                }
+            }
+            if(X_GridIndex == 0)
+            {
+                for(Y_Modifier = 0; Y_Modifier < 5; Y_Modifier++)
+                {
+                    LeftRight_Section_Map[Y_Modifier * 7] = move_map[(itr1 + Y_Modifier) * WORLD_WIDTH + 59];
+                }
+            }
+            for(SrcY = 0; SrcY < 5 && Path_Length == 0; SrcY++)
+            {
+                for(TgtY = 0; TgtY < 5 && Path_Length == 0; TgtY++)
+                {
+                    Path_Length += CRP_SPATH_Arbitrary(4, SrcY, 0, TgtY, 7, 5, LeftRight_Section_Map, X_Retn_Array, Y_Retn_Array);
+                }
+            }
+            if(Path_Length == 0)
+            {
+                Passable_Direction_Flags &= ~8;
+            }
+
+            Adjacent_Section_X = X_GridBase + 1;
+            if(Adjacent_Section_X >= WORLD_WIDTH)
+            {
+                Adjacent_Section_X -= WORLD_WIDTH;
+            }
+            if(move_map[itr1 * WORLD_WIDTH + X_GridBase] != (char)-1)
+            {
+                if(move_map[itr1 * WORLD_WIDTH + Adjacent_Section_X] != (char)-1 ||
+                    move_map[(itr1 + 1) * WORLD_WIDTH + Adjacent_Section_X] != (char)-1)
+                {
+                    Passable_Direction_Flags |= 2;
+                }
+            }
+            for(Y_LoopVar = itr1 + 1; Y_LoopVar < itr1 + 4 && !(Passable_Direction_Flags & 2); Y_LoopVar++)
+            {
+                if(move_map[Y_LoopVar * WORLD_WIDTH + X_GridBase] != (char)-1)
+                {
+                    if(move_map[(Y_LoopVar - 1) * WORLD_WIDTH + Adjacent_Section_X] != (char)-1 ||
+                        move_map[Y_LoopVar * WORLD_WIDTH + Adjacent_Section_X] != (char)-1 ||
+                        move_map[(Y_LoopVar + 1) * WORLD_WIDTH + Adjacent_Section_X] != (char)-1)
+                    {
+                        Passable_Direction_Flags |= 2;
+                    }
+                }
+            }
+            if(move_map[(itr1 + 4) * WORLD_WIDTH + X_GridBase] != (char)-1 && !(Passable_Direction_Flags & 2))
+            {
+                if(move_map[(itr1 + 4) * WORLD_WIDTH + Adjacent_Section_X] != (char)-1 ||
+                    move_map[(itr1 + 3) * WORLD_WIDTH + Adjacent_Section_X] != (char)-1)
+                {
+                    Passable_Direction_Flags |= 2;
+                }
+            }
+            if(Passable_Direction_Flags & 2)
+            {
+                Passable_Direction_Flags |= 0x20;
+            }
+            Path_Length = 0;
+            for(Y_Modifier = 0; Y_Modifier < 5; Y_Modifier++)
+            {
+                for(itr2 = 0; itr2 < 7; itr2++)
+                {
+                    LeftRight_Section_Map[Y_Modifier * 7 + itr2] = move_map[(itr1 + Y_Modifier) * WORLD_WIDTH + X_GridBase + itr2 - 1];
+                }
+            }
+            if(X_GridIndex == 11)
+            {
+                for(Y_Modifier = 0; Y_Modifier < 5; Y_Modifier++)
+                {
+                    LeftRight_Section_Map[Y_Modifier * 7 + 6] = move_map[(itr1 + Y_Modifier) * WORLD_WIDTH];
+                }
+            }
+            for(SrcY = 0; SrcY < 5 && Path_Length == 0; SrcY++)
+            {
+                for(TgtY = 0; TgtY < 5 && Path_Length == 0; TgtY++)
+                {
+                    Path_Length += CRP_SPATH_Arbitrary(2, SrcY, 6, TgtY, 7, 5, LeftRight_Section_Map, X_Retn_Array, Y_Retn_Array);
+                }
+            }
+            if(Path_Length == 0)
+            {
+                Passable_Direction_Flags &= ~2;
+            }
+
+            result_map[Y_GridIndex * 12 + X_GridIndex] = (char)Passable_Direction_Flags;
+            X_GridBase += 5;
+        }
+        itr1 += 5;
+    }
+
+    for(Y_GridIndex_2 = 0; Y_GridIndex_2 < 8; Y_GridIndex_2++)
+    {
+        for(X_GridIndex_2 = 0; X_GridIndex_2 < 12; X_GridIndex_2++)
+        {
+            if((result_map[Y_GridIndex_2 * 12 + X_GridIndex_2] & 1) && Y_GridIndex_2 != 0)
+            {
+                result_map[(Y_GridIndex_2 - 1) * 12 + X_GridIndex_2] |= 4;
+            }
+            if((result_map[Y_GridIndex_2 * 12 + X_GridIndex_2] & 4) && Y_GridIndex_2 < 7)
+            {
+                result_map[(Y_GridIndex_2 + 1) * 12 + X_GridIndex_2] |= 1;
+            }
+            if((result_map[Y_GridIndex_2 * 12 + X_GridIndex_2] & 8) && X_GridIndex_2 != 0)
+            {
+                result_map[Y_GridIndex_2 * 12 + X_GridIndex_2 - 1] |= 2;
+            }
+            /* OGBUG  East column bound tests the wrong loop variable: the asm (ovr055, loc_5227A) does `cmp [bp+Y_GridIndex_2], 0Bh; jge` -- it compares the ROW index Y_GridIndex_2 to 11, not the COLUMN index X_GridIndex_2. Since Y_GridIndex_2 is in [0,7], `< 11` is always true, so the East->West reciprocal bit is written even for the rightmost column (X_GridIndex_2 == 11), where the target index Y*12+12 == (Y+1)*12+0 leaks a West bit into column 0 of the next row down. Faithful to the OG; harmless because UU_TBL_1/UU_TBL_2 are NIU (never read for gameplay). Do not "fix". */
+            if((result_map[Y_GridIndex_2 * 12 + X_GridIndex_2] & 2) && Y_GridIndex_2 < 11)
+            {
+                result_map[Y_GridIndex_2 * 12 + X_GridIndex_2 + 1] |= 8;
+            }
+        }
+    }
 
 }

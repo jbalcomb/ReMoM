@@ -1674,7 +1674,7 @@ void AI_Stacks_Roamers_Target_Or_Deploy(int16_t landmass_idx, int16_t wp, int16_
         landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
     }
     /* HACK */  /* OGBUG  divide by zero, should `if(landmass_node_count > 0)` */
-    /* HACK */  if (landmass_node_count == 0)
+    /* HACK */  if(landmass_node_count == 0)
     /* HACK */  {
     /* HACK */      landmass_node_centroid_wx = 0;
     /* HACK */      landmass_node_centroid_wy = 0;
@@ -2602,7 +2602,7 @@ int16_t AI_Stacks_Assign_Target(int16_t stack_wx, int16_t stack_wy, int16_t * ta
     targets_idx = ST_UNDEFINED;
     for(itr_targets = 0; itr_targets < _ai_targets_count; itr_targets++)
     {
-        if (_ai_targets_value[itr_targets] <= 0)
+        if(_ai_targets_value[itr_targets] <= 0)
         {
             continue;
         }
@@ -2885,7 +2885,7 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
     /* Process the built stacks and assign orders, non-garrison only */
     for(itr_stacks1 = 0; itr_stacks1 < _ai_own_stack_count; itr_stacks1++)
     {
-        if (_ai_own_stack_type[itr_stacks1] != AISTK_Roamer)
+        if(_ai_own_stack_type[itr_stacks1] != AISTK_Roamer)
         {
             continue;
         }
@@ -3067,12 +3067,12 @@ void AI_Find_Opportunity_City_Target(int16_t wp, int16_t player_idx)
         for(itr_cities = 0; ((itr_cities < _cities) && (found_target == ST_FALSE)); itr_cities++)
         {
             /* Search for an adjacent enemy city that is weakly defended */
-            if (_CITIES[itr_cities].wx < min_wx) { continue; }
-            if (_CITIES[itr_cities].wx > max_wx) { continue; }
-            if (_CITIES[itr_cities].wy < min_wy) { continue; }
-            if (_CITIES[itr_cities].wy > max_wy) { continue; }
-            if (_CITIES[itr_cities].wp != wp) { continue; }
-            if (_CITIES[itr_cities].owner_idx == player_idx) { continue; }
+            if(_CITIES[itr_cities].wx < min_wx) { continue; }
+            if(_CITIES[itr_cities].wx > max_wx) { continue; }
+            if(_CITIES[itr_cities].wy < min_wy) { continue; }
+            if(_CITIES[itr_cities].wy > max_wy) { continue; }
+            if(_CITIES[itr_cities].wp != wp) { continue; }
+            if(_CITIES[itr_cities].owner_idx == player_idx) { continue; }
 
             /* Enemy city found in range, count its defenders */
             defender_count = 0;
@@ -4653,7 +4653,7 @@ void AI_Stacks_Order_Attack_Target_Or_Goto_Destination(int16_t unit_idx, int16_t
     _ai_own_stack_unit_list[stack_idx][list_unit_idx] = ST_UNDEFINED;
 
 #ifdef STU_DEBUG
-    if (target_wx == 0 && target_wy == 0)
+    if(target_wx == 0 && target_wy == 0)
     {
         LOG_DEBUG(LOG_CAT_AIMOVE, "AI_ORDERS: WARNING unit %d (owner %d type %d) at (%d,%d) assigned dst (0,0) — status=%d stack_idx=%d list_unit=%d wp=%d caller=%d", unit_idx, _UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].Status, stack_idx, list_unit_idx, _UNITS[unit_idx].wp, g_ai_set_target_caller);
     }
@@ -4975,7 +4975,7 @@ int16_t AI_Find_Tower_To_Settle_Elsewhere(int16_t player_idx, int16_t unit_idx, 
         }
     }
 
-    if (unit_is_on_tower == 1) {
+    if(unit_is_on_tower == 1) {
         return 0;
     }
 
@@ -4983,10 +4983,10 @@ int16_t AI_Find_Tower_To_Settle_Elsewhere(int16_t player_idx, int16_t unit_idx, 
     min_delta_distance = 1000;
 
     for (itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++) {
-        if (_TOWERS[itr_towers].owner_idx == player_idx) {
-            if (_landmasses[(unit_wp * WORLD_SIZE) + (_TOWERS[itr_towers].wy * WORLD_WIDTH) + _TOWERS[itr_towers].wx] == unit_landmass_idx) {
+        if(_TOWERS[itr_towers].owner_idx == player_idx) {
+            if(_landmasses[(unit_wp * WORLD_SIZE) + (_TOWERS[itr_towers].wy * WORLD_WIDTH) + _TOWERS[itr_towers].wx] == unit_landmass_idx) {
                 delta_distance = Delta_XY_With_Wrap(unit_wx, unit_wy, _TOWERS[itr_towers].wx, _TOWERS[itr_towers].wy, WORLD_WIDTH);
-                if (delta_distance < min_delta_distance) {
+                if(delta_distance < min_delta_distance) {
                     min_delta_distance = delta_distance;
                     tower_wx = _TOWERS[itr_towers].wx;
                     tower_wy = _TOWERS[itr_towers].wy;
@@ -4995,7 +4995,7 @@ int16_t AI_Find_Tower_To_Settle_Elsewhere(int16_t player_idx, int16_t unit_idx, 
         }
     }
 
-    if (min_delta_distance == 1000) {
+    if(min_delta_distance == 1000) {
         return 0;
     }
 
@@ -5424,14 +5424,14 @@ void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t w
         unit_type = _UNITS[itr_units].type;
         /* ¿ OGBUG  should skip all non-military units ? */
         /* Skip Settlers */
-        if ((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
+        if((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
         {
             continue;
         }
         /* OGBUG  should condition on same plane */
         if(_landmasses[((_UNITS[itr_units].wp * WORLD_SIZE) + (_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx)] == landmass_idx)
         {
-            if (_UNITS[itr_units].owner_idx == player_idx)
+            if(_UNITS[itr_units].owner_idx == player_idx)
             {
                 sum_own_city_wx__own_units_cost += _unit_type_table[unit_type].cost;
             }
@@ -5686,7 +5686,7 @@ void AI_Stack_Set_Destination(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
     occupied = ST_FALSE;
     for (itr = 0; itr < _units; itr++)
     {
-        if (((int8_t)_UNITS[itr].wx) == wx &&
+        if(((int8_t)_UNITS[itr].wx) == wx &&
             ((int8_t)_UNITS[itr].wy) == wy &&
             ((int8_t)_UNITS[itr].wp) == stack_wp)
         {
@@ -5697,13 +5697,13 @@ void AI_Stack_Set_Destination(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
     }
 
     /* Phase 2: Diplomatic restrictions */
-    if (occupied == ST_TRUE)
+    if(occupied == ST_TRUE)
     {
         /* If owner is not self and not Neutral Player */
-        if (occupant_owner_idx != player_idx && occupant_owner_idx != NEUTRAL_PLAYER_IDX)
+        if(occupant_owner_idx != player_idx && occupant_owner_idx != NEUTRAL_PLAYER_IDX)
         {
 
-            if (
+            if(
                 _players[player_idx].peace_duration[occupant_owner_idx] != 0
                 ||
                 _players[player_idx].Dipl.Dipl_Status[occupant_owner_idx] == DIPL_WizardPact
@@ -5717,7 +5717,7 @@ void AI_Stack_Set_Destination(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
     }
 
     /* Phase 3: Check if the stack is strategically allowed to leave current square (garrison check) */
-    if (!AI_Stack_Can_Mobilize(stack_idx, stack_wx, stack_wy, stack_wp))
+    if(!AI_Stack_Can_Mobilize(stack_idx, stack_wx, stack_wy, stack_wp))
     {
         return;
     }
@@ -5725,12 +5725,12 @@ void AI_Stack_Set_Destination(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
     /* Phase 4: Assign GOTO status to all units in the stack at current location */
     for (itr = 0; itr < _units; itr++)
     {
-        if (((int8_t)_UNITS[itr].wx) == stack_wx &&
+        if(((int8_t)_UNITS[itr].wx) == stack_wx &&
             ((int8_t)_UNITS[itr].wy) == stack_wy &&
             ((int8_t)_UNITS[itr].wp) == stack_wp)
         {
             /* Do not move units that are intended for outpost creation (Settlers/Engineers) */
-            if (!(_unit_type_table[_UNITS[itr].type].Abilities & UA_CREATEOUTPOST))
+            if(!(_unit_type_table[_UNITS[itr].type].Abilities & UA_CREATEOUTPOST))
             {
                 _UNITS[itr].Status = us_GOTO;
                 _UNITS[itr].dst_wx = (int8_t)wx;
@@ -6102,7 +6102,7 @@ int16_t Make_Monster_List(int16_t budget, int16_t lair_race, int16_t * unit_type
 
     current_budget = budget;
 
-    if (current_budget < 0)
+    if(current_budget < 0)
     {
         current_budget = 0;
     }
@@ -6111,7 +6111,7 @@ int16_t Make_Monster_List(int16_t budget, int16_t lair_race, int16_t * unit_type
     tries = 0;
 
     /* Loop continues while budget is at least 25 and we haven't exceeded 2000 attempts */
-    while (current_budget >= 25 && tries < 2000)
+    while(current_budget >= 25 && tries < 2000)
     {
         /* Generate a random unit index from the pool of rampage monsters */
         /* OGBUG  should be Random(44) */
@@ -6161,7 +6161,7 @@ int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
 
     for (itr = 0; itr < _cities; itr++)
     {
-        if (_CITIES[itr].wx == wx && 
+        if(_CITIES[itr].wx == wx && 
             _CITIES[itr].wy == wy && 
             _CITIES[itr].wp == wp)
         {
@@ -6170,17 +6170,17 @@ int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
         }
     }
 
-    if (square_has_city == ST_FALSE)
+    if(square_has_city == ST_FALSE)
     {
         return ST_TRUE;
     }
 
     /* Set minimum required defenders based on difficulty level */
-    if (_difficulty < god_Normal)
+    if(_difficulty < god_Normal)
     {
         garrison = 1;
     }
-    else if (_difficulty == god_Normal)
+    else if(_difficulty == god_Normal)
     {
         garrison = 2;
     }
@@ -6192,12 +6192,12 @@ int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
     /* Count combat-capable units at the location */
     for (itr = 0; itr < _units; itr++)
     {
-        if (garrison <= 0)
+        if(garrison <= 0)
         {
             break;
         }
 
-        if (_UNITS[itr].wx == wx && 
+        if(_UNITS[itr].wx == wx && 
             _UNITS[itr].wy == wy && 
             _UNITS[itr].wp == wp)
         {
@@ -6205,7 +6205,7 @@ int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
             unit_type = _UNITS[itr].type;
 
             /* Check if unit is a military unit (not Settler,Engineer,Boat) */
-            if (!(_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) &&
+            if(!(_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) &&
                 _unit_type_table[unit_type].Construction == 0 &&
                 _unit_type_table[unit_type].Transport == 0)
             {
@@ -6216,13 +6216,13 @@ int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
 
     /* Fortress defense check */
     // DEDU  What is the intent of the 120 turns? Is it backwards? Supports early game exploration?
-    if (unit_owner_idx != NEUTRAL_PLAYER_IDX)
+    if(unit_owner_idx != NEUTRAL_PLAYER_IDX)
     {
-        if (_FORTRESSES[unit_owner_idx].wp == wp &&
+        if(_FORTRESSES[unit_owner_idx].wp == wp &&
             _FORTRESSES[unit_owner_idx].wx == wx &&
             _FORTRESSES[unit_owner_idx].wy == wy)
         {
-            if (_turn > 120)
+            if(_turn > 120)
             {
                 return ST_FALSE;
             }
@@ -6230,7 +6230,7 @@ int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
     }
 
     /* If defense requirement met, square can be left */
-    if (garrison <= 0)
+    if(garrison <= 0)
     {
         return ST_TRUE;
     }
@@ -7367,7 +7367,7 @@ void AI_Choose_War_Landmass(int16_t player_idx)
                                 final_landmass_weights[itr_landmasses] += 1;
                                 landmass_node_index = _ai_landmass_land_squares_lists[wp][landmass_node_index];
                             }
-                            if (final_landmass_weights[itr_landmasses] < 10)
+                            if(final_landmass_weights[itr_landmasses] < 10)
                             {
                                 final_landmass_weights[itr_landmasses] = 0;
                             }

@@ -19,8 +19,8 @@ extern "C" {
 
 
 
-// #define SET_HOTKEY(_hotkey_) do { p_fields[fields_count].hotkey = (_hotkey_); if((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123)) { p_fields[fields_count].hotkey -= 32; } } while (0)
-// #define SET_HOTKEY(_hotkey_) do { p_fields[fields_count].hotkey = (_hotkey_); UPPERCASE(_hotkey_) } while (0)
+// #define SET_HOTKEY(_hotkey_) do { p_fields[fields_count].hotkey = (_hotkey_); if((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123)) { p_fields[fields_count].hotkey -= 32; } } while(0)
+// #define SET_HOTKEY(_hotkey_) do { p_fields[fields_count].hotkey = (_hotkey_); UPPERCASE(_hotkey_) } while(0)
 
 
 

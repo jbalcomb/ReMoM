@@ -620,15 +620,15 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
                     }
                 }
 
-                if (City_Count > 0)
+                if(City_Count > 0)
                 {
                     for (Y_Loop_Var = 0; Y_Loop_Var < WORLD_HEIGHT; Y_Loop_Var++)
                     {
                         for (X_Loop_Var = 0; X_Loop_Var < WORLD_WIDTH; X_Loop_Var++)
                         {
-                            if ((_map_square_flags[((city_wp * WORLD_SIZE) + ((Y_Loop_Var)*WORLD_WIDTH) + (X_Loop_Var))] & MSF_ROAD) != 0)
+                            if((_map_square_flags[((city_wp * WORLD_SIZE) + ((Y_Loop_Var)*WORLD_WIDTH) + (X_Loop_Var))] & MSF_ROAD) != 0)
                             {
-                                if (_landmasses[((city_wp * WORLD_SIZE) + (Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] == city_landmass)
+                                if(_landmasses[((city_wp * WORLD_SIZE) + (Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] == city_landmass)
                                 {
                                     movepath_cost_map->moves2[((Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] = 1;
                                 }
@@ -646,7 +646,7 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
                 for (itr_bits = 0; itr_bits < City_Count; itr_bits++)
                 {
                     City_Tile_Index = ((_CITIES[City_List[itr_bits]].wy * WORLD_WIDTH) + _CITIES[City_List[itr_bits]].wx);
-                    if (movepath_cost_map->Reach_From[City_Tile_Index] == City_Tile_Index)
+                    if(movepath_cost_map->Reach_From[City_Tile_Index] == City_Tile_Index)
                     {
                         Set_Bit_Field(City_List[itr_bits], (uint8_t*)&_CITIES[itr_cities].road_connections[0]);
                         Set_Bit_Field(itr_cities, (uint8_t*)&_CITIES[City_List[itr_bits]].road_connections[0]);

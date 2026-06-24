@@ -337,7 +337,7 @@ int16_t Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have
         {
             if(terrain_type <= tt_Rivers_end)
             {
-                if ( (terrain_type == tt_Mountain1) || (terrain_type == tt_ChaosNode) )
+                if( (terrain_type == tt_Mountain1) || (terrain_type == tt_ChaosNode) )
                 {
                     // HERE:  base/super-type 'Moutain' or 'Chaos Node'
                     production_bonus = 5;
@@ -1527,49 +1527,49 @@ int TILE_BuildingReqType__GEMINI(int XPos, int YPos, int Plane)
     terrain_type = tile_word % NUM_TERRAIN_TYPES;
 
     /* Range and Type Checks */
-    if (terrain_type >= tt_Tundra_1st)
+    if(terrain_type >= tt_Tundra_1st)
     {
         return 0; /* loc_F418D */
     }
 
-    if (terrain_type == TT_BugGrass)
+    if(terrain_type == TT_BugGrass)
     {
         return BREQ_Grass; /* loc_F41F1 */
     }
 
-    if (terrain_type < tt_Grasslands1)
+    if(terrain_type < tt_Grasslands1)
     {
         return BREQ_Water; /* loc_F41B6 */
     }
 
-    if (terrain_type > TT_4WRiver5)
+    if(terrain_type > TT_4WRiver5)
     {
         return BREQ_Water; /* loc_F41B6 */
     }
 
-    if (terrain_type > TT_Shore2_end)
+    if(terrain_type > TT_Shore2_end)
     {
         return BREQ_Grass; /* loc_F41F1 */
     }
 
-    if (terrain_type > TT_Desert_end)
+    if(terrain_type > TT_Desert_end)
     {
         return BREQ_Water; /* loc_F41B6 */
     }
 
     /* Check for Hill types */
-    if (terrain_type > tt_Hills_Lst)
+    if(terrain_type > tt_Hills_Lst)
     {
         return 0; /* loc_F418D */
     }
 
-    if (terrain_type > tt_Rivers_end)
+    if(terrain_type > tt_Rivers_end)
     {
         return BREQ_Hill; /* loc_F41FF */
     }
 
     /* Check for Forest types */
-    if (terrain_type > tt_Forest3)
+    if(terrain_type > tt_Forest3)
     {
         return BREQ_Grass; /* loc_F41F1 */
     }
@@ -1577,7 +1577,7 @@ int TILE_BuildingReqType__GEMINI(int XPos, int YPos, int Plane)
     /* Specific terrain ID switch (range 0xA2 to 0xB8) */
     /* [bp-02h] -> table_idx : unsigned int */
     table_idx = terrain_type - 0xA2;
-    if (table_idx > 0x16)
+    if(table_idx > 0x16)
     {
         return 0; /* loc_F418D */
     }

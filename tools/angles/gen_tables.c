@@ -104,10 +104,10 @@ static void emit_tables(
     printf("static const uint8_t Tangents_0_44[45] = {\n");
     for (i = 0; i < 45; i++)
     {
-        if (i % 9 == 0) printf("    ");
+        if(i % 9 == 0) printf("    ");
         printf("0x%02X", tan_0_44[i]);
-        if (i < 44) printf(",");
-        if ((i + 1) % 9 == 0 || i == 44) printf("\n");
+        if(i < 44) printf(",");
+        if((i + 1) % 9 == 0 || i == 44) printf("\n");
     }
     printf("};\n\n");
 
@@ -116,10 +116,10 @@ static void emit_tables(
     printf("static const uint16_t Tangents_45_89[45] = {\n");
     for (i = 0; i < 45; i++)
     {
-        if (i % 8 == 0) printf("    ");
+        if(i % 8 == 0) printf("    ");
         printf("0x%04X", tan_45_89[i]);
-        if (i < 44) printf(",");
-        if ((i + 1) % 8 == 0 || i == 44) printf("\n");
+        if(i < 44) printf(",");
+        if((i + 1) % 8 == 0 || i == 44) printf("\n");
     }
     printf("};\n\n");
 
@@ -128,10 +128,10 @@ static void emit_tables(
     printf("static const uint16_t angle_to_sin[90] = {\n");
     for (i = 0; i < 90; i++)
     {
-        if (i % 8 == 0) printf("    ");
+        if(i % 8 == 0) printf("    ");
         printf("0x%04X", sin_tbl[i]);
-        if (i < 89) printf(",");
-        if ((i + 1) % 8 == 0 || i == 89) printf("\n");
+        if(i < 89) printf(",");
+        if((i + 1) % 8 == 0 || i == 89) printf("\n");
     }
     printf("};\n\n");
 
@@ -140,10 +140,10 @@ static void emit_tables(
     printf("static const uint16_t angle_to_cos[90] = {\n");
     for (i = 0; i < 90; i++)
     {
-        if (i % 8 == 0) printf("    ");
+        if(i % 8 == 0) printf("    ");
         printf("0x%04X", cos_tbl[i]);
-        if (i < 89) printf(",");
-        if ((i + 1) % 8 == 0 || i == 89) printf("\n");
+        if(i < 89) printf(",");
+        if((i + 1) % 8 == 0 || i == 89) printf("\n");
     }
     printf("};\n");
 }
@@ -161,7 +161,7 @@ static int verify_table_u8(
     printf("%s  [%d entries, uint8]\n", name, count);
     for (i = 0; i < count; i++)
     {
-        if (generated[i] != expected[i])
+        if(generated[i] != expected[i])
         {
             printf("  [%2d] %2d deg: expected %3u (0x%02X), got %3u (0x%02X), diff %+d\n",
                 i, i + deg_offset,
@@ -189,7 +189,7 @@ static int verify_table_u16(
     printf("%s  [%d entries, uint16]\n", name, count);
     for (i = 0; i < count; i++)
     {
-        if (generated[i] != expected[i])
+        if(generated[i] != expected[i])
         {
             printf("  [%2d] %2d deg: expected %5u (0x%04X), got %5u (0x%04X), diff %+d\n",
                 i, i + deg_offset,
@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
     }
 
 
-    if (emit_mode)
+    if(emit_mode)
     {
         emit_tables(gen_tan_0_44, gen_tan_45_89, gen_sin, gen_cos);
         return 0;
@@ -296,7 +296,7 @@ int main(int argc, char *argv[])
     printf("================================\n");
     printf("Total: %d / 270 entries match\n", 270 - total_mismatches);
 
-    if (total_mismatches == 0)
+    if(total_mismatches == 0)
     {
         printf("VERIFIED: All tables match WIZARDS.EXE seg034 data exactly.\n");
     }

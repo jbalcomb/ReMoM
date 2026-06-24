@@ -506,11 +506,11 @@ int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
 
 // Meh?    has_watertravel_item = ST_FALSE;
 
-// Meh.    if (_UNITS[unit_idx].Hero_Slot != -1)
+// Meh.    if(_UNITS[unit_idx].Hero_Slot != -1)
 // Meh.    {
 // Meh.        niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
 // Meh.
-// Meh.        if (
+// Meh.        if(
 // Meh.            ((global_battle_unit->item_enchantments & UE_WINDWALKING) != 0)
 // Meh.            ||
 // Meh.            ((global_battle_unit->item_enchantments & UE_FLIGHT) != 0)
@@ -540,7 +540,7 @@ int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
 // Meh?        return ST_TRUE;
 // Meh?    }
 
-    if (
+    if(
         (_UNITS[unit_idx].Hero_Slot == ST_UNDEFINED)
         ||
         ((BU_Apply_Item_Powers(unit_idx, global_battle_unit) & UE_WATERWALKING) == 0)
@@ -743,6 +743,17 @@ int16_t Unit_Has_NonCorporeal(int16_t unit_idx)
     DEDUCE: ¿ the usage here, incrementing without initializing, is another clue that variables initialized to zero can/do get put in the Uninitialized Data Data Segment ?
 
 */
+/*
+    Overland shortest-path driver — see doc/PathFinding/MoM-MovePath-Compare.md ("Move_Path_Find — overland").
+
+    The overland solver SPLITS the shared 5-step skeleton across two functions, where CRP_SPATH_Arbitrary
+    (MAPGEN.c) does all five in a single body:
+        [Skeleton 1 + 3]  init parallel arrays + relaxation sweep  -> delegated to Move_Path_Find() (MovePath.c)
+        [Skeleton 2]      bail if the destination tile is impassable
+        [Skeleton 4]      back-trace dst -> Reach_From[] self-link
+        [Skeleton 5]      reverse + 1-D index -> (x, y)
+    The inline [Skeleton step N] labels below mark steps 2/4/5; steps 1/3 run inside the Move_Path_Find() call.
+*/
 int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t UU_flag, int16_t UU_moves2, int16_t boatrider_count, int16_t troop_count, int16_t player_idx)
 {
     int16_t ext_y2 = 0;
@@ -814,7 +825,8 @@ Calc_Move_Path:
         // sets movepath_cost_map->moves2[] from movement_mode_cost_maps[wp].UU_MvMd, walking, forester, mountaineer, swimming, sailing
         Update_MovePathMap(&movepath_cost_map->moves2[0], boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
 
-        if(movepath_cost_map->moves2[((dst_wy * WORLD_WIDTH) + dst_wx)] == -1)  /* INF  cost of -1 means impassible */
+        /* [Skeleton step 2]  Bail if the destination tile is impassable (MoM-MovePath-Compare.md, "The shared skeleton"); returns path_length 0 via Done_Return_Zero. */
+        if(movepath_cost_map->moves2[((dst_wy * WORLD_WIDTH) + dst_wx)] == (int8_t)INF)  /* CLAUDE  (int8_t)INF == -1; impassable byte 0xFF on this signed moves2 map */
         {
             goto Done_Return_Zero;
         }
@@ -860,14 +872,16 @@ Calc_Move_Path:
         
         UU_flag = ST_FALSE;
 
-    } while (UU_flag == ST_FALSE);
+    } while(UU_flag == ST_FALSE);
 
 
     if(UU_flag == ST_FALSE)
     {
 
+        /* [Skeleton steps 1 + 3]  Move_Path_Find runs the array init + relaxation sweep, filling Reach_Costs[]/Reach_From[]. */
         Move_Path_Find(src_wx, src_wy, movepath_cost_map);
 
+        /* [Skeleton step 4]  Back-trace from the destination through Reach_From[] until a self-link, collecting Reverse_Path[] (path_length stays 0 if dst was never reached). */
         path_length = 0;
         dst_world_map_idx = ((dst_wy * WORLD_WIDTH) + dst_wx);
         ptr_reached_from = &movepath_cost_map->Reach_From[dst_world_map_idx];
@@ -879,6 +893,7 @@ Calc_Move_Path:
             path_length++;
         }
 
+        /* [Skeleton step 5]  Reverse the collected indices and convert each 1-D index to (x, y) -> mvpth_x/y/c[]. */
         for(itr = 0; itr < path_length; itr++)
         {
             itr_wx = (movepath_cost_map->Reverse_Path[((path_length - 1) - itr)] % WORLD_WIDTH);
@@ -914,6 +929,191 @@ Done:
 
     return path_length;
 }
+/* GEMINI */
+#if 0
+int Make_Move_Path__GEMINI(int MvMd_0, int MvMd_1, int MvMd_2, int MvMd_3, int MvMd_4, int MvMd_5,
+                   int src_wx, int src_wy, int dst_wx, int dst_wy, int wp,
+                   uint8_t *mvpth_x, uint8_t *mvpth_y, uint8_t *mvpth_c,
+                   int UU_flag, int UU_moves2, int boatrider_count, int troop_count, int player_idx)
+{
+    /* Local variables mapped from stack frame */
+    int ext_y2;             /* [bp-0Eh] */
+    int ext_x2;             /* [bp-0Ch] */
+    int ext_y1;             /* [bp-0Ah] */
+    int ext_x1;             /* [bp-08h] */
+    int dst_world_map_idx;  /* [bp-06h] */
+    int itr_wy;             /* [bp-04h] */
+    int itr_wx;             /* [bp-02h] */
+    int _SI_itr;            /* si */
+    int _DI_path_length;    /* di */
+
+    /* Antigravity */
+    EMMDATAH_Map();
+
+    UU_flag = e_ST_TRUE;
+    UU_moves2 = 8;
+
+    ai_move_path_idx = e_ST_UNDEFINED;
+
+    if (player_idx == e_HUMAN_PLAYER_IDX)
+    {
+        UU_flag = e_ST_FALSE;
+        goto loc_D5B50;
+    }
+
+    for (_SI_itr = 0; _SI_itr < 140 && ai_move_path_table[_SI_itr].src_wx != e_ST_UNDEFINED; _SI_itr++)
+    {
+        if (ai_move_path_table[_SI_itr].src_wx == src_wx &&
+            ai_move_path_table[_SI_itr].src_wy == src_wy &&
+            ai_move_path_table[_SI_itr].dst_wx == dst_wx &&
+            ai_move_path_table[_SI_itr].dst_wy == dst_wy &&
+            ai_move_path_table[_SI_itr].Plane == wp)
+        {
+            ai_move_path_idx = _SI_itr;
+        }
+    }
+
+    if (ai_move_path_idx != e_ST_UNDEFINED)
+    {
+        _fmemcpy(mvpth_x, ai_move_path_table[ai_move_path_idx].wx_array, ai_move_path_table[ai_move_path_idx].Length);
+        _fmemcpy(mvpth_y, ai_move_path_table[ai_move_path_idx].wy_array, ai_move_path_table[ai_move_path_idx].Length);
+        _fmemcpy(mvpth_c, ai_move_path_table[ai_move_path_idx].cost_array, ai_move_path_table[ai_move_path_idx].Length);
+        
+        UU_DBG_MovePatchCache_Hits++;
+        
+        return ai_move_path_table[ai_move_path_idx].Length;
+    }
+    else
+    {
+        UU_DBG_MovePatchCache_Misses++;
+    }
+
+loc_D5B50:
+    Init_MovePathMap(MvMd_0, MvMd_1, MvMd_2, MvMd_3, MvMd_4, MvMd_5, wp);
+
+    if (player_idx == e_HUMAN_PLAYER_IDX && UU_moves2 == 1)
+    {
+        for (itr_wy = 0; itr_wy < e_WORLD_HEIGHT; itr_wy++)
+        {
+            for (itr_wx = 0; itr_wx < e_WORLD_WIDTH; itr_wx++)
+            {
+                if (movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] != e_ST_UNDEFINED_DB)
+                {
+                    if (movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] > 2)
+                    {
+                        movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] = 2;
+                    }
+                }
+            }
+        }
+    }
+
+    Update_MovePathMap((int8_t far *)movepath_cost_map, boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
+
+    if (movepath_cost_map->moves2[dst_wy * e_WORLD_WIDTH + dst_wx] == e_ST_UNDEFINED_DB)
+    {
+        return 0;
+    }
+
+    if (UU_flag == e_ST_TRUE)
+    {
+        TILE_ExtendRange(src_wx, src_wy, dst_wx, dst_wy, &ext_x1, &ext_y1, &ext_x2, &ext_y2);
+
+        for (itr_wy = 0; itr_wy < ext_y1; itr_wy++)
+        {
+            for (itr_wx = 0; itr_wx < e_WORLD_WIDTH; itr_wx++)
+            {
+                movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] = e_ST_UNDEFINED_DB;
+            }
+        }
+
+        for (itr_wy = ext_y2 + 1; itr_wy < e_WORLD_HEIGHT; itr_wy++)
+        {
+            for (itr_wx = 0; itr_wx < e_WORLD_WIDTH; itr_wx++)
+            {
+                movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] = e_ST_UNDEFINED_DB;
+            }
+        }
+
+        if (ext_x1 < ext_x2)
+        {
+            for (itr_wy = ext_y1; itr_wy <= ext_y2; itr_wy++)
+            {
+                for (itr_wx = 0; itr_wx < ext_x1; itr_wx++)
+                {
+                    movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] = e_ST_UNDEFINED_DB;
+                }
+                for (itr_wx = ext_x2 + 1; itr_wx < e_WORLD_WIDTH; itr_wx++)
+                {
+                    movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] = e_ST_UNDEFINED_DB;
+                }
+            }
+        }
+        else
+        {
+            for (itr_wy = ext_y1; itr_wy <= ext_y2; itr_wy++)
+            {
+                for (itr_wx = ext_x2 + 1; itr_wx < ext_x1; itr_wx++)
+                {
+                    movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] = e_ST_UNDEFINED_DB;
+                }
+            }
+        }
+
+        Move_Path_Find(src_wx, src_wy, movepath_cost_map);
+
+        _DI_path_length = 0;
+        dst_world_map_idx = dst_wy * e_WORLD_WIDTH + dst_wx;
+        while (movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
+        {
+            movepath_cost_map->Reverse_Path[_DI_path_length] = dst_world_map_idx;
+            dst_world_map_idx = movepath_cost_map->Reach_From[dst_world_map_idx];
+            _DI_path_length++;
+        }
+
+        for (_SI_itr = 0; _SI_itr < _DI_path_length; _SI_itr++)
+        {
+            int16_t map_idx = movepath_cost_map->Reverse_Path[_DI_path_length - 1 - _SI_itr];
+            itr_wx = map_idx % e_WORLD_WIDTH;
+            itr_wy = map_idx / e_WORLD_WIDTH;
+            mvpth_x[_SI_itr] = itr_wx;
+            mvpth_y[_SI_itr] = itr_wy;
+            mvpth_c[_SI_itr] = movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx];
+        }
+
+        if (_DI_path_length == 0)
+        {
+            UU_flag = e_ST_FALSE;
+            goto loc_D5B50;
+        }
+    }
+    else
+    {
+        Move_Path_Find(src_wx, src_wy, movepath_cost_map);
+
+        _DI_path_length = 0;
+        dst_world_map_idx = dst_wy * e_WORLD_WIDTH + dst_wx;
+        while (movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
+        {
+            movepath_cost_map->Reverse_Path[_DI_path_length] = dst_world_map_idx;
+            dst_world_map_idx = movepath_cost_map->Reach_From[dst_world_map_idx];
+            _DI_path_length++;
+        }
+
+        for (_SI_itr = 0; _SI_itr < _DI_path_length; _SI_itr++)
+        {
+            int16_t map_idx = movepath_cost_map->Reverse_Path[_DI_path_length - 1 - _SI_itr];
+            itr_wx = map_idx % e_WORLD_WIDTH;
+            itr_wy = map_idx / e_WORLD_WIDTH;
+            mvpth_x[_SI_itr] = itr_wx;
+            mvpth_y[_SI_itr] = itr_wy;
+            mvpth_c[_SI_itr] = movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx];
+        }
+    }
+
+    return _DI_path_length;
+}
+#endif
 
 
 // WZD o148p04
@@ -928,8 +1128,6 @@ Done:
 ; calculates the movement cost (in half MPs) map for
 ; the selected plane from the passed movement type
 ; matrix and stores it into Temp_MoveMap_EMS@
-;
-; shifted up the segment in the overland djikstra patch
 */
 /*
 
@@ -943,7 +1141,7 @@ void Init_MovePathMap(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t Mv
     int16_t road_bits = 0;
     int16_t itr_squares = 0;
     int16_t itr_wy = 0;
-    int16_t itr_wx = 0;  // _DI_
+    int16_t itr_wx = 0;
 
     EMMDATAH_Map();
 
@@ -1006,9 +1204,9 @@ Yay_Pathfinding:
                 {
                     movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
                 }
-                else if(movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] == -1)
+                else if(movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] == (int8_t)INF)  // CLAUDE == -1
                 {
-                    movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = -1;
+                    movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = (int8_t)INF;  // CLAUDE == -1
                 }
                 else
                 {
@@ -1098,7 +1296,7 @@ Loaded_Game_Update()
 */
 void Invalidate_AI_Move_Path(void)
 {
-    if (_ai_move_path_idx > 0 && _ai_move_path_idx < 140)
+    if(_ai_move_path_idx > 0 && _ai_move_path_idx < 140)
     {
         _ai_move_path_table[_ai_move_path_idx].src_wx = -1;  // INF / ST_UNDEFINED?
     }
@@ -1119,7 +1317,7 @@ void Cache_AI_Move_Path(int16_t player_idx, int16_t src_wx, int16_t src_wy, int1
     struct s_AI_MOVE_PATH * path_ptr = NULL;
 
     /* Only process for AI players */
-    if (player_idx == HUMAN_PLAYER_IDX)
+    if(player_idx == HUMAN_PLAYER_IDX)
     {
         return;
     }
@@ -1130,25 +1328,25 @@ void Cache_AI_Move_Path(int16_t player_idx, int16_t src_wx, int16_t src_wy, int1
     /* Find the source and destination indices within the provided path arrays */
     for (i = 0; i < 35; i++)
     {
-        if (wx_array[i] == src_wx && wy_array[i] == src_wy)
+        if(wx_array[i] == src_wx && wy_array[i] == src_wy)
         {
             src_idx = i;
         }
 
-        if (wx_array[i] == dst_wx && wy_array[i] == dst_wy)
+        if(wx_array[i] == dst_wx && wy_array[i] == dst_wy)
         {
             dst_idx = i;
         }
 
         /* Optimization: break if both found */
-        if (src_idx != -1 && dst_idx != -1)
+        if(src_idx != -1 && dst_idx != -1)
         {
             break;
         }
     }
 
     /* Valid path must contain both points and move forward in the array */
-    if (src_idx == -1 || dst_idx == -1 || dst_idx <= src_idx)
+    if(src_idx == -1 || dst_idx == -1 || dst_idx <= src_idx)
     {
         return;
     }
@@ -1157,7 +1355,7 @@ void Cache_AI_Move_Path(int16_t player_idx, int16_t src_wx, int16_t src_wy, int1
     i = 0;
     while((i < 140) && (_ai_move_path_idx == -1))
     {
-        if (_ai_move_path_table[i].src_wx == -1)
+        if(_ai_move_path_table[i].src_wx == -1)
         {
             _ai_move_path_idx = i;
         }
@@ -1165,7 +1363,7 @@ void Cache_AI_Move_Path(int16_t player_idx, int16_t src_wx, int16_t src_wy, int1
     }
 
     /* If no empty slot is found, return */
-    if (_ai_move_path_idx == -1)
+    if(_ai_move_path_idx == -1)
     {
         return;
     }
@@ -1175,7 +1373,7 @@ void Cache_AI_Move_Path(int16_t player_idx, int16_t src_wx, int16_t src_wy, int1
     duplicate = ST_FALSE;
     for (i = 0; i < 140; i++)
     {
-        if (_ai_move_path_table[i].src_wx == src_wx &&
+        if(_ai_move_path_table[i].src_wx == src_wx &&
             _ai_move_path_table[i].srx_wy == src_wy &&
             _ai_move_path_table[i].dst_wx == dst_wx &&
             _ai_move_path_table[i].dst_wy == dst_wy)
@@ -1185,7 +1383,7 @@ void Cache_AI_Move_Path(int16_t player_idx, int16_t src_wx, int16_t src_wy, int1
         }
     }
 
-    if (duplicate == ST_TRUE)
+    if(duplicate == ST_TRUE)
     {
         return;
     }

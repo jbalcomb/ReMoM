@@ -500,14 +500,14 @@ void VGA_ShiftCopyFromF3(int16_t x, int16_t y)
     /* 2. Gap Cleanup */
     /* If you have a custom Fill() function, use it here. Otherwise: */
     
-    if (x > 0) {
+    if(x > 0) {
         /* Black out the left edge */
         for (row = 0; row < SCREEN_HEIGHT; row++) {
             memset(current_video_page + (row * SCREEN_WIDTH), 0, x);
         }
     }
 
-    if (y > 0) {
+    if(y > 0) {
         /* Black out the top edge */
         memset(current_video_page, 0, SCREEN_WIDTH * y);
     }

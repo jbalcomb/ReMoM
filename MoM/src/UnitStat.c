@@ -1108,7 +1108,7 @@ if(_CITIES[_city_idx].construction > 298)
                 // WTF? or      _DI_CalledFromFlag, _DI_CalledFromFlag
                 // WTF? jz      short $+2
                 bldg_pict_y1 = 0;
-                if (CalledFromFlag == uvt_Prod)
+                if(CalledFromFlag == uvt_Prod)
                 {
                     bldg_pict_y1 = -4;
                 }

@@ -297,11 +297,11 @@ void Move_Path_Find_C(int16_t wx, int16_t wy, int8_t * movepath_cost_map)
     // mov     ax, [bp+wy]
     // mov     bx, e_WORLD_WIDTH
     // mul     bx
-    // mov     [cs:CS_Row_Start], ax
-    CS_Row_Start = (wy * WORLD_WIDTH);
+    // mov     [cs:origin_row], ax
+    origin_row = (wy * WORLD_WIDTH);
 00007FF6F0D1DBD8  movsx       eax,word ptr [wy]  
 00007FF6F0D1DBDF  imul        eax,eax,3Ch  
-00007FF6F0D1DBE2  mov         word ptr [CS_Row_Start (07FF6F0D773A4h)],ax  
+00007FF6F0D1DBE2  mov         word ptr [origin_row (07FF6F0D773A4h)],ax  
 
     // add     ax, [bp+wx]
     // mov     dx, ax                          ; dx = square index
@@ -431,10 +431,10 @@ void Move_Path_Find_C(int16_t wx, int16_t wy, int8_t * movepath_cost_map)
     // mov     si, 0
     // mov     bx, OVL_Path_Results.Reach_Costs
     // mov     _DI_OVL_Path_Results_Reach_Costs, OVL_Path_Results.Reach_From
-    // add     si, [cs:CS_Row_Start]
-    // add     bx, [cs:CS_Row_Start]
-    // add     _DI_OVL_Path_Results_Reach_Costs, [cs:CS_Row_Start]
-    // add     _DI_OVL_Path_Results_Reach_Costs, [cs:CS_Row_Start]
+    // add     si, [cs:origin_row]
+    // add     bx, [cs:origin_row]
+    // add     _DI_OVL_Path_Results_Reach_Costs, [cs:origin_row]
+    // add     _DI_OVL_Path_Results_Reach_Costs, [cs:origin_row]
 loc_D5155:
     CS_Value_Change = ST_FALSE;
 00007FF6F0D1DD00  mov         byte ptr [CS_Value_Change (07FF6F0D46B3Ch)],0  
@@ -447,26 +447,26 @@ loc_D5155:
     _DI_ = 4800;
 00007FF6F0D1DD16  mov         eax,12C0h  
 00007FF6F0D1DD1B  mov         word ptr [_DI_],ax  
-    _SI_ += CS_Row_Start;
-00007FF6F0D1DD1F  movsx       eax,word ptr [CS_Row_Start (07FF6F0D773A4h)]  
+    _SI_ += origin_row;
+00007FF6F0D1DD1F  movsx       eax,word ptr [origin_row (07FF6F0D773A4h)]  
 00007FF6F0D1DD26  movsx       ecx,word ptr [_SI_]  
 00007FF6F0D1DD2A  add         ecx,eax  
 00007FF6F0D1DD2C  mov         eax,ecx  
 00007FF6F0D1DD2E  mov         word ptr [_SI_],ax  
-    _BX_ += CS_Row_Start;
-00007FF6F0D1DD32  movsx       eax,word ptr [CS_Row_Start (07FF6F0D773A4h)]  
+    _BX_ += origin_row;
+00007FF6F0D1DD32  movsx       eax,word ptr [origin_row (07FF6F0D773A4h)]  
 00007FF6F0D1DD39  movsx       ecx,word ptr [_BX_]  
 00007FF6F0D1DD3D  add         ecx,eax  
 00007FF6F0D1DD3F  mov         eax,ecx  
 00007FF6F0D1DD41  mov         word ptr [_BX_],ax  
-    _DI_ += CS_Row_Start;
-00007FF6F0D1DD45  movsx       eax,word ptr [CS_Row_Start (07FF6F0D773A4h)]  
+    _DI_ += origin_row;
+00007FF6F0D1DD45  movsx       eax,word ptr [origin_row (07FF6F0D773A4h)]  
 00007FF6F0D1DD4C  movsx       ecx,word ptr [_DI_]  
 00007FF6F0D1DD50  add         ecx,eax  
 00007FF6F0D1DD52  mov         eax,ecx  
 00007FF6F0D1DD54  mov         word ptr [_DI_],ax  
-    _DI_ += CS_Row_Start;
-00007FF6F0D1DD58  movsx       eax,word ptr [CS_Row_Start (07FF6F0D773A4h)]  
+    _DI_ += origin_row;
+00007FF6F0D1DD58  movsx       eax,word ptr [origin_row (07FF6F0D773A4h)]  
 00007FF6F0D1DD5F  movsx       ecx,word ptr [_DI_]  
 00007FF6F0D1DD63  add         ecx,eax  
 00007FF6F0D1DD65  mov         eax,ecx  

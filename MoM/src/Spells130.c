@@ -667,7 +667,7 @@ int16_t Cast_Change_Terrain(int16_t player_idx)
 
                     }
 
-                    if (Square_Is_Volcano(scsv1, scsv2, scsv3) != ST_FALSE)
+                    if(Square_Is_Volcano(scsv1, scsv2, scsv3) != ST_FALSE)
                     {
 
                         Set_Terrain_Type_Mountain(scsv1, scsv2, scsv3);  // BUGBUG  update move cost maps
@@ -731,7 +731,7 @@ int16_t Cast_Change_Terrain(int16_t player_idx)
 
             }
 
-            if (Square_Is_Volcano(scsv1, scsv2, scsv3) != ST_FALSE)
+            if(Square_Is_Volcano(scsv1, scsv2, scsv3) != ST_FALSE)
             {
 
                 Set_Terrain_Type_Mountain(scsv1, scsv2, scsv3);  // BUGBUG  update move cost maps

@@ -3396,27 +3396,27 @@ void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy)
     /* Get target unit/object index from combat grid */
     combat_grid_target = CMB_TargetRows[cgy][cgx];
 
-    if (combat_grid_target != 99)
+    if(combat_grid_target != 99)
     {
-        if (combat_grid_target < 0)
+        if(combat_grid_target < 0)
         {
             goto loc_MoveCheck;
         }
 
         /* If target is a unit, check if it's an active enemy */
-        if (battle_units[combat_grid_target].controller_idx == battle_units[battle_unit_idx].controller_idx)
+        if(battle_units[combat_grid_target].controller_idx == battle_units[battle_unit_idx].controller_idx)
         {
             goto loc_MoveCheck;
         }
 
-        if (battle_units[combat_grid_target].status != bus_Active)
+        if(battle_units[combat_grid_target].status != bus_Active)
         {
             goto loc_MoveCheck;
         }
     }
 
     /* Target is either a wall (99) or an active enemy unit */
-    if (combat_grid_target == 99)
+    if(combat_grid_target == 99)
     {
         target_cgx = cgx;
         target_cgy = cgy;
@@ -3433,22 +3433,22 @@ void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy)
 
     Unused_Local = -2;
 
-    if (battle_units[battle_unit_idx].movement_points <= 0)
+    if(battle_units[battle_unit_idx].movement_points <= 0)
     {
         return;
     }
 
-    if (combat_grid_target == 99)
+    if(combat_grid_target == 99)
     {
         /* Wall/Object attack logic */
-        if (delta_x <= 1 && delta_y <= 1)
+        if(delta_x <= 1 && delta_y <= 1)
         {
             Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, target_cgx, target_cgy);
         }
         else
         {
             ranged_group = battle_units[battle_unit_idx].ranged_type / 10;
-            if (ranged_group == rag_Boulder || ranged_group == rag_Missile || ranged_group == rag_Magic)
+            if(ranged_group == rag_Boulder || ranged_group == rag_Missile || ranged_group == rag_Magic)
             {
                 Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, target_cgx, target_cgy);
             }
@@ -3457,12 +3457,12 @@ void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy)
     else
     {
         /* Enemy unit interaction logic */
-        if (Check_Attack_Melee(battle_unit_idx, combat_grid_target) == ST_TRUE)
+        if(Check_Attack_Melee(battle_unit_idx, combat_grid_target) == ST_TRUE)
         {
-            if (delta_x <= 1 && delta_y <= 1)
+            if(delta_x <= 1 && delta_y <= 1)
             {
                 /* Adjacent melee check (includes flight/wall physics) */
-                if (BU_MeleeWallCheck(battle_unit_idx, combat_grid_target) == ST_TRUE)
+                if(BU_MeleeWallCheck(battle_unit_idx, combat_grid_target) == ST_TRUE)
                 {
                     Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, target_cgx, target_cgy);
                 }
@@ -3470,7 +3470,7 @@ void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy)
                 {
                     /* Failed wall check? Try ranged if available */
                     ranged_group = battle_units[battle_unit_idx].ranged_type / 10;
-                    if (ranged_group == rag_Boulder || ranged_group == rag_Missile || ranged_group == rag_Magic)
+                    if(ranged_group == rag_Boulder || ranged_group == rag_Missile || ranged_group == rag_Magic)
                     {
                         Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, target_cgx, target_cgy);
                     }
@@ -3480,7 +3480,7 @@ void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy)
             {
                 /* Not adjacent: Ranged attack only */
                 ranged_group = battle_units[battle_unit_idx].ranged_type / 10;
-                if (ranged_group == rag_Boulder || ranged_group == rag_Missile || ranged_group == rag_Magic)
+                if(ranged_group == rag_Boulder || ranged_group == rag_Missile || ranged_group == rag_Magic)
                 {
                     Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, target_cgx, target_cgy);
                 }
@@ -3492,9 +3492,9 @@ void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy)
 
 loc_MoveCheck:
     /* Move logic for empty tiles */
-    if (combat_grid_target == -1)
+    if(combat_grid_target == -1)
     {
-        if (battle_units[battle_unit_idx].movement_points > 0)
+        if(battle_units[battle_unit_idx].movement_points > 0)
         {
             Move_Battle_Unit__WIP(battle_unit_idx, cgx, cgy);
         }
@@ -3732,13 +3732,13 @@ int16_t Target_Is_Visible(int16_t battle_unit_idx)
     is_visible = ST_TRUE;
 
     /* Check for Invisibility enchantment or innate Invisibility ability */
-    if ((enchantments & UE_INVISIBILITY) != 0)
+    if((enchantments & UE_INVISIBILITY) != 0)
     {
         goto loc_783E8;
     }
 
     bu_ptr = &battle_units[battle_unit_idx];
-    if ((bu_ptr->Abilities & UA_INVISIBILITY) == 0)
+    if((bu_ptr->Abilities & UA_INVISIBILITY) == 0)
     {
         /* Not invisible, return 1 */
         goto Done;
@@ -3749,39 +3749,39 @@ loc_783E8:
     is_visible = 0;
 
     /* If owner is the defender, check if attacker has True Sight (sees illusions) */
-    if (player_idx == _combat_defender_player)
+    if(player_idx == _combat_defender_player)
     {
-        if (_attacker_sees_illusions == ST_TRUE)
+        if(_attacker_sees_illusions == ST_TRUE)
         {
             is_visible = 1;
         }
     }
 
     /* If owner is the attacker, check if defender has True Sight (sees illusions) */
-    if (player_idx == _combat_attacker_player)
+    if(player_idx == _combat_attacker_player)
     {
-        if (_defender_sees_illusions == ST_TRUE)
+        if(_defender_sees_illusions == ST_TRUE)
         {
             is_visible = 1;
         }
     }
 
     /* If not seen by True Sight, check for proximity detection (adjacent units) */
-    if (is_visible == 0)
+    if(is_visible == 0)
     {
         for (other_battle_unit_idx = 0; other_battle_unit_idx < _combat_total_unit_count; other_battle_unit_idx++)
         {
             bu_ptr = &battle_units[other_battle_unit_idx];
             
             /* Only active enemy units can detect the invisible unit */
-            if (bu_ptr->status == bus_Active)
+            if(bu_ptr->status == bus_Active)
             {
-                if (bu_ptr->controller_idx != player_idx)
+                if(bu_ptr->controller_idx != player_idx)
                 {
                     distance = Range_To_Battle_Unit(battle_unit_idx, other_battle_unit_idx);
                     
                     /* If an enemy is adjacent (distance < 2), the unit is detected */
-                    if (distance < 2)
+                    if(distance < 2)
                     {
                         is_visible = 1;
                         break;
@@ -4479,14 +4479,14 @@ void Auto_Cast_Spell_And_Do_Combat_Turn(int16_t player_idx)
 {
     int16_t winner;
     /* AI players attempt to cast a spell at the start of their turn */
-    if (player_idx != combat_human_player)
+    if(player_idx != combat_human_player)
     {
         /* Caster_ID for wizards in combat is 20 + player_idx */
         // TODO  CP-branch  Combat_Cast_Spell__WIP((20 + player_idx), _combat_wx, _combat_wy, _combat_wp);
     }
     winner = Check_For_Winner();  /* ¿ because spell cast may resulted in a win/loss ? */
     /* If no winner has been determined yet, proceed with unit movement */
-    if (winner == ST_UNDEFINED)
+    if(winner == ST_UNDEFINED)
     {
         Update_Combat_Enchantments_Icon_And_Help(); /* ¿ because spell cast may been an enchantment ? */
         Auto_Do_Combat_Turn(player_idx);
@@ -8396,9 +8396,9 @@ void BU_CreateImage__SEGRAX(int battle_unit_idx)
     {
         frame_num = CMB_BaseAnimFrame;
     }
-    else if (battle_units[battle_unit_idx].Moving == ST_TRUE)
+    else if(battle_units[battle_unit_idx].Moving == ST_TRUE)
     {
-        if (battle_units[battle_unit_idx].Move_Bob == ST_TRUE)
+        if(battle_units[battle_unit_idx].Move_Bob == ST_TRUE)
         {
             frame_num = CMB_BaseAnimFrame;
         } 
@@ -8764,7 +8764,7 @@ void Move_Confused(int16_t battle_unit_idx)
         random_x = (Random(COMBAT_GRID_WIDTH) - 1);
         random_y = (Random(COMBAT_GRID_HEIGHT) - 1);
 
-        if (CMB_TargetRows[random_y][random_x] == -1)  /* unoccupied */
+        if(CMB_TargetRows[random_y][random_x] == -1)  /* unoccupied */
         {
             target_x = random_x;
             target_y = random_y;
@@ -8773,7 +8773,7 @@ void Move_Confused(int16_t battle_unit_idx)
         }
     }
 
-    if (target_found == ST_TRUE)
+    if(target_found == ST_TRUE)
     {
         Move_Battle_Unit__WIP(battle_unit_idx, target_x, target_y);
     }
@@ -9108,12 +9108,12 @@ int16_t Check_For_Winner(void)
     /* Count active units on each side, accounting for confusion */
     for (itr = 0; itr < _combat_total_unit_count; itr++)
     {
-        if (battle_units[itr].status == bus_Active)
+        if(battle_units[itr].status == bus_Active)
         {
-            if (battle_units[itr].controller_idx == _combat_attacker_player)
+            if(battle_units[itr].controller_idx == _combat_attacker_player)
             {
                 /* OGBUG: The assembly compares Confusion_State to 2 */
-                if (battle_units[itr].Confusion_State == 2)
+                if(battle_units[itr].Confusion_State == 2)
                 {
                     defender_count++;
                 }
@@ -9122,10 +9122,10 @@ int16_t Check_For_Winner(void)
                     attacker_count++;
                 }
             }
-            else if (battle_units[itr].controller_idx == _combat_defender_player)
+            else if(battle_units[itr].controller_idx == _combat_defender_player)
             {
                 /* OGBUG: The assembly compares Confusion_State to 2 */
-                if (battle_units[itr].Confusion_State == 2)
+                if(battle_units[itr].Confusion_State == 2)
                 {
                     attacker_count++;
                 }
@@ -9142,27 +9142,27 @@ int16_t Check_For_Winner(void)
     LOG_DEBUG(LOG_CAT_COMBAT, "_combat_turn: %d", _combat_turn);
 #endif
     /* Check for elimination */
-    if (attacker_count == 0)    { return _combat_defender_player; }
-    if (defender_count == 0)    { return _combat_attacker_player; }
+    if(attacker_count == 0)    { return _combat_defender_player; }
+    if(defender_count == 0)    { return _combat_attacker_player; }
     /* Check for turn limit timeout (50 turns) */
-    if (_combat_turn > 50)      { return _combat_defender_player; }
+    if(_combat_turn > 50)      { return _combat_defender_player; }
 
     /* AI "Fight or Flight" Logic */
-    if (combat_computer_player != NEUTRAL_PLAYER_IDX)
+    if(combat_computer_player != NEUTRAL_PLAYER_IDX)
     {
         /* AI will not flee during wizard city sieges or on the first turn */
-        if (_computer_player_city_seige == ST_FALSE && _combat_turn > 1)
+        if(_computer_player_city_seige == ST_FALSE && _combat_turn > 1)
         {
-            if (Retreat_Check(combat_computer_player) == ST_TRUE)
+            if(Retreat_Check(combat_computer_player) == ST_TRUE)
             {
                 /* AI has decided to flee the battle */
                 for (itr = 0; itr < _combat_total_unit_count; itr++)
                 {
-                    if (battle_units[itr].controller_idx == combat_computer_player)
+                    if(battle_units[itr].controller_idx == combat_computer_player)
                     {
                         battle_units[itr].action = bua_Flee;
                         
-                        if (battle_units[itr].status == bus_Active)
+                        if(battle_units[itr].status == bus_Active)
                         {
                             battle_units[itr].status = bus_Flee;
                         }
@@ -9676,15 +9676,15 @@ void BU_SetVisibility(int16_t battle_unit_idx)
     is_visible = 1; /* e_ST_TRUE */
 
     /* Check for Invisibility (Enchantment or Innate Ability) */
-    if ((enchantments & UE_INVISIBILITY) || (battle_units[battle_unit_idx].Abilities & UA_INVISIBILITY))
+    if((enchantments & UE_INVISIBILITY) || (battle_units[battle_unit_idx].Abilities & UA_INVISIBILITY))
     {
         /* loc_860AB: */
         is_visible = 0; /* e_ST_FALSE */
 
         /* True Seeing check: Defender units vs Attacker True Seeing */
-        if (owner_idx == _combat_defender_player)
+        if(owner_idx == _combat_defender_player)
         {
-            if (_attacker_sees_illusions == 1 /* e_ST_TRUE */)
+            if(_attacker_sees_illusions == 1 /* e_ST_TRUE */)
             {
                 is_visible = 1; /* e_ST_TRUE */
                 battle_units[battle_unit_idx].Image_Effect = 4;
@@ -9693,9 +9693,9 @@ void BU_SetVisibility(int16_t battle_unit_idx)
 
         /* True Seeing check: Attacker units vs Defender True Seeing */
         /* loc_860D8: */
-        if (owner_idx == _combat_attacker_player)
+        if(owner_idx == _combat_attacker_player)
         {
-            if (_defender_sees_illusions == 1 /* e_ST_TRUE */)
+            if(_defender_sees_illusions == 1 /* e_ST_TRUE */)
             {
                 is_visible = 1; /* e_ST_TRUE */
                 battle_units[battle_unit_idx].Image_Effect = 4;
@@ -9704,7 +9704,7 @@ void BU_SetVisibility(int16_t battle_unit_idx)
 
         /* Human player always sees their own invisible units */
         /* loc_86100: */
-        if (owner_idx == combat_human_player)
+        if(owner_idx == combat_human_player)
         {
             is_visible = 1; /* e_ST_TRUE */
             battle_units[battle_unit_idx].Image_Effect = 4;
@@ -9712,22 +9712,22 @@ void BU_SetVisibility(int16_t battle_unit_idx)
 
         /* If still not visible, set 'Hidden' effect and check for proximity detection */
         /* loc_86121: */
-        if (is_visible == 0 /* e_ST_FALSE */)
+        if(is_visible == 0 /* e_ST_FALSE */)
         {
             battle_units[battle_unit_idx].Image_Effect = 5;
 
             for (i = 0; i < _combat_total_unit_count; i++)
             {
                 /* loc_8613E: */
-                if (battle_units[i].status == 1 /* bus_Active */)
+                if(battle_units[i].status == 1 /* bus_Active */)
                 {
                     /* Only check proximity for enemy units */
-                    if (battle_units[i].controller_idx != owner_idx)
+                    if(battle_units[i].controller_idx != owner_idx)
                     {
                         distance = Range_To_Battle_Unit(battle_unit_idx, i);
 
                         /* If an enemy is adjacent (distance 0 or 1), the unit is revealed */
-                        if (distance < 2)
+                        if(distance < 2)
                         {
                             is_visible = 1; /* e_ST_TRUE */
                             battle_units[battle_unit_idx].Image_Effect = 4;
@@ -12515,7 +12515,7 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
                 // where's the rest of the screen update?
             }
 
-        } while (Do_Legal_Spell_Check__WIP(spell_idx) != ST_FALSE);
+        } while(Do_Legal_Spell_Check__WIP(spell_idx) != ST_FALSE);
         // ...not illegal...
 
         // not doing xtramana popup, so go right back to the combat screen
@@ -15757,42 +15757,42 @@ OGBUG: Flying Fortress should be considered here, but it isn't
 int16_t BU_MeleeWallCheck(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx)
 {
 
-    if (battlefield->walled != 1)
+    if(battlefield->walled != 1)
     {
         return ST_TRUE;
     }
 
     /* OGBUG: Teleporting and merging units can attack through walls according to the code below */
-    if (battle_units[src_battle_unit_idx].Move_Flags & (MV_FLYING | MV_TELEPORT | MV_MERGING))
+    if(battle_units[src_battle_unit_idx].Move_Flags & (MV_FLYING | MV_TELEPORT | MV_MERGING))
     {
         return ST_TRUE;
     }
 
-    if (battle_units[src_battle_unit_idx].Abilities & UA_NONCORPOREAL)
+    if(battle_units[src_battle_unit_idx].Abilities & UA_NONCORPOREAL)
     {
         return ST_TRUE;
     }
 
     /* If the target is not inside the city, walls do not apply */
-    if (Battle_Unit_Is_Within_City(dst_battle_unit_idx) != 1)
+    if(Battle_Unit_Is_Within_City(dst_battle_unit_idx) != 1)
     {
         return ST_TRUE;
     }
 
     /* If the attacker is already inside the city, walls do not apply */
-    if (Battle_Unit_Is_Within_City(src_battle_unit_idx) != 0)
+    if(Battle_Unit_Is_Within_City(src_battle_unit_idx) != 0)
     {
         return ST_TRUE;
     }
 
     /* Check for the city gate at (8, 12) */
-    if (battle_units[dst_battle_unit_idx].cgx == CGX_GATE && battle_units[dst_battle_unit_idx].cgy == CGY_GATE)
+    if(battle_units[dst_battle_unit_idx].cgx == CGX_GATE && battle_units[dst_battle_unit_idx].cgy == CGY_GATE)
     {
         return ST_TRUE;
     }
 
     /* Check if the specific cell occupied by the target contains a city wall section */
-    if (Combat_Grid_Cell_Has_City_Wall(battle_units[dst_battle_unit_idx].cgx, battle_units[dst_battle_unit_idx].cgy) != 1)
+    if(Combat_Grid_Cell_Has_City_Wall(battle_units[dst_battle_unit_idx].cgx, battle_units[dst_battle_unit_idx].cgy) != 1)
     {
         return ST_TRUE;
     }
@@ -16093,7 +16093,7 @@ int16_t Battle_Unit_Pict_Open(void)
 
     for (battle_unit_slot_idx = 0; battle_unit_slot_idx < MAX_BATTLE_UNIT_COUNT; battle_unit_slot_idx++)
     {
-        if (battle_unit_slots[battle_unit_slot_idx] == ST_FALSE)
+        if(battle_unit_slots[battle_unit_slot_idx] == ST_FALSE)
         {
             return battle_unit_slot_idx;
         }
@@ -17708,10 +17708,10 @@ int16_t CMB_AttackRoll__SEGRAX(uint16_t attack_strength, uint16_t to_hit) {
     uint16_t success_count = 0;
     uint16_t total_rolls = 0;
 
-    while (total_rolls < attack_strength) {
+    while(total_rolls < attack_strength) {
         die_roll = Random(10);
 
-        if ((8 - to_hit) <= die_roll || die_roll == 10) {
+        if((8 - to_hit) <= die_roll || die_roll == 10) {
             success_count++;
         }
         total_rolls++;
@@ -17738,10 +17738,10 @@ uint16_t CMB_DefenseRoll__SEGRAX(uint16_t defense, uint16_t to_block) {
     uint16_t success_count = 0;
     uint16_t total_rolls = 0;
 
-    while (total_rolls < defense) {
+    while(total_rolls < defense) {
         int16_t die_roll = Random(10);
 
-        if (die_roll >= (8 - to_block)) {
+        if(die_roll >= (8 - to_block)) {
             success_count++;
         }
 
@@ -17788,7 +17788,7 @@ int16_t Combat_Resistance_Check(struct s_BATTLE_UNIT battle_unit, int16_t resist
     }
 
 #ifdef STU_DEBUG
-    if (battle_unit.controller_idx != HUMAN_PLAYER_IDX)
+    if(battle_unit.controller_idx != HUMAN_PLAYER_IDX)
     {
         return 10;
     }
@@ -18942,7 +18942,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
         // ; return array, making extra defense rolls when
         // ; necessary
 
-        while (battle_units[defender_battle_unit_idx].hits > (Attack_Damage + Target_Damage))
+        while(battle_units[defender_battle_unit_idx].hits > (Attack_Damage + Target_Damage))
         {
 
             Attack_Damage -= battle_units[defender_battle_unit_idx].hits;
@@ -18958,7 +18958,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
                 // ; attack damage to the total, and add it to the return
                 // ; array
 
-                if (
+                if(
                     ((battle_units[attacker_battle_unit_idx].Abilities & UA_CREATEUNDEAD) != 0)
                     &&
                     ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
@@ -18991,7 +18991,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
                 // ; the attack damage to the return array, then make a
                 // ; new defense roll to reduce the remainder
 
-                if (
+                if(
                     ((battle_units[attacker_battle_unit_idx].Abilities & UA_CREATEUNDEAD) != 0)
                     &&
                     ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
@@ -19008,12 +19008,12 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
 
                 }
 
-                if ((attack_attributes & Att_DoomDmg) == 0)
+                if((attack_attributes & Att_DoomDmg) == 0)
                 {
 
                     Attack_Damage = CMB_DefenseRoll__SEGRAX(defense_special, defender_toblock);
 
-                    if ((defender_enchantments & UE_INVULNERABILITY) != 0)
+                    if((defender_enchantments & UE_INVULNERABILITY) != 0)
                     {
 
                         Attack_Damage -= 2;
@@ -20057,7 +20057,7 @@ int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_
     ship_value = -100;
 
     /* Check if target is unreachable due to flight */
-    if ((target->Move_Flags & MV_FLYING) && 
+    if((target->Move_Flags & MV_FLYING) && 
         !(attacker->Move_Flags & MV_FLYING) && 
         (attacker->ranged_type == rat_NONE)) 
     {
@@ -20065,7 +20065,7 @@ int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_
     }
 
     /* Calculate target's highest attack strength for later comparison */
-    if (target->ranged > target->melee)
+    if(target->ranged > target->melee)
     {
         target_atk_str = target->ranged;
     }
@@ -20077,7 +20077,7 @@ int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_
     attack_attributes = attacker->attack_attributes;
     to_hit = attacker->tohit;
 
-    if (has_ranged_attack != ST_FALSE)
+    if(has_ranged_attack != ST_FALSE)
     {
         /* Ranged Attack Logic */
         attack_immunities = Battle_Unit_Attack_Immunities(attacker_idx, has_ranged_attack);
@@ -20088,12 +20088,12 @@ int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_
         to_hit += attacker->ranged_tohit;
 
         /* Calculate Distance Penalty for non-magic ranged attacks */
-        if ((attack_type / 10) != rag_Magic)
+        if((attack_type / 10) != rag_Magic)
         {
             dist_penalty = Range_To_Battle_Unit(attacker_idx, target_idx) / 3;
-            if (attacker->Abilities & UA_LONGRANGE)
+            if(attacker->Abilities & UA_LONGRANGE)
             {
-                if (dist_penalty > 0)
+                if(dist_penalty > 0)
                 {
                     dist_penalty = ST_TRUE;
                 }
@@ -20118,24 +20118,24 @@ int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_
     ship_value = attack_strength - defense_strength;
 
     /* Threat assessment: targets with ranged attacks are higher priority */
-    if (Battle_Unit_Has_Ranged_Attack(target_idx))
+    if(Battle_Unit_Has_Ranged_Attack(target_idx))
     {
         ship_value += (target->ranged / 3) + 2;
     }
 
     /* Status effects */
-    if (target->Combat_Effects & bue_Confusion)
+    if(target->Combat_Effects & bue_Confusion)
     {
         ship_value -= 10;
     }
 
     /* Node effects: attacking spirits in a Sorcery Node */
-    if (battlefield->Central_Structure >= CS_SorceryNode && ship_value > 0)
+    if(battlefield->Central_Structure >= CS_SorceryNode && ship_value > 0)
     {
         /* Check if attacker is under index 40 and belongs to the defender player */
-        if (attacker_idx < 40 && attacker->controller_idx == _combat_defender_player)
+        if(attacker_idx < 40 && attacker->controller_idx == _combat_defender_player)
         {
-            if (target->Abilities & UA_MELD)
+            if(target->Abilities & UA_MELD)
             {
                 ship_value += 3;
                 goto CurrentTargetCheck;
@@ -20144,10 +20144,10 @@ int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_
     }
 
     /* Tactical safety: if our defense is high enough relative to target attack, de-prioritize */
-    if (ship_value > 0 && attacker_idx < 40)
+    if(ship_value > 0 && attacker_idx < 40)
     {
         attacker_defense = attacker->defense;
-        if ((attacker_defense / 2) > target_atk_str)
+        if((attacker_defense / 2) > target_atk_str)
         {
             ship_value -= 10;
         }
@@ -20155,25 +20155,25 @@ int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_
 
 CurrentTargetCheck:
     /* Stick to current target bonus */
-    if (attacker->target_battle_unit_idx == target_idx)
+    if(attacker->target_battle_unit_idx == target_idx)
     {
         ship_value += 10;
     }
 
     /* City Wall Logic (Melee Only) */
-    if ((_ai_battlefield_city_walls & 1) && (has_ranged_attack == ST_FALSE))
+    if((_ai_battlefield_city_walls & 1) && (has_ranged_attack == ST_FALSE))
     {
         /* Only applicable to attackers who can't bypass walls */
-        if (attacker->controller_idx == _combat_attacker_player && 
+        if(attacker->controller_idx == _combat_attacker_player && 
             !(attacker->Move_Flags & MV_FLYING) && 
             !(attacker->Abilities & UA_NONCORPOREAL) && 
             !(attacker->Move_Flags & MV_TELEPORT) && 
             !(attacker->Move_Flags & MV_MERGING))
         {
-            if (Combat_Grid_Cell_Has_City_Wall(target->cgx, target->cgy) > 0)
+            if(Combat_Grid_Cell_Has_City_Wall(target->cgx, target->cgy) > 0)
             {
                 /* Check for gate location (8, 12) */
-                if (target->cgx == CGX_GATE && target->cgy == CGY_GATE)
+                if(target->cgx == CGX_GATE && target->cgy == CGY_GATE)
                 {
                     ship_value += 5;
                 }
@@ -20192,19 +20192,19 @@ CurrentTargetCheck:
     }
 
     /* Wall of Fire Logic (Melee Only) */
-    if ((_ai_battlefield_city_walls & 2) && (has_ranged_attack == 0))
+    if((_ai_battlefield_city_walls & 2) && (has_ranged_attack == 0))
     {
-        if (attacker->controller_idx == _combat_attacker_player && 
+        if(attacker->controller_idx == _combat_attacker_player && 
             !(attacker->Move_Flags & MV_FLYING) && 
             !(attacker->Move_Flags & MV_TELEPORT) && 
             !(attacker->Move_Flags & MV_MERGING))
         {
             /* If target is inside city and attacker is outside */
-            if (Battle_Unit_Is_Within_City(target_idx) == 1 && Battle_Unit_Is_Within_City(attacker_idx) == 0)
+            if(Battle_Unit_Is_Within_City(target_idx) == 1 && Battle_Unit_Is_Within_City(attacker_idx) == 0)
             {
                 /* Predict damage from Fireball (used as proxy for Wall of Fire damage) */
                 Apply_Battle_Unit_Damage_From_Spell(spl_Fireball, attacker_idx, damage_array, 0);
-                if (damage_array[0] > 1)
+                if(damage_array[0] > 1)
                 {
                     ship_value = -20;
                 }
@@ -20213,9 +20213,9 @@ CurrentTargetCheck:
     }
 
     /* Final range/movement adjustments */
-    if (has_ranged_attack == 1)
+    if(has_ranged_attack == 1)
     {
-        if (target->Combat_Effects & bue_Black_Sleep)
+        if(target->Combat_Effects & bue_Black_Sleep)
         {
             ship_value += 20;
         }
@@ -20224,9 +20224,9 @@ CurrentTargetCheck:
     {
         /* Melee reach check */
         distance = Range_To_Battle_Unit(attacker_idx, target_idx);
-        if ((distance * 2) <= attacker->movement_points)
+        if((distance * 2) <= attacker->movement_points)
         {
-            if (target->Combat_Effects & bue_Black_Sleep)
+            if(target->Combat_Effects & bue_Black_Sleep)
             {
                 ship_value += 20;
             }
@@ -21683,11 +21683,11 @@ int16_t City_Gold(int16_t city_idx)
     amount = 0;
 
     /* Check if the city belongs to the neutral player */
-    if (_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
+    if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
     {
         itr = 0;
         /* amount is a sum of random(10) for each population point */
-        while (itr < _CITIES[city_idx].population)
+        while(itr < _CITIES[city_idx].population)
         {
             amount += Random(10);
             itr++;
@@ -21702,7 +21702,7 @@ int16_t City_Gold(int16_t city_idx)
         /* Calculate total population of the owner's empire */
         for (itr = 0; itr < _cities; itr++)
         {
-            if (_CITIES[itr].owner_idx == city_owner)
+            if(_CITIES[itr].owner_idx == city_owner)
             {
                 empire_population += _CITIES[itr].population;
             }
@@ -21710,7 +21710,7 @@ int16_t City_Gold(int16_t city_idx)
 
         /* Calculate fraction of gold reserve: (city_pop / total_empire_pop) * gold_reserve */
         /* Assembly uses long multiplication and division (LXMUL@, LDIV@) */
-        if (empire_population > 0)
+        if(empire_population > 0)
         {
             amount = ((long)_players[city_owner].gold_reserve * (long)_CITIES[city_idx].population / (long)empire_population);
         }
@@ -21742,7 +21742,7 @@ int16_t Rampage_Combat_City(void)
 
     for (itr = 0; itr < NUM_LAIRS_102; itr++)
     {
-        if (_LAIRS[itr].intact == ST_FALSE)
+        if(_LAIRS[itr].intact == ST_FALSE)
         {
             empty_lair_idx = itr;
             break;
@@ -21755,20 +21755,20 @@ int16_t Rampage_Combat_City(void)
     secondary_count = 0;
 
     /* 50% chance for rampage to create ruins/lair */
-    if (Random(2) == 1)
+    if(Random(2) == 1)
     {
         return 666;
     }
 
     /* No room for a new lair record */
-    if (empty_lair_idx == -1)
+    if(empty_lair_idx == -1)
     {
         return 666;
     }
 
     /* Check if the city is a player's capital; capitals cannot be turned into ruins by rampage */
     fortress_city_idx = Player_Fortress_City(_CITIES[_combat_environ_idx].owner_idx);
-    if (fortress_city_idx == _combat_environ_idx)
+    if(fortress_city_idx == _combat_environ_idx)
     {
         return 666;
     }
@@ -21782,12 +21782,12 @@ int16_t Rampage_Combat_City(void)
     /* Identify the two most expensive unit types in the rampaging monster stack to guard the ruins */
     for (itr = 0; itr < _combat_total_unit_count; itr++)
     {
-        if (battle_units[itr].status != 1 /* bus_Active */)
+        if(battle_units[itr].status != 1 /* bus_Active */)
         {
             continue;
         }
 
-        if (battle_units[itr].controller_idx != NEUTRAL_PLAYER_IDX)
+        if(battle_units[itr].controller_idx != NEUTRAL_PLAYER_IDX)
         {
             continue;
         }
@@ -21797,27 +21797,27 @@ int16_t Rampage_Combat_City(void)
 
         current_u_type = _UNITS[battle_units[itr].unit_idx].type;
 
-        if (current_u_type == primary_unit)
+        if(current_u_type == primary_unit)
         {
             primary_count++;
         }
-        else if (current_u_type == secondary_unit)
+        else if(current_u_type == secondary_unit)
         {
             secondary_count++;
         }
         else
         {
-            if (unit_types_found == 0)
+            if(unit_types_found == 0)
             {
                 primary_unit = current_u_type;
                 primary_count = 1;
                 unit_types_found = 1;
             }
-            else if (unit_types_found == 1)
+            else if(unit_types_found == 1)
             {
                 unit_types_found = 2;
                 /* If new unit is more expensive than primary, shift primary to secondary */
-                if (_unit_type_table[current_u_type].cost >= _unit_type_table[primary_unit].cost)
+                if(_unit_type_table[current_u_type].cost >= _unit_type_table[primary_unit].cost)
                 {
                     secondary_unit = primary_unit;
                     secondary_count = primary_count;
@@ -21833,14 +21833,14 @@ int16_t Rampage_Combat_City(void)
             else
             {
                 /* Compare with existing primary and secondary to keep the top two most expensive */
-                if (_unit_type_table[current_u_type].cost > _unit_type_table[primary_unit].cost)
+                if(_unit_type_table[current_u_type].cost > _unit_type_table[primary_unit].cost)
                 {
                     secondary_unit = primary_unit;
                     secondary_count = primary_count;
                     primary_unit = current_u_type;
                     primary_count = 1;
                 }
-                else if (_unit_type_table[current_u_type].cost > _unit_type_table[secondary_unit].cost)
+                else if(_unit_type_table[current_u_type].cost > _unit_type_table[secondary_unit].cost)
                 {
                     secondary_unit = current_u_type;
                     secondary_count = 1;
@@ -21940,7 +21940,7 @@ void Update_Move_Map_City_Area_Restrictions(int16_t battle_unit_idx)
     unit_ptr = &battle_units[battle_unit_idx];
 
     /* Check specific wall corner logic */
-    if (battlefield->walled == ST_TRUE)
+    if(battlefield->walled == ST_TRUE)
     {
         /* [5,10] */
         if(battlefield->walls[0][0] == ST_TRUE)
@@ -21958,7 +21958,7 @@ void Update_Move_Map_City_Area_Restrictions(int16_t battle_unit_idx)
             _cmbt_movepath_cost_map[((MAX_CGY_CITY * COMBAT_GRID_WIDTH) + MIN_CGX_CITY)] = INF;
         }
         /* [8,13] */
-        if (battlefield->walls[3][3] == ST_TRUE)
+        if(battlefield->walls[3][3] == ST_TRUE)
         {
             _cmbt_movepath_cost_map[((MAX_CGY_CITY * COMBAT_GRID_WIDTH) + MAX_CGX_CITY)] = INF;
         }
@@ -21972,25 +21972,25 @@ void Update_Move_Map_City_Area_Restrictions(int16_t battle_unit_idx)
     }
 
     /* Check for units that ignore wall movement restrictions */
-    if (unit_ptr->Move_Flags & (MV_FLYING | MV_TELEPORT | MV_MERGING))
+    if(unit_ptr->Move_Flags & (MV_FLYING | MV_TELEPORT | MV_MERGING))
     {
         goto Check_FlyingFortress_Bug;
     }
 
-    if (unit_ptr->Abilities & UA_NONCORPOREAL)
+    if(unit_ptr->Abilities & UA_NONCORPOREAL)
     {
         goto Check_FlyingFortress_Bug;
     }
 
     /* Basic wall/fortress check */
-    if (battlefield->walled != ST_TRUE && battlefield->city_enchantments[FLYING_FORTRESS] == 0)
+    if(battlefield->walled != ST_TRUE && battlefield->city_enchantments[FLYING_FORTRESS] == 0)
     {
         goto Check_FlyingFortress_Bug;
     }
 
     /* Check if unit is currently inside city boundaries */
     // defender or attacker?
-    if (Battle_Unit_Is_Within_City(battle_unit_idx))
+    if(Battle_Unit_Is_Within_City(battle_unit_idx))
     {
         for (i = 0; i < COMBAT_GRID_CITY_AREA_WIDTH; i++)
         {
@@ -22013,38 +22013,38 @@ void Update_Move_Map_City_Area_Restrictions(int16_t battle_unit_idx)
                     battlefield->city_enchantments[FLYING_FORTRESS] > 0
                 )
                 {
-                    if (i == 0)  /* cax / left / west */
+                    if(i == 0)  /* cax / left / west */
                     {
                         _cmbt_movepath_cost_map[(((MIN_CGY_CITY + j) * COMBAT_GRID_WIDTH) + (MIN_CGX_CITY - 1))] = INF;
-                        if (j == 0)  /* cay / top-left / north-west */
+                        if(j == 0)  /* cay / top-left / north-west */
                         {
                             _cmbt_movepath_cost_map[(((MIN_CGY_CITY - 1) * COMBAT_GRID_WIDTH) + (MIN_CGX_CITY - 1))] = INF;
                         }
-                        if (j == 3)  /* cay / bottom-left / south-west */
+                        if(j == 3)  /* cay / bottom-left / south-west */
                         {
                             _cmbt_movepath_cost_map[(((MAX_CGY_CITY + 1) * COMBAT_GRID_WIDTH) + (MIN_CGX_CITY - 1))] = INF;
                         }
                     }
 
-                    if (j == 0)  /* north */
+                    if(j == 0)  /* north */
                     {
                         _cmbt_movepath_cost_map[((MIN_CGY_CITY - 1) * COMBAT_GRID_WIDTH) + (MIN_CGX_CITY + i)] = INF;
                     }
 
-                    if (i == 3)  /* east */
+                    if(i == 3)  /* east */
                     {
                         _cmbt_movepath_cost_map[(((MIN_CGY_CITY + j) * COMBAT_GRID_WIDTH) + (MAX_CGX_CITY + 1))] = INF;
-                        if (j == 0)  /* cay / top-right / north-east */
+                        if(j == 0)  /* cay / top-right / north-east */
                         {
                             _cmbt_movepath_cost_map[(((MIN_CGY_CITY - 1) * COMBAT_GRID_WIDTH) + (MAX_CGX_CITY + 1))] = INF;
                         }
-                        if (j == 3)  /* cay / bottom-right / south-east */
+                        if(j == 3)  /* cay / bottom-right / south-east */
                         {
                             _cmbt_movepath_cost_map[(((MAX_CGY_CITY + 1) * COMBAT_GRID_WIDTH) + (MAX_CGX_CITY + 1))] = INF;
                         }
                     }
 
-                    if (j == 3)  /* south */
+                    if(j == 3)  /* south */
                     {
                         _cmbt_movepath_cost_map[(((MAX_CGY_CITY + 1) * COMBAT_GRID_WIDTH) + (MIN_CGX_CITY + i))] = INF;
                     }
@@ -22070,7 +22070,7 @@ void Update_Move_Map_City_Area_Restrictions(int16_t battle_unit_idx)
                 {
                     continue;
                 }
-                if (battlefield->walls[j][i] == ST_TRUE || battlefield->city_enchantments[FLYING_FORTRESS] > 0)
+                if(battlefield->walls[j][i] == ST_TRUE || battlefield->city_enchantments[FLYING_FORTRESS] > 0)
                 {
                     _cmbt_movepath_cost_map[(MIN_CGY_CITY + j) * COMBAT_GRID_WIDTH + (MIN_CGX_CITY + i)] = INF;
                 }
@@ -23077,25 +23077,25 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
     GUI_Multipurpose_Int = 0;
 
     /* Reduce fame of the loser */
-    if (city_owner_idx < _num_players)
+    if(city_owner_idx < _num_players)
     {
         city_size = _CITIES[_combat_environ_idx].size;
         _players[city_owner_idx].fame -= city_size;
 
-        if (city_owner_idx == HUMAN_PLAYER_IDX)
+        if(city_owner_idx == HUMAN_PLAYER_IDX)
         {
             /* Track fame loss for human player summary */
             GUI_Multipurpose_Int -= city_size;
         }
 
-        if (_players[city_owner_idx].fame < 0)
+        if(_players[city_owner_idx].fame < 0)
         {
             _players[city_owner_idx].fame = 0;
         }
     }
 
     /* Raze Decision Logic */
-    if (_CITIES[_combat_environ_idx].population == 0)
+    if(_CITIES[_combat_environ_idx].population == 0)
     {
         GAME_RazeCity = ST_TRUE;
     }
@@ -23103,31 +23103,31 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
     {
         GAME_RazeCity = ST_FALSE;
 
-        if (troop_owner_idx == HUMAN_PLAYER_IDX)
+        if(troop_owner_idx == HUMAN_PLAYER_IDX)
         {
-            if (magic_set.raze_city == ST_TRUE)
+            if(magic_set.raze_city == ST_TRUE)
             {
                 /* displays the passed message as a raze city confirmation dialog */
                 /* returns 0 if the city is razed, or 1 if not */
                 itr = Raze_City_Prompt(cnst_RazeCity_Msg2);
-                if (itr == 0)
+                if(itr == 0)
                 {
                     GAME_RazeCity = ST_TRUE;
                 }
             }
         }
-        else if (troop_owner_idx < _num_players)
+        else if(troop_owner_idx < _num_players)
         {
             /* AI decides whether to raze or not. Returns 1 for yes, 0 for no. */
             GAME_RazeCity = Raze_Check(_combat_environ_idx, troop_owner_idx);
         }
     }
 
-    if (GAME_RazeCity == ST_FALSE)
+    if(GAME_RazeCity == ST_FALSE)
     {
         /* --- KEEP CITY --- */
         CMB_Gold_Reward = _CITIES[_combat_environ_idx].size - 2;
-        if (CMB_Gold_Reward < 0)
+        if(CMB_Gold_Reward < 0)
         {
             CMB_Gold_Reward = 0;
         }
@@ -23135,7 +23135,7 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
         /* Attacker gains fame for capturing */
         _players[troop_owner_idx].fame += CMB_Gold_Reward;
 
-        if (troop_owner_idx == HUMAN_PLAYER_IDX)
+        if(troop_owner_idx == HUMAN_PLAYER_IDX)
         {
             GUI_Multipurpose_Int += CMB_Gold_Reward;
         }
@@ -23143,16 +23143,16 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
         /* Calculate gold loot from conquest */
         CMB_Gold_Reward = City_Gold(_combat_environ_idx);
 
-        if (troop_owner_idx < _num_players)
+        if(troop_owner_idx < _num_players)
         {
             Player_Add_Gold(troop_owner_idx, CMB_Gold_Reward);
         }
 
         /* Loser loses the same amount of gold */
-        if (city_owner_idx < _num_players)
+        if(city_owner_idx < _num_players)
         {
             _players[city_owner_idx].gold_reserve -= CMB_Gold_Reward;
-            if (_players[city_owner_idx].gold_reserve < 0)
+            if(_players[city_owner_idx].gold_reserve < 0)
             {
                 _players[city_owner_idx].gold_reserve = 0;
             }
@@ -23163,17 +23163,17 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
         /* --- RAZE CITY --- */
         fame_penalty = _CITIES[_combat_environ_idx].size;
 
-        if (troop_owner_idx == HUMAN_PLAYER_IDX)
+        if(troop_owner_idx == HUMAN_PLAYER_IDX)
         {
             /* Fame penalty for human razing */
             GUI_Multipurpose_Int -= fame_penalty;
         }
 
         /* Attacker loses fame for razing */
-        if (troop_owner_idx < _num_players)
+        if(troop_owner_idx < _num_players)
         {
             _players[troop_owner_idx].fame -= fame_penalty;
-            if (_players[troop_owner_idx].fame < 0)
+            if(_players[troop_owner_idx].fame < 0)
             {
                 _players[troop_owner_idx].fame = 0;
             }
@@ -23182,10 +23182,10 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
         /* Loot treasury */
         CMB_Gold_Reward = City_Gold(_combat_environ_idx);
 
-        if (city_owner_idx < _num_players)
+        if(city_owner_idx < _num_players)
         {
             _players[city_owner_idx].gold_reserve -= CMB_Gold_Reward;
-            if (_players[city_owner_idx].gold_reserve < 0)
+            if(_players[city_owner_idx].gold_reserve < 0)
             {
                 _players[city_owner_idx].gold_reserve = 0;
             }
@@ -23195,13 +23195,13 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
         for (itr = 3; itr < 36; itr++)
         {
             /* bs_NotBuilt is -1, Replaced 0, Built 1, Removed 2 */
-            if (_CITIES[_combat_environ_idx].bldg_status[itr] > bs_NotBuilt)
+            if(_CITIES[_combat_environ_idx].bldg_status[itr] > bs_NotBuilt)
             {
                 CMB_Gold_Reward += bldg_data_table[itr].construction_cost / 10;
             }
         }
 
-        if (troop_owner_idx < _num_players)
+        if(troop_owner_idx < _num_players)
         {
             Player_Add_Gold(troop_owner_idx, CMB_Gold_Reward);
         }
@@ -23210,10 +23210,10 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
     battle_units = (struct s_BATTLE_UNIT *)Allocate_First_Block(_screen_seg, 63);  // 63 PR, 1008 B
 
     /* Check for rampaging neutral fantastic units (e.g., Great Drake, Hydra) */
-    if (_UNITS[troops[0]].owner_idx == NEUTRAL_PLAYER_IDX)
+    if(_UNITS[troops[0]].owner_idx == NEUTRAL_PLAYER_IDX)
     {
         unit_type = _UNITS[troops[0]].type;
-        if ((_unit_type_table[unit_type].Abilities & UA_FANTASTIC) != 0)
+        if((_unit_type_table[unit_type].Abilities & UA_FANTASTIC) != 0)
         {
             /* Populate battle unit data for the rampage */
             for (itr = 0; itr < troop_count; itr++)
@@ -23238,12 +23238,12 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
     /* Prep UI Summary Scroll */
     CMB_Population_Lost = 0;
 
-    if (troop_owner_idx == HUMAN_PLAYER_IDX)
+    if(troop_owner_idx == HUMAN_PLAYER_IDX)
     {
         CMB_ScrollMsg_Type = 1; /* combat victory */
     }
 
-    if (city_owner_idx == HUMAN_PLAYER_IDX)
+    if(city_owner_idx == HUMAN_PLAYER_IDX)
     {
         CMB_ScrollMsg_Type = 12; /* city lost */
     }
@@ -23251,7 +23251,7 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
     CMB_Population_Lost = 0;
     CMB_Buildings_Lost = 0;
 
-    if (troop_owner_idx == HUMAN_PLAYER_IDX || city_owner_idx == HUMAN_PLAYER_IDX)
+    if(troop_owner_idx == HUMAN_PLAYER_IDX || city_owner_idx == HUMAN_PLAYER_IDX)
     {
         /* Displays summary and finalizes raze/capture status */
         Combat_Results_Scroll();
@@ -23302,7 +23302,7 @@ int16_t Retreat_Check(int16_t player_idx)
     /* Get_Player_Mode returns 0 if the AI's situation is considered hopeless */
     safety_level = Get_Player_Mode(player_idx);
 
-    if (safety_level != 0)
+    if(safety_level != 0)
     {
         return ST_FALSE;
     }
@@ -23312,22 +23312,22 @@ int16_t Retreat_Check(int16_t player_idx)
         b_unit_ptr = &battle_units[i];
 
         /* Only consider units that are actively in the fight or uninvolved (not dead/fled) */
-        if (b_unit_ptr->status == bus_Active || b_unit_ptr->status == bus_Uninvolved)
+        if(b_unit_ptr->status == bus_Active || b_unit_ptr->status == bus_Uninvolved)
         {
-            if (b_unit_ptr->controller_idx == player_idx)
+            if(b_unit_ptr->controller_idx == player_idx)
             {
                 risked_unit_count++;
 
                 unit_ptr = &_UNITS[b_unit_ptr->unit_idx];
 
                 /* Check if the unit is a Hero */
-                if (unit_ptr->Hero_Slot > -1)
+                if(unit_ptr->Hero_Slot > -1)
                 {
                     hero_count++;
                 }
 
                 /* Check if the unit is a "builder" (Settlers or units with Construction) */
-                if ((b_unit_ptr->Abilities & UA_CREATEOUTPOST) || (b_unit_ptr->Construction > 0))
+                if((b_unit_ptr->Abilities & UA_CREATEOUTPOST) || (b_unit_ptr->Construction > 0))
                 {
                     builder_count++;
                 }
@@ -23336,13 +23336,13 @@ int16_t Retreat_Check(int16_t player_idx)
     }
 
     /* AI will flee if it has at least one hero to save */
-    if (hero_count > 0)
+    if(hero_count > 0)
     {
         return ST_TRUE;
     }
 
     /* AI will flee if all remaining units are just builders (non-combatants) */
-    if (risked_unit_count == builder_count)
+    if(risked_unit_count == builder_count)
     {
         return ST_TRUE;
     }
@@ -23367,7 +23367,7 @@ int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
 
     score = 0;
 
-    if (_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
+    if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
     {
         return 0;
     }
@@ -23396,7 +23396,7 @@ int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
         {
             /* OGBUG: this should either check the diplomatic status or hostility instead, or use a different jump */
             /* BUG: Lawful check uses Hidden_Rel == 0 to penalize raze score */
-            if (_players[player_idx].Dipl.Hidden_Rel[city_owner] == 0)
+            if(_players[player_idx].Dipl.Hidden_Rel[city_owner] == 0)
             {
                 score -= 200;
             }
@@ -23419,12 +23419,12 @@ int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
         total_surviving = 0;
         for (i = 0; i < _combat_total_unit_count; i++)
         {
-            if (battle_units[i].status == bus_Active)
+            if(battle_units[i].status == bus_Active)
             {
                 total_surviving++;
             }
         }
-        if (total_surviving < 3)
+        if(total_surviving < 3)
         {
             score += 10;
         }
@@ -23439,13 +23439,13 @@ int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
 
     for (i = 0; i < _units; i++)
     {
-        if (_landmasses[(_UNITS[i].wp * WORLD_WIDTH) + (_UNITS[i].wy * WORLD_WIDTH) + _UNITS[i].wx] == city_landmass)
+        if(_landmasses[(_UNITS[i].wp * WORLD_WIDTH) + (_UNITS[i].wy * WORLD_WIDTH) + _UNITS[i].wx] == city_landmass)
         {
-            if (_UNITS[i].owner_idx == player_idx)
+            if(_UNITS[i].owner_idx == player_idx)
             {
                 own_units_on_landmass++;
             }
-            else if (_UNITS[i].owner_idx == city_owner)
+            else if(_UNITS[i].owner_idx == city_owner)
             {
                 city_owner_units_on_landmass++;
             }
@@ -23453,7 +23453,7 @@ int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
     }
 
     /* Strategic value adjustment */
-    if (city_owner_units_on_landmass == 0)
+    if(city_owner_units_on_landmass == 0)
     {
         score -= 200;
     }
@@ -23465,16 +23465,16 @@ int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
     }
 
     /* Chaotic wizards have a baseline chance to raze */
-    if (_players[player_idx].Personality == 3 /* PRS_Chaotic */)
+    if(_players[player_idx].Personality == 3 /* PRS_Chaotic */)
     {
-        if (score < 10)
+        if(score < 10)
         {
             score = 10;
         }
     }
 
     /* Final probability check */
-    if (Random(100) <= score)
+    if(Random(100) <= score)
     {
         return ST_TRUE; /* Raze city */
     }
@@ -25379,11 +25379,11 @@ void Battle_Unit_Figure_Position(int16_t figure_count, int16_t current_figure, i
             }
         } break;
         case 0x2:
-            if (current_figure == 0) {
+            if(current_figure == 0) {
                 *figure_x = 0;
                 *figure_y = 4;
             }
-            else if (current_figure == 1) {
+            else if(current_figure == 1) {
                 *figure_x = -6;
                 *figure_y = 10;
             }
@@ -25393,15 +25393,15 @@ void Battle_Unit_Figure_Position(int16_t figure_count, int16_t current_figure, i
             }
             break;
         case 0x3:
-            if (current_figure == 0) {
+            if(current_figure == 0) {
                 *figure_x = 1;
                 *figure_y = 4;
             }
-            else if (current_figure == 1) {
+            else if(current_figure == 1) {
                 *figure_x = 8;
                 *figure_y = 8;
             }
-            else if (current_figure == 2) {
+            else if(current_figure == 2) {
                 *figure_x = 1;
                 *figure_y = 12;
             }
@@ -25411,19 +25411,19 @@ void Battle_Unit_Figure_Position(int16_t figure_count, int16_t current_figure, i
             }
             break;
         case 0x4:
-            if (current_figure == 0) {
+            if(current_figure == 0) {
                 *figure_x = 1;
                 *figure_y = 4;
             }
-            else if (current_figure == 1) {
+            else if(current_figure == 1) {
                 *figure_x = 8;
                 *figure_y = 8;
             }
-            else if (current_figure == 2) {
+            else if(current_figure == 2) {
                 *figure_x = 1;
                 *figure_y = 12;
             }
-            else if (current_figure == 3) {
+            else if(current_figure == 3) {
                 *figure_x = -7;
                 *figure_y = 8;
             }
@@ -25433,23 +25433,23 @@ void Battle_Unit_Figure_Position(int16_t figure_count, int16_t current_figure, i
             }
             break;
         case 0x5:
-            if (current_figure == 0) {
+            if(current_figure == 0) {
                 *figure_x = 1;
                 *figure_y = 4;
             }
-            else if (current_figure == 1) {
+            else if(current_figure == 1) {
                 *figure_x = 9;
                 *figure_y = 8;
             }
-            else if (current_figure == 2) {
+            else if(current_figure == 2) {
                 *figure_x = -8;
                 *figure_y = 8;
             }
-            else if (current_figure == 3) {
+            else if(current_figure == 3) {
                 *figure_x = 1;
                 *figure_y = 12;
             }
-            else if (current_figure == 4) {
+            else if(current_figure == 4) {
                 *figure_x = -3;
                 *figure_y = 9;
             }
@@ -25459,27 +25459,27 @@ void Battle_Unit_Figure_Position(int16_t figure_count, int16_t current_figure, i
             }
             break;
         case 0x6:
-            if (current_figure == 0) {
+            if(current_figure == 0) {
                 *figure_x = 1;
                 *figure_y = 4;
             }
-            else if (current_figure == 1) {
+            else if(current_figure == 1) {
                 *figure_x = 10;
                 *figure_y = 8;
             }
-            else if (current_figure == 2) {
+            else if(current_figure == 2) {
                 *figure_x = -8;
                 *figure_y = 8;
             }
-            else if (current_figure == 3) {
+            else if(current_figure == 3) {
                 *figure_x = 1;
                 *figure_y = 12;
             }
-            else if (current_figure == 4) {
+            else if(current_figure == 4) {
                 *figure_x = 6;
                 *figure_y = 6;
             }
-            else if (current_figure == 5) {
+            else if(current_figure == 5) {
                 *figure_x = -3;
                 *figure_y = 11;
             }
@@ -25489,31 +25489,31 @@ void Battle_Unit_Figure_Position(int16_t figure_count, int16_t current_figure, i
             }
             break;
         case 0x7:
-            if (current_figure == 0) {
+            if(current_figure == 0) {
                 *figure_x = 1;
                 *figure_y = 4;
             }
-            else if (current_figure == 1) {
+            else if(current_figure == 1) {
                 *figure_x = 10;
                 *figure_y = 8;
             }
-            else if (current_figure == 2) {
+            else if(current_figure == 2) {
                 *figure_x = -8;
                 *figure_y = 8;
             }
-            else if (current_figure == 3) {
+            else if(current_figure == 3) {
                 *figure_x = 2;
                 *figure_y = 12;
             }
-            else if (current_figure == 4) {
+            else if(current_figure == 4) {
                 *figure_x = 6;
                 *figure_y = 6;
             }
-            else if (current_figure == 5) {
+            else if(current_figure == 5) {
                 *figure_x = -3;
                 *figure_y = 12;
             }
-            else if (current_figure == 6) {
+            else if(current_figure == 6) {
                 *figure_x = -2;
                 *figure_y = 7;
             }
@@ -26321,7 +26321,7 @@ void Generate_Combat_Map(
         case clt_City:
         {
             battlefield->Central_Structure = CS_City;
-            if (city_population >= 12)
+            if(city_population >= 12)
             {
                 house_ctr = 0;
                 for (j = 0; j <= 3; j++)
@@ -26330,9 +26330,9 @@ void Generate_Combat_Map(
                     {
                         /* Logic to exclude corners if city walls exist */
                         /* should be ~ if not corner or not walls */
-                        if ((i == 0 && j == 0) || (i == 3 && j == 0) || (i == 0 && j == 3) || (i == 3 && j == 3))
+                        if((i == 0 && j == 0) || (i == 3 && j == 0) || (i == 0 && j == 3) || (i == 3 && j == 3))
                         {
-                            if (city_walls == ST_FALSE)
+                            if(city_walls == ST_FALSE)
                             {
                                 battlefield->house_cgxs[house_ctr] = (MIN_CGX_CITY + i);
                                 battlefield->house_cgys[house_ctr] = (MIN_CGY_CITY + j);
@@ -26354,7 +26354,7 @@ void Generate_Combat_Map(
             else
             {
                 battlefield->house_cnt = 0;
-                while (battlefield->house_cnt < city_population)
+                while(battlefield->house_cnt < city_population)
                 {
                     random_cax = Random(4) - 1;
                     random_cay = Random(4) - 1;
@@ -26362,9 +26362,9 @@ void Generate_Combat_Map(
                     j = (MIN_CGY_CITY + random_cay);
                     reject_house_location = 0; /* e_ST_FALSE */
 
-                    if (city_walls == 1) /* e_ST_TRUE */
+                    if(city_walls == 1) /* e_ST_TRUE */
                     {
-                        if ((random_cax == 0 && random_cay == 0) || (random_cax == 0 && random_cay == 3) || (random_cax == 3 && random_cay == 0) || (random_cax == 3 && random_cay == 3))
+                        if((random_cax == 0 && random_cay == 0) || (random_cax == 0 && random_cay == 3) || (random_cax == 3 && random_cay == 0) || (random_cax == 3 && random_cay == 3))
                         {
                             reject_house_location = ST_TRUE;
                         }
@@ -26372,13 +26372,13 @@ void Generate_Combat_Map(
 
                     for (house_ctr = 0; house_ctr < battlefield->house_cnt; house_ctr++)
                     {
-                        if (battlefield->house_cgxs[house_ctr] == i && battlefield->house_cgys[house_ctr] == j)
+                        if(battlefield->house_cgxs[house_ctr] == i && battlefield->house_cgys[house_ctr] == j)
                         {
                             reject_house_location = ST_TRUE;
                         }
                     }
 
-                    if (reject_house_location == ST_FALSE)
+                    if(reject_house_location == ST_FALSE)
                     {
                         battlefield->house_cgxs[battlefield->house_cnt] = i;
                         battlefield->house_cgys[battlefield->house_cnt] = j;
@@ -26389,7 +26389,7 @@ void Generate_Combat_Map(
             }
 
             battlefield->walled = city_walls;
-            if (city_walls == ST_TRUE)
+            if(city_walls == ST_TRUE)
             {
                 for (j = 0; j <= 3; j++)
                 {
@@ -26410,7 +26410,7 @@ void Generate_Combat_Map(
         case clt_Fortress:
         {
             battlefield->Central_Structure = CS_Fortress;
-            if (city_population >= 11)  /* 12 - 1, for fortress cell */
+            if(city_population >= 11)  /* 12 - 1, for fortress cell */
             {
                 house_ctr = 0;
                 for (j = 0; j <= 3; j++)
@@ -26419,12 +26419,12 @@ void Generate_Combat_Map(
                     {
                         /* Exclude corners if walls, and center square (1,1) for the fortress */
                         /* should be ~ if not corner or not walls */
-                        if ((i == 0 && j == 0) || (i == 3 && j == 0) || (i == 0 && j == 3) || (i == 3 && j == 3))
+                        if((i == 0 && j == 0) || (i == 3 && j == 0) || (i == 0 && j == 3) || (i == 3 && j == 3))
                         {
-                            if (city_walls != ST_FALSE) continue;
+                            if(city_walls != ST_FALSE) continue;
                         }
 
-                        if (i == 1 && j == 1) continue;  /* exclude Fortress */
+                        if(i == 1 && j == 1) continue;  /* exclude Fortress */
 
                         battlefield->house_cgxs[house_ctr] = (MIN_CGX_CITY + i);
                         battlefield->house_cgys[house_ctr] = (MIN_CGY_CITY + j);
@@ -26438,7 +26438,7 @@ void Generate_Combat_Map(
             else
             {
                 battlefield->house_cnt = 0;
-                while (battlefield->house_cnt < city_population)
+                while(battlefield->house_cnt < city_population)
                 {
                     random_cax = Random(4) - 1;
                     random_cay = Random(4) - 1;
@@ -26446,11 +26446,11 @@ void Generate_Combat_Map(
                     j = (MIN_CGY_CITY + random_cay);
                     reject_house_location = ST_FALSE;
 
-                    if (random_cax == 1 && random_cay == 1) reject_house_location = ST_TRUE;
+                    if(random_cax == 1 && random_cay == 1) reject_house_location = ST_TRUE;
                     
-                    if (city_walls == ST_TRUE)
+                    if(city_walls == ST_TRUE)
                     {
-                        if ((random_cax == 0 && random_cay == 0) || (random_cax == 0 && random_cay == 3) || (random_cax == 3 && random_cay == 0) || (random_cax == 3 && random_cay == 3))
+                        if((random_cax == 0 && random_cay == 0) || (random_cax == 0 && random_cay == 3) || (random_cax == 3 && random_cay == 0) || (random_cax == 3 && random_cay == 3))
                         {
                             reject_house_location = ST_TRUE;
                         }
@@ -26458,13 +26458,13 @@ void Generate_Combat_Map(
 
                     for (house_ctr = 0; house_ctr < battlefield->house_cnt; house_ctr++)
                     {
-                        if (battlefield->house_cgxs[house_ctr] == i && battlefield->house_cgys[house_ctr] == j)
+                        if(battlefield->house_cgxs[house_ctr] == i && battlefield->house_cgys[house_ctr] == j)
                         {
                             reject_house_location = ST_TRUE;
                         }
                     }
 
-                    if (reject_house_location == ST_FALSE)
+                    if(reject_house_location == ST_FALSE)
                     {
                         battlefield->house_cgxs[battlefield->house_cnt] = i;
                         battlefield->house_cgys[battlefield->house_cnt] = j;
@@ -26475,7 +26475,7 @@ void Generate_Combat_Map(
             }
 
             battlefield->walled = city_walls;
-            if (city_walls == ST_TRUE)
+            if(city_walls == ST_TRUE)
             {
                 for (j = 0; j <= 3; j++)
                 {

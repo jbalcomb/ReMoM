@@ -88,14 +88,14 @@ int main(void)
 
     /* Perform the iteration */
 
-    while ( set[z] == 0 )
+    while( set[z] == 0 )
     {
         /* find minimal vertex u not in the set */
 
         min_value = Inf;
         for (i = 0; i < n; i++)
-            if (set[i] == 0)
-                if (length[i] < min_value)
+            if(set[i] == 0)
+                if(length[i] < min_value)
                 {
                     min_value = length[i];
                     u = i;
@@ -111,9 +111,9 @@ int main(void)
         /* update the length values and the path back pointer */
 
         for (i = 0; i < n; i++)
-            if (set[i] == 0)
+            if(set[i] == 0)
             {
-                if (length[u] + weight[u][i] < length[i])
+                if(length[u] + weight[u][i] < length[i])
                 {
                     length[i] = length[u] + weight[u][i];
                     path[i] = u;
@@ -124,14 +124,14 @@ int main(void)
     /* print out shortest path and its length */
 
     i = 0;
-    while (u != 0)
+    while(u != 0)
     {
         stack[i++] = u;
         u = path[u];
     }
     stack[i] = 0;
     printf("Shortest path is: ");
-    while (i >= 0)
+    while(i >= 0)
         printf("%d ", stack[i--]);
     printf("\n");
 
@@ -149,14 +149,14 @@ int get_integer(char *prompt)
     int value, valid_input = 0;
     char inbuf[133];
 
-    while (valid_input < 1)
+    while(valid_input < 1)
     {
         printf(prompt);
         fgets(inbuf, sizeof(inbuf), stdin);
         valid_input = sscanf(inbuf, "%d", &value);
-        if (valid_input == -1)
+        if(valid_input == -1)
             printf("Please enter an integer value.\n");
-        if (valid_input == 0)
+        if(valid_input == 0)
             printf("That is not an integer - please enter an integer value.\n");
     }
 
@@ -175,14 +175,14 @@ float get_float(char *prompt)
     float value;
     char inbuf[133];
 
-    while (valid_input < 1)
+    while(valid_input < 1)
     {
         printf(prompt);
         fgets(inbuf, sizeof(inbuf), stdin);
         valid_input = sscanf(inbuf, "%f", &value);
-        if (valid_input == -1)
+        if(valid_input == -1)
             printf("Please enter a floating point value.\n");
-        if (valid_input == 0)
+        if(valid_input == 0)
         {
             printf("That is not a floating point value.\n");
             printf("Please enter a floating point value.\n");
@@ -203,7 +203,7 @@ void *make_array(int number_of_elements, int data_size)
     void *address;
 
     address = (void *) malloc(number_of_elements * data_size);
-    if (address == NULL)
+    if(address == NULL)
     {
         fprintf(stderr, "Insufficient memory for array allocation.\n");
         exit(1);
@@ -220,10 +220,10 @@ int get_number_of_vertices(void)
 {
     int number = -1;
 
-    while (number < 2)
+    while(number < 2)
     {
         number = get_integer("Enter number of vertices: ");
-        if (number < 2)
+        if(number < 2)
             printf("The number of vertices must be 2 or greater.\n");
     }
 
@@ -238,10 +238,10 @@ int get_terminal_vertex(int number_of_vertices)
 {
     int number = -1;
 
-    while ((number < 1) || (number > number_of_vertices - 1))
+    while((number < 1) || (number > number_of_vertices - 1))
     {
         number = get_integer("Enter terminal vertex: ");
-        if ((number < 1) || (number > number_of_vertices - 1))
+        if((number < 1) || (number > number_of_vertices - 1))
             printf("The value of the terminal vertex must be between 1 and %d.\n",
                     number_of_vertices - 1);
     }

@@ -123,7 +123,7 @@ if [ "${CALL_COUNT}" -eq 0 ]; then
     echo
     echo "FAIL: no [RNG-CALL] lines captured"
     echo "  Check that Random_at() tracing is wired up and --seed was honored."
-    echo "  See MoX/src/random.c:318-341 ('if (_cmd_line_seed != 0)')."
+    echo "  See MoX/src/random.c:318-341 ('if(_cmd_line_seed != 0)')."
     exit 1
 fi
 echo "  output : ${HEMOM_RNG_LOG}"

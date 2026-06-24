@@ -528,17 +528,17 @@ void LBX_IMG_VShiftRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr
     width = GET_2B_OFS(bitmap, 0);
     height = GET_2B_OFS(bitmap, 2);
 
-    if (x1 < 0)
+    if(x1 < 0)
     {
         x1 = 0;
     }
 
-    if (x2 > width)
+    if(x2 > width)
     {
         x2 = width;
     }
 
-    if (x1 > x2)
+    if(x1 > x2)
     {
         Swap_Short(&x1, &x2);
         Swap_Short(&y1, &y2);
@@ -546,7 +546,7 @@ void LBX_IMG_VShiftRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr
 
     shear = (int32_t)y1 * 1000;
 
-    if (x2 != x1)
+    if(x2 != x1)
     {
         shear_add = ((int32_t)(y2 - y1) * 1000) / (x2 - x1);
     }
@@ -564,13 +564,13 @@ void LBX_IMG_VShiftRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr
     {
         current_shear = (int16_t)(shear / 1000);
 
-        if (current_shear != 0)
+        if(current_shear != 0)
         {
-            if (current_shear < 0)
+            if(current_shear < 0)
             {
                 /* MoO2 Shear_Y_Negative_() */
                 New_Height = height + current_shear;
-                if (New_Height > 0)
+                if(New_Height > 0)
                 {
                     /* New_Height = (height + current_shear) > 0 */
                     for (itr = ofst; itr < (ofst + New_Height); itr++)
@@ -595,7 +595,7 @@ void LBX_IMG_VShiftRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr
             {
                 /* MoO2 Shear_Y_Positive_() */
                 New_Height = height - current_shear;
-                if (New_Height > 0)
+                if(New_Height > 0)
                 {
                     /* (height - current_shear) > 0 */
                     for (itr = (ofst + height - 1); itr >= (ofst + current_shear); itr--)
@@ -823,7 +823,7 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
     // // _fmemcpy(animation_header, 0, 0, picture, 16)
     // memcpy(&animation_header, picture, 16);
     // x2 = x + animation_header.width - 1;
-    // if (x2 < screen_window_x1)
+    // if(x2 < screen_window_x1)
     // {
     //     return;
     // }
@@ -2379,7 +2379,7 @@ static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t he
 
     bbuff_pos = current_video_page + ((y1 * SCREEN_WIDTH) + x1);
 
-    while (width--)
+    while(width--)
     {
         // line_count = CS031_height;
         bbuff = bbuff_pos++;
@@ -2403,7 +2403,7 @@ static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t he
             {
                 skip_count = *(frame_data + 1);
                 line_skip_count -= skip_count;
-                if (line_skip_count > 0)
+                if(line_skip_count > 0)
                 {
                     data_count = *frame_data++;
                     frame_data++;
@@ -2411,9 +2411,9 @@ static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t he
                     /* loc_10eb6: */
                     do {
                         data_byte = *frame_data++;
-                        if (data_byte <= 223)
+                        if(data_byte <= 223)
                         {
-                            if (--line_skip_count >= 0)
+                            if(--line_skip_count >= 0)
                             {
                                 /* continue; */
                             }
@@ -2431,7 +2431,7 @@ static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t he
                             /* 10ed3 */
                             frame_data++;
                             line_skip_count -= (data_byte - 223);
-                            if (line_skip_count >= 0)
+                            if(line_skip_count >= 0)
                             {
                                 data_count--;
                                 /* continue; */
@@ -2446,8 +2446,8 @@ static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t he
                                 goto loc_10f51;
                             }
                         }
-                    } while (--data_count);
-                    if (packet_byte_count >= 1)
+                    } while(--data_count);
+                    if(packet_byte_count >= 1)
                     {
                         goto loc_10ea2;
                     }
@@ -2476,10 +2476,10 @@ static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t he
                 packet_byte_count -= data_count + 2;
                 /* loc_10f30: */
                 do {
-                    if (--line_count >= 0)
+                    if(--line_count >= 0)
                     {
                         data_byte = *frame_data++;
-                        if (data_byte <= 223)
+                        if(data_byte <= 223)
                         {
                         loc_10f38:
                             *bbuff = data_byte;
@@ -2493,7 +2493,7 @@ static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t he
                             line_count++;
                         loc_10f51:
                             do {
-                                if (--line_count >= 0)
+                                if(--line_count >= 0)
                                 {
                                     *bbuff = data_byte;
                                     bbuff += SCREEN_WIDTH;
@@ -2503,7 +2503,7 @@ static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t he
                                     data_count--;
                                     goto loc_10f7e;
                                 }
-                            } while (--len_compr);
+                            } while(--len_compr);
                         }
                     }
                     else
@@ -2512,8 +2512,8 @@ static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t he
                         frame_data += data_count;
                         break;
                     }
-                } while (--data_count);
-            } while (packet_byte_count >= 1);
+                } while(--data_count);
+            } while(packet_byte_count >= 1);
         }
 
 /*
@@ -2534,7 +2534,7 @@ static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t he
                     data_count = *frame_data++;
                     line_skip_count -= data_count;
 
-                    if (line_skip_count < 0)
+                    if(line_skip_count < 0)
                     {
                         /* copy_sequence_pre3: */
                         frame_data++;
@@ -2550,7 +2550,7 @@ static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t he
                         frame_data++;
                         frame_data += data_count;
                         packet_byte_count -= data_count + 2;
-                        if (packet_byte_count != 0) { goto copy_consume_skip_y; }
+                        if(packet_byte_count != 0) { goto copy_consume_skip_y; }
                         goto next_column;
                     }
                 }
@@ -2579,16 +2579,16 @@ static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t he
                 for (;;)
                 {
                     line_count--;
-                    if (line_count < 0) { frame_data += data_count; break; }
+                    if(line_count < 0) { frame_data += data_count; break; }
                     *bbuff = *frame_data++;
                     bbuff += SCREEN_WIDTH;
                     data_count--;
-                    if (data_count == 0) { break; }
+                    if(data_count == 0) { break; }
                 }
-                // if (!((packet_byte_count - 1) < 0)) { goto copy_sequence_start; }
+                // if(!((packet_byte_count - 1) < 0)) { goto copy_sequence_start; }
                 // goto next_column;  /* copy_end_loop_height: */
-            } while (packet_byte_count >= 1);
-        }  /* if (packet_op == 0x00)  / * Type: copy * / */
+            } while(packet_byte_count >= 1);
+        }  /* if(packet_op == 0x00)  / * Type: copy * / */
 
 /*
     END: Copy - Packet Operation
@@ -2597,7 +2597,7 @@ static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t he
     next_column:
         ;
 
-    }  /* while (width--) */
+    }  /* while(width--) */
 
 }
 
@@ -2613,25 +2613,25 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int width, int h, int s
     int ylen;
 
     /* skip columns */
-    while (skip_x--) {
+    while(skip_x--) {
         b = *data++;
-        if (b != 0xff) {
+        if(b != 0xff) {
             b = *data++;
             data += b;
         }
     }
 
-    while (width--)
+    while(width--)
     {
         q = p++;
         b = *data++;
-        if (b == 0xff) { /* skip column */
+        if(b == 0xff) { /* skip column */
             continue;
         }
 
         packet_op = b;
         packet_byte_count = *data++;
-        if ((packet_op & 0x80) == 0) /* regular data  unsigned/non-negative*/
+        if((packet_op & 0x80) == 0) /* regular data  unsigned/non-negative*/
         {
             ylen = skip_y;  // line_skip_count = skip_y
         copy_consume_skip_y:
@@ -2646,7 +2646,7 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int width, int h, int s
                     {
                         data += data_count + 1;
                         packet_byte_count -= data_count + 2;
-                        if (packet_byte_count != 0)
+                        if(packet_byte_count != 0)
                         {
                             goto copy_consume_skip_y;
                         }
@@ -2689,7 +2689,7 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int width, int h, int s
                 packet_byte_count -= data_count + 2;
             copy_loop_height:
                 do {
-                    if (--ylen >= 0) {
+                    if(--ylen >= 0) {
                         *q = *data++;
                         q += pitch;
                     }
@@ -2697,25 +2697,25 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int width, int h, int s
                         data += data_count;
                         break;
                     }
-                } while (--data_count);
-            } while (packet_byte_count >= 1);
+                } while(--data_count);
+            } while(packet_byte_count >= 1);
         }
         else {    /* compressed data */
             uint8_t len_compr;
             /*10e97*/
             ylen = skip_y;
         loc_10ea2:
-            if (ylen != 0) {
+            if(ylen != 0) {
                 ylen -= data[1];
-                if (ylen > 0) {
+                if(ylen > 0) {
                     data_count = *data++;
                     ++data;
                     packet_byte_count -= data_count + 2;
                     /*loc_10eb6:*/
                     do {
                         b = *data++;
-                        if (b <= 0xdf) {
-                            if (--ylen >= 0) {
+                        if(b <= 0xdf) {
+                            if(--ylen >= 0) {
                                 /*continue;*/
                             }
                             else {
@@ -2730,7 +2730,7 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int width, int h, int s
                             /*10ed3*/
                             ++data;
                             ylen -= (b - 0xdf);
-                            if (ylen >= 0) {
+                            if(ylen >= 0) {
                                 --data_count;
                                 /*continue;*/
                             }
@@ -2744,8 +2744,8 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int width, int h, int s
                                 goto loc_10f51;
                             }
                         }
-                    } while (--data_count);
-                    if (packet_byte_count >= 1) {
+                    } while(--data_count);
+                    if(packet_byte_count >= 1) {
                         goto loc_10ea2;
                     }
                     else {
@@ -2772,9 +2772,9 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int width, int h, int s
                 packet_byte_count -= data_count + 2;
                 /*loc_10f30:*/
                 do {
-                    if (--ylen >= 0) {
+                    if(--ylen >= 0) {
                         b = *data++;
-                        if (b <= 0xdf) {
+                        if(b <= 0xdf) {
                         loc_10f38:
                             *q = b;
                             q += pitch;
@@ -2786,7 +2786,7 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int width, int h, int s
                             ++ylen;
                         loc_10f51:
                             do {
-                                if (--ylen >= 0) {
+                                if(--ylen >= 0) {
                                     *q = b;
                                     q += pitch;
                                 }
@@ -2794,7 +2794,7 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int width, int h, int s
                                     --data_count;
                                     goto loc_10f7e;
                                 }
-                            } while (--len_compr);
+                            } while(--len_compr);
                         }
                     }
                     else {
@@ -2802,12 +2802,12 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int width, int h, int s
                         data += data_count;
                         break;
                     }
-                } while (--data_count);
-            } while (packet_byte_count >= 1);
+                } while(--data_count);
+            } while(packet_byte_count >= 1);
         }
     next_column:
         ;
-    }  /* while (width--) */
+    }  /* while(width--) */
 }
 
 
@@ -3526,7 +3526,7 @@ void Vanish_Bitmap__WIP(SAMB_ptr bitmap, int16_t percent)
 
         }
 
-    } while (--_CS_width != 0);
+    } while(--_CS_width != 0);
 
 }
 
@@ -3757,7 +3757,7 @@ _AX_ >>= 1;     // shr     ax, 1
     _SI_ >>= _SI_;
     _SI_ &= _CF_;
 
-} while (--_CX_ != 0);
+} while(--_CX_ != 0);
 // loop    loc_24F9E
 
 

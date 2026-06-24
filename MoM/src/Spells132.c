@@ -1513,7 +1513,7 @@ int16_t Cast_Spell_Of_Return(int16_t player_idx)
 
         do {
             return_value = Spell_Casting_Screen__WIP(stt_Friendly_City, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aSpellOfReturn);  // "Spell of Return"
-        } while (return_value == ST_FALSE);
+        } while(return_value == ST_FALSE);
 
     }
     else

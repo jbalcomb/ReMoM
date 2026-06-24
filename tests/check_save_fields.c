@@ -33,10 +33,10 @@ static int    dump_count = 0;
 static char *Trim(char *s)
 {
     char *end;
-    while (*s && isspace((unsigned char)*s)) { s++; }
-    if (*s == '\0') { return s; }
+    while(*s && isspace((unsigned char)*s)) { s++; }
+    if(*s == '\0') { return s; }
     end = s + strlen(s) - 1;
-    while (end > s && isspace((unsigned char)*end)) { *end-- = '\0'; }
+    while(end > s && isspace((unsigned char)*end)) { *end-- = '\0'; }
     return s;
 }
 
@@ -48,7 +48,7 @@ static int Parse_Key_Value(char *line, char **key_out, char **val_out)
     char *val;
     char *end;
 
-    if (eq == NULL) { return 1; }
+    if(eq == NULL) { return 1; }
 
     *eq = '\0';
     key = line;
@@ -56,14 +56,14 @@ static int Parse_Key_Value(char *line, char **key_out, char **val_out)
 
     /* Trim trailing whitespace from key. */
     end = eq - 1;
-    while (end >= key && isspace((unsigned char)*end)) { *end-- = '\0'; }
+    while(end >= key && isspace((unsigned char)*end)) { *end-- = '\0'; }
 
     /* Trim leading whitespace from value. */
-    while (*val && isspace((unsigned char)*val)) { val++; }
+    while(*val && isspace((unsigned char)*val)) { val++; }
 
     /* Trim trailing whitespace from value. */
     end = val + strlen(val) - 1;
-    while (end >= val && isspace((unsigned char)*end)) { *end-- = '\0'; }
+    while(end >= val && isspace((unsigned char)*end)) { *end-- = '\0'; }
 
     *key_out = key;
     *val_out = val;
@@ -78,13 +78,13 @@ static int Load_Dump(const char *filepath)
     char *storage_ptr = dump_storage;
 
     fp = fopen(filepath, "r");
-    if (fp == NULL)
+    if(fp == NULL)
     {
         fprintf(stderr, "check_save_fields: cannot open dump file: %s\n", filepath);
         return 1;
     }
 
-    while (fgets(raw, sizeof(raw), fp) != NULL && dump_count < MAX_DUMP_LINES)
+    while(fgets(raw, sizeof(raw), fp) != NULL && dump_count < MAX_DUMP_LINES)
     {
         char *line = Trim(raw);
         char *key;
@@ -92,14 +92,14 @@ static int Load_Dump(const char *filepath)
         size_t key_len;
         size_t val_len;
 
-        if (*line == '\0' || *line == '#') { continue; }
-        if (Parse_Key_Value(line, &key, &val) != 0) { continue; }
+        if(*line == '\0' || *line == '#') { continue; }
+        if(Parse_Key_Value(line, &key, &val) != 0) { continue; }
 
         key_len = strlen(key) + 1;
         val_len = strlen(val) + 1;
 
         /* Bounds check on storage. */
-        if ((size_t)((storage_ptr - dump_storage) + key_len + val_len) > sizeof(dump_storage))
+        if((size_t)((storage_ptr - dump_storage) + key_len + val_len) > sizeof(dump_storage))
         {
             fprintf(stderr, "check_save_fields: dump_storage exhausted\n");
             fclose(fp);
@@ -127,7 +127,7 @@ static const char *Lookup_Dump_Field(const char *key)
     int i;
     for (i = 0; i < dump_count; i++)
     {
-        if (strcmp(dump_keys[i], key) == 0)
+        if(strcmp(dump_keys[i], key) == 0)
         {
             return dump_vals[i];
         }
@@ -144,22 +144,22 @@ int main(int argc, char *argv[])
     int   failed = 0;
     int   missing = 0;
 
-    if (argc < 3)
+    if(argc < 3)
     {
         fprintf(stderr, "Usage: %s <dump.txt> <assertions.txt>\n", argv[0]);
         return 2;
     }
 
-    if (Load_Dump(argv[1]) != 0) { return 2; }
+    if(Load_Dump(argv[1]) != 0) { return 2; }
 
     fp = fopen(argv[2], "r");
-    if (fp == NULL)
+    if(fp == NULL)
     {
         fprintf(stderr, "check_save_fields: cannot open assertions file: %s\n", argv[2]);
         return 2;
     }
 
-    while (fgets(raw, sizeof(raw), fp) != NULL)
+    while(fgets(raw, sizeof(raw), fp) != NULL)
     {
         char       *line = Trim(raw);
         char       *key;
@@ -168,8 +168,8 @@ int main(int argc, char *argv[])
 
         line_num++;
 
-        if (*line == '\0' || *line == '#') { continue; }
-        if (Parse_Key_Value(line, &key, &expected) != 0)
+        if(*line == '\0' || *line == '#') { continue; }
+        if(Parse_Key_Value(line, &key, &expected) != 0)
         {
             fprintf(stderr, "%s:%d: bad assertion line: %s\n", argv[2], line_num, line);
             failed++;
@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
         }
 
         actual = Lookup_Dump_Field(key);
-        if (actual == NULL)
+        if(actual == NULL)
         {
             fprintf(stderr, "FAIL %s:%d: field not found in dump: %s\n", argv[2], line_num, key);
             missing++;
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
             continue;
         }
 
-        if (strcmp(actual, expected) != 0)
+        if(strcmp(actual, expected) != 0)
         {
             fprintf(stderr, "FAIL %s:%d: %s\n  actual:   %s\n  expected: %s\n", argv[2], line_num, key, actual, expected);
             failed++;
@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
 
     fclose(fp);
 
-    if (failed > 0)
+    if(failed > 0)
     {
         fprintf(stderr, "\n%d passed, %d failed (%d missing)\n", passed, failed, missing);
         return 1;

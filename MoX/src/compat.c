@@ -26,11 +26,11 @@ https://github.com/lattera/glibc/blob/master/string/strcasecmp.c
 //   const unsigned char *p2 = (const unsigned char *) s2;
 //   int result;
 // 
-//   if (p1 == p2)
+//   if(p1 == p2)
 //     return 0;
 // 
-//   while ((result = TOLOWER (*p1) - TOLOWER (*p2++)) == 0)
-//     if (*p1++ == '\0')
+//   while((result = TOLOWER (*p1) - TOLOWER (*p2++)) == 0)
+//     if(*p1++ == '\0')
 //       break;
 // 
 //   return result;
@@ -48,7 +48,7 @@ https://github.com/torvalds/linux/blob/master/lib/string.c
 // 	do {
 // 		c1 = tolower(*s1++);
 // 		c2 = tolower(*s2++);
-// 	} while (c1 == c2 && c1 != 0);
+// 	} while(c1 == c2 && c1 != 0);
 // 	return c1 - c2;
 // }
 
@@ -62,6 +62,6 @@ int strcasecmp(const char *s1, const char *s2)
     {
         c1 = tolower(*s1++);
         c2 = tolower(*s2++);
-    } while (c1 == c2 && c1 != 0);
+    } while(c1 == c2 && c1 != 0);
     return c1 - c2;
 }

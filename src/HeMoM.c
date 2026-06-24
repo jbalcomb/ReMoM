@@ -109,10 +109,10 @@ extern int16_t _given_chance_to_rename_home_city;
 static char *Trim_Whitespace(char *str)
 {
     char *end;
-    while (*str && isspace((unsigned char)*str)) { str++; }
+    while(*str && isspace((unsigned char)*str)) { str++; }
     if(*str == '\0') { return str; }
     end = str + strlen(str) - 1;
-    while (end > str && isspace((unsigned char)*end)) { *end-- = '\0'; }
+    while(end > str && isspace((unsigned char)*end)) { *end-- = '\0'; }
     return str;
 }
 
@@ -247,7 +247,7 @@ static int Config_Parse(const char *filepath, struct s_HeMoM_Config *cfg)
 
     LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Loading config: %s", filepath);
 
-    while (fgets(line, sizeof(line), fp) != NULL)
+    while(fgets(line, sizeof(line), fp) != NULL)
     {
         line_num++;
         key = Trim_Whitespace(line);

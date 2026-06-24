@@ -311,7 +311,7 @@ int16_t Player_Armies_Gold_Upkeep(int16_t player_idx)
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-        if (_UNITS[itr_units].owner_idx == player_idx)
+        if(_UNITS[itr_units].owner_idx == player_idx)
         {
             gold_upkeep_cost += Unit_Gold_Upkeep(itr_units);
         }
@@ -960,7 +960,7 @@ void Player_Magic_Power_Distribution(int16_t * mana_points, int16_t * skill_poin
             {
                 research_portion += (_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].Level * 3);
             }
-            if ((_HEROES2[player_idx]->heroes[_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type].abilities & HSA_SAGE2) != 0)
+            if((_HEROES2[player_idx]->heroes[_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type].abilities & HSA_SAGE2) != 0)
             {
                 research_portion += (_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].Level * 9);
             }

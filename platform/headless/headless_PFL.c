@@ -103,14 +103,14 @@ static int headless_event_handler_first_call = 1;
 void Platform_Event_Handler(void)
 {
     /* Log input mode on first call so we can see which path is active. */
-    if (headless_event_handler_first_call)
+    if(headless_event_handler_first_call)
     {
         headless_event_handler_first_call = 0;
-        if (Platform_Replay_Active())
+        if(Platform_Replay_Active())
         {
             LOG_INFO(LOG_CAT_HEADLESS_PFL, "[headless] Platform_Event_Handler: input mode = REPLAY (.RMR)");
         }
-        else if (platform_frame_callback != NULL)
+        else if(platform_frame_callback != NULL)
         {
             LOG_INFO(LOG_CAT_HEADLESS_PFL, "[headless] Platform_Event_Handler: input mode = SCENARIO (.hms artificial human player)");
         }
@@ -123,9 +123,9 @@ void Platform_Event_Handler(void)
     /* CLAUDE: do NOT reset platform_frame_mouse_buttons here.  For consistency with windowed backends, reset is now done at the END after capture, so any edge flag set by the artificial human player callback accumulates correctly into this frame's capture. */
 
     /* Replay: inject recorded frame instead of polling OS events. */
-    if (Platform_Replay_Active())
+    if(Platform_Replay_Active())
     {
-        if (Replay_Inject_Frame())
+        if(Replay_Inject_Frame())
         {
             platform_frame_mouse_buttons = 0;
             return;
@@ -134,7 +134,7 @@ void Platform_Event_Handler(void)
     }
 
     /* Artificial human player: inject scripted input when no replay is active. */
-    if (platform_frame_callback != NULL)
+    if(platform_frame_callback != NULL)
     {
         platform_frame_callback();
     }
@@ -142,7 +142,7 @@ void Platform_Event_Handler(void)
     STU_Log_Pump();
 
     /* Record: capture input state (including artificial human player actions). */
-    if (Platform_Record_Active())
+    if(Platform_Record_Active())
     {
         Replay_Capture_Frame();
     }

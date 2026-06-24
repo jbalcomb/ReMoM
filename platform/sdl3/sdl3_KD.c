@@ -612,9 +612,9 @@ void Build_Key_Xlat(void)
 uint32_t Mod_Xlat(SDL_Keymod sdl3_key_modifiers)
 {
     uint32_t mox_mod = 0;
-    if (sdl3_key_modifiers & SDL_KMOD_SHIFT ) { mox_mod |= MOX_MOD_SHIFT; }
-    if (sdl3_key_modifiers & SDL_KMOD_ALT   ) { mox_mod |= MOX_MOD_ALT;   }
-    if (sdl3_key_modifiers & SDL_KMOD_CTRL  ) { mox_mod |= MOX_MOD_CTRL;  }
+    if(sdl3_key_modifiers & SDL_KMOD_SHIFT ) { mox_mod |= MOX_MOD_SHIFT; }
+    if(sdl3_key_modifiers & SDL_KMOD_ALT   ) { mox_mod |= MOX_MOD_ALT;   }
+    if(sdl3_key_modifiers & SDL_KMOD_CTRL  ) { mox_mod |= MOX_MOD_CTRL;  }
     return mox_mod;
 }
 

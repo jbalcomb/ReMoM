@@ -255,8 +255,8 @@ int16_t Check_Allocation(SAMB_ptr SAMB_head)
 {
     int16_t is_valid;
 
-    // if (SA_GET_MEMSIG1(SAMB_head) != SA_MEMSIG1 || SA_GET_MEMSIG2(SAMB_head) != SA_MEMSIG2)
-    if (SA_GET_MEMSIG1(SAMB_head) != _SA_MEMSIG1 || SA_GET_MEMSIG2(SAMB_head) != _SA_MEMSIG2)
+    // if(SA_GET_MEMSIG1(SAMB_head) != SA_MEMSIG1 || SA_GET_MEMSIG2(SAMB_head) != SA_MEMSIG2)
+    if(SA_GET_MEMSIG1(SAMB_head) != _SA_MEMSIG1 || SA_GET_MEMSIG2(SAMB_head) != _SA_MEMSIG2)
     {
         is_valid = ST_FAILURE;
     }

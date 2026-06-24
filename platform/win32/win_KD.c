@@ -142,7 +142,7 @@ void Platform_Keyboard_Buffer_Add_Key_Press(int mox_key, uint32_t mox_mod, char 
 
     packed_key = ((uint32_t)mox_key) | mox_mod | (((uint32_t)mox_character) << 8);
 
-    if (mox_key == MOX_KEY_OVERRUN)
+    if(mox_key == MOX_KEY_OVERRUN)
     {
         return;
     }
@@ -161,7 +161,7 @@ int Platform_Keyboard_Buffer_Pending_Count(void)
 
 uint32_t Platform_Keyboard_Buffer_Peek_Latest(void)
 {
-    if (platform_keyboard_buffer.key_write == platform_keyboard_buffer.key_read)
+    if(platform_keyboard_buffer.key_write == platform_keyboard_buffer.key_read)
     {
         return 0;
     }

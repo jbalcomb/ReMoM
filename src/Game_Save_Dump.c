@@ -105,7 +105,7 @@ static void rd_str(const uint8_t *buf, int off, int maxlen, char *out)
     for (itr = 0; itr < maxlen; itr++)
     {
         out[itr] = (char)buf[off + itr];
-        if (out[itr] == '\0') { break; }
+        if(out[itr] == '\0') { break; }
     }
     out[maxlen - 1] = '\0';
 }
@@ -604,7 +604,7 @@ int Game_Save_Dump(const char *save_filepath, const char *text_filepath)
     size_t bytes_read;
 
     fin = stu_fopen_ci(save_filepath, "rb");
-    if (fin == NULL)
+    if(fin == NULL)
     {
         LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] Could not open: %s", save_filepath);
         return 1;
@@ -613,14 +613,14 @@ int Game_Save_Dump(const char *save_filepath, const char *text_filepath)
     bytes_read = fread(sav, 1, SD_TOTAL_SIZE, fin);
     fclose(fin);
 
-    if (bytes_read != SD_TOTAL_SIZE)
+    if(bytes_read != SD_TOTAL_SIZE)
     {
         LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] Short read: %zu bytes (expected %d) from %s", bytes_read, SD_TOTAL_SIZE, save_filepath);
         return 1;
     }
 
     fout = fopen(text_filepath, "w");
-    if (fout == NULL)
+    if(fout == NULL)
     {
         LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] Could not create: %s", text_filepath);
         return 1;

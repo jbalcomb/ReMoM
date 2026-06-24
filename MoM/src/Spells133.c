@@ -481,7 +481,7 @@ void Wall_Rise(int16_t spell_idx, int16_t caster_idx)
         }
 
     }
-    else if (wall_type == 1)
+    else if(wall_type == 1)
     {
 
         battlefield->wall_of_fire = ST_TRUE;
@@ -873,7 +873,7 @@ void BU_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
     Target_Draw_Y -= 27;
 
     /* Set animation speed based on user settings */
-    if (magic_set.movement_animations != 0)
+    if(magic_set.movement_animations != 0)
     {
         Frame_Speed = 20;
     }
@@ -889,7 +889,7 @@ void BU_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
     Mark_Block(World_Data);
 
     /* Handle teleport sound effect */
-    if (magic_set.sound_effects == 1)
+    if(magic_set.sound_effects == 1)
     {
         Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
         Sound_Data_Seg = LBX_Reload_Next(soundfx_lbx_file__ovr133__1of2, SFX_Teleport, World_Data);
@@ -912,7 +912,7 @@ void BU_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
         Combat_Screen_Draw();
 
         /* Phase 1: Fade out from Origin (i from 150 down to 50) */
-        if (i > 50)
+        if(i > 50)
         {
             Create_Picture(45, 42, GfxBuf_2400B);
             Copy_Bitmap_To_Bitmap(IMG_CMB_FX_Figure, GfxBuf_2400B);
@@ -923,7 +923,7 @@ void BU_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
         }
 
         /* Phase 2: Fade in at Target (i from 100 down to 0) */
-        if (i <= 100)
+        if(i <= 100)
         {
             Create_Picture(45, 42, GfxBuf_2400B);
             Copy_Bitmap_To_Bitmap(IMG_CMB_FX_Figure, GfxBuf_2400B);
@@ -986,7 +986,7 @@ void BU_TunnelTo(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 
     Mark_Block(World_Data); /* World_Data: global block handle */
 
-    if (magic_set.sound_effects == 1)
+    if(magic_set.sound_effects == 1)
     {
         /* Play sound effects for tunneling */
         Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size); /* SND_CMB_Silence@ is a global sound buffer */
@@ -1125,7 +1125,7 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
         SND_SpellCast = (SAMB_ptr)ST_UNDEFINED;
     }
 
-    if (battle_unit->controller_idx == _combat_attacker_player)
+    if(battle_unit->controller_idx == _combat_attacker_player)
     {
         battle_unit->target_cgx = 8;
     }
@@ -1388,7 +1388,7 @@ void Vortex_Move_Screen_Assign_Mouse_Images(int vortex_idx)
             delta_x = (cgx - _vortexes[vortex_idx].cgx);
             delta_y = (cgy - _vortexes[vortex_idx].cgy);
 
-//             if (
+//             if(
 //                 (battlefield->MoveCost_Teleport[cgx] != -1) // INF
 //                 &&
 //                 (abs((cgx - _vortexes[vortex_idx].cgx)) <= 1) &&

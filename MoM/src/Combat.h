@@ -246,9 +246,7 @@ Generate_Combat_Map()
 #define NUMBER_OF_VERTICES      COMBAT_GRID_CELL_COUNT
 #define TERMINAL_VERTEX         ((destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx) 
 
-#define INF                     0xFF
-
-#define IS_INF(_value_)         ((uint8_t)(_value_) == (uint8_t)INF)
+/* CLAUDE  INF / IS_INF moved to the shared MOX_TYPE.h (already included by Combat.h) so all three shortest-path solvers share one sentinel. */
 
 
 /*

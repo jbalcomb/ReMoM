@@ -33,14 +33,14 @@ DELAY_MOUSE_UPDATE_LIMIT
 */
 
 #define BOOLVEC_DECLARE(_name_, _fnum_) uint8_t _name_[((_fnum_) + 7) / 8]
-#define BOOLVEC_CLEAR(_name_, _fnum_) do { if ((_fnum_) <= 8) { (_name_)[0] = 0; } else { memset(&(_name_), 0, sizeof(_name_)); } } while (0)
-// #define BOOLVEC_COPY(_named_, _names_, _fnum_) do { if ((_fnum_) <= 8) { (_named_)[0] = (_names_)[0]; } else { memcpy(&(_named_), &(_names_), sizeof(_named_)); } } while (0)
+#define BOOLVEC_CLEAR(_name_, _fnum_) do { if((_fnum_) <= 8) { (_name_)[0] = 0; } else { memset(&(_name_), 0, sizeof(_name_)); } } while(0)
+// #define BOOLVEC_COPY(_named_, _names_, _fnum_) do { if((_fnum_) <= 8) { (_named_)[0] = (_names_)[0]; } else { memcpy(&(_named_), &(_names_), sizeof(_named_)); } } while(0)
 // #define BOOLVEC_COMP(_name1_, _name2_, _fnum_) (((_fnum_) <= 8) ? ((_name1_)[0] == (_name2_)[0]) : (memcmp((_name1_), (_name2_), ((_fnum_) + 7) / 8) == 0))
 // #define BOOLVEC_PTRPARAMI(_name_) uint8_t *_name_
-// #define BOOLVEC_SET0(_name_, _i_) do { int ti = (_i_); _name_[ti / 8] &= ~(1 << (ti & 7)); } while (0)
-// #define BOOLVEC_SET1(_name_, _i_) do { int ti = (_i_); _name_[ti / 8] |=  (1 << (ti & 7)); } while (0)
-#define BOOLVEC_SET(_name_, _i_, _v_) do { int ti = (_i_); uint8_t *tp = &(_name_[ti / 8]); if ((_v_)) { *tp |= (1 << (ti & 7)); } else { *tp &= ~(1 << (ti & 7)); } } while (0)
-// #define BOOLVEC_TOGGLE(_name_, _i_) do { int ti = (_i_); _name_[ti / 8] ^=  (1 << (ti & 7)); } while (0)
+// #define BOOLVEC_SET0(_name_, _i_) do { int ti = (_i_); _name_[ti / 8] &= ~(1 << (ti & 7)); } while(0)
+// #define BOOLVEC_SET1(_name_, _i_) do { int ti = (_i_); _name_[ti / 8] |=  (1 << (ti & 7)); } while(0)
+#define BOOLVEC_SET(_name_, _i_, _v_) do { int ti = (_i_); uint8_t *tp = &(_name_[ti / 8]); if((_v_)) { *tp |= (1 << (ti & 7)); } else { *tp &= ~(1 << (ti & 7)); } } while(0)
+// #define BOOLVEC_TOGGLE(_name_, _i_) do { int ti = (_i_); _name_[ti / 8] ^=  (1 << (ti & 7)); } while(0)
 // #define BOOLVEC_IS0(_name_, _i_) ((_name_[(_i_) / 8] & (1 << ((_i_) & 7))) == 0)
 #define BOOLVEC_IS1(_name_, _i_) ((_name_[(_i_) / 8] & (1 << ((_i_) & 7))) != 0)
 // #define BOOLVEC_IS_CLEAR(_name_, _fnum_) (((_fnum_) <= 8) ? ((_name_)[0] == 0) : (/*FIXME*/0))
@@ -74,16 +74,16 @@ DELAY_MOUSE_UPDATE_LIMIT
 // #define MAX(a, b) (((a) >= (b)) ? (a) : (b))
 // #endif
 // #ifndef SETMIN
-// #define SETMIN(a, b) do { if ((b) < (a)) { (a) = (b); }} while (0)
+// #define SETMIN(a, b) do { if((b) < (a)) { (a) = (b); }} while(0)
 // #endif
 // #ifndef SETMAX
-// #define SETMAX(a, b) do { if ((b) > (a)) { (a) = (b); }} while (0)
+// #define SETMAX(a, b) do { if((b) > (a)) { (a) = (b); }} while(0)
 // #endif
 #ifndef SETRANGE
-#define SETRANGE(a, b, c) do { if (((c) <= (b)) || ((b) > (a))) { (a) = (b); } else if ((c) < (a)) { (a) = (c); } } while (0)
+#define SETRANGE(a, b, c) do { if(((c) <= (b)) || ((b) > (a))) { (a) = (b); } else if((c) < (a)) { (a) = (c); } } while(0)
 #endif
-// #define ADDSATT(_v_, _n_, _top_) do { int _t_; _t_ = (_v_) + (_n_); SETMIN(_t_, (_top_)); (_v_) = _t_; } while (0)
-// #define SUBSATT(_v_, _n_, _bot_) do { int _t_; _t_ = (_v_) - (_n_); SETMAX(_t_, (_bot_)); (_v_) = _t_; } while (0)
+// #define ADDSATT(_v_, _n_, _top_) do { int _t_; _t_ = (_v_) + (_n_); SETMIN(_t_, (_top_)); (_v_) = _t_; } while(0)
+// #define SUBSATT(_v_, _n_, _bot_) do { int _t_; _t_ = (_v_) - (_n_); SETMAX(_t_, (_bot_)); (_v_) = _t_; } while(0)
 // #define SUBSAT0(_v_, _n_) SUBSATT(_v_, _n_, 0)
 // #define TBLLEN(_t_) (sizeof((_t_)) / sizeof((_t_)[0]))
 //

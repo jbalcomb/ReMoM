@@ -1410,7 +1410,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
 
                 Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, cr_bldg_idx, bldg_data_table[cr_bldg_idx].shape);
 
-                if (_CITIES[city_idx].bldg_status[cr_bldg_idx] == bs_Removed)
+                if(_CITIES[city_idx].bldg_status[cr_bldg_idx] == bs_Removed)
                 {
                     src_pict_seg = cityscape_rubble_seg[bldg_data_table[cr_bldg_idx].shape];  // shape: {2x2, 2x3, 3x2, 3x3}
                     Set_Animation_Frame(src_pict_seg, cityscape_bldg_anim_ctr);
@@ -1421,7 +1421,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
                 {
                     Set_Animation_Frame(bldg_picts_seg[cr_bldg_idx], cityscape_bldg_anim_ctr);
                     Draw_Picture_To_Bitmap(bldg_picts_seg[cr_bldg_idx], GfxBuf_2400B);
-                    if (cr_bldg_idx == new_bldg_idx)
+                    if(cr_bldg_idx == new_bldg_idx)
                     {
                         Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
                     }

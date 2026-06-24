@@ -258,7 +258,7 @@ static void far *load_global_timbre(FILE *GTL, unsigned bank, unsigned patch)
         if(GTL_hdr.bank == -1) 
             return NULL;            // timbre not found, return NULL
     }
-    while ((GTL_hdr.bank != bank) ||
+    while((GTL_hdr.bank != bank) ||
           (GTL_hdr.patch != patch));       
 
     gfseek(GTL,GTL_hdr.offset,SEEK_SET);    
@@ -795,8 +795,8 @@ int16_t Play_Sound__MSDOS(SAMB_ptr sound_buffer)
                     Audio_Error__STUB(SND_Not_XMIDI_File);
                 }
     
-                // if ((hseq[i] = AIL_register_sequence(hdriver,buffer,i,state[i],NULL)) == -1)
-                // if ((hseq = AIL_register_sequence(hdriver,buffer,seqnum,state,NULL)) == -1)
+                // if((hseq[i] = AIL_register_sequence(hdriver,buffer,i,state[i],NULL)) == -1)
+                // if((hseq = AIL_register_sequence(hdriver,buffer,seqnum,state,NULL)) == -1)
                 if((sequence_handle = AIL_register_sequence(midi_driver_handle, midi_sound_buffer, 0, state_table_pointer, NULL)) == -1)
                 {
                     Audio_Error__STUB(SND_Sequence_Failure);
@@ -810,7 +810,7 @@ int16_t Play_Sound__MSDOS(SAMB_ptr sound_buffer)
                         bank = timbre_required / 256;
                         patch = timbre_required % 256;
                         timb = (char *)load_global_timbre(GTL, bank, patch);
-                        if (timb != NULL)
+                        if(timb != NULL)
                         {
                             AIL_install_timbre(midi_driver_handle, bank, patch, timb);
                         }
@@ -1162,10 +1162,10 @@ C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\BLASTER.C
 //       };
 // 
 //     env = getenv("BLASTER");
-//     if (env==NULL) return 0;
+//     if(env==NULL) return 0;
 // 
 //     strncpy(string,env,127);
-//     if (!strlen(string)) return 0;
+//     if(!strlen(string)) return 0;
 // 
 //     strupr(string);
 // 
@@ -1173,12 +1173,12 @@ C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\BLASTER.C
 // 
 //     for (m=0;m<strlen(string);m++)
 //         {
-//         if ((m != 0) && (string[m] != ' ')) continue;
+//         if((m != 0) && (string[m] != ' ')) continue;
 // 
 //         m += (string[m] == ' '); k = string[m];
 // 
 //         for (i=0;i<4;i++)
-//             if (k==tokens[i])
+//             if(k==tokens[i])
 //             {
 //             p = m + 1;
 //             num = 0;
@@ -1188,10 +1188,10 @@ C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\BLASTER.C
 //                 d = string[p++];
 // 
 //                 for (j=0;j<base[i];j++)
-//                     if (toupper(d) == "0123456789ABCDEF"[j])
+//                     if(toupper(d) == "0123456789ABCDEF"[j])
 //                         num = (num * base[i]) + j;
 //                 }
-//             while (isalnum(d));
+//             while(isalnum(d));
 // 
 //             *targets[i] = num;
 //             break;
@@ -1200,17 +1200,17 @@ C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\BLASTER.C
 //                      
 //     *desc = t;
 // 
-//     if (!type) return 0;
+//     if(!type) return 0;
 // 
-//     if (type > 4) type=4;
+//     if(type > 4) type=4;
 // 
-//     if (FM_driver_name != NULL)
+//     if(FM_driver_name != NULL)
 //         stu_strcpy(FM_driver_name,FM_driver_names[type-1]);
 // 
-//     if (DSP_driver_name != NULL)
+//     if(DSP_driver_name != NULL)
 //         stu_strcpy(DSP_driver_name,DSP_driver_names[type-1]);
 // 
-//     if (board_name != NULL)
+//     if(board_name != NULL)
 //         stu_strcpy(board_name,board_names[type-1]);
 // 
 //     return type;

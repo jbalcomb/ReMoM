@@ -509,7 +509,7 @@ void Set_Square_Scouted_Flags(int16_t wx, int16_t wy, int16_t wp, int16_t scout_
 
     for (itr_world_y = start_world_y; itr_world_y < (start_world_y + scout_range); itr_world_y++)
     {
-        if (itr_world_y >= WORLD_HEIGHT)
+        if(itr_world_y >= WORLD_HEIGHT)
         {
             continue;
         }
@@ -595,7 +595,7 @@ void Contact_Other_Player(int16_t unit_idx, int16_t wp)
         return;
     }
     // OGBUG  only checks the unit's active enchantments, t fails to check for  natural invisibility abilities (e.g. Nightstalker) or  invisibility granted by magical items.
-    if ((unit_ptr->enchantments & UE_INVISIBILITY) != 0)
+    if((unit_ptr->enchantments & UE_INVISIBILITY) != 0)
     {
         return;
     }

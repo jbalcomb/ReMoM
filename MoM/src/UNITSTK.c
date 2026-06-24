@@ -334,7 +334,7 @@ int16_t Stack_Move_To(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int1
     /* Build the stack of units for moving, filtering for road builders if necessary */
     Build_RoadBuilder_Stack(&troop_count, &troops[0], dst_wx, dst_wy, player_idx, unit_idx);
 
-    if (troop_count < 1)
+    if(troop_count < 1)
     {
         return ST_FALSE;
     }
@@ -348,14 +348,14 @@ int16_t Stack_Move_To(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int1
         troop_unit_idx = troops[itr_troops];
         unit_ptr = &_UNITS[troop_unit_idx];
 
-        if (unit_ptr->Rd_Constr_Left != ST_UNDEFINED)
+        if(unit_ptr->Rd_Constr_Left != ST_UNDEFINED)
         {
             roadbuilder_count++;
         }
     }
 
     /* If every unit in the stack is a road builder, set special move flag */
-    if (roadbuilder_count == troop_count)
+    if(roadbuilder_count == troop_count)
     {
         Special_Move = 2;  /* ¿ IIF 'Build Road' ? */
     }
@@ -373,12 +373,12 @@ int16_t Stack_Move_To(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int1
     {
         unit_ptr = &_UNITS[troops[itr_troops]];
         /* If unit is still at original coordinates and isn't building a road */
-        if ((int16_t)unit_ptr->wx == unit_wx && (int16_t)unit_ptr->wy == unit_wy)
+        if((int16_t)unit_ptr->wx == unit_wx && (int16_t)unit_ptr->wy == unit_wy)
         {
-            if (unit_ptr->Rd_Constr_Left == ST_UNDEFINED)
+            if(unit_ptr->Rd_Constr_Left == ST_UNDEFINED)
             {
                 /* If unit was in GOTO or MOVE state and hasn't finished its turn */
-                if ((unit_ptr->Status == us_GOTO || unit_ptr->Status == us_Move) && unit_ptr->Finished == ST_FALSE)
+                if((unit_ptr->Status == us_GOTO || unit_ptr->Status == us_Move) && unit_ptr->Finished == ST_FALSE)
                 {
                     unit_ptr->Move_Failed = ST_TRUE;
                     unit_ptr->Status = us_Ready;
@@ -393,9 +393,9 @@ int16_t Stack_Move_To(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int1
     {
         unit_ptr = &_UNITS[troops[itr_troops]];
         /* Only process valid units that aren't road builders */
-        if (unit_ptr->owner_idx != ST_UNDEFINED && unit_ptr->Rd_Constr_Left == ST_UNDEFINED)
+        if(unit_ptr->owner_idx != ST_UNDEFINED && unit_ptr->Rd_Constr_Left == ST_UNDEFINED)
         {
-            if (unit_ptr->Status == us_Ready)
+            if(unit_ptr->Status == us_Ready)
             {
                 EMMDATAH_Map();
                 Invalidate_AI_Move_Path(); /* Clears existing pathing data in EMS */
@@ -419,7 +419,7 @@ int16_t Stack_Move_To(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int1
         }
     }
     /* Refresh graphics if the moving player is the local player */
-    if (player_idx == _human_player_idx)
+    if(player_idx == _human_player_idx)
     {
         o62p01_empty_function(player_idx);
         Set_Unit_Draw_Priority();
@@ -558,13 +558,13 @@ static void WIZ_NextIdleStack_GEMINI(int16_t player_idx, int16_t *map_x, int16_t
     
     o62p01_empty_function(player_idx);
 
-    while (done == ST_FALSE)
+    while(done == ST_FALSE)
     {
         CRP_OverlandVar_3 = ST_FALSE;
         
         AllUnitsMoved = Next_Unit_Nearest_Available(player_idx, &map_plane);
 
-        if (AllUnitsMoved == ST_TRUE)
+        if(AllUnitsMoved == ST_TRUE)
         {
             all_units_moved = ST_TRUE;         /* global: all_units_moved */
             _active_stack_has_path = ST_FALSE; /* global: _active_stack_has_path */
@@ -580,18 +580,18 @@ static void WIZ_NextIdleStack_GEMINI(int16_t player_idx, int16_t *map_x, int16_t
 
             Select_Unit_Stack(player_idx, map_x, map_y, map_plane, next_unit_wx, next_unit_wy);
 
-            if (done == ST_FALSE)
+            if(done == ST_FALSE)
             {
                 done = ST_TRUE; /* default to exit loop unless unit is in GOTO mode */
 
-                if (_UNITS[_unit].Status == us_GOTO)
+                if(_UNITS[_unit].Status == us_GOTO)
                 {
                     next_unit_dst_wx = _UNITS[_unit].dst_wx;
                     next_unit_dst_wy = _UNITS[_unit].dst_wy;
                     CRP_OverlandVar_3 = ST_TRUE;
 
                     /* Check if unit reached destination and is not busy with road construction */
-                    if ((_UNITS[_unit].wx == next_unit_dst_wx) && 
+                    if((_UNITS[_unit].wx == next_unit_dst_wx) && 
                         (_UNITS[_unit].wy == next_unit_dst_wy) && 
                         (_UNITS[_unit].Rd_Constr_Left == (int8_t)ST_UNDEFINED))
                     {
@@ -611,7 +611,7 @@ static void WIZ_NextIdleStack_GEMINI(int16_t player_idx, int16_t *map_x, int16_t
         }
     }
 
-    if (all_units_moved == ST_FALSE)
+    if(all_units_moved == ST_FALSE)
     {
         next_unit_idx = _unit;
         next_unit_wx = _UNITS[next_unit_idx].wx;
@@ -824,51 +824,51 @@ static int Next_Unit_Nearest_Available__GEMINI(int player_idx, int /* near */ *m
     done = ST_FALSE;
     itr_units = 0;
 
-    while (done == ST_FALSE)
+    while(done == ST_FALSE)
     {
         _SI_unit_idx = itr_units;
         
-        if (_UNITS[_SI_unit_idx].owner_idx != player_idx)
+        if(_UNITS[_SI_unit_idx].owner_idx != player_idx)
         {
             goto Check_Itr_Units;
         }
 
-        if (_UNITS[_SI_unit_idx].wp != _DI_map_plane && _UNITS[_SI_unit_idx].in_tower != ST_TRUE)
+        if(_UNITS[_SI_unit_idx].wp != _DI_map_plane && _UNITS[_SI_unit_idx].in_tower != ST_TRUE)
         {
             goto Check_Itr_Units;
         }
 
-        if (_UNITS[_SI_unit_idx].owner_idx == ST_UNDEFINED)
+        if(_UNITS[_SI_unit_idx].owner_idx == ST_UNDEFINED)
         {
             goto Check_Itr_Units;
         }
 
-        if (_UNITS[_SI_unit_idx].Finished != ST_FALSE)
+        if(_UNITS[_SI_unit_idx].Finished != ST_FALSE)
         {
             goto Check_Itr_Units;
         }
 
         delta = Delta_XY_With_Wrap(_active_world_x, _active_world_y, _UNITS[_SI_unit_idx].wx, _UNITS[_SI_unit_idx].wy, WORLD_WIDTH);
 
-        if (_UNITS[_SI_unit_idx].Status == us_Wait)
+        if(_UNITS[_SI_unit_idx].Status == us_Wait)
         {
-            if (Closest_Waiting_Dist > delta)
+            if(Closest_Waiting_Dist > delta)
             {
                 Closest_Waiting_Dist = delta;
                 Closest_Waiting_Unit = _SI_unit_idx;
             }
             goto Check_Itr_Units;
         }
-        else if (_UNITS[_SI_unit_idx].Status == us_Purify)
+        else if(_UNITS[_SI_unit_idx].Status == us_Purify)
         {
             goto Check_Itr_Units;
         }
-        else if (_UNITS[_SI_unit_idx].Status == us_Unknown_100)
+        else if(_UNITS[_SI_unit_idx].Status == us_Unknown_100)
         {
             goto Check_Itr_Units;
         }
         
-        if (Closest_Active_Dist > delta)
+        if(Closest_Active_Dist > delta)
         {
             Closest_Active_Dist = delta;
             Closest_Active_Unit = _SI_unit_idx;
@@ -877,13 +877,13 @@ static int Next_Unit_Nearest_Available__GEMINI(int player_idx, int /* near */ *m
 Check_Itr_Units:
         itr_units++;
         
-        if (itr_units == _units)
+        if(itr_units == _units)
         {
-            if (Closest_Active_Unit != ST_UNDEFINED)
+            if(Closest_Active_Unit != ST_UNDEFINED)
             {
                 done = ST_TRUE;
                 
-                if (_DI_map_plane == 2)
+                if(_DI_map_plane == 2)
                 {
                     _DI_map_plane = 0;
                 }
@@ -893,9 +893,9 @@ Check_Itr_Units:
                 _active_world_x = _UNITS[_unit].wx;
                 _active_world_y = _UNITS[_unit].wy;
             }
-            else if (Closest_Waiting_Unit != ST_UNDEFINED)
+            else if(Closest_Waiting_Unit != ST_UNDEFINED)
             {
-                if (_DI_map_plane == 2)
+                if(_DI_map_plane == 2)
                 {
                     _DI_map_plane = 0;
                 }
@@ -908,7 +908,7 @@ Check_Itr_Units:
                 
                 for (itr_wait_units = 0; itr_wait_units < _units; itr_wait_units++)
                 {
-                    if (_UNITS[itr_wait_units].owner_idx == player_idx && _UNITS[itr_wait_units].Status == us_Wait)
+                    if(_UNITS[itr_wait_units].owner_idx == player_idx && _UNITS[itr_wait_units].Status == us_Wait)
                     {
                         _UNITS[itr_wait_units].Status = us_Ready;
                     }
@@ -916,7 +916,7 @@ Check_Itr_Units:
             }
             else
             {
-                if (tried_other_plane != ST_TRUE)
+                if(tried_other_plane != ST_TRUE)
                 {
                     tried_other_plane = ST_TRUE;
                     _DI_map_plane = (_DI_map_plane + 1) % 2;

@@ -194,7 +194,7 @@ def merge(screen_filter=None):
                 ])
         # Stats
         total = len(rows)
-        seen = sum(1 for r in rows if (r["src_basename"], int(r["line"])) in fieldadd_by_key)
+        seen = sum(1 for r in rows if(r["src_basename"], int(r["line"])) in fieldadd_by_key)
         print(f"  {screen}: {total} static rows, {seen} hit at runtime -> {out_path}")
 
 

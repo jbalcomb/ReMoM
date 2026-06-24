@@ -545,7 +545,7 @@ void Load_Screen(void)
             // HACK: merge MGC Load_Screen() and WZD Load_Screen()
             current_screen = previous_screen;
         }
-        if (loaded_game_flag == ST_TRUE)
+        if(loaded_game_flag == ST_TRUE)
         {
             current_screen = scr_Main_Screen;
         }

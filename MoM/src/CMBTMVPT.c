@@ -86,14 +86,14 @@ int16_t * m_movement_path_grid_cell_index;
 #define RELAX_ADJACENT_CELLS(OFFSET_ARRAY, START_IDX, END_IDX, EXTRA_COST) \
     for (itr_adjacent = (START_IDX); itr_adjacent < (END_IDX); itr_adjacent++) { \
         adjacent_idx = ctr + OFFSET_ARRAY[itr_adjacent]; \
-        if (adjacent_idx >= 0 && adjacent_idx < COMBAT_GRID_CELL_COUNT) { \
+        if(adjacent_idx >= 0 && adjacent_idx < COMBAT_GRID_CELL_COUNT) { \
             adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx]; \
-            if (adjacent_path_cost != INF) { \
+            if(adjacent_path_cost != INF) { \
                 potential_path_cost = adjacent_path_cost + move_cost + (EXTRA_COST); \
-                if (potential_path_cost < _cmbt_mvpth_c[ctr]) { \
+                if(potential_path_cost < _cmbt_mvpth_c[ctr]) { \
                     _cmbt_path_data[ctr] = adjacent_idx; \
                     _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost; \
-                    if (_cmbt_path_data[ctr] != current_origin) { \
+                    if(_cmbt_path_data[ctr] != current_origin) { \
                         tense = ST_TRUE; \
                     } \
                 } \
@@ -103,6 +103,20 @@ int16_t * m_movement_path_grid_cell_index;
 
 // WZD ovr155p01
 /* GEMINI */
+/*
+    Structure map — see doc/PathFinding/MoM-MovePath-Compare.md ("Combat_Move_Path_Find — combat grid").
+
+    Combat solver (live). Like CRP_SPATH_Arbitrary (MAPGEN.c) — and unlike the overland Move_Path_Find, which
+    splits the work with its caller Make_Move_Path — this runs all five shared-skeleton steps in one body.
+    NOTE: the local "1..5" section numbers below are NOT the skeleton step numbers; the mapping is:
+        local 1 (bail)              = [Skeleton step 2]
+        local 2 (PREP init)         = [Skeleton step 1]
+        local 3 (relaxation sweep)  = [Skeleton step 3]
+        local 4 (trace)             = [Skeleton step 4]
+        local 5 (reverse + convert) = [Skeleton step 5]
+    Combat-specific: single-direction raster (left-edge / middle / right-edge phases per row), and diagonal
+    moves cost +1 vs orthogonal +0 (the RELAX_ADJACENT_CELLS EXTRA_COST argument).
+*/
 void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t destination_cgx, int16_t destination_cgy)
 {
     int16_t move_cost = 0;  /* 1-byte, unsigned */
@@ -134,17 +148,18 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
 
     movement_path_grid_cell_count = 0;
 
-    /* 1. Bail out early if the destination is an illegal/impassable square */
-    if (_cmbt_movepath_cost_map[dst_idx] == INF) {
+    /* [Skeleton step 2]  1. Bail out early if the destination is an illegal/impassable square */
+    if(_cmbt_movepath_cost_map[dst_idx] == INF)
+    {
         return; 
     }
 
-    /* 2. Initialize the Pathing */
+    /* [Skeleton step 1]  2. Initialize the Pathing — predecessor _cmbt_path_data[] = self, distance _cmbt_mvpth_c[] = INF, source = 0 (PREP macro) */
     PREP
 
-    /* --- 3. THE BELLMAN-FORD RELAXATION SWEEP --- */
+    /* --- [Skeleton step 3]  3. THE BELLMAN-FORD RELAXATION SWEEP (single-direction raster, to fixed point) --- */
     tense = ST_TRUE;
-    while (tense == ST_TRUE) {
+    while(tense == ST_TRUE) {
         /* CLAUDE */ DBG_convergence_itr++;
         /* CLAUDE */ assert(DBG_convergence_itr < 462 && "Combat_Move_Path_Find: pathfinder failed to converge (uint8 cost overflow?)");
         tense = ST_FALSE;
@@ -157,7 +172,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
 
             /* -- PHASE 1: Left Edge (X = 0) -- */
             move_cost = _cmbt_movepath_cost_map[ctr];
-            if (move_cost != INF) {
+            if(move_cost != INF) {
                 current_origin = _cmbt_path_data[ctr];
                 RELAX_ADJACENT_CELLS(CMB_AdjctOfs_NoWest, 0, 4, 1); /* Diagonals (+1 Cost) */
                 RELAX_ADJACENT_CELLS(CMB_AdjctOfs_NoWest, 4, 8, 0); /* Orthogonals */
@@ -167,7 +182,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
             /* -- PHASE 2: Middle Squares (X = 1 to 19) -- */
             for (itr_x = 0; itr_x < max_x; itr_x++) {
                 move_cost = _cmbt_movepath_cost_map[ctr];
-                if (move_cost != INF) {
+                if(move_cost != INF) {
                     current_origin = _cmbt_path_data[ctr];
                     RELAX_ADJACENT_CELLS(CMB_AdjacentOffsets, 0, 4, 1);
                     RELAX_ADJACENT_CELLS(CMB_AdjacentOffsets, 4, 8, 0);
@@ -177,7 +192,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
 
             /* -- PHASE 3: Right Edge (X = 20) -- */
             move_cost = _cmbt_movepath_cost_map[ctr];
-            if (move_cost != INF) {
+            if(move_cost != INF) {
                 current_origin = _cmbt_path_data[ctr];
                 RELAX_ADJACENT_CELLS(CMB_AdjctOfs_NoEast, 0, 4, 1);
                 RELAX_ADJACENT_CELLS(CMB_AdjctOfs_NoEast, 4, 8, 0);
@@ -186,7 +201,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
         }
     }
 
-    /* --- 4. TRACE THE PATH --- */
+    /* --- [Skeleton step 4]  4. TRACE THE PATH (back-trace dst -> _cmbt_path_data[] until a self-link) --- */
 
     /* Temp array to hold the raw index path */
     /* THE HIJACK: Aim the global pointer at the terrain cost map */
@@ -198,7 +213,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
     ctr = (destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx;
 
     /* The Trace Loop */
-    while (_cmbt_path_data[ctr] != ctr) {
+    while(_cmbt_path_data[ctr] != ctr) {
         m_movement_path_grid_cell_index[movement_path_grid_cell_count] = ctr;
         ctr = _cmbt_path_data[ctr];
         movement_path_grid_cell_count++;
@@ -212,7 +227,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
         _cmbt_mvpth_y[itr] = (uint8_t)path_cgy;
     }
 
-    /* --- 5. REVERSE AND CONVERT TO 2D --- */
+    /* --- [Skeleton step 5]  5. REVERSE AND CONVERT TO 2D --- */
     /* Reverse the path and convert the 1D indices back into 2D (X,Y) coordinates */
     for (itr = 0; itr < movement_path_grid_cell_count; itr++) {
         /* Calculate the backwards index: (Count - 1) - Current Iteration */
@@ -258,7 +273,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
 
     /* --- THE RELAXATION SWEEP --- */
     tense = ST_TRUE;
-    while (tense == ST_TRUE) {
+    while(tense == ST_TRUE) {
         /* CLAUDE */ DBG_convergence_itr++;
         /* CLAUDE */ assert(DBG_convergence_itr < ((COMBAT_GRID_CELL_WIDTH * COMBAT_GRID_CELL_HEIGHT) - 1) && "Combat_Move_Path_Find: pathfinder failed to converge (uint8 cost overflow?)");
         tense = ST_FALSE;
@@ -273,7 +288,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
             
             /* -- PHASE 1: Left Edge (X = 0) -- */
             move_cost = _cmbt_movepath_cost_map[ctr];
-            if (move_cost != INF) {
+            if(move_cost != INF) {
                 current_origin = _cmbt_path_data[ctr];
                 RELAX_ADJACENT_CELLS(CMB_AdjctOfs_NoWest, 0, 8, 0);
             }
@@ -282,7 +297,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
             /* -- PHASE 2: Middle Squares (X = 1 to 19) -- */
             for (itr_x = 0; itr_x < max_x; itr_x++) {
                 move_cost = _cmbt_movepath_cost_map[ctr];
-                if (move_cost != INF) {
+                if(move_cost != INF) {
                     current_origin = _cmbt_path_data[ctr];
                     RELAX_ADJACENT_CELLS(CMB_AdjacentOffsets, 0, 8, 0);
                 }
@@ -291,7 +306,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
 
             /* -- PHASE 3: Right Edge (X = 20) -- */
             move_cost = _cmbt_movepath_cost_map[ctr];
-            if (move_cost != INF) {
+            if(move_cost != INF) {
                 current_origin = _cmbt_path_data[ctr];
                 RELAX_ADJACENT_CELLS(CMB_AdjctOfs_NoEast, 0, 8, 0);
             }
@@ -309,7 +324,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
             _cmbt_path_data[ctr] = ST_FALSE;
 
             /* If the flood fill ever reached this square... */
-            if (_cmbt_mvpth_c[ctr] != INF) {
+            if(_cmbt_mvpth_c[ctr] != INF) {
                 
                 move_cost = _cmbt_movepath_cost_map[ctr];
                 
@@ -320,7 +335,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
                 /* If our remaining movement points are strictly GREATER than the cost 
                    to get there, we can step into it! */
                 // ...player-friendly mechanic...
-                if (moves2 > get_to_cost) {
+                if(moves2 > get_to_cost) {
                     /* Mark the square as "Reachable" (Draw the blue highlight here) */
                     _cmbt_path_data[ctr] = ST_TRUE;
                 }

@@ -1797,7 +1797,7 @@ void Draw_NameStartingCity_Background(void)
     default: ST_TRUE
     stays ST_TRUE is bldg status is already NotBuilt or Replaced
     stays ST_TRUE if Prereq() == ST_TRUE
-    only ST_FALSE if (Build || Removed) && Prereq() == ST_FALSE
+    only ST_FALSE if(Build || Removed) && Prereq() == ST_FALSE
 if this is a building is required list, ...
     what would it mean to only test for Built or Removed?
         makes no sense to test for a requirement on a building that been removed

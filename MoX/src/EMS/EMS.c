@@ -101,22 +101,22 @@ static int EMS_StrICmp(const char *a, const char *b)
     unsigned char ca;
     unsigned char cb;
 
-    if (a == NULL && b == NULL) {
+    if(a == NULL && b == NULL) {
         return 0;
     }
-    if (a == NULL) {
+    if(a == NULL) {
         return -1;
     }
-    if (b == NULL) {
+    if(b == NULL) {
         return 1;
     }
 
-    while (*a != '\0' || *b != '\0') {
+    while(*a != '\0' || *b != '\0') {
         ca = (unsigned char)*a++;
         cb = (unsigned char)*b++;
         ca = (unsigned char)tolower(ca);
         cb = (unsigned char)tolower(cb);
-        if (ca != cb) {
+        if(ca != cb) {
             return (int)ca - (int)cb;
         }
     }
@@ -127,12 +127,12 @@ static s_EMS_HOST_HANDLE *EMS_FindHandle(SAMB_ptr base)
 {
     int idx;
 
-    if (base == NULL) {
+    if(base == NULL) {
         return NULL;
     }
 
     for (idx = 0; idx < EMS_EMU_MAX_HANDLES; ++idx) {
-        if (g_ems_handles[idx].in_use && g_ems_handles[idx].base == base) {
+        if(g_ems_handles[idx].in_use && g_ems_handles[idx].base == base) {
             return &g_ems_handles[idx];
         }
     }
@@ -146,23 +146,23 @@ static SAMB_ptr EMS_AllocHandle(int16_t pages, const char *name)
     size_t alloc_size;
     SAMB_ptr base;
 
-    if (pages <= 0) {
+    if(pages <= 0) {
         return NULL;
     }
 
     alloc_size = (size_t)pages * SZ_EMM_LOGICAL_PAGE;
     base = (SAMB_ptr)calloc(1u, alloc_size);
-    if (base == NULL) {
+    if(base == NULL) {
         return NULL;
     }
 
     for (idx = 0; idx < EMS_EMU_MAX_HANDLES; ++idx) {
-        if (!g_ems_handles[idx].in_use) {
+        if(!g_ems_handles[idx].in_use) {
             g_ems_handles[idx].in_use = 1;
             g_ems_handles[idx].base = base;
             g_ems_handles[idx].pages = pages;
             g_ems_handles[idx].name[0] = '\0';
-            if (name != NULL) {
+            if(name != NULL) {
                 strncpy(g_ems_handles[idx].name, name, 8);
                 g_ems_handles[idx].name[8] = '\0';
             }
@@ -178,11 +178,11 @@ static void EMS_FreeHandle(SAMB_ptr base)
 {
     s_EMS_HOST_HANDLE *handle = EMS_FindHandle(base);
 
-    if (handle == NULL) {
+    if(handle == NULL) {
         return;
     }
 
-    if (handle->base != NULL) {
+    if(handle->base != NULL) {
         free(handle->base);
     }
 
@@ -193,16 +193,16 @@ static int32_t EMS_GetTotalPages(void)
 {
     int32_t min_pages;
 
-    if (g_ems_total_pages != 0) {
+    if(g_ems_total_pages != 0) {
         return g_ems_total_pages;
     }
 
     min_pages = 0;
-    if (EMM_MinKB > 0) {
+    if(EMM_MinKB > 0) {
         min_pages = (int32_t)EMM_MinKB / 16;
     }
 
-    if (min_pages < EMS_EMU_DEFAULT_PAGES) {
+    if(min_pages < EMS_EMU_DEFAULT_PAGES) {
         min_pages = EMS_EMU_DEFAULT_PAGES;
     }
 
@@ -228,7 +228,7 @@ int16_t EMM_GetHandleCount(void)
     int count = 0;
 
     for (idx = 0; idx < EMS_EMU_MAX_HANDLES; ++idx) {
-        if (g_ems_handles[idx].in_use) {
+        if(g_ems_handles[idx].in_use) {
             ++count;
         }
     }
@@ -244,12 +244,12 @@ int16_t EMM_GetFreePageCnt(void)
     int32_t total = EMS_GetTotalPages();
 
     for (idx = 0; idx < EMS_EMU_MAX_HANDLES; ++idx) {
-        if (g_ems_handles[idx].in_use) {
+        if(g_ems_handles[idx].in_use) {
             used += g_ems_handles[idx].pages;
         }
     }
 
-    if (used >= total) {
+    if(used >= total) {
         return 0;
     }
 
@@ -261,7 +261,7 @@ int16_t EMM_GetPageCount(SAMB_ptr emm_handle)
 {
     s_EMS_HOST_HANDLE *handle = EMS_FindHandle(emm_handle);
 
-    if (handle == NULL) {
+    if(handle == NULL) {
         return 0;
     }
 
@@ -279,7 +279,7 @@ int16_t EMM_GetHandleName(SAMB_ptr emm_handle, char *out_name)
 {
     s_EMS_HOST_HANDLE *handle = EMS_FindHandle(emm_handle);
 
-    if (handle == NULL || out_name == NULL) {
+    if(handle == NULL || out_name == NULL) {
         return ST_FAILURE;
     }
 
@@ -291,7 +291,7 @@ int16_t EMM_GetHandleName(SAMB_ptr emm_handle, char *out_name)
 // WZD s12p07
 void EMM_ReleaseHandle__SUTB(SAMB_ptr handle)
 {
-    if (handle != NULL) {
+    if(handle != NULL) {
         EMS_FreeHandle(handle);
     }
 }
@@ -304,12 +304,12 @@ void EMM_MapnRead(uint16_t target_offset, SAMB_ptr target_seg, uint32_t emm_data
     s_EMS_HOST_HANDLE *handle = EMS_FindHandle(emm_handle);
     size_t total_bytes;
 
-    if (handle == NULL || handle->base == NULL || target_seg == NULL) {
+    if(handle == NULL || handle->base == NULL || target_seg == NULL) {
         return;
     }
 
     total_bytes = (size_t)handle->pages * SZ_EMM_LOGICAL_PAGE;
-    if ((size_t)emm_data_offset + byte_count > total_bytes) {
+    if((size_t)emm_data_offset + byte_count > total_bytes) {
         return;
     }
 
@@ -326,12 +326,12 @@ void EMM_MapnWrite(uint16_t target_offset, SAMB_ptr target_seg, uint32_t emm_dat
     s_EMS_HOST_HANDLE *handle = EMS_FindHandle(emm_handle);
     size_t total_bytes;
 
-    if (handle == NULL || handle->base == NULL || target_seg == NULL) {
+    if(handle == NULL || handle->base == NULL || target_seg == NULL) {
         return;
     }
 
     total_bytes = (size_t)handle->pages * SZ_EMM_LOGICAL_PAGE;
-    if ((size_t)emm_data_offset + byte_count > total_bytes) {
+    if((size_t)emm_data_offset + byte_count > total_bytes) {
         return;
     }
 
@@ -390,10 +390,10 @@ void EMM_Startup(void)
         g_ems_handles[idx].name[0] = '\0';
     }
 
-    if (_EMMDATAH_seg == NULL) {
+    if(_EMMDATAH_seg == NULL) {
         int16_t pages = EMS_EMU_DATAH_PAGES;
         int32_t min_pages = (EMM_MinKB > 0) ? (int32_t)EMM_MinKB / 16 : 0;
-        if (min_pages > pages) {
+        if(min_pages > pages) {
             pages = (int16_t)min_pages;
         }
         _EMMDATAH_seg = EMM_MakeNamedHandle(pages, "EMMDATAH");
@@ -408,7 +408,7 @@ void EMM_ReleaseAll__STUB(void)
     {
         EMM_ReleaseHandle__SUTB(EMM_Table[itr].handle);
     }
-    if (g_EmmHndl_OVERXYZ != 0)
+    if(g_EmmHndl_OVERXYZ != 0)
     {
         EMM_ReleaseHandle__SUTB(g_EmmHndl_OVERXYZ);
     }
@@ -422,20 +422,20 @@ SAMB_ptr EMM_GetHandle(int16_t page_count, const char *handle_name, int16_t rese
     int itr;
     SAMB_ptr emm_handle;
 
-    if (handle_name == NULL || handle_name[0] == '\0') {
+    if(handle_name == NULL || handle_name[0] == '\0') {
         return NULL;
     }
 
     handle_idx = ST_UNDEFINED;
 
     for (itr = 0; itr < EMM_Open_Handles; itr++) {
-        if (EMS_StrICmp(handle_name, EMM_Table[itr].name) == 0) {
+        if(EMS_StrICmp(handle_name, EMM_Table[itr].name) == 0) {
             handle_idx = itr;
         }
     }
 
-    if (handle_idx == ST_UNDEFINED) {
-        if (EMM_Open_Handles >= 40) {
+    if(handle_idx == ST_UNDEFINED) {
+        if(EMM_Open_Handles >= 40) {
             Exit_With_Message("EMM handle table overflow");
             return NULL;
         }
@@ -443,12 +443,12 @@ SAMB_ptr EMM_GetHandle(int16_t page_count, const char *handle_name, int16_t rese
         strncpy(EMM_Table[EMM_Open_Handles].name, handle_name, 8);
         EMM_Table[EMM_Open_Handles].name[8] = '\0';
 
-        if (reserved_flag == ST_TRUE && EMM_Table[EMM_Open_Handles].name[0] != '\0') {
+        if(reserved_flag == ST_TRUE && EMM_Table[EMM_Open_Handles].name[0] != '\0') {
             EMM_Table[EMM_Open_Handles].name[0] = (char)(-(signed char)EMM_Table[EMM_Open_Handles].name[0]);
         }
 
         emm_handle = EMM_MakeNamedHandle(page_count, EMM_Table[EMM_Open_Handles].name);
-        if (emm_handle == NULL) {
+        if(emm_handle == NULL) {
             return NULL;
         }
 
@@ -458,11 +458,11 @@ SAMB_ptr EMM_GetHandle(int16_t page_count, const char *handle_name, int16_t rese
         EMM_Table[EMM_Open_Handles].handle = emm_handle;
         EMM_Open_Handles++;
 
-        if (reserved_flag == ST_TRUE) {
+        if(reserved_flag == ST_TRUE) {
             EMM_Pages_Reserved -= page_count;
         }
 
-        if (EMM_Pages_Reserved < 0) {
+        if(EMM_Pages_Reserved < 0) {
             stu_itoa(-EMM_Pages_Reserved, buffer, 10);
             stu_strcpy(near_buffer, cnst_EMMErr_ResOut1);
             stu_strcat(near_buffer, buffer);
@@ -477,7 +477,7 @@ SAMB_ptr EMM_GetHandle(int16_t page_count, const char *handle_name, int16_t rese
 
     emm_handle = EMM_Table[handle_idx].handle;
 
-    if (EMM_GetPageCount(emm_handle) < page_count) {
+    if(EMM_GetPageCount(emm_handle) < page_count) {
         stu_itoa(page_count, buffer, 10);
         stu_strcpy(near_buffer, handle_name);
         stu_strcat(near_buffer, cnst_EMMErr_Reload1);
@@ -494,7 +494,7 @@ SAMB_ptr EMMDATAH_Map(void)
 {
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    if (_EMMDATAH_seg == NULL) {
+    if(_EMMDATAH_seg == NULL) {
         LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu (NULL early)", __func__, (unsigned long long)g_random_call_count);
         return NULL;
     }
@@ -514,12 +514,12 @@ SAMB_ptr EMM_EMMDATAH_AllocFirst(uint16_t nparas)
     SAMB_ptr header;
 
     EMM_Data_Level = 0;
-    if (EMMDATAH_Map() == NULL) {
+    if(EMMDATAH_Map() == NULL) {
         return NULL;
     }
 
     free_paras = (uint16_t)(4090 - EMM_Data_Level);
-    if (free_paras < nparas_total) {
+    if(free_paras < nparas_total) {
         Allocation_Error(4, (uint16_t)(nparas_total - free_paras));
     }
 
@@ -541,12 +541,12 @@ SAMB_ptr EMM_EMMDATAH_AllocNext(uint16_t nparas)
     uint16_t free_paras;
     SAMB_ptr header;
 
-    if (EMMDATAH_Map() == NULL) {
+    if(EMMDATAH_Map() == NULL) {
         return NULL;
     }
 
     free_paras = (uint16_t)(4090 - EMM_Data_Level);
-    if (free_paras < nparas_total) {
+    if(free_paras < nparas_total) {
         Allocation_Error(4, (uint16_t)(nparas_total - free_paras));
     }
 

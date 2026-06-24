@@ -1,6 +1,27 @@
 
 SEEALSO:  dijkstra.c
 
+drake178 said:
+    calculates the shortest path to every square from the starting one;
+    not the best solution for MoM, as it's based on movement costs rather than turns to reach a square
+    (he also made a overland djikstra patch)
+
+
+"SPATH" === "Shortest Path"
+"SSSP"  === "Single-Source Shortest Path"
+
+
+### Single-Source Shortest Path (SSSP)
+That's the standard graph-theory term
+    — it's the name on the 08-sssp.pdf in your doc/PathFinding/ folder,
+    and it's what SPATH ("Shortest PATH") is an instance of:
+    compute the shortest path from one source tile to all others.
+    All three MoM solvers are SSSP via Bellman-Ford relaxation.
+
+Single-Source Shortest Path (SSSP) via Bellman-Ford relaxation
+
+
+
 
 //Sidav  this is Bellman Ford
 https://www.google.com/search?q=Grid-based+Bellman-Ford+Iterative+Relaxation+algorithm&oq=Grid-based+Bellman-Ford+Iterative+Relaxation+algorithm
@@ -79,7 +100,7 @@ CMB_Path_Costs@
 Tile_GetTo_Cost
 
 
-movepath_cost = &movepath_cost_map->moves2[CS_Row_Start];
+movepath_cost = &movepath_cost_map->moves2[origin_row];
 move_cost = *movepath_cost++;
 vs.
 move_cost = _cmbt_movepath_cost_map[ctr];
@@ -96,9 +117,9 @@ MovePath.C  Move_Path_Find()
 
 loop until there are no changes to ...?
 
-    movepath_cost = &movepath_cost_map->moves2[CS_Row_Start];
-    movepath_reach_cost = &movepath_cost_map->Reach_Costs[CS_Row_Start];
-    movepath_reach_from = &movepath_cost_map->Reach_From[CS_Row_Start];
+    movepath_cost = &movepath_cost_map->moves2[origin_row];
+    movepath_reach_cost = &movepath_cost_map->Reach_Costs[origin_row];
+    movepath_reach_from = &movepath_cost_map->Reach_From[origin_row];
 
         new_reach_cost = adjacent_reach_cost + tmp_move_cost;
         current_reach_cost = *movepath_reach_cost;

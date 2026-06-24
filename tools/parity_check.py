@@ -54,7 +54,7 @@ def pick_preset(explicit: Optional[str]) -> str:
         return explicit
     candidates = ["MSVC-headless-debug", "clang-debug", "MSVC-debug"]
     for name in candidates:
-        if (BUILD_ROOT / name / "bin" / "Debug").is_dir():
+        if(BUILD_ROOT / name / "bin" / "Debug").is_dir():
             return name
     return "clang-debug"
 
@@ -496,7 +496,7 @@ def _snapshot_remom_if_newer(layout: BuildLayout) -> None:
         if not src.exists():
             continue
         dst = layout.remom_out / name
-        if (not dst.exists()) or src.stat().st_mtime > dst.stat().st_mtime:
+        if(not dst.exists()) or src.stat().st_mtime > dst.stat().st_mtime:
             shutil.copy2(str(src), str(dst))
             refreshed.append(name)
     # If stderr.log was refreshed, the derived rng.log is stale — re-filter it.

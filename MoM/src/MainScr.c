@@ -6095,12 +6095,12 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
             {
                 if((unit_wx != dst_wx) || (unit_wy != dst_wy))
                 {
-                    ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;  // ~== Lairs, Cities - only allow dst in path finding
+                    ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = (int8_t)INF;  // CLAUDE (int8_t)INF == -1; ~== Lairs, Cities - only allow dst in path finding
                 }
             }
             else
             {
-                ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;  // neutral player can't merge stacks
+                ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = (int8_t)INF;  // CLAUDE (int8_t)INF == -1; neutral player can't merge stacks
             }
 
             continue;
@@ -6117,12 +6117,12 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
                         Player_Army_At_Square(unit_wx, unit_wy, wp, _UNITS[itr_units].owner_idx, &checked_troop_count, &checked_troops[0]);
                         if(checked_troop_count > troop_count)
                         {
-                            ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;
+                            ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = (int8_t)INF;  // CLAUDE == -1
                         }
                     }
                     else
                     {
-                        ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;
+                        ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = (int8_t)INF;  // CLAUDE == -1
                     }
                 }
             }
@@ -6191,7 +6191,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
 
         if((checked_troop_count + troop_count) > MAX_STACK)
         {
-            ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;
+            ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = (int8_t)INF;  // CLAUDE == -1
         }
         else
         {
@@ -6985,11 +6985,11 @@ void Main_Screen_Draw_Debug_Information(void)
 
     // COPILOT+GPT54  // scanned_field = Scan_Field();
     // COPILOT+GPT54  // if(scanned_field)
-    // COPILOT+GPT54  if (screen_x >= MAP_SCREEN_X && screen_x < MAP_SCREEN_X + MAP_WIDTH * SQUARE_WIDTH &&
+    // COPILOT+GPT54  if(screen_x >= MAP_SCREEN_X && screen_x < MAP_SCREEN_X + MAP_WIDTH * SQUARE_WIDTH &&
     // COPILOT+GPT54  screen_y >= MAP_SCREEN_Y && screen_y < MAP_SCREEN_Y + MAP_HEIGHT * SQUARE_HEIGHT)
     // COPILOT+GPT54  {
     // COPILOT+GPT54      int entity_idx = GET_MAP_ENTITY(grid_x, grid_y);
-    // COPILOT+GPT54      if (entity_idx >= 0 && entity_idx < MAX_UNIT_COUNT && entity_idx < _units)
+    // COPILOT+GPT54      if(entity_idx >= 0 && entity_idx < MAX_UNIT_COUNT && entity_idx < _units)
     // COPILOT+GPT54      {
     // COPILOT+GPT54          Print_Integer(46, 22 + (8 * pos), _UNITS[entity_idx].wx);
     // COPILOT+GPT54      }

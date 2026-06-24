@@ -645,7 +645,7 @@ int FUU_Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, int16_t **
                     
                     // wav_data = realloc(wav_data, new_wav_buf_size);
                     tmp_wav_data = realloc(wav_data, new_wav_buf_size);
-                    if (tmp_wav_data == NULL)
+                    if(tmp_wav_data == NULL)
                     {
                         STU_DEBUG_BREAK();
                     }
@@ -708,7 +708,7 @@ success:
     // wav_data = realloc(conv_data, (LEN_WAV_HDR + wav_data_size));
     new_wav_buf_size = (LEN_WAV_HDR + wav_data_size);
     tmp_wav_data = realloc(wav_data, new_wav_buf_size);
-    if (tmp_wav_data == NULL)
+    if(tmp_wav_data == NULL)
     {
         STU_DEBUG_BREAK();
     }

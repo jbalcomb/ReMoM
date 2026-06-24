@@ -1527,7 +1527,7 @@ void City_Screen_Add_Fields_Resource_Window(int16_t city_idx, int16_t xstart, in
             city_resources_rows_fields[1] = Add_Hidden_Field(group_two_x1, (ystart + (itr_resource_types * 8)), 132, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055[0], ST_UNDEFINED);
 
         }
-        else if (itr_resource_types == 2)
+        else if(itr_resource_types == 2)
         {
 
             if(_CITIES[city_idx].gold_units < _CITIES[city_idx].building_maintenance)
@@ -1665,7 +1665,7 @@ void City_Screen_Draw_Resource_Icons(int16_t city_idx, int16_t xstart, int16_t y
             }
 
         }
-        else if (itr_resource_types == 2)
+        else if(itr_resource_types == 2)
         {
 
             xpos = xstart;

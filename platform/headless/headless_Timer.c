@@ -53,7 +53,7 @@ void Platform_Sleep_Millies(uint64_t ms)
 
 uint64_t Platform_Get_Millies(void)
 {
-    if (headless_ticks_startup == 0)
+    if(headless_ticks_startup == 0)
     {
         headless_ticks_startup = Headless_Get_Ticks_Ms();
     }

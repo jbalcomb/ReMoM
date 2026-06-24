@@ -150,7 +150,7 @@ void Screen_Flic_Capture(void)
     FILE * file_pointer = NULL;
     int16_t itr = 0;
 
-    if (release_flag == ST_TRUE)
+    if(release_flag == ST_TRUE)
     {
         return;
     }
@@ -162,10 +162,10 @@ void Screen_Flic_Capture(void)
     stu_strcpy(file_name, cnst_Scrdmp00_Full);
 
     /* Loop to find an unused filename SCRDMPxx.FLI */
-    while (DIR(file_name, scanline_buffer) != 0)
+    while(DIR(file_name, scanline_buffer) != 0)
     {
         file_number++;
-        if (file_number < 10)
+        if(file_number < 10)
         {
             stu_strcpy(scanline_buffer, cnst_Scrdmp_0);
             stu_itoa(file_number, buffer, 10);

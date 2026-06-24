@@ -13,11 +13,11 @@ int main(int argc, char** argv) {
 
     /* Parse command line arguments to selectively re-enable them */
     for (i = 1; i < argc; ++i) {
-        if (strcmp(argv[i], "--debug-input") == 0) {
+        if(strcmp(argv[i], "--debug-input") == 0) {
             remom_log_enable_channel(LOG_CHAN_INPUT);
             remom_log_write(LOG_INFO, LOG_CHAN_CORE, "Input logging explicitly enabled via CLI.");
         }
-        else if (strcmp(argv[i], "--debug-all") == 0) {
+        else if(strcmp(argv[i], "--debug-all") == 0) {
             /* Turn everything back on */
             remom_log_set_channel_mask(~0u); 
             remom_log_write(LOG_INFO, LOG_CHAN_CORE, "All logging channels enabled via CLI.");

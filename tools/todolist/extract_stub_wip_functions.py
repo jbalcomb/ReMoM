@@ -65,7 +65,7 @@ def Strip_C_Comments_And_Strings(source_text: str) -> str:
 
     while index < text_length:
         current = source_text[index]
-        following = source_text[index + 1] if (index + 1) < text_length else ""
+        following = source_text[index + 1] if(index + 1) < text_length else ""
 
         if current == "/" and following == "/":
             output.append("  ")

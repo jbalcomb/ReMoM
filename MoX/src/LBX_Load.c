@@ -348,7 +348,7 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     while(entry_length >= read_size)
     {
         entry_length -= read_size;
-        // if ( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
+        // if( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
 // #pragma warning(suppress : 28183)
         fread(rvr_SAMB_data, read_size, 1, lbxload_fptr);
         rvr_SAMB_data += read_size;
@@ -356,7 +356,7 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     if(entry_length > 0)
     {
         read_size = entry_length;
-        // if ( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
+        // if( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
 #pragma warning(suppress : 28183 6387)
         fread(rvr_SAMB_data, read_size, 1, lbxload_fptr);
     }
@@ -571,7 +571,7 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     while(entry_length >= read_size)
     {
         entry_length -= read_size;
-        // if ( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
+        // if( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
         if(NULL != rvr_SAMB_data)
         {
             fread(rvr_SAMB_data, read_size, 1, lbxload_fptr);
@@ -581,7 +581,7 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     if(entry_length > 0)
     {
         read_size = entry_length;
-        // if ( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
+        // if( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
 
         if(NULL != rvr_SAMB_data)
         {

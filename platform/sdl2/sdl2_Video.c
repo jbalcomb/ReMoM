@@ -58,7 +58,7 @@ void Platform_Set_Palette_Color(uint8_t index, uint8_t r, uint8_t g, uint8_t b)
     platform_palette_buffer[index].b = b;
     platform_palette_buffer[index].a = 255;
 
-    if (sdl2_surface_RGB666->format->palette != NULL)
+    if(sdl2_surface_RGB666->format->palette != NULL)
     {
         SDL_SetPaletteColors(sdl2_surface_RGB666->format->palette, &color, index, 1);
     }

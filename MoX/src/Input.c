@@ -2135,7 +2135,7 @@ void Input_Box_Popup(int16_t field_num)
 
     Control_Change = ST_FALSE;
 
-    // 1oom:  while ((key != MOO_KEY_RETURN) && (!flag_mouse_button))
+    // 1oom:  while((key != MOO_KEY_RETURN) && (!flag_mouse_button))
     while((Control_Change == ST_FALSE) && (key != ST_KEY_ENTER))
     {
 
@@ -2496,7 +2496,7 @@ int16_t Setup_Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, c
 
     Control_Change = ST_FALSE;
 
-    // 1oom:  while ((key != MOO_KEY_RETURN) && (!flag_mouse_button))
+    // 1oom:  while((key != MOO_KEY_RETURN) && (!flag_mouse_button))
     while((key != ST_KEY_ENTER) && (Control_Change == ST_FALSE))
     {
         while((Keyboard_Status() == 0) && (Control_Change == ST_FALSE))
@@ -2849,7 +2849,7 @@ void Draw_Input_Box_Popup(int16_t field_num, char * string)
 
             Lines_Drawn = 0;
 
-            while (anim_stage > 0)
+            while(anim_stage > 0)
             {
                 Line(cursor_x1, ((p_fields[field_num].y1 + anim_stage) - 1), ((cursor_x1 + Cursor_Width) + 1), ((p_fields[field_num].y1 + anim_stage) - 1), ibeam_color_array[(Cursor_Height - Lines_Drawn)]);
                 Lines_Drawn++;

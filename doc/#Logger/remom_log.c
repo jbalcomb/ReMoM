@@ -37,12 +37,12 @@ void remom_log_write(RemomLogLevel level, RemomLogChannel channel, const char* f
 
     /* NEW: Early exit if this channel is currently muted.
        This prevents unnecessary string formatting and CPU usage. */
-    if ((s_ActiveChannelsMask & (1u << channel)) == 0) {
+    if((s_ActiveChannelsMask & (1u << channel)) == 0) {
         return;
     }
 
     /* 1. Format the prefix with both Level and Channel */
     int prefixLen = sprintf(tempBuf, "[%s][%s] ", s_LevelNames[level], s_ChannelNames[channel]);
-    if (prefixLen < 0) return;
+    if(prefixLen < 0) return;
 
     /* ... the rest of the string formatting and buffer writing remains exactly the same ... */

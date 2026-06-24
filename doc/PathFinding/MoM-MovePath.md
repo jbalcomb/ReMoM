@@ -32,6 +32,17 @@ EZ_Resolve() is called inside of Move_Units()
 
 Set_Active_Stack_Movement_Path()
 
+¿¿¿
+UnitMoce.c
+// WZD o148p03
+Make_Move_Path()
+    EMMDATAH_Map();
+        Init_MovePathMap(MvMd_0, MvMd_1, MvMd_2, MvMd_3, MvMd_4, MvMd_5, wp);
+        Update_MovePathMap(&movepath_cost_map->moves2[0], boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
+        // TODO          // TODO  TILE_ExtendRange(src_wx, src_wy, dst_wx, dst_wy, &ext_x1, &ext_y1, &ext_x2, &ext_y2);
+        // TODO          // Move_Path_Find(src_wx, src_wy, (int8_t *)&movepath_cost_map[0]);
+
+???
 
 
 ## Move_Units()

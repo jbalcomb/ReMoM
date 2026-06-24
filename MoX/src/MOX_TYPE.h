@@ -32,4 +32,10 @@ typedef unsigned int        dword;
 
 
 
+/* CLAUDE  Unified "impassable tile / infinite cost" sentinel for the three shortest-path solvers (overland Move_Path_Find, combat Combat_Move_Path_Find, new-game CRP_SPATH_Arbitrary). Single home here, where every one of those translation units already reaches MOX_TYPE.h; replaces the former duplicate `#define INF 0xFF` in Combat.h, MovePath.c, and MAPGEN.c. IS_INF()'s uint8_t cast makes the test robust against signed sign-extension when reading a stored 0xFF out of a signed byte array -- use the bare INF where you specifically need the OG's raw signed comparison preserved. */
+#define INF                     0xFF
+#define IS_INF(_value_)         ((uint8_t)(_value_) == (uint8_t)INF)
+
+
+
 #endif /* MOX_TYPE_H */

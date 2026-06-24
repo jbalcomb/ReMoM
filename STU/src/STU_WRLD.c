@@ -1692,7 +1692,7 @@ static void Allocate_Simulation(int simulations_to_run)
     // memset(simulation_data, 0, simulations_to_run * sizeof(struct s_Simulation_Data));
     size = (simulations_to_run * sizeof(struct s_Simulation_Data));
     simulation_data = malloc(size);
-    if (!simulation_data)
+    if(!simulation_data)
     {
         Exit_With_Message("FATAL: malloc() failed for simulation_data");
         return;

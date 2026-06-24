@@ -34,13 +34,13 @@ static FILE * Decisions_File = NULL;
 
 void AI_Metrics_Startup(void)
 {
-    if (!AI_Metrics_Enabled)
+    if(!AI_Metrics_Enabled)
     {
         return;
     }
 
     Turn_Summary_File = stu_fopen("AI_TURN_SUMMARY.CSV", "w");
-    if (Turn_Summary_File != NULL)
+    if(Turn_Summary_File != NULL)
     {
         fprintf(Turn_Summary_File,
             "turn,player_idx,name,gold,mana,fame,power_base,unit_count,city_count,active,raider_acc,monster_acc\n");
@@ -48,7 +48,7 @@ void AI_Metrics_Startup(void)
     }
 
     NPC_Events_File = stu_fopen("AI_NPC_EVENTS.CSV", "w");
-    if (NPC_Events_File != NULL)
+    if(NPC_Events_File != NULL)
     {
         fprintf(NPC_Events_File,
             "turn,event_type,source_idx,source_wx,source_wy,source_wp,count,budget,target_wx,target_wy,accumulator,threshold\n");
@@ -56,7 +56,7 @@ void AI_Metrics_Startup(void)
     }
 
     Build_Detail_File = stu_fopen("AI_BUILD_DETAIL.CSV", "w");
-    if (Build_Detail_File != NULL)
+    if(Build_Detail_File != NULL)
     {
         fprintf(Build_Detail_File,
             "turn,player_idx,city_idx,city_pop,city_units,chosen_product,chosen_weight,alt_count,top3_products,top3_weights\n");
@@ -64,7 +64,7 @@ void AI_Metrics_Startup(void)
     }
 
     Unit_Outcomes_File = stu_fopen("AI_UNIT_OUTCOMES.CSV", "w");
-    if (Unit_Outcomes_File != NULL)
+    if(Unit_Outcomes_File != NULL)
     {
         fprintf(Unit_Outcomes_File,
             "turn,player_idx,unit_idx,unit_type,status,src_wx,src_wy,dst_wx,dst_wy,end_wx,end_wy,move_failed,arrived\n");
@@ -72,7 +72,7 @@ void AI_Metrics_Startup(void)
     }
 
     Decisions_File = stu_fopen("AI_DECISIONS.CSV", "w");
-    if (Decisions_File != NULL)
+    if(Decisions_File != NULL)
     {
         fprintf(Decisions_File,
             "turn,player_idx,category,subject_idx,decision,decision_name,score,alt_count\n");
@@ -83,35 +83,35 @@ void AI_Metrics_Startup(void)
 
 void AI_Metrics_Shutdown(void)
 {
-    if (Turn_Summary_File != NULL)
+    if(Turn_Summary_File != NULL)
     {
         fflush(Turn_Summary_File);
         stu_fclose(Turn_Summary_File);
         Turn_Summary_File = NULL;
     }
 
-    if (NPC_Events_File != NULL)
+    if(NPC_Events_File != NULL)
     {
         fflush(NPC_Events_File);
         stu_fclose(NPC_Events_File);
         NPC_Events_File = NULL;
     }
 
-    if (Build_Detail_File != NULL)
+    if(Build_Detail_File != NULL)
     {
         fflush(Build_Detail_File);
         stu_fclose(Build_Detail_File);
         Build_Detail_File = NULL;
     }
 
-    if (Unit_Outcomes_File != NULL)
+    if(Unit_Outcomes_File != NULL)
     {
         fflush(Unit_Outcomes_File);
         stu_fclose(Unit_Outcomes_File);
         Unit_Outcomes_File = NULL;
     }
 
-    if (Decisions_File != NULL)
+    if(Decisions_File != NULL)
     {
         fflush(Decisions_File);
         stu_fclose(Decisions_File);
@@ -127,7 +127,7 @@ void AI_Metrics_Emit_Turn_Summary(int16_t turn, int16_t difficulty, int16_t num_
     int16_t unit_counts[NUM_PLAYERS];
     int16_t city_counts[NUM_PLAYERS];
 
-    if (!AI_Metrics_Enabled || Turn_Summary_File == NULL)
+    if(!AI_Metrics_Enabled || Turn_Summary_File == NULL)
     {
         return;
     }
@@ -140,7 +140,7 @@ void AI_Metrics_Emit_Turn_Summary(int16_t turn, int16_t difficulty, int16_t num_
 
     for (itr = 0; itr < _units; itr++)
     {
-        if (_UNITS[itr].owner_idx >= 0 && _UNITS[itr].owner_idx < NUM_PLAYERS)
+        if(_UNITS[itr].owner_idx >= 0 && _UNITS[itr].owner_idx < NUM_PLAYERS)
         {
             unit_counts[_UNITS[itr].owner_idx]++;
         }
@@ -148,7 +148,7 @@ void AI_Metrics_Emit_Turn_Summary(int16_t turn, int16_t difficulty, int16_t num_
 
     for (itr = 0; itr < _cities; itr++)
     {
-        if (_CITIES[itr].owner_idx >= 0 && _CITIES[itr].owner_idx < NUM_PLAYERS)
+        if(_CITIES[itr].owner_idx >= 0 && _CITIES[itr].owner_idx < NUM_PLAYERS)
         {
             city_counts[_CITIES[itr].owner_idx]++;
         }
@@ -198,7 +198,7 @@ void AI_Metrics_Emit_NPC_Event(
     int16_t threshold
 )
 {
-    if (!AI_Metrics_Enabled || NPC_Events_File == NULL)
+    if(!AI_Metrics_Enabled || NPC_Events_File == NULL)
     {
         return;
     }
@@ -241,7 +241,7 @@ void AI_Metrics_Emit_Build(
     int16_t i;
     int16_t j;
 
-    if (!AI_Metrics_Enabled || Build_Detail_File == NULL)
+    if(!AI_Metrics_Enabled || Build_Detail_File == NULL)
     {
         return;
     }
@@ -251,7 +251,7 @@ void AI_Metrics_Emit_Build(
     {
         for (j = 0; j < 3; j++)
         {
-            if (weights[i] > top3_weights[j])
+            if(weights[i] > top3_weights[j])
             {
                 /* Shift down */
                 int16_t k;
@@ -302,7 +302,7 @@ void AI_Metrics_Emit_Unit_Outcome(
 {
     int16_t arrived;
 
-    if (!AI_Metrics_Enabled || Unit_Outcomes_File == NULL)
+    if(!AI_Metrics_Enabled || Unit_Outcomes_File == NULL)
     {
         return;
     }
@@ -341,7 +341,7 @@ void AI_Metrics_Emit_Decision(
     int16_t alt_count
 )
 {
-    if (!AI_Metrics_Enabled || Decisions_File == NULL)
+    if(!AI_Metrics_Enabled || Decisions_File == NULL)
     {
         return;
     }

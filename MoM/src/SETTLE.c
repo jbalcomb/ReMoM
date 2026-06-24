@@ -127,10 +127,10 @@ void AI_Execute_Orders(int16_t player_idx)
     /* ¿ OGBUG  This is in and only in a per-player-loop that already checks for Time-Stop ? */
 
     /* Time Stop Logic Check */
-    if (g_timestop_player_num > 0)
+    if(g_timestop_player_num > 0)
     {
         /* If Time Stop is active, only the casting player can move units */
-        if ((player_idx + 1) != g_timestop_player_num)
+        if((player_idx + 1) != g_timestop_player_num)
         {
             return;
         }
@@ -141,7 +141,7 @@ void AI_Execute_Orders(int16_t player_idx)
     {
 
         /* Check if unit belongs to the player currently processing AI moves */
-        if (_UNITS[unit_idx].owner_idx == (int8_t)player_idx)
+        if(_UNITS[unit_idx].owner_idx == (int8_t)player_idx)
         {
 
             /* AI_METRICS */    /* Snapshot state before movement for metrics */
@@ -153,7 +153,7 @@ void AI_Execute_Orders(int16_t player_idx)
 
             /* Process unit orders based on its current Status */
             /* Switch based on unit status (2 to 16) */
-            /* Logic: bx = status - 2; if (bx > 14) skip; */
+            /* Logic: bx = status - 2; if(bx > 14) skip; */
             switch(_UNITS[unit_idx].Status)
             {
                 case us_BuildRoad:
@@ -187,7 +187,7 @@ void AI_Execute_Orders(int16_t player_idx)
             }
 
             /* AI_METRICS */    /* Emit unit outcome for non-idle units */
-            /* AI_METRICS */    if (pre_status == us_GOTO || pre_status == us_Move || pre_status == us_BuildRoad)
+            /* AI_METRICS */    if(pre_status == us_GOTO || pre_status == us_Move || pre_status == us_BuildRoad)
             /* AI_METRICS */    {
             /* AI_METRICS */        AI_Metrics_Emit_Unit_Outcome(_turn, player_idx, unit_idx,
             /* AI_METRICS */            _UNITS[unit_idx].type, pre_status,
@@ -782,7 +782,7 @@ void AI_Unit_Army_Do_Road(int16_t unit_idx)
     /* Second pass: Initialize road building status for all participating units */
     for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
     {
-        if (_UNITS[troops[itr_troops]].Status == us_BuildRoad)
+        if(_UNITS[troops[itr_troops]].Status == us_BuildRoad)
         {
             /* Transition status to GOTO (AI will move and build along the path) */
             _UNITS[troops[itr_troops]].Status = us_GOTO;

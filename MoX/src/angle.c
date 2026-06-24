@@ -150,8 +150,8 @@ While the underlying math is definitively an Inverse Tangent (atan2), naming it 
 /* Main Function: Returns a full 0-359 degree angle based on X and Y distances */
 int16_t Get_Angle(int x_dist, int y_dist) {
     int angle;
-    if (x_dist >= 0) {
-        if (y_dist >= 0) {
+    if(x_dist >= 0) {
+        if(y_dist >= 0) {
             /* Quadrant 1 (Bottom-Right, assuming Y goes down on screen) */
             angle = Get_Base_Angle(y_dist, x_dist);
         } else {
@@ -160,7 +160,7 @@ int16_t Get_Angle(int x_dist, int y_dist) {
             angle = 360 - angle;
         }
     } else {
-        if (y_dist >= 0) {
+        if(y_dist >= 0) {
             /* Quadrant 2 (Bottom-Left) */
             angle = Get_Base_Angle(y_dist, -x_dist);
             angle = 180 - angle;
@@ -272,7 +272,7 @@ int16_t Get_Base_Angle(unsigned int y, unsigned int x) {
     int i;
 
     /* Prevent divide-by-zero: perfectly vertical means 90 degrees */
-    if (x == 0) {
+    if(x == 0) {
         return 90;
     }
 
@@ -285,33 +285,33 @@ int16_t Get_Base_Angle(unsigned int y, unsigned int x) {
     /* The assembly optimizes the lookup by splitting the arrays in half 
      * so it never has to scan more than 23 values to find the angle. 
      */
-    if (ratio < 256) {
+    if(ratio < 256) {
         /* Angle is between 0 and 44 degrees */
-        if (ratio < 103) {
+        if(ratio < 103) {
             /* Scan 0 to 21 */
             for (i = 0; i <= 21; i++) {
-                if (ratio < Tangents_0_44[i]) return i - 1 < 0 ? 0 : i - 1;
+                if(ratio < Tangents_0_44[i]) return i - 1 < 0 ? 0 : i - 1;
             }
             return 21;
         } else {
             /* Scan 22 to 44 */
             for (i = 22; i <= 44; i++) {
-                if (ratio < Tangents_0_44[i]) return i - 1;
+                if(ratio < Tangents_0_44[i]) return i - 1;
             }
             return 44;
         }
     } else {
         /* Angle is between 45 and 89 degrees */
-        if (ratio < 603) {
+        if(ratio < 603) {
             /* Scan 45 to 66 */
             for (i = 0; i <= 21; i++) {
-                if (ratio < Tangents_45_89[i]) return i + 45 - 1;
+                if(ratio < Tangents_45_89[i]) return i + 45 - 1;
             }
             return 66; /* 45 + 21 */
         } else {
             /* Scan 67 to 89 */
             for (i = 22; i <= 44; i++) {
-                if (ratio < Tangents_45_89[i]) return i + 45 - 1;
+                if(ratio < Tangents_45_89[i]) return i + 45 - 1;
             }
             return 89;
         }
@@ -331,13 +331,13 @@ int16_t Cos(int16_t angle, int16_t radius) {
     long result;
 
     /* Fold the 360-degree angle into the 0-90 degree quadrant */
-    if (angle > 90 && angle <= 180) {
+    if(angle > 90 && angle <= 180) {
         angle = 180 - angle;
         sign = -1;
-    } else if (angle > 180 && angle <= 270) {
+    } else if(angle > 180 && angle <= 270) {
         angle = angle - 180;
         sign = -1;
-    } else if (angle > 270 && angle <= 360) {
+    } else if(angle > 270 && angle <= 360) {
         angle = 360 - angle;
         /* sign remains positive */
     }
@@ -348,7 +348,7 @@ int16_t Cos(int16_t angle, int16_t radius) {
     /* Multiply and shift right by 16 (equivalent to assembly's "mov ax, dx") */
     result = ((long)radius * multiplier) >> 16;
 
-    if (sign == -1) {
+    if(sign == -1) {
         return (int)(-result);
     }
     return (int)result;
@@ -370,14 +370,14 @@ int16_t Sin(int16_t angle, int16_t radius) {
     long result;
 
     /* 1. Fold the 360-degree angle into the 0-90 degree quadrant */
-    if (angle > 90 && angle <= 180) {
+    if(angle > 90 && angle <= 180) {
         /* Quadrant 2: Sine is positive, angle counts backward from 180 */
         angle = 180 - angle;
-    } else if (angle > 180 && angle <= 270) {
+    } else if(angle > 180 && angle <= 270) {
         /* Quadrant 3: Sine is negative, angle counts forward from 180 */
         angle = angle - 180;
         sign = -1;
-    } else if (angle > 270 && angle <= 360) {
+    } else if(angle > 270 && angle <= 360) {
         /* Quadrant 4: Sine is negative, angle counts backward from 360 */
         angle = 360 - angle;
         sign = -1;
@@ -386,8 +386,8 @@ int16_t Sin(int16_t angle, int16_t radius) {
     /* 2. The 90-Degree Shortcut */
     /* If the angle is exactly 90 (or 270, which folds to 90), sin(90) = 1.0. 
        1.0 * radius is just radius. The assembly skips the math here. */
-    if (angle == 90) {
-        if (sign == -1) {
+    if(angle == 90) {
+        if(sign == -1) {
             return -radius;
         }
         return radius;
@@ -402,7 +402,7 @@ int16_t Sin(int16_t angle, int16_t radius) {
     result = ((long)radius * multiplier) >> 16;
 
     /* 5. Apply the quadrant sign */
-    if (sign == -1) {
+    if(sign == -1) {
         return (int)(-result);
     }
     

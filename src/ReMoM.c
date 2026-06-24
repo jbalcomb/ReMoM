@@ -150,7 +150,7 @@ static void Debug_Print_Working_Directory(void)
     }
 #endif
 
-    if (stu_getcwd(working_directory, sizeof(working_directory)) != NULL)
+    if(stu_getcwd(working_directory, sizeof(working_directory)) != NULL)
     {
         LOG_INFO(LOG_CAT_REMOM, "CWD (%s): %s", platform_name, working_directory);
         LOG_DEBUG(LOG_CAT_GENERAL, "CWD (%s): %s", platform_name, working_directory);
@@ -287,7 +287,7 @@ int main(int argc, char * argv[])
         int argi;
         for (argi = 1; argi < argc; argi++)
         {
-            if (stu_strcmp(argv[argi], "--headless") == 0)
+            if(stu_strcmp(argv[argi], "--headless") == 0)
             {
 #ifdef USE_SDL3
                 stu_putenv("SDL_VIDEODRIVER=offscreen");
@@ -456,7 +456,7 @@ int MOM_main(int argc, char** argv)
     /* OG-MoM: `MAGIC.EXE JENNY` skipped the intro logos */
     /* MS-DOS allowed checking argv[1] even if there wasn't an argument? ... if(!(argv[1][0] == 'J' && argv[1][1] == 'E' && argv[1][2] == 'N' && argv[1][3] == 'N' && argv[1][4] == 'Y') */
     int skip_intro = (argc > 1 && strcmp(argv[1], "JENNY") == 0);
-    if (!skip_intro && !remom_continue_flag)
+    if(!skip_intro && !remom_continue_flag)
     {
         Draw_Logos();
     }
@@ -510,7 +510,7 @@ int MOM_main(int argc, char** argv)
     // WZD Exit_With_Size();
 
 
-    if (remom_continue_flag)
+    if(remom_continue_flag)
     {
         /* --continue: skip Main Menu, load SAVE9.GAM, enter game (WIZARDS.EXE path). */
         current_screen = scr_Continue;

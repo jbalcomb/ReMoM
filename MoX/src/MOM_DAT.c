@@ -2647,8 +2647,9 @@ void CRP_NEWG_CreatePathGrids__STUB(void)
     |-> CRP_NEWG_CreatePathGrid(movement_mode_cost_maps[wp]->sailing[0], UU_TBL_2[wp]);
 
 */
-int8_t *  UU_TBL_2;
-int8_t *  UU_TBL_1;
+/* CLAUDE  was `int8_t *` -- mismatched the `extern SAMB_ptr` in MOM_DAT.h (C4142, surfaced once MOX_TYPE.h was touched and forced a recompile). Aligned to SAMB_ptr (unsigned char *): matches the extern, the Allocate_Next_Block save-block convention, and the unsigned bitflag bytes the grid holds. */
+SAMB_ptr  UU_TBL_2;
+SAMB_ptr  UU_TBL_1;
 
 // WZD dseg:9CDC
 // AKA TBL_Maps;
@@ -2876,7 +2877,7 @@ Allocate_Data_Space()
 hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR, 592 B  ... ~ (36) 16-byte structs
 LOADSAVE.c
 fwrite(hero_names_table, 16, NUM_HERO_TYPES, file_pointer);
-// TODO  DEDU  if (file_size_flag == ST_TRUE) { MEM_Clear_Far(hero_names_table, 545); } else { ... }
+// TODO  DEDU  if(file_size_flag == ST_TRUE) { MEM_Clear_Far(hero_names_table, 545); } else { ... }
 fread(hero_names_table, 16, NUM_HERO_TYPES, file_pointer);
 */
 struct s_INACTV_HERO * hero_names_table;

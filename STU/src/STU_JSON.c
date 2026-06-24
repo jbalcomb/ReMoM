@@ -31,7 +31,7 @@
 // 
 //    json_object * root = json_object_new_object();
 // 
-//     if (!root)
+//     if(!root)
 //         return 1;
 // 
 //     // {"module":"log"}

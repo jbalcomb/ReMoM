@@ -61,17 +61,17 @@ typedef struct PFL_Color
 
 /** Clamp-to-max: if b < a, set a = b. */
 #ifndef SETMAX
-#define SETMAX(a, b) do { if ((b) < (a)) { (a) = (b); } } while (0)
+#define SETMAX(a, b) do { if((b) < (a)) { (a) = (b); } } while(0)
 #endif
 
 /** Clamp-to-min: if b > a, set a = b. */
 #ifndef SETMIN
-#define SETMIN(a, b) do { if ((b) > (a)) { (a) = (b); } } while (0)
+#define SETMIN(a, b) do { if((b) > (a)) { (a) = (b); } } while(0)
 #endif
 
 /** Clamp a into [b, c]. */
 #ifndef SETRANGE
-#define SETRANGE(a, b, c) do { if (((c) <= (b)) || ((b) > (a))) { (a) = (b); } else if ((c) < (a)) { (a) = (c); } } while (0)
+#define SETRANGE(a, b, c) do { if(((c) <= (b)) || ((b) > (a))) { (a) = (b); } else if((c) < (a)) { (a) = (c); } } while(0)
 #endif
 
 
@@ -224,7 +224,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 /** Restore the background previously saved by Save_Mouse_On_Page(). */
 void Restore_Mouse_On_Page(void);
 
-/** Update cursor shape if (x, y) falls in a different mouse region. */
+/** Update cursor shape if(x, y) falls in a different mouse region. */
 void Check_Mouse_Shape(int16_t x, int16_t y);
 
 /** Mouse interrupt handler: process a button event at window coordinates. */
@@ -453,10 +453,10 @@ static FILE *mouse_dbg_log_file = NULL;
 
 static FILE *Mouse_Dbg_Log(void)
 {
-    if (mouse_dbg_log_file == NULL)
+    if(mouse_dbg_log_file == NULL)
     {
         mouse_dbg_log_file = fopen("mouse_debug.log", "w");
-        if (mouse_dbg_log_file != NULL) { setvbuf(mouse_dbg_log_file, NULL, _IONBF, 0); }
+        if(mouse_dbg_log_file != NULL) { setvbuf(mouse_dbg_log_file, NULL, _IONBF, 0); }
     }
     return (mouse_dbg_log_file != NULL) ? mouse_dbg_log_file : stderr;
 }

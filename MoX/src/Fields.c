@@ -947,7 +947,7 @@ void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_se
 
     p_fields[fields_count].hotkey = hotkey;
 
-    if ((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123) )
+    if((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123) )
     {
         p_fields[fields_count].hotkey -= 32;
     }
@@ -2328,7 +2328,7 @@ void Assign_Auto_Function(void (*auto_function)(void), uint16_t delay)
 
     auto_active_flag = ST_TRUE;
 
-    if ( (delay <= 0) || (delay >= 10) )
+    if( (delay <= 0) || (delay >= 10) )
     {
         auto_function_delay = 2;
     }

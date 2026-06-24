@@ -69,7 +69,7 @@ struct s_MOVE_PATH
     WIZARDS.EXE  ovr147
 */
 
-// drake178: Overland_Pathfinder()
+// WZD o147p01
 void Move_Path_Find(int16_t wx, int16_t wy, struct s_MOVE_PATH * movepath_cost_map);
 
 

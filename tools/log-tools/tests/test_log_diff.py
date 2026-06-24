@@ -94,7 +94,7 @@ class TestRawDiff(unittest.TestCase):
         diff_text = report["diff"]
         plus_minus_begin_lines = [
             ln for ln in diff_text.splitlines()
-            if (ln.startswith("+") or ln.startswith("-"))
+            if(ln.startswith("+") or ln.startswith("-"))
             and "BEGIN: ReMoM main()" in ln
             and not ln.startswith("+++") and not ln.startswith("---")
         ]

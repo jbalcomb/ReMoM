@@ -299,7 +299,7 @@ static void pfl_mouse_move(int dx, int dy)
         dy = pfl_mouse_dy_acc / pfl_mouse_sy;
         pfl_mouse_dy_acc = pfl_mouse_dy_acc % pfl_mouse_sy;
     }
-    if ((dx == 0) && (dy == 0))
+    if((dx == 0) && (dy == 0))
     {
         return;
     }
@@ -600,14 +600,14 @@ void Platform_Event_Handler(void)
         }
     }
 
-    // if (hw_audio_check_process()) {
+    // if(hw_audio_check_process()) {
     //     exit(EXIT_FAILURE);
     // }
 
     /* CLAUDE */  /* Dasm: SDL_Delay(10) removed; vsync (SDL_RENDERER_PRESENTVSYNC) already provides frame pacing via SDL_RenderPresent(); the delay here stacked on every call to Platform_Event_Handler() (multiple times per frame from Get_Input and Mouse_Button), adding 30-50ms of cumulative lag per frame */
 
     /* Artificial human player: inject scripted input. */
-    if (platform_frame_callback != NULL)
+    if(platform_frame_callback != NULL)
     {
         platform_frame_callback();
     }

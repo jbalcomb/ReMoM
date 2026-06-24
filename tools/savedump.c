@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     const char *output_path;
     char        derived_path[1024];
 
-    if (argc < 2 || argc > 3 || strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0)
+    if(argc < 2 || argc > 3 || strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0)
     {
         Print_Usage(argv[0]);
         return 1;
@@ -58,21 +58,21 @@ int main(int argc, char *argv[])
 
     input_path = argv[1];
 
-    if (argc == 3)
+    if(argc == 3)
     {
         output_path = argv[2];
     }
     else
     {
         size_t len = strlen(input_path);
-        if (len >= sizeof(derived_path) - 5)
+        if(len >= sizeof(derived_path) - 5)
         {
             fprintf(stderr, "savedump: input path too long\n");
             return 1;
         }
         memcpy(derived_path, input_path, len + 1);
         /* Replace ".GAM" suffix (case-insensitive) with ".txt", else append ".txt". */
-        if (len >= 4
+        if(len >= 4
             && (derived_path[len - 4] == '.')
             && (derived_path[len - 3] == 'G' || derived_path[len - 3] == 'g')
             && (derived_path[len - 2] == 'A' || derived_path[len - 2] == 'a')
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
         output_path = derived_path;
     }
 
-    if (Game_Save_Dump(input_path, output_path) != 0)
+    if(Game_Save_Dump(input_path, output_path) != 0)
     {
         fprintf(stderr, "savedump: failed\n");
         return 2;

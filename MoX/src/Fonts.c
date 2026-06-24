@@ -1522,19 +1522,19 @@ int16_t Clipped_Print_String(int16_t x, int16_t y, char * string, int16_t change
         return 0;
     }
 
-    if (x > screen_window_x2)
+    if(x > screen_window_x2)
     {
         return x;
     }
 
     width = Get_String_Width(string);
 
-    if ((x + width) < screen_window_x1)
+    if((x + width) < screen_window_x1)
     {
         return (x + width);
     }
 
-    // while ((character = *str++) != 0)
+    // while((character = *str++) != 0)
     while(string[ptr] != '\0')
     {
         character = string[ptr];
@@ -1628,7 +1628,7 @@ int16_t Clipped_Print_Character(int16_t x, int16_t y, char character)
         if(x < screen_window_x1)
         {
             skip_x = screen_window_x1 - x;
-            if (skip_x >= width)
+            if(skip_x >= width)
             {
                 return next_x;
             }
@@ -3170,26 +3170,26 @@ void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, 
     delta_green = green_max - green_min;
     delta_blue = blue_max - blue_min;
 
-    if (delta_red < 0) delta_red = -delta_red;
-    if (delta_green < 0) delta_green = -delta_green;
-    if (delta_blue < 0) delta_blue = -delta_blue;
+    if(delta_red < 0) delta_red = -delta_red;
+    if(delta_green < 0) delta_green = -delta_green;
+    if(delta_blue < 0) delta_blue = -delta_blue;
 
     cycle_step_value = step_value;
 
     /* 2. Determine Primary Color Channel (the one with the largest change) */
     primary_color = 2; /* Default to Blue */
-    if (delta_red >= delta_green && delta_red >= delta_blue) {
+    if(delta_red >= delta_green && delta_red >= delta_blue) {
         primary_color = 0;
-    } else if (delta_green >= delta_red && delta_green >= delta_blue) {
+    } else if(delta_green >= delta_red && delta_green >= delta_blue) {
         primary_color = 1;
     }
 
     /* 3. Handle Initialization / Direction Reset */
-    if (cycle_direction_flag == -1) {
+    if(cycle_direction_flag == -1) {
         cycle_direction_flag = 0;
-        if (primary_color == 0)      cycle_color_value = red_min;
-        else if (primary_color == 1) cycle_color_value = green_min;
-        else if (primary_color == 2) cycle_color_value = blue_min;
+        if(primary_color == 0)      cycle_color_value = red_min;
+        else if(primary_color == 1) cycle_color_value = green_min;
+        else if(primary_color == 2) cycle_color_value = blue_min;
     }
 
     /* 4. Interpolate the other two colors based on the primary color */
@@ -3214,11 +3214,11 @@ void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, 
     }
 
     /* 5. Advance the Cycle State */
-    if (primary_color == 0) {
+    if(primary_color == 0) {
         Update_Cycle(&red_min, &red_max);
-    } else if (primary_color == 1) {
+    } else if(primary_color == 1) {
         Update_Cycle(&green_min, &green_max);
-    } else if (primary_color == 2) {
+    } else if(primary_color == 2) {
         Update_Cycle(&blue_min, &blue_max);
     }
 
@@ -3265,13 +3265,13 @@ void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, 
  */
 void Update_Cycle(int16_t *color_min, int16_t * color_max)
 {
-    if (cycle_direction_flag == 0) {
+    if(cycle_direction_flag == 0) {
         /* Moving "Forward" */
-        if (*color_max > *color_min) {
+        if(*color_max > *color_min) {
             cycle_color_value += cycle_step_value;
             
             /* Did we overshoot the maximum? */
-            if (cycle_color_value >= *color_max) {
+            if(cycle_color_value >= *color_max) {
                 cycle_color_value = *color_max - 1; /* Bounce back */
                 cycle_direction_flag = 1;           /* Switch direction */
             }
@@ -3280,7 +3280,7 @@ void Update_Cycle(int16_t *color_min, int16_t * color_max)
             cycle_color_value -= cycle_step_value;
             
             /* ¿ OGBUG  Claude feels strongly that this should be (cycle_color_value <= *color_max) ? */
-            if (cycle_color_value <= *color_min) {
+            if(cycle_color_value <= *color_min) {
                 cycle_color_value = *color_min + 1; /* Bounce back */
                 cycle_direction_flag = 1;           /* Switch direction */
             }
@@ -3288,11 +3288,11 @@ void Update_Cycle(int16_t *color_min, int16_t * color_max)
         
     } else {
         /* Moving "Backward" (cycle_direction_flag != 0) */
-        if (*color_max > *color_min) {
+        if(*color_max > *color_min) {
             cycle_color_value -= cycle_step_value;
             
             /* Did we overshoot the minimum? */
-            if (cycle_color_value <= *color_min) {
+            if(cycle_color_value <= *color_min) {
                 cycle_color_value = *color_min + 1; /* Bounce back */
                 cycle_direction_flag = 0;           /* Switch direction */
             }
@@ -3301,7 +3301,7 @@ void Update_Cycle(int16_t *color_min, int16_t * color_max)
             cycle_color_value += cycle_step_value;
             
             /* ¿ OGBUG  Claude feels strongly that this should be (cycle_color_value >= *color_min) ? */
-            if (cycle_color_value >= *color_max) {
+            if(cycle_color_value >= *color_max) {
                 cycle_color_value = *color_max - 1; /* Bounce back */
                 cycle_direction_flag = 0;           /* Switch direction */
             }
@@ -3431,7 +3431,7 @@ void Update_Cycle(int16_t *color_min, int16_t * color_max)
 // 
 //     for (itr = 0; itr < 256; itr++)  // TODO  ~ #define Color Count
 //     {
-//         if (*(current_palette + 768 + itr) == 1)  // TODO  ~ #define Palette Flags Offset
+//         if(*(current_palette + 768 + itr) == 1)  // TODO  ~ #define Palette Flags Offset
 //         {
 //             // ¿ XBGR pixel format ?
 //             *(platform_palette_buffer + (itr * 4) + 3) = 0x00;

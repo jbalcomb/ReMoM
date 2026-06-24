@@ -347,7 +347,7 @@ void Clipped_Line_Base(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t P
 // static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos, int scale)
 static void ui_draw_line_limit_do(int x1, int y1, int x2, int y2, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos)
 {
-    if (x1 == x2)
+    if(x1 == x2)
     {
         if((x1 < screen_window_x1) || (x1 > screen_window_x2))
         {
@@ -446,7 +446,7 @@ static void ui_draw_line_limit_do(int x1, int y1, int x2, int y2, uint8_t color,
         }
     }
 
-    if (colortbl) {
+    if(colortbl) {
         // ui_draw_line_ctbl(x1, y1, x2, y2, colortbl, colornum, colorpos, scale);
         ui_draw_line_ctbl(x1, y1, x2, y2, colortbl, colornum, colorpos);
     } else {
@@ -870,7 +870,7 @@ void Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 
         y_error += y_slope;
 
-        // if ((y_error & 0xFF00) != 0)
+        // if((y_error & 0xFF00) != 0)
         if(y_error >= 256)
         {
             y_error &= 0x00FF;
@@ -976,7 +976,7 @@ void Multi_Colored_Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t 
 
         y_error += y_slope;
 
-        // if ((y_error & 0xFF00) != 0)
+        // if((y_error & 0xFF00) != 0)
         if(y_error >= 256)
         {
             y_error &= 0x00FF;
@@ -1018,7 +1018,7 @@ void ui_draw_line_ctbl(int x1, int y1, int x2, int y2, const uint8_t *colortbl, 
         {
             length = dy + 1;
             yslope = 256;
-            if (dy != 0) {
+            if(dy != 0) {
                 xslope = (dx << 8) / dy;
             }
         }
@@ -1050,7 +1050,7 @@ void ui_draw_line_ctbl(int x1, int y1, int x2, int y2, const uint8_t *colortbl, 
             }
             if(color != 0)
             {
-                // if (scale == 1) {
+                // if(scale == 1) {
                 //     *p = color;
                 // } else {
                 //     gfxscale_draw_pixel(p, color, UI_SCREEN_W, scale);
@@ -1095,7 +1095,7 @@ uint16_t rnd_bitfiddle__1oom(uint16_t ax)
     uint16_t bx;
     uint16_t dx;
 
-    if (ax == 0) {
+    if(ax == 0) {
         return 0x35c8;
     }
 
@@ -1122,7 +1122,7 @@ uint16_t rnd_bitfiddle__1oom(uint16_t ax)
         if(ax & 1) { dx |= 0x8000; }
 
         ax = dx;    // mov     ax, dx
-    } while (--loops);
+    } while(--loops);
     return ax;
 }
 

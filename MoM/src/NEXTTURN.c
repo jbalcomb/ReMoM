@@ -1195,7 +1195,7 @@ int16_t Casting_Cost(int16_t player_idx, int16_t spell_idx, int16_t combat_flag)
             }
         }
 
-        if (Evil_Omens_Up == ST_TRUE)
+        if(Evil_Omens_Up == ST_TRUE)
         {
             casting_cost = ((casting_cost * 3) / 2);
         }
@@ -3953,7 +3953,7 @@ void Heal_All_Units(void)
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
 
-        /* HACK: */ if (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
+        /* HACK: */ if(_UNITS[itr_units].owner_idx == ST_UNDEFINED)
         {
             continue;
         }

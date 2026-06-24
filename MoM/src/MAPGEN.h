@@ -191,7 +191,8 @@ void o51p54_empty_function(void);
 */
 
 // MGC o54p01
-// CRP_SPATH_Arbitrary()
+int16_t CRP_SPATH_Arbitrary(int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Wdt, int16_t Hgt, uint8_t * Map, uint8_t * Xs, uint8_t * Ys);
+
 // MGC o54p02
 // UU_SPATH_Segmented()
 // MGC o54p03
@@ -210,7 +211,7 @@ void o51p54_empty_function(void);
 */
 
 // MGC o55p01
-// void CRP_NEWG_CreatePathGrid__STUB(void * moves2, void * move_path_chunks);
+void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map);
 
 
 

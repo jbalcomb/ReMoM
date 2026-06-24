@@ -222,7 +222,7 @@ void Mirror_Screen(int16_t player_idx, int16_t OL, int16_t OT, int16_t OR, int16
             leave_screen = ST_UNDEFINED;
         }
 
-        if (leave_screen == ST_FALSE)
+        if(leave_screen == ST_FALSE)
         {
             Copy_Back_To_Off();
             Mirror_Screen_Draw();

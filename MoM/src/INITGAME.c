@@ -61,15 +61,15 @@ void gd_dump_players(const char* point) {
             const gd_field_t* f = &wizard_fields[i];
             const uint8_t* fp = base + f->off;
             int q = 0;
-            if (f->kind == GD_STR) {
+            if(f->kind == GD_STR) {
                 val[q++] = '"';
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
                     uint8_t c = fp[k];
-                    if (c == 0) break;
+                    if(c == 0) break;
                     val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
                 }
                 val[q++] = '"'; val[q] = 0;
-            } else if (f->kind == GD_BYTES) {
+            } else if(f->kind == GD_BYTES) {
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
                     q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
                 val[q] = 0;
@@ -78,7 +78,7 @@ void gd_dump_players(const char* point) {
                 for (k = 0; k < f->count; k++) {
                     long v = gd_rd(fp + k * es, f->kind);
                     q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if (q > (int)sizeof(val) - 16) break;
+                    if(q > (int)sizeof(val) - 16) break;
                 }
             }
             LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _players[%d].%s = %s",
@@ -102,15 +102,15 @@ void gd_dump_nodes(const char* point) {
             const gd_field_t* f = &node_fields[i];
             const uint8_t* fp = base + f->off;
             int q = 0;
-            if (f->kind == GD_STR) {
+            if(f->kind == GD_STR) {
                 val[q++] = '"';
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
                     uint8_t c = fp[k];
-                    if (c == 0) break;
+                    if(c == 0) break;
                     val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
                 }
                 val[q++] = '"'; val[q] = 0;
-            } else if (f->kind == GD_BYTES) {
+            } else if(f->kind == GD_BYTES) {
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
                     q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
                 val[q] = 0;
@@ -119,7 +119,7 @@ void gd_dump_nodes(const char* point) {
                 for (k = 0; k < f->count; k++) {
                     long v = gd_rd(fp + k * es, f->kind);
                     q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if (q > (int)sizeof(val) - 16) break;
+                    if(q > (int)sizeof(val) - 16) break;
                 }
             }
             LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _NODES[%d].%s = %s",
@@ -139,15 +139,15 @@ void gd_dump_towers(const char* point) {
             const gd_field_t* f = &tower_fields[i];
             const uint8_t* fp = base + f->off;
             int q = 0;
-            if (f->kind == GD_STR) {
+            if(f->kind == GD_STR) {
                 val[q++] = '"';
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
                     uint8_t c = fp[k];
-                    if (c == 0) break;
+                    if(c == 0) break;
                     val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
                 }
                 val[q++] = '"'; val[q] = 0;
-            } else if (f->kind == GD_BYTES) {
+            } else if(f->kind == GD_BYTES) {
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
                     q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
                 val[q] = 0;
@@ -156,7 +156,7 @@ void gd_dump_towers(const char* point) {
                 for (k = 0; k < f->count; k++) {
                     long v = gd_rd(fp + k * es, f->kind);
                     q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if (q > (int)sizeof(val) - 16) break;
+                    if(q > (int)sizeof(val) - 16) break;
                 }
             }
             LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _TOWERS[%d].%s = %s",
@@ -175,15 +175,15 @@ void gd_dump_lairs(const char* point) {
             const gd_field_t* f = &lair_fields[i];
             const uint8_t* fp = base + f->off;
             int q = 0;
-            if (f->kind == GD_STR) {
+            if(f->kind == GD_STR) {
                 val[q++] = '"';
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
                     uint8_t c = fp[k];
-                    if (c == 0) break;
+                    if(c == 0) break;
                     val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
                 }
                 val[q++] = '"'; val[q] = 0;
-            } else if (f->kind == GD_BYTES) {
+            } else if(f->kind == GD_BYTES) {
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
                     q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
                 val[q] = 0;
@@ -192,7 +192,7 @@ void gd_dump_lairs(const char* point) {
                 for (k = 0; k < f->count; k++) {
                     long v = gd_rd(fp + k * es, f->kind);
                     q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if (q > (int)sizeof(val) - 16) break;
+                    if(q > (int)sizeof(val) - 16) break;
                 }
             }
             LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _LAIRS[%d].%s = %s",

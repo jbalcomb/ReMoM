@@ -296,9 +296,9 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
     Encounter_Outcome = ST_TRUE;
 
 
-    if (player_idx == _human_player_idx)
+    if(player_idx == _human_player_idx)
     {
-        if (magic_set.event_music == ST_TRUE)
+        if(magic_set.event_music == ST_TRUE)
         {
             sound_seg = LBX_Reload(music_lbx_file__ovr083, MUSIC_Site_Discovery, SND_Music_Segment);
             sound_seg_size = lbxload_entry_length;
@@ -369,7 +369,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
     /*
         BEGIN: Fought & Won
     */
-    if (Encounter_Outcome == ST_TRUE)
+    if(Encounter_Outcome == ST_TRUE)
     {
         Reward_Special_Count = 0;
 
@@ -387,7 +387,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
         /*
             BEGIN:  Hero Treasure (Prisoner)
         */
-        if (
+        if(
             (Hero_Slot != ST_UNDEFINED)
             &&
             (player_idx == _human_player_idx)
@@ -413,7 +413,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
         /*
             BEGIN:  Item Treasure
         */
-        if (
+        if(
             (_LAIRS[lair_idx].Item_Count > 0)
             &&
             (player_idx == _human_player_idx)

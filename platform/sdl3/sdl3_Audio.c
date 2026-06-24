@@ -592,17 +592,17 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
 // ...moved into sdl3_Play_Sound()
 // void ui_sound_play_music(int musici)
 // {
-//     if ((musici < 0) || (musici >= NUM_MUSICS)) {
+//     if((musici < 0) || (musici >= NUM_MUSICS)) {
 //         // log_error("uisound: invalid music num %i\n", musici);
 //         dbg_prn("uisound: invalid music num %i\n", musici);
 //         return;
 //     }
 //     hw_audio_music_stop();
-//     if (ui_data_music_i != musici) {
+//     if(ui_data_music_i != musici) {
 //         uint8_t *n;
 //         uint32_t len;
 //         n = lbxfile_item_get_with_len(LBXFILE_MUSIC, musici, &len);
-//         if (ui_data_mus) {
+//         if(ui_data_mus) {
 //             hw_audio_music_release(0);
 //             lbxfile_item_release(LBXFILE_MUSIC, ui_data_mus);
 //         }
@@ -630,11 +630,11 @@ static void ui_sound_stop_music(void)
 //     uint32_t len = 0;
 //     struct mus_s *m;
 // 
-//     if (!audio_initialized) {
+//     if(!audio_initialized) {
 //         return 0;
 //     }
 // 
-//     if (mus_index >= mus_num) {
+//     if(mus_index >= mus_num) {
 //         int old_mus_num = mus_num;
 //         mus_num = (mus_index + 1);
 //         // mustbl = lib_realloc(mustbl, mus_num * sizeof(struct mus_s));
@@ -648,7 +648,7 @@ static void ui_sound_stop_music(void)
 // 
 //     m = &mustbl[mus_index];
 // 
-//     if (m->type != MUS_TYPE_UNKNOWN) {
+//     if(m->type != MUS_TYPE_UNKNOWN) {
 //         hw_audio_music_release(mus_index);
 //     }
 // 
@@ -669,7 +669,7 @@ static void ui_sound_stop_music(void)
 //     // m->sdlmtype = mus_type_to_sdlm(m->type);
 //     m->sdlmtype = MUS_MID;
 // 
-//     if (m->type == MUS_TYPE_UNKNOWN) {
+//     if(m->type == MUS_TYPE_UNKNOWN) {
 //         // log_error("SDLA: failed to init music %i\n", mus_index);
 //         return -1;
 //     }
@@ -710,7 +710,7 @@ void hw_audio_music_release(int mus_index)
 
 void hw_audio_music_play(int mus_index)
 {
-    // if (audio_initialized && opt_music_enabled && (mus_index < mus_num)) {
+    // if(audio_initialized && opt_music_enabled && (mus_index < mus_num)) {
         if(Mix_PlayingMusic())
         {
             Mix_HaltMusic();
@@ -724,14 +724,14 @@ void hw_audio_music_play(int mus_index)
 
 void hw_audio_music_fadeout(void)
 {
-    if (audio_initialized && opt_music_enabled && Mix_PlayingMusic()) {
+    if(audio_initialized && opt_music_enabled && Mix_PlayingMusic()) {
         Mix_FadeOutMusic(1000);
     }
 }
 
 void hw_audio_music_stop(void)
 {
-    // if (audio_initialized && opt_music_enabled) {
+    // if(audio_initialized && opt_music_enabled) {
         Mix_HaltMusic();
         // mus_playing = -1;
     // }
@@ -739,16 +739,16 @@ void hw_audio_music_stop(void)
 
 bool hw_audio_music_volume(int volume)
 {
-    if (volume < 0) {
+    if(volume < 0) {
         volume = 0;
     }
-    if (volume > 128) {
+    if(volume > 128) {
         volume = 128;
     }
-    if (audio_initialized && opt_music_enabled) {
+    if(audio_initialized && opt_music_enabled) {
         Mix_VolumeMusic(volume);
     }
-    if (opt_music_volume != volume) {
+    if(opt_music_volume != volume) {
         // log_message("SDLA: music volume %i\n", volume);
         opt_music_volume = volume;
     }
@@ -764,11 +764,11 @@ static int8_t xmid_find_free_noteoff(struct noteoffs_s *s)
 {
     int i = s->pos;
     int num = NOTEOFFBUFSIZE;
-    while (num) {
-        if (++i == NOTEOFFBUFSIZE) {
+    while(num) {
+        if(++i == NOTEOFFBUFSIZE) {
             i = 0;
         }
-        if (s->tbl[i].ch == 0) {
+        if(s->tbl[i].ch == 0) {
             s->pos = i;
             return i;
         }
@@ -782,7 +782,7 @@ static bool xmid_add_pending_noteoff(struct noteoffs_s *s, const uint8_t *data, 
     uint32_t t = t_now + duration;
     int8_t i = xmid_find_free_noteoff(s);
     noteoff_t *n;
-    if (i < 0) {
+    if(i < 0) {
         /* log_error("XMID: BUG noteoff tbl full!\n"); */
         return false;
     }
@@ -792,17 +792,17 @@ static bool xmid_add_pending_noteoff(struct noteoffs_s *s, const uint8_t *data, 
     n->ch = data[0] & 0x8f; /* 9x -> 8x */
     n->note = data[1];
 
-    if (s->top < 0) {
+    if(s->top < 0) {
         s->top = i;
     } else {
         int j, k;
         j = s->top;
         k = -1;
-        while ((j >= 0) && (t >= s->tbl[j].t)) {
+        while((j >= 0) && (t >= s->tbl[j].t)) {
             k = j;
             j = s->tbl[j].next;
         }
-        if (k < 0) {
+        if(k < 0) {
             n->next = s->top;
             s->top = i;
         } else {
@@ -810,7 +810,7 @@ static bool xmid_add_pending_noteoff(struct noteoffs_s *s, const uint8_t *data, 
             s->tbl[i].next = j;
         }
     }
-    if (++s->num > s->max) {
+    if(++s->num > s->max) {
         s->max = s->num;
     }
     return true;
@@ -819,13 +819,13 @@ static bool xmid_add_pending_noteoff(struct noteoffs_s *s, const uint8_t *data, 
 static uint32_t xmid_encode_delta_time(uint8_t *buf, uint32_t delta_time)
 {
     uint32_t len_event = 0, v = delta_time & 0x7f;
-    while ((delta_time >>= 7) != 0) {
+    while((delta_time >>= 7) != 0) {
         v <<= 8;
         v |= (delta_time & 0x7f) | 0x80;
     }
-    while (1) {
+    while(1) {
         buf[len_event++] = (uint8_t)(v & 0xff);
-        if (v & 0x80) {
+        if(v & 0x80) {
             v >>= 8;
         } else {
             return len_event;
@@ -843,7 +843,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
     memset(s, 0, sizeof(s[0]));
     s->top = -1;
 
-    while ((len_in > 0) && (!end_found)) {
+    while((len_in > 0) && (!end_found)) {
         uint32_t len_event = 0;
         uint32_t add_extra_bytes = 0;
         uint32_t skip_extra_bytes = 0;
@@ -861,13 +861,13 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                     uint8_t b = 0;
                     dt_off = 0;
                     skip_extra_bytes = 1;
-                    while (((b = data_in[2 + skip_extra_bytes]) & 0x80) != 0) {
+                    while(((b = data_in[2 + skip_extra_bytes]) & 0x80) != 0) {
                         dt_off |= b & 0x7f;
                         dt_off <<= 7;
                         ++skip_extra_bytes;
                     }
                     dt_off |= b;
-                    if (!xmid_add_pending_noteoff(s, data_in, t_now + delta_time, dt_off)) {
+                    if(!xmid_add_pending_noteoff(s, data_in, t_now + delta_time, dt_off)) {
                         goto fail;
                     }
                 }
@@ -880,7 +880,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                 {
                     uint8_t c;
                     c = data_in[1];
-                    if (0
+                    if(0
                       || ((c >= 0x20) && (c <= 0x2e))
                       || ((c >= 0x3a) && (c <= 0x3f))
                       || ((c >= 0x6e) && (c <= 0x78))
@@ -892,18 +892,18 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                     }
                     switch (c) {
                         case 0x74:  /* AIL loop: FOR loop = 1 to n */
-                            if (looppoint >= 0) {
+                            if(looppoint >= 0) {
                                 /* log_warning("XMID: nth FOR loop unimpl\n"); */
                             } else {
                                 looppoint = noteons;
-                                if (looppoint > 0) {
+                                if(looppoint > 0) {
                                     /* log_warning("XMID: FOR loop after %i notes unimpl\n", looppoint); */
                                 }
                             }
                             break;
                         case 0x75:  /* AIL loop: NEXT/BREAK */
                             /* LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: NEXT/BREAK at %i after %i notes, forcing end\n", looppoint, noteons)); */
-                            if (looppoint >= 0) {
+                            if(looppoint >= 0) {
                                 *tune_loops = true;
                             } else {
                                 /* log_warning("XMID: NEXT/BREAK without FOR\n"); */
@@ -938,12 +938,12 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                     uint8_t bank = 0;
                     patch = data_in[1];
                     for (ti = 0; ti < timbre_num; ++ti) {
-                        if (timbre_tbl[ti * 2] == patch) {
+                        if(timbre_tbl[ti * 2] == patch) {
                             bank = timbre_tbl[ti * 2 + 1];
                             break;
                         }
                     }
-                    if (ti < timbre_num) {
+                    if(ti < timbre_num) {
                         /* LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: TIMB found bank 0x%02x for patch 0x%02x\n", bank, patch)); */
                         buf_extra[0] = 0xb0 | (data_in[1] & 0xf);
                         buf_extra[1] = 0;
@@ -969,9 +969,9 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                         break;
                     case 0x0f:
                         len_event = 3 + data_in[2];
-                        if (data_in[1] == 0x2f) {
+                        if(data_in[1] == 0x2f) {
                             end_found = true;
-                        } else if (data_in[1] == 0x51) {
+                        } else if(data_in[1] == 0x51) {
                             /* MOO1 seems to ignore the set tempo events as not dropping them results in wrong tempo in f.ex tune 0xA */
                             /*& LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: dropping tempo %u event after %i notes\n", GET_BE_24(&data_in[3]), noteons)); */
                             add_event = false;
@@ -993,7 +993,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                 break;
         }
 
-        if (add_event) {
+        if(add_event) {
             uint32_t len_delta_time;
             uint8_t buf_delta_time[4];
 
@@ -1032,7 +1032,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
             {
                 /* last event, add remaining noteoffs */
                 /* LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: %i noteoffs at end, max %i noteoffs, total %i noteons\n", s->num, s->max, noteons)); */
-                while (s->top >= 0) {
+                while(s->top >= 0) {
                     noteoff_t *n = &(s->tbl[s->top]);
                     *p++ = n->ch;
                     *p++ = n->note;
@@ -1080,19 +1080,19 @@ fail:
 // mus_type_t fmt_mus_detect(const uint8_t *data, uint32_t len)
 // {
 //     uint32_t hdrid;
-//     if (len < 32) {
+//     if(len < 32) {
 //         return MUS_TYPE_UNKNOWN;
 //     }
 //     hdrid = GET_BE_32(data);
-//     if (hdrid == HDRID_LBXXMID) {
+//     if(hdrid == HDRID_LBXXMID) {
 //         return MUS_TYPE_LBXXMID;
-//     } else if (hdrid == HDRID_MIDI) {
+//     } else if(hdrid == HDRID_MIDI) {
 //         return MUS_TYPE_MIDI;
-//     } else if (hdrid == HDRID_WAV) {
+//     } else if(hdrid == HDRID_WAV) {
 //         return MUS_TYPE_WAV;
-//     } else if (hdrid == HDRID_OGG) {
+//     } else if(hdrid == HDRID_OGG) {
 //         return MUS_TYPE_OGG;
-//     } else if (hdrid == HDRID_FLAC) {
+//     } else if(hdrid == HDRID_FLAC) {
 //         return MUS_TYPE_FLAC;
 //     }
 //     return MUS_TYPE_UNKNOWN;
@@ -1107,7 +1107,7 @@ bool fmt_mus_convert_xmid(const uint8_t *data_in, uint32_t len_in, uint8_t **dat
     uint16_t timbre_num;
     int len = 0;
 
-    if (0
+    if(0
       /* || (fmt_mus_detect(data_in, len_in) != MUS_TYPE_LBXXMID) */
       || (len_in < 0x4e)
       || (memcmp(&data_in[0x10], (const uint8_t *)"FORM", 4) != 0)
@@ -1172,10 +1172,10 @@ bool fmt_mus_convert_xmid(const uint8_t *data_in, uint32_t len_in, uint8_t **dat
     
     }
 
-    if (data_out_ptr) {
+    if(data_out_ptr) {
         *data_out_ptr = data;
     }
-    if (len_out_ptr) {
+    if(len_out_ptr) {
         *len_out_ptr = len;
     }
     return true;

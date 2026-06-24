@@ -58,7 +58,7 @@ static char * Store_String(CSV_Table * t, const char * s)
 {
     int len = (int)strlen(s) + 1;
     char * dst;
-    if (t->storage_used + len > (int)sizeof(t->storage))
+    if(t->storage_used + len > (int)sizeof(t->storage))
     {
         return NULL;
     }
@@ -71,10 +71,10 @@ static char * Store_String(CSV_Table * t, const char * s)
 static char * Trim(char * s)
 {
     char * end;
-    while (*s && isspace((unsigned char)*s)) { s++; }
-    if (*s == '\0') { return s; }
+    while(*s && isspace((unsigned char)*s)) { s++; }
+    if(*s == '\0') { return s; }
     end = s + strlen(s) - 1;
-    while (end > s && isspace((unsigned char)*end)) { *end-- = '\0'; }
+    while(end > s && isspace((unsigned char)*end)) { *end-- = '\0'; }
     return s;
 }
 
@@ -83,14 +83,14 @@ static int Parse_CSV_Line(char * line, char * tokens[], int max_tokens)
 {
     int count = 0;
     char * p = line;
-    while (*p && count < max_tokens)
+    while(*p && count < max_tokens)
     {
         tokens[count] = p;
-        while (*p && *p != ',' && *p != '\n' && *p != '\r')
+        while(*p && *p != ',' && *p != '\n' && *p != '\r')
         {
             p++;
         }
-        if (*p == ',')
+        if(*p == ',')
         {
             *p = '\0';
             p++;
@@ -98,7 +98,7 @@ static int Parse_CSV_Line(char * line, char * tokens[], int max_tokens)
         else
         {
             /* End of line — null-terminate */
-            while (*p == '\n' || *p == '\r')
+            while(*p == '\n' || *p == '\r')
             {
                 *p = '\0';
                 p++;
@@ -120,14 +120,14 @@ static int Load_CSV(const char * filepath, CSV_Table * t)
     memset(t, 0, sizeof(*t));
 
     fp = fopen(filepath, "r");
-    if (fp == NULL)
+    if(fp == NULL)
     {
         fprintf(stderr, "check_ai_metrics: cannot open CSV: %s\n", filepath);
         return 1;
     }
 
     /* Read header line */
-    if (fgets(raw, sizeof(raw), fp) == NULL)
+    if(fgets(raw, sizeof(raw), fp) == NULL)
     {
         fclose(fp);
         return 1;
@@ -140,10 +140,10 @@ static int Load_CSV(const char * filepath, CSV_Table * t)
     }
 
     /* Read data rows */
-    while (fgets(raw, sizeof(raw), fp) != NULL && t->row_count < MAX_ROWS)
+    while(fgets(raw, sizeof(raw), fp) != NULL && t->row_count < MAX_ROWS)
     {
         char * line = Trim(raw);
-        if (*line == '\0') { continue; }
+        if(*line == '\0') { continue; }
 
         token_count = Parse_CSV_Line(raw, tokens, MAX_COLUMNS);
         for (col = 0; col < token_count && col < t->col_count; col++)
@@ -167,7 +167,7 @@ static int Find_Column(CSV_Table * t, const char * name)
     int i;
     for (i = 0; i < t->col_count; i++)
     {
-        if (strcmp(t->headers[i], name) == 0)
+        if(strcmp(t->headers[i], name) == 0)
         {
             return i;
         }
@@ -187,7 +187,7 @@ static int Parse_Filter(CSV_Table * t, const char * filter, int * filter_col, co
     char * eq;
     static char filter_buf[256];
 
-    if (strcmp(filter, "*") == 0)
+    if(strcmp(filter, "*") == 0)
     {
         *filter_col = -1;
         *filter_val = NULL;
@@ -198,7 +198,7 @@ static int Parse_Filter(CSV_Table * t, const char * filter, int * filter_col, co
     filter_buf[sizeof(filter_buf) - 1] = '\0';
 
     eq = strchr(filter_buf, '=');
-    if (eq == NULL)
+    if(eq == NULL)
     {
         return 1;
     }
@@ -206,7 +206,7 @@ static int Parse_Filter(CSV_Table * t, const char * filter, int * filter_col, co
     *filter_col = Find_Column(t, Trim(filter_buf));
     *filter_val = Trim(eq + 1);
 
-    if (*filter_col < 0)
+    if(*filter_col < 0)
     {
         return 1;
     }
@@ -215,7 +215,7 @@ static int Parse_Filter(CSV_Table * t, const char * filter, int * filter_col, co
 
 static int Row_Matches(CSV_Table * t, int row, int filter_col, const char * filter_val)
 {
-    if (filter_col < 0)
+    if(filter_col < 0)
     {
         return 1; /* match all */
     }
@@ -236,17 +236,17 @@ static int Eval_Liveness(
     int pass = 0;
 
     /* Special case: COUNT MIN/MAX — count matching rows */
-    if (strcmp(column_name, "COUNT") == 0)
+    if(strcmp(column_name, "COUNT") == 0)
     {
         for (row = 0; row < t->row_count; row++)
         {
-            if (Row_Matches(t, row, filter_col, filter_val))
+            if(Row_Matches(t, row, filter_col, filter_val))
             {
                 match_count++;
             }
         }
 
-        if (strcmp(op_str, "MIN") == 0)
+        if(strcmp(op_str, "MIN") == 0)
         {
             pass = (match_count >= threshold);
         }
@@ -255,7 +255,7 @@ static int Eval_Liveness(
             pass = (match_count <= threshold);
         }
 
-        if (!pass)
+        if(!pass)
         {
             fprintf(stderr, "FAIL %s:%d: LIVENESS COUNT %s %d — got %d matching rows\n",
                 assert_file, line_num, op_str, threshold, match_count);
@@ -264,7 +264,7 @@ static int Eval_Liveness(
     }
 
     col_idx = Find_Column(t, column_name);
-    if (col_idx < 0)
+    if(col_idx < 0)
     {
         fprintf(stderr, "FAIL %s:%d: column '%s' not found in CSV\n", assert_file, line_num, column_name);
         return 1;
@@ -274,36 +274,36 @@ static int Eval_Liveness(
     for (row = 0; row < t->row_count; row++)
     {
         int val;
-        if (!Row_Matches(t, row, filter_col, filter_val))
+        if(!Row_Matches(t, row, filter_col, filter_val))
         {
             continue;
         }
         match_count++;
         val = atoi(t->cells[row][col_idx]);
 
-        if (strcmp(op_str, "MIN") == 0)
+        if(strcmp(op_str, "MIN") == 0)
         {
-            if (val >= threshold)
+            if(val >= threshold)
             {
                 pass = 1;
             }
         }
         else /* MAX */
         {
-            if (val <= threshold)
+            if(val <= threshold)
             {
                 pass = 1;
             }
         }
     }
 
-    if (match_count == 0)
+    if(match_count == 0)
     {
         fprintf(stderr, "FAIL %s:%d: LIVENESS — no rows matched filter\n", assert_file, line_num);
         return 1;
     }
 
-    if (!pass)
+    if(!pass)
     {
         fprintf(stderr, "FAIL %s:%d: LIVENESS %s %s %d — no matching row satisfied the condition (%d rows checked)\n",
             assert_file, line_num, column_name, op_str, threshold, match_count);
@@ -326,7 +326,7 @@ static int Eval_Bounds(
     int first_bad_val = 0;
 
     col_idx = Find_Column(t, column_name);
-    if (col_idx < 0)
+    if(col_idx < 0)
     {
         fprintf(stderr, "FAIL %s:%d: column '%s' not found in CSV\n", assert_file, line_num, column_name);
         return 1;
@@ -335,14 +335,14 @@ static int Eval_Bounds(
     for (row = 0; row < t->row_count; row++)
     {
         int val;
-        if (!Row_Matches(t, row, filter_col, filter_val))
+        if(!Row_Matches(t, row, filter_col, filter_val))
         {
             continue;
         }
         val = atoi(t->cells[row][col_idx]);
-        if (val < lo || val > hi)
+        if(val < lo || val > hi)
         {
-            if (violations == 0)
+            if(violations == 0)
             {
                 int turn_col = Find_Column(t, "turn");
                 first_bad_val = val;
@@ -352,7 +352,7 @@ static int Eval_Bounds(
         }
     }
 
-    if (violations > 0)
+    if(violations > 0)
     {
         fprintf(stderr, "FAIL %s:%d: BOUNDS %s RANGE %d..%d — %d violations (first at turn %d: value=%d)\n",
             assert_file, line_num, column_name, lo, hi, violations, first_bad_turn, first_bad_val);
@@ -382,7 +382,7 @@ static int Eval_Trend(
     int nonzero_seen = 0;
 
     col_idx = Find_Column(t, column_name);
-    if (col_idx < 0)
+    if(col_idx < 0)
     {
         fprintf(stderr, "FAIL %s:%d: column '%s' not found in CSV\n", assert_file, line_num, column_name);
         return 1;
@@ -391,49 +391,49 @@ static int Eval_Trend(
     for (row = 0; row < t->row_count; row++)
     {
         int val;
-        if (!Row_Matches(t, row, filter_col, filter_val))
+        if(!Row_Matches(t, row, filter_col, filter_val))
         {
             continue;
         }
         val = atoi(t->cells[row][col_idx]);
-        if (match_count == 0)
+        if(match_count == 0)
         {
             first_val = val;
             min_val = val;
             max_val = val;
         }
         last_val = val;
-        if (val < min_val) { min_val = val; }
-        if (val > max_val) { max_val = val; }
-        if (val != 0) { nonzero_seen = 1; }
+        if(val < min_val) { min_val = val; }
+        if(val > max_val) { max_val = val; }
+        if(val != 0) { nonzero_seen = 1; }
         match_count++;
     }
 
-    if (match_count == 0)
+    if(match_count == 0)
     {
         fprintf(stderr, "FAIL %s:%d: TREND — no rows matched filter\n", assert_file, line_num);
         return 1;
     }
 
-    if (strcmp(direction, "INCREASES") == 0)
+    if(strcmp(direction, "INCREASES") == 0)
     {
         /* Pass if the max seen exceeded the first value (allows non-monotonic growth
            like accumulators that reset on threshold). */
-        if (max_val > first_val) { return 0; }
+        if(max_val > first_val) { return 0; }
         fprintf(stderr, "FAIL %s:%d: TREND %s INCREASES — first=%d max=%d last=%d (%d rows)\n",
             assert_file, line_num, column_name, first_val, max_val, last_val, match_count);
         return 1;
     }
-    else if (strcmp(direction, "DECREASES") == 0)
+    else if(strcmp(direction, "DECREASES") == 0)
     {
-        if (min_val < first_val) { return 0; }
+        if(min_val < first_val) { return 0; }
         fprintf(stderr, "FAIL %s:%d: TREND %s DECREASES — first=%d min=%d last=%d (%d rows)\n",
             assert_file, line_num, column_name, first_val, min_val, last_val, match_count);
         return 1;
     }
-    else if (strcmp(direction, "NONZERO") == 0)
+    else if(strcmp(direction, "NONZERO") == 0)
     {
-        if (nonzero_seen) { return 0; }
+        if(nonzero_seen) { return 0; }
         fprintf(stderr, "FAIL %s:%d: TREND %s NONZERO — all %d matching rows were 0\n",
             assert_file, line_num, column_name, match_count);
         return 1;
@@ -465,7 +465,7 @@ static int Eval_Rate(
     double rate_per_window;
 
     turn_col = Find_Column(t, "turn");
-    if (turn_col < 0)
+    if(turn_col < 0)
     {
         fprintf(stderr, "FAIL %s:%d: RATE requires a 'turn' column\n", assert_file, line_num);
         return 1;
@@ -474,25 +474,25 @@ static int Eval_Rate(
     for (row = 0; row < t->row_count; row++)
     {
         int turn;
-        if (!Row_Matches(t, row, filter_col, filter_val))
+        if(!Row_Matches(t, row, filter_col, filter_val))
         {
             continue;
         }
         turn = atoi(t->cells[row][turn_col]);
-        if (turn > max_turn) { max_turn = turn; }
-        if (turn < min_turn) { min_turn = turn; }
+        if(turn > max_turn) { max_turn = turn; }
+        if(turn < min_turn) { min_turn = turn; }
         total_count++;
     }
 
     /* Total turn span — if no rows matched, fall back to span from first to last turn in table */
-    if (total_count == 0)
+    if(total_count == 0)
     {
         min_turn = 0;
         max_turn = 0;
         for (row = 0; row < t->row_count; row++)
         {
             int turn = atoi(t->cells[row][turn_col]);
-            if (turn > max_turn) { max_turn = turn; }
+            if(turn > max_turn) { max_turn = turn; }
         }
         total_turns = max_turn + 1;
     }
@@ -501,23 +501,23 @@ static int Eval_Rate(
         total_turns = (max_turn - min_turn) + 1;
     }
 
-    if (total_turns < 1) { total_turns = 1; }
+    if(total_turns < 1) { total_turns = 1; }
 
     windows = total_turns / turns_per_window;
-    if (windows < 1) { windows = 1; }
+    if(windows < 1) { windows = 1; }
 
     rate_per_window = (double)total_count / (double)windows;
 
-    if (strcmp(op_str, "MIN") == 0)
+    if(strcmp(op_str, "MIN") == 0)
     {
-        if (rate_per_window >= (double)threshold) { return 0; }
+        if(rate_per_window >= (double)threshold) { return 0; }
         fprintf(stderr, "FAIL %s:%d: RATE PER %d MIN %d — got %.2f/window (%d events over %d turns)\n",
             assert_file, line_num, turns_per_window, threshold, rate_per_window, total_count, total_turns);
         return 1;
     }
-    else if (strcmp(op_str, "MAX") == 0)
+    else if(strcmp(op_str, "MAX") == 0)
     {
-        if (rate_per_window <= (double)threshold) { return 0; }
+        if(rate_per_window <= (double)threshold) { return 0; }
         fprintf(stderr, "FAIL %s:%d: RATE PER %d MAX %d — got %.2f/window (%d events over %d turns)\n",
             assert_file, line_num, turns_per_window, threshold, rate_per_window, total_count, total_turns);
         return 1;
@@ -541,14 +541,14 @@ static int Sum_Column(
     int count = 0;
 
     col_idx = Find_Column(t, column_name);
-    if (col_idx < 0)
+    if(col_idx < 0)
     {
         return -1;
     }
 
     for (row = 0; row < t->row_count; row++)
     {
-        if (!Row_Matches(t, row, filter_col, filter_val))
+        if(!Row_Matches(t, row, filter_col, filter_val))
         {
             continue;
         }
@@ -592,7 +592,7 @@ static int Eval_Baseline(
 
     /* Build full baseline path: absolute → use as-is; otherwise try
        relative to the assertions file directory first, then csv_dir. */
-    if (baseline_path[0] == '/')
+    if(baseline_path[0] == '/')
     {
         strncpy(full_baseline_path, baseline_path, sizeof(full_baseline_path) - 1);
         full_baseline_path[sizeof(full_baseline_path) - 1] = '\0';
@@ -602,7 +602,7 @@ static int Eval_Baseline(
         strncpy(assert_dir, assert_file, sizeof(assert_dir) - 1);
         assert_dir[sizeof(assert_dir) - 1] = '\0';
         last_slash = strrchr(assert_dir, '/');
-        if (last_slash != NULL)
+        if(last_slash != NULL)
         {
             *last_slash = '\0';
             snprintf(full_baseline_path, sizeof(full_baseline_path), "%s/%s", assert_dir, baseline_path);
@@ -613,7 +613,7 @@ static int Eval_Baseline(
         }
         /* If not found alongside assertion file, try csv_dir */
         test_fp = fopen(full_baseline_path, "r");
-        if (test_fp == NULL)
+        if(test_fp == NULL)
         {
             snprintf(full_baseline_path, sizeof(full_baseline_path), "%s/%s", csv_dir, baseline_path);
         }
@@ -623,7 +623,7 @@ static int Eval_Baseline(
         }
     }
 
-    if (Load_CSV(full_baseline_path, &g_baseline) != 0)
+    if(Load_CSV(full_baseline_path, &g_baseline) != 0)
     {
         fprintf(stderr, "FAIL %s:%d: BASELINE could not load baseline '%s'\n",
             assert_file, line_num, full_baseline_path);
@@ -631,11 +631,11 @@ static int Eval_Baseline(
     }
 
     /* Re-parse filter against baseline table (column indices may differ) */
-    if (filter_col >= 0)
+    if(filter_col >= 0)
     {
         const char * filter_col_name = t->headers[filter_col];
         baseline_filter_col = Find_Column(&g_baseline, filter_col_name);
-        if (baseline_filter_col < 0)
+        if(baseline_filter_col < 0)
         {
             fprintf(stderr, "FAIL %s:%d: BASELINE filter column '%s' missing in baseline\n",
                 assert_file, line_num, filter_col_name);
@@ -644,13 +644,13 @@ static int Eval_Baseline(
         baseline_filter_val = filter_val;
     }
 
-    if (Sum_Column(t, filter_col, filter_val, column_name, &actual_sum, &actual_count) != 0)
+    if(Sum_Column(t, filter_col, filter_val, column_name, &actual_sum, &actual_count) != 0)
     {
         fprintf(stderr, "FAIL %s:%d: BASELINE column '%s' not in actual CSV\n",
             assert_file, line_num, column_name);
         return 1;
     }
-    if (Sum_Column(&g_baseline, baseline_filter_col, baseline_filter_val,
+    if(Sum_Column(&g_baseline, baseline_filter_col, baseline_filter_val,
         column_name, &baseline_sum, &baseline_count) != 0)
     {
         fprintf(stderr, "FAIL %s:%d: BASELINE column '%s' not in baseline CSV\n",
@@ -660,9 +660,9 @@ static int Eval_Baseline(
 
     abs_drift = (actual_sum > baseline_sum) ? (actual_sum - baseline_sum) : (baseline_sum - actual_sum);
 
-    if (baseline_sum == 0)
+    if(baseline_sum == 0)
     {
-        if (actual_sum == 0) { return 0; }
+        if(actual_sum == 0) { return 0; }
         fprintf(stderr, "FAIL %s:%d: BASELINE %s — baseline sum was 0 but actual sum is %ld\n",
             assert_file, line_num, column_name, actual_sum);
         return 1;
@@ -670,7 +670,7 @@ static int Eval_Baseline(
 
     drift_pct = (100.0 * (double)abs_drift) / (double)baseline_sum;
 
-    if (drift_pct <= (double)tolerance_pct) { return 0; }
+    if(drift_pct <= (double)tolerance_pct) { return 0; }
 
     fprintf(stderr, "FAIL %s:%d: BASELINE %s drift %.1f%% > tolerance %d%% (actual_sum=%ld over %d rows, baseline_sum=%ld over %d rows)\n",
         assert_file, line_num, column_name, drift_pct, tolerance_pct,
@@ -693,7 +693,7 @@ int main(int argc, char * argv[])
     char csv_dir[MAX_PATH_LEN];
     const char * assert_file;
 
-    if (argc < 3)
+    if(argc < 3)
     {
         fprintf(stderr, "Usage: %s <csv_dir> <assertions.txt>\n", argv[0]);
         return 2;
@@ -704,13 +704,13 @@ int main(int argc, char * argv[])
     assert_file = argv[2];
 
     fp = fopen(assert_file, "r");
-    if (fp == NULL)
+    if(fp == NULL)
     {
         fprintf(stderr, "check_ai_metrics: cannot open assertions file: %s\n", assert_file);
         return 2;
     }
 
-    while (fgets(raw, sizeof(raw), fp) != NULL)
+    while(fgets(raw, sizeof(raw), fp) != NULL)
     {
         char * line;
         char * tokens[16];
@@ -721,51 +721,51 @@ int main(int argc, char * argv[])
 
         line_num++;
         line = Trim(raw);
-        if (*line == '\0' || *line == '#') { continue; }
+        if(*line == '\0' || *line == '#') { continue; }
 
         /* Strip inline comments */
         p = strchr(line, '#');
-        if (p != NULL)
+        if(p != NULL)
         {
             *p = '\0';
             line = Trim(line);
-            if (*line == '\0') { continue; }
+            if(*line == '\0') { continue; }
         }
 
         /* Tokenize by whitespace */
         p = line;
-        while (*p && token_count < 16)
+        while(*p && token_count < 16)
         {
-            while (*p && isspace((unsigned char)*p)) { p++; }
-            if (*p == '\0') { break; }
+            while(*p && isspace((unsigned char)*p)) { p++; }
+            if(*p == '\0') { break; }
             tokens[token_count++] = p;
-            while (*p && !isspace((unsigned char)*p)) { p++; }
-            if (*p)
+            while(*p && !isspace((unsigned char)*p)) { p++; }
+            if(*p)
             {
                 *p = '\0';
                 p++;
             }
         }
 
-        if (token_count < 2) { continue; }
+        if(token_count < 2) { continue; }
 
         /* Build CSV path */
         snprintf(csv_path, sizeof(csv_path), "%s/%s", csv_dir, tokens[1]);
 
         /* Load CSV (reuses g_table each assertion) */
-        if (Load_CSV(csv_path, &g_table) != 0)
+        if(Load_CSV(csv_path, &g_table) != 0)
         {
             fprintf(stderr, "FAIL %s:%d: could not load %s\n", assert_file, line_num, csv_path);
             failed++;
             continue;
         }
 
-        if (strcmp(tokens[0], "LIVENESS") == 0 && token_count >= 6)
+        if(strcmp(tokens[0], "LIVENESS") == 0 && token_count >= 6)
         {
             /* LIVENESS <csv> <filter> <column> MIN|MAX <value> */
             int filter_col;
             const char * filter_val;
-            if (Parse_Filter(&g_table, tokens[2], &filter_col, &filter_val) != 0)
+            if(Parse_Filter(&g_table, tokens[2], &filter_col, &filter_val) != 0)
             {
                 fprintf(stderr, "FAIL %s:%d: bad filter '%s'\n", assert_file, line_num, tokens[2]);
                 failed++;
@@ -775,18 +775,18 @@ int main(int argc, char * argv[])
                 tokens[3], tokens[4], atoi(tokens[5]),
                 line, line_num, assert_file);
         }
-        else if (strcmp(tokens[0], "BOUNDS") == 0 && token_count >= 6)
+        else if(strcmp(tokens[0], "BOUNDS") == 0 && token_count >= 6)
         {
             /* BOUNDS <csv> <filter> <column> RANGE <lo> <hi> */
             int filter_col;
             const char * filter_val;
-            if (Parse_Filter(&g_table, tokens[2], &filter_col, &filter_val) != 0)
+            if(Parse_Filter(&g_table, tokens[2], &filter_col, &filter_val) != 0)
             {
                 fprintf(stderr, "FAIL %s:%d: bad filter '%s'\n", assert_file, line_num, tokens[2]);
                 failed++;
                 continue;
             }
-            if (strcmp(tokens[4], "RANGE") != 0 || token_count < 7)
+            if(strcmp(tokens[4], "RANGE") != 0 || token_count < 7)
             {
                 fprintf(stderr, "FAIL %s:%d: BOUNDS expects 'RANGE <lo> <hi>'\n", assert_file, line_num);
                 failed++;
@@ -796,12 +796,12 @@ int main(int argc, char * argv[])
                 tokens[3], atoi(tokens[5]), atoi(tokens[6]),
                 line, line_num, assert_file);
         }
-        else if (strcmp(tokens[0], "TREND") == 0 && token_count >= 5)
+        else if(strcmp(tokens[0], "TREND") == 0 && token_count >= 5)
         {
             /* TREND <csv> <filter> <column> INCREASES|DECREASES|NONZERO */
             int filter_col;
             const char * filter_val;
-            if (Parse_Filter(&g_table, tokens[2], &filter_col, &filter_val) != 0)
+            if(Parse_Filter(&g_table, tokens[2], &filter_col, &filter_val) != 0)
             {
                 fprintf(stderr, "FAIL %s:%d: bad filter '%s'\n", assert_file, line_num, tokens[2]);
                 failed++;
@@ -811,18 +811,18 @@ int main(int argc, char * argv[])
                 tokens[3], tokens[4],
                 line, line_num, assert_file);
         }
-        else if (strcmp(tokens[0], "RATE") == 0 && token_count >= 6)
+        else if(strcmp(tokens[0], "RATE") == 0 && token_count >= 6)
         {
             /* RATE <csv> <filter> PER <turns> MIN|MAX <count> */
             int filter_col;
             const char * filter_val;
-            if (Parse_Filter(&g_table, tokens[2], &filter_col, &filter_val) != 0)
+            if(Parse_Filter(&g_table, tokens[2], &filter_col, &filter_val) != 0)
             {
                 fprintf(stderr, "FAIL %s:%d: bad filter '%s'\n", assert_file, line_num, tokens[2]);
                 failed++;
                 continue;
             }
-            if (strcmp(tokens[3], "PER") != 0 || token_count < 7)
+            if(strcmp(tokens[3], "PER") != 0 || token_count < 7)
             {
                 fprintf(stderr, "FAIL %s:%d: RATE expects 'PER <turns> MIN|MAX <count>'\n", assert_file, line_num);
                 failed++;
@@ -832,18 +832,18 @@ int main(int argc, char * argv[])
                 atoi(tokens[4]), tokens[5], atoi(tokens[6]),
                 line, line_num, assert_file);
         }
-        else if (strcmp(tokens[0], "BASELINE") == 0 && token_count >= 7)
+        else if(strcmp(tokens[0], "BASELINE") == 0 && token_count >= 7)
         {
             /* BASELINE <csv> <filter> <column> <baseline_path> TOLERANCE <pct> */
             int filter_col;
             const char * filter_val;
-            if (Parse_Filter(&g_table, tokens[2], &filter_col, &filter_val) != 0)
+            if(Parse_Filter(&g_table, tokens[2], &filter_col, &filter_val) != 0)
             {
                 fprintf(stderr, "FAIL %s:%d: bad filter '%s'\n", assert_file, line_num, tokens[2]);
                 failed++;
                 continue;
             }
-            if (strcmp(tokens[5], "TOLERANCE") != 0)
+            if(strcmp(tokens[5], "TOLERANCE") != 0)
             {
                 fprintf(stderr, "FAIL %s:%d: BASELINE expects 'TOLERANCE <pct>'\n", assert_file, line_num);
                 failed++;
@@ -860,7 +860,7 @@ int main(int argc, char * argv[])
             continue;
         }
 
-        if (result == 0)
+        if(result == 0)
         {
             passed++;
         }
@@ -872,7 +872,7 @@ int main(int argc, char * argv[])
 
     fclose(fp);
 
-    if (failed > 0)
+    if(failed > 0)
     {
         fprintf(stderr, "\n%d passed, %d failed\n", passed, failed);
         return 1;

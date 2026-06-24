@@ -89,33 +89,33 @@ static uint32_t Pack_Key_Char(char ch)
     uint32_t mox_mod = 0;
     char mox_character = ch;
 
-    if (ch >= 'a' && ch <= 'z')
+    if(ch >= 'a' && ch <= 'z')
     {
         mox_key = MOX_KEY_a + (ch - 'a');
     }
-    else if (ch >= 'A' && ch <= 'Z')
+    else if(ch >= 'A' && ch <= 'Z')
     {
         mox_key = MOX_KEY_a + (ch - 'A');
         mox_mod = MOX_MOD_SHIFT;
         mox_character = ch;
     }
-    else if (ch == ' ')
+    else if(ch == ' ')
     {
         mox_key = MOX_KEY_SPACE;
     }
-    else if (ch >= '0' && ch <= '9')
+    else if(ch >= '0' && ch <= '9')
     {
         mox_key = MOX_KEY_SPACE;  /* digits use mox_character, not mox_key */
     }
-    else if (ch == '+')
+    else if(ch == '+')
     {
         mox_key = MOX_KEY_NUMPLUS;
     }
-    else if (ch == '-')
+    else if(ch == '-')
     {
         mox_key = MOX_KEY_NUMMINUS;
     }
-    else if (ch == '\t')
+    else if(ch == '\t')
     {
         mox_key = MOX_KEY_TAB;
     }
@@ -164,10 +164,10 @@ static uint32_t Pack_Key_Direction(int dir_code)
 static char *Trim(char *str)
 {
     char *end;
-    while (*str && isspace((unsigned char)*str)) { str++; }
-    if (*str == '\0') { return str; }
+    while(*str && isspace((unsigned char)*str)) { str++; }
+    if(*str == '\0') { return str; }
     end = str + strlen(str) - 1;
-    while (end > str && isspace((unsigned char)*end)) { *end-- = '\0'; }
+    while(end > str && isspace((unsigned char)*end)) { *end-- = '\0'; }
     return str;
 }
 
@@ -199,14 +199,14 @@ static void Set_Var(const char *name, const char *value)
     int itr;
     for (itr = 0; itr < hemom_var_count; itr++)
     {
-        if (strcmp(hemom_vars[itr].name, name) == 0)
+        if(strcmp(hemom_vars[itr].name, name) == 0)
         {
             strncpy(hemom_vars[itr].value, value, HEMOM_MAX_VARVALUE - 1);
             hemom_vars[itr].value[HEMOM_MAX_VARVALUE - 1] = '\0';
             return;
         }
     }
-    if (hemom_var_count < HEMOM_MAX_VARS)
+    if(hemom_var_count < HEMOM_MAX_VARS)
     {
         strncpy(hemom_vars[hemom_var_count].name, name, HEMOM_MAX_VARNAME - 1);
         hemom_vars[hemom_var_count].name[HEMOM_MAX_VARNAME - 1] = '\0';
@@ -221,7 +221,7 @@ static const char *Get_Var(const char *name)
     int itr;
     for (itr = 0; itr < hemom_var_count; itr++)
     {
-        if (strcmp(hemom_vars[itr].name, name) == 0)
+        if(strcmp(hemom_vars[itr].name, name) == 0)
         {
             return hemom_vars[itr].value;
         }
@@ -239,9 +239,9 @@ static void Expand_Vars(const char *src, char *dst, size_t dst_size)
     size_t di = 0;
     const char *sp = src;
 
-    while (*sp != '\0' && di + 1 < dst_size)
+    while(*sp != '\0' && di + 1 < dst_size)
     {
-        if (*sp == '$')
+        if(*sp == '$')
         {
             char name[HEMOM_MAX_VARNAME];
             size_t ni = 0;
@@ -250,16 +250,16 @@ static void Expand_Vars(const char *src, char *dst, size_t dst_size)
 
             /* Read variable name: $[A-Za-z_][A-Za-z0-9_]* */
             vp = sp + 1;
-            while (ni + 1 < sizeof(name) && ((*vp >= 'A' && *vp <= 'Z') || (*vp >= 'a' && *vp <= 'z') || (*vp >= '0' && *vp <= '9') || *vp == '_'))
+            while(ni + 1 < sizeof(name) && ((*vp >= 'A' && *vp <= 'Z') || (*vp >= 'a' && *vp <= 'z') || (*vp >= '0' && *vp <= '9') || *vp == '_'))
             {
                 name[ni++] = *vp++;
             }
             name[ni] = '\0';
 
-            if (ni > 0)
+            if(ni > 0)
             {
                 vv = Get_Var(name);
-                if (vv != NULL)
+                if(vv != NULL)
                 {
                     size_t vv_len = strlen(vv);
                     size_t copyable = (vv_len < dst_size - di - 1) ? vv_len : (dst_size - di - 1);
@@ -285,7 +285,7 @@ static void Populate_Builtin_Vars(void)
     time_t now = time(NULL);
     struct tm *lt = localtime(&now);
     char save_name[HEMOM_MAX_VARVALUE];
-    if (lt != NULL)
+    if(lt != NULL)
     {
         /* AHP-YYYYMMDDHHMM — 16 chars, fits in LEN_SAVE_DESCRIPTION (20) */
         snprintf(save_name, sizeof(save_name), "AHP-%04d%02d%02d%02d%02d", lt->tm_year + 1900, lt->tm_mon + 1, lt->tm_mday, lt->tm_hour, lt->tm_min);
@@ -324,18 +324,18 @@ static uint64_t Parse_Wait_Duration_Ms(const char *raw)
     char *endp = NULL;
     long long n;
 
-    if (raw == NULL || *raw == '\0') { return 0; }
+    if(raw == NULL || *raw == '\0') { return 0; }
 
     n = strtoll(raw, &endp, 10);
-    if (endp == raw || n < 0) { return 0; }
+    if(endp == raw || n < 0) { return 0; }
 
-    while (*endp == ' ' || *endp == '\t') { endp++; }
-    if (*endp == '\0') { return 0; }  /* bare number — not allowed */
+    while(*endp == ' ' || *endp == '\t') { endp++; }
+    if(*endp == '\0') { return 0; }  /* bare number — not allowed */
 
-    if (stu_stricmp(endp, "f") == 0)  { return (uint64_t)n * PLATFORM_MILLISECONDS_PER_FRAME; }
-    if (stu_stricmp(endp, "ms") == 0) { return (uint64_t)n; }
-    if (stu_stricmp(endp, "s") == 0)  { return (uint64_t)n * 1000; }
-    if (stu_stricmp(endp, "m") == 0)  { return (uint64_t)n * 60 * 1000; }
+    if(stu_stricmp(endp, "f") == 0)  { return (uint64_t)n * PLATFORM_MILLISECONDS_PER_FRAME; }
+    if(stu_stricmp(endp, "ms") == 0) { return (uint64_t)n; }
+    if(stu_stricmp(endp, "s") == 0)  { return (uint64_t)n * 1000; }
+    if(stu_stricmp(endp, "m") == 0)  { return (uint64_t)n * 60 * 1000; }
 
     return 0;
 }
@@ -361,9 +361,9 @@ int HeMoM_Player_Load_Scenario(const char *filepath)
 #endif
 
     rc = Parse_Scenario_File(filepath, 0);
-    if (rc != 0) { return rc; }
+    if(rc != 0) { return rc; }
 
-    if (hemom_action_count == 0)
+    if(hemom_action_count == 0)
     {
         LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] Scenario is empty");
         return 1;
@@ -390,7 +390,7 @@ static void Resolve_Include_Path(const char *parent_file, const char *name, char
     size_t dir_len;
 
     /* Treat as absolute if it starts with / or \ or has a drive letter. */
-    if (name[0] == '/' || name[0] == '\\' || (name[0] != '\0' && name[1] == ':'))
+    if(name[0] == '/' || name[0] == '\\' || (name[0] != '\0' && name[1] == ':'))
     {
         strncpy(out, name, out_size - 1);
         out[out_size - 1] = '\0';
@@ -401,7 +401,7 @@ static void Resolve_Include_Path(const char *parent_file, const char *name, char
     slash_bwd = strrchr(parent_file, '\\');
     last_slash = (slash_fwd > slash_bwd) ? slash_fwd : slash_bwd;
 
-    if (last_slash == NULL)
+    if(last_slash == NULL)
     {
         strncpy(out, name, out_size - 1);
         out[out_size - 1] = '\0';
@@ -409,7 +409,7 @@ static void Resolve_Include_Path(const char *parent_file, const char *name, char
     }
 
     dir_len = (size_t)(last_slash - parent_file) + 1;
-    if (dir_len + strlen(name) + 1 > out_size)
+    if(dir_len + strlen(name) + 1 > out_size)
     {
         strncpy(out, name, out_size - 1);
         out[out_size - 1] = '\0';
@@ -428,14 +428,14 @@ static int Parse_Scenario_File(const char *filepath, int depth)
     int   line_num = 0;
     struct s_HeMoM_Action *act;
 
-    if (depth >= HEMOM_MAX_INCLUDE_DEPTH)
+    if(depth >= HEMOM_MAX_INCLUDE_DEPTH)
     {
         LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] include depth exceeded (limit %d) at %s", HEMOM_MAX_INCLUDE_DEPTH, filepath);
         return 1;
     }
 
     fp = stu_fopen_ci(filepath, "r");
-    if (fp == NULL)
+    if(fp == NULL)
     {
         LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] Could not open scenario: %s", filepath);
         return 1;
@@ -446,29 +446,29 @@ static int Parse_Scenario_File(const char *filepath, int depth)
     LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] Parsing: %s (depth=%d)", filepath, depth);
 #endif
 
-    while (fgets(line, sizeof(line), fp) != NULL && hemom_action_count < HEMOM_MAX_ACTIONS)
+    while(fgets(line, sizeof(line), fp) != NULL && hemom_action_count < HEMOM_MAX_ACTIONS)
     {
         char *comment;
         line_num++;
         p = Trim(line);
 
-        if (*p == '\0' || *p == '#') { continue; }
+        if(*p == '\0' || *p == '#') { continue; }
 
         /* Strip inline `#` comments and re-trim trailing whitespace. */
         comment = strchr(p, '#');
-        if (comment != NULL)
+        if(comment != NULL)
         {
             *comment = '\0';
-            while (comment > p && isspace((unsigned char)*(comment - 1)))
+            while(comment > p && isspace((unsigned char)*(comment - 1)))
             {
                 comment--;
                 *comment = '\0';
             }
-            if (*p == '\0') { continue; }
+            if(*p == '\0') { continue; }
         }
 
         /* Include directive — inlines another scenario file. */
-        if (stu_strnicmp(p, "include ", 8) == 0)
+        if(stu_strnicmp(p, "include ", 8) == 0)
         {
             char *raw = Trim(p + 8);
             char  resolved[512];
@@ -479,7 +479,7 @@ static int Parse_Scenario_File(const char *filepath, int depth)
             LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] %s:%d: include %s -> %s", filepath, line_num, raw, resolved);
 #endif
             sub_rc = Parse_Scenario_File(resolved, depth + 1);
-            if (sub_rc != 0)
+            if(sub_rc != 0)
             {
                 fclose(fp);
                 return sub_rc;
@@ -490,11 +490,11 @@ static int Parse_Scenario_File(const char *filepath, int depth)
         act = &hemom_actions[hemom_action_count];
         memset(act, 0, sizeof(*act));
 
-        if (stu_strnicmp(p, "wait ", 5) == 0)
+        if(stu_strnicmp(p, "wait ", 5) == 0)
         {
             char *raw = Trim(p + 5);
             uint64_t duration_ms = Parse_Wait_Duration_Ms(raw);
-            if (duration_ms == 0)
+            if(duration_ms == 0)
             {
                 LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: bad wait duration (need NNNf|NNNms|NNNs|NNNm): %s", filepath, line_num, raw);
                 continue;
@@ -503,7 +503,7 @@ static int Parse_Scenario_File(const char *filepath, int depth)
             act->wait_ms = duration_ms;
             hemom_action_count++;
         }
-        else if (stu_strnicmp(p, "key ", 4) == 0)
+        else if(stu_strnicmp(p, "key ", 4) == 0)
         {
             char *val = Trim(p + 4);
             act->type = act_KEY;
@@ -511,72 +511,72 @@ static int Parse_Scenario_File(const char *filepath, int depth)
             act->packed_key = Pack_Key_Char(val[0]);
             hemom_action_count++;
         }
-        else if (stu_stricmp(p, "escape") == 0)
+        else if(stu_stricmp(p, "escape") == 0)
         {
             act->type = act_ESCAPE;
             act->packed_key = Pack_Key_Escape();
             hemom_action_count++;
         }
-        else if (stu_stricmp(p, "enter") == 0)
+        else if(stu_stricmp(p, "enter") == 0)
         {
             act->type = act_ENTER;
             act->packed_key = Pack_Key_Enter();
             hemom_action_count++;
         }
-        else if (stu_stricmp(p, "backspace") == 0)
+        else if(stu_stricmp(p, "backspace") == 0)
         {
             act->type = act_BACKSPACE;
             act->packed_key = Pack_Key_Backspace();
             hemom_action_count++;
         }
         /* Direction / numpad keys — move unit stack one square. */
-        else if (stu_stricmp(p, "left") == 0)      { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_LEFT);      hemom_action_count++; }
-        else if (stu_stricmp(p, "right") == 0)     { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_RIGHT);     hemom_action_count++; }
-        else if (stu_stricmp(p, "up") == 0)        { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_UP);        hemom_action_count++; }
-        else if (stu_stricmp(p, "down") == 0)      { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_DOWN);      hemom_action_count++; }
-        else if (stu_stricmp(p, "upright") == 0)   { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_RIGHTUP);   hemom_action_count++; }
-        else if (stu_stricmp(p, "downright") == 0) { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_RIGHTDOWN); hemom_action_count++; }
-        else if (stu_stricmp(p, "upleft") == 0)    { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_LEFTUP);    hemom_action_count++; }
-        else if (stu_stricmp(p, "downleft") == 0)  { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_LEFTDOWN);  hemom_action_count++; }
-        else if (stu_strnicmp(p, "click ", 6) == 0)
+        else if(stu_stricmp(p, "left") == 0)      { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_LEFT);      hemom_action_count++; }
+        else if(stu_stricmp(p, "right") == 0)     { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_RIGHT);     hemom_action_count++; }
+        else if(stu_stricmp(p, "up") == 0)        { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_UP);        hemom_action_count++; }
+        else if(stu_stricmp(p, "down") == 0)      { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_DOWN);      hemom_action_count++; }
+        else if(stu_stricmp(p, "upright") == 0)   { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_RIGHTUP);   hemom_action_count++; }
+        else if(stu_stricmp(p, "downright") == 0) { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_RIGHTDOWN); hemom_action_count++; }
+        else if(stu_stricmp(p, "upleft") == 0)    { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_LEFTUP);    hemom_action_count++; }
+        else if(stu_stricmp(p, "downleft") == 0)  { act->type = act_KEY; act->packed_key = Pack_Key_Direction(MOX_KEY_LEFTDOWN);  hemom_action_count++; }
+        else if(stu_strnicmp(p, "click ", 6) == 0)
         {
             act->type = act_CLICK;
-            if (sscanf(p + 6, "%hd %hd", &act->x, &act->y) != 2)
+            if(sscanf(p + 6, "%hd %hd", &act->x, &act->y) != 2)
             {
                 LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: bad click coords: %s", filepath, line_num, p);
                 continue;
             }
             hemom_action_count++;
         }
-        else if (stu_strnicmp(p, "rclick ", 7) == 0)
+        else if(stu_strnicmp(p, "rclick ", 7) == 0)
         {
             act->type = act_RCLICK;
-            if (sscanf(p + 7, "%hd %hd", &act->x, &act->y) != 2)
+            if(sscanf(p + 7, "%hd %hd", &act->x, &act->y) != 2)
             {
                 LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: bad rclick coords: %s", filepath, line_num, p);
                 continue;
             }
             hemom_action_count++;
         }
-        else if (stu_stricmp(p, "next_turn") == 0)
+        else if(stu_stricmp(p, "next_turn") == 0)
         {
             act->type = act_KEY;
             act->character = 'n';
             act->packed_key = Pack_Key_Char('n');
             hemom_action_count++;
         }
-        else if (stu_stricmp(p, "quit") == 0)
+        else if(stu_stricmp(p, "quit") == 0)
         {
             act->type = act_QUIT;
             act->packed_key = Pack_Key_Escape();
             hemom_action_count++;
         }
-        else if (stu_stricmp(p, "end") == 0)
+        else if(stu_stricmp(p, "end") == 0)
         {
             act->type = act_END;
             hemom_action_count++;
         }
-        else if (stu_strnicmp(p, "type ", 5) == 0)
+        else if(stu_strnicmp(p, "type ", 5) == 0)
         {
             /* `type <string>` expands each character into an act_KEY.
                $VARNAME references are substituted at parse time. */
@@ -593,7 +593,7 @@ static int Parse_Scenario_File(const char *filepath, int depth)
 
             for (c = expanded; *c != '\0'; c++)
             {
-                if (hemom_action_count >= HEMOM_MAX_ACTIONS) { break; }
+                if(hemom_action_count >= HEMOM_MAX_ACTIONS) { break; }
                 act = &hemom_actions[hemom_action_count];
                 memset(act, 0, sizeof(*act));
                 act->type = act_KEY;
@@ -630,8 +630,8 @@ void HeMoM_Player_Frame(void)
     int16_t wx, wy;
     int scale;
 
-    if (!hemom_active) { return; }
-    if (hemom_action_index >= hemom_action_count)
+    if(!hemom_active) { return; }
+    if(hemom_action_index >= hemom_action_count)
     {
         hemom_active = 0;
         LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] Scenario complete (%d actions)", hemom_action_count);
@@ -644,9 +644,9 @@ void HeMoM_Player_Frame(void)
     }
 
     /* Wall-clock wait: idle until Platform_Get_Millies() reaches the target. */
-    if (hemom_wait_active)
+    if(hemom_wait_active)
     {
-        if (Platform_Get_Millies() < hemom_wait_until_ms)
+        if(Platform_Get_Millies() < hemom_wait_until_ms)
         {
             return;
         }
@@ -740,7 +740,7 @@ void HeMoM_Player_Frame(void)
                    to wherever the user's real mouse is, breaking Scroll Field reads
                    (Find_Bar_Position uses Pointer_X at call time, not click coords). */
                 Set_Pointer_Position(act->x, act->y);
-                if (act->type == act_CLICK)
+                if(act->type == act_CLICK)
                 {
                     platform_frame_mouse_buttons |= ST_LEFT_BUTTON;
                     User_Mouse_Handler(ST_LEFT_BUTTON, wx, wy);

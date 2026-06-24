@@ -2474,7 +2474,7 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                     // // or  assert(image_encoders_count <= image_encoder_array_size / sizeof(ImageCodecInfo));
                     // // try to use __analysis_assume() instead of assert()
                     // // node_anim_seg = node_auras_seg[node_owner_banner_idx];
-                    // NOWORKIE  if (node_owner_banner_idx < sizeof(node_auras_seg))
+                    // NOWORKIE  if(node_owner_banner_idx < sizeof(node_auras_seg))
                     // {
                     //     node_anim_seg = node_auras_seg[node_owner_banner_idx];
                     // }
@@ -3129,7 +3129,7 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
             }
             square_explored_flag = *(explore_data_ptr + (minimap_square_y * WORLD_WIDTH) + minimap_square_x);
             square_explored_flag = GET_SQUARE_EXPLORED(minimap_square_x, minimap_square_y, wp);
-            // // if ((minimap_square_y >= 0 && minimap_square_y < WORLD_HEIGHT) && (square_explored != UNEXPLORED));
+            // // if((minimap_square_y >= 0 && minimap_square_y < WORLD_HEIGHT) && (square_explored != UNEXPLORED));
             // if(
             //     (
             //         (minimap_square_y >= 0)

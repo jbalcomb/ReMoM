@@ -1386,9 +1386,9 @@ void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
                         Icon_Count = (SBK_BookManaLimit / casting_cost);
                     }
 
-                    if (battle_units[caster_idx].Item_Charges > 0)
+                    if(battle_units[caster_idx].Item_Charges > 0)
                     {
-                        if (_ITEMS[_players[HUMAN_PLAYER_IDX].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
+                        if(_ITEMS[_players[HUMAN_PLAYER_IDX].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
                         {
                             Icon_Count = battle_units[caster_idx].Item_Charges;
                             casting_cost = 22222;
@@ -2059,7 +2059,7 @@ void BigBook_PageTurn(short int direction)
         Copy_Back_To_Off();
 
         /* Determine background page index (left side) */
-        if (direction >= 1)
+        if(direction >= 1)
         {
             page_index = SBK_OpenPage;
         }
@@ -2072,17 +2072,17 @@ void BigBook_PageTurn(short int direction)
         BigBook_Compose__WIP(page_index, pict_seg, 1);
         Draw_Picture_Windowed(25, -20, pict_seg);
 
-        if (page_index != 0 && SBK_Dogears > 1)
+        if(page_index != 0 && SBK_Dogears > 1)
         {
             FLIC_Draw(15, 9, (void *)_spellbook_big_left_corner_seg);
         }
 
         /* Determine background page index (Right Side) */
-        if (direction == 1)
+        if(direction == 1)
         {
             page_index = SBK_OpenPage + 3;
         }
-        else if (direction == 0)
+        else if(direction == 0)
         {
             page_index = SBK_OpenPage;
         }
@@ -2096,18 +2096,18 @@ void BigBook_PageTurn(short int direction)
         BigBook_Compose__WIP(page_index, pict_seg, 0);
         Draw_Picture_Windowed(173, -20, pict_seg);
 
-        if (m_spellbook_page_count - 2 > page_index && SBK_Dogears > 1)
+        if(m_spellbook_page_count - 2 > page_index && SBK_Dogears > 1)
         {
             FLIC_Draw(289, 9, (void *)_spellbook_big_right_corner_seg);
         }
 
         /* Determine which page is "on top" (turning) */
-        if (direction != 0)
+        if(direction != 0)
         {
             /* Forward or Research */
-            if (page_turn_stage < 2)
+            if(page_turn_stage < 2)
             {
-                if (direction == 1)
+                if(direction == 1)
                 {
                     page_index = SBK_OpenPage + 1;
                 }
@@ -2115,11 +2115,11 @@ void BigBook_PageTurn(short int direction)
             }
             else
             {
-                if (direction == 1)
+                if(direction == 1)
                 {
                     page_index = SBK_OpenPage + 2;
                 }
-                else if (direction == 666)
+                else if(direction == 666)
                 {
                     page_index = SBK_Candidate_Page;
                 }
@@ -2130,7 +2130,7 @@ void BigBook_PageTurn(short int direction)
         {
             /* Backward */
             Set_File_Animation_Frame(3 - page_turn_stage);
-            if (page_turn_stage < 2)
+            if(page_turn_stage < 2)
             {
                 page_index = SBK_OpenPage;
                 left_page = 1;
@@ -2150,7 +2150,7 @@ void BigBook_PageTurn(short int direction)
         Scale_Bitmap(pict_seg, stage_text_widths[page_turn_stage], 100);
 
         /* Apply distortion effects based on animation stage to simulate page curve */
-        if ((direction >= 1 && page_turn_stage == 0) || (direction == 0 && page_turn_stage == 3))
+        if((direction >= 1 && page_turn_stage == 0) || (direction == 0 && page_turn_stage == 3))
         {
             LBX_IMG_VShiftRect(0, 0, 4, -6, pict_seg);
             LBX_IMG_VShiftRect(5, -7, 12, -12, pict_seg);
@@ -2162,7 +2162,7 @@ void BigBook_PageTurn(short int direction)
             Draw_Picture_Windowed(165, -24, pict_seg);
         }
 
-        if ((direction >= 1 && page_turn_stage == 1) || (direction == 0 && page_turn_stage == 2))
+        if((direction >= 1 && page_turn_stage == 1) || (direction == 0 && page_turn_stage == 2))
         {
             LBX_IMG_VShiftRect(0, -4, 5, -9, pict_seg);
             LBX_IMG_VShiftRect(6, -10, 14, -18, pict_seg);
@@ -2174,7 +2174,7 @@ void BigBook_PageTurn(short int direction)
             Draw_Picture_Windowed(165, -26, pict_seg);
         }
 
-        if ((direction >= 1 && page_turn_stage == 2) || (direction == 0 && page_turn_stage == 1))
+        if((direction >= 1 && page_turn_stage == 2) || (direction == 0 && page_turn_stage == 1))
         {
             LBX_IMG_VShiftRect(0, -20, 6, -25, pict_seg);
             LBX_IMG_VShiftRect(7, -25, 16, -30, pict_seg);
@@ -2187,7 +2187,7 @@ void BigBook_PageTurn(short int direction)
             Draw_Picture_Windowed(80, -20, pict_seg);
         }
 
-        if ((direction >= 1 && page_turn_stage == 3) || (direction == 0 && page_turn_stage == 0))
+        if((direction >= 1 && page_turn_stage == 3) || (direction == 0 && page_turn_stage == 0))
         {
             LBX_IMG_VShiftRect(0, 0, 36, -18, pict_seg);
             LBX_IMG_VShiftRect(37, -18, 64, -26, pict_seg);
@@ -2282,16 +2282,16 @@ void BigBook_Draw(void)
     Copy_Back_To_Off();
 
     /* Draw navigation dog-ears if in apprentice book mode (SBK_Dogears > 1) */
-    if (SBK_Dogears > 1)
+    if(SBK_Dogears > 1)
     {
         /* Left dog-ear (previous page) */
-        if (SBK_OpenPage != 0)
+        if(SBK_OpenPage != 0)
         {
             FLIC_Draw(15, 9, _spellbook_big_left_corner_seg);
         }
 
         /* Right dog-ear (next page) */
-        if (SBK_OpenPage != m_spellbook_page_count && SBK_OpenPage < (m_spellbook_page_count - 2))
+        if(SBK_OpenPage != m_spellbook_page_count && SBK_OpenPage < (m_spellbook_page_count - 2))
         {
             FLIC_Draw(289, 9, _spellbook_big_right_corner_seg);
         }
@@ -2306,7 +2306,7 @@ void BigBook_Draw(void)
     Draw_Picture_Windowed(173, -20, pict_seg);
 
     /* If choosing research (SBK_Dogears == 0), display the prompt text */
-    if (SBK_Dogears == 0)
+    if(SBK_Dogears == 0)
     {
         Set_Font_Style_Outline_Heavy(5, 9, 0, 0);
         Set_Outline_Color(1);

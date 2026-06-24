@@ -1795,7 +1795,7 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
                     cgx = (Random(3) + 7);
                 }
                 cgy = (8 + Random(3));
-            } while (CMB_TargetRows[cgy][cgx] >= 0);
+            } while(CMB_TargetRows[cgy][cgx] >= 0);
         }
 
         battle_unit_idx = Target_BU_List[Picked_Target];

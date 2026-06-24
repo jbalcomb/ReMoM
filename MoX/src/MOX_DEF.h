@@ -35,7 +35,7 @@
 // Define macro to swap two numbers
 // #define SWAP(x, y, temp) temp = x; x = y; y = temp;  ... macro expansion(temp = x; x = y; y = temp;)
 // x = x + y - ( y = x );
-// #define SWAP(x, y, T) do { T SWAP = x; x = y; y = SWAP; } while (0)  ...  invoke: SWAP(a, b, int);
+// #define SWAP(x, y, T) do { T SWAP = x; x = y; y = SWAP; } while(0)  ...  invoke: SWAP(a, b, int);
 // 'Graphics Gems'
 #define SWAP(x, y) (x ^= y ^= x ^= y)  // ... UB!!  Sequence Point Violation
 // temp = x2; x2 = x1; x1 = temp;
@@ -47,7 +47,7 @@
 #define TOGGLE(_value_)  ( ( _value_ = (1 - (_value_)) ) )
 
 
-#define UPPERCASE(_character_) do { if(((_character_) > 96) && ((_character_) < 123) ) { (_character_) -= 32; } } while (0)
+#define UPPERCASE(_character_) do { if(((_character_) > 96) && ((_character_) < 123) ) { (_character_) -= 32; } } while(0)
 
 
 /*
@@ -89,25 +89,25 @@ https://wiki.sei.cmu.edu/confluence/display/c/PRE12-C.+Do+not+define+unsafe+macr
 #define IS_ODD(_number_)    ( ((_number_) % 2 == 1) )
 #endif
 #ifndef SETABS
-#define SETABS(x) do { if ((x) < 0) { (x) = -(x); } } while (0)
+#define SETABS(x) do { if((x) < 0) { (x) = -(x); } } while(0)
 #endif
 #ifndef SETMIN
-#define SETMIN(a, b) do { if ((b) > (a)) { (a) = (b); } } while (0)
-// #define SETMIN(a, b) do { if ((a) < (b)) { (a) = (b); } } while (0)
+#define SETMIN(a, b) do { if((b) > (a)) { (a) = (b); } } while(0)
+// #define SETMIN(a, b) do { if((a) < (b)) { (a) = (b); } } while(0)
 #endif
 #ifndef SETMAX
-#define SETMAX(a, b) do { if ((b) < (a)) { (a) = (b); } } while (0)
+#define SETMAX(a, b) do { if((b) < (a)) { (a) = (b); } } while(0)
 #endif
 #ifndef SETRANGE
-#define SETRANGE(a, b, c) do { if (((c) <= (b)) || ((b) > (a))) { (a) = (b); } else if ((c) < (a)) { (a) = (c); } } while (0)
+#define SETRANGE(a, b, c) do { if(((c) <= (b)) || ((b) > (a))) { (a) = (b); } else if((c) < (a)) { (a) = (c); } } while(0)
 #endif
 // e.g., _CITIES[itr].size = ((_CITIES[itr].population + 3) / 4);
 #ifndef BUCKET
-#define BUCKET(_value_, _size_) do { (((_value_) + ((_size_) - 1)) / (_size_) )} while (0)
+#define BUCKET(_value_, _size_) do { (((_value_) + ((_size_) - 1)) / (_size_) )} while(0)
 #endif
 // `1oom`
-#define ADDSATT(_v_, _n_, _top_) do { int _t_; _t_ = (_v_) + (_n_); SETMIN(_t_, (_top_)); (_v_) = _t_; } while (0)
-#define SUBSATT(_v_, _n_, _bot_) do { int _t_; _t_ = (_v_) - (_n_); SETMAX(_t_, (_bot_)); (_v_) = _t_; } while (0)
+#define ADDSATT(_v_, _n_, _top_) do { int _t_; _t_ = (_v_) + (_n_); SETMIN(_t_, (_top_)); (_v_) = _t_; } while(0)
+#define SUBSATT(_v_, _n_, _bot_) do { int _t_; _t_ = (_v_) - (_n_); SETMAX(_t_, (_bot_)); (_v_) = _t_; } while(0)
 #define SUBSAT0(_v_, _n_) SUBSATT(_v_, _n_, 0)
 #define TBLLEN(_t_) (sizeof((_t_)) / sizeof((_t_)[0]))
 
@@ -272,7 +272,7 @@ if(_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot > -1)
 #define BATTLE_UNIT_CONTROLLER_INDEX(_bux_)  ( battle_units[(_bux_)].controller_idx )
 #define BATTLE_UNIT_STATUS(_bux_)  ( battle_units[(_bux_)].Status )
 
-// #define BUNITIDX(_bux_)    do { battle_units[(_bux_)].unit_idx } while (0)
+// #define BUNITIDX(_bux_)    do { battle_units[(_bux_)].unit_idx } while(0)
 #define BUNITUNIT()         ( battle_units[battle_unit_idx].unit_idx   )
 #define BUNITCONTROLLER()   ( battle_units[battle_unit_idx].controller_idx  )
 #define BUNITOWNER()        ( _UNITS[BUNITUNIT()].owner_idx )
@@ -422,7 +422,7 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 NOTE(JimBalcomb,20260302): These have been deprecated, do not use them anymore - GET_TERRAIN_TYPE, TERRAIN_TYPE, SET_TERRAIN_TYPE, TERRAIN_TYPE_INDEX.
 use `terrain_type = p_world_map[wp][wy][wx];`
 */
-// #define GET_TERRAIN_TYPE(_value_, _size_) do { GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2))) } while (0)
+// #define GET_TERRAIN_TYPE(_value_, _size_) do { GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2))) } while(0)
 /*
     gets the uint16_t 'Terrain Type' from _world_maps
 */
@@ -434,7 +434,7 @@ use `terrain_type = p_world_map[wp][wy][wx];`
 /* DELETEME */  #define TERRAIN_TYPE(_wx_, _wy_, _wp_)        ( (int16_t)GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2))) % NUM_TERRAIN_TYPES )
 // ¿ TODO  #define TERRAIN_TYPE(_wx_, _wy_, _wp_)        ( p_world_map[(_wp_)][(_wy_)][(_wx_)] % NUM_TERRAIN_TYPES ) ?
 
-// #define SET_TERRAIN_TYPE(_terrain_type_) do { SET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2)), (_terrain_type_)) } while (0)
+// #define SET_TERRAIN_TYPE(_terrain_type_) do { SET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2)), (_terrain_type_)) } while(0)
 /*
     sets the uint16_t 'Terrain Type' in _world_maps
 */

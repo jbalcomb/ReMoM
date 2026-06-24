@@ -494,7 +494,7 @@ void Check_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons)
     // 1oom
     // buttons &= (MOUSE_BUTTON_MASK_LEFT | MOUSE_BUTTON_MASK_RIGHT);
     // mouse_buttons = buttons;
-    // if (buttons) {
+    // if(buttons) {
     // 1oom:  buttons &= (MOUSE_BUTTON_MASK_LEFT | MOUSE_BUTTON_MASK_RIGHT);
     buttons &= (MOUSE_BUTTON_MASK_LEFT | MOUSE_BUTTON_MASK_RIGHT);
     if(buttons != 0)
@@ -535,7 +535,7 @@ void Save_Mouse_On_Page(int16_t x, int16_t y)
     // if(previous_pointer_image_number == 0 && mouse_save_flag != ST_FALSE)
     // mouse_save_flag == ST_TRUE
     // if(current_pointer_image_number == 0 && previous_pointer_image_number == 0 && GUI_HaveAreaSave == ST_FALSE) { return; }
-    if (current_pointer_image_number != 0)
+    if(current_pointer_image_number != 0)
     {
 
     }

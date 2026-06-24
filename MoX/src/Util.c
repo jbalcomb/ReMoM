@@ -283,10 +283,10 @@ endp Copy_Memory_Near
 // C:\STU\developp\1oom\src\util.c
 // void util_table_remove_item_keep_order(int itemi, void *tbl, int itemsz, int itemnum)
 /*
-    if ((itemi < 0) || (itemi >= itemnum)) {
+    if((itemi < 0) || (itemi >= itemnum)) {
         return;
     }
-    if (itemi < (itemnum - 1)) {
+    if(itemi < (itemnum - 1)) {
         memmove(tbl + itemi * itemsz, tbl + (itemi + 1) * itemsz, (itemnum - 1 - itemi) * itemsz);
     }
     memset(tbl + (itemnum - 1) * itemsz, 0, itemsz);
@@ -382,9 +382,9 @@ You can simplify and make it safer using memmove (handles overlap) and memset.
 Suggested safe replacement (concise):
 void Delete_Structure(int16_t record_num, uint8_t *address, int16_t struct_size, int16_t total_records)
 {
-    if (record_num < 0 || record_num >= total_records) return;
+    if(record_num < 0 || record_num >= total_records) return;
     int32_t byte_count = ((int32_t)total_records - record_num - 1) * (int32_t)struct_size;
-    if (byte_count > 0) {
+    if(byte_count > 0) {
         uint8_t *dst = address + (int32_t)record_num * struct_size;
         uint8_t *src = dst + struct_size;
         memmove(dst, src, (size_t)byte_count);
@@ -806,26 +806,26 @@ int UU_DBG_SelectDialog(char /* near */ *Q_ptr, char /* near */ *A1_ptr, char /*
     response_3 = INVALID_FIELD;
     Deactivate_Auto_Function();
 
-    while (finished == 0)
+    while(finished == 0)
     {
         input_field_idx = Get_Input();
 
-        if (input_field_idx == abort_id || input_field_idx == ST_UNDEFINED)
+        if(input_field_idx == abort_id || input_field_idx == ST_UNDEFINED)
         {
             return default_val;
         }
 
-        if (input_field_idx == response_1)
+        if(input_field_idx == response_1)
         {
             return v1;
         }
 
-        if (input_field_idx == response_2)
+        if(input_field_idx == response_2)
         {
             return v2;
         }
 
-        if (input_field_idx == response_3)
+        if(input_field_idx == response_3)
         {
             return v3;
         }
@@ -848,7 +848,7 @@ int UU_DBG_SelectDialog(char /* near */ *Q_ptr, char /* near */ *A1_ptr, char /*
         Clear_Fields();
 
         /* Option 1 */
-        if (a1[0] != '\0')
+        if(a1[0] != '\0')
         {
             UU_VGA_DrawDblRect(120, 130, 200, 145, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor);
             Print_Centered(160, 136, a1);
@@ -857,7 +857,7 @@ int UU_DBG_SelectDialog(char /* near */ *Q_ptr, char /* near */ *A1_ptr, char /*
         }
 
         /* Option 2 */
-        if (A2_ptr[0] != '\0')
+        if(A2_ptr[0] != '\0')
         {
             UU_VGA_DrawDblRect(120, 150, 200, 165, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor);
             Print_Centered(160, 156, A2_ptr);
@@ -865,7 +865,7 @@ int UU_DBG_SelectDialog(char /* near */ *Q_ptr, char /* near */ *A1_ptr, char /*
         }
 
         /* Option 3 */
-        if (A3_ptr[0] != '\0')
+        if(A3_ptr[0] != '\0')
         {
             UU_VGA_DrawDblRect(120, 170, 200, 185, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor);
             Print_Centered(160, 176, A3_ptr);

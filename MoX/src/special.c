@@ -196,25 +196,25 @@ static int util_math_line_plot(int x1, int y1, int x2, int y2, int *tblx, int *t
     int len = 0, delta_x, delta_y, dirx, diry, delta_add, zerr = 0x8000;
 
     delta_x = x2 - x1;
-    if (delta_x < 0) {
+    if(delta_x < 0) {
         delta_x = -delta_x;
         dirx = -1;
     } else {
         dirx = 1;
     }
     delta_y = y2 - y1;
-    if (delta_y < 0) {
+    if(delta_y < 0) {
         delta_y = -delta_y;
         diry = -1;
     } else {
         diry = 1;
     }
-    if (delta_x < delta_y) {
+    if(delta_x < delta_y) {
         delta_add = (delta_x << 16) / delta_y;
-        while (len < delta_y) {
+        while(len < delta_y) {
             y1 += diry;
             zerr += delta_add;
-            if (zerr >= 0x10000) {
+            if(zerr >= 0x10000) {
                 x1 += dirx;
             }
             zerr &= 0xffff;
@@ -222,12 +222,12 @@ static int util_math_line_plot(int x1, int y1, int x2, int y2, int *tblx, int *t
             tbly[len] = y1;
             ++len;
         }
-    } else if (delta_y < delta_x) {
+    } else if(delta_y < delta_x) {
         delta_add = (delta_y << 16) / delta_x;
-        while (len < delta_x) {
+        while(len < delta_x) {
             x1 += dirx;
             zerr += delta_add;
-            if (zerr >= 0x10000) {
+            if(zerr >= 0x10000) {
                 y1 += diry;
             }
             zerr &= 0xffff;
@@ -236,7 +236,7 @@ static int util_math_line_plot(int x1, int y1, int x2, int y2, int *tblx, int *t
             ++len;
         }
     } else {
-        while (len < delta_y) {
+        while(len < delta_y) {
             x1 += dirx;
             y1 += diry;
             tblx[len] = x1;
@@ -298,7 +298,7 @@ mov     [bp+error_term], ax
 
 1oom
     remainder += delta_add;
-    if (remainder >= 0x10000) {
+    if(remainder >= 0x10000) {
         y0 += sign_y;
     }
     remainder &= 0xffff;
