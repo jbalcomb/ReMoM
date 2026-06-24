@@ -1855,7 +1855,7 @@ void Simulate_World_Map_Generation(void)
         Generate_Roads(ARCANUS_PLANE);
         Generate_Roads(MYRROR_PLANE);
 
-        Simex_Autotiling();
+        Simtex_Autotiling();
 
         for(rivers = 0; rivers < NUM_RIVERS; rivers++)
         {

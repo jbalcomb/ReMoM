@@ -580,8 +580,8 @@ void Init_New_Game(void)
 
     Draw_Building_The_Worlds(80);
 
-    Simex_Autotiling();
-    gd_dump_world_map("19_Simex_Autotiling_W");
+    Simtex_Autotiling();
+    gd_dump_world_map("19_Simtex_Autotiling_W");
 
     Draw_Building_The_Worlds(85);
                                         
@@ -3892,7 +3892,7 @@ sanity check the values, see if you can prove that the data for Hills got mangle
 ...Lake
 
 */
-void Simex_Autotiling(void)
+void Simtex_Autotiling(void)
 {
     int16_t * terrtype = 0;
     int16_t adj_wx = 0;

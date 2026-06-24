@@ -78,7 +78,7 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
 void Desert_Autotile(void);
 
 // MGC o51p20
-void Simex_Autotiling(void);
+void Simtex_Autotiling(void);
 
 // MGC o51p21
 void Shuffle_Terrains(void);
