@@ -7314,34 +7314,26 @@ int16_t Square_Is_Mountain_NewGame(int16_t wx, int16_t wy, int16_t wp)
 }
 
 // MGC o51p47
-// drake178: TILE_IsHills()
 int16_t Square_Is_Hills_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type = 0;  // _CX_
-
+    int16_t terrain_type = 0;
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
-
     if(
         (terrain_type == tt_Hills1)
         ||
         (
-            (terrain_type >= tt_Mountains_Fst)
+            (terrain_type >= tt_Hills_Fst)
             &&
-            (terrain_type <= tt_Mountains_Lst)
+            (terrain_type <= tt_Hills_Lst)
         )
     )
     {
-
         return ST_TRUE;
-
     }
     else
     {
-
         return ST_FALSE;
-
     }
-
 }
 
 
