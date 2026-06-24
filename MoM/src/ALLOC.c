@@ -95,8 +95,8 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, ( ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERRUN) * sizeof(int16_t)) / SZ_PARAGRAPH_B) + 2) );  // 602 PR, 9632 B  ... still don't know how they got the +2 for the headers. maybe header and subheader
     p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
 
-    UU_TBL_1 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
-    UU_TBL_2 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
+    UU_TBL_1 = (int8_t *)Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
+    UU_TBL_2 = (int8_t *)Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
 
     _landmasses    = (uint8_t *)Allocate_Next_Block(World_Data, 302);  // 302 PR, 4832 B  ((2 * 60 * 40) / 16)
 

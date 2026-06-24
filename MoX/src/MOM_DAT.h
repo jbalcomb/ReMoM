@@ -4089,8 +4089,8 @@ extern struct s_TOWER * _TOWERS;
 extern struct s_FORTRESS * _FORTRESSES;
 extern struct s_NODE * _NODES;
 extern uint8_t * _landmasses;
-extern SAMB_ptr UU_TBL_2;
-extern SAMB_ptr UU_TBL_1;
+extern int8_t * UU_TBL_2;
+extern int8_t * UU_TBL_1;
 extern uint8_t * _world_maps;
 extern int16_t (*p_world_map)[WORLD_HEIGHT][WORLD_WIDTH];
 
