@@ -5767,7 +5767,7 @@ void Generate_Neutral_Cities(int16_t wp)
         }
         // ; add buildings based on population
         _CITIES[_cities].bldg_status[bt_NONE] = bs_Replaced;
-        switch(_CITIES[_cities].population)  // - 2;  switch 24 cases
+        switch(_CITIES[_cities].population - 2)  // - 2;  switch 24 cases
         {
             case 24:
             case 23:
