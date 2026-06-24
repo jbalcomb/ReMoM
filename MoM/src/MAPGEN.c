@@ -6147,7 +6147,7 @@ void Generate_Roads(int16_t wp)
                 ||
                 (GET_LANDMASS(src_wx, src_wy, wp) != GET_LANDMASS(dst_wx, dst_wy, wp))
                 ||
-                (Range(src_wx, src_wy, dst_wx, dst_wy) >= 11)  // BUGBUG  should used Delta_XY_With_Wrap()
+                (Range(src_wx, src_wy, dst_wx, dst_wy) >= 11)  /* OGBUG  should used Delta_XY_With_Wrap() */
             )
             {
                 continue;
@@ -6173,7 +6173,7 @@ void Generate_Roads(int16_t wp)
                 {
                     Invalid_Road = ST_TRUE;
                 }
-                // NOTE(drake178): BUG: this batch should start at $C5 (not that any of these can be present on the map at this stage)
+                /* OGBUG  this batch should start at $C5 (not that any of these can be present on the map at this stage) */
                 if(
                     (GET_TERRAIN_TYPE(wx, wy, wp) >= _Shore00001R10)
                     &&
@@ -6208,8 +6208,8 @@ void Generate_Roads(int16_t wp)
             }
         }
     }
-    // NOTE(drake178): BUG: ignores the passed plane value, and instead processes every city
-    // NOTE(drake178): BUG: Myrran roads will have normal roads as the map square coordinates upgraded are not set up before doing so
+    /* OGBUG  ignores the passed plane value, and instead processes every city */
+    /* OGBUG  Myrran roads will have normal roads as the map square coordinates upgraded are not set up before doing so */
     for(city_idx = 0; city_idx < _cities; city_idx++)
     {
         SET_MAP_SQUARE_FLAG(
@@ -6230,25 +6230,29 @@ void Generate_Roads(int16_t wp)
 https://masterofmagic.fandom.com/wiki/Roads?veaction=edit&section=19
 Roads beneath captured neutral cities and original Fortress sites on Myrror lack the characteristic pulsing gold animation of Enchanted Roads (see picture). The New Game sequence fails to correctly implement the enchantment for Roads beneath towns.
 */
-// BUGBUG         if(wp == MYRROR_PLANE)
-// BUGBUG         {
-// BUGBUG             // NOTE(drake178): BUG: these are not the city coordinates
-// BUGBUG             // BUGBUG  at exactly wx=60,wy=40,wp=1 this causes and AVRL
-// BUGBUG             SET_MAP_SQUARE_FLAG(
-// BUGBUG                 wx,
-// BUGBUG                 wy,
-// BUGBUG                 wp,
-// BUGBUG                 (
-// BUGBUG                     GET_MAP_SQUARE_FLAG(
-// BUGBUG                         wx,
-// BUGBUG                         wy,
-// BUGBUG                         wp
-// BUGBUG                     )
-// BUGBUG                     |
-// BUGBUG                     MSF_EROAD
-// BUGBUG                 )
-// BUGBUG             );
-// BUGBUG         }
+        if(wp == MYRROR_PLANE)
+        {
+            /* OGBUG  these are not the city coordinates */
+            /* OGBUG  at exactly wx=60,wy=40,wp=1 this causes an AVRL */
+/*
+If no city pair qualifies on Myrror (no roads built), wx and wy retain (60, 40) from the flag-clear loop's exit. SET_MAP_SQUARE_FLAG(60, 40, 1, …) indexes _map_square_flags[5460] — out of bounds even with WORLD_OVERFLOW padding (which gets you to byte 5040, short by ~420 bytes). For this particular seed, the build loops set (43, 9) so you're safe. For other seeds, the AVRL drake178 mentioned will fire.
+OOB-safety follow-up — same allocation-padding pattern you used for _world_maps and the Tundra OOB.
+*/
+            SET_MAP_SQUARE_FLAG(
+                wx,
+                wy,
+                wp,
+                (
+                    GET_MAP_SQUARE_FLAG(
+                        wx,
+                        wy,
+                        wp
+                    )
+                    |
+                    MSF_EROAD
+                )
+            );
+        }
     }
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
