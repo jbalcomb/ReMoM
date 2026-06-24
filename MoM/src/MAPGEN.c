@@ -3872,8 +3872,7 @@ void Desert_Autotile(void)
 ; mountain and hill ranges, as well as replace tundra
 ; map squares
 ;
-; WARNING: the hills and mountains would generate a
-;  break at the X wrap boundary
+; WARNING: the hills and mountains would generate a break at the X wrap boundary
 ; BUG: turns certain single map square hills into grasslands
 */
 /*
@@ -3906,6 +3905,7 @@ void Simtex_Autotiling(void)
 
     terrtype = (int16_t *)Near_Allocate_First((5 * 512));
     LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, (SAMB_ptr)terrtype, 0, 5, 512);
+
 /*
     BEGIN:  Ocean
 */
@@ -3922,9 +3922,9 @@ void Simtex_Autotiling(void)
                     adj_wx = (wx - 1);
                     if(adj_wx < 0) { adj_wx += WORLD_WIDTH; }
                     if(
-                        (p_world_map[wp][wy][adj_wx] >= tte_Grasslands)
+                        (p_world_map[wp][(wy - 1)][adj_wx] >= tte_Grasslands)
                         &&
-                        (p_world_map[wp][wy][adj_wx] <= tte_Hills)
+                        (p_world_map[wp][(wy - 1)][adj_wx] <= tte_Hills)
                         &&
                         ((wy - 1) >= 0)
                     )
@@ -3958,12 +3958,6 @@ void Simtex_Autotiling(void)
                     // E: {+1,0}
                     adj_wx = (wx + 1);
                     if(adj_wx >= WORLD_WIDTH) { adj_wx -= WORLD_WIDTH; }
-                    // if(wx == 3 && wy == 12 && wp == 0)
-                    // {
-                    //     // DBG_current_terrain_type = p_world_map[wp][wy][adj_wx];
-                    //     STU_DEBUG_BREAK();
-                    //     DBG_current_terrain_type  = p_world_map[wp][wy][adj_wx];
-                    // }
                     if(
                         (p_world_map[wp][wy][adj_wx] >= tte_Grasslands)
                         &&
@@ -3980,7 +3974,7 @@ void Simtex_Autotiling(void)
                         &&
                         (p_world_map[wp][(wy + 1)][adj_wx] <= tte_Hills)
                         &&
-                        (wy < WORLD_HEIGHT)  // BUGBUG  should be (wy + 1)
+                        (wy < WORLD_HEIGHT)  /* OGBUG  should be (wy + 1) */
                     )
                     {
                         mask += 16;
@@ -3991,7 +3985,7 @@ void Simtex_Autotiling(void)
                         &&
                         (p_world_map[wp][(wy + 1)][wx] <= tte_Hills)
                         &&
-                        (wy < WORLD_HEIGHT)  // BUGBUG  should be (wy + 1)
+                        (wy < WORLD_HEIGHT)  /* OGBUG  should be (wy + 1) */
                     )
                     {
                         mask += 32;
@@ -4004,7 +3998,7 @@ void Simtex_Autotiling(void)
                         &&
                         (p_world_map[wp][(wy + 1)][adj_wx] <= tte_Hills)
                         &&
-                        (wy < WORLD_HEIGHT)  // BUGBUG  should be (wy + 1)
+                        (wy < WORLD_HEIGHT)  /* OGBUG  should be (wy + 1) */
                     )
                     {
                         mask += 64;
@@ -4032,6 +4026,7 @@ void Simtex_Autotiling(void)
 /*
     END:  Ocean
 */
+
 /*
     BEGIN:  Mountain
 */
@@ -4046,6 +4041,7 @@ void Simtex_Autotiling(void)
                     continue;
                 }
                 mask = 0;
+                // NW: {-1,-1}
                 if(
                     (
                         (p_world_map[wp][(wy - 1)][(wx - 1)] == tte_Mountain)
@@ -4064,6 +4060,7 @@ void Simtex_Autotiling(void)
                 {
                     mask += 1;
                 }
+                // N: {0,-1}
                 if(
                     (
                         (p_world_map[wp][(wy - 1)][wx] == tte_Mountain)
@@ -4080,6 +4077,7 @@ void Simtex_Autotiling(void)
                 {
                     mask += 2;
                 }
+                // NE: {1,-1}
                 if(
                     (
                         (p_world_map[wp][(wy - 1)][(wx + 1)] == tte_Mountain)
@@ -4098,6 +4096,7 @@ void Simtex_Autotiling(void)
                 {
                     mask += 4;
                 }
+                // E: {1,0}
                 if(
                     (
                         (p_world_map[wp][wy][(wx + 1)] == tte_Mountain)
@@ -4114,6 +4113,7 @@ void Simtex_Autotiling(void)
                 {
                     mask += 8;
                 }
+                // SE: {1,1}
                 if(
                     (
                         (p_world_map[wp][(wy + 1)][(wx + 1)] == tte_Mountain)
@@ -4127,14 +4127,14 @@ void Simtex_Autotiling(void)
                     &&
                     ((wx + 1) < WORLD_WIDTH)
                     &&
-                    (wy < WORLD_HEIGHT)  // KNOWNBUG should be (wy + 1)
+                    (wy < WORLD_HEIGHT)  /* OGBUG should be (wy + 1) */
                 )
                 {
 
                     mask += 16;
 
                 }
-
+                // S: {0,1}
                 if(
                     (
                         (p_world_map[wp][(wy + 1)][wx] == tte_Mountain)
@@ -4146,14 +4146,14 @@ void Simtex_Autotiling(void)
                         )
                     )
                     &&
-                    (wy < WORLD_HEIGHT)  // KNOWNBUG should be (wy + 1)
+                    (wy < WORLD_HEIGHT)  /* OGBUG should be (wy + 1) */
                 )
                 {
 
                     mask += 32;
 
                 }
-
+                // SW: {-1,1}
                 if(
                     (
                         (p_world_map[wp][(wy + 1)][(wx - 1)] == tte_Mountain)
@@ -4167,11 +4167,12 @@ void Simtex_Autotiling(void)
                     &&
                     ((wx - 1) >= 0)
                     &&
-                    (wy < WORLD_HEIGHT)  // KNOWNBUG should be (wy + 1)
+                    (wy < WORLD_HEIGHT)  /* OGBUG should be (wy + 1) */
                 )
                 {
                     mask += 64;
                 }
+                // W: {-1,0}
                 if(
                     (
                         (p_world_map[wp][wy][(wx - 1)] == tte_Mountain)
@@ -4190,7 +4191,6 @@ void Simtex_Autotiling(void)
                 }
                 if(mask > 0)
                 {
-                    /* CLAUDE bugfix: was terrtype[(512 + mask)] — 512 is the byte offset (0x200), not the int16_t index; correct array index is 256 */
                     terrain_subtype_index = terrtype[(256 + mask)];
                     p_world_map[wp][wy][wx] = terrain_subtype_index;
                 }
@@ -4275,7 +4275,6 @@ void Simtex_Autotiling(void)
                 {
                     adj_wx -= WORLD_WIDTH;
                 }
-
                 if(
                     (p_world_map[wp][wy][adj_wx] != tte_Tundra)
                     &&
@@ -4284,6 +4283,8 @@ void Simtex_Autotiling(void)
                         ||
                         (p_world_map[wp][wy][adj_wx] > _TerType_Count)
                     )
+                    &&
+                    ((wx + 1) < WORLD_WIDTH)
                 )
                 {
                     mask += 8;
@@ -4294,10 +4295,8 @@ void Simtex_Autotiling(void)
                 {
                     adj_wx -= WORLD_WIDTH;
                 }
-                // HACK  BUGBUG  AVRL  overruns p_world_map because of wy=39+1 on wp=1
+                /* OGBUG  AVRL  overflows p_world_map, because of wy=39+1 on wp=1 */
                 if(
-                    !(wp == 1 && wy == 39)
-                    &&
                     (p_world_map[wp][(wy + 1)][adj_wx] != tte_Tundra)
                     &&
                     (
@@ -4306,16 +4305,14 @@ void Simtex_Autotiling(void)
                         (p_world_map[wp][(wy + 1)][adj_wx] > _TerType_Count)
                     )
                     &&
-                    (wy < WORLD_HEIGHT)  // BUGBUG  ((wy + 1) < WORLD_HEIGHT)
+                    (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
                 )
                 {
                     mask += 16;
                 }
                 // S: {0,+1}
-                // HACK  BUGBUG  AVRL  overruns p_world_map because of wy=39+1 on wp=1
+                /* OGBUG  AVRL  overflows p_world_map, because of wy=39+1 on wp=1 */
                 if(
-                    !(wp == 1 && wy == 39)
-                    &&
                     (p_world_map[wp][(wy + 1)][wx] != tte_Tundra)
                     &&
                     (
@@ -4324,7 +4321,7 @@ void Simtex_Autotiling(void)
                         (p_world_map[wp][(wy + 1)][wx] > _TerType_Count)
                     )
                     &&
-                    (wy < WORLD_HEIGHT)  // BUGBUG  ((wy + 1) < WORLD_HEIGHT)
+                    (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
                 )
                 {
                     mask += 32;
@@ -4335,10 +4332,8 @@ void Simtex_Autotiling(void)
                 {
                     adj_wx += WORLD_WIDTH;
                 }
-                // HACK  BUGBUG  AVRL  overruns p_world_map because of wy=39+1 on wp=1
+                /* OGBUG  AVRL  overflows p_world_map, because of wy=39+1 on wp=1 */
                 if(
-                    !(wp == 1 && wy == 39)
-                    &&
                     (p_world_map[wp][(wy + 1)][adj_wx] != tte_Tundra)
                     &&
                     (
@@ -4347,7 +4342,7 @@ void Simtex_Autotiling(void)
                         (p_world_map[wp][(wy + 1)][adj_wx] > _TerType_Count)
                     )
                     &&
-                    (wy < WORLD_HEIGHT)  // BUGBUG  ((wy + 1) < WORLD_HEIGHT)
+                    (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
                 )
                 {
                     mask += 64;
@@ -4397,12 +4392,14 @@ void Simtex_Autotiling(void)
                  mask = 0;
                  // NW: {-1,-1}
                  if(
-                     (p_world_map[wp][(wy - 1)][(wx - 1)] != tte_Hills)
-                     &&
+                    (
+                        (p_world_map[wp][(wy - 1)][(wx - 1)] == tte_Hills)
+                        ||
                      (
                          (p_world_map[wp][(wy - 1)][(wx - 1)] >= _Hills_0010)
                          &&
                          (p_world_map[wp][(wy - 1)][(wx - 1)] <= _1Hills2)
+                        )
                      )
                      &&
                      ((wx - 1) >= 0)
@@ -4414,12 +4411,14 @@ void Simtex_Autotiling(void)
                  }
                  // N: {0,-1}
                  if(
-                     (p_world_map[wp][(wy - 1)][wx] != tte_Hills)
-                     &&
+                    (
+                        (p_world_map[wp][(wy - 1)][wx] == tte_Hills)
+                        ||
                      (
                          (p_world_map[wp][(wy - 1)][wx] >= _Hills_0010)
                          &&
                          (p_world_map[wp][(wy - 1)][wx] <= _1Hills2)
+                        )
                      )
                      &&
                      ((wy - 1) >= 0)
@@ -4429,12 +4428,14 @@ void Simtex_Autotiling(void)
                  }
                  // NE: {+1,-1}
                  if(
-                     (p_world_map[wp][(wy - 1)][(wx + 1)] != tte_Hills)
-                     &&
+                    (
+                        (p_world_map[wp][(wy - 1)][(wx + 1)] == tte_Hills)
+                        ||
                      (
                          (p_world_map[wp][(wy - 1)][(wx + 1)] >= _Hills_0010)
                          &&
                          (p_world_map[wp][(wy - 1)][(wx + 1)] <= _1Hills2)
+                        )
                      )
                      &&
                      ((wx + 1) < WORLD_WIDTH)
@@ -4446,12 +4447,14 @@ void Simtex_Autotiling(void)
                  }
                  // E: {+1,0}
                  if(
-                     (p_world_map[wp][wy][(wx + 1)] != tte_Hills)
-                     &&
+                    (
+                        (p_world_map[wp][wy][(wx + 1)] == tte_Hills)
+                        ||
                      (
                          (p_world_map[wp][wy][(wx + 1)] >= _Hills_0010)
                          &&
                          (p_world_map[wp][wy][(wx + 1)] <= _1Hills2)
+                        )
                      )
                      &&
                      ((wx + 1) < WORLD_WIDTH)
@@ -4461,61 +4464,69 @@ void Simtex_Autotiling(void)
                  }
                  // SE: {+1,+1}
                  if(
-                     (p_world_map[wp][(wy + 1)][(wx + 1)] != tte_Hills)
-                     &&
+                    (
+                        (p_world_map[wp][(wy + 1)][(wx + 1)] == tte_Hills)
+                        ||
                      (
                          (p_world_map[wp][(wy + 1)][(wx + 1)] >= _Hills_0010)
                          &&
                          (p_world_map[wp][(wy + 1)][(wx + 1)] <= _1Hills2)
+                        )
                      )
                      &&
                      ((wx + 1) < WORLD_WIDTH)
                      &&
-                     (wy < WORLD_HEIGHT)  // BUGBUG  ((wy + 1) < WORLD_HEIGHT)
+                    (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
                  )
                  {
                      mask += 16;
                  }
                  // S: {0,+1}
                  if(
-                     (p_world_map[wp][(wy + 1)][wx] != tte_Hills)
-                     &&
+                    (
+                        (p_world_map[wp][(wy + 1)][wx] == tte_Hills)
+                        ||
                      (
                          (p_world_map[wp][(wy + 1)][wx] >= _Hills_0010)
                          &&
                          (p_world_map[wp][(wy + 1)][wx] <= _1Hills2)
+                        )
                      )
                      &&
-                     (wy < WORLD_HEIGHT)  // BUGBUG  ((wy + 1) < WORLD_HEIGHT)
+                    (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
                  )
                  {
                      mask += 32;
                  }
                  // SW: {-1,+1}
                  if(
-                     (p_world_map[wp][(wy + 1)][(wx - 1)] != tte_Hills)
-                     &&
+                    (
+                        (p_world_map[wp][(wy + 1)][(wx - 1)] == tte_Hills)
+                        ||
                      (
                          (p_world_map[wp][(wy + 1)][(wx - 1)] >= _Hills_0010)
                          &&
                          (p_world_map[wp][(wy + 1)][(wx - 1)] <= _1Hills2)
+                        )
                      )
                      &&
                      ((wx - 1) >= 0)
                      &&
-                     (wy < WORLD_HEIGHT)  // BUGBUG  ((wy + 1) < WORLD_HEIGHT)
+                    (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
                  )
                  {
                      mask += 64;
                  }
                  // W: {-1,0}
                  if(
-                     (p_world_map[wp][wy][(wx - 1)] != tte_Hills)
-                     &&
+                    (
+                        (p_world_map[wp][wy][(wx - 1)] == tte_Hills)
+                        ||
                      (
                          (p_world_map[wp][wy][(wx - 1)] >= _Hills_0010)
                          &&
                          (p_world_map[wp][wy][(wx - 1)] <= _1Hills2)
+                        )
                      )
                      &&
                      ((wx - 1) >= 0)
@@ -4523,10 +4534,9 @@ void Simtex_Autotiling(void)
                  {
                      mask += 128;
                  }
-                 // NOTE(Drake178): PATCHED here to fix the no-cardinal conversion that causes the square to become Grassland instead
+                /* OGBUG  no-cardinal conversion causes the square to become Grassland instead */
                  if(mask > 0)
                  {
-                    /* CLAUDE bugfix: was terrtype[(512 + mask)] — 512 is the byte offset (0x200), not the int16_t index; correct array index is 256 */
                     p_world_map[wp][wy][wx] = (16 + terrtype[(256 + mask)]);
                  }
              }
