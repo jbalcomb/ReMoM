@@ -16,6 +16,7 @@
 #include "demo_harness.h"
 #include "demo_effects.h"
 
+#include "../MoX/src/MOX_BASE.h"
 #include "../MoX/src/Video.h"   /* VGA_PartCopyFromF3(), current_video_page, video_page_buffer, draw_page_num */
 
 #define DEMO_REST_MILLIES   700   /* steady image before/after each quake */
@@ -33,7 +34,7 @@ static void Effect_Earthquake_Run(void)
     /* The clean base image lives in the F3 save page; loaded once.
        Default is the overland screen; override with: demo_vga earthquake <LBX> <entry> */
     {
-        const char * lbx = (Demo_Arg(0) != NULL) ? Demo_Arg(0) : "MAIN";
+        const char * lbx = (Demo_Arg(0) != ST_NULL) ? Demo_Arg(0) : "MAIN";
         int entry = Demo_Arg_Int(1, 0);
         int palette = Demo_Arg_Int(2, 0);
 
