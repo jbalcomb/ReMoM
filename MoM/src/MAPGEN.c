@@ -4709,8 +4709,7 @@ void Shuffle_Terrains(void)
  *
  * @details
  * Step-by-step behavior:
- * 1) Picks a random interior base square (`4..WORLD_WIDTH-4`,
- *    `4..WORLD_HEIGHT-4`).
+ * 1) Picks a random interior base square (`4..WORLD_WIDTH-4`,`4..WORLD_HEIGHT-4`).
  * 2) Rejects immediately if the base square is terrain-special, ocean-adjacent
  *    (including center check), mountain, hills, node, or already river.
  * 3) Initializes path buffers with the base square and chooses one random
@@ -4740,19 +4739,19 @@ void Shuffle_Terrains(void)
  */
 int16_t River_Path(int16_t wp)
 {
-    int16_t niu_directions_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /* BUGBUG  as coded, completely useless */
+    int16_t niu_directions_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /* OGBUG  as coded, completely useless */
     int16_t wy_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t wx_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t end_wy = 0;
     int16_t end_wx = 0;
-    int16_t niu_prev_dir = 0;  /* BUGBUG  as coded, completely useless */
+    int16_t niu_prev_dir = 0;  /* OGBUG  as coded, completely useless */
     int16_t next_wy = 0;
     int16_t next_wx = 0;
     int16_t attemps = 0;
     int16_t reached_mouth = 0;
     int16_t direction = 0;
     int16_t itr = 0;
-    int16_t same_dir = 0;  /* BUGBUG  as coded, should just be a 'first run' flag; looks like new_direction from Generate_Landmasses(), c&p error? */
+    int16_t same_dir = 0;  /* OGBUG  as coded, should just be a 'first run' flag; looks like new_direction from Generate_Landmasses(), c&p error? */
     int16_t downstream = 0;
     int16_t base_wy = 0;
     int16_t base_wx = 0;
@@ -4760,23 +4759,28 @@ int16_t River_Path(int16_t wp)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    base_wx = (4 + Random((WORLD_WIDTH  - 8)));
-    base_wy = (4 + Random((WORLD_HEIGHT - 8)));
+    base_wx = (4 + Random((WORLD_WIDTH  - 8)));  /* start 4 from left, end 4 from right */
+    base_wy = (4 + Random((WORLD_HEIGHT - 8)));  /* start 4 from top, end 4 from bottom */
 
+    /* bugged: 162, 163, 165, 180, */
+    // tte_Grasslands  = 0xA2, /* 162  AKA tt_Grasslands1 */
+    // tte_Forest1     = 0xA3, /* 163  AKA tt_Forest1     */
+    // _AllDesert1     = 0xA5, /* 165  AKA tt_Desert1     */
+    // tte_Grasslands4 = 0xB4, /* 180  AKA tt_Grasslands4 */
     if(_map_square_terrain_specials[((wp * WORLD_SIZE) + (base_wy * WORLD_WIDTH) + base_wx)] != 0) { return ST_FALSE; }
     if(Square_Is_Ocean_NewGame((base_wx - 1), (base_wy - 1), wp) == ST_TRUE) { return ST_FALSE; } /* NW */
     if(Square_Is_Ocean_NewGame((base_wx - 1), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; } /* W  */
     if(Square_Is_Ocean_NewGame((base_wx - 1), (base_wy + 1), wp) == ST_TRUE) { return ST_FALSE; } /* SW */
-    if(Square_Is_Ocean_NewGame((base_wx    ), (base_wy - 1), wp) == ST_TRUE) { return ST_FALSE; } /* N */
-    if(Square_Is_Ocean_NewGame((base_wx    ), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; } /* C */
+    if(Square_Is_Ocean_NewGame((base_wx    ), (base_wy - 1), wp) == ST_TRUE) { return ST_FALSE; } /* N  */
+    if(Square_Is_Ocean_NewGame((base_wx    ), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; } /* C  */
     if(Square_Is_Ocean_NewGame((base_wx    ), (base_wy + 1), wp) == ST_TRUE) { return ST_FALSE; } /* S  */
     if(Square_Is_Ocean_NewGame((base_wx + 1), (base_wy - 1), wp) == ST_TRUE) { return ST_FALSE; } /* NE */
-    if(Square_Is_Ocean_NewGame((base_wx + 1), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; } /* W */
+    if(Square_Is_Ocean_NewGame((base_wx + 1), (base_wy    ), wp) == ST_TRUE) { return ST_FALSE; } /* W  */
     if(Square_Is_Ocean_NewGame((base_wx + 1), (base_wy + 1), wp) == ST_TRUE) { return ST_FALSE; } /* SE */
     if(Square_Is_Mountain_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
-    if(Square_Is_Hills_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
-    if(Square_Is_Node_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
-    if(Square_Is_River_NewGame(base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
+    if(Square_Is_Hills_NewGame(   base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
+    if(Square_Is_Node_NewGame(    base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
+    if(Square_Is_River_NewGame(   base_wx, base_wy, wp) == ST_TRUE) { return ST_FALSE; }
 
     wx_array[0] = base_wx;
     wy_array[0] = base_wy;
@@ -4829,9 +4833,9 @@ int16_t River_Path(int16_t wp)
         if(_map_square_terrain_specials[((wp * WORLD_SIZE) + (next_wy * WORLD_WIDTH) + next_wx)] != 0) { continue; }
         /* Check for invalid terrain on next tile */
         if(Square_Is_Mountain_NewGame(next_wx, next_wy, wp) == ST_TRUE) { continue; }
-        if(Square_Is_Hills_NewGame(next_wx, next_wy, wp)    == ST_TRUE) { continue; }
-        if(Square_Is_Node_NewGame(next_wx, next_wy, wp)    == ST_TRUE) { continue; }
-        if(Square_Is_Desert_NewGame(next_wx, next_wy, wp)   == ST_TRUE) { continue; }
+        if(Square_Is_Hills_NewGame(   next_wx, next_wy, wp) == ST_TRUE) { continue; }
+        if(Square_Is_Node_NewGame(    next_wx, next_wy, wp) == ST_TRUE) { continue; }
+        if(Square_Is_Desert_NewGame(  next_wx, next_wy, wp) == ST_TRUE) { continue; }
 
         /* If we hit another river, we have an outflow */
         if(Square_Is_River_NewGame(next_wx, next_wy, wp) == ST_TRUE) { reached_mouth = ST_TRUE; }
@@ -4896,7 +4900,7 @@ int16_t River_Path(int16_t wp)
     /* Write river tiles to world map */
     for(itr = 0; itr < length; itr++)
     {
-        p_world_map[wp][wy_array[itr]][wx_array[itr]] = 1000;
+        p_world_map[wp][wy_array[itr]][wx_array[itr]] = tt_River_Placeholder;
     }
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
