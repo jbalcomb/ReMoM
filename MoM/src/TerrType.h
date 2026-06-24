@@ -110,7 +110,7 @@ enum OVL_Tiles_Extended
     _Shore00100000  = 0x1B,
     _Shore01100000  = 0x1C,
     _Shore11100000  = 0x1D,
-    _Shore11000000  = 0x1E,
+    _Shore11000000  = 0x1E, /* 30 */
     _Shore10000000  = 0x1F,  /* AKA _Ocean with one adjacent land square - NW */
     _Shore10100010  = 0x20,
     _Shore10101010  = 0x21,

@@ -1,26 +1,26 @@
-MAPGEN-River_Path.md
+MAPGEN-Generate_River.md
 
-C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\River_Path.asm
-C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\River_Path.c
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\Generate_River.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\Generate_River.c
 
 Init_New_Game()
-    |-> for(tries<2000 && River_Path(ARCANUS) != 0) { }   [MAPGEN.c:382]
-    |-> for(tries<2000 && River_Path(MYRROR)  != 0) { }   [MAPGEN.c:383]
+    |-> for(tries<2000 && Generate_River(ARCANUS) == ST_FALSE) { }   [MAPGEN.c:382]
+    |-> for(tries<2000 && Generate_River(MYRROR)  == ST_FALSE) { }   [MAPGEN.c:383]
 
 ---
 
-# `River_Path` — Walkthrough
+# `Generate_River` — Walkthrough
 
 | Function | Location | Role |
 |---|---|---|
-| `River_Path` | [MAPGEN.c:4154-4283](../../MoM/src/MAPGEN.c#L4154-L4283) | Tries to grow one river: pick a valid inland start, random-walk "downstream" toward an outflow (ocean or an existing river), and on success stamp the tiles as river. Returns `ST_TRUE` if it placed one (caller retries), `ST_FALSE` if this attempt failed. |
-| `River_Path__GEMINI` | [MAPGEN.c:4286-4430](../../MoM/src/MAPGEN.c#L4286-L4430) (inside `#if 0`) | Reference IDA→C translation (= Piethawn `*.c`). Matches the asm; kept for cross-reference. |
+| `Generate_River` | [MAPGEN.c:4154-4283](../../MoM/src/MAPGEN.c#L4154-L4283) | Tries to grow one river: pick a valid inland start, random-walk "downstream" toward an outflow (ocean or an existing river), and on success stamp the tiles as river. Returns `ST_TRUE` if it placed one (caller retries), `ST_FALSE` if this attempt failed. |
+| `Generate_River__GEMINI` | [MAPGEN.c:4286-4430](../../MoM/src/MAPGEN.c#L4286-L4430) (inside `#if 0`) | Reference IDA→C translation (= Piethawn `*.c`). Matches the asm; kept for cross-reference. |
 
-Verified faithful to the disassembly `River_Path.asm` (structure and `Random()` sequence 1:1), carrying preserved OG dead code (the `niu_*` arrays/vars) — see below.
+Verified faithful to the disassembly `Generate_River.asm` (structure and `Random()` sequence 1:1), carrying preserved OG dead code (the `niu_*` arrays/vars) — see below.
 
 ## Purpose
 
-Called in a retry loop by `Init_New_Game` — `for(tries=0; tries < 2000 && River_Path(plane) != 0; tries++)` per plane. Each call is one placement attempt:
+Called in a retry loop by `Init_New_Game` — `for(tries=0; tries < 2000 && Generate_River(plane) != 0; tries++)` per plane. Each call is one placement attempt:
 
 1. Roll an inland start point; reject if it has a terrain special, touches Ocean (3×3), or is Mountain/Hills/Node/River.
 2. Random-walk: each step usually continues `downstream` (50%) or, after the first step, picks a non-reverse direction; reject-and-retry steps onto special/Mountain/Hills/Node/Desert tiles; stop (`Have_Outflow`) on reaching an existing river or Ocean.
@@ -30,11 +30,11 @@ Called in a retry loop by `Init_New_Game` — `for(tries=0; tries < 2000 && Rive
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_New_Game` / MAPGEN | [MAPGEN.c:382-383](../../MoM/src/MAPGEN.c#L382-L383) | Up to 2000 attempts per plane; loop stops when `River_Path` returns `ST_FALSE`. |
+| `Init_New_Game` / MAPGEN | [MAPGEN.c:382-383](../../MoM/src/MAPGEN.c#L382-L383) | Up to 2000 attempts per plane; loop stops when `Generate_River` returns `ST_FALSE`. |
 
 ## Code walk
 
-Line refs are production [MAPGEN.c](../../MoM/src/MAPGEN.c); cross-checked against `River_Path.asm` (the authority). `Random(n)` returns `1..n` ([random.c:263](../../MoX/src/random.c#L263)).
+Line refs are production [MAPGEN.c](../../MoM/src/MAPGEN.c); cross-checked against `Generate_River.asm` (the authority). `Random(n)` returns `1..n` ([random.c:263](../../MoX/src/random.c#L263)).
 
 ### Start selection ([4176-4201](../../MoM/src/MAPGEN.c#L4176-L4201))
 
@@ -73,7 +73,7 @@ GEMINI matches the asm and production behaviorally; the only difference is cosme
 
 ## Related references
 
-- `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\River_Path.asm` — IDA Pro 5.5 disassembly (the authority; `loc_4900D` = loop cond, `loc_49016` = the `length<4` check).
+- `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\Generate_River.asm` — IDA Pro 5.5 disassembly (the authority; `loc_4900D` = loop cond, `loc_49016` = the `length<4` check).
 - [MAPGEN.c:4286-4430](../../MoM/src/MAPGEN.c#L4286-L4430) — `__GEMINI` reference translation (`#if 0`).
 - [MAPGEN.c:382-383](../../MoM/src/MAPGEN.c#L382-L383) — the retry-loop call sites.
 - `MOM_DEF.h` — `WORLD_WIDTH`/`WORLD_HEIGHT` (60/40), `WORLD_SIZE` (2400).

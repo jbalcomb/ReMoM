@@ -84,10 +84,10 @@ void Simtex_Autotiling(void);
 void Shuffle_Terrains(void);
 
 // MGC o51p22
-int16_t River_Path(int16_t wp);
+int16_t Generate_River(int16_t wp);
 
 // MGC o51p23
-void River_Terrain(int16_t wp);
+void River_Autotile(int16_t wp);
 
 // MGC o51p24
 void Generate_Neutral_Cities(int16_t wp);

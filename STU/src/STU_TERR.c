@@ -146,7 +146,7 @@ static const char * Terrain_Group_Name(int group)
     return "";
 }
 
-void Find_River_Path_Candidates(int16_t wp)
+void Find_Generate_River_Candidates(int16_t wp)
 {
     int16_t wy = 0;
     int16_t wx = 0;

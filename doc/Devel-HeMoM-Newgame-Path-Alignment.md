@@ -280,8 +280,8 @@ After Stage 1 the RNG cursor sits at the seed Init_Drivers established. Any subs
 | 3.14 | `Generate_Terrain_Specials(wp)` × 2 | **many** | Mineral specials per terrain type (Random rolls per square). Also **zeros `_map_square_flags[]` per plane** at [MAPGEN.c:5610-5620](../MoM/src/MAPGEN.c#L5610-L5620). |
 | 3.15 | `Generate_Roads(wp)` × 2 | 0 | Pathfinding-based road placement between neutral cities. *Re-zeros the flag plane it just landed on.* |
 | 3.16 | `Simex_Autotiling()` | 0 | Tile-type cleanup. |
-| 3.17 | `River_Path(wp)` (looped) | **many** | Random walker, up to 2000 tries per river. |
-| 3.18 | `River_Terrain(wp)` × 2 | 0 (terrain rewrite) | Converts walker output to river tiles. |
+| 3.17 | `Generate_River(wp)` (looped) | **many** | Random walker, up to 2000 tries per river. |
+| 3.18 | `River_Autotile(wp)` × 2 | 0 (terrain rewrite) | Converts walker output to river tiles. |
 | 3.19 | `Desert_Autotile()` | 0 | Sand/desert tile cleanup. |
 | 3.20 | `Shuffle_Terrains()` | **many** | Per-square variant index randomization. |
 | 3.21 | [Movement_Mode_Cost_Maps(wp)](../MoM/src/MAPGEN.c#L6073) × 2 | 0 | Builds `movement_mode_cost_maps[]` from `terrain_stats_table` + `MSF_ROAD` overlay. |

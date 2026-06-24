@@ -10,7 +10,7 @@ MapGen uses 1000 as temporary River terrain type
 
 
 
-## River_Path()
+## Generate_River()
 1. pick a random starting location
 2. validate location
     * square does not have a Terrain Special
@@ -46,7 +46,7 @@ curr_wx vs. next_wx in a dir_chg loop
     Generate_Climate_Terrain_Types()  ...does all five directions ...takes
     Generate_Landmasses()             ...does 3-5 directions      ...takes gol steps 5,10,20
     Make_Aura()
-    River_Path()
+    Generate_River()
 
 Generate_Climate_Terrain_Types()
 ...new_direction = ST_UNDEFINED;  // Eh? c&p error?
@@ -65,7 +65,7 @@ Make_Aura()
             curr_wx = (wx + dir_chg_tbl_wx[dir_chg_wx]);
             curr_wy = (wy + dir_chg_tbl_wy[dir_chg_wy]);
 
-River_Path()
+Generate_River()
         next_ws = Tile_Xs[(length - 1)] + dir_chg_tbl_wx[next_dir];
         next_wy = Tile_Ys[(length - 1)] + dir_chg_tbl_wy[next_dir];
 

@@ -2,7 +2,7 @@
 
 # Rivers Debug
 build a test-case
-initial random wx,wy from the first successful run of River_Path(0)?
+initial random wx,wy from the first successful run of Generate_River(0)?
 
 base_wx  41
 base_wy  26
@@ -17,31 +17,31 @@ wy_array = 0x00000094af7ff2c8 {0x001a, 0x001a, 0x001b, 0x001b, 0x001b, 0x0000, 0
 
 tt_Forest1     = 0xA3,
 
-River_Path(): base_wx = 41, base_wy = 26
-River_Path(): DBG_terrain_type: 163
-River_Path(): DBG_terrain_special: 0
-River_Path(): downstream: 3
-River_Path(): direction: 3
-River_Path(): next_wx = 42, next_wy = 26
-River_Path(): direction: 0
-River_Path(): next_wx = 42, next_wy = 27
-River_Path(): direction: 3
-River_Path(): next_wx = 43, next_wy = 27
-River_Path(): direction: 3
-River_Path(): next_wx = 44, next_wy = 27
+Generate_River(): base_wx = 41, base_wy = 26
+Generate_River(): DBG_terrain_type: 163
+Generate_River(): DBG_terrain_special: 0
+Generate_River(): downstream: 3
+Generate_River(): direction: 3
+Generate_River(): next_wx = 42, next_wy = 26
+Generate_River(): direction: 0
+Generate_River(): next_wx = 42, next_wy = 27
+Generate_River(): direction: 3
+Generate_River(): next_wx = 43, next_wy = 27
+Generate_River(): direction: 3
+Generate_River(): next_wx = 44, next_wy = 27
 
-River_Path(): base_wx = 41, base_wy = 26
-River_Path(): DBG_terrain_type: 163 A3
-River_Path(): DBG_terrain_special: 0 0
-River_Path(): downstream: 3
-River_Path(): direction: 3
-River_Path(): next_wx = 42, next_wy = 26
-River_Path(): direction: 0
-River_Path(): next_wx = 42, next_wy = 27
-River_Path(): direction: 3
-River_Path(): next_wx = 43, next_wy = 27
-River_Path(): direction: 3
-River_Path(): next_wx = 44, next_wy = 27
+Generate_River(): base_wx = 41, base_wy = 26
+Generate_River(): DBG_terrain_type: 163 A3
+Generate_River(): DBG_terrain_special: 0 0
+Generate_River(): downstream: 3
+Generate_River(): direction: 3
+Generate_River(): next_wx = 42, next_wy = 26
+Generate_River(): direction: 0
+Generate_River(): next_wx = 42, next_wy = 27
+Generate_River(): direction: 3
+Generate_River(): next_wx = 43, next_wy = 27
+Generate_River(): direction: 3
+Generate_River(): next_wx = 44, next_wy = 27
 
 1000
 mask 2  E

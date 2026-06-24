@@ -1859,12 +1859,12 @@ void Simulate_World_Map_Generation(void)
 
         for(rivers = 0; rivers < NUM_RIVERS; rivers++)
         {
-            for(tries = 0; ((tries < 2000) && (River_Path(ARCANUS_PLANE) != 0)); tries++) { }
-            for(tries = 0; ((tries < 2000) && (River_Path(MYRROR_PLANE)  != 0)); tries++) { }
+            for(tries = 0; ((tries < 2000) && (Generate_River(ARCANUS_PLANE) != 0)); tries++) { }
+            for(tries = 0; ((tries < 2000) && (Generate_River(MYRROR_PLANE)  != 0)); tries++) { }
         }
 
-        River_Terrain(ARCANUS_PLANE);
-        River_Terrain(MYRROR_PLANE);
+        River_Autotile(ARCANUS_PLANE);
+        River_Autotile(MYRROR_PLANE);
 
         Desert_Autotile();
 

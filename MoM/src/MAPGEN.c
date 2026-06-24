@@ -588,14 +588,14 @@ void Init_New_Game(void)
 
     for(rivers = 0; rivers < NUM_RIVERS; rivers++)
     {
-        for(tries = 0; ((tries < 2000) && (River_Path(ARCANUS_PLANE) == ST_FALSE)); tries++) { }
-        for(tries = 0; ((tries < 2000) && (River_Path(MYRROR_PLANE)  == ST_FALSE)); tries++) { }
+        for(tries = 0; ((tries < 2000) && (Generate_River(ARCANUS_PLANE) == ST_FALSE)); tries++) { }
+        for(tries = 0; ((tries < 2000) && (Generate_River(MYRROR_PLANE)  == ST_FALSE)); tries++) { }
     }
-    gd_dump_world_map("21_River_Path_W");
+    gd_dump_world_map("21_Generate_River_W");
 
-    River_Terrain(ARCANUS_PLANE);
-    River_Terrain(MYRROR_PLANE);
-    gd_dump_world_map("22_River_Terrain_W");
+    River_Autotile(ARCANUS_PLANE);
+    River_Autotile(MYRROR_PLANE);
+    gd_dump_world_map("22_River_Autotile_W");
 
     Desert_Autotile();
     gd_dump_landmasses("23_Desert_Autotile_L");
@@ -946,7 +946,7 @@ void Generate_Towers(void)
      * min_distance relaxation.  Inject the captured value instead of hardcoding it. */
     {
         long ci_tries;
-        if (gd_ci_get("tries", "gen_towers", &ci_tries, 1) == 1) {
+        if(gd_ci_get("tries", "gen_towers", &ci_tries, 1) == 1) {
             tries = (int16_t)ci_tries;
         }
     }
@@ -1536,7 +1536,7 @@ void Generate_Home_City__GEMINI(void)
         Invalid = e_ST_FALSE;
 
         /* Check if terrain is Ocean */
-        if(_world_maps[wp * (e_WORLD_WIDTH * e_WORLD_HEIGHT) + wy * e_WORLD_WIDTH + wx] == tt_Ocean1)
+        if(_world_maps[wp * (WORLD_WIDTH * e_WORLD_HEIGHT) + wy * WORLD_WIDTH + wx] == tt_Ocean1)
         {
             Invalid = e_ST_TRUE;
         }
@@ -1548,7 +1548,7 @@ void Generate_Home_City__GEMINI(void)
             {
                 if(_FORTRESSES[bldg_idx].wp == wp)
                 {
-                    if(Delta_XY_With_Wrap(wx, wy, _FORTRESSES[bldg_idx].wx, _FORTRESSES[bldg_idx].wy, e_WORLD_WIDTH) < minimum_fortress_distance)
+                    if(Delta_XY_With_Wrap(wx, wy, _FORTRESSES[bldg_idx].wx, _FORTRESSES[bldg_idx].wy, WORLD_WIDTH) < minimum_fortress_distance)
                     {
                         Invalid = e_ST_TRUE;
                         break;
@@ -1564,7 +1564,7 @@ void Generate_Home_City__GEMINI(void)
             {
                 if(_NODES[bldg_idx].wp == wp)
                 {
-                    if(Delta_XY_With_Wrap(wx, wy, _NODES[bldg_idx].wx, _NODES[bldg_idx].wy, e_WORLD_WIDTH) < (minimum_site_distance / 2))
+                    if(Delta_XY_With_Wrap(wx, wy, _NODES[bldg_idx].wx, _NODES[bldg_idx].wy, WORLD_WIDTH) < (minimum_site_distance / 2))
                     {
                         Invalid = e_ST_TRUE;
                         break;
@@ -1594,7 +1594,7 @@ void Generate_Home_City__GEMINI(void)
             {
                 if(_LAIRS[bldg_idx].wp == wp)
                 {
-                    if(Delta_XY_With_Wrap(wx, wy, _LAIRS[bldg_idx].wx, _LAIRS[bldg_idx].wy, e_WORLD_WIDTH) < (minimum_site_distance / 2))
+                    if(Delta_XY_With_Wrap(wx, wy, _LAIRS[bldg_idx].wx, _LAIRS[bldg_idx].wy, WORLD_WIDTH) < (minimum_site_distance / 2))
                     {
                         Invalid = e_ST_TRUE;
                         break;
@@ -3756,7 +3756,7 @@ void Desert_Autotile(void)
         {
             for(wx = 0; wx < WORLD_WIDTH; wx++)
             {
-                if(p_world_map[wp][wy][wx] == _1Desert)  /* these were created by River_Terrain() */
+                if(p_world_map[wp][wy][wx] == _1Desert)  /* these were created by River_Autotile() */
                 {
                     for(Y_Mod = -1; Y_Mod < 1; Y_Mod++)
                     {
@@ -4765,15 +4765,15 @@ void Shuffle_Terrains(void)
  * 8) On success, writes `1000` river placeholders for each stored path square.
  *
  * Final river graphic selection and shore outlet shaping are deferred to
- * `River_Terrain()`.
+ * `River_Autotile()`.
  *
  * @note
  * This function mutates global map state (`p_world_map`) and relies on multiple
  * global terrain-query helpers and direction tables.
  *
- * @see River_Terrain
+ * @see River_Autotile
  */
-int16_t River_Path(int16_t wp)
+int16_t Generate_River(int16_t wp)
 {
     int16_t niu_directions_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /* OGBUG  as coded, completely useless */
     int16_t wy_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -4980,9 +4980,9 @@ int16_t River_Path(int16_t wp)
  * It is intended to run after river path placement has marked placeholder river
  * squares.
  *
- * @see River_Path
+ * @see Generate_River
  */
-void River_Terrain(int16_t wp)
+void River_Autotile(int16_t wp)
 {
     int16_t terrain_type = 0;
     int16_t river_mask = 0;
@@ -4991,31 +4991,9 @@ void River_Terrain(int16_t wp)
     int16_t DBG_river_type = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-/*
-[22_River_Terrain_W]
-_world_maps[0].y09: 1/60 elem differ: [20] 502 ≠  47
-_world_maps[0].y12: 1/60 elem differ: [25] 488 ≠  49
-_world_maps[0].y14: 1/60 elem differ: [15]  50 ≠ 553
-_world_maps[0].y17: 1/60 elem differ: [19] 521 ≠  82
-_world_maps[0].y26: 1/60 elem differ: [ 9] 225 ≠  29
-_world_maps[0].y27: 1/60 elem differ: [37] 475 ≠  36
-_world_maps[1].y08: 1/60 elem differ: [34] 486 ≠  47
-_world_maps[1].y21: 1/60 elem differ: [44] 503 ≠  48
-_world_maps[1].y22: 1/60 elem differ: [27] 225 ≠  29
-_world_maps[1].y31: 1/60 elem differ: [14] 498 ≠  43
 
-29
-36
-43
-47
-48
-49
-_Shore11101110  = 0x32, / * 50 * /
-_Shore00011111  = 0x52, / * 82 * /
+    /* CLAUDE  All tile writes below use p_world_map[wp][wy][wx] (int16_t (*)[40][60], word-strided), matching the asm's `shl ax,1` / `mov [word ptr es:bx], ...` writes. The Gemini source wrote 52 of these as `_world_maps[wp*WORLD_SIZE + ...]` -- but _world_maps is uint8_t* (byte heap), so that byte-indexes a word map (half offset) and truncates values > 255 (e.g. _1Desert == 0x134; MSVC C4305). Converted all 52 to p_world_map. */
 
-_Shore1R100000  = 0xE1, / * 225 * /
-
-*/
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
 
@@ -5031,18 +5009,14 @@ _Shore1R100000  = 0xE1, / * 225 * /
 
             if(terrain_type == TT_RIVER_PLACEHOLDER)
             {
-
                 river_mask = 0;
-
                 if((Square_Is_Ocean_NewGame((wx    ), (wy - 1), wp) == ST_TRUE) || (Square_Is_River_NewGame((wx    ), (wy - 1), wp) == ST_TRUE)) { river_mask += 1; }  /* N */
                 if((Square_Is_Ocean_NewGame((wx + 1), (wy    ), wp) == ST_TRUE) || (Square_Is_River_NewGame((wx + 1), (wy    ), wp) == ST_TRUE)) { river_mask += 2; }  /* E */
                 if((Square_Is_Ocean_NewGame((wx    ), (wy + 1), wp) == ST_TRUE) || (Square_Is_River_NewGame((wx    ), (wy + 1), wp) == ST_TRUE)) { river_mask += 4; }  /* S */
                 if((Square_Is_Ocean_NewGame((wx - 1), (wy    ), wp) == ST_TRUE) || (Square_Is_River_NewGame((wx - 1), (wy    ), wp) == ST_TRUE)) { river_mask += 8; }  /* W */
-
                 // p_world_map[wp][wy][wx] = TILE_River_Types[river_mask][(Random(4) - 1)];
                 DBG_river_type = TILE_River_Types[river_mask][(Random(4) - 1)];
                 p_world_map[wp][wy][wx] = DBG_river_type;
-
             }
 
             river_mask = 0;
@@ -5052,486 +5026,440 @@ _Shore1R100000  = 0xE1, / * 225 * /
             if(Square_Is_River_NewGame((wx    ), (wy + 1), wp) == ST_TRUE) { river_mask += 4; }  /* S */
             if(Square_Is_River_NewGame((wx - 1), (wy    ), wp) == ST_TRUE) { river_mask += 8; }  /* W */
 
-            if(terrain_type == _1Lake)
+            if(terrain_type == _1Lake)  /* @@ Block_1 */
             {
-// NOTE(drake178): if the square has no river flowing into it, turn it into a desert ($134); if it has one, use the corresponding single lake square; but if it has more than one, convert surrounding tiles to grasslands until only one river inflow remains, and backtrack the loop variables to compensate since previous river tiles may need adjusting
-                switch(river_mask)
+                // NOTE(drake178): if the square has no river flowing into it, turn it into a desert ($134); if it has one, use the corresponding single lake square; but if it has more than one, convert surrounding tiles to grasslands until only one river inflow remains, and backtrack the loop variables to compensate since previous river tiles may need adjusting
+                switch (river_mask)
                 {
-                    case 0:
-                    {
-                        p_world_map[wp][wy][wx] = _1Desert;
-                    } break;
-                    case 1:
-                    {
-                        p_world_map[wp][wy][wx] = _1LakeRiv_N;
-                    } break;
-                    case 2:
-                    {
-                        p_world_map[wp][wy][wx] = _1LakeRiv_E;
-                    } break;
-                    case 4:
-                    {
-                        p_world_map[wp][wy][wx] = _1LakeRiv_S;
-                    } break;
-                    case 8:
-                    {
-                        p_world_map[wp][wy][wx] = _1LakeRiv_W;
-                    } break;
-                    case 9:
-                    {
-                        p_world_map[wp][wy][wx] = _1LakeRiv_N;
-                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;  // W
-                        wx -= 2;
-                        wy -= 1;
-                    } break;
-                    case 10:
-                    {
-                        p_world_map[wp][wy][wx] = _1LakeRiv_W;
-                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;  // E
-                        wx -= 1;
-                        wy -= 1;
-                    } break;
-                    case 11:
-                    {
-                        p_world_map[wp][wy][wx] = _1LakeRiv_N;
-                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;  // E
-                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;  // W
-                        wx -= 2;
-                        wy -= 1;
-                    } break;
-                    case 12:
-                    {
-                        p_world_map[wp][wy][wx] = _1LakeRiv_W;
-                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;  // S
-                        wx -= 2;
-                        wy -= 1;
-                    } break;
-                    case 13:
-                    {
-                        p_world_map[wp][wy][wx] = _1LakeRiv_N;
-                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;  // W
-                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;  // S
-                        wx -= 2;
-                        wy -= 1;
-                    } break;
-                    case 14:
-                    {
-                        p_world_map[wp][wy][wx] = _1LakeRiv_W;
-                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;  // E
-                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;  // S
-                        wx -= 2;
-                        wy -= 1;
-                    } break;
-                    case 15:
-                    {
-                        p_world_map[wp][wy][wx] = _1LakeRiv_N;
-                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;  // W
-                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;  // S
-                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;  // E
-                        wx -= 2;
-                        wy -= 1;
-                    } break;
-                    
+                case 0:
+                    p_world_map[wp][wy][wx] = _1Desert;
+                    break;
+                case 1:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_N;
+                    break;
+                case 2:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_E;
+                    break;
+                case 3:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_N;
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 4:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_S;
+                    break;
+                case 5:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_N;
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 6:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_S;
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 7:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_N;
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 8:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_W;
+                    break;
+                case 9:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_N;
+                    p_world_map[wp][wy][wx - 1] = tte_Grasslands;
+                    wx -= 2;
+                    wy--;
+                    break;
+                case 10:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_W;
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 11:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_N;
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    p_world_map[wp][wy][wx - 1] = tte_Grasslands;
+                    wx -= 2;
+                    wy--;
+                    break;
+                case 12:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_W;
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    wx -= 2;
+                    wy--;
+                    break;
+                case 13:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_N;
+                    p_world_map[wp][wy][wx - 1] = tte_Grasslands;
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    wx -= 2;
+                    wy--;
+                    break;
+                case 14:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_W;
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    wx -= 2;
+                    wy--;
+                    break;
+                case 15:
+                    p_world_map[wp][wy][wx] = _1LakeRiv_N;
+                    p_world_map[wp][wy][wx - 1] = tte_Grasslands;
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    wx -= 2;
+                    wy--;
+                    break;
                 }
             }
-
-            if(terrain_type < _Shore10000000)  // ¿ DEDU first Shore block/group except Lake? The game Civilation calls these a "watershed"
+            else if(terrain_type < _Shore10000000)  /* @@Block_2 */
             {
-// NOTE(drake178): if the square has river inflow from its only valid cardinal direction, turn it into the corresponding river outlet shore square
-                switch(terrain_type)  // Dasm (terrain_type - 3)
+                // ¿ DEDU first Shore block/group except Lake? The game Civilation calls these a "watershed"
+                // NOTE(drake178): if the square has river inflow from its only valid cardinal direction, turn it into the corresponding river outlet shore square
+                // Dasm (terrain_type - 3)
+                switch (terrain_type)
                 {
-                    case _Shore00000010:  /* 0x0006 */
-                    {
-                        if(river_mask == 4) { ( p_world_map[wp][wy][wx] = _Shore00001R00); }
-                    } break;
-                    case _Shore00001010:  /* 0x0007 */
-                    {
-                        if(river_mask == 4) { ( p_world_map[wp][wy][wx] = _Shore00001R10); }
-                    } break;
-                    case _Shore00100010:  /* 0x0008 */
-                    {
-                        if(river_mask == 4) { ( p_world_map[wp][wy][wx] = _Shore00000R10); }
-                    } break;
-                    case _Shore10000010:  /* 0x0009 */
-                    {
-
-                    } break;
-                    case _Shore00011000:  /* 0x000A */
-                    {
-
-                    } break;
-                    case _Shore00000100:  /* 0x000B */
-                    {
-
-                    } break;
-                    case _Shore00000011:  /* 0x000C */
-                    {
-
-                    } break;
-                    case _Shore10100000:  /* 0x000D */
-                    {
-
-                    } break;
-                    case _Shore10001000:  /* 0x000E */
-                    {
-
-                    } break;
-                    case _Shore00101000:  /* 0x000F */
-                    {
-
-                    } break;
-                    case _Shore00111000:  /* 0x0010 */
-                    {
-
-                    } break;
-                    case _Shore00010000:  /* 0x0011 */
-                    {
-
-                    } break;
-                    case _1Lake:          /* 0x0012 */
-                    {
-
-                    } break;
-                    case _Shore00000001:  /* 0x0013 */
-                    {
-
-                    } break;
-                    case _Shore10000011:  /* 0x0014 */
-                    {
-
-                    } break;
-                    case _Shore00110000:  /* 0x0015 */
-                    {
-
-                    } break;
-                    case _Shore01000000:  /* 0x0016 */
-                    {
-
-                    } break;
-                    case _Shore10000001:  /* 0x0017 */
-                    {
-
-                    } break;
-                    case _Shore10101000:  /* 0x0018 */
-                    {
-
-                    } break;
-                    case _Shore00101010:  /* 0x0019 */
-                    {
-
-                    } break;
-                    case _Shore10001010:  /* 0x001A */
-                    {
-
-                    } break;
-                    case _Shore00100000:  /* 0x001B */
-                    {
-
-                    } break;
-                    case _Shore01100000:  /* 0x001C */
-                    {
-
-                    } break;
-                    case _Shore11100000:  /* 0x001D */
-                    {
-
-                    } break;
-                    case _Shore11000000:  /* 0x001E */
-                    {
-
-                    } break;
-                    
-                }
-
-            }
-
-            if(
-                (terrain_type >= _Shore11000001)
-                &&
-                (terrain_type <= _Shore11101110)
-            )
-            {
-// NOTE(drake178): if the square has a river inflow from either or both of its two valid sides, turn it into a corresponding single or double river outlet
-                switch(terrain_type)  // Dasm (terrain_type - 34)  ; switch 16 cases
-                {
-                    case _Shore10110011:
-                    {
-                        if(river_mask == 1)       { ( p_world_map[wp][wy][wx] = _Shore1R000001); }
-                        if(river_mask == 8)       { ( p_world_map[wp][wy][wx] = _Shore1100000R); }
-                        if(river_mask == (1 + 8)) { ( p_world_map[wp][wy][wx] = _Shore1R00000R); }
-                    } break;
-
-                }
-
-            }
-
-            if(
-                (terrain_type >= _Shore11101110)
-                &&
-                (terrain_type <= _Shore01000100)
-            )
-            {
-                switch(river_mask)
-                {
-                    case 1:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R101110 - 0x32));
-                    } break;
-                    case 4:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore11101R10 - 0x32));
-                    } break;
-                    case (1 + 4):
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R101110 - 0x32));
-                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;  // S
-                        wx--;
-                        wy--;
-                    } break;
+                case 3:
+                    if(river_mask == 4) p_world_map[wp][wy][wx] = _Shore00001R00;
+                    break;
+                case 4:
+                    if(river_mask == 4) p_world_map[wp][wy][wx] = _Shore00001R10;
+                    break;
+                case 5:
+                    if(river_mask == 4) p_world_map[wp][wy][wx] = _Shore00000R10;
+                    break;
+                case 10:
+                    if(river_mask == 2) p_world_map[wp][wy][wx] = _Shore000R1000;
+                    break;
+                case 11:
+                    if(river_mask == 4) p_world_map[wp][wy][wx] = _Shore00000R00;
+                    break;
+                case 12:
+                    if(river_mask == 8) p_world_map[wp][wy][wx] = _Shore0000001R;
+                    break;
+                case 16:
+                    if(river_mask == 2) p_world_map[wp][wy][wx] = _Shore001R1000;
+                    break;
+                case 17:
+                    if(river_mask == 2) p_world_map[wp][wy][wx] = _Shore000R0000;
+                    break;
+                case 19:
+                    if(river_mask == 8) p_world_map[wp][wy][wx] = _Shore0000000R;
+                    break;
+                case 20:
+                    if(river_mask == 8) p_world_map[wp][wy][wx] = _Shore1000001R;
+                    break;
+                case 21:
+                    if(river_mask == 2) p_world_map[wp][wy][wx] = _Shore001R0000;
+                    break;
+                case 22:
+                    if(river_mask == 1) p_world_map[wp][wy][wx] = _Shore0R000000;
+                    break;
+                case 23:
+                    if(river_mask == 8) p_world_map[wp][wy][wx] = _Shore1000000R;
+                    break;
+                case 28:
+                    if(river_mask == 1) p_world_map[wp][wy][wx] = _Shore0R100000;
+                    break;
+                case 29:
+                    if(river_mask == 1) p_world_map[wp][wy][wx] = _Shore1R100000;
+                    break;
+                case 30:
+                    if(river_mask == 1) p_world_map[wp][wy][wx] = _Shore1R000000;
+                    break;
                 }
             }
-
-            if(
-                (terrain_type >= _Shore10010011)
-                &&
-                (terrain_type <= _Shore00111001)
-            )
+            else if(terrain_type >= _Shore11000001 && terrain_type <= _Shore11101110)  /* @@Block_3 */
             {
-                switch(river_mask)
+                // NOTE(drake178): if the square has a river inflow from either or both of its two valid sides, turn it into a corresponding single or double river outlet
+                // Dasm (terrain_type - 34)  ; switch 16 cases
+                switch (terrain_type)
                 {
-                    case 2:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore100R0011 - 0x42));
-                    } break;
-                    case 8:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1001001R - 0x42));
-                    } break;
-                    case (2 + 8):
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1001001R - 0x42));
-                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;  // E
-                        wx--;
-                        wy--;
-                    } break;
+                case 34:
+                    if(river_mask == 1) p_world_map[wp][wy][wx] = _Shore1R000001;
+                    if(river_mask == 8) p_world_map[wp][wy][wx] = _Shore1100000R;
+                    if(river_mask == 9) p_world_map[wp][wy][wx] = _Shore1R00000R;
+                    break;
+                case 35:
+                    if(river_mask == 1) p_world_map[wp][wy][wx] = _Shore1R100001;
+                    if(river_mask == 8) p_world_map[wp][wy][wx] = _Shore1110000R;
+                    if(river_mask == 9) p_world_map[wp][wy][wx] = _Shore1R10000R;
+                    break;
+                case 36:
+                    if(river_mask == 1) p_world_map[wp][wy][wx] = _Shore1R000011;
+                    if(river_mask == 8) p_world_map[wp][wy][wx] = _Shore1100001R;
+                    if(river_mask == 9) p_world_map[wp][wy][wx] = _Shore1R00001R;
+                    break;
+                case 37:
+                    if(river_mask == 1) p_world_map[wp][wy][wx] = _Shore1R100011;
+                    if(river_mask == 8) p_world_map[wp][wy][wx] = _Shore1110001R;
+                    if(river_mask == 9) p_world_map[wp][wy][wx] = _Shore1R10001R;
+                    break;
+                case 38:
+                    if(river_mask == 2) p_world_map[wp][wy][wx] = _Shore000R1100;
+                    if(river_mask == 4) p_world_map[wp][wy][wx] = _Shore00011R00;
+                    if(river_mask == 6) p_world_map[wp][wy][wx] = _Shore000R1R00;
+                    break;
+                case 39:
+                    if(river_mask == 2) p_world_map[wp][wy][wx] = _Shore001R1100;
+                    if(river_mask == 4) p_world_map[wp][wy][wx] = _Shore00111R00;
+                    if(river_mask == 6) p_world_map[wp][wy][wx] = _Shore000R1R10;
+                    break;
+                case 40:
+                    if(river_mask == 2) p_world_map[wp][wy][wx] = _Shore000R1110;
+                    if(river_mask == 4) p_world_map[wp][wy][wx] = _Shore00011R10;
+                    if(river_mask == 6) p_world_map[wp][wy][wx] = _Shore001R1R00;
+                    break;
+                case 41:
+                    if(river_mask == 2) p_world_map[wp][wy][wx] = _Shore001R1110;
+                    if(river_mask == 4) p_world_map[wp][wy][wx] = _Shore00111R10;
+                    if(river_mask == 6) p_world_map[wp][wy][wx] = _Shore001R1R10;
+                    break;
+                case 42:
+                    if(river_mask == 1) p_world_map[wp][wy][wx] = _Shore0R110000;
+                    if(river_mask == 2) p_world_map[wp][wy][wx] = _Shore011R0000;
+                    if(river_mask == 3) p_world_map[wp][wy][wx] = _Shore0R1R0000;
+                    break;
+                case 43:
+                    if(river_mask == 1) p_world_map[wp][wy][wx] = _Shore0R111000;
+                    if(river_mask == 2) p_world_map[wp][wy][wx] = _Shore011R1000;
+                    if(river_mask == 3) p_world_map[wp][wy][wx] = _Shore0R1R1000;
+                    break;
+                case 44:
+                    if(river_mask == 1) p_world_map[wp][wy][wx] = _Shore1R110000;
+                    if(river_mask == 2) p_world_map[wp][wy][wx] = _Shore111R0000;
+                    if(river_mask == 3) p_world_map[wp][wy][wx] = _Shore1R1R0000;
+                    break;
+                case 45:
+                    if(river_mask == 1) p_world_map[wp][wy][wx] = _Shore1R111000;
+                    if(river_mask == 2) p_world_map[wp][wy][wx] = _Shore111R1000;
+                    if(river_mask == 3) p_world_map[wp][wy][wx] = _Shore1R1R1000;
+                    break;
+                case 46:
+                    if(river_mask == 4) p_world_map[wp][wy][wx] = _Shore00000R11;
+                    if(river_mask == 8) p_world_map[wp][wy][wx] = _Shore0000011R;
+                    if(river_mask == 12) p_world_map[wp][wy][wx] = _Shore00000R1R;
+                    break;
+                case 47:
+                    if(river_mask == 4) p_world_map[wp][wy][wx] = _Shore00001R11;
+                    if(river_mask == 8) p_world_map[wp][wy][wx] = _Shore0000111R;
+                    if(river_mask == 12) p_world_map[wp][wy][wx] = _Shore00001R1R;
+                    break;
+                case 48:
+                    if(river_mask == 4) p_world_map[wp][wy][wx] = _Shore10000R11;
+                    if(river_mask == 8) p_world_map[wp][wy][wx] = _Shore1000011R;
+                    if(river_mask == 12) p_world_map[wp][wy][wx] = _Shore10000R1R;
+                    break;
+                case 49:
+                    if(river_mask == 4) p_world_map[wp][wy][wx] = _Shore10001R11;
+                    if(river_mask == 8) p_world_map[wp][wy][wx] = _Shore1000111R;
+                    if(river_mask == 12) p_world_map[wp][wy][wx] = _Shore10001R1R;
+                    break;
                 }
             }
-
-            if(
-                (terrain_type == _Shore00011111)
-                ||
-                (terrain_type == _Shore10011111)
-                ||
-                (terrain_type == _Shore00111111)
-                ||
-                (terrain_type == _Shore10111111)
-            )
+            else if(terrain_type >= _Shore11101110 && terrain_type <= _Shore01000100)  /* @@Block_4 */
             {
-                switch(river_mask)  // Dasm (river_mask - 2)
+                if(river_mask == 1)
                 {
-                    case 4:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore000R1111 - 0x52));
-                    } break;
-                    case 6:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore00011R11 - 0x52));
-                    } break;
-                    case 8:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore00011R11 - 0x52));
-                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
-                    } break;
-                    case 10:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0001111R - 0x52));
-                        wx -= 1;
-                        wy -= 1;
-                    } break;
-                    case 12:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0001111R - 0x52));
-                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
-                        wx -= 1;
-                        wy -= 1;
-                    } break;
-                    case 14:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0001111R - 0x52));
-                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;
-                        wx -= 1;
-                        wy -= 1;
-                    } break;
-                    case 16:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0001111R - 0x52));
-                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
-                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;
-                        wx -= 1;
-                        wy -= 1;
-                    } break;
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1R101110 - _Shore11101110);
+                }
+                else if(river_mask == 4)
+                {
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore11101R10 - _Shore11101110);
+                }
+                else if(river_mask == 5)
+                {
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1R101110 - _Shore11101110);
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    wx--;
+                    wy--;
                 }
             }
-
-            if(
-                (terrain_type == _Shore11000111)
-                ||
-                (terrain_type == _Shore11100111)
-                ||
-                (terrain_type == _Shore11001111)
-                ||
-                (terrain_type == _Shore11101111)
-            )
+            else if(terrain_type >= _Shore10010011 && terrain_type <= _Shore00111001)  /* @@Block_5 */
             {
-                switch(river_mask)  // Dasm (river_mask - 1)
+                if(river_mask == 2)
                 {
-                    case 1:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R000111 - 0x53));
-                    } break;
-                    case 4:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore11000R11 - 0x53));
-                    } break;
-                    case 5:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R000111 - 0x53));
-                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;
-                        wy -= 1;
-                    } break;
-                    case 8:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1100011R - 0x53));
-                    } break;
-                    case 9:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R000111 - 0x53));
-                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;
-                        wx -= 2;
-                        wy -= 1;
-                    } break;
-                    case 12:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1100011R - 0x53));
-                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;
-                        wy -= 1;
-                    } break;
-                    case 13:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R000111 - 0x53));
-                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;
-                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;
-                        wx -= 2;
-                        wy -= 1;
-                    } break;
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore100R0011 - _Shore10010011);
+                }
+                else if(river_mask == 8)
+                {
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1001001R - _Shore10010011);
+                }
+                else if(river_mask == 10)
+                {
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1001001R - _Shore10010011);
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    wx--;
+                    wy--;
                 }
             }
-
-            if(
-                (terrain_type == _Shore11110001)
-                ||
-                (terrain_type == _Shore11111001)
-                ||
-                (terrain_type == _Shore11110011)
-                ||
-                (terrain_type == _Shore11111011)
-            )
+            else if(terrain_type == _Shore00011111 || terrain_type == _Shore10011111 || terrain_type == _Shore00111111 || terrain_type == _Shore10111111)  /* @@Block_6 */
             {
-                switch(river_mask)  // Dasm (river_mask - 1)
+                switch (river_mask)
                 {
-                    case 1:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R110001 - 0x54));
-                    } break;
-                    case 2:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore111R0001 - 0x54));
-                    } break;
-                    case 3:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R110001 - 0x54));
-                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
-                        wx -= 1;
-                    } break;
-                    case 8:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1111000R - 0x54));
-                    } break;
-                    case 9:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R110001 - 0x54));
-                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;
-                        wx -= 2;
-                    } break;
-                    case 10:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1111000R - 0x54));
-                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
-                        wx--;
-                    } break;
-                    case 11:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore1R110001 - 0x54));
-                        p_world_map[wp][wy][(wx - 1)] = tte_Grasslands;
-                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
-                        wx -= 2;
-                    } break;
+                case 2:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore000R1111 - _Shore00011111);
+                    break;
+                case 4:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore00011R11 - _Shore00011111);
+                    break;
+                case 8:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore0001111R - _Shore00011111);
+                    break;
+                case 6:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore00011R11 - _Shore00011111);
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 10:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore0001111R - _Shore00011111);
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 12:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore0001111R - _Shore00011111);
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 14:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore00011R11 - _Shore00011111);
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
                 }
             }
-
-            if(
-                (terrain_type == _Shore01111100)
-                ||
-                (terrain_type == _Shore01111110)
-                ||
-                (terrain_type == _Shore11111100)
-                ||
-                (terrain_type == _Shore11111110)
-            )
+            else if(terrain_type == _Shore11000111 || terrain_type == _Shore11100111 || terrain_type == _Shore11001111 || terrain_type == _Shore11101111)  /* @@Block_7 */
             {
-                switch(river_mask)  // Dasm (river_mask - 1)
+                switch (river_mask)
                 {
-                    case 1:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0R111100 - 0x55));
-                    } break;
-                    case 2:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore011R1100 - 0x55));
-                    } break;
-                    case 4:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore01111R00 - 0x55));
-                    } break;
-                    case 3:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0R111100 - 0x55));
-                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
-                        wx -= 1;
-                        wy -= 1;
-                    } break;
-                    case 6:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore01111R00 - 0x55));
-                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
-                        wx -= 1;
-                        wy -= 1;
-                    } break;
-                    case 5:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0R111100 - 0x55));
-                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;
-                        wx -= 1;
-                        wy -= 1;
-                    } break;
-                    case 7:
-                    {
-                        p_world_map[wp][wy][wx] = (terrain_type + (_Shore0R111100 - 0x55));
-                        p_world_map[wp][wy][(wx + 1)] = tte_Grasslands;
-                        p_world_map[wp][(wy + 1)][wx] = tte_Grasslands;
-                        wx -= 1;
-                        wy -= 1;
-                    } break;
+                case 1:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1R000111 - _Shore11000111);
+                    break;
+                case 4:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore11000R11 - _Shore11000111);
+                    break;
+                case 8:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1100011R - _Shore11000111);
+                    break;
+                case 5:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1R000111 - _Shore11000111);
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 9:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1R000111 - _Shore11000111);
+                    p_world_map[wp][wy][wx - 1] = tte_Grasslands;
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    wx -= 2;
+                    wy--;
+                    break;
+                case 12:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1100011R - _Shore11000111);
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 13:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1R000111 - _Shore11000111);
+                    p_world_map[wp][wy][wx - 1] = tte_Grasslands;
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    wx -= 2;
+                    wy--;
+                    break;
+                }
+            }
+            else if(terrain_type == _Shore11110001 || terrain_type == _Shore11111001 || terrain_type == _Shore11110011 || terrain_type == _Shore11111011)  /* @@Block_8 */
+            {
+                switch (river_mask)
+                {
+                case 1:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1R110001 - _Shore11110001);
+                    break;
+                case 2:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore111R0001 - _Shore11110001);
+                    break;
+                case 8:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1111000R - _Shore11110001);
+                    break;
+                case 3:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1R110001 - _Shore11110001);
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 9:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1R110001 - _Shore11110001);
+                    p_world_map[wp][wy][wx - 1] = tte_Grasslands;
+                    wx -= 2;
+                    wy--;
+                    break;
+                case 10:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1111000R - _Shore11110001);
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 11:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore1R110001 - _Shore11110001);
+                    p_world_map[wp][wy][wx - 1] = tte_Grasslands;
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    wx -= 2;
+                    wy--;
+                    break;
+                }
+            }
+            else if(terrain_type == _Shore01111100 || terrain_type == _Shore01111110 || terrain_type == _Shore11111100 || terrain_type == _Shore11111110)  /* @@Block_9 */
+            {
+                switch (river_mask)
+                {
+                case 1:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore0R111100 - _Shore01111100);
+                    break;
+                case 2:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore011R1100 - _Shore01111100);
+                    break;
+                case 4:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore01111R00 - _Shore01111100);
+                    break;
+                case 3:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore0R111100 - _Shore01111100);
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 5:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore0R111100 - _Shore01111100);
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 6:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore01111R00 - _Shore01111100);
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
+                case 7:
+                    p_world_map[wp][wy][wx] = terrain_type + (_Shore0R111100 - _Shore01111100);
+                    p_world_map[wp][wy][wx + 1] = tte_Grasslands;
+                    p_world_map[wp][wy + 1][wx] = tte_Grasslands;
+                    wx--;
+                    wy--;
+                    break;
                 }
             }
 
