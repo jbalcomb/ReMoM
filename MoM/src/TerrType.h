@@ -12,9 +12,9 @@ enum e_TERRAIN_TYPES
     tt_Grasslands1 = 0xA2,
     tt_Forest1     = 0xA3,
     tt_Mountain1   = 0xA4,
-    tt_Desert1     = 0xA5,     /* AKA _AllDesert1 0xA5 used by Generate_Climate_Terrain_Types() */
-    tt_Swamp1      = 0xA6,     /* used by Generate_Climate_Terrain_Types() */
-    tt_Tundra1     = 0xA7,     /* used by basic terrain generation; used by Generate_Climate_Terrain_Types() */
+    tt_Desert1     = 0xA5,  /* 165  AKA _AllDesert1 0xA5 used by Generate_Climate_Terrain_Types() */
+    tt_Swamp1      = 0xA6,  /* used by Generate_Climate_Terrain_Types() */
+    tt_Tundra1     = 0xA7,  /* used by basic terrain generation; used by Generate_Climate_Terrain_Types() */
     tt_SorceryNode = 0xA8,
     tt_NatureNode  = 0xA9,
     tt_ChaosNode   = 0xAA,
@@ -73,7 +73,9 @@ enum e_TERRAIN_TYPES
     tt_Tundra_1st  = 0x25A,  // 602    should line up with mapping from TERRTYPE.LBX
     tt_Tundra_Last = 0x2F9,  // 761 - 602 = 159 total tundra types?
     
-    TerType_Count  = 0x02FA
+    TerType_Count  = 0x02FA,
+
+    tt_River_Placeholder = TT_RIVER_PLACEHOLDER
 };
 
 enum OVL_Tiles_Extended
@@ -128,7 +130,7 @@ enum OVL_Tiles_Extended
     _Shore00001111  = 0x2F,
     _Shore10000111  = 0x30,
     _Shore10001111  = 0x31,
-    _Shore11101110  = 0x32,
+    _Shore11101110  = 0x32, /* 50 */
     _Shore11100110  = 0x33,
     _Shore11101100  = 0x34,
     _Shore11100100  = 0x35,
@@ -160,7 +162,7 @@ enum OVL_Tiles_Extended
     _Shore00011001  = 0x4F,
     _Shore00110001  = 0x50,
     _Shore00111001  = 0x51,
-    _Shore00011111  = 0x52,
+    _Shore00011111  = 0x52, /* 82 */
     _Shore11000111  = 0x53,
     _Shore11110001  = 0x54,
     _Shore01111100  = 0x55,
@@ -241,30 +243,30 @@ enum OVL_Tiles_Extended
     _Shore10100111  = 0xA0,
     _Shore10101111  = 0xA1, /* 161  end of range for invalid river outflow */  /* end of first range considered as "an embarkable square" */
 
-    tte_Grasslands  = 0xA2, /* tt_Grasslands1  162  0xA2  0b10100010 */
-    tte_Forest1        = 0xA3,
-    tte_Mountain    = 0xA4, /* type used by Set_Terrain_Type_Mountain() */
-    _AllDesert1     = 0xA5, /* dont know what drake178 meant by "All", this is the base Desert terrain type */
-    tte_Swamp1         = 0xA6,
+    tte_Grasslands  = 0xA2, /* 162  0xA2  0b10100010  AKA tt_Grasslands1 */
+    tte_Forest1     = 0xA3, /* 163  AKA tt_Forest1   */
+    tte_Mountain    = 0xA4, /* 164  AKA tt_Mountain1 */ /* type used by Set_Terrain_Type_Mountain() */
+    _AllDesert1     = 0xA5, /* 165  AKA tt_Desert1   */ /* dont know what drake178 meant by "All", this is the base Desert terrain type */
+    tte_Swamp1      = 0xA6,
     tte_Tundra      = 0xA7,
     _SorceryLake    = 0xA8,
     _NatureForest   = 0xA9,
     _ChaosVolcano   = 0xAA,
     tte_Hills       = 0xAB,
-    tte_Grasslands2    = 0xAC,
-    tte_Grasslands3    = 0xAD,
+    tte_Grasslands2 = 0xAC,
+    tte_Grasslands3 = 0xAD,
     _AllDesert2     = 0xAE,
     _AllDesert3     = 0xAF,
     _AllDesert4     = 0xB0,
-    tte_Swamp2         = 0xB1,
-    tte_Swamp3         = 0xB2,
-    tte_Volcano     = 0xB3,  /* type used by Set_Terrain_Type_Volcano() */
-    tte_Grasslands4 = 0xB4,
+    tte_Swamp2      = 0xB1,
+    tte_Swamp3      = 0xB2,
+    tte_Volcano     = 0xB3, /* type used by Set_Terrain_Type_Volcano() */
+    tte_Grasslands4 = 0xB4, /* 180  AKA tt_Grasslands4 */
     _AllTundra2     = 0xB5,
     _AllTundra3     = 0xB6,
     _Forest2        = 0xB7,
     _Forest3        = 0xB8,
-    _River0010      = 0xB9,    /* BEGIN:  River */
+    _River0010      = 0xB9, /* BEGIN:  River */
     _River0001      = 0xBA,
     _River1000      = 0xBB,
     _River0100      = 0xBC,
@@ -304,7 +306,7 @@ enum OVL_Tiles_Extended
     _Shore0000001R  = 0xDE,
     _Shore1000000R  = 0xDF,
     _Shore0000000R  = 0xE0,
-    _Shore1R100000  = 0xE1,
+    _Shore1R100000  = 0xE1, /* 225 */
     _Shore1R000000  = 0xE2,
     _Shore0R100000  = 0xE3,
     _Shore0R000000  = 0xE4,
@@ -843,7 +845,11 @@ enum OVL_Tiles_Extended
     _Tundra00101111 = 0x2F7,
     _Tundra10100111 = 0x2F8,
     _Tundra10101111 = 0x2F9,
-    _TerType_Count  = 0x2FA   /* start of range for Tundra autotiling */
+
+    _TerType_Count  = 0x2FA,    /* start of range for Tundra autotiling */
+
+    tte_River_Placeholder = TT_RIVER_PLACEHOLDER
+
 };
 
 

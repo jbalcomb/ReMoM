@@ -27,6 +27,15 @@ void gd_dump_towers(const char* point);
 void gd_dump_lairs(const char* point);
 void gd_dump_cities(const char* point);
 
+/* Capture/Inject (CI), ReMoM side.  Reads og-game-data-capture.fwv (produced by
+ * extract-ci-stage0.py from the OG [CI] probe) and injects OG's exact bytes for
+ * values ReMoM cannot reproduce on its own -- uninitialized stack autos and
+ * OOB-overrun reads.  Distinct from the gd_dump_* [GD] capture (which compares).
+ * Defined in INITGAME.c.  Loads lazily on first use; idempotent. */
+int  gd_ci_load(void);                                                  /* -> record count, or -1 on failure */
+int  gd_ci_get(const char* key, const char* site, long* out, int max);  /* -> values copied, or -1 if absent */
+void gd_ci_inject_world_overrun(const char* site);                      /* write OG's OOB int16 past _world_maps */
+
 // MGC o56p1
 void Init_Computer_Players(void);
 

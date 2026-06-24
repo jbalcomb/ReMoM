@@ -428,8 +428,8 @@ static void gd_dump_one_uu_tbl(const char* point, const char* name, const unsign
 
 static void gd_dump_uu_tbls(const char* point)
 {
-    gd_dump_one_uu_tbl(point, "UU_TBL_1", UU_TBL_1);
-    gd_dump_one_uu_tbl(point, "UU_TBL_2", UU_TBL_2);
+    gd_dump_one_uu_tbl(point, "UU_TBL_1", (unsigned char *)UU_TBL_1);
+    gd_dump_one_uu_tbl(point, "UU_TBL_2", (unsigned char *)UU_TBL_2);
     STU_Log_Flush_All();
 }
 
@@ -573,58 +573,81 @@ void Init_New_Game(void)
     Generate_Terrain_Specials(ARCANUS_PLANE);
     Generate_Terrain_Specials(MYRROR_PLANE);
     gd_dump_terrain_specials("17_Generate_Terrain_Specials_TS");
+    gd_dump_world_map("18_Generate_Terrain_Specials_W");
 
     Generate_Roads(ARCANUS_PLANE);
     Generate_Roads(MYRROR_PLANE);
-    gd_dump_map_square_flags("18_Generate_Roads_F");
+    gd_dump_map_square_flags("19_Generate_Roads_F");
 
     Draw_Building_The_Worlds(80);
 
     Simtex_Autotiling();
-    gd_dump_world_map("19_Simtex_Autotiling_W");
+    gd_dump_world_map("20_Simtex_Autotiling_W");
 
     Draw_Building_The_Worlds(85);
-                                        
+
     for(rivers = 0; rivers < NUM_RIVERS; rivers++)
     {
-        for(tries = 0; ((tries < 2000) && (River_Path(ARCANUS_PLANE) != 0)); tries++) { }
-        for(tries = 0; ((tries < 2000) && (River_Path(MYRROR_PLANE)  != 0)); tries++) { }
+        for(tries = 0; ((tries < 2000) && (River_Path(ARCANUS_PLANE) == ST_FALSE)); tries++) { }
+        for(tries = 0; ((tries < 2000) && (River_Path(MYRROR_PLANE)  == ST_FALSE)); tries++) { }
     }
-    gd_dump_world_map("20_River_Path_W");
+    gd_dump_world_map("21_River_Path_W");
 
     River_Terrain(ARCANUS_PLANE);
     River_Terrain(MYRROR_PLANE);
-    gd_dump_world_map("21_River_Terrain_W");
+    gd_dump_world_map("22_River_Terrain_W");
 
     Desert_Autotile();
-    gd_dump_landmasses("22_Desert_Autotile_L");
-    gd_dump_world_map("23_Desert_Autotile_W");
+    gd_dump_landmasses("23_Desert_Autotile_L");
+    gd_dump_world_map("24_Desert_Autotile_W");
 
     Draw_Building_The_Worlds(85);
 
     Shuffle_Terrains();
-    gd_dump_world_map("24_Shuffle_Terrains_W");
+    gd_dump_world_map("25_Shuffle_Terrains_W");
 
     Movement_Mode_Cost_Maps(ARCANUS_PLANE);
     Movement_Mode_Cost_Maps(MYRROR_PLANE);
-    gd_dump_movement_mode_cost_maps("25_Movement_Mode_Cost_Maps_M");
+    gd_dump_movement_mode_cost_maps("26_Movement_Mode_Cost_Maps_M");
 
     Draw_Building_The_Worlds(90);
 
     CRP_NEWG_CreatePathGrids__WIP(ARCANUS_PLANE);
     CRP_NEWG_CreatePathGrids__WIP(MYRROR_PLANE);
-    gd_dump_uu_tbls("26_CRP_NEWG_CreatePathGrids_U");
+    /* CLAUDE 2026-06-24: lifecycle trace; companion logs at ALLOC.c (allocate)
+       and LOADSAVE.c (after stu_fread).  See ALLOC.c for the why. */
+    {
+        char row[96 * 5];
+        int plane, i, q;
+        const unsigned char * tbls[2] = { (const unsigned char *)UU_TBL_1, (const unsigned char *)UU_TBL_2 };
+        const char *         names[2] = { "UU_TBL_1", "UU_TBL_2" };
+        int t;
+        LOG_INFO(LOG_CAT_GENERAL, "[UU_TBL] event=calc  (after CRP_NEWG_CreatePathGrids__WIP for both planes)");
+        for (t = 0; t < 2; t++)
+        {
+            for (plane = 0; plane < NUM_PLANES; plane++)
+            {
+                q = 0;
+                for (i = 0; i < 96; i++)
+                {
+                    q += snprintf(row + q, sizeof(row) - q, i ? ",%d" : "%d", (int)tbls[t][(plane * 96) + i]);
+                }
+                LOG_TRACE(LOG_CAT_GENERAL, "[UU_TBL] event=calc table=%s plane=%d bytes=%s", names[t], plane, row);
+            }
+        }
+    }
+    gd_dump_uu_tbls("27_CRP_NEWG_CreatePathGrids_U");
 
     Draw_Building_The_Worlds(95);
 
     Init_Square_Explored();
-    gd_dump_square_explored("27_Init_Square_Explored_E");
+    gd_dump_square_explored("28_Init_Square_Explored_E");
 
     Animate_Oceans();
-    gd_dump_world_map("28_Animate_Oceans_W");
+    gd_dump_world_map("29_Animate_Oceans_W");
 
     Set_Upper_Lair_Guardian_Count();
-    gd_dump_lairs("29_Set_Upper_Lair_Guardian_Count_LR");
+    gd_dump_lairs("30_Set_Upper_Lair_Guardian_Count_LR");
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
@@ -909,7 +932,7 @@ void Extend_Islands(int16_t wp)
  */
 void Generate_Towers(void)
 {
-    int16_t tries = 13173;  /* CLAUDE  OG leaves Tries (auto stack local [bp-8]) uninitialized; it comes up as 13173 leftover stack memory (captured from DosBox). Seeding it reproduces OG's immediate min_distance relaxation. Path-dependent value. */
+    int16_t tries = 0;  /* CI: OG leaves this auto stack local [bp-8] uninitialized; injected from capture below (gd_ci "tries"). */
     int16_t min_distance = 0;
     int16_t wy = 0;
     int16_t wx = 0;
@@ -918,7 +941,15 @@ void Generate_Towers(void)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    /* HACK */ tries = 13173;  /* automatic (stack) local variable */
+    /* CI: OG leaves `tries` (auto stack local [bp-8]) uninitialized; it comes up
+     * as leftover stack memory (13173 in the captured run) and drives an immediate
+     * min_distance relaxation.  Inject the captured value instead of hardcoding it. */
+    {
+        long ci_tries;
+        if (gd_ci_get("tries", "gen_towers", &ci_tries, 1) == 1) {
+            tries = (int16_t)ci_tries;
+        }
+    }
 
     min_distance = 10;
 
@@ -3903,6 +3934,11 @@ void Simtex_Autotiling(void)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
+    /* CI: inject OG's exact OOB-overrun bytes (captured at this function's entry
+     * in OG) so the OG-faithful south-edge reads below (wp=1/wy=39 ->
+     * p_world_map[1][40][x]) return OG's values instead of ReMoM heap garbage. */
+    gd_ci_inject_world_overrun("simtex_entry");
+
     terrtype = (int16_t *)Near_Allocate_First((5 * 512));
     LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, (SAMB_ptr)terrtype, 0, 5, 512);
 
@@ -4369,9 +4405,9 @@ void Simtex_Autotiling(void)
                 {
                     p_world_map[wp][wy][wx] = (600 + terrtype[mask]);
                 }
-             }
-         }
-     }
+            }
+        }
+    }
  /*
      END:  Tundra
  */
@@ -4379,169 +4415,169 @@ void Simtex_Autotiling(void)
  /*
   BEGIN:  Hills
 */
-     for(wp = 0; wp < NUM_PLANES; wp++)
-     {
-         for(wy = 0; wy < WORLD_HEIGHT; wy++)
-         {
-             for(wx = 0; wx < WORLD_WIDTH; wx++)
-             {
-                 if(p_world_map[wp][wy][wx] != tte_Hills)
-                 {
-                     continue;
-                 }
-                 mask = 0;
-                 // NW: {-1,-1}
-                 if(
+    for(wp = 0; wp < NUM_PLANES; wp++)
+    {
+        for(wy = 0; wy < WORLD_HEIGHT; wy++)
+        {
+            for(wx = 0; wx < WORLD_WIDTH; wx++)
+            {
+                if(p_world_map[wp][wy][wx] != tte_Hills)
+                {
+                    continue;
+                }
+                mask = 0;
+                // NW: {-1,-1}
+                if(
                     (
                         (p_world_map[wp][(wy - 1)][(wx - 1)] == tte_Hills)
                         ||
-                     (
-                         (p_world_map[wp][(wy - 1)][(wx - 1)] >= _Hills_0010)
-                         &&
-                         (p_world_map[wp][(wy - 1)][(wx - 1)] <= _1Hills2)
+                        (
+                            (p_world_map[wp][(wy - 1)][(wx - 1)] >= _Hills_0010)
+                            &&
+                            (p_world_map[wp][(wy - 1)][(wx - 1)] <= _1Hills2)
                         )
-                     )
-                     &&
-                     ((wx - 1) >= 0)
-                     &&
-                     ((wy - 1) >= 0)
-                 )
-                 {
-                     mask += 1;
-                 }
-                 // N: {0,-1}
-                 if(
+                    )
+                    &&
+                    ((wx - 1) >= 0)
+                    &&
+                    ((wy - 1) >= 0)
+                )
+                {
+                    mask += 1;
+                }
+                // N: {0,-1}
+                if(
                     (
                         (p_world_map[wp][(wy - 1)][wx] == tte_Hills)
                         ||
-                     (
-                         (p_world_map[wp][(wy - 1)][wx] >= _Hills_0010)
-                         &&
-                         (p_world_map[wp][(wy - 1)][wx] <= _1Hills2)
+                        (
+                            (p_world_map[wp][(wy - 1)][wx] >= _Hills_0010)
+                            &&
+                            (p_world_map[wp][(wy - 1)][wx] <= _1Hills2)
                         )
-                     )
-                     &&
-                     ((wy - 1) >= 0)
-                 )
-                 {
-                     mask += 2;
-                 }
-                 // NE: {+1,-1}
-                 if(
+                    )
+                    &&
+                    ((wy - 1) >= 0)
+                )
+                {
+                    mask += 2;
+                }
+                // NE: {+1,-1}
+                if(
                     (
                         (p_world_map[wp][(wy - 1)][(wx + 1)] == tte_Hills)
                         ||
-                     (
-                         (p_world_map[wp][(wy - 1)][(wx + 1)] >= _Hills_0010)
-                         &&
-                         (p_world_map[wp][(wy - 1)][(wx + 1)] <= _1Hills2)
+                        (
+                            (p_world_map[wp][(wy - 1)][(wx + 1)] >= _Hills_0010)
+                            &&
+                            (p_world_map[wp][(wy - 1)][(wx + 1)] <= _1Hills2)
                         )
-                     )
-                     &&
-                     ((wx + 1) < WORLD_WIDTH)
-                     &&
-                     ((wy - 1) >= 0)
-                 )
-                 {
-                     mask += 4;
-                 }
-                 // E: {+1,0}
-                 if(
+                    )
+                    &&
+                    ((wx + 1) < WORLD_WIDTH)
+                    &&
+                    ((wy - 1) >= 0)
+                )
+                {
+                    mask += 4;
+                }
+                // E: {+1,0}
+                if(
                     (
                         (p_world_map[wp][wy][(wx + 1)] == tte_Hills)
                         ||
-                     (
-                         (p_world_map[wp][wy][(wx + 1)] >= _Hills_0010)
-                         &&
-                         (p_world_map[wp][wy][(wx + 1)] <= _1Hills2)
+                        (
+                            (p_world_map[wp][wy][(wx + 1)] >= _Hills_0010)
+                            &&
+                            (p_world_map[wp][wy][(wx + 1)] <= _1Hills2)
                         )
-                     )
-                     &&
-                     ((wx + 1) < WORLD_WIDTH)
-                 )
-                 {
-                     mask += 8;
-                 }
-                 // SE: {+1,+1}
-                 if(
+                    )
+                    &&
+                    ((wx + 1) < WORLD_WIDTH)
+                )
+                {
+                    mask += 8;
+                }
+                // SE: {+1,+1}
+                if(
                     (
                         (p_world_map[wp][(wy + 1)][(wx + 1)] == tte_Hills)
                         ||
-                     (
-                         (p_world_map[wp][(wy + 1)][(wx + 1)] >= _Hills_0010)
-                         &&
-                         (p_world_map[wp][(wy + 1)][(wx + 1)] <= _1Hills2)
+                        (
+                            (p_world_map[wp][(wy + 1)][(wx + 1)] >= _Hills_0010)
+                            &&
+                            (p_world_map[wp][(wy + 1)][(wx + 1)] <= _1Hills2)
                         )
-                     )
-                     &&
-                     ((wx + 1) < WORLD_WIDTH)
-                     &&
+                    )
+                    &&
+                    ((wx + 1) < WORLD_WIDTH)
+                    &&
                     (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
-                 )
-                 {
-                     mask += 16;
-                 }
-                 // S: {0,+1}
-                 if(
+                )
+                {
+                    mask += 16;
+                }
+                // S: {0,+1}
+                if(
                     (
                         (p_world_map[wp][(wy + 1)][wx] == tte_Hills)
                         ||
-                     (
-                         (p_world_map[wp][(wy + 1)][wx] >= _Hills_0010)
-                         &&
-                         (p_world_map[wp][(wy + 1)][wx] <= _1Hills2)
+                        (
+                            (p_world_map[wp][(wy + 1)][wx] >= _Hills_0010)
+                            &&
+                            (p_world_map[wp][(wy + 1)][wx] <= _1Hills2)
                         )
-                     )
-                     &&
+                    )
+                    &&
                     (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
-                 )
-                 {
-                     mask += 32;
-                 }
-                 // SW: {-1,+1}
-                 if(
+                )
+                {
+                    mask += 32;
+                }
+                // SW: {-1,+1}
+                if(
                     (
                         (p_world_map[wp][(wy + 1)][(wx - 1)] == tte_Hills)
                         ||
-                     (
-                         (p_world_map[wp][(wy + 1)][(wx - 1)] >= _Hills_0010)
-                         &&
-                         (p_world_map[wp][(wy + 1)][(wx - 1)] <= _1Hills2)
+                        (
+                            (p_world_map[wp][(wy + 1)][(wx - 1)] >= _Hills_0010)
+                            &&
+                            (p_world_map[wp][(wy + 1)][(wx - 1)] <= _1Hills2)
                         )
-                     )
-                     &&
-                     ((wx - 1) >= 0)
-                     &&
+                    )
+                    &&
+                    ((wx - 1) >= 0)
+                    &&
                     (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
-                 )
-                 {
-                     mask += 64;
-                 }
-                 // W: {-1,0}
-                 if(
+                )
+                {
+                    mask += 64;
+                }
+                // W: {-1,0}
+                if(
                     (
                         (p_world_map[wp][wy][(wx - 1)] == tte_Hills)
                         ||
-                     (
-                         (p_world_map[wp][wy][(wx - 1)] >= _Hills_0010)
-                         &&
-                         (p_world_map[wp][wy][(wx - 1)] <= _1Hills2)
+                        (
+                            (p_world_map[wp][wy][(wx - 1)] >= _Hills_0010)
+                            &&
+                            (p_world_map[wp][wy][(wx - 1)] <= _1Hills2)
                         )
-                     )
-                     &&
-                     ((wx - 1) >= 0)
-                 )
-                 {
-                     mask += 128;
-                 }
+                    )
+                    &&
+                    ((wx - 1) >= 0)
+                )
+                {
+                mask += 128;
+                }
                 /* OGBUG  no-cardinal conversion causes the square to become Grassland instead */
-                 if(mask > 0)
-                 {
-                    p_world_map[wp][wy][wx] = (16 + terrtype[(256 + mask)]);
-                 }
-             }
-         }
-     }
+                if(mask > 0)
+                {
+                p_world_map[wp][wy][wx] = (16 + terrtype[(256 + mask)]);
+                }
+            }
+        }
+    }
 /*
     END:  Hills
 */
@@ -7296,23 +7332,16 @@ int16_t Square_Is_Forest_NewGame(int16_t wx, int16_t wy, int16_t wp)
 
 
 // MGC o51p43
-// drake178: TILE_IsRiver()
 int16_t Square_Is_River_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
-
-    /* NOTE(drake178): converts the $3E8 used for temporariliy marking rivers into $EE - fortunately actually a river */
+    /* OGBUG  `% TerType_Count` converts 1000 (0x3E8) tt_River_Placeholder into $EE (fortunately actually a river) */
     // 1000 mod 762 = 238  0xEE
     terrain_type = (p_world_map[wp][wy][wx] % TerType_Count);
-
-    if((terrain_type > tt_Forest3) && (terrain_type < tt_Lake2)) { return ST_TRUE; }  /* NOTE(drake178): BUG: this should be tt_Lake1 ($C5) */
-
-    if((terrain_type > tt_Shore2F_end) && (terrain_type < tt_Mountains_Fst)) { return ST_TRUE; }
-
-    if((terrain_type > tt_Shore2_end) && (terrain_type < tt_Shore3_1st)) { return ST_TRUE; }
-
+    if((terrain_type > tt_Forest3     ) && (terrain_type < tt_Lake2         )) { return ST_TRUE; }  /* OGBUG  this should be tt_Lake1 ($C5) */
+    if((terrain_type > tt_Shore2F_end ) && (terrain_type < tt_Mountains_Fst )) { return ST_TRUE; }
+    if((terrain_type > tt_Shore2_end  ) && (terrain_type < tt_Shore3_1st    )) { return ST_TRUE; }
     if(terrain_type == TT_RIVER_PLACEHOLDER) { return ST_TRUE; }
-
     return ST_FALSE;
 }
 
@@ -7326,13 +7355,10 @@ int16_t Square_Is_River_NewGame(int16_t wx, int16_t wy, int16_t wp)
 // UU_TILE_IsShore()
 
 // MGC o51p46
-// drake178: TILE_IsMountains()
 int16_t Square_Is_Mountain_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type = 0;  // _CX_
-
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
-
+    int16_t terrain_type = 0;
+    terrain_type = p_world_map[wp][wy][wx];
     if(
         (terrain_type == tt_Mountain1)
         ||
@@ -7343,24 +7369,19 @@ int16_t Square_Is_Mountain_NewGame(int16_t wx, int16_t wy, int16_t wp)
         )
     )
     {
-
         return ST_TRUE;
-
     }
     else
     {
-
         return ST_FALSE;
-
     }
-
 }
 
 // MGC o51p47
 int16_t Square_Is_Hills_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+    terrain_type = p_world_map[wp][wy][wx];
     if(
         (terrain_type == tt_Hills1)
         ||
@@ -7381,13 +7402,10 @@ int16_t Square_Is_Hills_NewGame(int16_t wx, int16_t wy, int16_t wp)
 
 
 // MGC o51p48
-// drake178: TILE_IsSwamp()
 int16_t Square_Is_Swamp_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type = 0;  // _CX_
-
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
-
+    int16_t terrain_type = 0;
+    terrain_type = p_world_map[wp][wy][wx];
     if(
         (terrain_type == tt_Swamp2)
         ||
@@ -7396,27 +7414,19 @@ int16_t Square_Is_Swamp_NewGame(int16_t wx, int16_t wy, int16_t wp)
         (terrain_type == tt_Swamp1)
     )
     {
-
         return ST_TRUE;
-
     }
     else
     {
-
         return ST_FALSE;
-
     }
-
 }
 
 // MGC o51p49
-// drake178: TILE_IsDesert()
 int16_t Square_Is_Desert_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type = 0;  // _CX_
-
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
-
+    int16_t terrain_type = 0;
+    terrain_type = p_world_map[wp][wy][wx];
     if(
         (terrain_type == tt_Desert1)
         ||
@@ -7433,32 +7443,20 @@ int16_t Square_Is_Desert_NewGame(int16_t wx, int16_t wy, int16_t wp)
         )
     )
     {
-
         return ST_TRUE;
-
     }
     else
     {
-
         return ST_FALSE;
-
     }
-
 }
 
 
 // MGC o51p50
-// drake178: TILE_IsGrasslands()
-/*
-*/
-/*
-*/
 int16_t Square_Is_Grassland_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type = 0;  // _CX_
-
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
-
+    int16_t terrain_type = 0;
+    terrain_type = p_world_map[wp][wy][wx];
     if(
         (terrain_type == tt_Grasslands1)
         ||
@@ -7471,17 +7469,12 @@ int16_t Square_Is_Grassland_NewGame(int16_t wx, int16_t wy, int16_t wp)
         (terrain_type == tt_BugGrass)
     )
     {
-
         return ST_TRUE;
-
     }
     else
     {
-
         return ST_FALSE;
-
     }
-
 }
 
 
@@ -7509,7 +7502,7 @@ int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
     int16_t terrain_type = 0;  // _SI_
     int16_t food_units = 0;  // _CX_
 
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+    terrain_type = p_world_map[wp][wy][wx];
 
     if(
         (terrain_type == tt_Ocean)

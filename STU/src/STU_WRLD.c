@@ -1704,10 +1704,10 @@ static void Allocate_Game_Data(void)
 {
     _landmasses                  = (uint8_t           *)Allocate_Space(NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 1) / SZ_PARAGRAPH_B));
     // _world_maps               = (uint8_t           *)Allocate_Space( NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 2)                  / SZ_PARAGRAPH_B));
-    //_world_maps                = (uint8_t           *)Allocate_Space((NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 2) + WORLD_OVERRUN) / SZ_PARAGRAPH_B));
-    _world_maps                  = (uint8_t           *)Allocate_Space(( ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERRUN) * sizeof(int16_t)) / SZ_PARAGRAPH_B) + 2) );
+    //_world_maps                = (uint8_t           *)Allocate_Space((NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 2) + WORLD_OVERFLOW) / SZ_PARAGRAPH_B));
+    _world_maps                  = (uint8_t           *)Allocate_Space(( ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERFLOW) * sizeof(int16_t)) / SZ_PARAGRAPH_B) + 2) );
     // _map_square_terrain_speci = (uint8_t           *)Allocate_Space(NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 1) / SZ_PARAGRAPH_B));
-    _map_square_terrain_specials = (uint8_t           *)Allocate_Space(((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERRUN) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);
+    _map_square_terrain_specials = (uint8_t           *)Allocate_Space(((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERFLOW) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);
     _map_square_flags            = (uint8_t           *)Allocate_Space(NUM_PLANES * (((WORLD_WIDTH * WORLD_HEIGHT) * 1) / SZ_PARAGRAPH_B));
     _UNITS                       = (struct s_UNIT     *)Allocate_Space(2028);
     _CITIES                      = (struct s_CITY     *)Allocate_Space((((NUM_CITIES     * sizeof(struct s_CITY    )) / SZ_PARAGRAPH_B) + 1));

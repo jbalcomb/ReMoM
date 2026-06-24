@@ -14,6 +14,7 @@
 #include "../../STU/src/STU_LOG.h"  /* CALL_TRACE */
 
 #include "Combat.h"
+#include "INITGAME.h"  /* gd_ci_inject_world_overrun (CI overrun inject) */
 
 
 
@@ -90,20 +91,58 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
 
     /*
         ...make a better note somewhere...
-        WORLD_OVERRUN is for where OG-MoM does some bad math on the buffer
+        WORLD_OVERFLOW is for where OG-MoM does some bad math on the buffer and crashes - OOB AVRL/AVWL
+            e.g.,   Simtex_Autotiling()
+
     */
-    _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, ( ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERRUN) * sizeof(int16_t)) / SZ_PARAGRAPH_B) + 2) );  // 602 PR, 9632 B  ... still don't know how they got the +2 for the headers. maybe header and subheader
+    _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, ( ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERFLOW) * sizeof(int16_t)) / SZ_PARAGRAPH_B) + 2) );  // 602 PR, 9632 B  ... still don't know how they got the +2 for the headers. maybe header and subheader
     p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
+
+    /* CI: inject OG's exact OOB-overrun bytes (captured right after this same
+     * allocation in OG) into the over-allocated region past _world_maps, so the
+     * OG-faithful OOB south-edge reads in Simtex_Autotiling (wp=1/wy=39 ->
+     * p_world_map[1][40][x]) return OG's values rather than heap garbage.
+     * Supersedes the old debug memset-zero of this region. */
+    gd_ci_inject_world_overrun("post_alloc");
 
     UU_TBL_1 = (int8_t *)Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
     UU_TBL_2 = (int8_t *)Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
+    /* CLAUDE 2026-06-24: trace UU_TBL_1/2 lifecycle (allocate / calc / load).
+       The bytes here immediately follow _world_maps in this allocation arena,
+       so they're also the memory Simtex_Autotiling's OG-faithful OOB south-edge
+       reads land on at wp=1 wy=39 → wy+1=40.  Whatever's here at allocate
+       determines what those OOB reads return until the calc pass overwrites it.
+       Paired with companion logs at MAPGEN.c (after CRP_NEWG_CreatePathGrids__WIP)
+       and LOADSAVE.c (after stu_fread). */
+    {
+        char row[96 * 5];
+        int plane, i, q;
+        const unsigned char * tbls[2] = { (const unsigned char *)UU_TBL_1, (const unsigned char *)UU_TBL_2 };
+        const char *         names[2] = { "UU_TBL_1", "UU_TBL_2" };
+        int t;
+        LOG_INFO(LOG_CAT_GENERAL,
+            "[UU_TBL] event=allocate  UU_TBL_1=%p UU_TBL_2=%p  size_used=%d bytes each (224 allocated)",
+            (void *)UU_TBL_1, (void *)UU_TBL_2, NUM_PLANES * 96);
+        for (t = 0; t < 2; t++)
+        {
+            for (plane = 0; plane < NUM_PLANES; plane++)
+            {
+                q = 0;
+                for (i = 0; i < 96; i++)
+                {
+                    q += snprintf(row + q, sizeof(row) - q, i ? ",%d" : "%d", (int)tbls[t][(plane * 96) + i]);
+                }
+                LOG_TRACE(LOG_CAT_GENERAL, "[UU_TBL] event=allocate table=%s plane=%d bytes=%s", names[t], plane, row);
+            }
+        }
+    }
 
     _landmasses    = (uint8_t *)Allocate_Next_Block(World_Data, 302);  // 302 PR, 4832 B  ((2 * 60 * 40) / 16)
 
     /*
-        same OVERRUN issue as _world_maps
+        OGBUG  same OOB AVRL/AVWL issue as _world_maps
     */
-    _map_square_terrain_specials = (uint8_t *)Allocate_Next_Block(World_Data, ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERRUN) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // 302 PR, 4832 B
+    _map_square_terrain_specials = (uint8_t *)Allocate_Next_Block(World_Data, ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERFLOW) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // 302 PR, 4832 B
 
     _map_square_flags = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
 

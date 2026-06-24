@@ -7,6 +7,7 @@ Module: INITGAME
 */
 
 #include "../../MoX/src/MOM_DAT.h"
+#include "../../MoX/src/MOM_DEF.h"  /* WORLD_SIZE, WORLD_OVERFLOW, NUM_PLANES (CI overrun inject) */
 #include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/random.h"
@@ -23,6 +24,142 @@ Module: INITGAME
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>  /* getenv, strtol (CI loader) */
+
+/* ==================================================================== *
+ *  Capture/Inject (CI), ReMoM side -- see INITGAME.h.
+ * ==================================================================== *
+ *  Loads og-game-data-capture.fwv (extract-ci-stage0.py output) and hands
+ *  OG's captured values to the call sites that inject them.  The file lives in
+ *  the ReMoM build's working dir; ReMoMber may run from assets/ or the build
+ *  dir, so we try a few candidate paths (plus an OG_CI_FWV override) and log
+ *  loudly rather than fail silently -- a missing file just means "no inject". */
+
+#define GD_CI_MAX_VALS  512   /* longest record is the 240-int16 world overrun */
+#define GD_CI_MAX_RECS   16
+
+typedef struct {
+    char key[32];
+    char site[24];
+    int  count;
+    long vals[GD_CI_MAX_VALS];
+} gd_ci_rec_t;
+
+static gd_ci_rec_t gd_ci_recs[GD_CI_MAX_RECS];
+static int gd_ci_nrecs  = 0;
+static int gd_ci_loaded = 0;   /* 0 = not tried, 1 = loaded, -1 = tried + failed */
+
+int gd_ci_load(void)
+{
+    const char* cands[3];
+    const char* env;
+    const char* used = 0;
+    FILE* f = 0;
+    char  line[8192];
+    int   nc = 0, i;
+
+    if (gd_ci_loaded != 0) {
+        return (gd_ci_loaded == 1) ? gd_ci_nrecs : -1;
+    }
+
+    env = getenv("OG_CI_FWV");
+    if (env && *env) { cands[nc++] = env; }
+    cands[nc++] = "og-game-data-capture.fwv";   /* cwd (build dir, if run there) */
+    cands[nc++] = "/home/jbalcomb/STU/devel/ReMoM/out/build/clang-debug/bin/Debug/og-game-data-capture.fwv";
+
+    for (i = 0; i < nc; i++) {
+        f = fopen(cands[i], "r");
+        if (f) { used = cands[i]; break; }
+    }
+    if (!f) {
+        LOG_INFO(LOG_CAT_GENERAL,
+            "[CI] load FAILED: og-game-data-capture.fwv not found (cwd or build dir). No injection.");
+        gd_ci_loaded = -1;
+        return -1;
+    }
+
+    gd_ci_nrecs = 0;
+    while (fgets(line, sizeof(line), f)) {
+        char  key[64], site[64];
+        int   count = 0, consumed = 0, n = 0;
+        char* p = line;
+        char* endp;
+        gd_ci_rec_t* r;
+
+        while (*p == ' ' || *p == '\t') { p++; }
+        if (*p == '#' || *p == '\n' || *p == '\r' || *p == 0) { continue; }
+        if (gd_ci_nrecs >= GD_CI_MAX_RECS) {
+            LOG_INFO(LOG_CAT_GENERAL, "[CI] WARNING: >%d records; rest ignored.", GD_CI_MAX_RECS);
+            break;
+        }
+        if (sscanf(p, "%63s %63s %d%n", key, site, &count, &consumed) != 3) {
+            LOG_INFO(LOG_CAT_GENERAL, "[CI] WARNING: malformed record skipped.");
+            continue;
+        }
+        r = &gd_ci_recs[gd_ci_nrecs];
+        strncpy(r->key,  key,  sizeof(r->key)  - 1); r->key [sizeof(r->key)  - 1] = 0;
+        strncpy(r->site, site, sizeof(r->site) - 1); r->site[sizeof(r->site) - 1] = 0;
+
+        p += consumed;
+        for (;;) {
+            long v = strtol(p, &endp, 10);
+            if (endp == p) { break; }       /* no more numbers on the line */
+            if (n < GD_CI_MAX_VALS) { r->vals[n] = v; }
+            n++;
+            p = endp;
+        }
+        if (n != count) {
+            LOG_INFO(LOG_CAT_GENERAL,
+                "[CI] WARNING: %s %s declared %d values but found %d.", r->key, r->site, count, n);
+        }
+        r->count = (n < GD_CI_MAX_VALS) ? n : GD_CI_MAX_VALS;
+        gd_ci_nrecs++;
+    }
+    fclose(f);
+
+    LOG_INFO(LOG_CAT_GENERAL, "[CI] loaded %d record(s) from %s", gd_ci_nrecs, used);
+    gd_ci_loaded = 1;
+    return gd_ci_nrecs;
+}
+
+int gd_ci_get(const char* key, const char* site, long* out, int max)
+{
+    int i, k, n;
+    if (gd_ci_loaded == 0) { gd_ci_load(); }
+    for (i = 0; i < gd_ci_nrecs; i++) {
+        if (strcmp(gd_ci_recs[i].key, key) == 0 &&
+            strcmp(gd_ci_recs[i].site, site) == 0) {
+            n = gd_ci_recs[i].count;
+            if (n > max) { n = max; }
+            for (k = 0; k < n; k++) { out[k] = gd_ci_recs[i].vals[k]; }
+            return n;
+        }
+    }
+    return -1;
+}
+
+void gd_ci_inject_world_overrun(const char* site)
+{
+    long     vals[WORLD_OVERFLOW];
+    int16_t* dst;
+    int      n, i;
+
+    if (!_world_maps) {
+        LOG_INFO(LOG_CAT_GENERAL, "[CI] inject overrun (%s): _world_maps NULL -- skipped.", site);
+        return;
+    }
+    n = gd_ci_get("world_maps_overrun", site, vals, WORLD_OVERFLOW);
+    if (n < 0) {
+        LOG_INFO(LOG_CAT_GENERAL, "[CI] inject overrun (%s): no record -- skipped.", site);
+        return;
+    }
+    /* OG-faithful OOB target: one past the last valid cell, p_world_map[1][40][0]. */
+    dst = (int16_t*)_world_maps + (NUM_PLANES * WORLD_SIZE);
+    for (i = 0; i < n; i++) { dst[i] = (int16_t)vals[i]; }
+    LOG_INFO(LOG_CAT_GENERAL,
+        "[CI] inject overrun (%s): wrote %d int16 at _world_maps+%d.",
+        site, n, (int)(NUM_PLANES * WORLD_SIZE));
+}
 
 /* ---- Game-data capture (CaptureGameData PRD/PLAN, Phase 4, ReMoM side) ----
  * Dump _players in the SAME [GD] format as the OG-side STU-DOSBox probe,

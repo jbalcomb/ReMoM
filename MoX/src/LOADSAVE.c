@@ -293,6 +293,28 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
     stu_fread(UU_TBL_1, NUM_PLANES, 96, file_pointer);
     stu_fread(UU_TBL_2, NUM_PLANES, 96, file_pointer);
+    /* CLAUDE 2026-06-24: lifecycle trace; companion logs at ALLOC.c (allocate)
+       and MAPGEN.c (after CRP_NEWG_CreatePathGrids__WIP).  See ALLOC.c for the why. */
+    {
+        char row[96 * 5];
+        int plane, i, q;
+        const unsigned char * tbls[2] = { (const unsigned char *)UU_TBL_1, (const unsigned char *)UU_TBL_2 };
+        const char *         names[2] = { "UU_TBL_1", "UU_TBL_2" };
+        int t;
+        LOG_INFO(LOG_CAT_LOADSAVE, "[UU_TBL] event=load  (after stu_fread for both tables)");
+        for (t = 0; t < 2; t++)
+        {
+            for (plane = 0; plane < NUM_PLANES; plane++)
+            {
+                q = 0;
+                for (i = 0; i < 96; i++)
+                {
+                    q += snprintf(row + q, sizeof(row) - q, i ? ",%d" : "%d", (int)tbls[t][(plane * 96) + i]);
+                }
+                LOG_TRACE(LOG_CAT_LOADSAVE, "[UU_TBL] event=load table=%s plane=%d bytes=%s", names[t], plane, row);
+            }
+        }
+    }
 
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 19864);

@@ -273,7 +273,7 @@ WIZARDS.LBX
 #define WORLD_SIZE          2400
 #define WORLD_SIZE_DB       2400  // 1-byte values
 #define WORLD_SIZE_DW       4800  // 2-byte values
-#define WORLD_OVERRUN       (4 * WORLD_WIDTH)  /* too many AVRL/AVWL and no way to duplicate the OG-MoM behavior; something somewhere does (wy + 4) */
+#define WORLD_OVERFLOW       (4 * WORLD_WIDTH)  /* OGBUG  too many AVRL/AVWL and no way to duplicate the OG-MoM behavior; something somewhere does (wy + 4) */
 
 #define CITY_AREA_WIDTH        5
 #define CITY_AREA_HEIGHT       5
