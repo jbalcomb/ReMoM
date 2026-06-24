@@ -6319,8 +6319,8 @@ void CRP_NEWG_CreatePathGrids__WIP(int16_t wp)
 {
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     EMMDATAH_Map();
-    CRP_NEWG_CreatePathGrid__STUB(&movement_mode_cost_maps[wp].walking.moves2[0], &UU_TBL_1[wp]);
-    CRP_NEWG_CreatePathGrid__STUB(&movement_mode_cost_maps[wp].sailing.moves2[0], &UU_TBL_2[wp]);
+    CRP_NEWG_CreatePathGrid__STUB(&movement_mode_cost_maps[wp].walking.moves2[0], (uint8_t *)&UU_TBL_1[wp]);
+    CRP_NEWG_CreatePathGrid__STUB(&movement_mode_cost_maps[wp].sailing.moves2[0], (uint8_t *)&UU_TBL_2[wp]);
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
 
