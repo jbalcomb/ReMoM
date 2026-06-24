@@ -4951,7 +4951,31 @@ void River_Terrain(int16_t wp)
     int16_t DBG_river_type = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+/*
+[22_River_Terrain_W]
+_world_maps[0].y09: 1/60 elem differ: [20] 502 ≠  47
+_world_maps[0].y12: 1/60 elem differ: [25] 488 ≠  49
+_world_maps[0].y14: 1/60 elem differ: [15]  50 ≠ 553
+_world_maps[0].y17: 1/60 elem differ: [19] 521 ≠  82
+_world_maps[0].y26: 1/60 elem differ: [ 9] 225 ≠  29
+_world_maps[0].y27: 1/60 elem differ: [37] 475 ≠  36
+_world_maps[1].y08: 1/60 elem differ: [34] 486 ≠  47
+_world_maps[1].y21: 1/60 elem differ: [44] 503 ≠  48
+_world_maps[1].y22: 1/60 elem differ: [27] 225 ≠  29
+_world_maps[1].y31: 1/60 elem differ: [14] 498 ≠  43
 
+29
+36
+43
+47
+48
+49
+_Shore11101110  = 0x32, / * 50 * /
+_Shore00011111  = 0x52, / * 82 * /
+
+_Shore1R100000  = 0xE1, / * 225 * /
+
+*/
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
 
@@ -5474,6 +5498,7 @@ void River_Terrain(int16_t wp)
         }
 
     }
+
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
