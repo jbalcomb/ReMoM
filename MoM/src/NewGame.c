@@ -1533,7 +1533,7 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
             case ngscr_Banner:
             {
                 newgame_state = Newgame_Screen_7__WIP();
-                gd_dump_players("Newgame_Screen_7");
+                gd_dump_players("00a_Newgame_Screen_7_P");
             } break;
             case 99:  /* What sets 99? */
             {

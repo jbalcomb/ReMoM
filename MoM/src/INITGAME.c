@@ -35,6 +35,7 @@ typedef struct { uint16_t off; uint8_t kind; uint16_t count; const char* name; }
 #include "gd_node_fields.h"
 #include "gd_tower_fields.h"
 #include "gd_lair_fields.h"
+#include "gd_city_fields.h"
 
 static int gd_es(int kind) {
     return (kind == GD_U16 || kind == GD_I16) ? 2
@@ -201,6 +202,44 @@ void gd_dump_lairs(const char* point) {
         STU_Log_Flush_All();
     }
 }
+
+void gd_dump_cities(const char* point) {
+    int n, i, k;
+    char val[1100];
+    /* placed-city count -> compare-gd masks _CITIES[n >= _cities] (unplaced tail). */
+    LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _cities = %d", point, (int)_cities);
+    for (n = 0; n < NUM_CITIES; n++) {
+        const uint8_t* base = (const uint8_t*)&_CITIES[n];
+        for (i = 0; i < CITY_FIELD_COUNT; i++) {
+            const gd_field_t* f = &city_fields[i];
+            const uint8_t* fp = base + f->off;
+            int q = 0;
+            if (f->kind == GD_STR) {
+                val[q++] = '"';
+                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
+                    uint8_t c = fp[k];
+                    if (c == 0) break;
+                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
+                }
+                val[q++] = '"'; val[q] = 0;
+            } else if (f->kind == GD_BYTES) {
+                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
+                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
+                val[q] = 0;
+            } else {
+                int es = gd_es(f->kind);
+                for (k = 0; k < f->count; k++) {
+                    long v = gd_rd(fp + k * es, f->kind);
+                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
+                    if (q > (int)sizeof(val) - 16) break;
+                }
+            }
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _CITIES[%d].%s = %s",
+                      point, n, f->name, val);
+        }
+        STU_Log_Flush_All();
+    }
+}
 /* ---- end game-data capture ---- */
 
 
@@ -260,7 +299,7 @@ void Init_Computer_Players(void)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     Init_Computer_Players_Wizard_Profile();
-    gd_dump_players("Wizard_Profile");
+    gd_dump_players("00b_Wizard_Profile_P");
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
@@ -316,7 +355,7 @@ void Init_Computer_Players(void)
     }
 
     Init_Computer_Players_Spell_Library();
-    gd_dump_players("Spell_Library");
+    gd_dump_players("00c_Spell_Library_P");
 
     _players[NEUTRAL_PLAYER_IDX].Defeated_Wizards = 0;
 
@@ -369,30 +408,44 @@ void Init_Runtime(void)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     Draw_Building_The_Worlds(100);
+
     Initialize_Items();
+    // TODO  gd_dump_items
+
     Init_Heroes();
-    gd_dump_players("Init_Heroes");
+    gd_dump_players("100_Init_Heroes_P");
+    // TODO  gd_dump_heroes ... _HEROES2
+
     Init_Players();
-    gd_dump_players("Init_Players");
+    gd_dump_players("101_Init_Players_P");
+
     Init_CP_Strategy();
-    gd_dump_players("Init_CP_Strategy");
+    gd_dump_players("102_Init_CP_Strategy_P");
+
     Init_Magic_Personalities_Objectives();
-    gd_dump_players("Init_Magic_Pers_Obj");
+    gd_dump_players("103_Init_Magic_Pers_Obj_P");
+
     Init_Summoning_Circle_And_Spell_Of_Mastery();
-    gd_dump_players("Init_Summoning_Circle");
+    gd_dump_players("104_Init_Summoning_Circle_P");
+
     Initialize_Messages();
+
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
         _players[itr_players].capital_race = _CITIES[itr_players].race;
     }
+    gd_dump_players("105_capital_race_P");
+
     Init_Diplomatic_Relations();
-    gd_dump_players("Init_Diplomatic_Relations");
+    gd_dump_players("106_Init_Diplomatic_Relations_P");
+
     _players[HUMAN_PLAYER_IDX].gold_reserve = ((5 - _difficulty) * 25);
     for(itr_players = 1; itr_players < _num_players; itr_players++)
     {
         _players[itr_players].gold_reserve = 150;
         AI_SCircle_Reevals[itr_players] = (80 + Random(40));
     }
+    gd_dump_players("107_gold_reserve_P");
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
@@ -1783,7 +1836,7 @@ BEGIN: Knowable - Rare
                 
                 if(_players[itr].spellranks[sbr] > 9)
                 {
-                    for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_REALM; itr2++)
+                    for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_RARITY; itr2++)
                     {
                         _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 20 + itr2)] = sls_Knowable;
                     }
@@ -1838,7 +1891,7 @@ BEGIN: Knowable - Very Rare
                 
                 if(_players[itr].spellranks[sbr] > 9)
                 {
-                    for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_REALM; itr2++)
+                    for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_RARITY; itr2++)
                     {
                         _players[itr].spells_list[((sbr * NUM_SPELLS_PER_MAGIC_REALM) + 30 + itr2)] = sls_Knowable;
                     }

@@ -370,6 +370,22 @@ int16_t Random_at(int16_t n, const char *file, int line, const char *func)
             (int)ret,
             func ? func : "?",
             file, (int)line);
+        /* CLAUDE 2026-06-23: dual-emit into STU_LOG so [RNG-CALL] lines
+           appear co-located with [LAIR_VAL] / other LOG_INFO output in
+           remom_log_new.txt for in-place correlation.  The fprintf above
+           stays for parity_check.py / verify_rng_alignment.sh which read
+           stderr.log.  Same field order; LOG_INFO header (timestamp/sev/
+           cat/file:line/func) replaces the stderr trailing  at=  field. */
+        LOG_INFO(LOG_CAT_RANDOM,
+            "[RNG-CALL] seg=%lu  sidx=%lu  call=%llu  n=%d  before=0x%08X  after=0x%08X  result=%d  caller=%s  caller_at=%s:%d",
+            g_rng_segment, g_rng_seg_idx,
+            (unsigned long long)g_random_call_count,
+            (int)n,
+            (unsigned)seed_before,
+            (unsigned)random_seed,
+            (int)ret,
+            func ? func : "?",
+            file, (int)line);
     }
 
     return ret;

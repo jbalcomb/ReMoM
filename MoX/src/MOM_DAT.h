@@ -476,9 +476,9 @@ enum e_LAIR_TYPE
 {
     lt_NONE             = -1,   // N/A
     lt_Tower            =  0,   // N/A
-    lt_Chaos_Node       =  1,   // Node, sbr_Chaos
-    lt_Nature_Node      =  2,   // Node, sbr_Nature
-    lt_Sorcery_Node     =  3,   // Node, sbr_Sorcery
+    lt_Chaos_Node       =  1,   // Node, /* nt_Chaos   = 2 + 1 */
+    lt_Nature_Node      =  2,   // Node, /* nt_Nature  = 1 + 1 */
+    lt_Sorcery_Node     =  3,   // Node, /* nt_Sorcery = 0 + 1 */
     lt_Cave             =  4,   // ..., Random(5)
     lt_Dungeon          =  5,   // ..., sbr_Death
     lt_Ancient_Temple   =  6,   // Temple, Life
