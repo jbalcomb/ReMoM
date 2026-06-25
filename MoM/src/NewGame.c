@@ -1533,7 +1533,7 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
             case ngscr_Banner:
             {
                 newgame_state = Newgame_Screen_7__WIP();
-                gd_dump_players("00a_Newgame_Screen_7_P");
+                gd_dump_players("000_Newgame_Screen_7_P");
             } break;
             case 99:  /* What sets 99? */
             {
@@ -1546,11 +1546,11 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
 
     // ¿ MoO2  Module: HOMEGEN  Generate_Home_Worlds_() ?
     // ¿ MoO2  Module: INITGAME  Init_New_Game_() ?
-    Init_New_Game();
+    Init_New_Game();  /* GD series 100 */
 
     Initialize_Events();
 
-    Init_Runtime();  // ... wrap it up ... 100%!
+    Init_Runtime();  /* GD series 200 */  // ... wrap it up ... 100%!
 
     // save new game as continue save
     Save_SAVE_GAM(8);

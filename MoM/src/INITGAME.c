@@ -524,7 +524,7 @@ void Init_Computer_Players(void)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     Init_Computer_Players_Wizard_Profile();
-    gd_dump_players("00b_Wizard_Profile_P");
+    gd_dump_players("100_Wizard_Profile_P");
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
@@ -580,7 +580,7 @@ void Init_Computer_Players(void)
     }
 
     Init_Computer_Players_Spell_Library();
-    gd_dump_players("00c_Spell_Library_P");
+    gd_dump_players("101_Spell_Library_P");
 
     _players[NEUTRAL_PLAYER_IDX].Defeated_Wizards = 0;
 
@@ -635,24 +635,23 @@ void Init_Runtime(void)
     Draw_Building_The_Worlds(100);
 
     Initialize_Items();
-    // TODO  gd_dump_items
+    // TODO  gd_dump_items("200_Initialize_Items_I");
 
     Init_Heroes();
-    gd_dump_players("100_Init_Heroes_P");
-    gd_dump_heroes("100_Init_Heroes_HE");
-    // TODO  gd_dump_heroes ... _HEROES2
+    gd_dump_players("201_Init_Heroes_P");
+    gd_dump_heroes("202_Init_Heroes_HE");
 
     Init_Players();
-    gd_dump_players("101_Init_Players_P");
+    gd_dump_players("203_Init_Players_P");
 
     Init_CP_Strategy();
-    gd_dump_players("102_Init_CP_Strategy_P");
+    gd_dump_players("204_Init_CP_Strategy_P");
 
     Init_Magic_Personalities_Objectives();
-    gd_dump_players("103_Init_Magic_Pers_Obj_P");
+    gd_dump_players("205_Init_Magic_Pers_Obj_P");
 
     Init_Summoning_Circle_And_Spell_Of_Mastery();
-    gd_dump_players("104_Init_Summoning_Circle_P");
+    gd_dump_players("206_Init_Summoning_Circle_P");
 
     Initialize_Messages();
 
@@ -660,10 +659,10 @@ void Init_Runtime(void)
     {
         _players[itr_players].capital_race = _CITIES[itr_players].race;
     }
-    gd_dump_players("105_capital_race_P");
+    gd_dump_players("207_capital_race_P");  /* at-entry Init_Diplomatic_Relations() */
 
     Init_Diplomatic_Relations();
-    gd_dump_players("106_Init_Diplomatic_Relations_P");
+    gd_dump_players("208_Init_Diplomatic_Relations_P");
 
     _players[HUMAN_PLAYER_IDX].gold_reserve = ((5 - _difficulty) * 25);
     for(itr_players = 1; itr_players < _num_players; itr_players++)
@@ -671,7 +670,7 @@ void Init_Runtime(void)
         _players[itr_players].gold_reserve = 150;
         AI_SCircle_Reevals[itr_players] = (80 + Random(40));
     }
-    gd_dump_players("107_gold_reserve_P");
+    gd_dump_players("209_gold_reserve_P");  /* on-return Init_Runtime() */
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 

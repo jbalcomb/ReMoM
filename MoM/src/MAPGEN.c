@@ -472,7 +472,7 @@ void Init_New_Game(void)
 
     Init_Landmasses(MYRROR_PLANE);
 
-    gd_dump_landmasses("01_Init_Landmasses_L");   /* CLAUDE: _landmasses after Init_Landmasses */
+    gd_dump_landmasses("102_Init_Landmasses_L");   /* CLAUDE: _landmasses after Init_Landmasses */
 
     Draw_Building_The_Worlds(15);
 
@@ -482,8 +482,8 @@ void Init_New_Game(void)
 
     Generate_Landmasses(MYRROR_PLANE);
 
-    gd_dump_landmasses("02_Generate_Landmasses_L");   /* CLAUDE: _landmasses after Generate_Landmasses */
-    gd_dump_world_map("03_Landmasses_W");   /* CLAUDE: bisect map-divergence checkpoint */
+    gd_dump_landmasses("103_Generate_Landmasses_L");   /* CLAUDE: _landmasses after Generate_Landmasses */
+    gd_dump_world_map("104_Landmasses_W");   /* CLAUDE: bisect map-divergence checkpoint */
 
     Draw_Building_The_Worlds(25);
 
@@ -493,7 +493,7 @@ void Init_New_Game(void)
 
     Translate_Heightmap_To_Base_Terrain_Types(MYRROR_PLANE);
 
-    gd_dump_world_map("04_BaseTerrain_W");   /* CLAUDE: bisect map-divergence checkpoint */
+    gd_dump_world_map("105_BaseTerrain_W");   /* CLAUDE: bisect map-divergence checkpoint */
 
     Draw_Building_The_Worlds(35);
 
@@ -505,42 +505,42 @@ void Init_New_Game(void)
 
     /* CLAUDE: full map now built (both planes climate-terraformed) -- capture
      * for OG byte-compare before Nodes/Towers/Lairs run. */
-    gd_dump_world_map("05_ClimateTerrain_W");
+    gd_dump_world_map("106_ClimateTerrain_W");
 
     Draw_Building_The_Worlds(45);
 
     Generate_Nodes();
 
-    gd_dump_nodes("06_Generate_Nodes_N");   /* CLAUDE: _NODES at end of Generate_Nodes */
+    gd_dump_nodes("107_Generate_Nodes_N");   /* CLAUDE: _NODES at end of Generate_Nodes */
 
     Draw_Building_The_Worlds(50);
 
     Rebalance_Node_Types(ARCANUS_PLANE);
     Rebalance_Node_Types(MYRROR_PLANE);
 
-    gd_dump_nodes("07_Rebalance_Node_Types_N");   /* CLAUDE: _NODES after Rebalance */
+    gd_dump_nodes("108_Rebalance_Node_Types_N");   /* CLAUDE: _NODES after Rebalance */
 
     Draw_Building_The_Worlds(55);
 
     /* CLAUDE: map state immediately BEFORE Generate_Towers -- does the tower
      * loop read an identical map (so the divergence is internal to it) or not? */
-    gd_dump_world_map("08_PreTowers_W");
+    gd_dump_world_map("109_PreTowers_W");
 
     Generate_Towers();
 
-    gd_dump_towers("09_Generate_Towers_T");   /* CLAUDE: _TOWERS after Generate_Towers */
+    gd_dump_towers("110_Generate_Towers_T");   /* CLAUDE: _TOWERS after Generate_Towers */
 
     Draw_Building_The_Worlds(60);
 
     Extend_Islands(ARCANUS_PLANE);
     Extend_Islands(MYRROR_PLANE);
 
-    gd_dump_landmasses("10_Extend_Islands_L");
-    gd_dump_world_map("11_Extend_Islands_W");
+    gd_dump_landmasses("111_Extend_Islands_L");
+    gd_dump_world_map("112_Extend_Islands_W");
 
     Generate_Lairs();
 
-    gd_dump_lairs("12_Generate_Lairs_LR");   /* CLAUDE: _LAIRS after Generate_Lairs */
+    gd_dump_lairs("113_Generate_Lairs_LR");   /* CLAUDE: _LAIRS after Generate_Lairs */
 
     Draw_Building_The_Worlds(65);
 
@@ -548,8 +548,8 @@ void Init_New_Game(void)
 
     Generate_Home_Cities();
 
-    gd_dump_cities("13_Generate_Home_Cities_C");
-    gd_dump_units("14_Generate_Home_Cities_U");
+    gd_dump_cities("114_Generate_Home_Cities_C");
+    gd_dump_units("115_Generate_Home_Cities_U");
     
 
 #ifdef STU_DEBUG
@@ -561,8 +561,8 @@ void Init_New_Game(void)
     Generate_Neutral_Cities(ARCANUS_PLANE);
     Generate_Neutral_Cities(MYRROR_PLANE);
 
-    gd_dump_cities("15_Generate_Neutral_Cities_C");
-    gd_dump_units("16_Generate_Neutral_Cities_U");
+    gd_dump_cities("116_Generate_Neutral_Cities_C");
+    gd_dump_units("117_Generate_Neutral_Cities_U");
 
 #ifdef STU_DEBUG
     assert(Validate_All_Neutral_Cities() == ST_TRUE);
@@ -572,17 +572,17 @@ void Init_New_Game(void)
 
     Generate_Terrain_Specials(ARCANUS_PLANE);
     Generate_Terrain_Specials(MYRROR_PLANE);
-    gd_dump_terrain_specials("17_Generate_Terrain_Specials_TS");
-    gd_dump_world_map("18_Generate_Terrain_Specials_W");
+    gd_dump_terrain_specials("118_Generate_Terrain_Specials_TS");
+    gd_dump_world_map("119_Generate_Terrain_Specials_W");
 
     Generate_Roads(ARCANUS_PLANE);
     Generate_Roads(MYRROR_PLANE);
-    gd_dump_map_square_flags("19_Generate_Roads_F");
+    gd_dump_map_square_flags("120_Generate_Roads_F");
 
     Draw_Building_The_Worlds(80);
 
     Simtex_Autotiling();
-    gd_dump_world_map("20_Simtex_Autotiling_W");
+    gd_dump_world_map("121_Simtex_Autotiling_W");
 
     Draw_Building_The_Worlds(85);
 
@@ -591,24 +591,24 @@ void Init_New_Game(void)
         for(tries = 0; ((tries < 2000) && (Generate_River(ARCANUS_PLANE) == ST_FALSE)); tries++) { }
         for(tries = 0; ((tries < 2000) && (Generate_River(MYRROR_PLANE)  == ST_FALSE)); tries++) { }
     }
-    gd_dump_world_map("21_Generate_River_W");
+    gd_dump_world_map("122_Generate_River_W");
 
     River_Autotile(ARCANUS_PLANE);
     River_Autotile(MYRROR_PLANE);
-    gd_dump_world_map("22_River_Autotile_W");
+    gd_dump_world_map("123_River_Autotile_W");
 
     Desert_Autotile();
-    gd_dump_landmasses("23_Desert_Autotile_L");
-    gd_dump_world_map("24_Desert_Autotile_W");
+    gd_dump_landmasses("124_Desert_Autotile_L");
+    gd_dump_world_map("125_Desert_Autotile_W");
 
     Draw_Building_The_Worlds(85);
 
     Shuffle_Terrains();
-    gd_dump_world_map("25_Shuffle_Terrains_W");
+    gd_dump_world_map("126_Shuffle_Terrains_W");
 
     Movement_Mode_Cost_Maps(ARCANUS_PLANE);
     Movement_Mode_Cost_Maps(MYRROR_PLANE);
-    gd_dump_movement_mode_cost_maps("26_Movement_Mode_Cost_Maps_M");
+    gd_dump_movement_mode_cost_maps("127_Movement_Mode_Cost_Maps_M");
 
     Draw_Building_The_Worlds(90);
 
@@ -636,18 +636,18 @@ void Init_New_Game(void)
             }
         }
     }
-    gd_dump_uu_tbls("27_CRP_NEWG_CreatePathGrids_U");
+    gd_dump_uu_tbls("128_CRP_NEWG_CreatePathGrids_U");
 
     Draw_Building_The_Worlds(95);
 
     Init_Square_Explored();
-    gd_dump_square_explored("28_Init_Square_Explored_E");
+    gd_dump_square_explored("129_Init_Square_Explored_E");
 
     Animate_Oceans();
-    gd_dump_world_map("29_Animate_Oceans_W");
+    gd_dump_world_map("130_Animate_Oceans_W");
 
     Set_Upper_Lair_Guardian_Count();
-    gd_dump_lairs("30_Set_Upper_Lair_Guardian_Count_LR");
+    gd_dump_lairs("131_Set_Upper_Lair_Guardian_Count_LR");
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
