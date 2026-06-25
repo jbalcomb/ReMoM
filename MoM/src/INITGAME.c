@@ -307,7 +307,7 @@ void gd_dump_towers(const char* point) {
 void gd_dump_lairs(const char* point) {
     int n, i, k;
     char val[1100];
-    for (n = 0; n < NUM_LAIRS_102; n++) {
+    for (n = 0; n < NUM_LAIRS; n++) {
         const uint8_t* base = (const uint8_t*)&_LAIRS[n];
         for (i = 0; i < LAIR_FIELD_COUNT; i++) {
             const gd_field_t* f = &lair_fields[i];

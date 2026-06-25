@@ -1714,7 +1714,7 @@ static void Allocate_Game_Data(void)
     _NODES                       = (struct s_NODE     *)Allocate_Space((((NUM_NODES      * sizeof(struct s_NODE    )) / SZ_PARAGRAPH_B) + 1));
     _FORTRESSES                  = (struct s_FORTRESS *)Allocate_Space((((NUM_FORTRESSES * sizeof(struct s_FORTRESS)) / SZ_PARAGRAPH_B) + 1));
     _TOWERS                      = (struct s_TOWER    *)Allocate_Space((((NUM_TOWERS     * sizeof(struct s_TOWER   )) / SZ_PARAGRAPH_B) + 1));
-    _LAIRS                       = (struct s_LAIR     *)Allocate_Space((((NUM_LAIRS_102  * sizeof(struct s_LAIR    )) / SZ_PARAGRAPH_B) + 1));
+    _LAIRS                       = (struct s_LAIR     *)Allocate_Space((((NUM_LAIRS      * sizeof(struct s_LAIR    )) / SZ_PARAGRAPH_B) + 1));
     p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
 }
 
@@ -1729,7 +1729,7 @@ static void Clear_Game_Data(void)
     memset(_NODES,                        0,  (NUM_NODES      * sizeof(struct s_NODE     ))        );
     memset(_FORTRESSES,                   0,  (NUM_FORTRESSES * sizeof(struct s_FORTRESS ))        );
     memset(_TOWERS,                       0,  (NUM_TOWERS     * sizeof(struct s_TOWER    ))        );
-    memset(_LAIRS,                        0,  (NUM_LAIRS_102  * sizeof(struct s_LAIR     ))        );
+    memset(_LAIRS,                        0,  (NUM_LAIRS      * sizeof(struct s_LAIR     ))        );
 }
 
 static void New_Game_Screen_Mock(void)

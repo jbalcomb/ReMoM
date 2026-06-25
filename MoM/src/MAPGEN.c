@@ -3188,7 +3188,7 @@ void Generate_Lairs(void)
     
     /* Final Loop: Deactivate specific lair slots (cleanup/reserved) */
     tail_start = ((2 * NUM_TOWERS) + NUM_NODES + strong_lair_count + NUM_WEAK_LAIRS);
-    for(itr = tail_start; (itr < (tail_start + 3)) && (itr < NUM_LAIRS_102); itr++)
+    for(itr = tail_start; (itr < (tail_start + 3)) && (itr < NUM_LAIRS); itr++)
     {
         _LAIRS[itr].intact = ST_FALSE;
     }
@@ -5668,7 +5668,7 @@ void Generate_Neutral_Cities(int16_t wp)
                 }
             }
             // ; invalidate if less than 4 map squares away from an site - including nodes and towers
-            for(itr2 = 0; itr2 < NUM_LAIRS_102; itr2++)
+            for(itr2 = 0; itr2 < NUM_LAIRS; itr2++)
             {
                 if(_LAIRS[itr2].wp == wp)
                 {

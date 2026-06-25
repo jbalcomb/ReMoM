@@ -21740,7 +21740,7 @@ int16_t Rampage_Combat_City(void)
 
     empty_lair_idx = ST_UNDEFINED;
 
-    for (itr = 0; itr < NUM_LAIRS_102; itr++)
+    for (itr = 0; itr < NUM_LAIRS; itr++)
     {
         if(_LAIRS[itr].intact == ST_FALSE)
         {
