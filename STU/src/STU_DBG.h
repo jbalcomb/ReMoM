@@ -15,8 +15,12 @@ Presently, it seems easier to me to just include STU_DBG.h everywhere and have i
 #define STU_DEBUG_BREAK()  ( (void)0 )
 /* emptiness, when debugging is not enabled */
 // #define DLOG
-#define DLOG(_str_) ((void)sizeof((_str_), 0))
-// This trick leverages the sizeof operator, which does not evaluate its operand. The comma operator (x), 0 evaluates x and discards its value, but since it's inside sizeof, the expression remains unevaluated at runtime.
+/* CLAUDE 2026-06-24: dropped trailing `, 0` — it forced the sizeof operand
+   to be int but the result is discarded via (void) anyway, so the comma
+   added nothing and tripped GCC -Wunused-value on the left side.  Bare
+   sizeof(_str_) still type-checks _str_ at compile time with no runtime
+   evaluation. */
+#define DLOG(_str_) ((void)sizeof(_str_))
 #else
 
 #include "../../ext/stu_compat.h"
