@@ -788,22 +788,22 @@ void Init_Diplomatic_Relations(void)
             p2_ranks = _players[itr_players2].spellranks[sbr_Sorcery];
             p1_ranks = _players[itr_players1].spellranks[sbr_Sorcery];
             shared_ranks = MIN(p1_ranks,p2_ranks);
-            score += (p2_ranks * 2);
+            score += (shared_ranks * 2);
 
             p2_ranks = _players[itr_players2].spellranks[sbr_Chaos];
             p1_ranks = _players[itr_players1].spellranks[sbr_Chaos];
             shared_ranks = MIN(p1_ranks,p2_ranks);
-            score += (p2_ranks * 2);
+            score += (shared_ranks * 2);
 
             p2_ranks = _players[itr_players2].spellranks[sbr_Nature];
             p1_ranks = _players[itr_players1].spellranks[sbr_Nature];
             shared_ranks = MIN(p1_ranks,p2_ranks);
-            score += (p2_ranks * 2);
+            score += (shared_ranks * 2);
 
             p2_ranks = _players[itr_players2].spellranks[sbr_Life];
             p1_ranks = _players[itr_players1].spellranks[sbr_Life];
             shared_ranks = MIN(p1_ranks,p2_ranks);
-            score += (p2_ranks * 2);
+            score += (shared_ranks * 2);
 
             SETMIN(score,-90);
 
