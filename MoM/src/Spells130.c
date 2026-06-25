@@ -1119,20 +1119,29 @@ int16_t Cast_Transmute(int16_t player_idx)
     if(return_value == ST_TRUE)
     {
 
-        // BUGBUG ?
-        // IDGI  gcc says warning: suggest parentheses around ‘&&’ within ‘||’ [-Wparentheses]
+        /* DEDU  unknown which grouping OG intends.  C precedence (&& tighter
+           than ||) parses this as:
+             human OR ((enemy_spells AND detect_magic AND explored) AND animations)
+           — meaning the human-player path bypasses spell_animations entirely.
+           Alternative grouping would be:
+             (human OR (enemy_spells AND detect_magic AND explored)) AND animations
+           — making spell_animations a master toggle for everyone.  Explicit
+           parens below preserve the C-precedence interpretation that the
+           current binary uses; investigate against OG and regroup if needed. */
         if(
             (player_idx == HUMAN_PLAYER_IDX)
             ||
             (
-                (magic_set.enemy_spells == ST_TRUE)
+                (
+                    (magic_set.enemy_spells == ST_TRUE)
+                    &&
+                    (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > ST_FALSE)
+                    &&
+                    (SQUARE_EXPLORED(scsv1, scsv2, scsv3) != ST_FALSE)
+                )
                 &&
-                (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > ST_FALSE)
-                &&
-                (SQUARE_EXPLORED(scsv1, scsv2, scsv3) != ST_FALSE)
+                (magic_set.spell_animations == ST_TRUE)
             )
-            &&
-            (magic_set.spell_animations == ST_TRUE)
         )
         {
 
