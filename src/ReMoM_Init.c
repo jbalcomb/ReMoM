@@ -263,7 +263,7 @@ void ReMoM_Init_Engine(void)
 
     for(itr_savegams = 1; itr_savegams < 9; itr_savegams++)
     {
-        if(magic_set.Have_Save[itr_savegams] != ST_FALSE)
+        if(magic_set.Have_Save[(itr_savegams - 1)] != ST_FALSE)
         {
             stu_itoa(itr_savegams, found_file, 10);
             stu_strcpy(file_name, str_SAVE_NAME);
