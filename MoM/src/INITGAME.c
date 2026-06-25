@@ -176,6 +176,7 @@ typedef struct { uint16_t off; uint8_t kind; uint16_t count; const char* name; }
 #include "gd_lair_fields.h"
 #include "gd_city_fields.h"
 #include "gd_unit_fields.h"
+#include "gd_heroes_fields.h"
 
 static int gd_es(int kind) {
     return (kind == GD_U16 || kind == GD_I16) ? 2
@@ -376,6 +377,48 @@ void gd_dump_cities(const char* point) {
             }
             LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _CITIES[%d].%s = %s",
                       point, n, f->name, val);
+        }
+        STU_Log_Flush_All();
+    }
+}
+
+/* _HEROES2 capture: per-player heroes.  _HEROES2 is an array of NUM_PLAYERS
+ * pointers (one per player) to a s_HEROES { s_HERO heroes[NUM_HERO_TYPES]; }, so
+ * iterate players, dereference each pointer, and dump the flattened heroes_fields
+ * (heroes[0..34].<field>).  One [GD] line per (player, field):
+ *   "[GD] <point> _HEROES2[<player>].<field> = <value>". */
+void gd_dump_heroes(const char* point) {
+    int p, i, k;
+    char val[1100];
+    for (p = 0; p < NUM_PLAYERS; p++) {
+        const uint8_t* base = (const uint8_t*)_HEROES2[p];
+        if (!base) continue;   /* unallocated player slot */
+        for (i = 0; i < HEROES_FIELD_COUNT; i++) {
+            const gd_field_t* f = &heroes_fields[i];
+            const uint8_t* fp = base + f->off;
+            int q = 0;
+            if (f->kind == GD_STR) {
+                val[q++] = '"';
+                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
+                    uint8_t c = fp[k];
+                    if (c == 0) break;
+                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
+                }
+                val[q++] = '"'; val[q] = 0;
+            } else if (f->kind == GD_BYTES) {
+                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
+                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
+                val[q] = 0;
+            } else {
+                int es = gd_es(f->kind);
+                for (k = 0; k < f->count; k++) {
+                    long v = gd_rd(fp + k * es, f->kind);
+                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
+                    if (q > (int)sizeof(val) - 16) break;
+                }
+            }
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _HEROES2[%d].%s = %s",
+                      point, p, f->name, val);
         }
         STU_Log_Flush_All();
     }
@@ -596,6 +639,7 @@ void Init_Runtime(void)
 
     Init_Heroes();
     gd_dump_players("100_Init_Heroes_P");
+    gd_dump_heroes("100_Init_Heroes_HE");
     // TODO  gd_dump_heroes ... _HEROES2
 
     Init_Players();

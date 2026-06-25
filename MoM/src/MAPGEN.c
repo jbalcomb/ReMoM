@@ -7046,6 +7046,14 @@ void Animate_Oceans(void)
     int16_t wy = 0;
     int16_t wp = 0;
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
+    /* CI: inject OG's exact overrun bytes (captured after CRP_NEWG_CreatePathGrids
+     * fills UU_TBL_1, the block OG keeps right after _world_maps) so the OGBUG `<=`
+     * OOB loop below reads OG's values at plane-1 row 40 instead of ReMoM's zeroed
+     * over-allocation.  Otherwise ~30 OOB cells read as tte_Ocean(0) and draw
+     * spurious Random(5) calls that desync the whole downstream RNG stream. */
+    gd_ci_inject_world_overrun("animate_oceans_entry");
+
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
         for(wy = 0; wy <= WORLD_HEIGHT; wy++)  /* OGBUG  OOB AVRL; should be <, not <=; overruns by 1 */
