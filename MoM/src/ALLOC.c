@@ -13,6 +13,8 @@
 
 #include "../../STU/src/STU_LOG.h"  /* CALL_TRACE */
 
+#include "../../ext/stu_compat.h"  /* CLAUDE 2026-06-24: snprintf in the [UU_TBL] byte-dump (via transitive <stdio.h>) */
+
 #include "Combat.h"
 #include "INITGAME.h"  /* gd_ci_inject_world_overrun (CI overrun inject) */
 
