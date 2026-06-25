@@ -629,10 +629,12 @@ SAMB_ptr Allocate_Dos_Space(int32_t size)
 
     pointer = Allocate_Dos_Data_Space((lsize + 12));
 
-    if(pointer == ST_NULL)
-    {
-        // Allocation_Error(size);  // MoO2 has all as "Insufficient Memory!\n\n"
-    }
+    /* CLAUDE 2026-06-24: NULL check now actually bails.  Previously the body
+       was empty (just a commented-out Allocation_Error) and control fell
+       through to write SAMB header bytes at offset 12 from NULL.  Mirrors
+       Allocate_Space's pattern at line 488.  GCC -Wstringop-overflow caught
+       the fall-through correctly. */
+    if(pointer == ST_NULL) { Allocation_Error(1, size); return NULL; }
 
     header = (SAMB_ptr)pointer;
 
