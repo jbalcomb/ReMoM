@@ -240,13 +240,19 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                     Units_With_Same--;
                 }
 
-                /* BUGBUG:  drake178: this jump is supposed to skip all 4 of the following blocks, not just the first one (misplaced parentheses in the original code) */
-                // warning: '&&' within '||' [-Wlogical-op-parentheses]
-
+                /* OGBUG  drake178: misplaced parentheses in the original code —
+                   the condition is supposed to skip all 4 of the following blocks,
+                   not just the first one.  Preserved faithfully via C operator
+                   precedence (&& binds tighter than ||).  Explicit parentheses
+                   below make that intent visible to the compiler and silence
+                   GCC's -Wparentheses; do NOT regroup as ((MV_FLYING || …) && …)
+                   — that would be the "fixed" behavior, not OG-faithful. */
                 if(
-                    (l_movement_modes_array[itr_modes] == MV_FLYING)
-                    &&
-                    ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0)
+                    (
+                        (l_movement_modes_array[itr_modes] == MV_FLYING)
+                        &&
+                        ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0)
+                    )
                     ||
                     ((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0)
                     ||
