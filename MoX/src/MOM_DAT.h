@@ -3810,7 +3810,7 @@ extern SAMB_ptr unitview_stat_gold_icons_seg[15];
 extern SAMB_ptr unitview_stat_icons_seg[15];
 
 // WZD dseg:97F8
-extern SAMB_ptr special_seg[144];
+extern SAMB_ptr special_seg[145];  /* CLAUDE 2026-06-24: was [144] — see MOM_DAT.c */
 
 // WZD dseg:9918
 extern SAMB_ptr diplomacy_mirror_seg;

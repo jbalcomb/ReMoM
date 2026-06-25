@@ -2118,8 +2118,12 @@ OVL_DrawGlobalAnim()
     FLIC_Draw(start_x, start_y, special_seg[288]);
 
 */
-// SAMB_ptr special_seg[145];
-SAMB_ptr special_seg[144];
+/* CLAUDE 2026-06-24: was [144], but the loader at LOADER.c:1360 writes
+   special_seg[111..144] (111 from SPECIAL.LBX + 34 from SPECIAL2.LBX = 145
+   slots).  Index 144 was OOB by 1; GCC -Waggressive-loop-optimizations
+   caught the last iteration as UB.  The commented-out [145] above was an
+   earlier attempt at this fix. */
+SAMB_ptr special_seg[145];
 
 // WZD dseg:9918
 SAMB_ptr diplomacy_mirror_seg;
