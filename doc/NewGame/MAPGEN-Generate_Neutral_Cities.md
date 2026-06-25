@@ -108,8 +108,9 @@ Each attempt:
 ### Phase 4 — pick garrison unit types ([5841-5917](../../MoM/src/MAPGEN.c#L5841-L5917))
 
 Scan `ut_BarbSwordsmen .. ut_Magic_Spirit-1` twice, keeping the **highest unit
-index** that matches the city race, has its required building(s) built/replaced,
-is not an outpost-creator/construction/transport unit, and:
+index** that matches the city race, has each required building either absent
+(`reqd_bldg == 0`) or built/replaced, is not an outpost-creator/construction/
+transport unit, and:
 
 - **Best_Melee_Unit** ([5841-5879](../../MoM/src/MAPGEN.c#L5841-L5879)): `Ranged_Type == rat_UNDEF` **or** `>= srat_Thrown` (no-ranged end **or** thrown end — a union, so `||`).
 - **Best_Ranged_Unit** ([5880-5917](../../MoM/src/MAPGEN.c#L5880-L5917)): `Ranged_Type > rat_NONE` **and** `< srat_Thrown` (the open band `0 < x < 100` — an interval, so `&&`).
@@ -184,6 +185,7 @@ function where a translation could plausibly differ:
 | Prerequisite-prune guard + bound | `loc_4B325`: `add bx,itr2` then `cmp Buildings.None, bs_Built`; `itr2 = 1..35` (`loc_4B404`) | `bldg_status[itr2] == bs_Built`; `itr2 < NUM_BUILDINGS` ✓ |
 | Replace-marking bound | `itr2 = 1..35` (`loc_4B494`) | `itr2 < NUM_BUILDINGS` = `1..35` ✓ |
 | Phase-1 selector 8 | `loc_4A9B9` → **Orc** | `case 8: rt_Orc` ✓ |
+| Garrison req-building test (both loops) | `loc_4B4D1`/`loc_4B534` (melee), same in `loc_4B6EA` (ranged): `cmp reqd_bldg, 0 / jz` ⇒ **0 = requirement satisfied**, else require `bs_Built`/`bs_Replaced` | `(reqd_bldg_1 == 0) \|\| built \|\| replaced` and same for `reqd_bldg_2` ✓ |
 | Melee classifier (Ranged_Type) | `cmp rat_UNDEF / jz accept`, `cmp srat_Thrown / jl skip`, fall-through accept → `(==UNDEF) \|\| (>=Thrown)` (`loc_4B594`) | `(Ranged_Type == rat_UNDEF) \|\| (Ranged_Type >= srat_Thrown)` ✓ |
 | Ranged classifier (Ranged_Type) | `cmp rat_NONE / jle skip`, `cmp srat_Thrown / jge skip`, accept only if both pass → `(>NONE) && (<Thrown)` (`loc_4B6EA`) | `(Ranged_Type > rat_NONE) && (Ranged_Type < srat_Thrown)` ✓ |
 
