@@ -55,6 +55,11 @@ protected:
         // Allocate _world_maps: 2 planes * 2400 tiles * 2 bytes = 9600 bytes = 600 paragraphs
         _world_maps = (uint8_t *)Allocate_Space(602);
 
+        // CLAUDE  Wire the int16_t (word-strided) view that City_Maximum_Size_NewGame reads via
+        // Square_Food2_NewGame (p_world_map[wp][wy][wx]).  Without this p_world_map is NULL ->
+        // SEH 0xc0000005 on every test.
+        p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
+
         // Clear to Ocean (food2 = 0)
         memset(_world_maps, tt_Ocean, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
     }
@@ -63,6 +68,7 @@ protected:
     {
         free(_world_maps);
         _world_maps = NULL;
+        p_world_map = NULL;  // CLAUDE
     }
 
     // Helper: set a terrain type at (wx, wy, wp) in _world_maps

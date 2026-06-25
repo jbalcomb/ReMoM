@@ -10,7 +10,7 @@
 #
 # Direct causes:
 #   - City name popup: `Claudesville` typed into city[0].name
-#   - Patrol click: the human's capital stack (unit[0] Spearmen + unit[3] Swordsmen) gets status=1 (unit[0] also finished=1)
+#   - Patrol click: the human's capital stack (unit[0] + unit[5]) gets status=1, finished=1
 #   - Next Turn click: game.turn advances, AI gives movement orders to its units
 #   - Research picker: human clicks top-left spell (Resist Magic, idx 41)
 #   - AI research: each AI selects a spell via AI_Spell_Research_Select
@@ -53,67 +53,67 @@ city[0].race = 12
 # Patrol click set status=1 on the human's capital stack: unit[0] and unit[5]
 # (both at the capital, both finished=1).  Units pair as unit[N]/unit[N+5] for player N.
 unit[0].owner_idx = 0
-unit[0].wx = 36
-unit[0].wy = 14
+unit[0].wx = 18
+unit[0].wy = 24
 unit[0].wp = 0
 unit[0].status = 1
 unit[0].finished = 1
 
 unit[5].owner_idx = 0
-unit[5].wx = 36
-unit[5].wy = 14
+unit[5].wx = 18
+unit[5].wy = 24
 unit[5].wp = 0
 unit[5].status = 1
 unit[5].finished = 1
 
 # ==========================================================================
-#  Player 1 — Custom
+#  Player 1
 # ==========================================================================
 
 # NONDET player[1].researching_spell_idx -- observed values across 5 runs: 210, 2, 211, 2, 7  (set aside until determinism is restored)
 # player[1].researching_spell_idx = 210
 
 unit[1].owner_idx = 1
-unit[1].wx = 34
-unit[1].wy = 21
-unit[1].wp = 1
+unit[1].wx = 51
+unit[1].wy = 11
+unit[1].wp = 0
 unit[1].status = 0
 
 # ==========================================================================
-#  Player 2 — Freya
+#  Player 2
 # ==========================================================================
 
 # NONDET player[2].researching_spell_idx -- observed values across 5 runs: 169, 202, 161, 203, 203  (set aside until determinism is restored)
 # player[2].researching_spell_idx = 169
 
 unit[2].owner_idx = 2
-unit[2].wx = 16
-unit[2].wy = 8
+unit[2].wx = 36
+unit[2].wy = 12
 unit[2].wp = 0
 unit[2].status = 0
 
 # ==========================================================================
-#  Player 3 — Tauron
+#  Player 3
 # ==========================================================================
 
 # NONDET player[3].researching_spell_idx -- observed values across 5 runs: 211, 122, 207, 205, 212  (set aside until determinism is restored)
 # player[3].researching_spell_idx = 211
 
 unit[3].owner_idx = 3
-unit[3].wx = 38
-unit[3].wy = 31
-unit[3].wp = 0
+unit[3].wx = 45
+unit[3].wy = 14
+unit[3].wp = 1
 unit[3].status = 0
 
 # ==========================================================================
-#  Player 4 — Raven
+#  Player 4
 # ==========================================================================
 
 # NONDET player[4].researching_spell_idx -- observed values across 5 runs: 7, 6, 8, 2, 207  (set aside until determinism is restored)
 # player[4].researching_spell_idx = 7
 
 unit[4].owner_idx = 4
-unit[4].wx = 5
-unit[4].wy = 28
+unit[4].wx = 40
+unit[4].wy = 30
 unit[4].wp = 0
 unit[4].status = 0

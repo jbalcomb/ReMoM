@@ -34,7 +34,11 @@ class Animate_Oceans_test : public ::testing::Test
 protected:
     void SetUp() override
     {
-        _world_maps = static_cast<uint8_t *>(malloc(WORLD_SIZE * NUM_PLANES * sizeof(int16_t)));
+        // CLAUDE  Match production's _world_maps allocation: Animate_Oceans sweeps inclusive
+        // bounds (wy<=WORLD_HEIGHT, wx<=WORLD_WIDTH, OG-faithful), reaching one row/col past
+        // the logical map.  WORLD_OVERFLOW absorbs that overrun (see ALLOC.c); without it the
+        // inclusive sweep corrupts the heap (0xc0000374).
+        _world_maps = static_cast<uint8_t *>(malloc(((NUM_PLANES * WORLD_SIZE) + WORLD_OVERFLOW) * sizeof(int16_t)));
         ASSERT_NE(_world_maps, nullptr);
 
         p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;

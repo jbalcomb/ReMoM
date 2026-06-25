@@ -1074,9 +1074,9 @@ struct s_SPELL_DATA
 #pragma pack(pop)
 
 
-// sizeof:  0Ch  12d
 #pragma pack(push)
 #pragma pack(2)
+// sizeof:  0Ch  12d
 struct s_HERO
 {
     /* 00 */  int16_t  Level;          // ¿ experience (level) ?  Pick_Random_Hero() uses `>= 0` to mean 'player has hero'; negative means dead, -20 means dead forever/disappeared
@@ -1093,7 +1093,7 @@ struct s_HERO
 // sizeof:  0x0C  12
 struct s_HEROES
 {
-    struct s_HERO heroes[NUM_HERO_TYPES];
+    /* 00 */ struct s_HERO heroes[NUM_HERO_TYPES];
 };
 #pragma pack(pop)
 

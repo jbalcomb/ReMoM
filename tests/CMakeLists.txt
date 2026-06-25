@@ -232,8 +232,14 @@ add_test(
         --newgame "${HEMOM_TEST_ASSETS}/test_worldgen.ini"
     WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
 )
+# TIMEOUT was 10s when --newgame world-gen took ~0.26s.  A fixed ~1.5s cost was
+# since added to every new game (measured ~1.4-1.75s solo, flat across land sizes
+# -- NOT content-scaled, so it won't creep as worlds grow), and ~5.5s under
+# parallel contention.  10s became flaky under load.  20s = a few x the realistic
+# sequential worst-case (the suite runs serially; it shares SAVE*.GAM), enough to
+# absorb slow-CI variance while still catching a real hang promptly.
 set_tests_properties(HeMoM_AIBehavior_Setup PROPERTIES
-    TIMEOUT 10
+    TIMEOUT 20
     FIXTURES_SETUP HeMoM_AIBehavior
     LABELS "hemom;integration;ai"
 )
