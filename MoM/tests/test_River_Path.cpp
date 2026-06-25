@@ -548,7 +548,7 @@ protected:
 */
 TEST_F(River_Path_test, TerrainSpecialAtStart_RejectsPathAndLeavesMapUnchanged)
 {
-    const int16_t result = River_Path(ARCANUS_PLANE);
+    const int16_t result = Generate_River(ARCANUS_PLANE);
 
     EXPECT_EQ(result, ST_FALSE);
 
@@ -615,7 +615,7 @@ TEST_F(River_Path_test, TerrainSpecialAtStart_RejectsPathAndLeavesMapUnchanged)
 
     PHASE 3 -- Seed the RNG and call River_Path.
         Set_Random_Seed(plan.seed);
-        const int16_t result = River_Path(wp);
+        const int16_t result = Generate_River(wp);
 
         With the seed locked and the terrain funneled, River_Path() will:
             1) Random() for base_wx  -> produces plan.base_wx  (we set this square to Grasslands)
@@ -686,7 +686,7 @@ TEST_F(River_Path_test, ManufacturedCandidate_SucceedsAndWritesExpectedPath)
 
     Set_Random_Seed(plan.seed);
 
-    const int16_t result = River_Path(wp);
+    const int16_t result = Generate_River(wp);
     EXPECT_EQ(result, ST_TRUE);
 
     int16_t river_placeholder_count = 0;

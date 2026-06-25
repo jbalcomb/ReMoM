@@ -6664,41 +6664,45 @@ int16_t Mountain_Terrain_Special(int16_t wp)
 
 
 // MGC o51p32
-// drake178: NEWG_SetScoutingMaps()
-/*
-; clears the scouting maps, and marks the human
-; player's initial exploration around their fortress
-; city
-*/
-/*
-
-Init_New_Game() |-> 
-
-*/
+/**
+ * @brief Initializes fog-of-war exploration state for a new game.
+ *
+ * @details
+ * Clears exploration data for every square on both world planes, then reveals
+ * the initial scouting area around the human player's starting fortress.
+ *
+ * Reveal pattern behavior:
+ * - Marks the 3x3 block centered on the human fortress as fully explored.
+ * - Marks surrounding ring squares with partial corner-bit visibility to form
+ *   the classic starting vision shape.
+ * - Uses Set_Square_Explored_Bits(...) for all reveal writes so out-of-range
+ *   coordinates are ignored safely.
+ *
+ * The function mutates global exploration state via SET_SQUARE_EXPLORED and
+ * Set_Square_Explored_Bits, and reads fortress coordinates from
+ * _FORTRESSES[HUMAN_PLAYER_IDX].
+ *
+ * @return void
+ */
 void Init_Square_Explored(void)
 {
-    int16_t X_Modifier = 0;
+    int16_t wx_offset = 0;
     int16_t wp = 0;
-    int16_t wy = 0;  // _DI_
-    int16_t wx = 0;  // _SI_
+    int16_t wy = 0;
+    int16_t wx = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    for(wp = 0; wp < 2; wp++)
+    /* set the whole map for both worlds to 'unexplored' */
+    for(wp = 0; wp < NUM_PLANES; wp++)
     {
-
         for(wy = 0; wy < WORLD_HEIGHT; wy++)
         {
-
             for(wx = 0; wx < WORLD_WIDTH; wx++)
             {
-
                 SET_SQUARE_EXPLORED(wx,wy,wp,ST_FALSE);
-
             }
-
         }
-
     }
 
     /*
@@ -6709,57 +6713,41 @@ void Init_Square_Explored(void)
     wx = _FORTRESSES[HUMAN_PLAYER_IDX].wx;
     wy = _FORTRESSES[HUMAN_PLAYER_IDX].wy;
 
-    // ; mark the 3 by 3 area centered around the capital as
-    // ; fully explored
-    // ; 
+    // ; mark the 3 by 3 area centered around the capital as fully explored
     // ; WARNING: the corners will be overwritten below too
-    for(X_Modifier = -1; X_Modifier <= 1; X_Modifier++)
+    for(wx_offset = -1; wx_offset <= 1; wx_offset++)
     {
-
-        Set_Square_Explored_Bits(wp, (wx + X_Modifier), wy, (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
-        
+        Set_Square_Explored_Bits(wp, (wx + wx_offset), wy, (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
     }
-    for(X_Modifier = -1; X_Modifier <= 1; X_Modifier++)
+    for(wx_offset = -1; wx_offset <= 1; wx_offset++)
     {
-
-        Set_Square_Explored_Bits(wp, (wx + X_Modifier), (wy - 1), (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
-        
+        Set_Square_Explored_Bits(wp, (wx + wx_offset), (wy - 1), (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
     }
-    for(X_Modifier = -1; X_Modifier <= 1; X_Modifier++)
+    for(wx_offset = -1; wx_offset <= 1; wx_offset++)
     {
-
-        Set_Square_Explored_Bits(wp, (wx + X_Modifier), (wy + 1), (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
-        
+        Set_Square_Explored_Bits(wp, (wx + wx_offset), (wy + 1), (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
     }
 
-    Set_Square_Explored_Bits(wp, (wx - 1), (wy - 2), SCT_BottomRight);
-
-    Set_Square_Explored_Bits(wp, wx, (wy - 2), (SCT_BottomLeft | SCT_BottomRight));
-
-    Set_Square_Explored_Bits(wp, (wx + 1), (wy - 2), SCT_BottomLeft);
-
-    Set_Square_Explored_Bits(wp, (wx - 1), (wy + 2), SCT_TopRight);
-
-    Set_Square_Explored_Bits(wp, wx, (wy + 2), (SCT_TopLeft | SCT_TopRight));
-
-    Set_Square_Explored_Bits(wp, (wx - 2), (wy - 1), SCT_BottomRight);
-
-    Set_Square_Explored_Bits(wp, (wx - 2), wy, (SCT_TopRight | SCT_BottomRight));
-
-    Set_Square_Explored_Bits(wp, (wx - 2), (wy + 1), SCT_TopRight);
-
-    Set_Square_Explored_Bits(wp, (wx + 2), (wy - 1), SCT_BottomLeft);
-
-    Set_Square_Explored_Bits(wp, (wx + 2), (wy + 1), SCT_TopLeft);
-
-    Set_Square_Explored_Bits(wp, (wx + 2), wy, (SCT_BottomLeft | SCT_TopLeft));
-
+    Set_Square_Explored_Bits(wp, (wx - 1), (wy - 2),  SCT_BottomRight);
+    Set_Square_Explored_Bits(wp,  wx,      (wy - 2), (SCT_BottomLeft | SCT_BottomRight));
+    Set_Square_Explored_Bits(wp, (wx + 1), (wy - 2),  SCT_BottomLeft);
+    Set_Square_Explored_Bits(wp, (wx - 1), (wy + 2),  SCT_TopRight);
+    Set_Square_Explored_Bits(wp,  wx,      (wy + 2), (SCT_TopLeft | SCT_TopRight));
+    /* S2E */
+    Set_Square_Explored_Bits(wp, (wx + 1), (wy + 2),  SCT_TopLeft);
+    Set_Square_Explored_Bits(wp, (wx - 2), (wy - 1),  SCT_BottomRight);
+    Set_Square_Explored_Bits(wp, (wx - 2),  wy,      (SCT_TopRight | SCT_BottomRight));
+    Set_Square_Explored_Bits(wp, (wx - 2), (wy + 1),  SCT_TopRight);
+    Set_Square_Explored_Bits(wp, (wx + 2), (wy - 1),  SCT_BottomLeft);
+    Set_Square_Explored_Bits(wp, (wx + 2), (wy + 1),  SCT_TopLeft);
+    Set_Square_Explored_Bits(wp, (wx + 2),  wy,      (SCT_BottomLeft | SCT_TopLeft));
+    /* NW*/
     Set_Square_Explored_Bits(wp, (wx - 1), (wy - 1), (SCT_BottomLeft | SCT_TopRight | SCT_BottomRight));
-
+    /* SW */
     Set_Square_Explored_Bits(wp, (wx - 1), (wy + 1), (SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
-
-    Set_Square_Explored_Bits(wp, (wx - 1), (wy + 1), (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight));
-
+    /* SE */
+    Set_Square_Explored_Bits(wp, (wx + 1), (wy + 1), (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight));
+    /* NE */
     Set_Square_Explored_Bits(wp, (wx + 1), (wy - 1), (SCT_BottomLeft | SCT_TopLeft | SCT_BottomRight));
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
