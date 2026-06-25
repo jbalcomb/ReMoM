@@ -691,94 +691,92 @@ RE-CHECK: sets fields $182 to the visible relations
 */
 void Init_Diplomatic_Relations(void)
 {
-    int16_t Wiz_1_Books = 0;
-    int16_t Wiz_2_Books = 0;
-    int16_t Most_Chaos_Books = 0;
-    int16_t Life_Book_Total = 0;
-    int16_t Most_Death_Books = 0;
-    int16_t itr_players1 = 0;  // _DI_
-    int16_t itr_players2 = 0;  // _SI_
-    int16_t IDK = 0;  // _CX_
+    int16_t p1_ranks = 0;
+    int16_t p2_ranks = 0;
+    int16_t max_chaos = 0;
+    int16_t sum_life = 0;
+    int16_t max_death = 0;
+    int16_t itr_players1 = 0;
+    int16_t itr_players2 = 0;
+    int16_t score = 0;  /* player pair's initial diplomatic relation score */
+    int16_t shared_ranks = 0;  // DNE in Dasm
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
+    grand_vizier = ST_FALSE;
 
     for(itr_players1 = 0; itr_players1 < _num_players; itr_players1++)
     {
 
         for(itr_players2 = (itr_players1 + 1); itr_players2 < _num_players; itr_players2++)
         {
-            Most_Death_Books = _players[itr_players1].spellranks[sbr_Death];
-            if(_players[itr_players2].spellranks[sbr_Death] > Most_Death_Books)
+
+            max_death = _players[itr_players1].spellranks[sbr_Death];
+
+            if(_players[itr_players2].spellranks[sbr_Death] > max_death)
             {
-                Most_Death_Books = _players[itr_players2].spellranks[sbr_Death];
+                max_death = _players[itr_players2].spellranks[sbr_Death];
             }
 
-            Life_Book_Total = _players[itr_players1].spellranks[sbr_Life];
+            sum_life =  _players[itr_players1].spellranks[sbr_Life];
+            sum_life += _players[itr_players2].spellranks[sbr_Life];
 
-            Life_Book_Total += _players[itr_players2].spellranks[sbr_Life];
-
-            Most_Chaos_Books = _players[itr_players1].spellranks[sbr_Chaos];
-            if(_players[itr_players2].spellranks[sbr_Chaos] > Most_Chaos_Books)
+            max_chaos = _players[itr_players1].spellranks[sbr_Chaos];
+            if(_players[itr_players2].spellranks[sbr_Chaos] > max_chaos)
             {
-                Most_Chaos_Books = _players[itr_players2].spellranks[sbr_Chaos];
+                max_chaos = _players[itr_players2].spellranks[sbr_Chaos];
             }
 
-            IDK = 0;
+            score = 0;
             if(
-                (Life_Book_Total > 0)
+                (sum_life > 0)
                 &&
-                (Most_Death_Books > 0)
+                (max_death > 0)
             )
             {
-                IDK -= ((Life_Book_Total + Most_Death_Books) * 5);
+                score -= ((sum_life + max_death) * 5);
             }
             else
             {
-                IDK += (Life_Book_Total * 2);
-                IDK -= (Most_Death_Books * 3);
+                score += (sum_life * 2);
+                score -= (max_death * 3);
             }
 
-            IDK -= (Most_Chaos_Books * 2);
+            score -= (max_chaos * 2);
 
-            Wiz_2_Books = _players[itr_players2].spellranks[sbr_Sorcery];
-            Wiz_1_Books = _players[itr_players1].spellranks[sbr_Sorcery];
-            if(Wiz_1_Books < Wiz_2_Books)
-            {
-                Wiz_2_Books = Wiz_1_Books;
-            }
-            IDK += Wiz_2_Books;
+            p2_ranks = _players[itr_players2].spellranks[sbr_Sorcery];
+            p1_ranks = _players[itr_players1].spellranks[sbr_Sorcery];
+            shared_ranks = MIN(p1_ranks,p2_ranks);
+            score += (p2_ranks * 2);
 
-            Wiz_2_Books = _players[itr_players2].spellranks[sbr_Chaos];
-            Wiz_1_Books = _players[itr_players1].spellranks[sbr_Chaos];
-            if(Wiz_1_Books < Wiz_2_Books)
-            {
-                Wiz_2_Books = Wiz_1_Books;
-            }
-            IDK += Wiz_2_Books;
+            p2_ranks = _players[itr_players2].spellranks[sbr_Chaos];
+            p1_ranks = _players[itr_players1].spellranks[sbr_Chaos];
+            shared_ranks = MIN(p1_ranks,p2_ranks);
+            score += (p2_ranks * 2);
 
-            Wiz_2_Books = _players[itr_players2].spellranks[sbr_Life];
-            Wiz_1_Books = _players[itr_players1].spellranks[sbr_Life];
-            if(Wiz_1_Books < Wiz_2_Books)
-            {
-                Wiz_2_Books = Wiz_1_Books;
-            }
-            IDK += Wiz_2_Books;
+            p2_ranks = _players[itr_players2].spellranks[sbr_Nature];
+            p1_ranks = _players[itr_players1].spellranks[sbr_Nature];
+            shared_ranks = MIN(p1_ranks,p2_ranks);
+            score += (p2_ranks * 2);
 
-            if(IDK < -90)
-            {
-                IDK = -90;
-            }
+            p2_ranks = _players[itr_players2].spellranks[sbr_Life];
+            p1_ranks = _players[itr_players1].spellranks[sbr_Life];
+            shared_ranks = MIN(p1_ranks,p2_ranks);
+            score += (p2_ranks * 2);
 
-            _players[itr_players1].Dipl.Visible_Rel[itr_players2] = (int8_t)IDK;
-            _players[itr_players2].Dipl.Visible_Rel[itr_players1] = (int8_t)IDK;
+            SETMIN(score,-90);
 
-            _players[itr_players1].Dipl.Default_Rel[itr_players2] = (int8_t)IDK;
-            _players[itr_players2].Dipl.Default_Rel[itr_players1] = (int8_t)IDK;
+            _players[itr_players1].Dipl.Visible_Rel[itr_players2] = (int8_t)score;
+            _players[itr_players2].Dipl.Visible_Rel[itr_players1] = (int8_t)score;
+
+            _players[itr_players1].Dipl.Default_Rel[itr_players2] = (int8_t)score;
+            _players[itr_players2].Dipl.Default_Rel[itr_players1] = (int8_t)score;
 
             _players[itr_players1].peace_duration[itr_players2] = 0;
             _players[itr_players2].peace_duration[itr_players1] = 0;
 
         }
+
     }
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
