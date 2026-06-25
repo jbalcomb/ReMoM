@@ -957,23 +957,23 @@ void Init_Magic_Personalities_Objectives(void)
         {
             case sbr_Nature:
             {
-                _players[itr_players].spells_list[spl_Sprites] = 2;
+                _players[itr_players].spells_list[spl_Water_Walking] = sls_Known;  /* OGBUG  spl_Sprites ? */
             } break;
             case sbr_Sorcery:
             {
-                _players[itr_players].spells_list[spl_Nagas] = 2;
+                _players[itr_players].spells_list[spl_Counter_Magic] = sls_Known;  /* OGBUG  spl_Nagas ? */
             } break;
             case sbr_Chaos:
             {
-                _players[itr_players].spells_list[spl_Hell_Hounds] = 2;
+                _players[itr_players].spells_list[spl_Fire_Bolt] = sls_Known;  /* OGBUG  should be spl_Hell_Hounds ? */
             } break;
             case sbr_Life:
             {
-                _players[itr_players].spells_list[spl_Guardian_Spirit] = 2;
+                _players[itr_players].spells_list[spl_True_Light] = sls_Known;  /* OGBUG  spl_Guardian_Spirit ? */
             } break;
             case sbr_Death:
             {
-                _players[itr_players].spells_list[spl_Ghouls] = 2;
+                _players[itr_players].spells_list[spl_Black_Sleep] = sls_Known;  /* OGBUG  spl_Ghouls ? */
             } break;
         }
 
@@ -983,37 +983,37 @@ void Init_Magic_Personalities_Objectives(void)
             {
                 case sbr_Nature:
                 {
-                    if(_players[itr_players].spells_list[spl_Basilisk] == 0)
+                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)
                     {
-                        _players[itr_players].spells_list[spl_Basilisk] = 1;
+                        _players[itr_players].spells_list[spl_Basilisk] = sls_Knowable;
                     }
                 } break;
                 case sbr_Sorcery:
                 {
-                    if(_players[itr_players].spells_list[spl_Basilisk] == 0)  /* ; BUG: this is not the same spell! */
+                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)  /* OGBUG  should be spl_Phantom_Beast, not spl_Basilisk */
                     {
-                        _players[itr_players].spells_list[spl_Phantom_Beast] = 1;
+                        _players[itr_players].spells_list[spl_Phantom_Beast] = sls_Knowable;
                     }
                 } break;
                 case sbr_Chaos:
                 {
-                    if(_players[itr_players].spells_list[spl_Basilisk] == 0)  /* ; BUG: this is not the same spell! */
+                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)  /* OGBUG  should be spl_Chimeras, not spl_Basilisk */
                     {
-                        _players[itr_players].spells_list[spl_Chimeras] = 1;
+                        _players[itr_players].spells_list[spl_Chimeras] = sls_Knowable;
                     }
                 } break;
                 case sbr_Life:
                 {
-                    if(_players[itr_players].spells_list[spl_Path_Finding] == 0)  /* ; BUG: this is not the same spell! */
+                    if(_players[itr_players].spells_list[spl_Path_Finding] == sls_Unknown)  /* OGBUG  should be spl_Unicorns, not spl_Path_Finding */
                     {
-                        _players[itr_players].spells_list[spl_Unicorns] = 1;
+                        _players[itr_players].spells_list[spl_Unicorns] = sls_Knowable;
                     }
                 } break;
                 case sbr_Death:
                 {
-                    if(_players[itr_players].spells_list[spl_Basilisk] == 0)  /* ; BUG: this is not the same spell! */
+                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)  /* OGBUG  should be spl_Shadow_Demons, not spl_Basilisk */
                     {
-                        _players[itr_players].spells_list[spl_Shadow_Demons] = 1;
+                        _players[itr_players].spells_list[spl_Shadow_Demons] = sls_Knowable;
                     }
                 } break;
             }
