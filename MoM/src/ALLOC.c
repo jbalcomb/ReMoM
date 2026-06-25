@@ -18,6 +18,8 @@
 #include "Combat.h"
 #include "INITGAME.h"  /* gd_ci_inject_world_overrun (CI overrun inject) */
 
+#include <stdio.h>
+
 
 
 // WZD dseg:7056                                                 BEGIN:  ovr152 - Initialized Data
