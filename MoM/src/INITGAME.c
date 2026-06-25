@@ -97,8 +97,10 @@ int gd_ci_load(void)
             continue;
         }
         r = &gd_ci_recs[gd_ci_nrecs];
-        strncpy(r->key,  key,  sizeof(r->key)  - 1); r->key [sizeof(r->key)  - 1] = 0;
-        strncpy(r->site, site, sizeof(r->site) - 1); r->site[sizeof(r->site) - 1] = 0;
+        /* CLAUDE 2026-06-24: snprintf in lieu of strncpy + manual NUL —
+           always NUL-terminates, sidesteps GCC -Wstringop-truncation. */
+        snprintf(r->key,  sizeof(r->key),  "%s", key);
+        snprintf(r->site, sizeof(r->site), "%s", site);
 
         p += consumed;
         for (;;) {
