@@ -201,17 +201,17 @@ static void Set_Var(const char *name, const char *value)
     {
         if(strcmp(hemom_vars[itr].name, name) == 0)
         {
-            strncpy(hemom_vars[itr].value, value, HEMOM_MAX_VARVALUE - 1);
-            hemom_vars[itr].value[HEMOM_MAX_VARVALUE - 1] = '\0';
+            /* CLAUDE 2026-06-24: snprintf in lieu of strncpy + manual NUL.
+               Always NUL-terminates; sidesteps GCC's -Wstringop-truncation
+               which (correctly) flags strncpy's truncated-without-NUL case. */
+            snprintf(hemom_vars[itr].value, HEMOM_MAX_VARVALUE, "%s", value);
             return;
         }
     }
     if(hemom_var_count < HEMOM_MAX_VARS)
     {
-        strncpy(hemom_vars[hemom_var_count].name, name, HEMOM_MAX_VARNAME - 1);
-        hemom_vars[hemom_var_count].name[HEMOM_MAX_VARNAME - 1] = '\0';
-        strncpy(hemom_vars[hemom_var_count].value, value, HEMOM_MAX_VARVALUE - 1);
-        hemom_vars[hemom_var_count].value[HEMOM_MAX_VARVALUE - 1] = '\0';
+        snprintf(hemom_vars[hemom_var_count].name,  HEMOM_MAX_VARNAME,  "%s", name);
+        snprintf(hemom_vars[hemom_var_count].value, HEMOM_MAX_VARVALUE, "%s", value);
         hemom_var_count++;
     }
 }
