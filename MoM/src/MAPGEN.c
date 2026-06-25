@@ -7124,52 +7124,35 @@ void Animate_Oceans(void)
     int16_t wx = 0;
     int16_t wy = 0;
     int16_t wp = 0;
-
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
-
         for(wy = 0; wy < WORLD_HEIGHT; wy++)
         {
-
             for(wx = 0; wx < WORLD_WIDTH; wx++)
             {
-
-                if(p_world_map[wp][wy][wx] == tt_Ocean)
+                /* Check for Ocean on Arcanus plane */
+                if(p_world_map[wp][wy][wx] == tte_Ocean)
                 {
-
-                    if(Random(5) == 1)
+                    if(Random(5) == 1)  /* 1:5  20% */
                     {
 
-                        p_world_map[wp][wy][wx] = tt_OceanAnim;
+                        p_world_map[wp][wy][wx] = tte_OceanAnim;
 
                     }
-                    
                 }
-
-                // NOTE(drake178): conflicting condition - will always jump (myrran square types are only valid in graphics)
-                // BUGBUG  coded as if Myrror has its own terrain type indices
-                if(p_world_map[wp][wy][wx] == 762)
+                /* OGBUG conflicting condition - will always jump (myrran square types are only valid in graphics) - coded as if Myrror has its own terrain type indices */
+                if(p_world_map[wp][wy][wx] == (TerType_Count + tte_Ocean))
                 {
-
-                    if(Random(5) == 1)
+                    if(Random(5) == 1)  /* 1:5  20% */
                     {
-
-                        p_world_map[wp][wy][wx] = 1363;  // 762 + tt_OceanAnim
-
+                        p_world_map[wp][wy][wx] = (TerType_Count + tte_OceanAnim);
                     }
-                    
                 }
-
             }
-
         }
-
     }
-
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-
 }
 
 
