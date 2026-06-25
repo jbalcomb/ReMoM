@@ -7048,18 +7048,16 @@ void Animate_Oceans(void)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
-        for(wy = 0; wy < WORLD_HEIGHT; wy++)
+        for(wy = 0; wy <= WORLD_HEIGHT; wy++)  /* OGBUG  OOB AVRL; should be <, not <=; overruns by 1 */
         {
-            for(wx = 0; wx < WORLD_WIDTH; wx++)
+            for(wx = 0; wx <= WORLD_WIDTH; wx++)  /* OGBUG  OOB AVRL; should be <, not <=; overruns by 1 */
             {
                 /* Check for Ocean on Arcanus plane */
                 if(p_world_map[wp][wy][wx] == tte_Ocean)
                 {
                     if(Random(5) == 1)  /* 1:5  20% */
                     {
-
                         p_world_map[wp][wy][wx] = tte_OceanAnim;
-
                     }
                 }
                 /* OGBUG conflicting condition - will always jump (myrran square types are only valid in graphics) - coded as if Myrror has its own terrain type indices */
