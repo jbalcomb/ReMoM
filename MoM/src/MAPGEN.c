@@ -549,7 +549,7 @@ void Init_New_Game(void)
     Generate_Home_Cities();
 
     gd_dump_cities("13_Generate_Home_Cities_C");
-    // TODO  gd_dump_units("14_Generate_Home_Cities_U");
+    gd_dump_units("14_Generate_Home_Cities_U");
     
 
 #ifdef STU_DEBUG
@@ -562,7 +562,7 @@ void Init_New_Game(void)
     Generate_Neutral_Cities(MYRROR_PLANE);
 
     gd_dump_cities("15_Generate_Neutral_Cities_C");
-    // TODO  gd_dump_units("16_Generate_Neutral_Cities_U");
+    gd_dump_units("16_Generate_Neutral_Cities_U");
 
 #ifdef STU_DEBUG
     assert(Validate_All_Neutral_Cities() == ST_TRUE);
