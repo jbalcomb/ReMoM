@@ -1,24 +1,24 @@
 /*
 ====================================================================================================================================
-    test_River_Path.cpp -- Unit tests for River_Path() (MGC o51p22)
+    test_River_Path.cpp -- Unit tests for Generate_River() (MGC o51p22)
 ====================================================================================================================================
 
     WHAT THIS FILE TESTS
     --------------------
-    River_Path() is a single-river placement function in the Master of Magic map generation pipeline.  It is called from
+    Generate_River() is a single-river placement function in the Master of Magic map generation pipeline.  It is called from
     Init_New_Game() (MGC o51p01) in a tight retry loop:
 
         for(rivers = 0; rivers < NUM_RIVERS; rivers++)              NUM_RIVERS is 10.
         {
-            for(tries = 0; ((tries < 2000) && (River_Path(ARCANUS_PLANE) != 0)); tries++) { }
-            for(tries = 0; ((tries < 2000) && (River_Path(MYRROR_PLANE)  != 0)); tries++) { }
+            for(tries = 0; ((tries < 2000) && (Generate_River(ARCANUS_PLANE) != 0)); tries++) { }
+            for(tries = 0; ((tries < 2000) && (Generate_River(MYRROR_PLANE)  != 0)); tries++) { }
         }
 
     Each call either places exactly one river (returns ST_TRUE == 1) or fails and leaves the map untouched (returns ST_FALSE == 0).
-    After all rivers are placed, River_Terrain() (MGC o51p23) converts the temporary placeholder values into real river terrain
+    After all rivers are placed, River_Autotile() (MGC o51p23) converts the temporary placeholder values into real river terrain
     types with proper cardinal connectivity.
 
-    HOW THE ALGORITHM WORKS  (River_Path, MAPGEN.c:4318)
+    HOW THE ALGORITHM WORKS  (Generate_River, MAPGEN.c:4318)
     ----------------------------------------------------
     Step 1 -- Pick a random starting square.
         base_wx = 4 + Random(WORLD_WIDTH  - 8)     gives range [5 .. 56]  (at least 4 squares from any edge)
@@ -91,7 +91,7 @@
     THE PLACEHOLDER VALUE
     ---------------------
     TT_RIVER_PLACEHOLDER = 1000 (0x3E8), defined in TerrType.h.  This is intentionally outside the normal e_TERRAIN_TYPES range.
-    River_Path() writes 1000 into the terrain map as a temporary marker.  River_Terrain() (MGC o51p23) later resolves these into
+    Generate_River() writes 1000 into the terrain map as a temporary marker.  River_Autotile() (MGC o51p23) later resolves these into
     real river terrain enums (tt_RiverM_1st..tt_RiverM_end, tt_Rivers_1st..tt_Rivers_end) based on cardinal adjacency.
 
     RANDOM NUMBER GENERATOR
@@ -101,7 +101,7 @@
         into a result accumulator while shifting the 32-bit seed right one bit per step,
         guard against the all-zero state, then return ((result % max) + 1) in range [1..max].
     The global seed is set via Set_Random_Seed() and advanced by each call to Random().
-    The test helpers replicate this algorithm locally in Predict_Random() so we can pre-compute what River_Path() will do for
+    The test helpers replicate this algorithm locally in Predict_Random() so we can pre-compute what Generate_River() will do for
     a given seed without calling Random() and mutating the global state.
 
     RETURN VALUES / STATUS CONSTANTS
@@ -113,12 +113,12 @@
     WHAT THE TESTS COVER
     --------------------
     Test 1: TerrainSpecialAtStart_RejectsPathAndLeavesMapUnchanged
-        Verifies the early-rejection path: when every square has a terrain special (value 1), River_Path() must return ST_FALSE
+        Verifies the early-rejection path: when every square has a terrain special (value 1), Generate_River() must return ST_FALSE
         and must not write any placeholder values to the map.  This is the simplest failure mode.
 
     Test 2: ManufacturedCandidate_SucceedsAndWritesExpectedPath
         Verifies the happy path: constructs a carefully controlled world state where the river will succeed, seeds the RNG to
-        a known value, calls River_Path(), and then confirms that exactly 4 squares were stamped with placeholder 1000 at the
+        a known value, calls Generate_River(), and then confirms that exactly 4 squares were stamped with placeholder 1000 at the
         predicted locations.  This test exercises the full algorithm including RNG consumption, direction selection, terrain
         validation, ocean outflow detection, and map writing.
 
@@ -151,7 +151,7 @@ extern "C" {
 ------------------------------------------------------------------------------------------------------------------------------------
     Captures the four values that fully determine a straight-line river path from a given RNG seed:
 
-        seed        The value passed to Set_Random_Seed() before calling River_Path().  River_Path() will consume this seed
+        seed        The value passed to Set_Random_Seed() before calling Generate_River().  Generate_River() will consume this seed
                     through Random() calls to derive base_wx, base_wy, and downstream.
 
         base_wx     The X coordinate of the river's starting square.  Computed as 4 + Random(WORLD_WIDTH - 8).
@@ -163,7 +163,7 @@ extern "C" {
         downstream  The primary flow direction, an index into the cardinal direction tables (0=South, 1=West, 2=North, 3=East).
                     Computed as Random(4) - 1.  The river is biased to flow in this direction on each step.
 
-    Find_Usable_Seed() populates this structure by brute-forcing seeds until it finds one where River_Path() would produce
+    Find_Usable_Seed() populates this structure by brute-forcing seeds until it finds one where Generate_River() would produce
     a clean 3-step straight-line path that stays in bounds.
 ------------------------------------------------------------------------------------------------------------------------------------
 */
@@ -243,7 +243,7 @@ static int16_t Predict_Random(uint32_t * seed_state, int16_t max)
 ------------------------------------------------------------------------------------------------------------------------------------
     Count_Accepts_For_Seed() -- Simulates the direction-selection loop to check if a seed produces a usable path
 ------------------------------------------------------------------------------------------------------------------------------------
-    River_Path() walks up to 30 attempts trying to accumulate 3 accepted downstream steps.  This helper replays that same logic
+    Generate_River() walks up to 30 attempts trying to accumulate 3 accepted downstream steps.  This helper replays that same logic
     using Predict_Random() to determine whether a given seed will produce at least 3 downstream-direction steps before the
     30-attempt limit.
 
@@ -252,12 +252,12 @@ static int16_t Predict_Random(uint32_t * seed_state, int16_t max)
 
     Walk-through of the logic:
 
-    1)  Consume the first three Random() calls that River_Path() makes:
+    1)  Consume the first three Random() calls that Generate_River() makes:
             (void)Predict_Random(... WORLD_WIDTH  - 8)      consumes the base_wx roll
             (void)Predict_Random(... WORLD_HEIGHT - 8)      consumes the base_wy roll
             downstream = Predict_Random(... 4) - 1           consumes the downstream direction roll
 
-    2)  Enter the direction-selection loop (mirrors River_Path lines 4379-4435):
+    2)  Enter the direction-selection loop (mirrors Generate_River lines 4379-4435):
 
         On each iteration:
             a)  If Random(2) > 1  OR  this is the first step (same_dir == ST_UNDEFINED):
@@ -347,7 +347,7 @@ static int16_t Count_Accepts_For_Seed(uint32_t seed)
     How it works, step by step:
 
     1)  For each candidate seed, replay the first three Random() calls to derive base_wx, base_wy, and downstream.
-        These formulas match River_Path() exactly:
+        These formulas match Generate_River() exactly:
             base_wx    = 4 + Predict_Random(&seed_state, WORLD_WIDTH  - 8)     range [5..56]
             base_wy    = 4 + Predict_Random(&seed_state, WORLD_HEIGHT - 8)     range [5..35]
             downstream = Predict_Random(&seed_state, 4) - 1                    range [0..3]
@@ -363,7 +363,7 @@ static int16_t Count_Accepts_For_Seed(uint32_t seed)
             ocean_wy = end_wy + outflow_wy[downstream]
         where:
             outflow_wx[4] = { 1,  0, -1, 0 }   outflow_wy[4] = { 0,  1,  0, -1 }
-        This is where the test will place an Ocean square so that River_Path() detects outflow and accepts the path.
+        This is where the test will place an Ocean square so that Generate_River() detects outflow and accepts the path.
 
     4)  Bounds check:  if the endpoint or ocean square is at or beyond any world edge, skip this seed.
         The strict inequality (<=XMIN, >=XMAX) keeps a 1-square margin from the edge for safety.
@@ -429,9 +429,9 @@ static int16_t Find_Usable_Seed(s_river_seed_plan * plan)
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
-    River_Path_test -- Google Test fixture for River_Path()
+    River_Path_test -- Google Test fixture for Generate_River()
 ------------------------------------------------------------------------------------------------------------------------------------
-    This fixture allocates and initializes the three global data structures that River_Path() reads and writes:
+    This fixture allocates and initializes the three global data structures that Generate_River() reads and writes:
 
     1)  _world_maps / p_world_map
             The terrain type map.  Allocated as a flat buffer of (WORLD_SIZE * NUM_PLANES * sizeof(int16_t)) = 9,600 bytes.
@@ -443,10 +443,10 @@ static int16_t Find_Usable_Seed(s_river_seed_plan * plan)
 
     2)  _map_square_terrain_specials
             A flat byte array of (WORLD_SIZE * NUM_PLANES) = 4,800 bytes.  Indexed as [(wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx].
-            Each byte is the terrain special value for that square.  River_Path() rejects any square where this value is nonzero.
+            Each byte is the terrain special value for that square.  Generate_River() rejects any square where this value is nonzero.
 
             SetUp() fills this with 1 (memset to 1), meaning every square has a terrain special.  This is the DEFAULT state --
-            which guarantees that River_Path() will always fail in the default fixture state.  Tests that need a successful path
+            which guarantees that Generate_River() will always fail in the default fixture state.  Tests that need a successful path
             must explicitly clear the specials to 0 on the squares they want the river to use.
 
             WHY default to 1:  This is a defensive testing strategy.  By defaulting to "blocked everywhere", we ensure that a
@@ -455,7 +455,7 @@ static int16_t Find_Usable_Seed(s_river_seed_plan * plan)
 
     3)  _NODES
             Array of s_NODE structures, NUM_NODES (30) entries.  These represent the magic power nodes placed on the world map.
-            River_Path() calls Square_Is_Node_NewGame() which checks whether any node occupies a given square by scanning this
+            Generate_River() calls Square_Is_Node_NewGame() which checks whether any node occupies a given square by scanning this
             array.  All nodes are initialized with wx/wy/wp = ST_UNDEFINED (-1), meaning no node occupies any real square.
             This ensures that the "is it a node?" check never blocks river placement unless a test explicitly places a node.
 
@@ -520,11 +520,11 @@ protected:
     TEST: TerrainSpecialAtStart_RejectsPathAndLeavesMapUnchanged
 ------------------------------------------------------------------------------------------------------------------------------------
     Purpose:
-        Verify that River_Path() returns ST_FALSE and does not modify any map square when the starting square has a nonzero
+        Verify that Generate_River() returns ST_FALSE and does not modify any map square when the starting square has a nonzero
         terrain special.
 
     Background:
-        The very first validation in River_Path() (MAPGEN.c:4352) is:
+        The very first validation in Generate_River() (MAPGEN.c:4352) is:
             if(_map_square_terrain_specials[...] != 0) { return ST_FALSE; }
         This check fires BEFORE any ocean, mountain, or other terrain checks.  If the randomly chosen starting square has a
         terrain special, the function bails out immediately without writing anything to the map.
@@ -536,14 +536,14 @@ protected:
         Because terrain specials are 1 everywhere, no matter what base_wx/base_wy the RNG picks, the special check will fire.
 
     What the test does:
-        1) Call River_Path(ARCANUS_PLANE).
+        1) Call Generate_River(ARCANUS_PLANE).
         2) Assert the return value is ST_FALSE (0).
         3) Scan every square on ARCANUS_PLANE and assert that none contain the placeholder value 1000.
            This confirms the function truly left the map completely untouched.
 
     What this proves:
         - The terrain special check is the first guard and it works.
-        - A failed River_Path() call has zero side effects on the map.
+        - A failed Generate_River() call has zero side effects on the map.
 ------------------------------------------------------------------------------------------------------------------------------------
 */
 TEST_F(River_Path_test, TerrainSpecialAtStart_RejectsPathAndLeavesMapUnchanged)
@@ -568,11 +568,11 @@ TEST_F(River_Path_test, TerrainSpecialAtStart_RejectsPathAndLeavesMapUnchanged)
     TEST: ManufacturedCandidate_SucceedsAndWritesExpectedPath
 ------------------------------------------------------------------------------------------------------------------------------------
     Purpose:
-        Verify that River_Path() returns ST_TRUE and writes exactly 4 placeholder squares at the predicted coordinates when the
+        Verify that Generate_River() returns ST_TRUE and writes exactly 4 placeholder squares at the predicted coordinates when the
         map and RNG are set up for a valid straight-line river path.
 
     Background:
-        This is the "happy path" test.  It constructs a world state where River_Path() is guaranteed to succeed by:
+        This is the "happy path" test.  It constructs a world state where Generate_River() is guaranteed to succeed by:
             (a) Seeding the RNG to a known value that produces a 3-step downstream path.
             (b) Setting up the terrain map so the path squares are Grasslands (passable) and everything else is Desert (blocked).
             (c) Placing an Ocean square at the outflow point so the river finds its way to water.
@@ -590,7 +590,7 @@ TEST_F(River_Path_test, TerrainSpecialAtStart_RejectsPathAndLeavesMapUnchanged)
 
     PHASE 2 -- Prepare the world map to force a known outcome.
         The fixture default is tt_Grasslands1 with terrain specials = 1 everywhere.  This test overwrites both planes:
-            - Set every square to tt_Desert1.  Desert is rejected by River_Path() step 4c, so the river can ONLY walk on
+            - Set every square to tt_Desert1.  Desert is rejected by Generate_River() step 4c, so the river can ONLY walk on
               squares we explicitly set to Grasslands.
             - Clear all terrain specials to 0.  This removes the blanket "terrain special" block from the fixture.
 
@@ -607,17 +607,17 @@ TEST_F(River_Path_test, TerrainSpecialAtStart_RejectsPathAndLeavesMapUnchanged)
             step3 = base + 3 * dir[downstream]
             ocean = step3 + outflow[downstream]     (one square perpendicular to the downstream direction)
 
-        Why Desert for the background?  Because River_Path() has this check (MAPGEN.c:4416):
+        Why Desert for the background?  Because Generate_River() has this check (MAPGEN.c:4416):
             if(Square_Is_Desert_NewGame(next_wx, next_wy, wp) == ST_TRUE) { continue; }
         Desert squares cause the direction to be retried (the step is skipped).  By making the entire background Desert and only
         the intended path Grasslands, we ensure the river CANNOT wander off the planned path.  Any non-downstream direction will
         hit Desert and be retried, forcing the river to pick the downstream direction again.
 
-    PHASE 3 -- Seed the RNG and call River_Path.
+    PHASE 3 -- Seed the RNG and call Generate_River.
         Set_Random_Seed(plan.seed);
         const int16_t result = Generate_River(wp);
 
-        With the seed locked and the terrain funneled, River_Path() will:
+        With the seed locked and the terrain funneled, Generate_River() will:
             1) Random() for base_wx  -> produces plan.base_wx  (we set this square to Grasslands)
             2) Random() for base_wy  -> produces plan.base_wy
             3) Random() for downstream -> produces plan.downstream
@@ -640,7 +640,7 @@ TEST_F(River_Path_test, TerrainSpecialAtStart_RejectsPathAndLeavesMapUnchanged)
             EXPECT_EQ(p_world_map[wp][step3_wy][step3_wx], 1000);           3rd step.
 
     What this proves:
-        - River_Path() correctly consumes the RNG to derive starting point and direction.
+        - Generate_River() correctly consumes the RNG to derive starting point and direction.
         - The direction-selection loop favors the downstream direction.
         - Desert terrain correctly blocks steps, forcing the river onto the prepared path.
         - Ocean detection at the outflow point terminates the path.
