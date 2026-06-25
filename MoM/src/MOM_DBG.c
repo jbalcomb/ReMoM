@@ -113,7 +113,7 @@ _map_square_flags
 
 grand_vizier
 
-TBL_Premade_Items
+_prefab_item_table
 hero_names_table
 
 */
@@ -161,7 +161,7 @@ void Test_Run(void)
     // events_table
     // _map_square_flags
     assert(sizeof(grand_vizier) == 2);
-    // TBL_Premade_Items
+    // _prefab_item_table
     // hero_names_table
 
 }

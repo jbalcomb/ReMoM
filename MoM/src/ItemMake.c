@@ -16,6 +16,7 @@
 #include "../../MoX/src/GENDRAW.h"
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/MOM_DAT.h"
+#include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOX_T4.h"
@@ -2190,19 +2191,19 @@ static int16_t Add_Item(int16_t itemdata_idx)
     struct s_ITEM_DATA itemdata = { 0 };
     int16_t item_idx = 0;
 
-    if(itemdata_idx != -1)
+    if(itemdata_idx != ST_UNDEFINED)
     {
 
-        TBL_Premade_Items[itemdata_idx] = 1;
+        _prefab_item_table[itemdata_idx] = 1;
 
         LBX_Load_Data_Static(itemdata_lbx_file__ovr115, 0, (SAMB_ptr)&itemdata, itemdata_idx, 1, 56);
 
         itemdata.moves *= 2;  // convert moves to moves2
 
-        memcpy(&itemdata, &_ITEMS[136], sizeof(_ITEMS[0]));
+        memcpy(&itemdata, &_ITEMS[RANDOM_ITEM_IDX], sizeof(_ITEMS[0]));
     }
 
-    item_idx = Activate_Item(136);
+    item_idx = Activate_Item(RANDOM_ITEM_IDX);
 
     return item_idx;
 }
@@ -2222,24 +2223,21 @@ Add_Item()
 G_OVL_Cast()
     j_ITEM_MoveToActive(136)
     j_ITEM_MoveToActive(137)
-
 */
 int16_t Activate_Item(int16_t old_item_idx)
 {
-    int16_t new_item_idx;  // _DI_
-    int16_t itr;  // _SI_
-
-    new_item_idx = -1;
-
-    for(itr = 0; itr < 132; itr++)
+    int16_t new_item_idx = 0;
+    int16_t itr = 0;
+    new_item_idx = ST_UNDEFINED;;
+    for(itr = 0; itr < LAST_ACTIVE_ITEM_IDX; itr++)
     {
         if(_ITEMS[itr].cost <= 0)
         {
             memcpy(&_ITEMS[itr], &_ITEMS[old_item_idx], sizeof(_ITEMS[0]));
             new_item_idx = itr;
+            break;
         }
     }
-
     return new_item_idx;
 }
 
@@ -2314,13 +2312,13 @@ static void Create_Random_Item(int16_t Power, int16_t Value)
 
     m_itemmake_item_icon_idx = ((Item_Type_Icon_Ranges[weapon_type].start + Random(Item_Type_Icon_Ranges[weapon_type].count)) - 1);
 
-    _ITEMS[136].embed_spell_idx = 0;
+    _ITEMS[RANDOM_ITEM_IDX].embed_spell_idx = 0;
 
-    _ITEMS[136].embed_spell_cnt = 0;
+    _ITEMS[RANDOM_ITEM_IDX].embed_spell_cnt = 0;
 
-    _ITEMS[136].type = (int8_t)weapon_type;
+    _ITEMS[RANDOM_ITEM_IDX].type = (int8_t)weapon_type;
 
-    _ITEMS[136].icon_idx = (int8_t)m_itemmake_item_icon_idx;
+    _ITEMS[RANDOM_ITEM_IDX].icon_idx = (int8_t)m_itemmake_item_icon_idx;
 
     // allocate for and load all of the item power data records
     _ITEM_POWERS = (struct s_ITEM_POWER * )Near_Allocate_First(2010);  // 2010 B;  67 * 30 = 2010
@@ -2349,9 +2347,9 @@ static void Create_Random_Item(int16_t Power, int16_t Value)
                 if(item_power_idx >= 0)
                 {
                     m_itemmake_item_powers_array[power_ctr] = item_power_idx;
-                    m_itemmake_item_cost = Get_Item_Cost(136);
-                    stu_strcpy(GUI_NearMsgString, Get_Item_Name(136));
-                    Create_Item_Record(136);
+                    m_itemmake_item_cost = Get_Item_Cost(RANDOM_ITEM_IDX);
+                    stu_strcpy(GUI_NearMsgString, Get_Item_Name(RANDOM_ITEM_IDX));
+                    Create_Item_Record(RANDOM_ITEM_IDX);
                     power_ctr++;
                 }
             }
@@ -2420,10 +2418,10 @@ int16_t Make_Item(int16_t Power, int16_t spellranks[], int16_t Value)
     int8_t magic[5] = { 0, 0, 0, 0, 0 };
     int16_t Artifact = 0;
     int16_t Tries = 0;
-    int16_t itr = 0;  // _DI_
-    int16_t item_idx = 0;  // _SI_
+    int16_t itr = 0;
+    int16_t item_idx = 0;
 
-    item_idx = -1;
+    item_idx = ST_UNDEFINED;
 
     Tries = 0;
 
@@ -2431,20 +2429,20 @@ int16_t Make_Item(int16_t Power, int16_t spellranks[], int16_t Value)
     {
         Tries++;
 
-        item_idx = (Random(250) - 1);  // {0, ..., 249}
+        item_idx = (Random(NUM_PREFAB_ITEMS) - 1);  // {0, ..., 249}
 
         LBX_Load_Data_Static(itemdata_lbx_file__ovr115, 0, (SAMB_ptr)&itemdata, item_idx, 1, 56);
 
-        if(TBL_Premade_Items[item_idx] == 1)
+        if(_prefab_item_table[item_idx] == 1)
         {
-            item_idx = -1;
+            item_idx = ST_UNDEFINED;
         }
 
         for(itr = 0; itr < NUM_MAGIC_TYPES; itr++)
         {
             if(itemdata.spellranks[itr] > spellranks[itr])
             {
-                item_idx = -1;
+                item_idx = ST_UNDEFINED;
             }
         }
 
@@ -2452,7 +2450,7 @@ int16_t Make_Item(int16_t Power, int16_t spellranks[], int16_t Value)
         {
             if(itemdata.flag > 0)  /* ~== flag == 1*/
             {
-                item_idx = -1;
+                item_idx = ST_UNDEFINED;
             }
         }
 
@@ -2460,7 +2458,7 @@ int16_t Make_Item(int16_t Power, int16_t spellranks[], int16_t Value)
         {
             if(itemdata.flag == 0)
             {
-                item_idx = -1;
+                item_idx = ST_UNDEFINED;
             }
         }
 
@@ -2473,12 +2471,12 @@ int16_t Make_Item(int16_t Power, int16_t spellranks[], int16_t Value)
         {
             if(Value == 0)
             {
-                item_idx = -1;
+                item_idx = ST_UNDEFINED;
             }
         }
     }
 
-    if(item_idx == -1)
+    if(item_idx == ST_UNDEFINED)
     {
         Create_Random_Item(Power, Value);
     }

@@ -283,7 +283,7 @@ so, 300 PRs, + 1 for the SAMB header
 
     _ITEMS = (struct s_ITEM *)Allocate_Space(433);  // 433 PR, 6928 B;  SAVE.GAM: 138 * 50 = 6900  ... 1 + ((138 * 50) + (SZ_PARAGRAPH - 1))
 
-    TBL_Premade_Items = Allocate_Space(17);  // 17 PR, 272 B
+    _prefab_item_table = Allocate_Space(17);  // 17 PR, 272 B
     
     // AKA TBL_Spell_Data
     spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR, 7760 B; actual: 215 * 36 = 7740

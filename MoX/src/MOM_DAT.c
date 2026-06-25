@@ -1147,7 +1147,7 @@ uint32_t SND_Spell_Music_size;  // DNE in Dasm
 struct s_ITEM * _ITEMS;
 
 // WZD dseg:913A
-SAMB_ptr TBL_Premade_Items;
+SAMB_ptr _prefab_item_table;
 
 // WZD dseg:913E
 // drake178: IMG_USW_Items ITEM_ICONS

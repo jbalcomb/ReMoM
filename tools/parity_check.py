@@ -660,7 +660,7 @@ SAVE_GAM_REGIONS: list[tuple[int, int, str, int]] = [
     (117588,  100, "events_table",                           100),
     (117688, 4800, "_map_square_flags[2 planes]",            2400),
     (122488,    2, "grand_vizier",                              2),
-    (122490,  250, "TBL_Premade_Items",                         1),
+    (122490,  250, "_prefab_item_table",                         1),
     (122740,  560, "hero_names_table[16 × s_INACTV_HERO]",     35),
 ]
 SAVE_GAM_TOTAL = 123300  # LEN_SAVE_GAM_FILE

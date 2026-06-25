@@ -147,6 +147,11 @@ ITEM_MAX_POWERS
 
 #define UNIT_LEVEL_MAX              8
 
+#define LAST_ACTIVE_ITEM_IDX      132
+#define RANDOM_ITEM_IDX           136
+#define MAX_ITEM_COUNT            137
+#define NUM_ITEMS                 138
+#define NUM_PREFAB_ITEMS          250
 #define NUM_ITEM_POWERS             4
 #define MAX_ITEM_POWERS             4
 #define ITEM_MAX_POWERS             4

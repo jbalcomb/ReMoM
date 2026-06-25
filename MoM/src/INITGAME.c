@@ -790,20 +790,16 @@ void Init_Diplomatic_Relations(void)
 void Initialize_Items(void)
 {
     int16_t itr = 0;
-
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-
-    for(itr = 0; itr < 138; itr++)
+    for(itr = 0; itr < NUM_ITEMS; itr++)
     {
         _ITEMS[itr].cost = 0;
     }
-    for(itr = 0; itr < 250; itr++)
+    for(itr = 0; itr < NUM_PREFAB_ITEMS; itr++)
     {
-        TBL_Premade_Items[itr] = 0;
+        _prefab_item_table[itr] = 0;
     }
-
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-    
 }
 
 

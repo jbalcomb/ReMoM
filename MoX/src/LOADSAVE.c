@@ -125,13 +125,12 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 26152);
 
-    // stu_fwrite(_LAIRS, NUM_LAIRS, 24, file_pointer);
-    /* HACK */  stu_fwrite(_LAIRS, 102, 24, file_pointer);
+    stu_fwrite(_LAIRS, NUM_LAIRS, 24, file_pointer);
 
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 28600);
 
-    stu_fwrite(_ITEMS, 138, 50, file_pointer);
+    stu_fwrite(_ITEMS, NUM_ITEMS, 50, file_pointer);
 
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 35500);
@@ -179,7 +178,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 122490);
 
-    stu_fwrite(TBL_Premade_Items, 250, 1, file_pointer);
+    stu_fwrite(_prefab_item_table, 250, 1, file_pointer);
 
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 122740);
@@ -345,12 +344,12 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     assert(file_pointer_position == 26152);
 
     // stu_fread(_LAIRS, NUM_LAIRS, 24, file_pointer);
-    /* HACK */  stu_fread(_LAIRS, 102, 24, file_pointer);
+    /* HACK */  stu_fread(_LAIRS, NUM_LAIRS, 24, file_pointer);
 
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 28600);
 
-    stu_fread(_ITEMS, 138, 50, file_pointer);
+    stu_fread(_ITEMS, NUM_ITEMS, 50, file_pointer);
 
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 35500);
@@ -398,7 +397,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 122490);
 
-    stu_fread(TBL_Premade_Items, 250, 1, file_pointer);
+    stu_fread(_prefab_item_table, 250, 1, file_pointer);
 
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 122740);
