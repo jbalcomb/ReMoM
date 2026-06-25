@@ -28,6 +28,7 @@ void gd_dump_lairs(const char* point);
 void gd_dump_cities(const char* point);
 void gd_dump_units(const char* point);
 void gd_dump_heroes(const char* point);
+void gd_dump_items(const char* point);
 
 /* Capture/Inject (CI), ReMoM side.  Reads og-game-data-capture.fwv (produced by
  * extract-ci-stage0.py from the OG [CI] probe) and injects OG's exact bytes for

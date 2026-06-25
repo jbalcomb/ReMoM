@@ -177,6 +177,7 @@ typedef struct { uint16_t off; uint8_t kind; uint16_t count; const char* name; }
 #include "gd_city_fields.h"
 #include "gd_unit_fields.h"
 #include "gd_heroes_fields.h"
+#include "gd_item_fields.h"
 
 static int gd_es(int kind) {
     return (kind == GD_U16 || kind == GD_I16) ? 2
@@ -465,6 +466,46 @@ void gd_dump_units(const char* point) {
         STU_Log_Flush_All();
     }
 }
+
+/* _ITEMS capture: mirror of gd_dump_cities for the s_ITEM array (item_fields).
+ * _ITEMS is a single pointer to NUM_ITEMS contiguous s_ITEM records, all loaded
+ * from ITEMDATA.LBX by Initialize_Items, so the whole array is compared -- no
+ * placement-count tail to mask. */
+void gd_dump_items(const char* point) {
+    int n, i, k;
+    char val[1100];
+    for (n = 0; n < NUM_ITEMS; n++) {
+        const uint8_t* base = (const uint8_t*)&_ITEMS[n];
+        for (i = 0; i < ITEM_FIELD_COUNT; i++) {
+            const gd_field_t* f = &item_fields[i];
+            const uint8_t* fp = base + f->off;
+            int q = 0;
+            if (f->kind == GD_STR) {
+                val[q++] = '"';
+                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
+                    uint8_t c = fp[k];
+                    if (c == 0) break;
+                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
+                }
+                val[q++] = '"'; val[q] = 0;
+            } else if (f->kind == GD_BYTES) {
+                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
+                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
+                val[q] = 0;
+            } else {
+                int es = gd_es(f->kind);
+                for (k = 0; k < f->count; k++) {
+                    long v = gd_rd(fp + k * es, f->kind);
+                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
+                    if (q > (int)sizeof(val) - 16) break;
+                }
+            }
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ITEMS[%d].%s = %s",
+                      point, n, f->name, val);
+        }
+        STU_Log_Flush_All();
+    }
+}
 /* ---- end game-data capture ---- */
 
 
@@ -635,7 +676,7 @@ void Init_Runtime(void)
     Draw_Building_The_Worlds(100);
 
     Initialize_Items();
-    // TODO  gd_dump_items("200_Initialize_Items_I");
+    gd_dump_items("200_Initialize_Items_I");
 
     Init_Heroes();
     gd_dump_players("201_Init_Heroes_P");
