@@ -3742,7 +3742,6 @@ void Desert_Autotile(void)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     terrtype = (int16_t *)Near_Allocate_First((5 * 512));
-
     LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, (SAMB_ptr)terrtype, 0, 5, 512);
 
 // ; set the landmass of single square deserts ($134) to
@@ -4587,18 +4586,39 @@ void Simtex_Autotiling(void)
 }
 
 // MGC o51p21
-// drake178: NEWG_RandomizeTiles()
-/*
-; randomizes the square types of grasslands, forests,
-; swamps, and all-surround desert and tundra between
-; their multiple available graphics
-;
-; BUG: misses one of the tundra types due to an
-;  incorrect switch case
-*/
-/*
-Grasslands, Forests, Swamps, Tundra
-*/
+/**
+ * @brief Randomizes visual terrain variants for selected base terrain classes.
+ *
+ * @details
+ * Iterates every square on both world planes and remaps specific terrain types
+ * to alternate graphic variants of the same class. This pass is cosmetic-style
+ * post-processing intended to break up visual repetition after core terrain
+ * generation/autotiling.
+ *
+ * Terrain classes processed:
+ * - Grasslands: randomizes among `tte_Grasslands`, `tte_Grasslands2`,
+ *   `tte_Grasslands3`, and `tte_Grasslands4`.
+ * - Forest: randomizes among `tte_Forest1`, `tt_Forest2`, and `tt_Forest3`.
+ * - Desert: randomizes among `tt_Desert1` through `tt_Desert4`.
+ * - Swamp: randomizes among `tt_Swamp1` through `tt_Swamp3`.
+ * - Tundra: attempts to randomize among tundra variants, preserving original
+ *   historical bug behavior.
+ *
+ * The routine performs all changes in place via `p_world_map[wp][wy][wx]` and
+ * uses `Random(...)` for per-square variant selection.
+ *
+ * @param void This function accepts no parameters.
+ *
+ * @return void
+ * No explicit return value. Mutates world-map terrain tiles in place.
+ *
+ * @note Processes both planes (`wp` in `[0, NUM_PLANES)`) and all world squares.
+ * @note Preserves OG behavior where a TERRTYPE record is loaded but not used by
+ *       this function body.
+ * @warning Preserves OGBUG in tundra shuffle logic: the switch cases are
+ *          `1, 2, 3, 4` while `shuffle = Random(3)`; this leaves one intended
+ *          tundra variant path unreachable and keeps case-2 as a no-op.
+ */
 void Shuffle_Terrains(void)
 {
     int16_t * terrtype = 0;
@@ -4609,8 +4629,10 @@ void Shuffle_Terrains(void)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
+    /* OGBUG  this terrtype load is never used (is in Desert_Autile()) */
     terrtype = (int16_t *)Near_Allocate_First(5 * 512);
     LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, (SAMB_ptr)terrtype, 0, 5, 512);
+
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
         for(wy = 0; wy < WORLD_HEIGHT; wy++)
@@ -4684,7 +4706,7 @@ void Shuffle_Terrains(void)
                 }
                 if(p_world_map[wp][wy][wx] == tt_Swamp1)
                 {
-                    shuffle = Random(4);
+                    shuffle = Random(3);
                     switch(shuffle)
                     {
                         case 1:
@@ -4701,7 +4723,7 @@ void Shuffle_Terrains(void)
                         } break;
                     }
                 }
-                if(p_world_map[wp][wy][wx] == tt_Tundra1)  // BUGBUG  Tundra shuffle switch should be 1,2,3 not 1,3,4
+                if(p_world_map[wp][wy][wx] == tt_Tundra1)  /* OGBUG  Tundra shuffle switch should be 1,2,3 not 1,3,4 */
                 {
                     shuffle = Random(3);
                     switch(shuffle)
@@ -4729,6 +4751,7 @@ void Shuffle_Terrains(void)
     }
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
 }
 
 
