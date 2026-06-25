@@ -1714,7 +1714,12 @@ int16_t Apply_Earthquake(int16_t city_idx, int16_t * item_count, int16_t item_li
                 if(_UNITS[unit_idx].Hero_Slot > -1)
                 {
 
-                    for(itr2 = 0; itr2 < NUM_HERO_SLOTS; itr2++)
+                    /* CLAUDE 2026-06-24: was `itr2 < NUM_HERO_SLOTS` (=6) but
+                       Items[] has only NUM_HERO_ITEMS (=3) slots — itr2=3..5 was
+                       OOB UB and GCC -Waggressive-loop-optimizations caught it.
+                       NUM_HERO_SLOTS is the per-player hero count, not the
+                       per-hero item count. */
+                    for(itr2 = 0; itr2 < NUM_HERO_ITEMS; itr2++)
                     {
 
                         if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr2] > -1)
