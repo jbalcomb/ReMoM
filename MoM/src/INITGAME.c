@@ -2240,8 +2240,33 @@ void Initialize_Events(void)
 }
 
 // MGC o56p12
-// drake178: NEWG_CreateHeroes()
 // MoO2  Module: INITGAME  Init_Leaders_()
+/**
+ * @brief Initializes hero records for every player at new-game start.
+ *
+ * @details
+ * Walks every player slot and every premade hero template, then seeds the
+ * player-local hero records from `_hero_premade_table`. The routine resets the
+ * hero level, starts from the template's warrior/mage/any pick budget, and
+ * rolls randomized hero abilities until the available picks are consumed.
+ *
+ * Ability assignment rules are based on the premade template's `pick_type`:
+ * - Warrior picks unlock martial abilities and some mixed traits.
+ * - Mage picks unlock magical abilities, casting skill, and some mixed traits.
+ * - Any/Both picks apply the same pool to both warrior and mage counters.
+ *
+ * The function also copies the template spell loadout into the runtime hero
+ * record and emits trace logging for the generated spell state.
+ *
+ * @return void
+ *
+ * @note Mutates `_HEROES2[]` in place for all player slots and hero types.
+ * @note Uses `Random(14)` repeatedly while drawing hero perks, so the final
+ *       hero composition is intentionally nondeterministic.
+ * @warning Preserves legacy behavior in the selection loop, including the
+ *          original pick consumption pattern and the existing hero-template
+ *          constraints.
+ */
 void Init_Heroes(void)
 {
     int32_t abilities = 0;
@@ -2250,11 +2275,11 @@ void Init_Heroes(void)
     int16_t casting_skill = 0;
     int16_t itr_hero_types = 0;
     int16_t itr_players = 0;
-    int16_t warrior_picks = 0;  // _DI_
+    int16_t warrior_picks = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    for(itr_players = 0; itr_players < 5; itr_players++)
+    for(itr_players = 0; itr_players < (NUM_PLAYERS - 1); itr_players++)
     {
 
         for(itr_hero_types = 0; itr_hero_types < NUM_HERO_TYPES; itr_hero_types++)
@@ -2263,9 +2288,7 @@ void Init_Heroes(void)
             _HEROES2[itr_players]->heroes[itr_hero_types].Level = 0;
 
             warrior_picks = 0;
-
             mage_picks = 0;
-
             all_picks = 0;
 
             switch(_hero_premade_table[itr_hero_types].pick_type)
@@ -2327,10 +2350,10 @@ void Init_Heroes(void)
                     {
                         if(((abilities & HSA_ARCANE_POWER2) == 0) && (mage_picks > 0))
                         {
-                            // ; BUG: the Knight has no caster picks, this should be $1E (the Elven Archer)
+                            /* OGBUG  the Knight has no caster picks, this should be $1E (the Elven Archer) */
                             if(itr_hero_types != ut_Knight)  /* ¿ should ut_ElvenArcher  = 30 ? */
                             {
-                                // ; BUG: excludes the Warlock and the Chaos Warrior, this should be $1E (Ranged_Lightning)
+                                /* OGBUG  excludes the Warlock and the Chaos Warrior, this should be $1E (Ranged_Lightning) */
                                 if(
                                     ((abilities & HSA_ARCANE_POWER) != 0)
                                     &&
@@ -2346,6 +2369,8 @@ void Init_Heroes(void)
                                 {
                                     abilities |= HSA_ARCANE_POWER;
                                 }
+                                warrior_picks--;
+                                mage_picks--;
                             }
                         }
                     } break;
@@ -2359,7 +2384,7 @@ void Init_Heroes(void)
                     } break;
                     case 9:  /* Noble */
                     {
-                        if(((abilities & HSA_NOBLE) == 0) && (itr_hero_types == ut_Chosen)) { abilities |= HSA_NOBLE; warrior_picks--; mage_picks--; }
+                        if(((abilities & HSA_NOBLE) == 0) && (itr_hero_types != ut_Chosen)) { abilities |= HSA_NOBLE; warrior_picks--; mage_picks--; }
                     } break;
                     case 10:  /* Charm */
                     {
@@ -2368,14 +2393,14 @@ void Init_Heroes(void)
                     case 11:  /* Lucky */
                     {
                         if((abilities & HSA_LUCKY) == 0) { abilities |= HSA_LUCKY; warrior_picks--; mage_picks--; }
-                    } /* BUGBUG: case 11/Luck missing `break;`, falls through to case 12/Agility */
+                    } /* OGBUG  missing `break;` */
                     case 12:  /* Agility */
                     {
-                        if(((abilities & HSA_AGILITY2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_AGILITY) != 0) { abilities |= HSA_AGILITY2; } else { abilities |= HSA_AGILITY; } warrior_picks--; mage_picks--; }
+                        if(((abilities & HSA_AGILITY2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_AGILITY) != 0) { abilities ^= HSA_AGILITY; abilities |= HSA_AGILITY2; } else { abilities |= HSA_AGILITY; } warrior_picks--; mage_picks--; }
                     } break;
                     case 13:  /* Sage */
                     {
-                        if(((abilities & HSA_SAGE2) == 0) && (mage_picks > 0)) { if((abilities & HSA_SAGE) != 0) { abilities |= HSA_SAGE2; } else { abilities |= HSA_SAGE; } warrior_picks--; mage_picks--; }
+                        if(((abilities & HSA_SAGE2) == 0) && (mage_picks > 0)) { if((abilities & HSA_SAGE) != 0) { abilities ^= HSA_SAGE; abilities |= HSA_SAGE2; } else { abilities |= HSA_SAGE; } warrior_picks--; mage_picks--; }
                     } break;
 
                 }
