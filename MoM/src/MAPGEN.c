@@ -5845,17 +5845,17 @@ void Generate_Neutral_Cities(int16_t wp)
             if(
                 (_unit_type_table[itr2].race_type == _CITIES[_cities].race)
                 &&
-                (_unit_type_table[itr2].reqd_bldg_1 != 0)
-                &&
                 (
+                    (_unit_type_table[itr2].reqd_bldg_1 == 0)
+                    ||
                     (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_1] == bs_Built)
                     ||
                     (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_1] == bs_Replaced)
                 )
                 &&
-                (_unit_type_table[itr2].reqd_bldg_2 != 0)
-                &&
                 (
+                    (_unit_type_table[itr2].reqd_bldg_2 == 0)
+                    ||
                     (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_2] == bs_Built)
                     ||
                     (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_2] == bs_Replaced)
@@ -5883,17 +5883,17 @@ void Generate_Neutral_Cities(int16_t wp)
             if(
                 (_unit_type_table[itr2].race_type == _CITIES[_cities].race)
                 &&
-                (_unit_type_table[itr2].reqd_bldg_1 != 0)
-                &&
                 (
+                    (_unit_type_table[itr2].reqd_bldg_1 == 0)
+                    ||
                     (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_1] == bs_Built)
                     ||
                     (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_1] == bs_Replaced)
                 )
                 &&
-                (_unit_type_table[itr2].reqd_bldg_2 != 0)
-                &&
                 (
+                    (_unit_type_table[itr2].reqd_bldg_2 == 0)
+                    ||
                     (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_2] == bs_Built)
                     ||
                     (_CITIES[_cities].bldg_status[_unit_type_table[itr2].reqd_bldg_2] == bs_Replaced)
