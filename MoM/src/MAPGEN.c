@@ -675,20 +675,13 @@ void Init_New_Game(void)
 void Set_Upper_Lair_Guardian_Count(void)
 {
     int16_t itr_lairs = 0;
-
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-
     for(itr_lairs = 0; itr_lairs < NUM_LAIRS; itr_lairs++)
     {
-
-        _LAIRS[itr_lairs].guard1_count = (_LAIRS[itr_lairs].guard1_count | (_LAIRS[itr_lairs].guard1_count << 4));
-
-        _LAIRS[itr_lairs].guard2_count = (_LAIRS[itr_lairs].guard2_count | (_LAIRS[itr_lairs].guard2_count << 4));
-
+        _LAIRS[itr_lairs].guard1_count = (_LAIRS[itr_lairs].guard1_count + (_LAIRS[itr_lairs].guard1_count << 4));
+        _LAIRS[itr_lairs].guard2_count = (_LAIRS[itr_lairs].guard2_count + (_LAIRS[itr_lairs].guard2_count << 4));
     }
-
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-    
 }
 
 
