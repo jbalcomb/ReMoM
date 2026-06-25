@@ -5532,7 +5532,7 @@ void Generate_Neutral_Cities(int16_t wp)
     int16_t Best_Ranged_Unit = 0;
     int16_t Best_Melee_Unit = 0;
     int16_t itr3 = 0;
-    int16_t Invalid = 0;
+    int16_t reject = 0;
     int16_t wy = 0;
     int16_t wx = 0;
     int16_t itr2 = 0;
@@ -5540,36 +5540,28 @@ void Generate_Neutral_Cities(int16_t wp)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
+
+    /* Phase 1: Init */
     tries = 0;
 
-    // ; fill the default continental race table with random
-    // ; values corresponding to the selected plane,
-    // ; excluding high elves from Arcanus and giving high
-    // ; men a double chance instead
 
+    /* Phase 2: Initialize landmass default races based on plane */
+    /* 0x High Elves, 2x High Men */
     for(itr1 = 1; itr1 < 200; itr1++)
     {
-
         if(wp == ARCANUS_PLANE)
         {
-
-            // ; select a random Arcanian race except high elves, with
-            // ; high men having double chance, and save its index
-            // ; into the element of the array corresponding to itr2
-
-            // BUGBUG  cmp     bx, 12                            ; switch 13 cases
             switch((Random(NUM_RACES_ARCANUS) - 1))
             {
-                case 0: { m_landmasses_default_race[itr1] = rt_Barbarian; } break;
-                case 1: { m_landmasses_default_race[itr1] = rt_Gnoll;     } break;
-                case 2: { m_landmasses_default_race[itr1] = rt_Halfling;  } break;
-                case 3: { m_landmasses_default_race[itr1] = rt_High_Men;  } break;  // no Forest check, no High Elves
-                case 4: { m_landmasses_default_race[itr1] = rt_High_Men;  } break;
-                case 5: { m_landmasses_default_race[itr1] = rt_Klackon;   } break;
-                case 6: { m_landmasses_default_race[itr1] = rt_Lizardman; } break;
-                case 7: { m_landmasses_default_race[itr1] = rt_Nomad;     } break;
-                case 8: { m_landmasses_default_race[itr1] = rt_Orc;       } break;
-                // WTF?
+                case  0: { m_landmasses_default_race[itr1] = rt_Barbarian; } break;
+                case  1: { m_landmasses_default_race[itr1] = rt_Gnoll;     } break;
+                case  2: { m_landmasses_default_race[itr1] = rt_Halfling;  } break;
+                case  3: { m_landmasses_default_race[itr1] = rt_High_Men;  } break;  /* NOTE: no Forest check, no High Elves */
+                case  4: { m_landmasses_default_race[itr1] = rt_High_Men;  } break;
+                case  5: { m_landmasses_default_race[itr1] = rt_Klackon;   } break;
+                case  6: { m_landmasses_default_race[itr1] = rt_Lizardman; } break;
+                case  7: { m_landmasses_default_race[itr1] = rt_Nomad;     } break;
+                case  8: { m_landmasses_default_race[itr1] = rt_Orc;       } break;
                 case  9: { m_landmasses_default_race[itr1] = rt_Barbarian; } break;
                 case 10: { m_landmasses_default_race[itr1] = rt_High_Men;  } break;
                 case 11: { m_landmasses_default_race[itr1] = rt_Nomad;     } break;
@@ -5579,10 +5571,6 @@ void Generate_Neutral_Cities(int16_t wp)
         }
         else  /* MYRROR_PLANE */
         {
-
-            // ; select a random Myrran race and save its index into
-            // ; the element of the array corresponding to itr2
-
             switch((Random(NUM_RACES_MYRROR) - 1))
             {
                 case 0: { m_landmasses_default_race[itr1] = rt_Beastmen;  } break;
@@ -5591,108 +5579,90 @@ void Generate_Neutral_Cities(int16_t wp)
                 case 3: { m_landmasses_default_race[itr1] = rt_Dwarf;     } break;
                 case 4: { m_landmasses_default_race[itr1] = rt_Troll;     } break;
             }
-
         }
-
     }
 
+
+    /* Phase 3: Place 15 Neutral Cities */
     for(itr1 = 0; itr1 < 15; itr1++)
     {
-
-        if(tries >= 1000) { return; }
-
+        if(tries >= 1000) { goto Done; }
         do
         {
-
             tries++;
-
             wx = (3 + Random(54));
             wy = (3 + Random(34));
-
-
             /* Phase ?: Sanity Checks */
             /* IDA  Orange */
-            Invalid = ST_FALSE;
+            reject = ST_FALSE;
 
             /* Check terrain validity */
             if(TERRAIN_TYPE(wx, wy, wp) == tt_Ocean)
             {
-                Invalid = ST_TRUE;
+                reject = ST_TRUE;
             }
             /* OGBUG  there are no such map squares yet at this stage */
             if((TERRAIN_TYPE(wx, wy, wp) >= tt_Shore1_Fst) && (TERRAIN_TYPE(wx, wy, wp) <= tt_Shore1_Lst)
             )
             {
-                Invalid = ST_TRUE;
+                reject = ST_TRUE;
             }
 
             /* Distance checks */
-            // ; invalidate if less than 5 map squares away from a capital
             for(itr2 = 0; itr2 < _num_players; itr2++)
             {
                 if(Range(wx, wy, _FORTRESSES[itr2].wx, _FORTRESSES[itr2].wy) < 5)
                 {
-                    Invalid = ST_TRUE;
+                    reject = ST_TRUE;
                 }
             }
-            // ; invalidate if less than 4 map squares away from an already created city
             for(itr2 = 0; itr2 < _cities; itr2++)
             {
                 if(_CITIES[itr2].wp == wp)
                 {
                     if(Delta_XY_With_Wrap(wx, wy, _CITIES[itr2].wx, _CITIES[itr2].wy, WORLD_WIDTH) < 4)
                     {
-                        Invalid = ST_TRUE;
+                        reject = ST_TRUE;
                     }
                 }
             }
-            // ; invalidate of less than 4 map squares away from a node
-            // ; the encounter exclusion below would also catch these
             for(itr2 = 0; itr2 < NUM_NODES; itr2++)
             {
                 if(_NODES[itr2].wp == wp)
                 {
                     if(Range(wx, wy, _NODES[itr2].wx, _NODES[itr2].wy) < 4)
                     {
-                        Invalid = ST_TRUE;
+                        reject = ST_TRUE;
                     }
                 }
             }
-            // ; invalidate if less than 4 map squares away from a tower
-            // ; the encounter exclusion below would also catch these
             for(itr2 = 0; itr2 < NUM_TOWERS; itr2++)
             {
                 if(Range(wx, wy, _TOWERS[itr2].wx, _TOWERS[itr2].wy) < 4)
                 {
-                    Invalid = ST_TRUE;
+                    reject = ST_TRUE;
                 }
             }
-            // ; invalidate if less than 4 map squares away from an site - including nodes and towers
             for(itr2 = 0; itr2 < NUM_LAIRS; itr2++)
             {
                 if(_LAIRS[itr2].wp == wp)
                 {
                     if(Range(wx, wy, _LAIRS[itr2].wx, _LAIRS[itr2].wy) < 4)
                     {
-                        Invalid = ST_TRUE;
+                        reject = ST_TRUE;
                     }
                 }
             }
 
-        } while(Invalid == ST_TRUE && tries < 1000);
+        } while(reject == ST_TRUE && tries < 1000);
 
-        if(tries >= 1000) { return; }
+        if(tries >= 1000) { goto Done; }
 
+
+        /* Phase 4: Initialize City Data */
         location_is_forest_square = Square_Is_Forest_NewGame(wx, wy, wp);
-
         if(wp == ARCANUS_PLANE)
         {
-
-            // ; select a random Arcanian race, and assign it to the
-            // ; next record in the city table, replacing high elves
-            // ; with high men if the map square is not a forest
-
-            // BUGBUG  cmp     bx, 12                            ; switch 13 cases
             switch((Random(NUM_RACES_ARCANUS) - 1))
             {
                 case 0: { _CITIES[_cities].race = rt_Barbarian; } break;
@@ -5724,7 +5694,6 @@ void Generate_Neutral_Cities(int16_t wp)
         }
         else
         {
-            // ; select a random Myrran race, and assign it to the next record in the city table
             switch((Random(NUM_RACES_MYRROR) - 1))
             {
                 case 0: { _CITIES[_cities].race = rt_Beastmen;  } break;
@@ -5735,7 +5704,7 @@ void Generate_Neutral_Cities(int16_t wp)
             }
         }
 
-        // 75% chance of default race
+        /* 75% chance of default race */
         if(Random(4) > 1)
         {
             _CITIES[_cities].race = (int8_t)m_landmasses_default_race[GET_LANDMASS(wx, wy, wp)];
@@ -5746,8 +5715,7 @@ void Generate_Neutral_Cities(int16_t wp)
         _CITIES[_cities].wp = (int8_t)wp;
         _CITIES[_cities].owner_idx = NEUTRAL_PLAYER_IDX;
         _CITIES[_cities].population = (1 + ((_difficulty + 1) / 3) + Random(4));  /* OGBUG  ignores terrain */
-        if((_difficulty > god_Normal) && (Random(5) == 1)
-        )
+        if((_difficulty > god_Normal) && (Random(5) == 1))
         {
             _CITIES[_cities].population = (((_difficulty + 1) / 3) + Random(10));  /* OGBUG  ignores terrain */
         }
@@ -5784,9 +5752,9 @@ void Generate_Neutral_Cities(int16_t wp)
         {
             _CITIES[_cities].bldg_status[itr2] = bs_NotBuilt;
         }
-        // ; add buildings based on population
+        /* Grant buildings based on population (waterfall switch logic) */
         _CITIES[_cities].bldg_status[bt_NONE] = bs_Replaced;
-        switch(_CITIES[_cities].population - 2)  // - 2;  switch 24 cases
+        switch(_CITIES[_cities].population - 2)
         {
             case 24:
             case 23:
@@ -5815,27 +5783,22 @@ void Generate_Neutral_Cities(int16_t wp)
             case  0: { _CITIES[_cities].bldg_status[bt_Barracks] = bs_Built; }
         }
 
-        // ; remove any buildings prohibited by race
+        /* Prune race-restricted buildings */
         for(itr3 = 0; itr3 < _race_type_table[_CITIES[_cities].race].cant_build_count; itr3++)
         {
             _CITIES[_cities].bldg_status[_race_type_table[_CITIES[_cities].race].cant_build[itr3]] = bs_NotBuilt;
         }
 
-        // ; remove any buildings with unbuilt prerequisites
-        // ; 
-        // ; BUG: buildings with a terrain requirement will be
-        // ; randomly removed through a read out of the structure
-        // ; bounds, whereas if they also have a building req,
-        // ; that will be ignored completely
+        /* Enforce building prerequisites */
+        /* OGBUG  buildings with a terrain requirement will be randomly removed through a read out of the structure bounds, whereas if they also have a building req, that will be ignored completely */
         for(itr2 = 1; itr2 < NUM_BUILDINGS; itr2++)
         {
-            if(_CITIES[_cities].bldg_status[bt_NONE] == bs_Built)
+            if(_CITIES[_cities].bldg_status[itr2] == bs_Built)
             {
-                // ¿ BUGBUG  code should not be same on both branches ?  maybe, was two different fields, then got merged into a union?
-                // ...or, should just be checking reqd_bldg_2, because the first one is reqd_terrain and not reqd_bldg_1
+                /* ¿ BUGBUG  code should not be same on both branches ?  maybe, was two different fields, then got merged into a union? ...or, should just be checking reqd_bldg_2, because the first one is reqd_terrain and not reqd_bldg_1 */
                 if(bldg_data_table[itr2].reqd_bldg_1 > 100)  // bldg_idx  >= 100 is Terrain Type
                 {
-                    if(_CITIES[_cities].bldg_status[bldg_data_table[itr2].reqd_terrain] == bs_NotBuilt)  // ; BUG: out of bounds
+                    if(_CITIES[_cities].bldg_status[bldg_data_table[itr2].reqd_terrain] == bs_NotBuilt)  /* OGBUG  OOB AVRL */
                     {
                         _CITIES[_cities].bldg_status[itr2] = bs_NotBuilt;
                     }
@@ -5854,15 +5817,10 @@ void Generate_Neutral_Cities(int16_t wp)
             }
         }
 
-        // ; mark any buildings that have been replaced as such
-        // ; 
-        // ; WARNING: only considers buildings whose replacer is
-        // ; built, but not replaced itself, which means that the
-        // ; bottom of a chain may get ignored
-
+        /* Handle building upgrades (mark lower tier as Replaced) */
+        /* OGBUG only handles one level, misses prereqs that have prereqs */
         for(itr2 = 1; itr2 < NUM_BUILDINGS; itr2++)
         {
-
             if(
                 (bldg_data_table[itr2].replace_bldg > bt_NONE)
                 &&
@@ -5871,22 +5829,16 @@ void Generate_Neutral_Cities(int16_t wp)
                 (_CITIES[_cities].bldg_status[bldg_data_table[itr2].replace_bldg] == bs_Built)
             )
             {
-
                 _CITIES[_cities].bldg_status[bldg_data_table[itr2].replace_bldg] = bs_Replaced;
-
             }
-
         }
 
 /*
     BEGIN:  Garrison
 */
 
-        // ; find the highest level (by unit type index) close
-        // ; combat unit that can be recruited in the city
-
+        /* Phase 5: Select Garrison Units */
         Best_Melee_Unit = 0;
-
         for(itr2 = ut_BarbSwordsmen; itr2 < ut_Magic_Spirit; itr2++)
         {
 
@@ -5916,27 +5868,18 @@ void Generate_Neutral_Cities(int16_t wp)
                 (_unit_type_table[itr2].Transport == 0)
                 &&
                 (
-                    (_unit_type_table[itr2].Ranged_Type == rat_NONE)
+                    (_unit_type_table[itr2].Ranged_Type == rat_UNDEF)
                     ||
                     (_unit_type_table[itr2].Ranged_Type >= srat_Thrown)
                 )
             )
             {
-
                 Best_Melee_Unit = itr2;
-
             }
-
         }
-
-        // ; find the highest level (by unit type index) ranged
-        // ; attack unit that can be recruited in the city
-
         Best_Ranged_Unit = 0;
-
         for(itr2 = ut_BarbSwordsmen; itr2 < ut_Magic_Spirit; itr2++)
         {
-
             if(
                 (_unit_type_table[itr2].race_type == _CITIES[_cities].race)
                 &&
@@ -5964,69 +5907,54 @@ void Generate_Neutral_Cities(int16_t wp)
                 &&
                 (
                     (_unit_type_table[itr2].Ranged_Type > rat_NONE)
-                    ||
+                    &&
                     (_unit_type_table[itr2].Ranged_Type < srat_Thrown)
                 )
             )
             {
-
                 Best_Ranged_Unit = itr2;
-
             }
-
         }
 
-        // ; create up to population / 4 (rounded down) close combat units to garrison the city
+
+        /* Phase 6: Spawn Garrison Units */
         /* OGBUG  dark elves will have no such units, resulting in half the intended starting garrison */
         for(itr2 = 0; (((_CITIES[_cities].population / 4) > itr2) && (itr2 < MAX_STACK)); itr2++)
         {
-
             Create_Unit_NewGame(Best_Melee_Unit, NEUTRAL_PLAYER_IDX, _CITIES[_cities].wx, _CITIES[_cities].wy, _CITIES[_cities].wp, _cities);
-
         }
-
         if(Best_Ranged_Unit == 0)
         {
-
-            // ; create another up to population / 4 (rounded down) close combat units for the garrison, up to at most 9 units total
             /* OGBUG  dark elves will have no such units, resulting in half the intended starting garrison */
             for(itr2 = 0; (((_CITIES[_cities].population / 4) > itr2) && (itr2 < MAX_STACK)); itr2++)
             {
-
                 Create_Unit_NewGame(Best_Melee_Unit, NEUTRAL_PLAYER_IDX, _CITIES[_cities].wx, _CITIES[_cities].wy, _CITIES[_cities].wp, _cities);
-
             }
-
         }
         else
         {
-
-            // ; create up to population / 4 (rounded down) ranged attack units for the garrison, up to at most 9 units total
             // ; WARNING: the sawmill is not included in the default
             // ;  building list, and the shrine can't be reached with
             // ;  the generated populations, so there won't ever be
             // ;  a ranged attack unit for any race other than dark
             // ;  elves, who only have these and no close combat ones
-
             for(itr2 = 0; (((_CITIES[_cities].population / 4) > itr2) && (itr2 < MAX_STACK)); itr2++)
             {
-
                 Create_Unit_NewGame(Best_Ranged_Unit, NEUTRAL_PLAYER_IDX, _CITIES[_cities].wx, _CITIES[_cities].wy, _CITIES[_cities].wp, _cities);
-
             }
-
         }
 
 /*
     END:  Garrison
 */
 
+        /* Phase 7: Finalize City */
         Random_City_Name_By_Race_NewGame(_CITIES[_cities].race, _CITIES[_cities].name);
-
         _cities++;
 
     }
 
+Done:
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
