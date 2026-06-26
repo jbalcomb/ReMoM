@@ -752,7 +752,7 @@ int16_t Unit_Has_NonCorporeal(int16_t unit_idx)
 /*
     Overland shortest-path driver — see doc/PathFinding/MoM-MovePath-Compare.md ("Move_Path_Find — overland").
 
-    The overland solver SPLITS the shared 5-step skeleton across two functions, where CRP_SPATH_Arbitrary
+    The overland solver SPLITS the shared 5-step skeleton across two functions, where Find_Shortest_Path
     (MAPGEN.c) does all five in a single body:
         [Skeleton 1 + 3]  init parallel arrays + relaxation sweep  -> delegated to Move_Path_Find() (MovePath.c)
         [Skeleton 2]      bail if the destination tile is impassable

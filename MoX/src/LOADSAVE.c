@@ -97,8 +97,8 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 19480);
 
-    stu_fwrite(UU_TBL_1, NUM_PLANES, 96, file_pointer);
-    stu_fwrite(UU_TBL_2, NUM_PLANES, 96, file_pointer);
+    stu_fwrite(connectivity_grid_land, NUM_PLANES, 96, file_pointer);
+    stu_fwrite(connectivity_grid_sea, NUM_PLANES, 96, file_pointer);
 
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 19864);
@@ -290,17 +290,17 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 19480);
 
-    stu_fread(UU_TBL_1, NUM_PLANES, 96, file_pointer);
-    stu_fread(UU_TBL_2, NUM_PLANES, 96, file_pointer);
+    stu_fread(connectivity_grid_land, NUM_PLANES, 96, file_pointer);
+    stu_fread(connectivity_grid_sea, NUM_PLANES, 96, file_pointer);
     /* CLAUDE 2026-06-24: lifecycle trace; companion logs at ALLOC.c (allocate)
-       and MAPGEN.c (after CRP_NEWG_CreatePathGrids__WIP).  See ALLOC.c for the why. */
+       and MAPGEN.c (after Build_Connectivity_Graphs).  See ALLOC.c for the why. */
     {
         char row[96 * 5];
         int plane, i, q;
-        const unsigned char * tbls[2] = { (const unsigned char *)UU_TBL_1, (const unsigned char *)UU_TBL_2 };
-        const char *         names[2] = { "UU_TBL_1", "UU_TBL_2" };
+        const unsigned char * tbls[2] = { (const unsigned char *)connectivity_grid_land, (const unsigned char *)connectivity_grid_sea };
+        const char *         names[2] = { "connectivity_grid_land", "connectivity_grid_sea" };
         int t;
-        LOG_INFO(LOG_CAT_LOADSAVE, "[UU_TBL] event=load  (after stu_fread for both tables)");
+        LOG_INFO(LOG_CAT_LOADSAVE, "[connectivity_grids] event=load  (after stu_fread for both tables)");
         for (t = 0; t < 2; t++)
         {
             for (plane = 0; plane < NUM_PLANES; plane++)
@@ -310,7 +310,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
                 {
                     q += snprintf(row + q, sizeof(row) - q, i ? ",%d" : "%d", (int)tbls[t][(plane * 96) + i]);
                 }
-                LOG_TRACE(LOG_CAT_LOADSAVE, "[UU_TBL] event=load table=%s plane=%d bytes=%s", names[t], plane, row);
+                LOG_TRACE(LOG_CAT_LOADSAVE, "[connectivity_grids] event=load table=%s plane=%d bytes=%s", names[t], plane, row);
             }
         }
     }

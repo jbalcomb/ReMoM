@@ -179,20 +179,20 @@ Debug?
         if 0, then current is source map grid cell
 So, ...
     if adjacent_reach_cost == 0
-        new_reach_cost = adjacent_reach_cost + move_cost;   0 + {0,1,2,3,4,5,6, ...}
-            if new_reach_cost >= 0
+        new_cost_to_reach = adjacent_reach_cost + move_cost;   0 + {0,1,2,3,4,5,6, ...}
+            if new_cost_to_reach >= 0
                 current_reach_cost = -1
-                    if new_reach_cost < current_reach_cost
+                    if new_cost_to_reach < current_reach_cost
                         !(0 < -1)
                         !(0 < 0)
     if current_reach_cost == 0
-        new_reach_cost = adjacent_reach_cost + move_cost;  -1 + {0,1,2,3,4,5,6, ...}
-            if new_reach_cost >= 0
+        new_cost_to_reach = adjacent_reach_cost + move_cost;  -1 + {0,1,2,3,4,5,6, ...}
+            if new_cost_to_reach >= 0
                 current_reach_cost = 0
-                    if new_reach_cost < current_reach_cost
+                    if new_cost_to_reach < current_reach_cost
                         {0, ...} < 0
 OON Problem?
-    if new_reach_cost < current_reach_cost fails on the -1 initialized value for cells adjacent to the source map grid cell
+    if new_cost_to_reach < current_reach_cost fails on the -1 initialized value for cells adjacent to the source map grid cell
 Solutions?
     cast -1 to unsigned so compare is against 255
         janky?

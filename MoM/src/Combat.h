@@ -268,7 +268,7 @@ what I want is all of this...
             move_cost = _cmbt_movepath_cost_map[ctr];  // moves2 cost of cell, given terrain and movement mode
             if(!IS_INF(move_cost))
             {
-                old_next_cell_index = _cmbt_path_data[ctr];
+                current_origin = _cmbt_path_data[ctr];
                 for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++)
                 {
                     adjacent_idx = CMB_AdjctOfs_NoWest[itr_adjacent];
@@ -296,11 +296,11 @@ NEW_PATH_COST_ALL()
             potential_path_cost = adjacent_path_cost + move_cost;       \
             if(_cmbt_mvpth_c[ctr] > potential_path_cost)                \
             {                                                           \
-                _cmbt_path_data[ctr] = adjacent_idx;                   \
+                _cmbt_path_data[ctr] = adjacent_idx;                    \
                 _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;      \
-                if(_cmbt_path_data[ctr] != old_next_cell_index)        \
+                if(_cmbt_path_data[ctr] != current_origin)              \
                 {                                                       \
-                    Map_Changed = ST_TRUE;                              \
+                    a_cost_was_updated = ST_TRUE;                       \
                 }                                                       \
             }                                                           \
         }                                                               \
@@ -318,11 +318,11 @@ NEW_PATH_COST_ALL()
             potential_path_cost = adjacent_path_cost + move_cost;       \
             if(_cmbt_mvpth_c[ctr] > potential_path_cost)                \
             {                                                           \
-                _cmbt_path_data[ctr] = adjacent_idx;                   \
+                _cmbt_path_data[ctr] = adjacent_idx;                    \
                 _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;      \
-                if(_cmbt_path_data[ctr] != old_next_cell_index)        \
+                if(_cmbt_path_data[ctr] != current_origin)              \
                 {                                                       \
-                    Map_Changed = ST_TRUE;                              \
+                    a_cost_was_updated = ST_TRUE;                       \
                 }                                                       \
             }                                                           \
         }                                                               \
@@ -339,11 +339,11 @@ NEW_PATH_COST_ALL()
             potential_path_cost = adjacent_path_cost + move_cost;       \
             if(_cmbt_mvpth_c[ctr] > potential_path_cost)                \
             {                                                           \
-                _cmbt_path_data[ctr] = adjacent_idx;                   \
+                _cmbt_path_data[ctr] = adjacent_idx;                    \
                 _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;      \
-                if(_cmbt_path_data[ctr] != old_next_cell_index)        \
+                if(_cmbt_path_data[ctr] != current_origin)              \
                 {                                                       \
-                    Map_Changed = ST_TRUE;                              \
+                    a_cost_was_updated = ST_TRUE;                       \
                 }                                                       \
             }                                                           \
         }                                                               \
@@ -360,11 +360,11 @@ NEW_PATH_COST_ALL()
             potential_path_cost = adjacent_path_cost + move_cost;       \
             if(_cmbt_mvpth_c[ctr] > potential_path_cost)                \
             {                                                           \
-                _cmbt_path_data[ctr] = adjacent_idx;                   \
+                _cmbt_path_data[ctr] = adjacent_idx;                    \
                 _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;      \
-                if(_cmbt_path_data[ctr] != old_next_cell_index)        \
+                if(_cmbt_path_data[ctr] != current_origin)              \
                 {                                                       \
-                    Map_Changed = ST_TRUE;                              \
+                    a_cost_was_updated = ST_TRUE;                       \
                 }                                                       \
             }                                                           \
         }                                                               \
@@ -389,7 +389,7 @@ NEW_PATH_COST_ALL()
                 _cmbt_path_data[ctr] = adjacent_idx;                           \
                 _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;              \
                 new_next_cell_index = _cmbt_path_data[ctr];                    \
-                if(new_next_cell_index != old_next_cell_index)                  \
+                if(new_next_cell_index != current_origin)                  \
                 {                                                               \
                     unstable = ST_TRUE;                                         \
                 }                                                               \
@@ -402,7 +402,7 @@ NEW_PATH_COST_ALL()
     move_cost = _cmbt_movepath_cost_map[ctr];                         \
     if(!IS_INF(move_cost))                                      \
     {                                                           \
-        old_next_cell_index = _cmbt_path_data[ctr];            \
+        current_origin = _cmbt_path_data[ctr];            \
         for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++) \
         {                                                       \
             NEW_PATH_COST_ANY(itr_adjacent)                     \

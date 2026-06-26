@@ -48,20 +48,20 @@ int16_t wx;
 int16_t wy;
 // MoM_Data  struct s_MOVE_PATH * movepath_cost_map;
 
-int8_t    reach_costs_changed = ST_TRUE;  // WZD ovr147:0000  Code-Segment Variable
-int16_t   origin_row = 0;                 // WZD ovr147:0002  Code-Segment Variable
+int8_t    a_cost_was_updated = ST_TRUE; /* relaxation "changed" flag */  // WZD ovr147:0000  Code-Segment Variable
+int16_t   origin_row = 0;               // WZD ovr147:0002  Code-Segment Variable
 /* origin_row is the linear (1-D) array index of the first cell of the source tile's row — the anchor offset where each pathfinding sweep begins. */
-int16_t   itr;
+int16_t   itr;                  /* array-init / generic loop var */
 int8_t  * movepath_cost;
 uint8_t * movepath_reach_cost;
 int16_t * movepath_reach_from;
-int16_t   ofst_movepath_cost;
-int8_t    move_cost;
+int16_t   ofst_movepath_cost;   /* current tile 1-D index */
+int8_t    move_cost;            /* current tile entry cost */
 int8_t    itr_row;    // _CL_
 int8_t    incr_flag;  // _CH_
 int8_t    tmp_move_cost;
 uint8_t   adjacent_reach_cost;
-uint8_t   new_reach_cost;
+uint8_t   new_cost_to_reach;       /* candidate new cost */
 uint8_t   current_reach_cost;
 int8_t    reach_cost;
 int16_t   adj_pos;
@@ -75,13 +75,13 @@ static void Check_Cost(void)
     // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
     if(!IS_INF(adjacent_reach_cost))
     {
-        new_reach_cost = adjacent_reach_cost + tmp_move_cost;
+        new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
         current_reach_cost = *movepath_reach_cost;
-        if(new_reach_cost < current_reach_cost)
+        if(new_cost_to_reach < current_reach_cost)
         {
-            *movepath_reach_cost = new_reach_cost;
+            *movepath_reach_cost = new_cost_to_reach;
             *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-            reach_costs_changed = ST_TRUE;
+            a_cost_was_updated = ST_TRUE;
         }
     }
 }
@@ -209,7 +209,7 @@ static void Do_Costs_Lst(void)
     The inline [Skeleton step N] labels below mark each section:
 
         [Skeleton 1]  init parallel arrays: Reach_Costs[] = INF, Reach_From[] = self, source = 0
-        [Skeleton 3]  relaxation sweep to fixed point (while reach_costs_changed) — see the doc's
+        [Skeleton 3]  relaxation sweep to fixed point (while a_cost_was_updated) — see the doc's
                       "Optimization" note: each outer pass runs a downward row pass (Iter_Rows_Down)
                       then an upward row pass (Iter_Rows_Up), the alternating-raster (Gauss-Seidel)
                       acceleration that propagates costs both with and against the scan.
@@ -228,16 +228,16 @@ void Move_Path_Find(int16_t arg_wx, int16_t arg_wy, struct s_MOVE_PATH * arg_mov
         movepath_cost_map->Reach_From[itr] = itr;
     movepath_cost_map->Reach_Costs[((wy * WORLD_WIDTH) + wx)] = 0;
 
-    /* [Skeleton step 3]  Relaxation sweep to fixed point — alternating down/up raster passes (Gauss-Seidel), repeated while reach_costs_changed (MoM-MovePath-Compare.md, "Move_Path_Find — overland"). */
+    /* [Skeleton step 3]  Relaxation sweep to fixed point — alternating down/up raster passes (Gauss-Seidel), repeated while a_cost_was_updated (MoM-MovePath-Compare.md, "Move_Path_Find — overland"). */
 /*
     BEGIN:  @@MajorBlock_1_Outer
 */
 
-    // ¿ do{ ...} while(reach_costs_changed == ST_TRUE) ?
+    // ¿ do{ ...} while(a_cost_was_updated == ST_TRUE) ?
 
 MajorBlock_1_Outer:
 
-    reach_costs_changed = ST_FALSE;
+    a_cost_was_updated = ST_FALSE;
     ofst_movepath_cost = origin_row;
     movepath_cost = &movepath_cost_map->moves2[origin_row];
     movepath_reach_cost = &movepath_cost_map->Reach_Costs[origin_row];
@@ -308,7 +308,7 @@ Iter_Rows_Up:
 */
 
     /* [Skeleton step 3 — fixed-point gate]  Repeat the down+up macro-pass until a full sweep changes nothing. */
-    if(reach_costs_changed == ST_TRUE)
+    if(a_cost_was_updated == ST_TRUE)
     {
         goto MajorBlock_1_Outer;
     }

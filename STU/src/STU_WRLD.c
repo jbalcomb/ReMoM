@@ -1873,7 +1873,7 @@ void Simulate_World_Map_Generation(void)
 
         // Movement_Mode_Cost_Maps(ARCANUS_PLANE);
 
-        // CRP_NEWG_CreatePathGrids__WIP(MYRROR_PLANE);
+        // Build_Connectivity_Graphs(MYRROR_PLANE);
 
         // Init_Square_Explored();
 

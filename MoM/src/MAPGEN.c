@@ -67,7 +67,7 @@ extern struct s_MOVE_MODE_COST_MAPS * movement_mode_cost_maps;
 
 
 // forward declare; non-static to match the definition and the MAPGEN.h prototype (was erroneously static -> C4211)
-void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map);
+void Build_Connectivity_Graph(int8_t * move_map, uint8_t * result_map);
 
 
 
@@ -211,18 +211,15 @@ int16_t m_landmasses_ctr;
 
 // MGC 31D1:9118                                                 BEGIN:  ovr054 - Uninitialized Data
 
-/* CLAUDE  INF ("impassable tile / infinite cost") now comes from the shared MOX_TYPE.h (already included above). Per the asm (ovr054), cost bytes are UNSIGNED: reads are `mov al,[Costs+bx] / mov ah,0` (zero-extend, not cbw) and the cost compare is `jbe` (unsigned) -- so CRP_SPATH_Costs must be uint8_t, and a stored INF reads back as 255 (matching `cmp ...,0FFh`). Reverse/SourceTiles are word arrays (int16_t), matching the asm's `shl bx,1` word accesses. */
-
 // MGC 31D1:9118
-int16_t CRP_SPATH_Reverse[100];
+int16_t shortest_path_backtrace[100];
 // MGC 31D1:91E0
-uint8_t CRP_SPATH_Costs[225];           /* 1-byte, unsigned;  read is mov ah, 0 (zero-extend, not cbw), cost comparison is jbe (unsigned) */
+uint8_t shortest_path_cost_to_reach[225];           /* 1-byte, unsigned;  read is mov ah, 0 (zero-extend, not cbw), cost comparison is jbe (unsigned) */
 // MGC 31D1:92C1 00                                              align 2
 // MGC 31D1:92C2
-int16_t CRP_SPATH_SourceTiles[225];
+int16_t shortest_path_came_from[225];
 
 // MGC 31D1:92C2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+END:  ovr054 - Uninitialized Data
-
 
 
 
@@ -325,10 +322,10 @@ static void gd_dump_terrain_specials(const char* point)
 {
     int plane, y, x, q;
     char row[WORLD_WIDTH * 5];
-    for (plane = 0; plane < NUM_PLANES; plane++) {
-        for (y = 0; y < WORLD_HEIGHT; y++) {
+    for(plane = 0; plane < NUM_PLANES; plane++) {
+        for(y = 0; y < WORLD_HEIGHT; y++) {
             q = 0;
-            for (x = 0; x < WORLD_WIDTH; x++) {
+            for(x = 0; x < WORLD_WIDTH; x++) {
                 int v = GET_TERRAIN_SPECIAL(x, y, plane);
                 q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
             }
@@ -344,10 +341,10 @@ static void gd_dump_map_square_flags(const char* point)
 {
     int plane, y, x, q;
     char row[WORLD_WIDTH * 5];
-    for (plane = 0; plane < NUM_PLANES; plane++) {
-        for (y = 0; y < WORLD_HEIGHT; y++) {
+    for(plane = 0; plane < NUM_PLANES; plane++) {
+        for(y = 0; y < WORLD_HEIGHT; y++) {
             q = 0;
-            for (x = 0; x < WORLD_WIDTH; x++) {
+            for(x = 0; x < WORLD_WIDTH; x++) {
                 int v = GET_MAP_SQUARE_FLAG(x, y, plane);
                 q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
             }
@@ -363,10 +360,10 @@ static void gd_dump_square_explored(const char* point)
 {
     int plane, y, x, q;
     char row[WORLD_WIDTH * 5];
-    for (plane = 0; plane < NUM_PLANES; plane++) {
-        for (y = 0; y < WORLD_HEIGHT; y++) {
+    for(plane = 0; plane < NUM_PLANES; plane++) {
+        for(y = 0; y < WORLD_HEIGHT; y++) {
             q = 0;
-            for (x = 0; x < WORLD_WIDTH; x++) {
+            for(x = 0; x < WORLD_WIDTH; x++) {
                 int v = GET_SQUARE_EXPLORED(x, y, plane);
                 q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
             }
@@ -386,7 +383,7 @@ static void gd_dump_movement_mode_cost_maps(const char* point)
     static const char* const mode_names[6] = {
         "UU_MvMd", "walking", "forester", "mountaineer", "swimming", "sailing"
     };
-    for (plane = 0; plane < NUM_PLANES; plane++) {
+    for(plane = 0; plane < NUM_PLANES; plane++) {
         struct s_MOVE_COST_MAP* modes[6] = {
             &movement_mode_cost_maps[plane].UU_MvMd,
             &movement_mode_cost_maps[plane].walking,
@@ -395,10 +392,10 @@ static void gd_dump_movement_mode_cost_maps(const char* point)
             &movement_mode_cost_maps[plane].swimming,
             &movement_mode_cost_maps[plane].sailing,
         };
-        for (m = 0; m < 6; m++) {
-            for (y = 0; y < WORLD_HEIGHT; y++) {
+        for(m = 0; m < 6; m++) {
+            for(y = 0; y < WORLD_HEIGHT; y++) {
                 q = 0;
-                for (x = 0; x < WORLD_WIDTH; x++) {
+                for(x = 0; x < WORLD_WIDTH; x++) {
                     int v = (int)modes[m]->moves2[(y * WORLD_WIDTH) + x];
                     q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
                 }
@@ -410,15 +407,15 @@ static void gd_dump_movement_mode_cost_maps(const char* point)
     }
 }
 
-/* CLAUDE: capture UU_TBL_1 / UU_TBL_2 (path grids, NUM_PLANES x 96 uint8) for
+/* CLAUDE: capture connectivity_grid_land / connectivity_grid_sea (path grids, NUM_PLANES x 96 uint8) for
  * OG byte-compare.  SAMB_ptr = unsigned char*; one [GD] line per (table,plane). */
 static void gd_dump_one_uu_tbl(const char* point, const char* name, const unsigned char* tbl)
 {
     int plane, i, q;
     char row[96 * 5];
-    for (plane = 0; plane < NUM_PLANES; plane++) {
+    for(plane = 0; plane < NUM_PLANES; plane++) {
         q = 0;
-        for (i = 0; i < 96; i++) {
+        for(i = 0; i < 96; i++) {
             int v = (int)tbl[(plane * 96) + i];
             q += snprintf(row + q, sizeof(row) - q, i ? ",%d" : "%d", v);
         }
@@ -428,8 +425,8 @@ static void gd_dump_one_uu_tbl(const char* point, const char* name, const unsign
 
 static void gd_dump_uu_tbls(const char* point)
 {
-    gd_dump_one_uu_tbl(point, "UU_TBL_1", (unsigned char *)UU_TBL_1);
-    gd_dump_one_uu_tbl(point, "UU_TBL_2", (unsigned char *)UU_TBL_2);
+    gd_dump_one_uu_tbl(point, "connectivity_grid_land", (unsigned char *)connectivity_grid_land);
+    gd_dump_one_uu_tbl(point, "connectivity_grid_sea", (unsigned char *)connectivity_grid_sea);
     STU_Log_Flush_All();
 }
 
@@ -612,27 +609,26 @@ void Init_New_Game(void)
 
     Draw_Building_The_Worlds(90);
 
-    CRP_NEWG_CreatePathGrids__WIP(ARCANUS_PLANE);
-    CRP_NEWG_CreatePathGrids__WIP(MYRROR_PLANE);
-    /* CLAUDE 2026-06-24: lifecycle trace; companion logs at ALLOC.c (allocate)
-       and LOADSAVE.c (after stu_fread).  See ALLOC.c for the why. */
+    Build_Connectivity_Graphs(ARCANUS_PLANE);
+    Build_Connectivity_Graphs(MYRROR_PLANE);
+    /* CLAUDE 2026-06-24: lifecycle trace; companion logs at ALLOC.c (allocate) and LOADSAVE.c (after stu_fread).  See ALLOC.c for the why. */
     {
         char row[96 * 5];
         int plane, i, q;
-        const unsigned char * tbls[2] = { (const unsigned char *)UU_TBL_1, (const unsigned char *)UU_TBL_2 };
-        const char *         names[2] = { "UU_TBL_1", "UU_TBL_2" };
+        const unsigned char * tbls[2] = { (const unsigned char *)connectivity_grid_land, (const unsigned char *)connectivity_grid_sea };
+        const char *         names[2] = { "connectivity_grid_land", "connectivity_grid_sea" };
         int t;
-        LOG_INFO(LOG_CAT_GENERAL, "[UU_TBL] event=calc  (after CRP_NEWG_CreatePathGrids__WIP for both planes)");
-        for (t = 0; t < 2; t++)
+        LOG_INFO(LOG_CAT_GENERAL, "[connectivity_grids] event=calc  (after Build_Connectivity_Graphs for both planes)");
+        for(t = 0; t < 2; t++)
         {
-            for (plane = 0; plane < NUM_PLANES; plane++)
+            for(plane = 0; plane < NUM_PLANES; plane++)
             {
                 q = 0;
-                for (i = 0; i < 96; i++)
+                for(i = 0; i < 96; i++)
                 {
                     q += snprintf(row + q, sizeof(row) - q, i ? ",%d" : "%d", (int)tbls[t][(plane * 96) + i]);
                 }
-                LOG_TRACE(LOG_CAT_GENERAL, "[UU_TBL] event=calc table=%s plane=%d bytes=%s", names[t], plane, row);
+                LOG_TRACE(LOG_CAT_GENERAL, "[connectivity_grids] event=calc table=%s plane=%d bytes=%s", names[t], plane, row);
             }
         }
     }
@@ -6165,26 +6161,37 @@ _map_square_flags is allocated with + WORLD_WIDTH + 1 padding (ALLOC.c, STU_WRLD
 
 
 // MGC o51p27
-// drake178: CRP_NEWG_CreatePathGrids()
-/*
-; the arrays created by this function are never used
-; by the game, and can be repurposed even though they
-; are part of the save game file
-;
-; creates the segmented pathing grids of the selected
-; plane for both land and sea exclusive movement types
-*/
-/*
-
-MGC  ovr055 OON function  CRP_NEWG_CreatePathGrid__STUB()
-
-*/
-void CRP_NEWG_CreatePathGrids__WIP(int16_t wp)
+/**
+ * @brief Builds land and sea connectivity graphs for one world plane.
+ *
+ * @details
+ * Maps EMM data access, then generates two connectivity graph tables for the
+ * selected plane using the precomputed movement-cost maps:
+ * - Walking connectivity is built from `movement_mode_cost_maps[wp].walking`
+ *   into `connectivity_grid_land`.
+ * - Sailing connectivity is built from `movement_mode_cost_maps[wp].sailing`
+ *   into `connectivity_grid_sea`.
+ *
+ * The routine is a thin wrapper around `Build_Connectivity_Graph(...)` and
+ * writes plane-local results into fixed 96-byte slices per plane.
+ *
+ * @param wp World plane index to process.
+ *
+ * @return void
+ *
+ * @note Expects movement-mode cost maps for the selected plane to be already
+ *       initialized (for example by `Movement_Mode_Cost_Maps`).
+ * @note Mutates global connectivity buffers `connectivity_grid_land` and `connectivity_grid_sea`.
+ *
+ * @see Movement_Mode_Cost_Maps
+ * @see Build_Connectivity_Graph
+ */
+void Build_Connectivity_Graphs(int16_t wp)
 {
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     EMMDATAH_Map();
-    CRP_NEWG_CreatePathGrid__STUB(&movement_mode_cost_maps[wp].walking.moves2[0], (uint8_t *)&UU_TBL_1[wp]);
-    CRP_NEWG_CreatePathGrid__STUB(&movement_mode_cost_maps[wp].sailing.moves2[0], (uint8_t *)&UU_TBL_2[wp]);
+    Build_Connectivity_Graph(&movement_mode_cost_maps[wp].walking.moves2[0], (uint8_t *)&connectivity_grid_land[(wp * 96)]);
+    Build_Connectivity_Graph(&movement_mode_cost_maps[wp].sailing.moves2[0], (uint8_t *)&connectivity_grid_sea[(wp * 96)]);
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
 
@@ -7028,7 +7035,7 @@ void Animate_Oceans(void)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     /* CI: inject OG's exact overrun bytes (captured after CRP_NEWG_CreatePathGrids
-     * fills UU_TBL_1, the block OG keeps right after _world_maps) so the OGBUG `<=`
+     * fills connectivity_grid_land, the block OG keeps right after _world_maps) so the OGBUG `<=`
      * OOB loop below reads OG's values at plane-1 row 40 instead of ReMoM's zeroed
      * over-allocation.  Otherwise ~30 OOB cells read as tte_Ocean(0) and draw
      * spurious Random(5) calls that desync the whole downstream RNG stream. */
@@ -7651,7 +7658,7 @@ void o51p54_empty_function(void)
 */
 
 // MGC o54p01
-// drake178: CRP_SPATH_Arbitrary()
+// drake178: Find_Shortest_Path()
 /*
 ; the arrays created by this function are never used
 ; by the game, and can be repurposed even though they
@@ -7674,12 +7681,12 @@ void o51p54_empty_function(void)
 
         [Prelude]        rebuild 9 edge/corner adjacency-offset tables from Wdt (recomputed every call)
         [Skeleton 2]     bail if target / source tile is impassable
-        [Skeleton 1]     init parallel arrays: predecessor (SourceTiles) = self, cost (Costs) = INF, source = 0
-        [Skeleton 3]     relaxation sweep to fixed point — single fixed-direction raster (while Map_Changed)
+        [Skeleton 1]     init parallel arrays: predecessor (shortest_path_came_from) = self, cost (Costs) = INF, source = 0
+        [Skeleton 3]     relaxation sweep to fixed point — single fixed-direction raster (while a_cost_was_updated)
         [Skeleton 4]     back-trace target -> predecessor self-link; success iff self-link == source
         [Skeleton 5]     reverse collected indices and convert 1-D index -> (x, y)
 */
-int16_t CRP_SPATH_Arbitrary(int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Wdt, int16_t Hgt, uint8_t * Map, uint8_t * Xs, uint8_t * Ys)
+int16_t Find_Shortest_Path(int16_t src_x, int16_t src_y, int16_t dst_x, int16_t dst_y, int16_t Wdt, int16_t Hgt, uint8_t * movepath_cost_map, uint8_t * mvpth_x, uint8_t * mvpth_y)
 {
     int16_t Bottom_Row_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Top_Row_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -7690,23 +7697,23 @@ int16_t CRP_SPATH_Arbitrary(int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t Tg
     int16_t Right_Col_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Left_Col_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Mid_Tile_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Path_Length = 0;
-    uint8_t Cost_From_Adjacent = 0;
-    int16_t Total_Tiles = 0;
-    int16_t Current_Tile_Cost = 0;
+    int16_t path_length = 0;            /* path length (hop count) */
+    uint8_t new_cost_to_reach = 0;      /* candidate new cost */
+    int16_t grid_cell_count = 0;        /* total tile count */
+    int16_t move_cost = 0;              /* current tile entry cost */
     int16_t Inner_Col_Height = 0;
     int16_t Adjacent_Tile_Cost = 0;
     int16_t Inner_Row_Length = 0;
-    int16_t Row_LoopVar = 0;
-    int16_t Col_LoopVar = 0;
-    int16_t Current_Source = 0;
-    int16_t Adjacent_Tile_Offset = 0;
-    int16_t Map_Changed = 0;
-    int16_t Loop_Var = 0;
+    int16_t Row_LoopVar = 0;            /* row / column iterator */
+    int16_t Col_LoopVar = 0;            /* row / column iterator */
+    int16_t Current_Source = 0;         /* predecessor snapshot (Δ-detect) */
+    int16_t Adjacent_Tile_Offset = 0;   /* neighbour offset / index */
+    int16_t a_cost_was_updated = 0;     /* relaxation "changed" flag */  /* Early Exit: Bellman-Ford can terminate early if a full pass occurs without changing any distances. This saves significant CPU cycles. */
+    int16_t itr = 0;
     int16_t cx = 0;
-    int16_t si = 0;
+    int16_t ctr = 0;  /* current tile 1-D index */
 
-    /* [Prelude]  Rebuild the 9 edge/corner adjacency-offset tables from Wdt — recomputed every call (MoM-MovePath-Compare.md, "CRP_SPATH_Arbitrary"). */
+    /* [Prelude]  Rebuild the 9 edge/corner adjacency-offset tables from Wdt — recomputed every call (MoM-MovePath-Compare.md, "Find_Shortest_Path"). */
     /* Initializing Adjacency lists offsets based on Wdt */
     Mid_Tile_Adjacents[0] = -Wdt - 1;
     Mid_Tile_Adjacents[1] = -Wdt;
@@ -7757,273 +7764,274 @@ int16_t CRP_SPATH_Arbitrary(int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t Tg
     Bottom_Row_Adjacents[3] = -Wdt - 1;
     Bottom_Row_Adjacents[4] = -Wdt + 1;
 
-    Path_Length = 0;
+    path_length = 0;
 
     /* [Skeleton step 2]  Bail if the target or source tile is impassable (MoM-MovePath-Compare.md, "The shared skeleton"). */
     /* Verify target tile is passable */
-    if(Map[TgtY * Wdt + TgtX] == INF)
+    if(movepath_cost_map[dst_y * Wdt + dst_x] == INF)
     {
         return 0;
     }
 
     /* Verify source tile is passable */
-    if(Map[SrcY * Wdt + SrcX] == INF)
+    if(movepath_cost_map[src_y * Wdt + src_x] == INF)
     {
         return 0;
     }
 
-    /* [Skeleton step 1]  Two parallel arrays: predecessor CRP_SPATH_SourceTiles[] init to self; cost CRP_SPATH_Costs[] init INF, source = 0 (MoM-MovePath-Compare.md, "The shared skeleton"). */
-    Total_Tiles = Wdt * Hgt;
+    /* [Skeleton step 1]  Two parallel arrays: predecessor shortest_path_came_from[] init to self; cost shortest_path_cost_to_reach[] init INF, source = 0 (MoM-MovePath-Compare.md, "The shared skeleton"). */
+    grid_cell_count = Wdt * Hgt;
 
-    for (Loop_Var = 0; Loop_Var < Total_Tiles; Loop_Var++)
+    for(itr = 0; itr < grid_cell_count; itr++)
     {
-        CRP_SPATH_SourceTiles[Loop_Var] = Loop_Var;
+        shortest_path_came_from[itr] = itr;
     }
 
-    for (Loop_Var = 0; Loop_Var < Total_Tiles; Loop_Var++)
+    for(itr = 0; itr < grid_cell_count; itr++)
     {
-        CRP_SPATH_Costs[Loop_Var] = INF;
+        shortest_path_cost_to_reach[itr] = INF;
     }
 
-    CRP_SPATH_Costs[SrcY * Wdt + SrcX] = 0;
+    shortest_path_cost_to_reach[src_y * Wdt + src_x] = 0;
 
-    /* [Skeleton step 3]  Relaxation sweep to fixed point — single fixed-direction raster (MoM-MovePath-Compare.md, "The shared skeleton" / "CRP_SPATH_Arbitrary").
+    /* [Skeleton step 3]  Relaxation sweep to fixed point — single fixed-direction raster (MoM-MovePath-Compare.md, "The shared skeleton" / "Find_Shortest_Path").
        Per pass the raster walks: top-left corner, top row, top-right corner, then each middle row (left column, inner tiles, right column), bottom-left corner, bottom row, bottom-right corner. */
-    Map_Changed = ST_TRUE;
-    while(Map_Changed == ST_TRUE)
+    a_cost_was_updated = ST_TRUE;
+    while(a_cost_was_updated == ST_TRUE)
     {
-        Map_Changed = 0;
+        a_cost_was_updated = 0;
         Inner_Row_Length = Wdt - 2;
         Inner_Col_Height = Hgt - 2;
-        si = 0;
+        ctr = 0;
 
-        /* Top-Left Corner (si = 0) */
-        Current_Tile_Cost = Map[si];
-        if(Current_Tile_Cost != INF)
+        /* Top-Left Corner (ctr = 0) */
+        move_cost = movepath_cost_map[ctr];
+        if(move_cost != INF)
         {
-            Current_Source = CRP_SPATH_SourceTiles[si];
-            for (cx = 0; cx < 3; cx++)
+            Current_Source = shortest_path_came_from[ctr];
+            for(cx = 0; cx < 3; cx++)
             {
-                Adjacent_Tile_Offset = si + Top_Left_Adjacents[cx];
-                Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+                Adjacent_Tile_Offset = ctr + Top_Left_Adjacents[cx];
+                Adjacent_Tile_Cost = shortest_path_cost_to_reach[Adjacent_Tile_Offset];
                 if(Adjacent_Tile_Cost != INF)
                 {
-                    Cost_From_Adjacent = (uint8_t)(Adjacent_Tile_Cost + Current_Tile_Cost);
-                    if(CRP_SPATH_Costs[si] > Cost_From_Adjacent)
+                    new_cost_to_reach = (uint8_t)(Adjacent_Tile_Cost + move_cost);
+                    if(shortest_path_cost_to_reach[ctr] > new_cost_to_reach)
                     {
-                        CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
-                        CRP_SPATH_Costs[si] = Cost_From_Adjacent;
-                        if(CRP_SPATH_SourceTiles[si] != Current_Source)
+                        shortest_path_came_from[ctr] = Adjacent_Tile_Offset;
+                        shortest_path_cost_to_reach[ctr] = new_cost_to_reach;
+                        if(shortest_path_came_from[ctr] != Current_Source)
                         {
-                            Map_Changed = 1;
+                            a_cost_was_updated = 1;
                         }
                     }
                 }
             }
         }
-        si++;
+        ctr++;
 
-        /* Top Row Inner Tiles (si = 1 to Wdt - 2) */
-        for (Row_LoopVar = 0; Row_LoopVar < Inner_Row_Length; Row_LoopVar++) {
-            Current_Tile_Cost = Map[si];
-            if(Current_Tile_Cost != INF) {
-                Current_Source = CRP_SPATH_SourceTiles[si];
-                for (cx = 0; cx < 5; cx++) {
-                    Adjacent_Tile_Offset = si + Top_Row_Adjacents[cx];
-                    Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+        /* Top Row Inner Tiles (ctr = 1 to Wdt - 2) */
+        for(Row_LoopVar = 0; Row_LoopVar < Inner_Row_Length; Row_LoopVar++) {
+            move_cost = movepath_cost_map[ctr];
+            if(move_cost != INF) {
+                Current_Source = shortest_path_came_from[ctr];
+                for(cx = 0; cx < 5; cx++) {
+                    Adjacent_Tile_Offset = ctr + Top_Row_Adjacents[cx];
+                    Adjacent_Tile_Cost = shortest_path_cost_to_reach[Adjacent_Tile_Offset];
                     if(Adjacent_Tile_Cost != INF) {
-                        Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
-                        if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
-                            CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
-                            CRP_SPATH_Costs[si] = Cost_From_Adjacent;
-                            if(CRP_SPATH_SourceTiles[si] != Current_Source) {
-                                Map_Changed = 1;
+                        new_cost_to_reach = (unsigned char)(Adjacent_Tile_Cost + move_cost);
+                        if(shortest_path_cost_to_reach[ctr] > new_cost_to_reach) {
+                            shortest_path_came_from[ctr] = Adjacent_Tile_Offset;
+                            shortest_path_cost_to_reach[ctr] = new_cost_to_reach;
+                            if(shortest_path_came_from[ctr] != Current_Source) {
+                                a_cost_was_updated = 1;
                             }
                         }
                     }
                 }
             }
-            si++;
+            ctr++;
         }
 
-        /* Top-Right Corner (si = Wdt - 1) */
-        Current_Tile_Cost = Map[si];
-        if(Current_Tile_Cost != INF) {
-            Current_Source = CRP_SPATH_SourceTiles[si];
-            for (cx = 0; cx < 3; cx++) {
-                Adjacent_Tile_Offset = si + Top_Right_Adjacents[cx];
-                Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+        /* Top-Right Corner (ctr = Wdt - 1) */
+        move_cost = movepath_cost_map[ctr];
+        if(move_cost != INF) {
+            Current_Source = shortest_path_came_from[ctr];
+            for(cx = 0; cx < 3; cx++) {
+                Adjacent_Tile_Offset = ctr + Top_Right_Adjacents[cx];
+                Adjacent_Tile_Cost = shortest_path_cost_to_reach[Adjacent_Tile_Offset];
                 if(Adjacent_Tile_Cost != INF) {
-                    Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
-                    if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
-                        CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
-                        CRP_SPATH_Costs[si] = Cost_From_Adjacent;
-                        if(CRP_SPATH_SourceTiles[si] != Current_Source) {
-                            Map_Changed = 1;
+                    new_cost_to_reach = (unsigned char)(Adjacent_Tile_Cost + move_cost);
+                    if(shortest_path_cost_to_reach[ctr] > new_cost_to_reach) {
+                        shortest_path_came_from[ctr] = Adjacent_Tile_Offset;
+                        shortest_path_cost_to_reach[ctr] = new_cost_to_reach;
+                        if(shortest_path_came_from[ctr] != Current_Source) {
+                            a_cost_was_updated = 1;
                         }
                     }
                 }
             }
         }
-        si++;
+        ctr++;
 
         /* Middle Rows (row 1 to Hgt - 2) */
-        for (Col_LoopVar = 0; Col_LoopVar < Inner_Col_Height; Col_LoopVar++) {
+        for(Col_LoopVar = 0; Col_LoopVar < Inner_Col_Height; Col_LoopVar++) {
             /* Left Column */
-            Current_Tile_Cost = Map[si];
-            if(Current_Tile_Cost != INF) {
-                Current_Source = CRP_SPATH_SourceTiles[si];
-                for (cx = 0; cx < 5; cx++) {
-                    Adjacent_Tile_Offset = si + Left_Col_Adjacents[cx];
-                    Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+            move_cost = movepath_cost_map[ctr];
+            if(move_cost != INF) {
+                Current_Source = shortest_path_came_from[ctr];
+                for(cx = 0; cx < 5; cx++) {
+                    Adjacent_Tile_Offset = ctr + Left_Col_Adjacents[cx];
+                    Adjacent_Tile_Cost = shortest_path_cost_to_reach[Adjacent_Tile_Offset];
                     if(Adjacent_Tile_Cost != INF) {
-                        Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
-                        if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
-                            CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
-                            CRP_SPATH_Costs[si] = Cost_From_Adjacent;
-                            if(CRP_SPATH_SourceTiles[si] != Current_Source) {
-                                Map_Changed = 1;
+                        new_cost_to_reach = (unsigned char)(Adjacent_Tile_Cost + move_cost);
+                        if(shortest_path_cost_to_reach[ctr] > new_cost_to_reach) {
+                            shortest_path_came_from[ctr] = Adjacent_Tile_Offset;
+                            shortest_path_cost_to_reach[ctr] = new_cost_to_reach;
+                            if(shortest_path_came_from[ctr] != Current_Source) {
+                                a_cost_was_updated = 1;
                             }
                         }
                     }
                 }
             }
-            si++;
+            ctr++;
 
             /* Inner Row Tiles */
-            for (Row_LoopVar = 0; Row_LoopVar < Inner_Row_Length; Row_LoopVar++) {
-                Current_Tile_Cost = Map[si];
-                if(Current_Tile_Cost != INF) {
-                    Current_Source = CRP_SPATH_SourceTiles[si];
-                    for (cx = 0; cx < 8; cx++) {
-                        Adjacent_Tile_Offset = si + Mid_Tile_Adjacents[cx];
-                        Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+            for(Row_LoopVar = 0; Row_LoopVar < Inner_Row_Length; Row_LoopVar++) {
+                move_cost = movepath_cost_map[ctr];
+                if(move_cost != INF) {
+                    Current_Source = shortest_path_came_from[ctr];
+                    for(cx = 0; cx < 8; cx++) {
+                        Adjacent_Tile_Offset = ctr + Mid_Tile_Adjacents[cx];
+                        Adjacent_Tile_Cost = shortest_path_cost_to_reach[Adjacent_Tile_Offset];
                         if(Adjacent_Tile_Cost != INF) {
-                            Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
-                            if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
-                                CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
-                                CRP_SPATH_Costs[si] = Cost_From_Adjacent;
-                                if(CRP_SPATH_SourceTiles[si] != Current_Source) {
-                                    Map_Changed = 1;
+                            new_cost_to_reach = (unsigned char)(Adjacent_Tile_Cost + move_cost);
+                            if(shortest_path_cost_to_reach[ctr] > new_cost_to_reach) {
+                                shortest_path_came_from[ctr] = Adjacent_Tile_Offset;
+                                shortest_path_cost_to_reach[ctr] = new_cost_to_reach;
+                                if(shortest_path_came_from[ctr] != Current_Source) {
+                                    a_cost_was_updated = 1;
                                 }
                             }
                         }
                     }
                 }
-                si++;
+                ctr++;
             }
 
             /* Right Column */
-            Current_Tile_Cost = Map[si];
-            if(Current_Tile_Cost != INF) {
-                Current_Source = CRP_SPATH_SourceTiles[si];
-                for (cx = 0; cx < 5; cx++) {
-                    Adjacent_Tile_Offset = si + Right_Col_Adjacents[cx];
-                    Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+            move_cost = movepath_cost_map[ctr];
+            if(move_cost != INF) {
+                Current_Source = shortest_path_came_from[ctr];
+                for(cx = 0; cx < 5; cx++) {
+                    Adjacent_Tile_Offset = ctr + Right_Col_Adjacents[cx];
+                    Adjacent_Tile_Cost = shortest_path_cost_to_reach[Adjacent_Tile_Offset];
                     if(Adjacent_Tile_Cost != INF) {
-                        Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
-                        if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
-                            CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
-                            CRP_SPATH_Costs[si] = Cost_From_Adjacent;
-                            if(CRP_SPATH_SourceTiles[si] != Current_Source) {
-                                Map_Changed = 1;
+                        new_cost_to_reach = (unsigned char)(Adjacent_Tile_Cost + move_cost);
+                        if(shortest_path_cost_to_reach[ctr] > new_cost_to_reach) {
+                            shortest_path_came_from[ctr] = Adjacent_Tile_Offset;
+                            shortest_path_cost_to_reach[ctr] = new_cost_to_reach;
+                            if(shortest_path_came_from[ctr] != Current_Source) {
+                                a_cost_was_updated = 1;
                             }
                         }
                     }
                 }
             }
-            si++;
+            ctr++;
         }
 
         /* Bottom-Left Corner */
-        Current_Tile_Cost = Map[si];
-        if(Current_Tile_Cost != INF) {
-            Current_Source = CRP_SPATH_SourceTiles[si];
-            for (cx = 0; cx < 3; cx++) {
-                Adjacent_Tile_Offset = si + Bottom_Left_Adjacents[cx];
-                Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+        move_cost = movepath_cost_map[ctr];
+        if(move_cost != INF) {
+            Current_Source = shortest_path_came_from[ctr];
+            for(cx = 0; cx < 3; cx++) {
+                Adjacent_Tile_Offset = ctr + Bottom_Left_Adjacents[cx];
+                Adjacent_Tile_Cost = shortest_path_cost_to_reach[Adjacent_Tile_Offset];
                 if(Adjacent_Tile_Cost != INF) {
-                    Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
-                    if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
-                        CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
-                        CRP_SPATH_Costs[si] = Cost_From_Adjacent;
-                        if(CRP_SPATH_SourceTiles[si] != Current_Source) {
-                            Map_Changed = 1;
+                    new_cost_to_reach = (unsigned char)(Adjacent_Tile_Cost + move_cost);
+                    if(shortest_path_cost_to_reach[ctr] > new_cost_to_reach) {
+                        shortest_path_came_from[ctr] = Adjacent_Tile_Offset;
+                        shortest_path_cost_to_reach[ctr] = new_cost_to_reach;
+                        if(shortest_path_came_from[ctr] != Current_Source) {
+                            a_cost_was_updated = 1;
                         }
                     }
                 }
             }
         }
-        si++;
+        ctr++;
 
         /* Bottom Row Inner Tiles */
-        for (Row_LoopVar = 0; Row_LoopVar < Inner_Row_Length; Row_LoopVar++) {
-            Current_Tile_Cost = Map[si];
-            if(Current_Tile_Cost != INF) {
-                Current_Source = CRP_SPATH_SourceTiles[si];
-                for (cx = 0; cx < 5; cx++) {
-                    Adjacent_Tile_Offset = si + Bottom_Row_Adjacents[cx];
-                    Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+        for(Row_LoopVar = 0; Row_LoopVar < Inner_Row_Length; Row_LoopVar++) {
+            move_cost = movepath_cost_map[ctr];
+            if(move_cost != INF) {
+                Current_Source = shortest_path_came_from[ctr];
+                for(cx = 0; cx < 5; cx++) {
+                    Adjacent_Tile_Offset = ctr + Bottom_Row_Adjacents[cx];
+                    Adjacent_Tile_Cost = shortest_path_cost_to_reach[Adjacent_Tile_Offset];
                     if(Adjacent_Tile_Cost != INF) {
-                        Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
-                        if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
-                            CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
-                            CRP_SPATH_Costs[si] = Cost_From_Adjacent;
-                            if(CRP_SPATH_SourceTiles[si] != Current_Source) {
-                                Map_Changed = 1;
+                        new_cost_to_reach = (unsigned char)(Adjacent_Tile_Cost + move_cost);
+                        if(shortest_path_cost_to_reach[ctr] > new_cost_to_reach) {
+                            shortest_path_came_from[ctr] = Adjacent_Tile_Offset;
+                            shortest_path_cost_to_reach[ctr] = new_cost_to_reach;
+                            if(shortest_path_came_from[ctr] != Current_Source) {
+                                a_cost_was_updated = 1;
                             }
                         }
                     }
                 }
             }
-            si++;
+            ctr++;
         }
 
         /* Bottom-Right Corner */
-        Current_Tile_Cost = Map[si];
-        if(Current_Tile_Cost != INF) {
-            Current_Source = CRP_SPATH_SourceTiles[si];
-            for (cx = 0; cx < 3; cx++) {
-                Adjacent_Tile_Offset = si + Bottom_Right_Adjacents[cx];
-                Adjacent_Tile_Cost = CRP_SPATH_Costs[Adjacent_Tile_Offset];
+        move_cost = movepath_cost_map[ctr];
+        if(move_cost != INF) {
+            Current_Source = shortest_path_came_from[ctr];
+            for(cx = 0; cx < 3; cx++) {
+                Adjacent_Tile_Offset = ctr + Bottom_Right_Adjacents[cx];
+                Adjacent_Tile_Cost = shortest_path_cost_to_reach[Adjacent_Tile_Offset];
                 if(Adjacent_Tile_Cost != INF) {
-                    Cost_From_Adjacent = (unsigned char)(Adjacent_Tile_Cost + Current_Tile_Cost);
-                    if(CRP_SPATH_Costs[si] > Cost_From_Adjacent) {
-                        CRP_SPATH_SourceTiles[si] = Adjacent_Tile_Offset;
-                        CRP_SPATH_Costs[si] = Cost_From_Adjacent;
-                        if(CRP_SPATH_SourceTiles[si] != Current_Source) {
-                            Map_Changed = ST_TRUE;
+                    new_cost_to_reach = (unsigned char)(Adjacent_Tile_Cost + move_cost);
+                    if(shortest_path_cost_to_reach[ctr] > new_cost_to_reach) {
+                        shortest_path_came_from[ctr] = Adjacent_Tile_Offset;
+                        shortest_path_cost_to_reach[ctr] = new_cost_to_reach;
+                        if(shortest_path_came_from[ctr] != Current_Source) {
+                            a_cost_was_updated = ST_TRUE;
                         }
                     }
                 }
             }
         }
-        si++;
+        ctr++;
     }
 
     /* [Skeleton step 4]  Back-trace from the target through predecessor links until a self-link; success iff that self-link == source (MoM-MovePath-Compare.md, "The shared skeleton"). */
-    Path_Length = 0;
-    si = TgtY * Wdt + TgtX;
+    path_length = 0;
+    ctr = dst_y * Wdt + dst_x;
 
-    while(CRP_SPATH_SourceTiles[si] != si)
+    while(shortest_path_came_from[ctr] != ctr)
     {
-        CRP_SPATH_Reverse[Path_Length] = si;
-        si = CRP_SPATH_SourceTiles[si];
-        Path_Length++;
+        shortest_path_backtrace[path_length] = ctr;
+        ctr = shortest_path_came_from[ctr];
+        path_length++;
     }
 
-    if(si != SrcY * Wdt + SrcX)
+    if(ctr != src_y * Wdt + src_x)
     {
         return 0;
     }
 
     /* [Skeleton step 5]  Reverse the collected indices and convert each 1-D tile index back to (x, y) (MoM-MovePath-Compare.md, "The shared skeleton"). */
-    for (Loop_Var = 0; Loop_Var < Path_Length; Loop_Var++) {
-        Xs[Loop_Var] = (unsigned char)(CRP_SPATH_Reverse[Path_Length - 1 - Loop_Var] % Wdt);
-        Ys[Loop_Var] = (unsigned char)(CRP_SPATH_Reverse[Path_Length - 1 - Loop_Var] / Wdt);
+    for(itr = 0; itr < path_length; itr++) {
+        mvpth_x[itr] = (unsigned char)(shortest_path_backtrace[path_length - 1 - itr] % Wdt);
+        mvpth_y[itr] = (unsigned char)(shortest_path_backtrace[path_length - 1 - itr] / Wdt);
     }
 
-    return Path_Length;
+    return path_length;
+
 }
 
 
@@ -8048,51 +8056,81 @@ int16_t CRP_SPATH_Arbitrary(int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t Tg
 
 */
 
-// drake178: CRP_NEWG_CreatePathGrid()
-/*
-; the arrays created by this function are never used
-; by the game, and can be repurposed even though they
-; are part of the save game file
-;
-; creates a road map type structure slicing the passed
-; map into 5 by 5 segments, and representing the
-; available paths out of each one as a single byte
-; bitflag
-;
-; WARNING: matching the connections in the end means
-; that they may be present even if the original
-; criteria are not actually satisfied from a direction
-*/
+// MGC o55p01
 /*
 12x8 of 5x5 = 60x40
-
 */
-void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map)
+/**
+ * @brief Builds a coarse section-to-section connectivity map from a tile movement map.
+ *
+ * @details
+ * Partitions the 60x40 world into a 12x8 grid of 5x5 sections, then computes
+ * directional passability between neighboring sections using local path checks.
+ *
+ * For each section, the routine evaluates cardinal exits and writes direction
+ * bits into one byte in `result_map`:
+ * - `1` = north
+ * - `2` = east
+ * - `4` = south
+ * - `8` = west
+ *
+ * Connectivity checks are performed in two stages:
+ * 1) Fast boundary-adjacency probes along the relevant section edge.
+ * 2) Validation pathing with `Find_Shortest_Path(...)` over temporary local
+ *    windows (`TopBottom_Section_Map` and `LeftRight_Section_Map`) to ensure an
+ *    actual traversable route exists between opposite edge tiles.
+ *
+ * Horizontal wrap is preserved when building left/right windows for sections at
+ * the world edges. After the primary pass, reciprocal neighbor bits are filled
+ * into adjacent section cells.
+ *
+ * @param move_map Per-tile movement-cost map (world-sized, 60x40). Tiles with
+ *                 value `-1` are treated as impassable.
+ * @param result_map Output section graph buffer (12x8 = 96 bytes), one flags
+ *                   byte per section.
+ *
+ * @return void
+ *
+ * @note Mutates `result_map` in place and relies on `Find_Shortest_Path` for
+ *       route validation.
+ * @warning Preserves OG behavior, including the known east-reciprocal bound bug
+ *          in the final symmetry pass.
+ *
+ * @see Build_Connectivity_Graphs
+ * @see Find_Shortest_Path
+ */
+void Build_Connectivity_Graph(int8_t * move_map, uint8_t * result_map)
 {
-    /* CLAUDE  uint8_t (was int8_t) to match CRP_SPATH_Arbitrary's uint8_t* Map/Xs/Ys params (C4057). Section maps hold unsigned cost bytes (impassable 0xFF); Retn arrays hold small coords. */
-    uint8_t Y_Retn_Array[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    uint8_t X_Retn_Array[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    /*
+        CLAUDE
+        uint8_t (was int8_t) to match Find_Shortest_Path's uint8_t* movepath_cost_map/mvpth_x/mvpth_y params (C4057).
+        Section maps hold unsigned cost bytes (impassable 0xFF); Retn arrays hold small coords.
+    */
+    uint8_t mvpth_y[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t mvpth_x[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     uint8_t LeftRight_Section_Map[35] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     uint8_t TopBottom_Section_Map[35] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    uint8_t Passable_Direction_Flags = 0;
-    int16_t TgtY = 0;
-    int16_t Target_X = 0;
-    int16_t Adjacent_Section_X = 0;
-    int16_t Path_Length = 0;
-    int16_t Y_Modifier = 0;
-    int16_t SrcY = 0;
-    int16_t Source_X = 0;
-    int16_t X_LoopVar = 0;
-    int16_t Y_LoopVar = 0;
-    int16_t Y_GridIndex_2 = 0;
-    int16_t X_GridIndex_2 = 0;
-    int16_t X_GridBase = 0;
-    int16_t X_GridIndex = 0;
-    int16_t Y_GridIndex = 0;
-    int16_t itr1 = 0;
-    int16_t itr2 = 0;
+    uint8_t Passable_Direction_Flags = 0;   /* per-section result byte */
+    int16_t dst_y = 0;
+    int16_t dst_x = 0;
+    int16_t Adjacent_Section_X = 0; /* wrapped neighbour column */
+    int16_t path_length = 0;
+    int16_t Y_Modifier = 0;     /* section-build offsets */
+    int16_t src_y = 0;
+    int16_t src_x = 0;
+    int16_t X_LoopVar = 0;      /* edge-scan iterators */
+    int16_t Y_LoopVar = 0;      /* edge-scan iterators */
+    int16_t Y_GridIndex_2 = 0;  /* reciprocal-pass iterators */
+    int16_t X_GridIndex_2 = 0;  /* reciprocal-pass iterators */
+    int16_t X_GridBase = 0;     /* section pixel-base (× 5) (col) */
+    int16_t X_GridIndex = 0;    /* section-grid iterators (12×8) */
+    int16_t Y_GridIndex = 0;    /* section-grid iterators (12×8) */
+    int16_t itr1 = 0;           /* section pixel-base (× 5) (row) */
+    int16_t itr2 = 0;           /* section-build offsets */
 
     itr1 = 0;
+
+    /* 12x8 * 5x5 */
     for(Y_GridIndex = 0; Y_GridIndex < 8; Y_GridIndex++)
     {
         X_GridBase = 0;
@@ -8133,7 +8171,7 @@ void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map)
                 {
                     Passable_Direction_Flags |= 0x10;
                 }
-                Path_Length = 0;
+                path_length = 0;
                 for(Y_Modifier = 0; Y_Modifier < 7; Y_Modifier++)
                 {
                     for(itr2 = 0; itr2 < 5; itr2++)
@@ -8148,14 +8186,14 @@ void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map)
                         TopBottom_Section_Map[30 + itr2] = (char)-1;
                     }
                 }
-                for(Source_X = 0; Source_X < 5 && Path_Length == 0; Source_X++)
+                for(src_x = 0; src_x < 5 && path_length == 0; src_x++)
                 {
-                    for(Target_X = 0; Target_X < 5 && Path_Length == 0; Target_X++)
+                    for(dst_x = 0; dst_x < 5 && path_length == 0; dst_x++)
                     {
-                        Path_Length += CRP_SPATH_Arbitrary(Source_X, 4, Target_X, 0, 5, 7, TopBottom_Section_Map, X_Retn_Array, Y_Retn_Array);
+                        path_length += Find_Shortest_Path(src_x, 4, dst_x, 0, 5, 7, TopBottom_Section_Map, mvpth_x, mvpth_y);
                     }
                 }
-                if(Path_Length == 0)
+                if(path_length == 0)
                 {
                     Passable_Direction_Flags &= ~1;
                 }
@@ -8195,7 +8233,7 @@ void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map)
                 {
                     Passable_Direction_Flags |= 0x40;
                 }
-                Path_Length = 0;
+                path_length = 0;
                 for(Y_Modifier = 0; Y_Modifier < 7; Y_Modifier++)
                 {
                     for(itr2 = 0; itr2 < 5; itr2++)
@@ -8210,14 +8248,14 @@ void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map)
                         TopBottom_Section_Map[itr2] = (char)-1;
                     }
                 }
-                for(Source_X = 0; Source_X < 5 && Path_Length == 0; Source_X++)
+                for(src_x = 0; src_x < 5 && path_length == 0; src_x++)
                 {
-                    for(Target_X = 0; Target_X < 5 && Path_Length == 0; Target_X++)
+                    for(dst_x = 0; dst_x < 5 && path_length == 0; dst_x++)
                     {
-                        Path_Length += CRP_SPATH_Arbitrary(Source_X, 2, Target_X, 6, 5, 7, TopBottom_Section_Map, X_Retn_Array, Y_Retn_Array);
+                        path_length += Find_Shortest_Path(src_x, 2, dst_x, 6, 5, 7, TopBottom_Section_Map, mvpth_x, mvpth_y);
                     }
                 }
-                if(Path_Length == 0)
+                if(path_length == 0)
                 {
                     Passable_Direction_Flags &= ~4;
                 }
@@ -8260,7 +8298,7 @@ void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map)
             {
                 Passable_Direction_Flags |= 0x80;
             }
-            Path_Length = 0;
+            path_length = 0;
             for(Y_Modifier = 0; Y_Modifier < 5; Y_Modifier++)
             {
                 for(itr2 = 0; itr2 < 7; itr2++)
@@ -8272,17 +8310,17 @@ void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map)
             {
                 for(Y_Modifier = 0; Y_Modifier < 5; Y_Modifier++)
                 {
-                    LeftRight_Section_Map[Y_Modifier * 7] = move_map[(itr1 + Y_Modifier) * WORLD_WIDTH + 59];
+                    LeftRight_Section_Map[Y_Modifier * 7] = move_map[(itr1 + Y_Modifier) * WORLD_WIDTH + X_GridBase + 59];
                 }
             }
-            for(SrcY = 0; SrcY < 5 && Path_Length == 0; SrcY++)
+            for(src_y = 0; src_y < 5 && path_length == 0; src_y++)
             {
-                for(TgtY = 0; TgtY < 5 && Path_Length == 0; TgtY++)
+                for(dst_y = 0; dst_y < 5 && path_length == 0; dst_y++)
                 {
-                    Path_Length += CRP_SPATH_Arbitrary(4, SrcY, 0, TgtY, 7, 5, LeftRight_Section_Map, X_Retn_Array, Y_Retn_Array);
+                    path_length += Find_Shortest_Path(4, src_y, 0, dst_y, 7, 5, LeftRight_Section_Map, mvpth_x, mvpth_y);
                 }
             }
-            if(Path_Length == 0)
+            if(path_length == 0)
             {
                 Passable_Direction_Flags &= ~8;
             }
@@ -8324,7 +8362,7 @@ void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map)
             {
                 Passable_Direction_Flags |= 0x20;
             }
-            Path_Length = 0;
+            path_length = 0;
             for(Y_Modifier = 0; Y_Modifier < 5; Y_Modifier++)
             {
                 for(itr2 = 0; itr2 < 7; itr2++)
@@ -8339,14 +8377,14 @@ void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map)
                     LeftRight_Section_Map[Y_Modifier * 7 + 6] = move_map[(itr1 + Y_Modifier) * WORLD_WIDTH];
                 }
             }
-            for(SrcY = 0; SrcY < 5 && Path_Length == 0; SrcY++)
+            for(src_y = 0; src_y < 5 && path_length == 0; src_y++)
             {
-                for(TgtY = 0; TgtY < 5 && Path_Length == 0; TgtY++)
+                for(dst_y = 0; dst_y < 5 && path_length == 0; dst_y++)
                 {
-                    Path_Length += CRP_SPATH_Arbitrary(2, SrcY, 6, TgtY, 7, 5, LeftRight_Section_Map, X_Retn_Array, Y_Retn_Array);
+                    path_length += Find_Shortest_Path(2, src_y, 6, dst_y, 7, 5, LeftRight_Section_Map, mvpth_x, mvpth_y);
                 }
             }
-            if(Path_Length == 0)
+            if(path_length == 0)
             {
                 Passable_Direction_Flags &= ~2;
             }
@@ -8373,7 +8411,7 @@ void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map)
             {
                 result_map[Y_GridIndex_2 * 12 + X_GridIndex_2 - 1] |= 2;
             }
-            /* OGBUG  East column bound tests the wrong loop variable: the asm (ovr055, loc_5227A) does `cmp [bp+Y_GridIndex_2], 0Bh; jge` -- it compares the ROW index Y_GridIndex_2 to 11, not the COLUMN index X_GridIndex_2. Since Y_GridIndex_2 is in [0,7], `< 11` is always true, so the East->West reciprocal bit is written even for the rightmost column (X_GridIndex_2 == 11), where the target index Y*12+12 == (Y+1)*12+0 leaks a West bit into column 0 of the next row down. Faithful to the OG; harmless because UU_TBL_1/UU_TBL_2 are NIU (never read for gameplay). Do not "fix". */
+            /* OGBUG  East column bound tests the wrong loop variable: the asm (ovr055, loc_5227A) does `cmp [bp+Y_GridIndex_2], 0Bh; jge` -- it compares the ROW index Y_GridIndex_2 to 11, not the COLUMN index X_GridIndex_2. Since Y_GridIndex_2 is in [0,7], `< 11` is always true, so the East->West reciprocal bit is written even for the rightmost column (X_GridIndex_2 == 11), where the target index Y*12+12 == (Y+1)*12+0 leaks a West bit into column 0 of the next row down. Faithful to the OG; harmless because connectivity_grid_land/connectivity_grid_sea are NIU (never read for gameplay). Do not "fix". */
             if((result_map[Y_GridIndex_2 * 12 + X_GridIndex_2] & 2) && Y_GridIndex_2 < 11)
             {
                 result_map[Y_GridIndex_2 * 12 + X_GridIndex_2 + 1] |= 8;

@@ -41,7 +41,7 @@ The overland solver is **split across two functions** (see [MoM-MovePath-Compare
 | **Step 4** — back-trace `dst` → `Reach_From[]` self-link | here | [884-894](../../MoM/src/UnitMove.c#L884-L894) |
 | **Step 5** — reverse + 1-D index → (x, y) | here | [896-904](../../MoM/src/UnitMove.c#L896-L904) |
 
-This is the same five-step skeleton as `CRP_SPATH_Arbitrary` and `Combat_Move_Path_Find` — just spread across caller + callee rather than inlined in one body.
+This is the same five-step skeleton as `Find_Shortest_Path` and `Combat_Move_Path_Find` — just spread across caller + callee rather than inlined in one body.
 
 "Army", not "Stack": it takes a `troop_count` and does not touch `_unit_stack` / `_unit_stack_count`.
 

@@ -2637,22 +2637,22 @@ uint8_t * _landmasses;
 96 bytes per plane? 96 * 8 = 768?
 1-byte, signed
 
-    UU_TBL_1 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
-    UU_TBL_2 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
+    connectivity_grid_land = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
+    connectivity_grid_sea = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
 
 MGC  dseg:89E6 00 00 00 00                                     _landmasses dd 0                        ; DATA XREF: Save_SAVE_GAM+223r ...
-MGC  dseg:89EA 00 00 00 00                                     UU_TBL_2 dd 0                           ; DATA XREF: Save_SAVE_GAM+20Ar ...
-MGC  dseg:89EE 00 00 00 00                                     UU_TBL_1 dd 0                           ; DATA XREF: Save_SAVE_GAM+1F1r ...
+MGC  dseg:89EA 00 00 00 00                                     connectivity_grid_sea dd 0                           ; DATA XREF: Save_SAVE_GAM+20Ar ...
+MGC  dseg:89EE 00 00 00 00                                     connectivity_grid_land dd 0                           ; DATA XREF: Save_SAVE_GAM+1F1r ...
 MGC  dseg:89F2 00 00 00 00                                     _world_maps dd 0                        ; DATA XREF: Save_SAVE_GAM+1D8r ...
 
 MAPGEN.c
 void CRP_NEWG_CreatePathGrids__STUB(void)
-    |-> CRP_NEWG_CreatePathGrid(movement_mode_cost_maps[wp]->walking[0], UU_TBL_1[wp]);
-    |-> CRP_NEWG_CreatePathGrid(movement_mode_cost_maps[wp]->sailing[0], UU_TBL_2[wp]);
+    |-> CRP_NEWG_CreatePathGrid(movement_mode_cost_maps[wp]->walking[0], connectivity_grid_land[wp]);
+    |-> CRP_NEWG_CreatePathGrid(movement_mode_cost_maps[wp]->sailing[0], connectivity_grid_sea[wp]);
 
 */
-int8_t * UU_TBL_2;
-int8_t * UU_TBL_1;
+int8_t * connectivity_grid_sea;
+int8_t * connectivity_grid_land;
 
 // WZD dseg:9CDC
 // AKA TBL_Maps;

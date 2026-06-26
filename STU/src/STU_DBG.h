@@ -87,9 +87,9 @@ extern struct s_NODE * DBG_ORIG__NODES;
 // WZD dseg:9CD0
 extern uint8_t * DBG_ORIG__landmasses;
 // WZD dseg:9CD4
-extern SAMB_ptr DBG_ORIG_UU_TBL_2;
+extern SAMB_ptr DBG_ORIG_connectivity_grid_sea;
 // WZD dseg:9CD8
-extern SAMB_ptr DBG_ORIG_UU_TBL_1;
+extern SAMB_ptr DBG_ORIG_connectivity_grid_land;
 // WZD dseg:9CDC
 extern uint8_t * DBG_ORIG__world_maps;
 // WZD dseg:9EC2

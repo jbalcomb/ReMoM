@@ -291,8 +291,8 @@ exact same in MGC & WZD
  [-] _unit
  [-] _players
  [x] _world_maps        World_Data
- [x] UU_TBL_1           World_Data
- [x] UU_TBL_2           World_Data
+ [x] connectivity_grid_land           World_Data
+ [x] connectivity_grid_sea           World_Data
  [x] _landmasses        World_Data
  [x] _NODES
  [x] _FORTRESSES
@@ -325,8 +325,8 @@ GFX_Swap_Seg
 World_Data
     _CITIES
     _world_maps
-    UU_TBL_1
-    UU_TBL_2
+    connectivity_grid_land
+    connectivity_grid_sea
     _landmasses
     TBL_Terr_Specials
     _map_square_flags

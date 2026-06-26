@@ -301,8 +301,8 @@ struct s_AI_CONTINENTS
 // MAX_PLAYERS * sizeof(struct s_WIZARD)
 #define WIZARDS_RECORD_SIZE             6*WIZARD_RECORD_SIZE
 #define WORLD_MAPS_RECORD_SIZE          2*2400*2
-#define UU_TBL_1_RECORD_SIZE            2*96
-#define UU_TBL_2_RECORD_SIZE            2*96
+#define CONNECTIVITY_GRID_LAND_RECORD_SIZE            2*96
+#define CONNECTIVITY_GRID_SEA_RECORD_SIZE            2*96
 #define LANDMASSES_RECORD_SIZE          2*2400
 #define NODES_RECORD_SIZE               30*NODE_RECORD_SIZE
 // MAX_PLAYERS * sizeof(struct s_FORTRESS)
@@ -4089,8 +4089,8 @@ extern struct s_TOWER * _TOWERS;
 extern struct s_FORTRESS * _FORTRESSES;
 extern struct s_NODE * _NODES;
 extern uint8_t * _landmasses;
-extern int8_t * UU_TBL_2;
-extern int8_t * UU_TBL_1;
+extern int8_t * connectivity_grid_sea;
+extern int8_t * connectivity_grid_land;
 extern uint8_t * _world_maps;
 extern int16_t (*p_world_map)[WORLD_HEIGHT][WORLD_WIDTH];
 

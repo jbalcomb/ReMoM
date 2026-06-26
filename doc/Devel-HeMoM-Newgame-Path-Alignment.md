@@ -285,7 +285,7 @@ After Stage 1 the RNG cursor sits at the seed Init_Drivers established. Any subs
 | 3.19 | `Desert_Autotile()` | 0 | Sand/desert tile cleanup. |
 | 3.20 | `Shuffle_Terrains()` | **many** | Per-square variant index randomization. |
 | 3.21 | [Movement_Mode_Cost_Maps(wp)](../MoM/src/MAPGEN.c#L6073) × 2 | 0 | Builds `movement_mode_cost_maps[]` from `terrain_stats_table` + `MSF_ROAD` overlay. |
-| 3.22 | `CRP_NEWG_CreatePathGrids__WIP(wp)` × 2 | 0 | Builds AI path grids from the cost maps. |
+| 3.22 | `Build_Connectivity_Graphs(wp)` × 2 | 0 | Builds AI path grids from the cost maps. |
 | 3.23 | `Init_Square_Explored()` | 0 | Sets explored bits around each fortress (writes the low 3 bits of `_map_square_flags`). |
 | 3.24 | `Animate_Oceans()` | 0 | Ocean tile animation frames. |
 | 3.25 | `Set_Upper_Lair_Guardian_Count()` | 0 | Lair difficulty rollup. |

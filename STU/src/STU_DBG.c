@@ -80,9 +80,9 @@ struct s_NODE * DBG_ORIG__NODES;
 // WZD dseg:9CD0
 uint8_t * DBG_ORIG__landmasses;
 // WZD dseg:9CD4
-SAMB_ptr DBG_ORIG_UU_TBL_2;
+SAMB_ptr DBG_ORIG_connectivity_grid_sea;
 // WZD dseg:9CD8
-SAMB_ptr DBG_ORIG_UU_TBL_1;
+SAMB_ptr DBG_ORIG_connectivity_grid_land;
 // WZD dseg:9CDC
 uint8_t * DBG_ORIG__world_maps;
 // WZD dseg:9EC2

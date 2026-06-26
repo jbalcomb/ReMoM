@@ -33,9 +33,9 @@ So, I created Move_Path_Find, with helper functions instead - Check_Cost(); Do_C
         adjacent_reach_cost += tmp_move_cost;                           \
         if(adjacent_reach_cost < *movepath_reach_cost)                  \
         {                                                               \
-            *movepath_reach_cost = new_reach_cost;                      \
+            *movepath_reach_cost = new_cost_to_reach;                      \
             *movepath_reach_from = (ofst_movepath_cost + (_adj_ - 1));  \
-            reach_costs_changed = ST_TRUE;                              \
+            a_cost_was_updated = ST_TRUE;                              \
         }                                                               \
     }                                                                   \
 }
@@ -141,7 +141,7 @@ loop over balance of row
 */
 static void Move_Path_Find__MEH(int16_t wx, int16_t wy, struct s_MOVE_PATH * movepath_cost_map)
 {
-    int8_t  reach_costs_changed = ST_TRUE;  // WZD ovr147:0000  Code-Segment Variable
+    int8_t  a_cost_was_updated = ST_TRUE;  // WZD ovr147:0000  Code-Segment Variable
     int16_t origin_row = 0;                 // WZD ovr147:0002  Code-Segment Variable
     int16_t itr = 0;
     int8_t * movepath_cost = 0;
@@ -153,7 +153,7 @@ static void Move_Path_Find__MEH(int16_t wx, int16_t wy, struct s_MOVE_PATH * mov
     int8_t incr_flag = 0;  // _CH_
     int8_t tmp_move_cost = 0;
     uint8_t adjacent_reach_cost = 0;
-    uint8_t new_reach_cost = 0;
+    uint8_t new_cost_to_reach = 0;
     uint8_t current_reach_cost = 0;
     int8_t reach_cost = 0;
     int16_t adj_pos = 0;
@@ -208,11 +208,11 @@ static void Move_Path_Find__MEH(int16_t wx, int16_t wy, struct s_MOVE_PATH * mov
     BEGIN:  @@MajorBlock_1_Outer
 */
 
-    // ¿ do{ ...} while(reach_costs_changed == ST_TRUE) ?
+    // ¿ do{ ...} while(a_cost_was_updated == ST_TRUE) ?
 
 MajorBlock_1_Outer:
 
-    reach_costs_changed = ST_FALSE;
+    a_cost_was_updated = ST_FALSE;
     ofst_movepath_cost = origin_row;
     movepath_cost = &movepath_cost_map->moves2[origin_row];
     movepath_reach_cost = &movepath_cost_map->Reach_Costs[origin_row];
@@ -246,16 +246,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)  // ~ non-negative
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)  // ~ non-negative
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -265,16 +265,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -284,16 +284,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -303,16 +303,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -322,16 +322,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -341,16 +341,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -360,16 +360,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -379,16 +379,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -414,16 +414,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -433,16 +433,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -452,16 +452,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -471,16 +471,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -490,16 +490,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -509,16 +509,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -528,16 +528,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -547,16 +547,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -578,16 +578,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -597,16 +597,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -616,16 +616,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -635,16 +635,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -654,16 +654,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -673,16 +673,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -692,16 +692,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -711,16 +711,16 @@ MajorBlock_1_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -746,16 +746,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -765,16 +765,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -784,16 +784,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -803,16 +803,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -822,16 +822,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -841,16 +841,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -860,16 +860,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -879,16 +879,16 @@ MajorBlock_1_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -945,16 +945,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -964,16 +964,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -983,16 +983,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -1002,16 +1002,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -1021,16 +1021,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -1040,16 +1040,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -1059,16 +1059,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -1078,16 +1078,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -1113,16 +1113,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1132,16 +1132,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1151,16 +1151,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1170,16 +1170,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1189,16 +1189,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1208,16 +1208,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1227,16 +1227,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1246,16 +1246,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1277,16 +1277,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1296,16 +1296,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1315,16 +1315,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1334,16 +1334,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1353,16 +1353,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1372,16 +1372,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1391,16 +1391,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1410,16 +1410,16 @@ MajorBlock_2_Impassible:
                 adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-                if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+                if(new_cost_to_reach >= 0)
                 {
                         current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                     {
-                        *movepath_reach_cost = new_reach_cost;
+                        *movepath_reach_cost = new_cost_to_reach;
                         *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                        reach_costs_changed = ST_TRUE;
+                        a_cost_was_updated = ST_TRUE;
                     }
                 }
             }
@@ -1445,16 +1445,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -1464,16 +1464,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -1483,16 +1483,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -1502,16 +1502,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -1521,16 +1521,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -1540,16 +1540,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -1559,16 +1559,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -1578,16 +1578,16 @@ MajorBlock_2_Impassible:
             adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
             // if(adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
             if(adjacent_reach_cost == INF) { adjacent_reach_cost = 1; }
-            new_reach_cost = adjacent_reach_cost + tmp_move_cost;
-            if(new_reach_cost >= 0)
+            new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
+            if(new_cost_to_reach >= 0)
             {
                 current_reach_cost = *movepath_reach_cost;
                 // if(current_reach_cost == 0) { MOX_DBG_BREAK; }
-                if(new_reach_cost < (uint8_t)current_reach_cost)
+                if(new_cost_to_reach < (uint8_t)current_reach_cost)
                 {
-                    *movepath_reach_cost = new_reach_cost;
+                    *movepath_reach_cost = new_cost_to_reach;
                     *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-                    reach_costs_changed = ST_TRUE;
+                    a_cost_was_updated = ST_TRUE;
                 }
             }
         }
@@ -1614,7 +1614,7 @@ MajorBlock_2_Impassible:
     END:  @@MajorBlock_2
 */
 
-    if(reach_costs_changed == ST_TRUE)
+    if(a_cost_was_updated == ST_TRUE)
     {
         goto MajorBlock_1_Outer;
     }

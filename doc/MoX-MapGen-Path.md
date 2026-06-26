@@ -5,7 +5,7 @@ Don't see anything like this in MoO2.
 
 MGC
     ovr054
-        CRP_SPATH_Arbitrary()
+        Find_Shortest_Path()
         UU_SPATH_Segmented()
         UU_SPATH_15by15()
         UU_SPATH_Segments()

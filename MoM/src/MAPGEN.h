@@ -99,7 +99,7 @@ void Random_City_Name_By_Race_NewGame(int16_t race_type, char * name);
 void Generate_Roads(int16_t wp);
 
 // MGC o51p27
-void CRP_NEWG_CreatePathGrids__WIP(int16_t wp);
+void Build_Connectivity_Graphs(int16_t wp);
 
 // MGC o51p28
 void Generate_Terrain_Specials(int16_t wp);
@@ -191,7 +191,7 @@ void o51p54_empty_function(void);
 */
 
 // MGC o54p01
-int16_t CRP_SPATH_Arbitrary(int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Wdt, int16_t Hgt, uint8_t * Map, uint8_t * Xs, uint8_t * Ys);
+int16_t Find_Shortest_Path(int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Wdt, int16_t Hgt, uint8_t * Map, uint8_t * Xs, uint8_t * Ys);
 
 // MGC o54p02
 // UU_SPATH_Segmented()
@@ -211,7 +211,7 @@ int16_t CRP_SPATH_Arbitrary(int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t Tg
 */
 
 // MGC o55p01
-void CRP_NEWG_CreatePathGrid__STUB(int8_t * move_map, uint8_t * result_map);
+void Build_Connectivity_Graph(int8_t * move_map, uint8_t * result_map);
 
 
 

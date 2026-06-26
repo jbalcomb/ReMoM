@@ -81,7 +81,7 @@ int16_t * m_movement_path_grid_cell_index;
 /* * MACRO: RELAX_ADJACENT_CELLS
  * Inlines the Bellman-Ford edge relaxation math. 
  * Relies on standard local variables: itr_adjacent, ctr, adjacent_idx, adjacent_path_cost, 
- * move_cost, potential_path_cost, current_origin, and tense.
+ * move_cost, new_cost_to_reach, current_origin, and a_cost_was_updated.
  */
 #define RELAX_ADJACENT_CELLS(OFFSET_ARRAY, START_IDX, END_IDX, EXTRA_COST) \
     for (itr_adjacent = (START_IDX); itr_adjacent < (END_IDX); itr_adjacent++) { \
@@ -89,12 +89,12 @@ int16_t * m_movement_path_grid_cell_index;
         if(adjacent_idx >= 0 && adjacent_idx < COMBAT_GRID_CELL_COUNT) { \
             adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx]; \
             if(adjacent_path_cost != INF) { \
-                potential_path_cost = adjacent_path_cost + move_cost + (EXTRA_COST); \
-                if(potential_path_cost < _cmbt_mvpth_c[ctr]) { \
+                new_cost_to_reach = adjacent_path_cost + move_cost + (EXTRA_COST); \
+                if(new_cost_to_reach < _cmbt_mvpth_c[ctr]) { \
                     _cmbt_path_data[ctr] = adjacent_idx; \
-                    _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost; \
+                    _cmbt_mvpth_c[ctr] = (uint8_t)new_cost_to_reach; \
                     if(_cmbt_path_data[ctr] != current_origin) { \
-                        tense = ST_TRUE; \
+                        a_cost_was_updated = ST_TRUE; \
                     } \
                 } \
             } \
@@ -106,7 +106,7 @@ int16_t * m_movement_path_grid_cell_index;
 /*
     Structure map — see doc/PathFinding/MoM-MovePath-Compare.md ("Combat_Move_Path_Find — combat grid").
 
-    Combat solver (live). Like CRP_SPATH_Arbitrary (MAPGEN.c) — and unlike the overland Move_Path_Find, which
+    Combat solver (live). Like Find_Shortest_Path (MAPGEN.c) — and unlike the overland Move_Path_Find, which
     splits the work with its caller Make_Move_Path — this runs all five shared-skeleton steps in one body.
     NOTE: the local "1..5" section numbers below are NOT the skeleton step numbers; the mapping is:
         local 1 (bail)              = [Skeleton step 2]
@@ -119,28 +119,28 @@ int16_t * m_movement_path_grid_cell_index;
 */
 void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t destination_cgx, int16_t destination_cgy)
 {
-    int16_t move_cost = 0;  /* 1-byte, unsigned */
-    int16_t potential_path_cost = 0;
+    int16_t move_cost = 0;              /* current tile entry cost */  /* 1-byte, unsigned */
+    int16_t new_cost_to_reach = 0;      /* candidate new cost */
     int16_t max_y = 0;
-    int16_t adjacent_path_cost = 0;  // 1-byte, unsigned
+    int16_t adjacent_path_cost = 0;     /* 1-byte, unsigned */
     int16_t max_x = 0;
     int16_t itr_x = 0;
     int16_t itr_y = 0;
     int16_t current_origin = 0;
-    int16_t tense = 0;
+    int16_t a_cost_was_updated = 0;     /* relaxation "changed" flag */
     int16_t itr = 0;
-    int16_t ctr = 0;
+    int16_t ctr = 0;                    /* current tile 1-D index */
     int16_t itr_adjacent = 0;
     int16_t adjacent_idx = 0;
-    int16_t existing_path_cost = 0;  // DNE in Dasm
-    int16_t new_next_cell_index = 0;  // DNE in Dasm
-    int16_t next_index = 0;  // DNE in Dasm
-    int16_t reversed_idx = 0;  // DNE in Dasm
-    int16_t map_idx = 0;  // DNE in Dasm
-    int16_t path_cgx = 0;  // DNE in Dasm
-    int16_t path_cgy = 0;  // DNE in Dasm
-    int16_t dst_idx = 0;  // DNE in Dasm
-    int16_t src_idx = 0;  // DNE in Dasm
+    int16_t existing_path_cost = 0;     // DNE in Dasm
+    int16_t new_next_cell_index = 0;    // DNE in Dasm
+    int16_t next_index = 0;             // DNE in Dasm
+    int16_t reversed_idx = 0;           // DNE in Dasm
+    int16_t map_idx = 0;                // DNE in Dasm
+    int16_t path_cgx = 0;               // DNE in Dasm
+    int16_t path_cgy = 0;               // DNE in Dasm
+    int16_t dst_idx = 0;                // DNE in Dasm
+    int16_t src_idx = 0;                // DNE in Dasm
     /* CLAUDE */ int16_t DBG_convergence_itr = 0;  /* assert: pathfinder convergence guard */
 
     dst_idx = (destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx;
@@ -158,11 +158,11 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
     PREP
 
     /* --- [Skeleton step 3]  3. THE BELLMAN-FORD RELAXATION SWEEP (single-direction raster, to fixed point) --- */
-    tense = ST_TRUE;
-    while(tense == ST_TRUE) {
+    a_cost_was_updated = ST_TRUE;
+    while(a_cost_was_updated == ST_TRUE) {
         /* CLAUDE */ DBG_convergence_itr++;
         /* CLAUDE */ assert(DBG_convergence_itr < 462 && "Combat_Move_Path_Find: pathfinder failed to converge (uint8 cost overflow?)");
-        tense = ST_FALSE;
+        a_cost_was_updated = ST_FALSE;
         max_x = COMBAT_GRID_CELL_WIDTH - 2;  /* 19 */
         max_y = COMBAT_GRID_CELL_HEIGHT - 2; /* 20 */
         ctr = 0; /* 1D Array Index Counter */
@@ -247,7 +247,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
 void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t moves2)
 {
     int16_t move_cost = 0;  /* 1-byte, unsigned */
-    int16_t potential_path_cost = 0;
+    int16_t new_cost_to_reach = 0;
     int16_t get_to_cost = 0;
     int16_t max_y = 0;
     int16_t adjacent_path_cost = 0;
@@ -255,7 +255,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
     int16_t itr_x = 0;
     int16_t itr_y = 0;
     int16_t current_origin = 0;
-    int16_t tense = 0;
+    int16_t a_cost_was_updated = 0;
     int16_t itr = 0;
     int16_t itr2_y = 0;
     int16_t itr2_x = 0;
@@ -272,11 +272,11 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
     PREP
 
     /* --- THE RELAXATION SWEEP --- */
-    tense = ST_TRUE;
-    while(tense == ST_TRUE) {
+    a_cost_was_updated = ST_TRUE;
+    while(a_cost_was_updated == ST_TRUE) {
         /* CLAUDE */ DBG_convergence_itr++;
         /* CLAUDE */ assert(DBG_convergence_itr < ((COMBAT_GRID_CELL_WIDTH * COMBAT_GRID_CELL_HEIGHT) - 1) && "Combat_Move_Path_Find: pathfinder failed to converge (uint8 cost overflow?)");
-        tense = ST_FALSE;
+        a_cost_was_updated = ST_FALSE;
         
         max_y = COMBAT_GRID_CELL_HEIGHT - 2; /* 20 */
         max_x = COMBAT_GRID_CELL_WIDTH - 2;  /* 19 */

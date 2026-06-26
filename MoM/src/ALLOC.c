@@ -13,7 +13,7 @@
 
 #include "../../STU/src/STU_LOG.h"  /* CALL_TRACE */
 
-#include "../../ext/stu_compat.h"  /* CLAUDE 2026-06-24: snprintf in the [UU_TBL] byte-dump (via transitive <stdio.h>) */
+#include "../../ext/stu_compat.h"  /* CLAUDE 2026-06-24: snprintf in the [connectivity_grids] byte-dump (via transitive <stdio.h>) */
 
 #include "Combat.h"
 #include "INITGAME.h"  /* gd_ci_inject_world_overrun (CI overrun inject) */
@@ -109,24 +109,24 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
      * Supersedes the old debug memset-zero of this region. */
     gd_ci_inject_world_overrun("post_alloc");
 
-    UU_TBL_1 = (int8_t *)Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
-    UU_TBL_2 = (int8_t *)Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
-    /* CLAUDE 2026-06-24: trace UU_TBL_1/2 lifecycle (allocate / calc / load).
+    connectivity_grid_land = (int8_t *)Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
+    connectivity_grid_sea = (int8_t *)Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
+    /* CLAUDE 2026-06-24: trace connectivity_grid_land/2 lifecycle (allocate / calc / load).
        The bytes here immediately follow _world_maps in this allocation arena,
        so they're also the memory Simtex_Autotiling's OG-faithful OOB south-edge
        reads land on at wp=1 wy=39 → wy+1=40.  Whatever's here at allocate
        determines what those OOB reads return until the calc pass overwrites it.
-       Paired with companion logs at MAPGEN.c (after CRP_NEWG_CreatePathGrids__WIP)
+       Paired with companion logs at MAPGEN.c (after Build_Connectivity_Graphs)
        and LOADSAVE.c (after stu_fread). */
     {
         char row[96 * 5];
         int plane, i, q;
-        const unsigned char * tbls[2] = { (const unsigned char *)UU_TBL_1, (const unsigned char *)UU_TBL_2 };
-        const char *         names[2] = { "UU_TBL_1", "UU_TBL_2" };
+        const unsigned char * tbls[2] = { (const unsigned char *)connectivity_grid_land, (const unsigned char *)connectivity_grid_sea };
+        const char *         names[2] = { "connectivity_grid_land", "connectivity_grid_sea" };
         int t;
         LOG_INFO(LOG_CAT_GENERAL,
-            "[UU_TBL] event=allocate  UU_TBL_1=%p UU_TBL_2=%p  size_used=%d bytes each (224 allocated)",
-            (void *)UU_TBL_1, (void *)UU_TBL_2, NUM_PLANES * 96);
+            "[connectivity_grids] event=allocate  connectivity_grid_land=%p connectivity_grid_sea=%p  size_used=%d bytes each (224 allocated)",
+            (void *)connectivity_grid_land, (void *)connectivity_grid_sea, NUM_PLANES * 96);
         for (t = 0; t < 2; t++)
         {
             for (plane = 0; plane < NUM_PLANES; plane++)
@@ -136,7 +136,7 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
                 {
                     q += snprintf(row + q, sizeof(row) - q, i ? ",%d" : "%d", (int)tbls[t][(plane * 96) + i]);
                 }
-                LOG_TRACE(LOG_CAT_GENERAL, "[UU_TBL] event=allocate table=%s plane=%d bytes=%s", names[t], plane, row);
+                LOG_TRACE(LOG_CAT_GENERAL, "[connectivity_grids] event=allocate table=%s plane=%d bytes=%s", names[t], plane, row);
             }
         }
     }

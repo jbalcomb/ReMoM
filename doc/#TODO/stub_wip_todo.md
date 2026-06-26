@@ -248,8 +248,8 @@
 - [ ] sdl2_Play_Background_Music__WIP
 
 ## MAPGEN
-- [ ] CRP_NEWG_CreatePathGrid__STUB
-- [ ] CRP_NEWG_CreatePathGrids__WIP
+- [ ] Build_Connectivity_Graph
+- [ ] Build_Connectivity_Graphs
 - [ ] Generate_Home_City__WIP
 - [ ] Generate_Neutral_Cities__WIP
 

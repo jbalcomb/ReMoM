@@ -38,7 +38,7 @@ Your assembly block maps to this textbook pseudocode line-for-line:
 1. INITSSSP(s): The assembly block starting at loc_E2A21 loops through the entire grid and sets every square's distance to e_INF (Infinity). It then manually sets the starting coordinate (source_cgx, source_cgy) to 0.
 2. while there is at least one tense edge: Look at the variable Map_Changed (which is named unstable in the second function). At the start of every massive grid sweep (loc_E2A51), the engine sets Map_Changed = e_ST_FALSE. If the algorithm finishes scanning the entire 21x22 grid and Map_Changed is still false, it breaks out of the loop and finishes.
 3. for every edge u -> v: The assembly uses CMB_AdjacentOffsets to check the neighbors (the edges) of whatever square it is currently standing on.
-4. if u -> v is tense: The assembly calculates the potential_path_cost. It then uses a cmp (compare) instruction to see if this new cost is strictly less than the currently saved cost. If the saved cost is lower (jbe - jump if below or equal), it skips to the next square.
+4. if u -> v is tense: The assembly calculates the new_cost_to_reach. It then uses a cmp (compare) instruction to see if this new cost is strictly less than the currently saved cost. If the saved cost is lower (jbe - jump if below or equal), it skips to the next square.
 5. RELAX(u -> v): If the edge is tense, the assembly updates the square's cost, writes the breadcrumb into _cmbt_path_data, and critically, executes mov [bp+Map_Changed], e_ST_TRUE to ensure the massive while loop runs at least one more time.
 
 https://stackoverflow.com/questions/28857918/bellman-ford-algorithm-explanation
@@ -89,9 +89,9 @@ CMB_Path_Ys[]
 
 
 existing_path_cost ==> DNE in Dasm
-if(CMB_Path_Costs[ctr] > potential_path_cost)
+if(CMB_Path_Costs[ctr] > new_cost_to_reach)
 existing_path_cost = CMB_Path_Costs[ctr];
-if(existing_path_cost > potential_path_cost)
+if(existing_path_cost > new_cost_to_reach)
 
 new_next_cell_index ===> DNE in Dasm
 
@@ -121,13 +121,13 @@ loop until there are no changes to ...?
     movepath_reach_cost = &movepath_cost_map->Reach_Costs[origin_row];
     movepath_reach_from = &movepath_cost_map->Reach_From[origin_row];
 
-        new_reach_cost = adjacent_reach_cost + tmp_move_cost;
+        new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
         current_reach_cost = *movepath_reach_cost;
-        if(new_reach_cost < current_reach_cost)
+        if(new_cost_to_reach < current_reach_cost)
         {
-            *movepath_reach_cost = new_reach_cost;
+            *movepath_reach_cost = new_cost_to_reach;
             *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-            reach_costs_changed = ST_TRUE;
+            a_cost_was_updated = ST_TRUE;
         }
 
 Are we checking to see which adjacent cell has the lowest cost?
@@ -178,12 +178,12 @@ same for each section
                         adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
                         if(!IS_INF(adjacent_path_cost))
                         {
-                            potential_path_cost = adjacent_path_cost + move_cost;
+                            new_cost_to_reach = adjacent_path_cost + move_cost;
                             existing_path_cost = CMB_Path_Costs[ctr];
-                            if(existing_path_cost > potential_path_cost)
+                            if(existing_path_cost > new_cost_to_reach)
                             {
                                 _cmbt_path_data[ctr] = adjacent_idx;
-                                CMB_Path_Costs[ctr] = potential_path_cost;
+                                CMB_Path_Costs[ctr] = new_cost_to_reach;
                                 new_next_cell_index = _cmbt_path_data[ctr];
                                 if(new_next_cell_index != old_next_cell_index)
                                 {
@@ -222,19 +222,19 @@ Find does 0 to 4 and 4 to 8
                         // if(adjacent_path_cost != 255)
                         if(!IS_INF(adjacent_path_cost))
                         {
-                            // new_reach_cost = adjacent_reach_cost + tmp_move_cost;
+                            // new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
                             // current_reach_cost = *movepath_reach_cost;
-                            potential_path_cost = adjacent_path_cost + move_cost;
-                            // if(new_reach_cost < current_reach_cost)
-                            if(CMB_Path_Costs[ctr] > potential_path_cost)
+                            new_cost_to_reach = adjacent_path_cost + move_cost;
+                            // if(new_cost_to_reach < current_reach_cost)
+                            if(CMB_Path_Costs[ctr] > new_cost_to_reach)
                             {
                                 // *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
                                 _cmbt_path_data[ctr] = adjacent_idx;
-                                // *movepath_reach_cost = new_reach_cost;
-                                CMB_Path_Costs[ctr] = potential_path_cost;
+                                // *movepath_reach_cost = new_cost_to_reach;
+                                CMB_Path_Costs[ctr] = new_cost_to_reach;
                                 if(_cmbt_path_data[ctr] != old_next_cell_index)
                                 {
-                                    // reach_costs_changed = ST_TRUE;
+                                    // a_cost_was_updated = ST_TRUE;
                                     unstable = ST_TRUE;
                                 }
                             }
@@ -246,11 +246,11 @@ Find does 0 to 4 and 4 to 8
                         adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
                         if(adjacent_path_cost != 255)
                         {
-                            potential_path_cost = adjacent_path_cost + move_cost;
-                            if(CMB_Path_Costs[ctr] > potential_path_cost)
+                            new_cost_to_reach = adjacent_path_cost + move_cost;
+                            if(CMB_Path_Costs[ctr] > new_cost_to_reach)
                             {
                                 _cmbt_path_data[ctr] = adjacent_idx;
-                                CMB_Path_Costs[ctr] = potential_path_cost;
+                                CMB_Path_Costs[ctr] = new_cost_to_reach;
                                 if(_cmbt_path_data[ctr] != old_next_cell_index)
                                 {
                                     unstable = ST_TRUE;
@@ -271,11 +271,11 @@ if((adjacent_idx >= 0) && (adjacent_idx < 462))
     adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
     if(adjacent_path_cost != 255)
     {
-        potential_path_cost = adjacent_path_cost + move_cost;
-        if(CMB_Path_Costs[ctr] > potential_path_cost)
+        new_cost_to_reach = adjacent_path_cost + move_cost;
+        if(CMB_Path_Costs[ctr] > new_cost_to_reach)
         {
             _cmbt_path_data[ctr] = adjacent_idx;
-            CMB_Path_Costs[ctr] = potential_path_cost;
+            CMB_Path_Costs[ctr] = new_cost_to_reach;
             if(_cmbt_path_data[ctr] != old_next_cell_index)
             {
                 unstable = ST_TRUE;
@@ -302,24 +302,24 @@ this is the array index of the source cell
 adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
 this is 0
 
-potential_path_cost = adjacent_path_cost + move_cost;
+new_cost_to_reach = adjacent_path_cost + move_cost;
 this is (0 + 2)
 
-if(CMB_Path_Costs[ctr] > potential_path_cost)
+if(CMB_Path_Costs[ctr] > new_cost_to_reach)
 this is (INF > 2)
 ...the current cells path cost was set to INF beforehand
 
 _cmbt_path_data[ctr] = adjacent_idx;
 this sets the current cells 'reach from' index to that of the source cell
 
-CMB_Path_Costs[ctr] = potential_path_cost;
+CMB_Path_Costs[ctr] = new_cost_to_reach;
 this changes the current cells path cost from INF to (0 + 2)
 
 if(_cmbt_path_data[ctr] != old_next_cell_index)
     unstable = ST_TRUE;
 
-@`if(CMB_Path_Costs[ctr] > potential_path_cost)`
-potential_path_cost is new/next/adjacent path cost  ... adjacent cells path cost plus current cells movement cost
+@`if(CMB_Path_Costs[ctr] > new_cost_to_reach)`
+new_cost_to_reach is new/next/adjacent path cost  ... adjacent cells path cost plus current cells movement cost
 
 
 if (length[u] + weight[u][i] < length[i])
@@ -361,7 +361,7 @@ adjacent_idx is 266
 
 adjacent_path_cost is 0
 
-potential_path_cost is 1
+new_cost_to_reach is 1
 
 
 source cell is {14,12}
@@ -372,7 +372,7 @@ adjacent_idx is source cell
 move_cost is 1
 adjacent_path_cost is 1
 
-potential_path_cost = adjacent_path_cost + move_cost;
+new_cost_to_reach = adjacent_path_cost + move_cost;
 
 ...we can test on the cell index of the iterator, the cell index of the adjacent cell, the adjacent path cost of 0, and/or the potential path cost of 1...
 
@@ -386,14 +386,14 @@ ctr == {15,11}
 WhereWhen?
 
 
-if(existing_path_cost > potential_path_cost)
+if(existing_path_cost > new_cost_to_reach)
 vs.
 if(new_next_cell_index != old_next_cell_index)
 
 
 existing_path_cost = CMB_Path_Costs[ctr];
 ...on the first pass, this should be INF
-CMB_Path_Costs[ctr] = potential_path_cost;
+CMB_Path_Costs[ctr] = new_cost_to_reach;
 ...on the first pass, that should set it to 1
 
 first break should be at
@@ -409,7 +409,7 @@ first section sequence
 {  20,  41,  62,  83, 104, 125, 146, 167, 188, 209, 230, 251, 272, 293, 314, 335, 356, 377, 398, 419 }
 
 WTF!!!!!
-potential_path_cost is -47
+new_cost_to_reach is -47
 existing_path_cost is 66
 move_cost is -51
 adjacent_idx is 350
@@ -447,7 +447,7 @@ path cost of the adjacent cell
 potential path cost of the current cell
 existing path cost of the current cell
 
-potential_path_cost
+new_cost_to_reach
 existing_path_cost
 
 
@@ -459,7 +459,7 @@ Keeps looping while 'changed'...
     if(_cmbt_path_data[ctr] != old_next_cell_index)
     ...
     _cmbt_path_data[ctr] = adjacent_idx;
-    potential_path_cost = adjacent_path_cost + move_cost;
+    new_cost_to_reach = adjacent_path_cost + move_cost;
     ...
         where, ...
             _cmbt_path_data[ctr] = adjacent_idx;
@@ -467,10 +467,10 @@ Keeps looping while 'changed'...
 
 
 old_next_cell_index = _cmbt_path_data[ctr];
-potential_path_cost = adjacent_path_cost + move_cost;
-if(CMB_Path_Costs[ctr] > potential_path_cost)
+new_cost_to_reach = adjacent_path_cost + move_cost;
+if(CMB_Path_Costs[ctr] > new_cost_to_reach)
     _cmbt_path_data[ctr] = adjacent_idx;
-    CMB_Path_Costs[ctr] = potential_path_cost;
+    CMB_Path_Costs[ctr] = new_cost_to_reach;
     if(_cmbt_path_data[ctr] != old_next_cell_index)
 
 

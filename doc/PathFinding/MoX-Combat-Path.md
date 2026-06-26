@@ -129,13 +129,13 @@ void Check_Cost(void)
     // if (adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
     if(adjacent_reach_cost != 255)
     {
-        new_reach_cost = adjacent_reach_cost + tmp_move_cost;
+        new_cost_to_reach = adjacent_reach_cost + tmp_move_cost;
         current_reach_cost = *movepath_reach_cost;
-        if(new_reach_cost < current_reach_cost)
+        if(new_cost_to_reach < current_reach_cost)
         {
-            *movepath_reach_cost = new_reach_cost;
+            *movepath_reach_cost = new_cost_to_reach;
             *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
-            reach_costs_changed = ST_TRUE;
+            a_cost_was_updated = ST_TRUE;
         }
     }
 }

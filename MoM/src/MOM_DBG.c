@@ -93,8 +93,8 @@ _players
 
 _world_maps  // 4800 * 2 = 9600
 
-UU_TBL_1
-UU_TBL_2
+connectivity_grid_land
+connectivity_grid_sea
 _landmasses
 
 _NODES
@@ -144,8 +144,8 @@ void Test_Run(void)
 
     assert(sizeof(struct s_WIZARD) == WIZARD_RECORD_SIZE);  // 1224  _players
     // _world_maps  // 4800 * 2 = 9600
-    // UU_TBL_1
-    // UU_TBL_2
+    // connectivity_grid_land
+    // connectivity_grid_sea
     // _landmasses
     assert(sizeof(struct s_NODE) == NODE_RECORD_SIZE);          //   48  _NODES
     assert(sizeof(struct s_FORTRESS) == FORTRESS_RECORD_SIZE);  //    4  _FORTRESSES

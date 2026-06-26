@@ -19,6 +19,9 @@ add_executable(MOM_tests
     test_TILE_SetLandMass__WIP.cpp
     test_River_Path.cpp
     test_Desert_Autotile.cpp
+    test_Find_Shortest_Path.cpp
+    test_Build_Connectivity_Graph.cpp
+    test_Build_Connectivity_Graphs.cpp
     test_Animate_Oceans.cpp
     test_City_Maximum_Size_NewGame.cpp
     test_Init_New_Game.cpp

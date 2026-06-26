@@ -48,8 +48,8 @@ _turn
 _unit
 _players
 _world_maps
-UU_TBL_1
-UU_TBL_2
+connectivity_grid_land
+connectivity_grid_sea
 _landmasses
 _NODES
 _FORTRESSES
@@ -450,8 +450,8 @@ game_data.Turn             1 *     2 =     2    2534
 game_data.Current_Unit     1 *     2 =     2    2536
 wizard_data                6 *  1224 =  7344    9880
 gfp_TBL_Maps               2 *  4800 =  9600    19480
-gfp_UU_TBL_2               2 *    96 =   192    19672
-gfp_UU_TBL_1               2 *    96 =   192    19864
+gfp_connectivity_grid_sea               2 *    96 =   192    19672
+gfp_connectivity_grid_land               2 *    96 =   192    19864
 gfp_TBL_Landmasses         2 *  2400 =  4800    24664
 gfp_TBL_Nodes             30 *    48 =  1440    26104
 gfp_TBL_Fortresses         6 *     4 =    24    26128
