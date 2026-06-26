@@ -23,6 +23,7 @@
 #include "CityList.h"
 #include "CityScr.h"
 #include "Combat.h"
+#include "INITGAME.h"  /* gd_dump_cities (post-load GD capture) */
 #include "DIPLOMAC.h"
 #include "ItemScrn.h"
 #include "LOADER.h"
@@ -130,6 +131,7 @@ void Screen_Control(void)
                 // /* HACK */ Load_SAVE_GAM(-1);  // SAVETEST.GAM
                 /* HACK */  Load_WZD_Resources();
                 Load_SAVE_GAM(8);
+                gd_dump_cities("311_Load_Cities_C");  /* post-load WIZARDS snapshot (Load_SAVE_GAM FN-EXIT) */
                 Loaded_Game_Update();
                 current_screen = scr_Main_Screen;
 #ifdef MOUSE_DEBUG

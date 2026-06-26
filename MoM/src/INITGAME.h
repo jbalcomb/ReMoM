@@ -38,6 +38,8 @@ void gd_dump_items(const char* point);
 int  gd_ci_load(void);                                                  /* -> record count, or -1 on failure */
 int  gd_ci_get(const char* key, const char* site, long* out, int max);  /* -> values copied, or -1 if absent */
 void gd_ci_inject_world_overrun(const char* site);                      /* write OG's OOB int16 past _world_maps */
+void gd_ci_inject_flags_overrun(const char* site);                      /* write OG's OOB uint8 past _map_square_flags */
+void gd_ci_inject_terrain_specials_overrun(const char* site);           /* write OG's OOB uint8 past _map_square_terrain_specials */
 
 // MGC o56p1
 void Init_Computer_Players(void);

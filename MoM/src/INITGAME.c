@@ -163,6 +163,61 @@ void gd_ci_inject_world_overrun(const char* site)
         site, n, (int)(NUM_PLANES * WORLD_SIZE));
 }
 
+/* As gd_ci_inject_world_overrun, but for _map_square_flags (uint8/tile).
+ * Generate_Roads' wp=1 pass reads/writes one square-row past the logical array
+ * (index 4860); OG's adjacent bytes differ from ReMoM's over-allocation padding. */
+void gd_ci_inject_flags_overrun(const char* site)
+{
+    long     vals[WORLD_WIDTH + 1];   /* matches ALLOC.c _map_square_flags +WORLD_WIDTH+1 over-alloc */
+    uint8_t* dst;
+    int      n, i;
+
+    if (!_map_square_flags) {
+        LOG_INFO(LOG_CAT_GENERAL, "[CI] inject flags overrun (%s): _map_square_flags NULL -- skipped.", site);
+        return;
+    }
+    n = gd_ci_get("map_square_flags_overrun", site, vals, WORLD_WIDTH + 1);
+    if (n < 0) {
+        LOG_INFO(LOG_CAT_GENERAL, "[CI] inject flags overrun (%s): no record -- skipped.", site);
+        return;
+    }
+    /* OG-faithful OOB target: one past the last valid square, _map_square_flags[4800]. */
+    dst = _map_square_flags + (NUM_PLANES * WORLD_SIZE);
+    for (i = 0; i < n; i++) { dst[i] = (uint8_t)vals[i]; }
+    LOG_INFO(LOG_CAT_GENERAL,
+        "[CI] inject flags overrun (%s): wrote %d bytes at _map_square_flags+%d.",
+        site, n, (int)(NUM_PLANES * WORLD_SIZE));
+}
+
+/* As gd_ci_inject_flags_overrun, but for _map_square_terrain_specials (uint8/ts).
+ * Generate_Terrain_Specials' continue-gate GET_TERRAIN_SPECIAL(wx,wy,wp) reads this
+ * array at the same OOB pick as the _world_maps classification; the clear loop only
+ * zeroes the logical 4800 squares, so the WORLD_OVERFLOW over-alloc is uncleared and
+ * differs from OG's adjacent bytes -- a nonzero OOB read makes ReMoM `continue` past a
+ * cell OG processes (missing Desert_Terrain_Special). Inject OG's bytes at the entry. */
+void gd_ci_inject_terrain_specials_overrun(const char* site)
+{
+    long     vals[WORLD_OVERFLOW];   /* matches ALLOC.c _map_square_terrain_specials +WORLD_OVERFLOW over-alloc */
+    uint8_t* dst;
+    int      n, i;
+
+    if (!_map_square_terrain_specials) {
+        LOG_INFO(LOG_CAT_GENERAL, "[CI] inject ts overrun (%s): _map_square_terrain_specials NULL -- skipped.", site);
+        return;
+    }
+    n = gd_ci_get("terrain_specials_overrun", site, vals, WORLD_OVERFLOW);
+    if (n < 0) {
+        LOG_INFO(LOG_CAT_GENERAL, "[CI] inject ts overrun (%s): no record -- skipped.", site);
+        return;
+    }
+    /* OG-faithful OOB target: one past the last valid square, _map_square_terrain_specials[4800]. */
+    dst = _map_square_terrain_specials + (NUM_PLANES * WORLD_SIZE);
+    for (i = 0; i < n; i++) { dst[i] = (uint8_t)vals[i]; }
+    LOG_INFO(LOG_CAT_GENERAL,
+        "[CI] inject ts overrun (%s): wrote %d bytes at _map_square_terrain_specials+%d.",
+        site, n, (int)(NUM_PLANES * WORLD_SIZE));
+}
+
 /* ---- Game-data capture (CaptureGameData PRD/PLAN, Phase 4, ReMoM side) ----
  * Dump _players in the SAME [GD] format as the OG-side STU-DOSBox probe,
  * driven by the SAME generated field map (gd_wizard_fields.h from

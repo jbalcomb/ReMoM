@@ -6021,6 +6021,12 @@ void Generate_Roads(int16_t wp)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
+    /* CI: inject OG's _map_square_flags overrun bytes so this function's OGBUG OOB
+     * access (_map_square_flags[(1*2400)+(40*60)+60]=4860, the wp=1 pass) reads OG's
+     * values instead of ReMoM's over-allocation padding.  Fires both plane calls;
+     * the wp=1 one sets up its OOB reads. */
+    gd_ci_inject_flags_overrun("gen_roads_entry");
+
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
         for(wx = 0; wx < WORLD_WIDTH; wx++)
@@ -6250,6 +6256,10 @@ void Generate_Terrain_Specials(int16_t wp)
      * *_Terrain_Special ReMoM doesn't, knocking the RNG stream one draw out of
      * phase downstream.  Fires both plane calls; the wp=1 one sets up its reads. */
     gd_ci_inject_world_overrun("gen_ts_entry");
+    /* The same OOB pick also indexes _map_square_terrain_specials in the continue-gate
+     * GET_TERRAIN_SPECIAL(wx,wy,wp) read; inject OG's overrun there too, else a nonzero
+     * OOB ts makes ReMoM `continue` past a cell OG processes (missing Desert call). */
+    gd_ci_inject_terrain_specials_overrun("gen_ts_entry");
 
     /* Clear specials and flags map squares for the selected plane */
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
@@ -6290,6 +6300,18 @@ void Generate_Terrain_Specials(int16_t wp)
             wy = (itr_wy + Random((radius * 2)));  /* OGBUG  could be 39 + random(8) = 46, which is out of bounds */
             wx = (itr_wx + Random((radius * 2)));  /* OGBUG  could be 59 + random(8) = 67, which is out of bounds */
             /* OGBUG  OOB AVRL  e.g., wx=63,wy=45,p=1,offset = 5163 ACCESS VIOLATION READING LOCATION!!!!! */
+
+            /* TS-PROBE (no Random): pin cell-Y to the RNG divergence sidx and show
+             * which OOB read diverges -- ts (continue-gate, _map_square_terrain_specials)
+             * vs terrain/desert (_world_maps classification).  OG expects desert=1,ts=0
+             * at cell-Y.  Remove once the OOB CI is proven. */
+            LOG_INFO(LOG_CAT_GENERAL,
+                "[TS-PROBE] rng=%llu wp=%d wx=%d wy=%d oob=%d terrain=%d ts=%d desert=%d",
+                (unsigned long long)g_random_call_count, (int)wp, (int)wx, (int)wy,
+                (int)(wy >= WORLD_HEIGHT || wx >= WORLD_WIDTH),
+                (int)p_world_map[wp][wy][wx],
+                (int)GET_TERRAIN_SPECIAL(wx, wy, wp),
+                (int)Square_Is_Desert_NewGame(wx, wy, wp));
 
             /* Sanity check location */
             square_has_city = ST_FALSE;
