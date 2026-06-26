@@ -6239,16 +6239,12 @@ void Generate_Terrain_Specials(int16_t wp)
     int16_t itr_wy = 0;
     int16_t itr_wx = 0;
     int16_t itr = 0;
-    int16_t wy = 0;  // _DI_
-    int16_t wx = 0;  // _SI_
-    uint8_t DBG_terrain_special = 0;  // DNE in Dasm
-    int16_t DBG_wp_size = 0;  // DNE in Dasm
-    int16_t DBG_wy_size = 0;  // DNE in Dasm
-    int16_t DBG_wx_size = 0;  // DNE in Dasm
-    int16_t DBG_offset = 0;  // DNE in Dasm
+    int16_t wy = 0;
+    int16_t wx = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
+    /* Clear specials and flags map squares for the selected plane */
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
         for(wx = 0; wx < WORLD_WIDTH; wx++)
@@ -6267,6 +6263,8 @@ void Generate_Terrain_Specials(int16_t wp)
 
         }
     }
+
+    /* Set grid scan radius depending on the plane (Arcanus vs Myrror) */
     if(wp == ARCANUS_PLANE)
     {
         radius = 4;
@@ -6275,18 +6273,18 @@ void Generate_Terrain_Specials(int16_t wp)
     {
         radius = 3;
     }
-    for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy += radius)
+
+    /* Grid-based scanning to place terrain specials */
+    for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy += radius)     /* {0,...,36}; {0,...,39} */
     {
-        for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx += radius)
+        for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx += radius)  /* {0,...,56}; {0,...,57} */
         {
-            wy = (itr_wy + Random((radius * 2)));  // BUGBUG  could be 39 + random(8) = 46, which is out of bounds
-            wx = (itr_wx + Random((radius * 2))); //  BUGBUG  could be 59 + random(8) = 67, which is out of bounds
-            // crashes when it accesses passed the end of _map_square_terrain_specials
-            // e.g., wx=2,wy=42,p=1,offset = 4922 ACCESSVIOLATION READING LOCATION!!!!!
-            /* HACK */  if(((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx) >= (NUM_PLANES * WORLD_SIZE))
-            /* HACK */  {
-            /* HACK */      continue;
-            /* HACK */  }
+            /* Add random jitter inside the grid cell */
+            wy = (itr_wy + Random((radius * 2)));  /* OGBUG  could be 39 + random(8) = 46, which is out of bounds */
+            wx = (itr_wx + Random((radius * 2)));  /* OGBUG  could be 59 + random(8) = 67, which is out of bounds */
+            /* OGBUG  OOB AVRL  e.g., wx=63,wy=45,p=1,offset = 5163 ACCESS VIOLATION READING LOCATION!!!!! */
+
+            /* Sanity check location */
             square_has_city = ST_FALSE;
             square_has_site = ST_FALSE;
             for(itr = 0; itr < NUM_LAIRS; itr++)
@@ -6334,18 +6332,19 @@ void Generate_Terrain_Specials(int16_t wp)
                 (square_has_site != ST_FALSE)
                 ||
                 (
-                    (wy <= (WORLD_XMIN + 2))  // BUGBUG  should be || not &&
+                    (wy <= (WORLD_YMIN + 2))  /* OGBUG  should all be ||, not && */
                     &&
-                    (wy >= (WORLD_YMAX - 2))
+                    (wy >= (WORLD_HEIGHT - 2))
                     &&
-                    (wx <= (WORLD_YMIN + 2))
+                    (wx <= (WORLD_XMIN + 2))
                     &&
-                    (wx >= (WORLD_XMAX - 2))
+                    (wx >= (WORLD_WIDTH - 2))
                 )
             )
             {
                 continue;
             }
+            /* Chance to transform Grassland/Forest into Mountains/Hills/Swamp */
             if(
                 (Square_Is_Grassland_NewGame(wx, wy, wp) == ST_TRUE)
                 ||
@@ -6360,18 +6359,19 @@ void Generate_Terrain_Specials(int16_t wp)
                 {
                     case 0:
                     case 1:
-                    case 2: { p_world_map[wp][wy][wx] = tt_Mountain1;   } break;
+                    case 2: { p_world_map[wp][wy][wx] = tt_Mountain1;    } break;
                     case 3:
                     case 4:
                     case 5: { p_world_map[wp][wy][wx] =  tt_Hills1;      } break;
                     case 6: { p_world_map[wp][wy][wx] =  tt_Swamp1;      } break;
                 }
             }
-            if(Square_Is_Forest_NewGame(  wx, wy, wp)  == ST_TRUE)  {   SET_TERRAIN_SPECIAL(wx, wy, wp, TS_WILDGAME                     );  }
-            if(Square_Is_Mountain_NewGame(wx, wy, wp)  == ST_TRUE)  {   SET_TERRAIN_SPECIAL(wx, wy, wp, Mountain_Terrain_Special(wp)    );  }
-            if(Square_Is_Hills_NewGame(   wx, wy, wp)  == ST_TRUE)  {   SET_TERRAIN_SPECIAL(wx, wy, wp, Hills_Terrain_Special(wp)       );  }
-            if(Square_Is_Swamp_NewGame(   wx, wy, wp)  == ST_TRUE)  {   SET_TERRAIN_SPECIAL(wx, wy, wp, TS_NIGHTSHADE                   );  }
-            if(Square_Is_Desert_NewGame(  wx, wy, wp)  == ST_TRUE)  {   SET_TERRAIN_SPECIAL(wx, wy, wp, Desert_Terrain_Special(wp)      );  }
+
+            if(Square_Is_Forest_NewGame(  wx, wy, wp)  == ST_TRUE)  { SET_TERRAIN_SPECIAL(wx, wy, wp, TS_WILDGAME                     ); }
+            if(Square_Is_Mountain_NewGame(wx, wy, wp)  == ST_TRUE)  { SET_TERRAIN_SPECIAL(wx, wy, wp, Mountain_Terrain_Special(wp)    ); }
+            if(Square_Is_Hills_NewGame(   wx, wy, wp)  == ST_TRUE)  { SET_TERRAIN_SPECIAL(wx, wy, wp, Hills_Terrain_Special(wp)       ); }
+            if(Square_Is_Swamp_NewGame(   wx, wy, wp)  == ST_TRUE)  { SET_TERRAIN_SPECIAL(wx, wy, wp, TS_NIGHTSHADE                   ); }
+            if(Square_Is_Desert_NewGame(  wx, wy, wp)  == ST_TRUE)  { SET_TERRAIN_SPECIAL(wx, wy, wp, Desert_Terrain_Special(wp)      ); }
         }
     }
 

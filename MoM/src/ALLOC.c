@@ -145,12 +145,17 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
 
     /*
         OGBUG  same OOB AVRL/AVWL issue as _world_maps
+        Generate_Terrain_Specials() goes as far out as wx=63,wy=45,p=1,offset = 5163; 2400 + 2400 + 363; 363 / 16 = 22.6875
     */
-    _map_square_terrain_specials = (uint8_t *)Allocate_Next_Block(World_Data, ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERFLOW) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // 302 PR, 4832 B
+    _map_square_terrain_specials = (uint8_t *)Allocate_Next_Block(World_Data, ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERFLOW) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // ORIG: 302 PR, 4832 B
 
-    _map_square_flags = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
+    /*
+        OGBUG  same OOB AVRL/AVWL issue as _world_maps
+        Generate_Roads () ... (60, 40)
+    */
+    _map_square_flags = (uint8_t *)Allocate_Next_Block(World_Data, ((((NUM_PLANES * WORLD_SIZE) + 60 + 1) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // ORIG: 302 PR, 4832 B
 
-    _square_explored  = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
+    _square_explored  = (uint8_t *)Allocate_Next_Block(World_Data, (((NUM_PLANES * WORLD_SIZE) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // 302 PR, 4832 B
 
 
     square_scouted_p0 = (uint8_t *)Allocate_Next_Block(World_Data, 19);    // 19 PR, 304 B  ¿ (((2400 / 8) + 1) + 1) / 16) ?
