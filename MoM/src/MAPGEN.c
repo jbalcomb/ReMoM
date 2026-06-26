@@ -3854,16 +3854,6 @@ void Desert_Autotile(void)
 
 
 // MGC o51p20
-// drake178: NEWG_CreateShores()
-/*
-; creates shores based on the surrounding land type
-; map squares, then uses the same concept to consolidate
-; mountain and hill ranges, as well as replace tundra
-; map squares
-;
-; WARNING: the hills and mountains would generate a break at the X wrap boundary
-; BUG: turns certain single map square hills into grasslands
-*/
 /*
 Looks to be a form of Bitmask Autotiling.
 This is a popular method of smoothing that assigns binary values to neighboring positions.
@@ -3880,6 +3870,37 @@ sanity check the values, see if you can prove that the data for Hills got mangle
 ...Lake
 
 */
+/**
+ * @brief Applies SimTex-style terrain autotiling passes for ocean and major land classes.
+ *
+ * @details
+ * Loads TERRTYPE lookup data and runs multiple full-map smoothing passes on both
+ * planes, converting base terrain classes into edge/corner-aware subtype tiles.
+ *
+ * Processing order is fixed and stateful:
+ * 1) Ocean pass: computes neighborhood masks against adjacent land classes and
+ *    remaps ocean/shore presentation tiles.
+ * 2) Mountain pass: computes class-local adjacency masks to select mountain
+ *    subtype variants.
+ * 3) Tundra pass: computes tundra adjacency masks and applies tundra subtype
+ *    remaps.
+ * 4) Hills pass: computes hill adjacency masks and applies hill subtype remaps.
+ *
+ * The routine mutates `p_world_map` in place and uses TERRTYPE records loaded
+ * into near-memory (`terrtype`) for mask-to-subtype mapping.
+ *
+ * Before autotiling, CI support may inject captured OG overrun bytes so edge
+ * reads that intentionally preserve OG out-of-bounds behavior reproduce OG
+ * results deterministically.
+ *
+ * @return void
+ *
+ * @note Iterates `wp` over all planes and scans every map square in each pass.
+ * @note Preserves OG-compatible edge behavior used by the current implementation,
+ *       including south-edge overrun-sensitive reads.
+ * @warning Because passes are sequential and in-place, earlier pass outputs may
+ *          influence mask inputs in later passes.
+ */
 void Simtex_Autotiling(void)
 {
     int16_t * terrtype = 0;
@@ -4528,11 +4549,13 @@ void Simtex_Autotiling(void)
                 {
                 mask += 128;
                 }
-                /* OGBUG  no-cardinal conversion causes the square to become Grassland instead */
+
+                /* OGBUG  no-cardinal conversion causes the square to become Grassland instead e.g., Hills pass writes 16 + terrtype[256+mask] → 0xA4 + 16 = 0xB4 = tt_Grasslands4. The lone hill becomes grassland. */
                 if(mask > 0)
                 {
-                p_world_map[wp][wy][wx] = (16 + terrtype[(256 + mask)]);
+                    p_world_map[wp][wy][wx] = (16 + terrtype[(256 + mask)]);
                 }
+
             }
         }
     }
