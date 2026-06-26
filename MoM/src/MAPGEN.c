@@ -6677,116 +6677,87 @@ void Set_Square_Explored_Bits(int16_t wp, int16_t wx, int16_t wy, int16_t bits)
 
 
 // MGC o51p34
-// drake178: NEWG_SetMoveMaps()
-/*
-; sets the movement map for the selected plane based
-; on map square types
-*/
 /*
     populates movement_mode_cost_maps[]
     from terrain_stats_table[], then roads and eroads
-
 SEEALSO:  CITYCALC.c  Make_Road()
-
 */
+/**
+ * @brief Builds per-tile movement-cost maps for a world plane.
+ *
+ * @details
+ * Recomputes `movement_mode_cost_maps[wp]` from terrain data for every square
+ * on the selected plane, then applies road overrides.
+ *
+ * Base fill behavior per square:
+ * - Reads terrain id from `p_world_map[wp][y][x]`.
+ * - Loads six half-move costs from `terrain_stats_table` into movement-mode
+ *   maps: `UU_MvMd`, `walking`, `forester`, `mountaineer`, `swimming`, and
+ *   `sailing`.
+ *
+ * Road override behavior:
+ * - If `MSF_ROAD` is present on a square, land-capable movement modes are
+ *   reduced to fast travel values.
+ * - On Arcanus, roaded land-capable modes are set to `1`.
+ * - On non-Arcanus planes, roaded land-capable modes are set to `0`
+ *   (enchanted-road behavior).
+ * - `sailing` is forced to `ST_UNDEFINED` on road squares.
+ *
+ * The routine maps EMM data first via `EMMDATAH_Map()` and mutates global
+ * movement-cost tables in place.
+ *
+ * @param wp World plane index whose movement maps are rebuilt.
+ *
+ * @return void
+ *
+ * @note Expects terrain and map-flag state to be initialized before call.
+ * @note Uses half-move units (`moves2`) in all output maps.
+ */
 void Movement_Mode_Cost_Maps(int16_t wp)
 {
     int16_t terrain_type_idx = 0;
     int16_t itr_wy = 0;
-    int16_t itr_wx = 0;  //  _DI_
-
+    int16_t itr_wx = 0;
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-
     EMMDATAH_Map();
-
     for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
     {
-
         for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
         {
-
-            // terrain_type_idx = TERRAIN_TYPE_INDEX(itr_wx, itr_wy, wp);
             terrain_type_idx = p_world_map[wp][itr_wy][itr_wx];
-
-// void Make_Road(int16_t wx, int16_t wy, int16_t wp)
-//     movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
-//     movement_mode_cost_maps[wp].walking.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
-//     movement_mode_cost_maps[wp].forester.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
-//     movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
-//     movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
-//     _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= MSF_ROAD;
-//     _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= ~(MSF_EROAD);
-//     if(wp == MYRROR_PLANE)
-//         Make_Road_Enchanted(wx, wy, wp);
-
-// struct s_MOVE_COST_MAP
-// {
-//     /* 0x0000 */ int8_t moves2[WORLD_SIZE];
-//     /* 0x0960 */
-// };
-// #pragma pack(pop)
-// 
-// 
-// // drake178: HMP_MAPS
-// // sizeof:  3840h  14,400
-// /*
-//     movement cost per movement mode, in moves2 units
-//     one *map* per movement mode, as world map - 60x40 - map squares
-// */
-// #pragma pack(push)
-// #pragma pack(2)
-// struct s_MOVE_MODE_COST_MAPS
-// {
-//     /* 0x0000 */ struct s_MOVE_COST_MAP UU_MvMd;
-//     /* 0x0960 */ struct s_MOVE_COST_MAP walking;
-
-            // ; AL = (byte *)(terrain_stats_table + (terrain_type * 6))
-            // [es:bx+HMP_MAPS.Walking.HalfMPCost], al
-            // movement_mode_cost_maps[((wp * 14400) + (itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[terrain_type_idx];
-            // terrain_stats_table[terrain_type_idx][]
-            // {1,0,2,3,4,5}
-            // {Walking,Unused_MoveType,Forester,Mountaineer,Swimming,Sailing}
-            movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)]      = terrain_stats_table[((terrain_type_idx * 6) + 1)];
-            movement_mode_cost_maps[wp].UU_MvMd.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)]      = terrain_stats_table[((terrain_type_idx * 6) + 0)];
-            movement_mode_cost_maps[wp].forester.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)]     = terrain_stats_table[((terrain_type_idx * 6) + 2)];
-            movement_mode_cost_maps[wp].mountaineer.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)]  = terrain_stats_table[((terrain_type_idx * 6) + 3)];
-            movement_mode_cost_maps[wp].swimming.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)]     = terrain_stats_table[((terrain_type_idx * 6) + 4)];
-            movement_mode_cost_maps[wp].sailing.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)]      = terrain_stats_table[((terrain_type_idx * 6) + 5)];
-
+            movement_mode_cost_maps[wp].walking.moves2[    ((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 1)];
+            movement_mode_cost_maps[wp].UU_MvMd.moves2[    ((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 0)];
+            movement_mode_cost_maps[wp].forester.moves2[   ((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 2)];
+            movement_mode_cost_maps[wp].mountaineer.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 3)];
+            movement_mode_cost_maps[wp].swimming.moves2[   ((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 4)];
+            movement_mode_cost_maps[wp].sailing.moves2[    ((itr_wy * WORLD_WIDTH) + itr_wx)] = terrain_stats_table[((terrain_type_idx * 6) + 5)];
+            /* Road logic adjustment */
             if((MAP_SQUARE_FLAG(itr_wx,itr_wy,wp) & MSF_ROAD) != 0)
             {
-
                 if(wp != ARCANUS_PLANE)
                 {
-
-                    movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
-                    movement_mode_cost_maps[wp].UU_MvMd.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
-                    movement_mode_cost_maps[wp].forester.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+                    /* Myrror: Enchanted roads reduce cost to 0 (free movement increment) */
+                    movement_mode_cost_maps[wp].walking.moves2[    ((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+                    movement_mode_cost_maps[wp].UU_MvMd.moves2[    ((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+                    movement_mode_cost_maps[wp].forester.moves2[   ((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
                     movement_mode_cost_maps[wp].mountaineer.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
-                    movement_mode_cost_maps[wp].swimming.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
-
+                    movement_mode_cost_maps[wp].swimming.moves2[   ((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
                 }
                 else
                 {
-
-                    movement_mode_cost_maps[wp].walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
-                    movement_mode_cost_maps[wp].UU_MvMd.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
-                    movement_mode_cost_maps[wp].forester.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+                    /* Arcanus: Standard roads reduce cost to 1 (half movement point) */
+                    movement_mode_cost_maps[wp].walking.moves2[    ((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+                    movement_mode_cost_maps[wp].UU_MvMd.moves2[    ((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+                    movement_mode_cost_maps[wp].forester.moves2[   ((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
                     movement_mode_cost_maps[wp].mountaineer.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
-                    movement_mode_cost_maps[wp].swimming.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
-
+                    movement_mode_cost_maps[wp].swimming.moves2[   ((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
                 }
-
+                /* Roads are impassable for Sailing units */
                 movement_mode_cost_maps[wp].sailing.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = ST_UNDEFINED;
-
             }
-
         }
-
     }
-
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-
 }
 
 
