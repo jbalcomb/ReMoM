@@ -2056,7 +2056,7 @@ sets tt_Tundra1, tt_Desert1, tt_Swamp1
  */
 void Generate_Climate_Terrain_Types(int16_t wp)
 {
-    int16_t new_direction = 0;  /* ¿ DEDU  c&p error ? */
+    int16_t new_direction = 0;  /* ¿ DEDU  c&p error ? looks like? */
     int16_t Steps_To_Take = 0;
     int16_t dir_chg = 0;  /* (Random(4) - 1), used to index dir_chg_tbl_wx/wy */
     int16_t direction = 0;
@@ -2066,16 +2066,17 @@ void Generate_Climate_Terrain_Types(int16_t wp)
     int16_t base_wy = 0;
     int16_t base_wx = 0;
     int16_t Steps_Taken = 0;
-    int16_t next_wx = 0;  // _DI_
-    int16_t next_wy = 0;  // _SI_
-    int16_t itr_wx = 0;  // _DI_
-    int16_t itr_wy = 0;  // _SI_
+    int16_t next_wx = 0;
+    int16_t next_wy = 0;
+    int16_t itr_wx = 0;
+    int16_t itr_wy = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 /*
     BEGIN:  tt_Tundra1
 */
+    /* North and South Pole Tundra Generation */
     for(itr_wy = 2; itr_wy < 8; itr_wy++)
     {
         for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
@@ -2086,7 +2087,7 @@ void Generate_Climate_Terrain_Types(int16_t wp)
                 (p_world_map[wp][itr_wy][itr_wx] == tt_Forest1)
             )
             {
-                if((2 + Random(8)) >= itr_wy)  // { 3, ..., 10 } >= { 2, ..., 7 }
+                if((2 + Random(8)) >= itr_wy)  /* { 3, ..., 10 } >= { 2, ..., 7 } */
                 {
                     p_world_map[wp][itr_wy][itr_wx] = tt_Tundra1;
                 }
@@ -2107,9 +2108,11 @@ void Generate_Climate_Terrain_Types(int16_t wp)
 /*
     END:  tt_Tundra1
 */
+
 /*
     BEGIN:  tt_Desert1
 */
+    /* Desert Patch Generation */
     for(itr = 0; itr < 8; itr++)
     {
         base_wx = (2 + Random((WORLD_WIDTH  - (3 * 2))));  // {  3, ..., 55 }
@@ -2123,7 +2126,7 @@ void Generate_Climate_Terrain_Types(int16_t wp)
         {
             curr_wx = (base_wx + dir_chg_tbl_wx[direction]);
             curr_wy = (base_wy + dir_chg_tbl_wy[direction]);
-            new_direction = ST_UNDEFINED;  // Eh? c&p error?
+            new_direction = ST_UNDEFINED;  /* OGBUG not used in this block - c&p error? */
             Steps_To_Take = (4 + Random(6));  // {5, ..., 10}
             for(Steps_Taken = 0; Steps_Taken < Steps_To_Take; Steps_Taken++)
             {
@@ -2144,20 +2147,20 @@ void Generate_Climate_Terrain_Types(int16_t wp)
         }
     }
 /*
+    END:  tt_Desert1
+*/
+
+/*
     BEGIN:  tt_Swamp1
 */
+    /* Swamp Patch Generation */
     for(itr = 0; itr < 8; itr++)
     {
-        base_wx = ( 1 + Random( (WORLD_WIDTH  - ( 2 * 2)) ) );  // {  2, ..., 57 }
-        base_wy = (10 + Random( (WORLD_HEIGHT - (10 * 2)) ) );  // { 11, ..., 30 }
-        if(
-            (base_wy >= 35)
-            &&
-            (base_wy <= 45)  // BUGBUG  out of bounds of the world map; was probably meant as a equitorial band?
-        )
+        do
         {
-            continue;
-        }
+            base_wx = ( 1 + Random( (WORLD_WIDTH  - ( 2 * 2)) ) );  /* {  2, ..., 57 } */
+            base_wy = (10 + Random( (WORLD_HEIGHT - (10 * 2)) ) );  /* { 11, ..., 30 } */
+        } while((base_wy >= 35) && (base_wy <= 45));  /* OGBUG  out of bounds of the world map; was probably meant as a equitorial band? */
         if(p_world_map[wp][base_wy][base_wx] == tt_Forest1)
         {
             p_world_map[wp][base_wy][base_wx] = tt_Swamp1;
@@ -2166,8 +2169,8 @@ void Generate_Climate_Terrain_Types(int16_t wp)
         {
             curr_wx = (base_wx + dir_chg_tbl_wx[direction]);
             curr_wy = (base_wy + dir_chg_tbl_wy[direction]);
-            new_direction = ST_UNDEFINED;  // Eh? c&p error?
-            Steps_To_Take = (2 + Random(3));  // {3, ..., 5}
+            new_direction = ST_UNDEFINED;  /* OGBUG not used in this block - c&p error? */
+            Steps_To_Take = (2 + Random(3));  /* {3, ..., 5} */
             for(Steps_Taken = 0; Steps_Taken < Steps_To_Take; Steps_Taken++)
             {
                 dir_chg = (Random(4) - 1);  // ¿ choose next direction with anti-straight-line bias ?
