@@ -6243,6 +6243,14 @@ void Generate_Terrain_Specials(int16_t wp)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
+    /* CI: inject OG's _world_maps overrun bytes so this function's OGBUG pick
+     * (wy = itr_wy + Random(radius*2)) reading past WORLD_HEIGHT on the wp=1 pass
+     * returns OG's values instead of ReMoM's over-allocation garbage.  Otherwise
+     * those OOB tiles misclassify (e.g. desert vs not) and OG draws a
+     * *_Terrain_Special ReMoM doesn't, knocking the RNG stream one draw out of
+     * phase downstream.  Fires both plane calls; the wp=1 one sets up its reads. */
+    gd_ci_inject_world_overrun("gen_ts_entry");
+
     /* Clear specials and flags map squares for the selected plane */
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
@@ -6323,23 +6331,6 @@ void Generate_Terrain_Specials(int16_t wp)
                     square_has_city = ST_TRUE;
                 }
             }
-            /* CLAUDE DIAGNOSTIC: per-cell state right after the (wy,wx) picks and
-             * city/site scan, before the continue-gate / transform / classify.
-             * No Random() here, so it does not perturb the stream.  Correlate
-             * rng_call with the first OG-vs-ReMoM draw divergence to find the
-             * cell whose terrain is classified differently.  REMOVE when done. */
-            LOG_DEBUG(LOG_CAT_GENERAL,
-                "[TS-PROBE] rng_call=%llu wp=%d wy=%d wx=%d terrain=%d ts=%d city=%d site=%d "
-                "G=%d F=%d M=%d H=%d Sw=%d D=%d",
-                (unsigned long long)g_random_call_count, (int)wp, (int)wy, (int)wx,
-                (int)p_world_map[wp][wy][wx], (int)GET_TERRAIN_SPECIAL(wx, wy, wp),
-                (int)(square_has_city != ST_FALSE), (int)(square_has_site != ST_FALSE),
-                (int)(Square_Is_Grassland_NewGame(wx, wy, wp) == ST_TRUE),
-                (int)(Square_Is_Forest_NewGame(wx, wy, wp)    == ST_TRUE),
-                (int)(Square_Is_Mountain_NewGame(wx, wy, wp)  == ST_TRUE),
-                (int)(Square_Is_Hills_NewGame(wx, wy, wp)     == ST_TRUE),
-                (int)(Square_Is_Swamp_NewGame(wx, wy, wp)     == ST_TRUE),
-                (int)(Square_Is_Desert_NewGame(wx, wy, wp)    == ST_TRUE));
             if(
                 (GET_TERRAIN_SPECIAL(wx, wy, wp) != ts_NONE)
                 ||
