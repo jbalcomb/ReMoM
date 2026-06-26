@@ -53,7 +53,7 @@ enum e_TERRAIN_TYPES
     tt_Hills_Fst   = 0x113,
     tt_Hills_Lst   = 0x123,
 
-    tt_Desert_Fst  = 0x124,  // 292
+    tt_Desert_Fst  = 0x124,  /* 292 */
     tt_Desert_Lst  = 0x1C3,  // 451
 
     tt_Shore2_1st  = 0x1C4,  // 452
@@ -98,7 +98,7 @@ enum OVL_Tiles_Extended
     _Shore00101000  = 0xF,
     _Shore00111000  = 0x10,
     _Shore00010000  = 0x11,   /* 17d  Land to the East */
-    _1Lake          = 0x12,   /* 18 */
+    _1Lake          = 0x12,   /* 18  stand-alone water  (_landmassp[] is 0?) */
     _Shore00000001  = 0x13,
     _Shore10000011  = 0x14,
     _Shore00110000  = 0x15,
@@ -373,7 +373,7 @@ enum OVL_Tiles_Extended
     _Hills_1101     = 0x121,
     _Hills_1001     = 0x122,
     _1Hills2        = 0x123,    /* tt_Hills_Lst   = 0x123 */
-    _Desert00001000 = 0x124,
+    _Desert00001000 = 0x124,    /* 292  AKA  tt_Desert_Fst */
     _Desert00001100 = 0x125,
     _Desert00001110 = 0x126,
     _Desert00000110 = 0x127,
@@ -389,7 +389,7 @@ enum OVL_Tiles_Extended
     _Desert00101000 = 0x131,
     _Desert00111000 = 0x132,
     _Desert00010000 = 0x133,
-    _1Desert        = 0x134,
+    _1Desert        = 0x134,    /* stand-alone Desert */
     _Desert00000001 = 0x135,
     _Desert10000011 = 0x136,
     _Desert00110000 = 0x137,

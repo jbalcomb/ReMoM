@@ -3695,17 +3695,15 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
  * `Square_Is_Desert_NewGame(...) == ST_FALSE` for that neighbor. A mask of
  * zero is normalized to `tt_Desert1`.
  *
- * Current implementation behavior:
- * - For `mask > 0`, the routine computes/debug-checks a candidate desert type
- *   (`290 + terrtype[mask]`) but does not currently write it back.
- * - For `mask == 0`, the routine writes `tt_Desert1`.
+ * Write-back behavior:
+ * - For `mask > 0`, writes `tt_Desert_Fst + (terrtype[mask] - 2)` (= `290 + terrtype[mask]`).
+ * - For `mask == 0`, writes `tt_Desert1`.
  *
  * Key local variables:
  * - `terrtype`: near-memory buffer loaded from `TERRTYPE.LBX` record 0.
  * - `mask`: accumulated 8-neighbor non-desert bitmask.
  * - `wp`, `wy`, `wx`: plane and square coordinates used for full-map scans.
- * - `DBG_before_desert`, `DBG_terrtype_type`, `DBG_after_desert`: debug values
- *   used to validate candidate desert type ranges.
+ * - `neighbor_idx`: flat index of the neighbor square in `_landmasses` (Phase 1).
  *
  * @param void This function accepts no parameters.
  *
@@ -3714,34 +3712,25 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
  *
  * @note Relies on global arrays (`p_world_map`, `_landmasses`) and helper
  *       functions/macros used by map generation.
- * @warning The `_1Desert` landmass-neighbor index expression currently uses
- *          modifier terms without adding `wy/wx`; this block reflects existing
- *          code behavior exactly.
  */
 void Desert_Autotile(void)
 {
     int16_t * terrtype = 0;
-    int16_t Y_Mod = 0;
-    int16_t X_Mod = 0;
+    int16_t wy_offset = 0;
+    int16_t wx_offset = 0;
     int16_t mask = 0;
     int16_t wp = 0;
     int16_t wx = 0;
     int16_t wy = 0;
-    int16_t DBG_before_desert = 0;
-    int16_t DBG_terrtype_type = 0;
-    int16_t DBG_after_desert = 0;
-    int16_t landmass_idx = 0;
+    int16_t neighbor_idx = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     terrtype = (int16_t *)Near_Allocate_First((5 * 512));
     LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, (SAMB_ptr)terrtype, 0, 5, 512);
 
-// ; set the landmass of single square deserts ($134) to
-// ; that of the last non-ocean square found among their
-// ; neighbouring tiles, if any
-// but, ...
-// Generate_Climate_Terrain_Types() only creates squares with tt_Desert1 (0x0A5)?
+
+    /* Phase 1: Update landmasses for dry lakes */
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
         for(wy = 0; wy < WORLD_HEIGHT; wy++)
@@ -3750,16 +3739,14 @@ void Desert_Autotile(void)
             {
                 if(p_world_map[wp][wy][wx] == _1Desert)  /* these were created by River_Autotile() */
                 {
-                    for(Y_Mod = -1; Y_Mod < 1; Y_Mod++)
+                    for(wy_offset = -1; wy_offset < 2; wy_offset++)
                     {
-                        for(X_Mod = -1; X_Mod < 1; X_Mod++)
+                        for(wx_offset = -1; wx_offset < 2; wx_offset++)
                         {
-                            if(_landmasses[((wp * WORLD_SIZE) + ((wy + Y_Mod) * WORLD_WIDTH) + (wx + X_Mod))] != 0)  /* NO_LANDMASS */
+                            neighbor_idx = ((wp * WORLD_SIZE) + ((wy + wy_offset) * WORLD_WIDTH) + (wx + wx_offset));
+                            if(_landmasses[neighbor_idx] != 0)  /* NO_LANDMASS */
                             {   
-                                // _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = _landmasses[((wp * WORLD_SIZE) + (Y_Mod * WORLD_WIDTH) + X_Mod)];
-                                landmass_idx = _landmasses[((wp * WORLD_SIZE) + ((wy + Y_Mod) * WORLD_WIDTH) + (wx + X_Mod))];
-                                assert(landmass_idx < NUM_LANDMASSES);
-                                _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = (uint8_t)landmass_idx;
+                                _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = _landmasses[neighbor_idx];
                             }
                         }
                     }
@@ -3768,6 +3755,8 @@ void Desert_Autotile(void)
         }
     }
 
+
+    /* Phase 2: Compute autotiling mask and update world maps */
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
         for(wy = 0; wy < WORLD_HEIGHT; wy++)
@@ -3783,7 +3772,7 @@ void Desert_Autotile(void)
                     ||
                     (p_world_map[wp][wy][wx] == tt_Desert4)
                     ||
-                    (p_world_map[wp][wy][wx] == _1Desert)
+                    (p_world_map[wp][wy][wx] == _1Desert)  /* stand-alone Desert */
                 )
                 {
                     mask = 0;
@@ -3846,31 +3835,8 @@ void Desert_Autotile(void)
 
                     if(mask > 0)
                     {
-                        // Dasm looks like (_Desert00001000 - 2) ... I don't see an explanation
-                        // ((_Desert00001000 + terrtype[mask]) - 2)
-                        // (290 + terrtype[mask])
-                        DBG_before_desert = p_world_map[wp][wy][wx];
-                        DBG_terrtype_type = terrtype[mask];
-                        DBG_after_desert = (290 + terrtype[mask]);
-                        if(DBG_after_desert != DBG_before_desert)
-                        {
-                            // STU_DEBUG_BREAK();
-                        }
-                        if(
-                            (DBG_after_desert != tt_Desert1)
-                            &&
-                            (DBG_after_desert != tt_Desert2)
-                            &&
-                            (DBG_after_desert != tt_Desert3)
-                            &&
-                            (DBG_after_desert != tt_Desert4)
-                            &&
-                            !((DBG_after_desert >= tt_Desert_Fst) && (DBG_after_desert <= tt_Desert_Lst))
-                        )
-                        {
-                            STU_DEBUG_BREAK();
-                        }
-                        p_world_map[wp][wy][wx] = (290 + terrtype[mask]);
+                        /* NOTE(JimBalcomb,20260626) terrtype[] values are 2-based */
+                        p_world_map[wp][wy][wx] = (tt_Desert_Fst + (terrtype[mask] - 2));
                     }
                     else
                     {
