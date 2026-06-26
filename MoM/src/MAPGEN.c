@@ -6016,8 +6016,8 @@ attempt:
  */
 void Generate_Roads(int16_t wp)
 {
-    int8_t Road_Ys[70] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int8_t Road_Xs[70] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int8_t path_wy_array[70] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int8_t path_wx_array[70] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t dst_wy = 0;
     int16_t dst_wx = 0;
     int16_t src_wy = 0;
@@ -6025,9 +6025,9 @@ void Generate_Roads(int16_t wp)
     int16_t city_idx = 0;
     int16_t wy = 0;
     int16_t wx = 0;
-    int16_t Line_Index = 0;
-    int16_t Road_Length = 0;
-    int16_t Invalid_Road = 0;
+    int16_t path_idx = 0;
+    int16_t path_length = 0;
+    int16_t reject = 0;
     int16_t dst_city_idx = 0;
     int16_t src_city_idx = 0;
 
@@ -6064,26 +6064,26 @@ void Generate_Roads(int16_t wp)
             {
                 continue;
             }
-            Road_Length = Path_Wrap(src_wx, src_wy, dst_wx, dst_wy, &Road_Xs[0], &Road_Ys[0], WORLD_WIDTH);
-            Invalid_Road = 0;
-            Line_Index = 0;
+            path_length = Path_Wrap(src_wx, src_wy, dst_wx, dst_wy, &path_wx_array[0], &path_wy_array[0], WORLD_WIDTH);
+            reject = 0;
+            path_idx = 0;
             // NOTE(drake178): invalidate the road if it would pass through an ocean or shore map square
             // NOTE(drake178): contains exclusions for map square types that will never be present on the map at this stage of the process
-            while(((Road_Length - 1) > Line_Index) && (Invalid_Road == ST_FALSE))
+            while(((path_length - 1) > path_idx) && (reject == ST_FALSE))
             {
-                wx = Road_Xs[Line_Index];
-                wy = Road_Ys[Line_Index];
+                wx = path_wx_array[path_idx];
+                wy = path_wy_array[path_idx];
                 if(
                     (GET_TERRAIN_TYPE(wx, wy, wp) >= tt_Shore1_Fst)
                     &&
                     (GET_TERRAIN_TYPE(wx, wy, wp) <= tt_Shore1_Lst)
                 )
                 {
-                    Invalid_Road = ST_TRUE;
+                    reject = ST_TRUE;
                 }
                 if(GET_TERRAIN_TYPE(wx, wy, wp) == tt_Ocean)
                 {
-                    Invalid_Road = ST_TRUE;
+                    reject = ST_TRUE;
                 }
                 /* OGBUG  this batch should start at $C5 (not that any of these can be present on the map at this stage) */
                 if(
@@ -6092,7 +6092,7 @@ void Generate_Roads(int16_t wp)
                     (GET_TERRAIN_TYPE(wx, wy, wp) <= tt_Shore2F_end)
                 )
                 {
-                    Invalid_Road = ST_TRUE;
+                    reject = ST_TRUE;
                 }
                 if(
                     (GET_TERRAIN_TYPE(wx, wy, wp) >= tt_Shore2_1st)
@@ -6100,17 +6100,16 @@ void Generate_Roads(int16_t wp)
                     (GET_TERRAIN_TYPE(wx, wy, wp) <= tt_OceanAnim)
                 )
                 {
-                    Invalid_Road = ST_TRUE;
+                    reject = ST_TRUE;
                 }
-                Line_Index++;
+                path_idx++;
             }
-            if(Invalid_Road == ST_FALSE)
+            if(reject == ST_FALSE)
             {
-                // NOTE(drake178): create a road or enchanted road along the specified line depending on the plane
-                for(Line_Index = 0; ((Road_Length - 1) > Line_Index); Line_Index++)
+                for(path_idx = 0; ((path_length - 1) > path_idx); path_idx++)
                 {
-                    wx = Road_Xs[Line_Index];
-                    wy = Road_Ys[Line_Index];
+                    wx = path_wx_array[path_idx];
+                    wy = path_wy_array[path_idx];
                     SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) | MSF_ROAD));
                     if(wp == MYRROR_PLANE)
                     {
@@ -6147,8 +6146,9 @@ Roads beneath captured neutral cities and original Fortress sites on Myrror lack
             /* OGBUG  these are not the city coordinates */
             /* OGBUG  at exactly wx=60,wy=40,wp=1 this causes an AVRL */
 /*
-If no city pair qualifies on Myrror (no roads built), wx and wy retain (60, 40) from the flag-clear loop's exit. SET_MAP_SQUARE_FLAG(60, 40, 1, …) indexes _map_square_flags[5460] — out of bounds even with WORLD_OVERFLOW padding (which gets you to byte 5040, short by ~420 bytes). For this particular seed, the build loops set (43, 9) so you're safe. For other seeds, the AVRL drake178 mentioned will fire.
-OOB-safety follow-up — same allocation-padding pattern you used for _world_maps and the Tundra OOB.
+If no city pair qualifies on Myrror (no roads built), wx and wy retain (60, 40) from the flag-clear loop's exit.
+SET_MAP_SQUARE_FLAG(60, 40, 1, …) indexes _map_square_flags[(1*2400)+(40*60)+60 = 4860] — past the logical 4800.
+_map_square_flags is allocated with + WORLD_WIDTH + 1 padding (ALLOC.c, STU_WRLD.c) = 4880 bytes, which covers index 4860, so the OOB lands in padding instead of faulting.
 */
             SET_MAP_SQUARE_FLAG(
                 wx,
