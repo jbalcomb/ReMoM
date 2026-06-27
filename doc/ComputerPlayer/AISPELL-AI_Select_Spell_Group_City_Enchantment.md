@@ -37,7 +37,7 @@ Leaf picker for category 3 (city enchantment) of [`AI_Select_Spell_Group`](AISPE
 | 2 | Transmute | 200 | `AITP_Transmute` |
 | 3 | Change_Terrain | 50 | `AITP_Change_Terrain` |
 | 4 | *(unused)* | — | — |
-| 5 | Move_Fortress | `_turn / 15` | `AITP_MoveFortress` |
+| 5 | Move_Fortress | `_turn / 15` | `AITP_Move_Fortress` |
 | 6 | Earth_Gate | `_turn / 15` | `AITP_EarthGate` |
 | 7 | Gaias_Blessing | 300 | `AITP_GaiasBlessing` |
 | 8 | Flying_Fortress | 100 | `AITP_FlyingFortress` |

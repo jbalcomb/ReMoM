@@ -2335,7 +2335,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
     }
 
     if(players_spell_list[spl_Move_Fortress] == sls_Known) {
-        if(AITP_MoveFortress(player_idx, &target_city_idx) == 1) {
+        if(AITP_Move_Fortress(player_idx, &target_city_idx) == 1) {
             AI_OVL_SplPriorities[5] = _turn / 15;
         }
     }
@@ -3031,9 +3031,101 @@ int16_t AITP_Change_Terrain(int16_t player_idx, int16_t * targeted_wx, int16_t *
 
 
 // WZD o156p20
-int16_t AITP_MoveFortress(int16_t player_idx, int16_t * city_idx)
+/**
+ * @brief AI target picker for Move Fortress — locates a city with stronger garrison
+ *        to relocate the fortress to.
+ *
+ * @details
+ * This function identifies the best candidate city for casting the Move Fortress spell.
+ * The spell relocates the player's fortress to a new city location, and the AI should
+ * move it to a location with higher military strength (stronger garrison).
+ *
+ * The selection algorithm:
+ * 1. Locates the current fortress city by matching coordinates between @c _FORTRESSES[]
+ *    and @c _CITIES[] (comparing wx, wy, and wp fields)
+ * 2. Records the current fortress garrison strength from @c _ai_all_own_garrison_strengths[]
+ * 3. Iterates through all player-owned cities on the map
+ * 4. Filters out the fortress city itself (skips self-comparison)
+ * 5. For each other player city, compares its garrison strength to the fortress garrison
+ * 6. Selects the city with the highest garrison strength that exceeds the fortress strength
+ * 7. Returns the index of that city if found
+ *
+ * The Move Fortress spell is most beneficial when the AI can relocate to a city with
+ * higher military capacity, thereby strengthening overall fortress defense and positioning.
+ *
+ * @param player_idx      Index of the AI player casting Move Fortress.
+ * @param[out] city_idx   Pointer to receive the index of the target city in @c _CITIES[].
+ *                        Only written when the function returns ST_TRUE.
+ *
+ * @return ST_TRUE if a valid target city (owned by the player, with garrison strength
+ *         greater than the fortress) was found and @p city_idx was populated; ST_FALSE
+ *         if no such target exists (all other player cities have weaker or equal garrison).
+ *
+ * @note The selection is deterministic: given the same game state and garrison values,
+ *       the same city will always be selected (the highest-garrison city found during
+ *       iteration).
+ * @note The fortress location is determined by coordinate matching (@c _FORTRESSES[])
+ *       against @c _CITIES[]; this assumes the fortress is always at a city location.
+ * @note Garrison strength is sourced from @c _ai_all_own_garrison_strengths[], which
+ *       should be pre-computed or updated before calling this function. If this array
+ *       is stale, targeting may be suboptimal.
+ * @note The comparison is strict (>) rather than (>=); the target city garrison must
+ *       be strictly greater than the fortress garrison to be selected.
+ * @note Only player-owned cities (@c owner_idx == player_idx) are considered; neutral
+ *       or enemy cities are skipped.
+ *
+ * @see AI_Select_Spell_Group_City_Enchantment(), _FORTRESSES[], _ai_all_own_garrison_strengths[]
+ */
+int16_t AITP_Move_Fortress(int16_t player_idx, int16_t * city_idx)
 {
-    return 0;
+    int16_t fortress_city = 0;
+    int16_t garrison_strength = 0;
+    int16_t target_city_idx = 0;
+    int16_t itr_cities = 0;
+
+    /* Locate the player's fortress city */
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].wx == _FORTRESSES[player_idx].wx &&
+            _CITIES[itr_cities].wy == _FORTRESSES[player_idx].wy &&
+            _CITIES[itr_cities].wp == _FORTRESSES[player_idx].wp)
+        {
+            fortress_city = itr_cities;
+        }
+    }
+
+    target_city_idx = ST_UNDEFINED;
+    garrison_strength = _ai_all_own_garrison_strengths[fortress_city];
+
+    /* Find the player's city with the strongest garrison (excluding the fortress itself)
+       that is stronger than the current fortress garrison. */
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(itr_cities == fortress_city)
+        {
+            continue;
+        }
+
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            if(_ai_all_own_garrison_strengths[itr_cities] > garrison_strength)
+            {
+                target_city_idx = itr_cities;
+                garrison_strength = _ai_all_own_garrison_strengths[itr_cities];
+            }
+        }
+    }
+
+    if(target_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *city_idx = target_city_idx;
+        return ST_TRUE;
+    }
+
 }
 
 // WZD o156p21
@@ -3290,8 +3382,8 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
         sw1_spell_idx = spell_idx;
         switch(sw1_spell_idx)
         {
-            case spl_Wall_Of_Stone:    { return AITP_Wall_Of_Stone(player_idx, city_idx);      } break;
-            case spl_Move_Fortress:    { return AITP_MoveFortress(player_idx, city_idx);     } break;
+            case spl_Wall_Of_Stone:    { return AITP_Wall_Of_Stone(player_idx, city_idx);    } break;
+            case spl_Move_Fortress:    { return AITP_Move_Fortress(player_idx, city_idx);    } break;
             case spl_Earth_Gate:       { return AITP_EarthGate(player_idx, city_idx);        } break;
             case spl_Flying_Fortress:  { return AITP_FlyingFortress(player_idx, city_idx);   } break;
             case spl_Wall_Of_Fire:     { return AITP_WallofFire(player_idx, city_idx);       } break;

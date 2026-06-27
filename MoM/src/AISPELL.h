@@ -168,7 +168,7 @@ int16_t AITP_Transmute(int16_t player_idx, int16_t * targeted_wx, int16_t * targ
 int16_t AITP_Change_Terrain(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp);
 
 // WZD o156p20
-int16_t AITP_MoveFortress(int16_t player_idx, int16_t * city_idx);
+int16_t AITP_Move_Fortress(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p21
 int16_t AITP_FlyingFortress(int16_t player_idx, int16_t * city_idx);

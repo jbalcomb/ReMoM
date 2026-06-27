@@ -142,7 +142,7 @@ Next_Turn_Proc()
 [x]                 |-> AITP_Wall_Of_Stone()
 [x]                 |-> AITP_Transmute()
 [x]                 |-> AITP_Change_Terrain()
-[ ]                 |-> AITP_MoveFortress()
+[x]                 |-> AITP_Move_Fortress()
 [ ]                 |-> AITP_EarthGate()
 [ ]                 |-> AITP_GaiasBlessing()
 [ ]                 |-> AITP_FlyingFortress()
@@ -158,6 +158,9 @@ Next_Turn_Proc()
 [ ]                 |-> AITP_Consecration()
 [ ]                 |-> AITP_WallofDarkness()
 [ ]                 |-> AITP_AltarofBattle()
+
+[ ] Get_Map_Square_Target_For_Spell()
+[ ] Pick_Target_For_City_Enchantment__WIP()
 
 Cast_Spell_Overland() |-> ... |-> AITP_Disjunction()
 
