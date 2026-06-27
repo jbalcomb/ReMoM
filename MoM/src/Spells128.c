@@ -114,6 +114,21 @@ int16_t Player_Research_Spells(int16_t player_idx)
     }
 
 
+    /* CLAUDE (pair-1 diag): dump the spells_list going in + the research_list
+       Build_Research_List produced, so we can see which spells OG's mid-research
+       rebuild keeps eligible that ReMoM's drops (pool 11 vs 6 @ player2 pick5). */
+    {
+        char _sl[820]; int _q = 0, _j;
+        for (_j = 0; _j < (NUM_SPELLS_PER_MAGIC_REALM * NUM_MAGIC_REALMS); _j++)
+            _q += snprintf(_sl + _q, sizeof(_sl) - _q, _j ? ",%d" : "%d", (int)_players[player_idx].spells_list[_j]);
+        LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_IN] player=%d spells_list=[%s]", player_idx, _sl);
+        _q = 0; char _rl[420];
+        for (_j = 0; _j < m_spell_list_count && _j < 80; _j++)
+            _q += snprintf(_rl + _q, sizeof(_rl) - _q, _j ? ",%d" : "%d", (int)research_list[_j]);
+        LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_POOL] player=%d build=initial pool=%d research_list=[%s]",
+                 player_idx, m_spell_list_count, _rl);
+    }
+
     if(_players[player_idx].spells_list[(spl_Spell_Of_Mastery - 1)] == sls_Known)
     {
         skip_som = ST_TRUE;
@@ -157,6 +172,15 @@ int16_t Player_Research_Spells(int16_t player_idx)
                 LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_SETUP] player=%d pick: random_calls=%llu->%llu  pool=%d  rng_idx=%d  -> slot=%d spell=%d  spells_list[%d]=Researchable", player_idx, (unsigned long long)_dbg_calls_before, (unsigned long long)g_random_call_count, _dbg_pool_size, research_list_idx, itr, research_list[research_list_idx], (spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx);
                 /* Refresh the eligible pool for the next slot */
                 Build_Research_List(player_idx, &research_list[0]);
+                /* CLAUDE (pair-1 diag): the rebuilt pool after each pick -- this is
+                   where OG (11) and ReMoM (6) diverge at player 2 pick 5. */
+                {
+                    char _rl2[420]; int _q2 = 0, _j2;
+                    for (_j2 = 0; _j2 < m_spell_list_count && _j2 < 80; _j2++)
+                        _q2 += snprintf(_rl2 + _q2, sizeof(_rl2) - _q2, _j2 ? ",%d" : "%d", (int)research_list[_j2]);
+                    LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_POOL] player=%d build=rebuild after_slot=%d pool=%d research_list=[%s]",
+                             player_idx, itr, m_spell_list_count, _rl2);
+                }
                 break;
             }
         }
