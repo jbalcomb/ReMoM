@@ -29,24 +29,52 @@
 */
 
 // WZD o128p01
-// drake178: WIZ_RefreshResearch()
-/*
-; fills any empty slots in the research candidate list
-; if possible, and ensures that if the wizard has any
-; candidates available, they are researching something
-; by calling AI_Research_Picker or GUI_Research_Dialog
-; if that is not the case
-; returns the player's research candidate count
-*/
-/*
-
-XREF:
-    WIZ_AddSpellRank__WIP()
-    j_Player_Research_Spells()
-        Player_Research_Spells()
-        PreInit_Overland()
-        Player_Gets_Spell()
-*/
+/**
+ * @brief Replenishes the player's research candidate list and ensures active spell selection.
+ *
+ * @details
+ * This function manages the player's spell research pipeline by:
+ *
+ * 1. **Building the candidate pool** — Calls @c Build_Research_List() to generate a list
+ *    of spells eligible for research based on the player's current spellbooks and known spells.
+ *
+ * 2. **Filling empty slots** — Iteratively populates empty entries in @c _players[player_idx].research_spells[],
+ *    selecting new candidates from the pool using @c Random(). After each addition, the candidate
+ *    pool is refreshed to account for the newly researchable spell. Continues until all slots are
+ *    full or the candidate pool is exhausted.
+ *
+ * 3. **Fallback to Spell of Mastery** — If the research list is not full and the candidate pool
+ *    is empty, adds @c spl_Spell_Of_Mastery to any remaining empty slots, unless the player
+ *    already knows or is researching Spell of Mastery.
+ *
+ * 4. **Sorting for efficiency** — Calls @c Sort_Research_List() to reorder candidates by
+ *    estimated research time (spell cost divided by per-realm research income).
+ *
+ * 5. **Spell selection** — If no spell is currently being researched (@c researching_spell_idx
+ *    is @c spl_NONE) and candidates are available, prompts the player to select a spell using
+ *    @c Spell_Research_Select() (human) or @c AI_Spell_Research_Select() (AI). Sets the initial
+ *    @c research_cost_remaining for the selected spell. This step is skipped on turn 1.
+ *
+ * The function is called during turn initialization and when new spellbooks are acquired. Extensive
+ * diagnostic logging is enabled to trace RNG calls and research slot assignments for determinism
+ * debugging.
+ *
+ * @param player_idx Index of the player whose research candidates are being refreshed.
+ *
+ * @return The number of populated entries in the player's @c research_spells array after this call.
+ *         Returns a value in the range [0, @c NUM_RESEARCH_SPELLS].
+ *
+ * @note Research slot selection uses @c Random(), which advances the RNG state. Callers must be
+ *       aware that this function's behavior depends on both the player's current spellbooks and
+ *       the RNG state.
+ * @note If the player is human, the research selection prompt may block awaiting user input.
+ * @note @c research_cost_remaining is only updated when a new spell is selected; it is not reset
+ *       if the player is already researching a spell.
+ * @note The function logs diagnostic information at @c LOG_CAT_SPELLS128 level for troubleshooting
+ *       research nondeterminism.
+ *
+ * @see Build_Research_List(), Sort_Research_List(), Spell_Research_Select(), AI_Spell_Research_Select()
+ */
 int16_t Player_Research_Spells(int16_t player_idx)
 {
     int16_t * research_list = 0;
@@ -60,17 +88,14 @@ int16_t Player_Research_Spells(int16_t player_idx)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
+
+    /* Phase 1: Init */
     spells_max = NUM_RESEARCH_SPELLS;
-
     m_spell_list_count = 0;
-
     spells_cnt = 0;
-
     skip_som = ST_FALSE;
 
     research_list = (int16_t *)Near_Allocate_First(200);
-
-
     Build_Research_List(player_idx, &research_list[0]);
 
     /* CLAUDE: log entry state for the research candidate-list population.  The
@@ -85,12 +110,7 @@ int16_t Player_Research_Spells(int16_t player_idx)
         {
             if(_players[player_idx].spells_list[_dbg_idx] == sls_Researchable) { _dbg_eligible++; }
         }
-        LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_SETUP] player=%d ENTER  random_seed=0x%08X  random_calls=%llu  m_spell_list_count=%d  spells_list_researchable_count=%d  research_spells=[%d,%d,%d,%d,%d,%d,%d,%d]",
-            player_idx, (unsigned)Get_Random_Seed(), (unsigned long long)g_random_call_count, m_spell_list_count, _dbg_eligible,
-            _players[player_idx].research_spells[0], _players[player_idx].research_spells[1],
-            _players[player_idx].research_spells[2], _players[player_idx].research_spells[3],
-            _players[player_idx].research_spells[4], _players[player_idx].research_spells[5],
-            _players[player_idx].research_spells[6], _players[player_idx].research_spells[7]);
+        LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_SETUP] player=%d ENTER  random_seed=0x%08X  random_calls=%llu  m_spell_list_count=%d  spells_list_researchable_count=%d  research_spells=[%d,%d,%d,%d,%d,%d,%d,%d]", player_idx, (unsigned)Get_Random_Seed(), (unsigned long long)g_random_call_count, m_spell_list_count, _dbg_eligible, _players[player_idx].research_spells[0], _players[player_idx].research_spells[1], _players[player_idx].research_spells[2], _players[player_idx].research_spells[3], _players[player_idx].research_spells[4], _players[player_idx].research_spells[5], _players[player_idx].research_spells[6], _players[player_idx].research_spells[7]);
     }
 
 
@@ -113,6 +133,8 @@ int16_t Player_Research_Spells(int16_t player_idx)
         }
     }
 
+
+    /* Fill empty research slots with new spells from the list */
     while((spells_cnt < spells_max) && (m_spell_list_count > 0))
     {
         /* CLAUDE: capture pre-Random state for the diagnostic log below. */
@@ -132,29 +154,20 @@ int16_t Player_Research_Spells(int16_t player_idx)
                 spell_realm = ((research_list[research_list_idx] - 1) / NUM_SPELLS_PER_MAGIC_REALM);
                 _players[player_idx].spells_list[((spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx)] = sls_Researchable;
                 /* CLAUDE: log the assignment so we can see which Random() call mapped to which slot/spell. */
-                LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_SETUP] player=%d pick: random_calls=%llu->%llu  pool=%d  rng_idx=%d  -> slot=%d spell=%d  spells_list[%d]=Researchable",
-                    player_idx, (unsigned long long)_dbg_calls_before, (unsigned long long)g_random_call_count,
-                    _dbg_pool_size, research_list_idx, itr, research_list[research_list_idx],
-                    (spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx);
+                LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_SETUP] player=%d pick: random_calls=%llu->%llu  pool=%d  rng_idx=%d  -> slot=%d spell=%d  spells_list[%d]=Researchable", player_idx, (unsigned long long)_dbg_calls_before, (unsigned long long)g_random_call_count, _dbg_pool_size, research_list_idx, itr, research_list[research_list_idx], (spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx);
+                /* Refresh the eligible pool for the next slot */
                 Build_Research_List(player_idx, &research_list[0]);
-                break;  /* CLAUDE bugfix: without break, all empty slots get filled in one pass using the same research_list_idx, causing duplicates */
+                break;
             }
         }
     }
 
-    /* CLAUDE: log exit state — final research_spells[] contents.  Compare across
-       runs to confirm whether nondeterminism here is upstream (RNG-state /
-       eligibility-pool divergence) or local. */
-    LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_SETUP] player=%d EXIT   random_calls=%llu  research_spells=[%d,%d,%d,%d,%d,%d,%d,%d]",
-        player_idx, (unsigned long long)g_random_call_count,
-        _players[player_idx].research_spells[0], _players[player_idx].research_spells[1],
-        _players[player_idx].research_spells[2], _players[player_idx].research_spells[3],
-        _players[player_idx].research_spells[4], _players[player_idx].research_spells[5],
-        _players[player_idx].research_spells[6], _players[player_idx].research_spells[7]);
+    /* CLAUDE: log exit state — final research_spells[] contents.  Compare across runs to confirm whether nondeterminism here is upstream (RNG-state / eligibility-pool divergence) or local. */
+    LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_SETUP] player=%d EXIT   random_calls=%llu  research_spells=[%d,%d,%d,%d,%d,%d,%d,%d]", player_idx, (unsigned long long)g_random_call_count, _players[player_idx].research_spells[0], _players[player_idx].research_spells[1], _players[player_idx].research_spells[2], _players[player_idx].research_spells[3], _players[player_idx].research_spells[4], _players[player_idx].research_spells[5], _players[player_idx].research_spells[6], _players[player_idx].research_spells[7]);
 
 
+    /* Re-count active research slots */
     spells_cnt = 0;
-
     for(itr = 0; itr < spells_max; itr++)
     {
         if(_players[player_idx].research_spells[itr] > spl_NONE)
@@ -164,6 +177,7 @@ int16_t Player_Research_Spells(int16_t player_idx)
     }
 
 
+    /* If list isn't full and no spells are left in the pool, check if we must add Spell of Mastery */
     if(
         (spells_cnt < spells_max)
         &&
@@ -172,9 +186,13 @@ int16_t Player_Research_Spells(int16_t player_idx)
         (skip_som == ST_FALSE)
     )
     {
-        if(_players[player_idx].research_spells[itr] == spl_NONE)
+        for (itr = 0; itr < spells_max; itr++)
         {
-            _players[player_idx].research_spells[itr] = spl_Spell_Of_Mastery;
+            if(_players[player_idx].research_spells[itr] == spl_NONE)
+            {
+                _players[player_idx].research_spells[itr] = spl_Spell_Of_Mastery;
+                break;
+            }
         }
     }
 
@@ -182,6 +200,7 @@ int16_t Player_Research_Spells(int16_t player_idx)
     Sort_Research_List(player_idx, spells_cnt);
 
 
+    /* If no spell is currently being researched, prompt for selection */
     if(
         (_players[player_idx].researching_spell_idx == spl_NONE)
         &&
@@ -192,17 +211,21 @@ int16_t Player_Research_Spells(int16_t player_idx)
     {
         if(player_idx == HUMAN_PLAYER_IDX)
         {
-
             Spell_Research_Select();
-
         }
         else
         {
-
             AI_Spell_Research_Select(player_idx);
-
         }
-
+        /* Set the research cost remaining for the newly selected spell */
+        if (_players[player_idx].researching_spell_idx == spl_Spell_Of_Mastery)
+        {
+            _players[player_idx].research_cost_remaining = _players[player_idx].som_research_cost;
+        }
+        else
+        {
+            _players[player_idx].research_cost_remaining = spell_data_table[_players[player_idx].researching_spell_idx].research_cost;
+        }
     }
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
