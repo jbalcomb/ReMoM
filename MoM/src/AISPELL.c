@@ -2359,7 +2359,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
     }
 
     if(players_spell_list[spl_Wall_Of_Fire] == sls_Known) {
-        if(AITP_WallofFire(player_idx, &target_city_idx) == 1) {
+        if(AITP_Wall_Of_Fire(player_idx, &target_city_idx) == 1) {
             AI_OVL_SplPriorities[9] = _turn / 20;
         }
     }
@@ -3370,9 +3370,83 @@ int16_t AITP_Gaias_Blessing(int16_t player_idx, int16_t * targeted_city_idx)
 }
 
 // WZD o156p24
-int16_t AITP_WallofFire(int16_t player_idx, int16_t * city_idx)
+/**
+ * @brief AI target picker for Wall of Fire — selects the highest-value owned city without
+ *        the Wall of Fire enchantment.
+ *
+ * @details
+ * This function identifies the best candidate city for casting the Wall of Fire spell.
+ * The spell grants a Wall of Fire enchantment to a target city, which provides defensive
+ * protection or offensive enhancement (fire-based). The AI should apply this enchantment
+ * to its most valuable cities to maximize defensive capabilities or strategic benefits.
+ *
+ * The selection algorithm:
+ * 1. Iterates through all cities on the map
+ * 2. Filters for cities owned by @p player_idx
+ * 3. Further filters for cities without the Wall of Fire enchantment already active
+ *    (i.e., @c _CITIES[].enchantments[WALL_OF_FIRE] == ST_FALSE)
+ * 4. Scores each candidate using the city's value from @c _ai_all_own_city_values[]
+ * 5. Selects the city with the highest value and stores its index in @p targeted_city_idx
+ *
+ * The Wall of Fire spell is most beneficial for high-value cities (e.g., production hubs,
+ * strategic locations, capitals) as the fire wall provides defensive protection or enhanced
+ * offensive capabilities. By targeting the highest-value city without the enchantment,
+ * the AI prioritizes protecting its most important urban centers.
+ *
+ * @param player_idx         Index of the AI player casting Wall of Fire.
+ * @param[out] targeted_city_idx Pointer to receive the index of the selected city in @c _CITIES[].
+ *                           Only written when the function returns ST_TRUE.
+ *
+ * @return ST_TRUE if a valid target city (owned by the player, without the Wall of Fire
+ *         enchantment) was found and @p targeted_city_idx was populated; ST_FALSE if
+ *         no valid target exists (e.g., all player cities already have Wall of Fire, or
+ *         the player has no cities).
+ *
+ * @note The selection is deterministic: given the same game state and city values,
+ *       the same city will always be selected.
+ * @note The city value is sourced from @c _ai_all_own_city_values[], which should be
+ *       pre-computed or updated before calling this function. If this array is stale,
+ *       targeting may be suboptimal.
+ * @note A city with @c enchantments[WALL_OF_FIRE] == ST_FALSE is the only valid target
+ *       for this spell; cities that already have the Wall of Fire enchantment are skipped.
+ * @note Only player-owned cities are considered; neutral or enemy cities are excluded.
+ *
+ * @see AI_Select_Spell_Group_City_Enchantment(), _ai_all_own_city_values[]
+ */
+int16_t AITP_Wall_Of_Fire(int16_t player_idx, int16_t * targeted_city_idx)
 {
-    return 0;
+    int16_t highest_value = 0;
+    int16_t best_city_idx = 0;
+    int16_t itr_cities = 0;
+
+    best_city_idx = ST_UNDEFINED;
+    highest_value = 0;
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            if(_CITIES[itr_cities].enchantments[WALL_OF_FIRE] == ST_FALSE)
+            {
+                if(_ai_all_own_city_values[itr_cities] > highest_value)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                }
+            }
+        }
+    }
+
+    if(best_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_city_idx = best_city_idx;
+        return ST_TRUE;
+    }
+
 }
 
 // WZD o156p25
@@ -3609,7 +3683,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
             case spl_Move_Fortress:    { return AITP_Move_Fortress(player_idx, city_idx);    } break;
             case spl_Earth_Gate:       { return AITP_Earth_Gate(player_idx, city_idx);       } break;
             case spl_Flying_Fortress:  { return AITP_Flying_Fortress(player_idx, city_idx);  } break;
-            case spl_Wall_Of_Fire:     { return AITP_WallofFire(player_idx, city_idx);       } break;
+            case spl_Wall_Of_Fire:     { return AITP_Wall_Of_Fire(player_idx, city_idx);     } break;
             case spl_Heavenly_Light:   { return AITP_HeavenlyLight(player_idx, city_idx);    } break;
             case spl_Altar_Of_Battle:  { return AITP_AltarofBattle(player_idx, city_idx);    } break;
             case spl_Inspirations:     { return AITP_Inspirations(player_idx, city_idx);     } break;
@@ -3620,7 +3694,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
             case spl_Cloud_Of_Shadow:  { return AITP_CloudofShadow(player_idx, city_idx);    } break;
             case spl_Summoning_Circle: { return AITP_Summoning_Circle(player_idx, city_idx); } break;
             case spl_Dark_Rituals:     { return AITP_DarkRituals(player_idx, city_idx);      } break;
-            case spl_Gaias_Blessing:   { return AITP_Gaias_Blessing(player_idx, city_idx);    } break;
+            case spl_Gaias_Blessing:   { return AITP_Gaias_Blessing(player_idx, city_idx);   } break;
             default: { Cast_Spell_Target_Error(spell_idx); } break;
         }
     }

@@ -180,7 +180,7 @@ int16_t AITP_Earth_Gate(int16_t player_idx, int16_t * targeted_city_idx);
 int16_t AITP_Gaias_Blessing(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p24
-int16_t AITP_WallofFire(int16_t player_idx, int16_t * city_idx);
+int16_t AITP_Wall_Of_Fire(int16_t player_idx, int16_t * targeted_city_idx);
 
 // WZD o156p25
 int16_t AITP_WallofDarkness(int16_t player_idx, int16_t * city_idx);

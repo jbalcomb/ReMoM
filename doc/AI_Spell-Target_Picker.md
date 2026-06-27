@@ -11,7 +11,7 @@ AITP_Move_Fortress()
 AITP_Flying_Fortress()
 AITP_Earth_Gate()
 AITP_Gaias_Blessing()
-AITP_WallofFire()
+AITP_Wall_Of_Fire()
 AITP_WallofDarkness()
 AITP_HeavenlyLight()
 AITP_AltarofBattle()
@@ -29,7 +29,7 @@ AITP_Consecration()
     case spl_Move_Fortress:    { return AITP_Move_Fortress(player_idx, city_idx);     } break;
     case spl_Earth_Gate:       { return AITP_Earth_Gate(player_idx, city_idx);        } break;
     case spl_Flying_Fortress:  { return AITP_Flying_Fortress(player_idx, city_idx);   } break;
-    case spl_Wall_Of_Fire:     { return AITP_WallofFire(player_idx, city_idx);       } break;
+    case spl_Wall_Of_Fire:     { return AITP_Wall_Of_Fire(player_idx, city_idx);       } break;
     case spl_Heavenly_Light:   { return AITP_HeavenlyLight(player_idx, city_idx);    } break;
     case spl_Altar_Of_Battle:  { return AITP_AltarofBattle(player_idx, city_idx);    } break;
     case spl_Inspirations:     { return AITP_Inspirations(player_idx, city_idx);     } break;
