@@ -46,7 +46,7 @@ Leaf picker for category 3 (city enchantment) of [`AI_Select_Spell_Group`](AISPE
 | 11 | Stream_Of_Life | `_turn / 10` | `AITP_Stream_Of_Life` |
 | 12 | Inspirations | 300 | `AITP_Inspirations` |
 | 13 | Prosperity | 300 | `AITP_Prosperity` |
-| 14 | Astral_Gate | 0 | `AITP_AstralGate` |
+| 14 | Astral_Gate | 0 | `AITP_Astral_Gate` |
 | 15 | Dark_Rituals | 100 | `AITP_DarkRituals` |
 | 16 | Cloud_Of_Shadow | `_turn / 20` | `AITP_CloudofShadow` |
 | 17 | Spell_Ward | 100 | `AITP_SpellWard__STUB` |

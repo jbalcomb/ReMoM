@@ -201,7 +201,7 @@ int16_t AITP_Inspirations(int16_t player_idx, int16_t * targeted_city_idx);
 int16_t AITP_Prosperity(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p31
-int16_t AITP_AstralGate(int16_t player_idx, int16_t * city_idx);
+int16_t AITP_Astral_Gate(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p32
 int16_t AITP_DarkRituals(int16_t player_idx, int16_t * city_idx);

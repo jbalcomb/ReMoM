@@ -18,7 +18,7 @@ AITP_AltarofBattle()
 AITP_Stream_Of_Life()
 AITP_Inspirations()
 AITP_Prosperity()
-AITP_AstralGate()
+AITP_Astral_Gate()
 AITP_DarkRituals()
 AITP_CloudofShadow()
 AITP_SpellWard__STUB()
@@ -34,7 +34,7 @@ AITP_Consecration()
     case spl_Altar_Of_Battle:  { return AITP_AltarofBattle(player_idx, city_idx);    } break;
     case spl_Inspirations:     { return AITP_Inspirations(player_idx, city_idx);     } break;
     case spl_Stream_Of_Life:   { return AITP_Stream_Of_Life(player_idx, city_idx);     } break;
-    case spl_Astral_Gate:      { return AITP_AstralGate(player_idx, city_idx);       } break;
+    case spl_Astral_Gate:      { return AITP_Astral_Gate(player_idx, city_idx);       } break;
     case spl_Prosperity:       { return AITP_Prosperity(player_idx, city_idx);       } break;
     case spl_Consecration:     { return AITP_Consecration(player_idx, city_idx);     } break;
     case spl_Cloud_Of_Shadow:  { return AITP_CloudofShadow(player_idx, city_idx);    } break;

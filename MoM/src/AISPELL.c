@@ -2389,7 +2389,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
     }
 
     if(players_spell_list[spl_Astral_Gate] == sls_Known) {
-        if(AITP_AstralGate(player_idx, &target_city_idx) == 1) {
+        if(AITP_Astral_Gate(player_idx, &target_city_idx) == 1) {
             AI_OVL_SplPriorities[14] = 0;
         }
     }
@@ -3673,11 +3673,11 @@ int16_t AITP_Prosperity(int16_t player_idx, int16_t * targeted_city_idx)
 
     for (itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        if ((int)_CITIES[itr_cities].owner_idx == player_idx)
+        if(_CITIES[itr_cities].owner_idx == player_idx)
         {
-            if (_CITIES[itr_cities].enchantments[PROSPERITY] == ST_FALSE)
+            if(_CITIES[itr_cities].enchantments[PROSPERITY] == ST_FALSE)
             {
-                if (_ai_all_own_city_values[itr_cities] > highest_value)
+                if(_ai_all_own_city_values[itr_cities] > highest_value)
                 {
                     best_city_idx = itr_cities;
                     highest_value = _ai_all_own_city_values[itr_cities];
@@ -3686,7 +3686,7 @@ int16_t AITP_Prosperity(int16_t player_idx, int16_t * targeted_city_idx)
         }
     }
 
-    if (best_city_idx == -1)
+    if(best_city_idx == ST_UNDEFINED)
     {
         return ST_FALSE;
     }
@@ -3699,9 +3699,40 @@ int16_t AITP_Prosperity(int16_t player_idx, int16_t * targeted_city_idx)
 }
 
 // WZD o156p31
-int16_t AITP_AstralGate(int16_t player_idx, int16_t * city_idx)
+int16_t AITP_Astral_Gate(int16_t player_idx, int16_t * targeted_city_idx)
 {
-    return 0;
+    int16_t highest_value = 0;
+    int16_t best_city_idx = 0;
+    int16_t itr_cities = 0;
+
+    best_city_idx = ST_UNDEFINED;
+    highest_value = 0;
+
+    for (itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            if(_CITIES[itr_cities].enchantments[ASTRAL_GATE] == ST_FALSE)
+            {
+                if(_ai_all_own_city_values[itr_cities] > highest_value)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                }
+            }
+        }
+    }
+
+    if(best_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_city_idx = best_city_idx;
+        return ST_TRUE;
+    }
+
 }
 
 // WZD o156p32
@@ -3902,7 +3933,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
             case spl_Heavenly_Light:   { return AITP_Heavenly_Light(player_idx, city_idx);   } break;
             case spl_Inspirations:     { return AITP_Inspirations(player_idx, city_idx);     } break;
             case spl_Stream_Of_Life:   { return AITP_Stream_Of_Life(player_idx, city_idx);   } break;
-            case spl_Astral_Gate:      { return AITP_AstralGate(player_idx, city_idx);       } break;
+            case spl_Astral_Gate:      { return AITP_Astral_Gate(player_idx, city_idx);      } break;
             case spl_Prosperity:       { return AITP_Prosperity(player_idx, city_idx);       } break;
             case spl_Consecration:     { return AITP_Consecration(player_idx, city_idx);     } break;
             case spl_Cloud_Of_Shadow:  { return AITP_CloudofShadow(player_idx, city_idx);    } break;
