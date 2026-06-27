@@ -139,7 +139,7 @@ Next_Turn_Proc()
 [x] CRP_SPL_IsNatSuppressed()
 ...
                 |-> AI_Select_Spell_Group_City_Enchantment
-[ ]                 |-> AITP_WallofStone()
+[x]                 |-> AITP_Wall_Of_Stone()
 [ ]                 |-> AITP_Transmute()
 [ ]                 |-> AITP_ChangeTerrain__WIP()
 [ ]                 |-> AITP_MoveFortress()
@@ -159,7 +159,9 @@ Next_Turn_Proc()
 [ ]                 |-> AITP_WallofDarkness()
 [ ]                 |-> AITP_AltarofBattle()
 
-AITP_Disjunction
+Cast_Spell_Overland() |-> ... |-> AITP_Disjunction()
+
+[x] AITP_Disjunction
 
 
 

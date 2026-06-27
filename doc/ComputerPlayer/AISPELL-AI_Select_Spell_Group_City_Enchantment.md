@@ -33,7 +33,7 @@ Leaf picker for category 3 (city enchantment) of [`AI_Select_Spell_Group`](AISPE
 
 | Slot | Spell | Weight | Target picker |
 |---|---|---|---|
-| 1 | Wall_Of_Stone | `_turn / 6` | `AITP_WallofStone` |
+| 1 | Wall_Of_Stone | `_turn / 6` | `AITP_Wall_Of_Stone` |
 | 2 | Transmute | 200 | `AITP_Transmute` |
 | 3 | Change_Terrain | 50 | `AITP_ChangeTerrain__WIP` |
 | 4 | *(unused)* | — | — |

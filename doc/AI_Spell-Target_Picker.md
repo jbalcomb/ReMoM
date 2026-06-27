@@ -4,7 +4,7 @@ AI Target-Picker (AITP)
 
 ¿ all ovr156 ?
 
-AITP_WallofStone()
+AITP_Wall_Of_Stone()
 AITP_Transmute()
 AITP_ChangeTerrain__WIP()
 AITP_MoveFortress()
@@ -25,7 +25,7 @@ AITP_SpellWard__STUB()
 AITP_Consecration()
 
 ### Pick_Target_For_City_Enchantment__WIP
-    case spl_Wall_Of_Stone:    { return AITP_WallofStone(player_idx, city_idx);      } break;
+    case spl_Wall_Of_Stone:    { return AITP_Wall_Of_Stone(player_idx, city_idx);      } break;
     case spl_Move_Fortress:    { return AITP_MoveFortress(player_idx, city_idx);     } break;
     case spl_Earth_Gate:       { return AITP_EarthGate(player_idx, city_idx);        } break;
     case spl_Flying_Fortress:  { return AITP_FlyingFortress(player_idx, city_idx);   } break;

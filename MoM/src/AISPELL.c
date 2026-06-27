@@ -2316,7 +2316,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
     }
 
     if(players_spell_list[spl_Wall_Of_Stone] == sls_Known) {
-        if(AITP_WallofStone(player_idx, &target_city_idx) == 1) {
+        if(AITP_Wall_Of_Stone(player_idx, &target_city_idx) == 1) {
             AI_OVL_SplPriorities[1] = _turn / 6;
         }
     }
@@ -2686,11 +2686,81 @@ int16_t AI_Select_Spell_Group_Disjunction(int16_t player_idx)
     return spl_NONE;
 }
 
+
 // WZD o156p17
-int16_t AITP_WallofStone(int16_t player_idx, int16_t * city)
+/**
+ * @brief AI target picker for Wall of Stone — selects the highest-value owned city without walls.
+ *
+ * @details
+ * This function identifies the best candidate city for casting the Wall of Stone spell.
+ * The spell grants city walls to a target city, so the AI must find a valid recipient.
+ *
+ * The selection algorithm:
+ * 1. Iterates through all cities on the map
+ * 2. Filters for cities owned by @p player_idx
+ * 3. Further filters for cities with no walls already built
+ *    (i.e., @c _CITIES[].bldg_status[bt_CityWalls] == bs_NotBuilt)
+ * 4. Scores each candidate using the city's value from @c _ai_all_own_city_values[]
+ * 5. Selects the city with the highest value and stores its index in @p city_idx
+ *
+ * Wall of Stone is most beneficial for high-value cities (e.g., production hubs, trade
+ * centers) as the spell grants defensive walls. By targeting the highest-value city,
+ * the AI prioritizes protecting its most important urban centers.
+ *
+ * @param player_idx    Index of the AI player casting Wall of Stone.
+ * @param[out] city_idx Pointer to receive the index of the selected city in @c _CITIES[].
+ *                      Only written when the function returns ST_TRUE.
+ *
+ * @return ST_TRUE if a valid target city (owned by the player, with no walls) was found
+ *         and @p city_idx was populated; ST_FALSE if no valid target exists (e.g., all
+ *         player cities already have walls, or the player has no cities).
+ *
+ * @note The selection is deterministic: given the same game state and city values,
+ *       the same city will always be selected.
+ * @note The city value is sourced from @c _ai_all_own_city_values[], which should be
+ *       pre-computed or updated before calling this function. If this array is stale,
+ *       targeting may be suboptimal.
+ * @note A city with @c bs_NotBuilt status for walls is the only valid target for this
+ *       spell; cities that have walls (or are under construction) are skipped.
+ *
+ * @see AI_Select_Spell_Group_City_Enchantment(), _ai_all_own_city_values[]
+ */
+int16_t AITP_Wall_Of_Stone(int16_t player_idx, int16_t * city_idx)
 {
-    return 0;
+    int16_t highest_value = 0;
+    int16_t best_city_idx = 0;
+    int16_t itr_cities = 0;
+
+    best_city_idx = ST_UNDEFINED;
+    highest_value = 0;
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            if(_CITIES[itr_cities].bldg_status[bt_CityWalls] == bs_NotBuilt)
+            {
+                if(_ai_all_own_city_values[itr_cities] > highest_value)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                }
+            }
+        }
+    }
+
+    if(best_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *city_idx = best_city_idx;
+        return ST_TRUE;
+    }
+
 }
+
 
 // WZD o156p18
 int16_t AITP_Transmute(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp)
@@ -2720,7 +2790,7 @@ int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, 
     int16_t Plane = 0;
     int16_t Y_Modifier = 0;
     int16_t X_Modifier = 0;
-    int16_t Highest_Value = 0;
+    int16_t highest_value = 0;
     int16_t target_city_idx = 0;
     int16_t itr_cities = 0;  // _SI_
 
@@ -2728,7 +2798,7 @@ int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, 
 
     target_city_idx = ST_UNDEFINED;
 
-    Highest_Value = 0;
+    highest_value = 0;
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
@@ -3009,7 +3079,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
         sw1_spell_idx = spell_idx;
         switch(sw1_spell_idx)
         {
-            case spl_Wall_Of_Stone:    { return AITP_WallofStone(player_idx, city_idx);      } break;
+            case spl_Wall_Of_Stone:    { return AITP_Wall_Of_Stone(player_idx, city_idx);      } break;
             case spl_Move_Fortress:    { return AITP_MoveFortress(player_idx, city_idx);     } break;
             case spl_Earth_Gate:       { return AITP_EarthGate(player_idx, city_idx);        } break;
             case spl_Flying_Fortress:  { return AITP_FlyingFortress(player_idx, city_idx);   } break;
