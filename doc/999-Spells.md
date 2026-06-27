@@ -46,8 +46,8 @@ Spell Casting
 Spell Cast Animation
 Spell Researching
 
-Spell Cast Animation - Global Enchantment
-Global Enchantment Animation
+Spell Cast Animation - overland enchantment
+overland enchantment Animation
 
 Spell Cast Animation - Summoning
 Creature Summon Animation
@@ -69,7 +69,7 @@ wizard’s mana reserve.
 Spell Binding:
 Sorcery. Instant. Casting Cost: 1000 mana;
 Upkeep: As For Target Enchantment. Very Rare.
-Steals a global enchantment from another wizard. The stolen
+Steals a overland enchantment from another wizard. The stolen
 overland spell becomes the property of the casting wizard in terms
 of maintenance and control.
 

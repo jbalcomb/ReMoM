@@ -22,17 +22,17 @@ and type of 9: Global_Enchantment
 
 Page 32
 OVERLAND ENCHANTMENTS
-This section of the magic summary screen shows any global enchantments currently in effect.  
+This section of the magic summary screen shows any overland enchantments currently in effect.  
 The enchantments are shown in the banner-color of the casting wizard,  
   except for enchantments cast by your wizard, which are listed in dark print.  
-To remove one of your wizard’s global enchantments (in dark letters),  
+To remove one of your wizard’s overland enchantments (in dark letters),  
   click on the spell in the overland enchantment window.  
 This also ends any maintenance you were paying for that spell.  
-If you wish to dispel global enchantments that were cast by other wizards,  
+If you wish to dispel overland enchantments that were cast by other wizards,  
   you must cast (by clicking on the spells button in the main movement screen and then clicking on the appropriate spell in your spell book; see Spell Casting)  
   disjunction, disjunction true or spell binding.  
-After casting one of these spells, you can choose which global enchantment you wish to eliminate.  
-Right-clicking on a global enchantment calls up its description.  
+After casting one of these spells, you can choose which overland enchantment you wish to eliminate.  
+Right-clicking on a overland enchantment calls up its description.  
 
 
 should all be just like the lists codes?

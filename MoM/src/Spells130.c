@@ -458,7 +458,7 @@ void Cast_Spell_Binding(int16_t player_idx)
     else
     {
 
-        var_A = IDK_AITP_Disjunction__STUB(&target_player_idx, &spell_idx, spl_Spell_Binding, player_idx);
+        var_A = AITP_Disjunction(&target_player_idx, &spell_idx, spl_Spell_Binding, player_idx);
 
         if(var_A == 1)
         {
@@ -472,11 +472,11 @@ void Cast_Spell_Binding(int16_t player_idx)
 
                 ptr_enchantments = &_players[target_player_idx].Globals[0];
 
-                ptr_enchantments[spell_data_table[spell_idx].ge_idx] = 0;
+                ptr_enchantments[spell_data_table[spell_idx].oe_idx] = 0;
 
                 ptr_enchantments = &_players[player_idx].Globals[0];
 
-                ptr_enchantments[spell_data_table[spell_idx].ge_idx] = (player_idx + 1);  // player_num
+                ptr_enchantments[spell_data_table[spell_idx].oe_idx] = (player_idx + 1);  // player_num
 
             }
 

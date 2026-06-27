@@ -71,7 +71,7 @@ Master of Magic is a 4X strategy game. Common subsystems include:
 City management (population, buildings, production queues, enchantments)
 Unit management (stacks of up to 9 units, movement on overland map, experience, abilities)
 Tactical combat (grid-based, units have melee/ranged/magic attacks, terrain effects)
-Spell system (5 magic realms: Life, Death, Chaos, Nature, Sorcery; spell research, casting, combat spells, city enchantments, global enchantments)
+Spell system (5 magic realms: Life, Death, Chaos, Nature, Sorcery; spell research, casting, combat spells, city enchantments, overland enchantments)
 Diplomacy (AI wizard interactions, treaties, demands)
 Map/world generation (two planes: Arcanus and Myrror, terrain types, nodes, lairs)
 Save/load game (binary file I/O)

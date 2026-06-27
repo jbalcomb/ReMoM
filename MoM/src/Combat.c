@@ -16995,7 +16995,7 @@ void BU_Init_Battle_Unit(struct s_BATTLE_UNIT * battle_unit)
     }
 
 
-    // drake178:  BUG: only checks the human player's global enchantments in each iteration of the player loop
+    // drake178:  BUG: only checks the human player's overland enchantments in each iteration of the player loop
     chaos_surge = ST_FALSE;
     for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
     {
@@ -19432,14 +19432,14 @@ Drapes a shroud of darkness over the entire battlefield, inspiring creatures of 
 /**
  * @brief Calculates and applies various battlefield bonuses and enchantment effects.
  *
- * Processes global enchantments (Eternal Night, Heavenly Light) and hero abilities (Prayer Master,
+ * Processes overland enchantments (Eternal Night, Heavenly Light) and hero abilities (Prayer Master,
  * Resistance to All, Leadership, Holy Bonus) to update battlefield bonuses for all players and units.
  * Updates combat enchantment arrays and hero ability bonuses based on battle unit states and city conditions.
  *
  * @param combat_structure Combat structure type (e.g., cs_City for city combat).
  *
  * @note Updates global arrays: _battlefield_holybonus[], _battlefield_resistall[], _battlefield_leadership[].
- * @note Updates global array: combat_enchantments[] for global enchantment effects.
+ * @note Updates global array: combat_enchantments[] for overland enchantment effects.
  * @note Also applies city wall defense bonus to defender units in city combat.
  */
 void Calc_Battlefield_Bonuses(int16_t combat_structure)

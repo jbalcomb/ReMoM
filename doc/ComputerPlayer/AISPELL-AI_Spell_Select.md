@@ -42,7 +42,7 @@ Called once per (AI player, turn) when the AI is idle (`casting_spell_idx == spl
 The decision flow:
 
 1. Recompute the AI's overland-spell inventory (`AI_Compute_Spells_Info`).
-2. Choose a CATEGORY (0-10): summon, unit-buff, city-buff, disenchant, disjunction, summoning circle, overland curse, suppress global, global enchantment, spell-of-mastery, or none.
+2. Choose a CATEGORY (0-10): summon, unit-buff, city-buff, disenchant, disjunction, summoning circle, overland curse, suppress global, overland enchantment, spell-of-mastery, or none.
 3. Within the chosen category, choose a specific `spell_idx`.
 4. Apply a "50-turn affordability" sanity check — if the spell would take more than ~50 turns of perceived mana income, cancel it.
 5. Hand off to `Cast_Spell_Overland_Do` to begin (or instant-complete) the cast.
@@ -155,7 +155,7 @@ All other non-zero categories delegate to a picker. The default branch and categ
 | 6 | (constant) | `spl_Summoning_Circle` |
 | 7 | `AI_Select_Spell_Group_Attack` | Overland curses / direct damage |
 | 8 | `AI_Select_Spell_Group_Suppression` | Realm-suppression globals (Suppress Magic, Tranquility, Life Force, Nature's Awareness) |
-| 9 | `AI_Select_Spell_Group_Global` | Other global enchantments |
+| 9 | `AI_Select_Spell_Group_Global` | Other overland enchantments |
 | 10 | (constant) | `spl_Spell_Of_Mastery` |
 
 ### Phase 4 — Affordability check ([367-374](../../MoM/src/AISPELL.c#L367-L374))

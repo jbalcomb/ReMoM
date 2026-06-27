@@ -24,7 +24,7 @@ Next_Turn_Proc()
 
 ## Purpose
 
-Leaf picker for category 8 (realm suppression) of [`AI_Select_Spell_Group`](AISPELL-AI_OVL_SplCat_Picker.md). The four candidates are the global enchantments that suppress an opposing magic realm: **Nature's Wrath**, **Life Force**, **Tranquility**, **Evil Omens**. Each known one is weighted by `casting_cost / 10`, scaled by any active realm suppression, then `Get_Weighted_Choice` selects a slot and the `switch` maps it to a spell id. This is the smallest weighted picker in the set — only 4 spells, all contiguous slots, no dead entries.
+Leaf picker for category 8 (realm suppression) of [`AI_Select_Spell_Group`](AISPELL-AI_OVL_SplCat_Picker.md). The four candidates are the overland enchantments that suppress an opposing magic realm: **Nature's Wrath**, **Life Force**, **Tranquility**, **Evil Omens**. Each known one is weighted by `casting_cost / 10`, scaled by any active realm suppression, then `Get_Weighted_Choice` selects a slot and the `switch` maps it to a spell id. This is the smallest weighted picker in the set — only 4 spells, all contiguous slots, no dead entries.
 
 ### The priority array
 

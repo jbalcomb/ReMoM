@@ -165,7 +165,7 @@ neutral city becomes yours.
 Disjunction: On rare occasions, a massive flux of energy from an asyet-
 unidentified source tears asunder the fabric of magic itself! Well,
 it need hardly be said that the consequences of this event are
-disastrous, as wizards see all their hard-placed global enchantments
+disastrous, as wizards see all their hard-placed overland enchantments
 destroyed along with the woven threads of magic.
 
 Donation: A generous and wealthy merchant decides to donate a large

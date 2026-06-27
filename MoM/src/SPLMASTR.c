@@ -873,10 +873,10 @@ int16_t Combat_Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_
 
 // WZD o136p08
 /*
-screen for targeting other players' global enchantments
+screen for targeting other players' overland enchantments
 
 "Tries to remove one global enemy enchantment."
-"...the purposes of dispelling the target global enchantment."
+"...the purposes of dispelling the target overland enchantment."
 */
 void Spell_Target_Global_Enchantment_Screen_Load(int16_t spell_idx)
 {
@@ -990,7 +990,7 @@ void Spell_Target_Global_Enchantment_Screen_Load(int16_t spell_idx)
 
 // WZD o136p09
 /*
-screen for targeting other players' global enchantments
+screen for targeting other players' overland enchantments
 */
 void Spell_Target_Global_Enchantment_Screen_Draw(void)
 {
@@ -1175,7 +1175,7 @@ void Spell_Target_Global_Enchantment_Screen_Draw(void)
 
 // WZD o136p10
 /*
-screen for targeting other players' global enchantments
+screen for targeting other players' overland enchantments
 */
 int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player_idx)
 {
@@ -1450,11 +1450,11 @@ void Spell_Target_Global_Enchantment_Bind__WIP(int16_t field_idx, int16_t player
 
         ptr_enchantments = &_players[target_player_idx].Globals[0];
 
-        ptr_enchantments[spell_data_table[spell_idx].ge_idx] = 0;
+        ptr_enchantments[spell_data_table[spell_idx].oe_idx] = 0;
 
         ptr_enchantments = &_players[player_idx].Globals[0];
 
-        ptr_enchantments[spell_data_table[spell_idx].ge_idx] = (player_idx + 1);  // player num
+        ptr_enchantments[spell_data_table[spell_idx].oe_idx] = (player_idx + 1);  // player num
 
     }
 
@@ -1601,7 +1601,7 @@ void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t pl
 
         ptr_enchantments = &_players[target_player_idx].Globals[0];
 
-        ptr_enchantments[spell_data_table[spell_idx].ge_idx] = 0;
+        ptr_enchantments[spell_data_table[spell_idx].oe_idx] = 0;
 
     }
 

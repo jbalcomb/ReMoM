@@ -17,7 +17,7 @@ N/A    7,8,10,12,13,14,16,18,21,22,23
 4      direct damage fixed  (Ovl & Cmb)
 5      special
 6,17   target wizard
-9      global enchantment
+9      overland enchantment
 11      item make
 19  Ovl,Cmb - Disenchant Area, Disenchant True
 20  Ovl     - Disjunction, Disjunction True

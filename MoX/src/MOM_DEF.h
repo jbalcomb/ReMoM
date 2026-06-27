@@ -1371,7 +1371,7 @@ Spell_Of_Return  = 214
 #define CHAOS_SURGE         0x0A
 #define DOOM_MASTERY        0x0B
 #define GREAT_WASTING       0x0C
-#define METEOR_STORM        0x0D
+#define METEOR_STORMS       0x0D
 #define ARMAGEDDON          0x0E
 #define TRANQUILITY         0x0F
 #define LIFE_FORCE          0x10

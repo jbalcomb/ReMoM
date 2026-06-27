@@ -24,7 +24,7 @@ Next_Turn_Proc()
 
 ## Purpose
 
-Leaf picker for category 5 (disjunction — strip enemy global enchantments) of [`AI_Select_Spell_Group`](AISPELL-AI_Select_Spell_Group.md). Like the Disenchant picker, it has **no priority array, no `Get_Weighted_Choice`, and no jump table** — it is a deterministic two-way preference: Disjunction True is strictly better, so it is chosen first when known; otherwise plain Disjunction; otherwise `spl_NONE`.
+Leaf picker for category 5 (disjunction — strip enemy overland enchantments) of [`AI_Select_Spell_Group`](AISPELL-AI_Select_Spell_Group.md). Like the Disenchant picker, it has **no priority array, no `Get_Weighted_Choice`, and no jump table** — it is a deterministic two-way preference: Disjunction True is strictly better, so it is chosen first when known; otherwise plain Disjunction; otherwise `spl_NONE`.
 
 ## How it's reached
 
@@ -62,4 +62,4 @@ None. The function is a straight preference with no dead code, no off-by-ones, a
 - [AISPELL-AI_Select_Spell_Group.md](AISPELL-AI_Select_Spell_Group.md) — the category picker that dispatches here.
 - [AISPELL-AI_Spell_Select.md](AISPELL-AI_Spell_Select.md) — the parent dispatcher.
 - [AISPELL-AI_Select_Spell_Group_Disenchant.md](AISPELL-AI_Select_Spell_Group_Disenchant.md) — sibling leaf picker with the identical two-spell-preference shape.
-- `IDK_AITP_Disjunction__STUB.asm` (in ovr156) is a *separate* target-picker, not called by this function.
+- `AITP_Disjunction.asm` (in ovr156) is a *separate* target-picker, not called by this function.

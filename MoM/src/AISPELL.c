@@ -209,7 +209,7 @@ to lower the odds; store the highest of the results
         }
 
         /* Realm-specific counter-spell prioritization (Consecration, Spell Ward) */
-        if(_players[player_idx].Prim_Realm == 1 || _players[player_idx].Prim_Realm == 2) { /* Death or Chaos */
+        if(_players[player_idx].Prim_Realm == 1 || _players[player_idx].Prim_Realm == sbr_Chaos) { /* Death or Chaos */
             if(spell_idx == spl_Consecration || spell_idx == spl_Spell_Ward) {
                 weights_long[itr] /= 2;
             }
@@ -404,7 +404,7 @@ selects a spell category for the AI to use next:
   6 - summoning circle
   7 - overland curse / damage
   8 - suppression global
-  9 - global enchantment
+  9 - overland enchantment
  10 - spell of mastery
 */
 /**
@@ -418,7 +418,7 @@ selects a spell category for the AI to use next:
  *   2. Unit buffs and movement enhancements (turn-dependent)
  *   3. City buffs and protective spells
  *   4. Disenchant spells (targets specific enchantments)
- *   5. Disjunction spells (counters opponent's global enchantments)
+ *   5. Disjunction spells (counters opponent's overland enchantments)
  *   6. Summoning Circle
  *   7. Curse spells (offense against hostile opponents)
  *   8. Realm supremacy (specific realm-based curses and enhancements)
@@ -430,7 +430,7 @@ selects a spell category for the AI to use next:
  *   - Player traits (conjurer, channeler)
  *   - Fortress vs. summon city alignment
  *   - Friendly vs. hostile army values
- *   - Known spells and active global enchantments
+ *   - Known spells and active overland enchantments
  *   - Opponent diplomatic status and realm composition
  *   - Mana reserves
  *   - Various strategic conditions
@@ -447,7 +447,7 @@ selects a spell category for the AI to use next:
  *       store the selected opponent target index if hostile opponents exist.
  * @note Some modifiers are hard-coded (e.g., offset 0x53 in Historian for Death Wish),
  *       reflecting legacy assembly code patterns.
- * @note `modifiers[9]` (global enchantments) is capped at a maximum value of 300 after
+ * @note `modifiers[9]` (overland enchantments) is capped at a maximum value of 300 after
  *       all individual checks to prevent over-weighting.
  */
 int16_t AI_Select_Spell_Group(int16_t player_idx)
@@ -650,7 +650,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
             }
             if(_players[itr].Globals[DOOM_MASTERY] != 0) modifiers[5] += 200;
             if(_players[itr].Globals[GREAT_WASTING] != 0) modifiers[5] += 50;
-            if(_players[itr].Globals[METEOR_STORM] != 0) modifiers[5] += 100;
+            if(_players[itr].Globals[METEOR_STORMS] != 0) modifiers[5] += 100;
             if(_players[itr].Globals[ARMAGEDDON] != 0) modifiers[5] += 200;
             
             if(_players[itr].Globals[TRANQUILITY] != 0) {
@@ -811,7 +811,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
     if(players_spell_list[spl_Great_Wasting] == sls_Known && _players[player_idx].Globals[GREAT_WASTING] == 0) modifiers[9] += 100;
     if(players_spell_list[spl_Chaos_Surge] == sls_Known && _players[player_idx].Globals[CHAOS_SURGE] == 0) modifiers[9] += 100;
     if(players_spell_list[spl_Doom_Mastery] == sls_Known && _players[player_idx].Globals[DOOM_MASTERY] == 0) modifiers[9] += 100;
-    if(players_spell_list[spl_Meteor_Storms] == sls_Known && _players[player_idx].Globals[METEOR_STORM] == 0) modifiers[9] += 100;
+    if(players_spell_list[spl_Meteor_Storms] == sls_Known && _players[player_idx].Globals[METEOR_STORMS] == 0) modifiers[9] += 100;
     if(players_spell_list[spl_Armageddon] == sls_Known && _players[player_idx].Globals[ARMAGEDDON] == 0) modifiers[9] += 100;
     if(players_spell_list[spl_Just_Cause] == sls_Known && _players[player_idx].Globals[JUST_CAUSE] == 0) modifiers[9] += 100;
     if(players_spell_list[spl_Holy_Arms] == sls_Known && _players[player_idx].Globals[HOLY_ARMS] == 0) modifiers[9] += 100;
@@ -1796,7 +1796,7 @@ int16_t AI_Select_Spell_Group_Global(int16_t player_idx)
         AI_OVL_SplPriorities[9] = spell_data_table[spl_Doom_Mastery].casting_cost / 10;
     }
 
-    if(players_spell_list[spl_Meteor_Storms] == sls_Known && _players[player_idx].Globals[METEOR_STORM] == 0)
+    if(players_spell_list[spl_Meteor_Storms] == sls_Known && _players[player_idx].Globals[METEOR_STORMS] == 0)
     {
         AI_OVL_SplPriorities[10] = spell_data_table[spl_Meteor_Storms].casting_cost / 10;
     }
@@ -2867,8 +2867,8 @@ void Cast_Spell_Target_Error(int16_t spell_idx)
 // WZD o156p38
 // drake178: AI_ReleaseGlobals()
 /*
-releases unwanted global enchantments or, if at zero
-mana, all global enchantments
+releases unwanted overland enchantments or, if at zero
+mana, all overland enchantments
 
 WARNING: this may not be the best thing to do...
 */
@@ -2963,7 +2963,7 @@ void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx)
         _players[player_idx].Globals[CHAOS_SURGE] = 0;
         _players[player_idx].Globals[DOOM_MASTERY] = 0;
         _players[player_idx].Globals[GREAT_WASTING] = 0;
-        _players[player_idx].Globals[METEOR_STORM] = 0;
+        _players[player_idx].Globals[METEOR_STORMS] = 0;
         _players[player_idx].Globals[ARMAGEDDON] = 0;
         _players[player_idx].Globals[TRANQUILITY] = 0;
         _players[player_idx].Globals[LIFE_FORCE] = 0;
@@ -3268,74 +3268,531 @@ int16_t IDK_Pick_Target_For_Unit_Enchantment__STUB(int16_t spell_target_type, in
 // WZD o156p42
 // drake178: sub_E8448()
 
+
 // WZD o156p43
 // drake178: sub_E882B()
 
-// WZD o156p44
-// drake178: sub_E88F3()
-/*
 
-*/
-int16_t IDK_AITP_Disjunction__STUB(int16_t * wx, int16_t * wy, int16_t spell_idx, int16_t player_idx)
+// WZD o156p44
+/**
+ * @brief AI target picker for Disjunction, Disjunction True, and Spell Binding — selects which opponent's
+ *        active overland enchantment to dispel or steal.
+ *
+ * @details
+ * Scores every active overland enchantment held by every opponent wizard and returns the player index and
+ * global-enchantment slot index of the single highest-scoring candidate. Scoring logic differs by spell:
+ *
+ * **spl_Spell_Binding** — scores all opponents' globals with fixed threat weights, with two realm-sensitive
+ * adjustments:
+ *   - ETERNAL_NIGHT: score 30 if the caster is Death realm (i.e., it helps them), else 100.
+ *   - CHAOS_SURGE: score 30 if the caster is Chaos realm, else 100.
+ *
+ * **spl_Disjunction / spl_Disjunction_True** — scores with higher, realm-reactive weights:
+ *   - ETERNAL_NIGHT: 200 if caster is Life realm, else 50.
+ *   - EVIL_OMENS: 200 if caster is Life or Nature realm, else 0 (irrelevant to remove).
+ *   - NATURES_WRATH: 200 if caster is Death or Chaos realm, else 0.
+ *   - HERB_MASTERY: 0 if caster is Death realm, else 50.
+ *   - CHAOS_SURGE: 0 if caster is Chaos realm, else 100.
+ *   - TRANQUILITY: 200 if caster is Chaos realm, else 0.
+ *   - LIFE_FORCE: 200 if caster is Chaos realm, else 0.
+ *   - SUPPRESS_MAGIC: always 250 (highest fixed weight).
+ *
+ * Both branches share a common set of non-realm-sensitive scores (e.g., ZOMBIE_MASTERY = 50,
+ * DOOM_MASTERY = 50, CHARM_OF_LIFE = 60, ARMAGEDDON = 40, METEOR_STORMS = 30).
+ *
+ * After scoring, the function finds the single (opponent, global) pair with the maximum score and writes
+ * the results to the output pointers. If no opponent has any scoreable global active, the outputs are
+ * left untouched and the function returns ST_FALSE.
+ *
+ * For any other value of @p spell_idx the function calls Cast_Spell_Target_Error() and returns ST_FALSE.
+ *
+ * @param[out] targeted_player_idx  Receives the index of the opponent whose overland enchantment was chosen.
+ *                                  Set to ST_UNDEFINED on entry; written only when a valid target is found.
+ * @param[out] targeted_spell_idx   Receives the Globals[] slot index (e.g., SUPPRESS_MAGIC, ETERNAL_NIGHT)
+ *                                  of the chosen enchantment. Set to ST_UNDEFINED on entry.
+ * @param[in]  spell_idx            The spell being resolved: spl_Spell_Binding, spl_Disjunction, or
+ *                                  spl_Disjunction_True. Any other value triggers Cast_Spell_Target_Error().
+ * @param[in]  player_idx           Index of the AI player casting the spell. Used for realm-based score
+ *                                  adjustments and to skip self when iterating opponents.
+ *
+ * @return ST_TRUE if a valid target (player + global slot) was identified and written to the output
+ *         pointers; ST_FALSE if no opponent holds a scoreable overland enchantment, or if @p spell_idx
+ *         is unrecognised.
+ *
+ * @note The internal scoring table `target_spell_scores[6][25]` uses @c int8_t.
+ * @bug (OGBUG) `target_spell_scores` should be @c uint8_t rather than @c int8_t. No score currently
+ *      reaches 128, so overflow does not occur in practice, but the type mismatch is present in the
+ *      original disassembly.
+ * @note The Spell Binding branch iterates up to NUM_PLAYERS (compile-time constant) when scanning for
+ *       the maximum, but only fills scores for _num_players (runtime count); entries beyond the live
+ *       player count remain zero and do not influence the result.
+ * @note The Disjunction/Disjunction True branch correctly limits its scan to _num_players for both
+ *       filling and maximum-finding.
+ */
+int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell_idx, int16_t spell_idx, int16_t player_idx)
 {
-    int8_t var_9E[6][25] = {
+    /* OGBUG  target_spell_scores should be uint8_t, not int8_t */
+    int8_t target_spell_scores[6][25] = {
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-    };
-    int16_t var_8 = 0;
-    int16_t var_6 = 0;
-    int16_t var_4 = 0;
-    int16_t var_2 = 0;
-    int16_t itr = 0;  // _DI_
-    int16_t _SI_player_idx = 0;  // _SI_
+    };  /* 1-byte, signed */
+    int16_t max_score = 0;
+    int16_t target_player_idx = 0;
+    int16_t target_spell_idx = 0;
+    int16_t spell_itr = 0;
+    int16_t itr_players = 0;
+    int16_t itr = 0;
 
     for(itr = 0; itr < NUM_PLAYERS; itr++)
     {
-
-        for(var_2 = 0; var_2 < 25; var_2++)
+        for(spell_itr = 0; spell_itr < 25; spell_itr++)
         {
-
-            var_9E[itr][var_2] = 0;
-
+            target_spell_scores[itr][spell_itr] = 0;
         }
-
     }
-
-    _SI_player_idx = 0;
 
     if(spell_idx == spl_Spell_Binding)
     {
-        
         for(itr = 0; itr < _num_players; itr++)
         {
+            if(itr == player_idx)
+            {
+                continue;
+            }
 
+            itr_players = itr;
+
+            /* ETERNAL_NIGHT */
+            if(_players[itr_players].Globals[ETERNAL_NIGHT] != 0)
+            {
+                if(_players[player_idx].Prim_Realm == sbr_Death || _players[player_idx].Sec_Realm == sbr_Death)
+                {
+                    target_spell_scores[itr_players][ETERNAL_NIGHT] = 30;
+                }
+                else
+                {
+                    target_spell_scores[itr_players][ETERNAL_NIGHT] = 100;
+                }
+            }
+
+            /* EVIL_OMENS */
+            if(_players[itr_players].Globals[EVIL_OMENS] != 0)
+            {
+                target_spell_scores[itr_players][EVIL_OMENS] = 10;
+            }
+
+            /* Zombie Mastery */
+            if(_players[itr_players].Globals[ZOMBIE_MASTERY] != 0)
+            {
+                target_spell_scores[itr_players][ZOMBIE_MASTERY] = 50;
+            }
+
+            /* Aura of Majesty */
+            if(_players[itr_players].Globals[AURA_OF_MAJESTY] != 0)
+            {
+                target_spell_scores[itr_players][AURA_OF_MAJESTY] = 20;
+            }
+
+            /* Wind Mastery */
+            if(_players[itr_players].Globals[WIND_MASTERY] != 0)
+            {
+                target_spell_scores[itr_players][WIND_MASTERY] = 15;
+            }
+
+            /* Suppress Magic */
+            if(_players[itr_players].Globals[SUPPRESS_MAGIC] != 0)
+            {
+                target_spell_scores[itr_players][SUPPRESS_MAGIC] = 100;
+            }
+
+            /* Time Stop */
+            if(_players[itr_players].Globals[TIME_STOP] != 0)
+            {
+                target_spell_scores[itr_players][TIME_STOP] = 10;
+            }
+
+            /* Nature's Awareness */
+            if(_players[itr_players].Globals[NATURES_AWARENESS] != 0)
+            {
+                target_spell_scores[itr_players][NATURES_AWARENESS] = 10;
+            }
+
+            /* Nature's Wrath */
+            if(_players[itr_players].Globals[NATURES_WRATH] != 0)
+            {
+                target_spell_scores[itr_players][NATURES_WRATH] = 20;
+            }
+
+            /* Herb Mastery */
+            if(_players[itr_players].Globals[HERB_MASTERY] != 0)
+            {
+                target_spell_scores[itr_players][HERB_MASTERY] = 20;
+            }
+
+            /* Chaos Surge */
+            if(_players[itr_players].Globals[CHAOS_SURGE] != 0)
+            {
+                if(_players[player_idx].Prim_Realm == sbr_Chaos || _players[player_idx].Sec_Realm == sbr_Chaos)
+                {
+                    target_spell_scores[itr_players][CHAOS_SURGE] = 30;
+                }
+                else
+                {
+                    target_spell_scores[itr_players][CHAOS_SURGE] = 100;
+                }
+            }
+
+            /* Doom Mastery */
+            if(_players[itr_players].Globals[DOOM_MASTERY] != 0)
+            {
+                target_spell_scores[itr_players][DOOM_MASTERY] = 50;
+            }
+
+            /* Great Wasting */
+            if(_players[itr_players].Globals[GREAT_WASTING] != 0)
+            {
+                target_spell_scores[itr_players][GREAT_WASTING] = 20;
+            }
+
+            /* Meteor Storm */
+            if(_players[itr_players].Globals[METEOR_STORMS] != 0)
+            {
+                target_spell_scores[itr_players][METEOR_STORMS] = 30;
+            }
+
+            /* Armageddon */
+            if(_players[itr_players].Globals[ARMAGEDDON] != 0)
+            {
+                target_spell_scores[itr_players][ARMAGEDDON] = 40;
+            }
+
+            /* Tranquility */
+            if(_players[itr_players].Globals[TRANQUILITY] != 0)
+            {
+                target_spell_scores[itr_players][TRANQUILITY] = 30;
+            }
+
+            /* Life Force */
+            if(_players[itr_players].Globals[LIFE_FORCE] != 0)
+            {
+                target_spell_scores[itr_players][LIFE_FORCE] = 30;
+            }
+
+            /* Crusade */
+            if(_players[itr_players].Globals[CRUSADE] != 0)
+            {
+                target_spell_scores[itr_players][CRUSADE] = 20;
+            }
+
+            /* Just Cause */
+            if(_players[itr_players].Globals[JUST_CAUSE] != 0)
+            {
+                target_spell_scores[itr_players][JUST_CAUSE] = 15;
+            }
+
+            /* Holy Arms */
+            if(_players[itr_players].Globals[HOLY_ARMS] != 0)
+            {
+                target_spell_scores[itr_players][HOLY_ARMS] = 30;
+            }
+
+            /* Planar Seal */
+            if(_players[itr_players].Globals[PLANAR_SEAL] != 0)
+            {
+                target_spell_scores[itr_players][PLANAR_SEAL] = 10;
+            }
+
+            /* Charm of Life */
+            if(_players[itr_players].Globals[CHARM_OF_LIFE] != 0)
+            {
+                target_spell_scores[itr_players][CHARM_OF_LIFE] = 60;
+            }
+
+            /* Detect Magic */
+            if(_players[itr_players].Globals[DETECT_MAGIC] != 0)
+            {
+                target_spell_scores[itr_players][DETECT_MAGIC] = 1;
+            }
+
+            /* Awareness */
+            if(_players[itr_players].Globals[AWARENESS] != 0)
+            {
+                target_spell_scores[itr_players][AWARENESS] = 1;
+            }
         }
 
-    }
-    else if(
-        (spell_idx == spl_Disjunction)
-        ||
-        (spell_idx == spl_Disjunction_True)
-    )
-    {
+        max_score = 0;
+        target_spell_idx = ST_UNDEFINED;
+        target_player_idx = ST_UNDEFINED;
 
+        for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
+        {
+            for(itr = 0; itr < 25; itr++)
+            {
+                if(target_spell_scores[itr_players][itr] > max_score)
+                {
+                    target_player_idx = itr_players;
+                    max_score = target_spell_scores[itr_players][itr];
+                    target_spell_idx = itr;
+                }
+            }
+        }
+
+        if(target_spell_idx == ST_UNDEFINED)
+        {
+            return ST_FALSE;
+        }
+        else
+        {
+            *targeted_player_idx = target_player_idx;
+            *targeted_spell_idx = target_spell_idx;
+            return ST_TRUE;
+        }
+    }
+    else if(spell_idx == spl_Disjunction || spell_idx == spl_Disjunction_True)
+    {
+        for(itr = 0; itr < _num_players; itr++)
+        {
+            if(itr == player_idx)
+            {
+                continue;
+            }
+
+            itr_players = itr;
+
+            /* ETERNAL_NIGHT */
+            if(_players[itr_players].Globals[ETERNAL_NIGHT] != 0)
+            {
+                if(_players[player_idx].Prim_Realm == sbr_Life || _players[player_idx].Sec_Realm == sbr_Life)
+                {
+                    target_spell_scores[itr_players][ETERNAL_NIGHT] = 200;
+                }
+                else
+                {
+                    target_spell_scores[itr_players][ETERNAL_NIGHT] = 50;
+                }
+            }
+
+            /* EVIL_OMENS */
+            if(_players[itr_players].Globals[EVIL_OMENS] != 0)
+            {
+                if(_players[player_idx].Prim_Realm == sbr_Life || _players[player_idx].Sec_Realm == sbr_Life ||
+                    _players[player_idx].Prim_Realm == sbr_Nature || _players[player_idx].Sec_Realm == sbr_Nature)
+                {
+                    target_spell_scores[itr_players][EVIL_OMENS] = 200;
+                }
+                else
+                {
+                    target_spell_scores[itr_players][EVIL_OMENS] = 0;
+                }
+            }
+
+            /* Zombie Mastery */
+            if(_players[itr_players].Globals[ZOMBIE_MASTERY] != 0)
+            {
+                target_spell_scores[itr_players][ZOMBIE_MASTERY] = 50;
+            }
+
+            /* Aura of Majesty */
+            if(_players[itr_players].Globals[AURA_OF_MAJESTY] != 0)
+            {
+                target_spell_scores[itr_players][AURA_OF_MAJESTY] = 20;
+            }
+
+            /* Wind Mastery */
+            if(_players[itr_players].Globals[WIND_MASTERY] != 0)
+            {
+                target_spell_scores[itr_players][WIND_MASTERY] = 15;
+            }
+
+            /* Suppress Magic */
+            if(_players[itr_players].Globals[SUPPRESS_MAGIC] != 0)
+            {
+                target_spell_scores[itr_players][SUPPRESS_MAGIC] = 250;
+            }
+
+            /* Time Stop */
+            if(_players[itr_players].Globals[TIME_STOP] != 0)
+            {
+                target_spell_scores[itr_players][TIME_STOP] = 10;
+            }
+
+            /* Nature's Awareness */
+            if(_players[itr_players].Globals[NATURES_AWARENESS] != 0)
+            {
+                target_spell_scores[itr_players][NATURES_AWARENESS] = 10;
+            }
+
+            /* Nature's Wrath */
+            if(_players[itr_players].Globals[NATURES_WRATH] != 0)
+            {
+                if(_players[player_idx].Prim_Realm == sbr_Death || _players[player_idx].Sec_Realm == sbr_Death ||
+                    _players[player_idx].Prim_Realm == sbr_Chaos || _players[player_idx].Sec_Realm == sbr_Chaos)
+                {
+                    target_spell_scores[itr_players][NATURES_WRATH] = 200;
+                }
+                else
+                {
+                    target_spell_scores[itr_players][NATURES_WRATH] = 0;
+                }
+            }
+
+            /* Herb Mastery */
+            if(_players[itr_players].Globals[HERB_MASTERY] != 0)
+            {
+                if(_players[player_idx].Prim_Realm == sbr_Death)
+                {
+                    target_spell_scores[itr_players][HERB_MASTERY] = 0;
+                }
+                else
+                {
+                    target_spell_scores[itr_players][HERB_MASTERY] = 50;
+                }
+            }
+
+            /* Chaos Surge */
+            if(_players[itr_players].Globals[CHAOS_SURGE] != 0)
+            {
+                if(_players[player_idx].Prim_Realm == sbr_Chaos || _players[player_idx].Sec_Realm == sbr_Chaos)
+                {
+                    target_spell_scores[itr_players][CHAOS_SURGE] = 0;
+                }
+                else
+                {
+                    target_spell_scores[itr_players][CHAOS_SURGE] = 100;
+                }
+            }
+
+            /* Doom Mastery */
+            if(_players[itr_players].Globals[DOOM_MASTERY] != 0)
+            {
+                target_spell_scores[itr_players][DOOM_MASTERY] = 50;
+            }
+
+            /* Great Wasting */
+            if(_players[itr_players].Globals[GREAT_WASTING] != 0)
+            {
+                target_spell_scores[itr_players][GREAT_WASTING] = 20;
+            }
+
+            /* Meteor Storm */
+            if(_players[itr_players].Globals[METEOR_STORMS] != 0)
+            {
+                target_spell_scores[itr_players][METEOR_STORMS] = 30;
+            }
+
+            /* Armageddon */
+            if(_players[itr_players].Globals[ARMAGEDDON] != 0)
+            {
+                target_spell_scores[itr_players][ARMAGEDDON] = 40;
+            }
+
+            /* Tranquility */
+            if(_players[itr_players].Globals[TRANQUILITY] != 0)
+            {
+                if(_players[player_idx].Prim_Realm == sbr_Chaos || _players[player_idx].Sec_Realm == sbr_Chaos)
+                {
+                    target_spell_scores[itr_players][TRANQUILITY] = 200;
+                }
+                else
+                {
+                    target_spell_scores[itr_players][TRANQUILITY] = 0;
+                }
+            }
+
+            /* Life Force */
+            if(_players[itr_players].Globals[LIFE_FORCE] != 0)
+            {
+                if(_players[player_idx].Prim_Realm == sbr_Chaos || _players[player_idx].Sec_Realm == sbr_Chaos)
+                {
+                    target_spell_scores[itr_players][LIFE_FORCE] = 200;
+                }
+                else
+                {
+                    target_spell_scores[itr_players][LIFE_FORCE] = 0;
+                }
+            }
+
+            /* Crusade */
+            if(_players[itr_players].Globals[CRUSADE] != 0)
+            {
+                target_spell_scores[itr_players][CRUSADE] = 20;
+            }
+
+            /* Just Cause */
+            if(_players[itr_players].Globals[JUST_CAUSE] != 0)
+            {
+                target_spell_scores[itr_players][JUST_CAUSE] = 15;
+            }
+
+            /* Holy Arms */
+            if(_players[itr_players].Globals[HOLY_ARMS] != 0)
+            {
+                target_spell_scores[itr_players][HOLY_ARMS] = 30;
+            }
+
+            /* Planar Seal */
+            if(_players[itr_players].Globals[PLANAR_SEAL] != 0)
+            {
+                target_spell_scores[itr_players][PLANAR_SEAL] = 10;
+            }
+
+            /* Charm of Life */
+            if(_players[itr_players].Globals[CHARM_OF_LIFE] != 0)
+            {
+                target_spell_scores[itr_players][CHARM_OF_LIFE] = 60;
+            }
+
+            /* Detect Magic */
+            if(_players[itr_players].Globals[DETECT_MAGIC] != 0)
+            {
+                target_spell_scores[itr_players][DETECT_MAGIC] = 1;
+            }
+
+            /* Awareness */
+            if(_players[itr_players].Globals[AWARENESS] != 0)
+            {
+                target_spell_scores[itr_players][AWARENESS] = 1;
+            }
+        }
+
+        max_score = 0;
+        target_spell_idx = ST_UNDEFINED;
+        target_player_idx = ST_UNDEFINED;
+
+        for(itr_players = 0; itr_players < _num_players; itr_players++)
+        {
+            for(itr = 0; itr < 25; itr++)
+            {
+                if(target_spell_scores[itr_players][itr] > max_score)
+                {
+                    target_player_idx = itr_players;
+                    max_score = target_spell_scores[itr_players][itr];
+                    target_spell_idx = itr;
+                }
+            }
+        }
+
+        if(target_spell_idx == ST_UNDEFINED)
+        {
+            return ST_FALSE;
+        }
+        else
+        {
+            *targeted_player_idx = target_player_idx;
+            *targeted_spell_idx = target_spell_idx;
+            return ST_TRUE;
+        }
     }
     else
     {
-    
+        Cast_Spell_Target_Error(spell_idx);
+        return ST_FALSE;
     }
-
-
-
-
-
-
-
-    return ST_FALSE;
 
 }
 

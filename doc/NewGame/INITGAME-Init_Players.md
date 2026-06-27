@@ -12,7 +12,7 @@ Init_Runtime()
 
 | Function | Location | Role |
 |---|---|---|
-| `Init_Players` | [INITGAME.c:1200-1277](../../MoM/src/INITGAME.c#L1200-L1277) | Per-player new-game reset of each wizard's derived stats: fame, starting spell-casting skill (from spell ranks), magic ratios, all global enchantments, vault items, and hero slots. |
+| `Init_Players` | [INITGAME.c:1200-1277](../../MoM/src/INITGAME.c#L1200-L1277) | Per-player new-game reset of each wizard's derived stats: fame, starting spell-casting skill (from spell ranks), magic ratios, all overland enchantments, vault items, and hero slots. |
 
 `MGC` overlay 56 (asm `proc Init_Players far`).
 
@@ -38,7 +38,7 @@ Single loop over `itr_players < _num_players` ([1208](../../MoM/src/INITGAME.c#L
 
 1. **Fame** ([1210-1217](../../MoM/src/INITGAME.c#L1210-L1217)) — `famous == ST_TRUE` → `fame = 10`, else `0`.
 2. **Casting skill** ([1218-1233](../../MoM/src/INITGAME.c#L1218-L1233)) — `spell_skill = Σ spellranks[0..4]`; `+5` if Archmage; then doubled. `Nominal_Skill` and `spell_casting_skill` are zeroed, then a grow loop increments `spell_casting_skill` and recomputes `Nominal_Skill = Player_Base_Casting_Skill__MGC(...)` until `Nominal_Skill >= spell_skill` (lands on the smallest skill whose nominal value reaches the target).
-3. **Resets** ([1234-1269](../../MoM/src/INITGAME.c#L1234-L1269)) — `researching_spell_idx = spl_NONE`, `mana_reserve = 0`, `research_cost_remaining = 0`, ratios `33/33/34`, the Summon Champion spells-list slot set `sls_Researchable` (OGBUG — see below), `casting_spell_idx = spl_NONE`, `casting_cost_remaining = 0`, every global enchantment `= 0` (in the asm's field order), `volcanoes = 0`, `tax_rate = 2`, `Vault_Items[0..3] = ST_UNDEFINED`.
+3. **Resets** ([1234-1269](../../MoM/src/INITGAME.c#L1234-L1269)) — `researching_spell_idx = spl_NONE`, `mana_reserve = 0`, `research_cost_remaining = 0`, ratios `33/33/34`, the Summon Champion spells-list slot set `sls_Researchable` (OGBUG — see below), `casting_spell_idx = spl_NONE`, `casting_cost_remaining = 0`, every overland enchantment `= 0` (in the asm's field order), `volcanoes = 0`, `tax_rate = 2`, `Vault_Items[0..3] = ST_UNDEFINED`.
 4. **Hero slots** ([1270-1273](../../MoM/src/INITGAME.c#L1270-L1273)) — `for itr_heroes < NUM_HERO_SLOTS`: `Heroes[itr_heroes].unit_idx = ST_UNDEFINED`.
 
 ## Verification against the asm

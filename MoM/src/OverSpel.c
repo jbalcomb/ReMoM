@@ -813,6 +813,7 @@ void Cast_Spell_Overland(int16_t player_idx)
         }
         else
         {
+
             switch(spell_data_table[spell_idx].type)
             {
                 // Air Elemental, Angel, Arch Angel, Basilisk, Behemoth, Chaos Spawn, Chimeras, Cockatrices, Colossus, Death Knights, Demon Lord, Djinn, Doom Bat, Earth Elemental, Efreet, Fire Elemental, Fire Giant, Floating Island, Gargoyles, Ghouls, Giant Spiders, Gorgons, Great Drake, Great Wyrm, Guardian Spirit, Hell Hounds, Hydra, Magic Spirit, Nagas, Night Stalker, Phantom Beast, Phantom Warriors, Shadow Demons, Skeletons, Sky Drake, Sprites, Stone Giant, Storm Giant, Unicorns, War Bears, Wraiths
@@ -1562,7 +1563,7 @@ void Cast_Spell_Overland(int16_t player_idx)
 
                     ptr_enchantments = &_players[player_idx].Globals[0];
 
-                    enchantments_idx = spell_data_table[spell_idx].ge_idx;
+                    enchantments_idx = spell_data_table[spell_idx].oe_idx;
 
                     ptr_enchantments[enchantments_idx] = (player_idx + 1);
 
@@ -1838,7 +1839,8 @@ void Cast_Spell_Overland(int16_t player_idx)
                     else
                     {
 
-                        /* SPELLY */  cast_can_continue = IDK_AITP_Disjunction__STUB(&spell_target_idx, &wy, spell_idx, player_idx);
+                        /* HERE: spell_target_idx === targeted_player_idx; wy === targeted_spell_idx */
+                        cast_can_continue = AITP_Disjunction(&spell_target_idx, &wy, spell_idx, player_idx);
 
                         if(cast_can_continue == ST_TRUE)
                         {
@@ -1857,7 +1859,7 @@ void Cast_Spell_Overland(int16_t player_idx)
 
                             }
 
-                            /* SPELLY */  enchantments_idx = IDK_Get_Global_Enchant_Index__STUB(wy);
+                            enchantments_idx = Overland_Enchantment_Spell_Index(wy);
 
                             item_list[0] = (_players[player_idx].casting_cost_original + Calculate_Dispel_Difficulty(spell_data_table[enchantments_idx].casting_cost, spell_target_idx, spell_data_table[enchantments_idx].magic_realm));
 
@@ -1957,10 +1959,64 @@ void Cast_Spell_Overland(int16_t player_idx)
 
 
 // WZD o135p06
-// sub_BCB9E()
-int16_t IDK_Get_Global_Enchant_Index__STUB(int16_t value)
+/**
+ * @brief Converts a global-enchantment slot index (a @c Globals[] array offset) into the
+ *        corresponding spell index from @c spell_data_table[].
+ *
+ * @details
+ * The game stores each wizard's active overland enchantments in @c _players[].Globals[], a
+ * fixed-size array whose slots are identified by named constants (e.g., @c ETERNAL_NIGHT,
+ * @c SUPPRESS_MAGIC). This function is the reverse lookup: given one of those slot indices it
+ * returns the @c spl_* spell index that represents the same enchantment in @c spell_data_table[].
+ *
+ * The primary caller is the AI disjunction path in @c Cast_Spell_Overland() (case
+ * @c scc_Disjunctions), which uses the slot index returned by @c AITP_Disjunction() to look up
+ * the full spell record so it can compute dispel difficulty and perform the Fizzle notification.
+ *
+ * @param oe_idx  A @c Globals[] slot index (0–23) identifying the target overland enchantment.
+ *                Valid values are the named constants ETERNAL_NIGHT through AWARENESS.
+ *
+ * @return The @c spl_* spell index corresponding to @p oe_idx, or 0 if @p oe_idx does
+ *         not match any recognised slot.
+ *
+ * @bug (OGBUG) In the original assembly, any @p oe_idx value greater than 23 causes the
+ *      jump table to fall through to @c @@Done, returning the value of the DX register at the
+ *      point of the call — effectively an uninitialized/undefined value. The C port returns 0
+ *      from the @c default branch instead, which is a safe approximation but differs from
+ *      original behaviour.
+ */
+int16_t Overland_Enchantment_Spell_Index(int16_t oe_idx)
 {
 
-    return 0;
+    switch (oe_idx)
+    {
+        case ETERNAL_NIGHT:     return spl_Eternal_Night;
+        case EVIL_OMENS:        return spl_Evil_Omens;
+        case ZOMBIE_MASTERY:    return spl_Zombie_Mastery;
+        case AURA_OF_MAJESTY:   return spl_Aura_Of_Majesty;
+        case WIND_MASTERY:      return spl_Wind_Mastery;
+        case SUPPRESS_MAGIC:    return spl_Suppress_Magic;
+        case TIME_STOP:         return spl_Time_Stop;
+        case NATURES_AWARENESS: return spl_Natures_Awareness;
+        case NATURES_WRATH:     return spl_Natures_Wrath;
+        case HERB_MASTERY:      return spl_Herb_Mastery;
+        case CHAOS_SURGE:       return spl_Chaos_Surge;
+        case DOOM_MASTERY:      return spl_Doom_Mastery;
+        case GREAT_WASTING:     return spl_Great_Wasting;
+        case METEOR_STORMS:     return spl_Meteor_Storms;
+        case ARMAGEDDON:        return spl_Armageddon;
+        case TRANQUILITY:       return spl_Tranquility;
+        case LIFE_FORCE:        return spl_Life_Force;
+        case CRUSADE:           return spl_Crusade;
+        case JUST_CAUSE:        return spl_Just_Cause;
+        case HOLY_ARMS:         return spl_Holy_Arms;
+        case PLANAR_SEAL:       return spl_Planar_Seal;
+        case CHARM_OF_LIFE:     return spl_Charm_Of_Life;
+        case DETECT_MAGIC:      return spl_Detect_Magic;
+        case AWARENESS:         return spl_Awareness;
+        default:
+            /* ¿ OGBUG  If oe_idx > 23, the assembly jumps directly to @@Done, returning the value of DX on entry (uninitialized/undefined). ? */
+            return 0;
+    }
 
 }

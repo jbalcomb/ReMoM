@@ -55,14 +55,14 @@ for(itr2 = 1; itr2 < _num_players; itr2++)
 sets ovl_ench_list_spells[144] = -1
 uses Build_Overland_Enchantment_List()
 ovl_ench_cnt
-    count of global enchantments
+    count of overland enchantments
 ovl_ench_list_spells[]
     array of spell_idx
 ovl_ench_list_players[]
     array of player_idx
 
 Cast_Spell_Disjuncts_Load__WIP()
-builds an array of global enchantment count per player, using ovl_ench_list_players[]
+builds an array of overland enchantment count per player, using ovl_ench_list_players[]
 builds an array of the first index per player
 builds an array of the first list index per player
 

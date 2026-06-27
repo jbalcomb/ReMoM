@@ -35,12 +35,12 @@ CMB_FillInfoArrays__WIP()
 Why two parts?
     Cloud of Shadow     City Enchantment
     Heavenly Light      City Enchantment
-    Chaos Surge         Global Enchantment
-    Eternal Night       Global Enchantment
+    Chaos Surge         overland enchantment
+    Eternal Night       overland enchantment
 
 ...node effects...
-...city enchantments and global enchantments that only apply to combat in cities...
-...global enchantments that apply regardless of who has cast them...
+...city enchantments and overland enchantments that only apply to combat in cities...
+...overland enchantments that apply regardless of who has cast them...
 
 
 

@@ -383,7 +383,7 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
 
     }
 
-    // ; remove all of the target's global enchantments
+    // ; remove all of the target's overland enchantments
     // TODO  Warning	C4047	'=': 'uint32_t *' differs in levels of indirection from 'uint8_t (*)[24]'	003_MoM	C:\STU\devel\ReMoM\MoM\src\CONQUEST.c	380		
     overland_enchantments = &_players[city_owner_idx].Globals[0];
 

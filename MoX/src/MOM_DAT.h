@@ -1061,7 +1061,7 @@ struct s_SPELL_DATA
             int16_t ce_idx;                     // 9: scc_City_Enchantment_Positive      index into _CITIES[].enchantments
         };
         struct {
-            int16_t ge_idx;                     // 9: scc_Global_Enchantment    indexes into _players[].Globals[], which holds player_num (i.e., player_idx + 1)
+            int16_t oe_idx;                     // 9: scc_Global_Enchantment    indexes into _players[].Globals[], which holds player_num (i.e., player_idx + 1)
         };
         struct {
             uint8_t strength;                   // AKA base damage  Attack_Strength  Apply_Battle_Unit_Damage_From_Spell()

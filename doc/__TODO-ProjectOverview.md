@@ -113,15 +113,6 @@ Back Around To The Beginning
 ## AI Spell
 8 functions for group selections
 
-Why AITP_Transmute under AI_Select_Spell_Group_City_Enchantment()?
-Why AITP_Transmute under AI_Select_Spell_Group_City_Enchantment() and Get_Map_Square_Target_For_Spell()?
-...
-enum e_OVERLAND_SPELL_TARGET_TYPE
-enum e_COMBAT_SPELL_TARGET_TYPE
-Get_Map_Square_Target_For_Spell()
-Pick_Target_For_City_Enchantment__WIP()
-...
-
 Next_Turn_Proc()
     |-> Next_Turn_Calc()
         |-> AI_Next_Turn()
@@ -168,7 +159,7 @@ Next_Turn_Proc()
 [ ]                 |-> AITP_WallofDarkness()
 [ ]                 |-> AITP_AltarofBattle()
 
-IDK_AITP_Disjunction__STUB
+AITP_Disjunction
 
 
 

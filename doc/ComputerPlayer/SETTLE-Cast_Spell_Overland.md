@@ -14,7 +14,7 @@ Next_Turn_Proc()
 
 | Function | Location | Role |
 |---|---|---|
-| `Cast_Spell_Overland` | [OverSpel.c:627-1956](../../MoM/src/OverSpel.c#L627-L1956) (1330 lines) | Completes an in-progress overland spell cast: applies counter-spell checks (Suppress Magic / Tranquility / Life Force), then dispatches by spell-class to apply the spell's effect (summon a unit, enchant a city/unit, fire damage, raise/drop a global enchantment, etc.). |
+| `Cast_Spell_Overland` | [OverSpel.c:627-1956](../../MoM/src/OverSpel.c#L627-L1956) (1330 lines) | Completes an in-progress overland spell cast: applies counter-spell checks (Suppress Magic / Tranquility / Life Force), then dispatches by spell-class to apply the spell's effect (summon a unit, enchant a city/unit, fire damage, raise/drop a overland enchantment, etc.). |
 
 ## Purpose
 
@@ -139,7 +139,7 @@ stu_strcpy(spell_name, spell_data_table[spell_idx].name);
 
 ### Phase 2 — Counter-spell triad
 
-Three counter-spells run in sequence. Each iterates every OTHER player; if that player has the counter-spell global enchantment active, roll a dispel attempt; if it succeeds, set `cast_can_continue = ST_FALSE` and short-circuit subsequent counter-spell checks (loops gate on `cast_can_continue == ST_TRUE`).
+Three counter-spells run in sequence. Each iterates every OTHER player; if that player has the counter-spell overland enchantment active, roll a dispel attempt; if it succeeds, set `cast_can_continue = ST_FALSE` and short-circuit subsequent counter-spell checks (loops gate on `cast_can_continue == ST_TRUE`).
 
 The dispel formula is `Random(250) <= (125000 / (500 + Calculate_Dispel_Difficulty(...)))` — equivalent to `Random(250) <= 250 * 500 / (500 + TSCC)` where TSCC is the target spell's casting cost + realm-adjusted difficulty.
 
@@ -194,7 +194,7 @@ Dispatches by `spell_data_table[spell_idx].type` (an `scc_*` enum). Each case ap
 | `scc_Direct_Damage_Fixed` (4) | [1364-1415](../../MoM/src/OverSpel.c#L1364-L1415) | Fire a fixed-strength damage spell. Human-only entry for some (per Spells129.c:169 cross-ref). |
 | `scc_Special_Spell` (5) | [1417-1452](../../MoM/src/OverSpel.c#L1417-L1452) | Catch-all for special spells (Spell_Binding, Resurrection, Incarnation, Summon_Hero, etc.). 5× `OGBUG no return value` annotations — see B5-B9. Inner default at [1449](../../MoM/src/OverSpel.c#L1449) triggers `STU_DEBUG_BREAK()` — defensive. |
 | `scc_Target_Wizard` (6) | [1454-1552](../../MoM/src/OverSpel.c#L1454-L1552) | Spells that target another wizard directly (Spell of Return, Banish, etc.). Inner default at [1511](../../MoM/src/OverSpel.c#L1511). |
-| `scc_Global_Enchantment` (9) | [1554-1616](../../MoM/src/OverSpel.c#L1554-L1616) | Raise a global enchantment (Suppress Magic, Tranquility, Life Force, Just Cause, etc.). |
+| `scc_Global_Enchantment` (9) | [1554-1616](../../MoM/src/OverSpel.c#L1554-L1616) | Raise a overland enchantment (Suppress Magic, Tranquility, Life Force, Just Cause, etc.). |
 | `scc_Crafting_Spell` (11) | [1618-1645](../../MoM/src/OverSpel.c#L1618-L1645) | Item-crafting initiation (Create Artifact, Enchant Item). |
 | `scc_Mundane_Curse` (16) | [1647-1651](../../MoM/src/OverSpel.c#L1647-L1651) | Curse spells against mundane targets. |
 | `scc_Disenchants` (19) | [1653-1827](../../MoM/src/OverSpel.c#L1653-L1827) | Disenchant Area / True Sight / etc. |

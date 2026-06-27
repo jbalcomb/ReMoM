@@ -4050,7 +4050,7 @@ void Heal_All_Units(void)
 // MoO2  Module: DIPLOMAC  Diplomacy_Growth_()
 /*
 ; processes the diplomatic reactions and persistent
-; effects of global enchantments and the Spell of Mastery
+; effects of overland enchantments and the Spell of Mastery
 ; WARNING: Herb Mastery is not included here despite
 ; having a persistent effect
 ; also contains multiple inherited BUGs

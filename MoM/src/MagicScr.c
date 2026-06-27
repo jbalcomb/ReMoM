@@ -1481,7 +1481,7 @@ void Build_Overland_Enchantment_List(void)
                 {
 
                     if(
-                        (spell_data_table[itr2].ge_idx == itr)
+                        (spell_data_table[itr2].oe_idx == itr)
                         &&
                         (spell_data_table[itr2].type == scc_Global_Enchantment)
                     )

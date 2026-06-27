@@ -1314,7 +1314,7 @@ void Init_CP_Strategy(void)
  * wizard's opening fame, nominal casting skill, and invested casting skill
  * from stored spellbook counts and retorts. It then clears or seeds the core
  * strategic resource fields used at game start, including mana, research,
- * casting progress, power-distribution ratios, tax rate, global enchantment
+ * casting progress, power-distribution ratios, tax rate, overland enchantment
  * flags, vault contents, and hero slot assignments.
  *
  * The routine computes a target `spell_skill` from the player's five realm
@@ -1386,7 +1386,7 @@ void Init_Players(void)
         _players[itr_players].Globals[CHAOS_SURGE] = 0;
         _players[itr_players].Globals[DOOM_MASTERY] = 0;
         _players[itr_players].Globals[GREAT_WASTING] = 0;
-        _players[itr_players].Globals[METEOR_STORM] = 0;
+        _players[itr_players].Globals[METEOR_STORMS] = 0;
         _players[itr_players].Globals[ARMAGEDDON] = 0;
         _players[itr_players].Globals[TRANQUILITY] = 0;
         _players[itr_players].Globals[LIFE_FORCE] = 0;

@@ -373,7 +373,7 @@ for(itr_players = 0; itr_players < _num_players; itr_players++)
 }
 ```
 
-If ANY player has the Planar Seal global enchantment up, no between-plane travel is possible — bail.
+If ANY player has the Planar Seal overland enchantment up, no between-plane travel is possible — bail.
 
 ### Gate 2 — Home-plane check ([5127-5132](../../MoM/src/AIMOVE.c#L5127-L5132))
 

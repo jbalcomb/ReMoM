@@ -18,13 +18,13 @@ Next_Turn_Proc()
 
 | Function | Location | Role |
 |---|---|---|
-| `AI_Select_Spell_Group_Global` | [AISPELL.c:1740-1958](../../MoM/src/AISPELL.c#L1740-L1958) | When the category picker chose "global enchantment" (category 9), decide *which* global enchantment the AI casts: weight each of the 20 (mostly only if its global is not already active) by `casting_cost`, scale by realm suppression, then weighted-random pick and return its `spl_*` id (0 = none). |
+| `AI_Select_Spell_Group_Global` | [AISPELL.c:1740-1958](../../MoM/src/AISPELL.c#L1740-L1958) | When the category picker chose "overland enchantment" (category 9), decide *which* overland enchantment the AI casts: weight each of the 20 (mostly only if its global is not already active) by `casting_cost`, scale by realm suppression, then weighted-random pick and return its `spl_*` id (0 = none). |
 
 > **Status: BUILDS CLEAN — faithful to the asm (1:1).** The body ([AISPELL.c:1740](../../MoM/src/AISPELL.c#L1740)) is a Piethawn IDA-C paste, adapted to production. The 20 weights, the per-spell "already-active" gates, the Planar Seal special case, the four suppression blocks, and the dispatch `switch` all match `AI_Select_Spell_Group_Global.asm` — the 20-entry jump table is contiguous (no gaps) and `switch(choice)` mirrors it 1:1. `players_spell_list` keeps the `- 1`; the asm's `AI_MyrrorAdvantage` is `AI_Has_More_Myrror_Cities` in production. `cmake --build --preset MSVC-debug` compiles and links with no errors or warnings. The asm + the `_misc.asm` jump-table bytes are the authority.
 
 ## Purpose
 
-Leaf picker for category 9 (global enchantment) of [`AI_Select_Spell_Group`](AISPELL-AI_OVL_SplCat_Picker.md) — the largest category. It scores each known global-enchantment spell by `casting_cost / 10` (Planar Seal `/20`), but **only if that global is not already active** for the wizard (no point re-casting one that's up), applies realm-suppression scaling, then `Get_Weighted_Choice` selects a slot and the `switch` maps it to a spell id.
+Leaf picker for category 9 (overland enchantment) of [`AI_Select_Spell_Group`](AISPELL-AI_OVL_SplCat_Picker.md) — the largest category. It scores each known global-enchantment spell by `casting_cost / 10` (Planar Seal `/20`), but **only if that global is not already active** for the wizard (no point re-casting one that's up), applies realm-suppression scaling, then `Get_Weighted_Choice` selects a slot and the `switch` maps it to a spell id.
 
 ### The priority array
 

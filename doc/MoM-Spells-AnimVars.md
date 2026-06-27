@@ -65,7 +65,7 @@ Disjunction True:
 Spell Binding:
     Sorcery. Instant. Casting Cost: 1000 mana;
     Upkeep: As For Target Enchantment. Very Rare.
-    Steals a global enchantment from another wizard. The stolen
+    Steals a overland enchantment from another wizard. The stolen
     overland spell becomes the property of the casting wizard in terms
     of maintenance and control.
 
@@ -162,7 +162,7 @@ AKA GUI_Interaction_Done
 Areas of Usage:
     Spell_Target_Wizard_Screen
     Sml/Cmb Spell Power Slider
-    Cast Spell Overland/Global Enchantment Animation
+    Cast Spell Overland/overland enchantment Animation
     Cast Spell City Enchantment Animation
     IDK_Spell_Cityscape_Draw
     ¿ IDK_Spell_DisjunctOrBind ?
@@ -249,7 +249,7 @@ SBK_SpellSlider() sets GAME_MP_SpellVar_3 to spellbook_page_spell_index
 Areas of Usage:
     Spell_Target_Wizard_Screen
     Sml/Cmb Spell Power Slider
-    Cast Spell Overland/Global Enchantment Animation
+    Cast Spell Overland/overland enchantment Animation
     Cast Spell City Enchantment Animation
     IDK_Spell_Cityscape_Draw
     ¿ IDK_Spell_DisjunctOrBind ?
@@ -295,7 +295,7 @@ XERF:
 Areas of Usage:
     Spell_Target_Wizard_Screen
     Sml/Cmb Spell Power Slider
-    Cast Spell Overland/Global Enchantment Animation
+    Cast Spell Overland/overland enchantment Animation
 
 XREF:
     SBK_SliderRedraw+9F                 mov     [GAME_MP_SpellVar_1], ax        ; holds the spell strength during sliders

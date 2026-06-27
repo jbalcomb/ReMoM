@@ -68,7 +68,7 @@ Weird Ones?
 
 
 all overland summons are done
-all overland/global enchantments are done
+all overland/overland enchantments are done
 all city enchantments are done
 all combat spell casting categories are done
 all combat summons are done
@@ -118,7 +118,7 @@ Spreadsheet - OSG Spells by Category
 [x] Creature Summoning Spells
 [x] City Enchantments
 [x] Creature Enchantments
-[x] Global Enchantments
+[x] overland enchantments
 [x] Combat Spells
 [ ] Special Spells
 

@@ -44,11 +44,11 @@ These 11 `int16_t` values are a **contiguous stack array** (frame `-3Ah .. -26h`
 | 2 | `-36h` | `UnitEnhance_Modifier` | unit buff |
 | 3 | `-34h` | `CityEnhance_Modifier` | city buff |
 | 4 | `-32h` | `Disenchant_Modifier` | disenchant own cities/nodes/units |
-| 5 | `-30h` | `Disjunction_Modifier` | disjoin enemy global enchantments |
+| 5 | `-30h` | `Disjunction_Modifier` | disjoin enemy overland enchantments |
 | 6 | `-2Eh` | `Summoning_Circle_Modifier` | move the summoning circle |
 | 7 | `-2Ch` | `Curse_Modifier` | offensive spell at the chosen target wizard |
 | 8 | `-2Ah` | `Suppression_Modifier` | suppression globals (Suppress Magic, etc.) |
-| 9 | `-28h` | `GlobalE_Modifier` | global enchantments |
+| 9 | `-28h` | `GlobalE_Modifier` | overland enchantments |
 | 10 | `-26h` | `Spell_of_Mastery_Modifier` | cast Spell of Mastery |
 
 `Get_Weighted_Choice` ([random.h:31](../../MoX/src/random.h#L31)) returns `0..10`; that index is the picked category.
@@ -98,7 +98,7 @@ Gate: only if the wizard knows `spl_Disenchant_Area` **or** `spl_Disenchant_True
 
 ### Disjunction weight (asm 527-861)
 
-Gate: only if the wizard knows `spl_Disjunction` **or** `spl_Disjunction_True`. Loop over every player `i != player_idx`, scoring `i`'s active global enchantments. Here `_players[i]` **is** properly indexed (unlike the suppression block below). Notable rules:
+Gate: only if the wizard knows `spl_Disjunction` **or** `spl_Disjunction_True`. Loop over every player `i != player_idx`, scoring `i`'s active overland enchantments. Here `_players[i]` **is** properly indexed (unlike the suppression block below). Notable rules:
 
 | Enemy global on player `i` | Weight added | Condition |
 |---|---|---|

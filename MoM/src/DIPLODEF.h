@@ -106,7 +106,7 @@ enum e_DIPLOMATIC_ORDERS
 ; 09 - city attacked
 ; 0A - spell of mastery
 0B ?
-; 0C - global enchantment
+; 0C - overland enchantment
 0D ?
 ; 0E - overextension
 NOTE: some code checks for `<= 14` ¿ meaningful, how ?
@@ -140,7 +140,7 @@ enum e_DIPLOMATIC_ACTION
     /* city attacked                               */
     /* spell of mastery                            */
 
-    /* global enchantment                          */
+    /* overland enchantment                          */
 
     dipact_Overextension      = 14,  /* overextension                               */
 

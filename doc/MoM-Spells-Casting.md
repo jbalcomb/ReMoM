@@ -142,9 +142,9 @@ spl_Awareness           calls out
 
 
 
-## Global Enchantment (9)
+## overland enchantment (9)
 
-~ Special Global Enchantments
+~ Special overland enchantments
 spl_Time_Stop
 spl_Natures_Awareness
 spl_Holy_Arms
