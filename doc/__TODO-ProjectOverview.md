@@ -141,7 +141,7 @@ Next_Turn_Proc()
                 |-> AI_Select_Spell_Group_City_Enchantment
 [x]                 |-> AITP_Wall_Of_Stone()
 [x]                 |-> AITP_Transmute()
-[ ]                 |-> AITP_ChangeTerrain__WIP()
+[x]                 |-> AITP_Change_Terrain()
 [ ]                 |-> AITP_MoveFortress()
 [ ]                 |-> AITP_EarthGate()
 [ ]                 |-> AITP_GaiasBlessing()

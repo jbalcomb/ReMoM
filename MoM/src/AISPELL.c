@@ -2329,7 +2329,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
     }
 
     if(players_spell_list[spl_Change_Terrain] == sls_Known) {
-        if(AITP_ChangeTerrain__WIP(player_idx, &target_wx, &target_wy, &target_wp) == 1) {
+        if(AITP_Change_Terrain(player_idx, &target_wx, &target_wy, &target_wp) == 1) {
             AI_OVL_SplPriorities[3] = 50;
         }
     }
@@ -2894,43 +2894,126 @@ int16_t AITP_Transmute(int16_t player_idx, int16_t * targeted_wx, int16_t * targ
 }
 
 // WZD o156p19
-// drake178: AITP_ChangeTerrain()
+/**
+ * @brief AI target picker for Change Terrain — selects the highest-value city with
+ *        a desert or swamp square in its catchment.
+ *
+ * @details
+ * This function identifies the best candidate square for casting the Change Terrain spell.
+ * The spell converts terrain types (e.g., desert to grassland, swamp to grassland),
+ * so the AI must find a valid, high-value city that can benefit from terrain conversion.
+ *
+ * The selection algorithm:
+ * 1. Iterates through all cities on the map
+ * 2. Filters for cities owned by @p player_idx
+ * 3. For each player city, scans a 5×5 catchment area (wy_offset ∈ [-2, +2],
+ *    wx_offset ∈ [-2, +2] with wrapping on the x-axis)
+ * 4. Within each catchment, checks for terrain squares that are either desert or swamp
+ *    (via @c Square_Is_Desert() and @c Square_Is_Swamp())
+ * 5. Scores each valid candidate using the city's value from @c _ai_all_own_city_values[]
+ *    (NOT the terrain square's value)
+ * 6. Selects the square from the highest-value city and stores its coordinates
+ *
+ * The Change Terrain spell is most beneficial for high-value cities with poor terrain.
+ * By targeting deserts or swamps in high-value city areas, the AI can improve land
+ * productivity and economic output.
+ *
+ * **Coordinate Wrapping:**
+ * - The y-axis (north–south) is bounds-checked: squares with wy < WORLD_YMIN or
+ *   wy >= WORLD_HEIGHT are skipped.
+ * - The x-axis (east–west) wraps: negative wx is converted to (wx + WORLD_WIDTH),
+ *   and wx >= WORLD_WIDTH is converted to (wx - WORLD_WIDTH).
+ *
+ * @param player_idx        Index of the AI player casting Change Terrain.
+ * @param[out] targeted_wx  Pointer to receive the x-coordinate of the selected square.
+ *                          Only written when the function returns ST_TRUE.
+ * @param[out] targeted_wy  Pointer to receive the y-coordinate of the selected square.
+ *                          Only written when the function returns ST_TRUE.
+ * @param[out] targeted_wp  Pointer to receive the plane index of the selected square.
+ *                          Only written when the function returns ST_TRUE.
+ *
+ * @return ST_TRUE if a valid target square (desert or swamp in a player city's catchment)
+ *         was found and the output pointers were populated; ST_FALSE if no valid target
+ *         exists (e.g., no player cities, no desert/swamp terrain in catchments).
+ *
+ * @note The selection is deterministic: given the same game state and city values,
+ *       the same square will always be selected.
+ * @note The city value (from @c _ai_all_own_city_values[]) is used for scoring,
+ *       not the individual terrain square's value. This means the function selects
+ *       based on city importance, not terrain importance.
+ * @note Only desert and swamp terrain types are considered valid targets; all other
+ *       terrain types (grassland, mountain, forest, etc.) are skipped.
+ * @note The x-axis wraps around the world; cities on the eastern edge have squares
+ *       from the western edge in their catchment.
+ * @note (OGBUG) The catchment corner squares (offsets [-2,-2], [-2,+2], [+2,-2], [+2,+2])
+ *       should arguably be excluded as they do not directly affect the city, but they are
+ *       currently included in the evaluation. This may lead to suboptimal targeting.
+ *
+ * @see AI_Select_Spell_Group_City_Enchantment(), Square_Is_Desert(), Square_Is_Swamp()
+ */
 /*
-; AI target picker for Change Terrain - selects the
-; first desert or swamp in the catchment of the highest
-; value city with such
-; returns 1 if a valid target was found, or 0 otherwise
-; BUG: treats catchment corners as affecting the city
-; WARNING: only targets deserts and swamps
+OGBUG  treats catchment corners as affecting the city, should skip corners
+¿ OGBUG  only targets deserts and swamps ?
 */
-/*
-
-*/
-int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp)
+int16_t AITP_Change_Terrain(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp)
 {
     int16_t target_wp = 0;
     int16_t target_wy = 0;
     int16_t target_wx = 0;
     int16_t city_area_wy = 0;
-    int16_t Plane = 0;
+    int16_t city_wp = 0;
     int16_t wy_offset = 0;
     int16_t wx_offset = 0;
     int16_t highest_value = 0;
     int16_t target_city_idx = 0;
-    int16_t itr_cities = 0;  // _SI_
-
-    STU_DEBUG_BREAK();
+    int16_t itr_cities = 0;
+    int16_t city_area_wx = 0;
 
     target_city_idx = ST_UNDEFINED;
-
     highest_value = 0;
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            city_wp = _CITIES[itr_cities].wp;
+            for(wy_offset = -2; wy_offset < 3; wy_offset++)
+            {
+                city_area_wy = _CITIES[itr_cities].wy + wy_offset;
+                if(city_area_wy >= WORLD_YMIN && city_area_wy < WORLD_HEIGHT)
+                {
+                    for(wx_offset = -2; wx_offset < 3; wx_offset++)
+                    {
+                        city_area_wx = _CITIES[itr_cities].wx + wx_offset;
+                        if(city_area_wx < 0)
+                        {
+                            city_area_wx += WORLD_WIDTH;
+                        }
+                        if(city_area_wx >= WORLD_WIDTH)
+                        {
+                            city_area_wx -= WORLD_WIDTH;
+                        }
 
+                        if(
+                            Square_Is_Desert(city_area_wx, city_area_wy, city_wp) == ST_TRUE
+                            ||
+                            Square_Is_Swamp(city_area_wx, city_area_wy, city_wp) == ST_TRUE
+                        )
+                        {
+                            if(_ai_all_own_city_values[itr_cities] > highest_value)
+                            {
+                                target_city_idx = itr_cities;
+                                highest_value = _ai_all_own_city_values[itr_cities];
+                                target_wx = city_area_wx;
+                                target_wy = city_area_wy;
+                                target_wp = city_wp;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-
-
 
     if(target_city_idx == ST_UNDEFINED)
     {
@@ -2938,6 +3021,9 @@ int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, 
     }
     else
     {
+        *targeted_wx = target_wx;
+        *targeted_wy = target_wy;
+        *targeted_wp = target_wp;
         return ST_TRUE;
     }
 
@@ -4018,8 +4104,7 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx,
         } break;
         case spl_Change_Terrain:
         {
-            STU_DEBUG_BREAK();
-            /* SPELLY */  return_value = AITP_ChangeTerrain__WIP(player_idx, wx, wy, wp);
+            return_value = AITP_Change_Terrain(player_idx, wx, wy, wp);
         } break;
         case spl_Ice_Storm:
         case spl_Fire_Storm:

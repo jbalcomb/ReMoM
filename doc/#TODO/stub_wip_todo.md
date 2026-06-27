@@ -42,7 +42,7 @@
 ## AISPELL
 - [ ] AI_Research_Picker__STUB
 - [x] AI_Spell_Select — done-done 2026-06-11 (walkthrough doc, `__STUB` suffix dropped, GEMINI deleted, variable casing normalized, 9 leaf pickers stubbed `return 0;`)
-- [ ] AITP_ChangeTerrain__WIP
+- [ ] AITP_Change_Terrain
 - [ ] AITP_SpellWard__STUB
 - [ ] AITP_SpellWard_Wrapper__STUB
 - [ ] AITP_Disjunction

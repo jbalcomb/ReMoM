@@ -6,7 +6,7 @@ AI Target-Picker (AITP)
 
 AITP_Wall_Of_Stone()
 AITP_Transmute()
-AITP_ChangeTerrain__WIP()
+AITP_Change_Terrain()
 AITP_MoveFortress()
 AITP_FlyingFortress()
 AITP_EarthGate()

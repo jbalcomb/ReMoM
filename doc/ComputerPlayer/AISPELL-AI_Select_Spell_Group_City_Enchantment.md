@@ -35,7 +35,7 @@ Leaf picker for category 3 (city enchantment) of [`AI_Select_Spell_Group`](AISPE
 |---|---|---|---|
 | 1 | Wall_Of_Stone | `_turn / 6` | `AITP_Wall_Of_Stone` |
 | 2 | Transmute | 200 | `AITP_Transmute` |
-| 3 | Change_Terrain | 50 | `AITP_ChangeTerrain__WIP` |
+| 3 | Change_Terrain | 50 | `AITP_Change_Terrain` |
 | 4 | *(unused)* | — | — |
 | 5 | Move_Fortress | `_turn / 15` | `AITP_MoveFortress` |
 | 6 | Earth_Gate | `_turn / 15` | `AITP_EarthGate` |
@@ -96,7 +96,7 @@ The `AITP_*` are stubs that return 0, so the picker's per-spell gates currently 
 ## Sub-functions / external calls
 
 - **`Get_Weighted_Choice(int16_t *, int16_t)`** ([random.h:31](../../MoX/src/random.h#L31)) — weighted pick over the 50-slot array.
-- **`AITP_*` (19 target-pickers)** — one per city spell; return `1` if a valid target exists and write it back through the pointer args. Only `AITP_ChangeTerrain__WIP` and `AITP_SpellWard__STUB` are reconstructed so far.
+- **`AITP_*` (19 target-pickers)** — one per city spell; return `1` if a valid target exists and write it back through the pointer args. Only `AITP_Change_Terrain` and `AITP_SpellWard__STUB` are reconstructed so far.
 - **`SPL_IsLifeSupressed` / `CRP_SPL_IsNatSuppressed` / `SPL_IsDthSuppressed` / `SPL_IsChsSuppressed`** ([AISPELL.c:1894+](../../MoM/src/AISPELL.c#L1894)) — realm-suppression predicates (implemented).
 - **Globals:** `AI_OVL_SplPriorities[50]`, `_players[].spells_list`, `_turn`.
 
