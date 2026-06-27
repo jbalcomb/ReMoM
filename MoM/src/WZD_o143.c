@@ -244,55 +244,43 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
     char Local_Name_String[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t city_name_idx = 0;
     int16_t attempts = 0;
-    char * city_names_buffer = 0;  // _DI_
-    int16_t itr_cities = 0;  // _SI_
-    /* HACK */ char hack_new_name[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    /* HACK */ char * city_names_buffer_ptr = 0;
+    char * city_names_buffer = 0;
+    int16_t itr_cities = 0;
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     city_names_buffer = (char *)Near_Allocate_First(280);
+    LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (char *)city_names_buffer, race_idx, 1, 280);
 
-    LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (SAMB_ptr)city_names_buffer, race_idx, 1, 280);
-
-    for(attempts = 0; attempts < 200; attempts++)
+    attempts = 0;
+    while(1)
     {
-
-        city_name_idx = (Random(20) - 1);
+        attempts++;
+        city_name_idx = Random(20) - 1;
 
         for(itr_cities = 0; itr_cities < _cities; itr_cities++)
         {
-
-            stu_strcpy(Local_Name_String, _CITIES[itr_cities].name);
-
-            stu_strcpy(hack_new_name, _CITIES[itr_cities].name);
-
-            // if(stricmp(Local_Name_String, city_names_buffer[(city_name_idx * 14)]) != 0)
-            city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
-
-            if(stu_stricmp(Local_Name_String, city_names_buffer_ptr) != 0)
+            stu_strcpy((char *)Local_Name_String, (char *)&_CITIES[itr_cities]);
+            if(stricmp(Local_Name_String, (char *)(city_names_buffer + city_name_idx * LEN_CITY_NAME)) == 0)
             {
-
-                continue;
-
+                if(attempts >= 200)
+                {
+                    LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (char *)city_names_buffer, Random(14) - 1, 1, 280);
+                }
+                else
+                {
+                    break;
+                }
             }
-
-            if(attempts < 200)
-            {
-
-                break;
-
-            }
-
-            LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (SAMB_ptr)city_names_buffer, (Random(NUM_RACES) - 1), 1, 280);
-
         }
 
+        if(itr_cities == _cities)
+        {
+            break;
+        }
     }
-    
-    // stu_strcpy(name, city_names_buffer[(city_name_idx * 14)]);
-    city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
-    stu_strcpy(name, city_names_buffer_ptr);
+
+    stu_strcpy(name, (char *)(city_names_buffer + city_name_idx * LEN_CITY_NAME));
     
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
@@ -622,9 +610,9 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
 
                 if(City_Count > 0)
                 {
-                    for (Y_Loop_Var = 0; Y_Loop_Var < WORLD_HEIGHT; Y_Loop_Var++)
+                    for(Y_Loop_Var = 0; Y_Loop_Var < WORLD_HEIGHT; Y_Loop_Var++)
                     {
-                        for (X_Loop_Var = 0; X_Loop_Var < WORLD_WIDTH; X_Loop_Var++)
+                        for(X_Loop_Var = 0; X_Loop_Var < WORLD_WIDTH; X_Loop_Var++)
                         {
                             if((_map_square_flags[((city_wp * WORLD_SIZE) + ((Y_Loop_Var)*WORLD_WIDTH) + (X_Loop_Var))] & MSF_ROAD) != 0)
                             {
@@ -643,7 +631,7 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
 
                 Move_Path_Find(city_wx, city_wy, movepath_cost_map);
 
-                for (itr_bits = 0; itr_bits < City_Count; itr_bits++)
+                for(itr_bits = 0; itr_bits < City_Count; itr_bits++)
                 {
                     City_Tile_Index = ((_CITIES[City_List[itr_bits]].wy * WORLD_WIDTH) + _CITIES[City_List[itr_bits]].wx);
                     if(movepath_cost_map->Reach_From[City_Tile_Index] == City_Tile_Index)
