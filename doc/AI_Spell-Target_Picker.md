@@ -19,7 +19,7 @@ AITP_Stream_Of_Life()
 AITP_Inspirations()
 AITP_Prosperity()
 AITP_Astral_Gate()
-AITP_DarkRituals()
+AITP_Dark_Rituals()
 AITP_CloudofShadow()
 AITP_SpellWard__STUB()
 AITP_Consecration()
@@ -39,5 +39,5 @@ AITP_Consecration()
     case spl_Consecration:     { return AITP_Consecration(player_idx, city_idx);     } break;
     case spl_Cloud_Of_Shadow:  { return AITP_CloudofShadow(player_idx, city_idx);    } break;
     case spl_Summoning_Circle: { return AITP_Summoning_Circle(player_idx, city_idx); } break;
-    case spl_Dark_Rituals:     { return AITP_DarkRituals(player_idx, city_idx);      } break;
+    case spl_Dark_Rituals:     { return AITP_Dark_Rituals(player_idx, city_idx);      } break;
     case spl_Gaias_Blessing:   { return AITP_Gaias_Blessing(player_idx, city_idx);    } break;

@@ -2395,7 +2395,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
     }
 
     if(players_spell_list[spl_Dark_Rituals] == sls_Known) {
-        if(AITP_DarkRituals(player_idx, &target_city_idx) == 1) {
+        if(AITP_Dark_Rituals(player_idx, &target_city_idx) == 1) {
             AI_OVL_SplPriorities[15] = 100;
         }
     }
@@ -3671,7 +3671,7 @@ int16_t AITP_Prosperity(int16_t player_idx, int16_t * targeted_city_idx)
     best_city_idx = ST_UNDEFINED;
     highest_value = 0;
 
-    for (itr_cities = 0; itr_cities < _cities; itr_cities++)
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
         if(_CITIES[itr_cities].owner_idx == player_idx)
         {
@@ -3708,7 +3708,7 @@ int16_t AITP_Astral_Gate(int16_t player_idx, int16_t * targeted_city_idx)
     best_city_idx = ST_UNDEFINED;
     highest_value = 0;
 
-    for (itr_cities = 0; itr_cities < _cities; itr_cities++)
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
         if(_CITIES[itr_cities].owner_idx == player_idx)
         {
@@ -3736,9 +3736,47 @@ int16_t AITP_Astral_Gate(int16_t player_idx, int16_t * targeted_city_idx)
 }
 
 // WZD o156p32
-int16_t AITP_DarkRituals(int16_t player_idx, int16_t * city_idx)
+int16_t AITP_Dark_Rituals(int16_t player_idx, int16_t * targeted_city_idx)
 {
-    return 0;
+    int16_t highest_value = 0;
+    int16_t best_city_idx = 0;
+    int16_t itr_cites = 0;
+
+    best_city_idx = ST_UNDEFINED;
+    highest_value = 0;
+
+    for(itr_cites = 0; itr_cites < _cities; itr_cites++)
+    {
+        if(_CITIES[itr_cites].owner_idx == player_idx)
+        {
+            if(_CITIES[itr_cites].enchantments[DARK_RITUALS] == ST_FALSE)
+            {
+                if(
+                    _CITIES[itr_cites].bldg_status[bt_Temple] == bs_Built
+                    ||
+                    _CITIES[itr_cites].bldg_status[bt_Temple] == bs_Replaced
+                )
+                {
+                    if(_ai_all_own_city_values[itr_cites] > highest_value)
+                    {
+                        best_city_idx = itr_cites;
+                        highest_value = _ai_all_own_city_values[itr_cites];
+                    }
+                }
+            }
+        }
+    }
+
+    if(best_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_city_idx = best_city_idx;
+        return ST_TRUE;
+    }
+
 }
 
 // WZD o156p33
@@ -3938,7 +3976,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
             case spl_Consecration:     { return AITP_Consecration(player_idx, city_idx);     } break;
             case spl_Cloud_Of_Shadow:  { return AITP_CloudofShadow(player_idx, city_idx);    } break;
             case spl_Summoning_Circle: { return AITP_Summoning_Circle(player_idx, city_idx); } break;
-            case spl_Dark_Rituals:     { return AITP_DarkRituals(player_idx, city_idx);      } break;
+            case spl_Dark_Rituals:     { return AITP_Dark_Rituals(player_idx, city_idx);      } break;
             case spl_Gaias_Blessing:   { return AITP_Gaias_Blessing(player_idx, city_idx);   } break;
             default: { Cast_Spell_Target_Error(spell_idx); } break;
         }
