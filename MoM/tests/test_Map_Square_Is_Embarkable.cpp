@@ -26,7 +26,7 @@ protected:
         ASSERT_NE(_world_maps, nullptr);
         memset(_world_maps, 0, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
 
-        /* Map_Square_Is_Embarkable() now reads through p_world_map; bind it to
+        /* Square_Is_Embarkable() now reads through p_world_map; bind it to
            _world_maps the same way the game does in Allocate_Data_Space(). */
         p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
     }
@@ -52,68 +52,68 @@ TEST_F(Map_Square_Is_Embarkable_test, BugGrass_IsNotEmbarkable)
 {
     Set_Terrain(10, 10, ARCANUS_PLANE, tt_BugGrass);
 
-    EXPECT_EQ(Map_Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_FALSE);
+    EXPECT_EQ(Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_FALSE);
 }
 
 TEST_F(Map_Square_Is_Embarkable_test, Lake_IsNotEmbarkable)
 {
     Set_Terrain(10, 10, ARCANUS_PLANE, tt_Lake);
 
-    EXPECT_EQ(Map_Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_FALSE);
+    EXPECT_EQ(Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_FALSE);
 }
 
 TEST_F(Map_Square_Is_Embarkable_test, Below_Shore11101110_IsEmbarkable)
 {
     Set_Terrain(10, 10, ARCANUS_PLANE, tt_Ocean);
 
-    EXPECT_EQ(Map_Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_TRUE);
+    EXPECT_EQ(Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_TRUE);
 }
 
 TEST_F(Map_Square_Is_Embarkable_test, Shore11101110_AndBelow_Shore10111000_IsNotEmbarkable)
 {
     Set_Terrain(10, 10, ARCANUS_PLANE, _Shore11101110);
 
-    EXPECT_EQ(Map_Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_FALSE);
+    EXPECT_EQ(Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_FALSE);
 }
 
 TEST_F(Map_Square_Is_Embarkable_test, Shore10111000_IsEmbarkable)
 {
     Set_Terrain(10, 10, ARCANUS_PLANE, _Shore10111000);
 
-    EXPECT_EQ(Map_Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_TRUE);
+    EXPECT_EQ(Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_TRUE);
 }
 
 TEST_F(Map_Square_Is_Embarkable_test, GrasslandsBoundary_IsNotEmbarkable)
 {
     Set_Terrain(10, 10, ARCANUS_PLANE, tte_Grasslands);
 
-    EXPECT_EQ(Map_Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_FALSE);
+    EXPECT_EQ(Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_FALSE);
 }
 
 TEST_F(Map_Square_Is_Embarkable_test, Shore00001R10_IsEmbarkable)
 {
     Set_Terrain(10, 10, ARCANUS_PLANE, _Shore00001R10);
 
-    EXPECT_EQ(Map_Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_TRUE);
+    EXPECT_EQ(Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_TRUE);
 }
 
 TEST_F(Map_Square_Is_Embarkable_test, River1100_3_IsNotEmbarkable)
 {
     Set_Terrain(10, 10, ARCANUS_PLANE, _River1100_3);
 
-    EXPECT_EQ(Map_Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_FALSE);
+    EXPECT_EQ(Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_FALSE);
 }
 
 TEST_F(Map_Square_Is_Embarkable_test, Shore000R0000_IsEmbarkable)
 {
     Set_Terrain(10, 10, ARCANUS_PLANE, _Shore000R0000);
 
-    EXPECT_EQ(Map_Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_TRUE);
+    EXPECT_EQ(Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_TRUE);
 }
 
 TEST_F(Map_Square_Is_Embarkable_test, RiversRange_IsNotEmbarkable)
 {
     Set_Terrain(10, 10, ARCANUS_PLANE, tt_Rivers_1st);
 
-    EXPECT_EQ(Map_Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_FALSE);
+    EXPECT_EQ(Square_Is_Embarkable(10, 10, ARCANUS_PLANE), ST_FALSE);
 }
