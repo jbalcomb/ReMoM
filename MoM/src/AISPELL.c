@@ -2371,7 +2371,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
     }
 
     if(players_spell_list[spl_Stream_Of_Life] == sls_Known) {
-        if(AITP_StreamofLife(player_idx, &target_city_idx) == 1) {
+        if(AITP_Stream_Of_Life(player_idx, &target_city_idx) == 1) {
             AI_OVL_SplPriorities[11] = _turn / 10;
         }
     }
@@ -3542,11 +3542,87 @@ int16_t AITP_AltarofBattle(int16_t player_idx, int16_t * city_idx)
     return 0;
 }
 
+
 // WZD o156p28
-int16_t AITP_StreamofLife(int16_t player_idx, int16_t * city_idx)
+/**
+ * @brief AI target picker for Stream of Life — selects the highest-value owned city without
+ *        the Stream of Life enchantment.
+ *
+ * @details
+ * This function identifies the best candidate city for casting the Stream of Life spell.
+ * The spell grants a Stream of Life enchantment to a target city, which provides population
+ * growth or food/production benefits to that city. The AI should apply this enchantment to
+ * its most valuable cities to maximize long-term economic and population benefits.
+ *
+ * The selection algorithm:
+ * 1. Iterates through all cities on the map
+ * 2. Filters for cities owned by @p player_idx
+ * 3. Further filters for cities without the Stream of Life enchantment already active
+ *    (i.e., @c _CITIES[].enchantments[STREAM_OF_LIFE] == ST_FALSE)
+ * 4. Scores each candidate using the city's value from @c _ai_all_own_city_values[]
+ * 5. Selects the city with the highest value and stores its index in @p targeted_city_idx
+ *
+ * The Stream of Life spell is most beneficial for high-value cities (e.g., population
+ * centers, production hubs, food producers) as the enchantment enhances city growth and
+ * productivity. By targeting the highest-value city without the enchantment, the AI
+ * prioritizes strengthening its most important urban centers.
+ *
+ * @param player_idx             Index of the AI player casting Stream of Life.
+ * @param[out] targeted_city_idx Pointer to receive the index of the selected city in @c _CITIES[].
+ *                               Only written when the function returns ST_TRUE.
+ *
+ * @return ST_TRUE if a valid target city (owned by the player, without the Stream of Life
+ *         enchantment) was found and @p targeted_city_idx was populated; ST_FALSE if
+ *         no valid target exists (e.g., all player cities already have Stream of Life, or
+ *         the player has no cities).
+ *
+ * @note The selection is deterministic: given the same game state and city values,
+ *       the same city will always be selected.
+ * @note The city value is sourced from @c _ai_all_own_city_values[], which should be
+ *       pre-computed or updated before calling this function. If this array is stale,
+ *       targeting may be suboptimal.
+ * @note A city with @c enchantments[STREAM_OF_LIFE] == ST_FALSE is the only valid target
+ *       for this spell; cities that already have the Stream of Life enchantment are skipped.
+ * @note Only player-owned cities are considered; neutral or enemy cities are excluded.
+ *
+ * @see AI_Select_Spell_Group_City_Enchantment(), _ai_all_own_city_values[]
+ */
+int16_t AITP_Stream_Of_Life(int16_t player_idx, int16_t * targeted_city_idx)
 {
-    return 0;
+    int16_t highest_value = 0;
+    int16_t best_city_idx = 0;
+    int16_t itr_cities = 0;
+
+    best_city_idx = ST_UNDEFINED;
+    highest_value = 0;
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            if(_CITIES[itr_cities].enchantments[STREAM_OF_LIFE] == ST_FALSE)
+            {
+                if(_ai_all_own_city_values[itr_cities] > highest_value)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                }
+            }
+        }
+    }
+
+    if(best_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_city_idx = best_city_idx;
+        return ST_TRUE;
+    }
+
 }
+
 
 // WZD o156p29
 int16_t AITP_Inspirations(int16_t player_idx, int16_t * city_idx)
@@ -3762,7 +3838,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
             case spl_Altar_Of_Battle:  { return AITP_AltarofBattle(player_idx, city_idx);    } break;
             case spl_Heavenly_Light:   { return AITP_Heavenly_Light(player_idx, city_idx);   } break;
             case spl_Inspirations:     { return AITP_Inspirations(player_idx, city_idx);     } break;
-            case spl_Stream_Of_Life:   { return AITP_StreamofLife(player_idx, city_idx);     } break;
+            case spl_Stream_Of_Life:   { return AITP_Stream_Of_Life(player_idx, city_idx);     } break;
             case spl_Astral_Gate:      { return AITP_AstralGate(player_idx, city_idx);       } break;
             case spl_Prosperity:       { return AITP_Prosperity(player_idx, city_idx);       } break;
             case spl_Consecration:     { return AITP_Consecration(player_idx, city_idx);     } break;

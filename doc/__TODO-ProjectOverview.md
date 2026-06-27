@@ -148,7 +148,7 @@ Next_Turn_Proc()
 [x]                 |-> AITP_Flying_Fortress()
 [x]                 |-> AITP_Wall_Of_Fire()
 [x]                 |-> AITP_Heavenly_Light()
-[ ]                 |-> AITP_StreamofLife()
+[x]                 |-> AITP_Stream_Of_Life()
 [ ]                 |-> AITP_Inspirations()
 [ ]                 |-> AITP_Prosperity()
 [ ]                 |-> AITP_AstralGate()
@@ -165,6 +165,20 @@ Next_Turn_Proc()
 Cast_Spell_Overland() |-> ... |-> AITP_Disjunction()
 
 [x] AITP_Disjunction
+
+Need `/doxyfunc`
+[ ] AITP_Inspirations()
+[ ] AITP_Prosperity()
+[ ] AITP_AstralGate()
+[ ] AITP_DarkRituals()
+[ ] AITP_CloudofShadow()
+[ ] AITP_SpellWard__STUB()
+[ ] AITP_Consecration()
+[ ] AITP_WallofDarkness()
+[ ] AITP_AltarofBattle()
+[ ] Get_Map_Square_Target_For_Spell()
+[ ] Pick_Target_For_City_Enchantment__WIP()
+
 
 
 

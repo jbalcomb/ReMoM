@@ -192,7 +192,7 @@ int16_t AITP_Heavenly_Light(int16_t player_idx, int16_t * targeted_city_idx);
 int16_t AITP_AltarofBattle(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p28
-int16_t AITP_StreamofLife(int16_t player_idx, int16_t * city_idx);
+int16_t AITP_Stream_Of_Life(int16_t player_idx, int16_t * targeted_city_idx);
 
 // WZD o156p29
 int16_t AITP_Inspirations(int16_t player_idx, int16_t * city_idx);

@@ -43,7 +43,7 @@ Leaf picker for category 3 (city enchantment) of [`AI_Select_Spell_Group`](AISPE
 | 8 | Flying_Fortress | 100 | `AITP_Flying_Fortress` |
 | 9 | Wall_Of_Fire | `_turn / 20` | `AITP_Wall_Of_Fire` |
 | 10 | Heavenly_Light | `_turn / 25` | `AITP_Heavenly_Light` |
-| 11 | Stream_Of_Life | `_turn / 10` | `AITP_StreamofLife` |
+| 11 | Stream_Of_Life | `_turn / 10` | `AITP_Stream_Of_Life` |
 | 12 | Inspirations | 300 | `AITP_Inspirations` |
 | 13 | Prosperity | 300 | `AITP_Prosperity` |
 | 14 | Astral_Gate | 0 | `AITP_AstralGate` |
