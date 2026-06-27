@@ -3662,9 +3662,40 @@ int16_t AITP_Inspirations(int16_t player_idx, int16_t * targeted_city_idx)
 }
 
 // WZD o156p30
-int16_t AITP_Prosperity(int16_t player_idx, int16_t * city_idx)
+int16_t AITP_Prosperity(int16_t player_idx, int16_t * targeted_city_idx)
 {
-    return 0;
+    int16_t highest_value = 0;
+    int16_t best_city_idx = 0;
+    int16_t itr_cities = 0;
+
+    best_city_idx = ST_UNDEFINED;
+    highest_value = 0;
+
+    for (itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if ((int)_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            if (_CITIES[itr_cities].enchantments[PROSPERITY] == ST_FALSE)
+            {
+                if (_ai_all_own_city_values[itr_cities] > highest_value)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                }
+            }
+        }
+    }
+
+    if (best_city_idx == -1)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_city_idx = best_city_idx;
+        return ST_TRUE;
+    }
+
 }
 
 // WZD o156p31
@@ -3856,7 +3887,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
     int16_t duped = 0;
     int16_t consecration = 0;
 
-    
+
     if(spell_target_type == stt_Friendly_City)
     {
         sw1_spell_idx = spell_idx;
