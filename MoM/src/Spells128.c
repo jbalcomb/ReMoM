@@ -236,86 +236,84 @@ int16_t Player_Research_Spells(int16_t player_idx)
 
 
 // WZD o128p02
-// drake178: WIZ_GetResearchList()
-/*
-; compiles a list of the lowest rarity spells from each realm available to the specified player
-*/
-/*
-
-*/
+/**
+ * @brief Compiles a list of the lowest-rarity knowable spells from each magic realm that are
+ *        available for research by the specified player.
+ *
+ * @details
+ * For each of the five standard magic realms (Nature, Sorcery, Chaos, Life, Death), this function
+ * scans the player's spell availability and selects **one** spell of the lowest available rarity
+ * tier (tier 0 = spell indices 0–9, tier 1 = 10–19, etc.) that has a status of @c sls_Knowable
+ * (accessible to the player but not yet researched or known).
+ *
+ * After processing the standard realms, the Arcane realm is handled separately: the function
+ * collects **all** Knowable spells from the first 12 indices (excluding indices 3 and 8 once the
+ * first Knowable spell from Arcane has been found).
+ *
+ * The spell indices are stored in @p research_list as 1-indexed values (i.e., spell_idx + 1).
+ * The total count of collected spells is written to the global variable @c m_spell_list_count,
+ * which is used by @c Player_Research_Spells() as the pool size for random selection.
+ *
+ * @param player_idx     Index of the player whose available spells are being scanned.
+ * @param[out] research_list  Output buffer where collected spell indices (1-indexed) are stored.
+ *                            Caller is responsible for allocating sufficient space (recommended
+ *                            at least 60 elements to accommodate all possible spells).
+ *
+ * @note Modifies the global @c m_spell_list_count with the total number of collected spells.
+ *       This global is critical for the @c Random() pool in @c Player_Research_Spells().
+ * @note Spell indices are stored as @c (realm * NUM_SPELLS_PER_MAGIC_REALM) + (spell_realm_idx + 1),
+ *       yielding 1-indexed spell enums suitable for use in @c spell_data_table[].
+ * @note The function does not clear the output buffer; it assumes pre-initialization or that
+ *       the caller will use only the first @c m_spell_list_count entries.
+ * @note Status value @c sls_Knowable indicates spells the player can research based on their
+ *       current spellbooks, but which are neither known (@c sls_Known) nor unknown (@c sls_Unknown).
+ *
+ * @see Player_Research_Spells(), m_spell_list_count, Research_Status
+ */
 void Build_Research_List(int16_t player_idx, int16_t research_list[])
 {
-    int16_t rarity;
-    int16_t itr_realms;  // _SI_
-    int16_t flag;  // _DI_
-    int16_t itr_spells;  // _CX_
+    int16_t rarity = 0;
+    int16_t itr_realms = 0;
+    int16_t flag = 0;
+    int16_t itr_spells = 0;
 
     m_spell_list_count = 0;
 
-    // itr 5 realms
     for(itr_realms = 0; itr_realms <= 4; itr_realms++)
     {
-
         flag = ST_FALSE;
-
-        // itr 40 spells per realm
         for(itr_spells = 0; itr_spells < NUM_SPELLS_PER_MAGIC_REALM; itr_spells++)
         {
-
             if(flag == ST_FALSE)
             {
                 rarity = (itr_spells / 10);  // updates until the first 'knowable'
             }
-
-            if((itr_spells / 10) <= rarity)
+            if ((itr_spells / 10) > rarity)
             {
-
-                if(_players[player_idx].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == sls_Knowable)
-                {
-
-                    research_list[m_spell_list_count] = ((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + (itr_spells + 1));
-
-                    m_spell_list_count++;
-
-                    flag = ST_TRUE;
-
-                }
-
+                break;
             }
-
+            if(_players[player_idx].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == sls_Knowable)
+            {
+                research_list[m_spell_list_count] = ((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + (itr_spells + 1));
+                m_spell_list_count++;
+                flag = ST_TRUE;
+            }
         }
-
     }
 
     flag = ST_FALSE;
-
     for(itr_spells = 0; itr_spells < 12; itr_spells++)
     {
-
-        if(
-            (flag != ST_TRUE)
-            ||
-            (
-                (itr_spells != 3)
-                &&
-                (itr_spells != 8)
-            )
-        )
+        if(flag == ST_TRUE && (itr_spells == 3 || itr_spells == 8))
         {
-
-            if(_players[player_idx].spells_list[((sbr_Arcane * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == sls_Knowable)
-            {
-
-                research_list[(m_spell_list_count)] = ((sbr_Arcane * NUM_SPELLS_PER_MAGIC_REALM) + (itr_spells + 1));
-
-                m_spell_list_count++;
-
-                flag = ST_TRUE;
-
-            }
-            
+            break;
         }
-
+        if(_players[player_idx].spells_list[((sbr_Arcane * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == sls_Knowable)
+        {
+            research_list[(m_spell_list_count)] = ((sbr_Arcane * NUM_SPELLS_PER_MAGIC_REALM) + (itr_spells + 1));
+            m_spell_list_count++;
+            flag = ST_TRUE;
+        }
     }
 
 }
