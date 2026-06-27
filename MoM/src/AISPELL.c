@@ -2353,7 +2353,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
     }
 
     if(players_spell_list[spl_Flying_Fortress] == sls_Known) {
-        if(AITP_FlyingFortress(player_idx, &target_city_idx) == 1) {
+        if(AITP_Flying_Fortress(player_idx, &target_city_idx) == 1) {
             AI_OVL_SplPriorities[8] = 100;
         }
     }
@@ -3129,9 +3129,83 @@ int16_t AITP_Move_Fortress(int16_t player_idx, int16_t * targeted_city_idx)
 }
 
 // WZD o156p21
-int16_t AITP_FlyingFortress(int16_t player_idx, int16_t * city_idx)
+/**
+ * @brief AI target picker for Flying Fortress — verifies if the fortress has the
+ *        Flying Fortress enchantment and returns the fortress city if it does.
+ *
+ * @details
+ * This function validates the fortress's eligibility for the Flying Fortress spell
+ * by checking whether the fortress city currently has the Flying Fortress enchantment
+ * active. Unlike other city-enchantment spells that target cities WITHOUT an enchantment,
+ * this function validates the presence of an existing enchantment.
+ *
+ * The validation algorithm:
+ * 1. Locates the player's fortress city by matching coordinates between @c _FORTRESSES[]
+ *    and @c _CITIES[] (comparing wx, wy, and wp fields)
+ * 2. Checks if the fortress city has the Flying Fortress enchantment active
+ *    (i.e., @c _CITIES[fortress_city_idx].enchantments[FLYING_FORTRESS] != ST_FALSE)
+ * 3. If the enchantment is present, returns the fortress city index as the valid target
+ * 4. If the enchantment is absent, returns FALSE (no valid target)
+ *
+ * The Flying Fortress spell enchantment is related to fortress mobility or capabilities.
+ * This function validates the current enchantment state of the fortress, which may be used
+ * to prevent duplicate applications or to verify prerequisites for other fortress-related spells.
+ *
+ * @param player_idx         Index of the AI player evaluating the fortress spell.
+ * @param[out] targeted_city_idx Pointer to receive the index of the fortress city in @c _CITIES[].
+ *                           Only written when the function returns ST_TRUE (enchantment present).
+ *
+ * @return ST_TRUE if the player's fortress city is located and currently has the
+ *         Flying Fortress enchantment active (enchantments[FLYING_FORTRESS] != ST_FALSE),
+ *         and @p targeted_city_idx was populated; ST_FALSE if the fortress does not have
+ *         the enchantment or if no fortress is found.
+ *
+ * @note Unlike most AITP_* targeting functions that select cities WITHOUT an enchantment,
+ *       this function returns TRUE when the enchantment IS PRESENT. The logic is inverted
+ *       from the standard enchantment-seeking functions.
+ * @note The fortress location is determined by coordinate matching (@c _FORTRESSES[])
+ *       against @c _CITIES[]; this assumes the fortress is always at a city location.
+ * @note Only the player's fortress is checked; other cities are not considered as targets.
+ * @note This function validates the enchantment presence rather than selecting a target city;
+ *       it may be used for validation or state-checking rather than spell casting.
+ *
+ * @see AI_Select_Spell_Group_City_Enchantment(), _FORTRESSES[]
+ */
+int16_t AITP_Flying_Fortress(int16_t player_idx, int16_t * targeted_city_idx)
 {
-    return 0;
+    int16_t fortress_city_idx = 0;
+    int16_t target_city_idx = 0;
+    int16_t itr_cities = 0;
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].wx == _FORTRESSES[player_idx].wx &&
+            _CITIES[itr_cities].wy == _FORTRESSES[player_idx].wy &&
+            _CITIES[itr_cities].wp == _FORTRESSES[player_idx].wp)
+        {
+            fortress_city_idx = itr_cities;
+        }
+    }
+
+    if(_CITIES[fortress_city_idx].enchantments[FLYING_FORTRESS] != ST_FALSE)
+    {
+        target_city_idx = fortress_city_idx;
+    }
+    else
+    {
+        target_city_idx = ST_UNDEFINED;
+    }
+
+    if(target_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_city_idx = target_city_idx;
+        return ST_TRUE;
+    }
+
 }
 
 // WZD o156p22
@@ -3534,7 +3608,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
             case spl_Wall_Of_Stone:    { return AITP_Wall_Of_Stone(player_idx, city_idx);    } break;
             case spl_Move_Fortress:    { return AITP_Move_Fortress(player_idx, city_idx);    } break;
             case spl_Earth_Gate:       { return AITP_Earth_Gate(player_idx, city_idx);       } break;
-            case spl_Flying_Fortress:  { return AITP_FlyingFortress(player_idx, city_idx);   } break;
+            case spl_Flying_Fortress:  { return AITP_Flying_Fortress(player_idx, city_idx);  } break;
             case spl_Wall_Of_Fire:     { return AITP_WallofFire(player_idx, city_idx);       } break;
             case spl_Heavenly_Light:   { return AITP_HeavenlyLight(player_idx, city_idx);    } break;
             case spl_Altar_Of_Battle:  { return AITP_AltarofBattle(player_idx, city_idx);    } break;
