@@ -28,6 +28,7 @@ Module: AITECH
 #include "SBookScr.h"
 #include "Spellbook.h"
 #include "SPELLDEF.h"
+#include "Terrain.h"
 #include "TerrType.h"
 #include "UNITTYPE.h"
 
@@ -2763,9 +2764,133 @@ int16_t AITP_Wall_Of_Stone(int16_t player_idx, int16_t * city_idx)
 
 
 // WZD o156p18
-int16_t AITP_Transmute(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp)
+/**
+ * @brief AI target picker for Transmute — selects the highest-value terrain square within
+ *        city catchments that can be converted.
+ *
+ * @details
+ * This function identifies the best candidate square for casting the Transmute spell.
+ * The spell converts terrain features (e.g., coal, iron, mithril) or terrain types,
+ * so the AI must find a valid, high-value target square within its city catchments.
+ *
+ * The selection algorithm:
+ * 1. Iterates through all cities on the map
+ * 2. Filters for cities owned by @p player_idx
+ * 3. For each player city, scans a 5×5 catchment area (wy_offset ∈ [-2, +2],
+ *    wx_offset ∈ [-2, +2] with wrapping on the x-axis)
+ * 4. Within each catchment, checks for transmutable terrain features (coal, iron, mithril, etc.)
+ * 5. Scores each valid candidate square using its terrain value
+ * 6. Selects the square with the highest value and stores its coordinates
+ *
+ * The Transmute spell is most beneficial for squares containing valuable minerals or
+ * improving terrain. By targeting the highest-value square in the AI's city areas,
+ * the function prioritizes economically significant transmutations.
+ *
+ * **Coordinate Wrapping:**
+ * - The y-axis (north–south) does not wrap; squares with wy < 0 or wy >= WORLD_HEIGHT
+ *   are skipped.
+ * - The x-axis (east–west) wraps: negative wx is converted to (wx + WORLD_WIDTH),
+ *   and wx >= WORLD_WIDTH is converted to (wx - WORLD_WIDTH).
+ *
+ * @param player_idx        Index of the AI player casting Transmute.
+ * @param[out] targeted_wx  Pointer to receive the x-coordinate of the selected square.
+ *                          Only written when the function returns ST_TRUE.
+ * @param[out] targeted_wy  Pointer to receive the y-coordinate of the selected square.
+ *                          Only written when the function returns ST_TRUE.
+ * @param[out] targeted_wp  Pointer to receive the plane index of the selected square.
+ *                          Only written when the function returns ST_TRUE.
+ *
+ * @return ST_TRUE if a valid target square (with transmutable terrain features) was found
+ *         and the output pointers were populated; ST_FALSE if no valid target exists
+ *         (e.g., no player cities, no transmutable terrain in catchments).
+ *
+ * @note The selection is deterministic: given the same game state and terrain values,
+ *       the same square will always be selected.
+ * @note The terrain value for each candidate square is sourced from the terrain value
+ *       system; if this system is not pre-computed or is stale, targeting may be suboptimal.
+ * @note Only terrain with specific special features (coal, iron, mithril, etc.) visible
+ *       via @c GET_TERRAIN_SPECIAL() are considered valid targets.
+ * @note The x-axis wraps around the world; this means a city on the eastern edge has
+ *       squares from the western edge in its catchment.
+ * @note (OGBUG) Terrain special features are not true bitflags; some are single-bit
+ *       values that may not combine properly with bitwise AND operations.
+ *
+ * @see AI_Select_Spell_Group_City_Enchantment(), GET_TERRAIN_SPECIAL()
+ */
+int16_t AITP_Transmute(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp)
 {
-    return 0;
+    int16_t target_wp = 0;
+    int16_t target_wy = 0;
+    int16_t target_wx = 0;
+    int16_t city_wp = 0;
+    int16_t wy_offset = 0;
+    int16_t wx_offset = 0;
+    int16_t highest_value = 0;
+    int16_t city_idx = 0;
+    int16_t itr_cities = 0;
+    int16_t city_area_wy = 0;
+    int16_t city_area_wx = 0;
+
+    city_idx = ST_UNDEFINED;
+    highest_value = 0;
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            city_wp = _CITIES[itr_cities].wp;
+            for(wy_offset = -2; wy_offset < 3; wy_offset++)
+            {
+                city_area_wy = _CITIES[itr_cities].wy + wy_offset;
+                if(city_area_wy >= 0 && city_area_wy < WORLD_HEIGHT)
+                {
+                    for(wx_offset = -2; wx_offset < 3; wx_offset++)
+                    {
+                        city_area_wx = _CITIES[itr_cities].wx + wx_offset;
+                        if(city_area_wx < 0)
+                        {
+                            city_area_wx += WORLD_WIDTH;
+                        }
+                        if(city_area_wx >= WORLD_WIDTH)
+                        {
+                            city_area_wx -= WORLD_WIDTH;
+                        }
+
+                        if(
+                            ((GET_TERRAIN_SPECIAL(city_area_wx, city_area_wy, city_wp) & TS_COAL) != 0) /* OGBUG  this is not a bitflag */
+                            ||
+                            ((GET_TERRAIN_SPECIAL(city_area_wx, city_area_wy, city_wp) & TS_IRON) != 0)  /* OGBUG  this is not a bitflag */
+                            ||
+                            ((GET_TERRAIN_SPECIAL(city_area_wx, city_area_wy, city_wp) & TS_SILVER) != 0)  /* OGBUG  this is not a bitflag */
+                        )
+                        {
+                            if(_ai_all_own_city_values[itr_cities] > highest_value)
+                            {
+                                city_idx = itr_cities;
+                                highest_value = _ai_all_own_city_values[itr_cities];
+                                target_wx = city_area_wx;
+                                target_wy = city_area_wy;
+                                target_wp = city_wp;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if(city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_wx = target_wx;
+        *targeted_wy = target_wy;
+        *targeted_wp = target_wp;
+        return ST_TRUE;
+    }
+
 }
 
 // WZD o156p19
@@ -2786,10 +2911,10 @@ int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, 
     int16_t target_wp = 0;
     int16_t target_wy = 0;
     int16_t target_wx = 0;
-    int16_t Tile_Y = 0;
+    int16_t city_area_wy = 0;
     int16_t Plane = 0;
-    int16_t Y_Modifier = 0;
-    int16_t X_Modifier = 0;
+    int16_t wy_offset = 0;
+    int16_t wx_offset = 0;
     int16_t highest_value = 0;
     int16_t target_city_idx = 0;
     int16_t itr_cities = 0;  // _SI_
@@ -3889,8 +4014,7 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx,
     {
         case spl_Transmute:
         {
-            STU_DEBUG_BREAK();
-            // SPELLY  return_value = AITP_Transmute(player_idx, wx, wy, wp);
+            return_value = AITP_Transmute(player_idx, wx, wy, wp);
         } break;
         case spl_Change_Terrain:
         {

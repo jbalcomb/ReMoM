@@ -140,7 +140,7 @@ Next_Turn_Proc()
 ...
                 |-> AI_Select_Spell_Group_City_Enchantment
 [x]                 |-> AITP_Wall_Of_Stone()
-[ ]                 |-> AITP_Transmute()
+[x]                 |-> AITP_Transmute()
 [ ]                 |-> AITP_ChangeTerrain__WIP()
 [ ]                 |-> AITP_MoveFortress()
 [ ]                 |-> AITP_EarthGate()
