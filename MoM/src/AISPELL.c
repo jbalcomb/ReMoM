@@ -2347,7 +2347,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
     }
 
     if(players_spell_list[spl_Gaias_Blessing] == sls_Known) {
-        if(AITP_GaiasBlessing(player_idx, &target_city_idx) == 1) {
+        if(AITP_Gaias_Blessing(player_idx, &target_city_idx) == 1) {
             AI_OVL_SplPriorities[7] = 300;
         }
     }
@@ -3215,9 +3215,84 @@ int16_t AITP_Earth_Gate(int16_t player_idx, int16_t * targeted_city_idx)
 }
 
 // WZD o156p23
-int16_t AITP_GaiasBlessing(int16_t player_idx, int16_t * city_idx)
+/**
+ * @brief AI target picker for Gaia's Blessing — selects the highest-value owned city without
+ *        the Gaia's Blessing enchantment.
+ *
+ * @details
+ * This function identifies the best candidate city for casting the Gaia's Blessing spell.
+ * The spell grants a Gaia's Blessing enchantment to a target city, which provides
+ * various benefits such as improved terrain production, population growth, or environmental
+ * stability. The AI should apply this enchantment to its most valuable cities to maximize
+ * overall economic and strategic benefit.
+ *
+ * The selection algorithm:
+ * 1. Iterates through all cities on the map
+ * 2. Filters for cities owned by @p player_idx
+ * 3. Further filters for cities without the Gaia's Blessing enchantment already active
+ *    (i.e., @c _CITIES[].enchantments[GAIAS_BLESSING] == ST_FALSE)
+ * 4. Scores each candidate using the city's value from @c _ai_all_own_city_values[]
+ * 5. Selects the city with the highest value and stores its index in @p targeted_city_idx
+ *
+ * The Gaia's Blessing spell is most beneficial for high-value cities (e.g., production
+ * hubs, population centers, strategic locations) as the blessing enhances overall
+ * productivity. By targeting the highest-value city without the enchantment, the AI
+ * prioritizes improving its most important urban centers.
+ *
+ * @param player_idx         Index of the AI player casting Gaia's Blessing.
+ * @param[out] targeted_city_idx Pointer to receive the index of the selected city in @c _CITIES[].
+ *                           Only written when the function returns ST_TRUE.
+ *
+ * @return ST_TRUE if a valid target city (owned by the player, without the Gaia's Blessing
+ *         enchantment) was found and @p targeted_city_idx was populated; ST_FALSE if
+ *         no valid target exists (e.g., all player cities already have Gaia's Blessing, or
+ *         the player has no cities).
+ *
+ * @note The selection is deterministic: given the same game state and city values,
+ *       the same city will always be selected.
+ * @note The city value is sourced from @c _ai_all_own_city_values[], which should be
+ *       pre-computed or updated before calling this function. If this array is stale,
+ *       targeting may be suboptimal.
+ * @note A city with @c enchantments[GAIAS_BLESSING] == ST_FALSE is the only valid target
+ *       for this spell; cities that already have the Gaia's Blessing enchantment are skipped.
+ * @note Only player-owned cities are considered; neutral or enemy cities are excluded.
+ *
+ * @see AI_Select_Spell_Group_City_Enchantment(), _ai_all_own_city_values[]
+ */
+int16_t AITP_Gaias_Blessing(int16_t player_idx, int16_t * targeted_city_idx)
 {
-    return 0;
+    int16_t highest_value = 0;
+    int16_t best_city_idx = 0;
+    int16_t itr_cities = 0;
+
+    best_city_idx = ST_UNDEFINED;
+    highest_value = 0;
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            if(_CITIES[itr_cities].enchantments[GAIAS_BLESSING] == ST_FALSE)
+            {
+                if(_ai_all_own_city_values[itr_cities] > highest_value)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                }
+            }
+        }
+    }
+
+    if(best_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_city_idx = best_city_idx;
+        return ST_TRUE;
+    }
+
 }
 
 // WZD o156p24
@@ -3471,7 +3546,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
             case spl_Cloud_Of_Shadow:  { return AITP_CloudofShadow(player_idx, city_idx);    } break;
             case spl_Summoning_Circle: { return AITP_Summoning_Circle(player_idx, city_idx); } break;
             case spl_Dark_Rituals:     { return AITP_DarkRituals(player_idx, city_idx);      } break;
-            case spl_Gaias_Blessing:   { return AITP_GaiasBlessing(player_idx, city_idx);    } break;
+            case spl_Gaias_Blessing:   { return AITP_Gaias_Blessing(player_idx, city_idx);    } break;
             default: { Cast_Spell_Target_Error(spell_idx); } break;
         }
     }

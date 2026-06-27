@@ -10,7 +10,7 @@ AITP_Change_Terrain()
 AITP_Move_Fortress()
 AITP_FlyingFortress()
 AITP_Earth_Gate()
-AITP_GaiasBlessing()
+AITP_Gaias_Blessing()
 AITP_WallofFire()
 AITP_WallofDarkness()
 AITP_HeavenlyLight()
@@ -40,4 +40,4 @@ AITP_Consecration()
     case spl_Cloud_Of_Shadow:  { return AITP_CloudofShadow(player_idx, city_idx);    } break;
     case spl_Summoning_Circle: { return AITP_Summoning_Circle(player_idx, city_idx); } break;
     case spl_Dark_Rituals:     { return AITP_DarkRituals(player_idx, city_idx);      } break;
-    case spl_Gaias_Blessing:   { return AITP_GaiasBlessing(player_idx, city_idx);    } break;
+    case spl_Gaias_Blessing:   { return AITP_Gaias_Blessing(player_idx, city_idx);    } break;

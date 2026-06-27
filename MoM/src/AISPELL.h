@@ -177,7 +177,7 @@ int16_t AITP_FlyingFortress(int16_t player_idx, int16_t * city_idx);
 int16_t AITP_Earth_Gate(int16_t player_idx, int16_t * targeted_city_idx);
 
 // WZD o156p23
-int16_t AITP_GaiasBlessing(int16_t player_idx, int16_t * city_idx);
+int16_t AITP_Gaias_Blessing(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p24
 int16_t AITP_WallofFire(int16_t player_idx, int16_t * city_idx);
