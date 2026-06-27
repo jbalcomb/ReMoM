@@ -29,6 +29,11 @@ void gd_dump_cities(const char* point);
 void gd_dump_units(const char* point);
 void gd_dump_heroes(const char* point);
 void gd_dump_items(const char* point);
+void gd_dump_fortresses(const char* point);
+void gd_dump_world_map(const char* point);        /* defined in MAPGEN.c */
+void gd_dump_landmasses(const char* point);       /* defined in MAPGEN.c */
+void gd_dump_terrain_specials(const char* point); /* defined in MAPGEN.c */
+void gd_dump_map_square_flags(const char* point); /* defined in MAPGEN.c */
 
 /* Capture/Inject (CI), ReMoM side.  Reads og-game-data-capture.fwv (produced by
  * extract-ci-stage0.py from the OG [CI] probe) and injects OG's exact bytes for
@@ -39,7 +44,6 @@ int  gd_ci_load(void);                                                  /* -> re
 int  gd_ci_get(const char* key, const char* site, long* out, int max);  /* -> values copied, or -1 if absent */
 void gd_ci_inject_world_overrun(const char* site);                      /* write OG's OOB int16 past _world_maps */
 void gd_ci_inject_flags_overrun(const char* site);                      /* write OG's OOB uint8 past _map_square_flags */
-void gd_ci_inject_terrain_specials_overrun(const char* site);           /* write OG's OOB uint8 past _map_square_terrain_specials */
 
 // MGC o56p1
 void Init_Computer_Players(void);

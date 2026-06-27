@@ -131,7 +131,22 @@ void Screen_Control(void)
                 // /* HACK */ Load_SAVE_GAM(-1);  // SAVETEST.GAM
                 /* HACK */  Load_WZD_Resources();
                 Load_SAVE_GAM(8);
-                gd_dump_cities("311_Load_Cities_C");  /* post-load WIZARDS snapshot (Load_SAVE_GAM FN-EXIT) */
+                /* 300-series: snapshot every save-loaded array right after Load_SAVE_GAM
+                 * (matches OG's gd_wzd_landmark_probe @ Load_SAVE_GAM on-return). Numbered
+                 * in save-load order; gaps (303/304/306/312/313) are Phase 2. */
+                gd_dump_heroes          ("301_Load_Heroes_H");
+                gd_dump_players         ("302_Load_Players_P");
+                gd_dump_world_map       ("303_Load_World_Maps_W");
+                gd_dump_landmasses      ("304_Load_Landmasses_L");
+                gd_dump_nodes           ("305_Load_Nodes_N");
+                gd_dump_fortresses      ("306_Load_Fortresses_F");
+                gd_dump_towers          ("307_Load_Towers_T");
+                gd_dump_lairs           ("308_Load_Lairs_L");
+                gd_dump_items           ("309_Load_Items_I");
+                gd_dump_cities          ("310_Load_Cities_C");
+                gd_dump_units           ("311_Load_Units_U");
+                gd_dump_terrain_specials("312_Load_Terrain_Specials_T");
+                gd_dump_map_square_flags("313_Load_Map_Flags_M");
                 Loaded_Game_Update();
                 current_screen = scr_Main_Screen;
 #ifdef MOUSE_DEBUG

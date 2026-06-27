@@ -280,7 +280,7 @@ and their order of execution
  * going INTO the tower/lair phase already differs, or whether Generate_Towers
  * reads an identical map+seed and still draws differently.  One [GD] line per
  * (plane,row): "[GD] <point> _world_maps[<plane>].y<NN> = csv int16 tiles". */
-static void gd_dump_world_map(const char* point)
+void gd_dump_world_map(const char* point)
 {
     int plane, y, x, q;
     char row[WORLD_WIDTH * 8];
@@ -299,7 +299,7 @@ static void gd_dump_world_map(const char* point)
 }
 
 /* CLAUDE: capture _landmasses (uint8 landmass-id per tile) for OG byte-compare. */
-static void gd_dump_landmasses(const char* point)
+void gd_dump_landmasses(const char* point)
 {
     int plane, y, x, q;
     char row[WORLD_WIDTH * 5];
@@ -318,7 +318,7 @@ static void gd_dump_landmasses(const char* point)
 }
 
 /* CLAUDE: capture _map_square_terrain_specials (uint8 terrain-special id per tile) for OG byte-compare. */
-static void gd_dump_terrain_specials(const char* point)
+void gd_dump_terrain_specials(const char* point)
 {
     int plane, y, x, q;
     char row[WORLD_WIDTH * 5];
@@ -337,7 +337,7 @@ static void gd_dump_terrain_specials(const char* point)
 }
 
 /* CLAUDE: capture _map_square_flags (uint8 per-square flag bits) for OG byte-compare. */
-static void gd_dump_map_square_flags(const char* point)
+void gd_dump_map_square_flags(const char* point)
 {
     int plane, y, x, q;
     char row[WORLD_WIDTH * 5];
@@ -6256,10 +6256,6 @@ void Generate_Terrain_Specials(int16_t wp)
      * *_Terrain_Special ReMoM doesn't, knocking the RNG stream one draw out of
      * phase downstream.  Fires both plane calls; the wp=1 one sets up its reads. */
     gd_ci_inject_world_overrun("gen_ts_entry");
-    /* The same OOB pick also indexes _map_square_terrain_specials in the continue-gate
-     * GET_TERRAIN_SPECIAL(wx,wy,wp) read; inject OG's overrun there too, else a nonzero
-     * OOB ts makes ReMoM `continue` past a cell OG processes (missing Desert call). */
-    gd_ci_inject_terrain_specials_overrun("gen_ts_entry");
 
     /* Clear specials and flags map squares for the selected plane */
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
@@ -6300,18 +6296,6 @@ void Generate_Terrain_Specials(int16_t wp)
             wy = (itr_wy + Random((radius * 2)));  /* OGBUG  could be 39 + random(8) = 46, which is out of bounds */
             wx = (itr_wx + Random((radius * 2)));  /* OGBUG  could be 59 + random(8) = 67, which is out of bounds */
             /* OGBUG  OOB AVRL  e.g., wx=63,wy=45,p=1,offset = 5163 ACCESS VIOLATION READING LOCATION!!!!! */
-
-            /* TS-PROBE (no Random): pin cell-Y to the RNG divergence sidx and show
-             * which OOB read diverges -- ts (continue-gate, _map_square_terrain_specials)
-             * vs terrain/desert (_world_maps classification).  OG expects desert=1,ts=0
-             * at cell-Y.  Remove once the OOB CI is proven. */
-            LOG_INFO(LOG_CAT_GENERAL,
-                "[TS-PROBE] rng=%llu wp=%d wx=%d wy=%d oob=%d terrain=%d ts=%d desert=%d",
-                (unsigned long long)g_random_call_count, (int)wp, (int)wx, (int)wy,
-                (int)(wy >= WORLD_HEIGHT || wx >= WORLD_WIDTH),
-                (int)p_world_map[wp][wy][wx],
-                (int)GET_TERRAIN_SPECIAL(wx, wy, wp),
-                (int)Square_Is_Desert_NewGame(wx, wy, wp));
 
             /* Sanity check location */
             square_has_city = ST_FALSE;
@@ -6851,7 +6835,7 @@ void Movement_Mode_Cost_Maps(int16_t wp)
 int16_t Square_Is_Bad_River_Mouth(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
-    terrain_type = (p_world_map[wp][wy][wx] % TerType_Count);
+    terrain_type = (TERRAIN_TYPE(wx, wy, wp) % NUM_TERRAIN_TYPES);
     if((terrain_type >= _Shore10111000) && (terrain_type <= _Shore10101111)) { return ST_TRUE; }
     return ST_FALSE;
 }
@@ -7087,7 +7071,7 @@ void Animate_Oceans(void)
 int16_t Square_Is_Ocean_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
-    terrain_type = (p_world_map[wp][wy][wx] % TerType_Count);
+    terrain_type = (TERRAIN_TYPE(wx, wy, wp) % NUM_TERRAIN_TYPES);
     if(terrain_type  == tt_BugGrass)   { return ST_FALSE; }
     if(terrain_type  < tt_Grasslands1) { return ST_TRUE;  }
     if((terrain_type > tt_RiverM_end) && (terrain_type < tt_Rivers_1st)) { return ST_TRUE; }
@@ -7243,7 +7227,7 @@ int16_t Square_Is_Shore_NewGame(int16_t wx, int16_t wy, int16_t wp)
 int16_t Square_Is_Mountain_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
-    terrain_type = p_world_map[wp][wy][wx];
+    terrain_type = (TERRAIN_TYPE(wx, wy, wp) % NUM_TERRAIN_TYPES);
     if(
         (terrain_type == tt_Mountain1)
         ||
@@ -7266,7 +7250,7 @@ int16_t Square_Is_Mountain_NewGame(int16_t wx, int16_t wy, int16_t wp)
 int16_t Square_Is_Hills_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
-    terrain_type = p_world_map[wp][wy][wx];
+    terrain_type = (TERRAIN_TYPE(wx, wy, wp) % NUM_TERRAIN_TYPES);
     if(
         (terrain_type == tt_Hills1)
         ||
@@ -7290,7 +7274,7 @@ int16_t Square_Is_Hills_NewGame(int16_t wx, int16_t wy, int16_t wp)
 int16_t Square_Is_Swamp_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
-    terrain_type = p_world_map[wp][wy][wx];
+    terrain_type = (TERRAIN_TYPE(wx, wy, wp) % NUM_TERRAIN_TYPES);
     if(
         (terrain_type == tt_Swamp2)
         ||
@@ -7311,7 +7295,7 @@ int16_t Square_Is_Swamp_NewGame(int16_t wx, int16_t wy, int16_t wp)
 int16_t Square_Is_Desert_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
-    terrain_type = p_world_map[wp][wy][wx];
+    terrain_type = (TERRAIN_TYPE(wx, wy, wp) % NUM_TERRAIN_TYPES);
     if(
         (terrain_type == tt_Desert1)
         ||
@@ -7341,7 +7325,7 @@ int16_t Square_Is_Desert_NewGame(int16_t wx, int16_t wy, int16_t wp)
 int16_t Square_Is_Grassland_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
-    terrain_type = p_world_map[wp][wy][wx];
+    terrain_type = (TERRAIN_TYPE(wx, wy, wp) % NUM_TERRAIN_TYPES);
     if(
         (terrain_type == tt_Grasslands1)
         ||

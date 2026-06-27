@@ -189,35 +189,6 @@ void gd_ci_inject_flags_overrun(const char* site)
         site, n, (int)(NUM_PLANES * WORLD_SIZE));
 }
 
-/* As gd_ci_inject_flags_overrun, but for _map_square_terrain_specials (uint8/ts).
- * Generate_Terrain_Specials' continue-gate GET_TERRAIN_SPECIAL(wx,wy,wp) reads this
- * array at the same OOB pick as the _world_maps classification; the clear loop only
- * zeroes the logical 4800 squares, so the WORLD_OVERFLOW over-alloc is uncleared and
- * differs from OG's adjacent bytes -- a nonzero OOB read makes ReMoM `continue` past a
- * cell OG processes (missing Desert_Terrain_Special). Inject OG's bytes at the entry. */
-void gd_ci_inject_terrain_specials_overrun(const char* site)
-{
-    long     vals[WORLD_OVERFLOW];   /* matches ALLOC.c _map_square_terrain_specials +WORLD_OVERFLOW over-alloc */
-    uint8_t* dst;
-    int      n, i;
-
-    if (!_map_square_terrain_specials) {
-        LOG_INFO(LOG_CAT_GENERAL, "[CI] inject ts overrun (%s): _map_square_terrain_specials NULL -- skipped.", site);
-        return;
-    }
-    n = gd_ci_get("terrain_specials_overrun", site, vals, WORLD_OVERFLOW);
-    if (n < 0) {
-        LOG_INFO(LOG_CAT_GENERAL, "[CI] inject ts overrun (%s): no record -- skipped.", site);
-        return;
-    }
-    /* OG-faithful OOB target: one past the last valid square, _map_square_terrain_specials[4800]. */
-    dst = _map_square_terrain_specials + (NUM_PLANES * WORLD_SIZE);
-    for (i = 0; i < n; i++) { dst[i] = (uint8_t)vals[i]; }
-    LOG_INFO(LOG_CAT_GENERAL,
-        "[CI] inject ts overrun (%s): wrote %d bytes at _map_square_terrain_specials+%d.",
-        site, n, (int)(NUM_PLANES * WORLD_SIZE));
-}
-
 /* ---- Game-data capture (CaptureGameData PRD/PLAN, Phase 4, ReMoM side) ----
  * Dump _players in the SAME [GD] format as the OG-side STU-DOSBox probe,
  * driven by the SAME generated field map (gd_wizard_fields.h from
@@ -233,6 +204,7 @@ typedef struct { uint16_t off; uint8_t kind; uint16_t count; const char* name; }
 #include "gd_unit_fields.h"
 #include "gd_heroes_fields.h"
 #include "gd_item_fields.h"
+#include "gd_fortress_fields.h"
 
 static int gd_es(int kind) {
     return (kind == GD_U16 || kind == GD_I16) ? 2
@@ -358,6 +330,42 @@ void gd_dump_towers(const char* point) {
                 }
             }
             LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _TOWERS[%d].%s = %s",
+                      point, n, f->name, val);
+        }
+        STU_Log_Flush_All();
+    }
+}
+
+void gd_dump_fortresses(const char* point) {
+    int n, i, k;
+    char val[1100];
+    for (n = 0; n < NUM_FORTRESSES; n++) {
+        const uint8_t* base = (const uint8_t*)&_FORTRESSES[n];
+        for (i = 0; i < FORTRESS_FIELD_COUNT; i++) {
+            const gd_field_t* f = &fortress_fields[i];
+            const uint8_t* fp = base + f->off;
+            int q = 0;
+            if(f->kind == GD_STR) {
+                val[q++] = '"';
+                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
+                    uint8_t c = fp[k];
+                    if(c == 0) break;
+                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
+                }
+                val[q++] = '"'; val[q] = 0;
+            } else if(f->kind == GD_BYTES) {
+                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
+                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
+                val[q] = 0;
+            } else {
+                int es = gd_es(f->kind);
+                for (k = 0; k < f->count; k++) {
+                    long v = gd_rd(fp + k * es, f->kind);
+                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
+                    if(q > (int)sizeof(val) - 16) break;
+                }
+            }
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _FORTRESSES[%d].%s = %s",
                       point, n, f->name, val);
         }
         STU_Log_Flush_All();
