@@ -250,7 +250,7 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     city_names_buffer = (char *)Near_Allocate_First(280);
-    LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (char *)city_names_buffer, race_idx, 1, 280);
+    LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (SAMB_ptr)city_names_buffer, race_idx, 1, 280);
 
     attempts = 0;
     while(1)
@@ -261,11 +261,11 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
         for(itr_cities = 0; itr_cities < _cities; itr_cities++)
         {
             stu_strcpy((char *)Local_Name_String, (char *)&_CITIES[itr_cities]);
-            if(stricmp(Local_Name_String, (char *)(city_names_buffer + city_name_idx * LEN_CITY_NAME)) == 0)
+            if(stu_stricmp(Local_Name_String, (char *)(city_names_buffer + city_name_idx * LEN_CITY_NAME)) == 0)
             {
                 if(attempts >= 200)
                 {
-                    LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (char *)city_names_buffer, Random(14) - 1, 1, 280);
+                    LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (SAMB_ptr)city_names_buffer, Random(14) - 1, 1, 280);
                 }
                 else
                 {
