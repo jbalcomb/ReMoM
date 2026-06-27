@@ -527,30 +527,19 @@ int16_t City_Road_Trade_Bonus(int16_t city_idx)
 
 
 // WZD s161p07
-// drake178: TILE_IsRiver()
 /*
 used to decide on river for cityscape  (not ocean, not *water*)
 */
 int16_t Square_Is_River(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type;  // _SI_
-    int16_t is_river;
-
+    int16_t terrain_type = 0;
+    int16_t is_river = 0;  // DNE in Dasm
     is_river = ST_FALSE;  // DNE in Dasm
-
-    if(wx < 0)
-    {
-        wx += WORLD_WIDTH;
-    }
-    if(wx > WORLD_WIDTH)
-    {
-        wx -= WORLD_WIDTH;
-    }
-
+    if(wx < 0)           { wx += WORLD_WIDTH; }
+    if(wx > WORLD_WIDTH) { wx -= WORLD_WIDTH; }
     if( (wy >= 0) && (wy < WORLD_HEIGHT) )
     {
-        terrain_type = TERRAIN_TYPE(wx, wy, wp);
-
+        terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
         if(terrain_type <= tt_4WRiver5)
         {
             if(terrain_type <= tt_Shore2_end)
@@ -602,49 +591,36 @@ int16_t Square_Is_River(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD s161p08
-// drake178: TILE_GetSpecialGold()
-/*
-    returns the gold units/income for the map square
-*/
 int16_t Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf)
 {
-    int16_t terrain_special;  // _DI_
-    int16_t gold_units;  // _SI_
-
+    int16_t terrain_special = 0;
+    int16_t gold_units = 0;
     terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
-
     gold_units = 0;
-
     if(terrain_special == TS_SILVER)
     {
         gold_units = 2;
     }
-
     if(terrain_special == TS_GOLD)
     {
         gold_units = 3;
     }
-
     if(terrain_special == TS_GEMS)
     {
         gold_units = 5;
     }
-
     if(are_dwarf != ST_FALSE)
     {
         gold_units = (gold_units * 2);  // +100%
     }
-
     if(have_miners_guild != ST_FALSE)
     {
         gold_units = ((gold_units * 3) / 2);  // +50%
     }
-
     if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
     {
         gold_units = (gold_units / 2);
     }
-
     return gold_units;
 }
 
@@ -661,8 +637,8 @@ int16_t Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_mine
 // drake178: TILE_GetSpecialPower()
 int16_t Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf)
 {
-    int16_t terrain_special;  // _DI_
-    int16_t mana_units;  // _SI_
+    int16_t terrain_special = 0;
+    int16_t mana_units = 0;
 
     terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
 
@@ -1025,8 +1001,9 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
 // UU_TILE_GetUnsdMPCost
 
 // WZD s161p22
-// NOTE(20250216, Jim Balcomb): WTF with all these c&p notes? I'm only just now doing anything with this.
-// TILE_IsAISailable    
+/*
+INCONSISTENT: returns 0 for the single square no-river lake, which means it should also return 0 for its river outlet versions (0xC5 - 0xC8)
+*/
 /*
 WZD s161p22
 TILE_IsAISailable()
@@ -1035,142 +1012,21 @@ TILE_IsSailable()
 WZD s161p39
 Square_Is_OceanLike()
 */
-/*
-WZD s161p22
-TILE_IsAISailable()
-; returns 1 if the square is a shore, ocean, or lake, or 0 otherwise
-; INCONSISTENT: returns 0 for the single square no-river
-; lake, which means it should also return 0 for its
-; river outlet versions (0xC5 - 0xC8)
-
-; drake178: TILE_IsSailable()
-; returns 1 for ocean/shore/lake tiles, or 0 otherwise
-
-*/
-// *whatever*, above...
-// WZD s161p22
-// drake178: TILE_IsAISailable()
-/*
-returns 1 if the square is a shore, ocean, or lake, or
-0 otherwise
-
-INCONSISTENT: returns 0 for the single square no-river
-lake, which means it should also return 0 for its
-river outlet versions (0xC5 - 0xC8)
-*/
-/*
-
-*/
 int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type = 0;  // _CX_
+    int16_t terrain_type = 0;
     int16_t is_shoreline = 0;
-
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
-
-    if(terrain_type >= _Tundra00001000)
-    {
-
-        is_shoreline = ST_TRUE;
-
-    }
-    else
-    {
-
-        if(terrain_type >= _Shore1100000R)
-        {
-
-            is_shoreline = ST_TRUE;
-
-        }
-        else
-        {
-
-            if(terrain_type >= _River1111_1)
-            {
-
-                is_shoreline = ST_FALSE;
-
-            }
-            else
-            {
-
-                if(terrain_type >= _Shore00011R11)
-                {
-
-                    is_shoreline = ST_TRUE;
-
-                }
-                else
-                {
-
-                    if(terrain_type >= _River1100_3)
-                    {
-
-                        is_shoreline = ST_FALSE;
-
-                    }
-                    else
-                    {
-
-                        if(terrain_type >= _1LakeRiv_W)
-                        {
-
-                            is_shoreline = ST_TRUE;
-
-                        }
-                        else
-                        {
-
-                            if(terrain_type >= tte_Grasslands)
-                            {
-
-                                is_shoreline = ST_FALSE;
-
-                            }
-                            else
-                            {
-
-                                if(terrain_type == tt_BugGrass)
-                                {
-
-                                    is_shoreline = ST_FALSE;
-
-                                }
-                                else
-                                {
-
-                                    if(terrain_type == _1Lake)
-                                    {
-
-                                        is_shoreline = ST_FALSE;
-
-                                    }
-                                    else
-                                    {
-
-                                        is_shoreline = ST_TRUE;
-
-                                    }
-
-                                }
-
-                            }
-                            
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
-
+    terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
+    if(     terrain_type >= _Tundra00001000) { is_shoreline = ST_FALSE; }
+    else if(terrain_type >= _Shore1100000R)  { is_shoreline = ST_TRUE;  }
+    else if(terrain_type >= _River1111_1)    { is_shoreline = ST_FALSE; }
+    else if(terrain_type >= _Shore00011R11)  { is_shoreline = ST_TRUE;  }
+    else if(terrain_type >= _River1100_3)    { is_shoreline = ST_FALSE; }
+    else if(terrain_type >= _1LakeRiv_W)     { is_shoreline = ST_TRUE;  }
+    else if(terrain_type >= tte_Grasslands)  { is_shoreline = ST_FALSE; }
+    else if(terrain_type == tt_BugGrass)     { is_shoreline = ST_FALSE; }
+    else if(terrain_type == _1Lake)          { is_shoreline = ST_FALSE; }
     return is_shoreline;
-
 }
 
 
@@ -1178,20 +1034,13 @@ int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp)
 // drake178: TILE_IsVisibleForest()
 // AKA Square_Is_Explored_Forest()
 /*
-returns 1 if the square is explored by the human
-player, and is a forest square, or 0 otherwise
-
-INCONSISTENT: unlike all other square type check
-functions, this only returns 1 for tiles visible to
-the human player (explored)
+INCONSISTENT: unlike all other square type check functions, this only returns 1 for tiles visible to the human player (explored)
 */
 int16_t Square_Is_Forest(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t is_forest = 0;
     int16_t terrain_type = 0;
-
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
-
+    terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
     if(
         (SQUARE_EXPLORED(wx, wy, wp) == ST_TRUE)
         &&
@@ -1212,7 +1061,6 @@ int16_t Square_Is_Forest(int16_t wx, int16_t wy, int16_t wp)
     {
         is_forest = ST_FALSE;
     }
-
     return is_forest;
 }
 
@@ -1237,7 +1085,7 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
     int16_t return_value = 0;
     uint16_t terrain_type = 0;
 
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+    terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
 
     // if(terrain_type > 0x25A)  /* _Tundra00001000 */
     if(terrain_type > tt_Tundra_1st)  /* _Tundra00001000 */
@@ -1330,16 +1178,15 @@ Done:
 }
 
 // WZD s161p25
-// drake178: TILE_IsDeepOcean()
+/*
+    DEDU  Why only tt_OceanAnim?
+*/
 int16_t Square_Is_Ocean(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type = 0;  // _CX_
+    int16_t terrain_type = 0;
     int16_t is_ocean = 0;  // DNE in Dasm
-
     is_ocean = ST_FALSE;  // DNE in Dasm
-
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
-
+    terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
     if(terrain_type == tt_OceanAnim)
     {
         is_ocean = ST_TRUE;
@@ -1348,7 +1195,6 @@ int16_t Square_Is_Ocean(int16_t wx, int16_t wy, int16_t wp)
     {
         is_ocean = ST_FALSE;
     }
-
     return is_ocean;
 }
 
@@ -1377,58 +1223,21 @@ vs. Square_Is_OceanLike()?
  *       and naming, including the legacy local variable spelling
  *       @c is_emarkable.
  */
-int16_t Map_Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp)
+int16_t Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
-
-    terrain_type = p_world_map[wp][wy][wx];
-
-    if(terrain_type == tt_BugGrass)
-    {
-        return ST_FALSE;
-    }
-
-    if(terrain_type == tt_Lake)
-    {
-        return ST_FALSE;
-    }
-
-    if(terrain_type < _Shore11101110)
-    {
-        return ST_TRUE;
-    }
-
-    if(terrain_type < _Shore10111000)
-    {
-        return ST_FALSE;
-    }
-
-    if(terrain_type < tte_Grasslands)
-    {
-        return ST_TRUE;
-    }
-
-    if(terrain_type < _Shore00001R10)
-    {
-        return ST_FALSE;
-    }
-
-    if(terrain_type < _River1100_3)
-    {
-        return ST_TRUE;
-    }
-
-    if(terrain_type < _Shore1100000R)
-    {
-        return ST_FALSE;
-    }
-
-    if(terrain_type < _Shore1000111R)
-    {
-        return ST_TRUE;
-    }
-
-    return ST_FALSE;
+    int16_t is_embarkable = 0;  // DNE in Dasm
+    terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
+    if(terrain_type == tt_BugGrass)   { is_embarkable = ST_FALSE; }
+    if(terrain_type == tt_Lake)       { is_embarkable = ST_FALSE; }
+    if(terrain_type < _Shore11101110) { is_embarkable = ST_TRUE;  }
+    if(terrain_type < _Shore10111000) { is_embarkable = ST_FALSE; }
+    if(terrain_type < tte_Grasslands) { is_embarkable = ST_TRUE;  }
+    if(terrain_type < _Shore00001R10) { is_embarkable = ST_FALSE; }
+    if(terrain_type < _River1100_3)   { is_embarkable = ST_TRUE;  }
+    if(terrain_type < _Shore1100000R) { is_embarkable = ST_FALSE; }
+    if(terrain_type < _Shore1000111R) { is_embarkable = ST_TRUE;  }
+    return is_embarkable;
 }
 
 
@@ -1507,108 +1316,11 @@ int16_t Building_Terrain_Type_Prerequisite(int16_t wx, int16_t wy, int16_t wp)
     return terrain_type;
 }
 
-/* COPILOT: preserved for reference only; excluded from build. */
-#if 0
-/* GEMINI */
-int TILE_BuildingReqType__GEMINI(int XPos, int YPos, int Plane)
-{
-    unsigned int far *world_maps_ptr; /* _world_maps */
-    unsigned int tile_word;
-    unsigned int terrain_type;
-    unsigned int table_idx;
-
-    /* Access the world map array. Each plane is 60x40 words (4800 bytes). */
-    /* Calculation: Plane * 2400 + YPos * 60 + XPos */
-    world_maps_ptr = _world_maps;
-    tile_word = world_maps_ptr[((unsigned long)Plane * 2400) + ((unsigned long)YPos * 60) + (unsigned int)XPos];
-
-    /* Tile word contains terrain type and additional flags. */
-    /* The base terrain type is the remainder of tile_word / NUM_TERRAIN_TYPES. */
-    terrain_type = tile_word % NUM_TERRAIN_TYPES;
-
-    /* Range and Type Checks */
-    if(terrain_type >= tt_Tundra_1st)
-    {
-        return 0; /* loc_F418D */
-    }
-
-    if(terrain_type == TT_BugGrass)
-    {
-        return BREQ_Grass; /* loc_F41F1 */
-    }
-
-    if(terrain_type < tt_Grasslands1)
-    {
-        return BREQ_Water; /* loc_F41B6 */
-    }
-
-    if(terrain_type > TT_4WRiver5)
-    {
-        return BREQ_Water; /* loc_F41B6 */
-    }
-
-    if(terrain_type > TT_Shore2_end)
-    {
-        return BREQ_Grass; /* loc_F41F1 */
-    }
-
-    if(terrain_type > TT_Desert_end)
-    {
-        return BREQ_Water; /* loc_F41B6 */
-    }
-
-    /* Check for Hill types */
-    if(terrain_type > tt_Hills_Lst)
-    {
-        return 0; /* loc_F418D */
-    }
-
-    if(terrain_type > tt_Rivers_end)
-    {
-        return BREQ_Hill; /* loc_F41FF */
-    }
-
-    /* Check for Forest types */
-    if(terrain_type > tt_Forest3)
-    {
-        return BREQ_Grass; /* loc_F41F1 */
-    }
-
-    /* Specific terrain ID switch (range 0xA2 to 0xB8) */
-    /* [bp-02h] -> table_idx : unsigned int */
-    table_idx = terrain_type - 0xA2;
-    if(table_idx > 0x16)
-    {
-        return 0; /* loc_F418D */
-    }
-
-    /* Indirect jump via table at off_F4209 based on table_idx */
-    /* The table maps specific sub-tiles to building requirement categories. */
-    switch (table_idx)
-    {
-        /* Note: Switch cases reconstructed from jump table targets loc_F41E5 to loc_F41FF */
-        /* Exact mapping of indices 0..22 to targets requires the table data. */
-        /* Targets include: 
-           BREQ_Grass  (loc_F41E5, loc_F41F1)
-           BREQ_Forest (loc_F41E7, loc_F41F6)
-           BREQ_Hill   (loc_F41E9, loc_F41FB, loc_F41FF)
-           0           (loc_F41EB, loc_F41ED, loc_F41EF, loc_F4204)
-        */
-        default:
-            /* TODO: Implement specific mappings from CS:F4209 if available */
-            return 0;
-    }
-
-    return 0;
-}
-#endif
-
 
 // WZD s161p28
-// drake178: TILE_IsHills()
 int16_t Square_Is_Hills(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type = 0;  // _CX_
+    int16_t terrain_type = 0;
     int16_t is_hills = 0;  // DNE in Dasm
 
     is_hills = ST_FALSE;  // DNE in Dasm
@@ -1637,10 +1349,9 @@ int16_t Square_Is_Hills(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD s161p29
-// drake178: TILE_IsMountains()
 int16_t Square_Is_Mountain(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type;  // _CX_
+    int16_t terrain_type;
     int16_t is_mountain;  // DNE in Dasm
 
     is_mountain = ST_FALSE;  // DNE in Dasm
@@ -1673,10 +1384,9 @@ int16_t Square_Is_Mountain(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD s161p30
-// drake178: TILE_IsDesert()
 int16_t Square_Is_Desert(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type = 0;  // _CX_
+    int16_t terrain_type = 0;
     int16_t is_desert = 0;  // DNE in Dasm
 
     is_desert = ST_FALSE;  // DNE in Dasm
@@ -1711,10 +1421,9 @@ int16_t Square_Is_Desert(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD s161p31
-// drake178: TILE_IsTundra()
 int16_t Square_Is_Tundra(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type = 0;  // _CX_
+    int16_t terrain_type = 0;
     int16_t is_tundra = 0;  // DNE in Dasm
 
     is_tundra = ST_FALSE;  // DNE in Dasm
@@ -1743,10 +1452,9 @@ int16_t Square_Is_Tundra(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD s161p32
-// drake178: TILE_IsSwamp()
 int16_t Square_Is_Swamp(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type = 0;  // _CX_
+    int16_t terrain_type = 0;
     int16_t is_swamp = 0;  // DNE in Dasm
 
     is_swamp = ST_FALSE;  // DNE in Dasm
@@ -1773,10 +1481,9 @@ int16_t Square_Is_Swamp(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD s161p33
-// drake178: TILE_IsGrasslands()
 int16_t Square_Is_Grasslands(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type = 0;  // _CX_
+    int16_t terrain_type = 0;
     int16_t is_grasslands = 0;  // DNE in Dasm
 
     is_grasslands = ST_FALSE;  // DNE in Dasm
@@ -1807,10 +1514,9 @@ int16_t Square_Is_Grasslands(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD s161p34
-// drake178: TILE_IsVolcano()
 int16_t Square_Is_Volcano(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type;  // _CX_
+    int16_t terrain_type;
     int16_t is_volcano;  // DNE in Dasm
 
     is_volcano = ST_FALSE;  // DNE in Dasm
@@ -1835,7 +1541,6 @@ int16_t Square_Is_Volcano(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD s161p35
-// drake178: TILE_IsCorrupted()
 int16_t Square_Has_Corruption(int16_t wx, int16_t wy, int16_t wp)
 {
     uint8_t map_square_flag = 0;  // DNE in Dasm

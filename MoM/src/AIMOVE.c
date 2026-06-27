@@ -2011,7 +2011,7 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
                 {
                     wx_offset -= WORLD_WIDTH;
                 }
-                if(Map_Square_Is_Embarkable(wx_offset, itr_stack_wy, wp) != ST_FALSE)
+                if(Square_Is_Embarkable(wx_offset, itr_stack_wy, wp) != ST_FALSE)
                 {
                     niu_embarkable_found = ST_TRUE;
                     niu_embarkable_wx = itr_stack_wx;
@@ -5106,7 +5106,7 @@ void AI_Stacks_Reorder_Settle_Elsewhere(int16_t unit_idx, int16_t wx, int16_t wy
                 {
                     unit_wx -= WORLD_WIDTH;
                 }
-                if(Map_Square_Is_Embarkable(unit_wx, unit_wy, wp) != ST_FALSE)
+                if(Square_Is_Embarkable(unit_wx, unit_wy, wp) != ST_FALSE)
                 {
                     square_is_embarkable = ST_TRUE;
                     new_target_wx = itr_wx;  /* OGBUG  this should be unit_wx, not itr_wx */

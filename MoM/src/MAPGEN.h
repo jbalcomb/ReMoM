@@ -150,10 +150,10 @@ int16_t Square_Is_Forest_NewGame(int16_t wx, int16_t wy, int16_t wp);
 int16_t Square_Is_River_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p44
-// UU_TILE_IsRiverOutlet()
+int16_t Square_Is_River_Mouth(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p45
-// UU_TILE_IsShore()
+int16_t Square_Is_Shore_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p46
 int16_t Square_Is_Mountain_NewGame(int16_t wx, int16_t wy, int16_t wp);

@@ -101,6 +101,11 @@ Back Around To The Beginning
 [ ] Next_Turn_Calc()
 [ ] NPC_To_Human_Diplomacy__WIP()
 
+[ ] CTY_Gold_Breakdown()    CITYCALC.c  WZD o142p33
+[ ] CTY_Prod_Breakdown()    CITYCALC.c  WZD o142p34
+[ ] CTY_Rsrc_Breakdown()    CITYCALC.c  WZD o142p35
+[ ] CTY_Pwr_Breakdown()     CITYCALC.c  WZD o142p36
+
 
 
 
@@ -163,6 +168,7 @@ Next_Turn_Proc()
 [ ]                 |-> AITP_WallofDarkness()
 [ ]                 |-> AITP_AltarofBattle()
 
+IDK_AITP_Disjunction__STUB
 
 
 
@@ -175,15 +181,15 @@ New Game
 [ ] GAME_WizardsLaunch()
 
 [ ] j_NEWG_FinalizeTables()
-    [ ] Initialize_Items
-    [ ] Init_Heroes
-    [ ] Init_Players
+    [x] Initialize_Items
+    [x] Init_Heroes
+    [x] Init_Players
     [x] Init_CP_Strategy
     [x] Init_Magic_Personalities_Objectives
-    [ ] Init_Summoning_Circle_And_Spell_Of_Mastery
-    [ ] Initialize_Messages
-    [ ] _players.capital_race
-    [ ] _players.gold_reserve
+    [x] Init_Summoning_Circle_And_Spell_Of_Mastery
+    [x] Initialize_Messages
+    [x] _players.capital_race
+    [x] _players.gold_reserve
     [ ] Wiz5_Spell_E0h@[itr_players] = (80 + Random(40))  WTF is this?  ; 80 + rnd(40) is stored here for each AI wizard (word array pointer, human excluded) when setting initial gold
 
 MoO2

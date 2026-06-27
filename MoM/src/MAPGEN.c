@@ -7184,24 +7184,60 @@ int16_t Square_Is_Forest_NewGame(int16_t wx, int16_t wy, int16_t wp)
 int16_t Square_Is_River_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
-    /* OGBUG  `% TerType_Count` converts 1000 (0x3E8) tt_River_Placeholder into $EE (fortunately actually a river) */
-    // 1000 mod 762 = 238  0xEE
-    terrain_type = (p_world_map[wp][wy][wx] % TerType_Count);
-    if((terrain_type > tt_Forest3     ) && (terrain_type < tt_Lake2         )) { return ST_TRUE; }  /* OGBUG  this should be tt_Lake1 ($C5) */
-    if((terrain_type > tt_Shore2F_end ) && (terrain_type < tt_Mountains_Fst )) { return ST_TRUE; }
-    if((terrain_type > tt_Shore2_end  ) && (terrain_type < tt_Shore3_1st    )) { return ST_TRUE; }
-    if(terrain_type == TT_RIVER_PLACEHOLDER) { return ST_TRUE; }
-    return ST_FALSE;
+    int16_t is_river = 0;  // DNE in Dasm
+    /* OGBUG  `% TerType_Count` converts 1000 (0x3E8) tt_River_Placeholder into $EE (fortunately actually a river) (1000 mod 762 = 238  0xEE) */
+    terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
+    if((terrain_type > tt_Forest3     ) && (terrain_type < tt_Lake2         )) { is_river = ST_TRUE; }  /* OGBUG  this should be tt_Lake1 ($C5), not tt_Lake2 */
+    if((terrain_type > tt_Shore2F_end ) && (terrain_type < tt_Mountains_Fst )) { is_river = ST_TRUE; }
+    if((terrain_type > tt_Shore2_end  ) && (terrain_type < tt_Shore3_1st    )) { is_river = ST_TRUE; }
+    if(terrain_type == TT_RIVER_PLACEHOLDER) { is_river = ST_TRUE; }
+    return is_river;
 }
 
 
 // MGC o51p44
-// drake178: UU_TILE_IsRiverOutlet()
-// UU_TILE_IsRiverOutlet()
+/* 
+Checks if the normalized terrain type matches specific shore or river ranges.
+Returns 1 (TRUE) if in ranges:
+- (200, 233)    - Lakes / Rivers
+- (451, 468)    - Desert Rivers
+- (472, 601)    - Anim Ocean / Other Rivers
+...a "river outlet" is a shore-classified tile that is a river tile rather than coastline.
+*/
+int16_t Square_Is_River_Mouth_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;
+    int16_t is_river_mouth = 0;  // DNE in Dasm
+    terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
+    if(terrain_type > _1LakeRiv_S && terrain_type < _River1100_3)     { is_river_mouth = ST_TRUE; }
+    if(terrain_type > _Desert10101111 && terrain_type < _River1111_1) { is_river_mouth = ST_TRUE; }
+    if(terrain_type > _River1111_5 && terrain_type < tte_OceanAnim)   { is_river_mouth = ST_TRUE; }
+    return is_river_mouth;
+}
+
 
 // MGC o51p45
-// drake178: UU_TILE_IsShore()
-// UU_TILE_IsShore()
+/* 
+Checks if the normalized terrain type matches specific shore or river ranges.
+Returns 1 (TRUE) if in ranges:
+- (1, 162)      - Land/Shore tiles before Grasslands
+- (200, 233)    - Lakes / Rivers
+- (451, 468)    - Desert Rivers
+- (472, 601)    - Anim Ocean / Other Rivers
+...vs. Square_Is_Shoreline()?
+*/
+int16_t Square_Is_Shore_NewGame(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;
+    int16_t is_shore = 0;  // DNE in Dasm
+    terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
+    if(terrain_type > _Land && terrain_type < tte_Grasslands)         { is_shore = ST_TRUE; }
+    if(terrain_type > _1LakeRiv_S && terrain_type < _River1100_3)     { is_shore = ST_TRUE; }
+    if(terrain_type > _Desert10101111 && terrain_type < _River1111_1) { is_shore = ST_TRUE; }
+    if(terrain_type > _River1111_5 && terrain_type < tte_OceanAnim)   { is_shore = ST_TRUE; }
+    return is_shore;
+}
+
 
 // MGC o51p46
 int16_t Square_Is_Mountain_NewGame(int16_t wx, int16_t wy, int16_t wp)

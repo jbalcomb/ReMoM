@@ -158,7 +158,7 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp);
 int16_t Square_Is_Ocean(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p26
-int16_t Map_Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p27
 int16_t Building_Terrain_Type_Prerequisite(int16_t wx, int16_t wy, int16_t wp);
