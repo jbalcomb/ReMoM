@@ -3922,10 +3922,54 @@ int16_t AITP_Spell_Ward(int16_t player_idx, int16_t * targeted_city_idx, int16_t
 
 
 // WZD o156p35
-int16_t AITP_Consecration(int16_t player_idx, int16_t * city_idx)
+int16_t AITP_Consecration(int16_t player_idx, int16_t * targeted_city_idx)
 {
-    return 0;
+    int16_t highest_value = 0;
+    int16_t human_player_primary_realm = 0;
+    int16_t human_player_secondary_realm = 0;
+    int16_t best_city_idx = 0;
+    int16_t itr_cities = 0;
+
+    best_city_idx = ST_UNDEFINED;
+    highest_value = 0;
+
+    human_player_primary_realm = _players[0].Prim_Realm;
+    human_player_secondary_realm = _players[0].Sec_Realm;
+
+    if(human_player_primary_realm == sbr_Death ||
+        human_player_secondary_realm == sbr_Death ||
+        human_player_primary_realm == sbr_Chaos ||
+        human_player_secondary_realm == sbr_Chaos ||
+        Random(10) == 1)  /* 1:10; 10% chance */
+    {
+        for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+        {
+            if(_CITIES[itr_cities].owner_idx == player_idx)
+            {
+                if(_ai_all_own_city_values[itr_cities] > highest_value)
+                {
+                    if(_CITIES[itr_cities].enchantments[CONSECRATION] == ST_FALSE)
+                    {
+                        best_city_idx = itr_cities;
+                        highest_value = _ai_all_own_city_values[itr_cities];
+                    }
+                }
+            }
+        }
+    }
+
+    if(best_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_city_idx = best_city_idx;
+        return ST_TRUE;
+    }
+
 }
+
 
 // WZD o156p36
 // drake178: UU_DBG_GetKnownSpells()

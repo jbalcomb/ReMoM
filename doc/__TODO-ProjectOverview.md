@@ -155,7 +155,7 @@ Next_Turn_Proc()
 [x]                 |-> AITP_Dark_Rituals()
 [x]                 |-> AITP_Cloud_Of_Shadow()
 [x]                 |-> AITP_Spell_Ward()
-[ ]                 |-> AITP_Consecration()
+[x]                 |-> AITP_Consecration()
 [ ]                 |-> AITP_WallofDarkness()
 [ ]                 |-> AITP_AltarofBattle()
 
