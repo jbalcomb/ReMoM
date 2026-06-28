@@ -2419,7 +2419,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
     }
 
     if(players_spell_list[spl_Wall_Of_Darkness] == sls_Known) {
-        if(AITP_WallofDarkness(player_idx, &target_city_idx) == 1) {
+        if(AITP_Wall_Of_Darkness(player_idx, &target_city_idx) == 1) {
             AI_OVL_SplPriorities[19] = _turn / 20;
         }
     }
@@ -3449,11 +3449,44 @@ int16_t AITP_Wall_Of_Fire(int16_t player_idx, int16_t * targeted_city_idx)
 
 }
 
+
 // WZD o156p25
-int16_t AITP_WallofDarkness(int16_t player_idx, int16_t * city_idx)
+int16_t AITP_Wall_Of_Darkness(int16_t player_idx, int16_t * targeted_city_idx)
 {
-    return 0;
+    int16_t highest_value = 0;
+    int16_t best_city_idx = 0;
+    int16_t itr_cities = 0;
+
+    best_city_idx = ST_UNDEFINED;
+    highest_value = 0;
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            if(_CITIES[itr_cities].enchantments[WALL_OF_DARKNESS] == ST_FALSE)
+            {
+                if(_ai_all_own_city_values[itr_cities] > highest_value)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                }
+            }
+        }
+    }
+
+    if(best_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_city_idx = best_city_idx;
+        return ST_TRUE;
+    }
+
 }
+
 
 // WZD o156p26
 /**
@@ -3817,6 +3850,7 @@ int16_t AITP_Cloud_Of_Shadow(int16_t player_idx, int16_t * targeted_city_idx)
 }
 
 // WZD o156p34
+/* ¿ OGBUG  the fallback random option can return a realm against which the selected city already has a ward ? */
 int16_t AITP_Spell_Ward(int16_t player_idx, int16_t * targeted_city_idx, int16_t * magic_realm)
 {
     int16_t Target_Realm = 0;
