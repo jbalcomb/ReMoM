@@ -2401,7 +2401,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
     }
 
     if(players_spell_list[spl_Cloud_Of_Shadow] == sls_Known) {
-        if(AITP_CloudofShadow(player_idx, &target_city_idx) == 1) {
+        if(AITP_Cloud_Of_Shadow(player_idx, &target_city_idx) == 1) {
             AI_OVL_SplPriorities[16] = _turn / 20;
         }
     }
@@ -3780,9 +3780,40 @@ int16_t AITP_Dark_Rituals(int16_t player_idx, int16_t * targeted_city_idx)
 }
 
 // WZD o156p33
-int16_t AITP_CloudofShadow(int16_t player_idx, int16_t * city_idx)
+int16_t AITP_Cloud_Of_Shadow(int16_t player_idx, int16_t * targeted_city_idx)
 {
-    return 0;
+    int16_t highest_value = 0;
+    int16_t best_city_idx = 0;
+    int16_t itr_cities = 0;
+
+    best_city_idx = ST_UNDEFINED;
+    highest_value = 0;
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            if(_CITIES[itr_cities].enchantments[CLOUD_OF_SHADOW] == ST_FALSE)
+            {
+                if(_ai_all_own_city_values[itr_cities] > highest_value)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                }
+            }
+        }
+    }
+
+    if(best_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_city_idx = best_city_idx;
+        return ST_TRUE;
+    }
+
 }
 
 // WZD o156p34
@@ -3974,9 +4005,9 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
             case spl_Astral_Gate:      { return AITP_Astral_Gate(player_idx, city_idx);      } break;
             case spl_Prosperity:       { return AITP_Prosperity(player_idx, city_idx);       } break;
             case spl_Consecration:     { return AITP_Consecration(player_idx, city_idx);     } break;
-            case spl_Cloud_Of_Shadow:  { return AITP_CloudofShadow(player_idx, city_idx);    } break;
+            case spl_Cloud_Of_Shadow:  { return AITP_Cloud_Of_Shadow(player_idx, city_idx);  } break;
             case spl_Summoning_Circle: { return AITP_Summoning_Circle(player_idx, city_idx); } break;
-            case spl_Dark_Rituals:     { return AITP_Dark_Rituals(player_idx, city_idx);      } break;
+            case spl_Dark_Rituals:     { return AITP_Dark_Rituals(player_idx, city_idx);     } break;
             case spl_Gaias_Blessing:   { return AITP_Gaias_Blessing(player_idx, city_idx);   } break;
             default: { Cast_Spell_Target_Error(spell_idx); } break;
         }

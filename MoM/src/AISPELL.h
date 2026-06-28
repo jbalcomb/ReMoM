@@ -207,7 +207,7 @@ int16_t AITP_Astral_Gate(int16_t player_idx, int16_t * city_idx);
 int16_t AITP_Dark_Rituals(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p33
-int16_t AITP_CloudofShadow(int16_t player_idx, int16_t * city_idx);
+int16_t AITP_Cloud_Of_Shadow(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p34
 int16_t AITP_SpellWard__STUB(int16_t player_idx, int16_t * city_idx, int16_t * magic_realm);
