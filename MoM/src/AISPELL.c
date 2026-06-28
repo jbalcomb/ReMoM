@@ -21,6 +21,7 @@ Module: AITECH
 #include "../../MoX/src/Util.h"
 #include "../../MoX/src/capture.h"
 #include "../../MoX/src/random.h"
+#include "../../MoX/src/special.h"
 
 #include "AIDUDES.h"
 #include "CITYCALC.h"
@@ -5019,8 +5020,7 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx,
         case spl_Black_Wind:
         case spl_Stasis:
         {
-            STU_DEBUG_BREAK();
-            // SPELLY  return_value AITP_OVL_HarmStack(player_idx, wx, wy, wp);
+            return_value = AITP_Attack_Stack(player_idx, wx, wy, wp);
         } break;
         case spl_Floating_Island:
         {
@@ -5045,8 +5045,7 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx,
         } break;
         case spl_Plane_Shift:
         {
-            STU_DEBUG_BREAK();
-            // SPELLY  return_value = AITP_PlaneShift(player_idx, wx, wy, wp);
+            return_value = AITP_Attack_Stack(player_idx, wx, wy, wp);
         } break;
         case spl_Natures_Cures:
         {
@@ -5067,7 +5066,112 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx,
 
 
 // WZD o156p46
-// drake178: AITP_OVL_HarmStack()
+/* OGBUG  ignores invisibility */
+/* OGBUG  ignores the sight range of units (using 2) */
+int16_t AITP_Attack_Stack(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp)
+{
+    int16_t target_wx = 0;
+    int16_t target_wy = 0;
+    int16_t target_wp = 0;
+    int16_t highest_value = 0;
+    int16_t scouting_radious = 0;
+    int16_t stack_is_visible = 0;
+    int16_t enemy_stack_wx = 0;
+    int16_t enemy_stack_wy = 0;
+    int16_t enemy_stack_wp = 0;
+    int16_t itr_enemy_stack_count = 0;
+    int16_t itr_cities = 0;
+
+    target_wx = ST_UNDEFINED;
+    highest_value = 0;
+
+    for(itr_enemy_stack_count = 0; itr_enemy_stack_count < _ai_all_enemy_stack_count; itr_enemy_stack_count++)
+    {
+        /* OGBUG  should be signed, not unsigned */
+        if((uint16_t)_ai_all_enemy_stacks[itr_enemy_stack_count].value > (uint16_t)highest_value)
+        {
+            stack_is_visible = ST_FALSE;
+            enemy_stack_wx = _ai_all_enemy_stacks[itr_enemy_stack_count].wx;
+            enemy_stack_wy = _ai_all_enemy_stacks[itr_enemy_stack_count].wy;
+            enemy_stack_wp = _ai_all_enemy_stacks[itr_enemy_stack_count].wp;
+
+            for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+            {
+                if(stack_is_visible != ST_FALSE)
+                {
+                    break;
+                }
+
+                if(_CITIES[itr_cities].owner_idx == player_idx)
+                {
+                    if(_CITIES[itr_cities].wp == enemy_stack_wp)
+                    {
+                        scouting_radious = 2;
+                        if(_CITIES[itr_cities].bldg_status[bt_CityWalls] == bs_Built)
+                        {
+                            scouting_radious = 3;
+                        }
+                        if(_CITIES[itr_cities].bldg_status[bt_Oracle] == bs_Built)
+                        {
+                            scouting_radious = 5;
+                        }
+
+                        /* OGBUG  should use itr_cities, not itr_enemy_stack_count */
+                        if(Delta_XY_With_Wrap(enemy_stack_wx, enemy_stack_wy, _CITIES[itr_enemy_stack_count].wx, _CITIES[itr_enemy_stack_count].wy, WORLD_WIDTH) <= scouting_radious)
+                        {
+                            highest_value = _ai_all_enemy_stacks[itr_enemy_stack_count].value;
+                            target_wx = enemy_stack_wx;
+                            target_wy = enemy_stack_wy;
+                            target_wp = enemy_stack_wp;
+                            stack_is_visible = ST_TRUE;
+                        }
+                    }
+                }
+            }
+
+            if(stack_is_visible == ST_FALSE)
+            {
+                scouting_radious = 2;
+                for(itr_cities = 0; itr_cities < _units; itr_cities++)
+                {
+                    if(stack_is_visible != ST_FALSE)
+                    {
+                        break;
+                    }
+
+                    if(_UNITS[itr_cities].owner_idx == player_idx)
+                    {
+                        if(_UNITS[itr_cities].wp == enemy_stack_wp)
+                        {
+                            /* OGBUG  should use itr_cities, not itr_enemy_stack_count */
+                            if(Delta_XY_With_Wrap(enemy_stack_wx, enemy_stack_wy, _UNITS[itr_enemy_stack_count].wx, _UNITS[itr_enemy_stack_count].wy, WORLD_WIDTH) <= scouting_radious)
+                            {
+                                highest_value = _ai_all_enemy_stacks[itr_enemy_stack_count].value;
+                                target_wx = enemy_stack_wx;
+                                target_wy = enemy_stack_wy;
+                                target_wp = enemy_stack_wp;
+                                stack_is_visible = ST_TRUE;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if(target_wx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_wx = target_wx;
+        *targeted_wy = target_wy;
+        *targeted_wp = target_wp;
+        return ST_TRUE;
+    }
+
+}
 
 
 // WZD o156p47

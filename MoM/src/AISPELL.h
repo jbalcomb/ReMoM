@@ -246,7 +246,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
 int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx, int16_t * wy, int16_t * wp, int16_t spell_idx, int16_t player_idx);
 
 // WZD o156p46
-// AITP_OVL_HarmStack()
+int16_t AITP_Attack_Stack(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp);
 
 // WZD o156p47
 int16_t Pick_Target_For_Floating_Island(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp);

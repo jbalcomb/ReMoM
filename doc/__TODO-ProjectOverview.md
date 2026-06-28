@@ -179,6 +179,19 @@ Need `/doxyfunc`
 [ ] Get_Map_Square_Target_For_Spell()
 [ ] Pick_Target_For_City_Enchantment__WIP()
 
+[ ] Get_Map_Square_Target_For_Spell()
+[x]     |-> AITP_Transmute(player_idx, wx, wy, wp);
+[x]     |-> AITP_Change_Terrain(player_idx, wx, wy, wp);
+[ ]     |-> AITP_Attack_Stack(player_idx, wx, wy, wp);
+[ ]     |-> Pick_Target_For_Floating_Island(player_idx, wx, wy, wp);
+[ ]     |-> AITP_EnchantRoad(player_idx, wx, wy, wp);
+[ ]     |-> AITP_Disenchant(player_idx, wx, wy, wp);
+[ ]     |-> AITP_HarmTerrain(player_idx, wx, wy, wp, spell_idx);
+[ ]     |-> AITP_PlaneShift(player_idx, wx, wy, wp);
+[ ]     |-> AITP_NaturesCures(player_idx, wx, wy, wp);
+[ ]     |-> Cast_Spell_Target_Error(spell_idx);
+
+
 
 
 
