@@ -481,7 +481,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
     }
 
     summon_wp = _players[player_idx].summon_wp;
-    niu_summon_landmass_idx = _landmasses[summon_wp * 960 + _players[player_idx].summon_wy * 60 + _players[player_idx].summon_wx];
+    niu_summon_landmass_idx = _landmasses[summon_wp * 960 + _players[player_idx].summon_wy * WORLD_WIDTH + _players[player_idx].summon_wx];
     summon_city_idx = 0;
 
     for(itr = 0; itr < _cities; itr++)
@@ -583,7 +583,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
             }
         }
 
-        fortress_landmass_idx = _landmasses[_FORTRESSES[player_idx].wp * 960 + _FORTRESSES[player_idx].wy * 60 + _FORTRESSES[player_idx].wx];
+        fortress_landmass_idx = _landmasses[_FORTRESSES[player_idx].wp * 960 + _FORTRESSES[player_idx].wy * WORLD_WIDTH + _FORTRESSES[player_idx].wx];
 
         for(itr = 0; itr < _units; itr++)
         {
@@ -591,7 +591,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
             {
                 if(((unsigned int *)&_UNITS[itr].enchantments)[0] != 0 || ((unsigned int *)&_UNITS[itr].enchantments)[1] != 0)
                 {
-                    if(_landmasses[_UNITS[itr].wp * 960 + _UNITS[itr].wy * 60 + _UNITS[itr].wx] == fortress_landmass_idx)
+                    if(_landmasses[_UNITS[itr].wp * 960 + _UNITS[itr].wy * WORLD_WIDTH + _UNITS[itr].wx] == fortress_landmass_idx)
                     {
                         modifiers[4] += 5;
                     }
@@ -1053,7 +1053,7 @@ int16_t AI_Select_Spell_Group_Summon(int16_t player_idx)
         AI_OVL_SplPriorities[9] = spell_data_table[spl_Great_Wyrm].casting_cost / 10;
     }
     if(players_spell_list[spl_Floating_Island] == sls_Known) {
-        if(ai_transport_count < 10 && (_turn / 60) > ai_transport_count) {
+        if(ai_transport_count < 10 && (_turn / WORLD_WIDTH) > ai_transport_count) {
             AI_OVL_SplPriorities[10] = spell_data_table[spl_Floating_Island].casting_cost / 5;
         }
     }
@@ -4488,7 +4488,7 @@ int16_t IDK_Pick_Target_For_Unit_Enchantment__STUB(int16_t spell_target_type, in
  *   - SUPPRESS_MAGIC: always 250 (highest fixed weight).
  *
  * Both branches share a common set of non-realm-sensitive scores (e.g., ZOMBIE_MASTERY = 50,
- * DOOM_MASTERY = 50, CHARM_OF_LIFE = 60, ARMAGEDDON = 40, METEOR_STORMS = 30).
+ * DOOM_MASTERY = 50, CHARM_OF_LIFE = WORLD_WIDTH, ARMAGEDDON = 40, METEOR_STORMS = 30).
  *
  * After scoring, the function finds the single (opponent, global) pair with the maximum score and writes
  * the results to the output pointers. If no opponent has any scoreable global active, the outputs are
@@ -4699,7 +4699,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             /* Charm of Life */
             if(_players[itr_players].Globals[CHARM_OF_LIFE] != 0)
             {
-                target_spell_scores[itr_players][CHARM_OF_LIFE] = 60;
+                target_spell_scores[itr_players][CHARM_OF_LIFE] = WORLD_WIDTH;
             }
 
             /* Detect Magic */
@@ -4934,7 +4934,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             /* Charm of Life */
             if(_players[itr_players].Globals[CHARM_OF_LIFE] != 0)
             {
-                target_spell_scores[itr_players][CHARM_OF_LIFE] = 60;
+                target_spell_scores[itr_players][CHARM_OF_LIFE] = WORLD_WIDTH;
             }
 
             /* Detect Magic */
@@ -5033,8 +5033,7 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx,
         case spl_Disenchant_True:
         case spl_Disenchant_Area:
         {
-            STU_DEBUG_BREAK();
-            // SPELLY  return_value = AITP_Disenchant(player_idx, wx, wy, wp);
+            return_value = AITP_Disenchant(player_idx, wx, wy, wp);
         } break;
         case spl_Corruption:
         case spl_Raise_Volcano:
@@ -5353,7 +5352,127 @@ int16_t AITP_Enchant_Road(int16_t player_idx, int16_t * targeted_wx, int16_t * t
 }
 
 // WZD o156p49
-// drake178: AITP_Disenchant()
+int16_t AITP_Disenchant(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp)
+{
+    int16_t fortress_landmass_idx = 0;
+    int16_t highest_cost_unit_idx = 0;
+    int16_t target_city_idx = 0;
+    int16_t target_node_idx = 0;
+    int16_t highest_cost = 0;
+    int16_t itr = 0;
+
+    for(itr = 0; itr < _cities; itr++)
+    {
+        if(_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX)
+        {
+            if(_CITIES[itr].enchantments[FLYING_FORTRESS] != 0)
+            {
+                if(Random(2) == 1)
+                {
+                    *targeted_wx = _CITIES[itr].wx;
+                    *targeted_wy = _CITIES[itr].wy;
+                    *targeted_wp = _CITIES[itr].wp;
+                    return ST_TRUE;
+                }
+            }
+        }
+    }
+
+    target_node_idx = ST_UNDEFINED;
+    highest_cost = 0;
+    for(itr = 0; itr < NUM_NODES; itr++)
+    {
+        if(_NODES[itr].owner_idx == player_idx)
+        {
+            if((_NODES[itr].flags & NF_WARPED) != 0)
+            {
+                if(_NODES[itr].power > highest_cost)
+                {
+                    target_node_idx = itr;
+                    highest_cost = _NODES[itr].power;
+                }
+            }
+        }
+    }
+
+    if(target_node_idx != ST_UNDEFINED)
+    {
+        *targeted_wx = _NODES[target_node_idx].wx;
+        *targeted_wy = _NODES[target_node_idx].wy;
+        *targeted_wp = _NODES[target_node_idx].wp;
+        return ST_TRUE;
+    }
+
+    target_city_idx = ST_UNDEFINED;
+    highest_cost = 0;
+    for(itr = 0; itr < _cities; itr++)
+    {
+        if(_CITIES[itr].owner_idx == player_idx)
+        {
+            if(
+                _CITIES[itr].enchantments[CURSED_LANDS] != 0
+                ||
+                _CITIES[itr].enchantments[FAMINE] != 0
+                ||
+                _CITIES[itr].enchantments[CHAOS_RIFT] != 0
+                ||
+                _CITIES[itr].enchantments[EVIL_PRESENCE] != 0
+            )
+            {
+                if(_ai_all_own_city_values[itr] > highest_cost)
+                {
+                    target_city_idx = itr;
+                    highest_cost = _ai_all_own_city_values[itr];
+                }
+            }
+        }
+    }
+
+    if(target_city_idx != ST_UNDEFINED)
+    {
+        *targeted_wx = _CITIES[target_city_idx].wx;
+        *targeted_wy = _CITIES[target_city_idx].wy;
+        *targeted_wp = _CITIES[target_city_idx].wp;
+        return ST_TRUE;
+    }
+
+    /* OGBUG  checks landmass without plane */
+    fortress_landmass_idx = _landmasses[_FORTRESSES[player_idx].wp * WORLD_SIZE + _FORTRESSES[player_idx].wy * WORLD_WIDTH + _FORTRESSES[player_idx].wx];
+    highest_cost_unit_idx = ST_UNDEFINED;
+    highest_cost = 0;
+
+    for(itr = 0; itr < _units; itr++)
+    {
+        if(_UNITS[itr].owner_idx == HUMAN_PLAYER_IDX)
+        {
+            if(_UNITS[itr].enchantments != 0)
+            {
+                if(_landmasses[_UNITS[itr].wp * WORLD_SIZE + _UNITS[itr].wy * WORLD_WIDTH + _UNITS[itr].wx] == fortress_landmass_idx)
+                {
+                    if(_unit_type_table[_UNITS[itr].type].cost > highest_cost)
+                    {
+                        highest_cost_unit_idx = itr;
+                        highest_cost = _unit_type_table[_UNITS[itr].type].cost;
+                    }
+                }
+            }
+        }
+    }
+
+    if(highest_cost_unit_idx != ST_UNDEFINED)
+    {
+        /* OGBUG: The original code uses target_city_idx instead of highest_cost_unit_idx here.
+         * Since target_city_idx is guaranteed to be -1 if we reached this block,
+         * this results in an out-of-bounds read of _UNITS[-1]. */
+        *targeted_wx = _UNITS[target_city_idx].wx;  /* OGBUG  OOB AVWL  target_city_idx is -1 */
+        *targeted_wy = _UNITS[target_city_idx].wy;  /* OGBUG  OOB AVWL  target_city_idx is -1 */
+        *targeted_wp = _UNITS[target_city_idx].wp;  /* OGBUG  OOB AVWL  target_city_idx is -1 */
+        return ST_TRUE;
+    }
+
+    return ST_FALSE;
+}
+
 
 // WZD o156p50
 // drake178: AITP_HarmTerrain()

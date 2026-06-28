@@ -255,7 +255,7 @@ int16_t AITP_Floating_Island(int16_t player_idx, int16_t * targeted_wx, int16_t 
 int16_t AITP_Enchant_Road(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp);
 
 // WZD o156p49
-// AITP_Disenchant()
+int16_t AITP_Disenchant(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp);
 
 // WZD o156p50
 // AITP_HarmTerrain()
