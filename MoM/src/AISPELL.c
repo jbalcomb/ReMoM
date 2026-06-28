@@ -4760,7 +4760,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             {
                 if(_players[player_idx].Prim_Realm == sbr_Life || _players[player_idx].Sec_Realm == sbr_Life)
                 {
-                    target_spell_scores[itr_players][ETERNAL_NIGHT] = 200;
+                    target_spell_scores[itr_players][ETERNAL_NIGHT] = (int8_t)200;  /* OGBUG  target_spell_scores should be uint8_t, not int8_t */
                 }
                 else
                 {
@@ -4774,7 +4774,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
                 if(_players[player_idx].Prim_Realm == sbr_Life || _players[player_idx].Sec_Realm == sbr_Life ||
                     _players[player_idx].Prim_Realm == sbr_Nature || _players[player_idx].Sec_Realm == sbr_Nature)
                 {
-                    target_spell_scores[itr_players][EVIL_OMENS] = 200;
+                    target_spell_scores[itr_players][EVIL_OMENS] = (int8_t)200;  /* OGBUG  target_spell_scores should be uint8_t, not int8_t */
                 }
                 else
                 {
@@ -4803,7 +4803,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             /* Suppress Magic */
             if(_players[itr_players].Globals[SUPPRESS_MAGIC] != 0)
             {
-                target_spell_scores[itr_players][SUPPRESS_MAGIC] = 250;
+                target_spell_scores[itr_players][SUPPRESS_MAGIC] = (int8_t)250;  /* OGBUG  target_spell_scores should be uint8_t, not int8_t */
             }
 
             /* Time Stop */
@@ -4824,7 +4824,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
                 if(_players[player_idx].Prim_Realm == sbr_Death || _players[player_idx].Sec_Realm == sbr_Death ||
                     _players[player_idx].Prim_Realm == sbr_Chaos || _players[player_idx].Sec_Realm == sbr_Chaos)
                 {
-                    target_spell_scores[itr_players][NATURES_WRATH] = 200;
+                    target_spell_scores[itr_players][NATURES_WRATH] = (int8_t)200;  /* OGBUG  target_spell_scores should be uint8_t, not int8_t */
                 }
                 else
                 {
@@ -4887,7 +4887,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             {
                 if(_players[player_idx].Prim_Realm == sbr_Chaos || _players[player_idx].Sec_Realm == sbr_Chaos)
                 {
-                    target_spell_scores[itr_players][TRANQUILITY] = 200;
+                    target_spell_scores[itr_players][TRANQUILITY] = (int8_t)200;  /* OGBUG  target_spell_scores should be uint8_t, not int8_t */
                 }
                 else
                 {
@@ -4900,7 +4900,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             {
                 if(_players[player_idx].Prim_Realm == sbr_Chaos || _players[player_idx].Sec_Realm == sbr_Chaos)
                 {
-                    target_spell_scores[itr_players][LIFE_FORCE] = 200;
+                    target_spell_scores[itr_players][LIFE_FORCE] = (int8_t)200;  /* OGBUG  target_spell_scores should be uint8_t, not int8_t */
                 }
                 else
                 {
