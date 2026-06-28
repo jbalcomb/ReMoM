@@ -210,7 +210,7 @@ int16_t AITP_Dark_Rituals(int16_t player_idx, int16_t * city_idx);
 int16_t AITP_Cloud_Of_Shadow(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p34
-int16_t AITP_SpellWard__STUB(int16_t player_idx, int16_t * city_idx, int16_t * magic_realm);
+int16_t AITP_Spell_Ward(int16_t player_idx, int16_t * city_idx, int16_t * magic_realm);
 
 // WZD o156p35
 int16_t AITP_Consecration(int16_t player_idx, int16_t * city_idx);

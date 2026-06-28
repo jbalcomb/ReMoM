@@ -2407,7 +2407,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
     }
 
     if(players_spell_list[spl_Spell_Ward] == sls_Known) {
-        if(AITP_SpellWard__STUB(player_idx, &target_city_idx, &Target_Realm) == 1) {
+        if(AITP_Spell_Ward(player_idx, &target_city_idx, &Target_Realm) == 1) {
             AI_OVL_SplPriorities[17] = 100;
         }
     }
@@ -3817,11 +3817,107 @@ int16_t AITP_Cloud_Of_Shadow(int16_t player_idx, int16_t * targeted_city_idx)
 }
 
 // WZD o156p34
-int16_t AITP_SpellWard__STUB(int16_t player_idx, int16_t * city_idx, int16_t * magic_realm)
+int16_t AITP_Spell_Ward(int16_t player_idx, int16_t * targeted_city_idx, int16_t * magic_realm)
 {
-    *city_idx = ST_UNDEFINED;
-    *magic_realm = ST_UNDEFINED;
-    return ST_FALSE;
+    int16_t Target_Realm = 0;
+    int16_t human_player_secondary_realm = 0;
+    int16_t human_player_primary_realm = 0;
+    int16_t highest_value = 0;
+    int16_t itr_cities = 0;
+    int16_t best_city_idx = 0;
+
+    best_city_idx = ST_UNDEFINED;
+    highest_value = 0;
+    human_player_primary_realm = _players[HUMAN_PLAYER_IDX].Prim_Realm;
+    human_player_secondary_realm = _players[HUMAN_PLAYER_IDX].Sec_Realm;
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            if(_ai_all_own_city_values[itr_cities] > highest_value)
+            {
+                if(human_player_primary_realm == sbr_Nature && _CITIES[itr_cities].enchantments[NATURE_WARD] == ST_FALSE)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                    Target_Realm = sbr_Nature;
+                }
+                else if(human_player_primary_realm == sbr_Chaos && _CITIES[itr_cities].enchantments[CHAOS_WARD] == ST_FALSE)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                    Target_Realm = sbr_Chaos;
+                }
+                else if(human_player_primary_realm == sbr_Sorcery && _CITIES[itr_cities].enchantments[SORCERY_WARD] == ST_FALSE)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                    Target_Realm = sbr_Sorcery;
+                }
+                else if(human_player_primary_realm == sbr_Death && _CITIES[itr_cities].enchantments[DEATH_WARD] == ST_FALSE)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                    Target_Realm = sbr_Death;
+                }
+                else if(human_player_primary_realm == sbr_Life && _CITIES[itr_cities].enchantments[LIFE_WARD] == ST_FALSE)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                    Target_Realm = sbr_Life;
+                }
+                else if(human_player_secondary_realm == sbr_Nature && _CITIES[itr_cities].enchantments[NATURE_WARD] == ST_FALSE)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                    Target_Realm = sbr_Nature;
+                }
+                else if(human_player_secondary_realm == sbr_Chaos && _CITIES[itr_cities].enchantments[CHAOS_WARD] == ST_FALSE)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                    Target_Realm = sbr_Chaos;
+                }
+                else if(human_player_secondary_realm == sbr_Sorcery && _CITIES[itr_cities].enchantments[SORCERY_WARD] == ST_FALSE)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                    Target_Realm = sbr_Sorcery;
+                }
+                else if(human_player_secondary_realm == sbr_Death && _CITIES[itr_cities].enchantments[DEATH_WARD] == ST_FALSE)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                    Target_Realm = sbr_Death;
+                }
+                else if(human_player_secondary_realm == sbr_Life && _CITIES[itr_cities].enchantments[LIFE_WARD] == ST_FALSE)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                    Target_Realm = sbr_Life;
+                }
+                else if(Random(10) == 1)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                    Target_Realm = Random(5) - 1;
+                }
+            }
+        }
+    }
+
+    if(best_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_city_idx = best_city_idx;
+        *magic_realm = Target_Realm;
+        return ST_TRUE;
+    }
+
 }
 
 
@@ -5034,7 +5130,7 @@ int16_t IDK_AITP_Target_Wizard__STUB(int16_t * spell_target_idx, int16_t spell_i
 int16_t AITP_SpellWard_Wrapper__STUB(int16_t * city_idx, int16_t * magic_realm, int16_t player_idx)
 {
 
-    return AITP_SpellWard__STUB(player_idx, city_idx, magic_realm);
+    return AITP_Spell_Ward(player_idx, city_idx, magic_realm);
 
 }
 

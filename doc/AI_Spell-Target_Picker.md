@@ -21,7 +21,7 @@ AITP_Prosperity()
 AITP_Astral_Gate()
 AITP_Dark_Rituals()
 AITP_Cloud_Of_Shadow()
-AITP_SpellWard__STUB()
+AITP_Spell_Ward()
 AITP_Consecration()
 
 ### Pick_Target_For_City_Enchantment__WIP
