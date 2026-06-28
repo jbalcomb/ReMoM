@@ -711,7 +711,7 @@ void Init_Computer_Players(void)
  * It then derives each active player's `capital_race` from the matching entry
  * in `_CITIES[]`, assigns the human player's starting gold from `_difficulty`,
  * and gives each AI player a fixed opening treasury plus an initial
- * `AI_SCircle_Reevals[]` delay randomized in the range `[80, 119]`.
+ * `_ai_reevaluate_summoning_circle_countdown[]` delay randomized in the range `[80, 119]`.
  *
  * @return void
  *
@@ -772,7 +772,7 @@ void Init_Runtime(void)
     for(itr_players = 1; itr_players < _num_players; itr_players++)
     {
         _players[itr_players].gold_reserve = 150;
-        AI_SCircle_Reevals[itr_players] = (80 + Random(40));
+        _ai_reevaluate_summoning_circle_countdown[itr_players] = (80 + Random(40));
     }
     gd_dump_players("209_gold_reserve_P");  /* on-return Init_Runtime() */
 

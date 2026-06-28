@@ -238,7 +238,7 @@ void AI_Next_Turn(void)
         }
 
         /* Update Summoning Circle re-evaluation counter */
-        AI_SCircle_Reevals[player_idx]--;
+        _ai_reevaluate_summoning_circle_countdown[player_idx]--;
 
 #ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: --- Player %d (%s) BEGIN ---", player_idx, _players[player_idx].name);

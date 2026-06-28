@@ -2913,7 +2913,7 @@ extern int16_t map_sustain;
 // WZD dseg:8890
 extern struct s_AI_CONTINENTS _ai_continents;
 // WZD dseg:8F98 
-extern int16_t * AI_SCircle_Reevals;
+extern int16_t * _ai_reevaluate_summoning_circle_countdown;
 // WZD dseg:8F9A
 extern uint8_t * _ai_landmass_settler_targets_wy_array[NUM_PLANES];
 // WZD dseg:8F9E
