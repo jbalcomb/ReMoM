@@ -171,7 +171,7 @@ Cast_Spell_Overland() |-> ... |-> AITP_Disjunction()
 [x]     |-> AITP_Change_Terrain(player_idx, wx, wy, wp);
 [x]     |-> AITP_Attack_Stack(player_idx, wx, wy, wp);
 [x]     |-> AITP_Floating_Island(player_idx, wx, wy, wp);
-[ ]     |-> AITP_EnchantRoad(player_idx, wx, wy, wp);
+[x]     |-> AITP_Enchant_Road(player_idx, wx, wy, wp);
 [ ]     |-> AITP_Disenchant(player_idx, wx, wy, wp);
 [ ]     |-> AITP_HarmTerrain(player_idx, wx, wy, wp, spell_idx);
 [ ]     |-> AITP_PlaneShift(player_idx, wx, wy, wp);
@@ -193,7 +193,7 @@ Need `/doxyfunc`
 [ ]     |-> AITP_Change_Terrain(player_idx, wx, wy, wp);
 [ ]     |-> AITP_Attack_Stack(player_idx, wx, wy, wp);
 [ ]     |-> AITP_Floating_Island(player_idx, wx, wy, wp);
-[ ]     |-> AITP_EnchantRoad(player_idx, wx, wy, wp);
+[ ]     |-> AITP_Enchant_Road(player_idx, wx, wy, wp);
 [ ]     |-> AITP_Disenchant(player_idx, wx, wy, wp);
 [ ]     |-> AITP_HarmTerrain(player_idx, wx, wy, wp, spell_idx);
 [ ]     |-> AITP_PlaneShift(player_idx, wx, wy, wp);

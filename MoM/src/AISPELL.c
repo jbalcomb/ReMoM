@@ -5028,8 +5028,7 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx,
         } break;
         case spl_Enchant_Road:
         {
-            STU_DEBUG_BREAK();
-            // SPELLY  return_value = AITP_EnchantRoad(player_idx, wx, wy, wp);
+            return_value = AITP_Enchant_Road(player_idx, wx, wy, wp);
         } break;
         case spl_Disenchant_True:
         case spl_Disenchant_Area:
@@ -5289,7 +5288,69 @@ int16_t AITP_Floating_Island(int16_t player_idx, int16_t * targeted_wx, int16_t 
 
 
 // WZD o156p48
-// drake178: AITP_EnchantRoad()
+int16_t AITP_Enchant_Road(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp)
+{
+    int16_t niu_player_index = 0;
+    int16_t enchanted_road = 0;
+    int16_t have_road = 0;
+    int16_t strongest_garrison = 0;
+    int16_t garrison_strength = 0;
+    int16_t wy_offset = 0;
+    int16_t wx_offset = 0;
+    int16_t best_city_idx = 0;
+    int16_t itr_cities = 0;
+
+    niu_player_index = player_idx;
+    best_city_idx = ST_UNDEFINED;
+    strongest_garrison = 0;
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        garrison_strength = _ai_all_own_garrison_strengths[itr_cities];
+        if(garrison_strength > strongest_garrison)
+        {
+            have_road = ST_FALSE;
+            enchanted_road = ST_FALSE;
+            for(wy_offset = -2; wy_offset < 3; wy_offset++)
+            {
+                for(wx_offset = -2; wx_offset < 3; wx_offset++)
+                {
+                    if(wy_offset == 0 && wx_offset == 0)
+                    {
+                        continue;
+                    }
+                    /* OGBUG  doesn't add wy_offset and wx_offset, so it only checks city center square */
+                    if((GET_MAP_SQUARE_FLAG(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, _CITIES[itr_cities].wp) & MSF_ROAD) != 0)
+                    {
+                        have_road = ST_TRUE;
+                        if((GET_MAP_SQUARE_FLAG(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, _CITIES[itr_cities].wp) & MSF_EROAD) != 0)
+                        {
+                            enchanted_road = ST_TRUE;
+                        }
+                    }
+                }
+            }
+            if(have_road == ST_TRUE && enchanted_road == ST_FALSE)
+            {
+                best_city_idx = itr_cities;
+                strongest_garrison = garrison_strength;
+            }
+        }
+    }
+
+    if(best_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_wx = _CITIES[best_city_idx].wx;
+        *targeted_wy = _CITIES[best_city_idx].wy;
+        *targeted_wp = _CITIES[best_city_idx].wp;
+        return ST_TRUE;
+    }
+
+}
 
 // WZD o156p49
 // drake178: AITP_Disenchant()

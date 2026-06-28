@@ -252,7 +252,7 @@ int16_t AITP_Attack_Stack(int16_t player_idx, int16_t * targeted_wx, int16_t * t
 int16_t AITP_Floating_Island(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp);
 
 // WZD o156p48
-// AITP_EnchantRoad()
+int16_t AITP_Enchant_Road(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp);
 
 // WZD o156p49
 // AITP_Disenchant()
