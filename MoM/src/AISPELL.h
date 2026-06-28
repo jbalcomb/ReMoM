@@ -267,7 +267,7 @@ int16_t AITP_Attack_Terrain(int16_t player_idx, int16_t * targeted_wx, int16_t *
 int16_t AITP_Plane_Shift(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp);
 
 // WZD o156p53
-// AITP_NaturesCures()
+int16_t AITP_Natures_Cures(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp);
 
 // WZD o156p54
 // sub_EA43C()

@@ -5046,8 +5046,7 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx,
         } break;
         case spl_Natures_Cures:
         {
-            STU_DEBUG_BREAK();
-            // SPELLY  return_value = AITP_NaturesCures(player_idx, wx, wy, wp);
+            return_value = AITP_Natures_Cures(player_idx, wx, wy, wp);
         } break;
         default:
         {
@@ -5693,7 +5692,43 @@ int16_t AITP_Plane_Shift(int16_t player_idx, int16_t * targeted_wx, int16_t * ta
 
 
 // WZD o156p53
-// drake178: AITP_NaturesCures()
+int16_t AITP_Natures_Cures(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp)
+{
+    int16_t highest_damage = 0;
+    int16_t unit_damage = 0;
+    int16_t best_unit_idx = 0;
+    int16_t itr_units = 0;
+
+    best_unit_idx = ST_UNDEFINED;
+    highest_damage = 0;
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        if(_UNITS[itr_units].owner_idx == player_idx)
+        {
+            unit_damage = _UNITS[itr_units].Damage;
+
+            if(unit_damage > highest_damage)
+            {
+                best_unit_idx = itr_units;
+                highest_damage = unit_damage;
+            }
+        }
+    }
+
+    if(best_unit_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_wx = _UNITS[best_unit_idx].wx;
+        *targeted_wy = _UNITS[best_unit_idx].wy;
+        *targeted_wp = _UNITS[best_unit_idx].wp;
+        return ST_TRUE;
+    }
+
+}
 
 
 // WZD o156p54
