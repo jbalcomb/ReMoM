@@ -4170,21 +4170,7 @@ void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx)
 
 
 // WZD o156p39
-// drake178: sub_E7CC9()
-/*
-
-XREF:
-    j_IDK_AI_City_Spell()
-        Cast_CallOfTheVoid()
-        Cast_Move_Fortress()
-        Cast_Earthquake()
-        Cast_WallOfStone()
-        Cast_SpellOfReturn()
-        Cast_Spell_Overland()
-        Cast_Spell_Overland()
-
-*/
-int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t * city_idx, int16_t spell_idx, int16_t player_idx)
+int16_t AITP_City_Enchantment(int16_t spell_target_type, int16_t * city_idx, int16_t spell_idx, int16_t player_idx)
 {
     int16_t sw2_spell_idx = 0;
     int16_t sw1_spell_idx = 0;
@@ -4200,6 +4186,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
         sw1_spell_idx = spell_idx;
         switch(sw1_spell_idx)
         {
+            case spl_Wall_Of_Darkness: { return AITP_Wall_Of_Darkness(player_idx, city_idx); } break;
             case spl_Wall_Of_Stone:    { return AITP_Wall_Of_Stone(player_idx, city_idx);    } break;
             case spl_Move_Fortress:    { return AITP_Move_Fortress(player_idx, city_idx);    } break;
             case spl_Earth_Gate:       { return AITP_Earth_Gate(player_idx, city_idx);       } break;
@@ -4274,13 +4261,13 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
                     (
                         (consecration == ST_FALSE)
                         &&
-                        (_CITIES[itr_cities].enchantments[CHAOS_WARD] != 0)
+                        (_CITIES[itr_cities].enchantments[CHAOS_WARD] == 0)
                     )
                     ||
                     (
-                        (consecration == ST_FALSE)
+                        (consecration == ST_TRUE)
                         &&
-                        (_CITIES[itr_cities].enchantments[DEATH_WARD] != 0)
+                        (_CITIES[itr_cities].enchantments[DEATH_WARD] == 0)
                     )
                 )
                 {
@@ -4303,17 +4290,17 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
                         switch(sw2_spell_idx)
                         {
 
-                            case spl_Earthquake:    // 0x1A   26  spl_Earthquake
+                            case spl_Earthquake:
                             {
                                 // EMPTY
                             } break;
 
-                            case spl_Call_The_Void: // 0x77   119  spl_Call_The_Void
+                            case spl_Call_The_Void:
                             {
                                 // EMPTY
                             } break;
 
-                            case spl_Chaos_Rift:    // 0x6E  110  spl_Chaos_Rift
+                            case spl_Chaos_Rift:
                             {
                                 if(_CITIES[itr_cities].enchantments[CHAOS_RIFT] != 0)
                                 {
@@ -4321,7 +4308,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
                                 }
                             } break;
 
-                            case spl_Evil_Presence:  // 0xB7  183  spl_Evil_Presence
+                            case spl_Evil_Presence:
                             {
                                 if(_CITIES[itr_cities].enchantments[EVIL_PRESENCE] != 0)
                                 {
@@ -4329,7 +4316,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
                                 }
                             } break;
 
-                            case spl_Famine:  // 0xBD  189  spl_Famine
+                            case spl_Famine:
                             {
                                 if(_CITIES[itr_cities].enchantments[FAMINE] != 0)
                                 {
@@ -4337,17 +4324,17 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
                                 }
                             } break;
 
-                            case spl_Cursed_Lands:  // 0xBE  190  spl_Cursed_Lands
+                            case spl_Cursed_Lands:
                             {
-                                if(_CITIES[itr_cities].enchantments[EVIL_PRESENCE] != 0)
+                                if(_CITIES[itr_cities].enchantments[CURSED_LANDS] != 0)
                                 {
                                     duped = ST_TRUE;
                                 }
                             } break;
 
-                            case spl_Pestilence:  // 0xC4  196  spl_Pestilence
+                            case spl_Pestilence:
                             {
-                                if(_CITIES[itr_cities].enchantments[EVIL_PRESENCE] != 0)
+                                if(_CITIES[itr_cities].enchantments[PESTILENCE] != 0)
                                 {
                                     duped = ST_TRUE;
                                 }
@@ -4362,11 +4349,8 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
 
                         if(duped == ST_FALSE)
                         {
-
                             best_enemy_city_value = _ai_all_enemy_city_values[itr_cities];
-
                             enemy_city_idx = itr_cities;
-
                         }
 
                     }
@@ -4379,17 +4363,12 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
 
         if(enemy_city_idx != ST_UNDEFINED)
         {
-
             *city_idx = enemy_city_idx;
-
             return ST_TRUE;
-
         }
         else
         {
-
             return ST_FALSE;
-
         }
 
     }
@@ -4397,10 +4376,6 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
     {
         Cast_Spell_Target_Error(spell_idx);
     }
-
-#ifdef STU_DEBUG
-    STU_DEBUG_BREAK();
-#endif
 
     return ST_FALSE;
 

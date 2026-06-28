@@ -48,7 +48,7 @@
 - [ ] AITP_Disjunction
 - [ ] IDK_AITP_Target_Wizard__STUB
 - [ ] IDK_Pick_Target_For_Unit_Enchantment__STUB
-- [ ] Pick_Target_For_City_Enchantment__WIP
+- [ ] AITP_City_Enchantment
 
 ## capture
 - [x] F11_Key__WIP

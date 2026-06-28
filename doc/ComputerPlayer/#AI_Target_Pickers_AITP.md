@@ -10,7 +10,7 @@ Why AITP_Transmute under AI_Select_Spell_Group_City_Enchantment() and Get_Map_Sq
 enum e_OVERLAND_SPELL_TARGET_TYPE
 enum e_COMBAT_SPELL_TARGET_TYPE
 Get_Map_Square_Target_For_Spell()
-Pick_Target_For_City_Enchantment__WIP()
+AITP_City_Enchantment()
 
 
 

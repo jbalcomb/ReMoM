@@ -15,7 +15,7 @@ Next_Turn_Proc()
 
 Cast_Spell_Overland()
     // friendly-city target lookup at cast time
-    |-> Pick_Target_For_City_Enchantment__WIP()
+    |-> AITP_City_Enchantment()
         switch(spell_idx)
             case spl_Stream_Of_Life:
                 |-> AITP_Stream_Of_Life()
@@ -39,7 +39,7 @@ The `AITP_*` target picker for **Stream of Life**, a city enchantment. The AI wa
 | Caller | Site | Notes |
 |---|---|---|
 | `AI_Select_Spell_Group_City_Enchantment` | [AISPELL.c:2374](../../MoM/src/AISPELL.c#L2374) | **Probe**: if a target exists, Stream of Life is given a turn-scaled priority weight (`AI_OVL_SplPriorities[11] = _turn / 10`). |
-| `Pick_Target_For_City_Enchantment__WIP` | [AISPELL.c:3798](../../MoM/src/AISPELL.c#L3798) | Cast-time lookup (`switch(spell_idx) case spl_Stream_Of_Life`) — returns the chosen city index for the actual cast. |
+| `AITP_City_Enchantment` | [AISPELL.c:3798](../../MoM/src/AISPELL.c#L3798) | Cast-time lookup (`switch(spell_idx) case spl_Stream_Of_Life`) — returns the chosen city index for the actual cast. |
 
 ## Code walk
 

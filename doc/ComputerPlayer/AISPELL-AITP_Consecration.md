@@ -15,7 +15,7 @@ Next_Turn_Proc()
 
 Cast_Spell_Overland()
     // friendly-city target lookup at cast time
-    |-> Pick_Target_For_City_Enchantment__WIP()
+    |-> AITP_City_Enchantment()
         switch(spell_idx)
             case spl_Consecration:
                 |-> AITP_Consecration()
@@ -39,7 +39,7 @@ The `AITP_*` target picker for **Consecration**, a Life city enchantment that pr
 | Caller | Site | Notes |
 |---|---|---|
 | `AI_Select_Spell_Group_City_Enchantment` | [AISPELL.c:2416](../../MoM/src/AISPELL.c#L2416) | **Probe**: if a target exists, Consecration is given a fixed priority weight (`AI_OVL_SplPriorities[18] = 100`). |
-| `Pick_Target_For_City_Enchantment__WIP` | [AISPELL.c:4147](../../MoM/src/AISPELL.c#L4147) | Cast-time lookup (`switch(spell_idx) case spl_Consecration`) — returns the chosen city index for the actual cast. |
+| `AITP_City_Enchantment` | [AISPELL.c:4147](../../MoM/src/AISPELL.c#L4147) | Cast-time lookup (`switch(spell_idx) case spl_Consecration`) — returns the chosen city index for the actual cast. |
 
 ## Code walk
 

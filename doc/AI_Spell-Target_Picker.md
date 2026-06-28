@@ -24,7 +24,7 @@ AITP_Cloud_Of_Shadow()
 AITP_Spell_Ward()
 AITP_Consecration()
 
-### Pick_Target_For_City_Enchantment__WIP
+### AITP_City_Enchantment
     case spl_Wall_Of_Stone:    { return AITP_Wall_Of_Stone(player_idx, city_idx);      } break;
     case spl_Move_Fortress:    { return AITP_Move_Fortress(player_idx, city_idx);     } break;
     case spl_Earth_Gate:       { return AITP_Earth_Gate(player_idx, city_idx);        } break;

@@ -159,14 +159,14 @@ Next_Turn_Proc()
 [x]                 |-> AITP_Wall_Of_Darkness()
 [x]                 |-> AITP_AltarofBattle()
 
-[ ] Get_Map_Square_Target_For_Spell()
-[ ] Pick_Target_For_City_Enchantment__WIP()
+[x] Get_Map_Square_Target_For_Spell()
+[x] AITP_City_Enchantment()
 
 Cast_Spell_Overland() |-> ... |-> AITP_Disjunction()
 
 [x] AITP_Disjunction
 
-[ ] Get_Map_Square_Target_For_Spell()
+[x] Get_Map_Square_Target_For_Spell()
 [x]     |-> AITP_Transmute(player_idx, wx, wy, wp);
 [x]     |-> AITP_Change_Terrain(player_idx, wx, wy, wp);
 [x]     |-> AITP_Attack_Stack(player_idx, wx, wy, wp);
@@ -176,7 +176,7 @@ Cast_Spell_Overland() |-> ... |-> AITP_Disjunction()
 [x]     |-> AITP_Attack_Terrain(player_idx, wx, wy, wp, spell_idx);
 [x]     |-> AITP_Plane_Shift(player_idx, wx, wy, wp);
 [x]     |-> AITP_Natures_Cures(player_idx, wx, wy, wp);
-[ ]     |-> Cast_Spell_Target_Error(spell_idx);
+[x]     |-> Cast_Spell_Target_Error(spell_idx);
 
 Need `/doxyfunc`
 [ ] AITP_Inspirations()
@@ -199,7 +199,7 @@ Need `/doxyfunc`
 [ ]     |-> AITP_Plane_Shift(player_idx, wx, wy, wp);
 [ ]     |-> AITP_Natures_Cures(player_idx, wx, wy, wp);
 [ ]     |-> Cast_Spell_Target_Error(spell_idx);
-[ ] Pick_Target_For_City_Enchantment__WIP()
+[ ] AITP_City_Enchantment()
 
 
 

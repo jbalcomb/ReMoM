@@ -1410,7 +1410,7 @@ int16_t Cast_Wall_Of_Stone(int16_t player_idx)
     if(player_idx != HUMAN_PLAYER_IDX)
     {
 
-        return_value = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &city_idx, spl_Wall_Of_Stone, player_idx);
+        return_value = AITP_City_Enchantment(stt_Friendly_City, &city_idx, spl_Wall_Of_Stone, player_idx);
 
     }
     else
@@ -1519,7 +1519,7 @@ int16_t Cast_Spell_Of_Return(int16_t player_idx)
     else
     {
 
-        return_value = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &scsv1, spl_Move_Fortress, player_idx);
+        return_value = AITP_City_Enchantment(stt_Friendly_City, &scsv1, spl_Move_Fortress, player_idx);
 
     }
 

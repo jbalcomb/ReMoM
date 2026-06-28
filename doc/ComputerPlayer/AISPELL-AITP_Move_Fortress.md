@@ -15,7 +15,7 @@ Next_Turn_Proc()
 
 Cast_Spell_Overland()
     // friendly-city target lookup at cast time
-    |-> Pick_Target_For_City_Enchantment__WIP()
+    |-> AITP_City_Enchantment()
         switch(spell_idx)
             case spl_Move_Fortress:
                 |-> AITP_Move_Fortress()
@@ -39,7 +39,7 @@ The `AITP_*` target picker for **Move Fortress**, which relocates the wizard's f
 | Caller | Site | Notes |
 |---|---|---|
 | `AI_Select_Spell_Group_City_Enchantment` | [AISPELL.c:2338](../../MoM/src/AISPELL.c#L2338) | **Probe**: if a target exists, Move Fortress is given a turn-scaled priority weight (`AI_OVL_SplPriorities[5] = _turn / 15`). |
-| `Pick_Target_For_City_Enchantment__WIP` | [AISPELL.c:3386](../../MoM/src/AISPELL.c#L3386) | Cast-time lookup (`switch(spell_idx) case spl_Move_Fortress`) — returns the chosen city index for the actual cast. |
+| `AITP_City_Enchantment` | [AISPELL.c:3386](../../MoM/src/AISPELL.c#L3386) | Cast-time lookup (`switch(spell_idx) case spl_Move_Fortress`) — returns the chosen city index for the actual cast. |
 
 ## Code walk
 

@@ -496,7 +496,7 @@ int16_t Cast_Call_The_Void(int16_t player_idx)
     else
     {
 
-        return_value = Pick_Target_For_City_Enchantment__WIP(stt_Enemy_City, &city_idx, spl_Call_The_Void, player_idx);
+        return_value = AITP_City_Enchantment(stt_Enemy_City, &city_idx, spl_Call_The_Void, player_idx);
 
     }
 
@@ -1157,7 +1157,7 @@ int16_t Cast_Stasis(int16_t player_idx)
     if(player_idx != HUMAN_PLAYER_IDX)
     {
 
-        return_value = Pick_Target_For_City_Enchantment__WIP(stt_Enemy_Group, &scsv1, spl_Stasis, player_idx);
+        return_value = AITP_City_Enchantment(stt_Enemy_Group, &scsv1, spl_Stasis, player_idx);
 
     }
     else
@@ -1444,7 +1444,7 @@ int16_t Cast_Move_Fortress(int16_t player_idx)
     if(player_idx != HUMAN_PLAYER_IDX)
     {
 
-        return_value = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &city_idx, spl_Move_Fortress, player_idx);
+        return_value = AITP_City_Enchantment(stt_Friendly_City, &city_idx, spl_Move_Fortress, player_idx);
 
     }
     else
@@ -1587,7 +1587,7 @@ int16_t Cast_Earthquake(int16_t player_idx)
     else
     {
 
-        return_value = Pick_Target_For_City_Enchantment__WIP(stt_Enemy_City, &city_idx, spl_Earthquake, player_idx);
+        return_value = AITP_City_Enchantment(stt_Enemy_City, &city_idx, spl_Earthquake, player_idx);
 
     }
 

@@ -15,7 +15,7 @@ Next_Turn_Proc()
 
 Cast_Spell_Overland()
     // friendly-city target lookup at cast time
-    |-> Pick_Target_For_City_Enchantment__WIP()
+    |-> AITP_City_Enchantment()
         switch(spell_idx)
             case spl_Astral_Gate:
                 |-> AITP_Astral_Gate()
@@ -39,7 +39,7 @@ The `AITP_*` target picker for **Astral Gate**, a city enchantment. The AI wants
 | Caller | Site | Notes |
 |---|---|---|
 | `AI_Select_Spell_Group_City_Enchantment` | [AISPELL.c:2392](../../MoM/src/AISPELL.c#L2392) | **Probe**. Note: even when a target is found, the assigned weight is **zero** — `AI_OVL_SplPriorities[14] = 0` — so Astral Gate is effectively never prioritized by the weighted picker (any spell with weight `> 0` outranks it). This is a *caller-side* value, not part of `AITP_Astral_Gate`; see below. |
-| `Pick_Target_For_City_Enchantment__WIP` | [AISPELL.c:3936](../../MoM/src/AISPELL.c#L3936) | Cast-time lookup (`switch(spell_idx) case spl_Astral_Gate`) — returns the chosen city index for the actual cast. |
+| `AITP_City_Enchantment` | [AISPELL.c:3936](../../MoM/src/AISPELL.c#L3936) | Cast-time lookup (`switch(spell_idx) case spl_Astral_Gate`) — returns the chosen city index for the actual cast. |
 
 The `= 0` weight is worth a flag: it makes the probe's success irrelevant to the AI's choice. That belongs to the [`AI_Select_Spell_Group_City_Enchantment`](AISPELL-AI_Select_Spell_Group_City_Enchantment.md) review (the weight table), not to this target picker — `AITP_Astral_Gate` itself is correct.
 

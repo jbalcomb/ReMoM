@@ -15,7 +15,7 @@ Next_Turn_Proc()
 
 Cast_Spell_Overland()
     // friendly-city target lookup at cast time
-    |-> Pick_Target_For_City_Enchantment__WIP()
+    |-> AITP_City_Enchantment()
         switch(spell_idx)
             case spl_Heavenly_Light:
                 |-> AITP_Heavenly_Light()
@@ -39,7 +39,7 @@ The `AITP_*` target picker for **Heavenly Light**, a city enchantment. The AI wa
 | Caller | Site | Notes |
 |---|---|---|
 | `AI_Select_Spell_Group_City_Enchantment` | [AISPELL.c:2368](../../MoM/src/AISPELL.c#L2368) | **Probe**: if a target exists, Heavenly Light is given a turn-scaled priority weight (`AI_OVL_SplPriorities[10] = _turn / 25`). |
-| `Pick_Target_For_City_Enchantment__WIP` | [AISPELL.c:3718](../../MoM/src/AISPELL.c#L3718) | Cast-time lookup (`switch(spell_idx) case spl_Heavenly_Light`) — returns the chosen city index for the actual cast. |
+| `AITP_City_Enchantment` | [AISPELL.c:3718](../../MoM/src/AISPELL.c#L3718) | Cast-time lookup (`switch(spell_idx) case spl_Heavenly_Light`) — returns the chosen city index for the actual cast. |
 
 ## Code walk
 

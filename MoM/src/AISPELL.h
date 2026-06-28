@@ -225,7 +225,7 @@ void Cast_Spell_Target_Error(int16_t spell_idx);
 void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx);
 
 // WZD o156p39
-int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t * city_idx, int16_t spell_idx, int16_t player_idx);
+int16_t AITP_City_Enchantment(int16_t spell_target_type, int16_t * city_idx, int16_t spell_idx, int16_t player_idx);
 
 // WZD o156p40
 int16_t AI_Has_Targetable_City(int16_t player_idx);

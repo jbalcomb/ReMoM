@@ -1163,7 +1163,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                 {
                     if(player_idx != HUMAN_PLAYER_IDX)
                     {
-                        /* SPELLY */  cast_can_continue = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &spell_target_idx, spell_idx, player_idx);
+                        cast_can_continue = AITP_City_Enchantment(stt_Friendly_City, &spell_target_idx, spell_idx, player_idx);
                     }
                     else
                     {
@@ -1269,7 +1269,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                 {
                     if(player_idx != HUMAN_PLAYER_IDX)
                     {
-                        /* SPELLY */  cast_can_continue = Pick_Target_For_City_Enchantment__WIP(stt_Friendly_City, &spell_target_idx, spell_idx, player_idx);
+                        cast_can_continue = AITP_City_Enchantment(stt_Friendly_City, &spell_target_idx, spell_idx, player_idx);
                     }
                     else
                     {

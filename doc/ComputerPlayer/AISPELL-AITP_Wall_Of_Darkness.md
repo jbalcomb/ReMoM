@@ -7,14 +7,13 @@ Next_Turn_Proc()
     |-> Next_Turn_Calc()
         |-> AI_Next_Turn()
             |-> Cast_Spell_Overland()
+                |-> AITP_City_Enchantment()                    // cast-time: case spl_Wall_Of_Darkness
+                    |-> AITP_Wall_Of_Darkness()
             |-> AI_Spell_Select()
                 |-> AI_Compute_Spells_Info()
                 |-> AI_Select_Spell_Group()
                 |-> AI_Select_Spell_Group_City_Enchantment()   // probe: does a target exist?
                     |-> AITP_Wall_Of_Darkness()
-
-// NOTE: no `case spl_Wall_Of_Darkness` in the cast-time dispatch
-//       (Pick_Target_For_City_Enchantment__WIP) — see "How it's reached".
 
 ---
 
@@ -35,8 +34,7 @@ The `AITP_*` target picker for **Wall of Darkness**, a city enchantment. The AI 
 | Caller | Site | Notes |
 |---|---|---|
 | `AI_Select_Spell_Group_City_Enchantment` | [AISPELL.c:2422](../../MoM/src/AISPELL.c#L2422) | **Probe**: if a target exists, Wall of Darkness is given a turn-scaled priority weight (`AI_OVL_SplPriorities[19] = _turn / 20`). |
-
-**No cast-time dispatch case.** Unlike its siblings, there is **no `case spl_Wall_Of_Darkness`** in the friendly-city cast dispatch (`Pick_Target_For_City_Enchantment__WIP`). Across AISPELL.c, `AITP_Wall_Of_Darkness` is called only from the probe above; `spl_Wall_Of_Darkness` otherwise appears only at the spell-selection return ([AISPELL.c:2517](../../MoM/src/AISPELL.c#L2517)). So the probe sets a priority, but the cast-time target re-lookup is not routed through this function in AISPELL.c — either Wall of Darkness is targeted by a different path or the dispatch case is absent. This is a dispatch-wiring observation outside `AITP_Wall_Of_Darkness` itself; the function is correct.
+| `AITP_City_Enchantment` | [AISPELL.c:4189](../../MoM/src/AISPELL.c#L4189) | **Cast-time**: the friendly-city switch `case spl_Wall_Of_Darkness` re-runs this picker to choose the target city for the actual cast. |
 
 ## Code walk
 
@@ -81,7 +79,6 @@ Three nested gates, then a strict max. **Faithful 1:1** — every branch, the `=
 None in the function. No dead code, no off-by-ones, no preserved original-game bugs.
 
 - **Tie-break**: the `> highest_value` test is strictly-greater, so among qualifying cities of equal top value the **lowest city index** is kept (the scan runs `0 -> _cities`).
-- **Missing cast-time dispatch** (above): a wiring gap/observation in `Pick_Target_For_City_Enchantment__WIP`, not a defect of this picker.
 
 ## Sub-functions / external calls
 

@@ -15,7 +15,7 @@ Next_Turn_Proc()
 
 Cast_Spell_Overland()
     // friendly-city target lookup at cast time
-    |-> Pick_Target_For_City_Enchantment__WIP()
+    |-> AITP_City_Enchantment()
         switch(spell_idx)
             case spl_Dark_Rituals:
                 |-> AITP_Dark_Rituals()
@@ -39,7 +39,7 @@ The `AITP_*` target picker for **Dark Rituals**, a city enchantment that require
 | Caller | Site | Notes |
 |---|---|---|
 | `AI_Select_Spell_Group_City_Enchantment` | [AISPELL.c:2398](../../MoM/src/AISPELL.c#L2398) | **Probe**: if a target exists, Dark Rituals is given a fixed priority weight (`AI_OVL_SplPriorities[15] = 100`). |
-| `Pick_Target_For_City_Enchantment__WIP` | [AISPELL.c:3979](../../MoM/src/AISPELL.c#L3979) | Cast-time lookup (`switch(spell_idx) case spl_Dark_Rituals`) — returns the chosen city index for the actual cast. |
+| `AITP_City_Enchantment` | [AISPELL.c:3979](../../MoM/src/AISPELL.c#L3979) | Cast-time lookup (`switch(spell_idx) case spl_Dark_Rituals`) — returns the chosen city index for the actual cast. |
 
 ## Code walk
 

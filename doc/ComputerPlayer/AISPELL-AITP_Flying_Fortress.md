@@ -15,7 +15,7 @@ Next_Turn_Proc()
 
 Cast_Spell_Overland()
     // friendly-city target lookup at cast time
-    |-> Pick_Target_For_City_Enchantment__WIP()
+    |-> AITP_City_Enchantment()
         switch(spell_idx)
             case spl_Flying_Fortress:
                 |-> AITP_Flying_Fortress()
@@ -39,7 +39,7 @@ The `AITP_*` target picker for **Flying Fortress**, a city enchantment that appl
 | Caller | Site | Notes |
 |---|---|---|
 | `AI_Select_Spell_Group_City_Enchantment` | [AISPELL.c:2356](../../MoM/src/AISPELL.c#L2356) | **Probe**: if a target is returned, Flying Fortress is given a fixed priority weight (`AI_OVL_SplPriorities[8] = 100`). |
-| `Pick_Target_For_City_Enchantment__WIP` | [AISPELL.c:3611](../../MoM/src/AISPELL.c#L3611) | Cast-time lookup (`switch(spell_idx) case spl_Flying_Fortress`) — returns the chosen city index for the actual cast. |
+| `AITP_City_Enchantment` | [AISPELL.c:3611](../../MoM/src/AISPELL.c#L3611) | Cast-time lookup (`switch(spell_idx) case spl_Flying_Fortress`) — returns the chosen city index for the actual cast. |
 
 ## Code walk
 

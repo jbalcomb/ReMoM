@@ -15,7 +15,7 @@ Next_Turn_Proc()
 
 Cast_Spell_Overland()
     // friendly-city target lookup at cast time
-    |-> Pick_Target_For_City_Enchantment__WIP()
+    |-> AITP_City_Enchantment()
         switch(spell_idx)
             case spl_Wall_Of_Stone:
                 |-> AITP_Wall_Of_Stone()
@@ -38,7 +38,7 @@ One of the `AITP_*` "where do I aim this?" target pickers for friendly-city spel
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Pick_Target_For_City_Enchantment__WIP` | [AISPELL.c:3082](../../MoM/src/AISPELL.c#L3082) | `switch(spell_idx) case spl_Wall_Of_Stone` — the actual target lookup when the spell is being cast. |
+| `AITP_City_Enchantment` | [AISPELL.c:3082](../../MoM/src/AISPELL.c#L3082) | `switch(spell_idx) case spl_Wall_Of_Stone` — the actual target lookup when the spell is being cast. |
 | `AI_Select_Spell_Group_City_Enchantment` | [AISPELL.c:2319](../../MoM/src/AISPELL.c#L2319) | Used as a **probe**: if a target exists, Wall of Stone is given a priority weight (`AI_OVL_SplPriorities[1] = _turn / 6`). |
 
 ## Code walk

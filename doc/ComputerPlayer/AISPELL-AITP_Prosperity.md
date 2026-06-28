@@ -15,7 +15,7 @@ Next_Turn_Proc()
 
 Cast_Spell_Overland()
     // friendly-city target lookup at cast time
-    |-> Pick_Target_For_City_Enchantment__WIP()
+    |-> AITP_City_Enchantment()
         switch(spell_idx)
             case spl_Prosperity:
                 |-> AITP_Prosperity()
@@ -39,7 +39,7 @@ The `AITP_*` target picker for **Prosperity**, a city enchantment. The AI wants 
 | Caller | Site | Notes |
 |---|---|---|
 | `AI_Select_Spell_Group_City_Enchantment` | [AISPELL.c:2386](../../MoM/src/AISPELL.c#L2386) | **Probe**: if a target exists, Prosperity is given a high fixed priority weight (`AI_OVL_SplPriorities[13] = 300`). |
-| `Pick_Target_For_City_Enchantment__WIP` | [AISPELL.c:3906](../../MoM/src/AISPELL.c#L3906) | Cast-time lookup (`switch(spell_idx) case spl_Prosperity`) — returns the chosen city index for the actual cast. |
+| `AITP_City_Enchantment` | [AISPELL.c:3906](../../MoM/src/AISPELL.c#L3906) | Cast-time lookup (`switch(spell_idx) case spl_Prosperity`) — returns the chosen city index for the actual cast. |
 
 ## Code walk
 
