@@ -4040,6 +4040,7 @@ int16_t AITP_Consecration(int16_t player_idx, int16_t * targeted_city_idx)
 // WZD o156p36
 // drake178: UU_DBG_GetKnownSpells()
 
+
 // WZD o156p37
 void Cast_Spell_Target_Error(int16_t spell_idx)
 {
@@ -4047,7 +4048,7 @@ void Cast_Spell_Target_Error(int16_t spell_idx)
     {
         return;
     }
-    _fstrcpy(near_buffer, spell_data_table[spell_idx].name);
+    stu_strcpy(near_buffer, spell_data_table[spell_idx].name);
     stu_strcat(near_buffer, CRP_AI_SpellTargetError);  /* " could not be found for CP." */
     Exit_With_Message(near_buffer);
 }
@@ -4988,21 +4989,10 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
 
 
 // WZD o156p45
-// drake178: AITP_OVL_TileSpells()
-/* 
-AI target picker for overland square spells
-returns 1 if a successful target is found, 0 if not,
-or the passed return value if the spell is undefined
-contains BUGs in every targeting function, and some
-select completely inappropriate targets
-*/
-/*
-    calls out to get wx,wy,wp, for 14 spells
-
-*/
 int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx, int16_t * wy, int16_t * wp, int16_t spell_idx, int16_t player_idx)
 {
-    int16_t Passed_Return = 0;
+
+    int16_t niu_variable = 0;
     int16_t return_value = 0;  // DNE in Dasm
 
     switch(spell_idx)
@@ -5051,8 +5041,9 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx,
         default:
         {
             Cast_Spell_Target_Error(spell_idx);  // "[spell name] could not be found for CP."
+            /* OGBUG  IDGI, but leaves the passed in parameter in AX which means it's the return value  `mov ax, [bp+spell_target_type]; mov [bp+niu_variable], ax;` */
             return_value = spell_target_type;
-            Passed_Return = return_value;
+            niu_variable = return_value;
         } break;
     }
 

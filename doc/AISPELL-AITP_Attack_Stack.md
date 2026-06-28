@@ -14,8 +14,6 @@ Next_Turn_Proc()
                         case spl_Black_Wind:
                         case spl_Stasis:
                             |-> AITP_Attack_Stack()
-                        case spl_Plane_Shift:
-                            |-> AITP_Attack_Stack()   // R1 mis-wire — OG calls AITP_Plane_Shift here
 
 ---
 
@@ -35,8 +33,7 @@ Next_Turn_Proc()
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Get_Map_Square_Target_For_Spell` | [AISPELL.c:5023](../MoM/src/AISPELL.c#L5023) | `switch(spell_idx)` cases `spl_Ice_Storm` / `spl_Fire_Storm` / `spl_Black_Wind` / `spl_Stasis` dispatch here. **Faithful** to the asm/IDA-C. |
-| `Get_Map_Square_Target_For_Spell` | [AISPELL.c:5048](../MoM/src/AISPELL.c#L5048) | `case spl_Plane_Shift` *also* calls this — a **reconstruction error in that dispatcher** (R1 of the `Get_Map_Square_Target_For_Spell` review): the OG (`.asm loc_E93BF`, IDA-C) routes Plane Shift to the separate `AITP_Plane_Shift`, not here. Not a defect of `AITP_Attack_Stack` itself. |
+| `Get_Map_Square_Target_For_Spell` | [AISPELL.c:5012](../MoM/src/AISPELL.c#L5012) | `switch(spell_idx)` cases `spl_Ice_Storm` / `spl_Fire_Storm` / `spl_Black_Wind` / `spl_Stasis` dispatch here. **Faithful** to the asm/IDA-C. |
 
 ## Code walk
 
@@ -121,5 +118,5 @@ All four are original-game behavior; keep them.
 
 - `…\ovr156\AITP_OVL_HarmStack.asm` — IDA Pro 5.5 disassembly (the authority; OG name keeps `OVL_HarmStack`).
 - `…\ovr156\AITP_OVL_HarmStack.c` — Piethawn IDA-C.
-- `Get_Map_Square_Target_For_Spell` ([AISPELL.c:5002](../MoM/src/AISPELL.c#L5002)) — the map-square target router that calls this (and whose `spl_Plane_Shift` case is the R1 mis-wire to here instead of `AITP_Plane_Shift`).
+- `Get_Map_Square_Target_For_Spell` ([AISPELL.c:5002](../MoM/src/AISPELL.c#L5002)) — the map-square target router that calls this (its `spl_Ice_Storm` / `spl_Fire_Storm` / `spl_Black_Wind` / `spl_Stasis` cases).
 - [ComputerPlayer/AISPELL-AI_Spell_Select.md](ComputerPlayer/AISPELL-AI_Spell_Select.md) — the parent dispatcher.
