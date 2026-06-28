@@ -5024,7 +5024,7 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx,
         } break;
         case spl_Floating_Island:
         {
-            return_value = Pick_Target_For_Floating_Island(player_idx, wx, wy, wp);
+            return_value = AITP_Floating_Island(player_idx, wx, wy, wp);
         } break;
         case spl_Enchant_Road:
         {
@@ -5175,135 +5175,113 @@ int16_t AITP_Attack_Stack(int16_t player_idx, int16_t * targeted_wx, int16_t * t
 
 
 // WZD o156p47
-// drake178: AITP_FloatingIsland()
-/*
-; AI target picker for Floating Island - selects the
-; closest ocean square within 10 tiles of a random city
-; in a cardinal direction
-; returns 1 if a valid target was found, or 0 otherwise
-; BUG: utterly useless targeting
-*/
-/*
-
-*/
-int16_t Pick_Target_For_Floating_Island(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp)
+int16_t AITP_Floating_Island(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp)
 {
     int16_t city_idx = 0;
-    int16_t Tries = 0;
-    int16_t uu_player_idx = 0;
+    int16_t tries = 0;
+    int16_t niu_player_idx = 0;
     int16_t target_wy = 0;
     int16_t target_wx = 0;
-    int16_t Vertical = 0;
+    int16_t is_vertical_axis = 0;
     int16_t city_wp = 0;
-    int16_t UpLeft = 0;
+    int16_t is_negative_offset = 0;
     int16_t city_wy = 0;
     int16_t city_wx = 0;
-    int16_t check_value = 0;  // _DI_
-    int16_t itr_squares = 0;  // _SI_
+    int16_t found_target = 0;
+    int16_t itr_squares = 0;
 
-    uu_player_idx = player_idx;
 
-    check_value = ST_FALSE;
+    /* Phase 1: Init */
+    niu_player_idx = player_idx;
+    found_target = ST_FALSE;
 
-    // ; make 200 attempts to find a random city that belongs
-    // ; to the player
-    for(Tries = 0; ((Tries < 200) && (check_value == ST_FALSE)); Tries++)
+    // ; make 200 attempts to find a random city that belongs to the player
+    for(tries = 0; ((tries < 200) && (found_target == ST_FALSE)); tries++)
     {
-
         city_idx = (Random(_cities) - 1);
-
         if(_CITIES[city_idx].owner_idx == player_idx)
         {
-
-            check_value = ST_TRUE;
-
+            found_target = ST_TRUE;
             city_wp = _CITIES[city_idx].wp;
-            
             city_wx = _CITIES[city_idx].wx;
-            
             city_wy = _CITIES[city_idx].wy;
-
         }
-
     }
 
-    if(check_value == ST_FALSE)
+    if(found_target == ST_FALSE)
     {
         return ST_FALSE;
     }
 
-    // ; find the closest ocean square within 10 tiles in any of
-    // ; the cardinal directions (straight only)
+    // ; find the closest ocean square within 10 squares in any of the cardinal directions (straight only)
 
     itr_squares = 0;
+    is_negative_offset = ST_TRUE;
+    is_vertical_axis = ST_FALSE;
+    found_target = ST_FALSE;
 
-    UpLeft = ST_TRUE;
-
-    Vertical = ST_FALSE;
-
-    check_value = ST_FALSE;
-
-    while((check_value == ST_FALSE) && (itr_squares < 10))
+    while((found_target == ST_FALSE) && (itr_squares < 10))
     {
-        if(UpLeft == ST_FALSE)
+        if(is_negative_offset == ST_FALSE)  /* +itr_squares : EAST / SOUTH (down-right) */
         {
-            if(Vertical == ST_FALSE)
+            if(is_vertical_axis == ST_FALSE)  /* EAST  (city_wx + itr_squares, city_wy) */
             {
                 if(Square_Is_Legal_For_Floating_Island((city_wx + itr_squares), city_wy, city_wp) == ST_TRUE)
                 {
-                    check_value = ST_TRUE;
+                    found_target = ST_TRUE;
                     target_wx = (city_wx + itr_squares);
                     target_wy = city_wy;
                 }
-                Vertical = ST_TRUE;
+                is_vertical_axis = ST_TRUE;
             }
-            else  /* (Vertical == ST_TRUE) */
+            else  /* (is_vertical_axis == ST_TRUE) : SOUTH (city_wx, city_wy + itr_squares) */
             {
                 if(Square_Is_Legal_For_Floating_Island(city_wx, (city_wy + itr_squares), city_wp) == ST_TRUE)
                 {
-                    check_value = ST_TRUE;
+                    found_target = ST_TRUE;
                     target_wx = city_wx;
                     target_wy = (city_wy + itr_squares);
                 }
-                Vertical = ST_TRUE;
+                is_vertical_axis = ST_FALSE;
+                is_negative_offset = ST_TRUE;
             }
         }
-        else  /* (UpLeft == ST_TRUE) */
+        else  /* (is_negative_offset == ST_TRUE) : -itr_squares : WEST / NORTH (up-left) */
         {
-            if(Vertical == ST_FALSE)
+            if(is_vertical_axis == ST_FALSE)  /* WEST  (city_wx - itr_squares, city_wy) */
             {
                 if(Square_Is_Legal_For_Floating_Island((city_wx - itr_squares), city_wy, city_wp) == ST_TRUE)
                 {
-                    check_value = ST_TRUE;
+                    found_target = ST_TRUE;
                     target_wx = (city_wx - itr_squares);
                     target_wy = city_wy;
                 }
-                Vertical = ST_TRUE;
+                is_vertical_axis = ST_TRUE;
             }
-            else  /* (Vertical == ST_TRUE) */
+            else  /* (is_vertical_axis == ST_TRUE) : NORTH (city_wx, city_wy - itr_squares) */
             {
                 if(Square_Is_Legal_For_Floating_Island(city_wx, (city_wy - itr_squares), city_wp) == ST_TRUE)
                 {
-                    check_value = ST_TRUE;
+                    found_target = ST_TRUE;
                     target_wx = city_wx;
                     target_wy = (city_wy - itr_squares);
                 }
-                Vertical = ST_FALSE;
+                is_vertical_axis = ST_FALSE;
                 itr_squares++;
-                UpLeft = ST_FALSE;
+                is_negative_offset = ST_FALSE;
             }
         }
     }
 
-    if(check_value == ST_FALSE)
+    if(found_target == ST_FALSE)
     {
         return ST_FALSE;
     }
     else
     {
-        *wx = target_wx;
-        *wy = target_wy;
-        *wp = city_wp;
+        *targeted_wx = target_wx;
+        *targeted_wy = target_wy;
+        *targeted_wp = city_wp;
         return ST_TRUE;
     }
 
