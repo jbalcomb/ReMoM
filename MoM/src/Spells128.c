@@ -3,8 +3,6 @@
         ovr128
 */
 
-#include <stdio.h>  /* CLAUDE: fprintf(stderr, ...) for [RESEARCH_SETUP] diagnostics */
-
 #include "CITYCALC.h"
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/Util.h"
@@ -98,37 +96,6 @@ int16_t Player_Research_Spells(int16_t player_idx)
     research_list = (int16_t *)Near_Allocate_First(200);
     Build_Research_List(player_idx, &research_list[0]);
 
-    /* CLAUDE: log entry state for the research candidate-list population.  The
-       value of m_spell_list_count and the contents of research_list[] are what
-       Random() picks indices into, so any nondeterminism in research_spells[]
-       traces back to one of these inputs varying or to the RNG state having
-       advanced different amounts before this function is reached. */
-    {
-        int16_t _dbg_eligible = 0;
-        int16_t _dbg_idx;
-        for(_dbg_idx = 0; _dbg_idx < (NUM_SPELLS_PER_MAGIC_REALM * NUM_MAGIC_REALMS); _dbg_idx++)
-        {
-            if(_players[player_idx].spells_list[_dbg_idx] == sls_Researchable) { _dbg_eligible++; }
-        }
-        LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_SETUP] player=%d ENTER  random_seed=0x%08X  random_calls=%llu  m_spell_list_count=%d  spells_list_researchable_count=%d  research_spells=[%d,%d,%d,%d,%d,%d,%d,%d]", player_idx, (unsigned)Get_Random_Seed(), (unsigned long long)g_random_call_count, m_spell_list_count, _dbg_eligible, _players[player_idx].research_spells[0], _players[player_idx].research_spells[1], _players[player_idx].research_spells[2], _players[player_idx].research_spells[3], _players[player_idx].research_spells[4], _players[player_idx].research_spells[5], _players[player_idx].research_spells[6], _players[player_idx].research_spells[7]);
-    }
-
-
-    /* CLAUDE (pair-1 diag): dump the spells_list going in + the research_list
-       Build_Research_List produced, so we can see which spells OG's mid-research
-       rebuild keeps eligible that ReMoM's drops (pool 11 vs 6 @ player2 pick5). */
-    {
-        char _sl[820]; int _q = 0, _j;
-        for (_j = 0; _j < (NUM_SPELLS_PER_MAGIC_REALM * NUM_MAGIC_REALMS); _j++)
-            _q += snprintf(_sl + _q, sizeof(_sl) - _q, _j ? ",%d" : "%d", (int)_players[player_idx].spells_list[_j]);
-        LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_IN] player=%d spells_list=[%s]", player_idx, _sl);
-        _q = 0; char _rl[420];
-        for (_j = 0; _j < m_spell_list_count && _j < 80; _j++)
-            _q += snprintf(_rl + _q, sizeof(_rl) - _q, _j ? ",%d" : "%d", (int)research_list[_j]);
-        LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_POOL] player=%d build=initial pool=%d research_list=[%s]",
-                 player_idx, m_spell_list_count, _rl);
-    }
-
     if(_players[player_idx].spells_list[(spl_Spell_Of_Mastery - 1)] == sls_Known)
     {
         skip_som = ST_TRUE;
@@ -152,10 +119,6 @@ int16_t Player_Research_Spells(int16_t player_idx)
     /* Fill empty research slots with new spells from the list */
     while((spells_cnt < spells_max) && (m_spell_list_count > 0))
     {
-        /* CLAUDE: capture pre-Random state for the diagnostic log below. */
-        uint64_t _dbg_calls_before = g_random_call_count;
-        int16_t _dbg_pool_size = m_spell_list_count;
-
         research_list_idx = (Random(m_spell_list_count) - 1);
 
         spells_cnt++;
@@ -168,27 +131,12 @@ int16_t Player_Research_Spells(int16_t player_idx)
                 spell_realm_idx = ((research_list[research_list_idx] - 1) % NUM_SPELLS_PER_MAGIC_REALM);
                 spell_realm = ((research_list[research_list_idx] - 1) / NUM_SPELLS_PER_MAGIC_REALM);
                 _players[player_idx].spells_list[((spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx)] = sls_Researchable;
-                /* CLAUDE: log the assignment so we can see which Random() call mapped to which slot/spell. */
-                LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_SETUP] player=%d pick: random_calls=%llu->%llu  pool=%d  rng_idx=%d  -> slot=%d spell=%d  spells_list[%d]=Researchable", player_idx, (unsigned long long)_dbg_calls_before, (unsigned long long)g_random_call_count, _dbg_pool_size, research_list_idx, itr, research_list[research_list_idx], (spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx);
                 /* Refresh the eligible pool for the next slot */
                 Build_Research_List(player_idx, &research_list[0]);
-                /* CLAUDE (pair-1 diag): the rebuilt pool after each pick -- this is
-                   where OG (11) and ReMoM (6) diverge at player 2 pick 5. */
-                {
-                    char _rl2[420]; int _q2 = 0, _j2;
-                    for (_j2 = 0; _j2 < m_spell_list_count && _j2 < 80; _j2++)
-                        _q2 += snprintf(_rl2 + _q2, sizeof(_rl2) - _q2, _j2 ? ",%d" : "%d", (int)research_list[_j2]);
-                    LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_POOL] player=%d build=rebuild after_slot=%d pool=%d research_list=[%s]",
-                             player_idx, itr, m_spell_list_count, _rl2);
-                }
                 break;
             }
         }
     }
-
-    /* CLAUDE: log exit state — final research_spells[] contents.  Compare across runs to confirm whether nondeterminism here is upstream (RNG-state / eligibility-pool divergence) or local. */
-    LOG_INFO(LOG_CAT_SPELLS128, "[RESEARCH_SETUP] player=%d EXIT   random_calls=%llu  research_spells=[%d,%d,%d,%d,%d,%d,%d,%d]", player_idx, (unsigned long long)g_random_call_count, _players[player_idx].research_spells[0], _players[player_idx].research_spells[1], _players[player_idx].research_spells[2], _players[player_idx].research_spells[3], _players[player_idx].research_spells[4], _players[player_idx].research_spells[5], _players[player_idx].research_spells[6], _players[player_idx].research_spells[7]);
-
 
     /* Re-count active research slots */
     spells_cnt = 0;
