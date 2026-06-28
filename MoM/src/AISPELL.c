@@ -2425,7 +2425,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
     }
 
     if(players_spell_list[spl_Altar_Of_Battle] == sls_Known) {
-        if(AITP_AltarofBattle(player_idx, &target_city_idx) == 1) {
+        if(AITP_Altar_Of_Battle(player_idx, &target_city_idx) == 1) {
             AI_OVL_SplPriorities[20] = 50;
         }
     }
@@ -3570,9 +3570,40 @@ int16_t AITP_Heavenly_Light(int16_t player_idx, int16_t * targeted_city_idx)
 }
 
 // WZD o156p27
-int16_t AITP_AltarofBattle(int16_t player_idx, int16_t * city_idx)
+int16_t AITP_Altar_Of_Battle(int16_t player_idx, int16_t * targeted_city_idx)
 {
-    return 0;
+    int16_t highest_value = 0;
+    int16_t best_city_idx = 0;
+    int16_t itr_cities = 0;
+
+    best_city_idx = ST_UNDEFINED;
+    highest_value = 0;
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            if(_CITIES[itr_cities].enchantments[ALTAR_OF_BATTLE] == ST_FALSE)
+            {
+                if(_ai_all_own_city_values[itr_cities] > highest_value)
+                {
+                    best_city_idx = itr_cities;
+                    highest_value = _ai_all_own_city_values[itr_cities];
+                }
+            }
+        }
+    }
+
+    if(best_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_city_idx = best_city_idx;
+        return ST_TRUE;
+    }
+
 }
 
 
@@ -4172,7 +4203,7 @@ int16_t Pick_Target_For_City_Enchantment__WIP(int16_t spell_target_type, int16_t
             case spl_Earth_Gate:       { return AITP_Earth_Gate(player_idx, city_idx);       } break;
             case spl_Flying_Fortress:  { return AITP_Flying_Fortress(player_idx, city_idx);  } break;
             case spl_Wall_Of_Fire:     { return AITP_Wall_Of_Fire(player_idx, city_idx);     } break;
-            case spl_Altar_Of_Battle:  { return AITP_AltarofBattle(player_idx, city_idx);    } break;
+            case spl_Altar_Of_Battle:  { return AITP_Altar_Of_Battle(player_idx, city_idx);  } break;
             case spl_Heavenly_Light:   { return AITP_Heavenly_Light(player_idx, city_idx);   } break;
             case spl_Inspirations:     { return AITP_Inspirations(player_idx, city_idx);     } break;
             case spl_Stream_Of_Life:   { return AITP_Stream_Of_Life(player_idx, city_idx);   } break;

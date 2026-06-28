@@ -189,7 +189,7 @@ int16_t AITP_Wall_Of_Darkness(int16_t player_idx, int16_t * city_idx);
 int16_t AITP_Heavenly_Light(int16_t player_idx, int16_t * targeted_city_idx);
 
 // WZD o156p27
-int16_t AITP_AltarofBattle(int16_t player_idx, int16_t * city_idx);
+int16_t AITP_Altar_Of_Battle(int16_t player_idx, int16_t * targeted_city_idx);
 
 // WZD o156p28
 int16_t AITP_Stream_Of_Life(int16_t player_idx, int16_t * targeted_city_idx);

@@ -157,7 +157,7 @@ Next_Turn_Proc()
 [x]                 |-> AITP_Spell_Ward()
 [x]                 |-> AITP_Consecration()
 [x]                 |-> AITP_Wall_Of_Darkness()
-[ ]                 |-> AITP_AltarofBattle()
+[x]                 |-> AITP_AltarofBattle()
 
 [ ] Get_Map_Square_Target_For_Spell()
 [ ] Pick_Target_For_City_Enchantment__WIP()
