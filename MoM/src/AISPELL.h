@@ -258,7 +258,7 @@ int16_t AITP_Enchant_Road(int16_t player_idx, int16_t * targeted_wx, int16_t * t
 int16_t AITP_Disenchant(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp);
 
 // WZD o156p50
-// AITP_HarmTerrain()
+int16_t AITP_Attack_Terrain(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp, int16_t spell_idx);
 
 // WZD o156p51
 // sub_E9FA9()

@@ -83,7 +83,7 @@ Meh. I put stuff in MoX_DEF.H that is meant to have access to this.
 void Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p02
-// TILE_IsNode          
+int16_t Square_Is_Node(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p03
 int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp);

@@ -33,7 +33,31 @@ void Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD s161p02
-// TILE_IsNode          
+int16_t Square_Is_Node(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t niu_variable = 0;
+    int16_t terrain_type = 0;
+    int16_t is_node = 0;  // DNE on Dasm
+    is_node = ST_FALSE;  // DNE on Dasm
+    niu_variable = 0;
+    terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
+    if(
+        (terrain_type != tt_SorceryNode )
+        &&
+        (terrain_type != tt_SorceryNode )
+        &&
+        (terrain_type != tt_SorceryNode )
+    )
+    {
+        is_node = ST_FALSE;
+    }
+    else
+    {
+        is_node = ST_TRUE;
+    }
+    return is_node;
+}
+
 
 // WZD s161p03
 // drake178: TILE_GetFood()
@@ -1518,11 +1542,8 @@ int16_t Square_Is_Volcano(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;
     int16_t is_volcano;  // DNE in Dasm
-
     is_volcano = ST_FALSE;  // DNE in Dasm
-
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
-
+    terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
     if(
         (terrain_type == tt_ChaosNode)
         ||
@@ -1535,7 +1556,6 @@ int16_t Square_Is_Volcano(int16_t wx, int16_t wy, int16_t wp)
     {
         is_volcano = ST_FALSE;
     }
-
     return is_volcano;
 }
 
@@ -1545,11 +1565,8 @@ int16_t Square_Has_Corruption(int16_t wx, int16_t wy, int16_t wp)
 {
     uint8_t map_square_flag = 0;  // DNE in Dasm
     int16_t has_corruption = 0;  // DNE in Dasm
-
     has_corruption = ST_FALSE;  // DNE in Dasm
-
     map_square_flag = GET_MAP_SQUARE_FLAG(wx, wy, wp);
-    
     if((map_square_flag & MSF_CORRUPTION) != 0)
     {
         has_corruption = ST_TRUE;
@@ -1558,7 +1575,6 @@ int16_t Square_Has_Corruption(int16_t wx, int16_t wy, int16_t wp)
     {
         has_corruption = ST_FALSE;
     }
-
     return has_corruption;
 }
 
