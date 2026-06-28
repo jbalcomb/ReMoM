@@ -3959,7 +3959,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
         } break;
         case 1:  // Stack vs. City
         {
-            // TODO  _players.banner_id+17E8h], BNR_Brown
+            _players[NEUTRAL_PLAYER_IDX].banner_id = BNR_Brown;
             _combat_wx = _CITIES[_combat_environ_idx].wx;
             _combat_wy = _CITIES[_combat_environ_idx].wy;
             _combat_wp = _CITIES[_combat_environ_idx].wp;
@@ -3981,7 +3981,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
         } break;
         case 5:  // Stack vs. Lair
         {
-            // TODO  _players.banner_id+17E8h], BNR_Brown
+            _players[NEUTRAL_PLAYER_IDX].banner_id = BNR_Brown;
             Lair_Make_Guardians(_combat_environ_idx);
             _combat_wx = _LAIRS[_combat_environ_idx].wx;
             _combat_wy = _LAIRS[_combat_environ_idx].wy;

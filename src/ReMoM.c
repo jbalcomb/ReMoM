@@ -486,7 +486,7 @@ int MOM_main(int argc, char** argv)
     // WZD }
     // WZD else
     // WZD {
-    // WZD     g_EmmHndl_OVERXYZ = 0;  // ¿ NULLL ?
+    // WZD     g_EmmHndl_OVERXYZ = 0;  // ¿ NULL ?
     // WZD }
 
     // WZD Load_Palette(0, ST_UNDEFINED);

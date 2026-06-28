@@ -7,6 +7,8 @@
 
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_BASE.h"
+#include "../../MoX/src/MOX_DAT.h"
+#include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_T4.h"  // ~ MOX & MOX2 //MoO2
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/Fonts.h"
@@ -125,12 +127,26 @@ void Screen_Control(void)
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu ENTER screen=Continue\n", (unsigned long long)Platform_Get_Millies());
 #endif
+
+    // WZD Load_Palette(0, ST_UNDEFINED);
+    // WZD Calculate_Remap_Colors();
+    // WZD Set_Button_Down_Offsets(1, 1,);
+    // WZD Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
+    // WZD Apply_Palette();
+    // WZD Fade_In();
+    // WZD current_screen = scr_Main_Screen
+    // WZD _players[NEUTRAL_PLAYER_IDX].banner_id = 5;  // enum Banner_Color {BNR_Brown = 5 }
+    // WZD Clear_Fields();
+    // WZD Loaded_Game_Update_WZD();
+    // WZD GAME_SoM_Cast_By = ST_UNDEFINED;
+
                 // MGC  fid0_Continue:                            ; case 0x0
                 // MGC  Stop_Music__STUB()
                 // MGC  j_GAME_WizardsLaunch__WIP(e_SAVE9GAM)
                 // /* HACK */ Load_SAVE_GAM(-1);  // SAVETEST.GAM
                 /* HACK */  Load_WZD_Resources();
                 Load_SAVE_GAM(8);
+
                 /* 300-series: snapshot every save-loaded array right after Load_SAVE_GAM
                  * (matches OG's gd_wzd_landmark_probe @ Load_SAVE_GAM on-return). Numbered
                  * in save-load order; gaps (303/304/306/312/313) are Phase 2. */
@@ -147,8 +163,12 @@ void Screen_Control(void)
                 gd_dump_units           ("311_Load_Units_U");
                 gd_dump_terrain_specials("312_Load_Terrain_Specials_T");
                 gd_dump_map_square_flags("313_Load_Map_Flags_M");
-                Loaded_Game_Update();
+
                 current_screen = scr_Main_Screen;
+                _players[NEUTRAL_PLAYER_IDX].banner_id = BNR_Brown;
+                Clear_Fields();
+                Loaded_Game_Update();
+                GAME_SoM_Cast_By = ST_UNDEFINED;
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu LEAVE screen=Continue next=%d\n", (unsigned long long)Platform_Get_Millies(), current_screen);
 #endif
