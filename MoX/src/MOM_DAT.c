@@ -872,7 +872,7 @@ struct s_AI_CONTINENTS _ai_continents;
 2-byte, signed
 decremented in AI_Next_Turn()
 */
-int16_t * AI_SCircle_Reevals;
+int16_t * _ai_reevaluate_summoning_circle_countdown;
 
 // WZD dseg:8F9A
 uint8_t * _ai_landmass_settler_targets_wy_array[2];

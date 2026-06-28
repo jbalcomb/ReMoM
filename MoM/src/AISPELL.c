@@ -857,7 +857,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
 
     if(players_spell_list[spl_Summoning_Circle] == sls_Known)
     {
-        if(AI_SCircle_Reevals[player_idx] < 0) {
+        if(_ai_reevaluate_summoning_circle_countdown[player_idx] < 0) {
             Own_City_Count = 0;
             for(itr = 0; itr < _cities; itr++) {
                 if(_CITIES[itr].owner_idx == player_idx)
