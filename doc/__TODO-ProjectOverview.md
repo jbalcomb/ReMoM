@@ -173,8 +173,8 @@ Cast_Spell_Overland() |-> ... |-> AITP_Disjunction()
 [x]     |-> AITP_Floating_Island(player_idx, wx, wy, wp);
 [x]     |-> AITP_Enchant_Road(player_idx, wx, wy, wp);
 [x]     |-> AITP_Disenchant(player_idx, wx, wy, wp);
-[ ]     |-> AITP_Attack_Terrain(player_idx, wx, wy, wp, spell_idx);
-[ ]     |-> AITP_PlaneShift(player_idx, wx, wy, wp);
+[x]     |-> AITP_Attack_Terrain(player_idx, wx, wy, wp, spell_idx);
+[x]     |-> AITP_Plane_Shift(player_idx, wx, wy, wp);
 [ ]     |-> AITP_NaturesCures(player_idx, wx, wy, wp);
 [ ]     |-> Cast_Spell_Target_Error(spell_idx);
 
@@ -196,7 +196,7 @@ Need `/doxyfunc`
 [ ]     |-> AITP_Enchant_Road(player_idx, wx, wy, wp);
 [ ]     |-> AITP_Disenchant(player_idx, wx, wy, wp);
 [ ]     |-> AITP_Attack_Terrain(player_idx, wx, wy, wp, spell_idx);
-[ ]     |-> AITP_PlaneShift(player_idx, wx, wy, wp);
+[ ]     |-> AITP_Plane_Shift(player_idx, wx, wy, wp);
 [ ]     |-> AITP_NaturesCures(player_idx, wx, wy, wp);
 [ ]     |-> Cast_Spell_Target_Error(spell_idx);
 [ ] Pick_Target_For_City_Enchantment__WIP()

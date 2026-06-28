@@ -5042,7 +5042,7 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx,
         } break;
         case spl_Plane_Shift:
         {
-            return_value = AITP_Attack_Stack(player_idx, wx, wy, wp);
+            return_value = AITP_Plane_Shift(player_idx, wx, wy, wp);
         } break;
         case spl_Natures_Cures:
         {
@@ -5617,11 +5617,84 @@ int16_t AITP_Attack_Terrain(int16_t player_idx, int16_t * targeted_wx, int16_t *
 // WZD o156p51
 // drake178: sub_E9FA9()
 
+
 // WZD o156p52
-// drake178: AITP_PlaneShift()
+int16_t AITP_Plane_Shift(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp)
+{
+    int highest_value;
+    int stack_value;
+    int itr_cities;
+    int itr_stacks;
+    int best_stack_idx;
+
+    itr_stacks = player_idx;  /* OGBUG  pointless */
+
+    best_stack_idx = ST_UNDEFINED;
+    highest_value = 0;
+
+    for(itr_stacks = 0; itr_stacks < _ai_all_own_stack_count; itr_stacks++)
+    {
+
+        stack_value = _ai_all_own_stacks[itr_stacks].value;
+
+        if((_ai_all_own_stacks[itr_stacks].abilities & AICAP_Settler) == 0)  /* OGBUG  condition is inverted, only considers Settlers instead of never */
+        {
+            stack_value = 0;
+        }
+
+        for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+        {
+            if(_ai_all_own_stacks[itr_stacks].wx == _CITIES[itr_cities].wx &&
+                _ai_all_own_stacks[itr_stacks].wy == _CITIES[itr_cities].wy)
+            {
+                stack_value = 0;
+            }
+        }
+
+        if(_ai_all_own_stacks[itr_stacks].wp == ARCANUS_PLANE)
+        {
+            if(stack_value > highest_value)
+            {
+                /* OGBUG  should test if square is occupieable */
+                if((_ai_all_own_stacks[itr_stacks].abilities & AICAP_Transport) != 0)
+                {
+                    if(Square_Is_Sailable(_ai_all_own_stacks[itr_stacks].wx, _ai_all_own_stacks[itr_stacks].wy, MYRROR_PLANE) == ST_TRUE)
+                    {
+                        best_stack_idx = itr_stacks;
+                        highest_value = stack_value;
+                    }
+                }
+                else
+                {
+                    if(Square_Is_OceanLike(_ai_all_own_stacks[itr_stacks].wx, _ai_all_own_stacks[itr_stacks].wy, MYRROR_PLANE) == ST_FALSE)
+                    {
+                        best_stack_idx = itr_stacks;
+                        highest_value = stack_value;
+                    }
+                }
+            }
+        }
+        /* OGBUG  missing MYRROR_PLANE -> ARCANUS_PLANE block */
+    }
+
+    if(best_stack_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_wx = _ai_all_own_stacks[best_stack_idx].wx;
+        *targeted_wy = _ai_all_own_stacks[best_stack_idx].wy;
+        *targeted_wp = _ai_all_own_stacks[best_stack_idx].wp;
+        return ST_TRUE;
+    }
+
+}
+
 
 // WZD o156p53
 // drake178: AITP_NaturesCures()
+
 
 // WZD o156p54
 // drake178: sub_EA43C()
