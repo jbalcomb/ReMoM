@@ -7050,15 +7050,6 @@ void Animate_Oceans(void)
                     if(Random(5) == 1)  /* 1:5  20% */
                     {
                         p_world_map[wp][wy][wx] = tte_OceanAnim;
-                        /*
-                            CI: OG keeps connectivity_grid_land right after _world_maps, so this OOB write lands there;
-                            in ReMoM the overrun hits _world_maps' over-allocation padding, so mirror it into the real block.
-                        */
-                        /* HACK */  long lin = (long)wp * WORLD_SIZE + (long)wy * WORLD_WIDTH + wx;
-                        /* HACK */  if (lin >= (long)(NUM_PLANES * WORLD_SIZE))
-                        /* HACK */  {
-                        /* HACK */      ((int16_t *)connectivity_grid_land)[lin - (NUM_PLANES * WORLD_SIZE)] = tte_OceanAnim;
-                        /* HACK */  }
                     }
                 }
                 /* OGBUG conflicting condition - will always jump (myrran square types are only valid in graphics) - coded as if Myrror has its own terrain type indices */
@@ -7067,15 +7058,6 @@ void Animate_Oceans(void)
                     if(Random(5) == 1)  /* 1:5  20% */
                     {
                         p_world_map[wp][wy][wx] = (TerType_Count + tte_OceanAnim);
-                        /*
-                            CI: OG keeps connectivity_grid_land right after _world_maps, so this OOB write lands there;
-                            in ReMoM the overrun hits _world_maps' over-allocation padding, so mirror it into the real block.
-                        */
-                        /* HACK */  long lin = (long)wp * WORLD_SIZE + (long)wy * WORLD_WIDTH + wx;
-                        /* HACK */  if (lin >= (long)(NUM_PLANES * WORLD_SIZE))
-                        /* HACK */  {
-                        /* HACK */      ((int16_t *)connectivity_grid_land)[lin - (NUM_PLANES * WORLD_SIZE)] = tte_OceanAnim;
-                        /* HACK */  }
                     }
                 }
             }
