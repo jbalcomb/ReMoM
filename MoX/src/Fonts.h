@@ -356,7 +356,7 @@ void Set_Color_Set(int16_t color_set_idx);
 void ST_PSTRM(int16_t x, int16_t y, int16_t val, char * string);
 
 // WZD s17p44
-void Disp_PSTR_Wrapper(int16_t x, int16_t y, char * buffer);
+void DBG_Disp_PSTR(int16_t x, int16_t y, char * buffer);
 
 // WZD s17p45
 void PSTRS(int16_t x, int16_t y, char * string);

@@ -13,6 +13,7 @@ Module: AITECH
 #include "../../STU/src/STU_LOG.h"
 
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/EXIT.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_DAT.h"
@@ -4038,7 +4039,43 @@ int16_t AITP_Consecration(int16_t player_idx, int16_t * targeted_city_idx)
 
 
 // WZD o156p36
-// drake178: UU_DBG_GetKnownSpells()
+/*
+¿ where could it make sense to make use of this ? ...Next_turn_Calc() |-> Players_Check_Spell_Research()?
+*/
+void DBG_Disp_PSTR_Known_Spells(int16_t player_idx)
+{
+    uint8_t * players_spell_list = NULL;
+    int16_t spell_idx = 0;
+    int16_t itr = 0;
+
+    /* Treat spell list as 1-based index by shifting pointer */
+    players_spell_list = (uint8_t *)&_players[player_idx].spells_list[0] - 1;
+
+    itr = 0;
+
+    for(spell_idx = 0; spell_idx < spl_Create_Artifact; spell_idx++)
+    {
+
+        if(players_spell_list[spell_idx] == sls_Known)
+        {
+
+            stu_strcpy(near_buffer, spell_data_table[spell_idx].name);
+
+            DBG_Disp_PSTR(20, itr, near_buffer);
+
+            itr++;
+
+        }
+
+    }
+
+    Copy_On_To_Off_Page();
+
+    Deactivate_Auto_Function();
+
+    Wait_For_Input();
+
+}
 
 
 // WZD o156p37

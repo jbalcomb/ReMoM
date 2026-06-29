@@ -3615,7 +3615,7 @@ void Determine_Offer(void)
 ; as the player's researched spell
 */
 /*
-
+ALL - HP & CP
 
 Q: Where does research_cost_remaining get updated?
 A: Players_Apply_Magic_Power()

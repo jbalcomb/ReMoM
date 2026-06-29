@@ -216,7 +216,7 @@ int16_t AITP_Spell_Ward(int16_t player_idx, int16_t * city_idx, int16_t * magic_
 int16_t AITP_Consecration(int16_t player_idx, int16_t * city_idx);
 
 // WZD o156p36
-// UU_DBG_GetKnownSpells()
+void DBG_Disp_PSTR_Known_Spells(int16_t player_idx);
 
 // WZD o156p37
 void Cast_Spell_Target_Error(int16_t spell_idx);

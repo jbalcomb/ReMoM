@@ -121,8 +121,8 @@ XREF:
     IDK_EoT_s52B09+127          mov     ax, offset Temp_String    
     IDK_EoT_s52B09+133          mov     ax, offset Temp_String    
     CMB_CounterMessage+176      cmp     [bp+di+Temp_String-1], 's'
-    UU_DBG_GetKnownSpells+3B    mov     ax, offset Temp_String    
-    UU_DBG_GetKnownSpells+47    mov     ax, offset Temp_String    
+    DBG_Disp_PSTR_Known_Spells+3B    mov     ax, offset Temp_String    
+    DBG_Disp_PSTR_Known_Spells+47    mov     ax, offset Temp_String    
     CRP_DBG_SpellTargetError+27 mov     ax, offset Temp_String    
     CRP_DBG_SpellTargetError+37 mov     ax, offset Temp_String    
     CRP_DBG_SpellTargetError+42 mov     ax, offset Temp_String    

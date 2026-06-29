@@ -1103,6 +1103,7 @@ void Set_Color_Set(int16_t color_set_idx)
 }
 
 
+
 /*
 MoO2
 Module: fonts
@@ -1111,15 +1112,9 @@ Module: fonts
 all debug stuff
 looks to be all Ken
 
-
 MoO2 moved the Check_Release_Version() to Disp_PSTR(), removing it from all the wrapper functions.
 
 MoO2 does not have the function that wraps Disp_PSTR() in Check_Release_Version().
-
-
-
-Disp_PSTR_Wrapper()
-OON XREF: UU_DBG_GetKnownSpells()
 
 */
 
@@ -1169,17 +1164,11 @@ void ST_PSTRM(int16_t x, int16_t y, int16_t val, char * string)
 
 
 // WZD s17p44
-// drake178: UU_DBG_TblCellWrapper()
 // MoO2  DNE
 /*
-; Unused in MoM
-; a wrapper for DBG_DrawTableCell that avoids the call
-; if No_Debug is set to 1
+OON XREF: DBG_Disp_PSTR_Known_Spells()
 */
-/*
-
-*/
-void Disp_PSTR_Wrapper(int16_t x, int16_t y, char * buffer)
+void DBG_Disp_PSTR(int16_t x, int16_t y, char * buffer)
 {
 
     if(Check_Release_Version() != ST_TRUE)
@@ -1193,93 +1182,41 @@ void Disp_PSTR_Wrapper(int16_t x, int16_t y, char * buffer)
 
 
 // WZD s17p45
-// drake178: UU_DBG_TblDrawString()
-/*
-; Unused in MoM
-; draws the passed string onto the screen using
-; DBG_DrawTableCell
-*/
-/*
-
-*/
 void PSTRS(int16_t x, int16_t y, char * string)
 {
-
     if(Check_Release_Version() != ST_TRUE)
     {
-
         _fstrcpy(near_buffer, string);
-
         Disp_PSTR(x, y, near_buffer);
-
     }
-
 }
 
 
 // WZD s17p46
-// drake178: UU_DBG_TblDrawS16()
-/*
-; draws the passed value as a signed 16bit integer
-; onto the screen using DBG_DrawTableCell
-; Attributes: bp-based frame
-*/
-/*
-
-FTW  winnt.h  typedef _Null_terminated_ CHAR *NPSTR, *LPSTR, *PSTR;
-
-*/
 void ST_PSTR(int x, int y, int val)
 {
     char buffer[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
     if(Check_Release_Version() != ST_TRUE)
     {
-
         stu_itoa(val, buffer, 10);
-
         Disp_PSTR(x, y, buffer);
-
     }
-
 }
 
-// WZD s17p47
-// drake178: UU_DBG_TblDrawS32()
-/*
-; Unused in MoM
-; draws the passed value as a signed 32bit integer
-; onto the screen using DBG_DrawTableCell
-*/
-/*
 
-*/
+// WZD s17p47
 void PSTRL(int16_t x, int16_t y, int32_t val)
 {
     char buffer[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
     if(Check_Release_Version() != ST_TRUE)
     {
-
         stu_ltoa(val, buffer, 10);
-
         Disp_PSTR(x, y, buffer);
-
     }
-
 }
 
 
 // WZD s17p48
-// drake178: UU_DBG_TblDrawU32()
-/*
-; Unused in MoM
-; draws the passed value as an unsigned 32bit integer
-; onto the screen using DBG_DrawTableCell
-*/
-/*
-
-*/
 void PSTRU(int16_t x, int16_t y, uint32_t value)
 {
     char buffer[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
