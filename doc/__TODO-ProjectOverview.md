@@ -181,7 +181,7 @@ Cast_Spell_Overland() |-> ... |-> AITP_Disjunction()
 ...the rest of ovr156  AISPELL
 [x] Disp_PSTR_Known_Spells
 [x] AITP_Unit_Enchantment
-[ ] sub_E8448
+[x] Select_Unit_For_Enchantment
 [ ] IDK_AI_Node_Target_For_Spell
 [ ] sub_E9FA9
 [ ] IDK_AITP_Target_Wizard__STUB

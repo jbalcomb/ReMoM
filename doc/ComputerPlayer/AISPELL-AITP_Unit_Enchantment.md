@@ -9,12 +9,20 @@ Next_Turn_Proc()
             |-> Cast_Spell_Overland()
                 case scc_Unit_Enchantment_Normal_Only:
                     |-> AITP_Unit_Enchantment()
-                        |-> sub_E8448()
+                        |-> Select_Unit_For_Enchantment()
 
 Cast_Chaos_Channels
+    |-> AITP_Unit_Enchantment()
+        |-> Select_Unit_For_Enchantment()
 Cast_Black_Wind
+    |-> AITP_Unit_Enchantment()
+        |-> Select_Unit_For_Enchantment()
 Cast_Word_Of_Recall
+    |-> AITP_Unit_Enchantment()
+        |-> Select_Unit_For_Enchantment()
 Cast_Lycantrophy
+    |-> AITP_Unit_Enchantment()
+        |-> Select_Unit_For_Enchantment()
 
 ---
 
@@ -22,13 +30,13 @@ Cast_Lycantrophy
 
 | Function | Location | Role |
 |---|---|---|
-| `AITP_Unit_Enchantment` | [AISPELL.c:4463-4517](../../MoM/src/AISPELL.c#L4463-L4517) | AI target picker for **unit enchantments**. Requires a friendly-unit target type, then dispatches on `spell_idx` (34 cases) to `sub_E8448` (the "pick best own unit" helper), passing the spell's 32-bit unit-enchantment mask plus five filter flags. Returns the helper's result; `ST_FALSE` on wrong target type or unknown spell. |
+| `AITP_Unit_Enchantment` | [AISPELL.c:4463-4517](../../MoM/src/AISPELL.c#L4463-L4517) | AI target picker for **unit enchantments**. Requires a friendly-unit target type, then dispatches on `spell_idx` (34 cases) to `Select_Unit_For_Enchantment` (the "pick best own unit" helper), passing the spell's 32-bit unit-enchantment mask plus five filter flags. Returns the helper's result; `ST_FALSE` on wrong target type or unknown spell. |
 
 > **Status: BUILDS CLEAN — faithful to the asm (1:1).** The body ([AISPELL.c:4463](../../MoM/src/AISPELL.c#L4463)) is a faithful reconstruction of `IDK_Pick_Target_For_Unit_Enchantment__STUB.asm` (production renamed `IDK_Pick_Target_For_Unit_Enchantment__STUB` → `AITP_Unit_Enchantment`; the asm/`.c` filename keeps the OG IDA name). It compiles and links as part of AISPELL.c / momlib. The `stt_Friendly_Unit` gate, the 34-case jump table (verified byte-for-byte), and every per-spell argument tuple match the asm. The asm is the authority.
 
 ## Purpose
 
-The `AITP_*`-style picker for the **unit-enchantment** spell group (Resist Elements, Giant Strength, Flight, Invisibility, Bless, Lionheart, Black Channels, … 34 spells). The AI has already decided to cast a unit enchantment; this routine picks *which own unit* receives it. It forwards to `sub_E8448` (drake178 `sub_E8448`, IDA-C `AI_Pick_Target_Unit`), passing the spell's **`UE_*` enchantment mask** (so the helper skips units that already have the buff) plus boolean filters. The chosen unit index is returned through `*unit_idx`.
+The `AITP_*`-style picker for the **unit-enchantment** spell group (Resist Elements, Giant Strength, Flight, Invisibility, Bless, Lionheart, Black Channels, … 34 spells). The AI has already decided to cast a unit enchantment; this routine picks *which own unit* receives it. It forwards to `Select_Unit_For_Enchantment` (drake178 `Select_Unit_For_Enchantment`, IDA-C `AI_Pick_Target_Unit`), passing the spell's **`UE_*` enchantment mask** (so the helper skips units that already have the buff) plus boolean filters. The chosen unit index is returned through `*unit_idx`.
 
 ## How it's reached
 
@@ -53,8 +61,8 @@ if(spell_target_type != stt_Friendly_Unit)   // asm  cmp arg_0,0 / jz proceed   
 
 switch(spell_idx)                             // asm  word_E83C0 (34 values) + off_E8404 (34 targets)
 {
-    case spl_Resist_Elements: return sub_E8448(player_idx, UE_RESIST_ELEMENTS, unit_idx, 0, 0, 0, 0, 0);  // loc_E80A7
-    case spl_Giant_Strength:  return sub_E8448(player_idx, UE_GIANT_STRENGTH,  unit_idx, 1, 0, 0, 0, 0);  // loc_E8235
+    case spl_Resist_Elements: return Select_Unit_For_Enchantment(player_idx, UE_RESIST_ELEMENTS, unit_idx, 0, 0, 0, 0, 0);  // loc_E80A7
+    case spl_Giant_Strength:  return Select_Unit_For_Enchantment(player_idx, UE_GIANT_STRENGTH,  unit_idx, 1, 0, 0, 0, 0);  // loc_E8235
     /* …30 more spells, each: (UE_mask, then 5 flags)… */
     case spl_Blur:            return 0;                                                                   // loc_E816D (no picker call)
     default: Cast_Spell_Target_Error(spell_idx); return 0;                                                // loc_E83A3
@@ -68,7 +76,7 @@ switch(spell_idx)                             // asm  word_E83C0 (34 values) + o
 The OG pushes **9 words** but cleans **`add sp, 12h` = 18 bytes = 8 arguments**, because the unit-enchantment mask is a single **4-byte** value: the asm sets `ax` (high word) and `dx` (low word) and `push ax; push dx` lays down one 32-bit `long`. So the call shape is:
 
 ```
-sub_E8448(player_idx, UE_mask /*int32*/, &unit_idx, exclude_heroes, include_only_heroes, exclude_low_type, enable_special_scoring, unknown_flag_5)
+Select_Unit_For_Enchantment(player_idx, UE_mask /*int32*/, &unit_idx, exclude_heroes, include_only_heroes, exclude_low_type, enable_special_scoring, unknown_flag_5)
 ```
 
 Production collapses the IDA-C's two 16-bit args (`block_mask_low`/`block_mask_high`) into one `UE_*` constant where `value = (block_high << 16) | block_low`. The `UE_*` constants live in [MOM_DEF.h:920-951](../../MoX/src/MOM_DEF.h#L920-L951) and are the same flags used by Combat.c / MainScr.c against the unit's 32-bit `enchantments` field.
@@ -94,19 +102,19 @@ The other 23 picker spells use all-zero flags; `spl_Blur` makes no call.
 
 ## OG quirks (preserve when reconstructing)
 
-- **`spl_Blur` returns 0 without calling the picker** (asm `loc_E816D` → `loc_E83B5: xor ax,ax`). The only in-table case with no `sub_E8448` call.
+- **`spl_Blur` returns 0 without calling the picker** (asm `loc_E816D` → `loc_E83B5: xor ax,ax`). The only in-table case with no `Select_Unit_For_Enchantment` call.
 - The first parameter is the spell **target type**; the gate is "must be a friendly-unit target" (`stt_Friendly_Unit == 0`), matching the asm's literal `cmp arg_0, 0`.
 
 ## Sub-functions / external calls
 
-- **`sub_E8448(player_idx, UE_mask, &unit_idx, exclude_heroes, include_only_heroes, exclude_low_type, enable_special_scoring, unknown_flag_5)`** — drake178 `sub_E8448` / IDA-C `AI_Pick_Target_Unit`; the per-unit scorer that returns the chosen own unit. Defined at [AISPELL.c:4524](../../MoM/src/AISPELL.c#L4524); prototype at [AISPELL.h:237](../../MoM/src/AISPELL.h#L237) (separate review, o156p42).
+- **`Select_Unit_For_Enchantment(player_idx, UE_mask, &unit_idx, exclude_heroes, include_only_heroes, exclude_low_type, enable_special_scoring, unknown_flag_5)`** — drake178 `sub_E8448` / IDA-C `AI_SelectBestTransportUnit`; the per-unit scorer that returns the chosen own unit. Defined at [AISPELL.c:4521](../../MoM/src/AISPELL.c#L4521); prototype at [AISPELL.h:237](../../MoM/src/AISPELL.h#L237) (separate review, o156p42).
 - **`Cast_Spell_Target_Error(spell_idx)`** ([AISPELL.h:222](../../MoM/src/AISPELL.h#L222)).
 
 ## Related references
 
 - `…\ovr156\IDK_Pick_Target_For_Unit_Enchantment__STUB.asm` — IDA Pro 5.5 disassembly (the authority; jump table `word_E83C0` / `off_E8404` at `WIZARDS.asm:375642-375675`).
 - `…\ovr156\IDK_Pick_Target_For_Unit_Enchantment__STUB.c` — Piethawn IDA-C (note: keeps the two separate 16-bit mask args and the always-zero 9th `arg_10`; production merges the masks and drops the dead arg).
-- `sub_E8448` (o156p42) — the unit scorer this dispatches to: selects the highest-value (`Upkeep`) eligible own unit in the AI's best non-garrison field stack, falling back to the Fortress stack. Has its own walkthrough/review.
+- [AISPELL-Select_Unit_For_Enchantment.md](AISPELL-Select_Unit_For_Enchantment.md) — `Select_Unit_For_Enchantment` (drake178 `sub_E8448`, o156p42), the unit scorer this dispatches to: selects the highest-value (`Upkeep`) eligible own unit in the AI's best non-garrison field stack, falling back to the Fortress stack.
 - [AISPELL-AITP_City_Enchantment.md](AISPELL-AITP_City_Enchantment.md) — the city-enchantment sibling router.
 - [AISPELL-Get_Map_Square_Target_For_Spell.md](AISPELL-Get_Map_Square_Target_For_Spell.md) — the map-square sibling router.
 - [AISPELL-AI_Spell_Select.md](AISPELL-AI_Spell_Select.md) — the parent dispatcher.

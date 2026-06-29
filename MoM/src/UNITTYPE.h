@@ -10,7 +10,7 @@
 
 enum e_UNIT_TYPE
 {
-    ut_Dwarf  = 0,
+    ut_Dwarf  = 0,  /* BEGIN:  Hero Units */
     ut_Barbarian  = 1,
     ut_Sage  = 2,
     ut_Dervish  = 3,
@@ -44,12 +44,12 @@ enum e_UNIT_TYPE
     ut_Knight  = 31,
     ut_Necromancer  = 32,
     ut_ChaosWarrior  = 33,
-    ut_Chosen  = 34,
-    ut_Trireme  = 35,
+    ut_Chosen  = 34,    /* END:  Hero Units */
+    ut_Trireme  = 35,   /* BEGIN:  Transport Units / Boats */
     ut_Galley  = 36,
     ut_Catapult  = 37,
-    ut_Warship  = 38,
-    ut_BarbSpearmen  = 39,
+    ut_Warship  = 38,   /* END:  Transport Units / Boats */
+    ut_BarbSpearmen  = 39,  /* BEGIN:  Normal Units */
     ut_BarbSwordsmen  = 40,
     ut_BarbBowmen  = 41,
     ut_BarbCavalry  = 42,
@@ -163,8 +163,8 @@ enum e_UNIT_TYPE
     ut_TrollShaman  = 150,
     ut_TrlSettlers  = 151,
     ut_WarTrolls  = 152,
-    ut_WarMammoths  = 153,
-    ut_Magic_Spirit  = 154,
+    ut_WarMammoths  = 153,  /* END:  Normal Units */
+    ut_Magic_Spirit  = 154, /* BEGIN:  Fantastic / Summoned Units */
     ut_Hell_Hounds  = 155,
     ut_Gargoyles  = 156,
     ut_Fire_Giant  = 157,
@@ -207,7 +207,7 @@ enum e_UNIT_TYPE
     ut_Air_Elemental  = 194,
     ut_Djinn  = 195,
     ut_Sky_Drake  = 196,
-    ut_Nagas  = 197,
+    ut_Nagas  = 197,    /* END:  Fantastic / Summoned Units */
     UNIT_TYPE_MAX  = 198
 };
 
@@ -302,8 +302,8 @@ struct s_UNIT_TYPE
     /* 16 */  int8_t   Construction;            /* {0: , 1: , 2: } 'Build Roads'  ¿ Build Outposts ? */
     /* 17 */  int8_t   Spec_Att_Attr;
     /* 18 */  uint16_t Move_Flags;              /* enum MOVEFLAGS */  /* TODO: check the data-type - UnitHasFlying() uses `byte ptr` and `CBW` */
-    /* 1A */  uint16_t Attribs_1;                /* enum ATTRIB_1 */
-    /* 1C */  uint8_t Attribs_2;                 /* enum ATTRIB_2 */
+    /* 1A */  uint16_t Attribs_1;               /* enum ATTRIB_1 */
+    /* 1C */  uint8_t  Attribs_2;               /* enum ATTRIB_2 */  /* ¿ AITP_Unit_Enchantment() uses this field to test for 'summoned unit' ? */
     /* 1B */  // 2-byte alignment padding
     /* 1E */  uint16_t Abilities;               /* enum ABL_FLAGS */  // macros - UA_...
     /* 20 */  uint16_t attack_attributes;       /* enum ATK_FLAGS */  // Att_ArmorPrc, etc.
