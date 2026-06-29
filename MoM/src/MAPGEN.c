@@ -7029,6 +7029,7 @@ void Animate_Oceans(void)
     int16_t wx = 0;
     int16_t wy = 0;
     int16_t wp = 0;
+    
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     /* CI: inject OG's exact overrun bytes (captured after CRP_NEWG_CreatePathGrids

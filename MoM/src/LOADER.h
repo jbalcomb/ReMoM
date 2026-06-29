@@ -374,7 +374,7 @@ void GFX_Swap_AppendUView(void);
 void Reload_Item_Pictures(void);
 
 // WZD o52p29
-void Spellbook_Load_Small_Pictures__WIP(void);
+void Spellbook_Load_Small_Pictures(void);
 
 // WZD o52p30
 void Cache_Graphics_Overland(void);

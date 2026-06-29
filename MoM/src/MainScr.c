@@ -837,12 +837,7 @@ void Main_Screen(void)
     int16_t hotkey_idx_T = 0;  // test_hotkey
 
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_MAINSCR, "DEBUG: [%s, %d]: BEGIN: Main_Screen()", __FILE__, __LINE__);
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Main_Screen()", __FILE__, __LINE__);
-    LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Main_Screen()", __FILE__, __LINE__);
-#endif
-
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 
 #ifdef MOUSE_DEBUG
@@ -1966,6 +1961,8 @@ g_dbg_fields_trace = 1;
     Deactivate_Auto_Function();
     Deactivate_Help_List();
     Reset_Window();
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
 
