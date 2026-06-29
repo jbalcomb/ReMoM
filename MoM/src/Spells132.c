@@ -1297,7 +1297,7 @@ int16_t Cast_Lycantrophy(int16_t player_idx)
     if(player_idx != HUMAN_PLAYER_IDX)
     {
 
-        return_value = IDK_Pick_Target_For_Unit_Enchantment__STUB(stt_Friendly_Unit, &unit_idx, spl_Lycanthropy, player_idx);
+        return_value = AITP_Unit_Enchantment(stt_Friendly_Unit, &unit_idx, spl_Lycanthropy, player_idx);
 
     }
     else

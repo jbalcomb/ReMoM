@@ -940,7 +940,7 @@ int16_t Cast_Chaos_Channels(int16_t player_idx)
     if(player_idx != HUMAN_PLAYER_IDX)
     {
 
-        return_value = IDK_Pick_Target_For_Unit_Enchantment__STUB(0, &unit_idx, spl_Chaos_Channels, player_idx);
+        return_value = AITP_Unit_Enchantment(0, &unit_idx, spl_Chaos_Channels, player_idx);
 
     }
     else

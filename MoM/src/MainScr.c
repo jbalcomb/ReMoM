@@ -3605,7 +3605,7 @@ void Draw_Unit_Enchantment_Outline(int16_t unit_idx)
         {
             enchantment_magic_realm = mr_Nature;
         }
-        else if((unit_enchantments & UE_RESISTMAGIC) != 0)
+        else if((unit_enchantments & UE_RESIST_MAGIC) != 0)
         {
             enchantment_magic_realm = mr_Sorcery;
         }
@@ -3613,35 +3613,35 @@ void Draw_Unit_Enchantment_Outline(int16_t unit_idx)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_PLANARTRAVEL) != 0)
+        else if((unit_enchantments & UE_PLANAR_TRAVEL) != 0)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_BLACKCHANNELS) != 0)
+        else if((unit_enchantments & UE_BLACK_CHANNELS) != 0)
         {
             enchantment_magic_realm = mr_Death;
         }
-        else if((unit_enchantments & UE_LIONHEART) != 0)
+        else if((unit_enchantments & UE_LION_HEART) != 0)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_IRONSKIN) != 0)
+        else if((unit_enchantments & UE_IRON_SKIN) != 0)
         {
             enchantment_magic_realm = mr_Nature;
         }
-        else if((unit_enchantments & UE_MAGICIMMUNITY) != 0)
+        else if((unit_enchantments & UE_MAGIC_IMMUNITY) != 0)
         {
             enchantment_magic_realm = mr_Sorcery;
         }
-        else if((unit_enchantments & UE_WINDWALKING) != 0)
+        else if((unit_enchantments & UE_WIND_WALKING) != 0)
         {
             enchantment_magic_realm = mr_Sorcery;
         }
-        else if((unit_enchantments & UE_ELEMENTALARMOR) != 0)
+        else if((unit_enchantments & UE_ELEMENTAL_ARMOR) != 0)
         {
             enchantment_magic_realm = mr_Nature;
         }
-        else if((unit_enchantments & UE_TRUESIGHT) != 0)
+        else if((unit_enchantments & UE_TRUE_SIGHT) != 0)
         {
             enchantment_magic_realm = mr_Life;
         }
@@ -3649,7 +3649,7 @@ void Draw_Unit_Enchantment_Outline(int16_t unit_idx)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_PATHFINDING) != 0)
+        else if((unit_enchantments & UE_PATH_FINDING) != 0)
         {
             enchantment_magic_realm = mr_Nature;
         }
@@ -3657,15 +3657,15 @@ void Draw_Unit_Enchantment_Outline(int16_t unit_idx)
         {
             enchantment_magic_realm = mr_Sorcery;
         }
-        else if((unit_enchantments & UE_ELDRITCHWEAPON) != 0)
+        else if((unit_enchantments & UE_ELDRITCH_WEAPON) != 0)
         {
             enchantment_magic_realm = mr_Chaos;
         }
-        else if((unit_enchantments & UE_WRAITHFORM) != 0)
+        else if((unit_enchantments & UE_WRAITH_FORM) != 0)
         {
             enchantment_magic_realm = mr_Death;
         }
-        else if((unit_enchantments & UE_GIANTSTRENGTH) != 0)
+        else if((unit_enchantments & UE_GIANT_STRENGTH) != 0)
         {
             enchantment_magic_realm = mr_Nature;
         }
@@ -3673,11 +3673,11 @@ void Draw_Unit_Enchantment_Outline(int16_t unit_idx)
         {
             enchantment_magic_realm = mr_Chaos;
         }
-        else if((unit_enchantments & UE_GUARDIANWIND) != 0)
+        else if((unit_enchantments & UE_GUARDIAN_WIND ) != 0)
         {
             enchantment_magic_realm = mr_Sorcery;
         }
-        else if((unit_enchantments & UE_SPELLLOCK) != 0)
+        else if((unit_enchantments & UE_SPELL_LOCK) != 0)
         {
             enchantment_magic_realm = mr_Sorcery;
         }
@@ -3689,11 +3689,11 @@ void Draw_Unit_Enchantment_Outline(int16_t unit_idx)
         {
             enchantment_magic_realm = mr_Death;
         }
-        else if((unit_enchantments & UE_HOLYARMOR) != 0)
+        else if((unit_enchantments & UE_HOLY_ARMOR) != 0)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_WATERWALKING) != 0)
+        else if((unit_enchantments & UE_WATER_WALKING) != 0)
         {
             enchantment_magic_realm = mr_Nature;
         }
@@ -3701,15 +3701,15 @@ void Draw_Unit_Enchantment_Outline(int16_t unit_idx)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_CLOAKOFFEAR) != 0)
+        else if((unit_enchantments & UE_CLOAK_OF_FEAR) != 0)
         {
             enchantment_magic_realm = mr_Death;
         }
-        else if((unit_enchantments & UE_STONESKIN) != 0)
+        else if((unit_enchantments & UE_STONE_SKIN) != 0)
         {
             enchantment_magic_realm = mr_Nature;
         }
-        else if((unit_enchantments & UE_FLAMEBLADE) != 0)
+        else if((unit_enchantments & UE_FLAME_BLADE) != 0)
         {
             enchantment_magic_realm = mr_Chaos;
         }
@@ -3717,11 +3717,11 @@ void Draw_Unit_Enchantment_Outline(int16_t unit_idx)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_HOLYWEAPON) != 0)
+        else if((unit_enchantments & UE_HOLY_WEAPON) != 0)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_RESISTELEMENTS) != 0)
+        else if((unit_enchantments & UE_RESIST_ELEMENTS) != 0)
         {
             enchantment_magic_realm = mr_Nature;
         }
@@ -4284,7 +4284,7 @@ int16_t Stack_Has_PlanarTravel(void)
         if(_unit_stack[itr].active == ST_TRUE)
         {
             if(
-                ((_UNITS[unit_idx].enchantments & UE_PLANARTRAVEL) != 0)
+                ((_UNITS[unit_idx].enchantments & UE_PLANAR_TRAVEL) != 0)
                 ||
                 ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_PLANARTRAVEL) != 0)
                 ||

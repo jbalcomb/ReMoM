@@ -224,7 +224,7 @@ void Apply_Wrack(int16_t player_idx)
             &&
             (battle_units[itr1].status == bus_Active)
             &&
-            ((battle_units[itr1].enchantments & UE_WRAITHFORM) == 0)  /* ; BUG: this enchantment should not help here */
+            ((battle_units[itr1].enchantments & UE_WRAITH_FORM) == 0)  /* ; BUG: this enchantment should not help here */
             &&
             ((battle_units[itr1].Attribs_1 & USA_IMMUNITY_DEATH) == 0)
         )
@@ -365,7 +365,7 @@ void Apply_Call_Lightning(int16_t player_idx)
             &&
             (battle_units[itr].status == bus_Active)
             &&
-            ((battle_units[itr].enchantments & UE_WRAITHFORM) == 0)
+            ((battle_units[itr].enchantments & UE_WRAITH_FORM) == 0)
             &&
             (Random(2) == 1)
         )

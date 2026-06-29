@@ -13,6 +13,7 @@ Module: AITECH
 #include "../../STU/src/STU_LOG.h"
 
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/Fields.h"
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/EXIT.h"
 #include "../../MoX/src/MOM_DAT.h"
@@ -4459,17 +4460,252 @@ int16_t AI_Has_Targetable_City(int16_t player_idx)
 }
 
 // WZD o156p41
-// drake178: sub_E8070()
-int16_t IDK_Pick_Target_For_Unit_Enchantment__STUB(int16_t spell_target_type, int16_t * unit_idx, int16_t spell_idx, int16_t player_idx)
+int16_t AITP_Unit_Enchantment(int16_t spell_target_type, int16_t * unit_idx, int16_t spell_idx, int16_t player_idx)
 {
+    int16_t return_value = 0;  // DNE in Dasm
 
-    return ST_FALSE;
+    if(spell_target_type != stt_Friendly_Unit)
+    {
+        Cast_Spell_Target_Error(spell_idx);
+        return_value = ST_FALSE;
+        goto Done;
+    }
+
+    switch(spell_idx)
+    {
+        case spl_Resist_Elements:   { return_value = sub_E8448(player_idx, UE_RESIST_ELEMENTS, unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Giant_Strength:    { return_value = sub_E8448(player_idx, UE_GIANT_STRENGTH,  unit_idx, 1, 0, 0, 0, 0); } break;
+        case spl_Stone_Skin:        { return_value = sub_E8448(player_idx, UE_STONE_SKIN,      unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Water_Walking:     { return_value = sub_E8448(player_idx, UE_WATER_WALKING,   unit_idx, 0, 0, 0, 1, 0); } break;
+        case spl_Path_Finding:      { return_value = sub_E8448(player_idx, UE_PATH_FINDING,    unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Elemental_Armor:   { return_value = sub_E8448(player_idx, UE_ELEMENTAL_ARMOR, unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Iron_Skin:         { return_value = sub_E8448(player_idx, UE_IRON_SKIN,       unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Regeneration:      { return_value = sub_E8448(player_idx, UE_REGENERATION,    unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Resist_Magic:      { return_value = sub_E8448(player_idx, UE_RESIST_MAGIC,    unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Guardian_Wind:     { return_value = sub_E8448(player_idx, UE_GUARDIAN_WIND,   unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Blur:              { return_value = 0; } break;
+        case spl_Spell_Lock:        { return_value = sub_E8448(player_idx, UE_SPELL_LOCK,      unit_idx, 0, 1, 0, 0, 0); } break;
+        case spl_Flight:            { return_value = sub_E8448(player_idx, UE_FLIGHT,          unit_idx, 0, 0, 0, 1, 0); } break;
+        case spl_Invisibility:      { return_value = sub_E8448(player_idx, UE_INVISIBILITY,    unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Wind_Walking:      { return_value = sub_E8448(player_idx, UE_WIND_WALKING,    unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Magic_Immunity:    { return_value = sub_E8448(player_idx, UE_MAGIC_IMMUNITY,  unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Eldritch_Weapon:   { return_value = sub_E8448(player_idx, UE_ELDRITCH_WEAPON, unit_idx, 1, 0, 0, 0, 0); } break;
+        case spl_Chaos_Channels:    { return_value = sub_E8448(player_idx, 0,                  unit_idx, 1, 0, 0, 0, 0); } break;
+        case spl_Flame_Blade:       { return_value = sub_E8448(player_idx, UE_FLAME_BLADE,     unit_idx, 1, 0, 0, 0, 0); } break;
+        case spl_Immolation:        { return_value = sub_E8448(player_idx, UE_IMMOLATION,      unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Bless:             { return_value = sub_E8448(player_idx, UE_BLESS,           unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Endurance:         { return_value = sub_E8448(player_idx, UE_ENDURANCE,       unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Holy_Weapon:       { return_value = sub_E8448(player_idx, UE_HOLY_WEAPON,     unit_idx, 1, 0, 0, 0, 0); } break;
+        case spl_Holy_Armor:        { return_value = sub_E8448(player_idx, UE_HOLY_ARMOR,      unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Heroism:           { return_value = sub_E8448(player_idx, UE_HEROISM,         unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_True_Sight:        { return_value = sub_E8448(player_idx, UE_TRUE_SIGHT,      unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Planar_Travel:     { return_value = sub_E8448(player_idx, UE_PLANAR_TRAVEL,   unit_idx, 0, 0, 0, 1, 0); } break;
+        case spl_Lionheart:         { return_value = sub_E8448(player_idx, UE_LION_HEART,      unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Invulnerability:   { return_value = sub_E8448(player_idx, UE_INVULNERABILITY, unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Righteousness:     { return_value = sub_E8448(player_idx, UE_RIGHTEOUSNESS,   unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Cloak_Of_Fear:     { return_value = sub_E8448(player_idx, UE_CLOAK_OF_FEAR,   unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Lycanthropy:       { return_value = sub_E8448(player_idx, 0,                  unit_idx, 1, 0, 1, 0, 0); } break;
+        case spl_Black_Channels:    { return_value = sub_E8448(player_idx, UE_BLACK_CHANNELS,  unit_idx, 0, 0, 0, 0, 0); } break;
+        case spl_Wraith_Form:       { return_value = sub_E8448(player_idx, UE_WRAITH_FORM,     unit_idx, 0, 0, 0, 0, 0); } break;
+        default:                    { Cast_Spell_Target_Error(spell_idx); return_value = ST_FALSE; }
+    }
+
+Done:
+
+    return return_value;
 
 }
 
 
 // WZD o156p42
 // drake178: sub_E8448()
+// AKA AI_Pick_Target_Unit()?
+// AKA AI_SelectBestTransportUnit()?
+int16_t sub_E8448
+(
+    int16_t player_idx,
+    int32_t unit_enchantment,
+    int16_t * targeted_unit_idx,
+    int16_t exclude_heroes,
+    int16_t include_only_heroes,
+    int16_t exclude_low_type,
+    int16_t enable_special_scoring,
+    int16_t flag5
+)
+{
+    int16_t best_stack_idx = 0;
+    int16_t found_city_at_stack = 0;
+    int16_t max_score = 0;
+    int16_t unit_plane = 0;
+    int16_t best_unit_idx = 0;
+    int16_t current_unit_score = 0;
+    int16_t itr_stacks = 0;
+    int16_t itr_units = 0;
+    int16_t di = 0;
+
+    best_stack_idx = ST_UNDEFINED;
+    max_score = 0;
+
+    for(itr_stacks = 0; itr_stacks < _ai_all_own_stack_count; itr_stacks++)
+    {
+        found_city_at_stack = 0;
+        for(di = 0; di < _cities; di++)
+        {
+            if(
+                _ai_all_own_stacks[itr_stacks].wx == _CITIES[di].wx
+                &&
+                _ai_all_own_stacks[itr_stacks].wy == _CITIES[di].wy
+                &&
+                _ai_all_own_stacks[itr_stacks].wp == _CITIES[di].wp
+            )
+            {
+                found_city_at_stack = 1;
+                break;
+            }
+        }
+
+        if(found_city_at_stack == 0)
+        {
+            if(_ai_all_own_stacks[itr_stacks].value > max_score)
+            {
+                best_stack_idx = itr_stacks;
+                max_score = _ai_all_own_stacks[itr_stacks].value;
+            }
+        }
+    }
+
+    if(best_stack_idx == ST_UNDEFINED)
+    {
+        for(itr_stacks = 0; itr_stacks < _ai_all_own_stack_count; itr_stacks++)
+        {
+            if(
+                _ai_all_own_stacks[itr_stacks].wx == _FORTRESSES[player_idx].wx
+                &&
+                _ai_all_own_stacks[itr_stacks].wy == _FORTRESSES[player_idx].wy
+                &&
+                _ai_all_own_stacks[itr_stacks].wp == _FORTRESSES[player_idx].wp
+            )
+            {
+                best_stack_idx = itr_stacks;
+            }
+        }
+    }
+
+    best_unit_idx = ST_UNDEFINED;
+    max_score = 0;
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        if(best_stack_idx >= 0)
+        {
+            if(
+                _UNITS[itr_units].wx != _ai_all_own_stacks[best_stack_idx].wx
+                ||
+                _UNITS[itr_units].wy != _ai_all_own_stacks[best_stack_idx].wy
+                ||
+                _UNITS[itr_units].wp != _ai_all_own_stacks[best_stack_idx].wp
+            )
+            {
+                continue;
+            }
+        }
+        else
+        {
+            continue;
+        }
+
+        if(exclude_heroes != ST_FALSE && _UNITS[itr_units].type >= ut_Magic_Spirit)
+        {
+            continue;
+        }
+
+        if(include_only_heroes != ST_FALSE && _UNITS[itr_units].type < ut_Magic_Spirit)
+        {
+            continue;
+        }
+
+        /* 
+         * If the unit has Attribs_2 set (e.g. Ab_Summoned), it is skipped.
+         */
+        if(_unit_type_table[_UNITS[itr_units].type].Attribs_2 != 0)
+        {
+            continue;
+        }
+
+        if(_unit_type_table[_UNITS[itr_units].type].Abilities & UA_CREATEOUTPOST)
+        {
+            continue;
+        }
+
+        if(_unit_type_table[_UNITS[itr_units].type].Abilities & UA_MELD)
+        {
+            continue;
+        }
+
+        if(exclude_low_type != ST_FALSE && _UNITS[itr_units].type <= ut_BarbSwordsmen)
+        {
+            continue;
+        }
+
+        /* Check unit status flags / mutations / enchantments */
+        if(
+            (_UNITS[itr_units].enchantments & unit_enchantment)
+        )
+        {
+            continue;
+        }
+
+        if(enable_special_scoring != ST_TRUE && _UNITS[itr_units].type == ut_Floating_Island)
+        {
+            continue;
+        }
+
+        /* 
+         * We initialize the unit score to its upkeep value.
+         */
+        current_unit_score = _unit_type_table[_UNITS[itr_units].type].Upkeep;
+        unit_plane = _UNITS[itr_units].wp;
+
+        if(enable_special_scoring == ST_TRUE)
+        {
+            /* 
+             * Note: In the assembly, bit 0x20 of Abilities is also tested at line 307,
+             * which would skip the unit if set. If that behavior is identical, this block 
+             * is unreachable, but we preserve it mechanically.
+             */
+            if(_unit_type_table[_UNITS[itr_units].type].Abilities & UA_CREATEOUTPOST)
+            {
+                current_unit_score *= 20;
+            }
+
+            if(
+                (_unit_type_table[_UNITS[itr_units].type].Move_Flags & MV_FLYING)
+                ||
+                (_unit_type_table[_UNITS[itr_units].type].Move_Flags & MV_SWIMMING)
+            )
+            {
+                current_unit_score = 0;
+            }
+        }
+
+        if(current_unit_score > max_score)
+        {
+            best_unit_idx = itr_units;
+            max_score = current_unit_score;
+        }
+    }
+
+    if(best_unit_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_unit_idx = best_unit_idx;
+        return ST_TRUE;
+    }
+
+}
 
 
 // WZD o156p43
@@ -5463,11 +5699,11 @@ int16_t AITP_Disenchant(int16_t player_idx, int16_t * targeted_wx, int16_t * tar
     if(highest_cost_unit_idx != ST_UNDEFINED)
     {
         /* OGBUG: The original code uses target_city_idx instead of highest_cost_unit_idx here.
-         * Since target_city_idx is guaranteed to be -1 if we reached this block,
-         * this results in an out-of-bounds read of _UNITS[-1]. */
-        *targeted_wx = _UNITS[target_city_idx].wx;  /* OGBUG  OOB AVWL  target_city_idx is -1 */
-        *targeted_wy = _UNITS[target_city_idx].wy;  /* OGBUG  OOB AVWL  target_city_idx is -1 */
-        *targeted_wp = _UNITS[target_city_idx].wp;  /* OGBUG  OOB AVWL  target_city_idx is -1 */
+         * Since target_city_idx is guaranteed to be ST_UNDEFINED if we reached this block,
+         * this results in an out-of-bounds read of _UNITS[ST_UNDEFINED]. */
+        *targeted_wx = _UNITS[target_city_idx].wx;  /* OGBUG  OOB AVWL  target_city_idx is ST_UNDEFINED */
+        *targeted_wy = _UNITS[target_city_idx].wy;  /* OGBUG  OOB AVWL  target_city_idx is ST_UNDEFINED */
+        *targeted_wp = _UNITS[target_city_idx].wp;  /* OGBUG  OOB AVWL  target_city_idx is ST_UNDEFINED */
         return ST_TRUE;
     }
 

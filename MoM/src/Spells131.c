@@ -606,7 +606,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
             {
             
                 // ; BUG: ignores combat-cast Spell Lock
-                if((_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments & UE_SPELLLOCK) != 0)
+                if((_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments & UE_SPELL_LOCK) != 0)
                 {
 
                     threshold = (strength + Calculate_Dispel_Difficulty(150, battle_units[battle_unit_idx].controller_idx, spell_data_table[spl_Spell_Lock].magic_realm));
@@ -735,7 +735,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                             }
 
                             if(
-                                (test == UE_HOLYWEAPON)
+                                (test == UE_HOLY_WEAPON)
                                 &&
                                 (_players[player_idx].Globals[HOLY_ARMS] > 0)
                             )
@@ -1273,7 +1273,7 @@ void Apply_Flame_Strike(int16_t player_idx)
         {
 
             if(
-                ((enchantments & UE_WRAITHFORM) == 0)  // ; BUG: this enchantment should not grant immunity here
+                ((enchantments & UE_WRAITH_FORM) == 0)  // ; BUG: this enchantment should not grant immunity here
                 &&
                 ((enchantments & UE_RIGHTEOUSNESS) == 0)
             )
@@ -1330,9 +1330,9 @@ void Apply_Holy_Word(int16_t player_idx)
 
             // ; BUG: this enchantment should not grant immunity here
             if(
-                ((enchantments & UE_WRAITHFORM) == 0)
+                ((enchantments & UE_WRAITH_FORM) == 0)
                 &&
-                ((enchantments & UE_SPELLLOCK) == 0)
+                ((enchantments & UE_SPELL_LOCK) == 0)
                 &&
                 (battle_units[battle_unit_idx].race >= rt_Arcane)
             )
@@ -1412,7 +1412,7 @@ void Apply_Death_Spell(int16_t player_idx)
 
             // ; BUG: this enchantment should not grant immunity here
             if(
-                ((enchantments & UE_WRAITHFORM) == 0)
+                ((enchantments & UE_WRAITH_FORM) == 0)
                 &&
                 ((battle_units[battle_unit_idx].Attribs_1 & USA_IMMUNITY_DEATH) == 0)
             )

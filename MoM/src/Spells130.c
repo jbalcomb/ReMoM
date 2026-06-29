@@ -195,7 +195,7 @@ int16_t Cast_Black_Wind(int16_t player_idx)
     else
     {
 
-        return_value = IDK_Pick_Target_For_Unit_Enchantment__STUB(stt_Enemy_Group, &scsv1, spl_Black_Wind, player_idx);
+        return_value = AITP_Unit_Enchantment(stt_Enemy_Group, &scsv1, spl_Black_Wind, player_idx);
 
     }
 
@@ -1549,7 +1549,7 @@ int16_t Cast_Word_Of_Recall(int16_t player_idx)
     else
     {
 
-        return_value = IDK_Pick_Target_For_Unit_Enchantment__STUB(stt_Friendly_Unit, &scsv1, spl_Word_Of_Recall, player_idx);
+        return_value = AITP_Unit_Enchantment(stt_Friendly_Unit, &scsv1, spl_Word_Of_Recall, player_idx);
 
     }
 

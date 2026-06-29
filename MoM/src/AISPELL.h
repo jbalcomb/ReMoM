@@ -231,10 +231,10 @@ int16_t AITP_City_Enchantment(int16_t spell_target_type, int16_t * city_idx, int
 int16_t AI_Has_Targetable_City(int16_t player_idx);
 
 // WZD o156p41
-int16_t IDK_Pick_Target_For_Unit_Enchantment__STUB(int16_t spell_target_type, int16_t * unit_idx, int16_t spell_idx, int16_t player_idx);
+int16_t AITP_Unit_Enchantment(int16_t spell_target_type, int16_t * unit_idx, int16_t spell_idx, int16_t player_idx);
 
 // WZD o156p42
-// sub_E8448()
+int16_t sub_E8448(int16_t player_idx, int32_t unit_enchantment, int16_t * targeted_unit_idx, int16_t flag1, int16_t flag2, int16_t flag3, int16_t flag4, int16_t flag5);
 
 // WZD o156p43
 // sub_E882B()

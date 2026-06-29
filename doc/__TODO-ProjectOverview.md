@@ -178,6 +178,15 @@ Cast_Spell_Overland() |-> ... |-> AITP_Disjunction()
 [x]     |-> AITP_Natures_Cures(player_idx, wx, wy, wp);
 [x]     |-> Cast_Spell_Target_Error(spell_idx);
 
+...the rest of ovr156  AISPELL
+[x] Disp_PSTR_Known_Spells
+[x] AITP_Unit_Enchantment
+[ ] sub_E8448
+[ ] IDK_AI_Node_Target_For_Spell
+[ ] sub_E9FA9
+[ ] IDK_AITP_Target_Wizard__STUB
+[ ] AITP_SpellWard_Wrapper__STUB
+
 Need `/doxyfunc`
 [ ] AITP_Inspirations()
 [ ] AITP_Prosperity()

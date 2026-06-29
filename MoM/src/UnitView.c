@@ -2867,9 +2867,9 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_idx, uint32_t enchantment, char 
     if(
         ((enchantment & UE_FLIGHT) != 0)
         ||
-        ((enchantment & UE_WATERWALKING) != 0)
+        ((enchantment & UE_WATER_WALKING) != 0)
         ||
-        ((enchantment & UE_WINDWALKING) != 0)
+        ((enchantment & UE_WIND_WALKING) != 0)
     )
     {
 
@@ -2941,7 +2941,7 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_idx, uint32_t enchantment, char 
                 }
 
                 if(
-                    ((enchantment & UE_WATERWALKING) != 0)
+                    ((enchantment & UE_WATER_WALKING) != 0)
                     &&
                     (
                         (Unit_Has_AirTravel(unit_idx) == ST_TRUE)
@@ -2955,7 +2955,7 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_idx, uint32_t enchantment, char 
                     unit_will_die = ST_FALSE;
                 }
 
-                if((enchantment & UE_WATERWALKING) != 0)
+                if((enchantment & UE_WATER_WALKING) != 0)
                 {
                     multiple_deaths = ST_TRUE;
                 }

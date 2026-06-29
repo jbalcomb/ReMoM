@@ -5602,7 +5602,7 @@ void Assign_Mouse_Images(void)
  * - If the attacker does not use a valid ranged group (Boulder, Missile, Magic),
  *   returns @c crsr_RedCross (not a valid ranged shot).
  * - Otherwise starts as @c crsr_Ranged.
- * - If the attacker has @c UE_TRUESIGHT, the ranged cursor remains enabled.
+ * - If the attacker has @c UE_TRUE_SIGHT, the ranged cursor remains enabled.
  * - If the defender is invisible (enchantment or innate ability), ranged fire is
  *   only allowed when @c _attacker_sees_illusions is true; otherwise it returns
  *   @c crsr_RedCross.
@@ -5645,7 +5645,7 @@ int16_t Ranged_Mouse_Image(int16_t attacker_idx, int16_t defender_idx)
 
     attacker_enchantments = (battle_units[attacker_idx].enchantments | battle_units[attacker_idx].item_enchantments);
 
-    if((attacker_enchantments & UE_TRUESIGHT) != 0)
+    if((attacker_enchantments & UE_TRUE_SIGHT) != 0)
     {
 
         image_num = crsr_Ranged;
@@ -6218,7 +6218,7 @@ int16_t BU_CheckFlight__WIP(int16_t battle_unit_idx)
 */
 /*
 
-has UE_WINDWALKING, UE_FLIGHT, MV_FLYING
+has UE_WIND_WALKING, UE_FLIGHT, MV_FLYING
 not bue_Web, bue_Black_Sleep
 
 */
@@ -6231,7 +6231,7 @@ int16_t Battle_Unit_Has_Flight(int16_t battle_unit_idx)
 
     enchantments = (battle_units[battle_unit_idx].enchantments | battle_units[battle_unit_idx].item_enchantments);
 
-    if((enchantments & UE_WINDWALKING) != 0)
+    if((enchantments & UE_WIND_WALKING) != 0)
     {
 
         has_flight = ST_TRUE;
@@ -9346,7 +9346,7 @@ void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx)
         {
             enchantment_magic_realm = mr_Nature;
         }
-        else if((unit_enchantments & UE_RESISTMAGIC) != 0)
+        else if((unit_enchantments & UE_RESIST_MAGIC) != 0)
         {
             enchantment_magic_realm = mr_Sorcery;
         }
@@ -9354,7 +9354,7 @@ void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_PLANARTRAVEL) != 0)
+        else if((unit_enchantments & UE_PLANAR_TRAVEL) != 0)
         {
             enchantment_magic_realm = mr_Life;
         }
@@ -9362,31 +9362,31 @@ void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx)
         {
             enchantment_magic_realm = mr_Sorcery;
         }
-        else if((unit_enchantments & UE_BLACKCHANNELS) != 0)
+        else if((unit_enchantments & UE_BLACK_CHANNELS) != 0)
         {
             enchantment_magic_realm = mr_Death;
         }
-        else if((unit_enchantments & UE_LIONHEART) != 0)
+        else if((unit_enchantments & UE_LION_HEART) != 0)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_IRONSKIN) != 0)
+        else if((unit_enchantments & UE_IRON_SKIN) != 0)
         {
             enchantment_magic_realm = mr_Nature;
         }
-        else if((unit_enchantments & UE_MAGICIMMUNITY) != 0)
+        else if((unit_enchantments & UE_MAGIC_IMMUNITY) != 0)
         {
             enchantment_magic_realm = mr_Sorcery;
         }
-        else if((unit_enchantments & UE_WINDWALKING) != 0)
+        else if((unit_enchantments & UE_WIND_WALKING) != 0)
         {
             enchantment_magic_realm = mr_Sorcery;
         }
-        else if((unit_enchantments & UE_ELEMENTALARMOR) != 0)
+        else if((unit_enchantments & UE_ELEMENTAL_ARMOR) != 0)
         {
             enchantment_magic_realm = mr_Nature;
         }
-        else if((unit_enchantments & UE_TRUESIGHT) != 0)
+        else if((unit_enchantments & UE_TRUE_SIGHT) != 0)
         {
             enchantment_magic_realm = mr_Life;
         }
@@ -9394,7 +9394,7 @@ void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_PATHFINDING) != 0)
+        else if((unit_enchantments & UE_PATH_FINDING) != 0)
         {
             enchantment_magic_realm = mr_Nature;
         }
@@ -9402,15 +9402,15 @@ void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx)
         {
             enchantment_magic_realm = mr_Sorcery;
         }
-        else if((unit_enchantments & UE_ELDRITCHWEAPON) != 0)
+        else if((unit_enchantments & UE_ELDRITCH_WEAPON) != 0)
         {
             enchantment_magic_realm = mr_Chaos;
         }
-        else if((unit_enchantments & UE_WRAITHFORM) != 0)
+        else if((unit_enchantments & UE_WRAITH_FORM) != 0)
         {
             enchantment_magic_realm = mr_Death;
         }
-        else if((unit_enchantments & UE_GIANTSTRENGTH) != 0)
+        else if((unit_enchantments & UE_GIANT_STRENGTH) != 0)
         {
             enchantment_magic_realm = mr_Nature;
         }
@@ -9418,11 +9418,11 @@ void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx)
         {
             enchantment_magic_realm = mr_Chaos;
         }
-        else if((unit_enchantments & UE_GUARDIANWIND) != 0)
+        else if((unit_enchantments & UE_GUARDIAN_WIND) != 0)
         {
             enchantment_magic_realm = mr_Sorcery;
         }
-        else if((unit_enchantments & UE_SPELLLOCK) != 0)
+        else if((unit_enchantments & UE_SPELL_LOCK) != 0)
         {
             enchantment_magic_realm = mr_Sorcery;
         }
@@ -9434,11 +9434,11 @@ void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx)
         {
             enchantment_magic_realm = mr_Death;
         }
-        else if((unit_enchantments & UE_HOLYARMOR) != 0)
+        else if((unit_enchantments & UE_HOLY_ARMOR) != 0)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_WATERWALKING) != 0)
+        else if((unit_enchantments & UE_WATER_WALKING) != 0)
         {
             enchantment_magic_realm = mr_Nature;
         }
@@ -9446,15 +9446,15 @@ void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_CLOAKOFFEAR) != 0)
+        else if((unit_enchantments & UE_CLOAK_OF_FEAR) != 0)
         {
             enchantment_magic_realm = mr_Death;
         }
-        else if((unit_enchantments & UE_STONESKIN) != 0)
+        else if((unit_enchantments & UE_STONE_SKIN) != 0)
         {
             enchantment_magic_realm = mr_Nature;
         }
-        else if((unit_enchantments & UE_FLAMEBLADE) != 0)
+        else if((unit_enchantments & UE_FLAME_BLADE) != 0)
         {
             enchantment_magic_realm = mr_Chaos;
         }
@@ -9462,11 +9462,11 @@ void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_HOLYWEAPON) != 0)
+        else if((unit_enchantments & UE_HOLY_WEAPON) != 0)
         {
             enchantment_magic_realm = mr_Life;
         }
-        else if((unit_enchantments & UE_RESISTELEMENTS) != 0)
+        else if((unit_enchantments & UE_RESIST_ELEMENTS) != 0)
         {
             enchantment_magic_realm = mr_Nature;
         }
@@ -11980,7 +11980,7 @@ case scc_Disjunction_Spell:  // 20
                         (spell_idx == spl_Dispel_Evil)
                     )
                     &&
-                    ((enchantments & UE_SPELLLOCK) != 0)
+                    ((enchantments & UE_SPELL_LOCK) != 0)
                 )
             )
             {
@@ -15363,7 +15363,7 @@ int16_t Check_Attack_Ranged(int16_t attacker_battle_unit_idx, int16_t defender_b
     result = 0;
 
     if(
-        ((attacker_enchantments & UE_TRUESIGHT) != 0)
+        ((attacker_enchantments & UE_TRUE_SIGHT) != 0)
         ||
         ((battle_units[attacker_battle_unit_idx].Attribs_1 & USA_IMMUNITY_ILLUSION) != 0)
     )
@@ -15392,7 +15392,7 @@ int16_t Check_Attack_Ranged(int16_t attacker_battle_unit_idx, int16_t defender_b
     {
 
         // ; BUG: ignores natural Illusions Immunity
-        if((attacker_enchantments & UE_TRUESIGHT) == 0)
+        if((attacker_enchantments & UE_TRUE_SIGHT) == 0)
         {
 
             if(Battle_Unit_Is_Within_City(defender_battle_unit_idx) == ST_TRUE)
@@ -16332,12 +16332,12 @@ void BU_Apply_Item_Enchantments(int16_t item_idx, struct s_BATTLE_UNIT * battle_
 
     if(ITEM_POWER(item_idx,ip_Cloak_Of_Fear))
     {
-        item_enchantments |= UE_CLOAKOFFEAR;
+        item_enchantments |= UE_CLOAK_OF_FEAR;
     }
 
     if(ITEM_POWER(item_idx,ip_Wraith_Form))
     {
-        item_enchantments |= UE_WRAITHFORM;
+        item_enchantments |= UE_WRAITH_FORM;
     }
 
     if(ITEM_POWER(item_idx,ip_Regeneration))
@@ -16347,22 +16347,22 @@ void BU_Apply_Item_Enchantments(int16_t item_idx, struct s_BATTLE_UNIT * battle_
 
     if(ITEM_POWER(item_idx,ip_Pathfinding))
     {
-        item_enchantments |= UE_PATHFINDING;
+        item_enchantments |= UE_PATH_FINDING;
     }
 
     if(ITEM_POWER(item_idx,ip_Water_Walking))
     {
-        item_enchantments |= UE_WATERWALKING;
+        item_enchantments |= UE_WATER_WALKING;
     }
 
     if(ITEM_POWER(item_idx,ip_Resist_Elements))
     {
-        item_enchantments |= UE_RESISTELEMENTS;
+        item_enchantments |= UE_RESIST_ELEMENTS;
     }
 
     if(ITEM_POWER(item_idx,ip_Elemental_Armour))
     {
-        item_enchantments |= UE_ELEMENTALARMOR;
+        item_enchantments |= UE_ELEMENTAL_ARMOR;
     }
 
     if(ITEM_POWER(item_idx,ip_Endurance))
@@ -16382,22 +16382,22 @@ void BU_Apply_Item_Enchantments(int16_t item_idx, struct s_BATTLE_UNIT * battle_
 
     if(ITEM_POWER(item_idx,ip_Resist_Magic))
     {
-        item_enchantments |= UE_RESISTMAGIC;
+        item_enchantments |= UE_RESIST_MAGIC;
     }
 
     if(ITEM_POWER(item_idx,ip_Guardian_Wind))
     {
-        item_enchantments |= UE_GUARDIANWIND;
+        item_enchantments |= UE_GUARDIAN_WIND;
     }
 
     if(ITEM_POWER(item_idx,ip_Magic_Immunity))
     {
-        item_enchantments |= UE_MAGICIMMUNITY;
+        item_enchantments |= UE_MAGIC_IMMUNITY;
     }
 
     if(ITEM_POWER(item_idx,ip_True_Sight))
     {
-        item_enchantments |= UE_TRUESIGHT;
+        item_enchantments |= UE_TRUE_SIGHT;
     }
 
     if(ITEM_POWER(item_idx,ip_Bless))
@@ -16407,12 +16407,12 @@ void BU_Apply_Item_Enchantments(int16_t item_idx, struct s_BATTLE_UNIT * battle_
 
     if(ITEM_POWER(item_idx,ip_Lion_Heart))
     {
-        item_enchantments |= UE_LIONHEART;
+        item_enchantments |= UE_LION_HEART;
     }
 
     if(ITEM_POWER(item_idx,ip_Planar_Travel))
     {
-        item_enchantments |= UE_PLANARTRAVEL;
+        item_enchantments |= UE_PLANAR_TRAVEL;
     }
 
     if(ITEM_POWER(item_idx,ip_Righteousness))
@@ -16511,12 +16511,12 @@ int16_t Unit_Hit_Points(int16_t unit_idx)
 
     hit_points = _unit_type_table[_UNITS[unit_idx].type].Hits;
 
-    if((_UNITS[unit_idx].enchantments & UE_BLACKCHANNELS) != 0)
+    if((_UNITS[unit_idx].enchantments & UE_BLACK_CHANNELS) != 0)
     {
         hit_points += 1;
     }
 
-    if((_UNITS[unit_idx].enchantments & UE_LIONHEART) != 0)
+    if((_UNITS[unit_idx].enchantments & UE_LION_HEART) != 0)
     {
         hit_points += 3;
     }
@@ -16664,13 +16664,13 @@ int16_t Battle_Unit_Hit_Points(struct s_BATTLE_UNIT * battle_unit)
 
     hit_points = _unit_type_table[_UNITS[unit_idx].type].Hits;
 
-    if((battle_unit_enchantments & UE_BLACKCHANNELS) != 0)
+    if((battle_unit_enchantments & UE_BLACK_CHANNELS) != 0)
     {
         hit_points += 1;
         battle_unit->Gold_Hits += 1;
     }
 
-    if((battle_unit_enchantments & UE_LIONHEART) != 0)
+    if((battle_unit_enchantments & UE_LION_HEART) != 0)
     {
         hit_points += 3;
         battle_unit->Gold_Hits += 3;
@@ -17030,9 +17030,9 @@ void BU_Init_Battle_Unit(struct s_BATTLE_UNIT * battle_unit)
         {
             if((unit_mutations & UM_UNDEAD) != 0)
             {
-                if((battle_unit_enchantments & UE_HOLYWEAPON) != 0)
+                if((battle_unit_enchantments & UE_HOLY_WEAPON) != 0)
                 {
-                    battle_unit->enchantments |= UE_HOLYWEAPON;
+                    battle_unit->enchantments |= UE_HOLY_WEAPON;
                     battle_unit->melee_tohit += 1;
 
                     if(
@@ -17106,12 +17106,12 @@ void BU_Init_Battle_Unit(struct s_BATTLE_UNIT * battle_unit)
 void BU_Apply_Specials(struct s_BATTLE_UNIT * battle_unit, uint32_t battle_unit_enchantments, uint8_t unit_mutations)
 {
 
-    if((battle_unit_enchantments & UE_WATERWALKING) != 0)
+    if((battle_unit_enchantments & UE_WATER_WALKING) != 0)
     {
         battle_unit->Move_Flags |= MV_SWIMMING;
     }
 
-    if((battle_unit_enchantments & UE_TRUESIGHT) != 0)
+    if((battle_unit_enchantments & UE_TRUE_SIGHT) != 0)
     {
         battle_unit->Attribs_1 |= USA_IMMUNITY_ILLUSION;
     }
@@ -17126,7 +17126,7 @@ void BU_Apply_Specials(struct s_BATTLE_UNIT * battle_unit, uint32_t battle_unit_
         battle_unit->Move_Flags |= MV_FLYING;
     }
 
-    if((battle_unit_enchantments & UE_WRAITHFORM) != 0)
+    if((battle_unit_enchantments & UE_WRAITH_FORM) != 0)
     {
         battle_unit->Abilities |= UA_NONCORPOREAL;
         battle_unit->Attribs_1 |= USA_IMMUNITY_WEAPON;
@@ -17139,7 +17139,7 @@ void BU_Apply_Specials(struct s_BATTLE_UNIT * battle_unit, uint32_t battle_unit_
         battle_unit->Abilities |= UA_FANTASTIC;
     }
 
-    if((battle_unit_enchantments & UE_BLACKCHANNELS) != 0)
+    if((battle_unit_enchantments & UE_BLACK_CHANNELS) != 0)
     {
         if(battle_unit->melee > 0)        
         {
@@ -17165,28 +17165,28 @@ void BU_Apply_Specials(struct s_BATTLE_UNIT * battle_unit, uint32_t battle_unit_
 
     }
 
-    if((battle_unit_enchantments & UE_IRONSKIN) != 0)
+    if((battle_unit_enchantments & UE_IRON_SKIN) != 0)
     {
         battle_unit->defense += 5;
         battle_unit->Gold_Defense += 5;
     }
-    else if((battle_unit_enchantments & UE_IRONSKIN) != 0)
+    else if((battle_unit_enchantments & UE_IRON_SKIN) != 0)
     {
         battle_unit->defense += 1;
         battle_unit->Gold_Defense += 1;
     }
 
-    if((battle_unit_enchantments & UE_GUARDIANWIND) != 0)
+    if((battle_unit_enchantments & UE_GUARDIAN_WIND) != 0)
     {
         battle_unit->Attribs_1 |= USA_IMMUNITY_MISSILES;
     }
 
-    if((battle_unit_enchantments & UE_MAGICIMMUNITY) != 0)
+    if((battle_unit_enchantments & UE_MAGIC_IMMUNITY) != 0)
     {
         battle_unit->Attribs_1 |= USA_IMMUNITY_MAGIC;
     }
 
-    if((battle_unit_enchantments & UE_FLAMEBLADE) != 0)
+    if((battle_unit_enchantments & UE_FLAME_BLADE) != 0)
     {
         if(battle_unit->melee > 0)
         {
@@ -17205,7 +17205,7 @@ void BU_Apply_Specials(struct s_BATTLE_UNIT * battle_unit, uint32_t battle_unit_
         }
     }
 
-    if((battle_unit_enchantments & UE_GIANTSTRENGTH) != 0)
+    if((battle_unit_enchantments & UE_GIANT_STRENGTH) != 0)
     {
         if(battle_unit->melee > 0)
         {
@@ -17225,7 +17225,7 @@ void BU_Apply_Specials(struct s_BATTLE_UNIT * battle_unit, uint32_t battle_unit_
         battle_unit->Attribs_2 |= USA_IMMOLATION;
     }
 
-    if((battle_unit_enchantments & UE_ELDRITCHWEAPON) != 0)
+    if((battle_unit_enchantments & UE_ELDRITCH_WEAPON) != 0)
     {
         battle_unit->melee_attack_attributes |= Att_EldrWeap;
 
@@ -17264,7 +17264,7 @@ void BU_Apply_Specials(struct s_BATTLE_UNIT * battle_unit, uint32_t battle_unit_
         battle_unit->race = rt_Chaos;
     }
 
-    if((battle_unit_enchantments & UE_LIONHEART) != 0)
+    if((battle_unit_enchantments & UE_LION_HEART) != 0)
     {
         if(battle_unit->melee > 0)
         {
@@ -17288,7 +17288,7 @@ void BU_Apply_Specials(struct s_BATTLE_UNIT * battle_unit, uint32_t battle_unit_
         battle_unit->Gold_Resist += 3;
     }
 
-    if((battle_unit_enchantments & UE_HOLYARMOR) != 0)
+    if((battle_unit_enchantments & UE_HOLY_ARMOR) != 0)
     {
         battle_unit->defense += 2;
         battle_unit->Gold_Defense += 2;
@@ -17838,13 +17838,13 @@ int16_t Combat_Effective_Resistance(struct s_BATTLE_UNIT battle_unit, int16_t ma
     )
     {
 
-        if((enchantments & UE_ELEMENTALARMOR) != 0)
+        if((enchantments & UE_ELEMENTAL_ARMOR) != 0)
         {
 
             resistance += 10;
 
         }
-        else if((enchantments & UE_RESISTELEMENTS) != 0)
+        else if((enchantments & UE_RESIST_ELEMENTS) != 0)
         {
 
             resistance += 3;
@@ -17869,7 +17869,7 @@ int16_t Combat_Effective_Resistance(struct s_BATTLE_UNIT battle_unit, int16_t ma
     }
 
     if(
-        ((enchantments & UE_RESISTMAGIC) != 0)
+        ((enchantments & UE_RESIST_MAGIC) != 0)
         &&
         (magic_realm > sbr_Nature)
     )
@@ -19218,11 +19218,11 @@ int16_t Battle_Unit_Defense_Special(int16_t battle_unit_idx, int16_t attack_type
         (attack_type != am_Melee)
     )
     {
-        if((enchantments & UE_ELEMENTALARMOR) != 0)
+        if((enchantments & UE_ELEMENTAL_ARMOR) != 0)
         {
             effective_defense += 10;
         }
-        else if((enchantments & UE_RESISTELEMENTS))
+        else if((enchantments & UE_RESIST_ELEMENTS))
         {
             effective_defense += 3;
         }
@@ -22322,7 +22322,7 @@ int16_t Undeployable_Battle_Units_On_Water(int16_t player_idx)
                 if(
                     ((battle_units[itr_battle_units].Abilities & UA_WINDWALKING) == 0)
                     ||
-                    ((battle_units[itr_battle_units].enchantments & UE_WINDWALKING))
+                    ((battle_units[itr_battle_units].enchantments & UE_WIND_WALKING))
                     ||
                     (_UNITS[battle_units[itr_battle_units].unit_idx].type == spell_data_table[ut_Floating_Island].unit_type)
                 )

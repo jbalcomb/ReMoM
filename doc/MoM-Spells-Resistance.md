@@ -69,10 +69,10 @@ XREF:
 echantments
 spell magic realm
 Hero Charmed  +30 "...never fail resistance rolls..."
-UE_ELEMENTALARMOR
-UE_RESISTELEMENTS
+UE_ELEMENTAL_ARMOR
+UE_RESIST_ELEMENTS
 UE_BLESS
-UE_RESISTMAGIC
+UE_RESIST_MAGIC
 
 XREF:
     Combat_Resistance_Check()

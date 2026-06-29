@@ -178,8 +178,8 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
             if(
                 (l_movement_modes_array[itr_modes] == MV_FORESTER) &&
                 (
-                    ((_UNITS[unit_idx].enchantments & UE_PATHFINDING) != 0) ||
-                    ((item_enchantments & UE_PATHFINDING) != 0)
+                    ((_UNITS[unit_idx].enchantments & UE_PATH_FINDING) != 0) ||
+                    ((item_enchantments & UE_PATH_FINDING) != 0)
                 )
             )
             {
@@ -189,8 +189,8 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
             if(
                 (l_movement_modes_array[itr_modes] == MV_MOUNTAINEER) &&
                 (
-                    ((_UNITS[unit_idx].enchantments & UE_PATHFINDING) != 0) ||
-                    ((item_enchantments & UE_PATHFINDING) != 0)
+                    ((_UNITS[unit_idx].enchantments & UE_PATH_FINDING) != 0) ||
+                    ((item_enchantments & UE_PATH_FINDING) != 0)
                 )
             )
             {
@@ -200,7 +200,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
             if(
                 (movement_mode_flags[itr_modes] == MV_FLYING) &&
                 (
-                    ((_UNITS[unit_idx].enchantments & UE_WINDWALKING) != 0) ||
+                    ((_UNITS[unit_idx].enchantments & UE_WIND_WALKING) != 0) ||
                     ((_unit_type_table[unit_type].Abilities & UA_WINDWALKING) != 0)
                 )
             )
@@ -210,7 +210,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
 
             if(
                 (movement_mode_flags[itr_modes] == MV_FLYING) &&
-                ((_UNITS[unit_idx].enchantments & (UE_WINDWALKING | UE_FLIGHT)) != 0) &&
+                ((_UNITS[unit_idx].enchantments & (UE_WIND_WALKING | UE_FLIGHT)) != 0) &&
                 (_unit_type_table[unit_type].Transport > 0)
             )
             {
@@ -233,8 +233,8 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
 
                 if(
                     ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
-                    ((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0) ||
-                    ((item_enchantments & UE_WRAITHFORM) != 0)
+                    ((_UNITS[unit_idx].enchantments & UE_WRAITH_FORM) != 0) ||
+                    ((item_enchantments & UE_WRAITH_FORM) != 0)
                 )
                 {
                     Units_With_Same--;
@@ -254,9 +254,9 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                         ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0)
                     )
                     ||
-                    ((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0)
+                    ((_UNITS[unit_idx].enchantments & UE_WRAITH_FORM) != 0)
                     ||
-                    ((item_enchantments & UE_WRAITHFORM) != 0)
+                    ((item_enchantments & UE_WRAITH_FORM) != 0)
                 )
                 {
                     Swimming_Units--;
@@ -268,8 +268,8 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
             (
                 (l_movement_modes_array[itr_modes] == MV_SWIMMING) &&
                 (
-                    ((_UNITS[unit_idx].enchantments & UE_WATERWALKING) != 0) ||
-                    ((item_enchantments & UE_WATERWALKING) != 0)
+                    ((_UNITS[unit_idx].enchantments & UE_WATER_WALKING) != 0) ||
+                    ((item_enchantments & UE_WATER_WALKING) != 0)
                 )
             )
             {
@@ -282,8 +282,8 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                 (l_movement_modes_array[itr_modes] == MV_SWIMMING) &&
                 (
                     ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
-                    ((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0) ||
-                    ((item_enchantments & UE_WRAITHFORM) != 0)
+                    ((_UNITS[unit_idx].enchantments & UE_WRAITH_FORM) != 0) ||
+                    ((item_enchantments & UE_WRAITH_FORM) != 0)
                 )
             )
             {
@@ -294,8 +294,8 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
             if(
                 (l_movement_modes_array[itr_modes] == MV_FLYING) &&
                 (
-                    ((_UNITS[unit_idx].enchantments & (UE_WINDWALKING | UE_FLIGHT)) != 0) ||
-                    ((item_enchantments & (UE_WINDWALKING | UE_FLIGHT)) != 0) ||
+                    ((_UNITS[unit_idx].enchantments & (UE_WIND_WALKING | UE_FLIGHT)) != 0) ||
+                    ((item_enchantments & (UE_WIND_WALKING | UE_FLIGHT)) != 0) ||
                     ((_UNITS[unit_idx].mutations & CC_FLIGHT) != 0)
                 )
             )
@@ -304,11 +304,11 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                 Flying_Units++;
 
                 if(
-                    ((_UNITS[unit_idx].enchantments & UE_WATERWALKING) != 0) ||
-                    ((item_enchantments & UE_WATERWALKING) != 0) ||
+                    ((_UNITS[unit_idx].enchantments & UE_WATER_WALKING) != 0) ||
+                    ((item_enchantments & UE_WATER_WALKING) != 0) ||
                     ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
-                    ((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0) ||
-                    ((item_enchantments & UE_WRAITHFORM) != 0)
+                    ((_UNITS[unit_idx].enchantments & UE_WRAITH_FORM) != 0) ||
+                    ((item_enchantments & UE_WRAITH_FORM) != 0)
                 )
                 {
                     Swimming_Units--;
@@ -352,8 +352,8 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
         unit_type = _UNITS[unit_idx].type;
         if(
             ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
-            ((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0)  // BUGBUG:  drake178: ignores the item power
-            /* || ((item_enchantments & UE_WRAITHFORM) != 0) */
+            ((_UNITS[unit_idx].enchantments & UE_WRAITH_FORM) != 0)  // BUGBUG:  drake178: ignores the item power
+            /* || ((item_enchantments & UE_WRAITH_FORM) != 0) */
         )
         {
             Units_With_Same++;
@@ -386,7 +386,7 @@ int16_t Unit_Has_AirTravel(int16_t unit_idx)
 
     
     if(
-        ((_UNITS[unit_idx].enchantments & UE_WINDWALKING) != 0)
+        ((_UNITS[unit_idx].enchantments & UE_WIND_WALKING) != 0)
         ||
         ((_UNITS[unit_idx].enchantments & UE_FLIGHT) != 0)
     )
@@ -411,7 +411,7 @@ int16_t Unit_Has_WindWalking(int16_t unit_idx)
     has_windwalking = ST_FALSE;
 
     if(
-        ((_UNITS[unit_idx].enchantments & UE_WINDWALKING) != 0)
+        ((_UNITS[unit_idx].enchantments & UE_WIND_WALKING) != 0)
         ||
         ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_WINDWALKING) != 0)
     )
@@ -448,7 +448,7 @@ int16_t Unit_Has_WaterTravel(int16_t unit_idx)
         has_watertravel = ST_TRUE;
     }
 
-    if((_UNITS[unit_idx].enchantments & UE_WATERWALKING) != 0)
+    if((_UNITS[unit_idx].enchantments & UE_WATER_WALKING) != 0)
     {
         has_watertravel = ST_TRUE;
     }
@@ -493,7 +493,7 @@ int16_t Unit_Has_Swimming(int16_t unit_idx)
         has_swimming = ST_TRUE;
     }
 
-    if((_UNITS[unit_idx].enchantments & UE_WATERWALKING) != 0)
+    if((_UNITS[unit_idx].enchantments & UE_WATER_WALKING) != 0)
     {
         has_swimming = ST_TRUE;
     }
@@ -517,7 +517,7 @@ int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
 // Meh.        niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
 // Meh.
 // Meh.        if(
-// Meh.            ((global_battle_unit->item_enchantments & UE_WINDWALKING) != 0)
+// Meh.            ((global_battle_unit->item_enchantments & UE_WIND_WALKING) != 0)
 // Meh.            ||
 // Meh.            ((global_battle_unit->item_enchantments & UE_FLIGHT) != 0)
 // Meh.            )
@@ -536,7 +536,7 @@ int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
 // Meh?    if(
 // Meh?        (_UNITS[unit_idx].Hero_Slot == ST_UNDEFINED)
 // Meh?        ||
-// Meh?        ((niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit) & UE_WATERWALKING) == 0)
+// Meh?        ((niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit) & UE_WATER_WALKING) == 0)
 // Meh?    )
 // Meh?    {
 // Meh?        return ST_FALSE;
@@ -549,7 +549,7 @@ int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
     if(
         (_UNITS[unit_idx].Hero_Slot == ST_UNDEFINED)
         ||
-        ((BU_Apply_Item_Powers(unit_idx, global_battle_unit) & UE_WATERWALKING) == 0)
+        ((BU_Apply_Item_Powers(unit_idx, global_battle_unit) & UE_WATER_WALKING) == 0)
         )
     {
         return ST_FALSE;
@@ -573,7 +573,7 @@ int16_t Unit_Has_AirTravel_Item(int16_t unit_idx)
         niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
 
         if(
-            ( (global_battle_unit->item_enchantments & UE_WINDWALKING) != 0) ||
+            ( (global_battle_unit->item_enchantments & UE_WIND_WALKING) != 0) ||
             ( (global_battle_unit->item_enchantments & UE_FLIGHT) != 0)
         )
         {
@@ -650,7 +650,7 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
         niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
 
         if(
-            ( (global_battle_unit->item_enchantments & UE_PLANARTRAVEL) != 0)
+            ( (global_battle_unit->item_enchantments & UE_PLANAR_TRAVEL) != 0)
         )
         {
             has_planartravel_item = ST_TRUE;
@@ -674,8 +674,8 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
  * @brief Determine whether a unit currently has non-corporeal movement.
  *
  * Performs the full overland check for non-corporeality by testing the unit's
- * innate `UA_NONCORPOREAL` ability, the unit-level `UE_WRAITHFORM`
- * enchantment, and hero item powers that grant `UE_WRAITHFORM` after applying
+ * innate `UA_NONCORPOREAL` ability, the unit-level `UE_WRAITH_FORM`
+ * enchantment, and hero item powers that grant `UE_WRAITH_FORM` after applying
  * item effects into `global_battle_unit`.
  *
  * @param unit_idx Global unit index to evaluate.
@@ -697,14 +697,14 @@ int16_t Unit_Has_NonCorporeal(int16_t unit_idx)
     {
         return ST_TRUE;
     }
-    if((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0)
+    if((_UNITS[unit_idx].enchantments & UE_WRAITH_FORM) != 0)
     {
         return ST_TRUE;
     }
     if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED)
     {
         niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
-        if((global_battle_unit->item_enchantments & UE_WRAITHFORM) != 0)
+        if((global_battle_unit->item_enchantments & UE_WRAITH_FORM) != 0)
         {
             return ST_TRUE;
         }

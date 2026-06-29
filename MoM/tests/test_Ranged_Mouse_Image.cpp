@@ -89,7 +89,7 @@ TEST_F(Ranged_Mouse_Image_test, DefenderInvisibleByAbility_NoSight_ReturnsRedCro
 TEST_F(Ranged_Mouse_Image_test, AttackerTruesight_OverridesDefenderInvisibility)
 {
     test_units[0].ranged_type = 20;  // 20 / 10 == rag_Missile
-    test_units[0].enchantments = UE_TRUESIGHT;
+    test_units[0].enchantments = UE_TRUE_SIGHT;
     test_units[1].enchantments = UE_INVISIBILITY;
     _attacker_sees_illusions = ST_FALSE;
 

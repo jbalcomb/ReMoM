@@ -47,7 +47,7 @@
 - [ ] AITP_SpellWard_Wrapper__STUB
 - [ ] AITP_Disjunction
 - [ ] IDK_AITP_Target_Wizard__STUB
-- [ ] IDK_Pick_Target_For_Unit_Enchantment__STUB
+- [ ] AITP_Unit_Enchantment
 - [ ] AITP_City_Enchantment
 
 ## capture

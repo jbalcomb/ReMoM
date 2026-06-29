@@ -92,7 +92,7 @@ Cache landmass at caller-supplied (wx, wy, wp). Cache settler's own (wx, wy, wp)
 `is_seafaring`: per-unit check — TRUE iff [`Unit_Has_AirTravel(unit_idx)`](../../MoM/src/UnitMove.c#L367) OR [`Unit_Has_WaterTravel(unit_idx)`](../../MoM/src/UnitMove.c#L426) fires for this specific settler. Both helpers union three sources:
 
 - **Unit-type movement flags** (`_unit_type_table[].Move_Flags`) — `MV_FLYING`, `MV_SAILING`, `MV_SWIMMING`
-- **Unit enchantments** (`_UNITS[].enchantments`) — `UE_WINDWALKING`, `UE_FLIGHT`, `UE_WATERWALKING`
+- **Unit enchantments** (`_UNITS[].enchantments`) — `UE_WIND_WALKING`, `UE_FLIGHT`, `UE_WATER_WALKING`
 - **Unit mutations** (`_UNITS[].mutations`) — `CC_FLIGHT`
 
 So the gate fires for two native-race settler cases plus the cast-on-them cases:

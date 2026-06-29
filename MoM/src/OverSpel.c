@@ -439,7 +439,7 @@ void Cast_Disenchant(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int
             else  /* (_UNITS[itr].owner_idx == player_idx) */
             {
 
-                if((_UNITS[itr].enchantments & UE_SPELLLOCK) != 0)
+                if((_UNITS[itr].enchantments & UE_SPELL_LOCK) != 0)
                 {
 
                     threshold = (strength + Calculate_Dispel_Difficulty(150, _UNITS[itr].owner_idx, sbr_Sorcery));
@@ -449,11 +449,11 @@ void Cast_Disenchant(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int
                     if(Random(250) <= (threshold + 500))
                     {
 
-                        _UNITS[itr].enchantments ^= UE_SPELLLOCK;
+                        _UNITS[itr].enchantments ^= UE_SPELL_LOCK;
 
                     }
 
-                }  /* ((_UNITS[itr].enchantments & UE_SPELLLOCK) == 0) */
+                }  /* ((_UNITS[itr].enchantments & UE_SPELL_LOCK) == 0) */
                 else
                 {
 
@@ -894,7 +894,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                     if(player_idx != HUMAN_PLAYER_IDX)
                     {
 
-                        /* SPELLY */  cast_can_continue = IDK_Pick_Target_For_Unit_Enchantment__STUB(stt_Friendly_Unit, &spell_target_idx, spell_idx, player_idx);
+                        cast_can_continue = AITP_Unit_Enchantment(stt_Friendly_Unit, &spell_target_idx, spell_idx, player_idx);
 
                     }
                     else
@@ -927,7 +927,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                                 if(
                                     (spell_idx == spl_Stone_Skin)
                                     &&
-                                    ((_UNITS[spell_target_idx].enchantments & UE_IRONSKIN) != 0)
+                                    ((_UNITS[spell_target_idx].enchantments & UE_IRON_SKIN) != 0)
                                 )
                                 {
                                     MultiPurpose_Local_Var = ST_FALSE;
@@ -940,7 +940,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                                 if(
                                     (spell_idx == spl_Resist_Elements)
                                     &&
-                                    ((_UNITS[spell_target_idx].enchantments & UE_ELEMENTALARMOR) != 0)
+                                    ((_UNITS[spell_target_idx].enchantments & UE_ELEMENTAL_ARMOR) != 0)
                                 )
                                 {
                                     MultiPurpose_Local_Var = ST_FALSE;
@@ -953,7 +953,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                                 if(
                                     (spell_idx == spl_Resist_Elements)
                                     &&
-                                    ((_UNITS[spell_target_idx].enchantments & UE_WRAITHFORM) != 0)
+                                    ((_UNITS[spell_target_idx].enchantments & UE_WRAITH_FORM) != 0)
                                 )
                                 {
                                     MultiPurpose_Local_Var = ST_FALSE;
