@@ -237,7 +237,7 @@ int16_t AITP_Unit_Enchantment(int16_t spell_target_type, int16_t * unit_idx, int
 int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment, int16_t * targeted_unit_idx, int16_t flag1, int16_t flag2, int16_t flag3, int16_t flag4, int16_t flag5);
 
 // WZD o156p43
-// sub_E882B()
+int16_t AITP_Node(int16_t * targeted_node_idx, int16_t spell_idx);
 
 // WZD o156p44
 int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell_idx, int16_t spell_idx, int16_t player_idx);

@@ -1045,6 +1045,9 @@ int16_t _ai_all_own_stack_count;
 int16_t _cp_hostile_opponents[NUM_PLAYERS];
 
 // WZD dseg:911A
+/*
+used by AITP_Node() to randomly select a player
+*/
 int16_t _cp_hostile_opponent_count;
 
 // WZD dseg:911C

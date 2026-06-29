@@ -1025,12 +1025,12 @@ int16_t Cast_Warp_Node(int16_t player_idx)
     int16_t scsv3 = 0;
     int16_t scsv2 = 0;
     int16_t scsv1 = 0;
-    int16_t return_value = 0;  // _DI_
+    int16_t return_value = 0;
 
     if(player_idx != HUMAN_PLAYER_IDX)
     {
 
-        // SPELLY  return_value = IDK_AI_Node_Target_For_Spell(stt_Node, &scsv1, &scsv2, &scsv3, spl_Warp_Node, player_idx);
+        return_value = AITP_Node(&scsv1, spl_Warp_Node);
 
     }
     else

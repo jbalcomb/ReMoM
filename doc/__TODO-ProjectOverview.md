@@ -182,7 +182,7 @@ Cast_Spell_Overland() |-> ... |-> AITP_Disjunction()
 [x] Disp_PSTR_Known_Spells
 [x] AITP_Unit_Enchantment
 [x] Select_Unit_For_Enchantment
-[ ] IDK_AI_Node_Target_For_Spell
+[x] AITP_Node
 [ ] sub_E9FA9
 [ ] IDK_AITP_Target_Wizard__STUB
 [ ] AITP_SpellWard_Wrapper__STUB

@@ -4700,7 +4700,54 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
 
 
 // WZD o156p43
-// drake178: sub_E882B()
+/* as bugged, should never return valid */
+int16_t AITP_Node(int16_t * targeted_node_idx, int16_t spell_idx)
+{
+    int16_t highest_power = 0;
+    int16_t target_owner_idx = 0;
+    int16_t best_node_idx = 0;
+    int16_t node_idx = 0;
+
+    if(spell_idx != spl_Warp_Node || _cp_hostile_opponent_count == 0)
+    {
+        return ST_FALSE;
+    }
+
+    if(Random(2) == 1)
+    {
+        target_owner_idx = HUMAN_PLAYER_IDX;
+    }
+    else
+    {
+        target_owner_idx = Random(_cp_hostile_opponent_count);  /* OGBUG  should be `_cp_hostile_opponents[Random(count) - 1]`, as-is can selct self or non-hostile */
+    }
+
+    best_node_idx = ST_UNDEFINED;
+    highest_power = 0;
+
+    for(node_idx = 0; node_idx < NUM_NODES; node_idx++)
+    {
+        if(_NODES[node_idx].owner_idx == target_owner_idx)
+        {
+            if(_NODES[node_idx].power > highest_power)
+            {
+                if((_NODES[node_idx].flags & NF_WARPED) == NF_WARPED)  /* OGBUG  should be != == NF_WARPED */
+                {
+                    highest_power = _NODES[node_idx].power;
+                    best_node_idx = node_idx;
+                }
+            }
+        }
+    }
+
+    if(best_node_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+
+    *targeted_node_idx = best_node_idx;
+    return ST_TRUE;
+}
 
 
 // WZD o156p44
