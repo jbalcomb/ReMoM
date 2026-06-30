@@ -108,7 +108,7 @@ Navigation reference for `MoM/src/AIMOVE.c` (~7400 lines). One row per function,
 ### `AI_Disband_To_Balance_Budget` — [line 3147](../../MoM/src/AIMOVE.c#L3147)
 - **drake178:** `AI_Balance_Upkeep()` (o158p16)
 - **End:** ~line 3344
-- **Purpose:** TBD — likely income/upkeep balancing by unit disbandment
+- **Purpose:** When food/gold/mana income is negative, kill the lowest-value units until each deficit reaches zero. Two passes: non-fantastic units cover food + gold; fantastic units (`type >= ut_Magic_Spirit`) cover mana. See [AIMOVE-AI_Disband_To_Balance_Budget.md](AIMOVE-AI_Disband_To_Balance_Budget.md).
 
 ### `AI_Shift_Off_Home_Plane` — [line 3348](../../MoM/src/AIMOVE.c#L3348)
 - **drake178:** `AI_ShiftOffHomePlane()` (o158p17)

@@ -214,7 +214,7 @@ int16_t niu_unknown_var;
  *       `cp_landmass_type_array` for downstream helpers during the current AI
  *       pass.
  *
- * @note The current implementation preserves a known original-game quirk where
+ * @note The current implementation preserves a known original-game bug where
  *       `AI_Find_Opportunity_City_Target()` is called with `wp` before the
  *       plane loop assigns it a defined plane index.
  */
@@ -3124,29 +3124,9 @@ void AI_Find_Opportunity_City_Target(int16_t wp, int16_t player_idx)
 
 
 // WZD o158p16
-// drake178: AI_Balance_Upkeep()
-/*
-if food, gold, or mana income are negative, attempts
-to find and disband the lowest value units until the
-incomes reach at least zero
-
-BUG: parameter mismatch when trying to determine
- the value of fantastic units
-BUG? resets the units to plane 0 after disbanding
-*/
-/*
-
-kill units until gold,food,mana income == upkeep
-
-uses _ai_landmass_strength_ratios[][]
-
-AI_Set_Unit_Orders(itr_players)
-    |-> AI_Balance_Upkeep(itr_players)
-
-*/
 void AI_Disband_To_Balance_Budget(int16_t player_idx)
 {
-    int16_t niu_var_1C = 0;
+    int16_t niu_variable = 0;
     int16_t lowest_value_unit_upkeep = 0;
     int16_t unit_landmass_idx = 0;
     int16_t unit_wp = 0;
@@ -3160,7 +3140,7 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
     int16_t mana_income = 0;
     int16_t food_income = 0;
     int16_t gold_income = 0;
-    int16_t itr_units = 0;  // _DI_
+    int16_t itr_units = 0;
 
     Player_Resource_Income_Total(player_idx, &gold_income, &food_income, &mana_income);
 
@@ -3168,7 +3148,7 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
     food_deficit = 0;
     gold_deficit = 0;
 
-    niu_var_1C = 0;  // was total?  MoO1 artifact?  myserious fourth resource?  wasn't there something like this elsewhere?
+    niu_variable = 0;
 
     if(food_income < 0)
     {
@@ -3257,10 +3237,9 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
             gold_deficit -= lowest_value_unit_upkeep;
 
             Kill_Unit(lowest_value_unit_idx, kt_Normal);
-// TODO  
-            // ; BUG? resets the unit's plane to 0 afterward
-            _UNITS[lowest_value_unit_idx].wp = 0;  // BUGBUG?  ...because, Kill_Unit() sets ST_UNDEFINED  ...but, why?
-// TODO  
+
+            _UNITS[lowest_value_unit_idx].wp = 0;  /* ¿ OGBUG  ...because, Kill_Unit() sets ST_UNDEFINED  ...but, why? */
+
         }
 
     }
@@ -3268,9 +3247,6 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
 
     for(tries = 0; ((tries < 200) && (mana_deficit > 0)); tries++)
     {
-
-        // ; BUG: uses unit type instead of unit index when trying
-        // ;  to determine threat value
 
         lowest_unit_value = 10000;
 
@@ -3293,7 +3269,7 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
                 if(unit_landmass_idx > 0)
                 {
 
-                    /* OGBUG ¿ should use Effective_Unit_Type_Strength() or pass itr_units ? */
+                    /* OGBUG  should use Effective_Unit_Type_Strength() or pass itr_units */
                     unit_value = (Effective_Unit_Strength(_UNITS[itr_units].type) / 10);
 
                     if(_ai_landmass_strength_ratios[unit_wp][unit_landmass_idx] == 0)
@@ -3333,10 +3309,9 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
             mana_deficit -= lowest_value_unit_upkeep;
 
             Kill_Unit(lowest_value_unit_idx, kt_Normal);
-// TODO  
-            // ; BUG? resets the unit's plane to 0 afterward
-            _UNITS[lowest_value_unit_idx].wp = 0;  // BUGBUG?  ...because, Kill_Unit() sets ST_UNDEFINED  ...but, why?
-// TODO  
+
+            _UNITS[lowest_value_unit_idx].wp = 0;  /* ¿ OGBUG  ...because, Kill_Unit() sets ST_UNDEFINED  ...but, why? */
+
         }
 
     }
