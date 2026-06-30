@@ -115,10 +115,10 @@ Navigation reference for `MoM/src/AIMOVE.c` (~7400 lines). One row per function,
 - **End:** ~line 3404
 - **Purpose:** For each AI-owned stack on the home plane, if the stack is on a tower or in an own city with the Astral Gate enchantment AND `Map_Square_Troops_Can_Plane_Shift` agrees, move every unit at the stack's position to the opposite plane and update the stack record. Whole pass gated by a global `PLANAR_SEAL` check (any player). See [AIMOVE-AI_Shift_Off_Home_Plane.md](AIMOVE-AI_Shift_Off_Home_Plane.md).
 
-### `AI_Move_Out_Boats` — [line 3424](../../MoM/src/AIMOVE.c#L3424)
+### `AI_Move_Out_Boats` — [line 3408](../../MoM/src/AIMOVE.c#L3408)
 - **drake178:** `AI_Transport_Sailoff()` (o158p18)
-- **End:** ~line 3484
-- **Purpose:** TBD
+- **End:** ~line 3470
+- **Purpose:** For every AI-owned transport stack parked on a land square (`_landmasses[(wp, wy, wx)] > 0`, i.e., docked at a port/fortress), scan the 8 neighbor squares for an ocean-like tile and order the stack to sail there via `AI_Stack_Set_Boats_Goto`. Last matching neighbor wins. See [AIMOVE-AI_Move_Out_Boats.md](AIMOVE-AI_Move_Out_Boats.md).
 
 ### `AI_Stacks_Move_Out_NonMilitary_Garrisoned` — [line 3503](../../MoM/src/AIMOVE.c#L3503)
 - **drake178:** `AI_GarrBuilderPush()` (o158p19)

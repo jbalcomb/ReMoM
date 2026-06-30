@@ -3433,20 +3433,23 @@ void AI_Move_Out_Boats(void)
             adjacent_wx = 0;
             adjacent_wy = 0;
             do_move_out = ST_FALSE;
+            /* Process boats on land */
             if(landmass_idx > 0)
             {
-                for(itr_wy = ST_UNDEFINED; itr_wy < 2; itr_wy++)
+                for(itr_wy = -1; itr_wy < 2; itr_wy++)
                 {
-                    for(itr_wx = ST_UNDEFINED; itr_wx < 2; itr_wx++)
+                    for(itr_wx = -1; itr_wx < 2; itr_wx++)
                     {
                         if(
-                            (itr_wy != 0)
+                            ((itr_wy != 0) || (itr_wx != 0))
                             &&
-                            (itr_wx != 0)
+                            ((itr_wx + unit_wx) < WORLD_WIDTH)
                             &&
                             ((itr_wy + unit_wy) < WORLD_HEIGHT)
                             &&
-                            ((itr_wx + unit_wx) < WORLD_WIDTH)
+                            ((itr_wx + unit_wx) >= 0)
+                            &&
+                            ((itr_wy + unit_wy) >= 0)
                         )
                         {
                             if(Square_Is_OceanLike((itr_wx + unit_wx), (itr_wy + unit_wy), unit_wp) == ST_TRUE)
