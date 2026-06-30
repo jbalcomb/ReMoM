@@ -3064,9 +3064,9 @@ void AI_Find_Opportunity_City_Target(int16_t wp, int16_t player_idx)
         max_wy = (stack_wy + 1);
         found_target = ST_FALSE;
 
+        /* Search for an adjacent enemy city that is weakly defended */
         for(itr_cities = 0; ((itr_cities < _cities) && (found_target == ST_FALSE)); itr_cities++)
         {
-            /* Search for an adjacent enemy city that is weakly defended */
             if(_CITIES[itr_cities].wx < min_wx) { continue; }
             if(_CITIES[itr_cities].wx > max_wx) { continue; }
             if(_CITIES[itr_cities].wy < min_wy) { continue; }
@@ -3118,7 +3118,7 @@ void AI_Find_Opportunity_City_Target(int16_t wp, int16_t player_idx)
             _ai_all_own_stacks[itr_stacks].unit_status = us_Ready;
         }
 
-    }  /* END: for(itr_stacks = 0; itr_stacks < _ai_all_own_stack_count; itr_stacks++) */
+    }
 
 }
 
