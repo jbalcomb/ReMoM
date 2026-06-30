@@ -270,8 +270,7 @@ int16_t AITP_Plane_Shift(int16_t player_idx, int16_t * targeted_wx, int16_t * ta
 int16_t AITP_Natures_Cures(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp);
 
 // WZD o156p54
-// sub_EA43C()
-int16_t IDK_AITP_Target_Wizard__STUB(int16_t * spell_target_idx, int16_t spell_idx, int16_t player_idx);
+int16_t AITP_Attack_Wizard(int16_t * targeted_player_idx, int16_t spell_idx, int16_t player_idx);
 
 // WZD o156p55
 int16_t AITP_SpellWard_Wrapper__STUB(int16_t * city_idx, int16_t * magic_realm, int16_t player_idx);

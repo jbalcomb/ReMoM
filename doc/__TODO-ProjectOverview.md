@@ -183,8 +183,8 @@ Cast_Spell_Overland() |-> ... |-> AITP_Disjunction()
 [x] AITP_Unit_Enchantment
 [x] Select_Unit_For_Enchantment
 [x] AITP_Node
-[ ] AITP_Corruption
-[ ] IDK_AITP_Target_Wizard__STUB
+[x] AITP_Corruption
+[ ] AITP_Attack_Wizard
 [ ] AITP_SpellWard_Wrapper__STUB
 
 Need `/doxyfunc`
@@ -209,6 +209,7 @@ Need `/doxyfunc`
 [ ]     |-> AITP_Natures_Cures(player_idx, wx, wy, wp);
 [ ]     |-> Cast_Spell_Target_Error(spell_idx);
 [ ] AITP_City_Enchantment()
+AITP_Attack_Wizard
 
 
 

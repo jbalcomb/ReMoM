@@ -46,7 +46,7 @@
 - [ ] AITP_Spell_Ward
 - [ ] AITP_SpellWard_Wrapper__STUB
 - [ ] AITP_Disjunction
-- [ ] IDK_AITP_Target_Wizard__STUB
+- [ ] AITP_Attack_Wizard
 - [ ] AITP_Unit_Enchantment
 - [ ] AITP_City_Enchantment
 

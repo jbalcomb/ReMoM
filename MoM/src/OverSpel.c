@@ -1456,7 +1456,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                 {
                     if(player_idx != HUMAN_PLAYER_IDX)
                     {
-                        /* SPELLY */  cast_can_continue = IDK_AITP_Target_Wizard__STUB(&spell_target_idx, spell_idx, player_idx);
+                        cast_can_continue = AITP_Attack_Wizard(&spell_target_idx, spell_idx, player_idx);
                         if(cast_can_continue == ST_TRUE)
                         {
                             switch(spell_data_table[spell_idx].Param0)

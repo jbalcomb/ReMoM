@@ -6180,11 +6180,47 @@ int16_t AITP_Natures_Cures(int16_t player_idx, int16_t * targeted_wx, int16_t * 
 
 
 // WZD o156p54
-// drake178: sub_EA43C()
-int16_t IDK_AITP_Target_Wizard__STUB(int16_t * spell_target_idx, int16_t spell_idx, int16_t player_idx)
+int16_t AITP_Attack_Wizard(int16_t * targeted_player_idx, int16_t spell_idx, int16_t player_idx)
 {
 
-    return ST_FALSE;
+    if(_cp_hostile_opponent_count == 0)
+    {
+        return ST_FALSE;
+    }
+
+    if(spell_idx == spl_Drain_Power ||
+        spell_idx == spl_Subversion ||
+        spell_idx == spl_Cruel_Unminding ||
+        spell_idx == spl_Spell_Blast)
+    {
+        if(Random(2) == 1)
+        {
+            *targeted_player_idx = _cp_hostile_opponents[0];  /* OGBUG  should HUMAN_PLAYER_IDX, not _cp_hostile_opponents[0] */
+        }
+        else
+        {
+            *targeted_player_idx = _cp_hostile_opponents[Random(_cp_hostile_opponent_count) - 1];
+        }
+
+        if(_players[*targeted_player_idx].casting_spell_idx == spl_NONE)
+        {
+            return ST_FALSE;
+        }
+
+        if((spell_data_table[_players[*targeted_player_idx].casting_spell_idx].casting_cost - _players[*targeted_player_idx].casting_cost_remaining) <= (_players[player_idx].mana_reserve - 50))
+        {
+            return ST_TRUE;
+        }
+        else
+        {
+            return ST_FALSE;
+        }
+    }
+    else
+    {
+        Cast_Spell_Target_Error(spell_idx);
+        return ST_FALSE;
+    }
     
 }
 
