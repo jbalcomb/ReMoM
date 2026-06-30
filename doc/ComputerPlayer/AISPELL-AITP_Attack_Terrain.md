@@ -1,5 +1,7 @@
 AISPELL-AITP_Attack_Terrain.md
 
+SEEALSO:  AISPELL-AITP_Attack_Terrain.md
+
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr156\AITP_HarmTerrain.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr156\AITP_HarmTerrain.c
 
@@ -21,7 +23,7 @@ Next_Turn_Proc()
 |---|---|---|
 | `AITP_Attack_Terrain` | [AISPELL.c:5477-5614](../../MoM/src/AISPELL.c#L5477-L5614) | AI target picker for **Corruption** and **Raise Volcano**: find a contacted enemy (non-neutral) city of highest value, then randomly probe its catchment for a valid land square to attack, and return that square. Returns `ST_TRUE` with `*targeted_wx/_wy/_wp`, `ST_FALSE` otherwise. |
 
-> **Status: BUILDS CLEAN — faithful to the asm (1:1), carrying two preserved OG bugs.** The body ([AISPELL.c:5477](../../MoM/src/AISPELL.c#L5477)) is a faithful reconstruction of `AITP_HarmTerrain.asm` (production renamed `AITP_HarmTerrain` → `AITP_Attack_Terrain`; the asm/`.c` filename keeps the OG `AITP_HarmTerrain`). It compiles and links as part of AISPELL.c / momlib, and the cast-time dispatch ([AISPELL.c:5041](../../MoM/src/AISPELL.c#L5041)) is live. The control flow, city gates, random probe, terrain filters, and return all match — including two preserved OG bugs ([B1](#b1-ogbug--returns-the-last-citys-plane), [B2](#b2-ogbug--asymmetric-random-offset)). The asm is the authority.
+> **Status: BUILDS CLEAN — faithful to the asm (1:1), carrying one preserved OG bug ([B1](#b1-ogbug--returns-the-last-citys-plane)).** The body ([AISPELL.c:5477](../../MoM/src/AISPELL.c#L5477)) is a faithful reconstruction of `AITP_HarmTerrain.asm` (production renamed `AITP_HarmTerrain` → `AITP_Attack_Terrain`; the asm/`.c` filename keeps the OG `AITP_HarmTerrain`). It compiles and links as part of AISPELL.c / momlib, and the cast-time dispatch ([AISPELL.c:5041](../../MoM/src/AISPELL.c#L5041)) is live. The control flow, city gates, random probe, terrain filters, and return all match. The asm is the authority.
 
 ## Purpose
 
@@ -50,7 +52,7 @@ for(itr_cities = 0; itr_cities < _cities; itr_cities++)                 // asm  
     city_wp = _CITIES[itr].wp;
     for(tries = 0; tries < 25 && found_target == 0; tries++)            // asm  ≤25 tries
     {
-        wx_offset = Random(5) - 3;  wy_offset = Random(5) - 3;          // asm  Random(5)+(-3)   [B2]
+        wx_offset = Random(5) - 3;  wy_offset = Random(5) - 3;          // asm  Random(5)+(-3) → -2..+2 (Random is 1..5)
         reject = (one of the four ±2 diagonal corners) ? ST_TRUE : ST_FALSE;
         if(reject != ST_FALSE) continue;
 
@@ -97,14 +99,10 @@ if(target_city_idx == ST_UNDEFINED) return ST_FALSE;                   // asm  c
 
 On success the asm writes `RetP = Plane` (the wp of the **last contacted enemy city iterated**), **not** `Target_Plane` (the target square's plane, which it sets but never reads). Production mirrors this: it sets `target_wp = city_wp` but the return uses `*targeted_wp = city_wp` ([5611](../../MoM/src/AISPELL.c#L5611)), leaving `target_wp` dead. If a higher-value enemy city is processed *after* the target locks in but finds no square, `city_wp` ends on that later city's plane — so the returned `(wx, wy)` can pair with the wrong `wp`. Faithfully preserved.
 
-## B2 (OGBUG) — asymmetric random offset
-
-`Random(5) - 3` yields **-3..+1**, not the symmetric -2..+2 a 5×5 catchment implies (asm `Random(5); add ax,-3`). Probes skew one tile toward −(NW): offset −3 (outside the nominal box) can occur, +2 never can. The corner-rejection still tests all four ±2 corners, but only the −2 corners are ever reachable. Faithfully preserved.
-
 ## OG quirks (preserve when reconstructing)
 
 - **B1** — returns the last-iterated contacted city's plane (`city_wp`), not the target square's plane.
-- **B2** — `Random(5) - 3` skews the offset range to -3..+1.
+- **Catchment offset is symmetric (not a bug).** `Random(5)` returns **1..5** ([random.c:296](../../MoX/src/random.c#L296)), so `Random(5) - 3` is **-2..+2** — the standard 5×5 grid; all four `±2` corners are reachable and explicitly rejected, leaving the 21-tile catchment. (An earlier revision wrongly flagged this as an asymmetric-offset bug, assuming `Random` was 0-based.)
 
 ## Sub-functions / external calls
 

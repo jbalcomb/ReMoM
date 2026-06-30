@@ -1700,104 +1700,37 @@ void All_City_Nightshade_Count(void)
 
 
 // WZD s161p38
-// drake178: TILE_IsLand()
-/*
-returns 1 for land (walkable) tiles, 0 otherwise
-*/
-/*
-
-*/
 int16_t Square_Is_Land(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type;  // _CX_
-    int16_t is_land;  // DNE in Dasm
-
+    int16_t terrain_type = 0;
+    int16_t is_land = 0;  // DNE in Dasm
     is_land = ST_FALSE;
-
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
-
-    if(terrain_type > tt_Tundra_1st)
+    terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
+    if (terrain_type >= tt_Tundra_1st)
     {
         is_land = ST_TRUE;
     }
-    else
+    else if (terrain_type == tt_BugGrass)
     {
-        
-        if(terrain_type == tt_BugGrass)
-        {
-            is_land = ST_TRUE;
-        }
-        else
-        {
-
-            if(
-                (terrain_type < tt_Rivers_1st)
-                ||
-                (terrain_type > tt_Rivers_1st)
-            )
-            {
-                if(
-                    (terrain_type < tt_4WRiver1)
-                    ||
-                    (terrain_type > tt_4WRiver5)
-                )
-                {
-
-                    if
-                    (
-                        (terrain_type < tt_Grasslands1)
-                        ||
-                        (terrain_type > tt_RiverM_end)
-                    )
-                    {
-
-                        is_land = ST_FALSE;
-
-                    }
-                    else
-                    {
-
-                        is_land = ST_TRUE;
-
-                    }
-
-                }
-                else
-                {
-
-                    is_land = ST_TRUE;
-
-                }
-
-            }
-            else
-            {
-
-                is_land = ST_TRUE;
-
-            }
-
-        }
-
+        is_land = ST_TRUE;
     }
-
+    else if (terrain_type >= tt_Rivers_1st && terrain_type <= tt_Desert_Lst)
+    {
+        is_land = ST_TRUE;
+    }
+    else if (terrain_type >= tt_4WRiver1 && terrain_type <= tt_4WRiver5)
+    {
+        is_land = ST_TRUE;
+    }
+    else if (terrain_type >= tt_Grasslands1 && terrain_type <= tt_RiverM_end)
+    {
+        is_land = ST_TRUE;
+    }
     return is_land;
-    
 }
 
 
 // WZD s161p39
-// drake178: TILE_IsAISailable2()
-/*
-WZD s161p22
-TILE_IsAISailable()
-
-WZD s161p24
-TILE_IsSailable()
-
-WZD s161p39
-Square_Is_OceanLike()
-*/
 /*
 used to decide on ocean for cityscape  (not river, not *water*)
 
@@ -1811,6 +1744,14 @@ used to decide on ocean for cityscape  (not river, not *water*)
 
 used by AI_Move_Out_Boats(), so ~== "Sailable"
 should also be equivalent to Square_Is_Shoreline(), used to build the shoreline linked-list array
+
+WZD s161p22
+    TILE_IsAISailable()
+WZD s161p24
+    TILE_IsSailable()
+WZD s161p39
+    Square_Is_OceanLike() AKA TILE_IsAISailable2()
+
 */
 int16_t Square_Is_OceanLike(int16_t wx, int16_t wy, int16_t wp)
 {

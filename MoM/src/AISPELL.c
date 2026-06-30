@@ -5802,9 +5802,13 @@ int16_t AITP_Attack_Terrain(int16_t player_idx, int16_t * targeted_wx, int16_t *
             wy_offset = Random(5) - 3;
 
             /* Check diagonal corners (±2, ±2) */
-            if((wx_offset == -2 && wy_offset == -2) ||
-                (wx_offset == -2 && wy_offset == 2) ||
-                (wx_offset == 2 && wy_offset == -2) ||
+            if(
+                (wx_offset == -2 && wy_offset == -2)
+                ||
+                (wx_offset == -2 && wy_offset == 2)
+                ||
+                (wx_offset == 2 && wy_offset == -2)
+                ||
                 (wx_offset == 2 && wy_offset == 2))
             {
                 reject = ST_TRUE;
@@ -5842,6 +5846,7 @@ int16_t AITP_Attack_Terrain(int16_t player_idx, int16_t * targeted_wx, int16_t *
                 continue;
             }
 
+            /* OGBUG  this condition can only apply to spl_Corruption, should come after that condition */
             if(Square_Has_Corruption(city_area_wx, city_area_wy, city_wp) != ST_FALSE)
             {
                 continue;
@@ -5891,7 +5896,173 @@ int16_t AITP_Attack_Terrain(int16_t player_idx, int16_t * targeted_wx, int16_t *
 
 
 // WZD o156p51
-// drake178: sub_E9FA9()
+/*
+NOT IN USE
+¿ ~== AITP_Attack_Terrain() ?
+highest-value **contacted, non-neutral, non-own** enemy city
+vs.
+contacted enemy (non-neutral) city of highest value
+
+**land, not volcano, not corrupted, not hills, not mountain, not node**
+Square_Is_Land(), Square_Is_Volcano(), Square_Has_Corruption()
+    Square_Is_Hills(), Square_Is_Mountain(), Square_Is_Node()
+vs.
+Square_Is_Land(), Square_Is_Volcano(), Square_Has_Corruption()
+if(spell_idx != spl_Corruption)
+    Square_Is_Mountain(), Square_Is_Hills(), Square_Is_River(), Square_Is_Node()
+
+*/
+int16_t AITP_Corruption(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp)
+{
+    int16_t is_city_area_corner_square = 0;
+    int16_t city_wp = 0;
+    int16_t target_wp = 0;
+    int16_t city_area_wy = 0;
+    int16_t target_wy = 0;
+    int16_t target_wx = 0;
+    int16_t square_ctr = 0;
+    int16_t found_target = 0;
+    int16_t wy_offset = 0;
+    int16_t wx_offset = 0;
+    int16_t best_city_idx = 0;
+    int16_t best_city_value = 0;
+    int16_t itr_cities = 0;
+    int16_t city_area_wx = 0;
+
+    best_city_idx = ST_UNDEFINED;
+    best_city_value = 0;
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            continue;
+        }
+
+        if(_CITIES[itr_cities].owner_idx == NEUTRAL_PLAYER_IDX)
+        {
+            continue;
+        }
+
+        if(Test_Bit_Field(player_idx, (uint8_t *)&_CITIES[itr_cities].contacts) == 0)
+        {
+            continue;
+        }
+
+        if(_ai_all_enemy_city_values[itr_cities] <= best_city_value)
+        {
+            continue;
+        }
+
+        city_wp = _CITIES[itr_cities].wp;
+        square_ctr = 0;
+        found_target = 0;
+
+        while(square_ctr < 25 && found_target == 0)
+        {
+            wx_offset = Random(5) - 3;
+            wy_offset = Random(5) - 3;
+
+            /* Check if it is a corner: (-2, -2), (-2, 2), (2, -2), (2, 2) */
+            if(
+                (wx_offset == -2 && wy_offset == -2)
+                ||
+                (wx_offset == -2 && wy_offset == 2)
+                ||
+                (wx_offset == 2 && wy_offset == -2)
+                ||
+                (wx_offset == 2 && wy_offset == 2)
+            )
+            {
+                is_city_area_corner_square = ST_TRUE;
+            }
+            else
+            {
+                is_city_area_corner_square = ST_FALSE;
+            }
+
+            city_area_wx = _CITIES[itr_cities].wx + wx_offset;
+            city_area_wy = _CITIES[itr_cities].wy + wy_offset;
+
+            if(is_city_area_corner_square != ST_FALSE)
+            {
+                square_ctr++;
+                continue;
+            }
+
+            if(city_area_wx <= 0 || city_area_wx >= WORLD_WIDTH)
+            {
+                square_ctr++;
+                continue;
+            }
+
+            if(city_area_wy <= 0 || city_area_wy >= WORLD_HEIGHT)
+            {
+                square_ctr++;
+                continue;
+            }
+
+            if(Square_Is_Land(city_area_wx, city_area_wy, city_wp) != ST_TRUE)
+            {
+                square_ctr++;
+                continue;
+            }
+
+            if(Square_Is_Volcano(city_area_wx, city_area_wy, city_wp) != ST_FALSE)
+            {
+                square_ctr++;
+                continue;
+            }
+
+            if(Square_Has_Corruption(city_area_wx, city_area_wy, city_wp) != ST_FALSE)
+            {
+                square_ctr++;
+                continue;
+            }
+
+            if(Square_Is_Hills(city_area_wx, city_area_wy, city_wp) != ST_FALSE)
+            {
+                square_ctr++;
+                continue;
+            }
+
+            if(Square_Is_Mountain(city_area_wx, city_area_wy, city_wp) != ST_FALSE)
+            {
+                square_ctr++;
+                continue;
+            }
+
+            if(Square_Is_Node(city_area_wx, city_area_wy, city_wp) != ST_FALSE)
+            {
+                square_ctr++;
+                continue;
+            }
+
+            best_city_idx = itr_cities;
+            best_city_value = _ai_all_enemy_city_values[itr_cities];
+            target_wx = city_area_wx;
+            target_wy = city_area_wy;
+            target_wp = city_wp;
+            found_target = ST_TRUE;
+
+            square_ctr++;
+        }
+    }
+
+    if(best_city_idx == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *targeted_wx = target_wx;
+        *targeted_wy = target_wy;
+        *targeted_wp = city_wp;  /* OGBUG  should use target_wp, not city_wp */
+        return 1;
+    }
+
+}
 
 
 // WZD o156p52

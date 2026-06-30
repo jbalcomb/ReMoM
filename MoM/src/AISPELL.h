@@ -261,7 +261,7 @@ int16_t AITP_Disenchant(int16_t player_idx, int16_t * targeted_wx, int16_t * tar
 int16_t AITP_Attack_Terrain(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp, int16_t spell_idx);
 
 // WZD o156p51
-// sub_E9FA9()
+int16_t AITP_Corruption(int16_t player_idx, int16_t * arg_2, int16_t * arg_4, int16_t * arg_6);
 
 // WZD o156p52
 int16_t AITP_Plane_Shift(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp);
