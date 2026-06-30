@@ -3357,8 +3357,16 @@ void AI_Shift_Off_Home_Plane(int16_t player_idx)
                     {
                         for(itr = 0; itr < _units; itr++)
                         {
-                            _ai_all_own_stacks[itr2].wp = (uint8_t)other_wp;
+                            if(
+                                (_UNITS[itr].wx == (int8_t)stack_wx)
+                                &&
+                                (_UNITS[itr].wy == (int8_t)stack_wy)
+                            )
+                            {
+                                _UNITS[itr].wp = (int8_t)other_wp;
+                            }
                         }
+                        _ai_all_own_stacks[itr2].wp = (uint8_t)other_wp;
                     }
                 }
                 for(itr_cities = 0; itr_cities < _cities; itr_cities++)
@@ -3386,6 +3394,7 @@ void AI_Shift_Off_Home_Plane(int16_t player_idx)
                                     _UNITS[itr].wp = (int8_t)other_wp;
                                 }
                             }
+                            _ai_all_own_stacks[itr2].wp = (uint8_t)other_wp;
                         }
                     }
                 }

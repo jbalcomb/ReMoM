@@ -4,13 +4,10 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Disband_To_Balan
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Disband_To_Balance_Budget.c
 
 WZD: o158p16
-drake178 name: `AI_Balance_Upkeep`
 
-```
 AI_Next_Turn()
-    |-> AI_Set_Unit_Orders(player_idx)
-        |-> AI_Disband_To_Balance_Budget(player_idx)   [Phase 3, global pre-pass item 1]
-```
+    |-> AI_Set_Unit_Orders()
+        |-> AI_Disband_To_Balance_Budget()
 
 ---
 
