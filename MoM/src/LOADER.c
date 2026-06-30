@@ -1611,12 +1611,12 @@ void Reload_Item_Pictures(void)
 }
 
 // WZD o52p29
-void Spellbook_Load_Small_Pictures__WIP(void)
+void Spellbook_Load_Small_Pictures(void)
 {
     int16_t itr = 0;
 
 #ifdef STU_DEBUG
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Spellbook_Load_Small_Pictures__WIP()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Spellbook_Load_Small_Pictures()", __FILE__, __LINE__);
 #endif
 
 
@@ -1647,7 +1647,7 @@ void Spellbook_Load_Small_Pictures__WIP(void)
     _spellbook_small_text = LBX_Reload_Next(special2_lbx_file, 43, g_graphics_cache_seg);
 
 #ifdef STU_DEBUG
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Spellbook_Load_Small_Pictures__WIP()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Spellbook_Load_Small_Pictures()", __FILE__, __LINE__);
 #endif
 
 }
@@ -1671,7 +1671,7 @@ void Cache_Graphics_Overland(void)
 
     City_Screen_Load_Pictures();
 
-    Spellbook_Load_Small_Pictures__WIP();
+    Spellbook_Load_Small_Pictures();
 
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Cache_Graphics_Overland()", __FILE__, __LINE__);
@@ -1773,7 +1773,7 @@ void Cache_Graphics_Combat(void)
 
     Reload_Combat_Graphics_Cache();
 
-    Spellbook_Load_Small_Pictures__WIP();
+    Spellbook_Load_Small_Pictures();
 
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Cache_Graphics_Combat()", __FILE__, __LINE__);

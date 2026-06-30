@@ -946,7 +946,7 @@ void Init_Summoning_Circle_And_Spell_Of_Mastery(void)
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
     
 }
 
