@@ -108,44 +108,6 @@ Back Around To The Beginning
 
 
 
-Summary
-Truly done-done: 1A, 1B, 3B, 3C, 3D (3 funcs), 3E (2 funcs), 4C (4 funcs), 4D (3 funcs) — ~15 functions.
-Open / not done-done:
-Wave 2 — slots 2A/2B/2C/2D: parent AI_Set_Unit_Orders is done but per-slot audits have no separate evidence. Could already be covered or could still need work — needs a peek at the parent doc.
-Wave 3A — AI_Evaluation_Map: no doc, no done-done commit.
-Wave 3F partial — AI_Update_Magic_Power, AI_Update_Gold_And_Mana_Reserves, AI_Update_Gold_Income_And_Food_Income, AI_Sanity_Check_Overland_Enchantments: bodies exist with un-swept CamelCase locals, no docs.
-Wave 3G — Player_All_Colony_Autobuild: no doc, no done-done.
-Wave 3H — AI_Kill_Excess_Settlers_And_Engineers: no doc, no done-done.
-Wave 4E — IDK_Get_Global_Enchant_Index__STUB: name not found in source; likely renamed or absorbed.
-Wave 5A/B/C — all 6 functions: bodies exist, no done-done commits, no docs, Wave 5B still references Create_Unit__WIP.
-Wave 1C — AI_Order_* (real names AI_Stacks_Order_*): tiny leaves, no per-function evidence but likely folded.
-
-Per-slot coverage
-2A AI_Disband_To_Balance_Budget
-Location: Phase 3 list item 1 (parent doc line 100).
-Role: "disband units if the player is bleeding gold."
-Call-graph entry at line 225: ├── AI_Disband_To_Balance_Budget [global pre-pass]
-No bug entry. No OG-asm verification statement. Audit is location + one-line role only.
-
-2B AI_Shift_Off_Home_Plane
-Location: Phase 3 list item 2 (parent doc line 101).
-Role: "move expansion off the home plane."
-Call-graph entry at line 226.
-No bug entry. No OG-asm verification statement. Same audit depth as 2A.
-
-2C AI_Move_Out_Boats + AI_Stack_Set_Boats_Goto
-AI_Move_Out_Boats covered: Phase 3 list item 3 (parent doc line 102), role "redistribute transports." Call-graph line 227.
-AI_Stack_Set_Boats_Goto is NOT mentioned anywhere in the parent doc. It's a helper called from inside AI_Move_Out_Boats, not directly from the dispatcher. The audit only covers the directly-called function.
-No bug entry. No OG-asm verification.
-2D AI_Find_Opportunity_City_Target
-
-Location: Phase 3 list item 4 (parent doc line 103).
-Role: "look for an opportunity-city to target."
-OGBUG documented (parent doc lines 105-107 and bug-catalog line 216):
-"AI_Find_Opportunity_City_Target(wp, ...) called with wp still at its initializer (0). Only Arcanus is ever evaluated for opportunity-city targets. IDA-confirmed OG-faithful — OG asm at loc_EBE34- has mov [bp+wp], 0 AFTER the call... Production's explicit int16_t wp = 0; reproduces the same observable... via a different timing. Preserved faithful-to-dasm."
-
-This is the only slot with full audit depth (location + role + OG verification + bug catalog entry).
-
 
 
 ## AI Spell

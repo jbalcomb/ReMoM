@@ -244,10 +244,10 @@ Lines [5596-5628](../../MoM/src/AIMOVE.c#L5596-L5628) — WZD/drake markers for 
 
 Lines [5717-5733](../../MoM/src/AIMOVE.c#L5717-L5733) — stubs `sub_F57AF()` through `sub_F5EBF()`. No bodies.
 
-### `AI_Stack_Set_Boats_Goto` — [line 5737](../../MoM/src/AIMOVE.c#L5737)
+### `AI_Stack_Set_Boats_Goto` — [line 5755](../../MoM/src/AIMOVE.c#L5755)
 - **drake178:** `AI_STK_MoveTransports()` (o162p19)
-- **End:** ~line 5764
-- **Purpose:** TBD
+- **End:** ~line 5782
+- **Purpose:** Commit a "go to (wx, wy)" order to every transport-capable unit at the given AI stack's `(wx, wy, wp)`, and mark the stack record as processed by setting its `value` to `ST_UNDEFINED`. Filters on `_unit_type_table[type].Transport > 0` so only boats receive the order — passenger units travel with the cargo system. Sole caller is `AI_Move_Out_Boats` Phase 4. See [AIMOVE-AI_Stack_Set_Boats_Goto.md](AIMOVE-AI_Stack_Set_Boats_Goto.md).
 
 ### Unreconstructed stub (o162p20)
 
