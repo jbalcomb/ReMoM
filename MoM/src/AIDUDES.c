@@ -558,43 +558,29 @@ void AI_Landmass_Values_And_Strengths(int16_t player_idx)
 
 
 // WZD o145p04
-// drake178: AI_Power_Distrib()
 /*
-sets the AI's power distribution percentages based
-on objective, magic strategy, current skill & mana,
-spells left to research, and spell being cast
-
-contains multiple BUGs that prohibit this function
-from working properly once the AI has ran out of
-spells to research
-*/
-/*
-
 ~ Players_Update_Magic_Power()
-
 "...available magic power is divided between researching, reserves and spell casting skill..."
 "...spell casting skill..." ... "...total current spell casting skill..."
 "...adjust how much of your total magic power you allocate to your mana reserves, researching efforts and spell casting skill..."
-
 OSG  Page 406  (PDF Page 403)
 I. Computer Players Prepare
 ...
     F. Adjust mana ratios for wand, research, and skill level.
-
 */
 void AI_Update_Magic_Power(int16_t player_idx)
 {
-    int16_t Mana_Total = 0;
-    int16_t Nominal_Skill = 0;
+    int16_t mana_reserve = 0;
+    int16_t base_casting_skill = 0;
     int16_t itr = 0;
-    int16_t Unresearched_Spells = 0;
+    int16_t knowable_spell_count = 0;
     int16_t itr_spells = 0;
     int16_t itr_realms = 0;
     int16_t desired_magic_investment_type = 0;
 
-    Nominal_Skill = Player_Base_Casting_Skill(player_idx);
+    base_casting_skill = Player_Base_Casting_Skill(player_idx);
 
-    Mana_Total = _players[player_idx].mana_reserve;
+    mana_reserve = _players[player_idx].mana_reserve;
 
     _players[player_idx].reevaluate_magic_power_countdown -= 1;
 
@@ -605,45 +591,24 @@ void AI_Update_Magic_Power(int16_t player_idx)
 
     _players[player_idx].reevaluate_magic_power_countdown = (15 + Random(10));
 
-    // ; check the wizard's spell library to see if there are
-    // ; any spells still marked as "knowable"
-    // ; 
-    // ; BUG: spells that are already research
-    // ; candidates are ignored by this loop
-
-    Unresearched_Spells = 0;
-
-    for(itr_realms = 0; ((itr_realms < NUM_MAGIC_REALMS) & (Unresearched_Spells == 0)); itr_realms++)
+    /* OGBUG  spells that are already research candidates are ignored by this loop */
+    knowable_spell_count = 0;
+    for(itr_realms = 0; ((itr_realms < NUM_MAGIC_REALMS) & (knowable_spell_count == 0)); itr_realms++)
     {
-
-        for(itr_spells = 0; ((itr_spells < NUM_SPELLS_PER_MAGIC_REALM) & (Unresearched_Spells == 0)); itr_spells++)
+        for(itr_spells = 0; ((itr_spells < NUM_SPELLS_PER_MAGIC_REALM) & (knowable_spell_count == 0)); itr_spells++)
         {
-
-            if(_players[player_idx].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == 2 /* S_Knowable */)
+            if(_players[player_idx].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == sls_Knowable)
             {
-
-                Unresearched_Spells++;
-
+                knowable_spell_count++;
             }
-
         }
-
     }
 
-    // ; BUG: branching this here removes the AI's ability
-    // ; to adjust power distribution entirely when all
-    // ; spells have been researched, including the intended
-    // ; modifiers for researching and casting the SoM
-
-    if(Unresearched_Spells == 0)
+    /* OGBUG  branching this here removes the AI's ability to adjust power distribution entirely when all spells have been researched, including the intended modifiers for researching and casting the SoM */
+    if(knowable_spell_count == 0)
     {
-
-        // ; BUG: should be added, not replacing
-
-        _players[player_idx].skill_ratio = (_players[player_idx].research_ratio / 2);
-
+        _players[player_idx].skill_ratio = (_players[player_idx].research_ratio / 2);  /* OGBUG  should be added, not replacing */
         _players[player_idx].research_ratio = 0;
-
     }
     else
     {
@@ -753,7 +718,7 @@ void AI_Update_Magic_Power(int16_t player_idx)
             if(
                 (desired_magic_investment_type == 1)  /* Skill */
                 &&
-                ((Mana_Total * 4) < Nominal_Skill)
+                ((mana_reserve * 4) < base_casting_skill)
             )
             {
                 desired_magic_investment_type = 0;  /* Mana */ // same as OBJ_Perfectionist
@@ -777,12 +742,19 @@ void AI_Update_Magic_Power(int16_t player_idx)
 
         }
 
-        /* OGBUG  should be spl_Spell_Of_Mastery */
+        /* OGBUG  should be spl_Spell_Of_Mastery, not spl_Fire_Elemental */
         if(_players[player_idx].researching_spell_idx == spl_Fire_Elemental)
         {
             _players[player_idx].research_ratio = 70;
             _players[player_idx].skill_ratio = 10;
             _players[player_idx].mana_ratio = 20;
+        }
+
+        if(_players[player_idx].casting_spell_idx == spl_Spell_Of_Mastery)
+        {
+            _players[player_idx].research_ratio = 0;
+            _players[player_idx].skill_ratio = 10;
+            _players[player_idx].mana_ratio = 90;
         }
 
         if(_turn < 30)
