@@ -14,7 +14,7 @@ Next_Turn_Proc()
                     |-> AITP_Spell_Ward()
 
 Cast_Spell_Ward()   // Spells130.c — the Spell Ward cast handler
-    |-> AITP_SpellWard_Wrapper__STUB()   // reorders args (city_idx, magic_realm, player_idx)
+    |-> AITP_Spell_Ward()   // reorders args (city_idx, magic_realm, player_idx)
         |-> AITP_Spell_Ward()
 
 ---
@@ -46,7 +46,7 @@ Spell Ward protects a city against a chosen magic realm. The AI casts it to blun
 | Caller | Site | Notes |
 |---|---|---|
 | `AI_Select_Spell_Group_City_Enchantment` | [AISPELL.c:2410](../../MoM/src/AISPELL.c#L2410) | **Probe**: if a target exists, Spell Ward is given a fixed priority weight (`AI_OVL_SplPriorities[17] = 100`). |
-| `AITP_SpellWard_Wrapper__STUB` | [AISPELL.c:5130-5133](../../MoM/src/AISPELL.c#L5130-L5133) | Cast-time adapter: takes `(city_idx, magic_realm, player_idx)` and calls `AITP_Spell_Ward(player_idx, city_idx, magic_realm)` — the arg reorder that lets the 3-output picker fit the dispatch convention. Invoked by `Cast_Spell_Ward` ([Spells130.c:1785](../../MoM/src/Spells130.c#L1785)). |
+| `AITP_Spell_Ward` | [AISPELL.c:5130-5133](../../MoM/src/AISPELL.c#L5130-L5133) | Cast-time adapter: takes `(city_idx, magic_realm, player_idx)` and calls `AITP_Spell_Ward(player_idx, city_idx, magic_realm)` — the arg reorder that lets the 3-output picker fit the dispatch convention. Invoked by `Cast_Spell_Ward` ([Spells130.c:1785](../../MoM/src/Spells130.c#L1785)). |
 
 ## Code walk
 
@@ -115,7 +115,7 @@ None original-game. Behavioral notes:
 
 - `…\ovr156\AITP_SpellWard__STUB.asm` — IDA Pro 5.5 disassembly (the authority; OG filename keeps `__STUB`).
 - `…\ovr156\AITP_SpellWard__STUB.c` — Piethawn IDA-C.
-- `…\ovr156\AITP_SpellWard_Wrapper__STUB.asm` — the arg-reordering cast-time wrapper.
+- `…\ovr156\AITP_Spell_Ward.asm` — the arg-reordering cast-time wrapper.
 - [AISPELL-AITP_Earth_Gate.md](AISPELL-AITP_Earth_Gate.md), [AISPELL-AITP_Dark_Rituals.md](AISPELL-AITP_Dark_Rituals.md) — sibling city pickers (single output; this one returns city + realm).
 - [AISPELL-AI_Select_Spell_Group_City_Enchantment.md](AISPELL-AI_Select_Spell_Group_City_Enchantment.md) — the leaf picker that probes this function and weights Spell Ward.
 - [AISPELL-AI_Spell_Select.md](AISPELL-AI_Spell_Select.md) — the parent dispatcher.

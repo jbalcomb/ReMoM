@@ -6226,8 +6226,7 @@ int16_t AITP_Attack_Wizard(int16_t * targeted_player_idx, int16_t spell_idx, int
 
 
 // WZD o156p55
-// drake178: sub_EA4FE()
-int16_t AITP_SpellWard_Wrapper__STUB(int16_t * city_idx, int16_t * magic_realm, int16_t player_idx)
+int16_t AITP_Spell_Ward_Wrapper(int16_t * city_idx, int16_t * magic_realm, int16_t player_idx)
 {
 
     return AITP_Spell_Ward(player_idx, city_idx, magic_realm);

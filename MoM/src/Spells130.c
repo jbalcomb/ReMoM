@@ -1782,7 +1782,7 @@ int16_t Cast_Spell_Ward(int16_t player_idx)
     if(player_idx != HUMAN_PLAYER_IDX)
     {
 
-        return_value = AITP_SpellWard_Wrapper__STUB(&city_idx, &magic_type_ench_idx, player_idx);
+        return_value = AITP_Spell_Ward_Wrapper(&city_idx, &magic_type_ench_idx, player_idx);
         
         magic_type_ench_idx += 9;
 

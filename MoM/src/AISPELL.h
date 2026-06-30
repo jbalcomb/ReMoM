@@ -273,7 +273,7 @@ int16_t AITP_Natures_Cures(int16_t player_idx, int16_t * targeted_wx, int16_t * 
 int16_t AITP_Attack_Wizard(int16_t * targeted_player_idx, int16_t spell_idx, int16_t player_idx);
 
 // WZD o156p55
-int16_t AITP_SpellWard_Wrapper__STUB(int16_t * city_idx, int16_t * magic_realm, int16_t player_idx);
+int16_t AITP_Spell_Ward_Wrapper(int16_t * city_idx, int16_t * magic_realm, int16_t player_idx);
 
 // WZD o156p56
 int16_t AI_Has_More_Myrror_Cities(int16_t player_idx);

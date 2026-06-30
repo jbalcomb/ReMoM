@@ -44,7 +44,7 @@
 - [x] AI_Spell_Select — done-done 2026-06-11 (walkthrough doc, `__STUB` suffix dropped, GEMINI deleted, variable casing normalized, 9 leaf pickers stubbed `return 0;`)
 - [ ] AITP_Change_Terrain
 - [ ] AITP_Spell_Ward
-- [ ] AITP_SpellWard_Wrapper__STUB
+- [ ] AITP_Spell_Ward
 - [ ] AITP_Disjunction
 - [ ] AITP_Attack_Wizard
 - [ ] AITP_Unit_Enchantment
