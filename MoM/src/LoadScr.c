@@ -45,6 +45,7 @@ MoO2  Module: LOADSAVE
 #include "CITYCALC.h"
 #include "Combat.h"
 #include "Explore.h"
+#include "INITGAME.h"  /* gd_dump_* -- 400-series save-entry GD capture */
 #include "LOADER.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
@@ -494,6 +495,27 @@ void Load_Screen(void)
         if( (input_field_idx == loadsave_save_button) && (selected_save_game_slot_idx >= 0) )
         {
             loadsave_settings_flag = ST_UNDEFINED;
+            /* 400-series: snapshot every save-written array at the canonical
+             * slot-1 save entry (selected_save_game_slot_idx 0 -> SAVE1.GAM),
+             * mirroring the 300-series (load) set so save-time state diffs
+             * against load-time.  Matches OG's stub050:j_Save_SAVE_GAM trigger
+             * gated on save_gam_idx==0. */
+            if (selected_save_game_slot_idx == 0)
+            {
+                gd_dump_heroes          ("401_Save_Heroes_H");
+                gd_dump_players         ("402_Save_Players_P");
+                gd_dump_world_map       ("403_Save_World_Maps_W");
+                gd_dump_landmasses      ("404_Save_Landmasses_L");
+                gd_dump_nodes           ("405_Save_Nodes_N");
+                gd_dump_fortresses      ("406_Save_Fortresses_F");
+                gd_dump_towers          ("407_Save_Towers_T");
+                gd_dump_lairs           ("408_Save_Lairs_L");
+                gd_dump_items           ("409_Save_Items_I");
+                gd_dump_cities          ("410_Save_Cities_C");
+                gd_dump_units           ("411_Save_Units_U");
+                gd_dump_terrain_specials("412_Save_Terrain_Specials_T");
+                gd_dump_map_square_flags("413_Save_Map_Flags_M");
+            }
             Save_SAVE_GAM(selected_save_game_slot_idx);
             leave_screen_flag = ST_TRUE;
         }
