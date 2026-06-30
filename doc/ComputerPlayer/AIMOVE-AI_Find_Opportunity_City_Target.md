@@ -3,9 +3,6 @@ AIMOVE-AI_Find_Opportunity_City_Target.md
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Find_Opportunity_City_Target.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Find_Opportunity_City_Target.c
 
-WZD: o158p15
-drake178 name: `AI_OppMoveOverride`
-
 AI_Next_Turn()
     |-> AI_Set_Unit_Orders()
         |-> AI_Find_Opportunity_City_Target()   [Phase 3, global pre-pass item 4]

@@ -221,6 +221,13 @@ Need `/doxyfunc`
 [ ] AI_Move_Out_Boats
 [ ] AI_Stack_Set_Boats_Goto
 [ ] AI_Find_Opportunity_City_Target
+[x] AI_Evaluation_Map()
+[ ] AI_Update_Magic_Power()
+[ ] AI_Update_Gold_And_Mana_Reserves()
+[ ] AI_Update_Gold_Income_And_Food_Income()
+[ ] AI_Sanity_Check_Overland_Enchantments()
+[ ] Player_All_Colony_Autobuild()
+[ ] AI_Kill_Excess_Settlers_And_Engineers()
 
 
 

@@ -293,10 +293,10 @@ Lines [5923-5945](../../MoM/src/AIMOVE.c#L5923-L5945) — stubs `sub_F64C2()` th
 - **Writes `lmt_*`:** `lmt_Own` ([6454](../../MoM/src/AIMOVE.c#L6454)), `lmt_Contested` ([6458](../../MoM/src/AIMOVE.c#L6458)), `lmt_NoOwnCity` ([6463](../../MoM/src/AIMOVE.c#L6463)), `lmt_NoOwnCityAndAllyHasCity` ([6486](../../MoM/src/AIMOVE.c#L6486), [6490](../../MoM/src/AIMOVE.c#L6490), [6491](../../MoM/src/AIMOVE.c#L6491), [6619](../../MoM/src/AIMOVE.c#L6619), [6672](../../MoM/src/AIMOVE.c#L6672))
 - **Reads `lmt_*`:** `lmt_NoOwnCity` ([6306](../../MoM/src/AIMOVE.c#L6306), [6484](../../MoM/src/AIMOVE.c#L6484), [6504](../../MoM/src/AIMOVE.c#L6504), [6636](../../MoM/src/AIMOVE.c#L6636)), `lmt_NoTargets` ([6438](../../MoM/src/AIMOVE.c#L6438)), `lmt_Contested` ([6563](../../MoM/src/AIMOVE.c#L6563)), `lmt_Own` ([6565](../../MoM/src/AIMOVE.c#L6565), [6691](../../MoM/src/AIMOVE.c#L6691)), `lmt_NoOwnCityAndAllyHasCity` ([6567](../../MoM/src/AIMOVE.c#L6567))
 
-### `AI_Evaluation_Map` — [line 6778](../../MoM/src/AIMOVE.c#L6778)
+### `AI_Evaluation_Map` — [line 6796](../../MoM/src/AIMOVE.c#L6796)
 - **drake178:** (no drake name at o162p36)
-- **End:** ~line 6998
-- **Purpose:** TBD — likely populates `g_ai_evaluation_map[][]` (the per-square attribute bitmap used by other AI passes)
+- **End:** ~line 7016
+- **Purpose:** Per-AI-player: rebuilds `g_ai_evaluation_map[NUM_PLANES][WORLD_SIZE]` — the per-square attribute bitmap consumed by downstream AI targeting/movement passes. Low 14 bits = accumulated strength (enemy unit strength/10 + lair guardian strength/10 + `+1` for non-own cities). Upper 2 bits = flags: `0x4000 AI_TARGET_NONHOSTILE`, `0x8000 AI_TARGET_SITE`. Two lair passes use different intact tests (`== ST_TRUE` for guardian strength, `!= ST_FALSE` for SITE flag). See [AIMOVE-AI_Evaluation_Map.md](AIMOVE-AI_Evaluation_Map.md).
 
 ### `AI_Choose_War_Landmass` — [line 7002](../../MoM/src/AIMOVE.c#L7002)
 - **drake178:** (no drake name at o162p37)
