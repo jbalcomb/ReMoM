@@ -3338,21 +3338,10 @@ void All_Outpost_Population_Growth(void)
 
 
 // WZD o142p22
-// drake178: WIZ_RecordHistory()
 // MoO2  Module: BILL  Record_History_()
 /*
-; calculates and records the astrologer/historian data
-; Power = power base - 10
-; Army Strength = (gold upkeep + mana upkeep) / 5
-; Research = sum of known in-realm indexes / 10
-; Historian = (above 3) + ((cities pop_K sum) / 10)
-; Astrologer's max scale is 200, Historian's is 160
-*/
-/*
-    calculates and records the 'power of a wizard', for the "History of Wizards’ Power graph"
-
+calculates and records the 'power of a wizard', for the "History of Wizards’ Power graph"
 "The power of a wizard is the combined value of many things including army strength, total magic power drawn from all sources per turn, and spells that wizard has learned."
-
 */
 void Record_History(void)
 {
@@ -3362,23 +3351,23 @@ void Record_History(void)
     int16_t max_curr_research = 0;
     int16_t max_curr_military = 0;
     int16_t max_curr_magic = 0;
-    int16_t itr = 0;  // _SI_
-    int16_t itr_players = 0;  // _SI_
-    int16_t IDK_max_curr_wiz_pwr = 0;  // _DI_
+    int16_t itr = 0;
+    int16_t itr_players = 0;
+    int16_t max_curr_wiz_pwr = 0;
 
     // ; fill out the astrologer fields and the local total progress array (sum of all fields)
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-        _players[itr_players].Astr.Magic_Power     = WIZ_Get_Astr_Power__STUB(itr_players);
-        _players[itr_players].Astr.Army_Strength   = WIZ_Get_Astr_ArmyStr__STUB(itr_players);
-        _players[itr_players].Astr.Spell_Research  = WIZ_Get_Astr_Resrch__STUB(itr_players);
-        _players[itr_players].Pop_div_10k          = WIZ_Get_Nation_Size__STUB(itr_players);
+        _players[itr_players].astrologer.magic_power     = Astrologer_Power(itr_players);
+        _players[itr_players].astrologer.army_strength   = Astrologer_Strength(itr_players);
+        _players[itr_players].astrologer.spell_research  = Astrologer_Research(itr_players);
+        _players[itr_players].empire_mini_pops           = Empire_Population_Points(itr_players);
 
         power_of_a_wizard[itr_players] = (
-            _players[itr_players].Astr.Magic_Power
-            + _players[itr_players].Astr.Army_Strength
-            + _players[itr_players].Astr.Spell_Research
-            + _players[itr_players].Pop_div_10k
+            _players[itr_players].astrologer.magic_power
+            + _players[itr_players].astrologer.army_strength
+            + _players[itr_players].astrologer.spell_research
+            + _players[itr_players].empire_mini_pops
         );
     }
 
@@ -3386,36 +3375,35 @@ void Record_History(void)
     max_curr_military = 0;
     max_curr_research = 0;
     max_curr_population = 0;
-
-    IDK_max_curr_wiz_pwr = 0;
+    max_curr_wiz_pwr = 0;
 
     // ; find and store the highest values in each category, with di holding the highest total
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
 
-        if(_players[itr_players].Astr.Magic_Power > max_curr_magic)
+        if(_players[itr_players].astrologer.magic_power > max_curr_magic)
         {
-            max_curr_magic = _players[itr_players].Astr.Magic_Power;
+            max_curr_magic = _players[itr_players].astrologer.magic_power;
         }
         
-        if(_players[itr_players].Astr.Army_Strength > max_curr_military)
+        if(_players[itr_players].astrologer.army_strength > max_curr_military)
         {
-            max_curr_military = _players[itr_players].Astr.Army_Strength;
+            max_curr_military = _players[itr_players].astrologer.army_strength;
         }
         
-        if(_players[itr_players].Astr.Spell_Research > max_curr_research)
+        if(_players[itr_players].astrologer.spell_research > max_curr_research)
         {
-            max_curr_research = _players[itr_players].Astr.Spell_Research;
+            max_curr_research = _players[itr_players].astrologer.spell_research;
         }
         
-        if(_players[itr_players].Pop_div_10k > max_curr_population)
+        if(_players[itr_players].empire_mini_pops > max_curr_population)
         {
-            max_curr_population = _players[itr_players].Pop_div_10k;
+            max_curr_population = _players[itr_players].empire_mini_pops;
         }
 
-        if(power_of_a_wizard[itr_players] > IDK_max_curr_wiz_pwr)
+        if(power_of_a_wizard[itr_players] > max_curr_wiz_pwr)
         {
-            IDK_max_curr_wiz_pwr = power_of_a_wizard[itr_players];
+            max_curr_wiz_pwr = power_of_a_wizard[itr_players];
         }
         
     }
@@ -3425,7 +3413,7 @@ void Record_History(void)
     {
         for(itr_players = 0; itr_players < _num_players; itr_players++)
         {
-            _players[itr_players].Astr.Magic_Power = ((max_curr_magic * _players[itr_players].Astr.Magic_Power) / 200);
+            _players[itr_players].astrologer.magic_power = (((int32_t)_players[itr_players].astrologer.magic_power * 200) / max_curr_magic);
         }
     }
 
@@ -3434,7 +3422,7 @@ void Record_History(void)
     {
         for(itr_players = 0; itr_players < _num_players; itr_players++)
         {
-            _players[itr_players].Astr.Army_Strength = ((max_curr_military * _players[itr_players].Astr.Army_Strength) / 200);
+            _players[itr_players].astrologer.army_strength = (((int32_t)_players[itr_players].astrologer.army_strength * 200) / max_curr_military);
         }
     }
 
@@ -3443,7 +3431,7 @@ void Record_History(void)
     {
         for(itr_players = 0; itr_players < _num_players; itr_players++)
         {
-            _players[itr_players].Astr.Spell_Research = ((max_curr_research * _players[itr_players].Astr.Spell_Research) / 200);
+            _players[itr_players].astrologer.spell_research = (((int32_t)_players[itr_players].astrologer.spell_research * 200) / max_curr_research);
         }
     }
 
@@ -3453,14 +3441,14 @@ void Record_History(void)
         power_of_a_wizard[itr_players] = (power_of_a_wizard[itr_players] / 7);
     }
 
-    IDK_max_curr_wiz_pwr = (IDK_max_curr_wiz_pwr / 7);
+    max_curr_wiz_pwr = (max_curr_wiz_pwr / 7);
 
     // adjust the total progress values such that the highest is at most 160
-    if(IDK_max_curr_wiz_pwr > 160)
+    if(max_curr_wiz_pwr > 160)
     {
         for(itr_players = 0; itr_players < _num_players; itr_players++)
         {
-            power_of_a_wizard[itr_players] = ((IDK_max_curr_wiz_pwr * power_of_a_wizard[itr_players]) / 160);
+            power_of_a_wizard[itr_players] = (((int32_t)power_of_a_wizard[itr_players] * 160) / max_curr_wiz_pwr);
         }
     }
     
@@ -3470,7 +3458,7 @@ void Record_History(void)
         // record the total progress values into the historian
         for(itr_players = 0; itr_players < _num_players; itr_players++)
         {
-            _players[itr_players].Historian[_turn] = (uint8_t)power_of_a_wizard[itr_players];
+            _players[itr_players].history[_turn] = (uint8_t)power_of_a_wizard[itr_players];
         }
     }
     else
@@ -3480,10 +3468,10 @@ void Record_History(void)
         {
             for(itr_history = 0; itr_history < 287; itr_history++)
             {
-                _players[itr_players].Historian[(itr_history + 1)] = _players[itr_players].Historian[itr_history];
+                _players[itr_players].history[itr_history] = _players[itr_players].history[(itr_history + 1)];
             }
 
-            _players[itr_players].Historian[287] = (uint8_t)power_of_a_wizard[itr_players];
+            _players[itr_players].history[287] = (uint8_t)power_of_a_wizard[itr_players];
         }
     }
 
@@ -3491,45 +3479,64 @@ void Record_History(void)
 
 
 // WZD o142p23
-// drake178: WIZ_Get_Astr_Power()
-int16_t WIZ_Get_Astr_Power__STUB(int16_t player_idx)
+int16_t Astrologer_Power(int16_t player_idx)
 {
-    return Random(100);
+    int power;
+    power = _players[player_idx].Power_Base - 10;
+    SETMIN(power, 0);
+    return power;
 }
 
 // WZD o142p24
-// drake178: WIZ_Get_Astr_ArmyStr()
-int16_t WIZ_Get_Astr_ArmyStr__STUB(int16_t player_idx)
+int16_t Astrologer_Strength(int16_t player_idx)
 {
-    return Random(100);
+    int32_t total_unit_upkeep = 0;
+    int16_t itr_units = 0;
+    total_unit_upkeep = 0;
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        if(_UNITS[itr_units].owner_idx == player_idx)
+        {
+            total_unit_upkeep += (Unit_Gold_Upkeep(itr_units) + (2 * Unit_Mana_Upkeep(itr_units)));
+        }
+    }
+    return (total_unit_upkeep / 5);
 }
 
 // WZD o142p25
-// drake178: WIZ_Get_Astr_Resrch()
-int16_t WIZ_Get_Astr_Resrch__STUB(int16_t player_idx)
+int16_t Astrologer_Research(int16_t player_idx)
 {
-    return Random(100);
+    int16_t itr_realms = 0;
+    int16_t research_total = 0;
+    int16_t itr_spell_in_realm = 0;
+    research_total = 0;
+    for(itr_realms = 0; itr_realms < NUM_MAGIC_REALMS; itr_realms++)
+    {
+        for(itr_spell_in_realm = 0; itr_spell_in_realm < NUM_SPELLS_PER_MAGIC_REALM; itr_spell_in_realm++)
+        {
+            if (_players[player_idx].spells_list[(itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spell_in_realm] == sls_Known)
+            {
+                research_total += (itr_spell_in_realm + 1);
+            }
+        }
+    }
+    return (research_total / 8);
 }
 
 // WZD o142p26
-// drake178: WIZ_Get_Nation_Size()
-int16_t WIZ_Get_Nation_Size__STUB(int16_t player_idx)
+/* MoO2  Module: COLCALC  Colony_N_Pops_Of_Empire_() */
+int16_t Empire_Population_Points(int16_t player_idx)
 {
-    int16_t itr_cities;  // _CX_
-    int16_t empire_population;  // _SI_
-
+    int16_t itr_cities = 0;
+    int16_t empire_population = 0;
     empire_population = 0;
-
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-
         if(_CITIES[itr_cities].owner_idx == player_idx)
         {
             empire_population += _CITIES[itr_cities].population;
         }
-
     }
-
     return (empire_population / 10);  // ~ "mini population units"
 }
 

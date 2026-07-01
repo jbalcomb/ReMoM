@@ -1914,7 +1914,7 @@ int16_t Get_Event_Victim(int16_t event_type)
 
     for(itr = 0; itr < _num_players; itr++)
     {
-        wizard_power[itr] = (_players[itr].Astr.Magic_Power + _players[itr].Astr.Spell_Research + _players[itr].Astr.Army_Strength);
+        wizard_power[itr] = (_players[itr].astrologer.magic_power + _players[itr].astrologer.spell_research + _players[itr].astrologer.army_strength);
     }
 
     if(event_type == ST_TRUE)

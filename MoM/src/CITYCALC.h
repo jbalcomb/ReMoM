@@ -265,16 +265,16 @@ void All_Outpost_Population_Growth(void);
 void Record_History(void);
 
 // WZD o142p23
-int16_t WIZ_Get_Astr_Power__STUB(int16_t player_idx);
+int16_t Astrologer_Power(int16_t player_idx);
 
 // WZD o142p24
-int16_t WIZ_Get_Astr_ArmyStr__STUB(int16_t player_idx);
+int16_t Astrologer_Strength(int16_t player_idx);
 
 // WZD o142p25
-int16_t WIZ_Get_Astr_Resrch__STUB(int16_t player_idx);
+int16_t Astrologer_Research(int16_t player_idx);
 
 // WZD o142p26
-int16_t WIZ_Get_Nation_Size__STUB(int16_t player_idx);
+int16_t Empire_Population_Points(int16_t player_idx);
 
 // WZD o142p27
 int16_t City_Rebel_Count(int16_t city_idx);

@@ -150,8 +150,8 @@ static void Dump_Game(FILE *fp, const uint8_t *sav)
 /*
  * Dump every field in struct s_WIZARD (1224 bytes).  Layout mirrored from
  * MoX/src/MOM_DAT.h:1382.  Nested sub-structs s_OWNED_HERO (28 B, x6),
- * s_WIZ_DIPL (306 B), s_Astr_Data (6 B) are expanded inline field-by-field.
- * Variable-length arrays (spells_list[240], Historian[288], Globals[24], etc.)
+ * s_WIZ_DIPL (306 B), s_ASTROLOGER (6 B) are expanded inline field-by-field.
+ * Variable-length arrays (spells_list[240], history[288], Globals[24], etc.)
  * are emitted one element per line so diffs pinpoint which index changed.
  */
 static void Dump_Players(FILE *fp, const uint8_t *sav)
@@ -314,14 +314,14 @@ static void Dump_Players(FILE *fp, const uint8_t *sav)
         fprintf(fp, "player[%d].gold_reserve = %d\n",     itr, rd_u16(sav, base + 0x356));
         fprintf(fp, "player[%d].field_358 = %d\n",        itr, rd_u16(sav, base + 0x358));
 
-        /* --- 0x035A Astr (s_Astr_Data, 6 bytes) --- */
+        /* --- 0x035A astrologer (s_ASTROLOGER, 6 bytes) --- */
         fprintf(fp, "player[%d].astr.magic_power = %d\n",    itr, rd_i16(sav, base + 0x35A));
         fprintf(fp, "player[%d].astr.spell_research = %d\n", itr, rd_i16(sav, base + 0x35C));
         fprintf(fp, "player[%d].astr.army_strength = %d\n",  itr, rd_i16(sav, base + 0x35E));
 
         fprintf(fp, "player[%d].pop_div_10k = %d\n", itr, rd_u16(sav, base + 0x360));
 
-        /* --- 0x0362 Historian[288] --- */
+        /* --- 0x0362 history[288] --- */
         for (k = 0; k < 288; k++)
         {
             fprintf(fp, "player[%d].historian[%d] = %d\n", itr, k, rd_u8(sav, base + 0x362 + k));

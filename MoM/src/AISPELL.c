@@ -449,7 +449,7 @@ selects a spell category for the AI to use next:
  *
  * @note The function modifies the global variable `_players[player_idx].cp_target_3` to
  *       store the selected opponent target index if hostile opponents exist.
- * @note Some modifiers are hard-coded (e.g., offset 0x53 in Historian for Death Wish),
+ * @note Some modifiers are hard-coded (e.g., offset 0x53 in history for Death Wish),
  *       reflecting legacy assembly code patterns.
  * @note `modifiers[9]` (overland enchantments) is capped at a maximum value of 300 after
  *       all individual checks to prevent over-weighting.
@@ -733,7 +733,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
             g_ai_spell_group_flags[SGRP_Earthquake] == 1 ||
             g_ai_spell_group_flags[0x4A] == 1 ||
             g_ai_spell_group_flags[SGRP_TimeStop] == 1 ||
-            ((unsigned char *)&_players[player_idx].Historian)[0x53] == 1 ||
+            ((unsigned char *)&_players[player_idx].history)[0x53] == 1 ||
             g_ai_spell_group_flags[SGRP_DeathWish] == 1 ||
             g_ai_spell_group_flags[SGRP_HarmWizard] == 1) {
 

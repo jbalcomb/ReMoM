@@ -2712,7 +2712,7 @@ void Diplomacy_Growth(void)
                 Thus, the percentage chance of suffering this penalty with a particular wizard
                     is based on a sliding scale depending on the strength ratio of your two armed forces.
     */
-    human_army_strength = _players[HUMAN_PLAYER_IDX].Astr.Army_Strength;
+    human_army_strength = _players[HUMAN_PLAYER_IDX].astrologer.army_strength;
 
     if(human_army_strength > 0)
     {
@@ -2721,13 +2721,13 @@ void Diplomacy_Growth(void)
         {
 
             if(
-                (_players[itr1].Astr.Army_Strength < human_army_strength)
+                (_players[itr1].astrologer.army_strength < human_army_strength)
                 &&
-                (_players[itr1].Astr.Army_Strength > 0)
+                (_players[itr1].astrologer.army_strength > 0)
             )
             {
 
-                Too_Strong_Treshold = ((human_army_strength * 50) / _players[itr1].Astr.Army_Strength);
+                Too_Strong_Treshold = ((human_army_strength * 50) / _players[itr1].astrologer.army_strength);
 
                 if(
                     (Random(100) >= Too_Strong_Treshold)
@@ -4197,7 +4197,7 @@ static void Diplomacy_Offer_Tribute(void)
         else  /* (_variable < var_4) */
         {
 
-            if(_players[m_diplomac_player_idx].Astr.Army_Strength != 0)
+            if(_players[m_diplomac_player_idx].astrologer.army_strength != 0)
             {
 
                 var_6 = ((_variable + 1) * 4);

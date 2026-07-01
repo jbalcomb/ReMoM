@@ -102,7 +102,7 @@ XP, healing, history logging.
 
 - [ ] **12A** [`Do_All_Units_XP_Check_`](../MoM/src/NEXTTURN.c#L4400) — trailing underscore in the name (preserved from OG). Iterates units checking XP thresholds → Level bumps.
 - [ ] **12B** [`Heal_All_Units`](../MoM/src/NEXTTURN.c#L3890) — per-unit healing (natural + Regeneration + city-based).
-- [ ] **12C** [`Record_History`](../MoM/src/CITYCALC.c#L3332) — logs per-turn stats to the history buffer for the graph screen.
+- [x] **12C** [`Record_History`](../MoM/src/CITYCALC.c#L3346) — **done-done**, doc [NextTurn/CITYCALC-Record_History.md](NextTurn/CITYCALC-Record_History.md). Computes each wizard's power graph value and appends to `history[288]`; verified 1:1 against `ovr142/Record_History.asm`. R1 (scaling operand swap + 32-bit) and R2 (history scroll direction) fixed this session. The four astrologer input getters (`Astrologer_Power`, `Astrologer_Strength`, `Astrologer_Research`, `Empire_Population_Points`) reconstructed from `__STUB`s and verified against `ovr142` asm this session.
 
 ### Wave 13 — Persistence
 Autosave and RNG-seed roundtrip. Runs at the tail of `Next_Turn_Calc`.

@@ -1050,7 +1050,7 @@ g_dbg_fields_trace = 1;
                 Assign_Auto_Function(Main_Screen_Draw, 1);
                 Main_Screen_Reset();
             }
-            // Advisor - Historian
+            // Advisor - history
             if(input_field_idx == hotkey_idx_F4)
             {
                 Advisor_Screen(3);
@@ -2497,14 +2497,14 @@ int16_t Get_Background_Music(void)
     for(itr_players = 1; itr_players < _num_players; itr_players++)
     {
 
-        if(_players[itr_players].Historian[IDK] > Highest_Power)
+        if(_players[itr_players].history[IDK] > Highest_Power)
         {
-            Highest_Power = _players[itr_players].Historian[IDK];
+            Highest_Power = _players[itr_players].history[IDK];
         }
 
-        if(_players[itr_players].Historian[IDK] < wizards_power)
+        if(_players[itr_players].history[IDK] < wizards_power)
         {
-            wizards_power = _players[itr_players].Historian[IDK];
+            wizards_power = _players[itr_players].history[IDK];
         }
 
     }
@@ -2514,14 +2514,14 @@ int16_t Get_Background_Music(void)
         wizards_power = 0;
     }
 
-    if((_players[_human_player_idx].Historian[IDK] + (Highest_Power / 10)) >= Highest_Power)
+    if((_players[_human_player_idx].history[IDK] + (Highest_Power / 10)) >= Highest_Power)
     {
         background_music_num = MUSIC_Bkrgnd_Good;
     }
 
     if(wizards_power > 0)
     {
-        if((_players[_human_player_idx].Historian[IDK] - (wizards_power / 10)) <= wizards_power)
+        if((_players[_human_player_idx].history[IDK] - (wizards_power / 10)) <= wizards_power)
         {
             background_music_num = MUSIC_Bkgrnd_Negative;
         }

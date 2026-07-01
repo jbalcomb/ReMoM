@@ -60,7 +60,7 @@ char cnst_Info_Msg_3[] = "Apprentice";
 // WZD dseg:37EE
 char cnst_Info_Msg_3_2[] = "3)";
 // WZD dseg:37F1
-char cnst_Info_Msg_4[] = "Historian";
+char cnst_Info_Msg_4[] = "history";
 // WZD dseg:37FB
 char cnst_Info_Msg_4_2[] = "4)";
 // WZD dseg:37FE
@@ -316,7 +316,7 @@ void Advisor_Screen(int16_t advisor_idx)
         stu_strcat(str2_Apprentice, fkey_string);
         stu_strcat(str2_Apprentice, cnst_Info_Msg_3_2);
 
-        stu_strcpy(str3_Historian, cnst_Info_Msg_4);  // "Historian"
+        stu_strcpy(str3_Historian, cnst_Info_Msg_4);  // "history"
         // stu_strcat(str3_Historian, text_0x1D);
         stu_strcat(str3_Historian, "\t");
         stu_strcat(str3_Historian, fkey_string);
@@ -377,7 +377,7 @@ void Advisor_Screen(int16_t advisor_idx)
         stu_strcat(box_list_stings[2], fkey_string);
         stu_strcat(box_list_stings[2], cnst_Info_Msg_3_2);
 
-        stu_strcpy(box_list_stings[3], cnst_Info_Msg_4);  // "Historian"
+        stu_strcpy(box_list_stings[3], cnst_Info_Msg_4);  // "history"
         // stu_strcat(str3_Historian, text_0x1D);
         stu_strcat(box_list_stings[3], "\x1D\x51");
         stu_strcat(box_list_stings[3], fkey_string);
@@ -471,7 +471,7 @@ void Advisor_Screen(int16_t advisor_idx)
         {
             Apprentice_Screen__WIP();
         } break;
-        case 3:  /* Historian     (F4) */
+        case 3:  /* history     (F4) */
         {
             Powergraph_Screen();
         } break;
@@ -653,7 +653,7 @@ void TaxCollector_Window(void)
 
 // WZD o76p03
 /*
-    "Historian"
+    "history"
     "History of Wizards Power"
 
 */
@@ -967,9 +967,9 @@ void IDK_Powergraph_Draw_Turn_Data(int16_t player_idx, int16_t turns, int16_t mo
     for(itr_turn_data = month; itr_turn_data < turns_count; itr_turn_data++)
     {
         x2 = (16 + x2_itr);
-        y2 = (181 - _players[player_idx].Historian[itr_turn_data]);  // 181 is 2 pixels up from the time-line
+        y2 = (181 - _players[player_idx].history[itr_turn_data]);  // 181 is 2 pixels up from the time-line
         ptr_player = &_players[player_idx];
-        ptr_Historian = &_players[player_idx].Historian[0];
+        ptr_Historian = &_players[player_idx].history[0];
 
         SETMIN(y2, 22);
         if(itr_turn_data > month)
@@ -981,7 +981,7 @@ void IDK_Powergraph_Draw_Turn_Data(int16_t player_idx, int16_t turns, int16_t mo
         else
         {
             x1 = 16;
-            y1 = (181 - _players[player_idx].Historian[0]);
+            y1 = (181 - _players[player_idx].history[0]);
             SETMIN(y1, 22);
         }
         x2_itr++;
@@ -1154,11 +1154,11 @@ void Status_Screen_Draw(void)
         {
             var_8 = 35;
 
-            scores[0] = _players[itr_players].Astr.Army_Strength;
+            scores[0] = _players[itr_players].astrologer.army_strength;
 
-            scores[1] = _players[itr_players].Astr.Magic_Power;
+            scores[1] = _players[itr_players].astrologer.magic_power;
 
-            scores[2] = _players[itr_players].Astr.Spell_Research;
+            scores[2] = _players[itr_players].astrologer.spell_research;
 
             for(itr_scores = 0; itr_scores < 3; itr_scores++)
             {

@@ -1269,11 +1269,11 @@ struct s_DIFFICULTY_MODIFIERS
 // sizeof:  06h  6d
 #pragma pack(push)
 #pragma pack(2)
-struct s_Astr_Data
+struct s_ASTROLOGER
 {
-    /* 00 */ int16_t Magic_Power;       /* populated in Record_History(), by WIZ_Get_Astr_Power(), in CITYCALC.c   */
-    /* 02 */ int16_t Spell_Research;    /* populated in Record_History(), by WIZ_Get_Astr_ArmyStr(), in CITYCALC.c */
-    /* 04 */ int16_t Army_Strength;     /* populated in Record_History(), by WIZ_Get_Astr_Resrch(), in CITYCALC.c  */
+    /* 00 */ int16_t magic_power;       /* populated in Record_History(), by Astrologer_Power(), in CITYCALC.c   */
+    /* 02 */ int16_t spell_research;    /* populated in Record_History(), by Astrologer_Strength(), in CITYCALC.c */
+    /* 04 */ int16_t army_strength;     /* populated in Record_History(), by Astrologer_Research(), in CITYCALC.c  */
 };
 #pragma pack(pop)
 
@@ -1424,7 +1424,7 @@ struct s_WIZ_DIPL
  * @note Embedded struct types (all defined earlier in this file):
  *  - @c s_OWNED_HERO   — Heroes[NUM_HEROES] roster
  *  - @c s_WIZ_DIPL     — diplomatic relations vector
- *  - @c s_Astr_Data    — historian/astrologer snapshot
+ *  - @c s_ASTROLOGER    — historian/astrologer snapshot
  *
  * @note Retorts block at offset 0x64..0x75 is laid out as 18 individual int8_t
  *       fields (alchemy, warlord, ..., artificer) rather than an array; preserve
@@ -1508,9 +1508,9 @@ struct s_WIZARD
     /* 0354 */ uint16_t Defeated_Wizards;  /* in WZD_093 WIZ_Conquest();  bifield of bit_idx == player_idx */
     /* 0356 */ uint16_t gold_reserve;       /*  */
     /* 0358 */ uint16_t field_358;
-    /* 035A */ struct s_Astr_Data Astr;     /* populated in Record_History() */
-    /* 0360 */ uint16_t Pop_div_10k;        /* ¿ mini-pops ?  onlu used for history? */
-    /* 0362 */ uint8_t  Historian[288];     /* ¿ Wizard's Power ? */
+    /* 035A */ struct s_ASTROLOGER astrologer;  /* populated in Record_History() */
+    /* 0360 */ uint16_t empire_mini_pops;       /* ¿ mini-pops ?  onlu used for history? */
+    /* 0362 */ uint8_t  history[288];           /* ¿ Wizard's Power ? */
     /* 0482 */ // struct s_GLOBALE Globals;
                uint8_t  Globals[NUM_OVERLAND_ENCHANTMENTS];
     /* 049A */ uint16_t magic_power_strategy;
