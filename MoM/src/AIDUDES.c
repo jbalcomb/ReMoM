@@ -266,9 +266,14 @@ void AI_Next_Turn(void)
                 PHASE(Player_Hostile_Opponents(player_idx));
                 PHASE(AI_Player_Calculate_Target_Values(player_idx));
             }
+            /* OGBUG  redundant - will be caught by the next block */
+            if(_players[player_idx].casting_spell_idx == spl_NONE)
+            {
+                PHASE(AI_Spell_Select(player_idx));
+            }
         }
 
-        /* Handle New Spell Selection if not casting */
+        /* Handle New Spell Selection if wasn't casting or finished casting */
         if(_players[player_idx].casting_spell_idx == spl_NONE)
         {
             PHASE(AI_Spell_Select(player_idx));
