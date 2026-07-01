@@ -1706,172 +1706,104 @@ int16_t Map_Square_Unit_Count(int16_t wx, int16_t wy, int16_t wp)
 }
 
 // WZD o145p11
-// drake178: AI_Alchemy()
-/*
-converts the player's gold into mana or vice versa
-based on a set of criteria
-
-BUG: when banished, converted gold replaces existing
-mana instead of being added to it
-*/
-/*
-
-rearranges gold and mana
-
-*/
 void AI_Update_Gold_And_Mana_Reserves(int16_t player_idx)
 {
-    int16_t Desired_Mana = 0;
-    int16_t Desired_Gold = 0;
-    int16_t Resource_Total = 0;
-
+    int32_t desired_mana = 0;
+    int32_t desired_gold = 0;
+    int32_t resource_total = 0;
     if(_players[player_idx].casting_spell_idx == spl_Spell_Of_Return)
     {
-
-        // ; convert all gold into mana
-        // ; 
-        // ; BUG: assumes no mana to begin with, overwriting it
-        // ; instead of adding to it
-
         if(_players[player_idx].alchemy == 1)
         {
-
-            _players[player_idx].mana_reserve = _players[player_idx].gold_reserve;  // ; BUG: assumes that the wizard had no mana originally
-
+            _players[player_idx].mana_reserve = _players[player_idx].gold_reserve;  /* OGBUG  should be +=, not = */
         }
         else
         {
-            
-            _players[player_idx].mana_reserve = (_players[player_idx].gold_reserve / 2);  // ; BUG: assumes that the wizard had no mana originally
-
+            _players[player_idx].mana_reserve = (_players[player_idx].gold_reserve / 2);  /* OGBUG  should be +=, not = */
         }
-
         _players[player_idx].gold_reserve = 0;
-
     }
     else
     {
-
         if(_players[player_idx].alchemy != 1)
         {
-
             if(_players[player_idx].mana_reserve == 0)
             {
-
                 _players[player_idx].mana_reserve = (_players[player_idx].gold_reserve / 4);
-
                 _players[player_idx].gold_reserve = (_players[player_idx].gold_reserve / 2);
-
             }
-
             if(Random(10) == 1)
             {
-    
-                if(_players[player_idx].mana_reserve >= (_players[player_idx].gold_reserve / 5))
+                if(_players[player_idx].mana_reserve < (_players[player_idx].gold_reserve / 5))
                 {
-
-                    if(_players[player_idx].gold_reserve >= (_players[player_idx].mana_reserve / 4))
+                    if(_players[player_idx].gold_reserve > 100)
                     {
-
-                        if(
-                            (_turn < 100)
-                            &&
-                            _players[player_idx].mana_reserve > 50
-                        )
-                        {
-
-                            Desired_Gold = _players[player_idx].gold_reserve;
-
-                            Desired_Mana = _players[player_idx].mana_reserve;
-
-                            Desired_Gold = (Desired_Mana / 4);
-
-                            Desired_Mana = (Desired_Mana - (Desired_Mana / 2));
-
-                            SETMAX(Desired_Mana, MAX_MANA_RESERVE);
-
-                            SETMAX(Desired_Gold, MAX_GOLD_RESERVE);
-
-                            _players[player_idx].gold_reserve = Desired_Gold;
-
-                            _players[player_idx].mana_reserve = Desired_Mana;
-
-                        }
-
+                        desired_gold = (int32_t)_players[player_idx].gold_reserve;
+                        desired_mana = (int32_t)_players[player_idx].mana_reserve;
+                        desired_mana += (desired_gold / 4);
+                        desired_gold = (desired_gold - (desired_gold / 2));
+                        SETMAX(desired_mana, MAX_MANA_RESERVE);
+                        SETMAX(desired_gold, MAX_GOLD_RESERVE);
+                        _players[player_idx].gold_reserve = desired_gold;
+                        _players[player_idx].mana_reserve = desired_mana;
                     }
-
+                }
+                else if(_players[player_idx].gold_reserve < (_players[player_idx].mana_reserve / 4))
+                {
+                    if(_players[player_idx].mana_reserve > 100)
+                    {
+                        desired_gold = (int32_t)_players[player_idx].gold_reserve;
+                        desired_mana = (int32_t)_players[player_idx].mana_reserve;
+                        desired_gold += (desired_mana / 4);
+                        desired_mana = (desired_mana - (desired_mana / 2));
+                        SETMAX(desired_mana, MAX_MANA_RESERVE);
+                        SETMAX(desired_gold, MAX_GOLD_RESERVE);
+                        _players[player_idx].gold_reserve = desired_gold;
+                        _players[player_idx].mana_reserve = desired_mana;
+                    }
                 }
                 else
                 {
-
-                    if(_players[player_idx].gold_reserve > 100)
+                    if(_turn < 100)
                     {
-
-                        Desired_Gold = _players[player_idx].gold_reserve;
-
-                        Desired_Mana = _players[player_idx].mana_reserve;
-
-                        Desired_Mana = (Desired_Gold / 4);
-
-                        Desired_Gold = (Desired_Gold - (Desired_Gold / 2));
-
-                        SETMAX(Desired_Mana, MAX_MANA_RESERVE);
-
-                        SETMAX(Desired_Gold, MAX_GOLD_RESERVE);
-
-                        _players[player_idx].gold_reserve = Desired_Gold;
-
-                        _players[player_idx].mana_reserve = Desired_Mana;
-
+                        if(_players[player_idx].mana_reserve > 50)
+                        {
+                            desired_gold = (int32_t)_players[player_idx].gold_reserve;
+                            desired_mana = (int32_t)_players[player_idx].mana_reserve;
+                            desired_gold += desired_mana / 4;
+                            desired_mana -= desired_mana / 2;
+                            SETMAX(desired_mana, MAX_MANA_RESERVE);
+                            SETMAX(desired_gold, MAX_GOLD_RESERVE);
+                            _players[player_idx].gold_reserve = (int)desired_gold;
+                            _players[player_idx].mana_reserve = (int)desired_mana;
+                        }
                     }
-
                 }
-
             }
-
         }
-        else
+        else  /* "the retort path" */
         {
-
             // want more gold or more mana
             if(_turn >= 150)
             {
-
-                Resource_Total = (_players[player_idx].gold_reserve + _players[player_idx].mana_reserve);
-
-                Desired_Mana = (Resource_Total * 7 / 10);  // mana = total * .7
-
-                SETMAX(Desired_Mana, MAX_MANA_RESERVE);
-
-                Desired_Gold = (Resource_Total - Desired_Mana);
-
-                SETMAX(Desired_Gold, MAX_GOLD_RESERVE);
-
+                resource_total = (_players[player_idx].gold_reserve + _players[player_idx].mana_reserve);
+                desired_mana = (resource_total * 7 / 10);  // mana = total * .7
+                SETMAX(desired_mana, MAX_MANA_RESERVE);
+                desired_gold = (resource_total - desired_mana);
+                SETMAX(desired_gold, MAX_GOLD_RESERVE);
             }
             else
             {
-
-                Resource_Total = (_players[player_idx].gold_reserve + _players[player_idx].mana_reserve);
-
-                Desired_Gold = (Resource_Total * 9 / 10);  // gold = total * .9
-
-                SETMAX(Desired_Gold, MAX_GOLD_RESERVE);
-
-                Desired_Mana = (Resource_Total - Desired_Gold);
-
-
-                SETMAX(Desired_Mana, MAX_MANA_RESERVE);
-
+                resource_total = (_players[player_idx].gold_reserve + _players[player_idx].mana_reserve);
+                desired_gold = (resource_total * 9 / 10);  // gold = total * .9
+                SETMAX(desired_gold, MAX_GOLD_RESERVE);
+                desired_mana = (resource_total - desired_gold);
+                SETMAX(desired_mana, MAX_MANA_RESERVE);
             }
-
-            _players[player_idx].gold_reserve = Desired_Gold;
-
-            _players[player_idx].mana_reserve = Desired_Mana;
-
+            _players[player_idx].gold_reserve = desired_gold;
+            _players[player_idx].mana_reserve = desired_mana;
         }
-
     }
-
 }
 
 
