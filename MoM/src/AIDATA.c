@@ -349,7 +349,6 @@ void Make_Monsters(void)
  *       @c Create_Unit__WIP(), @c Kill_Unit(), @c Army_At_Square_2(), and
  *       @c Adjacent_Free_Square() as part of the spawn attempt.
  */
-/* GEMINI */
 void Make_Raiders(void)
 {
     int16_t itr = 0;
@@ -415,8 +414,8 @@ void Make_Raiders(void)
 
     for(tries = 0; tries < 1000 && did_create == 0; tries++)
     {
-        /* BUG: Random(cities) - 1 can result in index -1 */
-        rolled_city = Random(_cities) - 1;
+
+        rolled_city = (Random(_cities) - 1);
 
         city_ptr = &_CITIES[rolled_city];
         if(city_ptr->owner_idx != NEUTRAL_PLAYER_IDX)
@@ -480,17 +479,19 @@ void Make_Raiders(void)
         /* Calculate how many raiders should spawn */
         raiders_count = (troop_count * _difficulty) / 6;
 
-        // Reduce raiders by 1/3 if AI fortress is present
-        // What the game-play rationale for this?
-        // Being nice to the human player, assuming they are already having to deal with a Computer Player being nearby?
-        // Being a cheatin' ass bitch on behalf of Computer Player?
+        /*
+            Reduce raiders by 1/3 if AI fortress is present
+            What the game-play rationale for this?
+            Being nice to the human player, assuming they are already having to deal with a Computer Player being nearby?
+            Being a cheatin' ass bitch on behalf of Computer Player?
+        */
         if(have_ai_fortress == ST_TRUE)
         {
             raiders_count = (raiders_count * 2) / 3;
         }
 
         /* Myrror raiders are reduced in early game */
-        // Again, intent? Is life harder on Myrror?
+        /* Again, intent? Is life harder on Myrror? */
         if(city_wp == MYRROR_PLANE && _turn < 200)
         {
             raiders_count /= 2;
