@@ -516,6 +516,26 @@ void Load_Screen(void)
                 gd_dump_terrain_specials("412_Save_Terrain_Specials_T");
                 gd_dump_map_square_flags("413_Save_Map_Flags_M");
             }
+            /* 500-series: same snapshot at Stage 2's slot-5 save
+             * (selected_save_game_slot_idx 4 -> SAVE5.GAM) -- the post-Next-Turn
+             * state.  Matches OG's stub050:j_Save_SAVE_GAM trigger gated on
+             * save_gam_idx==4. */
+            if (selected_save_game_slot_idx == 4)
+            {
+                gd_dump_heroes          ("501_Save_Heroes_H");
+                gd_dump_players         ("502_Save_Players_P");
+                gd_dump_world_map       ("503_Save_World_Maps_W");
+                gd_dump_landmasses      ("504_Save_Landmasses_L");
+                gd_dump_nodes           ("505_Save_Nodes_N");
+                gd_dump_fortresses      ("506_Save_Fortresses_F");
+                gd_dump_towers          ("507_Save_Towers_T");
+                gd_dump_lairs           ("508_Save_Lairs_L");
+                gd_dump_items           ("509_Save_Items_I");
+                gd_dump_cities          ("510_Save_Cities_C");
+                gd_dump_units           ("511_Save_Units_U");
+                gd_dump_terrain_specials("512_Save_Terrain_Specials_T");
+                gd_dump_map_square_flags("513_Save_Map_Flags_M");
+            }
             Save_SAVE_GAM(selected_save_game_slot_idx);
             leave_screen_flag = ST_TRUE;
         }

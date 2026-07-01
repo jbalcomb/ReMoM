@@ -17,6 +17,7 @@
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 
 #include "../../platform/include/Platform.h"  /* Platform_Get_Millies() */
 
@@ -74,7 +75,6 @@
 #include <string.h>
 
 #include "NEXTTURN.h"
-#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -268,7 +268,7 @@ void Next_Turn_Proc(void)
     int16_t curr_prod_idx = 0;
     int16_t DBG_itr_cities = 0;
 
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Next_Turn_Proc()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 
     Delete_Dead_Units();
@@ -411,7 +411,7 @@ void Next_Turn_Proc(void)
     Reset_Draw_Active_Stack();
 
 
-    LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Next_Turn_Proc()", __FILE__, __LINE__);
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
 
@@ -613,11 +613,7 @@ void Next_Turn_Calc(void)
     uint64_t ntc_start_ms = Platform_Get_Millies();
 #endif
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_NEXTTURN, "[NEXTTURN] BEGIN Next_Turn_Calc() at %llu ms", (unsigned long long)ntc_start_ms);
-    LOG_DEBUG(LOG_CAT_GENERAL, "[NEXTTURN] BEGIN Next_Turn_Calc() at %llu ms", (unsigned long long)ntc_start_ms);
-    LOG_TRACE(LOG_CAT_GENERAL, "[NEXTTURN] BEGIN Next_Turn_Calc() at %llu ms", (unsigned long long)ntc_start_ms);
-#endif
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 /* CLAUDE */ #ifdef STU_DEBUG
 /* CLAUDE */ #define PHASE(CALL) do { uint64_t _ps = Platform_Get_Millies(); CALL; { uint64_t _pe = Platform_Get_Millies(); LOG_INFO(LOG_CAT_NEXTTURN, "[NEXTTURN] phase %-48s = %llu ms", #CALL, (unsigned long long)(_pe - _ps)); LOG_TRACE(LOG_CAT_GENERAL, "[NEXTTURN] phase %-48s = %llu ms", #CALL, (unsigned long long)(_pe - _ps)); } } while(0)
@@ -865,12 +861,11 @@ void Next_Turn_Calc(void)
         uint64_t ntc_end_ms = Platform_Get_Millies();
         uint64_t ntc_dur_ms = ntc_end_ms - ntc_start_ms;
         LOG_INFO(LOG_CAT_NEXTTURN, "[GOLD] END Next_Turn_Calc: gold_reserve=%d", _players[0].gold_reserve);
-        LOG_INFO(LOG_CAT_NEXTTURN, "[NEXTTURN] END   Next_Turn_Calc() at %llu ms (duration=%llu ms)", (unsigned long long)ntc_end_ms, (unsigned long long)ntc_dur_ms);
-        LOG_DEBUG(LOG_CAT_GENERAL, "[NEXTTURN] END   Next_Turn_Calc() at %llu ms (duration=%llu ms)", (unsigned long long)ntc_end_ms, (unsigned long long)ntc_dur_ms);
-        LOG_TRACE(LOG_CAT_GENERAL, "[NEXTTURN] END   Next_Turn_Calc() at %llu ms (duration=%llu ms)", (unsigned long long)ntc_end_ms, (unsigned long long)ntc_dur_ms);
 /* CLAUDE */ #undef PHASE
     }
 #endif
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
 
@@ -2992,7 +2987,8 @@ void Apply_City_Changes(void)
             // apply population growth
             Population_Growth = City_Growth_Rate(itr_cities);
 
-            CITIES_POP_10S(itr_cities, (_CITIES[itr_cities].Pop_10s + Population_Growth));
+            // CITIES_POP_10S(itr_cities, (_CITIES[itr_cities].Pop_10s + Population_Growth));
+            _CITIES[(itr_cities)].Pop_10s = Population_Growth;
 
             // increase population
             if((_CITIES[itr_cities].Pop_10s >= 100) && (_CITIES[itr_cities].population < 25))

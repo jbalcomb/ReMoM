@@ -167,11 +167,7 @@ void AI_Next_Turn(void)
     uint64_t ntc_start_ms = Platform_Get_Millies();
 #endif
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_AIDUDES, "DEBUG: [%s, %d]: BEGIN: AI_Next_Turn()", __FILE__, __LINE__);
-    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Next_Turn()", __FILE__, __LINE__);
-    LOG_TRACE(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Next_Turn()", __FILE__, __LINE__);
-#endif
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 /* CLAUDE */ #ifdef STU_DEBUG
 /* CLAUDE */ #define PHASE(CALL) do { uint64_t _ps = Platform_Get_Millies(); CALL; { uint64_t _pe = Platform_Get_Millies(); LOG_INFO(LOG_CAT_AIDUDES, "[NEXTTURN] phase %-48s = %llu ms", #CALL, (unsigned long long)(_pe - _ps)); LOG_TRACE(LOG_CAT_AIMOVE, "[NEXTTURN] phase %-48s = %llu ms", #CALL, (unsigned long long)(_pe - _ps)); } } while(0)
@@ -385,11 +381,7 @@ void AI_Next_Turn(void)
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: === END Turn %d ===", _turn);
 #endif
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_AIDUDES, "DEBUG: [%s, %d]: END: AI_Next_Turn()", __FILE__, __LINE__);
-    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Next_Turn()", __FILE__, __LINE__);
-    LOG_TRACE(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Next_Turn()", __FILE__, __LINE__);
-#endif
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
 
