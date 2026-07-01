@@ -927,9 +927,9 @@ void All_Colony_Calculations(void)
     City_Apply_Production()
         UNIT_Create((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx)
     WIZ_HireHero()
-        Create_Unit__WIP(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), -1);
+        Create_Unit(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), -1);
     Lair_Make_Guardians()
-        Create_Unit__WIP(_LAIRS[lair_idx].guard2_unit_type, NEUTRAL_PLAYER_IDX, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, 2000)
+        Create_Unit(_LAIRS[lair_idx].guard2_unit_type, NEUTRAL_PLAYER_IDX, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, 2000)
 wp
     9 if in combat
 
@@ -949,152 +949,148 @@ R_Param
         also used by Demon Lord's Summon Demon
 
 */
-int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16_t wy, int16_t wp, int16_t R_Param)
+int16_t Create_Unit(int16_t unit_type, int16_t owner_idx, int16_t wx, int16_t wy, int16_t wp, int16_t R_Param)
 {
-    
-    int16_t did_create_unit;  // DNE in Dasm
-    int16_t itr;  // _DI_
+    int16_t itr = 0;
+    int16_t did_create_unit = 0;  // DNE in Dasm
 
     did_create_unit = ST_FALSE;
 
     if(
         (owner_idx == HUMAN_PLAYER_IDX)
         ||
-        (_units <= 950)
+        (_units > 950)
         ||
-        (R_Param == 2000)
+        (R_Param != 2000)
     )
     {
-        if(
-            (R_Param == 2000)
-            ||
-            (_units <= 980)
-        )
+        goto Done_Failure;
+    }
+
+    if(
+        (R_Param != 2000)
+        &&
+        (_units > 980)
+    )
+    {
+        goto Done_Failure;
+    }
+    
+    if(_units == MAX_UNIT_COUNT)
+    {
+        goto Done_Failure;
+    }
+    
+    _UNITS[_units].wx = (int8_t)wx;
+    _UNITS[_units].wy = (int8_t)wy;
+    _UNITS[_units].wp = (int8_t)wp;
+    _UNITS[_units].owner_idx = (int8_t)owner_idx;
+    _UNITS[_units].moves2_max = _unit_type_table[unit_type].Move_Halves;
+    _UNITS[_units].type = (uint8_t)unit_type;
+    _UNITS[_units].Hero_Slot = ST_UNDEFINED;
+    _UNITS[_units].in_tower = ST_FALSE;
+    _UNITS[_units].Finished = ST_TRUE;
+    _UNITS[_units].moves2 = 0;
+    _UNITS[_units].Sight_Range = _unit_type_table[unit_type].Sight;
+    _UNITS[_units].dst_wx = 0;
+    _UNITS[_units].dst_wy = 0;
+    _UNITS[_units].Status = us_Ready;
+    _UNITS[_units].Level = 0;
+    _UNITS[_units].XP = 0;
+    _UNITS[_units].Damage = 0;
+    _UNITS[_units].Draw_Priority = 0;
+    _UNITS[_units].enchantments = 0;
+    _UNITS[_units].mutations = 0;
+    _UNITS[_units].Move_Failed = ST_FALSE;
+    _UNITS[_units].Rd_Constr_Left = ST_UNDEFINED;
+
+    if((R_Param < 0) || R_Param >= 2000)
+    {
+        /* ¿ OGBUG  this means level 0 Raiders never get created ? */
+        if(R_Param < -1)
         {
-            
-            if(_units != MAX_UNIT_COUNT)
-            {
-                _UNITS[_units].wx = (int8_t)wx;
-                _UNITS[_units].wy = (int8_t)wy;
-                _UNITS[_units].wp = (int8_t)wp;
-                _UNITS[_units].owner_idx = (int8_t)owner_idx;
-                _UNITS[_units].moves2_max = _unit_type_table[unit_type].Move_Halves;
-                _UNITS[_units].type = (uint8_t)unit_type;
-                _UNITS[_units].Hero_Slot = ST_UNDEFINED;
-                _UNITS[_units].in_tower = ST_FALSE;
-                _UNITS[_units].Finished = ST_TRUE;
-                _UNITS[_units].moves2 = 0;
-                _UNITS[_units].Sight_Range = _unit_type_table[unit_type].Sight;
-                _UNITS[_units].dst_wx = 0;
-                _UNITS[_units].dst_wy = 0;
-                _UNITS[_units].Status = us_Ready;
-                _UNITS[_units].Level = 0;
-                _UNITS[_units].XP = 0;
-                _UNITS[_units].Damage = 0;
-                _UNITS[_units].Draw_Priority = 0;
-                _UNITS[_units].enchantments = 0;
-                _UNITS[_units].mutations = 0;
-                _UNITS[_units].Move_Failed = ST_FALSE;
-                _UNITS[_units].Rd_Constr_Left = ST_UNDEFINED;
-
-                if((R_Param < 0) || R_Param >= 2000)
-                {
-                    // ¿ OGBUG  this means level 0 Raiders never get created ?
-                    if(R_Param < -1)
-                    {
-                        R_Param = (abs(R_Param) - 1);
-                        _UNITS[_units].XP = TBL_Experience[R_Param];
-                        _UNITS[_units].Level = (int8_t)Calc_Unit_Level(_units);
-                    }
-                }
-                else  /* ((R_Param >= 0) && R_Param < 2000) */
-                {
-                    if(
-                        (_CITIES[R_Param].bldg_status[bt_FightersGuild] == bs_Built) ||
-                        (_CITIES[R_Param].bldg_status[bt_FightersGuild] == bs_Replaced)
-                    )
-                    {
-                        _UNITS[_units].XP = TBL_Experience[UL_REGULAR];
-                    }
-
-                    if(
-                        (_CITIES[R_Param].bldg_status[bt_WarCollege] == bs_Built) ||
-                        (_CITIES[R_Param].bldg_status[bt_WarCollege] == bs_Replaced)
-                    )
-                    {
-                        _UNITS[_units].XP = TBL_Experience[UL_VETERAN];
-                    }
-
-                    if(_CITIES[R_Param].enchantments[ALTAR_OF_BATTLE] > 0)
-                    {
-                        _UNITS[_units].XP = TBL_Experience[UL_ELITE];
-                    }
-
-                    // TODO  double check this is a direct assignment to the bitfield
-                    _UNITS[_units].mutations = (int8_t)City_Best_Weapon(R_Param);
-
-                    if((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
-                    {
-
-                        _CITIES[R_Param].population -= 1;
-
-                        if(_CITIES[R_Param].population == 0)
-                        {
-                            _CITIES[R_Param].Pop_10s = 3;
-
-                            if(_CITIES[R_Param].owner_idx >= _num_players)
-                            {
-                                for(itr = 0; itr < _num_players; itr++)
-                                {
-                                    if(
-                                        (_CITIES[R_Param].wx == _FORTRESSES[itr].wx)
-                                        &&
-                                        (_CITIES[R_Param].wy == _FORTRESSES[itr].wy)
-                                        &&
-                                        (_CITIES[R_Param].wp == _FORTRESSES[itr].wp)
-                                    )
-                                    {
-                                        _CITIES[R_Param].population += 1;
-                                        if(itr == HUMAN_PLAYER_IDX)
-                                        {
-                                            LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 11, 1, 150);  // "The last few people are required to maintain your fortress. They may not become settlers.  Settler unit not built."
-                                            Warn0(GUI_NearMsgString);
-                                            goto Done_Failure;
-                                        }
-                                    }
-                                }
-                            }
-                            
-                            Destroy_City(R_Param);
-
-                        }
-                    }
-
-                    if(
-                        (_players[owner_idx].alchemy > 0)
-                        &&
-                        (_UNITS[_units].mutations == 0)
-                    )
-                    {
-                        _UNITS[_units].mutations = wq_Magic;                        
-                    }
-
-                    if(
-                        (_players[owner_idx].Globals[CHAOS_SURGE] > 0)
-                        &&
-                        ((_unit_type_table[unit_type].Abilities & UA_FANTASTIC) == 0)
-                    )
-                    {
-                        // TODO  UNIT_ChaosChannel(_units);
-                    }
-
-                    _UNITS[_units].Level = (int8_t)Calc_Unit_Level(_units);
-                }
-
-                goto Done_Success;
-            }
+            R_Param = (abs(R_Param) - 1);
+            _UNITS[_units].XP = TBL_Experience[R_Param];
+            _UNITS[_units].Level = (int8_t)Calc_Unit_Level(_units);
         }
     }
+    else  /* ((R_Param >= 0) && R_Param < 2000) */
+    {
+        if(
+            (_CITIES[R_Param].bldg_status[bt_FightersGuild] == bs_Built) ||
+            (_CITIES[R_Param].bldg_status[bt_FightersGuild] == bs_Replaced)
+        )
+        {
+            _UNITS[_units].XP = TBL_Experience[UL_REGULAR];
+        }
+
+        if(
+            (_CITIES[R_Param].bldg_status[bt_WarCollege] == bs_Built) ||
+            (_CITIES[R_Param].bldg_status[bt_WarCollege] == bs_Replaced)
+        )
+        {
+            _UNITS[_units].XP = TBL_Experience[UL_VETERAN];
+        }
+
+        if(_CITIES[R_Param].enchantments[ALTAR_OF_BATTLE] > 0)
+        {
+            _UNITS[_units].XP = TBL_Experience[UL_ELITE];
+        }
+
+        _UNITS[_units].mutations = (int8_t)City_Best_Weapon(R_Param);
+
+        /* Special handling for Settlers */
+        if((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
+        {
+            _CITIES[R_Param].population -= 1;
+            if(_CITIES[R_Param].population == 0)
+            {
+                _CITIES[R_Param].Pop_10s = 3;
+                if(_CITIES[R_Param].owner_idx >= _num_players)
+                {
+                    for(itr = 0; itr < _num_players; itr++)
+                    {
+                        if(
+                            (_CITIES[R_Param].wx == _FORTRESSES[itr].wx)
+                            &&
+                            (_CITIES[R_Param].wy == _FORTRESSES[itr].wy)
+                            &&
+                            (_CITIES[R_Param].wp == _FORTRESSES[itr].wp)
+                        )
+                        {
+                            _CITIES[R_Param].population += 1;
+                            if(itr == HUMAN_PLAYER_IDX)
+                            {
+                                LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 11, 1, 150);  // "The last few people are required to maintain your fortress. They may not become settlers.  Settler unit not built."
+                                Warn0(GUI_NearMsgString);
+                            }
+                            goto Done_Failure;  /* Failure: Cannot destroy fortress city */
+                        }
+                    }
+                }
+                Destroy_City(R_Param);
+            }
+        }
+        if(
+            (_players[owner_idx].alchemy > 0)
+            &&
+            (_UNITS[_units].mutations == 0)
+        )
+        {
+            _UNITS[_units].mutations = wq_Magic;                        
+        }
+        if(
+            (_players[owner_idx].Globals[CHAOS_SURGE] > 0)
+            &&
+            ((_unit_type_table[unit_type].Abilities & UA_FANTASTIC) == 0)
+        )
+        {
+            Apply_Chaos_Channels(_units);
+        }
+        _UNITS[_units].Level = (int8_t)Calc_Unit_Level(_units);
+    }
+
+    goto Done_Success;
 
 Done_Failure:
     did_create_unit = ST_FALSE;
@@ -1106,7 +1102,6 @@ Done_Success:
     goto Done;
 
 Done:
-
     return did_create_unit;
 }
 
@@ -2167,7 +2162,7 @@ void City_Apply_Production(int16_t city_idx)
             if((_units + 1) < MAX_UNIT_COUNT)
             {
 
-                Create_Unit__WIP((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx);
+                Create_Unit((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx);
 
                 UNIT_RemoveExcess((_units - 1));
 
@@ -3503,7 +3498,7 @@ void Determine_Offer(void)
                         for(itr = 0; itr < Merc_Amount; itr++)
                         {
 
-                            Create_Unit__WIP(unit_type, itr_players, wx, wy, wp, -1);
+                            Create_Unit(unit_type, itr_players, wx, wy, wp, -1);
 
                             _UNITS[(_units - 1)].Level = (int8_t)Merc_Level;
 

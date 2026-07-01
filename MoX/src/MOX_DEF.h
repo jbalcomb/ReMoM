@@ -710,7 +710,7 @@ enum enum_BANNER_COLOR_ID
 
 
 
-#define MAX_UNIT_COUNT                  1000    /* AKA MAX_UNITS  used by Create_Unit__WIP(); City_Apply_Production(); Determine_Offer(); */
+#define MAX_UNIT_COUNT                  1000    /* AKA MAX_UNITS  used by Create_Unit(); City_Apply_Production(); Determine_Offer(); */
 /* vs. whatever uses 1009? */
 #define MAX_CITY_COUNT                   100
 #define MAX_WHAT_COUNT  (MAX_UNIT_COUNT + MAX_CITY_COUNT)  // no idea what to call this ... entity_idx above this is Nodes

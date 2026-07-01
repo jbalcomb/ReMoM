@@ -4288,7 +4288,7 @@ void Lair_Make_Guardians(int16_t lair_idx)
 
     for(itr = 0; ((itr < guard_count) && (unit_count < MAX_STACK)); itr++)
     {
-        if(Create_Unit__WIP(_LAIRS[lair_idx].guard1_unit_type, NEUTRAL_PLAYER_IDX, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, 2000) == ST_TRUE)
+        if(Create_Unit(_LAIRS[lair_idx].guard1_unit_type, NEUTRAL_PLAYER_IDX, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, 2000) == ST_TRUE)
         {
             if(_LAIRS[lair_idx].guard1_unit_type < ut_Magic_Spirit)
             {
@@ -4302,7 +4302,7 @@ void Lair_Make_Guardians(int16_t lair_idx)
 
     for(itr = 0; ((itr < guard_count) && (unit_count < MAX_STACK)); itr++)
     {
-        if(Create_Unit__WIP(_LAIRS[lair_idx].guard2_unit_type, NEUTRAL_PLAYER_IDX, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, 2000) == ST_TRUE)
+        if(Create_Unit(_LAIRS[lair_idx].guard2_unit_type, NEUTRAL_PLAYER_IDX, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, 2000) == ST_TRUE)
         {
             if(_LAIRS[lair_idx].guard2_unit_type < ut_Magic_Spirit)
             {
@@ -11790,7 +11790,7 @@ case scc_Disjunction_Spell:  // 20
 
         case scc_Summoning:
         {
-            did_create_unit = Create_Unit__WIP(spell_data_table[spell_idx].unit_type, player_idx, 0, 0, 9, 2000);
+            did_create_unit = Create_Unit(spell_data_table[spell_idx].unit_type, player_idx, 0, 0, 9, 2000);
             if(did_create_unit == ST_TRUE)
             {
                 UNIT_SummonToBattle__SEGRAX(player_idx, (_units - 1), target_cgx, target_cgy);
@@ -15721,7 +15721,7 @@ void BU_SummonDemon__SEGRAX(int16_t caster_idx)
         battle_units[caster_idx].Attribs_1 ^= USA_SUMMON_DEMON_1;
     }
 
-    Create_Unit__WIP(ut_Demon, battle_units[caster_idx].controller_idx, 0, 0, 9, 2000);
+    Create_Unit(ut_Demon, battle_units[caster_idx].controller_idx, 0, 0, 9, 2000);
 
     do {
         if(battle_units[caster_idx].controller_idx == _combat_attacker_player)

@@ -25,7 +25,7 @@ HIRE.c
         Hire_Success = WIZ_HireHero(HUMAN_PLAYER_IDX, unit_type_idx, hero_slot_idx, ST_FALSE);
 Spells132.c
     int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slot_idx, int16_t saved_flag)
-        Create_Unit__WIP(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), -1);
+        Create_Unit(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), -1);
 
 */
 #include <gtest/gtest.h>
@@ -125,7 +125,7 @@ protected:
 TEST_F(MyClassTestFixture, MOM_Create_Unit)
 {
     EXPECT_EQ(_units, 0);
-    Create_Unit__WIP(ut_LizSettlers, 0, 1, 1, 0, 2000);
+    Create_Unit(ut_LizSettlers, 0, 1, 1, 0, 2000);
     EXPECT_EQ(_units, 1);
     EXPECT_EQ(_UNITS[0].wx, 1);                     // _UNITS[_units].wx = wx;
     EXPECT_EQ(_UNITS[0].wy, 1);                     // _UNITS[_units].wy = wy;
@@ -149,7 +149,7 @@ TEST_F(MyClassTestFixture, MOM_Create_Unit)
     EXPECT_EQ(_UNITS[0].mutations, 0);              // _UNITS[_units].mutations = 0;
     EXPECT_EQ(_UNITS[0].Move_Failed, ST_FALSE);     // _UNITS[_units].Move_Failed = ST_FALSE;
     EXPECT_EQ(_UNITS[0].Rd_Constr_Left, -1);        // _UNITS[_units].Rd_Constr_Left = -1;
-    Create_Unit__WIP(ut_LizHalberdiers, 1, 2, 2, 1, 2000);
+    Create_Unit(ut_LizHalberdiers, 1, 2, 2, 1, 2000);
     EXPECT_EQ(_units, 2);
     EXPECT_EQ(_UNITS[1].wx, 2);                         // _UNITS[_units].wx = wx;
     EXPECT_EQ(_UNITS[1].wy, 2);                         // _UNITS[_units].wy = wy;
@@ -241,7 +241,7 @@ CITYCALC    int16_t Unit_Base_Level(int16_t unit_idx)
 //     _units = 0;
 //     _UNITS = (struct s_UNIT * )Allocate_Space((sizeof(struct s_UNIT) * 2) / SZ_PARAGRAPH_B);
 // 
-//     Create_Unit__WIP(ut_LizSettlers, 0, 1, 1, 0, 2000);
+//     Create_Unit(ut_LizSettlers, 0, 1, 1, 0, 2000);
 // 
 //     EXPECT_EQ(Unit_Base_Level(0), 0);
 // 
@@ -253,21 +253,21 @@ CITYCALC    int16_t Unit_Base_Level(int16_t unit_idx)
 TEST_F(MyClassTestFixture, MOM_Kill_Unit_kt0)
 {
     EXPECT_EQ(_units, 0);
-    Create_Unit__WIP(ut_LizSettlers, 0, 1, 1, 0, 2000);
+    Create_Unit(ut_LizSettlers, 0, 1, 1, 0, 2000);
     EXPECT_EQ(_units, 1);
     EXPECT_EQ(_UNITS[0].type, ut_LizSettlers);
     EXPECT_EQ(_UNITS[0].owner_idx, 0);
     EXPECT_EQ(_UNITS[0].wx, 1);
     EXPECT_EQ(_UNITS[0].wy, 1);
     EXPECT_EQ(_UNITS[0].wp, 0);
-    Create_Unit__WIP(ut_LizSettlers, 0, 1, 1, 0, 2000);
+    Create_Unit(ut_LizSettlers, 0, 1, 1, 0, 2000);
     EXPECT_EQ(_units, 2);
     EXPECT_EQ(_UNITS[1].type, ut_LizSettlers);
     EXPECT_EQ(_UNITS[1].owner_idx, 0);
     EXPECT_EQ(_UNITS[1].wx, 1);
     EXPECT_EQ(_UNITS[1].wy, 1);
     EXPECT_EQ(_UNITS[1].wp, 0);
-    Create_Unit__WIP(ut_LizSettlers, 0, 1, 1, 0, 2000);
+    Create_Unit(ut_LizSettlers, 0, 1, 1, 0, 2000);
     EXPECT_EQ(_units, 3);
     EXPECT_EQ(_UNITS[2].type, ut_LizSettlers);
     EXPECT_EQ(_UNITS[2].owner_idx, 0);
@@ -288,14 +288,14 @@ TEST_F(MyClassTestFixture, MOM_Kill_Unit_kt0)
 TEST_F(MyClassTestFixture, MOM_Kill_Unit_kt1)
 {
     EXPECT_EQ(_units, 0);
-    Create_Unit__WIP(ut_LizSettlers, 0, 1, 1, 0, 2000);
+    Create_Unit(ut_LizSettlers, 0, 1, 1, 0, 2000);
     EXPECT_EQ(_units, 1);
     EXPECT_EQ(_UNITS[0].type, ut_LizSettlers);
     EXPECT_EQ(_UNITS[0].owner_idx, 0);
     EXPECT_EQ(_UNITS[0].wx, 1);
     EXPECT_EQ(_UNITS[0].wy, 1);
     EXPECT_EQ(_UNITS[0].wp, 0);
-    Create_Unit__WIP(ut_LizHalberdiers, 1, 2, 2, 1, 2000);
+    Create_Unit(ut_LizHalberdiers, 1, 2, 2, 1, 2000);
     EXPECT_EQ(_units, 2);
     EXPECT_EQ(_UNITS[1].type, ut_LizHalberdiers);
     EXPECT_EQ(_UNITS[1].owner_idx, 1);
@@ -310,14 +310,14 @@ TEST_F(MyClassTestFixture, MOM_Kill_Unit_kt1)
 TEST_F(MyClassTestFixture, MOM_Kill_Unit_kt2)
 {
     EXPECT_EQ(_units, 0);
-    Create_Unit__WIP(ut_LizSettlers, 0, 1, 1, 0, 2000);
+    Create_Unit(ut_LizSettlers, 0, 1, 1, 0, 2000);
     EXPECT_EQ(_units, 1);
     EXPECT_EQ(_UNITS[0].type, ut_LizSettlers);
     EXPECT_EQ(_UNITS[0].owner_idx, 0);
     EXPECT_EQ(_UNITS[0].wx, 1);
     EXPECT_EQ(_UNITS[0].wy, 1);
     EXPECT_EQ(_UNITS[0].wp, 0);
-    Create_Unit__WIP(ut_LizHalberdiers, 1, 2, 2, 1, 2000);
+    Create_Unit(ut_LizHalberdiers, 1, 2, 2, 1, 2000);
     EXPECT_EQ(_units, 2);
     EXPECT_EQ(_UNITS[1].type, ut_LizHalberdiers);
     EXPECT_EQ(_UNITS[1].owner_idx, 1);
@@ -332,7 +332,7 @@ TEST_F(MyClassTestFixture, MOM_Kill_Unit_kt2)
 TEST_F(MyClassTestFixture, MOM_Delete_Dead_Units)
 {
     EXPECT_EQ(_units, 0);
-    Create_Unit__WIP(ut_LizSettlers, 0, 1, 1, 0, 2000);
+    Create_Unit(ut_LizSettlers, 0, 1, 1, 0, 2000);
     EXPECT_EQ(_units, 1);
     Kill_Unit(0, kt_Normal);
     EXPECT_EQ(_units, 1);
@@ -344,9 +344,9 @@ TEST_F(MyClassTestFixture, MOM_Delete_Dead_Units_ConsecutiveDeadUnits)
 {
     EXPECT_EQ(_units, 0);
 
-    Create_Unit__WIP(ut_LizSettlers, 0, 1, 1, 0, 2000);
-    Create_Unit__WIP(ut_LizHalberdiers, 1, 2, 2, 0, 2000);
-    Create_Unit__WIP(ut_LizSwordsmen, 2, 3, 3, 0, 2000);
+    Create_Unit(ut_LizSettlers, 0, 1, 1, 0, 2000);
+    Create_Unit(ut_LizHalberdiers, 1, 2, 2, 0, 2000);
+    Create_Unit(ut_LizSwordsmen, 2, 3, 3, 0, 2000);
 
     EXPECT_EQ(_units, 3);
 

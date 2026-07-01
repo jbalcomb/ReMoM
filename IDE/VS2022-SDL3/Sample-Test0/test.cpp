@@ -56,7 +56,7 @@ TEST(MOM_test, MOM_Create_Unit)
 
     EXPECT_EQ(_units, 0);
 
-    Create_Unit__WIP(ut_LizSettlers, 0, 1, 1, 0, 2000);
+    Create_Unit(ut_LizSettlers, 0, 1, 1, 0, 2000);
 
     EXPECT_EQ(_units, 1);
 
@@ -66,7 +66,7 @@ TEST(MOM_test, MOM_Create_Unit)
     EXPECT_EQ(_UNITS[0].wy, 1);
     EXPECT_EQ(_UNITS[0].wp, 0);
 
-    Create_Unit__WIP(ut_LizHalberdiers, 1, 2, 2, 1, 2000);
+    Create_Unit(ut_LizHalberdiers, 1, 2, 2, 1, 2000);
 
     EXPECT_EQ(_units, 2);
 
@@ -95,7 +95,7 @@ TEST(MOM_test, MOM_Delete_Dead_Units)
 
     EXPECT_EQ(_units, 0);
 
-    Create_Unit__WIP(ut_LizSettlers, 0, 1, 1, 0, 2000);
+    Create_Unit(ut_LizSettlers, 0, 1, 1, 0, 2000);
 
     EXPECT_EQ(_units, 1);
     

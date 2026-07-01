@@ -94,7 +94,7 @@ flowchart TD
     Min1{"raiders_count &lt; 1?"}
     Set1["raiders_count = 1"]
     Level["raiders_level_neg by turn:<br/>&gt;250→-4, &gt;120→-3, &gt;40→-2, else -1"]
-    Spawn["for i in 0..raiders_count:<br/>pick random unit_type from troops<br/>skip if &lt;= BarbSwordsmen OR Transport OR CreateOutpost<br/>Create_Unit__WIP(NEUTRAL, adj, level)"]
+    Spawn["for i in 0..raiders_count:<br/>pick random unit_type from troops<br/>skip if &lt;= BarbSwordsmen OR Transport OR CreateOutpost<br/>Create_UnitRAL, adj, level)"]
     KillGarr["kill troops[0..units_created/3]"]
     Done(["return"])
     Fallback["average_unit_cost += 15"]
@@ -343,7 +343,7 @@ for(itr = 0; itr < raiders_count; itr++)
         continue;
     }
 
-    Create_Unit__WIP(unit_type, NEUTRAL_PLAYER_IDX, empty_adjacent_x, empty_adjacent_y, city_wp, raiders_level_neg);
+    Create_Unit_type, NEUTRAL_PLAYER_IDX, empty_adjacent_x, empty_adjacent_y, city_wp, raiders_level_neg);
     units_created++;
 }
 ```
@@ -354,7 +354,7 @@ Maps onto asm `loc_FA043`-`loc_FA0B1` (lines 317-361). Verifications:
 - Filter 1 — `unit_type <= ut_BarbSwordsmen`: asm:333-334 `cmp unit_type, ut_BarbSwordsmen; jle skip` ↔ production line 529. The inline `OGBUG` comment observes this incorrectly filters barbarian Spearmen and Swordsmen from raiding — presumably the OG intended `<` (skip Settlers only, which sits at value 0) or the enum ordering doesn't match intent. Preserved OG-as-written.
 - Filter 2 — `Transport != 0`: asm:335-340 ↔ production line 535.
 - Filter 3 — `UA_CREATEOUTPOST`: asm:341-346 ↔ production line 540. Note asm:342 has `mov dx, s_CITYSCAPE_R.row2.field_y2` — IDA picked a struct-field offset label whose numeric value happens to equal `sizeof(s_UNIT_TYPE)`. Production uses standard indexing; the OG oddity is IDA-label noise, not an actual byte mismatch.
-- `Create_Unit__WIP` call: asm:347-354 pushes `raiders_level_neg, city_wp, adjacent_wy, adjacent_wx, 5 (=NEUTRAL_PLAYER_IDX), unit_type` → C `(unit_type, NEUTRAL_PLAYER_IDX, empty_adjacent_x, empty_adjacent_y, city_wp, raiders_level_neg)`. Matches production line 549.
+- `Create_Unitl: asm:347-354 pushes `raiders_level_neg, city_wp, adjacent_wy, adjacent_wx, 5 (=NEUTRAL_PLAYER_IDX), unit_type` → C `(unit_type, NEUTRAL_PLAYER_IDX, empty_adjacent_x, empty_adjacent_y, city_wp, raiders_level_neg)`. Matches production line 549.
 - `units_created++`: asm:356 ↔ production line 550.
 
 Loop-exit: asm:359-361 `cmp itr2, [bp+n_raiders]; jl continue` ↔ production `for(itr = 0; itr < raiders_count; itr++)` at line 523.
@@ -404,7 +404,7 @@ Maps onto asm:394-397: after the tries loop exits, `cmp did_create, ST_FALSE; jn
 - **`Random(n)`** — RNG returning `1..n`. Multiple call sites: accumulator update, city roll, per-raider unit-type roll. Critical for PRNG parity.
 - **`Adjacent_Free_Square(wx, wy, wp, &adj_wx, &adj_wy)`** — finds an empty adjacent tile to spawn the raider party. Returns `ST_TRUE` on success.
 - **`Army_At_Square_2(wx, wy, wp, &troop_count, troops)`** — populates the source city's garrison list. Same right-to-left cdecl pattern as sibling helpers.
-- **`Create_Unit__WIP(type, owner, wx, wy, wp, level)`** ([AIDATA.c called]) — creates a new unit. Still `__WIP`-suffixed pending finalization. Called per raider spawned.
+- **`Create_Unit, owner, wx, wy, wp, level)`** ([AIDATA.c called]) — creates a new unit. Still `__WIP`-suffixed pending finalization. Called per raider spawned.
 - **`Kill_Unit(unit_idx, kt_Normal)`** — deletes a unit. Called on the source garrison's leading `units_created / 3` units to represent "the raid parties took them from the city."
 - **`AI_Metrics_Emit_NPC_Event(...)`** — ReMoM STU_LOG instrumentation. Not in OG.
 

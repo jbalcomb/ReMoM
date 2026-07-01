@@ -83,7 +83,7 @@ type
 
 Hire_Hero_Popup()
     |-> WIZ_HireHero()
-        |-> Create_Unit__WIP()
+        |-> Create_Unit()
 
 */
 // int16_t Cast_Summon_Hero(int16_t player_idx, int16_t type)
@@ -412,7 +412,7 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
 {
     int16_t itr = 0;
 
-    Create_Unit__WIP(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), ST_UNDEFINED);
+    Create_Unit(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), ST_UNDEFINED);
 
     _UNITS[(_units - 1)].Finished = ST_FALSE;  // default is ST_TRUE
     _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;  // default is 0
@@ -1271,7 +1271,7 @@ void Cast_Floating_Island(int16_t player_idx)
 
     }
 
-    Create_Unit__WIP(spell_data_table[spl_Floating_Island].unit_type, player_idx, wx, wy, wp, ST_UNDEFINED);
+    Create_Unit(spell_data_table[spl_Floating_Island].unit_type, player_idx, wx, wy, wp, ST_UNDEFINED);
    
 }
 

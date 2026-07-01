@@ -69,7 +69,7 @@ void All_Colony_Calculations(void);
 */
 
 // WZD o121p01
-int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16_t wy, int16_t wp, int16_t R_Param);
+int16_t Create_Unit(int16_t unit_type, int16_t owner_idx, int16_t wx, int16_t wy, int16_t wp, int16_t R_Param);
 
 // WZD o121p02
 int16_t Player_Base_Casting_Skill(int16_t player_idx);

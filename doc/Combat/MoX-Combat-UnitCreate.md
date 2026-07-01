@@ -174,7 +174,7 @@ CMB_CreateEntities__WIP()
 
 
 BU_SummonDemon__SEGRAX()
-    Create_Unit__WIP()
+    Create_Unit
     UNIT_SummonToBattle__SEGRAX()
     BU_CombatSummon__SEGRAX()
 
@@ -185,7 +185,7 @@ Cast_Spell_On_Battle_Unit()
 
     switch(spell_data_table[spell_idx].type)
         case scc_Summoning:
-            Figure_Count = Create_Unit__WIP(spell_data_table[spell_idx].unit_type, player_idx, 0, 0, 9, 2000);
+            Figure_Count = Create_Unitl_data_table[spell_idx].unit_type, player_idx, 0, 0, 9, 2000);
             if(Figure_Count == 1)
                 UNIT_SummonToBattle__SEGRAX(player_idx, (_units - 1), target_cgx, target_cgy);
                 BU_CombatSummon__SEGRAX((_combat_total_unit_count - 1), target_cgx, target_cgy, spell_idx, caster_idx);

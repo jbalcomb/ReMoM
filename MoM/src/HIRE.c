@@ -812,7 +812,7 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
 
     Set_Button_Down_Offsets(1, 1);
 
-    Create_Unit__WIP(CRP_EVNT_MercUnitType, HUMAN_PLAYER_IDX, _FORTRESSES[HUMAN_PLAYER_IDX].wx, _FORTRESSES[HUMAN_PLAYER_IDX].wy, _FORTRESSES[HUMAN_PLAYER_IDX].wp, ST_UNDEFINED);
+    Create_Unit(CRP_EVNT_MercUnitType, HUMAN_PLAYER_IDX, _FORTRESSES[HUMAN_PLAYER_IDX].wx, _FORTRESSES[HUMAN_PLAYER_IDX].wy, _FORTRESSES[HUMAN_PLAYER_IDX].wp, ST_UNDEFINED);
 
     _UNITS[(_units - 1)].Level = (int8_t)level;
 

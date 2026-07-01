@@ -322,7 +322,7 @@ void Make_Monsters(void)
     /* Create the units on the map */
     for(itr = 0; itr < n_monsters; itr++)
     {
-        Create_Unit__WIP(monster_type_list[itr], NEUTRAL_PLAYER_IDX, adjacent_wx, adjacent_wy, lair_wp, -1);
+        Create_Unit(monster_type_list[itr], NEUTRAL_PLAYER_IDX, adjacent_wx, adjacent_wy, lair_wp, -1);
     }
 
 }
@@ -357,7 +357,7 @@ void Make_Monsters(void)
  *       global player, city, unit, and fortress state.
  * @note Reads from globals including @c _players, @c _CITIES, @c _UNITS,
  *       @c _FORTRESSES, and @c _landmasses, and may call
- *       @c Create_Unit__WIP(), @c Kill_Unit(), @c Army_At_Square_2(), and
+ *       @c Create_Unit(), @c Kill_Unit(), @c Army_At_Square_2(), and
  *       @c Adjacent_Free_Square() as part of the spawn attempt.
  */
 void Make_Raiders(void)
@@ -558,7 +558,7 @@ void Make_Raiders(void)
 #ifdef STU_DEBUG
             LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Raiders creating unit type %d at (%d,%d) plane %d, level %d", unit_type, empty_adjacent_x, empty_adjacent_y, city_wp, raiders_level_neg);
 #endif
-            Create_Unit__WIP(unit_type, NEUTRAL_PLAYER_IDX, empty_adjacent_x, empty_adjacent_y, city_wp, raiders_level_neg);
+            Create_Unit(unit_type, NEUTRAL_PLAYER_IDX, empty_adjacent_x, empty_adjacent_y, city_wp, raiders_level_neg);
             units_created++;
         }
 

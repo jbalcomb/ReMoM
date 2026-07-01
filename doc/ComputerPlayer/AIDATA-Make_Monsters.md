@@ -27,7 +27,7 @@ The neutral player's monster-rampage scheduler — the sibling of [`Make_Raiders
 - **Plane-match gate**: after each search-loop iteration exits (via `lair_idx SET OR tries >= 1000`), roll `Random(3)`. If `<= 1` (⅓, matching OG's `jle short loc_F9B76`), accept the lair unconditionally. Otherwise, check `_FORTRESSES[HUMAN_PLAYER_IDX].wp == _LAIRS[lair_idx].wp`; on match, accept; on mismatch, spin (re-roll Random(3), keep `lair_idx`, do NOT increment `tries`).
 - **Race determination**: `guard1_unit_type.race_type`, or forced to `rt_Death` if the race enum is below `rt_Arcane`.
 - **Budget**: `((Random(diff+1) + Random(diff+1)) * _turn) / 5`. Halved if any AI wizard's fortress is on the same landmass (`ai_home_continent` flag).
-- **Spawn**: `Make_Monster_List` fills up to `MAX_STACK` unit types; `Create_Unit__WIP` places them at an `Adjacent_Free_Square` of the lair. Level-neg hard-coded to `-1`.
+- **Spawn**: `Make_Monster_List` fills up to `MAX_STACK` unit types; `Create_Unitces them at an `Adjacent_Free_Square` of the lair. Level-neg hard-coded to `-1`.
 
 ## How it's reached
 
@@ -91,7 +91,7 @@ flowchart TD
     AIReduce{"ai_home_continent?"}
     Halve["budget /= 2"]
     MakeList["n_monsters = Make_Monster_List(budget, race, list)"]
-    Spawn["for i in 0..n_monsters:<br/>Create_Unit__WIP(list[i], NEUTRAL, adj, wp, -1)"]
+    Spawn["for i in 0..n_monsters:<br/>Create_Unit[i], NEUTRAL, adj, wp, -1)"]
     Done(["return"])
 
     Entry --> ScanLairs --> ZoneGate
@@ -364,7 +364,7 @@ n_monsters = Make_Monster_List(rampage_budget, lair_race, &monster_type_list[0])
 ...
 for(itr = 0; itr < n_monsters; itr++)
 {
-    Create_Unit__WIP(monster_type_list[itr], NEUTRAL_PLAYER_IDX, adjacent_wx, adjacent_wy, lair_wp, -1);
+    Create_Unitter_type_list[itr], NEUTRAL_PLAYER_IDX, adjacent_wx, adjacent_wy, lair_wp, -1);
 }
 ```
 
@@ -372,7 +372,7 @@ Maps onto asm:461-490.
 
 - `Make_Monster_List` args right-to-left: `monster_type_list&, lair_race, rampage_budget` (asm:462-466). C call order: `(rampage_budget, lair_race, &monster_type_list[0])`. ✓
 - Return value → `n_monsters` (asm:468). ✓
-- `Create_Unit__WIP` args right-to-left: `-1, lair_wp, adjacent_wy, adjacent_wx, NEUTRAL_PLAYER_IDX, monster_type_list[itr]` (asm:472-485). C call: `(monster_type_list[itr], NEUTRAL, adjacent_wx, adjacent_wy, lair_wp, -1)`. ✓
+- `Create_Units right-to-left: `-1, lair_wp, adjacent_wy, adjacent_wx, NEUTRAL_PLAYER_IDX, monster_type_list[itr]` (asm:472-485). C call: `(monster_type_list[itr], NEUTRAL, adjacent_wx, adjacent_wy, lair_wp, -1)`. ✓
 - Hard-coded `-1` for `raiders_level_neg` param (asm:473). Monsters don't get level-neg scaling by turn (unlike [`Make_Raiders`](AIDATA-Make_Raiders.md)).
 
 ## OG quirks preserved (faithful — do not "fix")
@@ -395,7 +395,7 @@ Maps onto asm:461-490.
 - **`Random(n)`** — RNG returning `1..n`. Call sites: accumulator update, lair roll, plane-check gate, budget (2x).
 - **`Adjacent_Free_Square(wx, wy, wp, &adj_wx, &adj_wy)`** — finds an empty tile adjacent to the lair. Returns non-zero on success.
 - **`Make_Monster_List(budget, race, list_out)`** — separate function; fills up to `MAX_STACK` unit types for the given budget/race. Returns count.
-- **`Create_Unit__WIP(type, owner, wx, wy, wp, level)`** — creates a new unit. Called once per monster. Same `__WIP`-pending signature as [`Make_Raiders`](AIDATA-Make_Raiders.md).
+- **`Create_Unit, owner, wx, wy, wp, level)`** — creates a new unit. Called once per monster. Same `__WIP`-pending signature as [`Make_Raiders`](AIDATA-Make_Raiders.md).
 - **`AI_Metrics_Emit_NPC_Event(...)`** — ReMoM STU_LOG instrumentation. Not in OG.
 
 No `EMM_Map_CONTXXX__WIP` in this function.
