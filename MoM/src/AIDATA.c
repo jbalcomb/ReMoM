@@ -639,7 +639,7 @@ int16_t NPC_Destinations(void)
             dst_wy = _UNITS[troops[0]].dst_wy;
 
             /* Identify if current destination is a city */
-            target_city_idx = -1;
+            target_city_idx = ST_UNDEFINED;
             for(itr = 0; itr < _cities; itr++)
             {
                 if(_CITIES[itr].wx == dst_wx && _CITIES[itr].wy == dst_wy && _CITIES[itr].wp == stack_wp)
@@ -653,7 +653,7 @@ int16_t NPC_Destinations(void)
             {
                 /* Evaluate the worth of attacking the adjacent city */
                 Army_At_Square_1(_CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, _CITIES[adj_city_idx].wp, &troop_count, troops);
-                // OGBUG  ¿ Delta_XY_With_Wrap() is always 1 here ?  ... adj_city_idx
+                /* ¿ OGBUG  Delta_XY_With_Wrap() is always 1 here ?  ... adj_city_idx */
                 adj_city_val = 10 - troop_count - Delta_XY_With_Wrap(_CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, stack_wx, stack_wy, WORLD_WIDTH);
                 
                 if(_difficulty > god_Normal && _CITIES[adj_city_idx].owner_idx == HUMAN_PLAYER_IDX) adj_city_val += 5;
@@ -663,11 +663,9 @@ int16_t NPC_Destinations(void)
                 Army_At_Square_1(dst_wx, dst_wy, stack_wp, &troop_count, troops);
                 cur_target_val = 10 - troop_count - Delta_XY_With_Wrap(dst_wx, dst_wy, stack_wx, stack_wy, WORLD_WIDTH);
                 
-                if(target_city_idx != -1)
-                {
-                    if(_difficulty > god_Normal && _CITIES[target_city_idx].owner_idx == HUMAN_PLAYER_IDX) cur_target_val += 5;
-                    if(_difficulty > god_Hard   && _CITIES[target_city_idx].owner_idx == HUMAN_PLAYER_IDX) cur_target_val += 5;
-                }
+                /* OGBUG  OOB AVRL  target_city_idx can be -1 at `_CITIES[target_city_idx]` */
+                if(_difficulty > god_Normal && _CITIES[target_city_idx].owner_idx == HUMAN_PLAYER_IDX) cur_target_val += 5;
+                if(_difficulty > god_Hard   && _CITIES[target_city_idx].owner_idx == HUMAN_PLAYER_IDX) cur_target_val += 5;
 
                 if(adj_city_val > cur_target_val)
                 {
@@ -685,7 +683,7 @@ int16_t NPC_Destinations(void)
         if(stack->unit_status != us_GOTO)
         {
             adj_city_val = -1000;
-            target_city_idx = -1;
+            target_city_idx = ST_UNDEFINED;
             cities_examined = 0;
 
             for(itr = 0; itr < _cities; itr++)
