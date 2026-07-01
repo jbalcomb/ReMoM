@@ -241,7 +241,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
         ai_human_hostility = ST_TRUE;
     }
 
-    EMM_Map_CONTXXX__WIP();
+    CONTXXX_Map();
 
     _ai_ferry_count = 0;
 
@@ -4222,7 +4222,7 @@ void AI_Stacks_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                                         distance
                                     );
 
-                                EMM_Map_CONTXXX__WIP();
+                                CONTXXX_Map();
 
                                 if(map_square_value > highest_map_square_value)
                                 {
@@ -5346,7 +5346,7 @@ void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t w
 
 
     /* Phase 1: */
-    EMM_Map_CONTXXX__WIP();
+    CONTXXX_Map();
 
 
     /* Phase 2: */
@@ -6264,7 +6264,7 @@ int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
  *       settler target selection that depends on occupiable squares from
  *       @c g_ai_evaluation_map.
  * @note The routine temporarily maps the CONTXXX EMS data via
- *       @c EMM_Map_CONTXXX__WIP() and restores the default data mapping with
+ *       @c CONTXXX_Map() and restores the default data mapping with
  *       @c EMMDATAH_Map() before returning.
  */
 void AI_Evaluate_Continents(int16_t player_idx)
@@ -6304,7 +6304,7 @@ void AI_Evaluate_Continents(int16_t player_idx)
 
 
     /* Phase 1: */
-    EMM_Map_CONTXXX__WIP();  /* needs all the landmass data */
+    CONTXXX_Map();  /* needs all the landmass data */
 
 
     /* Phase 2: */
@@ -6787,7 +6787,7 @@ if we can move units off the current landmass, make sure the stage-square is the
  * planes. The low 14 bits store the accumulated evaluation value, while the
  * upper bits store flags such as @c AI_TARGET_NONHOSTILE and
  * @c AI_TARGET_SITE. The routine also depends on the continent-mapping state
- * prepared by @c EMM_Map_CONTXXX__WIP().
+ * prepared by @c CONTXXX_Map().
  *
  * @warning The implementation is still under reverse-engineering and contains
  * defensive range checks and naming that do not yet fully describe the final
@@ -6808,7 +6808,7 @@ void AI_Evaluation_Map(int16_t player_idx)
     struct s_CITY * p_city = NULL;
     struct s_NODE * p_node = NULL;
 
-    EMM_Map_CONTXXX__WIP();
+    CONTXXX_Map();
 
     /* Identify non-hostile players relative to the current player */
     for(itr = 0; itr < NUM_PLAYERS; itr++)
@@ -6972,7 +6972,7 @@ void AI_Choose_War_Landmass(int16_t player_idx)
 
     first_hostile_player_idx = ST_UNDEFINED;
 
-    EMM_Map_CONTXXX__WIP();
+    CONTXXX_Map();
 
     /* OGBUG  should check spl_Spell_Of_Mastery, not spl_Fire_Elemental */
     /* OGBUG  should exclude self - `itr_players != player_idx` */

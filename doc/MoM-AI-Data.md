@@ -138,13 +138,13 @@ Move_To_Stage_Points_()
 
 
 XREF:
-    EMM_Map_CONTXXX__WIP+E8      mov     [word ptr CONTX_OwnStack_Ps], ax  
+    CONTXXX_Map+E8      mov     [word ptr CONTX_OwnStack_Ps], ax  
     AI_CONTX_Regroup__WIP+32     les     bx, [CONTX_OwnStack_Ps]           
     AI_CONTX_Regroup__WIP+12B    les     bx, [CONTX_OwnStack_Ps]           
     AI_CONTX_Regroup__WIP+169    les     bx, [CONTX_OwnStack_Ps]           
     AI_Stacks_Move_Out_NonMilitary_Garrisoned+8E        les     bx, [CONTX_OwnStack_Ps]           
     AI_Stacks_Move_Out_NonMilitary_Garrisoned:loc_EFB7C les     bx, [CONTX_OwnStack_Ps]           
-    EMM_Map_CONTXXX__WIP+E4      mov     [word ptr CONTX_OwnStack_Ps+2], dx
+    CONTXXX_Map+E4      mov     [word ptr CONTX_OwnStack_Ps+2], dx
 
 
 

@@ -235,7 +235,7 @@ Faithful.
 - **`AI_Player_City_Buy_Production(player_idx, city_idx)`** — attempts to spend gold to complete the city's current construction faster. Only called when the city already has a real project (not Housing/TradeGoods) AND the player is a wizard (not neutral).
 - **`Random(n)`** — RNG returning `1..n`. Called at most once per city iteration.
 
-No I/O. No `EMM_Map_CONTXXX__WIP`.
+No I/O. No `CONTXXX_Map`.
 
 ## Related references
 

@@ -52,7 +52,7 @@ file offset of last terrain picture
                     // MS-DOS  terrain_pict_seg = EMM_PageFrame[(m_terrain_lbx_001 * 24)];  // segments; 24 * 16 = 384, sizeof pict; 180h offset from File, not Entry
                     // MS-DOS  if(terrain_000_elpn != terrain_001_0)
                     // MS-DOS  {
-                    // MS-DOS      EMM_Map4Pages(terrain_001_0, g_EmmHndl_TERRAIN); // First Logical Page, EMM Handle Name
+                    // MS-DOS      EMM_MapMulti4(terrain_001_0, g_EmmHndl_TERRAIN); // First Logical Page, EMM Handle Name
                     // MS-DOS  }
 
                     // map index in m_terrain_lbx_001 to TERRAIN.LBX Entry 0, instead of TERRAIN.LBX entire file in EMM
@@ -172,7 +172,7 @@ jz      short loc_D984D
 
 push    [ehn_terrain_lbx]               ; EMM_Handle
 push    [bp+terrain_001_0]              ; First_Log_Page
-call    EMM_Map4Pages                   ; maps in four consecutive logical pages from the
+call    EMM_MapMulti4                   ; maps in four consecutive logical pages from the
                                         ; passed handle, starting with the one specified
                                         ; uses a different EMM function than seg012:0255
                                         ; preserves all register values

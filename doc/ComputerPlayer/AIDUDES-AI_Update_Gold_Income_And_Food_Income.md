@@ -253,7 +253,7 @@ OG tests food first, then tries. Production `while (tries < 50 && food_income > 
 - **`CITIES_FARMER_COUNT(city_idx, value)`** — modder-API macro that stores `value` into `_CITIES[city_idx].farmer_count`. The OG asm does the same store directly (asm:142).
 - **`SETABS(x)`** — absolute-value macro at [MOX_DEF.h:92](../../MoX/src/MOX_DEF.h#L92), expands to `if((x) < 0) { (x) = -(x); }`.
 
-No I/O. No `EMM_Map_CONTXXX__WIP`. No PHASE wrapper at the call site (typically).
+No I/O. No `CONTXXX_Map`. No PHASE wrapper at the call site (typically).
 
 ## Related references
 

@@ -47,7 +47,7 @@ The `sum_own_city_wx__own_units_cost` / `sum_own_city_wy__enemy_units_cost` arra
 ## Phase 1 — Setup
 
 ```c
-EMM_Map_CONTXXX__WIP();  /* needs all the landmass data */
+CONTXXX_Map();  /* needs all the landmass data */
 ```
 
 Pages CONTXXX data into the EMS frame so the `_ai_landmass_*` arrays are accessible.

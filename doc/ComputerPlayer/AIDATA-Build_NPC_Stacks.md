@@ -289,7 +289,7 @@ Counter increment (asm:218-219) ↔ production line 1246.
 - **`Unit_Has_AirTravel(unit_idx)`** — returns non-zero if the unit type has air-travel ability. Called twice per unit: once in the existing-stack downgrade check, once in the new-stack abilities determination.
 - **`Unit_Has_WaterTravel(unit_idx)`** — same for water travel.
 
-No RNG. No I/O. No `EMM_Map_CONTXXX__WIP` (the caller `NPC_Destinations` handles EMM setup).
+No RNG. No I/O. No `CONTXXX_Map` (the caller `NPC_Destinations` handles EMM setup).
 
 ## Related references
 

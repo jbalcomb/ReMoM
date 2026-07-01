@@ -25691,7 +25691,7 @@ void EMM_FIGUREX_Init__HACK(int16_t bufpi)
 
     FIGUREX_OFFSET
 
-    // TODO  EMM_Map4Pages(logical_page, EmmHndl_FIGUREX);
+    // TODO  EMM_MapMulti4(logical_page, EmmHndl_FIGUREX);
     EMS_PFBA = (EmmHndl_FIGUREX + (logical_page * SZ_EMM_LOGICAL_PAGE));
 
     SET_2B_OFS((EMS_PFBA + offset), SAMB_MEMSIG1, _SA_MEMSIG1);
@@ -25707,7 +25707,7 @@ void EMM_FIGUREX_Init__HACK(int16_t bufpi)
 void EMM_TILEX_Init__HACK(void)
 {
 
-    // EMM_Map4Pages(0, EmmHndl_TILEXXX);
+    // EMM_MapMulti4(0, EmmHndl_TILEXXX);
     EMS_PFBA = (EmmHndl_TILEXXX + (0 * SZ_EMM_LOGICAL_PAGE));
 
     SET_2B_OFS(EMS_PFBA, SAMB_MEMSIG1, _SA_MEMSIG1);

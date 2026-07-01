@@ -431,7 +431,7 @@ XREF:
 */
 SAMB_ptr EMM_Map4Pages_VGAFILEH1234(void)
 {
-    // TODO  EMM_Map4Pages(1, _VGAFILEH_seg);
+    // TODO  EMM_MapMulti4(1, _VGAFILEH_seg);
     EMS_PFBA = (_VGAFILEH_seg + (1 * SZ_EMM_LOGICAL_PAGE));
 
     return EMS_PFBA;

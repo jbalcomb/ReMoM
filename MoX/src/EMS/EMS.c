@@ -347,24 +347,45 @@ SAMB_ptr EMM_GetPageFrame(void)
 }
 
 // WZD s12p11
-void EMM_MapFourPages(uint16_t emsFirst, SAMB_ptr emsHandle)
+void EMM_MapFourPages(uint16_t emm_first, SAMB_ptr emm_handle)
 {
-    EMS_PFBA = emsHandle + (emsFirst * SZ_EMM_LOGICAL_PAGE);
+    EMS_PFBA = emm_handle + (emm_first * SZ_EMM_LOGICAL_PAGE);
 
-    EMM_Log2Phys_Map[0].Logical_Page = emsFirst;
+    EMM_Log2Phys_Map[0].Logical_Page = emm_first;
     EMM_Log2Phys_Map[0].Physical_Page = 0;
-    EMM_Log2Phys_Map[1].Logical_Page = emsFirst + 1;
+    EMM_Log2Phys_Map[1].Logical_Page = emm_first + 1;
     EMM_Log2Phys_Map[1].Physical_Page = 1;
-    EMM_Log2Phys_Map[2].Logical_Page = emsFirst + 2;
+    EMM_Log2Phys_Map[2].Logical_Page = emm_first + 2;
     EMM_Log2Phys_Map[2].Physical_Page = 2;
-    EMM_Log2Phys_Map[3].Logical_Page = emsFirst + 3;
+    EMM_Log2Phys_Map[3].Logical_Page = emm_first + 3;
     EMM_Log2Phys_Map[3].Physical_Page = 3;
 }
 
 // WZD s12p12
-void EMM_Map4Pages(int emsFirst, SAMB_ptr emsHandle)
+void EMM_MapMulti4(int16_t emm_first, SAMB_ptr emm_handle)
 {
-    EMM_MapFourPages((uint16_t)emsFirst, emsHandle);
+/*
+16A9:0299 8B 5E 06                                            mov bx, [bp+emm_first]
+16A9:029C 8B 56 08                                            mov dx, [bp+emm_handle]
+16A9:029F B8 AA 36                                            mov ax, seg dseg
+16A9:02A2 8E D8                                               mov ds, ax
+16A9:02A4 89 1E 17 76                                         mov [ems_mapping_array.logical_page], bx
+16A9:02A8 43                                                  inc bx
+16A9:02A9 89 1E 1B 76                                         mov [ems_mapping_array.logical_page+4], bx
+16A9:02AD 43                                                  inc bx
+16A9:02AE 89 1E 1F 76                                         mov [ems_mapping_array.logical_page+8], bx
+16A9:02B2 43                                                  inc bx
+16A9:02B3 89 1E 23 76                                         mov [ems_mapping_array.logical_page+0Ch], bx
+16A9:02B7 43                                                  inc bx                              ; ¿ trailing increment in a for-loop ?
+16A9:02B8 B9 04 00                                            mov cx, 4                           ; number of entries in array
+16A9:02BB BE 17 76                                            mov si, offset ems_mapping_array
+16A9:02BE B8 00 50                                            mov ax, 5000h
+16A9:02C1 CD 67                                               int 67h                             ;  - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES
+16A9:02C1                                                                                         ; AL = 00h / 01h, DX = handle, CX = number of entries in array
+16A9:02C1                                                                                         ; DS:SI -> mapping array
+16A9:02C1                                                                                         ; Return: AH = status
+*/
+    EMM_MapFourPages((uint16_t)emm_first, emm_handle);
 }
 
 

@@ -301,7 +301,7 @@ Both paths converge at `loc_D42F5` for the final stores (asm:191-203). Each clam
 - **`Random(n)`** — one call (`Random(10)`) gates the rebalance for the alchemy != 1 path. No RNG in the SoR or alchemy=1 paths.
 - **`SETMAX(var, max)`** — clamp macro: `if (var > max) var = max;`. Used at every `Desired_*` assignment in Phases 2-3.
 
-No `EMM_Map_CONTXXX__WIP`. No I/O. No PHASE wrapper at the call site (typically).
+No `CONTXXX_Map`. No I/O. No PHASE wrapper at the call site (typically).
 
 ## Related references
 

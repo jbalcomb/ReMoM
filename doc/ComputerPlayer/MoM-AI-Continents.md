@@ -92,9 +92,9 @@ neighborhood) of any shore-terrain square.
         It looks at CONTX_1stLoadTs[0][4].
         Instantly, it has a linked list of every single valid port/shoreline square on Continent #4.
         It just loops through that tiny, pre-calculated list, finds the port square closest to the enemy continent, and issues the move order!
-        This perfectly ties back to the EMM_Map_CONTXXX__WIP snippet you shared earlier. Now we know exactly what the CONTX_1stLoadTs (First Load Squares) and CONTX_LoadTChain (Load Tile Chain) arrays are actually doing!
+        This perfectly ties back to the CONTXXX_Map snippet you shared earlier. Now we know exactly what the CONTX_1stLoadTs (First Load Squares) and CONTX_LoadTChain (Load Tile Chain) arrays are actually doing!
 
-EMM_Map_CONTXXX__WIP()
+CONTXXX_Map()
 CONTX_CreateChains__WIP()
 CONTX_CreateLChains__WIP()
 ...last three procs in over145 ...later additions? ...after other weirder later additions, so rearrangement?
@@ -125,7 +125,7 @@ Allocate_Data_Space()
 
 
 
-EMM_Map_CONTXXX__WIP()
+CONTXXX_Map()
 EMMDATAH_Map()
 
 
@@ -145,7 +145,7 @@ _ai_landmass_war_targets[2]
 
 
 AIDUDES.C
-EMM_Map_CONTXXX__WIP()
+CONTXXX_Map()
     CONTX_TileXs[0]           =  (int8_t *)(&EMM_PageFrame[0] + (   0 * SZ_PARAGRAPH_B));  //  100 -    0 = 100 * 1 PR = 1600 B
     CONTX_TileXs[1]           =  (int8_t *)(&EMM_PageFrame[0] + ( 100 * SZ_PARAGRAPH_B));  //  200 -  100 = 100 * 1 PR = 1600 B
     CONTX_TileYs[0]           =  (int8_t *)(&EMM_PageFrame[0] + ( 200 * SZ_PARAGRAPH_B));  //  300 -  200 = 100 * 1 PR = 1600 B

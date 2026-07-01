@@ -189,7 +189,7 @@ Maps 1:1 onto asm `loc_D48AC`-`loc_D48F6` (lines 147-176). `cmp farmer_count, po
 - **`City_Minimum_Farmers(city_idx)`** — returns baseline food demand for the city. Called once per neutral city.
 - **`Map_Square_Unit_Count(wx, wy, wp)`** — counts units on the exact tile. Called once per neutral city. Args in `(wx, wy, wp)` order matching asm push order (right-to-left cdecl gives `wp, wy, wx` on the stack → C call `(wx, wy, wp)`).
 
-No RNG. No I/O. No `EMM_Map_CONTXXX__WIP`.
+No RNG. No I/O. No `CONTXXX_Map`.
 
 ## Related references
 

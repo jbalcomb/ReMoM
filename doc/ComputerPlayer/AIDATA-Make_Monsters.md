@@ -398,7 +398,7 @@ Maps onto asm:461-490.
 - **`Create_Unit, owner, wx, wy, wp, level)`** — creates a new unit. Called once per monster. Same `__WIP`-pending signature as [`Make_Raiders`](AIDATA-Make_Raiders.md).
 - **`AI_Metrics_Emit_NPC_Event(...)`** — ReMoM STU_LOG instrumentation. Not in OG.
 
-No `EMM_Map_CONTXXX__WIP` in this function.
+No `CONTXXX_Map` in this function.
 
 ## Related references
 

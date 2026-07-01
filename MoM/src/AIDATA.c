@@ -59,49 +59,49 @@ void NPC_Excess_Garrison(void)
     int16_t cheapest_unit = 0;
     int16_t lowest_value = 0;
     int16_t troop_count = 0;
-    int16_t i = 0;
-    int16_t j = 0;
+    int16_t itr_cities = 0;
+    int16_t itr_units = 0;
 
-    for(i = 0; i < _cities; i++)
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        if(_CITIES[i].owner_idx == NEUTRAL_PLAYER_IDX)
+        if(_CITIES[itr_cities].owner_idx == NEUTRAL_PLAYER_IDX)
         {
-            city_wx = _CITIES[i].wx;
-            city_wy = _CITIES[i].wy;
-            city_wp = _CITIES[i].wp;
+            city_wx = _CITIES[itr_cities].wx;
+            city_wy = _CITIES[itr_cities].wy;
+            city_wp = _CITIES[itr_cities].wp;
 
             lowest_value = 1000;
             cheapest_unit = ST_UNDEFINED;
             troop_count = 0;
 
-            for(j = 0; j < _units; j++)
+            for(itr_units = 0; itr_units < _units; itr_units++)
             {
-                if(_UNITS[j].wp == city_wp && 
-                    _UNITS[j].wx == city_wx && 
-                    _UNITS[j].wy == city_wy)
+                if(_UNITS[itr_units].wp == city_wp && 
+                    _UNITS[itr_units].wx == city_wx && 
+                    _UNITS[itr_units].wy == city_wy)
                 {
                     troop_count++;
 
                     /* Check cost of unit to find the cheapest in the garrison */
-                    if(_unit_type_table[_UNITS[j].type].cost < lowest_value)
+                    if(_unit_type_table[_UNITS[itr_units].type].cost < lowest_value)
                     {
-                        lowest_value = _unit_type_table[_UNITS[j].type].cost;
-                        cheapest_unit = j;
+                        lowest_value = _unit_type_table[_UNITS[itr_units].type].cost;
+                        cheapest_unit = itr_units;
                     }
                 }
             }
 
             /* Calculate base max garrison from population */
-            max_garrison = _CITIES[i].population;
+            max_garrison = _CITIES[itr_cities].population;
 
-            if(_CITIES[i].bldg_status[GRANARY] == bs_Built || 
-                _CITIES[i].bldg_status[GRANARY] == bs_Replaced)
+            if(_CITIES[itr_cities].bldg_status[GRANARY] == bs_Built || 
+                _CITIES[itr_cities].bldg_status[GRANARY] == bs_Replaced)
             {
                 max_garrison += 2;
             }
 
-            if(_CITIES[i].bldg_status[FARMERS_MARKET] == bs_Built || 
-                _CITIES[i].bldg_status[FARMERS_MARKET] == bs_Replaced)
+            if(_CITIES[itr_cities].bldg_status[FARMERS_MARKET] == bs_Built || 
+                _CITIES[itr_cities].bldg_status[FARMERS_MARKET] == bs_Replaced)
             {
                 max_garrison += 2;
             }
@@ -110,9 +110,9 @@ void NPC_Excess_Garrison(void)
             if(troop_count > max_garrison && cheapest_unit != ST_UNDEFINED)
             {
 #ifdef STU_DEBUG
-                LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Excess garrison at city %d (%d/%d), removing unit %d (type %d)", i, troop_count, max_garrison, cheapest_unit, _UNITS[cheapest_unit].type);
+                LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Excess garrison at city %d (%d/%d), removing unit %d (type %d)", itr_cities, troop_count, max_garrison, cheapest_unit, _UNITS[cheapest_unit].type);
 #endif
-                AI_Metrics_Emit_NPC_Event(_turn, "GARRISON_CULL", i, city_wx, city_wy, city_wp, 1, 0, 0, 0, troop_count, max_garrison);
+                AI_Metrics_Emit_NPC_Event(_turn, "GARRISON_CULL", itr_cities, city_wx, city_wy, city_wp, 1, 0, 0, 0, troop_count, max_garrison);
                 Kill_Unit(cheapest_unit, kt_Normal);
             }
         }

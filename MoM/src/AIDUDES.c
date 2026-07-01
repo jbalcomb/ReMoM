@@ -2013,87 +2013,41 @@ void AI_Hopeless_Stasis(void)
 
 
 // WZD o145p16
-// drake178: EMM_Map_CONTXXX__WIP()
-/*
-maps in the EMM_ContXXX_H handle (all 4 pages), and
-resets its corresponding global pointers
-*/
-/*
-EmmHndl_CONTXXX is allocated in ALLOC.C Allocate_Data_Space()
-
-¿ kinda like ?
-m_terrain_lbx_000
-LOADER.C
-Terrain_Init()
-// ehn_terrain_lbx = EMM_Load_LBX_File("TERRAIN.LBX", 1);
-// HACK:  no EMM, so just load entry and monkey with offset adjustments
-// TODO  make this an allocate and reload and set another pointer to the offset, so it looks like it did and dont need the math elsewhere - e.g., Draw_Map_Terrain()
-m_terrain_lbx_000 = LBX_Load(terrain_lbx_file, 0);  // 676416 B
-
-*/
-void EMM_Map_CONTXXX__WIP(void)
+void CONTXXX_Map(void)
 {
-    int16_t itr = 0;  // _SI_
+    int16_t itr = 0;
 
-    // TODO  EMM_Map4Pages(0, EmmHndl_CONTXXX);
-    // ...
-    // TODO  CONTX_Arc_TileXs = SA_MK_FP0(EMS_PFBA);
-    // ...
-    // ...
-    // ...
+    EMM_MapMulti4(0, EmmHndl_CONTXXX);
 
-    // EMS_PFBA = Allocate_Space(((4 * 16384) / 16));
-    EMS_PFBA = EmmHndl_CONTXXX;
-
-    _ai_landmass_land_squares_wx_array[0]           =  (int8_t *)(&EMS_PFBA[0] + (   0 * SZ_PARAGRAPH_B));  //  100 -    0 = 100 * 1 PR = 1600 B
-    _ai_landmass_land_squares_wx_array[1]           =  (int8_t *)(&EMS_PFBA[0] + ( 100 * SZ_PARAGRAPH_B));  //  200 -  100 = 100 * 1 PR = 1600 B
-    _ai_landmass_land_squares_wy_array[0]           =  (int8_t *)(&EMS_PFBA[0] + ( 200 * SZ_PARAGRAPH_B));  //  300 -  200 = 100 * 1 PR = 1600 B
-    _ai_landmass_land_squares_wy_array[1]           =  (int8_t *)(&EMS_PFBA[0] + ( 300 * SZ_PARAGRAPH_B));  //  400 -  300 = 100 * 1 PR = 1600 B
-    _ai_landmass_land_squares_lists[0]        = (int16_t *)(&EMS_PFBA[0] + ( 400 * SZ_PARAGRAPH_B));  //  600 -  400 = 200 * 1 PR = 3200 B
-    _ai_landmass_land_squares_lists[1]        = (int16_t *)(&EMS_PFBA[0] + ( 600 * SZ_PARAGRAPH_B));  //  800 -  600 = 200 * 1 PR = 3200 B
-    _ai_landmass_land_squares_heads[0]       = (int16_t *)(&EMS_PFBA[0] + ( 800 * SZ_PARAGRAPH_B));  //  825 -  800 =  25 * 1 PR =  400 B
-    _ai_landmass_land_squares_heads[1]       = (int16_t *)(&EMS_PFBA[0] + ( 825 * SZ_PARAGRAPH_B));  //  850 -  825 =  25 * 1 PR =  400 B
-    _ai_own_stack_wx          = (&EMS_PFBA[0] + ( 850 * SZ_PARAGRAPH_B));  //  860 -  850 =  10 * 1 PR =  160 B  80 2-byte values
-    _ai_own_stack_wy          = (&EMS_PFBA[0] + ( 860 * SZ_PARAGRAPH_B));  //  870 -  860 =  10 * 1 PR =  160 B  80 2-byte values
-    _ai_own_stack_wp          = (&EMS_PFBA[0] + ( 870 * SZ_PARAGRAPH_B));  //  880 -  870 =  10 * 1 PR =  160 B  80 2-byte values
-    _ai_own_stack_type        = (&EMS_PFBA[0] + ( 880 * SZ_PARAGRAPH_B));  //  890 -  880 =  10 * 1 PR =  160 B  80 2-byte values
-    _ai_own_stack_unit_count  = (&EMS_PFBA[0] + ( 890 * SZ_PARAGRAPH_B));  //  900 -  890 =  10 * 1 PR =  160 B  80 2-byte values
-    g_ai_evaluation_map[0]        = (uint16_t *)(&EMS_PFBA[0] + ( 900 * SZ_PARAGRAPH_B));  // 1500 -  900 = 600 * 1 PR = 9600 B
-    g_ai_evaluation_map[1]        = (uint16_t *)(&EMS_PFBA[0] + (1500 * SZ_PARAGRAPH_B));  // 2100 - 1500 = 600 * 1 PR = 9600 B
-    _ai_landmass_dock_squares_wx_array[0]       =  (int8_t *)(&EMS_PFBA[0] + (2100 * SZ_PARAGRAPH_B));  // 2200 - 2100 = 100 * 1 PR = 1600 B
-    _ai_landmass_dock_squares_wx_array[1]       =  (int8_t *)(&EMS_PFBA[0] + (2200 * SZ_PARAGRAPH_B));  // 2300 - 2200 = 100 * 1 PR = 1600 B
-    _ai_landmass_dock_squares_wy_array[0]       =  (int8_t *)(&EMS_PFBA[0] + (2300 * SZ_PARAGRAPH_B));  // 2400 - 2300 = 100 * 1 PR = 1600 B
-    _ai_landmass_dock_squares_wy_array[1]       =  (int8_t *)(&EMS_PFBA[0] + (2400 * SZ_PARAGRAPH_B));  // 2500 - 2400 = 100 * 1 PR = 1600 B
-    _ai_landmass_dock_squares_lists[0]       = (int16_t *)(&EMS_PFBA[0] + (2500 * SZ_PARAGRAPH_B));  // 2700 - 2500 = 200 * 1 PR = 3200 B
-    _ai_landmass_dock_squares_lists[1]       = (int16_t *)(&EMS_PFBA[0] + (2700 * SZ_PARAGRAPH_B));  // 2900 - 2700 = 200 * 1 PR = 3200 B
-    _ai_landmass_dock_squares_heads[0]        = (int16_t *)(&EMS_PFBA[0] + (2900 * SZ_PARAGRAPH_B));  // 3000 - 2900 = 100 * 1 PR = 1600 B
-    _ai_landmass_dock_squares_heads[1]        = (int16_t *)(&EMS_PFBA[0] + (3000 * SZ_PARAGRAPH_B));  // 3200 - 3000 = 200 * 1 PR = 3200 B
+    _ai_landmass_land_squares_wx_array[0] = (  int8_t *)(&EMS_PFBA[0] + (   0 * SZ_PARAGRAPH_B));  //  100 -    0 = 100 * 1 PR = 1600 B
+    _ai_landmass_land_squares_wx_array[1] = (  int8_t *)(&EMS_PFBA[0] + ( 100 * SZ_PARAGRAPH_B));  //  200 -  100 = 100 * 1 PR = 1600 B
+    _ai_landmass_land_squares_wy_array[0] = (  int8_t *)(&EMS_PFBA[0] + ( 200 * SZ_PARAGRAPH_B));  //  300 -  200 = 100 * 1 PR = 1600 B
+    _ai_landmass_land_squares_wy_array[1] = (  int8_t *)(&EMS_PFBA[0] + ( 300 * SZ_PARAGRAPH_B));  //  400 -  300 = 100 * 1 PR = 1600 B
+    _ai_landmass_land_squares_lists[0]    = ( int16_t *)(&EMS_PFBA[0] + ( 400 * SZ_PARAGRAPH_B));  //  600 -  400 = 200 * 1 PR = 3200 B
+    _ai_landmass_land_squares_lists[1]    = ( int16_t *)(&EMS_PFBA[0] + ( 600 * SZ_PARAGRAPH_B));  //  800 -  600 = 200 * 1 PR = 3200 B
+    _ai_landmass_land_squares_heads[0]    = ( int16_t *)(&EMS_PFBA[0] + ( 800 * SZ_PARAGRAPH_B));  //  825 -  800 =  25 * 1 PR =  400 B
+    _ai_landmass_land_squares_heads[1]    = ( int16_t *)(&EMS_PFBA[0] + ( 825 * SZ_PARAGRAPH_B));  //  850 -  825 =  25 * 1 PR =  400 B
+    _ai_own_stack_wx                      =             (&EMS_PFBA[0] + ( 850 * SZ_PARAGRAPH_B));  //  860 -  850 =  10 * 1 PR =  160 B  80 2-byte values
+    _ai_own_stack_wy                      =             (&EMS_PFBA[0] + ( 860 * SZ_PARAGRAPH_B));  //  870 -  860 =  10 * 1 PR =  160 B  80 2-byte values
+    _ai_own_stack_wp                      =             (&EMS_PFBA[0] + ( 870 * SZ_PARAGRAPH_B));  //  880 -  870 =  10 * 1 PR =  160 B  80 2-byte values
+    _ai_own_stack_type                    =             (&EMS_PFBA[0] + ( 880 * SZ_PARAGRAPH_B));  //  890 -  880 =  10 * 1 PR =  160 B  80 2-byte values
+    _ai_own_stack_unit_count              =             (&EMS_PFBA[0] + ( 890 * SZ_PARAGRAPH_B));  //  900 -  890 =  10 * 1 PR =  160 B  80 2-byte values
+    g_ai_evaluation_map[0]                = (uint16_t *)(&EMS_PFBA[0] + ( 900 * SZ_PARAGRAPH_B));  // 1500 -  900 = 600 * 1 PR = 9600 B
+    g_ai_evaluation_map[1]                = (uint16_t *)(&EMS_PFBA[0] + (1500 * SZ_PARAGRAPH_B));  // 2100 - 1500 = 600 * 1 PR = 9600 B
+    _ai_landmass_dock_squares_wx_array[0] = (  int8_t *)(&EMS_PFBA[0] + (2100 * SZ_PARAGRAPH_B));  // 2200 - 2100 = 100 * 1 PR = 1600 B
+    _ai_landmass_dock_squares_wx_array[1] = (  int8_t *)(&EMS_PFBA[0] + (2200 * SZ_PARAGRAPH_B));  // 2300 - 2200 = 100 * 1 PR = 1600 B
+    _ai_landmass_dock_squares_wy_array[0] = (  int8_t *)(&EMS_PFBA[0] + (2300 * SZ_PARAGRAPH_B));  // 2400 - 2300 = 100 * 1 PR = 1600 B
+    _ai_landmass_dock_squares_wy_array[1] = (  int8_t *)(&EMS_PFBA[0] + (2400 * SZ_PARAGRAPH_B));  // 2500 - 2400 = 100 * 1 PR = 1600 B
+    _ai_landmass_dock_squares_lists[0]    = ( int16_t *)(&EMS_PFBA[0] + (2500 * SZ_PARAGRAPH_B));  // 2700 - 2500 = 200 * 1 PR = 3200 B
+    _ai_landmass_dock_squares_lists[1]    = ( int16_t *)(&EMS_PFBA[0] + (2700 * SZ_PARAGRAPH_B));  // 2900 - 2700 = 200 * 1 PR = 3200 B
+    _ai_landmass_dock_squares_heads[0]    = ( int16_t *)(&EMS_PFBA[0] + (2900 * SZ_PARAGRAPH_B));  // 3000 - 2900 = 100 * 1 PR = 1600 B
+    _ai_landmass_dock_squares_heads[1]    = ( int16_t *)(&EMS_PFBA[0] + (3000 * SZ_PARAGRAPH_B));  // 3200 - 3000 = 200 * 1 PR = 3200 B
 
     /* HACK */  memset(g_ai_evaluation_map[0], 0, 9600);
     /* HACK */  memset(g_ai_evaluation_map[1], 0, 9600);
 
-// mov     ax, _SI_itr
-// shl     ax, 1
-// mov     dx, [EMS_PFBA]             ; contains the segment address of the EMS page frame
-// add     dx, ax
-// add     dx, 3200
-// push    dx                              ; addr
-// call    SA_MK_FP0
-// pop     cx
-// mov     bx, _SI_itr
-// mov     cl, 2
-// shl     bx, cl
-// mov     [word ptr (_ai_own_stack_unit_list+2)+bx], dx ; 2 segment increments each (32 bytes data space)
-//                                         ; each holds a list of unit indices or -1s for units
-//                                         ; that have already been assigned orders
-// mov     [word ptr _ai_own_stack_unit_list+bx], ax ; 2 segment increments each (32 bytes data space)
-//                                         ; each holds a list of unit indices or -1s for units
-//                                         ; that have already been assigned orders
-// inc     _SI_itr
-
-    for(itr = 0; itr < 80; itr++)
+    for(itr = 0; itr < MAX_AI_STACKS; itr++)
     {
-
         // ¿ get a pointer at every 32 bytes, starting at 51200 bytes from the EMM base ?
         _ai_own_stack_unit_list[itr] = (int16_t *)(&EMS_PFBA[0] + (3200 * SZ_PARAGRAPH_B) + ((itr * 2) * SZ_PARAGRAPH_B));
         
@@ -2124,7 +2078,7 @@ void EMM_Map_CONTXXX__WIP(void)
  * @note Landmass index 0 is treated as ocean and is intentionally excluded
  *       from the generated lists.
  * @note The routine temporarily remaps CONTXXX via
- *       @c EMM_Map_CONTXXX__WIP() and restores the normal data mapping with
+ *       @c CONTXXX_Map() and restores the normal data mapping with
  *       @c EMMDATAH_Map() before returning.
  */
 void Build_Land_Linked_List(void)
@@ -2138,7 +2092,7 @@ void Build_Land_Linked_List(void)
     int16_t wp = 0;
     int16_t next_node_idx = 0;  // DNE in Dasm, reuses itr
 
-    EMM_Map_CONTXXX__WIP();
+    CONTXXX_Map();
 
     for(itr = 0; itr < NUM_LANDMASSES; itr++)
     {
@@ -2228,7 +2182,7 @@ void Build_Land_Linked_List(void)
  * @note Landmass index 0 is the ocean sentinel, so it intentionally gets no
  *       chain; these tables are keyed by actual continents only.
  * @note The routine temporarily remaps CONTXXX via
- *       @c EMM_Map_CONTXXX__WIP() and restores the normal data mapping with
+ *       @c CONTXXX_Map() and restores the normal data mapping with
  *       @c EMMDATAH_Map() before returning.
  */
 void Build_Dock_Linked_List(void)
@@ -2245,7 +2199,7 @@ void Build_Dock_Linked_List(void)
     int16_t wp = 0;
     int16_t next_node_idx = 0;  // DNE in Dasm, reuses itr
 
-    EMM_Map_CONTXXX__WIP();
+    CONTXXX_Map();
 
     /* 2. Initialize the "Head" pointers of the Linked Lists to -1 (Empty) */
     /* default all of boths planes to invalid */

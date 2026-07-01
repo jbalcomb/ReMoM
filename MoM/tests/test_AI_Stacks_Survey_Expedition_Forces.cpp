@@ -68,7 +68,7 @@ protected:
         EmmHndl_CONTXXX = Allocate_Space(4096);
         ASSERT_NE(EmmHndl_CONTXXX, nullptr);
         memset(EmmHndl_CONTXXX, 0, (4096 * SZ_PARAGRAPH_B));
-        EMM_Map_CONTXXX__WIP();
+        CONTXXX_Map();
 
         _ai_own_stack_count = 0;
         cp_drafted_unit_count = 0;

@@ -13,7 +13,7 @@
 - [ ] AI_Next_Turn
 - [ ] CONTX_CreateChains__WIP
 - [ ] CONTX_CreateLChains__WIP
-- [ ] EMM_Map_CONTXXX__WIP
+- [ ] CONTXXX_Map
 
 ## AIMOVE
 - [x] AI_Stacks_Assign_Target

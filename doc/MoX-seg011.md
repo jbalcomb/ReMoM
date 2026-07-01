@@ -40,7 +40,7 @@ dseg:760C 00 00                                           EMM_PageFrame dw 0    
 dseg:760C                                                                                         ; contains the segment address of the EMS page frame
 dseg:760E 45 4D 4D 58 58 58 58 30 00                      EMM_DevName db 'EMMXXXX0',0             ; DATA XREF: EMM_DetectDevice:loc_16AA0o
 dseg:7617 00 00 00 00 00 00 01 00 00 00 02 00 00 00 03 00 EMM_Log2Phys_Map EMM_L2P_Map_Record <0, 0>
-dseg:7617                                                                                         ; DATA XREF: EMM_Map4Pages:loc_16D34w ...
+dseg:7617                                                                                         ; DATA XREF: EMM_MapMulti4:loc_16D34w ...
 dseg:7617                                                 EMM_L2P_Map_Record <0, 1>
 dseg:7617                                                 EMM_L2P_Map_Record <0, 2>
 dseg:7617                                                 EMM_L2P_Map_Record <0, 3>

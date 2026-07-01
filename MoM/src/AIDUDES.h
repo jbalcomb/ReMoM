@@ -68,7 +68,7 @@ void AI_Kill_Excess_Settlers_And_Engineers(int16_t player_idx);
 void AI_Hopeless_Stasis(void);
 
 // WZD o145p16
-void EMM_Map_CONTXXX__WIP(void);
+void CONTXXX_Map(void);
 
 // WZD o145p17
 void Build_Land_Linked_List(void);

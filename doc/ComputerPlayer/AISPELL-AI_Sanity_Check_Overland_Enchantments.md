@@ -299,7 +299,7 @@ Faithful. Note the OG asm uses `Meteor_Storm` (singular) as the label; productio
 
 ## Sub-functions / external calls
 
-None. Pure state mutation on `_players[player_idx]`. No RNG, no I/O, no `EMM_Map_CONTXXX__WIP`, no helper calls.
+None. Pure state mutation on `_players[player_idx]`. No RNG, no I/O, no `CONTXXX_Map`, no helper calls.
 
 ## Related references
 

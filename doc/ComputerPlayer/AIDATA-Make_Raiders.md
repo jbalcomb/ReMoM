@@ -408,7 +408,7 @@ Maps onto asm:394-397: after the tries loop exits, `cmp did_create, ST_FALSE; jn
 - **`Kill_Unit(unit_idx, kt_Normal)`** — deletes a unit. Called on the source garrison's leading `units_created / 3` units to represent "the raid parties took them from the city."
 - **`AI_Metrics_Emit_NPC_Event(...)`** — ReMoM STU_LOG instrumentation. Not in OG.
 
-No `EMM_Map_CONTXXX__WIP` in this function.
+No `CONTXXX_Map` in this function.
 
 ## Related references
 

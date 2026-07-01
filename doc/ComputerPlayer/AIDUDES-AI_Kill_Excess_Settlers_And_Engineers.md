@@ -212,7 +212,7 @@ Note: both `Kill_Unit` calls pass `0` (asm:113-116, 189-192). Production uses `k
 
 - **`Kill_Unit(unit_idx, death_type)`** — removes the unit from `_UNITS[]`. Called with `kt_Normal` (= `0`), meaning "silent removal, no death animation." Asm push order confirms `0` is the second argument (asm lines 113-114, 189-190 both `xor ax, ax; push ax; push _DI_itr; call j_Kill_Unit`).
 
-No RNG. No I/O. No `EMM_Map_CONTXXX__WIP`.
+No RNG. No I/O. No `CONTXXX_Map`.
 
 ## Related references
 

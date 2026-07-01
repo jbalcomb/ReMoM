@@ -2431,7 +2431,7 @@ populated in AI_Evaluation_Map()
 does `== 0x8000`, so, probably, must be 2-byte, unsigned?
 does it use negative values anywhere?
 
-allocated in EMM_Map_CONTXXX__WIP()
+allocated in CONTXXX_Map()
 9600 B
 4800 2-byte values?
 2400 per world_map?

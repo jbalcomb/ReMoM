@@ -160,7 +160,7 @@ void EMM_ReleaseHandle__SUTB(SAMB_ptr handle);
 // EMM_MapFourPages()
 
 // WZD s12p12
-void EMM_Map4Pages(int emsFirst, SAMB_ptr emsHandle);
+void EMM_MapMulti4(int16_t emm_first, SAMB_ptr emm_handle);
 
 
 /* WIZARDS.EXE seg013 */

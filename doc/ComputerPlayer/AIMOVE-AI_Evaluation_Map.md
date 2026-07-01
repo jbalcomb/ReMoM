@@ -48,7 +48,7 @@ Per-AI-player only. The output is consumed indirectly by every downstream target
 | `_CITIES[]` (count `_cities`) | per-city records | Read for AI_TARGET_SITE flag + `+1` strength if not own. |
 | `_NODES[NUM_NODES]` | per-node records | Read for AI_TARGET_SITE flag (unconditional). |
 | `Effective_Unit_Strength(unit_idx)`, `Effective_Unit_Type_Strength(type)` | strength helpers | Called per unit / per lair guardian. |
-| `EMM_Map_CONTXXX__WIP()` | EMS page-frame remap | Called once at function entry; no matching `EMMDATAH_Map()` at exit (the next-stage `AI_Evaluate_Continents` is responsible for the eventual restore via `AI_Set_Unit_Orders`'s Phase 5 cleanup). |
+| `CONTXXX_Map()` | EMS page-frame remap | Called once at function entry; no matching `EMMDATAH_Map()` at exit (the next-stage `AI_Evaluate_Continents` is responsible for the eventual restore via `AI_Set_Unit_Orders`'s Phase 5 cleanup). |
 
 ## Signature and locals
 
@@ -63,7 +63,7 @@ OG stack locals (asm:4-7): `nonhostiles[NUM_PLAYERS]`, `xy_ofst`, `unit_owner_id
 ```mermaid
 flowchart TD
     Entry(["AI_Evaluation_Map(player_idx)"])
-    EMM["EMM_Map_CONTXXX__WIP()"]
+    EMM["CONTXXX_Map()"]
     NH["nonhostiles[] from Dipl/peace/Hostility"]
     Clear["zero g_ai_evaluation_map for both planes"]
     Units["unit pass:<br/>per non-own unit, add strength/10<br/>OR 0x4000 if owner in nonhostiles[]"]
@@ -83,7 +83,7 @@ Line refs are production [AIMOVE.c](../../MoM/src/AIMOVE.c); cross-checked again
 ### Phase 1 — EMM remap + `nonhostiles[]` table ([6811-6833](../../MoM/src/AIMOVE.c#L6811-L6833))
 
 ```c
-EMM_Map_CONTXXX__WIP();
+CONTXXX_Map();
 
 for(itr = 0; itr < NUM_PLAYERS; itr++)
 {
@@ -274,7 +274,7 @@ A square that's been the staging tile for an enemy army in a friendly wizard's t
 - **Duplicate own-skip test in Phase 3 unit pass** (lines 6864-6868) — the OG bytes at asm:107-122 contain two separate `cmp; jnz; jmp` blocks both testing `unit_owner_idx == player_idx`. Production reproduces both via the `||` chain with an inline comment ("conflicting condition - will always jump"). Faithful; the redundancy is in the original.
 - **Phase 4 uses `intact == ST_TRUE`, Phase 6 uses `intact != ST_FALSE`** — different tests on the same field. Phase 4 only contributes guardian strength for fully-intact lairs (`intact == 1`); Phase 6 flags as SITE any lair that hasn't been emptied (`intact != 0`, which includes 0xC0 = partially-looted). Asm:207 vs asm:409. Both preserved.
 - **`(guardN_count & 0x0F)` low-nibble extraction** — the high nibble is the initial count (set by `Set_Upper_Lair_Guardian_Count` at world-gen); the low nibble is the live count. Strength contribution scales with live count. Faithful (asm:272, 305).
-- **No EMM restore at exit** — the function only calls `EMM_Map_CONTXXX__WIP()` on entry; there's no matching `EMMDATAH_Map()` at exit. The caller chain (downstream `AI_Set_Unit_Orders` Phase 5) handles the restore. Asm:16 has the entry call but no matching exit call before `retf` at line 522. Faithful.
+- **No EMM restore at exit** — the function only calls `CONTXXX_Map()` on entry; there's no matching `EMMDATAH_Map()` at exit. The caller chain (downstream `AI_Set_Unit_Orders` Phase 5) handles the restore. Asm:16 has the entry call but no matching exit call before `retf` at line 522. Faithful.
 
 ## Bug catalog (OG bugs + HACK mitigations)
 
@@ -294,7 +294,7 @@ These HACKs are necessary as long as the OG bug-classes above remain unfixed els
 
 ## Sub-functions / external calls
 
-- **`EMM_Map_CONTXXX__WIP()`** — pages CONTXXX into the EMS frame so `g_ai_evaluation_map` is reachable. Called once at entry.
+- **`CONTXXX_Map()`** — pages CONTXXX into the EMS frame so `g_ai_evaluation_map` is reachable. Called once at entry.
 - **`Effective_Unit_Strength(unit_idx)`** — per-instance effective strength; called once per non-own unit.
 - **`Effective_Unit_Type_Strength(type)`** — per-type baseline strength; called twice per intact lair (one per guardian slot).
 

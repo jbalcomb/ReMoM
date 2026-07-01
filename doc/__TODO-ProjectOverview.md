@@ -396,11 +396,11 @@ if(_NUM_STARS > 54)
 
 
 
-[ ] add Set_Game_Random_Seed_() from MoO2, in Init_New_Game(), with _cmd_line_seed
+[x] add Set_Game_Random_Seed_() from MoO2, in Init_New_Game(), with _cmd_line_seed
 
-[ ] MapGen location validation for neutral cities generation
-[ ] MapGen - Towers too close together
-[ ] MapGen - missing SE corner Shore?
+[x] MapGen location validation for neutral cities generation
+[x] MapGen - Towers too close together
+[x] MapGen - missing SE corner Shore?
 
 
 [\] mouse movement still feels laggish/weird
@@ -410,7 +410,7 @@ if(_NUM_STARS > 54)
 [x] new game city max pop invalid
 
 [x] research spells seem like the wrong ones
-[ ] all research spells show (999 turns)
+[x] all research spells show (999 turns)
 
 [ ] prod scr usa help is bldg help, melee is part maintenance but also melee - seems bldg is over unit
 

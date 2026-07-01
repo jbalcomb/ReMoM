@@ -134,7 +134,7 @@ Setting `value = ST_UNDEFINED` is how the caller (`AI_Move_Out_Boats` or any fut
 
 ## Sub-functions / external calls
 
-None. Pure stack/array manipulation. No RNG, no I/O, no `EMM_Map_CONTXXX__WIP`.
+None. Pure stack/array manipulation. No RNG, no I/O, no `CONTXXX_Map`.
 
 ## Related references
 

@@ -93,7 +93,7 @@ protected:
         ASSERT_NE(EmmHndl_CONTXXX, nullptr);
         memset(EmmHndl_CONTXXX, 0, (4096 * SZ_PARAGRAPH_B));
         _EMMDATAH_seg = EmmHndl_CONTXXX;
-        EMM_Map_CONTXXX__WIP();
+        CONTXXX_Map();
 
         for(wp = 0; wp < NUM_PLANES; wp++)
         {

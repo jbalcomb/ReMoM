@@ -390,7 +390,7 @@ Match ✓.
 - **`abs(R_Param)`** — Borland C runtime `abs`. Level-neg path only.
 - **`TBL_Experience[9]`** — XP-by-Level lookup table. Layout per IDA labels: index 0 = `Hero_or_Recruit` (0 XP), 1 = `Myrmidon_or_Regular` (20), 2 = `Captain_or_Veteran` (60), 3 = `Cmdr_or_Elite` (120), 4 = `Champion_or_Ultra_Elite` (200), 5-8 for higher hero tiers.
 
-No `EMM_Map_CONTXXX__WIP` in this function.
+No `CONTXXX_Map` in this function.
 
 ## Related references
 

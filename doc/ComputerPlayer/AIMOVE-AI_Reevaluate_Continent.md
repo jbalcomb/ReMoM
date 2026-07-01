@@ -82,7 +82,7 @@ void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t w
 ```c
 // AIMOVE.c:5777-5778
 /* Phase 1: */
-EMM_Map_CONTXXX__WIP();
+CONTXXX_Map();
 ```
 
 Page the CONTXXX data handle into the EMS frame so the `_ai_landmass_*_squares_*` arrays are accessible during the subsequent phases. Counterpart to the `EMMDATAH_Map()` cleanup at the end of the sibling [`AI_Evaluate_Continents`](AIMOVE-AI_Evaluate_Continents.md) — this function does not perform the cleanup (flagged inline at line 6025 as `/* ¿ OGBUG  no EMMDATAH_Map() ? */`).

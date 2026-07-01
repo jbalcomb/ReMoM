@@ -51,7 +51,7 @@ Per-AI-player only — invoked once per turn per AI player.
 void AI_Shift_Off_Home_Plane(int16_t player_idx)
 ```
 
-No RNG. No `EMM_Map_CONTXXX__WIP`. No I/O.
+No RNG. No `CONTXXX_Map`. No I/O.
 
 ## Structure
 

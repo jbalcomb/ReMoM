@@ -222,7 +222,7 @@ Statement order — units first, then the stack record — matches OG.
 
 ## Sub-functions / external calls
 
-None. Pure stack/array scan. No RNG, no I/O, no `EMM_Map_CONTXXX__WIP`.
+None. Pure stack/array scan. No RNG, no I/O, no `CONTXXX_Map`.
 
 ## Related references
 

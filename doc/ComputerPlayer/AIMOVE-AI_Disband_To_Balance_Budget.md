@@ -208,7 +208,7 @@ Near-identical structure to Loop 1 except:
 - **`Effective_Unit_Strength(unit_idx_or_type)`** — per-unit (Loop 1) or per-unit-type (Loop 2; OGBUG) effective strength. The Loop 2 misuse is the function-typed-vs-index-typed parameter mismatch documented as B1.
 - **`Kill_Unit(unit_idx, kt_Normal)`** — removes the unit from the world. Called with `kt_Normal == 0` (asm: `xor ax, ax; push ax`).
 
-No RNG calls. No I/O. No `EMM_Map_CONTXXX__WIP` or page-frame churn.
+No RNG calls. No I/O. No `CONTXXX_Map` or page-frame churn.
 
 ## Related references
 

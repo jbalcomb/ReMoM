@@ -71,7 +71,7 @@ if(
 
 ```c
 // AIMOVE.c:223-230
-EMM_Map_CONTXXX__WIP();
+CONTXXX_Map();
 _ai_ferry_count = 0;
 _ai_expedition_size_threshold = (2 + (_turn / 30));
 if(_ai_expedition_size_threshold > MAX_STACK)
@@ -207,7 +207,7 @@ After all landmasses on a plane finish, two non-landmass passes run:
 EMMDATAH_Map();
 ```
 
-Restores the default data-segment mapping in the EMS page frame, undoing the `EMM_Map_CONTXXX__WIP()` from Phase 2. Mirrors the cleanup pattern in sibling [`AI_Reevaluate_All_Continents`](AIMOVE-AI_Reevaluate_All_Continents.md).
+Restores the default data-segment mapping in the EMS page frame, undoing the `CONTXXX_Map()` from Phase 2. Mirrors the cleanup pattern in sibling [`AI_Reevaluate_All_Continents`](AIMOVE-AI_Reevaluate_All_Continents.md).
 
 ## Bug catalog summary
 
@@ -221,7 +221,7 @@ All other "many many BUGs" referenced in the function's preamble comment live in
 
 ```
 AI_Set_Unit_Orders(player_idx)
-├── EMM_Map_CONTXXX__WIP                     [setup]
+├── CONTXXX_Map                     [setup]
 ├── AI_Disband_To_Balance_Budget             [global pre-pass]
 ├── AI_Shift_Off_Home_Plane                  [global pre-pass]
 ├── AI_Move_Out_Boats                        [global pre-pass]

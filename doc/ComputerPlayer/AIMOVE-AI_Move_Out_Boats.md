@@ -45,7 +45,7 @@ Plane-agnostic — it iterates every AI-owned stack regardless of plane and the 
 void AI_Move_Out_Boats(void)
 ```
 
-No RNG. No `EMM_Map_CONTXXX__WIP`. No I/O.
+No RNG. No `CONTXXX_Map`. No I/O.
 
 OG locals — `Can_Sail_Off`, `Sailable_Tile_X`, `Sailable_Tile_Y`, `itr_wy`, `landmass_idx`, `wp`, `wy`, `wx` (asm:4-11) — map to production `do_move_out`, `adjacent_wx`, `adjacent_wy`, `itr_wy`, `landmass_idx`, `unit_wp`, `unit_wy`, `unit_wx`.
 
