@@ -154,7 +154,7 @@ void Cast_Summon_Hero(int16_t player_idx, int16_t type)
 
                 WIZ_HireHero(player_idx, unit_type, hero_slot_idx, 0);
 
-                UNIT_RemoveExcess((_units - 1));
+                Evict_Weakest_From_Full_Stack((_units - 1));
 
                 _HEROES2[player_idx]->heroes[unit_type].Level = -20;  // Why?
 
@@ -342,7 +342,7 @@ void Cast_Incarnation(int16_t player_idx)
 
                     WIZ_HireHero(player_idx, unit_type, hero_slot_idx, 0);
 
-                    UNIT_RemoveExcess((_units - 1));
+                    Evict_Weakest_From_Full_Stack((_units - 1));
 
                     _HEROES2[player_idx]->heroes[unit_type].Level = -20;  // Why?
 
@@ -532,7 +532,7 @@ void Cast_Resurrection(int16_t player_idx)
 
                 WIZ_HireHero(player_idx, unit_type, hero_slot_idx, ST_TRUE);
 
-                UNIT_RemoveExcess((_units - 1));
+                Evict_Weakest_From_Full_Stack((_units - 1));
 
             }
 
@@ -575,7 +575,7 @@ void Cast_Resurrection(int16_t player_idx)
                 _UNITS[(_units - 1)].wy = (int8_t)_players[player_idx].summon_wy;
                 _UNITS[(_units - 1)].wp = (int8_t)_players[player_idx].summon_wp;
 
-                UNIT_RemoveExcess((_units - 1));
+                Evict_Weakest_From_Full_Stack((_units - 1));
 
                 Spell_Animation_Load_Graphics(spl_Resurrection);
 

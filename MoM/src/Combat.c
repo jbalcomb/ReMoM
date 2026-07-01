@@ -20469,7 +20469,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             _UNITS[battle_units[itr_battle_units].unit_idx].wy = (int8_t)_players[battle_unit_owner_idx].summon_wy;
             _UNITS[battle_units[itr_battle_units].unit_idx].wp = (int8_t)_players[battle_unit_owner_idx].summon_wp;
             _UNITS[battle_units[itr_battle_units].unit_idx].Finished = ST_TRUE;
-            UNIT_RemoveExcess(battle_units[itr_battle_units].unit_idx);
+            Evict_Weakest_From_Full_Stack(battle_units[itr_battle_units].unit_idx);
             battle_units[itr_battle_units].status = bus_Active;
             if(
                 (battle_unit_owner_idx == player_idx)

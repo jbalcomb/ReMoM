@@ -2178,7 +2178,7 @@ void City_Apply_Production(int16_t city_idx)
             if((_units + 1) < MAX_UNIT_COUNT)
             {
                 Create_Unit((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx);
-                UNIT_RemoveExcess((_units - 1));
+                Evict_Weakest_From_Full_Stack((_units - 1));
                 Army_At_City(city_idx, &uu_troop_count, &uu_troops[0]);
                 if(
                     (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
@@ -3479,7 +3479,7 @@ void Determine_Offer(void)
 
                             _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;
 
-                            UNIT_RemoveExcess((_units - 1));
+                            Evict_Weakest_From_Full_Stack((_units - 1));
 
                         }
 

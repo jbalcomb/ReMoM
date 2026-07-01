@@ -1575,7 +1575,7 @@ int16_t Cast_Word_Of_Recall(int16_t player_idx)
         _UNITS[scsv1].wy = (int8_t)_players[player_idx].summon_wy;
         _UNITS[scsv1].wp = (int8_t)_players[player_idx].summon_wp;
 
-        UNIT_RemoveExcess(scsv1);
+        Evict_Weakest_From_Full_Stack(scsv1);
 
     }
 

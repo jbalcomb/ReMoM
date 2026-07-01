@@ -736,7 +736,7 @@ e.g.,
     STK_CaptureCity__WIP()
         |-> Kill_Unit(unit_idx, 0)
 
-    UNIT_RemoveExcess()
+    Evict_Weakest_From_Full_Stack()
         |-> Kill_Unit(unit_idx, 1)
 
 */
@@ -1404,8 +1404,44 @@ void UNIT_LoggedPushOff(int16_t unit_idx)
 
 
 // WZD o120p26
-// drake178: UNIT_RemoveExcess()
-void UNIT_RemoveExcess(int16_t unit_idx)
+/**
+ * @brief Resolves stack overflow on a tile by evicting the weakest unit.
+ *
+ * @details
+ * This helper enforces the maximum stack size after unit placement/movement by
+ * inspecting all units on the acting unit's tile. If the tile contains more than
+ * @c MAX_STACK units, the function computes a simple "weakness" score for each
+ * unit and removes one candidate.
+ *
+ * Selection algorithm:
+ * 1. Read the acting unit's coordinates (@c wx/@c wy/@c wp).
+ * 2. Gather all units on that square via @c Army_At_Square_1().
+ * 3. If troop count exceeds @c MAX_STACK, compute score per unit as:
+ *    @code
+ *    Unit_Gold_Upkeep(unit) + Unit_Mana_Upkeep(unit) + unit_level
+ *    @endcode
+ * 4. Choose the lowest-scoring unit as the eviction target.
+ *    Ties are resolved in favor of the later-iterated unit due to
+ *    @c <= comparison in the selection check.
+ * 5. Remove the selected unit:
+ *    - Non-neutral owner: push off tile with logging via @c UNIT_LoggedPushOff().
+ *    - Neutral owner: dismiss immediately via @c Kill_Unit(..., kt_Dismissed).
+ *
+ * @param unit_idx Index of the reference unit whose current tile is checked for
+ *                 stack overflow.
+ *
+ * @return This function returns no value.
+ *
+ * @note The temporary troop list is sized to 10 entries, while the stack cap is
+ *       defined by @c MAX_STACK.
+ * @note The selection metric is a heuristic and does not directly account for
+ *       combat abilities beyond upkeep and current level.
+ * @note Neutral and non-neutral removals use different paths, which affects
+ *       downstream reporting/logging behavior.
+ *
+ * @see Army_At_Square_1(), UNIT_LoggedPushOff(), Kill_Unit(), Unit_Gold_Upkeep(), Unit_Mana_Upkeep()
+ */
+void Evict_Weakest_From_Full_Stack(int16_t unit_idx)
 {
     int16_t troops[10] = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB };
     int16_t unit_wp = 0;
@@ -1416,19 +1452,14 @@ void UNIT_RemoveExcess(int16_t unit_idx)
     int16_t trooper_value = 0;
     int16_t lowest_trooper_value = 0;
     int16_t itr_troops = 0;
-
     lowest_trooper_idx   = -999;
     lowest_trooper_value =  999;
-
     unit_wx = _UNITS[unit_idx].wx;
     unit_wy = _UNITS[unit_idx].wy;
     unit_wp = _UNITS[unit_idx].wp;
-
     Army_At_Square_1(UNITX(), UNITY(), UNITP(), &troop_count, &troops[0]);
-
     if(troop_count > MAX_STACK)
     {
-
         for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
         {
             trooper_value = Unit_Gold_Upkeep(troops[itr_troops]) + Unit_Mana_Upkeep(troops[itr_troops]);
@@ -1439,7 +1470,6 @@ void UNIT_RemoveExcess(int16_t unit_idx)
                 lowest_trooper_idx = troops[itr_troops];
             }
         }
-
         if(_UNITS[lowest_trooper_idx].owner_idx != NEUTRAL_PLAYER_IDX)
         {
             UNIT_LoggedPushOff(lowest_trooper_idx);
@@ -1448,9 +1478,7 @@ void UNIT_RemoveExcess(int16_t unit_idx)
         {
             Kill_Unit(lowest_trooper_idx, kt_Dismissed);
         }
-
     }
-    
 }
 
 

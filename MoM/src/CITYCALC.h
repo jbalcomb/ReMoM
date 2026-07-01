@@ -190,8 +190,8 @@ int16_t Unit_Base_Level(int16_t unit_idx);
 void UNIT_LoggedPushOff(int16_t unit_idx);
 
 // WZD o120p26
-// drake178: UNIT_RemoveExcess()
-void UNIT_RemoveExcess(int16_t unit_idx);
+// drake178: Evict_Weakest_From_Full_Stack()
+void Evict_Weakest_From_Full_Stack(int16_t unit_idx);
 
 
 
