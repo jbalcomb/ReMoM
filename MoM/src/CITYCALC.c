@@ -2107,7 +2107,6 @@ int16_t City_Production_Production(int16_t city_idx)
 
 
 // WZD o142p12
-// drake178: CTY_GetGold()
 int16_t City_Gold_Production(int16_t city_idx)
 {
     int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -2208,6 +2207,7 @@ int16_t City_Gold_Production(int16_t city_idx)
         }
         else
         {
+            gold_units += gold_units;
             are_dwarf = ST_TRUE;
         }
 

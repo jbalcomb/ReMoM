@@ -10,7 +10,11 @@ You need the original game data files to play.
 
 2. Copy those files into this folder (the same folder as `ReMoMber`).
 
-3. Run `ReMoMber` (or `ReMoMber.exe` on Windows).
+3. Run the game:
+   - **Windows:** `ReMoMber.exe`. *(The Windows build currently runs silent — no audio yet.)*
+   - **Linux:** the `.AppImage` (`chmod +x` it first), or `./ReMoMber` from the ZIP if you have SDL2 installed.
+   - **macOS:** `./ReMoMber`. It's unsigned, so the first time clear the quarantine flag:
+     `xattr -dr com.apple.quarantine ReMoMber`.
 
 ## Troubleshooting
 

@@ -16,6 +16,8 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
+#include "remom_version.h"  /* REMOM_VERSION_STRING — generated from the git tag */
+
 
 
 // static SDL_Window * sdl3_window;                    // static SDL_Window *screen;
@@ -30,7 +32,7 @@ int platform_screen_scale = 4;
 int sdl3_window_width  = PLATFORM_SCREEN_WIDTH * 4;
 int sdl3_window_height = PLATFORM_SCREEN_HEIGHT * 4;
 
-char sdl3_window_title[] = "(MoM-Rasm) Master of Magic v1.31 - Reassembly";  // static const char *window_title = "";
+char sdl3_window_title[] = "(MoM-Rasm) Master of Magic v1.31 - Reassembly (v" REMOM_VERSION_STRING ")";  // static const char *window_title = "";
 
 SDL_Rect sdl3_blit_rect = {0, 0, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT};  // static SDL_Rect blit_rect = { 0, 0, SCREENWIDTH, SCREENHEIGHT};
 
