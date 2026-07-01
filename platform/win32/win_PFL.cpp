@@ -23,6 +23,8 @@
 #include "../../platform/include/Platform_Replay.h"
 #include "win_PFL.h"
 
+#include "remom_version.h"  /* REMOM_VERSION_STRING — generated from the git tag */
+
 
 
 /* ========================================================================= */
@@ -49,7 +51,7 @@ void Platform_Register_Frame_Callback(void (*callback)(void))
 }
 
 static const CHAR win_window_class_name[] = "MoM_Wnd_Cls";
-static const CHAR win_window_title[] = "(ReMoM) Master of Magic v1.31 - Win32";
+static const CHAR win_window_title[] = "(ReMoM) Master of Magic v1.31 - Win32 (v" REMOM_VERSION_STRING ")";
 
 
 

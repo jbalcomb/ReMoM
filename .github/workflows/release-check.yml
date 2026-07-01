@@ -98,3 +98,42 @@ jobs:
             out/build/clang-release/**/*.log
           if-no-files-found: ignore
           retention-days: 7
+
+  macos-release:
+    name: macOS Clang Release
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install SDL2 and tools
+        run: brew install sdl2 sdl2_mixer ninja
+
+      - name: Cache CMake build directory
+        uses: actions/cache@v4
+        with:
+          path: out/build/macos-release
+          key: cmake-${{ runner.os }}-macos-release-${{ hashFiles('CMakePresets.json', '**/CMakeLists.txt') }}
+          restore-keys: |
+            cmake-${{ runner.os }}-macos-release-
+
+      - name: Configure (macos-release preset)
+        run: cmake --preset macos-release -DCMAKE_PREFIX_PATH="$(brew --prefix)"
+
+      - name: Build
+        run: cmake --build out/build/macos-release
+
+      - name: Test
+        run: ctest --test-dir out/build/macos-release --output-on-failure --timeout 120 --label-exclude integration --exclude-regex "Reload_Melee_Sound_test"
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: cmake-logs-macos-${{ github.run_id }}
+          path: |
+            out/build/macos-release/CMakeFiles/CMakeOutput.log
+            out/build/macos-release/CMakeFiles/CMakeError.log
+            out/build/macos-release/**/*.log
+          if-no-files-found: ignore
+          retention-days: 7

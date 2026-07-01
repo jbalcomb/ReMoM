@@ -146,6 +146,29 @@
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++"
             }
+        },
+        {
+            "name": "macos-release",
+            "displayName": "macOS Release",
+            "description": "macOS (AppleClang) single-config Release build for distribution packaging",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+            }
+        },
+        {
+            "name": "macos-debug",
+            "displayName": "macOS",
+            "description": "macOS (AppleClang) multi-config development build",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+            }
         }
     ],
     "buildPresets": [
@@ -208,6 +231,17 @@
             "name": "clang-debug",
             "displayName": "Linux Clang",
             "configurePreset": "clang-debug",
+            "configuration": "Debug",
+            "targets": [
+                "all",
+                "ReMoMber",
+                "HeMoM"
+            ]
+        },
+        {
+            "name": "macos-debug",
+            "displayName": "macOS",
+            "configurePreset": "macos-debug",
             "configuration": "Debug",
             "targets": [
                 "all",
@@ -287,6 +321,12 @@
             "name": "clang-debug",
             "displayName": "Linux Clang",
             "configurePreset": "clang-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "macos-debug",
+            "displayName": "macOS",
+            "configurePreset": "macos-debug",
             "configuration": "Debug"
         }
     ],
@@ -394,6 +434,24 @@
                 {
                     "type": "package",
                     "name": "clang-debug"
+                }
+            ]
+        },
+        {
+            "name": "macos-debug",
+            "displayName": "macOS",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "macos-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "macos-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "macos-debug"
                 }
             ]
         }

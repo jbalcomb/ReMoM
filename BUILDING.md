@@ -72,9 +72,16 @@ statically link SDL and eliminate DLL dependencies at runtime.
 
 ## Building (CMake)
 
+CMake is the canonical build system. The named presets in `CMakePresets.json`
+(`clang-debug`, `clang-release`, `MSVC-release`, `macos-release`, …) are exactly
+what CI uses, so prefer them over ad-hoc `cmake -B build` invocations when you
+want to reproduce CI. For how releases are built and published, see
+[RELEASES.md](RELEASES.md).
+
 CMake defaults to the SDL2 backend. The custom Find modules in `cmake/`
 handle locating SDL2 and SDL2_mixer automatically via pkg-config on
-Linux/macOS, or via cache variables on Windows.
+Linux/macOS, or via cache variables on Windows. On Windows the `MSVC-*`
+presets instead use the native **Win32** backend, which needs no SDL.
 
 ### Linux / macOS (CMake)
 

@@ -1,11 +1,32 @@
 cmake_minimum_required(VERSION 3.15)
 
+# --- Release version (single source of truth) ---
+# The full version string is supplied by the release pipeline from the git tag
+# (e.g. tag v0.5.0 -> -DREMOM_VERSION=0.5.0).  Local / dev builds fall back to a
+# placeholder.  CMake's project(VERSION) needs a clean numeric MAJOR.MINOR.PATCH,
+# so we derive that from the (possibly suffixed) full string while keeping the
+# full string for artifact names and the in-app version banner.
+set(REMOM_VERSION "0.0.0-dev" CACHE STRING "Release version (set from the git tag by CI)")
+
+string(REGEX MATCH "^[0-9]+\\.[0-9]+\\.[0-9]+" REMOM_VERSION_NUMERIC "${REMOM_VERSION}")
+if(NOT REMOM_VERSION_NUMERIC)
+    set(REMOM_VERSION_NUMERIC "0.0.0")
+endif()
+
 project(
     ReMoM
-    VERSION "0.0.1"
+    VERSION "${REMOM_VERSION_NUMERIC}"
     DESCRIPTION "Reassembly of Master of Magic v1.31 (Simtex, 1995)"
     LANGUAGES C
 )
+
+# Generate a header carrying the full version string for the in-app banner.
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/remom_version.h.in"
+    "${CMAKE_BINARY_DIR}/generated/remom_version.h"
+    @ONLY
+)
+include_directories("${CMAKE_BINARY_DIR}/generated")
 
 # GoogleTest requires at least C++17
 enable_language(CXX)
@@ -229,19 +250,19 @@ add_subdirectory(tests)
 add_subdirectory(demo)
 
 # --- Installation / Packaging ---
-
-install(TARGETS
-        ReMoMber
-        HeMoM
-        savedump
-        rmr2hms
-        check_save_fields
-        compare_save_text
-        check_ai_metrics
+#
+# Public releases are ENGINE-ONLY: we install just the player executable plus a
+# couple of docs / templates.  The player supplies their own original Master of
+# Magic data files (every *.LBX plus CONFIG.MOM) at runtime — those are NOT
+# shipped.  The dev/QA tools (HeMoM, savedump, rmr2hms, check_*, compare_*) stay
+# buildable but are deliberately excluded from the installed/packaged set.
+install(TARGETS ReMoMber
     RUNTIME DESTINATION .
 )
 
 # Bundle SDL DLLs on Windows so the player doesn't need them installed.
+# No-op for the MSVC-release preset (native Win32 backend, links no SDL); this
+# only matters for SDL-based Windows packaging.
 if(WIN32 AND NOT USE_WIN32)
     if(_sdl_imported_loc)
         install(FILES "${_sdl_imported_loc}" DESTINATION .)
@@ -251,16 +272,18 @@ if(WIN32 AND NOT USE_WIN32)
     endif()
 endif()
 
-# Bundle game assets and the PLAYING readme.
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/assets/" DESTINATION .)
+# Player-facing docs only.  No game data, saves, test fixtures, or dev/modder
+# config templates from assets/ are bundled.  Power-user features (the ReMoM.ini
+# --newgame template, seeds, logging control) are deferred to a separate
+# Dev/Modder effort — see the "Future phase" section in RELEASES.md.
 if(EXISTS "${PROJECT_SOURCE_DIR}/PLAYING.md")
     install(FILES "${PROJECT_SOURCE_DIR}/PLAYING.md" DESTINATION .)
 endif()
 
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_NAME "ReMoM")
-set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
-set(CPACK_PACKAGE_FILE_NAME "ReMoM-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+set(CPACK_PACKAGE_VERSION "${REMOM_VERSION}")
+set(CPACK_PACKAGE_FILE_NAME "ReMoM-${REMOM_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
 
 if(WIN32)
     set(CPACK_GENERATOR "ZIP;NSIS")
@@ -273,7 +296,7 @@ else()
 endif()
 
 set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
-set(CPACK_SOURCE_PACKAGE_FILE_NAME "ReMoM-${PROJECT_VERSION}-Source")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "ReMoM-${REMOM_VERSION}-Source")
 set(CPACK_SOURCE_IGNORE_FILES
     "/assets/"
     "/\\.LBX/"

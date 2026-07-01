@@ -13,22 +13,26 @@ https://youtu.be/d-PlvxV_Ek0
 
 ## Download and Play
 
-Pre-built binaries are available on the [Releases](https://github.com/jbalcomb/ReMoM/releases) page.
+Pre-built, **engine-only** binaries are available on the [Releases](https://github.com/jbalcomb/ReMoM/releases) page. You supply your own original game data files.
 
-1. Download the ZIP (Windows) or AppImage (Linux) for your platform.
-2. Extract the ZIP (or make the AppImage executable with `chmod +x`).
+1. Download the artifact for your platform:
+   - **Windows:** the `.zip`, or run the `.exe` installer. *(Audio is not yet wired up on the Windows build — it runs silent.)*
+   - **Linux:** the `.AppImage` (self-contained) — or the `.zip`/`.tar.gz` if you already have SDL2 installed.
+   - **macOS:** the `.zip`. It's unsigned, so on first run clear the quarantine flag: `xattr -dr com.apple.quarantine ReMoMber`.
+2. Extract it (on Linux/macOS, `chmod +x` the AppImage / `ReMoMber`).
 3. Copy your original **Master of Magic v1.31** game files (all `.LBX` files and `CONFIG.MOM`) into the same folder as the executable.
 4. Run `ReMoMber`.
 
-See [PLAYING.md](PLAYING.md) for more details and troubleshooting.
+See [PLAYING.md](PLAYING.md) for more details and troubleshooting. Maintainers cutting a release: see [RELEASES.md](RELEASES.md).
 
 ## How to Build
 
 ### Prerequisites
 
 - **CMake** 3.25+ (for preset support)
-- **SDL3** 3.4.2+ development files
-- **SDL3_mixer** (optional — use a no-sound preset to build without it)
+- A rendering/audio backend, depending on platform/preset:
+  - **Windows (`MSVC-*` presets):** none — these use the native **Win32** backend (no SDL).
+  - **Linux / macOS:** **SDL2** + **SDL2_mixer** development files. SDL2 is the default backend; SDL3 is opt-in via `-DUSE_SDL3=ON` (use a no-sound preset to build without the mixer).
 - A C/C++ toolchain:
   - **Windows:** Visual Studio 2022 (x64 C++ tools)
   - **Linux:** GCC or Clang, plus Ninja or Make
@@ -43,9 +47,10 @@ Build presets are defined in `CMakePresets.json`.
 cmake --workflow --preset=MSVC-debug
 ```
 
-This runs configure, build, test, and package steps in one command.
+This runs configure, build, test, and package steps in one command. The `MSVC-*`
+presets use the native **Win32** backend, so no SDL install is needed on Windows.
 
-Without SDL3_mixer:
+Explicitly without audio:
 
 ```powershell
 cmake --workflow --preset=MSVC-nosound-debug
@@ -59,7 +64,7 @@ cmake --build --preset MSVC-debug
 ctest --preset MSVC-debug
 ```
 
-SDL3 and SDL3_mixer are expected at `C:\devellib\SDL3-3.4.2` and `C:\devellib\SDL3_mixer-3.2.0`. To use a different location, pass `-DCMAKE_PREFIX_PATH=C:\your\path` when configuring.
+To build an SDL-based Windows binary instead (opt out of the Win32 backend with `-DUSE_WIN32=OFF`), CMake looks for SDL under `C:\devellib\` (e.g. `SDL2-2.32.2`, or `SDL3-3.4.2` with `-DUSE_SDL3=ON`). Pass `-DCMAKE_PREFIX_PATH=C:\your\path` to use a different location. See [BUILDING.md](BUILDING.md).
 
 ---
 
@@ -77,28 +82,28 @@ If your distro's CMake is too old (need 3.25+), install the latest from Kitware:
 curl -fsSL https://raw.githubusercontent.com/jbalcomb/ReMoM/main/scripts/install-cmake-linux.sh | bash
 ```
 
-#### 2. Install SDL3
+#### 2. Install SDL2
 
-SDL3 is not yet in most distro repos. Build and install from source:
+SDL2 is the default backend and is in the distro repos:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jbalcomb/ReMoM/main/scripts/install-sdl3-linux.sh | bash
+sudo apt install libsdl2-dev libsdl2-mixer-dev
 ```
 
-This installs SDL3 3.4.2 to `/usr/local`. The script will list the apt packages needed for a full build (X11, Wayland, PulseAudio, etc.) and prompt before proceeding.
+(SDL3 is optional — opt in with `-DUSE_SDL3=ON`; see [BUILDING.md](BUILDING.md). To build without audio, use the `clang-nosound-debug` preset.)
 
 #### 3. Build ReMoM
 
 ```bash
-cmake --workflow --preset=clang-nosound-debug
+cmake --workflow --preset=clang-debug
 ```
 
 Or run steps individually:
 
 ```bash
-cmake --preset clang-nosound-debug
-cmake --build --preset clang-nosound-debug
-ctest --preset clang-nosound-debug
+cmake --preset clang-debug
+cmake --build --preset clang-debug
+ctest --preset clang-debug
 ```
 
 ---
