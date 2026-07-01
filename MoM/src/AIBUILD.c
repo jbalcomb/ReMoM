@@ -27,79 +27,45 @@
 */
 
 // WZD o157p01
-// drake178: AI_SetProduction()
 /*
-; chooses and assigns the next production projects to all of the specified player's cities
 ; WARNING: can't produce settlers or engineers in more than one city simultaneously
-*/
-/*
-
-XREF:
-    j_AI_SetProduction()
-        AI_Overland_Turn()
-
-AI_Overland_Turn()
-    |-> j_AI_SetProduction(_SI_itr_players)
-
 */
 void Player_All_Colony_Autobuild(int16_t player_idx)
 {
     int16_t assign_new_building = 0;
-    int16_t itr_cities = 0;  // _SI_
-
+    int16_t itr_cities = 0;
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-
         if(_CITIES[itr_cities].owner_idx != player_idx)
         {
-
             continue;
-
         }
-
         assign_new_building = ST_FALSE;
-
         if(_CITIES[itr_cities].construction == bt_AUTOBUILD)
         {
-
             assign_new_building = ST_TRUE;
-
         }
-
         if(
             ((_CITIES[itr_cities].construction == bt_Housing) || (_CITIES[itr_cities].construction == bt_TradeGoods))
             &&
             (Random(6) == 1)  // 1:6  1/6  16.67% chance
         )
         {
-
             assign_new_building = ST_TRUE;
-
         }
-
-
         if(assign_new_building == ST_TRUE)
         {
-
-
             if(player_idx == NEUTRAL_PLAYER_IDX)
             {
-
                 Player_Colony_Autobuild_NP(itr_cities);
-
             }
             else
             {
-
                 Player_Colony_Autobuild_CP(player_idx, itr_cities);
-
             }
-
-
         }
         else
         {
-
             if(
                 (_CITIES[itr_cities].construction != bt_Housing)
                 &&
@@ -108,16 +74,12 @@ void Player_All_Colony_Autobuild(int16_t player_idx)
                 (player_idx != NEUTRAL_PLAYER_IDX)
             )
             {
-
                 AI_Player_City_Buy_Production(player_idx, itr_cities);
-
             }
-
         }
-
     }
-
 }
+
 
 // WZD o157p02
 // drake178: AI_CTY_SetProduction()

@@ -84,7 +84,7 @@ Player_Colony_Autobuild_()
     |-> Assign_Colony_New_Building_()
 
 
-_CITIES[].construction == bt_GRANDVIZIER  ~== s_COLONY.IDK_auto_build == ST_TRUE
+_CITIES[].construction == bt_AUTOBUILD  ~== s_COLONY.IDK_auto_build == ST_TRUE
 
 
 
