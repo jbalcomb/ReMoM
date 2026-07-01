@@ -70,7 +70,8 @@ Random events fire during normal end-of-turn (skipped during Time Stop).
 Outpost growth, city changes, nightshade counts, and building removal.
 
 - [ ] **9A** [`All_Outpost_Population_Growth`](../MoM/src/CITYCALC.c#L3207) — outposts with sufficient food grow toward "city" status.
-- [x] **9B** [`Apply_City_Changes`](../MoM/src/NEXTTURN.c#L2917) — **done-done**, doc [NextTurn/NEXTTURN-Apply_City_Changes.md](NextTurn/NEXTTURN-Apply_City_Changes.md). Per-turn outpost/city population maintenance; verified 1:1 against `ovr140/Apply_City_Changes.asm`. R1 (`Pop_10s` overwrite → accumulate) fixed this session.
+- [x] **9B** [`Apply_City_Changes`](../MoM/src/NEXTTURN.c#L2901) — **done-done**, doc [NextTurn/NEXTTURN-Apply_City_Changes.md](NextTurn/NEXTTURN-Apply_City_Changes.md). Per-turn outpost/city population maintenance; verified 1:1 against `ovr140/Apply_City_Changes.asm`. R1 (`Pop_10s` overwrite → accumulate) fixed this session.
+  - Downstream helper: [`City_Apply_Production`](../MoM/src/NEXTTURN.c#L2159) — **done-done**, doc [NextTurn/NEXTTURN-City_Apply_Production.md](NextTurn/NEXTTURN-City_Apply_Production.md). Per-city production advance/completion; verified 1:1 against `ovr140/City_Apply_Production.asm`. Building-completion bookkeeping restructure (nested → unconditional) fixed this session.
 - [ ] **9C** [`All_City_Nightshade_Count`](../MoM/src/Terrain.c#L1625) — recounts nightshade tiles per city (affects Life realm bonuses).
 - [ ] **9D** [`All_City_Removed_Buildings`](../MoM/src/City_ovr55.c#L2284) — sweeps `bldg_status[]` for state changes and applies effects.
 

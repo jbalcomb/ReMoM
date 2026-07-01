@@ -2112,221 +2112,182 @@ void Initialize_Reports(void)
 
 
 // WZD o140p03
-// drake178: CTY_ProdProgress()
 // MoO2  Module: COLCALC  Apply_Production_()
-/*
-    accumulate production points
-        apply production points
-            create building
-            create unit
-    do 'Grand Vizier' // do 'Computer Player' product decision/selection
-
-*/
+/**
+ * @brief Applies one turn of production progress for a single city.
+ *
+ * @details
+ * This routine advances the city's accumulated production and resolves completion
+ * of either unit production or building construction based on
+ * @c _CITIES[city_idx].construction.
+ *
+ * Behavior summary:
+ * 1. Early-out if the city has no population.
+ * 2. If constructing a unit (@c construction >= 100):
+ *    - Add production to @c Prod_Accu.
+ *    - If enough production is accumulated, attempt to create the unit.
+ *    - If unit cap is reached, apply human/AI-specific fallback behavior
+ *      (warning message for human, autobuild/trade-goods fallback).
+ *    - Reset accumulated production on completion attempt.
+ * 3. If constructing a building:
+ *    - Handle pseudo-products (values below @c bt_Barracks) for AI cities.
+ *    - Add production (neutral cities accumulate at half rate).
+ *    - On completion, update building status, replacement relationships,
+ *      building count, reports, and follow-up construction choice.
+ * 4. If Grand Vizier is enabled for the human player and the city is in
+ *    autobuild state, invoke automatic build selection.
+ *
+ * Human-specific side effects include building-complete messages and unit-cap
+ * warning UI strings; AI cities generally switch to autobuild after completion.
+ *
+ * @param city_idx Index of the city in @c _CITIES[] whose production phase is processed.
+ *
+ * @return This function returns no value.
+ *
+ * @note Unit production uses @c Create_Unit() with unit type encoded as
+ *       @c construction - 100.
+ * @note Production overflow is discarded on completion by resetting
+ *       @c _CITIES[city_idx].Prod_Accu to 0.
+ * @note Building completion may mark replaced buildings as @c bs_Replaced when
+ *       the new building defines @c replace_bldg.
+ * @note Oracle completion for the human player triggers local exploration reveal.
+ * @note With Grand Vizier enabled, human post-completion selection is automated
+ *       through @c Player_Colony_Autobuild_HP().
+ *
+ * @see City_Current_Product_Cost(), Create_Unit(), Player_Colony_Autobuild_HP()
+ */
 void City_Apply_Production(int16_t city_idx)
 {
     char city_name[LEN_NAME];
     int16_t uu_troops[MAX_STACK] = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB };  // HACK
     int16_t uu_troop_count;
-    int16_t product_cost;  // _SI_
+    int16_t product_cost;
 
     product_cost = City_Current_Product_Cost(city_idx);
 
     if(_CITIES[city_idx].population <= 0)
     {
-
         return;
-
     }
 
     if(_CITIES[city_idx].construction >= 100)  /* *Product* is 'Unit' */
     {
-
         _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
-
         if(_CITIES[city_idx].Prod_Accu >= product_cost)
         {
-            
             if((_units + 1) < MAX_UNIT_COUNT)
             {
-
                 Create_Unit((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx);
-
                 UNIT_RemoveExcess((_units - 1));
-
                 Army_At_City(city_idx, &uu_troop_count, &uu_troops[0]);
-
                 if(
                     (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
                     ||
                     (grand_vizier == ST_TRUE)
                 )
                 {
-
                     _CITIES[city_idx].construction = bt_AUTOBUILD;
-
                 }
-
             }
             else
             {
-
                 if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
                 {
-
                     _CITIES[city_idx].construction = bt_AUTOBUILD;
-
                 }
                 else
                 {
-
                     LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 66, 1, 150);  // "Maximum number of units exceeded"
-
                     stu_strcpy(city_name, _CITIES[city_idx].name);
-
                     stu_strcat(GUI_NearMsgString, city_name);
-
                     stu_strcat(GUI_NearMsgString, cnst_TooManyUnits);  // ". You must disband some units if you wish to build or summon any more."
-
                     Warn0(GUI_NearMsgString);
-
                     if(
                         (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
                         &&
                         (grand_vizier == ST_TRUE)
                     )
                     {
-
                         _CITIES[city_idx].construction = bt_AUTOBUILD;
-
                     }
                     else
                     {
-
                         _CITIES[city_idx].construction = bt_TradeGoods;
-
                     }
                 }
-
             }
-
-
-            _CITIES[city_idx].Prod_Accu = 0;  // BUGBUG ¿ drake178: discards excess ? not actually a bug, just prescribed behavior? "surplus production units will be lost"
-
+            _CITIES[city_idx].Prod_Accu = 0;  /* "surplus production units will be lost" */
         }
-
     }
     else  /* *Product* is 'Building' */
     {
-
         if(_CITIES[city_idx].construction < bt_Barracks)  /* ~== not a *real* building */
         {
-
             if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
             {
-
                 _CITIES[city_idx].construction = bt_AUTOBUILD;
-
             }
-
         }
         else
         {
-
             if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
             {
-
                 _CITIES[city_idx].Prod_Accu += (_CITIES[city_idx].production_units / 2);
-
             }
             else
             {
-
                 _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
-
             }
-
+            /* Did we build a Building? */
             if(_CITIES[city_idx].Prod_Accu >= product_cost)
             {
-
-                // NOTE(JimBalcomb,20250221):  just got triggered, don't recall why I had this here...  assert((_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] < 0));
-                // IDGI:  ¿ impossible state - unreachable code ?
-                // #CRASHME
-                // BUGBUG
-                // C6385  Reading invalid data from '_CITIES[city_idx].bldg_status':  the readable size is '36' bytes, but '_CITIES[city_idx].construction' bytes may be read.
+                // TODO  pragma ignore C6385  Reading invalid data from '_CITIES[city_idx].bldg_status':  the readable size is '36' bytes, but '_CITIES[city_idx].construction' bytes may be read.
                 if(_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] >= 0)  /* bs_Replaced, bs_Built, bs_Removed */
                 {
-
                     _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] += 1;
-
                 }
                 else
                 {
-
-                    // C6386  Buffer overrun while writing to '_CITIES[city_idx].bldg_status':  the writable size is '36' bytes, but '_CITIES[city_idx].construction' bytes might be written.
+                    // TODO  pragma ignore C6386  Buffer overrun while writing to '_CITIES[city_idx].bldg_status':  the writable size is '36' bytes, but '_CITIES[city_idx].construction' bytes might be written.
                     _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] = bs_Built;
-
                     if(bldg_data_table[_CITIES[city_idx].construction].replace_bldg != ST_UNDEFINED)
                     {
-
                         _CITIES[city_idx].bldg_status[bldg_data_table[_CITIES[city_idx].construction].replace_bldg] = bs_Replaced;
-
                     }
-
-                    if(
-                        (_CITIES[city_idx].construction == bt_Oracle)
-                        &&
-                        (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
-                    )
+                }
+                if(
+                    (_CITIES[city_idx].construction == bt_Oracle)
+                    &&
+                    (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+                )
+                {
+                    Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 6);
+                }
+                _CITIES[city_idx].bldg_cnt += 1;
+                _CITIES[city_idx].Prod_Accu = 0;
+                if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+                {
+                    _CITIES[city_idx].construction = bt_AUTOBUILD;
+                }
+                else
+                {
+                    if(g_bldg_msg_ctr < 20)
                     {
-
-                        Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 6);
-
+                        MSG_Building_Complete[g_bldg_msg_ctr].city_idx = (int8_t)city_idx;
+                        MSG_Building_Complete[g_bldg_msg_ctr].bldg_type_idx = _CITIES[city_idx].construction;
+                        g_bldg_msg_ctr++;
                     }
-
-                    _CITIES[city_idx].bldg_cnt += 1;
-
-                    _CITIES[city_idx].Prod_Accu = 0;
-
-                    if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+                    if(grand_vizier == ST_TRUE)
                     {
-
                         _CITIES[city_idx].construction = bt_AUTOBUILD;
-
                     }
                     else
                     {
-
-                        if(g_bldg_msg_ctr < 20)
-                        {
-
-                            MSG_Building_Complete[g_bldg_msg_ctr].city_idx = (int8_t)city_idx;
-
-                            MSG_Building_Complete[g_bldg_msg_ctr].bldg_type_idx = _CITIES[city_idx].construction;
-
-                            g_bldg_msg_ctr++;
-
-                        }
-
-                        if(grand_vizier == ST_TRUE)
-                        {
-
-                            _CITIES[city_idx].construction = bt_AUTOBUILD;
-
-                        }
-                        else
-                        {
-
-                            _CITIES[city_idx].construction = bt_Housing;
-
-                        }
+                        _CITIES[city_idx].construction = bt_Housing;
                     }
-
                 }
-
             }
-
         }
-
     }
 
     if(
@@ -2337,11 +2298,8 @@ void City_Apply_Production(int16_t city_idx)
         (_CITIES[city_idx].construction == bt_AUTOBUILD)
     )
     {
-
         Player_Colony_Autobuild_HP(city_idx);
-
     }
-
 
 }
 
