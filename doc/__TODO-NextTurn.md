@@ -9,7 +9,7 @@ Tracking the per-turn review/cleanup work for every function reachable from [`Ne
 ### Wave 1 — Unit lifecycle helpers
 Called at multiple points in the outer wrapper and the inner sim entry — used to clean up dead units, refresh movement points, and reset status flags between phases.
 
-- [ ] **1A** [`Delete_Dead_Units`](../MoM/src/NEXTTURN.c#L161) — called 5× per turn (pre-sim, mid-sim after AI turn, post-spell-casting, and 2× in `Next_Turn_Proc` bookends). Cleanup of `_UNITS[]` entries with `owner_idx == ST_UNDEFINED`.
+- [x] **1A** [`Delete_Dead_Units`](../MoM/src/NEXTTURN.c#L161) — **done-done**, doc [NextTurn/NEXTTURN-Delete_Dead_Units.md](NextTurn/NEXTTURN-Delete_Dead_Units.md). Compacts `_UNITS[]`, removing entries whose `owner_idx` is outside `[0,5]` (dead = `ST_UNDEFINED`) and fixing up hero `unit_idx` back-references; verified 1:1 against `ovr060/Delete_Dead_Units.asm`. Called 5× per turn (`Next_Turn_Proc` bookends, `Next_Turn_Calc`, `Loaded_Game_Update*`). No divergences; `continue` is an equivalent restructure (not in the asm).
 - [ ] **1B** [`All_Units_In_Towers`](../MoM/src/WZD_o059.h#L64) — called 2× in `Next_Turn_Proc` bookends. Marks units at tower positions with `in_tower = TRUE`.
 - [ ] **1C** [`Update_Units_MvsSts`](../MoM/src/NEXTTURN.c#L502) — called once in `Next_Turn_Proc`. Refreshes `moves2_max`/`moves2` from `Unit_Moves2()` and normalizes `Status` (Wait/ReachedDest → Ready).
 - [ ] **1D** [`All_AI_Refresh_Units_Movement`](../MoM/src/NEXTTURN.c#L441) — sibling of 1C for non-human units; handles Stasis via `mutations & (C_STASISINIT | C_STASISLINGER) → Finished = TRUE`. Not called by `Next_Turn_Proc` directly but reached via `Loaded_Game_Update*` — noted for completeness.

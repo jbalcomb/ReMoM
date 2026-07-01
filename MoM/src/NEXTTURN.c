@@ -144,20 +144,35 @@ int16_t IDK_autosave;
 
 // WZD o60p01
 // ~ MoO2  Module: SHIPSTAK  Remove_Non_Detected_Ships_()  Delete_Ship_Stack_()  Delete_Ship_Node_()
-/*
-    Eh?
-        for each _units
-    ...reduces _units...
-
-XREF:
-Next_Turn_Proc__WIP()
-Next_Turn_Proc__WIP()
-j_Delete_Dead_Units()
-    Loaded_Game_Update_WZD()
-    Next_Turn_Calc()
-    Loaded_Game_Update()
-
-*/
+/**
+ * @brief Removes dead/dismissed units from the global unit table and compacts indices.
+ *
+ * @details
+ * This routine scans @c _UNITS[] and deletes entries whose owner index is outside
+ * the valid active-owner range (human through neutral). Such entries represent
+ * units previously marked for removal (for example by @c Kill_Unit()).
+ *
+ * For each removed unit, the function compacts the unit array via
+ * @c Delete_Structure(), decrements @c _units, and then fixes hero references:
+ * every hero slot in every player whose @c unit_idx is greater than the deleted
+ * position is decremented by one to stay aligned with shifted unit indices.
+ *
+ * Iteration uses a while-loop with in-place compaction semantics:
+ * when a deletion occurs, the same index is re-checked (no increment) so the
+ * unit shifted into that slot is processed correctly.
+ *
+ * @return This function returns no value.
+ *
+ * @note A unit is considered removable when
+ *       @c owner_idx < HUMAN_PLAYER_IDX or @c owner_idx > NEUTRAL_PLAYER_IDX.
+ * @note Hero references equal to @c ST_UNDEFINED are ignored during index-fixup.
+ * @note The local @c unit_type variable is currently read but not used for
+ *       decision-making; behavior is driven by owner index bounds.
+ * @note This function mutates global structures: @c _UNITS[], @c _units,
+ *       and @c _players[].Heroes[].unit_idx.
+ *
+ * @see Kill_Unit(), Delete_Structure(), Next_Turn_Proc(), Next_Turn_Calc()
+ */
 void Delete_Dead_Units(void)
 {
     int16_t unit_type = 0;
@@ -176,24 +191,16 @@ void Delete_Dead_Units(void)
         )
         {
             Delete_Structure(itr_units, (uint8_t *)&_UNITS[0], sizeof(struct s_UNIT), _units);
+            /* Decrement the unit index for any owned heroes whose unit index is greater than the deleted unit's index */
             for(itr_players = 0; itr_players < _num_players; itr_players++)
                 for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
                     if((_players[itr_players].Heroes[itr_heroes].unit_idx != ST_UNDEFINED) && (_players[itr_players].Heroes[itr_heroes].unit_idx > itr_units))
                         _players[itr_players].Heroes[itr_heroes].unit_idx -= 1;
             _units -= 1;
-
-            /* COPILOT */ continue;  /* Re-check the unit that shifted into this slot. */
+            continue;  /* Re-check the unit that shifted into this slot. */
         }
         itr_units++;
     }
-
-#ifdef STU_DEBUG
-    for(itr_units = 0; itr_units < _units; itr_units++)
-    {
-        assert(_UNITS[itr_units].owner_idx != ST_UNDEFINED);
-    }
-#endif
-
 }
 
 
