@@ -1885,7 +1885,6 @@ void AI_Update_Gold_Income_And_Food_Income(int16_t player_idx)
  *       list queried via Map_Square_Unit_Count(), and writes updated
  *       farmer_count values back into neutral cities.
  */
-/* GEMINI */
 void NPC_Farmers(void)
 {
     int16_t city_idx = 0;
@@ -1902,7 +1901,7 @@ void NPC_Farmers(void)
             unit_count = Map_Square_Unit_Count(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp);
             /* Check for production bonus (Halflings or Granary). */
             /* OGBUG:  wrong calculation */
-            if(_CITIES[city_idx].race == rt_Halfling || _CITIES[city_idx].bldg_status[GRANARY] == bs_Built)
+            if(_CITIES[city_idx].race == rt_Halfling || _CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Built)
             {
                 /* Halfling/Granary logic (3 food per farmer) */
                 temp_val = min_farmers + unit_count;

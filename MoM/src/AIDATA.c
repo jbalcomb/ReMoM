@@ -62,7 +62,7 @@ void NPC_Excess_Garrison(void)
     int16_t i = 0;
     int16_t j = 0;
 
-    for (i = 0; i < _cities; i++)
+    for(i = 0; i < _cities; i++)
     {
         if(_CITIES[i].owner_idx == NEUTRAL_PLAYER_IDX)
         {
@@ -74,7 +74,7 @@ void NPC_Excess_Garrison(void)
             cheapest_unit = ST_UNDEFINED;
             troop_count = 0;
 
-            for (j = 0; j < _units; j++)
+            for(j = 0; j < _units; j++)
             {
                 if(_UNITS[j].wp == city_wp && 
                     _UNITS[j].wx == city_wx && 
@@ -146,7 +146,7 @@ void Make_Monsters(void)
     valid_zone_count = 0;
 
     /* First pass: Count how many lairs are intact and eligible to spawn rampages */
-    for (itr = 0; itr < NUM_LAIRS; itr++)
+    for(itr = 0; itr < NUM_LAIRS; itr++)
     {
         if(_LAIRS[itr].intact == ST_TRUE && _LAIRS[itr].guard1_unit_type != 0)
         {
@@ -202,7 +202,7 @@ void Make_Monsters(void)
             {
                 /* Check if this lair is on a continent with any player city */
                 city_match_found = 0;
-                for (itr = 0; itr < _cities; itr++)
+                for(itr = 0; itr < _cities; itr++)
                 {
                     if(_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX)
                     {
@@ -258,7 +258,7 @@ void Make_Monsters(void)
     // here, means we a flag for whether the rampage is on a continent the human is sharing with an AI
     if(_landmasses[_FORTRESSES[HUMAN_PLAYER_IDX].wp * WORLD_SIZE + _FORTRESSES[HUMAN_PLAYER_IDX].wy * WORLD_WIDTH + _FORTRESSES[HUMAN_PLAYER_IDX].wx] != lair_landmass_idx)
     {
-        for (itr = 1; itr < _num_players; itr++)
+        for(itr = 1; itr < _num_players; itr++)
         {
             if(_landmasses[_FORTRESSES[itr].wp * WORLD_SIZE + _FORTRESSES[itr].wy * WORLD_WIDTH + _FORTRESSES[itr].wx] == lair_landmass_idx)
             {
@@ -309,7 +309,7 @@ void Make_Monsters(void)
     AI_Metrics_Emit_NPC_Event(_turn, "MONSTER_SPAWN", lair_idx, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, lair_wp, n_monsters, rampage_budget, adjacent_wx, adjacent_wy, _players[NEUTRAL_PLAYER_IDX].average_unit_cost, (50 - (_difficulty * 5)));
 
     /* Create the units on the map */
-    for (itr = 0; itr < n_monsters; itr++)
+    for(itr = 0; itr < n_monsters; itr++)
     {
         Create_Unit__WIP(monster_type_list[itr], NEUTRAL_PLAYER_IDX, adjacent_wx, adjacent_wy, lair_wp, -1);
     }
@@ -380,7 +380,7 @@ void Make_Raiders(void)
     have_neutral_city = 0;
 
     /* Check if any neutral cities exist on the map */
-    for (itr = 0; itr < _cities; itr++)
+    for(itr = 0; itr < _cities; itr++)
     {
         city_ptr = &_CITIES[itr];
         if(city_ptr->owner_idx == NEUTRAL_PLAYER_IDX)
@@ -413,7 +413,7 @@ void Make_Raiders(void)
     unused_local = 0;
     did_create = 0;
 
-    for (tries = 0; tries < 1000 && did_create == 0; tries++)
+    for(tries = 0; tries < 1000 && did_create == 0; tries++)
     {
         /* BUG: Random(cities) - 1 can result in index -1 */
         rolled_city = Random(_cities) - 1;
@@ -433,7 +433,7 @@ void Make_Raiders(void)
 
         /* Check for presence of AI fortresses on the same landmass */
         have_ai_fortress = 0;
-        for (itr = 1; itr < _num_players; itr++)
+        for(itr = 1; itr < _num_players; itr++)
         {
             fortress_ptr = &_FORTRESSES[itr];
             /* BUG: Uses wp/wy/wx to index landmasses but doesn't strictly verify wp matches city_wp */
@@ -445,7 +445,7 @@ void Make_Raiders(void)
 
         /* Check if there is at least one non-neutral city on the same landmass */
         have_non_neutral = 0;
-        for (itr = 0; itr < _cities; itr++)
+        for(itr = 0; itr < _cities; itr++)
         {
             city_ptr = &_CITIES[itr];
             if(city_ptr->owner_idx != NEUTRAL_PLAYER_IDX)
@@ -520,7 +520,7 @@ void Make_Raiders(void)
         }
 
         units_created = 0;
-        for (itr = 0; itr < raiders_count; itr++)
+        for(itr = 0; itr < raiders_count; itr++)
         {
 
             unit_type = _UNITS[troops[(Random(troop_count) - 1)]].type;
@@ -551,7 +551,7 @@ void Make_Raiders(void)
         }
 
         /* Remove a portion of the original garrison to 'form' the raider party */
-        for (itr2 = 0; itr2 < (units_created / 3); itr2++)
+        for(itr2 = 0; itr2 < (units_created / 3); itr2++)
         {
             Kill_Unit(troops[itr2], kt_Normal);
         }
@@ -606,7 +606,8 @@ int16_t NPC_Destinations(void)
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: NPC_Destinations evaluating %d neutral stacks", _ai_all_own_stack_count);
 #endif
 
-    for (stack_idx = 0; stack_idx < _ai_all_own_stack_count; stack_idx++) {
+    for(stack_idx = 0; stack_idx < _ai_all_own_stack_count; stack_idx++)
+    {
         stack = &_ai_all_own_stacks[stack_idx];
         stack_wx = stack->wx;
         stack_wy = stack->wy;
@@ -616,9 +617,12 @@ int16_t NPC_Destinations(void)
 
         /* Check for any adjacent non-neutral city */
         adj_city_idx = -1;
-        for (itr = 0; itr < _cities; itr++) {
-            if(_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX && _CITIES[itr].wp == stack_wp) {
-                if(abs(stack_wx - _CITIES[itr].wx) < 2 && abs(stack_wy - _CITIES[itr].wy) < 2) {
+        for(itr = 0; itr < _cities; itr++)
+        {
+            if(_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX && _CITIES[itr].wp == stack_wp)
+            {
+                if(abs(stack_wx - _CITIES[itr].wx) < 2 && abs(stack_wy - _CITIES[itr].wy) < 2)
+                {
                     adj_city_idx = itr;
                     break;
                 }
@@ -626,7 +630,8 @@ int16_t NPC_Destinations(void)
         }
 
         /* If adjacent city found and stack is already moving (GOTO), evaluate redirection */
-        if(adj_city_idx > -1 && stack->unit_status == us_GOTO) {
+        if(adj_city_idx > -1 && stack->unit_status == us_GOTO)
+        {
             Army_At_Square_1(stack_wx, stack_wy, stack_wp, &troop_count, troops);
             
             /* Current destination coordinates from the first unit in the stack */
@@ -635,14 +640,17 @@ int16_t NPC_Destinations(void)
 
             /* Identify if current destination is a city */
             target_city_idx = -1;
-            for (itr = 0; itr < _cities; itr++) {
-                if(_CITIES[itr].wx == dst_wx && _CITIES[itr].wy == dst_wy && _CITIES[itr].wp == stack_wp) {
+            for(itr = 0; itr < _cities; itr++)
+            {
+                if(_CITIES[itr].wx == dst_wx && _CITIES[itr].wy == dst_wy && _CITIES[itr].wp == stack_wp)
+                {
                     target_city_idx = itr;
                     break;
                 }
             }
 
-            if(target_city_idx != adj_city_idx) {
+            if(target_city_idx != adj_city_idx)
+            {
                 /* Evaluate the worth of attacking the adjacent city */
                 Army_At_Square_1(_CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, _CITIES[adj_city_idx].wp, &troop_count, troops);
                 // OGBUG  ¿ Delta_XY_With_Wrap() is always 1 here ?  ... adj_city_idx
@@ -655,12 +663,14 @@ int16_t NPC_Destinations(void)
                 Army_At_Square_1(dst_wx, dst_wy, stack_wp, &troop_count, troops);
                 cur_target_val = 10 - troop_count - Delta_XY_With_Wrap(dst_wx, dst_wy, stack_wx, stack_wy, WORLD_WIDTH);
                 
-                if(target_city_idx != -1) {
+                if(target_city_idx != -1)
+                {
                     if(_difficulty > god_Normal && _CITIES[target_city_idx].owner_idx == HUMAN_PLAYER_IDX) cur_target_val += 5;
                     if(_difficulty > god_Hard   && _CITIES[target_city_idx].owner_idx == HUMAN_PLAYER_IDX) cur_target_val += 5;
                 }
 
-                if(adj_city_val > cur_target_val) {
+                if(adj_city_val > cur_target_val)
+                {
 #ifdef STU_DEBUG
                     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Stack %d at (%d,%d) redirected to adjacent city %d at (%d,%d) (val %d > %d)", stack_idx, stack_wx, stack_wy, adj_city_idx, _CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, adj_city_val, cur_target_val);
 #endif
@@ -672,19 +682,23 @@ int16_t NPC_Destinations(void)
         }
 
         /* If stack is idle, find the best non-neutral city to target on the same landmass/plane */
-        if(stack->unit_status != us_GOTO) {
+        if(stack->unit_status != us_GOTO)
+        {
             adj_city_val = -1000;
             target_city_idx = -1;
             cities_examined = 0;
 
-            for (itr = 0; itr < _cities; itr++) {
+            for(itr = 0; itr < _cities; itr++)
+            {
                 if(_CITIES[itr].owner_idx == NEUTRAL_PLAYER_IDX) continue;
                 if(cities_examined >= 30) break;
                 if(_CITIES[itr].wp != stack_wp) continue;
 
                 /* If unit is LandOnly, check if city is on the same landmass */
-                if((stack->abilities & AICAP_LandOnly) != 0) {
-                    if(_landmasses[(_CITIES[itr].wp * WORLD_SIZE) + (_CITIES[itr].wy * WORLD_WIDTH) + _CITIES[itr].wx] != stack_landmass_idx) {
+                if((stack->abilities & AICAP_LandOnly) != 0)
+                {
+                    if(_landmasses[(_CITIES[itr].wp * WORLD_SIZE) + (_CITIES[itr].wy * WORLD_WIDTH) + _CITIES[itr].wx] != stack_landmass_idx)
+                    {
                         continue;
                     }
                 }
@@ -695,14 +709,16 @@ int16_t NPC_Destinations(void)
                 if(_difficulty > god_Normal && _CITIES[itr].owner_idx == HUMAN_PLAYER_IDX) cur_target_val += 5;
                 if(_difficulty > god_Hard   && _CITIES[itr].owner_idx == HUMAN_PLAYER_IDX) cur_target_val += 5;
 
-                if(cur_target_val > adj_city_val) {
+                if(cur_target_val > adj_city_val)
+                {
                     target_city_idx = itr;
                     adj_city_val = cur_target_val;
                 }
                 cities_examined++;
             }
 
-            if(cities_examined > 0) {
+            if(cities_examined > 0)
+            {
                 uu_city_idx = target_city_idx;
 #ifdef STU_DEBUG
                 LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Stack %d at (%d,%d) targeting city %d at (%d,%d) (val %d, examined %d cities)", stack_idx, stack_wx, stack_wy, target_city_idx, _CITIES[target_city_idx].wx, _CITIES[target_city_idx].wy, adj_city_val, cities_examined);
@@ -717,8 +733,10 @@ int16_t NPC_Destinations(void)
                 LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Stack %d at (%d,%d) disbanded (no reachable targets)", stack_idx, stack_wx, stack_wy);
 #endif
                 AI_Metrics_Emit_NPC_Event(_turn, "NPC_DISBAND", stack_idx, stack_wx, stack_wy, stack_wp, 0, 0, 0, 0, 0, 0);
-                for (itr = 0; itr < _units; itr++) {
-                    if(_UNITS[itr].wx == stack_wx && _UNITS[itr].wy == stack_wy && _UNITS[itr].wp == stack_wp) {
+                for(itr = 0; itr < _units; itr++)
+                {
+                    if(_UNITS[itr].wx == stack_wx && _UNITS[itr].wy == stack_wy && _UNITS[itr].wp == stack_wp)
+                    {
                         Kill_Unit(itr, kt_Normal);
                     }
                 }
@@ -1157,7 +1175,7 @@ void Build_NPC_Stacks(void)
 
     _ai_all_own_stack_count = 0;
     
-    for (unit_idx = 0; unit_idx < _units; unit_idx++)
+    for(unit_idx = 0; unit_idx < _units; unit_idx++)
     {
         if(_ai_all_own_stack_count >= 80)
         {
@@ -1178,7 +1196,7 @@ void Build_NPC_Stacks(void)
         stack_exists = 0;
 
         /* Check if a stack already exists at this location in the AI's collection */
-        for (itr = 0; itr < _ai_all_own_stack_count; itr++)
+        for(itr = 0; itr < _ai_all_own_stack_count; itr++)
         {
             stack_ptr = &_ai_all_own_stacks[itr];
 
@@ -1200,7 +1218,7 @@ void Build_NPC_Stacks(void)
         {
             city_defender = ST_FALSE;
             /* Check if unit is currently inside a city */
-            for (itr = 0; itr < _cities; itr++)
+            for(itr = 0; itr < _cities; itr++)
             {
                 curr_city = &_CITIES[itr];
                 if(curr_city->wx == (uint8_t)unit_wx &&
