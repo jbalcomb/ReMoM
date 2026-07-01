@@ -123,7 +123,7 @@ Definitely Done-Done:
 ...j_Cast_Spell_Overland__WIP(); EMMDATAH_Map(); Allocate_AI_Data(); Player_Hostile_Opponents(); AI_Player_Calculate_Target_Values(); j_AI_Spell_Select();
 ...EMMDATAH_Map(); AI_Update_Magic_Power(); AI_Sanity_Check_Overland_Enchantments(); AI_Update_Gold_And_Mana_Reserves(); AI_Update_Gold_Income_And_Food_Income();
 ...
-[]          |-> Player_All_Colony_Autobuild(player_idx)
+[x]          |-> Player_All_Colony_Autobuild(player_idx)
 [x]         |-> AI_Evaluation_Map(player_idx)               populates g_ai_evaluation_map
 [x]         |-> AI_Evaluate_Continents(player_idx)          uses g_ai_evaluation_map, just populated in AI_Evaluation_Map()
                 ...sibling function... [x] OON XREF: AI_Set_Unit_Orders() |-> AI_Stacks_Stage_Expedition_Forces() |-> AI_Reevaluate_Continent()

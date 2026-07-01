@@ -1935,98 +1935,59 @@ void NPC_Farmers(void)
 
 
 // WZD o145p14
-// drake178: AI_ExcessBuilders()
-/*
-ensure that there is at most one settler and, after
-turn 200, at most one engineer on any continent
-*/
-/*
-
-inherently keeps the oldest
-kills off 2+ settlers, per continent
-after turn 200, kills off 2+ engineers, per continent
-
-*/
 void AI_Kill_Excess_Settlers_And_Engineers(int16_t player_idx)
 {
     int16_t engineer_count[NUM_LANDMASSES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t settler_count[NUM_LANDMASSES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t landmass_idx = 0;
-    int16_t itr = 0;  // _DI_
-
+    int16_t itr = 0;
     for(itr = 0; itr <NUM_LANDMASSES; itr++)
     {
-
         settler_count[itr] = 0;
-
         engineer_count[itr] = 0;
-
     }
-
     for(itr = 0; itr < _units; itr++)
     {
-
         if(_UNITS[itr].owner_idx == player_idx)
         {
-
-            if((_unit_type_table[_UNITS[itr].type].Abilities & UA_CREATEUNDEAD) != 0)
+            if((_unit_type_table[_UNITS[itr].type].Abilities & UA_CREATEOUTPOST) != 0)
             {
-
                 landmass_idx = _landmasses[((_UNITS[itr].wp * WORLD_SIZE) + (_UNITS[itr].wy * WORLD_WIDTH) + _UNITS[itr].wx)];
-
                 if(
                     (landmass_idx != 0)
                     &&
                     (landmass_idx < NUM_LANDMASSES)
                 )
                 {
-
                     settler_count[landmass_idx] += 1;
-
                     if(settler_count[landmass_idx] > 1)
                     {
-
-                        Kill_Unit(itr, 0);
-
+                        Kill_Unit(itr, kt_Normal);
                     }
-
                 }
-
             }
-
             if(
                 (_unit_type_table[_UNITS[itr].type].Construction > 0)
                 &&
                 (_turn > 200)
             )
             {
-
                 landmass_idx = _landmasses[((_UNITS[itr].wp * WORLD_SIZE) + (_UNITS[itr].wy * WORLD_WIDTH) + _UNITS[itr].wx)];
-
                 if(
                     (landmass_idx != 0)
                     &&
                     (landmass_idx < NUM_LANDMASSES)
                 )
                 {
-
                     engineer_count[landmass_idx] += 1;
-
                     if(engineer_count[landmass_idx] > 1)
                     {
-
-                        Kill_Unit(itr, 0);
-
+                        Kill_Unit(itr, kt_Normal);
                     }
-
                 }
-
             }
-
         }
-
     }
-
 }
 
 
