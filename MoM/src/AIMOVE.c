@@ -6944,6 +6944,124 @@ void AI_Evaluation_Map(int16_t player_idx)
 }
 
 
+/* CLAUDE: GD capture of the AI landmass-square scratch arrays (per-landmass
+ * linked-list heads, per-node next-index lists, per-node wx/wy coords -- in the
+ * CONTXXX EMS frame) at AI_Choose_War_Landmass entry, for the Stage-2 landmass-
+ * weight divergence hunt.  Mirrors the OG capfn (og_sort_trace.h, 603_AI_Choose_War_Landmass_Squares)
+ * byte-for-byte: heads dumped per-landmass (all NUM_LANDMASSES -- reset every
+ * rebuild, always valid); lists/wx/wy only up to the used node count (their tails
+ * are stale scratch and would diff spuriously).  used = total nodes reachable
+ * from all heads (== the builder's count[wp]), by traversal so no _landmasses
+ * read is needed.  The arrays are map-derived (player-independent), so the caller
+ * fires this once per turn. */
+static void gd_dump_ai_landmass_squares(const char* point)
+{
+    static char buf[1024];
+    int16_t wp;
+    int i, used, node, guard, base, end, q;
+
+    for(wp = 0; wp < NUM_PLANES; wp++)
+    {
+        /* used = total nodes reachable from all heads == builder count[wp].
+         * A node index outside [0,1600) is the list terminator (ST_UNDEFINED or
+         * stale); guard bounds the walk against a corrupt cycle. */
+        used = 0;
+        for(i = 0; i < NUM_LANDMASSES; i++)
+        {
+            node = _ai_landmass_land_squares_heads[wp][i];
+            guard = 0;
+            while(node >= 0 && node < 1600 && guard++ < 1600)
+            {
+                used++;
+                node = _ai_landmass_land_squares_lists[wp][node];
+            }
+        }
+
+        /* Emit <=100 values per [GD] line, tagged with the start index (@base),
+         * so each line stays under the logger's LOG_FMT_BUF_LEN.  The OG capfn
+         * chunks identically, so the two logs diff line-for-line. */
+        for(base = 0; base < NUM_LANDMASSES; base += 100)
+        {
+            end = (base + 100 < NUM_LANDMASSES) ? base + 100 : NUM_LANDMASSES;
+            q = 0; buf[0] = 0;
+            for(i = base; i < end; i++)
+                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
+                              (int)_ai_landmass_land_squares_heads[wp][i]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].heads@%d = %s",
+                      point, (int)wp, base, buf);
+        }
+        for(base = 0; base < used; base += 100)
+        {
+            end = (base + 100 < used) ? base + 100 : used;
+            q = 0; buf[0] = 0;
+            for(i = base; i < end; i++)
+                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
+                              (int)_ai_landmass_land_squares_lists[wp][i]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].lists@%d = %s",
+                      point, (int)wp, base, buf);
+        }
+        for(base = 0; base < used; base += 100)
+        {
+            end = (base + 100 < used) ? base + 100 : used;
+            q = 0; buf[0] = 0;
+            for(i = base; i < end; i++)
+                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
+                              (int)_ai_landmass_land_squares_wx_array[wp][i]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].wx_array@%d = %s",
+                      point, (int)wp, base, buf);
+        }
+        for(base = 0; base < used; base += 100)
+        {
+            end = (base + 100 < used) ? base + 100 : used;
+            q = 0; buf[0] = 0;
+            for(i = base; i < end; i++)
+                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
+                              (int)_ai_landmass_land_squares_wy_array[wp][i]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].wy_array@%d = %s",
+                      point, (int)wp, base, buf);
+        }
+        STU_Log_Flush_All();   /* drain per plane -- avoid async-logger ring overrun */
+    }
+}
+
+
+/* gd_dump_fortresses / gd_dump_cities are in INITGAME.c (INITGAME.h not included here). */
+void gd_dump_fortresses(const char* point);
+void gd_dump_cities(const char* point);
+
+/* CLAUDE: GD capture of _ai_continents (604) -- the per-plane/per-player continent
+ * evaluation that gates AI_Choose_War_Landmass's plane reevaluation (the switch
+ * reads .type_array).  s_LANDMASSES = { wx_array[60], wy_array[60], type_array[60] }
+ * (uint8) per (plane,player); flat record idx = plane*NUM_PLAYERS + player.
+ * DGROUP global -- valid on-entry.  Mirrors the OG capfn byte-for-byte. */
+static void gd_dump_ai_continents(const char* point)
+{
+    static char buf[1024];
+    int wp, pl, lm, q, flat;
+    for(wp = 0; wp < NUM_PLANES; wp++)
+    {
+        for(pl = 0; pl < NUM_PLAYERS; pl++)
+        {
+            flat = wp * NUM_PLAYERS + pl;
+            q = 0; buf[0] = 0;
+            for(lm = 0; lm < NUM_LANDMASSES; lm++)
+                q += snprintf(buf + q, sizeof(buf) - q, lm ? ",%d" : "%d",
+                              (int)_ai_continents.plane[wp].player[pl].wx_array[lm]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_continents[%d].wx_array = %s", point, flat, buf);
+            q = 0; buf[0] = 0;
+            for(lm = 0; lm < NUM_LANDMASSES; lm++)
+                q += snprintf(buf + q, sizeof(buf) - q, lm ? ",%d" : "%d",
+                              (int)_ai_continents.plane[wp].player[pl].wy_array[lm]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_continents[%d].wy_array = %s", point, flat, buf);
+            q = 0; buf[0] = 0;
+            for(lm = 0; lm < NUM_LANDMASSES; lm++)
+                q += snprintf(buf + q, sizeof(buf) - q, lm ? ",%d" : "%d",
+                              (int)_ai_continents.plane[wp].player[pl].type_array[lm]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_continents[%d].type_array = %s", point, flat, buf);
+        }
+    }
+}
+
 // WZD o162p37
 void AI_Choose_War_Landmass(int16_t player_idx)
 {
@@ -6970,9 +7088,37 @@ void AI_Choose_War_Landmass(int16_t player_idx)
     int16_t landmass_weight_check = 0;  // DNE in Dasm, reuses Value_Sum
     int16_t landmass_node_index = 0;  // DNE in Dasm, reuses Value_Sum
 
+    /* CLAUDE: GD point -- capture _FORTRESSES + _CITIES on-entry.  Both live in
+     * DGROUP (not the CONTXXX EMS frame), so they are valid here without a
+     * CONTXXX_Map(); matches the OG probe's aicwl_entry landmark.  Fire once. */
+    {
+        static int aicwl_dgroup_gd_done = 0;
+        if(!aicwl_dgroup_gd_done) {
+            aicwl_dgroup_gd_done = 1;
+            /* which player this (first) call is for -- whose _ai_continents row
+             * the reevaluation reads. */
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 604_AI_Choose_War_Landmass_Continents player_idx = %d", (int)player_idx);
+            gd_dump_fortresses   ("601_AI_Choose_War_Landmass_F");
+            gd_dump_cities       ("602_AI_Choose_War_Landmass_C");
+            gd_dump_ai_continents("604_AI_Choose_War_Landmass_Continents");
+        }
+    }
+
     first_hostile_player_idx = ST_UNDEFINED;
 
     CONTXXX_Map();
+
+    /* CLAUDE: GD point -- capture the AI landmass-square scratch arrays right
+     * AFTER CONTXXX_Map(): it re-maps the CONTXXX EMS pages into the frame AND
+     * reassigns the array pointers (&EMS_PFBA[0]+off), so the arrays are only
+     * valid HERE -- the builder leaves EMMDATAH mapped, not CONTXXX.  Matches the
+     * OG probe, which triggers at this same CONTXXX_Map() return.  Arrays are
+     * map-derived (player-independent), so capture once; lift the guard for
+     * per-turn captures. */
+    {
+        static int aicwl_gd_done = 0;
+        if(!aicwl_gd_done) { aicwl_gd_done = 1; gd_dump_ai_landmass_squares("603_AI_Choose_War_Landmass_Squares"); }
+    }
 
     /* OGBUG  should check spl_Spell_Of_Mastery, not spl_Fire_Elemental */
     /* OGBUG  should exclude self - `itr_players != player_idx` */
