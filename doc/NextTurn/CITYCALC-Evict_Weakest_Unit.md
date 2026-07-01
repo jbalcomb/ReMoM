@@ -1,4 +1,4 @@
-CITYCALC-Evict_Weakest_From_Full_Stack.md
+CITYCALC-Evict_Weakest_Unit.md
 
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr120\UNIT_RemoveExcess.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr120\UNIT_RemoveExcess.c
@@ -7,19 +7,19 @@ Next_Turn_Proc()
     |-> Next_Turn_Calc()
         |-> Apply_City_Changes()
             |-> City_Apply_Production()
-                |-> Evict_Weakest_From_Full_Stack()
+                |-> Evict_Weakest_Unit()
 
 ---
 
-# `Evict_Weakest_From_Full_Stack` — Walkthrough
+# `Evict_Weakest_Unit` — Walkthrough
 
-**Location:** [CITYCALC.c:1407-1445](../../MoM/src/CITYCALC.c#L1407-L1445) (~39 lines, ends [line 1445](../../MoM/src/CITYCALC.c#L1445)).
+**Location:** [CITYCALC.c:1441-1479](../../MoM/src/CITYCALC.c#L1441-L1479) (~39 lines, ends [line 1479](../../MoM/src/CITYCALC.c#L1479)).
 **WZD overlay:** ovr120, p26 (IDA address `ovr120:1E02`).
 **On-disk OG name:** the disassembly/decompilation files retain the original drake178 name `UNIT_RemoveExcess` — IDA output naming is decoupled from the renamed production symbol.
 
 ## Purpose
 
-A general post-unit-creation helper: whenever a routine drops a new unit onto a map square, that square's stack can exceed the `MAX_STACK` limit of 9. `Evict_Weakest_From_Full_Stack` scans every unit on the given unit's square, finds the **least valuable** one, and removes it — pushing it off to an adjacent square (owned units) or dismissing/killing it outright (neutral units).
+A general post-unit-creation helper: whenever a routine drops a new unit onto a map square, that square's stack can exceed the `MAX_STACK` limit of 9. `Evict_Weakest_Unit` scans every unit on the given unit's square, finds the **least valuable** one, and removes it — pushing it off to an adjacent square (owned units) or dismissing/killing it outright (neutral units).
 
 Despite the original "RemoveExcess" name, it removes **exactly one** unit. Because each spawn adds a single unit, the square is only ever one over the cap, so shedding the weakest restores it.
 
@@ -45,7 +45,7 @@ Nearly all pass `(_units - 1)` — the slot of the just-created unit.
 ## Signature
 
 ```c
-void Evict_Weakest_From_Full_Stack(int16_t unit_idx)
+void Evict_Weakest_Unit(int16_t unit_idx)
 ```
 
 `unit_idx` is the just-created unit; the function reads its `wx/wy/wp` to locate the square to scan. Note `unit_idx` itself is not necessarily the unit removed — the lowest-value unit on the square is.
@@ -56,7 +56,7 @@ void Evict_Weakest_From_Full_Stack(int16_t unit_idx)
 |---|---|---|
 | `_UNITS[]` (`s_UNIT`) | read | `wx/wy/wp` of `unit_idx`; `Level` and `owner_idx` of each unit on the square. |
 
-External calls: `Army_At_Square_1` (enumerate units on the square), `Unit_Gold_Upkeep`, `Unit_Mana_Upkeep`, `Push_Off_Square_With_Message` (relocate an owned unit), `Kill_Unit` (dismiss a neutral unit).
+External calls: `Army_At_Square_1` (enumerate units on the square), `Unit_Gold_Upkeep`, `Unit_Mana_Upkeep`, `Evict_Unit_With_Message` (relocate an owned unit), `Kill_Unit` (dismiss a neutral unit).
 
 ## Locals
 
@@ -76,26 +76,26 @@ The `{ 0xBB, ... }` `troops[]` initializer is a ReMoM debug sentinel — OG leav
 
 Line refs are production [CITYCALC.c](../../MoM/src/CITYCALC.c); cross-checked against `UNIT_RemoveExcess.asm` (164 lines, on-disk OG filename).
 
-### Setup ([1418-1423](../../MoM/src/CITYCALC.c#L1418-L1423))
+### Setup ([1452-1457](../../MoM/src/CITYCALC.c#L1452-L1457))
 
 Seed `lowest_trooper_idx = -999`, `lowest_trooper_value = 999` (asm:21-22). Copy `unit_wx/wy/wp` from `_UNITS[unit_idx]` (asm:23-46), then `Army_At_Square_1(UNITX(), UNITY(), UNITP(), &troop_count, &troops[0])` (asm:47-77) to enumerate the stack on that square.
 
 > **Dead-store note (faithful):** the call passes the `UNITX()/UNITY()/UNITP()` macros, which re-read `_UNITS[unit_idx].wx/wy/wp` directly rather than the `unit_wx/wy/wp` locals just assigned. OG does exactly the same — asm:23-46 store the locals, then asm:51-74 **re-read** the struct for the call arguments, leaving the locals dead. Production's macro form matches the asm; the decompiled `.c`, which passes the locals, is the divergent (simplified) rendering.
 
-### Over-cap guard ([1424](../../MoM/src/CITYCALC.c#L1424), asm:78-80)
+### Over-cap guard ([1458](../../MoM/src/CITYCALC.c#L1458), asm:78-80)
 
 `if (troop_count > MAX_STACK)` — `MAX_STACK = 9`. At or under the cap the function returns without touching anything.
 
-### Find the least-valuable unit ([1426-1435](../../MoM/src/CITYCALC.c#L1426-L1435), asm:82-136)
+### Find the least-valuable unit ([1460-1469](../../MoM/src/CITYCALC.c#L1460-L1469), asm:82-136)
 
 For each unit on the square: `trooper_value = Unit_Gold_Upkeep + Unit_Mana_Upkeep + Level` (asm:86-120). Keep the running minimum in `lowest_trooper_value` / `lowest_trooper_idx`; the update guard is `trooper_value <= lowest_trooper_value` (asm:121-123 `jg` skips), so **ties keep the later-scanned unit**.
 
-### Remove it ([1436-1443](../../MoM/src/CITYCALC.c#L1436-L1443), asm:137-157)
+### Remove it ([1470-1477](../../MoM/src/CITYCALC.c#L1470-L1477), asm:137-157)
 
 ```c
 if(_UNITS[lowest_trooper_idx].owner_idx != NEUTRAL_PLAYER_IDX)
 {
-    Push_Off_Square_With_Message(lowest_trooper_idx);
+    Evict_Unit_With_Message(lowest_trooper_idx);
 }
 else
 {
@@ -103,10 +103,10 @@ else
 }
 ```
 
-- **Non-neutral** → `Push_Off_Square_With_Message` (relocate to an adjacent square, keeping the unit alive).
+- **Non-neutral** → `Evict_Unit_With_Message` (relocate to an adjacent square, keeping the unit alive).
 - **Neutral** (`owner_idx == 5`) → `Kill_Unit(…, kt_Dismissed)` — `kt_Dismissed = 1`, dismissible/resurrectable.
 
-The asm (asm:142-143) is `cmp owner_idx, e_NEUTRAL_PLAYER_IDX; jnz <PushOff>` — neutral falls through to `Kill_Unit(idx, 1)`, non-neutral jumps to `Push_Off_Square_With_Message`. Production's `!=`-first structure mirrors that `jnz`-to-PushOff sense exactly.
+The asm (asm:142-143) is `cmp owner_idx, e_NEUTRAL_PLAYER_IDX; jnz <PushOff>` — neutral falls through to `Kill_Unit(idx, 1)`, non-neutral jumps to `Evict_Unit_With_Message`. Production's `!=`-first structure mirrors that `jnz`-to-PushOff sense exactly.
 
 ## Faithfulness notes (production correct; decompiled `.c` diverges)
 
@@ -118,15 +118,15 @@ One spot where the drake178 `.c` is a simplified rendering and production matche
 
 ## OG quirks preserved (faithful — do not "fix")
 
-- **Dead `unit_wx/wy/wp` stores** ([1420-1422](../../MoM/src/CITYCALC.c#L1420-L1422)) — computed then bypassed by the `UNITX()/UNITY()/UNITP()` re-reads at the call. OG does the same (asm:23-46 store, asm:51-74 re-read). Preserved.
-- **`<=` tie-break keeps the later unit** ([1430](../../MoM/src/CITYCALC.c#L1430), asm:121-123) — among equal-value units the last one scanned is the one removed. Faithful.
-- **Seed sentinels `-999` / `999`** ([1418-1419](../../MoM/src/CITYCALC.c#L1418-L1419)) — if the loop somehow found nothing (cannot happen when `troop_count > 9`), `lowest_trooper_idx` would stay `-999`; the over-cap guard makes that unreachable. Preserved as-is.
+- **Dead `unit_wx/wy/wp` stores** ([1454-1456](../../MoM/src/CITYCALC.c#L1454-L1456)) — computed then bypassed by the `UNITX()/UNITY()/UNITP()` re-reads at the call. OG does the same (asm:23-46 store, asm:51-74 re-read). Preserved.
+- **`<=` tie-break keeps the later unit** ([1464](../../MoM/src/CITYCALC.c#L1464), asm:121-123) — among equal-value units the last one scanned is the one removed. Faithful.
+- **Seed sentinels `-999` / `999`** ([1452-1453](../../MoM/src/CITYCALC.c#L1452-L1453)) — if the loop somehow found nothing (cannot happen when `troop_count > 9`), `lowest_trooper_idx` would stay `-999`; the over-cap guard makes that unreachable. Preserved as-is.
 
 ## Related references
 
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr120\UNIT_RemoveExcess.asm` — IDA Pro 5.5 disassembly (the authority, 164 lines). On-disk filename retains the drake178 name `UNIT_RemoveExcess`.
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr120\UNIT_RemoveExcess.c` — drake178 decompilation (call passes locals rather than the struct re-reads the asm does; the asm and production are correct).
 - `Piethawn/in/WIZARDS.inc:9184` — `e_NEUTRAL_PLAYER_IDX = 5` (authoritative IDA equate).
-- [`NEXTTURN-City_Apply_Production.md`](NEXTTURN-City_Apply_Production.md) — the NextTurn-path caller; invokes `Evict_Weakest_From_Full_Stack(_units - 1)` right after building a unit.
+- [`NEXTTURN-City_Apply_Production.md`](NEXTTURN-City_Apply_Production.md) — the NextTurn-path caller; invokes `Evict_Weakest_Unit(_units - 1)` right after building a unit.
 - Constants: `MAX_STACK = 9`, `NEUTRAL_PLAYER_IDX = 5`, `kt_Dismissed = 1` ([CITYCALC.h:25](../../MoM/src/CITYCALC.h#L25)).
 - Tracked as a downstream helper of Wave 9B in [`__TODO-NextTurn.md`](../__TODO-NextTurn.md).

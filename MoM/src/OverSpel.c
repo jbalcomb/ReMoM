@@ -840,7 +840,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                         else
                         {
                             Create_Unit(spell_data_table[spell_idx].Param0, player_idx, _players[player_idx].summon_wx, _players[player_idx].summon_wy, _players[player_idx].summon_wp, ST_UNDEFINED);
-                            Evict_Weakest_From_Full_Stack((_units - 1));
+                            Evict_Weakest_Unit((_units - 1));
                         }
                         MultiPurpose_Local_Var = ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM);
                         MultiPurpose_Local_Var = (MultiPurpose_Local_Var / 10);

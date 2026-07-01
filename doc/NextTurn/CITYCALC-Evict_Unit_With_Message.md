@@ -1,4 +1,4 @@
-CITYCALC-Push_Off_Square_With_Message.md
+CITYCALC-Evict_Unit_With_Message.md
 
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr120\UNIT_LoggedPushOff.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr120\UNIT_LoggedPushOff.c
@@ -7,41 +7,41 @@ Next_Turn_Proc()
     |-> Next_Turn_Calc()
         |-> Apply_City_Changes()
             |-> City_Apply_Production()
-                |-> Evict_Weakest_From_Full_Stack()
-                    |-> Push_Off_Square_With_Message()
+                |-> Evict_Weakest_Unit()
+                    |-> Evict_Unit_With_Message()
 
 ---
 
-# `Push_Off_Square_With_Message` — Walkthrough
+# `Evict_Unit_With_Message` — Walkthrough
 
 **Location:** [CITYCALC.c:1376-1400](../../MoM/src/CITYCALC.c#L1376-L1400) (~25 lines, ends [line 1400](../../MoM/src/CITYCALC.c#L1400)).
 **WZD overlay:** ovr120, p25 (IDA address `ovr120:1D81`).
 **On-disk OG name:** the disassembly/decompilation files retain the original drake178 name `UNIT_LoggedPushOff` — IDA output naming is decoupled from the renamed production symbol.
-**Called from:** [`Evict_Weakest_From_Full_Stack`](../../MoM/src/CITYCALC.c#L1472) — the non-neutral eviction branch (the sole caller).
+**Called from:** [`Evict_Weakest_Unit`](../../MoM/src/CITYCALC.c#L1472) — the non-neutral eviction branch (the sole caller).
 
 ## Purpose
 
-A thin message-logging wrapper around `UNIT_PushOffTile`. It relocates a unit off its current square, and — if that push **destroyed** a human-owned unit (no adjacent square could take it, so `UNIT_PushOffTile` sets `owner_idx = ST_UNDEFINED`) — records the loss in the `msg_unit_lost` queue so it shows up in the human player's end-of-turn "units lost" summary.
+A thin message-logging wrapper around `Evict_Unit`. It relocates a unit off its current square, and — if that push **destroyed** a human-owned unit (no adjacent square could take it, so `Evict_Unit` sets `owner_idx = ST_UNDEFINED`) — records the loss in the `msg_unit_lost` queue so it shows up in the human player's end-of-turn "units lost" summary.
 
-The `…_With_Message` in the name is exactly this: `UNIT_PushOffTile` does the relocation; this wrapper adds the human-facing loss message when the push turns out to be fatal. Non-human losses and successful relocations are not logged.
+The `…_With_Message` in the name is exactly this: `Evict_Unit` does the relocation; this wrapper adds the human-facing loss message when the push turns out to be fatal. Non-human losses and successful relocations are not logged.
 
 Whether the owner was human is captured **before** the push (into `owner_was_human_player`), because a fatal push overwrites `owner_idx` with `ST_UNDEFINED` — after which the original owner can no longer be read.
 
 ## Signature
 
 ```c
-void Push_Off_Square_With_Message(int16_t unit_idx)
+void Evict_Unit_With_Message(int16_t unit_idx)
 ```
 
 ## Globals read / written
 
 | Symbol | Access | Effect |
 |---|---|---|
-| `_UNITS[unit_idx]` (`s_UNIT`) | read (+ mutated by callee) | `owner_idx` read before/after the push; `type` read for the message. `UNIT_PushOffTile` mutates position / `owner_idx`. |
+| `_UNITS[unit_idx]` (`s_UNIT`) | read (+ mutated by callee) | `owner_idx` read before/after the push; `type` read for the message. `Evict_Unit` mutates position / `owner_idx`. |
 | `msg_unit_lost_ctr` | read + increment | lost-unit queue length, cap 20. |
 | `msg_unit_lost[]` (`s_Unit_Lost_Msg_Item`) | written | `[msg_unit_lost_ctr].Unit_Type` = unit type, `.Cause` = 3. |
 
-External calls: `UNIT_PushOffTile`.
+External calls: `Evict_Unit`.
 
 ## Locals
 
@@ -59,7 +59,7 @@ Line refs are production [CITYCALC.c](../../MoM/src/CITYCALC.c); cross-checked a
 
 ### Push ([1387](../../MoM/src/CITYCALC.c#L1387), asm:26-28)
 
-`UNIT_PushOffTile(unit_idx)` — relocate to an adjacent square, or destroy the unit (`owner_idx = ST_UNDEFINED`) if none is available.
+`Evict_Unit(unit_idx)` — relocate to an adjacent square, or destroy the unit (`owner_idx = ST_UNDEFINED`) if none is available.
 
 ### Log the loss if fatal ([1388-1399](../../MoM/src/CITYCALC.c#L1388-L1399), asm:34-61)
 
@@ -82,14 +82,14 @@ Production folds OG's three nested `if`s into one `&&` chain — equivalent to t
 
 ## OG quirks preserved (faithful — do not "fix")
 
-- **Owner captured before the push** ([1378-1386](../../MoM/src/CITYCALC.c#L1378-L1386)) — a fatal `UNIT_PushOffTile` clears `owner_idx`, so the human check must be taken beforehand. Faithful.
+- **Owner captured before the push** ([1378-1386](../../MoM/src/CITYCALC.c#L1378-L1386)) — a fatal `Evict_Unit` clears `owner_idx`, so the human check must be taken beforehand. Faithful.
 - **Only human, only-fatal pushes are logged** — non-human losses and successful relocations produce no message (asm:34-37 gate on both `owner_idx == -1` and `flag == ST_TRUE`). Faithful.
 
 ## Related references
 
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr120\UNIT_LoggedPushOff.asm` — IDA Pro 5.5 disassembly (the authority, 67 lines). On-disk filename retains the drake178 name `UNIT_LoggedPushOff`.
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr120\UNIT_LoggedPushOff.c` — drake178 decompilation.
-- [`CITYCALC-Evict_Weakest_From_Full_Stack.md`](CITYCALC-Evict_Weakest_From_Full_Stack.md) — the sole caller; invokes this on the non-neutral eviction path.
-- `UNIT_PushOffTile` — the underlying relocation/destroy routine (separate review).
+- [`CITYCALC-Evict_Weakest_Unit.md`](CITYCALC-Evict_Weakest_Unit.md) — the sole caller; invokes this on the non-neutral eviction path.
+- `Evict_Unit` — the underlying relocation/destroy routine (separate review).
 - Constants: `HUMAN_PLAYER_IDX = 0`, `ST_UNDEFINED = -1` ([MOX_BASE.h:75](../../MoX/src/MOX_BASE.h#L75)); `msg_unit_lost` cause `3` = push-off loss.
 - Tracked as a downstream helper of Wave 9B in [`__TODO-NextTurn.md`](../__TODO-NextTurn.md).

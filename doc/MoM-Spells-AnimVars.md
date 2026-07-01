@@ -506,7 +506,7 @@ XREF:
     Retreat_From_Combat:loc_7F631        mov     ax, [_combat_wx]                        
     Retreat_From_Combat+8EE              cmp     ax, [_combat_wx]                        
     CMB_Units_Init__WIP+186              cmp     ax, [_combat_wx]                        
-    UNIT_PushOffTile+BE                  cmp     ax, [_combat_wx]                        
+    Evict_Unit+BE                  cmp     ax, [_combat_wx]                        
     GAME_NextHumanStack+F                mov     [_combat_wx], e_ST_UNDEFINED            
     Combat_Node_type+3D                  cmp     ax, [_combat_wx]                        
     Combat_Cast_Spell_With_Caster+88     push    [_combat_wx]                            

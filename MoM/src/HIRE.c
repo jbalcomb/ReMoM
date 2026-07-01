@@ -660,7 +660,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
             }
 
             // ; BUG: can push a unit out of the capital when finding a prisoner
-            Evict_Weakest_From_Full_Stack((_units - 1));
+            Evict_Weakest_Unit((_units - 1));
 
             Hero_Hired = ST_TRUE;
 
@@ -937,7 +937,7 @@ void AI_Accept_Hero(int16_t player_idx, int16_t hero_slot_idx, int16_t unit_type
             return;
         }
 
-        Evict_Weakest_From_Full_Stack((_units - 1));
+        Evict_Weakest_Unit((_units - 1));
 
         _players[player_idx].gold_reserve -= unit_cost;
 

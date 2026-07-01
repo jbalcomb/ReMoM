@@ -436,87 +436,114 @@ int16_t AI_Unit_Army_Do_Move(int16_t unit_idx)
 // drake178: sub_8227A()
 // sub_8227A()
 
+
 // WZD o100p08
 // drake178: sub_82377()
 // sub_82377()
 
+
 // WZD o100p09
-// drake178: UNIT_PushOffTile()
-void UNIT_PushOffTile(int16_t unit_idx)
+/**
+ * @brief Relocates a unit from an invalid/full tile to a nearby legal square, or removes it.
+ *
+ * @details
+ * This routine attempts to "push off" a unit by searching a local 3x3 neighborhood
+ * around the unit's current coordinates for the first square that can accept it.
+ * A candidate square is considered valid when:
+ * - it is not the current combat square,
+ * - it has no lair,
+ * - it has no city owned by the same player,
+ * - and @c Unit_Space_At_Square() reports available space (> 0).
+ *
+ * Search behavior:
+ * 1. Capture unit position/owner.
+ * 2. Compute starting scan coordinates near (wx - 1, wy - 1), with boundary
+ *    adjustment and x-wrap handling.
+ * 3. Scan up to a 3x3 region (row-major order), stopping at the first valid square.
+ * 4. If found, move the unit to that target square and call @c Units_In_Tower()
+ *    for post-move tower handling.
+ * 5. If no legal square is found, dismiss the unit via @c Kill_Unit(unit_idx, 1).
+ *
+ * @param unit_idx Index of the unit in @c _UNITS[] to evict.
+ *
+ * @return This function returns no value.
+ *
+ * @note The search is first-fit; it does not evaluate "best" destination quality.
+ * @note X coordinates wrap around world width; Y coordinates are clipped by explicit checks.
+ * @note (OGBUG) Pre-adjusting start coordinates (instead of validating per-test
+ *       coordinates) shifts the effective scan rectangle near map edges.
+ * @note (OGBUG) Towers of Wizardry can be selected as push destinations due to
+ *       legacy post-move handling behavior.
+ *
+ * @see Unit_Space_At_Square(), Units_In_Tower(), Kill_Unit(), Square_Has_Lair(), Player_City_At_Square()
+ */
+void Evict_Unit(int16_t unit_idx)
 {
     int16_t troops[2] = { 0, 0 };
-    int16_t Target_Y = 0;
-    int16_t Target_X = 0;
+    int16_t target_square_wy = 0;
+    int16_t target_square_wx = 0;
     int16_t unit_owner_idx = 0;
     int16_t unit_wp = 0;
     int16_t unit_wy = 0;
     int16_t unit_wx = 0;
     int16_t unit_spaces = 0;
-    int16_t Found_Tile = 0;
-    int16_t Checked_X = 0;
-    int16_t Diameter = 0;
-    int16_t Min_X = 0;
-    int16_t Min_Y = 0;
-    int16_t itr_x = 0;
-    int16_t itr_y = 0;  // _DI_
-
+    int16_t found_square = 0;
+    int16_t curr_wx = 0;
+    int16_t range = 0;
+    int16_t wx_start = 0;
+    int16_t wy_start = 0;
+    int16_t itr_wx = 0;
+    int16_t itr_wy = 0;
     unit_wx = _UNITS[unit_idx].wx;
     unit_wy = _UNITS[unit_idx].wy;
     unit_wp = _UNITS[unit_idx].wp;
     unit_owner_idx = _UNITS[unit_idx].owner_idx;
-
-    Min_Y = (unit_wy - 1);
-
-    if(Min_Y < 0)
+    wy_start = (unit_wy - 1);
+    if(wy_start < 0)
     {
-        Min_Y = 0;  // BUGBUG:  drake178: BUG: range checking must be performed on the test coordinates, doing it here shifts the rectangle
+        wy_start = 0;  /* OGBUG:  drake178: BUG: range checking must be performed on the test coordinates, doing it here shifts the rectangle */
     }
-
-    Min_X = (unit_wx - 1);
-
-    if(Min_X < 0)
+    wx_start = (unit_wx - 1);
+    if(wx_start < 0)
     {
-        Min_X += WORLD_WIDTH;
+        wx_start += WORLD_WIDTH;  /* OGBUG:  drake178: BUG: range checking must be performed on the test coordinates, doing it here shifts the rectangle */
     }
-
-    Diameter = 3;
-    Found_Tile = ST_FALSE;
+    range = 3;
+    found_square = ST_FALSE;
     unit_spaces = 0;
-
-    for(itr_y = Min_Y; ((itr_y <= (Min_Y + Diameter)) && (Found_Tile == ST_FALSE)); itr_y++)
+    for(itr_wy = wy_start; ((itr_wy < (wy_start + range)) && (found_square == ST_FALSE)); itr_wy++)
     {
-        if(itr_y < WORLD_HEIGHT)
+        if(itr_wy < WORLD_HEIGHT)
         {
-            for(itr_x = Min_X; itr_x <= (Min_X + Diameter); itr_x++)
+            for(itr_wx = wx_start; itr_wx < (wx_start + range); itr_wx++)
             {
-                if(Found_Tile == ST_FALSE)
+                if(found_square == ST_FALSE)
                 {
-                    if(itr_x < WORLD_WIDTH)
+                    if(itr_wx < WORLD_WIDTH)
                     {
-                        Checked_X = itr_x;
+                        curr_wx = itr_wx;
                     }
                     else
                     {
-                        Checked_X = (itr_x - WORLD_WIDTH);
+                        curr_wx = (itr_wx - WORLD_WIDTH);
                     }
-
                     if(
-                        (Checked_X != _combat_wx) &&
-                        (itr_y != _combat_wy)
+                        (curr_wx != _combat_wx)
+                        ||
+                        (itr_wy != _combat_wy)
                     )
                     {
                         if(
-                            (Square_Has_Lair(Checked_X, itr_y, unit_wp) == -1) &&
-                            (Player_City_At_Square(Checked_X, itr_y, unit_wp, unit_owner_idx) == -1)
+                            (Square_Has_Lair(curr_wx, itr_wy, unit_wp) == -1) &&
+                            (Player_City_At_Square(curr_wx, itr_wy, unit_wp, unit_owner_idx) == -1)
                         )
                         {
-                            unit_spaces = Unit_Space_At_Square(Checked_X, itr_y, unit_wp, unit_owner_idx, unit_idx);
-
+                            unit_spaces = Unit_Space_At_Square(curr_wx, itr_wy, unit_wp, unit_owner_idx, unit_idx);
                             if(unit_spaces > 0)
                             {
-                                Found_Tile = ST_TRUE;
-                                Target_X = Checked_X;
-                                Target_Y = itr_y;
+                                found_square = ST_TRUE;
+                                target_square_wx = curr_wx;
+                                target_square_wy = itr_wy;
                             }
                         }
                     }
@@ -524,15 +551,12 @@ void UNIT_PushOffTile(int16_t unit_idx)
             }
         }
     }
-
     if(unit_spaces > 0)
     {
-        _UNITS[unit_idx].wx = (int8_t)Target_X;
-        _UNITS[unit_idx].wy = (int8_t)Target_Y;
-
+        _UNITS[unit_idx].wx = (int8_t)target_square_wx;
+        _UNITS[unit_idx].wy = (int8_t)target_square_wy;
         troops[0] = unit_idx;
-
-        Units_In_Tower(1, &troops[0], _UNITS[unit_idx].wp);  // BUGBUG  drake178: Towers of Wizardry are not valid push destinations
+        Units_In_Tower(1, &troops[0], _UNITS[unit_idx].wp);  /* OGBUG  drake178: Towers of Wizardry are not valid push destinations */
     }
     else
     {
@@ -543,15 +567,13 @@ void UNIT_PushOffTile(int16_t unit_idx)
 
 
 // WZD o100p10
-// drake178: TILE_UNIT_CanMoveTo()
 /*
-
-    Return:
-        0, if Unit's movement mode does not support the terrain type or there are already 9 units on the square
-        {1, ..., 9}, count of Units that could move to the target map square
-        ~==
-        == 0, False
-        >= 1, True
+Return:
+0, if Unit's movement mode does not support the terrain type or there are already 9 units on the square
+{1, ..., 9}, count of Units that could move to the target map square
+~==
+== 0, False
+>= 1, True
 */
 int16_t Unit_Space_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t unit_idx)
 {

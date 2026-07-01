@@ -49,7 +49,7 @@ int16_t AI_Unit_Army_Do_Move(int16_t unit_idx);
 // sub_82377()
 
 // WZD o100p09
-void UNIT_PushOffTile(int16_t unit_idx);
+void Evict_Unit(int16_t unit_idx);
 
 // WZD o100p10
 int16_t Unit_Space_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t unit_idx);

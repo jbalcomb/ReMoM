@@ -186,12 +186,11 @@ int16_t Calc_Unit_Level(int16_t unit_idx);
 int16_t Unit_Base_Level(int16_t unit_idx);
 
 // WZD o120p25
-// drake178: Push_Off_Square_With_Message()
-void Push_Off_Square_With_Message(int16_t unit_idx);
+void Evict_Unit_With_Message(int16_t unit_idx);
 
 // WZD o120p26
-// drake178: Evict_Weakest_From_Full_Stack()
-void Evict_Weakest_From_Full_Stack(int16_t unit_idx);
+// drake178: Evict_Weakest_Unit()
+void Evict_Weakest_Unit(int16_t unit_idx);
 
 
 

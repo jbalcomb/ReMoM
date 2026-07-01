@@ -736,7 +736,7 @@ e.g.,
     STK_CaptureCity__WIP()
         |-> Kill_Unit(unit_idx, 0)
 
-    Evict_Weakest_From_Full_Stack()
+    Evict_Weakest_Unit()
         |-> Kill_Unit(unit_idx, 1)
 
 */
@@ -1373,7 +1373,7 @@ int16_t Unit_Base_Level(int16_t unit_idx)
 
 
 // WZD o120p25
-void Push_Off_Square_With_Message(int16_t unit_idx)
+void Evict_Unit_With_Message(int16_t unit_idx)
 {
     int16_t owner_was_human_player = 0;
     if(_UNITS[unit_idx].owner_idx != HUMAN_PLAYER_IDX)
@@ -1384,7 +1384,7 @@ void Push_Off_Square_With_Message(int16_t unit_idx)
     {
         owner_was_human_player = ST_TRUE;
     }
-    UNIT_PushOffTile(unit_idx);
+    Evict_Unit(unit_idx);
     if(
         (_UNITS[unit_idx].owner_idx == ST_UNDEFINED)
         &&
@@ -1421,7 +1421,7 @@ void Push_Off_Square_With_Message(int16_t unit_idx)
  *    Ties are resolved in favor of the later-iterated unit due to
  *    @c <= comparison in the selection check.
  * 5. Remove the selected unit:
- *    - Non-neutral owner: push off tile with logging via @c Push_Off_Square_With_Message().
+ *    - Non-neutral owner: push off tile with logging via @c Evict_Unit_With_Message().
  *    - Neutral owner: dismiss immediately via @c Kill_Unit(..., kt_Dismissed).
  *
  * @param unit_idx Index of the reference unit whose current tile is checked for
@@ -1436,9 +1436,9 @@ void Push_Off_Square_With_Message(int16_t unit_idx)
  * @note Neutral and non-neutral removals use different paths, which affects
  *       downstream reporting/logging behavior.
  *
- * @see Army_At_Square_1(), Push_Off_Square_With_Message(), Kill_Unit(), Unit_Gold_Upkeep(), Unit_Mana_Upkeep()
+ * @see Army_At_Square_1(), Evict_Unit_With_Message(), Kill_Unit(), Unit_Gold_Upkeep(), Unit_Mana_Upkeep()
  */
-void Evict_Weakest_From_Full_Stack(int16_t unit_idx)
+void Evict_Weakest_Unit(int16_t unit_idx)
 {
     int16_t troops[10] = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB };
     int16_t unit_wp = 0;
@@ -1469,7 +1469,7 @@ void Evict_Weakest_From_Full_Stack(int16_t unit_idx)
         }
         if(_UNITS[lowest_trooper_idx].owner_idx != NEUTRAL_PLAYER_IDX)
         {
-            Push_Off_Square_With_Message(lowest_trooper_idx);
+            Evict_Unit_With_Message(lowest_trooper_idx);
         }
         else
         {

@@ -44,7 +44,7 @@ void City_Apply_Production(int16_t city_idx)
 | `bldg_data_table[]` (`s_BLDG_DATA`) | read | `replace_bldg` lookup for upgrade chains. |
 | `GUI_NearMsgString`, `cnst_TooManyUnits`, `message_lbx_file` | read/written | "too many units" warning text assembly. |
 
-External calls: `City_Current_Product_Cost`, `Create_Unit`, `Evict_Weakest_From_Full_Stack`, `Army_At_City`, `Set_Map_Square_Explored_Flags_XYP_Range`, `Player_Colony_Autobuild_HP`, `LBX_Load_Data_Static`, `Warn0`, `stu_strcpy`, `stu_strcat`.
+External calls: `City_Current_Product_Cost`, `Create_Unit`, `Evict_Weakest_Unit`, `Army_At_City`, `Set_Map_Square_Explored_Flags_XYP_Range`, `Player_Colony_Autobuild_HP`, `LBX_Load_Data_Static`, `Warn0`, `stu_strcpy`, `stu_strcat`.
 
 ## Locals
 
@@ -71,7 +71,7 @@ Line refs are production [NEXTTURN.c](../../MoM/src/NEXTTURN.c); cross-checked a
 
 `Prod_Accu += production_units`; if `Prod_Accu >= product_cost`, complete:
 
-- **Cap OK** (`(_units + 1) < MAX_UNIT_COUNT`, asm:394-398): `Create_Unit(construction - 100, owner, wx, wy, wp, city_idx)` ([2180](../../MoM/src/NEXTTURN.c#L2180)) — the `city_idx` as the 6th arg drives Create_Unit's city-block XP/weapon logic. Then `Evict_Weakest_From_Full_Stack(_units - 1)` and `Army_At_City(...)`. If AI **or** Grand Vizier → `construction = bt_AUTOBUILD` (asm:461-471).
+- **Cap OK** (`(_units + 1) < MAX_UNIT_COUNT`, asm:394-398): `Create_Unit(construction - 100, owner, wx, wy, wp, city_idx)` ([2180](../../MoM/src/NEXTTURN.c#L2180)) — the `city_idx` as the 6th arg drives Create_Unit's city-block XP/weapon logic. Then `Evict_Weakest_Unit(_units - 1)` and `Army_At_City(...)`. If AI **or** Grand Vizier → `construction = bt_AUTOBUILD` (asm:461-471).
 - **Cap hit** ([2192-2218](../../MoM/src/NEXTTURN.c#L2192-L2218), asm:475-564): AI → `bt_AUTOBUILD`. Human → load + assemble the "Maximum number of units exceeded … `<city>` … disband some units" string and `Warn0`, then `bt_AUTOBUILD` if Grand Vizier else `bt_TradeGoods`. Production re-checks `owner == HUMAN` inside the already-human branch ([2205](../../MoM/src/NEXTTURN.c#L2205)) — this mirrors the redundant `cmp owner, HUMAN` at asm:536, faithful.
 - `Prod_Accu = 0` after either sub-case ([2219](../../MoM/src/NEXTTURN.c#L2219), asm:565-571) — surplus production dropped.
 
