@@ -1808,98 +1808,60 @@ void AI_Update_Gold_And_Mana_Reserves(int16_t player_idx)
 
 
 // WZD o145p12
-// drake178: AI_Tax_And_Farmers()
-/*
-sets the tax rate for the player and, if food
-production is below 0, makes 50 attempts at
-converting a random worker into a farmer
-
-BUG: treats all farmers as generating 2 food
-*/
-/*
-
-updates tax_rate (∴ gold_income)
-updates food_income
-
-*/
 void AI_Update_Gold_Income_And_Food_Income(int16_t player_idx)
 {
     int16_t food_income = 0;
     int16_t mana_income = 0;
     int16_t gold_income = 0;
-    int16_t Tries = 0;
-    int16_t UU_Local_0_3 = 0;
-    int16_t UU_Local_0_2 = 0;
-    int16_t UU_Local_0_1 = 0;
-    int16_t city_idx = 0;  // _DI_
-
-    UU_Local_0_1 = 0;
-    UU_Local_0_3 = 0;
-    UU_Local_0_2 = 0;
-
+    int16_t tries = 0;
+    int16_t niu_variable_3 = 0;
+    int16_t niu_variable_2 = 0;
+    int16_t niu_variable_1 = 0;
+    int16_t city_idx = 0;
+    niu_variable_1 = 0;
+    niu_variable_3 = 0;
+    niu_variable_2 = 0;
     Player_Resource_Income_Total(player_idx, &gold_income, &food_income, &mana_income);
-
     if(
         (((_turn / 50) * 75) > gold_income)
         &&
         (_players[player_idx].tax_rate < 6)
     )
     {
-
         _players[player_idx].tax_rate += 1;
-
     }
-
     Player_Resource_Income_Total(player_idx, &gold_income, &food_income, &mana_income);
-
     if(
         (gold_income > 200)
         &&
         (_players[player_idx].tax_rate > 1)
     )
     {
-
         _players[player_idx].tax_rate -= 1;
-
     }
-
-
     if(_players[player_idx].tax_rate > 4)
     {
-
         _players[player_idx].tax_rate = 4;
-
     }
-
-
-    Tries = 0;
-
-    food_income = -(food_income);
-
-    while(((Tries < 50) && (food_income > 0)))
+    tries = 0;
+    if(food_income < 0)
     {
-
-        city_idx = (Random(_cities) - 1);
-
-        if(_CITIES[city_idx].owner_idx == player_idx)
+        food_income = -food_income;
+        while(((tries < 50) && (food_income > 0)))
         {
-
-            if(_CITIES[city_idx].farmer_count < _CITIES[city_idx].population)
+            city_idx = (Random(_cities) - 1);
+            if(_CITIES[city_idx].owner_idx == player_idx)
             {
-
-                CITIES_FARMER_COUNT(city_idx, (_CITIES[city_idx].farmer_count + 1));
-
-                // ; BUG: not all farmers generate 2 food
-                food_income -= 2;
-
+                if(_CITIES[city_idx].farmer_count < _CITIES[city_idx].population)
+                {
+                    CITIES_FARMER_COUNT(city_idx, (_CITIES[city_idx].farmer_count + 1));
+                    
+                    food_income -= 2;  /* OGBUG  not all farmers generate 2 food */
+                }
             }
-
+            tries++;
         }
-
-        Tries++;
-
     }
-
 }
 
 
