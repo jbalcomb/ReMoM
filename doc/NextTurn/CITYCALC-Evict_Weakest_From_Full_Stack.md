@@ -56,7 +56,7 @@ void Evict_Weakest_From_Full_Stack(int16_t unit_idx)
 |---|---|---|
 | `_UNITS[]` (`s_UNIT`) | read | `wx/wy/wp` of `unit_idx`; `Level` and `owner_idx` of each unit on the square. |
 
-External calls: `Army_At_Square_1` (enumerate units on the square), `Unit_Gold_Upkeep`, `Unit_Mana_Upkeep`, `UNIT_LoggedPushOff` (relocate an owned unit), `Kill_Unit` (dismiss a neutral unit).
+External calls: `Army_At_Square_1` (enumerate units on the square), `Unit_Gold_Upkeep`, `Unit_Mana_Upkeep`, `Push_Off_Square_With_Message` (relocate an owned unit), `Kill_Unit` (dismiss a neutral unit).
 
 ## Locals
 
@@ -95,7 +95,7 @@ For each unit on the square: `trooper_value = Unit_Gold_Upkeep + Unit_Mana_Upkee
 ```c
 if(_UNITS[lowest_trooper_idx].owner_idx != NEUTRAL_PLAYER_IDX)
 {
-    UNIT_LoggedPushOff(lowest_trooper_idx);
+    Push_Off_Square_With_Message(lowest_trooper_idx);
 }
 else
 {
@@ -103,10 +103,10 @@ else
 }
 ```
 
-- **Non-neutral** → `UNIT_LoggedPushOff` (relocate to an adjacent square, keeping the unit alive).
+- **Non-neutral** → `Push_Off_Square_With_Message` (relocate to an adjacent square, keeping the unit alive).
 - **Neutral** (`owner_idx == 5`) → `Kill_Unit(…, kt_Dismissed)` — `kt_Dismissed = 1`, dismissible/resurrectable.
 
-The asm (asm:142-143) is `cmp owner_idx, e_NEUTRAL_PLAYER_IDX; jnz <PushOff>` — neutral falls through to `Kill_Unit(idx, 1)`, non-neutral jumps to `UNIT_LoggedPushOff`. Production's `!=`-first structure mirrors that `jnz`-to-PushOff sense exactly.
+The asm (asm:142-143) is `cmp owner_idx, e_NEUTRAL_PLAYER_IDX; jnz <PushOff>` — neutral falls through to `Kill_Unit(idx, 1)`, non-neutral jumps to `Push_Off_Square_With_Message`. Production's `!=`-first structure mirrors that `jnz`-to-PushOff sense exactly.
 
 ## Faithfulness notes (production correct; decompiled `.c` diverges)
 

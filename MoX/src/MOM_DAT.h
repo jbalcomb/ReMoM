@@ -3996,12 +3996,12 @@ extern int8_t MSG_BldLost_Count;
 extern struct s_MSG_BUILDING_LOST MSG_BldLost_Array[20];
 
 // WZD dseg:9B94
-extern int8_t MSG_UnitLost_Count;
+extern int8_t msg_unit_lost_ctr;
 
 // WZD dseg:9B95 00                                              db    0
 
 // WZD dseg:9B96
-extern struct s_MSG_UNIT_LOST MSG_UnitLost_Array[20];
+extern struct s_MSG_UNIT_LOST msg_unit_lost[20];
 
 // WZD dseg:9BE6
 extern int8_t MSG_UnitKilled_Count;

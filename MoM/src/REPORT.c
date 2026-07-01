@@ -296,7 +296,7 @@ void Chancellor_Screen__WIP(int16_t flag)
 
     }
 
-    total_message_count = (MSG_UnitLost_Count + MSG_CityGrowth_Count + MSG_BldLost_Count + MSG_UEsLost_Count + MSG_CEsLost_Count + MSG_UnitKilled_Count + MSG_GEs_Lost + MSG_CityDeath_Count);
+    total_message_count = (msg_unit_lost_ctr + MSG_CityGrowth_Count + MSG_BldLost_Count + MSG_UEsLost_Count + MSG_CEsLost_Count + MSG_UnitKilled_Count + MSG_GEs_Lost + MSG_CityDeath_Count);
 
     if(flag == 1)
     {
@@ -396,7 +396,7 @@ void Chancellor_Screen__WIP(int16_t flag)
 
     }
 
-    if(MSG_UnitLost_Count > 0)
+    if(msg_unit_lost_ctr > 0)
     {
 
         scroll_text_line_count++;
@@ -787,7 +787,7 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
 
 
     /*
-        MSG_UnitLost_Count
+        msg_unit_lost_ctr
         MSG_UnitKilled_Count
         MSG_CityGrowth_Count
         MSG_CityDeath_Count
@@ -798,7 +798,7 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
     */
 
 
-    if(MSG_UnitLost_Count > 0)
+    if(msg_unit_lost_ctr > 0)
     {
         Set_Font_Colors_15(4, &colors1[0]);
 
@@ -810,12 +810,12 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
 
         Set_Font_Spacing_Width(2);
 
-        for(itr = 0; MSG_UnitLost_Count > itr; itr++)
+        for(itr = 0; msg_unit_lost_ctr > itr; itr++)
         {
 
-            x = Clipped_Print(70, (_scroll_start_x + _scroll_text_top + x_add), *_unit_type_table[MSG_UnitLost_Array[itr].Unit_Type].name);
+            x = Clipped_Print(70, (_scroll_start_x + _scroll_text_top + x_add), *_unit_type_table[msg_unit_lost[itr].Unit_Type].name);
 
-            switch(MSG_UnitLost_Array[itr].Cause)
+            switch(msg_unit_lost[itr].Cause)
             {
                 case 0:
                 {

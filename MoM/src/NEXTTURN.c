@@ -2098,7 +2098,7 @@ void All_City_Calculations(void)
 */
 void Initialize_Reports(void)
 {
-    MSG_UnitLost_Count = 0;
+    msg_unit_lost_ctr = 0;
     MSG_UnitKilled_Count = 0;
     MSG_UEsLost_Count = 0;
     MSG_CEsLost_Count = 0;
@@ -2597,17 +2597,17 @@ void WIZ_MatchFoodUpkeep__WIP(int16_t player_idx, int16_t food_excess, int16_t f
                         food_upkeep--;
 
                         if(
-                            (MSG_UnitLost_Count < 20)
+                            (msg_unit_lost_ctr < 20)
                             &&
                             (player_idx == HUMAN_PLAYER_IDX)
                         )
                         {
 
-                            MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
+                            msg_unit_lost[msg_unit_lost_ctr].Unit_Type = _UNITS[itr_units].type;
 
-                            MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 4;
+                            msg_unit_lost[msg_unit_lost_ctr].Cause = 4;
 
-                            MSG_UnitLost_Count++;
+                            msg_unit_lost_ctr++;
 
                         }
 
@@ -2622,17 +2622,17 @@ void WIZ_MatchFoodUpkeep__WIP(int16_t player_idx, int16_t food_excess, int16_t f
         }
 
         if(
-            (MSG_UnitLost_Count < 20)
+            (msg_unit_lost_ctr < 20)
             &&
             (player_idx == HUMAN_PLAYER_IDX)
         )
         {
 
-            MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
+            msg_unit_lost[msg_unit_lost_ctr].Unit_Type = _UNITS[itr_units].type;
 
-            MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 0;
+            msg_unit_lost[msg_unit_lost_ctr].Cause = 0;
 
-            MSG_UnitLost_Count++;
+            msg_unit_lost_ctr++;
 
         }
 
@@ -2679,13 +2679,13 @@ int16_t WIZ_MatchGoldUpkeep(int16_t player_idx, int16_t gold_upkeep)
                         gold_upkeep -= Unit_Gold_Upkeep(troops[itr_troops]);
                         
                         if(
-                            (MSG_UnitLost_Count < 20) &&
+                            (msg_unit_lost_ctr < 20) &&
                             (player_idx == HUMAN_PLAYER_IDX)
                         )
                         {
-                            MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
-                            MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 4;
-                            MSG_UnitLost_Count++;
+                            msg_unit_lost[msg_unit_lost_ctr].Unit_Type = _UNITS[itr_units].type;
+                            msg_unit_lost[msg_unit_lost_ctr].Cause = 4;
+                            msg_unit_lost_ctr++;
                         }
                         Kill_Unit(troops[itr_troops], kt_Normal);
 
@@ -2693,13 +2693,13 @@ int16_t WIZ_MatchGoldUpkeep(int16_t player_idx, int16_t gold_upkeep)
                 }
 
                 if(
-                    (MSG_UnitLost_Count < 20) &&
+                    (msg_unit_lost_ctr < 20) &&
                     (player_idx == HUMAN_PLAYER_IDX)
                 )
                 {
-                    MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
-                    MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 1;
-                    MSG_UnitLost_Count++;
+                    msg_unit_lost[msg_unit_lost_ctr].Unit_Type = _UNITS[itr_units].type;
+                    msg_unit_lost[msg_unit_lost_ctr].Cause = 1;
+                    msg_unit_lost_ctr++;
                 }
 
                 Kill_Unit(itr_units, kt_Dismissed);
@@ -2807,13 +2807,13 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
                     mana_upkeep -= (Unit_Mana_Upkeep(itr_units) / Channeler_Divisor);
                     
                     if(
-                        (MSG_UnitLost_Count < 20) &&
+                        (msg_unit_lost_ctr < 20) &&
                         (player_idx == HUMAN_PLAYER_IDX)
                     )
                     {
-                        MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
-                        MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 4;
-                        MSG_UnitLost_Count++;
+                        msg_unit_lost[msg_unit_lost_ctr].Unit_Type = _UNITS[itr_units].type;
+                        msg_unit_lost[msg_unit_lost_ctr].Cause = 4;
+                        msg_unit_lost_ctr++;
                     }
                     Kill_Unit(troops[itr_troops], kt_Normal);
 
@@ -2821,13 +2821,13 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
             }
 
             if(
-                (MSG_UnitLost_Count < 20) &&
+                (msg_unit_lost_ctr < 20) &&
                 (player_idx == HUMAN_PLAYER_IDX)
             )
             {
-                MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
-                MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 2;
-                MSG_UnitLost_Count++;
+                msg_unit_lost[msg_unit_lost_ctr].Unit_Type = _UNITS[itr_units].type;
+                msg_unit_lost[msg_unit_lost_ctr].Cause = 2;
+                msg_unit_lost_ctr++;
             }
             Kill_Unit(itr_units, kt_Dismissed);
 

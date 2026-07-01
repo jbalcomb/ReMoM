@@ -2359,23 +2359,28 @@ int8_t MSG_BldLost_Count;
 struct s_MSG_BUILDING_LOST MSG_BldLost_Array[20];
 
 // WZD dseg:9B94
-// drake178: MSG_UnitLost_Count
-int8_t MSG_UnitLost_Count;
+/*
+1-byte, signed
+*/
+int8_t msg_unit_lost_ctr;
 
 // WZD dseg:9B95 00                                              db    0
 
 // WZD dseg:9B96
-// drake178: MSG_UnitLost_Array Unit_Lost_Msg_Item 14h dup(<0>)
-struct s_MSG_UNIT_LOST MSG_UnitLost_Array[20];
+/*
+¿ vs. MSG_UnitKilled_Array[] ?
+*/
+struct s_MSG_UNIT_LOST msg_unit_lost[20];
 
 // WZD dseg:9BE6
-// drake178: MSG_UnitKilled_Count
 int8_t MSG_UnitKilled_Count;
 
 // WZD dseg:9BE7 00                                              db    0
 
 // WZD dseg:9BE8
-// drake178: MSG_UnitKilled_Array Unit_Killed_Msg_Item 14h dup(<0>)
+/*
+¿ vs. msg_unit_lost[] ?
+*/
 struct s_MSG_UNIT_KILLED MSG_UnitKilled_Array[20];
 
 // WZD dseg:9C38

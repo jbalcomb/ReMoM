@@ -1373,33 +1373,30 @@ int16_t Unit_Base_Level(int16_t unit_idx)
 
 
 // WZD o120p25
-// drake178: UNIT_LoggedPushOff()
-void UNIT_LoggedPushOff(int16_t unit_idx)
+void Push_Off_Square_With_Message(int16_t unit_idx)
 {
-    int16_t flag;  // _DI_
-
+    int16_t owner_was_human_player = 0;
     if(_UNITS[unit_idx].owner_idx != HUMAN_PLAYER_IDX)
     {
-        flag = ST_FALSE;
+        owner_was_human_player = ST_FALSE;
     }
     else
     {
-        flag = ST_TRUE;
+        owner_was_human_player = ST_TRUE;
     }
-    
     UNIT_PushOffTile(unit_idx);
-
     if(
-        (_UNITS[unit_idx].owner_idx == -1) &&
-        (flag == ST_TRUE) &&
-        (MSG_UnitLost_Count < 20)
+        (_UNITS[unit_idx].owner_idx == ST_UNDEFINED)
+        &&
+        (owner_was_human_player == ST_TRUE)
+        &&
+        (msg_unit_lost_ctr < 20)
     )
     {
-        MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[unit_idx].type;
-
-        MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 3;
+        msg_unit_lost[msg_unit_lost_ctr].Unit_Type = _UNITS[unit_idx].type;
+        msg_unit_lost[msg_unit_lost_ctr].Cause = 3;
+        msg_unit_lost_ctr++;
     }
-
 }
 
 
@@ -1424,7 +1421,7 @@ void UNIT_LoggedPushOff(int16_t unit_idx)
  *    Ties are resolved in favor of the later-iterated unit due to
  *    @c <= comparison in the selection check.
  * 5. Remove the selected unit:
- *    - Non-neutral owner: push off tile with logging via @c UNIT_LoggedPushOff().
+ *    - Non-neutral owner: push off tile with logging via @c Push_Off_Square_With_Message().
  *    - Neutral owner: dismiss immediately via @c Kill_Unit(..., kt_Dismissed).
  *
  * @param unit_idx Index of the reference unit whose current tile is checked for
@@ -1439,7 +1436,7 @@ void UNIT_LoggedPushOff(int16_t unit_idx)
  * @note Neutral and non-neutral removals use different paths, which affects
  *       downstream reporting/logging behavior.
  *
- * @see Army_At_Square_1(), UNIT_LoggedPushOff(), Kill_Unit(), Unit_Gold_Upkeep(), Unit_Mana_Upkeep()
+ * @see Army_At_Square_1(), Push_Off_Square_With_Message(), Kill_Unit(), Unit_Gold_Upkeep(), Unit_Mana_Upkeep()
  */
 void Evict_Weakest_From_Full_Stack(int16_t unit_idx)
 {
@@ -1472,7 +1469,7 @@ void Evict_Weakest_From_Full_Stack(int16_t unit_idx)
         }
         if(_UNITS[lowest_trooper_idx].owner_idx != NEUTRAL_PLAYER_IDX)
         {
-            UNIT_LoggedPushOff(lowest_trooper_idx);
+            Push_Off_Square_With_Message(lowest_trooper_idx);
         }
         else
         {

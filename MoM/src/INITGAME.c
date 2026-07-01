@@ -2589,7 +2589,7 @@ message types, clearing all event messages
 void Initialize_Messages(void)
 {
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-    MSG_UnitLost_Count = 0;
+    msg_unit_lost_ctr = 0;
     MSG_UnitKilled_Count = 0;
     MSG_UEsLost_Count = 0;
     MSG_CEsLost_Count = 0;

@@ -58,7 +58,7 @@ int16_t DBG_trigger_event_conjunction_nature = ST_FALSE;
 int16_t DBG_trigger_event_conjunction_sorcery = ST_FALSE;
 int16_t DBG_trigger_event_mana_short = ST_FALSE;
 /*
-    MSG_UnitLost_Count
+    msg_unit_lost_ctr
     MSG_UnitKilled_Count
     MSG_CityGrowth_Count
     MSG_CityDeath_Count
