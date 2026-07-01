@@ -59,6 +59,7 @@
 #include "REPORT.h"
 #include "Spellbook.h"
 #include "Spells128.h"
+#include "Spells129.h"
 #include "Spells130.h"
 #include "TerrType.h"
 #include "Terrain.h"
