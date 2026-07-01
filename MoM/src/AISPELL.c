@@ -4093,16 +4093,6 @@ void Cast_Spell_Target_Error(int16_t spell_idx)
 
 
 // WZD o156p38
-// drake178: AI_ReleaseGlobals()
-/*
-releases unwanted overland enchantments or, if at zero
-mana, all overland enchantments
-
-WARNING: this may not be the best thing to do...
-*/
-/*
-
-*/
 void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx)
 {
 
@@ -4122,13 +4112,15 @@ void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx)
     if(
         (_players[player_idx].Globals[EVIL_OMENS] != 0)
         &&
-        (_players[player_idx].Prim_Realm == sbr_Life)
-        &&
-        (_players[player_idx].Sec_Realm == sbr_Life)
-        &&
-        (_players[player_idx].Prim_Realm == sbr_Nature)
-        &&
-        (_players[player_idx].Sec_Realm == sbr_Nature)
+        (
+            (_players[player_idx].Prim_Realm == sbr_Life)
+            ||
+            (_players[player_idx].Sec_Realm == sbr_Life)
+            ||
+            (_players[player_idx].Prim_Realm == sbr_Nature)
+            ||
+            (_players[player_idx].Sec_Realm == sbr_Nature)
+        )
     )
     {
 
@@ -4152,9 +4144,11 @@ void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx)
     if(
         (_players[player_idx].Globals[TRANQUILITY] != 0)
         &&
-        (_players[player_idx].Prim_Realm == sbr_Chaos)
-        &&
-        (_players[player_idx].Sec_Realm == sbr_Chaos)
+        (
+            (_players[player_idx].Prim_Realm == sbr_Chaos)
+            ||
+            (_players[player_idx].Sec_Realm == sbr_Chaos)
+        )
     )
     {
 
@@ -4165,9 +4159,11 @@ void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx)
     if(
         (_players[player_idx].Globals[LIFE_FORCE] != 0)
         &&
-        (_players[player_idx].Prim_Realm == sbr_Chaos)
-        &&
-        (_players[player_idx].Sec_Realm == sbr_Chaos)
+        (
+            (_players[player_idx].Prim_Realm == sbr_Death)
+            ||
+            (_players[player_idx].Sec_Realm == sbr_Death)
+        )
     )
     {
 
