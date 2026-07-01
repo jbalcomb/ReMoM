@@ -5678,40 +5678,24 @@ void Resolve_Delayed_Diplomacy_Orders(void)
 // DIPL_GetOffMyLawn()
 
 // WZD o87p08
-// drake178: WIZ_DecreasePeaceCs()
 /*
-; decreases the peace counters for all wizards towards
-; all others
-*/
-/*
-
 ¿ "Once a peace treaty is in place, the opposing wizard will not attack you for about the next dozen turns." ?
-
 */
 void Decrease_Peace_Duration(void)
 {
-    int16_t itr_players1;  // _CX_
-    int16_t itr_players2;  // _SI_
-
+    int16_t itr_players1 = 0;
+    int16_t itr_players2 = 0;
     for(itr_players1 = 0; itr_players1 < _num_players; itr_players1++)
     {
-
         for(itr_players2 = 0; itr_players2 < _num_players; itr_players2++)
         {
-
             _players[itr_players1].peace_duration[itr_players2] -= 1;
-
-            if(_players[itr_players1].peace_duration[itr_players2] != 0)
+            if(_players[itr_players1].peace_duration[itr_players2] < 0)
             {
-
                 _players[itr_players1].peace_duration[itr_players2] = 0;
-
             }
-
         }
-
     }
-
 }
 
 
