@@ -882,26 +882,17 @@ void Next_Turn_Calc(void)
 void All_Colony_Calculations(void)
 {
     int16_t minimum_farmer_count = 0;
-    int16_t itr_cities = 0;  // _SI_
-
+    int16_t itr_cities = 0;
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-
         Do_City_Calculations(itr_cities);
-
         minimum_farmer_count = City_Minimum_Farmers(itr_cities);
-
         if(_CITIES[itr_cities].farmer_count < minimum_farmer_count)
         {
-
-            CITIES_FARMER_COUNT(itr_cities, (int8_t)minimum_farmer_count);
-
+            _CITIES[itr_cities].farmer_count = (int8_t)minimum_farmer_count;
         }
-
         City_Rebel_Count(itr_cities);
-
     }
-
 }
 
 
@@ -2911,18 +2902,44 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
 
 
 // WZD o140p16
-// drake178: CTY_ProgressTurn()
 // MoO2  Module: COLCALC  Apply_Colony_Changes_()  Apply_Colony_Pop_Growth_()
-/*
-    Outpost loss
-    Outpost graduation  (NOT growth)
-    City population growth
-    City size increase
-    ¿ City size 1 Pop_10s default 5 ?
-    City size decrease
-    Pestilence City size decrease
-
-*/
+/**
+ * @brief Applies per-turn population and production updates to all cities and outposts.
+ *
+ * @details
+ * This routine performs the main end-of-turn city-state transition pass. It iterates
+ * all entries in @c _CITIES[] and handles outpost progression/failure, city population
+ * growth and shrinkage, production processing, and selected city-enchantment upkeep hooks.
+ *
+ * Processing flow per city:
+ * 1. Distinguish outpost state (@c population == 0) from normal city state
+ * 2. For outposts:
+ *    - Destroy failed outposts when @c Pop_10s <= 0
+ *    - Promote to city when @c Pop_10s >= 10, initialize size/farmers, and emit gained-city report
+ * 3. For cities:
+ *    - Apply growth delta from @c City_Growth_Rate()
+ *    - Handle growth threshold (@c Pop_10s >= 100), increase population, recompute farmers/size,
+ *      clamp neutral-city cap, and emit growth report
+ *    - Handle negative population delta (@c Pop_10s < 0), reduce population where allowed,
+ *      and emit death report
+ *    - Apply pestilence attrition chance (additional population loss path)
+ *    - Apply production resolution via @c City_Apply_Production()
+ * 4. Run per-city enchantment effect hooks (implemented and placeholder SPELLY hooks)
+ * 5. After all cities, update volcano bookkeeping via @c Volcano_Counts()
+ *
+ * @return This function returns no value.
+ *
+ * @note Human-facing report arrays/counters are updated for city gain, growth, loss,
+ *       and death events when capacity limits allow.
+ * @note City size is derived from population and clamped to @c MAX_CITY_SIZE.
+ * @note Neutral city growth is capped by @c MAX_CITY_POPULATION_NEUTRAL_PLAYER.
+ * @note (OGBUG) On population growth, excess @c Pop_10s above 100 is discarded by
+ *       resetting @c Pop_10s to 0.
+ * @note Enchantment hooks for Stream of Life, Chaos Rift, Gaia's Blessing, and
+ *       Nightshade are currently placeholders in this build path.
+ *
+ * @see City_Growth_Rate(), City_Apply_Production(), Destroy_City(), Volcano_Counts()
+ */
 void Apply_City_Changes(void)
 {
     int16_t excess_farmer_count = 0;
@@ -2958,11 +2975,11 @@ void Apply_City_Changes(void)
             if(_CITIES[itr_cities].Pop_10s >= 10)
             {
 
-                CITIES_POPULATION(itr_cities, 1);
+                _CITIES[itr_cities].population = 1;
 
-                CITIES_SIZE(itr_cities, 1);  /* CTY_Hamlet */
+                _CITIES[itr_cities].size = 1;  /* CTY_Hamlet */
 
-                CITIES_FARMER_COUNT(itr_cities, (int8_t)City_Minimum_Farmers(itr_cities));
+                _CITIES[itr_cities].farmer_count = (int8_t)City_Minimum_Farmers(itr_cities);
 
                 Do_City_Calculations(itr_cities);
 
@@ -2988,8 +3005,7 @@ void Apply_City_Changes(void)
             // apply population growth
             Population_Growth = City_Growth_Rate(itr_cities);
 
-            // CITIES_POP_10S(itr_cities, (_CITIES[itr_cities].Pop_10s + Population_Growth));
-            _CITIES[(itr_cities)].Pop_10s = Population_Growth;
+            _CITIES[(itr_cities)].Pop_10s += Population_Growth;
 
             // increase population
             if((_CITIES[itr_cities].Pop_10s >= 100) && (_CITIES[itr_cities].population < 25))
@@ -2999,38 +3015,38 @@ void Apply_City_Changes(void)
 
                 excess_farmer_count = (_CITIES[itr_cities].farmer_count - excess_farmer_count);
 
-                CITIES_POPULATION(itr_cities, (_CITIES[itr_cities].population + 1));
+                _CITIES[itr_cities].population = (_CITIES[itr_cities].population + 1);
 
-                CITIES_POP_10S(itr_cities, 0);  /* ; BUG: discards excess population */
+                _CITIES[itr_cities].Pop_10s = 0;  /* OGBUG  discards excess population */
 
                 New_Min_Farmers = City_Minimum_Farmers(itr_cities);
 
-                CITIES_FARMER_COUNT(itr_cities, (New_Min_Farmers + excess_farmer_count));  /* new minimum farmers +/- too many/few */
+                _CITIES[itr_cities].farmer_count = (New_Min_Farmers + excess_farmer_count);  /* new minimum farmers +/- too many/few */
 
                 if(_CITIES[itr_cities].farmer_count > _CITIES[itr_cities].population)
                 {
 
-                    CITIES_FARMER_COUNT(itr_cities, _CITIES[itr_cities].population);
+                    _CITIES[itr_cities].farmer_count = _CITIES[itr_cities].population;
 
                 }
 
-                CITIES_SIZE(itr_cities, ((_CITIES[itr_cities].population + 3) / 4));  /* {0, ..., 24} {3, ..., 27} {0, 1, 2, 3, 4, 5, 6} */
+                _CITIES[itr_cities].size = ((_CITIES[itr_cities].population + 3) / 4);  /* {0, ..., 24} {3, ..., 27} {0, 1, 2, 3, 4, 5, 6} */
 
                 if(_CITIES[itr_cities].size > MAX_CITY_SIZE)
                 {
 
-                    CITIES_SIZE(itr_cities, MAX_CITY_SIZE);  /* CTY_Capital */
+                    _CITIES[itr_cities].size = MAX_CITY_SIZE;  /* CTY_Capital */
 
                 }
 
                 if(_CITIES[itr_cities].owner_idx == NEUTRAL_PLAYER_IDX)
                 {
 
-                    // BUGBUG:  In City_Growth_Rate(), uses `if(_CITIES[city_idx].population >= ((_difficulty + 1) * 2))`
+                    /* OGBUG  In City_Growth_Rate(), uses `if(_CITIES[city_idx].population >= ((_difficulty + 1) * 2))` */
                     if(_CITIES[itr_cities].population > MAX_CITY_POPULATION_NEUTRAL_PLAYER)
                     {
 
-                        CITIES_POPULATION(itr_cities, MAX_CITY_POPULATION_NEUTRAL_PLAYER);
+                        _CITIES[itr_cities].population = MAX_CITY_POPULATION_NEUTRAL_PLAYER;
 
                     }
 
@@ -3058,15 +3074,15 @@ void Apply_City_Changes(void)
                 if(_CITIES[itr_cities].population <= 1)  /* cant be 0 in this branch, so must be == 1 or <= -1 */
                 {
 
-                    CITIES_POP_10S(itr_cities, 5);
+                    _CITIES[itr_cities].Pop_10s = 5;
 
                 }
                 else
                 {
 
-                    CITIES_POPULATION(itr_cities, (_CITIES[itr_cities].population - 1));
+                    _CITIES[itr_cities].population = (_CITIES[itr_cities].population - 1);
 
-                    CITIES_SIZE(itr_cities, ((_CITIES[itr_cities].population + 3) / 4));
+                    _CITIES[itr_cities].size = ((_CITIES[itr_cities].population + 3) / 4);
 
                     if((
                         _CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
@@ -3081,7 +3097,7 @@ void Apply_City_Changes(void)
 
                     }
 
-                    CITIES_POP_10S(itr_cities, (_CITIES[itr_cities].Pop_10s + 100));
+                    _CITIES[itr_cities].Pop_10s = (_CITIES[itr_cities].Pop_10s + 100);
 
                 }
 
@@ -3094,7 +3110,7 @@ void Apply_City_Changes(void)
                 if(_CITIES[itr_cities].population > Random(10))
                 {
 
-                    CITIES_POPULATION(itr_cities, (_CITIES[itr_cities].population - 1));
+                    _CITIES[itr_cities].population = (_CITIES[itr_cities].population - 1);
 
                     if((
                         _CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
