@@ -188,50 +188,60 @@ void Make_Monsters(void)
         return;
     }
 
+    /* Search for an eligible lair that is on the same continent as a non-neutral city */
+    /* loc_F99C3 */
     tries = 0;
     lair_idx = ST_UNDEFINED;
-
-    /* Search for an eligible lair that is on the same continent as a non-neutral city */
-    while(lair_idx == ST_UNDEFINED && tries < 1000)
+    while(1)
     {
-        rolled_idx = (Random(NUM_LAIRS) - 1);
-
-        if(_LAIRS[rolled_idx].intact == ST_TRUE && _LAIRS[rolled_idx].guard1_unit_type != 0)
+        if(
+            (lair_idx == ST_UNDEFINED)
+            &&
+            (tries < 1000)
+        )
         {
-            if(_unit_type_table[_LAIRS[rolled_idx].guard1_unit_type].race_type != rt_Life)
+            rolled_idx = (Random(NUM_LAIRS) - 1);
+            if(_LAIRS[rolled_idx].intact == ST_TRUE && _LAIRS[rolled_idx].guard1_unit_type != 0)
             {
-                /* Check if this lair is on a continent with any player city */
-                city_match_found = 0;
-                for(itr = 0; itr < _cities; itr++)
+                if(_unit_type_table[_LAIRS[rolled_idx].guard1_unit_type].race_type != rt_Life)
                 {
-                    if(_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX)
+                    /* Check if this lair is on a continent with any player city */
+                    city_match_found = 0;
+                    for(itr = 0; itr < _cities; itr++)
                     {
-                        if(_CITIES[itr].wp == _LAIRS[rolled_idx].wp)
+                        if(_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX)
                         {
-                            if(_landmasses[_CITIES[itr].wp * WORLD_SIZE + _CITIES[itr].wy * WORLD_WIDTH + _CITIES[itr].wx] ==
-                                _landmasses[_LAIRS[rolled_idx].wp * WORLD_SIZE + _LAIRS[rolled_idx].wy * WORLD_WIDTH + _LAIRS[rolled_idx].wx])
+                            if(_CITIES[itr].wp == _LAIRS[rolled_idx].wp)
                             {
-                                lair_idx = rolled_idx;
-                                break;
+                                if(_landmasses[_CITIES[itr].wp * WORLD_SIZE + _CITIES[itr].wy * WORLD_WIDTH + _CITIES[itr].wx] ==
+                                    _landmasses[_LAIRS[rolled_idx].wp * WORLD_SIZE + _LAIRS[rolled_idx].wy * WORLD_WIDTH + _LAIRS[rolled_idx].wx])
+                                {
+                                    lair_idx = rolled_idx;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
-
-                /* 33% chance to force the rampage to be on the same plane as the human fortress */
-                if(lair_idx != ST_UNDEFINED && Random(3) == 2)
-                {
-                    if(_FORTRESSES[HUMAN_PLAYER_IDX].wp != _LAIRS[rolled_idx].wp)
-                    {
-                        lair_idx = ST_UNDEFINED; /* Plane mismatch, retry search */
-                    }
-                }
+            }
+            tries++;
+        }
+        else
+        {
+            /* loc_F9B46 */
+            if(Random(3) <= 1)
+            {
+                break;
+            }
+            /* OGBUG  OOB AVRL  lair_idx can be -1 at _LAIRS[lair_idx] */
+            if(_FORTRESSES[HUMAN_PLAYER_IDX].wp == _LAIRS[lair_idx].wp)
+            {
+                break;
             }
         }
-        tries++;
     }
-
-    if(tries >= 1000 || lair_idx == ST_UNDEFINED)
+    /* loc_F9B76 */
+    if(tries >= 1000)
     {
 #ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Monsters failed to find eligible lair after %d tries", tries);
@@ -244,6 +254,7 @@ void Make_Monsters(void)
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Monsters selected lair %d at (%d,%d) plane %d after %d tries", lair_idx, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, tries);
 #endif
+    /* OGBUG  OOB AVRL  lair_idx can be -1 at _LAIRS[lair_idx] */
     lair_wx = _LAIRS[lair_idx].wx;
     lair_wy = _LAIRS[lair_idx].wy;
     lair_wp = _LAIRS[lair_idx].wp;
