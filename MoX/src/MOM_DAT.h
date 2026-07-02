@@ -2522,10 +2522,10 @@ extern int16_t TBL_AI_PRS_War_Mod[6];
 extern struct s_DIFFICULTY_MODIFIERS difficulty_modifiers_table[NUM_DIFFICULTY_LEVEL];
 
 // WZD dseg:203A
-extern int16_t TBL_AI_BLD_OBJWgts[10][5];
+extern int16_t ai_build_objective_weights_table[10][5];
 
 // WZD dseg:206C
-extern int16_t TBL_AI_BLD_BaseWgts[10];
+extern int16_t ai_build_base_weights_table[10];
 
 
 // WZD dseg:2080                                                 ¿  BEGIN: meaningful boundary ?

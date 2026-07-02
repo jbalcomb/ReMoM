@@ -490,12 +490,21 @@ struct s_DIFFICULTY_MODIFIERS difficulty_modifiers_table[NUM_DIFFICULTY_LEVEL] =
 
 
 // WZD dseg:203A
-// TBL_AI_BLD_OBJWgts AI_BLD_Obj_Priorities
+// ai_build_objective_weights_table AI_BLD_Obj_Priorities
 /*
     10 categories
      5 objectives   Pragmatist, Militarist, Theurgist, Perfectionist, Expansionist
+
+It's the AI's build-preference table keyed by the wizard's strategic Objective. It's a 2-D table indexed [build_category][objective]:
+Rows = 10 build categories: Projects, Gold, Religion, Research, Military, Production, Food, Navy, Combat_Unit(8), Builder(9).
+Columns = the 5 AI Objectives (personalities): Pragmatist, Militarist, Theurgist, Perfectionist, Expansionist.
+Cell = a weight bias for building things in that category when the wizard has that objective.
+It's used two ways in the autobuild weighting:
+Additive, for buildings: Weights[itr] = ai_build_base_weights_table[Category] + ai_build_objective_weights_table[Category][Objective] — the objective-specific bump on top of the objective-independent base weight.
+Multiplicative, for units: Weights[itr] = Weights[itr] * (ai_build_objective_weights_table[9 or 8][Objective] + 10) / 10 — rows 9 (Builder) and 8 (Combat_Unit) act as a (mod+10)/10 percentage scalar on settler/engineer/combat weights.
+So it exists to slant an AI wizard's construction choices toward what its personality cares about (a Militarist weights Military/Combat_Unit rows higher, an Expansionist the Builder row, etc.). It's the objective-varying companion to ai_build_base_weights_table, which holds the flat per-category baseline.
 */
-int16_t TBL_AI_BLD_OBJWgts[10][5] = 
+int16_t ai_build_objective_weights_table[10][5] = 
 {
     { 0,  0,  0,  5,  0},
     { 0,  0,  0,  5,  0},
@@ -515,7 +524,7 @@ int16_t TBL_AI_BLD_OBJWgts[10][5] =
     ¿ indexed by bldg_data_table[bldg_idx].Category ?
     
 */
-int16_t TBL_AI_BLD_BaseWgts[10] =
+int16_t ai_build_base_weights_table[10] =
 {
     10, 15, 30, 10, 10, 15, 15, 10, 10, 10
 };
