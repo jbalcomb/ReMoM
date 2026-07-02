@@ -6328,23 +6328,9 @@ void AI_Evaluate_Continents(int16_t player_idx)
         }
     }
 
-    /* CLAUDE DEBUG: trace type_array for the 3 divergent landmasses (plane 1, player 1)
-     * through each classification phase, to prove exactly where 3(NoOwnCity) vs
-     * 4(NoOwnCityAndAllyHasCity) is decided.  Fires only for the captured player 1. */
-    #define DBG_CLASSIFY(site) do { if(player_idx == 1) LOG_DEBUG(LOG_CAT_GENERAL, \
-        "[DBG-CLASSIFY] %-10s plane1: lm28=%d lm29=%d lm34=%d", (site), \
-        (int)_ai_continents.plane[1].player[player_idx].type_array[28], \
-        (int)_ai_continents.plane[1].player[player_idx].type_array[29], \
-        (int)_ai_continents.plane[1].player[player_idx].type_array[34]); } while(0)
 
     /* Phase 1: */
-    if(player_idx == 1)
-        LOG_DEBUG(LOG_CAT_GENERAL, "[DBG-MAP] before CONTXXX_Map: map[1][676]=%d [1][1970]=%d [1][1398]=%d",
-            (int)g_ai_evaluation_map[1][676], (int)g_ai_evaluation_map[1][1970], (int)g_ai_evaluation_map[1][1398]);
     CONTXXX_Map();  /* needs all the landmass data */
-    if(player_idx == 1)
-        LOG_DEBUG(LOG_CAT_GENERAL, "[DBG-MAP] after  CONTXXX_Map: map[1][676]=%d [1][1970]=%d [1][1398]=%d",
-            (int)g_ai_evaluation_map[1][676], (int)g_ai_evaluation_map[1][1970], (int)g_ai_evaluation_map[1][1398]);
 
 
     /* Phase 2: */
@@ -6465,8 +6451,6 @@ HERE:
 */
 
 
-    DBG_CLASSIFY("P4_count");
-
     /* Phase 5: */
 /*
     BEGIN:  Classify the landmass  {lmt_NoOwnCity, lmt_Own, lmt_Contested, lmt_NoOwnCityAndAllyHasCity}
@@ -6562,8 +6546,6 @@ HERE:
 
     _ai_continents.plane[0].player[player_idx].type_array[0] = lmt_NoOwnCityAndAllyHasCity;
     _ai_continents.plane[1].player[player_idx].type_array[0] = lmt_NoOwnCityAndAllyHasCity;
-
-    DBG_CLASSIFY("P5_ally");
 
 /*
     END:  Classify the landmass  {lmt_NoOwnCity, lmt_Own, lmt_Contested, lmt_NoOwnCityAndAllyHasCity}
@@ -6709,8 +6691,6 @@ HERE:
     }
 
 
-    DBG_CLASSIFY("P7");
-
     /* Phase 8: set stage-square to nearest occupieable square, for unsettled landmasses */
 /*
 HERE:
@@ -6729,20 +6709,10 @@ HERE:
             territory_centroid_wy = _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx];
             min_delta_distance = 1000;
             landmass_node_index = _ai_landmass_dock_squares_heads[wp][landmass_idx];
-            if(player_idx == 1 && wp == 1 && (landmass_idx == 28 || landmass_idx == 29 || landmass_idx == 34))
-                LOG_DEBUG(LOG_CAT_GENERAL, "[DBG-P8] lm=%d ENTER type=%d centroid=(%d,%d) dock_head_node=%d",
-                    (int)landmass_idx, (int)_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx],
-                    (int)territory_centroid_wx, (int)territory_centroid_wy, (int)landmass_node_index);
             while(landmass_node_index != ST_UNDEFINED)
             {
                 landmass_node_wx = _ai_landmass_dock_squares_wx_array[wp][landmass_node_index];
                 landmass_node_wy = _ai_landmass_dock_squares_wy_array[wp][landmass_node_index];
-                if(player_idx == 1 && wp == 1 && (landmass_idx == 28 || landmass_idx == 29 || landmass_idx == 34))
-                    LOG_DEBUG(LOG_CAT_GENERAL, "[DBG-P8]   lm=%d node=%d wx=%d wy=%d mapoff=%d mapval=%d occupieable=%d",
-                        (int)landmass_idx, (int)landmass_node_index, (int)landmass_node_wx, (int)landmass_node_wy,
-                        (int)((landmass_node_wy * WORLD_WIDTH) + landmass_node_wx),
-                        (int)g_ai_evaluation_map[wp][((landmass_node_wy * WORLD_WIDTH) + landmass_node_wx)],
-                        (int)(g_ai_evaluation_map[wp][((landmass_node_wy * WORLD_WIDTH) + landmass_node_wx)] == 0));
                 /* occupieable - no site or enemy stack */
                 if(g_ai_evaluation_map[wp][((landmass_node_wy * WORLD_WIDTH) + landmass_node_wx)] == 0)
                 {
@@ -6761,10 +6731,6 @@ HERE:
                 }
                 landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
             }
-            if(player_idx == 1 && wp == 1 && (landmass_idx == 28 || landmass_idx == 29 || landmass_idx == 34))
-                LOG_DEBUG(LOG_CAT_GENERAL, "[DBG-P8] lm=%d DECISION min_delta=%d -> %s",
-                    (int)landmass_idx, (int)min_delta_distance,
-                    (min_delta_distance < 1000) ? "STAYS 3 (occupieable dock found)" : "BECOMES 4 (no occupieable dock)");
             if(min_delta_distance < 1000)
             {
                 _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (uint8_t)target_square_wx;
@@ -6779,7 +6745,6 @@ HERE:
         }
     }
 
-    DBG_CLASSIFY("P8");
 
     /* Phase 9: set stage-square for landmasses we can afford to pull troops from */
 /*
@@ -6847,7 +6812,6 @@ if we can move units off the current landmass, make sure the stage-square is the
     }
 
 
-    #undef DBG_CLASSIFY
     /* Phase 10:  */
     /* Restore EMM mapping to default Data block */
 /* Safely remap the standard Data Handle before exiting */
