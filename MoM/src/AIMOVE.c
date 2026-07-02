@@ -268,7 +268,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
         /* convenience pointers */
         cp_landmass_wx_array = &_ai_continents.plane[wp].player[player_idx].wx_array[0];
         cp_landmass_wy_array = &_ai_continents.plane[wp].player[player_idx].wy_array[0];
-        cp_landmass_type_array = &_ai_continents.plane[wp].player[player_idx].type_array[0];
+        cp_landmass_type_array = (int8_t *)&_ai_continents.plane[wp].player[player_idx].type_array[0];
 
         /* Iterate through all landmasses */
         for(landmass_idx = 1; landmass_idx < NUM_LANDMASSES; landmass_idx++)
@@ -6271,6 +6271,9 @@ int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
  *       @c CONTXXX_Map() and restores the default data mapping with
  *       @c EMMDATAH_Map() before returning.
  */
+/* CI (Capture/Inject) accessor -- defined in INITGAME.c (INITGAME.h not included). */
+int gd_ci_get(const char* key, const char* site, long* out, int max);
+
 void AI_Evaluate_Continents(int16_t player_idx)
 {
     int16_t sum_own_city_wy__enemy_units_cost[NUM_PLANES][NUM_LANDMASSES] = {
@@ -6325,8 +6328,23 @@ void AI_Evaluate_Continents(int16_t player_idx)
         }
     }
 
+    /* CLAUDE DEBUG: trace type_array for the 3 divergent landmasses (plane 1, player 1)
+     * through each classification phase, to prove exactly where 3(NoOwnCity) vs
+     * 4(NoOwnCityAndAllyHasCity) is decided.  Fires only for the captured player 1. */
+    #define DBG_CLASSIFY(site) do { if(player_idx == 1) LOG_DEBUG(LOG_CAT_GENERAL, \
+        "[DBG-CLASSIFY] %-10s plane1: lm28=%d lm29=%d lm34=%d", (site), \
+        (int)_ai_continents.plane[1].player[player_idx].type_array[28], \
+        (int)_ai_continents.plane[1].player[player_idx].type_array[29], \
+        (int)_ai_continents.plane[1].player[player_idx].type_array[34]); } while(0)
+
     /* Phase 1: */
+    if(player_idx == 1)
+        LOG_DEBUG(LOG_CAT_GENERAL, "[DBG-MAP] before CONTXXX_Map: map[1][676]=%d [1][1970]=%d [1][1398]=%d",
+            (int)g_ai_evaluation_map[1][676], (int)g_ai_evaluation_map[1][1970], (int)g_ai_evaluation_map[1][1398]);
     CONTXXX_Map();  /* needs all the landmass data */
+    if(player_idx == 1)
+        LOG_DEBUG(LOG_CAT_GENERAL, "[DBG-MAP] after  CONTXXX_Map: map[1][676]=%d [1][1970]=%d [1][1398]=%d",
+            (int)g_ai_evaluation_map[1][676], (int)g_ai_evaluation_map[1][1970], (int)g_ai_evaluation_map[1][1398]);
 
 
     /* Phase 2: */
@@ -6354,14 +6372,26 @@ HERE:
         }
     }
     /* if settler landing bad, force reevaluation */
+    LOG_DEBUG(LOG_CAT_GENERAL, "force_reevaluation = %d", force_reevaluation);
+    LOG_DEBUG(LOG_CAT_GENERAL, "_ai_reevaluate_continents_countdown = %d", _ai_reevaluate_continents_countdown[player_idx]);
     if(force_reevaluation == ST_TRUE)
     {
         _ai_reevaluate_continents_countdown[player_idx] = 0;
     }
     _ai_reevaluate_continents_countdown[player_idx] -= 1;
+    LOG_DEBUG(LOG_CAT_GENERAL, "_ai_reevaluate_continents_countdown = %d", _ai_reevaluate_continents_countdown[player_idx]);
+    /* CLAUDE: 611 fire-once flag, shared across BOTH return paths (this throttle
+     * early-return AND the full-eval end at the bottom) so it fires on whatever
+     * return the first invocation takes -- the OG probe captures at the far-return
+     * regardless of path.  On this early return _ai_continents == on-entry (== 610). */
+    static int aievalcont_gd_return_done = 0;
     if(_ai_reevaluate_continents_countdown[player_idx] > 0)
     {
         LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        if(!aievalcont_gd_return_done) {
+            aievalcont_gd_return_done = 1;
+            gd_dump_ai_continents("611_AI_Evaluate_Continents_Return_Continents");
+        }
         return;
     }
     _ai_reevaluate_continents_countdown[player_idx] = (25 + Random(10) + Random(10));
@@ -6435,6 +6465,8 @@ HERE:
 */
 
 
+    DBG_CLASSIFY("P4_count");
+
     /* Phase 5: */
 /*
     BEGIN:  Classify the landmass  {lmt_NoOwnCity, lmt_Own, lmt_Contested, lmt_NoOwnCityAndAllyHasCity}
@@ -6487,9 +6519,9 @@ HERE:
             {
                 /* Classify lmt_Own when our unit-cost on this landmass is more than 10× the enemy's unit-cost (equivalently: enemy unit-cost is < 10% of ours). */
                 if(
-                    sum_own_city_wx__own_units_cost[wp][landmass_idx]
+                    (uint16_t)sum_own_city_wx__own_units_cost[wp][landmass_idx]
                     >
-                    (sum_own_city_wy__enemy_units_cost[wp][landmass_idx] * 10)  /* ¿ OGBUG  could overflow ? */
+                    (uint16_t)(sum_own_city_wy__enemy_units_cost[wp][landmass_idx] * 10)  /* OGBUG  could overflow - Dasm shows cast to 16-bit unsigned - only AX (low 16 bits) is used, JBE is unsigned comparison */
                 )
                 {
                     _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Own;
@@ -6531,10 +6563,23 @@ HERE:
     _ai_continents.plane[0].player[player_idx].type_array[0] = lmt_NoOwnCityAndAllyHasCity;
     _ai_continents.plane[1].player[player_idx].type_array[0] = lmt_NoOwnCityAndAllyHasCity;
 
+    DBG_CLASSIFY("P5_ally");
+
 /*
     END:  Classify the landmass  {lmt_NoOwnCity, lmt_Own, lmt_Contested, lmt_NoOwnCityAndAllyHasCity}
 */
 
+
+    /* CI: OG uses landmass_node_centroid_wx/wy UNINITIALIZED in Phase 6 (they're only
+     * set in Phase 9).  Inject OG's captured stack value (capture order: wy, wx) so
+     * ReMoM's Phase 6 delta matches; Phase 9's assignment overwrites it legitimately. */
+    {
+        long ci_c[2];
+        if(gd_ci_get("centroid", "ai_eval_cont", ci_c, 2) == 2) {
+            landmass_node_centroid_wy = (int16_t)ci_c[0];
+            landmass_node_centroid_wx = (int16_t)ci_c[1];
+        }
+    }
 
     /* Phase 6: Choose Unoccupied Landmass for Settler Target */
     for(wp = 0; wp < NUM_PLANES; wp++)
@@ -6664,6 +6709,8 @@ HERE:
     }
 
 
+    DBG_CLASSIFY("P7");
+
     /* Phase 8: set stage-square to nearest occupieable square, for unsettled landmasses */
 /*
 HERE:
@@ -6682,15 +6729,28 @@ HERE:
             territory_centroid_wy = _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx];
             min_delta_distance = 1000;
             landmass_node_index = _ai_landmass_dock_squares_heads[wp][landmass_idx];
+            if(player_idx == 1 && wp == 1 && (landmass_idx == 28 || landmass_idx == 29 || landmass_idx == 34))
+                LOG_DEBUG(LOG_CAT_GENERAL, "[DBG-P8] lm=%d ENTER type=%d centroid=(%d,%d) dock_head_node=%d",
+                    (int)landmass_idx, (int)_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx],
+                    (int)territory_centroid_wx, (int)territory_centroid_wy, (int)landmass_node_index);
             while(landmass_node_index != ST_UNDEFINED)
             {
                 landmass_node_wx = _ai_landmass_dock_squares_wx_array[wp][landmass_node_index];
                 landmass_node_wy = _ai_landmass_dock_squares_wy_array[wp][landmass_node_index];
+                if(player_idx == 1 && wp == 1 && (landmass_idx == 28 || landmass_idx == 29 || landmass_idx == 34))
+                    LOG_DEBUG(LOG_CAT_GENERAL, "[DBG-P8]   lm=%d node=%d wx=%d wy=%d mapoff=%d mapval=%d occupieable=%d",
+                        (int)landmass_idx, (int)landmass_node_index, (int)landmass_node_wx, (int)landmass_node_wy,
+                        (int)((landmass_node_wy * WORLD_WIDTH) + landmass_node_wx),
+                        (int)g_ai_evaluation_map[wp][((landmass_node_wy * WORLD_WIDTH) + landmass_node_wx)],
+                        (int)(g_ai_evaluation_map[wp][((landmass_node_wy * WORLD_WIDTH) + landmass_node_wx)] == 0));
                 /* occupieable - no site or enemy stack */
                 if(g_ai_evaluation_map[wp][((landmass_node_wy * WORLD_WIDTH) + landmass_node_wx)] == 0)
                 {
-                    /* ¿ OGBUG  no jitter ? */
-                    delta_distance = Delta_XY_With_Wrap(landmass_node_wx, landmass_node_wy, territory_centroid_wx, territory_centroid_wy, WORLD_WIDTH);
+                    delta_distance = (
+                        Random(20)
+                        +
+                        Delta_XY_With_Wrap(landmass_node_wx, landmass_node_wy, territory_centroid_wx, territory_centroid_wy, WORLD_WIDTH)
+                    );
                     if(delta_distance < min_delta_distance)
                     {
                         min_delta_distance = delta_distance;
@@ -6701,6 +6761,10 @@ HERE:
                 }
                 landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
             }
+            if(player_idx == 1 && wp == 1 && (landmass_idx == 28 || landmass_idx == 29 || landmass_idx == 34))
+                LOG_DEBUG(LOG_CAT_GENERAL, "[DBG-P8] lm=%d DECISION min_delta=%d -> %s",
+                    (int)landmass_idx, (int)min_delta_distance,
+                    (min_delta_distance < 1000) ? "STAYS 3 (occupieable dock found)" : "BECOMES 4 (no occupieable dock)");
             if(min_delta_distance < 1000)
             {
                 _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (uint8_t)target_square_wx;
@@ -6715,6 +6779,7 @@ HERE:
         }
     }
 
+    DBG_CLASSIFY("P8");
 
     /* Phase 9: set stage-square for landmasses we can afford to pull troops from */
 /*
@@ -6782,6 +6847,7 @@ if we can move units off the current landmass, make sure the stage-square is the
     }
 
 
+    #undef DBG_CLASSIFY
     /* Phase 10:  */
     /* Restore EMM mapping to default Data block */
 /* Safely remap the standard Data Handle before exiting */
@@ -6791,12 +6857,9 @@ if we can move units off the current landmass, make sure the stage-square is the
      * after the full continent-status/stage-point rebuild (and after EMMDATAH_Map(),
      * matching the OG far-return capture point).  Diff against 610 to see what this
      * evaluation produced.  Fire once, on the same (first) invocation as 610. */
-    {
-        static int aievalcont_gd_return_done = 0;
-        if(!aievalcont_gd_return_done) {
-            aievalcont_gd_return_done = 1;
-            gd_dump_ai_continents("611_AI_Evaluate_Continents_Return_Continents");
-        }
+    if(!aievalcont_gd_return_done) {  /* shared flag declared at the throttle above */
+        aievalcont_gd_return_done = 1;
+        gd_dump_ai_continents("611_AI_Evaluate_Continents_Return_Continents");
     }
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
@@ -6830,6 +6893,37 @@ if we can move units off the current landmass, make sure the stage-square is the
  * defensive range checks and naming that do not yet fully describe the final
  * intent of the original routine.
  */
+/* 608: g_ai_evaluation_map -- per-plane WORLD_SIZE uint16 occupation map (CONTXXX
+ * EMS frame); the occupiable gate AI_Evaluate_Continents reads.  Chunked <=100/line
+ * @base, %u (values can be a cost OR-ed with AI_TARGET_SITE 0x8000).  Defined before
+ * AI_Evaluation_Map so it can be called at that function's return. */
+static void gd_dump_ai_evaluation_map(const char* point)
+{
+    static char buf[1024];
+    int wp, base, end, i, q;
+    for(wp = 0; wp < NUM_PLANES; wp++)
+    {
+        for(base = 0; base < WORLD_SIZE; base += 100)
+        {
+            end = (base + 100 < WORLD_SIZE) ? base + 100 : WORLD_SIZE;
+            q = 0; buf[0] = 0;
+            for(i = base; i < end; i++)
+                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%u" : "%u",
+                              (unsigned)g_ai_evaluation_map[wp][i]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s g_ai_evaluation_map[%d]@%d = %s",
+                      point, wp, base, buf);
+        }
+        STU_Log_Flush_All();
+    }
+}
+
+/* GD capture (defined in INITGAME.c) -- AI_Evaluation_Map's on-entry inputs (608_*). */
+void gd_dump_players(const char* point);
+void gd_dump_units(const char* point);
+void gd_dump_lairs(const char* point);
+void gd_dump_cities(const char* point);
+void gd_dump_nodes(const char* point);
+
 void AI_Evaluation_Map(int16_t player_idx)
 {
     int16_t nonhostiles[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
@@ -6840,10 +6934,26 @@ void AI_Evaluation_Map(int16_t player_idx)
     int16_t itr_units = 0;
     int16_t wp = 0;
     int16_t strength = 0;
+    int aiem_capture_strength = 0;  /* CLAUDE: 608 per-unit strength fire-once gate */
     struct s_UNIT * p_unit = NULL;
     struct s_LAIR * p_lair = NULL;
     struct s_CITY * p_city = NULL;
     struct s_NODE * p_node = NULL;
+
+    /* CLAUDE: GD point 608 inputs -- capture the arrays AI_Evaluation_Map sums into
+     * g_ai_evaluation_map (all DGROUP, valid on-entry before CONTXXX_Map), to pin
+     * which input drives the 608 strength divergence.  Fire once (first AI player). */
+    {
+        static int aiem_inputs_gd_done = 0;
+        if(!aiem_inputs_gd_done) {
+            aiem_inputs_gd_done = 1;
+            gd_dump_players("608_AI_Evaluation_Map_P");
+            gd_dump_units  ("608_AI_Evaluation_Map_U");
+            gd_dump_lairs  ("608_AI_Evaluation_Map_L");
+            gd_dump_cities ("608_AI_Evaluation_Map_C");
+            gd_dump_nodes  ("608_AI_Evaluation_Map_N");
+        }
+    }
 
     CONTXXX_Map();
 
@@ -6879,23 +6989,23 @@ void AI_Evaluation_Map(int16_t player_idx)
         }
     }
 
+    /* CLAUDE: GD point 608 per-unit strength -- emit each processed unit's raw
+     * Effective_Unit_Strength() as AI_Evaluation_Map sums it (before the /10), to
+     * pin which unit(s) drive the 608 map divergence.  Mirrors the OG probe, which
+     * captures AX at the j_Effective_Unit_Strength return indexed by SI (== itr).
+     * Fire once (first AI player). */
+    {
+        static int aiem_strength_gd_done = 0;
+        aiem_capture_strength = !aiem_strength_gd_done;
+        aiem_strength_gd_done = 1;
+    }
+
     /* Iterate through all units and add their strength to the map */
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
         p_unit = &_UNITS[itr_units];
 
-        /* OGBUG  OOB AVRL  by (bad) design  assert(_UNITS[itr_units].owner_idx != ST_UNDEFINED); */
-        /* HACK */  if(p_unit->owner_idx == ST_UNDEFINED)
-        /* HACK */  {
-        /* HACK */      continue;
-        /* HACK */  }
-        /* OGBUG  OOB AVRL  by (bad) design  assert(p_unit->wp != ST_UNDEFINED); */
-        /* HACK */  if(p_unit->wp == ST_UNDEFINED)
-        /* HACK */  {
-        /* HACK */      continue;
-        /* HACK */  }
-
-        unit_owner_idx = p_unit->owner_idx;
+        unit_owner_idx = p_unit->owner_idx;  /* OGBUG  OOB AVRL  _UNITS[itr_units].owner_idx is ST_UNDEFINED */
 
         /* Skip units belonging to the player being evaluated */
         if(
@@ -6907,21 +7017,27 @@ void AI_Evaluation_Map(int16_t player_idx)
             continue;
         }
 
-        wp = p_unit->wp;
+        wp = p_unit->wp;  /* OGBUG  OOB AVRL  p_unit->wp is ST_UNDEFINED */
         xy_ofst = ((p_unit->wy * WORLD_WIDTH) + p_unit->wx);
 
         /* Add 1/10th of the unit's effective strength to the map square */
-        strength = Effective_Unit_Strength(itr) / 10;
+        strength = Effective_Unit_Strength(itr_units);   /* raw (before /10) */
+        if(aiem_capture_strength)
+            LOG_DEBUG(LOG_CAT_GENERAL,
+                      "[GD] 608_AI_Evaluation_Map_Strength unit_strength[%d].s = %d",
+                      (int)itr_units, (int)strength);
+        strength = strength / 10;
         g_ai_evaluation_map[wp][xy_ofst] += strength;  /* OGBUG  could index g_ai_evaluation_map with wp = -1 */
 
         /* If the unit owner is non-hostile, mark the square with a flag */
-        // OGBUG  will index nonhostiles[] with unit_owner_idx = ST_UNDEFINED, because it *sanitizes* owner_idx to ST_UNDEFINED at start of turn
+        // OGBUG  OOB AVRL  will index nonhostiles[] with unit_owner_idx = ST_UNDEFINED, because it *sanitizes* owner_idx to ST_UNDEFINED at start of turn
         if(nonhostiles[unit_owner_idx] == ST_TRUE)
         {
-            g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_NONHOSTILE;  /* OGBUG  could index g_ai_evaluation_map with wp = -1 */
+            g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_NONHOSTILE;  /* OGBUG  OOB AVRL  could index g_ai_evaluation_map with wp = -1 */
         }
 
     }
+    if(aiem_capture_strength) STU_Log_Flush_All();
 
     /* Iterate through all lairs and add guardian strength */
     for(itr = 0; itr < NUM_LAIRS; itr++)
@@ -6977,6 +7093,12 @@ void AI_Evaluation_Map(int16_t player_idx)
         xy_ofst = ((p_node->wy * WORLD_WIDTH) + p_node->wx);
         g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_SITE;
     }
+
+    /* CLAUDE: GD point 608 -- g_ai_evaluation_map at AI_Evaluation_Map return (the
+     * occupiable gate feeding AI_Evaluate_Continents's stage-point selection).  No
+     * EMMDATAH_Map() here, so CONTXXX is still mapped.  Fire once. */
+    { static int evalmap_gd_done = 0;
+      if(!evalmap_gd_done) { evalmap_gd_done = 1; gd_dump_ai_evaluation_map("608_AI_Evaluation_Map"); } }
 
 }
 
@@ -7192,6 +7314,9 @@ void AI_Choose_War_Landmass(int16_t player_idx)
     uint8_t continent_status;  // DNE in Dasm
     int16_t landmass_weight_check = 0;  // DNE in Dasm, reuses Value_Sum
     int16_t landmass_node_index = 0;  // DNE in Dasm, reuses Value_Sum
+    /* CLAUDE: 607 shadow -- min_delta_distance is a scalar reused each landmass
+     * iteration; snapshot it per-landmass so 607 can dump the whole array. */
+    int16_t gd_min_delta_distance[NUM_LANDMASSES] = {0};
 
     /* CLAUDE: GD point -- capture _FORTRESSES + _CITIES on-entry.  Both live in
      * DGROUP (not the CONTXXX EMS frame), so they are valid here without a
@@ -7223,7 +7348,7 @@ void AI_Choose_War_Landmass(int16_t player_idx)
      * per-turn captures. */
     {
         static int aicwl_gd_done = 0;
-        if(!aicwl_gd_done) { aicwl_gd_done = 1; gd_dump_ai_landmass_squares("605_AI_Choose_War_Landmass_Squares"); }
+        if(!aicwl_gd_done) { aicwl_gd_done = 1; gd_dump_ai_landmass_squares("605_AI_Choose_War_Landmass_Squares"); gd_dump_ai_dock_squares("606_AI_Choose_War_Landmass_Dock_Squares"); }
     }
 
     /* OGBUG  should check spl_Spell_Of_Mastery, not spl_Fire_Elemental */
@@ -7448,15 +7573,19 @@ void AI_Choose_War_Landmass(int16_t player_idx)
                 }
                 /* to avoid divide by zero */
                 if(min_delta_distance == 0) { min_delta_distance = 1; }
+                gd_min_delta_distance[itr_landmasses] = min_delta_distance;  /* CLAUDE 607 */
 
                 if(first_hostile_player_idx <= ST_UNDEFINED)
                 {
                     /* ¿ weighted by distance ? */
+                    LOG_DEBUG(LOG_CAT_GENERAL, "AI_Choose_War_Landmass() Continent_Values[itr_landmasses] * 1000 = %d", Continent_Values[itr_landmasses] * 1000);
+                    LOG_DEBUG(LOG_CAT_GENERAL, "AI_Choose_War_Landmass() min_delta_distance = %d", min_delta_distance);
                     final_landmass_weights[itr_landmasses] = (
                         (Continent_Values[itr_landmasses] * 1000)
                         /
                         min_delta_distance
                     );
+                    LOG_DEBUG(LOG_CAT_GENERAL, "AI_Choose_War_Landmass() final_landmass_weights[itr_landmasses] = %d", final_landmass_weights[itr_landmasses]);
                     if(
                         (Continent_Values[itr_landmasses] > 0)
                         &&
@@ -7522,10 +7651,9 @@ void AI_Choose_War_Landmass(int16_t player_idx)
                     )
                     {
                         if(
-                            (_FORTRESSES[player_idx].active == ST_FALSE)
+                            (_FORTRESSES[player_idx].active != ST_FALSE)
                             ||
-                            /* OGBUG  should check fortress plane */
-                            (itr_landmasses == _landmasses[((wp * WORLD_SIZE) + (_FORTRESSES[player_idx].wy * WORLD_WIDTH) + _FORTRESSES[player_idx].wx)])
+                            (itr_landmasses != _landmasses[((wp * WORLD_SIZE) + (_FORTRESSES[player_idx].wy * WORLD_WIDTH) + _FORTRESSES[player_idx].wx)])
                         )
                         {
                             landmass_node_index = _ai_landmass_land_squares_heads[wp][itr_landmasses];
@@ -7557,6 +7685,36 @@ void AI_Choose_War_Landmass(int16_t player_idx)
             }
             else
             {
+                /* CLAUDE: GD point 607 -- final_landmass_weights, the exact array
+                 * passed to Get_Weighted_Choice (its sum is the diverging arg).
+                 * Emit wp / player_idx / first_hostile_player_idx so both sides pair
+                 * on the same call.  OG mirror reads Continent_Values_2 @
+                 * SS:(BP-0x10A) at the Get_Weighted_Choice entry.  Fire once (first
+                 * call that reaches Get_Weighted_Choice). */
+                {
+                    static int aicwl_weights_gd_done = 0;
+                    if(!aicwl_weights_gd_done) {
+                        static char wbuf[1024];
+                        int wi, wq = 0;
+                        aicwl_weights_gd_done = 1;
+                        wbuf[0] = 0;
+                        for(wi = 0; wi < NUM_LANDMASSES; wi++)
+                            wq += snprintf(wbuf + wq, sizeof(wbuf) - (size_t)wq, wi ? ",%d" : "%d", (int)final_landmass_weights[wi]);
+                        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights final_landmass_weights = %s", wbuf);
+                        wq = 0; wbuf[0] = 0;
+                        for(wi = 0; wi < NUM_LANDMASSES; wi++)
+                            wq += snprintf(wbuf + wq, sizeof(wbuf) - (size_t)wq, wi ? ",%d" : "%d", (int)Continent_Values[wi]);
+                        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights Continent_Values = %s", wbuf);
+                        wq = 0; wbuf[0] = 0;
+                        for(wi = 0; wi < NUM_LANDMASSES; wi++)
+                            wq += snprintf(wbuf + wq, sizeof(wbuf) - (size_t)wq, wi ? ",%d" : "%d", (int)gd_min_delta_distance[wi]);
+                        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights min_delta_distance = %s", wbuf);
+                        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights wp = %d", (int)wp);
+                        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights player_idx = %d", (int)player_idx);
+                        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights first_hostile_player_idx = %d", (int)first_hostile_player_idx);
+                    }
+                }
+                LOG_DEBUG(LOG_CAT_GENERAL, "[GD] first_hostile_player_idx = %d", first_hostile_player_idx);
                 _ai_landmass_war_targets[wp][player_idx] = Get_Weighted_Choice(&final_landmass_weights[0], NUM_LANDMASSES);
             }
 

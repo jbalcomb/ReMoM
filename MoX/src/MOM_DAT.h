@@ -187,7 +187,7 @@ struct s_LANDMASSES
 {
     /* 00 */ uint8_t wx_array[NUM_LANDMASSES];  /* embark/disemabrk */
     /* 3C */ uint8_t wy_array[NUM_LANDMASSES];  /* embark/disemabrk */
-    /* 78 */ uint8_t type_array[NUM_LANDMASSES];  /* 1-byte, signed; enum e_LANDMASS_TYPE */  /* ¿ ~== MoO2 s_SHIP.ai_mission ? */
+    /* 78 */  int8_t type_array[NUM_LANDMASSES];  /* 1-byte, signed; enum e_LANDMASS_TYPE */  /* ¿ ~== MoO2 s_SHIP.ai_mission ? */
     /* B4 */ 
 };
 
@@ -2916,7 +2916,7 @@ extern uint8_t * Wiz5_Spell_28h;
 // WZD dseg:8FA8
 extern uint8_t * Wiz5_Spell_3Ch;
 // WZD dseg:8FAA
-extern int8_t * _ai_reevaluate_continents_countdown;
+extern int16_t * _ai_reevaluate_continents_countdown;
 // WZD dseg:8FAC
 extern uint8_t * _ai_landmass_settler_targets[NUM_PLANES];
 // WZD dseg:8FB0
