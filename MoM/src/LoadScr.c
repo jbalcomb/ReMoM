@@ -879,6 +879,23 @@ void Loaded_Game_Update(void)
         END:  STU Debug
     */
 
+    /* CLAUDE: GD point 317 -- _ai_reevaluate_continents_countdown at
+     * Loaded_Game_Update return (the AI_Evaluate_Continents throttle, initialized
+     * at load).  ReMoM stores it as int16_t[]; the OG probe reads uint8_t[] @ 0x8FAA
+     * -- the sign/width mismatch is a suspect for the throttle divergence.  Fire once. */
+    {
+        static int lgu_cd_gd_done = 0;
+        if(!lgu_cd_gd_done) {
+            static char cbuf[256];
+            int ci, cq = 0;
+            lgu_cd_gd_done = 1;
+            cbuf[0] = 0;
+            for(ci = 0; ci < NUM_PLAYERS; ci++)
+                cq += snprintf(cbuf + cq, sizeof(cbuf) - cq, ci ? ",%d" : "%d", (int)_ai_reevaluate_continents_countdown[ci]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 317_Loaded_Game_Update_Countdown _ai_reevaluate_continents_countdown = %s", cbuf);
+        }
+    }
+
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 }
