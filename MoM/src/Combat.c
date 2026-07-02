@@ -11269,7 +11269,7 @@ int16_t Get_Effective_Hits(int16_t hits, int16_t defense)
             } break;
             case 2:
             {
-                effective_hits = ((effective_hits * 7) / 15);  // 70%
+                effective_hits = ((effective_hits * 7) / 10);  // 70%
             } break;
             case 3:
             {
@@ -11326,11 +11326,11 @@ int16_t Get_Effective_Ranged_Strength(int16_t ranged, int16_t figures, int16_t a
         }
         else if(ranged == 2)
         {
-            ranged_threat = (ranged_threat / 7);
+            ranged_threat = (ranged_threat / 3);
         }
         else if(ranged == 3)
         {
-            ranged_threat = (ranged_threat / 7);
+            ranged_threat = ((ranged_threat * 2) / 3);
         }
     }
 
@@ -11499,7 +11499,7 @@ int16_t Get_Effective_Melee_Strength(int16_t melee, int16_t thrown, int16_t figu
                 } break;
                 case 3:
                 {
-                    melee_threat = ((melee_threat * 2) / 3);
+                    thrown_threat = ((thrown_threat * 2) / 3);
                 } break;
             }
         }
@@ -16812,11 +16812,10 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     if((battle_unit->attack_attributes & 0x04 /* Att_Poison */) != 0)
     {
         battle_unit->Poison_Strength = battle_unit->Spec_Att_Attrib;
-    }
-
-    if((battle_unit->ranged_type & 0x68 /* SR_MultiGaze */) != 0)
-    {
-        battle_unit->Spec_Att_Attrib = 0;
+        if(battle_unit->ranged_type != srat_MultiGaze)
+        {
+            battle_unit->Spec_Att_Attrib = 0;
+        }
     }
 
     BU_Init_Battle_Unit(battle_unit);
