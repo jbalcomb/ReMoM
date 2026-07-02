@@ -628,6 +628,7 @@ enum e_BUILDING_TYPE
     bt_Dark_Rituals       = 105,
     bt_Altar_Of_Battle    = 106,  /* Last Useable Building Type */
 
+    bt_MAX_THINGS         = 298   /* 100 buildings + 198 units*/
 };
 /*
 case spl_Move_Fortress:    { _ce_bldg_idx = 104; } break;

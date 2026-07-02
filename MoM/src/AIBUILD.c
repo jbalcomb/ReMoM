@@ -669,30 +669,22 @@ void Player_Colony_Autobuild_HP(int16_t city_idx)
     int16_t product_count = 0;
     int16_t uu_unit_count = 0;
     int16_t uu_depr_count = 0;
-    int16_t itr = 0;  // _DI_
-    int16_t itr_units = 0;  // _DI_
-    int16_t itr_cities = 0;  // _DI_
-
+    int16_t itr = 0;
+    int16_t itr_units = 0;
+    int16_t itr_cities = 0;
     if(_CITIES[city_idx].population == 0)
     {
         return;
     }
-
     player_idx = HUMAN_PLAYER_IDX;
-
     city_wp = _CITIES[city_idx].wp;
     city_wx = _CITIES[city_idx].wx;
     city_wy = _CITIES[city_idx].wy;
-
     Calculate_Product_Array(city_idx, &product_count, &uu_depr_count, &uu_unit_count, &product_array[0]);
-
     city_landmass = _landmasses[((city_wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)];
-
     need_settler = ST_TRUE;
     need_engineer = ST_TRUE;
-
     ai_transport_count = 0;
-
     // test for settler or engineer and count transports on same landmass
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
@@ -701,19 +693,17 @@ void Player_Colony_Autobuild_HP(int16_t city_idx)
             &&
             (_UNITS[itr_units].wp == city_wp)
             &&
-            (_landmasses[((_UNITS[itr_units].wp * WORLD_SIZE) + (_UNITS[itr_units].wx * WORLD_WIDTH) + _UNITS[itr_units].wp)] == city_landmass)
+            (_landmasses[((_UNITS[itr_units].wp * WORLD_SIZE) + (_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx)] == city_landmass)
         )
         {
             if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_CREATEOUTPOST) != 0)
             {
                 need_settler = ST_FALSE;
             }
-
             if(_unit_type_table[_UNITS[itr_units].type].Construction > 0)
             {
                 need_engineer = ST_FALSE;
             }
-
             // drake178:  ; BUG: unless wind walking, flying, or in dry dock, transport units won't be on a landmass
             if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
             {
@@ -721,48 +711,39 @@ void Player_Colony_Autobuild_HP(int16_t city_idx)
             }
         }
     }
-
     // test for settle or engineer in-production
-    for(itr_cities = 0; itr_cities < _units; itr_cities++)
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        if(_UNITS[itr_units].owner_idx == player_idx)
+        if(_CITIES[itr_cities].owner_idx == player_idx)
         {
             if(itr_cities == city_idx)
             {
                 continue;
             }
-
             product_idx = _CITIES[itr_cities].construction;
-
             if(product_idx >= 100)
             {
                 product_idx -= 100;
+                if((_unit_type_table[product_idx].Abilities & UA_CREATEOUTPOST) != 0)
+                {
+                    need_settler = ST_FALSE;
+                }
+                if(_unit_type_table[product_idx].Construction > 0)
+                {
+                    need_engineer = ST_FALSE;
+                }
             }
-
-            if((_unit_type_table[product_idx].Abilities & UA_CREATEOUTPOST) != 0)
-            {
-                need_settler = ST_FALSE;
-            }
-
-            if(_unit_type_table[product_idx].Construction > 0)
-            {
-                need_engineer = ST_FALSE;
-            }
-
         }
     }
-
     city_unit_count = Map_Square_Unit_Count(city_wx, city_wy, city_wp);
-
     if(Random(15) > city_unit_count)
     {
         need_units = ST_TRUE;
     }
     else
     {
-        need_units = ST_TRUE;
+        need_units = ST_FALSE;
     }
-
     if(
         (_turn < 20)
         &&
@@ -771,13 +752,11 @@ void Player_Colony_Autobuild_HP(int16_t city_idx)
     {
         need_units = ST_FALSE;
     }
-
     if( (city_unit_count > 0) && (_CITIES[city_idx].bldg_status[bt_Barracks]      == bs_NotBuilt) ) { _CITIES[city_idx].construction = bt_Barracks;      return; }
     if( (city_unit_count > 1) && (_CITIES[city_idx].bldg_status[bt_BuildersHall]  == bs_NotBuilt) ) { _CITIES[city_idx].construction = bt_BuildersHall;  return; }
     if( (city_unit_count > 2) && (_CITIES[city_idx].bldg_status[bt_Shrine]        == bs_NotBuilt) ) { _CITIES[city_idx].construction = bt_Shrine;        return; }
     if( (city_unit_count > 3) && (_CITIES[city_idx].bldg_status[bt_Smithy]        == bs_NotBuilt) ) { _CITIES[city_idx].construction = bt_Smithy;        return; }
     if( (city_unit_count > 4) && (_CITIES[city_idx].bldg_status[bt_Granary]       == bs_NotBuilt) ) { _CITIES[city_idx].construction = bt_Granary;       return; }
-    
     for(itr = 0; itr < product_count; itr++)
     {
         if(product_array[itr] < 100)
@@ -786,12 +765,14 @@ void Player_Colony_Autobuild_HP(int16_t city_idx)
         }
         else
         {
-            product_weights[itr] = (_unit_type_table[product_array[itr]].cost / 10);
+            product_weights[itr] = (
+                (_unit_type_table[(product_array[itr] - 100)].cost / 10)
+                *
+                (_unit_type_table[(product_array[itr] - 100)].cost / 10)
+            );
         }
     }
-
-    // ¿ BUGBUG  should use city_idx here, not itr ?
-    if(_CITIES[itr].population < 5)
+    if(_CITIES[itr].population < 5)  /* OGBUG  should use city_idx, not itr */
     {
         for(itr = 0; itr < product_count; itr++)
         {
@@ -801,7 +782,6 @@ void Player_Colony_Autobuild_HP(int16_t city_idx)
             }
         }
     }
-
     for(itr = 0; itr < product_count; itr++)
     {
         if(product_array[itr] < 100)
@@ -814,7 +794,6 @@ void Player_Colony_Autobuild_HP(int16_t city_idx)
         else
         {
             unit_type = (product_array[itr] - 100);
-
             if((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
             {
                 if(
@@ -827,7 +806,6 @@ void Player_Colony_Autobuild_HP(int16_t city_idx)
                     {
                         product_weights[itr] = ((product_weights[itr] * 3) / 2);
                     }
-
                     product_weights[itr] = ((product_weights[itr] * (ai_build_objective_weights_table[9][_players[player_idx].Objective] + 10)) / 10);
                 }
                 else
@@ -843,7 +821,6 @@ void Player_Colony_Autobuild_HP(int16_t city_idx)
                     {
                         product_weights[itr] = ((product_weights[itr] * 3) / 2);
                     }
-
                     product_weights[itr] = ((product_weights[itr] * (ai_build_objective_weights_table[9][_players[player_idx].Objective] + 10)) / 10);
                 }
                 else
@@ -868,7 +845,7 @@ void Player_Colony_Autobuild_HP(int16_t city_idx)
             }
             else
             {
-                if(need_units != ST_FALSE)
+                if(need_units == ST_FALSE)
                 {
                     product_weights[itr] = 0;
                 }
@@ -879,13 +856,8 @@ void Player_Colony_Autobuild_HP(int16_t city_idx)
             }
         }
     }
-
     product_choice = Get_Weighted_Choice(&product_weights[0], product_count);
-
     _CITIES[city_idx].construction = product_array[product_choice];
-
-    
-    assert(_CITIES[city_idx].construction >= -4);  // min -1 is grand vizier
-    assert(_CITIES[city_idx].construction <= 298);  // 100 buildings + 198 units
-
+    assert(_CITIES[city_idx].construction >= bt_AUTOBUILD);   // min -1 is grand vizier
+    assert(_CITIES[city_idx].construction <= bt_MAX_THINGS);  // 100 buildings + 198 units
 }
