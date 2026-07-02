@@ -94,6 +94,7 @@ ITEM_MAX_POWERS
 #define NUM_PLANES                  2
 #define NUM_RIVERS                 10
 #define NUM_PLAYERS                 6
+#define NUM_NONNPC_PLAYERS          5
 #define NUM_CITIES                100
 #define NUM_UNITS                1009
 #define NUM_RACES                  14

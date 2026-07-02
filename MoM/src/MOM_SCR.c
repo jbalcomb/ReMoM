@@ -163,6 +163,11 @@ void Screen_Control(void)
                 gd_dump_units           ("311_Load_Units_U");
                 gd_dump_terrain_specials("312_Load_Terrain_Specials_T");
                 gd_dump_map_square_flags("313_Load_Map_Flags_M");
+                /* 314: _ai_continents is derived AI scratch state, NOT saved data
+                 * (no loader) -- appended after the 13 canonical load arrays as an
+                 * at-load in-memory baseline, to compare against 603 (AICWL entry)
+                 * and 610 (AI_Reevaluate_Continent entry). */
+                gd_dump_ai_continents   ("314_Load_Continents");
 
                 current_screen = scr_Main_Screen;
                 _players[NEUTRAL_PLAYER_IDX].banner_id = BNR_Brown;

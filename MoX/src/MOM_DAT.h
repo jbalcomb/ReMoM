@@ -191,20 +191,9 @@ struct s_LANDMASSES
     /* B4 */ 
 };
 
-//  ; (sizeof=0x384)
-struct s_CONTINENTS_TABLE
-{
-    /* 0000 */ struct s_LANDMASSES Player_0;
-    /* 00B4 */ struct s_LANDMASSES Player_1;
-    /* 0168 */ struct s_LANDMASSES Player_2;
-    /* 021C */ struct s_LANDMASSES Player_3;
-    /* 02D0 */ struct s_LANDMASSES Player_4;
-    /* 0384 */ 
-};
-
 struct s_AI_CONTINENTS_PLAYERS
 {
-    struct s_LANDMASSES player[NUM_PLAYERS];
+    struct s_LANDMASSES player[NUM_NONNPC_PLAYERS];  /* only needed for *real* players (not sure why it has player 0, maybe just easier indexing management) */
 };
 
 struct s_AI_CONTINENTS

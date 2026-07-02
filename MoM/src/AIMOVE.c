@@ -5321,6 +5321,10 @@ OON XREF: AI_Set_Unit_Orders() |-> AI_Stacks_Stage_Expedition_Forces() |-> AI_Re
 Per Player, Per Landmass+Plane
 (no plane and landmass loops, so can not use continue style logic, like AI_Evaluate_Continents())
 */
+/* CLAUDE: forward decl -- gd_dump_ai_continents is defined later (with AICWL).
+ * Non-static: called from AI_Evaluate_Continents (610/611 GD points) and from
+ * MOM_SCR.c (314 at-load snapshot; also declared in INITGAME.h). */
+void gd_dump_ai_continents(const char* point);
 void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t wp)
 {
     int16_t delta_distance = 0;
@@ -6302,6 +6306,22 @@ void AI_Evaluate_Continents(int16_t player_idx)
     int16_t square_occupation_value = 0;  // DNE in Dasm, resuses found_targe
     int16_t landmass_node_count = 0;  // DNE in Dasm, reuses world_offset
 
+    /* CLAUDE: GD point 610 -- _ai_continents on-ENTRY to AI_Evaluate_Continents,
+     * before it rebuilds the per-plane/per-player continent status (type_array) +
+     * stage points (wx/wy_array).  AI_Evaluate_Continents is the every-turn,
+     * non-throttled continent evaluator (a NEXTTURN phase, AIDUDES.c:302), so it
+     * runs each AI turn -- unlike the Random(20)-gated AI_Reevaluate_Continent.
+     * Paired with 611 (at-return) so a diff shows exactly what this pass produced.
+     * Emit player_idx so compare-gd can confirm both sides captured the same
+     * (first) invocation.  Fire once. */
+    {
+        static int aievalcont_gd_entry_done = 0;
+        if(!aievalcont_gd_entry_done) {
+            aievalcont_gd_entry_done = 1;
+            gd_dump_ai_continents("610_AI_Evaluate_Continents_Entry_Continents");
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 610_AI_Evaluate_Continents_Entry_Continents player_idx = %d", (int)player_idx);
+        }
+    }
 
     /* Phase 1: */
     CONTXXX_Map();  /* needs all the landmass data */
@@ -6764,6 +6784,17 @@ if we can move units off the current landmass, make sure the stage-square is the
 /* Safely remap the standard Data Handle before exiting */
     EMMDATAH_Map();  /* ¿ set EMM back to the default handle - EMMDATAH ? */
 
+    /* CLAUDE: GD point 611 -- _ai_continents at-RETURN from AI_Evaluate_Continents,
+     * after the full continent-status/stage-point rebuild (and after EMMDATAH_Map(),
+     * matching the OG far-return capture point).  Diff against 610 to see what this
+     * evaluation produced.  Fire once, on the same (first) invocation as 610. */
+    {
+        static int aievalcont_gd_return_done = 0;
+        if(!aievalcont_gd_return_done) {
+            aievalcont_gd_return_done = 1;
+            gd_dump_ai_continents("611_AI_Evaluate_Continents_Return_Continents");
+        }
+    }
 }
 
 
@@ -6947,7 +6978,7 @@ void AI_Evaluation_Map(int16_t player_idx)
 /* CLAUDE: GD capture of the AI landmass-square scratch arrays (per-landmass
  * linked-list heads, per-node next-index lists, per-node wx/wy coords -- in the
  * CONTXXX EMS frame) at AI_Choose_War_Landmass entry, for the Stage-2 landmass-
- * weight divergence hunt.  Mirrors the OG capfn (og_sort_trace.h, 603_AI_Choose_War_Landmass_Squares)
+ * weight divergence hunt.  Mirrors the OG capfn (og_sort_trace.h, 605_AI_Choose_War_Landmass_Squares)
  * byte-for-byte: heads dumped per-landmass (all NUM_LANDMASSES -- reset every
  * rebuild, always valid); lists/wx/wy only up to the used node count (their tails
  * are stale scratch and would diff spuriously).  used = total nodes reachable
@@ -7025,24 +7056,25 @@ static void gd_dump_ai_landmass_squares(const char* point)
 }
 
 
-/* gd_dump_fortresses / gd_dump_cities are in INITGAME.c (INITGAME.h not included here). */
+/* gd_dump_fortresses / gd_dump_cities / gd_dump_players are in INITGAME.c (INITGAME.h not included here). */
 void gd_dump_fortresses(const char* point);
 void gd_dump_cities(const char* point);
+void gd_dump_players(const char* point);
 
 /* CLAUDE: GD capture of _ai_continents (604) -- the per-plane/per-player continent
  * evaluation that gates AI_Choose_War_Landmass's plane reevaluation (the switch
  * reads .type_array).  s_LANDMASSES = { wx_array[60], wy_array[60], type_array[60] }
- * (uint8) per (plane,player); flat record idx = plane*NUM_PLAYERS + player.
+ * (uint8) per (plane,player); flat record idx = plane*NUM_NONNPC_PLAYERS + player.
  * DGROUP global -- valid on-entry.  Mirrors the OG capfn byte-for-byte. */
-static void gd_dump_ai_continents(const char* point)
+void gd_dump_ai_continents(const char* point)
 {
     static char buf[1024];
     int wp, pl, lm, q, flat;
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
-        for(pl = 0; pl < NUM_PLAYERS; pl++)
+        for(pl = 0; pl < NUM_NONNPC_PLAYERS; pl++)
         {
-            flat = wp * NUM_PLAYERS + pl;
+            flat = wp * NUM_NONNPC_PLAYERS + pl;
             q = 0; buf[0] = 0;
             for(lm = 0; lm < NUM_LANDMASSES; lm++)
                 q += snprintf(buf + q, sizeof(buf) - q, lm ? ",%d" : "%d",
@@ -7097,10 +7129,11 @@ void AI_Choose_War_Landmass(int16_t player_idx)
             aicwl_dgroup_gd_done = 1;
             /* which player this (first) call is for -- whose _ai_continents row
              * the reevaluation reads. */
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 604_AI_Choose_War_Landmass_Continents player_idx = %d", (int)player_idx);
             gd_dump_fortresses   ("601_AI_Choose_War_Landmass_F");
             gd_dump_cities       ("602_AI_Choose_War_Landmass_C");
-            gd_dump_ai_continents("604_AI_Choose_War_Landmass_Continents");
+            gd_dump_ai_continents("603_AI_Choose_War_Landmass_Continents");
+            gd_dump_players      ("604_AI_Choose_War_Landmass_P");
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 604_AI_Choose_War_Landmass_P player_idx = %d", (int)player_idx);
         }
     }
 
@@ -7117,7 +7150,7 @@ void AI_Choose_War_Landmass(int16_t player_idx)
      * per-turn captures. */
     {
         static int aicwl_gd_done = 0;
-        if(!aicwl_gd_done) { aicwl_gd_done = 1; gd_dump_ai_landmass_squares("603_AI_Choose_War_Landmass_Squares"); }
+        if(!aicwl_gd_done) { aicwl_gd_done = 1; gd_dump_ai_landmass_squares("605_AI_Choose_War_Landmass_Squares"); }
     }
 
     /* OGBUG  should check spl_Spell_Of_Mastery, not spl_Fire_Elemental */

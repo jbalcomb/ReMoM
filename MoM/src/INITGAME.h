@@ -34,6 +34,7 @@ void gd_dump_world_map(const char* point);        /* defined in MAPGEN.c */
 void gd_dump_landmasses(const char* point);       /* defined in MAPGEN.c */
 void gd_dump_terrain_specials(const char* point); /* defined in MAPGEN.c */
 void gd_dump_map_square_flags(const char* point); /* defined in MAPGEN.c */
+void gd_dump_ai_continents(const char* point);    /* defined in AIMOVE.c */
 
 /* Capture/Inject (CI), ReMoM side.  Reads og-game-data-capture.fwv (produced by
  * extract-ci-stage0.py from the OG [CI] probe) and injects OG's exact bytes for
