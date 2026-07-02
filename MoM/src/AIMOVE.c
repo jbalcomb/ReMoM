@@ -6991,7 +6991,7 @@ void AI_Evaluation_Map(int16_t player_idx)
  * from all heads (== the builder's count[wp]), by traversal so no _landmasses
  * read is needed.  The arrays are map-derived (player-independent), so the caller
  * fires this once per turn. */
-static void gd_dump_ai_landmass_squares(const char* point)
+void gd_dump_ai_landmass_squares(const char* point)
 {
     static char buf[1024];
     int16_t wp;
@@ -7058,6 +7058,73 @@ static void gd_dump_ai_landmass_squares(const char* point)
                       point, (int)wp, base, buf);
         }
         STU_Log_Flush_All();   /* drain per plane -- avoid async-logger ring overrun */
+    }
+}
+
+/* 606: dock (embark) squares -- parallel structure to the land squares above, same
+ * CONTXXX EMS frame, built once at load by Build_Dock_Linked_List.  AICWL's dock
+ * loop walks these to compute min_delta_distance, so dumping them at the same
+ * CONTXXX_Map() return as 605 lets compare-gd pin a dock-square-data divergence. */
+void gd_dump_ai_dock_squares(const char* point)
+{
+    static char buf[1024];
+    int16_t wp;
+    int i, used, node, guard, base, end, q;
+
+    for(wp = 0; wp < NUM_PLANES; wp++)
+    {
+        used = 0;
+        for(i = 0; i < NUM_LANDMASSES; i++)
+        {
+            node = _ai_landmass_dock_squares_heads[wp][i];
+            guard = 0;
+            while(node >= 0 && node < 1600 && guard++ < 1600)
+            {
+                used++;
+                node = _ai_landmass_dock_squares_lists[wp][node];
+            }
+        }
+        for(base = 0; base < NUM_LANDMASSES; base += 100)
+        {
+            end = (base + 100 < NUM_LANDMASSES) ? base + 100 : NUM_LANDMASSES;
+            q = 0; buf[0] = 0;
+            for(i = base; i < end; i++)
+                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
+                              (int)_ai_landmass_dock_squares_heads[wp][i]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].heads@%d = %s",
+                      point, (int)wp, base, buf);
+        }
+        for(base = 0; base < used; base += 100)
+        {
+            end = (base + 100 < used) ? base + 100 : used;
+            q = 0; buf[0] = 0;
+            for(i = base; i < end; i++)
+                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
+                              (int)_ai_landmass_dock_squares_lists[wp][i]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].lists@%d = %s",
+                      point, (int)wp, base, buf);
+        }
+        for(base = 0; base < used; base += 100)
+        {
+            end = (base + 100 < used) ? base + 100 : used;
+            q = 0; buf[0] = 0;
+            for(i = base; i < end; i++)
+                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
+                              (int)_ai_landmass_dock_squares_wx_array[wp][i]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].wx_array@%d = %s",
+                      point, (int)wp, base, buf);
+        }
+        for(base = 0; base < used; base += 100)
+        {
+            end = (base + 100 < used) ? base + 100 : used;
+            q = 0; buf[0] = 0;
+            for(i = base; i < end; i++)
+                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
+                              (int)_ai_landmass_dock_squares_wy_array[wp][i]);
+            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].wy_array@%d = %s",
+                      point, (int)wp, base, buf);
+        }
+        STU_Log_Flush_All();
     }
 }
 

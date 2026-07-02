@@ -254,6 +254,11 @@ void AI_Evaluation_Map(int16_t player_idx);
 // WZD o162p37
 void AI_Choose_War_Landmass(int16_t player_idx);
 
+/* GD capture (defined in AIMOVE.c) -- dump the CONTXXX land/dock square arrays.
+ * Called at 605/606 (AICWL) and at 315/316 (Build_*_Linked_List return). */
+void gd_dump_ai_landmass_squares(const char* point);
+void gd_dump_ai_dock_squares(const char* point);
+
 // WZD o162p38
 void Player_Clear_All_Unit_Orders(int16_t player_idx);
 

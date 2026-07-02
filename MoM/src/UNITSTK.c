@@ -331,6 +331,8 @@ int16_t Stack_Move_To(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int1
     int16_t itr_troops = 0;
     struct s_UNIT * unit_ptr;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     /* Build the stack of units for moving, filtering for road builders if necessary */
     Build_RoadBuilder_Stack(&troop_count, &troops[0], dst_wx, dst_wy, player_idx, unit_idx);
 
@@ -427,6 +429,9 @@ int16_t Stack_Move_To(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int1
         Set_Entities_On_Map_Window(*map_x, *map_y, map_p);
         Reset_Draw_Active_Stack();
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    
     return did_move_stack;
 }
 

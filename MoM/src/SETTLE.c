@@ -7,10 +7,12 @@
 
 */
 
-#include "SETTLE.h"
-
 #include "../../STU/src/AI_METRICS.h"
+#include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
+
 #include "../../MoX/src/MOM_DAT.h"
+#include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_TYPE.h"
@@ -19,7 +21,6 @@
 #include "Combat.h"
 #include "Lair.h"
 #include "MainScr.h"
-#include "../../MoX/src/MOM_DEF.h"
 #include "Outpost.h"
 #include "Terrain.h"
 #include "UnitMove.h"   // WTFMATE
@@ -27,6 +28,8 @@
 #include "UNITTYPE.h"   // WTFMATE
 #include "WZD_o059.h"
 #include "WZD_o143.h"   /* OVL_GetRoadPath() */
+
+#include "SETTLE.h"
 
 
 
@@ -118,6 +121,7 @@ void AI_Execute_Orders(int16_t player_idx)
     int16_t l_map_x = 0;
     int16_t unit_idx = 0;
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     /* Store current map state to restore later */
     l_map_x = _map_x;
@@ -207,7 +211,9 @@ void AI_Execute_Orders(int16_t player_idx)
     _prev_world_x = _map_x;
     _prev_world_y = _map_y;
     _map_plane = l_map_plane;
-    
+ 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
 }
 
 

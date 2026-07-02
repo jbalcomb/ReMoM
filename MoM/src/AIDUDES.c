@@ -2142,6 +2142,13 @@ void Build_Land_Linked_List(void)
         }
     }
 
+    /* CLAUDE: GD point 315 -- _ai_landmass_land_squares at Build_Land_Linked_List
+     * return, captured BEFORE EMMDATAH_Map() remaps CONTXXX away (arrays fully built,
+     * CONTXXX still mapped).  Diff vs 605 (same arrays read at AICWL) confirms the
+     * builder is the source.  Fire once. */
+    { static int land_bld_gd_done = 0;
+      if(!land_bld_gd_done) { land_bld_gd_done = 1; gd_dump_ai_landmass_squares("315_Build_Land_Linked_List_Squares"); } }
+
     EMMDATAH_Map();
 
 }
@@ -2206,15 +2213,15 @@ void Build_Dock_Linked_List(void)
         _ai_landmass_dock_squares_heads[MYRROR_PLANE][itr] = ST_UNDEFINED;
     }
 
-    /* CLAUDE: mirror Build_Land_Linked_List() — initialize the "next" pointers of
-       every list slot to -1.  Without this, slots beyond the populated chains
-       hold allocator zero-fill, which looks like "go to slot 0" to any reader
-       that walks past a chain tail due to a bug elsewhere → infinite loop. */
-    for(itr = 0; itr < 1600; itr++)
-    {
-        _ai_landmass_dock_squares_lists[ARCANUS_PLANE][itr] = ST_UNDEFINED;
-        _ai_landmass_dock_squares_lists[MYRROR_PLANE][itr] = ST_UNDEFINED;
-    }
+    // FUCK YOU CLUADE  /* CLAUDE: mirror Build_Land_Linked_List() — initialize the "next" pointers of
+    // FUCK YOU CLUADE     every list slot to -1.  Without this, slots beyond the populated chains
+    // FUCK YOU CLUADE     hold allocator zero-fill, which looks like "go to slot 0" to any reader
+    // FUCK YOU CLUADE     that walks past a chain tail due to a bug elsewhere → infinite loop. */
+    // FUCK YOU CLUADE  for(itr = 0; itr < 1600; itr++)
+    // FUCK YOU CLUADE  {
+    // FUCK YOU CLUADE      _ai_landmass_dock_squares_lists[ARCANUS_PLANE][itr] = ST_UNDEFINED;
+    // FUCK YOU CLUADE      _ai_landmass_dock_squares_lists[MYRROR_PLANE][itr] = ST_UNDEFINED;
+    // FUCK YOU CLUADE  }
 
     count[ARCANUS_PLANE] = 0;
     count[MYRROR_PLANE] = 0;
@@ -2298,6 +2305,11 @@ To prevent falling off the edge, the assembly uses previous_node_idx to follow e
             }
         }
     }
+    /* CLAUDE: GD point 316 -- _ai_landmass_dock_squares at Build_Dock_Linked_List
+     * return, captured BEFORE EMMDATAH_Map() remaps CONTXXX away.  Diff vs 606 (dock
+     * at AICWL).  Fire once. */
+    { static int dock_bld_gd_done = 0;
+      if(!dock_bld_gd_done) { dock_bld_gd_done = 1; gd_dump_ai_dock_squares("316_Build_Dock_Linked_List_Squares"); } }
 /* Safely remap the standard Data Handle before exiting */
     EMMDATAH_Map();  /* ¿ set EMM back to the default handle - EMMDATAH ? */
 

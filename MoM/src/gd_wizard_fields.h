@@ -131,7 +131,7 @@ static const gd_field_t wizard_fields[] = {
     { 0x04AA, GD_U16  ,   1, "reevaluate_hostility_countdown" },
     { 0x04AC, GD_U16  ,   1, "reevaluate_magic_strategy_countdown" },
     { 0x04AE, GD_U16  ,   1, "reevaluate_magic_power_countdown" },
-    { 0x04B0, GD_U8   ,   6, "peace_duration" },
+    { 0x04B0, GD_I8   ,   6, "peace_duration" },
     { 0x04B6, GD_I16  ,   1, "niu_cp_target_1" },
     { 0x04B8, GD_I16  ,   1, "niu_cp_target_2" },
     { 0x04BA, GD_I16  ,   1, "cp_target_3" },
