@@ -6306,6 +6306,8 @@ void AI_Evaluate_Continents(int16_t player_idx)
     int16_t square_occupation_value = 0;  // DNE in Dasm, resuses found_targe
     int16_t landmass_node_count = 0;  // DNE in Dasm, reuses world_offset
 
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
     /* CLAUDE: GD point 610 -- _ai_continents on-ENTRY to AI_Evaluate_Continents,
      * before it rebuilds the per-plane/per-player continent status (type_array) +
      * stage points (wx/wy_array).  AI_Evaluate_Continents is the every-turn,
@@ -6359,7 +6361,8 @@ HERE:
     _ai_reevaluate_continents_countdown[player_idx] -= 1;
     if(_ai_reevaluate_continents_countdown[player_idx] > 0)
     {
-        return ;
+        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        return;
     }
     _ai_reevaluate_continents_countdown[player_idx] = (25 + Random(10) + Random(10));
 /*
@@ -6795,6 +6798,9 @@ if we can move units off the current landmass, make sure the stage-square is the
             gd_dump_ai_continents("611_AI_Evaluate_Continents_Return_Continents");
         }
     }
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
 }
 
 

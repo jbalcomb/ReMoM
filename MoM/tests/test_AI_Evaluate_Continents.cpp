@@ -27,7 +27,7 @@ protected:
     struct s_FORTRESS * saved_fortresses = nullptr;
     struct s_UNIT * saved_units = nullptr;
     uint8_t * saved_landmasses = nullptr;
-    uint8_t * saved_countdown = nullptr;
+    int8_t * saved_countdown = nullptr;
     SAMB_ptr saved_datah = nullptr;
     SAMB_ptr saved_ems_pfba = nullptr;
     SAMB_ptr saved_contxxx = nullptr;
@@ -74,7 +74,7 @@ protected:
         ASSERT_NE(_UNITS, nullptr);
         _landmasses = static_cast<uint8_t *>(calloc(WORLD_SIZE * NUM_PLANES, sizeof(uint8_t)));
         ASSERT_NE(_landmasses, nullptr);
-        _ai_reevaluate_continents_countdown = static_cast<uint8_t *>(calloc(NUM_PLAYERS, sizeof(uint8_t)));
+        _ai_reevaluate_continents_countdown = static_cast<int8_t *>(calloc(NUM_PLAYERS, sizeof(uint8_t)));
         ASSERT_NE(_ai_reevaluate_continents_countdown, nullptr);
 
         for(wp = 0; wp < NUM_PLANES; wp++)

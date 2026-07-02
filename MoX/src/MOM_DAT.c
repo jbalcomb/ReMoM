@@ -878,7 +878,7 @@ uint8_t * Wiz5_Spell_28h;
 // WZD dseg:8FA8
 uint8_t * Wiz5_Spell_3Ch;
 // WZD dseg:8FAA
-uint8_t * _ai_reevaluate_continents_countdown;
+int8_t * _ai_reevaluate_continents_countdown;  /* 1-byte, signed */
 // WZD dseg:8FAC
 /*
 landmass_idx

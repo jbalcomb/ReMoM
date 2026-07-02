@@ -2916,7 +2916,7 @@ extern uint8_t * Wiz5_Spell_28h;
 // WZD dseg:8FA8
 extern uint8_t * Wiz5_Spell_3Ch;
 // WZD dseg:8FAA
-extern uint8_t * _ai_reevaluate_continents_countdown;
+extern int8_t * _ai_reevaluate_continents_countdown;
 // WZD dseg:8FAC
 extern uint8_t * _ai_landmass_settler_targets[NUM_PLANES];
 // WZD dseg:8FB0
