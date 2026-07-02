@@ -1050,6 +1050,7 @@ int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp)
     else if(terrain_type >= tte_Grasslands)  { is_shoreline = ST_FALSE; }
     else if(terrain_type == tt_BugGrass)     { is_shoreline = ST_FALSE; }
     else if(terrain_type == _1Lake)          { is_shoreline = ST_FALSE; }
+    else                                     { is_shoreline = ST_TRUE;  }
     return is_shoreline;
 }
 
