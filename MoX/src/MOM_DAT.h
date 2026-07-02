@@ -1508,7 +1508,7 @@ struct s_WIZARD
     /* 04AA */ int16_t reevaluate_hostility_countdown;      /* 2-byte, signed */
     /* 04AC */ int16_t reevaluate_magic_strategy_countdown; /* 2-byte, signed */
     /* 04AE */ int16_t reevaluate_magic_power_countdown;    /* 2-byte, signed */  /* Why does this have it's own countdown? */
-    /* 04B0 */  int8_t  peace_duration[NUM_PLAYERS];  /* 1-byte, signed */  /* decremented in AI_Next_Turn() */
+    /* 04B0 */  int8_t  peace_duration[NUM_PLAYERS];  /* 1-byte, signed */  /* decremented in AI_Next_Turn() and Decrease_Peace_Duration() */
     /* 04B6 */ int16_t  niu_cp_target_1;  /* set in Init_CP_Strategy(), never xref'd again */
     /* 04B8 */ int16_t  niu_cp_target_2;  /* set in Init_CP_Strategy(), never xref'd again */
     /* 04BA */ int16_t  cp_target_3;  /* set to hostile, target player_idx in AI_Select_Spell_Group()  OVL_TargetWiz AKA IDK_AI_Strategy_3 */

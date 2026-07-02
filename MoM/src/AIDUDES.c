@@ -289,7 +289,7 @@ void AI_Next_Turn(void)
         Some_AI_Turn_Var_3 = 0;
 
         /* Decrement peace treaties durations */
-        for (other_player_idx = 0; other_player_idx < _num_players; other_player_idx++)
+        for(other_player_idx = 0; other_player_idx < _num_players; other_player_idx++)
         {
             if(_players[player_idx].peace_duration[other_player_idx] != 0)
             {

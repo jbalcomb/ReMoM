@@ -16,6 +16,7 @@ MoO2
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
 
 #include "../../MoX/src/MOM_DEF.h"
 
@@ -5689,6 +5690,10 @@ void Decrease_Peace_Duration(void)
     {
         for(itr_players2 = 0; itr_players2 < _num_players; itr_players2++)
         {
+            if(itr_players1 == itr_players2)
+            {
+                continue;
+            }
             _players[itr_players1].peace_duration[itr_players2] -= 1;
             if(_players[itr_players1].peace_duration[itr_players2] < 0)
             {
