@@ -2040,9 +2040,6 @@ void CONTXXX_Map(void)
     _ai_landmass_dock_squares_heads[0]    = ( int16_t *)(&EMS_PFBA[0] + (2900 * SZ_PARAGRAPH_B));  // 3000 - 2900 = 100 * 1 PR = 1600 B
     _ai_landmass_dock_squares_heads[1]    = ( int16_t *)(&EMS_PFBA[0] + (3000 * SZ_PARAGRAPH_B));  // 3200 - 3000 = 200 * 1 PR = 3200 B
 
-    /* HACK */  memset(g_ai_evaluation_map[0], 0, 9600);
-    /* HACK */  memset(g_ai_evaluation_map[1], 0, 9600);
-
     for(itr = 0; itr < MAX_AI_STACKS; itr++)
     {
         // ¿ get a pointer at every 32 bytes, starting at 51200 bytes from the EMM base ?
