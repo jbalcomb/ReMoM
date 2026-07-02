@@ -7327,8 +7327,8 @@ void AI_Choose_War_Landmass(int16_t player_idx)
                 min_delta_distance = 1000;
                 while(landmass_node_index != ST_UNDEFINED)
                 {
-                    dock_square_wx = _ai_landmass_dock_squares_wx_array[wp][Value_Sum];
-                    dock_square_wy = _ai_landmass_dock_squares_wy_array[wp][Value_Sum];
+                    dock_square_wx = _ai_landmass_dock_squares_wx_array[wp][landmass_node_index];
+                    dock_square_wy = _ai_landmass_dock_squares_wy_array[wp][landmass_node_index];
                     if(g_ai_evaluation_map[wp][((dock_square_wy * WORLD_WIDTH) + dock_square_wx)] == 0)
                     {
                         delta_distance = Delta_XY_With_Wrap(dock_square_wx, dock_square_wy, empire_wx, empire_wy, WORLD_WIDTH);
