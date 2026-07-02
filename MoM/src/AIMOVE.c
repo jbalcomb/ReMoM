@@ -56,7 +56,7 @@ int16_t ai_human_hostility = ST_FALSE;  /* OON XREF: AI_Set_Unit_Orders() */
 /*
 
 */
-uint8_t * cp_landmass_type_array;
+int8_t * cp_landmass_type_array;
 uint8_t * cp_landmass_wy_array;
 uint8_t * cp_landmass_wx_array;
 
