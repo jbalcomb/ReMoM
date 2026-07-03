@@ -33,8 +33,11 @@
 #include "UnitMove.h"
 #include "DIPLODEF.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "AIMOVE.h"
 
