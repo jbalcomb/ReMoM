@@ -4639,8 +4639,8 @@ void AI_Stacks_Order_Attack_Target_Or_Goto_Destination(int16_t unit_idx, int16_t
     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: unit_idx: %d, target_wx: %d, target_wy: %d, target_value: %d", __FILE__, __LINE__, unit_idx, target_wx, target_wy, target_value);
 #endif
     if(
-        ((target_value & AI_TARGET_SITE) != 0)
-        ||
+        ((target_value & AI_TARGET_SITE) == 0)
+        &&
         ((target_value & AI_TARGET_STRENGTH_MASK) != 0)
     )
     {
