@@ -4157,7 +4157,7 @@ void AI_Stacks_Do_Settle(int16_t player_idx, int16_t landmass_idx)
             {
                 continue;
             }
-            if((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_CREATEOUTPOST) != 0)
+            if((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_CREATEOUTPOST) == 0)
             {
                 continue;
             }

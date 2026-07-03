@@ -155,6 +155,8 @@ static void AI_Log_Metrics(void)
 
 // WZD o145p02
 // ¿ MoO2  Module: AIDATA  Compute_AI_Data_() ?
+void gd_dump_units(const char* point);   /* CLAUDE: GD capture (defined in INITGAME.c) */
+
 void AI_Next_Turn(void)
 {
     int i;                  /* _DI_itr_units__peace */
@@ -368,10 +370,18 @@ void AI_Next_Turn(void)
 
     /* Event Generation */
     PHASE(Make_Raiders());
+    /* CLAUDE: GD point 616 -- _UNITS AFTER Make_Raiders (NPC raider unit generation).
+     * Captured at the call site (mirrors OG's far-return into AI_Next_Turn) so the
+     * function's many early-return paths are handled automatically.  Fire once. */
+    { static int gd616_done = 0; if(!gd616_done) { gd616_done = 1; gd_dump_units("616_Make_Raiders_Return_U"); } }
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Make_Raiders done");
 #endif
     PHASE(Make_Monsters());
+    /* CLAUDE: GD point 617 -- _UNITS AFTER Make_Monsters (NPC monster unit generation).
+     * Same call-site capture.  Pairs with 616 to see which NPC-generation pass creates
+     * the divergent late unit records (e.g. _UNITS[48..50]).  Fire once. */
+    { static int gd617_done = 0; if(!gd617_done) { gd617_done = 1; gd_dump_units("617_Make_Monsters_Return_U"); } }
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Make_Monsters done");
 #endif
