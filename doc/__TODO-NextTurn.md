@@ -85,7 +85,7 @@ Outpost growth, city changes, nightshade counts, and building removal.
 NPC diplomatic actions, contact discovery, treaty adjustments. Most functions carry `__WIP` / `__STUB` suffixes.
 
 - [ ] **10A** [`Diplomacy_Growth_For_Enchantments__WIP`](../MoM/src/NEXTTURN.c#L4050) — still `__WIP`. Adjusts diplomacy based on active overland enchantments.
-- [ ] **10B** [`Determine_Offer`](../MoM/src/NEXTTURN.c#L3340) — computes what each AI wizard could/would offer human this turn.
+- [x] **10B** [`Determine_Offer`](../MoM/src/NEXTTURN.c#L3359) — **done-done**, doc [NextTurn/NEXTTURN-Determine_Offer.md](NextTurn/NEXTTURN-Determine_Offer.md). Per-player wandering-merchant / mercenary / hero-for-hire offers (human popups, AI auto-resolve); verified 1:1 against `ovr140/Determine_Offer.asm`, no divergences. Preserved OGBUGs: B1 (`player_fame` never per-player), B2 (item affordability tested before Charismatic discount). `IDK`→`offer_chance_pct` + locals lowercased this session.
 - [ ] **10C** [`Diplomacy_Growth`](../MoM/src/DIPLOMAC.c#L2661) — natural per-turn hostility/friendship drift.
 - [ ] **10D** [`Determine_First_Contacts`](../MoM/src/DIPLOMAC.c#L5421) — checks whether any wizard-to-wizard first contact triggered this turn.
 - [ ] **10E** `NPC_To_NPC_Treaty_Negotiations__STUB` — still `__STUB`; TODO-commented at [NEXTTURN.c:765](../MoM/src/NEXTTURN.c#L765). Full body not yet reconstructed.

@@ -3310,79 +3310,102 @@ void All_Players_Apply_Spell_Casting(void)
 
 
 // WZD o140p19
-// drake178: EVNT_RandomOffers()
-/*
-; processes the wandering merchant, mercenary, and hero for hire offers for all players
-; has multiple BUGs, both own and inherited
-*/
-/*
-
-*/
+/**
+ * @brief Evaluates and processes periodic item, mercenary, and hero offers for each wizard.
+ *
+ * @details
+ * Iterates all active players and runs three independent offer pipelines:
+ * merchant item offers, mercenary offers, and hero-for-hire offers.
+ *
+ * High-level sequence per player:
+ * 1. Skip players currently casting @c spl_Spell_Of_Return or with inactive fortress.
+ * 2. Item offer branch (human player path):
+ *    - Compute chance from fame/famous status.
+ *    - Optionally force via debug trigger.
+ *    - Generate a random item with @c Make_Item().
+ *    - Price at 3x item cost (halved if charismatic), then show merchant popup.
+ *    - Remove generated item if the player cannot afford the pre-discount price.
+ * 3. Mercenary offer branch (all players if unit cap allows):
+ *    - Compute chance from fame/famous plus AI bonus.
+ *    - Optionally force via debug trigger.
+ *    - Generate mercenary offer via @c Generate_Mercenaries().
+ *    - If accepted/auto-accepted and affordable, deduct gold, create units at
+ *      fortress location, initialize level/xp/moves, and enforce stack limits
+ *      with @c Evict_Weakest_Unit().
+ * 4. Hero offer branch:
+ *    - Compute chance from fame/famous, AI bonus, and current hero count divisor.
+ *    - Optionally force via debug trigger.
+ *    - If triggered and under unit cap, resolve hero slot + random hero type,
+ *      then route through human popup or AI acceptance path.
+ *
+ * @return This function returns no value.
+ *
+ * @note Offer probability uses integer arithmetic and is clamped to a minimum
+ *       baseline with @c SETMAX(..., 10) at multiple stages.
+ * @note The local @c player_fame value is refreshed in the human-item branch,
+ *       then reused in later branches for the current loop iteration.
+ * @note Debug triggers (@c DBG_trigger_offer_item, @c DBG_trigger_offer_merc,
+ *       @c DBG_trigger_offer_hero) force corresponding offer checks and grant
+ *       temporary human gold for testing.
+ * @note Merchant affordability check is performed before charismatic discount,
+ *       preserving historical behavior.
+ * @note Mercenary generated coordinates are overwritten with fortress
+ *       coordinates before unit creation.
+ *
+ * @see Player_Fame(), Make_Item(), Merchant_Popup(), Generate_Mercenaries(),
+ *      Hire_Merc_Popup(), Create_Unit(), Evict_Weakest_Unit(),
+ *      Hero_Slot_Open(), Pick_Random_Hero(), Hire_Hero_Popup(), AI_Accept_Hero()
+ */
 void Determine_Offer(void)
 {
-    int16_t Bookshelf[NUM_MAGIC_TYPES] = { 0, 0, 0, 0, 0 };
+    int16_t bookshelf[NUM_MAGIC_TYPES] = { 0, 0, 0, 0, 0 };
     int16_t item_price = 0;
-    int16_t Hire_Response = 0;
-    int16_t Merc_Level = 0;
-    int16_t Merc_Cost = 0;
-    int16_t Merc_Amount = 0;
+    int16_t hire_response = 0;
+    int16_t merc_level = 0;
+    int16_t merc_cost = 0;
+    int16_t merc_amount = 0;
     int16_t wp = 0;
     int16_t wy = 0;
     int16_t wx = 0;
-    int16_t Hero_Slot = 0;
+    int16_t hero_slot = 0;
     int16_t unit_type = 0;  // used for Generate_Mercenaries() and Pick_Random_Hero()
     int16_t player_fame = 0;
     int16_t itr = 0;
-    int16_t itr_players = 0;  // _SI_
-    int16_t IDK = 0;  // _DI_
-
+    int16_t itr_players = 0;
+    int16_t offer_chance_pct = 0;
     for(itr = 0; itr < NUM_MAGIC_TYPES; itr++)
     {
-        Bookshelf[itr] = 12;
+        bookshelf[itr] = 12;
     }
-
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-
         if(_players[itr_players].casting_spell_idx == spl_Spell_Of_Return)
         {
             continue;
         }
-
         if(_FORTRESSES[itr_players].active == ST_FALSE)
         {
             continue;
         }
-
         if(itr_players == HUMAN_PLAYER_IDX)
         {
-
             player_fame = Player_Fame(itr_players);
-
-            IDK = (2 + (player_fame / 25));
-
+            offer_chance_pct = (2 + (player_fame / 25));
             if(_players[itr_players].famous > 0)
             {
-                IDK = (IDK * 2);
+                offer_chance_pct = (offer_chance_pct * 2);
             }
-
-            SETMAX(IDK, 10);
-
-            
+            SETMAX(offer_chance_pct, 10);
             /* HACK: */ if(DBG_trigger_offer_item == ST_TRUE)
             {
-                IDK = 100;
+                offer_chance_pct = 100;
                 _players[HUMAN_PLAYER_IDX].gold_reserve = 9999;
                 DBG_trigger_offer_item = ST_FALSE;
             }
-
-            if(Random(100) <= IDK)
+            if(Random(100) <= offer_chance_pct)
             {
-
-                GUI_InHeroNaming = Make_Item(0, &Bookshelf[0], 0);
-
+                GUI_InHeroNaming = Make_Item(0, &bookshelf[0], 0);
                 item_price = (_ITEMS[GUI_InHeroNaming].cost * 3);
-
                 // drake178: ; BUG: wrong order of operations
                 if(_players[HUMAN_PLAYER_IDX].gold_reserve < item_price)
                 {
@@ -3390,189 +3413,126 @@ void Determine_Offer(void)
                 }
                 else
                 {
-
                     if(_players[HUMAN_PLAYER_IDX].charismatic > 0)
                     {
                         item_price = (item_price / 2);  // "half price"
                     }
-
                     Set_Mouse_List(1, mouse_list_default);
-
                     Merchant_Popup();
-
                     Set_Mouse_List(1, mouse_list_hourglass);
-
                 }
             }
         }
-
-
         if(_units >= 947)
         {
             continue;
         }
-
-        IDK = (1 + (player_fame / 20));
-
+        offer_chance_pct = (1 + (player_fame / 20));
         if(_players[itr_players].famous > 0)
         {
-            IDK *= 2;
+            offer_chance_pct *= 2;
         }
-
-        SETMAX(IDK, 10);
-
+        SETMAX(offer_chance_pct, 10);
         if(itr_players > 0)
         {
-            IDK += 10;
+            offer_chance_pct += 10;
         }
-
         /* HACK: */ if(DBG_trigger_offer_merc == ST_TRUE)
         {
-            IDK = 100;
+            offer_chance_pct = 100;
             _players[HUMAN_PLAYER_IDX].gold_reserve = 9999;
             DBG_trigger_offer_merc = ST_FALSE;
         }
-
-        if(Random(100) <= IDK)
+        if(Random(100) <= offer_chance_pct)
         {
-
             unit_type = 0;
-
-            Generate_Mercenaries(itr_players, &wx, &wy, &wp, &Merc_Amount, &unit_type, &Merc_Cost, &Merc_Level);
-
+            Generate_Mercenaries(itr_players, &wx, &wy, &wp, &merc_amount, &unit_type, &merc_cost, &merc_level);
             wx = _FORTRESSES[itr_players].wx;
             wy = _FORTRESSES[itr_players].wy;
             wp = _FORTRESSES[itr_players].wp;
-
             if(
-                (Merc_Amount > 0)
+                (merc_amount > 0)
                 &&
-                ((_units + Merc_Amount) < 1000)
+                ((_units + merc_amount) < 1000)
             )
             {
-
                 // ; conflicting condition - will always jump
-                if(_players[itr_players].gold_reserve >= Merc_Cost)
+                if(_players[itr_players].gold_reserve >= merc_cost)
                 {
-
-                    Hire_Response = ST_TRUE;
-
+                    hire_response = ST_TRUE;
                     if(itr_players == HUMAN_PLAYER_IDX)
                     {
-
                         Set_Mouse_List(1, mouse_list_default);
-
-                        Hire_Response = Hire_Merc_Popup(unit_type, Merc_Amount, Merc_Level, Merc_Cost);
-
+                        hire_response = Hire_Merc_Popup(unit_type, merc_amount, merc_level, merc_cost);
                         Set_Mouse_List(1, mouse_list_hourglass);
-
                     }
-
-                    if(Hire_Response == ST_TRUE)
+                    if(hire_response == ST_TRUE)
                     {
-
-                        _players[itr_players].gold_reserve -= Merc_Cost;
-
-                        for(itr = 0; itr < Merc_Amount; itr++)
+                        _players[itr_players].gold_reserve -= merc_cost;
+                        for(itr = 0; itr < merc_amount; itr++)
                         {
-
                             Create_Unit(unit_type, itr_players, wx, wy, wp, -1);
-
-                            _UNITS[(_units - 1)].Level = (int8_t)Merc_Level;
-
-                            _UNITS[(_units - 1)].XP = TBL_Experience[Merc_Level];
-
+                            _UNITS[(_units - 1)].Level = (int8_t)merc_level;
+                            _UNITS[(_units - 1)].XP = TBL_Experience[merc_level];
                             _UNITS[(_units - 1)].Finished = ST_FALSE;
-
                             _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;
-
                             Evict_Weakest_Unit((_units - 1));
-
                         }
-
                         if(itr_players == HUMAN_PLAYER_IDX)
                         {
-
                             _active_world_x = wx;
                             _active_world_y = wy;
                             _map_plane = wp;
-
                             o62p01_empty_function(itr_players);
-
                         }
-
                     }
-
                 }
-
             }
-
         }
-
-        IDK = (3 + (player_fame / 25));
-
+        offer_chance_pct = (3 + (player_fame / 25));
         if(_players[itr_players].famous > 0)
         {
-            IDK *= 2;
+            offer_chance_pct *= 2;
         }
-
-        SETMAX(IDK, 10);
-
+        SETMAX(offer_chance_pct, 10);
         if(itr_players > HUMAN_PLAYER_IDX)
         {
-            IDK += 10;
+            offer_chance_pct += 10;
         }
-
-        IDK = (IDK / (((Player_Hero_Count(itr_players) + 1) / 2) + 1));
-
+        offer_chance_pct = (offer_chance_pct / (((Player_Hero_Count(itr_players) + 1) / 2) + 1));
         /* HACK*/ if(DBG_trigger_offer_hero == ST_TRUE)
         {
-            IDK = 100;
+            offer_chance_pct = 100;
             _players[HUMAN_PLAYER_IDX].gold_reserve = 9999;
             DBG_trigger_offer_hero = ST_FALSE;
         }
-
         if(
-            (Random(100) <= IDK)
+            (Random(100) <= offer_chance_pct)
             &&
             ((_units + 1) < MAX_UNIT_COUNT)
         )
         {
-
-            Hero_Slot = Hero_Slot_Open(itr_players);
-
+            hero_slot = Hero_Slot_Open(itr_players);
             unit_type = Pick_Random_Hero(itr_players, 0, 0);
-
             if(
-                (Hero_Slot > -1)
+                (hero_slot > ST_UNDEFINED)
                 &&
-                (unit_type > -1)
+                (unit_type > ST_UNDEFINED)
             )
             {
-
                 if(itr_players == HUMAN_PLAYER_IDX)
                 {
-
                     Set_Mouse_List(1, mouse_list_default);
-
-                    Hire_Hero_Popup(Hero_Slot, unit_type, 0);
-
+                    Hire_Hero_Popup(hero_slot, unit_type, 0);
                     Set_Mouse_List(1, mouse_list_hourglass);
-
                 }
                 else
                 {
-
-                    AI_Accept_Hero(itr_players, Hero_Slot, unit_type);
-
+                    AI_Accept_Hero(itr_players, hero_slot, unit_type);
                 }
-
             }
-
         }
-
     }
-
 }
 
 
