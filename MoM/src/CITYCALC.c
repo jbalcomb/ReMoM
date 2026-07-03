@@ -3217,18 +3217,57 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
 
 // WZD o142p21
-// drake178: CTY_OutpostGrowth()
 // MoO2  Module: COLCALC  Apply_Colony_Pop_Growth_()
 /*
-; calculates and records the growth and/or shrinkage of all outposts, although turning into a full city is not in this function
-; BUG: this function ignores Wild Games altogether, both as a source of food and as a terrain special
-; BUG: difficulty-based outpost growth modifiers are applied to both AI and human player outposts
+OGBUG  ignores Wild Game, both as a source of food and as a terrain special
+OGBUG  difficulty-based outpost growth modifiers are applied to both AI and human player outposts
 */
-/*
-    adds and/or subtracts to/from _CITIES[].Pop_10s
-    if percentage change of grow += {3}
-    if percentage change of shrink += {2}
-*/
+/**
+ * @brief Applies one-turn growth/shrink updates to all outposts.
+ *
+ * @details
+ * Iterates all entries in @c _CITIES and processes only outposts
+ * (cities with @c population == 0). For each outpost, the routine computes a
+ * growth chance from terrain food, race growth bonus, selected city enchantments,
+ * nearby terrain specials, and global difficulty modifiers; then computes a
+ * shrink chance from harmful enchantments.
+ *
+ * Processing flow per outpost:
+ * 1. Start growth from @c City_Food_Terrain(city_idx).
+ * 2. Add race outpost-growth bonus
+ *    (@c _race_type_table[race].outpost_growth_rate).
+ * 3. Add enchantment growth bonuses:
+ *    - @c GAIAS_BLESSING: +20
+ *    - @c STREAM_OF_LIFE: +10
+ * 4. Scan usable city-area tiles and add terrain-special bonus:
+ *    - @c TS_IRON or @c TS_SILVER: +5 each
+ *    - Any other non-zero special: +10
+ * 5. Build shrink chance starting at 5, then add:
+ *    - @c EVIL_PRESENCE: +5
+ *    - @c PESTILENCE: +10
+ *    - @c FAMINE: +10
+ *    - @c CHAOS_RIFT: +10
+ * 6. Apply difficulty scaling to growth chance.
+ * 7. Roll stochastic updates:
+ *    - If @c Random(100) <= grow, increase @c Pop_10s by @c Random(3).
+ *    - If @c Random(100) <= shrink, decrease @c Pop_10s by @c Random(2).
+ *
+ * @return This function returns no value.
+ *
+ * @note This routine mutates @c _CITIES[itr_cities].Pop_10s in place.
+ * @note Growth and shrink checks are independent random rolls and can both
+ *       trigger in the same turn.
+ * @note (OGBUG) Terrain-special lookup in the inner loop indexes
+ *       @c wx_array/@c wy_array with @c itr_cities instead of @c itr,
+ *       causing incorrect reads and potential out-of-bounds access when
+ *       @c itr_cities >= CITY_AREA_SIZE.
+ * @note (OGBUG) Wild Game is ignored in this outpost-growth path despite being
+ *       relevant to food/terrain valuation elsewhere.
+ * @note (OGBUG) Difficulty outpost-growth modifiers are applied regardless of
+ *       whether the outpost belongs to AI or human.
+ *
+ * @see City_Food_Terrain(), Get_Useable_City_Area(), GET_TERRAIN_SPECIAL(), Random()
+ */
 void All_Outpost_Population_Growth(void)
 {
     int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -3238,102 +3277,76 @@ void All_Outpost_Population_Growth(void)
     int16_t terrain_special = 0;
     int16_t useable_map_squares = 0;
     int16_t shrink = 0;
-    int16_t itr_cities = 0;  // _SI_
-    int16_t grow = 0;  // _DI_
-
+    int16_t itr_cities = 0;
+    int16_t grow = 0;
     EMMDATAH_Map();
-
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-
-        if(_CITIES[itr_cities].population == 0)
+        /* Only process Outposts, not Cities */
+        if(_CITIES[itr_cities].population != 0)
         {
             continue;
         }
-
         grow = City_Food_Terrain(itr_cities);
-
         grow += _race_type_table[_CITIES[itr_cities].race].outpost_growth_rate;
-
         if(_CITIES[itr_cities].enchantments[GAIAS_BLESSING] != 0)
         {
             grow += 20;
         }
-
         if(_CITIES[itr_cities].enchantments[STREAM_OF_LIFE] != 0)
         {
             grow += 10;
         }
-
         city_wp = CITIESP();
-
         useable_map_squares = Get_Useable_City_Area(CITIESX(), CITIESY(), city_wp, &wx_array[0], &wy_array[0]);
-
         for(itr = 0; itr < useable_map_squares; itr++)
         {
-
-            terrain_special = GET_TERRAIN_SPECIAL(wx_array[itr], wy_array[itr], city_wp);
-
+            /* OGBUG  should use itr, not itr_cities */
+            /* OGBUG  OOB AVRL  itr_cities >= 25 */
+            terrain_special = GET_TERRAIN_SPECIAL(wx_array[itr_cities], wy_array[itr_cities], city_wp);
             if(terrain_special != 0)
             {
-
                 if(
                     (terrain_special == TS_IRON)
                     ||
                     (terrain_special == TS_SILVER)
                 )
                 {
-
                     grow += 5;
-
                 }
                 else
                 {
-
                     grow += 10;
-
                 }
-
             }
-
         }
-
         shrink = 5;  // 5%  1:20
-
         if(_CITIES[itr_cities].enchantments[EVIL_PRESENCE] != 0)
         {
             shrink += 5;  // 5%  1:20
         }
-
         if(_CITIES[itr_cities].enchantments[PESTILENCE] != 0)
         {
             shrink += 10;  // 10%  2:20
         }
-
         if(_CITIES[itr_cities].enchantments[FAMINE] != 0)
         {
             shrink += 10;  // 10%  2:20
         }
-
         if(_CITIES[itr_cities].enchantments[CHAOS_RIFT] != 0)
         {
             shrink += 10;  // 10%  2:20
         }
-        
-        grow = ((difficulty_modifiers_table[_difficulty].outpost_growth * grow) / 100);
-
+        grow = (((int32_t)difficulty_modifiers_table[_difficulty].outpost_growth * grow) / 100);
         if(Random(100) <= grow)
         {
-            CITIES_POP_10S(itr_cities, (_CITIES[itr_cities].Pop_10s + Random(3)));
+            _CITIES[itr_cities].Pop_10s = (_CITIES[itr_cities].Pop_10s + Random(3));
         }
-
         if(Random(100) <= shrink)
         {
-            CITIES_POP_10S(itr_cities, (_CITIES[itr_cities].Pop_10s - Random(3)));
+            _CITIES[itr_cities].Pop_10s = (_CITIES[itr_cities].Pop_10s - Random(2));
         }
-        
     }
-
 }
 
 
