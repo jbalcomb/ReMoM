@@ -53,7 +53,7 @@ void Cast_Plane_Shift_Draw(int16_t wx, int16_t wy, int16_t wp);
 int16_t Cast_Plane_Shift(int16_t player_idx);
 
 // WZD o132p11
-// WIZ_GreatWasting()
+void WIZ_GreatWasting(int16_t Player_Index);
 
 // WZD o132p12
 // CTY_GaiasBlessing()

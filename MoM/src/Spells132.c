@@ -1139,7 +1139,60 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
 
 
 // WZD o132p11
-// WIZ_GreatWasting()
+void WIZ_GreatWasting(int16_t Player_Index)
+{
+    int16_t Tiles_Corrupted = 0;
+    int16_t Tiles_To_Corrupt = 0;
+    int16_t Tries = 0;
+    int16_t XPos = 0;
+    int16_t YPos = 0;
+    int16_t Plane = 0;
+    int16_t UU_Array1 = 0;
+    int16_t UU_Array2 = 0;
+    int16_t si = 0;
+    int16_t success = 0;
+    UU_Array1 = Near_Allocate_First(50);
+    UU_Array2 = Near_Allocate_Next(50);
+    Tiles_To_Corrupt = Random(3) + 3;
+    Tiles_Corrupted = 0;
+    while(Tiles_Corrupted < Tiles_To_Corrupt)
+    {
+        Tries = 0;
+        success = 0;
+        while(success == 0 && Tries < 50)
+        {
+            Tries++;
+            success = 1;
+            XPos = Random(60) - 1;
+            YPos = Random(40) - 1;
+            Plane = Random(2) - 1;
+            for(si = 0; si < _cities; si++)
+            {
+                if(_CITIES[si].wp == Plane && _CITIES[si].owner_idx == Player_Index)
+                {
+                    if(Delta_XY_With_Wrap(_CITIES[si].wx, _CITIES[si].wy, XPos, YPos, 60) <= 2)
+                    {
+                        success = 0;
+                    }
+                }
+            }
+            if(Square_Is_Sailable(XPos, YPos, Plane) != 0)
+            {
+                success = 0;
+            }
+            if(Square_Has_Corrruption(XPos, YPos, Plane) != 0)
+            {
+                success = 0;
+            }
+            if(success == 1)
+            {
+                _map_square_flags[Plane * 2400 + YPos * 60 + XPos] |= MSF_CORRUPTION;
+            }
+        }
+        Tiles_Corrupted++;
+    }
+}
+
 
 // WZD o132p12
 // CTY_GaiasBlessing()
