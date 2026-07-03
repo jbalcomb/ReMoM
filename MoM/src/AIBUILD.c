@@ -435,20 +435,45 @@ void Player_Colony_Autobuild_CP(int16_t player_idx, int16_t city_idx)
 
 
 // WZD o157p03
-// drake178: AI_CTY_NeutralProd()
-/*
-; selects the next production item for a neutral city
-*/
 // MoO2  Module: AIBUILD  Player_Colony_Autobuild_()  |->  Assign_Colony_New_Building_()
 /*
-
-XREF:
-    Player_All_Colony_Autobuild()
-    NX_j_AI_CTY_NeutralProd()
-
 ¿ HP vs. CP vs. NP ?
-
 */
+/**
+ * @brief Selects autobuild production for a neutral-player city.
+ *
+ * @details
+ * This variant of the colony autobuild routine is used for neutral cities.
+ * It constructs the producible candidate list, assigns baseline weights, then
+ * applies neutral-specific filters that emphasize straightforward garrisoning:
+ *
+ * 1. Build candidate list via @c Calculate_Product_Array().
+ * 2. Estimate whether local military production is needed using a random
+ *    threshold against current stack size on the city tile.
+ * 3. Assign initial weights:
+ *    - Units: squared cost-based weight.
+ *    - Buildings: category base AI weight.
+ * 4. Enforce strategic filters:
+ *    - If units are needed, suppress building options.
+ *    - If units are not needed, suppress military unit options.
+ *    - Always suppress settlers, engineers, and transport units.
+ * 5. Explicitly suppress naval infrastructure buildings
+ *    (@c bt_ShipWrightsGuild, @c bt_MaritimeGuild).
+ * 6. Force @c bt_Barracks if not yet built; otherwise choose by weighted random.
+ *
+ * @param city_idx Index of the neutral city receiving a new construction target.
+ *
+ * @return This function returns no value.
+ *
+ * @note @c uu_city_landmass is computed but not currently used by this routine.
+ * @note Candidate entries >= 100 represent unit constructions and are converted
+ *       to unit type indices by subtracting 100.
+ * @note Final output is written to @c _CITIES[city_idx].construction.
+ *
+ * @see Player_All_Colony_Autobuild(), Player_Colony_Autobuild_CP(),
+ *      Player_Colony_Autobuild_HP(), Calculate_Product_Array(),
+ *      Get_Weighted_Choice()
+ */
 void Player_Colony_Autobuild_NP(int16_t city_idx)
 {
     int16_t product_weights[(NUM_BUILDINGS + 14)] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -459,126 +484,84 @@ void Player_Colony_Autobuild_NP(int16_t city_idx)
     int16_t product_count = 0;
     int16_t uu_unit_count = 0;
     int16_t uu_depr_count = 0;
-    int16_t itr = 0;  // _DI_
-
+    int16_t itr = 0;
     Calculate_Product_Array(city_idx, &product_count, &uu_depr_count, &uu_unit_count, &product_array[0]);
-
     uu_city_landmass = _landmasses[((_CITIES[city_idx].wp * WORLD_SIZE) + (_CITIES[city_idx].wy * WORLD_WIDTH) + _CITIES[city_idx].wx)];
-
-    if((5 + Random(15)) < Map_Square_Unit_Count(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp))
+    if((5 + Random(15)) <= Map_Square_Unit_Count(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp))
     {
-
-        need_units = ST_TRUE;
-
+        need_units = ST_FALSE;
     }
     else
     {
-
-        need_units = ST_FALSE;
-
+        need_units = ST_TRUE;
     }
-
-
     for(itr = 0; itr < product_count; itr++)
     {
-        
         if(product_array[itr] >= 100)
         {
-
-            product_weights[itr] = (_unit_type_table[product_array[itr]].cost / 10);
-
+            product_weights[itr] = (
+                (_unit_type_table[(product_array[itr] - 100)].cost / 10)
+                *
+                (_unit_type_table[(product_array[itr] - 100)].cost / 10)
+            );
         }
         else
         {
-
             product_weights[itr] = ai_build_base_weights_table[bldg_data_table[product_array[itr]].Category];
-
         }
-
     }
-
     for(itr = 0; itr < product_count; itr++)
     {
-
         if(product_array[itr] < 100)
         {
-
             if(need_units == ST_TRUE)
             {
-
                 product_weights[itr] = 0;
-
             }
-
         }
         else
         {
-
             if(
                 ((_unit_type_table[(product_array[itr] - 100)].Abilities & UA_CREATEOUTPOST) != 0)
                 ||
-                (_unit_type_table[_UNITS[(product_array[itr] - 100)].type].Transport != 0)
+                (_unit_type_table[(product_array[itr] - 100)].Transport != 0)
                 ||
-                (_unit_type_table[_UNITS[(product_array[itr] - 100)].type].Construction != 0)
+                (_unit_type_table[(product_array[itr] - 100)].Construction != 0)
             )
             {
-
                 product_weights[itr] = 0;
-
             }
             else
             {
-
                 if(need_units == ST_FALSE)
                 {
-
                     product_weights[itr] = 0;
-
                 }
-
             }
-
         }
-
     }
-
     for(itr = 0; itr < product_count; itr++)
     {
-
         if(product_array[itr] == bt_ShipWrightsGuild)
         {
-
             product_weights[itr] = 0;
-
         }
-
         if(product_array[itr] == bt_MaritimeGuild)
         {
-
             product_weights[itr] = 0;
-
         }
-
     }
-
     if(_CITIES[city_idx].bldg_status[bt_Barracks] == bs_NotBuilt)  /* {-1:NotBuilt,0:Replaced,1:Built,2:Removed} */
     {
-
         _CITIES[city_idx].construction = bt_Barracks;
-
     }
     else
     {
-
         product_choice = Get_Weighted_Choice(&product_weights[0], product_count);
-
-        _CITIES[city_idx].construction = product_choice;
-
+        _CITIES[city_idx].construction = product_array[product_choice];
     }
-
-    assert(_CITIES[city_idx].construction >= -4);  // min -1 is grand vizier
-    assert(_CITIES[city_idx].construction <= 298);  // 100 buildings + 198 units
-
+    assert(_CITIES[city_idx].construction >= bt_AUTOBUILD);   // min -1 is grand vizier
+    assert(_CITIES[city_idx].construction <= bt_MAX_THINGS);  // 100 buildings + 198 units
 }
 
 // WZD o157p04
