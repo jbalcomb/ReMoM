@@ -5606,7 +5606,60 @@ void NPC_To_Human_Diplomacy__WIP(void)
 // G_DIPL_NeedForWar()
 
 // WZD o87p04
-// G_DIPL_SuperiorityWar()
+void G_DIPL_SuperiorityWar(int16_t Player_1, int16_t Player_2)
+{
+    if (_players[Player_1].Dipl.Dipl_Status[Player_2] == DIPL_Alliance ||
+        _players[Player_1].Dipl.Dipl_Status[Player_2] == DIPL_WizardPact)
+    {
+        if (_difficulty < 2)
+        {
+            return;
+        }
+
+        if (_players[Player_1].Dipl.Dipl_Status[Player_2] == DIPL_Alliance)
+        {
+            if (Random(4) == 1 || (Random(2) == 1 && _players[Player_2].Objective == OBJ_Expansionist))
+            {
+                Change_Relations(-10000, Player_1, Player_2, 30, 0, 0);
+                Break_Treaties(Player_2, Player_1);
+                if (_players[Player_1].Dipl.Visible_Rel[Player_2] > 30)
+                {
+                    _players[Player_1].Dipl.Visible_Rel[Player_2] = 30;
+                    _players[Player_2].Dipl.Visible_Rel[Player_1] = 30;
+                }
+            }
+        }
+        else if (_players[Player_1].Dipl.Dipl_Status[Player_2] == DIPL_WizardPact)
+        {
+            if (Random(2) == 1 || _players[Player_2].Objective == OBJ_Expansionist)
+            {
+                Change_Relations(-10000, Player_1, Player_2, 30, 0, 0);
+                Break_Treaties(Player_2, Player_1);
+                if (_players[Player_1].Dipl.Visible_Rel[Player_2] > 30)
+                {
+                    _players[Player_1].Dipl.Visible_Rel[Player_2] = 30;
+                    _players[Player_2].Dipl.Visible_Rel[Player_1] = 30;
+                }
+            }
+        }
+    }
+    else
+    {
+        if (_players[Player_1].peace_duration[Player_2] < 1)
+        {
+            if (_players[Player_1].Dipl.Visible_Rel[Player_2] < 0)
+            {
+                Change_Relations(-10000, Player_1, Player_2, 39, 0, 0);
+            }
+            else
+            {
+                Change_Relations(-10000, Player_1, Player_2, 41, 0, 0);
+            }
+            Declare_War(Player_2, Player_1);
+        }
+    }
+}
+
 
 // WZD o87p05
 // IDK_Dipl_s73F1C()

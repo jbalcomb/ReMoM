@@ -197,7 +197,7 @@ void NPC_To_Human_Diplomacy__WIP(void);
 // G_DIPL_NeedForWar()
 
 // WZD o87p04
-// G_DIPL_SuperiorityWar()
+void G_DIPL_SuperiorityWar(int16_t Player_1, int16_t Player_2);
 
 // WZD o87p05
 // IDK_Dipl_s73F1C()
