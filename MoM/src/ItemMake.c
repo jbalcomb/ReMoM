@@ -2179,34 +2179,45 @@ static int16_t Item_Make_Screen_Spellbook_Popup(void)
 
 
 // WZD o115p14
-/*
-; loads and adds the specified prefabricated item to
-; the item table or, if passed -1, moves the item from
-; index 88h (136) to the active table (0-131)
-; returns the item index if successful, or -1 otherwise
-*/
-// TODO  struct s_ITEM_DATA itemdata
 static int16_t Add_Item(int16_t itemdata_idx)
 {
-    struct s_ITEM_DATA itemdata = { 0 };
+    struct s_ITEM_DATA itemdata =
+    {
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* name[LEN_ITEM_NAME] */
+        0,                 /* icon_idx */
+        0,                 /* field_1F */
+        0,                 /* field_20 */
+        0,                 /* field_21 */
+        0,                 /* cost */
+        0,                 /* field_24 */
+        0,                 /* field_25 */
+        0,                 /* field_26 */
+        0,                 /* moves */
+        0,                 /* field_28 */
+        0,                 /* field_29 */
+        0,                 /* field_2A */
+        0,                 /* field_2B */
+        0,                 /* field_2C */
+        0,                 /* field_2D */
+        0,                 /* field_2E */
+        0,                 /* field_2F */
+        0,                 /* field_30 */
+        0,                 /* field_31 */
+        { 0, 0, 0, 0, 0 }, /* spellranks[5] */
+        0                  /* flag */
+    };
     int16_t item_idx = 0;
-
     if(itemdata_idx != ST_UNDEFINED)
     {
-
         _prefab_item_table[itemdata_idx] = 1;
-
         LBX_Load_Data_Static(itemdata_lbx_file__ovr115, 0, (SAMB_ptr)&itemdata, itemdata_idx, 1, 56);
-
-        itemdata.moves *= 2;  // convert moves to moves2
-
-        memcpy(&itemdata, &_ITEMS[RANDOM_ITEM_IDX], sizeof(_ITEMS[0]));
+        itemdata.moves *= 2;  /* convert moves to moves2 */
+        memcpy(&_ITEMS[RANDOM_ITEM_IDX], &itemdata, sizeof(_ITEMS[0]));
     }
-
     item_idx = Activate_Item(RANDOM_ITEM_IDX);
-
     return item_idx;
 }
+
 
 // WZD o115p15
 /*
