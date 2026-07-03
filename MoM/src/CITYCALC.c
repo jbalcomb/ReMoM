@@ -2526,205 +2526,193 @@ int16_t City_Mana_Production(int16_t city_idx)
 
 
 // WZD o142p15
-// drake178: CTY_GetPopGrowth()
-/*
-; calculates and returns the city's population growth
-; contains multiple bugs that can prevent negative
-; total growth from being applied in certain cases
-*/
-/*
-
-XREF:
-    j_City_Growth_Rate()
-        City_Screen_Draw2__WIP()
-        Apply_City_Changes()
-*/
+/**
+ * @brief Computes the per-turn population growth value for a city.
+ *
+ * @details
+ * Calculates growth (or shrink) from food capacity, race growth traits,
+ * buildings, enchantments, current construction target, ownership, and
+ * difficulty scaling. The function first derives a base growth rate, then
+ * applies a percentage modifier, and finally applies owner-specific rules.
+ *
+ * Base growth path:
+ * - Returns 0 for outposts (@c population == 0).
+ * - Uses @c City_Maximum_Size() as the food-capacity anchor.
+ * - Applies immediate decay when food is below population.
+ * - Applies race growth modifier and fixed building bonuses
+ *   (@c GRANARY, @c FARMERS_MARKET).
+ * - Applies event/enchantment multipliers
+ *   (@c STREAM_OF_LIFE, Population Boom).
+ *
+ * Growth modifier path:
+ * - Starts at 0 percent.
+ * - Applies @c DARK_RITUALS penalty.
+ * - If building @c bt_Housing, applies worker-derived bonus and additional
+ *   building bonuses (@c SAWMILL, @c BUILDERS_HALL).
+ *
+ * Ownership and difficulty path:
+ * - Neutral cities grow at half rate and are capped by a
+ *   difficulty-based size threshold.
+ * - AI-owned non-neutral cities apply
+ *   @c difficulty_modifiers_table[_difficulty].population_growth scaling.
+ * - Final value is clamped so normal growth cannot remain negative.
+ *
+ * @param city_idx Index into @c _CITIES for the city to evaluate.
+ *
+ * @return Per-turn population growth value in city population units.
+ *         Positive values indicate growth, 0 indicates no growth,
+ *         and starvation can produce a negative intermediate value before
+ *         final clamping in the normal path.
+ *
+ * @note Contains documented legacy OGBUG behaviors around max-population checks
+ *       and early exits that can suppress expected negative growth in some
+ *       edge cases.
+ *
+ * @see City_Maximum_Size(), City_Rebel_Count(), difficulty_modifiers_table
+ */
 int16_t City_Growth_Rate(int16_t city_idx)
 {
     int16_t maximum_size = 0;
     int16_t population_growth_modifier = 0;
-    int16_t population_growth_rate = 0;  // _DI_
-
+    int16_t population_growth_rate = 0;
+/*
+    BEGIN:  population_growth_rate
+*/
     if(_CITIES[city_idx].population == 0)
     {
-
         population_growth_rate = 0;
-
+        goto Done;
     }
-    else
+    maximum_size = City_Maximum_Size(city_idx);
+    /* If population matches maximum size, growth is 0 */
+    /* OGBUG  drake178: BUG #1: prevents negative growth at max pop */
+    if(_CITIES[city_idx].population == maximum_size)
     {
-        maximum_size = City_Maximum_Size(city_idx);
-
-        if(_CITIES[city_idx].population == maximum_size)  // BUGBUG  drake178: BUG #1: prevents negative growth at max pop
+        population_growth_rate = 0;
+        goto Done;
+    }
+    /* If maximum size is 0, population decays by current population */
+    if(maximum_size == 0)
+    {
+        population_growth_rate = -(_CITIES[city_idx].population);
+        goto Done;
+    }
+    /* Check for starvation (insufficient food) */
+    if(_CITIES[city_idx].food_units < _CITIES[city_idx].population)
+    {
+        population_growth_rate = ((_CITIES[city_idx].food_units - _CITIES[city_idx].population) * 5);
+        goto Done;
+    }
+    /* Normal population growth calculation */
+    // e.g., 20 - 10 = 10 + 1 = 11 / 2 = 5 + {2, 1, 0, -1, -2} = {7, 6, 5, 4, 3}
+    population_growth_rate = ((((maximum_size - _CITIES[city_idx].population) + 1) / 2) + _race_type_table[_CITIES[city_idx].race].Growth_Mod);
+    /* Granary increases growth by 2 */
+    if(
+        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced)
+    )
+    {
+        population_growth_rate += 2;
+    }
+    /* Farmer's Market increases growth by 3 */
+    if(
+        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Replaced)
+    )
+    {
+        population_growth_rate += 3;
+    }
+    /* Max population limit for growth is 25 (25,000) */
+    /* OGBUG  drake178: BUG #2: prevents negative growth at 25 pop */
+    if(_CITIES[city_idx].population >= MAX_CITY_POPULATION)
+    {
+        population_growth_rate = 0;
+        goto Done;
+    }
+    /* Stream of Life doubles population growth */
+    if(_CITIES[city_idx].enchantments[STREAM_OF_LIFE] > 0)
+    {
+        population_growth_rate = (population_growth_rate * 2);
+    }
+    /* Population Boom event doubles population growth */
+    if( (events_table->Population_Boom_Status != 0) && (events_table->Population_Boom_Data == city_idx) )
+    {
+        population_growth_rate = (population_growth_rate * 2);
+    }
+/*
+    END:  population_growth_rate
+*/
+/*
+    BEGIN:  population_growth_modifier
+*/
+    population_growth_modifier = 0;
+    /* Dark Rituals reduces growth by 25% */
+    if(_CITIES[city_idx].enchantments[DARK_RITUALS] > 0)
+    {
+        population_growth_modifier -= 25;
+    }
+    /* Housing production bonus */
+    if(_CITIES[city_idx].construction == bt_Housing)
+    {
+        if(_CITIES[city_idx].population == 1)
         {
-
-            population_growth_rate = 0;
-
+            population_growth_modifier += 50;
         }
         else
         {
-            if(maximum_size == 0)
-            {
-
-                population_growth_rate = -(_CITIES[city_idx].population);
-
-            }
-            else
-            {
-                if(_CITIES[city_idx].food_units < _CITIES[city_idx].population)
-                {
-
-                    population_growth_rate = ((_CITIES[city_idx].food_units - _CITIES[city_idx].population) * 5);
-
-                }
-                else
-                {
-                    // e.g., 20 - 10 = 10 + 1 = 11 / 2 = 5 + {2, 1, 0, -1, -2} = {7, 6, 5, 4, 3}
-                    population_growth_rate = ((((maximum_size - _CITIES[city_idx].population) + 1) / 2) + _race_type_table[_CITIES[city_idx].race].Growth_Mod);
-
-                    if(
-                        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built)
-                        ||
-                        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced)
-                    )
-                    {
-
-                        population_growth_rate += 2;
-
-                    }
-
-                    if(
-                        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built)
-                        ||
-                        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Replaced)
-                    )
-                    {
-
-                        population_growth_rate += 3;
-
-                    }
-
-                    if(_CITIES[city_idx].population >= MAX_CITY_POPULATION)  // BUGBUG  drake178: BUG #2: prevents negative growth at 25 pop
-                    {
-
-                        population_growth_rate = 0;
-
-                    }
-                    else
-                    {
-
-                        if(_CITIES[city_idx].enchantments[STREAM_OF_LIFE] > 0)
-                        {
-
-                            population_growth_rate = (population_growth_rate * 2);
-
-                        }
-
-                        /*
-                            Population Boom
-                        */
-                        if( (events_table->Population_Boom_Status != 0) && (events_table->Population_Boom_Data == city_idx) )
-                        {
-
-                            population_growth_rate = (population_growth_rate * 2);
-
-                        }
-
-                        population_growth_modifier = 0;
-
-                        if(_CITIES[city_idx].enchantments[DARK_RITUALS] > 0)
-                        {
-
-                            population_growth_modifier -= 25;
-
-                        }
-
-                        if(_CITIES[city_idx].construction == bt_Housing)
-                        {
-
-                            if(_CITIES[city_idx].population == 1)
-                            {
-
-                                population_growth_modifier += 50;
-
-                            }
-                            else
-                            {
-
-                                population_growth_modifier += ((((_CITIES[city_idx].population - City_Rebel_Count(city_idx)) - _CITIES[city_idx].farmer_count) * 100) / _CITIES[city_idx].population);
-
-                            }
-
-                            if(
-                                (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Built)
-                                ||
-                                (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Replaced)
-                            )
-                            {
-
-                                population_growth_modifier += 10;
-
-                            }
-
-                            if(
-                                (_CITIES[city_idx].bldg_status[BUILDERS_HALL] == bs_Built)
-                                ||
-                                (_CITIES[city_idx].bldg_status[BUILDERS_HALL] == bs_Replaced)
-                            )
-                            {
-
-                                population_growth_modifier += 15;
-
-                            }
-
-                            if(_CITIES[city_idx].population >= MAX_CITY_POPULATION)  // BUGBUG  drake178: BUG #3: prevents negative growth at 25 pop if housing is selected as the build project, even with zero workers and no buildings
-                            {
-
-                                population_growth_rate = 0;
-
-                            }
-                            else
-                            {
-
-                                population_growth_rate = (((population_growth_rate * population_growth_modifier) + 100) / 100);
-
-                                if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
-                                {
-                                    population_growth_rate /= 2;
-
-                                    if(_CITIES[city_idx].population >= ((_difficulty + 1) * 2))
-                                    {
-
-                                        population_growth_rate = 0;
-
-                                    }
-                                }
-                                else
-                                {
-                                    if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
-                                    {
-
-                                        population_growth_rate = ((population_growth_rate * difficulty_modifiers_table[_difficulty].population_growth) / 100);
-
-                                    }
-                                }
-
-                                SETMIN(population_growth_rate, 0);
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-
+            /* Add percentage of workers (non-rebels, non-farmers) */
+            population_growth_modifier += ((((_CITIES[city_idx].population - City_Rebel_Count(city_idx)) - _CITIES[city_idx].farmer_count) * 100) / _CITIES[city_idx].population);
         }
-
+        /* Sawmill increases housing growth modifier by 10% */
+        if(
+            (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Replaced)
+        )
+        {
+            population_growth_modifier += 10;
+        }
+        /* Builders Hall increases housing growth modifier by 15% */
+        if(
+            (_CITIES[city_idx].bldg_status[BUILDERS_HALL] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[BUILDERS_HALL] == bs_Replaced)
+        )
+        {
+            population_growth_modifier += 15;
+        }
+        /* Recheck population limit */
+        /* OGBUG  drake178: BUG #3: prevents negative growth at 25 pop if housing is selected as the build project, even with zero workers and no buildings */
+        if(_CITIES[city_idx].population >= MAX_CITY_POPULATION)
+        {
+            population_growth_rate = 0;
+        }
     }
-
+/*
+    END:  population_growth_modifier
+*/
+    /* Apply population growth modifier */
+    population_growth_rate = ((population_growth_rate * (population_growth_modifier + 100)) / 100);
+    /* Neutral player check */
+    if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
+    {
+        population_growth_rate /= 2;
+        /* Neutral cities stop growing at difficulty-based population size */
+        if(_CITIES[city_idx].population >= ((_difficulty + 1) * 2))
+        {
+            population_growth_rate = 0;
+        }
+    }
+    else if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+    {
+        /* AI players growth modifiers based on difficulty */
+        population_growth_rate = ((population_growth_rate * difficulty_modifiers_table[_difficulty].population_growth) / 100);
+    }
+    /* Normal growth cannot be negative (clamped to 0) */
+    SETMIN(population_growth_rate, 0);
+Done:
     return population_growth_rate;
 }
 

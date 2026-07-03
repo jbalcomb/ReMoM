@@ -3,12 +3,15 @@ CITYCALC-City_Food_WildGame.md
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr142\City_Food_WildGame.asm   (ground truth — IDA Pro 5.5 disassembly)
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr142\City_Food_WildGame.c     (Gemini translation of the .asm — second opinion)
 
-City_Growth_Rate()
-    |-> City_Maximum_Size()
-        |-> City_Food_Terrain()                 CITYCALC
-        |-> Map_Square_Food2()                  Terrain
-        |    |-> City_Area_Square_Is_Shared()   CITYCALC
-        |-> City_Food_WildGame()                CITYCALC
+Next_Turn_Proc()
+    |-> Next_Turn_Calc()
+        |-> Apply_City_Changes()
+            |-> City_Growth_Rate()
+                |-> City_Maximum_Size()
+                    |-> City_Food_Terrain()                 CITYCALC
+                    |-> Map_Square_Food2()                  Terrain
+                    |    |-> City_Area_Square_Is_Shared()   CITYCALC
+                    |-> City_Food_WildGame()                CITYCALC
 
 ---
 

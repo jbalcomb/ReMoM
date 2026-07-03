@@ -3,10 +3,13 @@ CITYCALC-City_Maximum_Size.md
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr142\City_Maximum_Size.asm   (ground truth — IDA Pro 5.5 disassembly)
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr142\City_Maximum_Size.c     (Gemini translation of the .asm — second opinion)
 
-City_Growth_Rate()
-    |-> City_Maximum_Size()
-        |-> City_Food_Terrain()                 CITYCALC
-        |-> City_Food_WildGame()                CITYCALC
+Next_Turn_Proc()
+    |-> Next_Turn_Calc()
+        |-> Apply_City_Changes()
+            |-> City_Growth_Rate()
+                |-> City_Maximum_Size()
+                    |-> City_Food_Terrain()                 CITYCALC
+                    |-> City_Food_WildGame()                CITYCALC
 
 ---
 
