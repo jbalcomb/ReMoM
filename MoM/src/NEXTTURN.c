@@ -2905,12 +2905,22 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
  *
  * @see City_Growth_Rate(), City_Apply_Production(), Destroy_City(), Volcano_Counts()
  */
+void gd_dump_cities(const char* point);   /* CLAUDE: GD capture (defined in INITGAME.c) */
+
 void Apply_City_Changes(void)
 {
     int16_t excess_farmer_count = 0;
     int16_t New_Min_Farmers = 0;
     int16_t Population_Growth = 0;
     int16_t itr_cities = 0;
+
+    /* CLAUDE: GD point 630 -- _CITIES BEFORE Apply_City_Changes (outpost graduation/
+     * failure + population-growth application; runs right after
+     * All_Outpost_Population_Growth in Next_Turn_Calc).  Pairs with 631 to isolate
+     * this pass's effect on the city Pop_/size/construction fields (the 910 city
+     * divergence).  Fire once. */
+    { static int gd630_done = 0;
+      if(!gd630_done) { gd630_done = 1; gd_dump_cities("630_Apply_City_Changes_Entry_C"); } }
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
@@ -3133,6 +3143,11 @@ void Apply_City_Changes(void)
     }
 
     Volcano_Counts();
+
+    /* CLAUDE: GD point 631 -- _CITIES AFTER Apply_City_Changes (post-Volcano_Counts,
+     * matching where OG returns to Next_Turn_Calc).  Fire once. */
+    { static int gd631_done = 0;
+      if(!gd631_done) { gd631_done = 1; gd_dump_cities("631_Apply_City_Changes_Return_C"); } }
 
 }
 

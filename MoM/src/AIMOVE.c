@@ -221,10 +221,22 @@ int16_t niu_unknown_var;
  *       `AI_Find_Opportunity_City_Target()` is called with `wp` before the
  *       plane loop assigns it a defined plane index.
  */
+void gd_dump_units(const char* point);   /* CLAUDE: GD capture (defined in INITGAME.c) */
+
 void AI_Set_Unit_Orders(int16_t player_idx)
 {
     int16_t wp = 0;
     int16_t landmass_idx = 0;
+
+    /* CLAUDE: GD point 612 -- _UNITS BEFORE AI_Set_Unit_Orders, the per-AI-player
+     * order/movement setter (sets dst_wx/dst_wy/Status/moves via AI_Move_Out_Boats +
+     * the stack-expedition logic).  Pairs with 613 to isolate this call's effect on
+     * _UNITS -- the 911 movement divergence.  player_idx scalar records WHICH player
+     * (both sides fire on the first AI player -> must match).  Fire once. */
+    { static int gd612_done = 0;
+      if(!gd612_done) { gd612_done = 1;
+        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 612_AI_Set_Unit_Orders_Entry_U player_idx = %d", (int)player_idx);
+        gd_dump_units("612_AI_Set_Unit_Orders_Entry_U"); } }
 
 
     /* Phase 1: Init */
@@ -339,6 +351,11 @@ void AI_Set_Unit_Orders(int16_t player_idx)
     /* Phase 4 */
     /* Restore EMM mapping to default Data block */
     EMMDATAH_Map();
+
+    /* CLAUDE: GD point 613 -- _UNITS AFTER AI_Set_Unit_Orders (post-EMMDATAH_Map,
+     * matching where OG returns to AI_Next_Turn).  Fire once. */
+    { static int gd613_done = 0;
+      if(!gd613_done) { gd613_done = 1; gd_dump_units("613_AI_Set_Unit_Orders_Return_U"); } }
 
 }
 

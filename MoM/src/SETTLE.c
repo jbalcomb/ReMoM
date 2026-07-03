@@ -114,14 +114,26 @@ Game-Data:
  *       `_map_plane` to their saved pre-processing values before exiting the
  *       normal path.
  */
+void gd_dump_units(const char* point);   /* CLAUDE: GD capture (defined in INITGAME.c) */
+
 void AI_Execute_Orders(int16_t player_idx)
 {
     int16_t l_map_plane = 0;
     int16_t l_map_y = 0;
     int16_t l_map_x = 0;
     int16_t unit_idx = 0;
+    static int gd614_done = 0, gd615_done = 0;   /* CLAUDE: 614/615 fire-once gates */
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
+    /* CLAUDE: GD point 614 -- _UNITS BEFORE AI_Execute_Orders, the per-AI-player order
+     * EXECUTION pass (dispatches each unit by Status: move/goto/road/meld/settle/ferry
+     * via AI_Unit_Army_Do_*; this is where dst/Status actually get applied).  Pairs with
+     * 615 to isolate this call's effect on _UNITS (the 911 movement divergence).
+     * player_idx scalar records WHICH player.  Fire once (first AI player). */
+    if(!gd614_done) { gd614_done = 1;
+        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 614_AI_Execute_Orders_Entry_U player_idx = %d", (int)player_idx);
+        gd_dump_units("614_AI_Execute_Orders_Entry_U"); }
 
     /* Store current map state to restore later */
     l_map_x = _map_x;
@@ -136,6 +148,10 @@ void AI_Execute_Orders(int16_t player_idx)
         /* If Time Stop is active, only the casting player can move units */
         if((player_idx + 1) != g_timestop_player_num)
         {
+            /* CLAUDE: GD 615 on the Time-Stop early-return path too -- OG's far-return
+             * fires regardless of the internal path, so both sides dump here.  Shared
+             * gd615_done gate -> fires once total (this OR the normal exit). */
+            if(!gd615_done) { gd615_done = 1; gd_dump_units("615_AI_Execute_Orders_Return_U"); }
             return;
         }
     }
@@ -213,6 +229,10 @@ void AI_Execute_Orders(int16_t player_idx)
     _map_plane = l_map_plane;
  
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
+    /* CLAUDE: GD point 615 -- _UNITS AFTER AI_Execute_Orders (normal exit).  Shared
+     * gd615_done gate with the Time-Stop early-return path.  Fire once. */
+    if(!gd615_done) { gd615_done = 1; gd_dump_units("615_AI_Execute_Orders_Return_U"); }
 
 }
 
