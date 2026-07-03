@@ -9,7 +9,7 @@ enum e_TERRAIN_TYPES
     tt_Shore1_Fst  = 0x2,
     tt_Lake        = 0x12,
     tt_Shore1_Lst  = 0xA1,  /* 161  end of range for invalid river outflow */
-    tt_Grasslands1 = 0xA2,
+    tt_Grasslands1 = 0xA2,  /* 162 */
     tt_Forest1     = 0xA3,
     tt_Mountain1   = 0xA4,
     tt_Desert1     = 0xA5,  /* 165  AKA _AllDesert1 0xA5 used by Generate_Climate_Terrain_Types() */

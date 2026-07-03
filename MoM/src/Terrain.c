@@ -60,281 +60,161 @@ int16_t Square_Is_Node(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD s161p03
-// drake178: TILE_GetFood()
-/*
-    drake178:  BUG: swamps do not yield the documented 1/2 food
-*/
-/*
-
-*/
-int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
+/**
+ * @brief Computes terrain food yield in doubled-food units for one map square.
+ *
+ * @details
+ * This routine classifies the square's base terrain type and assigns a food
+ * value using a mix of range checks and explicit per-terrain switch cases.
+ * The computed value is then scaled to doubled units and optionally halved when
+ * the square is shared by multiple city areas.
+ *
+ * Processing summary:
+ * 1. Decode terrain via @c p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES.
+ * 2. Early-return 0 for ocean/animated-ocean categories.
+ * 3. Assign base food from threshold buckets and explicit terrain cases.
+ * 4. Multiply by 2 to convert to the function's x2 food unit space.
+ * 5. If @c City_Area_Square_Is_Shared() is true, halve the result.
+ *
+ * @param wx World X coordinate of the evaluated square.
+ * @param wy World Y coordinate of the evaluated square.
+ * @param wp World plane containing the evaluated square.
+ *
+ * @return Food yield in doubled-food units for the square.
+ *
+ * @note Return values are in x2 food units, matching call sites that aggregate
+ *       fractional food using doubled arithmetic.
+ * @note Several terrain classes use threshold ranges instead of only symbolic
+ *       enum equality checks, preserving original binary logic.
+ * @note (OGBUG) Swamp tiles return 0, despite manual expectations of 1/2 food.
+ * @note (OGBUG) Nature Node returns 5 base food here, while the referenced MGC
+ *       NewGame behavior notes 4.
+ * @note The historical comment questioning @c food_units *= 2 is retained as-is;
+ *       this documentation describes current behavior only.
+ *
+ * @see City_Area_Square_Is_Shared(), City_Food_Terrain(), City_Maximum_Size()
+ */
+int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;
     int16_t food_units;
-    // IDGI  int16_t terrain_type_switch_value;
-
-    terrain_type = TERRAIN_TYPE(wx, wy, wp);
-
-    if(terrain_type != tt_Ocean)
+    terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
+    if(terrain_type == tt_Ocean)
     {
-        // HERE:  >= 1 && <= ??
-        if(terrain_type < tt_OceanAnim)
-        {
-            // HERE:  >= 1 && < 'Tundra Range'
-            if(terrain_type != tt_BugGrass)
-            {
-                // HERE:  >= 2 && < 'Tundra Range'
-                if(terrain_type >= tte_Grasslands)  /* enum OVL_Tiles_Extended */
-                {
-                    // HERE:  > 'Shore1 Range' && < 'Tundra Range'
-                    if(terrain_type <= _River1111_5)
-                    {
-                        // HERE:  > 'Shore1 Range' && < 'Shore3 Range < 'Tundra Range'
-                        if(terrain_type <= _Shore111R1110)
-                        {
-                            // HERE:  > 'Shore1 Range' && < '4WRiver Range' < 'Shore3 Range < 'Tundra Range'
-                            if(terrain_type <= _Desert10101111)
-                            {
-                                // HERE:  > 'Shore1 Range' && < 'Shore2 Range'  < '4WRiver Range' < 'Shore3 Range < 'Tundra Range'
-                                if(terrain_type <= _1Hills2)
-                                {
-                                    // HERE:  > 'Shore1 Range' && < 'Desert Range' < 'Shore2 Range'  < '4WRiver Range' < 'Shore3 Range < 'Tundra Range'
-                                    if(terrain_type <= _Mount1001)
-                                    {
-                                        // HERE:  > 'Shore1 Range' && < 'Hills Range' < 'Desert Range' < 'Shore2 Range'  < '4WRiver Range' < 'Shore3 Range < 'Tundra Range'
-                                        if(terrain_type <= tt_Rivers_end)
-                                        {
-                                            // HERE:  > 'Shore1 Range' && < 'Mountain Range' < 'Hills Range' < 'Desert Range' < 'Shore2 Range'  < '4WRiver Range' < 'Shore3 Range < 'Tundra Range'
-                                            if(terrain_type <= tt_Forest3)
-                                            {
-                                                // HERE:  > 'Shore1 Range' && 'RiverM, Lake, Shore2, Rivers Range' < 'Mountain Range' < 'Hills Range' < 'Desert Range' < 'Shore2 Range'  < '4WRiver Range' < 'Shore3 Range < 'Tundra Range'
-                                                // HERE:  ¿ 'RiverM, Lake, Shore2, Rivers Range' ?
-
-                                                // IDGI  terrain_type_switch_value = terrain_type - e_TT_Grass1;  /* enum e_TERRAIN_TYPES */
-//  ; DATA XREF: TILE_GetFood+B5
-//  ; jump table for switch statement
-// ovr161:01AC
-// sw_terrtype_based_grass
-// sw_terrtype_based_grass[ 0] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands1     = 0A2h
-// sw_terrtype_based_grass[ 1] = 60 01 = sw_terrtype_based_grass_01_21_22       tt_Forest1    = 0A3h
-// sw_terrtype_based_grass[ 2] = 62 01 = sw_terrtype_based_grass_02             tt_Mountain1  = 0A4h
-// sw_terrtype_based_grass[ 3] = 64 01 = sw_terrtype_based_grass_03_12_13_14    tt_Desert1    = 0A5h
-// sw_terrtype_based_grass[ 4] = 66 01 = sw_terrtype_based_grass_04_15_16       tt_Swamp1     = 0A6h
-// sw_terrtype_based_grass[ 5] = 68 01 = sw_terrtype_based_grass_05_19_20       tt_Tundra1    = 0A7h
-// sw_terrtype_based_grass[ 6] = 6A 01 = sw_terrtype_based_grass_06             tt_SorceryNode   = 0A8h
-// sw_terrtype_based_grass[ 7] = 6F 01 = sw_terrtype_based_grass_07             tt_NatureNode    = 0A9h
-// sw_terrtype_based_grass[ 8] = 74 01 = sw_terrtype_based_grass_08             tt_ChaosNode  = 0AAh
-// sw_terrtype_based_grass[ 9] = 7A 01 = sw_terrtype_based_grass_09             tt_Hills1     = 0ABh
-// sw_terrtype_based_grass[10] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands2     = 0ACh
-// sw_terrtype_based_grass[11] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands3     = 0ADh
-// sw_terrtype_based_grass[12] = 64 01 = sw_terrtype_based_grass_03_12_13_14    tt_Desert2    = 0AEh
-// sw_terrtype_based_grass[13] = 64 01 = sw_terrtype_based_grass_03_12_13_14    tt_Desert3    = 0AFh
-// sw_terrtype_based_grass[14] = 64 01 = sw_terrtype_based_grass_03_12_13_14    tt_Desert4    = 0B0h
-// sw_terrtype_based_grass[15] = 66 01 = sw_terrtype_based_grass_04_15_16       tt_Swamp2     = 0B1h
-// sw_terrtype_based_grass[16] = 66 01 = sw_terrtype_based_grass_04_15_16       tt_Swamp3     = 0B2h
-// sw_terrtype_based_grass[17] = 76 01 = sw_terrtype_based_grass_17             tt_Volcano    = 0B3h
-// sw_terrtype_based_grass[18] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands4     = 0B4h
-// sw_terrtype_based_grass[19] = 68 01 = sw_terrtype_based_grass_05_19_20       tt_Tundra2    = 0B5h
-// sw_terrtype_based_grass[20] = 68 01 = sw_terrtype_based_grass_05_19_20       tt_Tundra3    = 0B6h
-// sw_terrtype_based_grass[21] = 60 01 = sw_terrtype_based_grass_01_21_22       tt_Forest2    = 0B7h
-// sw_terrtype_based_grass[22] = 60 01 = sw_terrtype_based_grass_01_21_22       tt_Forest3    = 0B8h
-
-// sw_terrtype_based_grass[ 0] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands1     = 0A2h
-// sw_terrtype_based_grass[10] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands2     = 0ACh
-// sw_terrtype_based_grass[11] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands3     = 0ADh
-// sw_terrtype_based_grass[18] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands4     = 0B4h
-
-// sw_terrtype_based_grass[ 1] = 60 01 = sw_terrtype_based_grass_01_21_22       tt_Forest1    = 0A3h
-// sw_terrtype_based_grass[21] = 60 01 = sw_terrtype_based_grass_01_21_22       tt_Forest2    = 0B7h
-// sw_terrtype_based_grass[22] = 60 01 = sw_terrtype_based_grass_01_21_22       tt_Forest3    = 0B8h
-
-// sw_terrtype_based_grass[ 2] = 62 01 = sw_terrtype_based_grass_02             tt_Mountain1  = 0A4h
-
-// sw_terrtype_based_grass[ 3] = 64 01 = sw_terrtype_based_grass_03_12_13_14    tt_Desert1    = 0A5h
-// sw_terrtype_based_grass[12] = 64 01 = sw_terrtype_based_grass_03_12_13_14    tt_Desert2    = 0AEh
-// sw_terrtype_based_grass[13] = 64 01 = sw_terrtype_based_grass_03_12_13_14    tt_Desert3    = 0AFh
-// sw_terrtype_based_grass[14] = 64 01 = sw_terrtype_based_grass_03_12_13_14    tt_Desert4    = 0B0h
-
-// sw_terrtype_based_grass[ 4] = 66 01 = sw_terrtype_based_grass_04_15_16       tt_Swamp1     = 0A6h
-// sw_terrtype_based_grass[15] = 66 01 = sw_terrtype_based_grass_04_15_16       tt_Swamp2     = 0B1h
-// sw_terrtype_based_grass[16] = 66 01 = sw_terrtype_based_grass_04_15_16       tt_Swamp3     = 0B2h
-
-// sw_terrtype_based_grass[ 5] = 68 01 = sw_terrtype_based_grass_05_19_20       tt_Tundra1    = 0A7h
-// sw_terrtype_based_grass[19] = 68 01 = sw_terrtype_based_grass_05_19_20       tt_Tundra2    = 0B5h
-// sw_terrtype_based_grass[20] = 68 01 = sw_terrtype_based_grass_05_19_20       tt_Tundra3    = 0B6h
-
-// sw_terrtype_based_grass[ 6] = 6A 01 = sw_terrtype_based_grass_06             tt_SorceryNode   = 0A8h
-
-// sw_terrtype_based_grass[ 7] = 6F 01 = sw_terrtype_based_grass_07             tt_NatureNode    = 0A9h
-
-// sw_terrtype_based_grass[ 8] = 74 01 = sw_terrtype_based_grass_08             tt_ChaosNode  = 0AAh
-
-// sw_terrtype_based_grass[ 9] = 7A 01 = sw_terrtype_based_grass_09             tt_Hills1     = 0ABh
-
-// sw_terrtype_based_grass[17] = 76 01 = sw_terrtype_based_grass_17             tt_Volcano    = 0B3h
-
-// ovr161:015B                                                 sw_terrtype_based_grass_00_10_11_18:    ; DATA XREF: ovr161:sw_terrtype_based_grasso
-
-// tt_Grasslands1     = 0A2h
-// tt_Forest1    = 0A3h
-// tt_Mountain1  = 0A4h
-// tt_Desert1    = 0A5h
-// tt_Swamp1     = 0A6h
-// tt_Tundra1    = 0A7h
-// tt_SorceryNode   = 0A8h
-// tt_NatureNode    = 0A9h
-// tt_ChaosNode  = 0AAh
-// tt_Hills1     = 0ABh
-// tt_Grasslands2     = 0ACh
-// tt_Grasslands3     = 0ADh
-// tt_Desert2    = 0AEh
-// tt_Desert3    = 0AFh
-// tt_Desert4    = 0B0h
-// tt_Swamp2     = 0B1h
-// tt_Swamp3     = 0B2h
-// tt_Volcano    = 0B3h
-// tt_Grasslands4     = 0B4h
-// tt_Tundra2    = 0B5h
-// tt_Tundra3    = 0B6h
-// tt_Forest2    = 0B7h
-// tt_Forest3    = 0B8h
-                                                // {162, ..., 184}
-                                                // IDGI  switch(terrain_type_switch_value)
-                                                switch(terrain_type)
-                                                {
-                                                    // terrain_type - e_TT_Grass1 = 0; sw_terrtype_based_grass[0] = sw_terrtype_based_grass_00_10_11_18 = ovr161:015B
-                                                    case tt_Grasslands1:
-                                                    case tt_Grasslands2:
-                                                    case tt_Grasslands3:
-                                                    case tt_Grasslands4:
-                                                    {
-                                                        food_units = 3;
-                                                    } break;
-                                                    case tt_Forest1:
-                                                    case tt_Forest2:
-                                                    case tt_Forest3:
-                                                    {
-                                                        food_units = 1;
-                                                    } break;
-                                                    case tt_Mountain1:
-                                                    {
-                                                        food_units = 0;
-                                                    } break;
-                                                    case tt_Desert1:
-                                                    case tt_Desert2:
-                                                    case tt_Desert3:
-                                                    case tt_Desert4:
-                                                    {
-                                                        food_units = 0;
-                                                    } break;
-                                                    case tt_Swamp1:  // BUGBUG: manual says 1/2 food
-                                                    case tt_Swamp2:  // BUGBUG: manual says 1/2 food
-                                                    case tt_Swamp3:  // BUGBUG: manual says 1/2 food
-                                                    {
-                                                        food_units = 0;
-                                                    } break;
-                                                    case tt_Tundra1:
-                                                    case tt_Tundra2:
-                                                    case tt_Tundra3:
-                                                    {
-                                                        food_units = 0;
-                                                    } break;
-                                                    case tt_SorceryNode:
-                                                    {
-                                                        food_units = 4;
-                                                    } break;
-                                                    case tt_NatureNode:
-                                                    {
-                                                        food_units = 5;  // MGC NewGame version has 4
-                                                    } break;
-                                                    case tt_ChaosNode:
-                                                    {
-                                                        food_units = 0;
-                                                    } break;
-                                                    case tt_Hills1:
-                                                    {
-                                                        food_units = 1;
-                                                    } break;
-                                                    case tt_Volcano:
-                                                    {
-                                                        food_units = 0;
-                                                    } break;
-
-                                                }
-                                            }
-                                            else
-                                            {
-                                                // HERE:  ¿ 'RiverM, Lake, Shore2, Rivers Range' ?
-                                                food_units = 4;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            // HERE:  'Mountain Range'
-                                            food_units = 0;  // DNE in Dasm - magically falls-through / jumps to 'return 0'
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // HERE:  'Hills Range'
-                                        food_units = 1;
-                                    }
-                                }
-                                else
-                                {
-                                    // HERE:  'Desert Range'
-                                    food_units = 0;  // DNE in Dasm - magically falls-through / jumps to 'return 0'
-                                }
-                            }
-                            else
-                            {
-                                // HERE:  'Shore2 Range'
-                                food_units = 1;
-                            }
-                        }
-                        else
-                        {
-                            // HERE:  '4WRiver Range'
-                            food_units = 4;
-                        }
-                    }
-                    else
-                    {
-                        // HERE:  'Shore3 Range'
-                        food_units = 1;
-
-                    }
-                }
-                else
-                {
-                    // HERE:  'Shore1 Range'
-                    food_units = 1;
-                }
-            }
-            else
-            {
-                // 0x0001  _Land  tt_BugGrass
-                food_units = 3;
-            }
-
-            food_units *= 2;
-
-            if(City_Area_Square_Is_Shared(wx, wy, wp) == ST_TRUE)
-            {
-                food_units /= 2;
-            }                               
-
-        }
-        else
-        {
-            // 0x0259  tt_AnimOcean  tt_OceanAnim  && 'Tundra Range'
-            food_units = 0;
-        }
+        return 0;
+    }
+    if(terrain_type >= tt_OceanAnim)
+    {
+        return 0;
+    }
+    if(terrain_type == tt_BugGrass)
+    {
+        food_units = 3;
+    }
+    else if(terrain_type < tt_Grasslands1)
+    {
+        food_units = 1;
+    }
+    else if(terrain_type > _River1111_5)
+    {
+        food_units = 1;
+    }
+    else if(terrain_type > _Shore111R1110)
+    {
+        food_units = 4;
+    }
+    else if(terrain_type > _Desert10101111)
+    {
+        food_units = 1;
+    }
+    else if(terrain_type > _1Hills2)
+    {
+        return 0;
+    }
+    else if(terrain_type > _Mount1001)
+    {
+        food_units = 1;
+    }
+    else if(terrain_type > tt_Rivers_end)
+    {
+        return 0;
+    }
+    else if(terrain_type > tt_Forest3)
+    {
+        food_units = 4;
     }
     else
     {
-        // 0x0000  _Ocean  tt_Ocean1
-        food_units = 0;
+        switch(terrain_type)
+        {
+            case tt_Grasslands1:
+            case tt_Grasslands2:
+            case tt_Grasslands3:
+            case tt_Grasslands4:
+            {
+                food_units = 3;
+            } break;
+            case tt_Forest1:
+            case tt_Forest2:
+            case tt_Forest3:
+            {
+                food_units = 1;
+            } break;
+            case tt_Mountain1:
+            {
+                food_units = 0;
+            } break;
+            case tt_Desert1:
+            case tt_Desert2:
+            case tt_Desert3:
+            case tt_Desert4:
+            {
+                food_units = 0;
+            } break;
+            case tt_Swamp1:  /* OGBUG  manual says 1/2 food for Swamp */
+            case tt_Swamp2:  /* OGBUG  manual says 1/2 food for Swamp */
+            case tt_Swamp3:  /* OGBUG  manual says 1/2 food for Swamp */
+            {
+                food_units = 0;
+            } break;
+            case tt_Tundra1:
+            case tt_Tundra2:
+            case tt_Tundra3:
+            {
+                food_units = 0;
+            } break;
+            case tt_SorceryNode:
+            {
+                food_units = 4;
+            } break;
+            case tt_NatureNode:
+            {
+                food_units = 5;  /* OGBUG  MGC NewGame version has 4 */
+            } break;
+            case tt_ChaosNode:
+            {
+                food_units = 0;
+            } break;
+            case tt_Hills1:
+            {
+                food_units = 1;
+            } break;
+            case tt_Volcano:
+            {
+                food_units = 0;
+            } break;
+            default:
+            {
+                food_units = 0;
+            } break;
+        }
+    }
+
+    food_units *= 2;  /* ¿ OGBUG  should be /= 2, not *= 2 ? everywhere else is food2, not foodx2 */
+
+    if(City_Area_Square_Is_Shared(wx, wy, wp) == ST_TRUE)
+    {
+        food_units /= 2;
     }
 
     return food_units;
@@ -1707,23 +1587,23 @@ int16_t Square_Is_Land(int16_t wx, int16_t wy, int16_t wp)
     int16_t is_land = 0;  // DNE in Dasm
     is_land = ST_FALSE;
     terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
-    if (terrain_type >= tt_Tundra_1st)
+    if(terrain_type >= tt_Tundra_1st)
     {
         is_land = ST_TRUE;
     }
-    else if (terrain_type == tt_BugGrass)
+    else if(terrain_type == tt_BugGrass)
     {
         is_land = ST_TRUE;
     }
-    else if (terrain_type >= tt_Rivers_1st && terrain_type <= tt_Desert_Lst)
+    else if(terrain_type >= tt_Rivers_1st && terrain_type <= tt_Desert_Lst)
     {
         is_land = ST_TRUE;
     }
-    else if (terrain_type >= tt_4WRiver1 && terrain_type <= tt_4WRiver5)
+    else if(terrain_type >= tt_4WRiver1 && terrain_type <= tt_4WRiver5)
     {
         is_land = ST_TRUE;
     }
-    else if (terrain_type >= tt_Grasslands1 && terrain_type <= tt_RiverM_end)
+    else if(terrain_type >= tt_Grasslands1 && terrain_type <= tt_RiverM_end)
     {
         is_land = ST_TRUE;
     }

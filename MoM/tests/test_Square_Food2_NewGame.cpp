@@ -38,7 +38,7 @@ extern "C" {
         Swamp1..3:        0  (BUG: manual says 1/2)
         Tundra1..3:       0
         SorceryNode:      4
-        NatureNode:       4  (BUG: is 5 in WZD Square_Food2)
+        NatureNode:       4  (BUG: is 5 in WZD Square_Food_x2)
         ChaosNode:        0
         Hills1:           1
         Volcano:          0
@@ -293,7 +293,7 @@ TEST_F(Square_Food2_NewGame_test, SorceryNode_Returns4)
 }
 
 
-// NatureNode: food2 = 4 (BUG: is 5 in WZD Square_Food2)
+// NatureNode: food2 = 4 (BUG: is 5 in WZD Square_Food_x2)
 TEST_F(Square_Food2_NewGame_test, NatureNode_Returns4)
 {
     // Arrange

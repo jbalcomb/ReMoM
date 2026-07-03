@@ -36,7 +36,7 @@ extern "C" {
         Swamp:      0  (BUG: manual says 1/2)
         Tundra:     0
         SorceryNode:4
-        NatureNode: 4  (BUG: is 5 in WZD Square_Food2)
+        NatureNode: 4  (BUG: is 5 in WZD Square_Food_x2)
         ChaosNode:  0
         Hills:      1
         Volcano:    0

@@ -1635,38 +1635,27 @@ int16_t City_House_Count(int16_t city_idx)
 }
 
 // WZD o142p06
-// drake178: CTY_GetTileFood()
-/*
-why the `/ 4` on food2_units?
-food, food2, pop?
-*/
 int16_t City_Food_Terrain(int16_t city_idx)
 {
     int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t city_wp = 0;
     int16_t useable_map_squares = 0;
-    int16_t food2_units = 0;  // _DI_
-    int16_t itr = 0;  // _SI_
-
+    int16_t food_units_x2 = 0;
+    int16_t itr = 0;
     city_wp = _CITIES[city_idx].wp;
-
     // NOTE: Accounts for 'Corruption'
     useable_map_squares = Get_Useable_City_Area(CITYX(), CITYY(), city_wp, &wx_array[0], &wy_array[0]);
-
-    food2_units = 0;
-
+    food_units_x2 = 0;
     for(itr = 0; itr < useable_map_squares; itr++)
     {
-        food2_units += Square_Food2(wx_array[itr], wy_array[itr], city_wp);
+        food_units_x2 += Square_Food_x2(wx_array[itr], wy_array[itr], city_wp);  /* returns ('food units' * 2) */
     }
-
-    if(_CITIES[city_idx].enchantments[GAIAS_BLESSING] != ST_FALSE)
+    if(_CITIES[city_idx].enchantments[GAIAS_BLESSING] > ST_FALSE)
     {
-        food2_units = ((food2_units * 3) / 2);  /* +50% */
+        food_units_x2 = ((food_units_x2 * 3) / 2);  /* +50% */
     }
-
-    return (food2_units / 4);
+    return (food_units_x2 / 2 / 2);  /* food_units_x2 -> food_units -> food2_units */
 }
 
 // WZD o142p07
@@ -1722,8 +1711,6 @@ int16_t City_Food_WildGame(int16_t city_idx)
 
 
 // WZD o142p08
-// does like Draw_Map_Roads() with itr_world_x and curr_world_x
-
 /**
  * @brief Collects usable city catchment tiles, excluding corrupted squares.
  *
@@ -1746,8 +1733,9 @@ int16_t City_Food_WildGame(int16_t city_idx)
  * @return Number of usable catchment tiles written to the output arrays.
  *
  * @note Maximum output is bounded by CITY_AREA_SIZE for the catchment shape.
- * @warning Preserves current boundary behavior, including the historical
- *          square_x > WORLD_WIDTH wrap check.
+ * @note X coordinates wrap at both world edges (square_x < 0 -> +WORLD_WIDTH;
+ *       square_x >= WORLD_WIDTH -> -WORLD_WIDTH). Y rows outside the world are
+ *       dropped, not wrapped.
  */
 int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp, int16_t *wx_array, int16_t *wy_array)
 {
@@ -1759,83 +1747,53 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
     int16_t map_square_count = 0;
     int16_t itr_city_area_squares = 0;
     int16_t square_x = 0;
-
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-
     map_square_count = 0;
-
     for(itr_city_area_squares = -2; itr_city_area_squares <= 2; itr_city_area_squares++)
     {
         square_y = (city_wy + itr_city_area_squares);
-
         if(
             (square_y >= 0)
             &&
             (square_y < WORLD_HEIGHT)
         )
         {
-
             square_x_min = -2;
             square_x_max =  2;
-
             if(
                 (itr_city_area_squares == -2)
                 ||
                 (itr_city_area_squares ==  2)
             )
             {
-
                 square_x_min = -1;
                 square_x_max =  1;
-
             }
-
             terrain_flags_table_row = (uint8_t *)&_map_square_flags[(city_wp * WORLD_SIZE) + (square_y * WORLD_WIDTH)];
-
             itr_world_x = square_x_min;
-
             while(itr_world_x <= square_x_max)
             {
-
                 square_x = city_wx + itr_world_x;
-
                 if(square_x < 0)
                 {
-
                     square_x += WORLD_WIDTH;
-
                 }
-
-                if(square_x > WORLD_WIDTH)  // BUGBUG  should be >= ?
+                if(square_x >= WORLD_WIDTH)
                 {
-
                     square_x -= WORLD_WIDTH;
-
                 }
-
                 if((*(terrain_flags_table_row + square_x) & MSF_CORRUPTION) == 0)
                 {
-
                     wx_array[map_square_count] = square_x;
-
                     wy_array[map_square_count] = square_y;
-
                     map_square_count++;
-
                 }
-
                 itr_world_x++;
-
             }
-
         }
-
     }
-
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-
     return map_square_count;
-
 }
 
 
@@ -3994,7 +3952,7 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
             )
             {
 
-                *MaxPop = Square_Food2(curr_wx, itr_wy, wp);
+                *MaxPop = Square_Food_x2(curr_wx, itr_wy, wp);
 
                 if((GET_TERRAIN_SPECIAL(curr_wx, itr_wy, wp) & ts_Wild_Game) != 0)
                 {
@@ -4015,7 +3973,7 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
             else
             {
 
-                food2_units = Square_Food2(curr_wx, itr_wy, wp);
+                food2_units = Square_Food_x2(curr_wx, itr_wy, wp);
 
                 if((GET_TERRAIN_SPECIAL(curr_wx, itr_wy, wp) & ts_Wild_Game) != 0)
                 {
@@ -4060,7 +4018,7 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
     }
 
     // HERE: *MaxPop is ...
-    // *MaxPop = Square_Food2(curr_wx, itr_wy, wp);
+    // *MaxPop = Square_Food_x2(curr_wx, itr_wy, wp);
     // *MaxPop += ((food2_units + food2_remainder) / 2);
     *MaxPop = (*MaxPop / 4);  // ¿ 2 food2 per population unit ?
     // HERE: *MaxPop is population
@@ -4314,18 +4272,40 @@ void Reset_City_Area_Bitfields(void)
 
 
 // WZD o142p30
-// drake178: TILE_IsShared
 /*
-    ~== Check_Square_Scouted() in Explore.C for square_scouted_p0/p1
-"shared [world] map square"
+"shared map square"
 */
+/**
+ * @brief Tests whether a world map square is marked as shared by city catchments.
+ *
+ * @details
+ * Converts the provided world coordinates into the per-plane bit index used by
+ * the city-area shared bitfield and queries that bit via @c Test_Bit_Field().
+ *
+ * Bit index mapping:
+ * @code
+ * city_area_bit_index = (city_area_square_wy * WORLD_WIDTH) + city_area_square_wx
+ * @endcode
+ *
+ * The bit is looked up in @c city_area_shared_bits for the selected plane using
+ * @c (city_wp * WORLD_SIZE) as the plane offset.
+ *
+ * @param city_area_square_wx World X coordinate of the square to test.
+ * @param city_area_square_wy World Y coordinate of the square to test.
+ * @param city_wp World plane index containing the tested square.
+ *
+ * @return @c ST_TRUE if the square is flagged as shared; otherwise @c ST_FALSE.
+ *
+ * @note This is a pure query helper; it does not modify bitfields.
+ * @note Shared-bit population is performed by @c Reset_City_Area_Bitfields().
+ *
+ * @see Reset_City_Area_Bitfields(), Test_Bit_Field(), Get_Useable_City_Area()
+ */
 int16_t City_Area_Square_Is_Shared(int16_t city_area_square_wx, int16_t city_area_square_wy, int16_t city_wp)
 {
-    int16_t city_area_bit_index;
-    int16_t is_shared;  // DNE in Dasm
-
+    int16_t city_area_bit_index = 0;
+    int16_t is_shared = 0;
     city_area_bit_index = ((city_area_square_wy * WORLD_WIDTH) + city_area_square_wx);
-
     if(Test_Bit_Field(city_area_bit_index, &city_area_shared_bits[(city_wp * WORLD_SIZE)]) == ST_FALSE)
     {
         is_shared = ST_FALSE;
@@ -4334,7 +4314,6 @@ int16_t City_Area_Square_Is_Shared(int16_t city_area_square_wx, int16_t city_are
     {
         is_shared = ST_TRUE;
     }
-
     return is_shared;
 }
 

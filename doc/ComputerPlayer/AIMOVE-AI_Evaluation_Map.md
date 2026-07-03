@@ -27,7 +27,7 @@ The foundational pre-orders setup function: builds the "AI's view of the world m
 - **`AI_TARGET_NONHOSTILE` flag (`0x4000`)**: square holds at least one unit whose owner is in this player's `nonhostiles[]` table (Wizard Pact, Alliance, current peace duration, or `Hostility[itr] < 2`). Read by movement code that wants to *not* trespass on a friendly wizard's territory.
 - **`AI_TARGET_SITE` flag (`0x8000`)**: square holds a city, an intact lair (intact != ST_FALSE), or a node — anything worth attacking/melding/sieging. Read by target-list builders.
 
-The function is called once per AI player per turn ([AIDUDES.c:300](../../MoM/src/AIDUDES.c#L300), wrapped in `PHASE()`), right before [`AI_Evaluate_Continents`](AIMOVE-AI_Eevaluate_Continents.md), which is in turn before `AI_Set_Unit_Orders`.
+The function is called once per AI player per turn ([AIDUDES.c:300](../../MoM/src/AIDUDES.c#L300), wrapped in `PHASE()`), right before [`AI_Evaluate_Continents`](AIMOVE-AI_Evaluate_Continents.md), which is in turn before `AI_Set_Unit_Orders`.
 
 ## How it's reached
 
@@ -303,7 +303,7 @@ No RNG. No I/O. No `AI_Stack_*` orders issued — this function only *writes the
 ## Related references
 
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr162\AI_Evaluation_Map.asm` — IDA Pro 5.5 disassembly (the authority).
-- [AIMOVE-AI_Eevaluate_Continents.md](AIMOVE-AI_Eevaluate_Continents.md) — immediately downstream caller (the next `PHASE()` in [AIDUDES.c:301](../../MoM/src/AIDUDES.c#L301)); consumes `g_ai_evaluation_map` for landmass classification.
+- [AIMOVE-AI_Evaluate_Continents.md](AIMOVE-AI_Evaluate_Continents.md) — immediately downstream caller (the next `PHASE()` in [AIDUDES.c:301](../../MoM/src/AIDUDES.c#L301)); consumes `g_ai_evaluation_map` for landmass classification.
 - [AIMOVE-AI_Set_Unit_Orders.md](AIMOVE-AI_Set_Unit_Orders.md) — runs after `AI_Evaluate_Continents`; many of its per-landmass dispatch callees read `g_ai_evaluation_map`.
 - [MoM-AI-AIMOVE-Index.md](MoM-AI-AIMOVE-Index.md) — AIMOVE.c function index.
 - `Set_Upper_Lair_Guardian_Count` (MAPGEN) — the world-gen function that packs initial guardian counts into the high nibble; explains why Phase 4 uses `& 0x0F`.

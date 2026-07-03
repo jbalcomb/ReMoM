@@ -86,7 +86,7 @@ void Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp);
 int16_t Square_Is_Node(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p03
-int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p04
 int16_t Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have_gaias_blessing);

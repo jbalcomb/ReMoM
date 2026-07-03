@@ -7362,7 +7362,7 @@ returns food, not food2
 
 Terrain.c
 // WZD s161p03
-int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
+int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
 
 traced with terrain_type == tt_Grasslands1
 
@@ -7486,7 +7486,7 @@ int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
 
             case tt_NatureNode:
             {
-                food_units = 4;  // BUGBUG  is 5 in Terrain.c // WZD s161p03  int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
+                food_units = 4;  // BUGBUG  is 5 in Terrain.c // WZD s161p03  int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
             } break;
 
             case tt_ChaosNode:
@@ -7528,7 +7528,7 @@ Surveyor.c
 CITYCALC.c
     void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int16_t *MaxPop, int16_t *production_bonus, int16_t *gold_bonus, int16_t *unit_cost_reduction, int16_t *gold_units, int16_t *magic_units, int16_t *have_nightshade, int16_t *have_mithril, int16_t *have_adamantium, int16_t *have_shore, int16_t *is_unexplored)
         // HERE: *MaxPop is ...
-        // *MaxPop = Square_Food2(curr_wx, itr_wy, wp);
+        // *MaxPop = Square_Food_x2(curr_wx, itr_wy, wp);
         // *MaxPop += ((Tile_Food + food2_remainder) / 2);
         *MaxPop = (*MaxPop / 4);  // ¿ 2 food2 per population unit ?
         if(map_square_has_city == ST_TRUE)
@@ -7536,7 +7536,7 @@ CITYCALC.c
 CITYCALC.c
     int16_t City_Maximum_Size(int16_t city_idx)
 
-¿ TILE_GetFood() ~== Square_Food2() ?
+¿ TILE_GetFood() ~== Square_Food_x2() ?
 
 could be considered the equivalent of City_Maximum_Size
 given that it's only missing City_Food_WildGame(), but that doesn't matter because we haven't done terrain specials yet
