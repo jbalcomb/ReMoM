@@ -128,7 +128,7 @@ void Diplomacy_Growth(void);
 // static void WIZ_DIPL_TeachSpell(int16_t player_idx, int16_t spell_idx);
 
 // WZD o85p08
-// G_DIPL_PickSides()
+void G_DIPL_PickSides(void);
 
 // WZD o85p09
 // static void Start_Treaty(int16_t player1, int16_t player2, int16_t type);;

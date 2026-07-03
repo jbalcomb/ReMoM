@@ -121,7 +121,7 @@ static void Limit_Temporary_Peace_Modifier(void);
 // WZD o85p07
 static void Diplomacy_Player_Gets_Spell(int16_t player_idx, int16_t spell_idx);
 // WZD o85p08
-// G_DIPL_PickSides()
+void G_DIPL_PickSides(void);
 // WZD o85p09
 static void Start_Treaty(int16_t player1, int16_t player2, int16_t type);
 // WZD o85p10
@@ -3237,7 +3237,29 @@ static void Diplomacy_Player_Gets_Spell(int16_t player_idx, int16_t spell_idx)
 
 
 // WZD o85p08
-// G_DIPL_PickSides()
+void G_DIPL_PickSides(void)
+{
+    int _SI_i;
+    int _DI_j;
+    int Third_Player_Index;
+    for(_SI_i = 1; _SI_i < _num_players; _SI_i++)
+    {
+        for(_DI_j = _SI_i + 1; _DI_j < _num_players; _DI_j++)
+        {
+            for(Third_Player_Index = _SI_i + 1; Third_Player_Index < _num_players; Third_Player_Index++) {
+                if(_players[_DI_j].Dipl.Dipl_Status[Third_Player_Index] == DIPL_War)
+                {
+                    if(_players[_SI_i].Dipl.Dipl_Status[_DI_j] == DIPL_Alliance &&
+                        _players[_SI_i].Dipl.Dipl_Status[Third_Player_Index] == DIPL_Alliance)
+                        {
+                        Break_Treaties(_SI_i, _DI_j);
+                        Break_Treaties(_SI_i, Third_Player_Index);
+                    }
+                }
+            }
+        }
+    }
+}
 
 
 // WZD o85p09
