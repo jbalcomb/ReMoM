@@ -2406,11 +2406,7 @@ struct s_MSG_UNIT_KILLED
 // WZD dseg:0130 82 20 8A 20 92 20 A0 20 AF 20 BF 20 CE 20 DB 20+wizard_abilities_names dw offset cnst_Alchemy, offset cnst_Warlord, offset cnst_ChaosMastery, offset cnst_NatureMastery, offset cnst_SorceryMastery, offset cnst_InfernalPower, offset cnst_DivinePower, offset cnst_SageMaster, offset cnst_Channeler, offset cnst_Myrran, offset cnst_Archmage
 // WZD dseg:0130 E7 20 F1 20 F8 20 01 21 0F 21 1C 21 23 21 2E 21+                                        ; DATA XREF: Mirror_Screen_Draw+61Er ...
 // WZD dseg:0130 37 21 43 21                                     dw offset cnst_ManaFocusing, offset cnst_NodeMastery, offset cnst_Famous, offset cnst_Runemaster, offset cnst_Conjurer, offset cnst_Charismatic, offset cnst_Artificer ; "Alchemy"
-// WZD dseg:0154
-// WZD dseg:0154
-// DELETEME  // WZD dseg:0154 01 00                                           EVNT_Enabled dw 1                       ; DATA XREF: Determine_Event+8r
-// WZD dseg:0154
-// WZD dseg:0154
+
 // WZD dseg:0156 4D 21 55 21 5C 21 64 21 69 21 6E 21             _city_size_names dw offset cnst_Outpost, offset cnst_Hamlet, offset cnst_Village, offset cnst_Town, offset cnst_City, offset cnst_Capital
 // WZD dseg:0156                                                                                         ; DATA XREF: City_Screen_Draw2__WIP+1Fr ...
 // WZD dseg:0156                                                                                         ; "Outpost"
@@ -2456,7 +2452,7 @@ extern struct s_mouse_list mouse_list_hourglass[1];
 // WZD dseg:0130
 extern char * _wizard_abilities_names[18];
 
-// DELETEME  // WZD dseg:0154 01 00                                           EVNT_Enabled dw 1                       ; DATA XREF: EVNT_GenerateRandom:loc_6AD68r
+
 
 // WZD dseg:0156
 extern char * _city_size_names[6];

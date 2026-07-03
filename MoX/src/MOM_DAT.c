@@ -86,8 +86,7 @@
 // WZD dseg:0130
 // char * _wizard_abilities_names[] =
 
-// DELETEME  // WZD dseg:0154 01 00                                           
-// DELETEME  int16_t EVNT_Enabled = ST_TRUE;
+
 
 // WZD dseg:0156 4D 21 55 21 5C 21 64 21 69 21 6E 21             _city_size_names dw offset cnst_Outpost, offset cnst_Hamlet, offset cnst_Village, offset cnst_Town, offset cnst_City, offset cnst_Capital
 
@@ -285,7 +284,7 @@ char * _wizard_abilities_names[18] =
     cnst_Artificer
 };
 
-// DELETEME  // WZD dseg:0154 01 00                                           EVNT_Enabled dw 1                       ; DATA XREF: EVNT_GenerateRandom:loc_6AD68r
+
 
 // WZD dseg:0156
 char * _city_size_names[6] =

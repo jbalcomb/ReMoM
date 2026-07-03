@@ -6,6 +6,8 @@
         ovr081
 */
 
+#include "../../STU/src/STU_LOG.h"
+
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/Fonts.h"
@@ -13,10 +15,12 @@
 #include "../../MoX/src/Graphics.h"
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/MOM_DAT.h"
+#include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _screen_seg */
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
 #include "../../MoX/src/MOX_T4.h"
+#include "../../MoX/src/random.h"
 #include "../../MoX/src/SOUND.h"
 
 #include "City_ovr55.h"
@@ -25,11 +29,9 @@
 #include "ItemMake.h"
 #include "Items.h"
 #include "ItemScrn.h"
-#include "../../MoX/src/random.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "MOM_DBG.h"
-#include "../../MoX/src/MOM_DEF.h"
 #include "RACETYPE.h"
 #include "SBookScr.h"
 #include "Spells129.h"
@@ -47,7 +49,12 @@
 // WZD dseg:0154                                                 BEGIN:  ovr080 - Initialized Data
 
 // WZD dseg:0154
-int16_t EVNT_Enabled = ST_TRUE;
+/*
+hard-coded to true, never set; only tested in Determine_Event() to disable random events;
+The real events gate is in Next_Turn_Calc() - only calls Determine_Event() when magic_set.random_events == ST_TRUE.
+DEDU  ¿ deprecated debug code ?  ¿ is in MoO1 ?
+*/
+int16_t g_random_events_enabled = ST_TRUE;
 
 // WZD dseg:0154                                                 END:  ovr080 - Initialized Data
 
@@ -213,212 +220,113 @@ char * m_event_message;
 */
 
 // WZD s080p01
-/*
-; attempts to generate a random event
-; has some BUGs that need review
-*/
-/*
-
-*/
 void Determine_Event(void)
 {
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Conjunction_Active = 0;;
-    int16_t Normal_Units = 0;;
-    int16_t Summoned_Units = 0;;
-    int16_t troop_count = 0;;
-    int16_t terrain_special = 0;;
-    int16_t wp = 0;;
-    int16_t marriage_city_idx = 0;;
-    int16_t city_idx = 0;;
-    int16_t wy = 0;;
-    int16_t wx = 0;;
-    int16_t Unused_Diff_Var = 0;;
-    int16_t itr_troops = 0;;
-    int16_t Tries = 0;;
-    int16_t Event_Chance = 0;;
-    int16_t event_type = 0;;  // _SI_
-    int16_t player_idx = 0;;  // _DI_
-
-    // ¿ clear events_table data ?
-    if(EVNT_Enabled == ST_FALSE)
+    int16_t conjunction_active = 0;
+    int16_t normal_units = 0;
+    int16_t summoned_units = 0;
+    int16_t troop_count = 0;
+    int16_t terrain_special = 0;
+    int16_t wp = 0;
+    int16_t marriage_city_idx = 0;
+    int16_t city_idx = 0;
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t niu_escalation_scalar = 0;
+    int16_t itr_troops = 0;
+    int16_t tries = 0;
+    int16_t event_pressure_accumulator = 0;
+    int16_t event_type = 0;
+    int16_t player_idx = 0;
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    if(g_random_events_enabled == ST_FALSE)
     {
         events_table->Meteor_Status = 3;
-
         events_table->Gift_Status = 3;
-
         events_table->Disjunction_Status = 3;
-
         events_table->marriage_status = 3;
-
         events_table->Earthquake_Status = 3;
-
         events_table->Pirates_Status = 3;
-
         events_table->Plague_Status = 3;
         events_table->Plague_Duration = 0;
-
         events_table->Rebellion_Status = 3;
-
         events_table->Donation_Status = 3;
-
         events_table->Depletion_Status = 3;
-
         events_table->minerals_status = 3;
-
         events_table->Population_Boom_Status = 3;
         events_table->Population_Boom_Duration = 0;
-
         events_table->Good_Moon_Status = 3;
         events_table->Good_Moon_Duration = 0;
-
         events_table->Bad_Moon_Status = 3;
         events_table->Bad_Moon_Duration = 0;
-
         events_table->Conjunction_Chaos_Status = 3;
         events_table->Conjunction_Chaos_Duration = 0;
-
         events_table->Conjunction_Nature_Status = 3;
         events_table->Conjunction_Nature_Duration = 0;
-
         events_table->Conjunction_Sorcery_Status = 3;
         events_table->Conjunction_Sorcery_Duration = 0;
-
         events_table->Mana_Short_Status = 3;
         events_table->Mana_Short_Duration = 0;
-
-        return;
+        goto Done;
     }
-
-
     if(events_table->last_event_turn > _turn)
     {
-
-        Event_Chance = 0;
-
+        event_pressure_accumulator = 0;
     }
     else
     {
-
-        Event_Chance = (_turn - events_table->last_event_turn);
-
-        SETMIN(Event_Chance, 0);
-
+        event_pressure_accumulator = (_turn - events_table->last_event_turn);
+        SETMIN(event_pressure_accumulator, 0);
     }
-
-    // ; BUG: events can not be processed in the first 5 turns after launching the game
+    /* OGBUG  events can not be processed in the first 5 turns after launching the game, should be _turn based for 'Load Game' */
     if(_event_delay_count < 5)
     {
-
         _event_delay_count++;
-
-        Event_Chance = 0;
-
+        event_pressure_accumulator = 0;
     }
-
+    /* scale chance by difficulty */
     switch(_difficulty)
     {
-
-        case god_Intro:
-        {
-
-            Event_Chance = ((Event_Chance * 1) / 2);  // 50%
-
-        } break;
-
-        case god_Easy:
-        {
-
-            Event_Chance = ((Event_Chance * 2) / 3);  // 66%
-
-
-        } break;
-
-        case god_Normal:
-        {
-
-            Event_Chance = ((Event_Chance * 3) / 4);  // 75%
-
-        } break;
-
-        case god_Hard:
-        {
-
-            Event_Chance = ((Event_Chance * 4) / 5);  // 80%
-
-        } break;
-
-        // ~ Impossible is 100%
-
+        case god_Intro:  { event_pressure_accumulator = ((event_pressure_accumulator * 1) / 2); } break;  /* 50% */
+        case god_Easy:   { event_pressure_accumulator = ((event_pressure_accumulator * 2) / 3); } break;  /* 66% */
+        case god_Normal: { event_pressure_accumulator = ((event_pressure_accumulator * 3) / 4); } break;  /* 75% */
+        case god_Hard:   { event_pressure_accumulator = ((event_pressure_accumulator * 4) / 5); } break;  /* 80% */
+        /* Impossible is 100% */
     }
+    
+    /* DEBUG HACK */  if(DBG_trigger_event == ST_TRUE) { event_pressure_accumulator = 512; }  /* force it to fire off an event */
 
-    // if(DBG_trigger_event == STU_TRUE)
-    if(DBG_trigger_event == ST_TRUE)
+    /* fire test  (¿ power of two avoids modulo bias ?)*/
+    if(Random(512) > event_pressure_accumulator)
     {
-
-        Event_Chance = 512;
-
+        goto Done;
     }
-
-    if(Random(512) > Event_Chance)
-    {
-
-        return;
-
-    }
-
+    /* pick a candidate event, then run the veto gauntlet; up to 5 tries */
     event_type = ST_UNDEFINED;
-
-    for(Tries = 0; ((Tries < 5) && (event_type == ST_UNDEFINED)); Tries++)
+    for(tries = 0; ((tries < 5) && (event_type == ST_UNDEFINED)); tries++)
     {
-
         event_type = Random(18);
 
-// // et_Meteor               =  1,
-// // et_Gift                 =  2,
-// // et_Disjunction          =  3,
-// // et_Marriage             =  4,
-// // et_Earthquake           =  5,
-// // et_Pirates              =  6,
-//         if(DBG_trigger_event_plague               == ST_TRUE) { event_type = et_Plague;               DBG_trigger_event_plague               = ST_FALSE; }
-// // et_Rebellion            =  8,
-// // et_Donation             =  9,
-// // et_Depletion            = 10,
-// // et_New_Mine             = 11,
-//         if(DBG_trigger_event_population_boom      == ST_TRUE) { event_type = et_Population_Boom;      DBG_trigger_event_population_boom      = ST_FALSE; }
-//         if(DBG_trigger_event_good_moon            == ST_TRUE) { event_type = et_Good_Moon;            DBG_trigger_event_good_moon            = ST_FALSE; }
-//         if(DBG_trigger_event_bad_moon             == ST_TRUE) { event_type = et_Bad_Moon;             DBG_trigger_event_bad_moon             = ST_FALSE; }
-//         if(DBG_trigger_event_conjunction_chaos    == ST_TRUE) { event_type = et_Conjunction_Chaos;    DBG_trigger_event_conjunction_chaos    = ST_FALSE; }
-//         if(DBG_trigger_event_conjunction_nature   == ST_TRUE) { event_type = et_Conjunction_Nature;   DBG_trigger_event_conjunction_nature   = ST_FALSE; }
-//         if(DBG_trigger_event_conjunction_sorcery  == ST_TRUE) { event_type = et_Conjunction_Sorcery;  DBG_trigger_event_conjunction_sorcery  = ST_FALSE; }
-//         if(DBG_trigger_event_mana_short           == ST_TRUE) { event_type = et_Mana_Short;           DBG_trigger_event_mana_short           = ST_FALSE; }
-
-// Severity Code Description Project File Line Suppression State Details
-//     Warning C6385 Reading invalid data from 'm_event_good_array'.sdl2_ReMoM C :\STU\devel\ReMoM\src\EVENTS.C 382		
+        /* pick a victim appropriate to the event's good/bad alignment */
         if(event_type > ST_UNDEFINED)
-            player_idx = Get_Event_Victim(m_event_good_array[event_type]);
-
-        if(DBG_trigger_event == ST_TRUE)
         {
-
-            player_idx = HUMAN_PLAYER_IDX;
-
+            player_idx = Get_Event_Victim(m_event_good_array[event_type]);
         }
+
+        /* DEBUG HACK */  if(DBG_trigger_event == ST_TRUE) { player_idx = HUMAN_PLAYER_IDX; }
 
         if(player_idx == ST_UNDEFINED)
         {
-
             event_type = ST_UNDEFINED;
-
         }
 
         if(_FORTRESSES[player_idx].active == ST_FALSE)
         {
-
             event_type = ST_UNDEFINED;
-
         }
 
+        /* veto any event that is already active (2) or parked/disabled (3) */
         /* et_None */
         if((event_type == et_Meteor              ) && ((events_table->Meteor_Status               == 3) || (events_table->Meteor_Status               == 2))) { event_type = ST_UNDEFINED; } /*  1 */
         if((event_type == et_Gift                ) && ((events_table->Gift_Status                 == 3) || (events_table->Gift_Status                 == 2))) { event_type = ST_UNDEFINED; } /*  2 */
@@ -439,18 +347,15 @@ void Determine_Event(void)
         if((event_type == et_Conjunction_Sorcery ) && ((events_table->Conjunction_Sorcery_Status  == 3) || (events_table->Conjunction_Sorcery_Status  == 2))) { event_type = ST_UNDEFINED; } /* 17 */
         if((event_type == et_Mana_Short          ) && ((events_table->Mana_Short_Status           == 3) || (events_table->Mana_Short_Status           == 2))) { event_type = ST_UNDEFINED; } /* 18 */
         
-        Conjunction_Active = 0;
-
-        if(events_table->Good_Moon_Status            == 2) { Conjunction_Active++; }
-        if(events_table->Bad_Moon_Status             == 2) { Conjunction_Active++; }
-        if(events_table->Conjunction_Chaos_Status    == 2) { Conjunction_Active++; }
-        if(events_table->Conjunction_Nature_Status   == 2) { Conjunction_Active++; }
-        if(events_table->Conjunction_Sorcery_Status  == 2) { Conjunction_Active++; }
-        if(events_table->Mana_Short_Status           == 2) { Conjunction_Active++; }
-
-        if(Conjunction_Active >= 1)
+        conjunction_active = ST_FALSE;
+        if(events_table->Good_Moon_Status            == 2) { conjunction_active++; }
+        if(events_table->Bad_Moon_Status             == 2) { conjunction_active++; }
+        if(events_table->Conjunction_Chaos_Status    == 2) { conjunction_active++; }
+        if(events_table->Conjunction_Nature_Status   == 2) { conjunction_active++; }
+        if(events_table->Conjunction_Sorcery_Status  == 2) { conjunction_active++; }
+        if(events_table->Mana_Short_Status           == 2) { conjunction_active++; }
+        if(conjunction_active >= ST_TRUE)
         {
-
             if(
                 (event_type == et_Good_Moon)
                 ||
@@ -465,11 +370,8 @@ void Determine_Event(void)
                 (event_type == et_Mana_Short)
             )
             {
-
                 event_type = ST_UNDEFINED;
-
             }
-
         }
 
         if(
@@ -478,9 +380,7 @@ void Determine_Event(void)
             (_players[player_idx].gold_reserve < 100)
         )
         {
-
             event_type = ST_UNDEFINED;
-
         }
 
         if(
@@ -497,30 +397,19 @@ void Determine_Event(void)
             (event_type == et_Population_Boom)
         )
         {
-
             city_idx = Pick_Random_City(player_idx);
-
             if(city_idx == ST_UNDEFINED)
             {
-
                 event_type = ST_UNDEFINED;
-
             }
-
             if(event_type == et_Marriage)
             {
-
                 marriage_city_idx = Pick_Random_City(NEUTRAL_PLAYER_IDX);
-
                 if(marriage_city_idx == ST_UNDEFINED)
                 {
-
                     event_type = ST_UNDEFINED;
-
                 }
-
             }
-
         }
 
         if(
@@ -529,9 +418,7 @@ void Determine_Event(void)
             (_turn < 150)
         )
         {
-
             event_type = ST_UNDEFINED;
-
         }
 
         if(
@@ -540,98 +427,64 @@ void Determine_Event(void)
             (_turn < 150)
         )
         {
-
             event_type = ST_UNDEFINED;
-
         }
 
         if(event_type == et_Rebellion)
         {
-
-            Summoned_Units = 0;
-
-            Normal_Units = 0;
-
+            summoned_units = 0;
+            normal_units = 0;
             if(Player_Fortress_City(player_idx) == city_idx)
             {
-
                 event_type = ST_UNDEFINED;
-
             }
             else
             {
-
                 Army_At_City(city_idx, &troop_count, &troops[0]);
-
                 for(itr_troops = 0; ((itr_troops < troop_count) && (event_type == et_Rebellion)); itr_troops++)
                 {
-
                     if(_unit_type_table[_UNITS[troops[itr_troops]].type].race_type < rt_Arcane)
                     {
-
-                        Normal_Units++;
-
+                        normal_units++;
                     }
                     else
                     {
-
-                        Summoned_Units++;
-
+                        summoned_units++;
                     }
-
                     if(_UNITS[troops[itr_troops]].Hero_Slot > -1)
                     {
-
                         event_type = ST_UNDEFINED;
-
                     }
-
                 }
-
-                if(Summoned_Units > Normal_Units)
+                if(summoned_units > normal_units)
                 {
-
                     event_type = ST_UNDEFINED;
-
                 }
-
             }
-
         }
 
         if(event_type == et_Depletion)
         {
             if(EVNT_TargetDepletion__STUB(player_idx, &wx, &wy, &wp, &terrain_special) == ST_UNDEFINED)
             {
-
                 event_type = ST_UNDEFINED;
-
             }
-
         }
 
         if(event_type == et_New_Mine)
         {
-
             if(EVNT_FindNewMineral__STUB(player_idx, &wx, &wy, &wp, &terrain_special) == ST_UNDEFINED)
             {
-
                 event_type = ST_UNDEFINED;
-
             }
-
         }
 
         if(event_type == et_Disjunction)
         {
-
             if(Any_Overland_Enchantments() == ST_FALSE)
             {
-
                 event_type = ST_UNDEFINED;
-
             }
-
         }
 
         if((event_type == et_Good_Moon) && (events_table->Bad_Moon_Status  == 2)) { event_type = ST_UNDEFINED; }
@@ -644,230 +497,120 @@ void Determine_Event(void)
 
     if(event_type == ST_UNDEFINED)
     {
-
-        return;
-
+        goto Done;
     }
 
     events_table->last_event_turn = _turn;
-
     _event_delay_count = 0;
-
     switch(_difficulty)
     {
-
-        case god_Intro:
-        {
-
-            Unused_Diff_Var = (_turn / 20);
-
-        } break;
-
-        case god_Easy:
-        {
-
-            Unused_Diff_Var = (_turn / 18);
-
-        } break;
-
-        case god_Normal:
-        {
-            
-            Unused_Diff_Var = (_turn / 15);
-
-        } break;
-        case god_Hard:
-        {
-
-            Unused_Diff_Var = (_turn / 13);
-
-        } break;
-        case god_Impossible:
-        {
-
-            Unused_Diff_Var = (_turn / 10);
-
-        } break;
-
+        case god_Intro:      { niu_escalation_scalar = (_turn / 20); } break;
+        case god_Easy:       { niu_escalation_scalar = (_turn / 18); } break;
+        case god_Normal:     { niu_escalation_scalar = (_turn / 15); } break;
+        case god_Hard:       { niu_escalation_scalar = (_turn / 13); } break;
+        case god_Impossible: { niu_escalation_scalar = (_turn / 10); } break;
     }
 
     switch(event_type)
     {
-
         case et_Meteor:
         {
-
             events_table->Meteor_Status = 1;
-
             events_table->Meteor_Data = city_idx;
-
             events_table->Meteor_Player = player_idx;
-
         } break;
-
         case et_Gift:
         {
-
             events_table->Gift_Status = 1;
-
             events_table->Gift_Player = player_idx;
-
             events_table->Gift_Data = Make_Item(2, _players[player_idx].spellranks, 0);
-            
         } break;
-
         case et_Disjunction:
         {
-
             events_table->Disjunction_Status = 1;
-
         } break;
-
         case et_Marriage:
         {
-
             events_table->marriage_status = 1;
-
             events_table->marriage_neutral_city_idx = marriage_city_idx;
-
             events_table->marriage_player_city_idx = city_idx;
-
             events_table->marriage_player_idx = player_idx;
-
         } break;
-
         case et_Earthquake:
         {
-
             events_table->Earthquake_Status = 1;
-
             events_table->Earthquake_Player = player_idx;
-
             events_table->Earthquake_Data = city_idx;
-
         } break;
-
         case et_Pirates:
         {
-
             events_table->Pirates_Status = 1;
-
             events_table->Pirates_Player = player_idx;
-
-            Conjunction_Active = ((_players[player_idx].gold_reserve * 100) / (29 + Random(21)));
-
-            Conjunction_Active -= (Conjunction_Active % 10);
-
-            events_table->Pirates_Data = Conjunction_Active;
-
+            conjunction_active = ((_players[player_idx].gold_reserve * 100) / (29 + Random(21)));
+            conjunction_active -= (conjunction_active % 10);
+            events_table->Pirates_Data = conjunction_active;
         } break;
-
         case et_Plague:
         {
-
             events_table->Plague_Status = 1;
-
             events_table->Plague_Data = city_idx;
-
             events_table->Plague_Player = player_idx;
-
         } break;
-
         case et_Rebellion:
         {
-
             events_table->Rebellion_Status = 1;
-
             events_table->Rebellion_Data = city_idx;
-
             events_table->Rebellion_Player = player_idx;
-
         } break;
-
         case et_Donation:
         {
-
             events_table->Donation_Status = 1;
-
             events_table->Donation_Player = player_idx;
-
             events_table->Donation_Data = (100 + (Random(100) * 5));
-
         } break;
-
         case et_Depletion:
         {
-
             events_table->Depletion_Status = 1;
-
             events_table->Depletion_Player = player_idx;
-
         } break;
-
         case et_New_Mine:
         {
-
             events_table->minerals_status = 1;
-
             events_table->minerals_player = player_idx;
-
         } break;
-
         case et_Population_Boom:
         {
-
             events_table->Population_Boom_Status = 1;
-
             events_table->Population_Boom_Data = city_idx;
-
             events_table->Population_Boom_Player = player_idx;
-
         } break;
-
         case et_Good_Moon:
         {
-
             events_table->Good_Moon_Status = 1;
-
         } break;
-
         case et_Bad_Moon:
         {
-
             events_table->Bad_Moon_Status = 1;
-
         } break;
-
         case et_Conjunction_Chaos:
         {
-
             events_table->Conjunction_Chaos_Status = 1;
-
         } break;
-        
         case et_Conjunction_Nature:
         {
-            
             events_table->Conjunction_Nature_Status = 1;
-
         } break;
-
         case et_Conjunction_Sorcery:
         {
-
             events_table->Conjunction_Sorcery_Status = 1;
-
         } break;
-
         case et_Mana_Short:
         {
-
             events_table->Mana_Short_Status = 1;
-
         } break;
-
     }
-
+Done:
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 }
 
 

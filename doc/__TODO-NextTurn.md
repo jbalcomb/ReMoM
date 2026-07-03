@@ -62,7 +62,7 @@ Called immediately after the AI turn dispatch, before the time-stop-vs-normal sp
 ### Wave 8 — Events
 Random events fire during normal end-of-turn (skipped during Time Stop).
 
-- [ ] **8A** [`Determine_Event`](../MoM/src/EVENTS.c#L223) — gated on `magic_set.random_events == ST_TRUE AND DBG_Alt_A_State == ST_FALSE`. Picks and triggers a random event.
+- [x] **8A** [`Determine_Event`](../MoM/src/EVENTS.c#L221) — **done-done**, doc [NextTurn/EVENTS-Determine_Event.md](NextTurn/EVENTS-Determine_Event.md). Once-per-turn random-event picker: build `event_pressure_accumulator` (difficulty-weighted turns-since-last-event) → `Random(512)` fire test (`P = pressure/512`) → ≤5 `Random(18)` draws through the veto gauntlet → commit into `events_table`. Verified 1:1 against `ovr080/Determine_Event.asm` (910 lines; `.c` is a **Fable 5** translation, not Gemini), no divergences. Renamed this session: `EVNT_Enabled`→`g_random_events_enabled`, `Event_Chance`→`event_pressure_accumulator`, `Unused_Diff_Var`→`niu_escalation_scalar`, + locals lowercased. Preserved OGBUGs: first-5-turns event suppression, `niu_escalation_scalar` dead code, Donation/Rebellion out-of-order checks. Noted `g_random_events_enabled` is a vestigial OG global (hardcoded `TRUE`; real gate is the caller's `magic_set.random_events`).
 - [ ] **8B** [`Event_Twiddle`](../MoM/src/EVENTS.c#L884) — per-turn event state advancement (event counters, expiration).
 - [ ] **8C** [`Cool_Off_Volcanoes`](../MoM/src/NEXTTURN.c#L4621) — volcano tiles slowly convert back to mountains (event fallout).
 
