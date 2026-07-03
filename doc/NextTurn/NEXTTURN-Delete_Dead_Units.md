@@ -5,9 +5,9 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr060\Delete_Dead_Units.c
 
 Next_Turn_Proc()
     |-> Delete_Dead_Units()
-Next_Turn_Proc()
     |-> Next_Turn_Calc()
         |-> Delete_Dead_Units()
+    |-> Delete_Dead_Units()
 
 ---
 

@@ -189,7 +189,7 @@ void Heal_All_Units(void);
 void Diplomacy_Growth_For_Enchantments__WIP(void);
 
 // WZD o140p25
-void Do_All_Units_XP_Check_(void);
+void Do_All_Units_XP_Check(void);
 
 // WZD o140p26
 void Cool_Off_Volcanoes(void);

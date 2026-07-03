@@ -817,8 +817,8 @@ void Next_Turn_Calc(void)
 /* CLAUDE */ PHASE(All_City_Removed_Buildings());
 
 
-    // Do_All_Units_XP_Check_();
-/* CLAUDE */ PHASE(Do_All_Units_XP_Check_());
+    // Do_All_Units_XP_Check();
+/* CLAUDE */ PHASE(Do_All_Units_XP_Check());
 
 
     // Heal_All_Units();
@@ -4340,36 +4340,51 @@ void Diplomacy_Growth_For_Enchantments__WIP(void)
 // WZD o140p25
 // MoO2  Module: INITSHIP  Repair_Ships_At_Colonies_()
 // Next_Turn_Calc_() |-> Do_All_Ships_XP_Check_() |-> Best_Instructor_Bonus_(); Do_XP_For_Ship_() |-> Do_Academy_At_Location_Check_(); Calc_Ship_Level_()
-/*
-    heals units
-    clears stasis
-    ...
-    _UNITS[itr_units].XP += 1;
-    hero_level = Calc_Unit_Level(itr_units);
-    Hero_LevelUp_Popup(itr_units);
-    _UNITS[itr_units].Level = Calc_Unit_Level(itr_units);    
-    ...
-    _UNITS[troop_list[itr_troops]].XP += Highest_Armsmaster_XP;
-    _UNITS[troop_list[itr_troops]].Level = Calc_Unit_Level(troop_list[itr_troops]);
-
-*/
-void Do_All_Units_XP_Check_(void)
+/**
+ * @brief Advances per-turn unit experience and related hero mastery effects.
+ *
+ * @details
+ * Iterates all units and applies the end-of-turn XP progression path, then
+ * performs hero-specific and army-specific follow-up checks. The function:
+ * - Fully heals units protected by Herb Mastery, except undead/Death units.
+ * - Processes Stasis mutation state transitions and resistance checks.
+ * - Grants 1 XP to eligible non-fantastic, non-undead units when not blocked
+ *   by Time Stop.
+ * - Recomputes each unit's level through @c Calc_Unit_Level().
+ * - Tracks hero-level changes for human-controlled units so the UI can react
+ *   when a hero levels up.
+ * - Scans each player's heroes and their stacks to apply Armsmaster-related
+ *   XP bonuses when a hero is stationed with other units on the same tile.
+ *
+ * @return This function returns no value.
+ *
+ * @note Uses a static battle-unit buffer for resistance checks.
+ * @note The processed hero list is backed by a one-slot offset array so the
+ *       legacy @c Hero_Slot == -1 write does not underflow.
+ * @note XP gain is suppressed for units outside the active Time Stop player
+ *       when Time Stop is in effect.
+ *
+ * @see Calc_Unit_Level(), Load_Battle_Unit(), Combat_Resistance_Check(),
+ *      Player_Hero_Casting_Skill()
+ */
+void Do_All_Units_XP_Check(void)
 {
     /* TODO  init to zeroes (But, HOW!?!?!) */  static struct s_BATTLE_UNIT battle_unit;  // // sizeof: 6Eh  110d
-    int16_t Processed_Hero_List[NUM_HEROES] = { 0, 0, 0, 0, 0, 0 };
+    // int16_t processed_hero_list[NUM_HEROES] = { 0, 0, 0, 0, 0, 0 };
+    /* HACK */ int16_t processed_hero_list_backing[NUM_HEROES + 1] = { 0, 0, 0, 0, 0, 0, 0 };  /* +1 leading slot absorbs the OG Hero_Slot == -1 write */
+    /* HACK */ int16_t * processed_hero_list = &processed_hero_list_backing[1];
     int16_t troop_list[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t hero_level = 0;
     int16_t hero_unit_idx = 0;
     int16_t troop_count = 0;
-    int16_t Highest_Armsmaster_XP = 0;
-    int16_t XP_Gain = 0;
+    int16_t highest_armsmaster_xp = 0;
+    int16_t xp_gain = 0;
     int16_t itr_heroes = 0;
-    int16_t itr_units = 0;  // _SI_
-    int16_t itr_players = 0;  // _SI_
-    int16_t itr_troops = 0;  // _DI_
-
+    int16_t itr_units = 0;
+    int16_t itr_players = 0;
+    int16_t itr_troops = 0;
+    int8_t hero_slot = 0;  // DNE in Dasm
     memset(&battle_unit, 0, sizeof(struct s_BATTLE_UNIT));
-
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
         // Herb Mastery:  Nature. Global Enchantment;  Casting Cost: 1000 mana;  Upkeep: 10 mana/turn. Very Rare.
@@ -4382,40 +4397,27 @@ void Do_All_Units_XP_Check_(void)
             ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
         )
         {
-
             _UNITS[itr_units].Damage = 0;
-
         }
-
         /*
             BEGIN:  Stasis
         */
         if((_UNITS[itr_units].mutations & C_STASISLINGER) != 0)
         {
-
             Load_Battle_Unit(itr_units, &battle_unit);
-
             if(Combat_Resistance_Check(battle_unit, -5, sbr_Sorcery) == 0)
             {
-
                 _UNITS[itr_units].mutations ^= C_STASISLINGER;
-
             }
-
         }
-
         if((_UNITS[itr_units].mutations & C_STASISINIT) != 0)
         {
-
             _UNITS[itr_units].mutations |= C_STASISLINGER;
-
             _UNITS[itr_units].mutations ^= C_STASISINIT;
-
         }
         /*
             END:  Stasis
         */
-
         /*
             BEGIN:  Experience Points & Experience Level
         */
@@ -4427,149 +4429,95 @@ void Do_All_Units_XP_Check_(void)
             (
                 (g_timestop_player_num == 0)
                 ||
-                (_UNITS[itr_units].owner_idx == g_timestop_player_num)
+                (_UNITS[itr_units].owner_idx == (g_timestop_player_num - 1))
             )
         )
         {
-
             _UNITS[itr_units].XP += 1;
-
             hero_level = Calc_Unit_Level(itr_units);
-
-            if(_UNITS[itr_units].Hero_Slot > -1)
+            hero_slot = _UNITS[itr_units].Hero_Slot;
+            if(hero_slot > ST_UNDEFINED)
             {
-
                 if(_UNITS[itr_units].owner_idx == HUMAN_PLAYER_IDX)
                 {
-
                     if(_UNITS[itr_units].Level < hero_level)
                     {
-
                         Hero_LevelUp_Popup(itr_units);
-
                     }
-
                 }
-
             }
-
             _UNITS[itr_units].Level = (int8_t)Calc_Unit_Level(itr_units);
-
         }
         /*
             END:  Experience Points & Experience Level
         */
-
-
     }
-
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-
         for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
         {
-
-            Processed_Hero_List[itr_heroes] = ST_FALSE;
-
+            processed_hero_list[itr_heroes] = ST_FALSE;
         }
-
         if(
             (g_timestop_player_num == 0)
             ||
-            (g_timestop_player_num == itr_players)
+            ((g_timestop_player_num - 1) == itr_players)
         )
         {
-
             for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
             {
-
                 if(
                     (_players[itr_players].Heroes[itr_heroes].unit_idx > -1)
                     &&
-                    (Processed_Hero_List[itr_heroes] == ST_FALSE)
+                    (processed_hero_list[itr_heroes] == ST_FALSE)
                 )
                 {
-
                     hero_unit_idx = _players[itr_players].Heroes[itr_heroes].unit_idx;
-
-                    Highest_Armsmaster_XP = 0;
-
+                    highest_armsmaster_xp = 0;
                     Army_At_Square_1(_UNITS[hero_unit_idx].wx, _UNITS[hero_unit_idx].wy, _UNITS[hero_unit_idx].wp, &troop_count, &troop_list[0]);
-
-                    Processed_Hero_List[itr_heroes] = ST_TRUE;
-
+                    processed_hero_list[itr_heroes] = ST_TRUE;
                     for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
                     {
-
-                        XP_Gain = 0;
-
+                        xp_gain = 0;
                         /*
-                            ¿ BUGBUG ?
-                            Run-Time Check Failure #2 - Stack around the variable 'Processed_Hero_List' was corrupted.
+                            ¿ BUGBUG - /RTCs ?
+                            Run-Time Check Failure #2 - Stack around the variable 'processed_hero_list' was corrupted.
                         */
-                        // Processed_Hero_List[_UNITS[troop_list[itr_troops]].Hero_Slot] = ST_TRUE;  // ; BUG: this can also be -1!
-                        if(_UNITS[troop_list[itr_troops]].Hero_Slot > ST_UNDEFINED)
+                        // processed_hero_list[_UNITS[troop_list[itr_troops]].Hero_Slot] = ST_TRUE;  // ; BUG: this can also be -1!
+                        hero_slot = _UNITS[troop_list[itr_troops]].Hero_Slot;
+                        processed_hero_list[hero_slot] = ST_TRUE;
+                        if(hero_slot > ST_UNDEFINED)
                         {
-
-                            Processed_Hero_List[_UNITS[troop_list[itr_troops]].Hero_Slot] = ST_TRUE;
-
+                            if((_HEROES2[itr_players]->heroes[_UNITS[troop_list[itr_troops]].type].abilities & HSA_ARMSMASTER) != 0)
+                            {
+                                xp_gain = ((_UNITS[troop_list[itr_troops]].Level + 1) * 2);
+                            }
+                            else if((_HEROES2[itr_players]->heroes[_UNITS[troop_list[itr_troops]].type].abilities & HSA_ARMSMASTER2) != 0)
+                            {
+                                xp_gain = ((_UNITS[troop_list[itr_troops]].Level + 1) * 3);
+                            }
+                            if(xp_gain > highest_armsmaster_xp)
+                            {
+                                highest_armsmaster_xp = xp_gain;
+                            }
                         }
-
-                        if(_UNITS[troop_list[itr_troops]].Hero_Slot > -1)
-                        {
-
-                            if((_HEROES2[HUMAN_PLAYER_IDX]->heroes[_UNITS[troop_list[itr_troops]].type].abilities & HSA_ARMSMASTER) != 0)
-                            {
-
-                                XP_Gain = ((_UNITS[troop_list[itr_troops]].Level + 1) * 2);
-
-                            }
-
-                            else if((_HEROES2[HUMAN_PLAYER_IDX]->heroes[_UNITS[troop_list[itr_troops]].type].abilities & HSA_ARMSMASTER2) != 0)
-                            {
-
-                                XP_Gain = ((_UNITS[troop_list[itr_troops]].Level + 1) * 3);
-
-                            }
-
-                            if(XP_Gain > Highest_Armsmaster_XP)
-                            {
-
-                                Highest_Armsmaster_XP = XP_Gain;
-
-                            }
-
-                        }
-
                     }
-
-                    if(Highest_Armsmaster_XP > 0)
+                    if(highest_armsmaster_xp > 0)
                     {
-
                         for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
                         {
-
-                            if(_UNITS[troop_list[itr_troops]].Hero_Slot == -1)
+                            hero_slot = _UNITS[troop_list[itr_troops]].Hero_Slot;
+                            if(hero_slot == ST_UNDEFINED)
                             {
-
-                                _UNITS[troop_list[itr_troops]].XP += Highest_Armsmaster_XP;
-
+                                _UNITS[troop_list[itr_troops]].XP += highest_armsmaster_xp;
                                 _UNITS[troop_list[itr_troops]].Level = (int8_t)Calc_Unit_Level(troop_list[itr_troops]);
-
                             }
-
                         }
-                        
                     }
-
                 }
-
             }
-
         }
-        
     }
-
 }
 
 

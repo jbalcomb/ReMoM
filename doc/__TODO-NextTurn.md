@@ -109,7 +109,7 @@ Runs after normal/time-stop-else block. Applies all queued spell casts for all p
 ### Wave 12 — End-of-turn unit passes
 XP, healing, history logging.
 
-- [ ] **12A** [`Do_All_Units_XP_Check_`](../MoM/src/NEXTTURN.c#L4400) — trailing underscore in the name (preserved from OG). Iterates units checking XP thresholds → Level bumps.
+- [x] **12A** [`Do_All_Units_XP_Check`](../MoM/src/NEXTTURN.c#L4370) — **done-done**, doc [NextTurn/NEXTTURN-Do_All_Units_XP_Check.md](NextTurn/NEXTTURN-Do_All_Units_XP_Check.md). Per-turn unit XP/Level + Herb Mastery heal + Stasis countdown + Armsmaster stack bonus; verified 1:1 against `ovr140/Do_All_Units_XP_Check.asm`. R1 (Time-Stop owner test dropped the `- 1` on 1-based `g_timestop_player_num`) and R2 (`_HEROES2[HUMAN_PLAYER_IDX]` → per-player `_HEROES2[itr_players]`) fixed this session; `processed_hero_list` made an offset-backed array so the OG's unconditional `[-1]` write no longer trips MSVC `/RTCs`.
 - [ ] **12B** [`Heal_All_Units`](../MoM/src/NEXTTURN.c#L3890) — per-unit healing (natural + Regeneration + city-based).
 - [x] **12C** [`Record_History`](../MoM/src/CITYCALC.c#L3346) — **done-done**, doc [NextTurn/CITYCALC-Record_History.md](NextTurn/CITYCALC-Record_History.md). Computes each wizard's power graph value and appends to `history[288]`; verified 1:1 against `ovr142/Record_History.asm`. R1 (scaling operand swap + 32-bit) and R2 (history scroll direction) fixed this session. The four astrologer input getters (`Astrologer_Power`, `Astrologer_Strength`, `Astrologer_Research`, `Empire_Population_Points`) reconstructed from `__STUB`s and verified against `ovr142` asm this session.
 
