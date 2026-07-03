@@ -2700,11 +2700,11 @@ void Diplomacy_Growth(void)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    /* CLAUDE: GD point 620 -- _players BEFORE Diplomacy_Growth (the diplomacy-phase
+    /* CLAUDE: GD point 628 -- _players BEFORE Diplomacy_Growth (the diplomacy-phase
      * pass that updates treaty/peace/exchange modifiers, downstream of the
      * All_Outpost_Population_Growth RNG desync).  Fire once. */
     { static int gd620_done = 0;
-      if(!gd620_done) { gd620_done = 1; gd_dump_players("620_Diplomacy_Growth_Entry_P"); } }
+      if(!gd620_done) { gd620_done = 1; gd_dump_players("628_Diplomacy_Growth_Entry_P"); } }
 
     for(itr1 = 0; itr1 < _num_players; itr1++)
     {
@@ -2848,11 +2848,11 @@ void Diplomacy_Growth(void)
         }
     }
 
-    /* CLAUDE: GD point 621 -- _players AFTER Diplomacy_Growth.  Pairs with 620 to show
+    /* CLAUDE: GD point 629 -- _players AFTER Diplomacy_Growth.  Pairs with 628 to show
      * whether the treaty/peace/exchange modifier divergence is introduced by this pass
      * (drawing from the desynced RNG stream) or already present on entry.  Fire once. */
     { static int gd621_done = 0;
-      if(!gd621_done) { gd621_done = 1; gd_dump_players("621_Diplomacy_Growth_Return_P"); } }
+      if(!gd621_done) { gd621_done = 1; gd_dump_players("629_Diplomacy_Growth_Return_P"); } }
 }
 
 

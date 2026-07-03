@@ -268,6 +268,32 @@ retf
 
 
 // WZD o60p04
+void gd_dump_units(const char* point);   /* CLAUDE: GD capture (defined in INITGAME.c) */
+
+/* CLAUDE DEBUG: scan for the 3 neutral defenders (cities 9/13/17) by (wx,wy,type=104)
+ * and log owner_idx/wp -- to find where they get killed (owner -> -1) between
+ * Next_Turn_Calc and the 2nd Delete_Dead_Units.  Match on coords+type only: Kill_Unit
+ * zaps owner_idx & wp but leaves wx/wy, so a just-killed defender is still found. */
+static void dbg_scan_defenders(const char* where)
+{
+    int16_t i;
+    int16_t found = 0;
+    for(i = 0; i < _units; i++)
+    {
+        if(_UNITS[i].type == 104 &&
+           ( (_UNITS[i].wx == 29 && _UNITS[i].wy == 32) ||
+             (_UNITS[i].wx == 41 && _UNITS[i].wy == 12) ||
+             (_UNITS[i].wx == 24 && _UNITS[i].wy == 22) ))
+        {
+            LOG_DEBUG(LOG_CAT_GENERAL, "[DBG-KILL] %-28s _UNITS[%d] (%d,%d) type=%d owner=%d wp=%d",
+                where, (int)i, (int)_UNITS[i].wx, (int)_UNITS[i].wy, (int)_UNITS[i].type,
+                (int)_UNITS[i].owner_idx, (int)_UNITS[i].wp);
+            found++;
+        }
+    }
+    LOG_DEBUG(LOG_CAT_GENERAL, "[DBG-KILL] %-28s defenders_found=%d _units=%d", where, (int)found, (int)_units);
+}
+
 void Next_Turn_Proc(void)
 {
     char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -280,6 +306,9 @@ void Next_Turn_Proc(void)
 
 
     Delete_Dead_Units();
+    /* CLAUDE: GD 619 -- _UNITS after Next_Turn_Proc's 1st Delete_Dead_Units (before
+     * All_Units_In_Towers), matching OG's j_All_Units_In_Towers landmark #1.  Fire once. */
+    { static int gd624_done = 0; if(!gd624_done) { gd624_done = 1; gd_dump_units("619_Delete_Dead_Units_NextTurnProc_1_U"); } }
     All_Units_In_Towers();
 
 
@@ -289,12 +318,18 @@ void Next_Turn_Proc(void)
 
 
     Next_Turn_Calc();
+    dbg_scan_defenders("B after Next_Turn_Calc");
 
 
     Cache_Graphics_Overland();
+    dbg_scan_defenders("C after Cache_Graphics");
 
 
     Delete_Dead_Units();
+    dbg_scan_defenders("D after Delete_Dead_Units_2");
+    /* CLAUDE: GD 634 -- _UNITS after Next_Turn_Proc's 2nd Delete_Dead_Units (before
+     * All_Units_In_Towers), matching OG's j_All_Units_In_Towers landmark #2.  Fire once. */
+    { static int gd626_done = 0; if(!gd626_done) { gd626_done = 1; gd_dump_units("634_Delete_Dead_Units_NextTurnProc_2_U"); } }
     All_Units_In_Towers();
 
 
@@ -613,6 +648,8 @@ void All_AI_Players_Contacted(void)
 */
 
 // WZD o119p01
+void gd_dump_units(const char* point);   /* CLAUDE: GD capture (defined in INITGAME.c) */
+
 void Next_Turn_Calc(void)
 {
     int16_t itr_players = 0;
@@ -640,14 +677,14 @@ void Next_Turn_Calc(void)
     // AI_Kill_Lame_Units();  // ¿ BUGBUG  leaves dead/deleteable units lying around ?
 /* CLAUDE */ PHASE(AI_Kill_Lame_Units());
 
-    // Delete_Dead_Units();  // DNE in Dasm
-/* CLAUDE */ PHASE(Delete_Dead_Units());
-
     // AI_Next_Turn();
 /* CLAUDE */ PHASE(AI_Next_Turn());
-
-    // /* HACK */  Delete_Dead_Units();  // DNE in Dasm
-/* CLAUDE */ PHASE(Delete_Dead_Units());
+    /* CLAUDE: GD point 618 -- _UNITS AFTER AI_Next_Turn (captured at the call site,
+     * BEFORE the following Next_Turn_Process_Purify(), mirroring OG's far-return into
+     * Next_Turn_Calc).  Tells whether the divergent neutral units (_UNITS[48..50], owner
+     * 5 / type 104 in OG, absent in ReMoM) exist by the end of the AI turn or are created
+     * in a later Next_Turn_Calc phase.  Fire once. */
+    { static int gd618_done = 0; if(!gd618_done) { gd618_done = 1; gd_dump_units("618_AI_Next_Turn_Return_U"); } }
 
     // Next_Turn_Process_Purify();
 /* CLAUDE */ PHASE(Next_Turn_Process_Purify());
@@ -726,6 +763,10 @@ void Next_Turn_Calc(void)
 
         // All_Outpost_Population_Growth();
 /* CLAUDE */ PHASE(All_Outpost_Population_Growth());
+    /* CLAUDE: GD point 621 -- _UNITS after All_Outpost_Population_Growth, before the
+     * following Apply_City_Changes(), mirroring OG (which fires at the j_Apply_City_Changes
+     * landmark to dodge the ovr119 overlay eviction on return).  Fire once. */
+    { static int gd623_done = 0; if(!gd623_done) { gd623_done = 1; gd_dump_units("621_All_Outpost_Population_Growth_Return_U"); } }
 
         // Apply_City_Changes();
 /* CLAUDE */ PHASE(Apply_City_Changes());
@@ -748,6 +789,9 @@ void Next_Turn_Calc(void)
 
         // Determine_Offer();
 /* CLAUDE */ PHASE(Determine_Offer());
+    /* CLAUDE: GD point 627 -- _UNITS after Determine_Offer (before the following
+     * Set_Mouse_List), mirroring OG's far-return into Next_Turn_Calc+0x11F.  Fire once. */
+    { static int gd624_done = 0; if(!gd624_done) { gd624_done = 1; gd_dump_units("627_Determine_Offer_Return_U"); } }
 
 
         Set_Mouse_List(1, mouse_list_hourglass);
@@ -803,7 +847,10 @@ void Next_Turn_Calc(void)
 
 
     // Delete_Dead_Units();  // ¿ here, because we may have killed units with a spell, just above ?
-/* CLAUDE */ PHASE(Delete_Dead_Units());
+/* CLAUDE */ PHASE(Delete_Dead_Units());  /* j_Delete_Dead_Units() */
+    /* CLAUDE: GD 630 -- _UNITS after Next_Turn_Calc's Delete_Dead_Units (before
+     * Set_Unit_Draw_Priority), matching OG's far-return into Next_Turn_Calc+0x1ED.  Fire once. */
+    { static int gd625_done = 0; if(!gd625_done) { gd625_done = 1; gd_dump_units("630_Delete_Dead_Units_NextTurnCalc_U"); } }
 
 
     // Set_Unit_Draw_Priority();
@@ -817,12 +864,18 @@ void Next_Turn_Calc(void)
 /* CLAUDE */ PHASE(All_City_Removed_Buildings());
 
 
-    // Do_All_Units_XP_Check();
-/* CLAUDE */ PHASE(Do_All_Units_XP_Check());
+    // Do_All_Units_XP_Check_();
+/* CLAUDE */ PHASE(Do_All_Units_XP_Check_());
+    /* CLAUDE: GD point 631 -- _UNITS after Do_All_Units_XP_Check (before the following
+     * Heal_All_Units), mirroring OG's far-return into Next_Turn_Calc+0x210.  Fire once. */
+    { static int gd631x_done = 0; if(!gd631x_done) { gd631x_done = 1; gd_dump_units("631_Do_All_Units_XP_Check_Return_U"); } }
 
 
     // Heal_All_Units();
 /* CLAUDE */ PHASE(Heal_All_Units());
+    /* CLAUDE: GD point 632 -- _UNITS after Heal_All_Units, before the following
+     * Record_History(), mirroring OG's far-return into Next_Turn_Calc.  Fire once. */
+    { static int gd622_done = 0; if(!gd622_done) { gd622_done = 1; gd_dump_units("632_Heal_All_Units_Return_U"); } }
 
 
     // Record_History();
@@ -856,6 +909,11 @@ void Next_Turn_Calc(void)
 
     // All_City_Calculations();
 /* CLAUDE */ PHASE(All_City_Calculations());
+    /* CLAUDE: GD point 633 -- _UNITS after the LATE (end-of-turn) All_City_Calculations,
+     * before the following Get_Random_Seed(), mirroring the OG capture point (OG fires at
+     * Get_Random_Seed to dodge the ovr119 overlay eviction on return).  Fire once. */
+    { static int gd619_done = 0; if(!gd619_done) { gd619_done = 1; gd_dump_units("633_All_City_Calculations_Return_U"); } }
+    dbg_scan_defenders("A at 633 dump (NTC tail)");
 
 
     RNG_AI_Turn_Seed = Get_Random_Seed();
@@ -2914,13 +2972,13 @@ void Apply_City_Changes(void)
     int16_t Population_Growth = 0;
     int16_t itr_cities = 0;
 
-    /* CLAUDE: GD point 630 -- _CITIES BEFORE Apply_City_Changes (outpost graduation/
+    /* CLAUDE: GD point 622 -- _CITIES BEFORE Apply_City_Changes (outpost graduation/
      * failure + population-growth application; runs right after
-     * All_Outpost_Population_Growth in Next_Turn_Calc).  Pairs with 631 to isolate
+     * All_Outpost_Population_Growth in Next_Turn_Calc).  Pairs with 626 to isolate
      * this pass's effect on the city Pop_/size/construction fields (the 910 city
      * divergence).  Fire once. */
     { static int gd630_done = 0;
-      if(!gd630_done) { gd630_done = 1; gd_dump_cities("630_Apply_City_Changes_Entry_C"); } }
+      if(!gd630_done) { gd630_done = 1; gd_dump_cities("622_Apply_City_Changes_Entry_C"); } }
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
@@ -3112,6 +3170,11 @@ void Apply_City_Changes(void)
             */
 
             City_Apply_Production(itr_cities);
+            /* CLAUDE: GD 623_City_Apply_Production -- _UNITS after City_Apply_Production
+             * (line 3141), which calls Create_Unit() for completed unit builds -- bisects
+             * unit creation WITHIN Apply_City_Changes.  Fire once (first city). */
+            // { static int gdcap_done = 0; if(!gdcap_done)                    { gdcap_done = 1; gd_dump_units("623_City_Apply_Production_Return_U"); } }
+            { static int gdcap_done = 0; if(!gdcap_done && itr_cities == 9) { gdcap_done = 1; gd_dump_units("623_City_Apply_Production_Return_U"); } }
 
         }
 
@@ -3119,6 +3182,9 @@ void Apply_City_Changes(void)
         if(_CITIES[itr_cities].enchantments[CONSECRATION] > 0)
         {
             Apply_Consecration(itr_cities);
+            /* CLAUDE: GD 624_Apply_Consecration -- _UNITS after Apply_Consecration (line 3152).
+             * Only fires for consecrated cities (none in the current stage-2 turn).  Fire once. */
+            { static int gdcons_done = 0; if(!gdcons_done) { gdcons_done = 1; gd_dump_units("624_Apply_Consecration_Return_U"); } }
         }
 
         if(_CITIES[itr_cities].enchantments[STREAM_OF_LIFE] > 0)
@@ -3143,11 +3209,18 @@ void Apply_City_Changes(void)
     }
 
     Volcano_Counts();
+    /* CLAUDE: GD 625_Volcano_Counts -- _UNITS after Volcano_Counts (line 3176), which can
+     * Destroy_City via volcano eruptions.  NOTE: same _UNITS state as
+     * 626_Apply_City_Changes_Return_U below (nothing runs between them).  Fire once. */
+    { static int gdvolc_done = 0; if(!gdvolc_done) { gdvolc_done = 1; gd_dump_units("625_Volcano_Counts_Return_U"); } }
 
-    /* CLAUDE: GD point 631 -- _CITIES AFTER Apply_City_Changes (post-Volcano_Counts,
-     * matching where OG returns to Next_Turn_Calc).  Fire once. */
+    /* CLAUDE: GD point 626 -- _CITIES and _UNITS AFTER Apply_City_Changes (post-Volcano_Counts,
+     * matching where OG returns to Next_Turn_Calc).  _UNITS too because Apply_City_Changes
+     * can Destroy_City (which may delete/relocate units).  Fire once. */
     { static int gd631_done = 0;
-      if(!gd631_done) { gd631_done = 1; gd_dump_cities("631_Apply_City_Changes_Return_C"); } }
+      if(!gd631_done) { gd631_done = 1;
+        gd_dump_cities("626_Apply_City_Changes_Return_C");
+        gd_dump_units("626_Apply_City_Changes_Return_U"); } }
 
 }
 
