@@ -23,7 +23,17 @@
 #include "../../platform/include/Platform_Replay.h"
 #include "win_PFL.h"
 
-#include "remom_version.h"  /* REMOM_VERSION_STRING — generated from the git tag */
+/* REMOM_VERSION_STRING comes from the CMake-generated remom_version.h (built from
+ * the git tag).  The autotools build doesn't generate it, so fall back to a dev
+ * placeholder when the header isn't on the include path. */
+#if defined(__has_include)
+#  if __has_include("remom_version.h")
+#    include "remom_version.h"
+#  endif
+#endif
+#ifndef REMOM_VERSION_STRING
+#  define REMOM_VERSION_STRING "0.0.0-dev"
+#endif
 
 
 
