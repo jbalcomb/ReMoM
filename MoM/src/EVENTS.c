@@ -177,7 +177,7 @@ int16_t EVNT_DestroyedBldngs;
 int16_t m_event_player_idx;
 
 // WZD dseg:C2E0
-int16_t CRP_EVNT_Var_2;
+int16_t niu_event_twiddle_type_flag;
 
 // WZD dseg:C2E2
 int16_t EVNT_MsgDataValue;
@@ -196,7 +196,7 @@ int16_t m_current_event;
 int16_t m_event_message_type;
 
 // WZD dseg:C2EA
-int16_t CRP_EVNT_Var_1;
+int16_t niu_event_twiddle_flag;
 
 // WZD dseg:C2EA                                                 END:  ovr080 - Uninitialized Data
 
@@ -615,15 +615,42 @@ Done:
 
 
 // WZD s080p02
-// drake178: EVNT_Progress()
 // MoO2  Module: Events  Event_Twiddle_()
-/*
-; progresses any ongoing events (status 1 or 2)
-; has several BUGs relating to specific events
-*/
-/*
-
-*/
+/**
+ * @brief Advances and resolves all currently active world events for the turn.
+ *
+ * @details
+ * Processes each event slot in @c events_table that is in @c es_Starting or
+ * @c es_Ongoing state, applies event-specific gameplay effects, updates event
+ * state and duration counters, and triggers player-facing messages when
+ * appropriate.
+ *
+ * Processing responsibilities include:
+ * - One-shot events that immediately resolve and clear state
+ *   (e.g., Meteor, Gift, Disjunction, Marriage, Earthquake, Pirates,
+ *   Donation, Depletion, New Mine).
+ * - Ongoing timed events that can continue or terminate probabilistically
+ *   (e.g., Plague, Population Boom, Good Moon, Bad Moon,
+ *   Conjunctions, Mana Short).
+ * - Mutating shared event message context globals
+ *   (@c m_current_event, @c m_event_player_idx, @c m_event_city_idx,
+ *   @c m_event_message_type, @c EVNT_MsgDataValue, etc.) used by
+ *   @c Show_Event_Message().
+ * - Applying world/game-state side effects such as population changes,
+ *   city ownership transitions, enchantment/global cleanup, gold changes,
+ *   terrain-special edits, and item rewards.
+ *
+ * @return This function returns no value.
+ *
+ * @note Operates heavily via global state and in-place mutation of
+ *       @c events_table, @c _CITIES, @c _players, and unit tables.
+ * @note Message visibility and formatting are delegated to
+ *       @c Show_Event_Message() and @c Get_Event_Message().
+ * @note Event sub-blocks are evaluated sequentially in a single call, so
+ *       multiple events can be progressed during one turn tick.
+ *
+ * @see Determine_Event(), Show_Event_Message(), Get_Event_Message()
+ */
 void Event_Twiddle(void)
 {
     int16_t item_list[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -639,35 +666,27 @@ void Event_Twiddle(void)
     uint8_t * ptr_players_globals = 0;
     int16_t player_idx = 0;
     int16_t itr_globals = 0;
-    int16_t itr_players = 0;  // _SI_
-    int16_t city_idx = 0;  // _DI_
+    int16_t itr_players = 0;
+    int16_t city_idx = 0;
 
+    if(DBG_trigger_event == ST_TRUE) { DBG_trigger_event = ST_FALSE; }
 
-
-    // if(DBG_trigger_event == STU_TRUE)
-    if(DBG_trigger_event == ST_TRUE)
-    {
-        DBG_trigger_event = ST_FALSE;
-    }
-
-
-
-    CRP_EVNT_Var_1 = 0;
+    niu_event_twiddle_flag = 0;
 
     /*
         BEGIN: Meteor
     */
-    if( (events_table->Meteor_Status == 1) || (events_table->Meteor_Status == 2) )
+    if((events_table->Meteor_Status == es_Starting) || (events_table->Meteor_Status == es_Ongoing))
     {
         if(_CITIES[events_table->Meteor_Data].owner_idx != events_table->Meteor_Player)
         {
-            events_table->Meteor_Status = 0;
+            events_table->Meteor_Status = es_Nothing;
         }
         else
         {
             player_idx = events_table->Meteor_Player;
             EVNT_MsgDataValue = 0;
-            CRP_EVNT_Var_2 = 0;
+            niu_event_twiddle_type_flag = 0;
             m_current_event = et_Meteor;
             m_event_city_idx = events_table->Meteor_Data;
             m_event_player_idx = player_idx;
@@ -679,23 +698,14 @@ void Event_Twiddle(void)
             {
                 m_event_message_type = 4;
             }
-
-            events_table->Meteor_Status = 0;
-
+            events_table->Meteor_Status = es_Nothing;
             Army_At_City(m_event_city_idx, &troop_count, &troops[0]);
-
             city_population = _CITIES[m_event_city_idx].population;
-
             EVNT_DestroyedBldngs = Apply_Call_The_Void(m_event_city_idx);
-
             EVNT_LostPopulation = (city_population - _CITIES[m_event_city_idx].population);
-
             Army_At_City(m_event_city_idx, &post_event_troop_count, &troops[0]);
-
             EVNT_LostUnitCount = (troop_count - post_event_troop_count);
-
             Show_Event_Message();
-
         }
     }
     /*
@@ -705,14 +715,14 @@ void Event_Twiddle(void)
     /*
         BEGIN: Gift
     */
-    if( (events_table->Gift_Status == 1) || (events_table->Gift_Status == 2) )
+    if((events_table->Gift_Status == es_Starting) || (events_table->Gift_Status == es_Ongoing))
     {
         EVNT_MsgDataValue = events_table->Gift_Data;
-        CRP_EVNT_Var_2 = 0;
+        niu_event_twiddle_type_flag = 0;
         m_current_event = et_Gift;
         m_event_city_idx = 0;
         events_table->Gift_Player = m_event_player_idx;
-        events_table->Gift_Status = 0;
+        events_table->Gift_Status = es_Nothing;
         if(events_table->Gift_Player == _human_player_idx)
         {
             m_event_message_type = 0;
@@ -730,7 +740,6 @@ void Event_Twiddle(void)
             Update_Remap_Gray_Palette();
             Set_Page_Off();
             Main_Screen_Draw();
-            // Gradient_Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);
             DARKEN_SCREEN();
             PageFlip_FX();
             Copy_On_To_Off_Page();
@@ -745,15 +754,15 @@ void Event_Twiddle(void)
     /*
         BEGIN: Disjunction
     */
-    if( (events_table->Disjunction_Status == 1) || (events_table->Disjunction_Status == 2) )
+    if((events_table->Disjunction_Status == es_Starting) || (events_table->Disjunction_Status == es_Ongoing))
     {
         EVNT_MsgDataValue = 0;
-        CRP_EVNT_Var_2 = 0;
+        niu_event_twiddle_type_flag = 0;
         m_current_event = et_Disjunction;
         m_event_city_idx = 0;
         m_event_player_idx = 99;
         m_event_message_type = 3;
-        events_table->Disjunction_Status = 0;
+        events_table->Disjunction_Status = es_Nothing;
         for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
         {
             ptr_players_globals = (uint8_t *)&_players[itr_players].Globals;
@@ -774,7 +783,7 @@ void Event_Twiddle(void)
     /*
         BEGIN: Marriage
     */
-    if( (events_table->marriage_status == 1) || (events_table->marriage_status == 2) )
+    if((events_table->marriage_status == es_Starting) || (events_table->marriage_status == es_Ongoing))
     {
         player_idx = events_table->marriage_player_idx;
         m_event_city_idx = events_table->marriage_neutral_city_idx;
@@ -811,7 +820,7 @@ void Event_Twiddle(void)
         Reset_City_Area_Bitfields();
         Reset_City_Road_Connection_Bitfields();
         Show_Event_Message();
-        events_table->marriage_status = 0;
+        events_table->marriage_status = es_Nothing;
     }
     /*
         END: Marriage
@@ -820,14 +829,14 @@ void Event_Twiddle(void)
     /*
         BEGIN: Earthquake
     */
-    if( (events_table->Earthquake_Status == 1) || (events_table->Earthquake_Status == 2) )
+    if((events_table->Earthquake_Status == es_Starting) || (events_table->Earthquake_Status == es_Ongoing))
     {
         player_idx = events_table->Earthquake_Player;
         m_current_event = et_Earthquake;
         m_event_player_idx = events_table->Earthquake_Player;
         EVNT_MsgDataValue = 0;
         m_event_city_idx = events_table->Earthquake_Data;
-        events_table->Earthquake_Status = 0;
+        events_table->Earthquake_Status = es_Nothing;
         if(events_table->Earthquake_Player == _human_player_idx)
         {
             m_event_message_type = 0;
@@ -862,13 +871,13 @@ void Event_Twiddle(void)
     /*
         BEGIN: Pirates
     */
-    if( (events_table->Pirates_Status == 1) || (events_table->Pirates_Status == 2) )
+    if((events_table->Pirates_Status == es_Starting) || (events_table->Pirates_Status == es_Ongoing))
     {
         player_idx = events_table->Pirates_Player;
         m_current_event = et_Pirates;
         m_event_player_idx = events_table->Pirates_Player;
         EVNT_MsgDataValue = events_table->Pirates_Data;
-        events_table->Pirates_Status = 0;
+        events_table->Pirates_Status = es_Nothing;
         if(events_table->Pirates_Player == _human_player_idx)
         {
             m_event_message_type = 0;
@@ -879,7 +888,7 @@ void Event_Twiddle(void)
         }
         Show_Event_Message();
         _players[player_idx].gold_reserve -= events_table->Pirates_Data;
-        SETMIN(_players[HUMAN_PLAYER_IDX].gold_reserve, 0);
+        SETMIN(_players[player_idx].gold_reserve, 0);
     }
     /*
         END: Pirates
@@ -888,14 +897,12 @@ void Event_Twiddle(void)
     /*
         BEGIN: Plague
     */
-    if( (events_table->Plague_Status == es_Starting) || (events_table->Plague_Status == es_Ongoing) )
+    if((events_table->Plague_Status == es_Starting) || (events_table->Plague_Status == es_Ongoing))
     {
         player_idx = events_table->Plague_Player;
         m_current_event = et_Plague;
         m_event_city_idx = events_table->Plague_Data;
         m_event_player_idx = events_table->Plague_Player;
-        EVNT_MsgDataValue = events_table->Plague_Data;
-        events_table->Plague_Status = 0;
         if(events_table->Plague_Player == _human_player_idx)
         {
             m_event_message_type = 0;
@@ -911,7 +918,7 @@ void Event_Twiddle(void)
                 _CITIES[events_table->Plague_Data].population -= 1;
             }
         }
-        if(events_table->Plague_Status == 1)
+        if(events_table->Plague_Status == es_Starting)
         {
             Show_Event_Message();
             events_table->Plague_Status = es_Ongoing;
@@ -923,18 +930,18 @@ void Event_Twiddle(void)
             {
                 if(events_table->Plague_Duration > 3)
                 {
-                    events_table->Plague_Status = 0;
+                    events_table->Plague_Status = es_Nothing;
                 }
             }
             events_table->Plague_Duration += 1;
             if(_CITIES[events_table->Plague_Data].population < 2)
             {
-                events_table->Plague_Status = 0;
+                events_table->Plague_Status = es_Nothing;
                 _CITIES[events_table->Plague_Data].population = 2;
             }
             if(player_idx == _human_player_idx)
             {
-                if(events_table->Plague_Status == 0)
+                if(events_table->Plague_Status == es_Nothing)
                 {
                     m_event_message_type = emt_Ended;
                     Show_Event_Message();
@@ -949,13 +956,13 @@ void Event_Twiddle(void)
     /*
         BEGIN: Rebellion
     */
-    if( (events_table->Rebellion_Status == es_Starting) || (events_table->Rebellion_Status == es_Ongoing) )
+    if((events_table->Rebellion_Status == es_Starting) || (events_table->Rebellion_Status == es_Ongoing))
     {
         player_idx = events_table->Rebellion_Player;
         m_event_city_idx = events_table->Rebellion_Data;
         m_event_player_idx = events_table->Rebellion_Player;
         m_current_event = et_Rebellion;
-        events_table->Rebellion_Status = 0;
+        events_table->Rebellion_Status = es_Nothing;
         if(events_table->Rebellion_Player == _human_player_idx)
         {
             m_event_message_type = emt_Started;
@@ -964,9 +971,7 @@ void Event_Twiddle(void)
         {
             m_event_message_type = emt_Elsewhere;
         }
-
         Army_At_City(m_event_city_idx, &post_event_troop_count, &troops[0]);
-
         for(itr_players = 0; itr_players < post_event_troop_count; itr_players++)
         {
             if(_unit_type_table[_UNITS[troops[itr_players]].type].race_type < rt_Arcane)
@@ -978,9 +983,7 @@ void Event_Twiddle(void)
                 Dismiss_Unit(troops[itr_players]);
             }
         }
-
         Change_City_Ownership(m_event_city_idx, NEUTRAL_PLAYER_IDX);
-
         Show_Event_Message();
     }
     /*
@@ -990,7 +993,7 @@ void Event_Twiddle(void)
     /*
         BEGIN: Donation
     */
-    if( (events_table->Donation_Status == 1) || (events_table->Donation_Status == 2) )
+    if((events_table->Donation_Status == es_Starting) || (events_table->Donation_Status == es_Ongoing))
     {
         player_idx = events_table->Donation_Player;
         m_current_event = et_Donation;
@@ -1004,7 +1007,7 @@ void Event_Twiddle(void)
         {
             m_event_message_type = 4;
         }
-        events_table->Donation_Status = 0;
+        events_table->Donation_Status = es_Nothing;
         _players[player_idx].gold_reserve += EVNT_MsgDataValue;
         Show_Event_Message();
     }
@@ -1015,7 +1018,7 @@ void Event_Twiddle(void)
     /*
         BEGIN: Depletion
     */
-    if( (events_table->Depletion_Status == 1) || (events_table->Depletion_Status == 2) )
+    if((events_table->Depletion_Status == es_Starting) || (events_table->Depletion_Status == es_Ongoing))
     {
         player_idx = events_table->Depletion_Player;
         m_current_event = et_Depletion;
@@ -1033,7 +1036,7 @@ void Event_Twiddle(void)
         {
             m_event_message_type = 4;
         }
-        events_table->Depletion_Status = 0;
+        events_table->Depletion_Status = es_Nothing;
         Show_Event_Message();
     }
     /*
@@ -1043,7 +1046,7 @@ void Event_Twiddle(void)
     /*
         BEGIN: Minerals
     */
-    if( (events_table->minerals_status == 1) || (events_table->minerals_status == 2) )
+    if((events_table->minerals_status == es_Starting) || (events_table->minerals_status == es_Ongoing))
     {
         player_idx = events_table->minerals_player;
         m_current_event = et_New_Mine;
@@ -1061,7 +1064,7 @@ void Event_Twiddle(void)
         {
             m_event_message_type = 4;
         }
-        events_table->minerals_status = 0;
+        events_table->minerals_status = es_Nothing;
         Show_Event_Message();
     }
     /*
@@ -1071,7 +1074,7 @@ void Event_Twiddle(void)
     /*
         BEGIN: Population Boom
     */
-    if( (events_table->Population_Boom_Status == 1) || (events_table->Population_Boom_Status == 2) )
+    if((events_table->Population_Boom_Status == es_Starting) || (events_table->Population_Boom_Status == es_Ongoing))
     {
         player_idx = events_table->Population_Boom_Player;
         m_current_event = et_Population_Boom;
@@ -1085,10 +1088,10 @@ void Event_Twiddle(void)
         {
             m_event_message_type = 4;
         }
-        if(events_table->Population_Boom_Status == 1)
+        if(events_table->Population_Boom_Status == es_Starting)
         {
             Show_Event_Message();
-            events_table->Population_Boom_Status = 2;
+            events_table->Population_Boom_Status = es_Ongoing;
             events_table->Population_Boom_Duration = 0;
         }
         else
@@ -1097,7 +1100,7 @@ void Event_Twiddle(void)
             {
                 if(events_table->Population_Boom_Duration > 3)
                 {
-                    events_table->Population_Boom_Status = 0;
+                    events_table->Population_Boom_Status = es_Nothing;
                     if(player_idx == _human_player_idx)
                     {
                         m_event_message_type = 1;
@@ -1115,15 +1118,15 @@ void Event_Twiddle(void)
     /*
         BEGIN: Good Moon
     */
-    if( (events_table->Good_Moon_Status == 1) || (events_table->Good_Moon_Status == 2) )
+    if((events_table->Good_Moon_Status == es_Starting) || (events_table->Good_Moon_Status == es_Ongoing))
     {
         m_current_event = et_Good_Moon;
         m_event_player_idx = 99;
         m_event_message_type = emt_Happened;
-        if(events_table->Good_Moon_Status == 1)
+        if(events_table->Good_Moon_Status == es_Starting)
         {
             Show_Event_Message();
-            events_table->Good_Moon_Status = 2;
+            events_table->Good_Moon_Status = es_Ongoing;
             events_table->Good_Moon_Duration = 0;
         }
         else
@@ -1147,15 +1150,15 @@ void Event_Twiddle(void)
     /*
         BEGIN: Bad Moon
     */
-    if( (events_table->Bad_Moon_Status == 1) || (events_table->Bad_Moon_Status == 2) )
+    if((events_table->Bad_Moon_Status == es_Starting) || (events_table->Bad_Moon_Status == es_Ongoing))
     {
         m_current_event = et_Bad_Moon;
         m_event_player_idx = 99;
         m_event_message_type = emt_Happened;
-        if(events_table->Bad_Moon_Status == 1)
+        if(events_table->Bad_Moon_Status == es_Starting)
         {
             Show_Event_Message();
-            events_table->Bad_Moon_Status = 2;
+            events_table->Bad_Moon_Status = es_Ongoing;
             events_table->Bad_Moon_Duration = 0;
         }
         else
@@ -1179,7 +1182,7 @@ void Event_Twiddle(void)
     /*
         BEGIN: Conjunction - Chaos
     */
-    if( (events_table->Conjunction_Chaos_Status == es_Starting) || (events_table->Conjunction_Chaos_Status == es_Ongoing) )
+    if((events_table->Conjunction_Chaos_Status == es_Starting) || (events_table->Conjunction_Chaos_Status == es_Ongoing))
     {
         m_current_event = et_Conjunction_Chaos;
         m_event_player_idx = 99;
@@ -1211,9 +1214,9 @@ void Event_Twiddle(void)
     /*
         BEGIN: Conjunction - Nature
     */
-    if( (events_table->Conjunction_Nature_Status == es_Starting) || (events_table->Conjunction_Nature_Status == es_Ongoing) )
+    if((events_table->Conjunction_Nature_Status == es_Starting) || (events_table->Conjunction_Nature_Status == es_Ongoing))
     {
-        m_current_event = et_Conjunction_Chaos;
+        m_current_event = et_Conjunction_Nature;
         m_event_player_idx = 99;
         m_event_message_type = emt_Happened;
         if(events_table->Conjunction_Nature_Status == es_Starting)
@@ -1243,9 +1246,9 @@ void Event_Twiddle(void)
     /*
         BEGIN: Conjunction - Sorcery
     */
-    if( (events_table->Conjunction_Sorcery_Status == es_Starting) || (events_table->Conjunction_Sorcery_Status == es_Ongoing) )
+    if((events_table->Conjunction_Sorcery_Status == es_Starting) || (events_table->Conjunction_Sorcery_Status == es_Ongoing))
     {
-        m_current_event = et_Conjunction_Chaos;
+        m_current_event = et_Conjunction_Sorcery;
         m_event_player_idx = 99;
         m_event_message_type = emt_Happened;
         if(events_table->Conjunction_Sorcery_Status == es_Starting)
@@ -1275,9 +1278,9 @@ void Event_Twiddle(void)
     /*
         BEGIN: Mana Short
     */
-    if( (events_table->Mana_Short_Status == es_Starting) || (events_table->Mana_Short_Status == es_Ongoing) )
+    if((events_table->Mana_Short_Status == es_Starting) || (events_table->Mana_Short_Status == es_Ongoing))
     {
-        m_current_event = et_Conjunction_Chaos;
+        m_current_event = et_Mana_Short;
         m_event_player_idx = 99;
         m_event_message_type = emt_Happened;
         if(events_table->Mana_Short_Status == es_Starting)

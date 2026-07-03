@@ -819,6 +819,8 @@ enum enum_BANNER_COLOR_ID
 #define ST_TRANSPARENT       0  /*  */
 #define ST_BLACK             1  /*  */
 
+#define ST_DARK              3  /* DARKEN_SCREEN() */
+
 #define ST_LIGHT_GRAY        7  /* used for Sites {nodes, lairs, towers} on the Cartographer Screen */
 
 #define ST_GRAY              8
@@ -889,7 +891,7 @@ enum enum_BANNER_COLOR_ID
 
 // MoO2  Darken_Fill()
 // MoO2  Darken_Main_Screen_Background_()
-#define DARKEN_SCREEN()  { Gradient_Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL); }
+#define DARKEN_SCREEN()  { Gradient_Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_DARK, ST_NULL, ST_NULL, ST_NULL, ST_NULL); }
 
 // TODO  GUI_String_1 = (char *)Near_Allocate_First(100);
 // TODO  GUI_String_2 = (char *)Near_Allocate_Next(100);
