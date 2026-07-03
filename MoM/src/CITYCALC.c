@@ -1658,8 +1658,41 @@ int16_t City_Food_Terrain(int16_t city_idx)
     return (food_units_x2 / 2 / 2);  /* food_units_x2 -> food_units -> food2_units */
 }
 
+
 // WZD o142p07
-// drake178: CTY_GetWildGameFood()
+/**
+ * @brief Computes additional food provided by Wild Game specials in a city's usable area.
+ *
+ * @details
+ * Scans the city's non-corrupted catchment squares and sums food contributed by
+ * the @c TS_WILDGAME terrain special. Each qualifying square contributes either
+ * full or reduced value depending on whether the catchment square is shared with
+ * another city's area.
+ *
+ * Processing summary:
+ * 1. Resolve the city's world plane.
+ * 2. Build the usable catchment coordinate list with @c Get_Useable_City_Area().
+ * 3. For each usable square, test @c GET_TERRAIN_SPECIAL(... ) & TS_WILDGAME.
+ * 4. Convert the square coordinates to a shared-bitfield index.
+ * 5. Add food contribution:
+ *    - Unshared square: +2
+ *    - Shared square: +1
+ *
+ * @param city_idx Index of the city whose Wild Game food bonus is being summed.
+ *
+ * @return Total Wild Game food bonus for the city, in whole food units.
+ *
+ * @note This routine uses the same shared-area bitfield queried by
+ *       @c City_Area_Square_Is_Shared(), but reads it directly via
+ *       @c Test_Bit_Field().
+ * @note Only squares returned by @c Get_Useable_City_Area() are considered, so
+ *       corrupted catchment tiles do not contribute.
+ * @note The return value is consumed directly by city food and maximum-size
+ *       calculations as an additive bonus.
+ *
+ * @see Get_Useable_City_Area(), City_Area_Square_Is_Shared(), City_Food_Production(),
+ *      City_Maximum_Size()
+ */
 int16_t City_Food_WildGame(int16_t city_idx)
 {
     int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -1667,46 +1700,30 @@ int16_t City_Food_WildGame(int16_t city_idx)
     int16_t bit_index = 0;
     int16_t city_wp = 0;
     int16_t useable_map_squares = 0;
-    int16_t food_units = 0;  // _DI_
-    int16_t itr = 0;  // _SI_
-    uint8_t * bit_field = 0;  // _DX_
-
+    int16_t food_units = 0;
+    int16_t itr = 0;
+    uint8_t * bit_field = 0;
     city_wp = _CITIES[city_idx].wp;
-
-    // NOTE: Accounts for 'Corruption'
     useable_map_squares = Get_Useable_City_Area(CITYX(), CITYY(), city_wp, &wx_array[0], &wy_array[0]);
-
     food_units = 0;
-
     for(itr = 0; itr < useable_map_squares; itr++)
     {
-
         if((GET_TERRAIN_SPECIAL(wx_array[itr], wy_array[itr], city_wp) & TS_WILDGAME) != 0)
         {
-
             bit_index = ((wy_array[itr] * WORLD_WIDTH) + wx_array[itr]);
-
             bit_field = (city_area_shared_bits + (city_wp * WORLD_SIZE) );
-
+            /* ~== City_Area_Square_Is_Shared() */
             if(Test_Bit_Field(bit_index, bit_field) == ST_FALSE)
             {
-
                 food_units += 2;
-
             }
             else
             {
-
                 food_units += 1;
-
             }
-
         }
-
     }
-
     return food_units;
-
 }
 
 
@@ -1912,31 +1929,45 @@ int16_t City_Food_Production(int16_t city_idx)
 
 
 // WZD o142p10
-// drake178: CTY_GetMaxPop()
 /*
-; returns the city's maximum population (without cap),
-; based on square food, gaia's blessing, famine,
-; granary, and farmer's market
+vs. MAPGEN  City_Maximum_Size_NewGame()?
 */
-/*
-
-XREF:
-    City_Growth_Rate()
-    Compute_Base_Values_For_Map_Square()
-    NX_j_City_Maximum_Size()
-
-*/
+/**
+ * @brief Calculates the city's maximum sustainable population from food sources.
+ *
+ * @details
+ * Starts from terrain-derived food capacity and then applies a small set of
+ * modifiers that affect how large the city can grow before food limits stop
+ * further expansion.
+ *
+ * Calculation steps:
+ * 1. Begin with @c City_Food_Terrain(city_idx).
+ * 2. Halve the value if the city is under @c FAMINE.
+ * 3. Add +2 if @c GRANARY is built or replaced.
+ * 4. Add +3 if @c FARMERS_MARKET is built or replaced.
+ * 5. Add Wild Game bonus from @c City_Food_WildGame(city_idx).
+ *
+ * @param city_idx Index of the city whose maximum size is being evaluated.
+ *
+ * @return Estimated maximum city population size as used by growth logic.
+ *
+ * @note This function is consumed by city growth calculations rather than
+ *       directly enforcing a hard cap on city population.
+ * @note (OGBUG) The routine does not include a @c FORESTERS_GUILD contribution.
+ * @note (OGBUG) The final value is returned directly; the in-code note indicates
+ *       it may historically have intended an additional division by 2.
+ *
+ * @see City_Food_Terrain(), City_Food_WildGame(), City_Growth_Rate(),
+ *      Compute_Base_Values_For_Map_Square(), City_Maximum_Size_NewGame()
+ */
 int16_t City_Maximum_Size(int16_t city_idx)
 {
-    int16_t maximum_size;  // _SI_
-
+    int16_t maximum_size = 0;
     maximum_size = City_Food_Terrain(city_idx);
-
     if(_CITIES[city_idx].enchantments[FAMINE] > 0)
     {
         maximum_size = (maximum_size / 2);
     }
-
     if(
         (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built)
         ||
@@ -1945,7 +1976,6 @@ int16_t City_Maximum_Size(int16_t city_idx)
     {
         maximum_size += 2;
     }
-
     if(
         (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built)
         ||
@@ -1954,12 +1984,9 @@ int16_t City_Maximum_Size(int16_t city_idx)
     {
         maximum_size += 3;
     }
-
-    // BUGBUG  ¿ no FORESTERS_GUILD ?
-
+    /* OGBUG  ¿ no FORESTERS_GUILD ? */
     maximum_size += City_Food_WildGame(city_idx);
-
-    return maximum_size;
+    return maximum_size;  /* OGBUG be `/ 2` - 2 food === 1 pop */
 }
 
 

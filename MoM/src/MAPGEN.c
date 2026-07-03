@@ -7515,54 +7515,26 @@ int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
 
 // MGC o51p52
 /*
-; returns the amount of food found on the surrounding
-; map squares in a radius equal to a city's catchment area
-; (the base maximum population of a city built there)
-*/
-/*
-Surveyor.c
-    Surveyor_Window_Display()
-        Compute_Base_Values_For_Map_Square(l_mx, l_my, _map_plane, &val, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &is_unexplored);
-        Print(245, 151, str_MaximumPop);
-        Print_Integer_Right(306, 151, val);
-CITYCALC.c
-    void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int16_t *MaxPop, int16_t *production_bonus, int16_t *gold_bonus, int16_t *unit_cost_reduction, int16_t *gold_units, int16_t *magic_units, int16_t *have_nightshade, int16_t *have_mithril, int16_t *have_adamantium, int16_t *have_shore, int16_t *is_unexplored)
-        // HERE: *MaxPop is ...
-        // *MaxPop = Square_Food_x2(curr_wx, itr_wy, wp);
-        // *MaxPop += ((Tile_Food + food2_remainder) / 2);
-        *MaxPop = (*MaxPop / 4);  // ¿ 2 food2 per population unit ?
-        if(map_square_has_city == ST_TRUE)
-            *MaxPop = City_Maximum_Size(city_idx);
-CITYCALC.c
-    int16_t City_Maximum_Size(int16_t city_idx)
-
-¿ TILE_GetFood() ~== Square_Food_x2() ?
-
-could be considered the equivalent of City_Maximum_Size
-given that it's only missing City_Food_WildGame(), but that doesn't matter because we haven't done terrain specials yet
-
+vs. CITYCALC  City_Maximum_Size()?
 */
 int16_t City_Maximum_Size_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t city_area_squares = 0;  // AKA useable_map_squares
-    int16_t city_area_food_units = 0;  // _DI_  AKA food2_units
-    int16_t itr = 0;  // _SI_
-
+    int16_t city_area_squares = 0;
+    int16_t city_area_food_units = 0;
+    int16_t itr = 0;
+    int16_t maximum_size = 0;
     city_area_squares = Get_Useable_City_Area_NewGame(wx, wy, wp, &wx_array[0], &wy_array[0]);
-
     city_area_food_units = 0;
-
     for(itr = 0; itr < city_area_squares; itr++)
     {
-
         city_area_food_units += Square_Food2_NewGame(wx_array[itr], wy_array[itr], wp);
-
     }
-
-    return (city_area_food_units / 2);
-
+    /* N/A - Granary, Farmer's Market, Forester's Guild */
+    /* OGBUG  missing City_Food_WildGame() (but no TS's yet) */
+    maximum_size = (city_area_food_units / 2);
+    return maximum_size;  /* 2 food units ("food2") === 1 population unit */
 }
 
 
