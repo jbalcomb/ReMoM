@@ -148,7 +148,7 @@ static void Cancel_Players_City_Enchantments(int16_t player1, int16_t player2);
 // WZD o86p01
 static void Npc_Diplomacy_Screen(void);
 // WZD o86p02
-void NPC_To_NPC_Treaty_Negotiations__STUB(void);
+void NPC_To_NPC_Treaty_Negotiations(void);
 // WZD o86p03
 static int16_t DIPL_sub_72DB6__STUB(void);
 // DIPL_sub_72DB6()
@@ -164,15 +164,15 @@ void Determine_First_Contacts(void);
 // WZD o87p02
 void NPC_To_Human_Diplomacy__WIP(void);
 // WZD o87p03
-// G_DIPL_NeedForWar()
+void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2);
 // WZD o87p04
-// G_DIPL_SuperiorityWar()
+void G_DIPL_SuperiorityWar(int16_t Player_1, int16_t Player_2);
 // WZD o87p05
 // IDK_Dipl_s73F1C()
 // WZD o87p06
 void Resolve_Delayed_Diplomacy_Orders(void);
 // WZD o87p07
-// DIPL_GetOffMyLawn()
+void DIPL_GetOffMyLawn(int16_t player1, int16_t player2);
 // WZD o87p08
 void Decrease_Peace_Duration(void);
 // WZD o87p09
@@ -2867,8 +2867,8 @@ static int16_t Npc_Proposal__WIP(void)
 {
     int16_t var_6 = 0;
     int16_t other_player = 0;
-    int16_t itr_players = 0;
     int16_t return_value = 0;
+    int16_t itr_players = 0;
     int16_t itr_other_players = 0;  // _SI_
 
     for(itr_players = 1; itr_players < _num_players; itr_players++)
@@ -4833,27 +4833,226 @@ static void Npc_Diplomacy_Screen(void)
 
 
 // WZD o86p02
-// drake178: DIPL_AI_To_AI()
 // MoO2  Module: NPCDIPLO  NPC_To_NPC_Treaty_Negotiations_()
-/*
-; many BUGs and INCONSISTENCIES inside
-; RE-EXPLORE in more context!
-*/
-/*
-
-*/
-void NPC_To_NPC_Treaty_Negotiations__STUB(void)
+/**
+ * @brief Runs AI-to-AI diplomacy negotiations for treaties, spell trades, peace, and alliance war propagation.
+ *
+ * @details
+ * This routine performs autonomous diplomacy updates between non-human wizards.
+ * It evaluates each ordered AI pair, probabilistically opens a negotiation pass,
+ * scores the current relationship, and may escalate the relationship into a
+ * treaty, execute a spell exchange, improve relations, or conclude peace.
+ *
+ * Main negotiation pass:
+ * 1. Early-out if the human is casting @c spl_Spell_Of_Return
+ *    (preserved OGBUG behavior, even though the routine is AI-vs-AI).
+ * 2. Iterate ordered non-human player pairs with active fortresses and contact.
+ * 3. Gate negotiation by a difficulty-scaled random check.
+ * 4. Build @c Base_Score from hidden relation, visible relation, and defender
+ *    personality bias; then derive @c Total_Score using additional random terms.
+ * 5. Add treaty-state bonuses for existing pact/alliance.
+ * 6. If the treaty score is high enough:
+ *    - Prefer upgrading to @c DIPL_Alliance.
+ *    - Otherwise attempt @c DIPL_WizardPact.
+ * 7. If exchange interest is high enough, attempt a one-spell-for-one-spell trade
+ *    using the first spell from each differential list.
+ * 8. After treaty/trade handling, the common follow-up block may:
+ *    - Apply a small positive relation gain.
+ *    - Convert an active war into peace if the peace modifier threshold is met.
+ *    - Decay diplomat modifiers.
+ *    - Invoke downstream strategic helpers (@c G_DIPL_PickSides(),
+ *      @c G_DIPL_NeedForWar(), @c DIPL_GetOffMyLawn()).
+ *
+ * Alliance propagation pass:
+ * After the main pair loop, allied AIs may automatically join wars against a
+ * third active wizard already at war with their ally.
+ *
+ * @return This function returns no value.
+ *
+ * @note The first pass iterates ordered pairs, so player A evaluating player B
+ *       is distinct from player B evaluating player A.
+ * @note Spell trades use the first entry returned by each differential spell
+ *       list rather than optimizing by spell value.
+ * @note The duplicate treaty-threshold comparison for alliance and wizard pact is
+ *       preserved exactly from the live implementation.
+ * @note This routine mutates diplomacy state, treaties, spells known, relation
+ *       modifiers, and potentially war/peace state between AI players.
+ * @note (OGBUG) The early return on the human player's @c spl_Spell_Of_Return
+ *       is unrelated to AI-AI diplomacy but preserved as-is.
+ *
+ * @see Start_Treaty(), Declare_Peace(), Change_Relations(), G_DIPL_PickSides(),
+ *      G_DIPL_NeedForWar(), DIPL_GetOffMyLawn(), Get_Differential_Spell_List(),
+ *      Diplomacy_Player_Gets_Spell(), Declare_War()
+ */
+void NPC_To_NPC_Treaty_Negotiations(void)
 {
+    int16_t Total_Score = 0;
+    int16_t Other_Players_Count = 0;
+    int16_t Trade_Spell_Count = 0;
+    int16_t Trade_For_Spell = 0;
+    int16_t First_Trade_Spell = 0;
+    int16_t Player_Loop_Var = 0;
+    int16_t Base_Score = 0;
+    int16_t itr_players1 = 0;
+    int16_t itr_players2 = 0;
 
-    // ; BUG: what does this have to do with AI-AI diplomacy?
+    /* OGBUG  drake178: what does this have to do with AI-AI diplomacy? */
     if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
     {
-
         return;
-
     }
 
-    
+    for(itr_players1 = 1; itr_players1 < _num_players; itr_players1++)
+    {
+        for(itr_players2 = 1; itr_players2 < _num_players; itr_players2++)
+        {
+            if(_FORTRESSES[itr_players1].active != ST_TRUE)
+            {
+                continue;
+            }
+
+            if(_FORTRESSES[itr_players2].active != ST_TRUE)
+            {
+                continue;
+            }
+
+            if(itr_players1 == itr_players2)
+            {
+                continue;
+            }
+
+            if(Random(15 - _difficulty * 2) != 1)
+            {
+                continue;
+            }
+
+            if(_players[itr_players1].Dipl.Contacted[itr_players2] != ST_TRUE)
+            {
+                continue;
+            }
+
+            Base_Score = (int)_players[itr_players1].Dipl.Hidden_Rel[itr_players2] +
+                         (int)_players[itr_players1].Dipl.Visible_Rel[itr_players2] +
+                         TBL_AI_PRS_IDK_Mod[_players[itr_players2].Personality];
+
+            Total_Score = Base_Score + Random(100);
+            Total_Score += (Random(5) + 3) * _difficulty;
+
+            if(_players[itr_players1].Dipl.Dipl_Status[itr_players2] == DIPL_WizardPact)
+            {
+                Total_Score += 10;
+            }
+
+            if(_players[itr_players1].Dipl.Dipl_Status[itr_players2] == DIPL_Alliance)
+            {
+                Total_Score += 20;
+            }
+
+            if((Total_Score + _players[itr_players1].Dipl.treaty_modifier[itr_players2]) > 150)
+            {
+                if(_players[itr_players1].Dipl.Dipl_Status[itr_players2] != DIPL_Alliance)
+                {
+                    Start_Treaty(itr_players1, itr_players2, DIPL_Alliance);
+                    goto loc_72C33;
+                }
+            }
+
+            if((Total_Score + _players[itr_players1].Dipl.treaty_modifier[itr_players2]) > 150)
+            {
+                if(_players[itr_players1].Dipl.Dipl_Status[itr_players2] != DIPL_WizardPact)
+                {
+                    Start_Treaty(itr_players1, itr_players2, DIPL_WizardPact);
+                    goto loc_72C33;
+                }
+            }
+
+            if((_players[itr_players1].Dipl.exchange_modifier[itr_players2] + 80) < Total_Score)
+            {
+                Trade_Spell_Count = Get_Differential_Spell_List(itr_players1, itr_players2, 1, m_exchange_spell_list);
+                First_Trade_Spell = (int)m_exchange_spell_list[0];
+
+                Other_Players_Count = Get_Differential_Spell_List(itr_players2, itr_players1, 1, m_exchange_spell_list);
+                Trade_For_Spell = (int)m_exchange_spell_list[0];
+
+                if(Trade_Spell_Count > 0 && Other_Players_Count > 0)
+                {
+                    Diplomacy_Player_Gets_Spell(itr_players2, First_Trade_Spell);
+                    Diplomacy_Player_Gets_Spell(itr_players1, Trade_For_Spell);
+                }
+            }
+
+        loc_72C33:
+            if(Random(20) == 1)
+            {
+                Change_Relations(Random(5) + 5, itr_players1, itr_players2, 1, 0, 0);
+            }
+
+            if(_players[itr_players1].Dipl.Dipl_Status[itr_players2] == DIPL_War)
+            {
+                if((m_diplomsg_1_record_sub_number + _players[itr_players1].Dipl.peace_modifier[itr_players2]) > 100)
+                {
+                    Declare_Peace(itr_players1, itr_players2);
+                }
+            }
+
+            Adjust_Diplomat_Modifiers(itr_players1, itr_players2);
+            Adjust_Diplomat_Modifiers(itr_players1, itr_players2);
+            Adjust_Diplomat_Modifiers(itr_players1, itr_players2);
+
+            G_DIPL_PickSides();
+            G_DIPL_NeedForWar(itr_players1, itr_players2);
+
+            if(_players[itr_players1].Dipl.Dipl_Action[itr_players2] == 0)
+            {
+                DIPL_GetOffMyLawn(itr_players2, itr_players1);
+            }
+        }
+    }
+
+    for(itr_players1 = 1; itr_players1 < _num_players; itr_players1++)
+    {
+        for(itr_players2 = 1; itr_players2 < _num_players; itr_players2++)
+        {
+            if(_FORTRESSES[itr_players1].active != ST_TRUE)
+            {
+                continue;
+            }
+
+            if(_FORTRESSES[itr_players2].active != ST_TRUE)
+            {
+                continue;
+            }
+
+            if(_players[itr_players1].Dipl.Dipl_Status[itr_players2] == DIPL_Alliance)
+            {
+                for(Player_Loop_Var = 1; Player_Loop_Var < _num_players; Player_Loop_Var++)
+                {
+                    if(_FORTRESSES[Player_Loop_Var].active != ST_TRUE)
+                    {
+                        continue;
+                    }
+
+                    if(Player_Loop_Var == itr_players1)
+                    {
+                        continue;
+                    }
+
+                    if(Player_Loop_Var == itr_players2)
+                    {
+                        continue;
+                    }
+
+                    if(_players[Player_Loop_Var].Dipl.Dipl_Status[itr_players1] == DIPL_War)
+                    {
+                        if(_players[Player_Loop_Var].Dipl.Dipl_Status[itr_players2] != DIPL_War)
+                        {
+                            Declare_War(itr_players2, Player_Loop_Var);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 }
 
@@ -5808,6 +6007,7 @@ void G_DIPL_SuperiorityWar(int16_t Player_1, int16_t Player_2)
 // WZD o87p05
 // IDK_Dipl_s73F1C()
 
+
 // WZD o87p06
 // MoO2  Module: DIP-SCRN  Resolve_Delayed_Diplomacy_Orders_()
 /*
@@ -5928,7 +6128,7 @@ void DIPL_GetOffMyLawn(int16_t player1, int16_t player2)
             Change_Relations(-Random_DA_Value, player2, player1, relations_type, Violated_City_Index, 0);
         }
     }
-    
+
 }
 
 

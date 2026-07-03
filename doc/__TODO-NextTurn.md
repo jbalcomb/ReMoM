@@ -89,7 +89,8 @@ NPC diplomatic actions, contact discovery, treaty adjustments. Most functions ca
 - [x] **10C** [`Diplomacy_Growth`](../MoM/src/DIPLOMAC.c#L2652) — **done-done**, doc [NextTurn/DIPLOMAC-Diplomacy_Growth.md](NextTurn/DIPLOMAC-Diplomacy_Growth.md). Per-turn wizard-relations drift (pact/alliance goodwill, human military-threat + overextension penalties, gravitate-to-default, symmetrize); verified 1:1 against `ovr085/Diplomacy_Growth.asm`. R1 (overextension `*= 2`→`*= 4`) and R2 (16-bit `too_strong_treshold` → int32_t) fixed; locals lowercased + `Dipl_182h_Field`→`default_relations` this session.
   - Downstream helper: [`Change_Relations`](../MoM/src/DIPLOMAC.c#L3344) (was `Change_Relations__WIP`; on-disk OG `Change_Relations__WIP`) — **done-done**, doc [NextTurn/DIPLOMAC-Change_Relations.md](NextTurn/DIPLOMAC-Change_Relations.md). Central diplomatic-relation applier (reciprocation/personality/charisma scaling, war & overextension, side modifiers, hostility); verified 1:1 against `ovr085/Change_Relations__WIP.asm`. R1 (symmetrize wrote `Dipl_Status`, should be `Visible_Rel`) fixed; `__WIP` dropped + locals renamed (`value`→`relation_value`, `NoCharisma_RelValue`→`relation_value_pre_charisma`, `Rel_Divisor`→`diminishing_returns_divisor`) this session. Preserved OGBUG: Earth-Lore→Declare_War (should be Spell_Of_Mastery).
 - [ ] **10D** [`Determine_First_Contacts`](../MoM/src/DIPLOMAC.c#L5421) — checks whether any wizard-to-wizard first contact triggered this turn.
-- [ ] **10E** `NPC_To_NPC_Treaty_Negotiations__STUB` — still `__STUB`; TODO-commented at [NEXTTURN.c:765](../MoM/src/NEXTTURN.c#L765). Full body not yet reconstructed.
+- [x] **10E** [`NPC_To_NPC_Treaty_Negotiations`](../MoM/src/DIPLOMAC.c#L4837) — **done-done**, doc [NextTurn/DIPLOMAC-NPC_To_NPC_Treaty_Negotiations.md](NextTurn/DIPLOMAC-NPC_To_NPC_Treaty_Negotiations.md). Per-turn AI-vs-AI (NPC-to-NPC) diplomacy: treaty-negotiation nest (score → alliance/pact/spell-exchange, goodwill roll, war→peace, post-passes) + ally-drags-you-to-war nest; verified 1:1 against `ovr086/NPC_To_NPC_Treaty_Negotiations__STUB.asm`, both loop nests' bounds checked. `__STUB` dropped (body fully reconstructed), stale `Change_Relations__WIP` call updated to `Change_Relations`; wired live at [NEXTTURN.c:772](../MoM/src/NEXTTURN.c#L772). Preserved OGBUG: human `spl_Spell_Of_Return` gates the AI-vs-AI pass.
+  - New callees added + committed this session, **quick error-scan only — full 1:1 review still pending**: [`G_DIPL_PickSides`](../MoM/src/DIPLOMAC.c#L3240), [`G_DIPL_NeedForWar`](../MoM/src/DIPLOMAC.c#L5755) (+ [`G_DIPL_SuperiorityWar`](../MoM/src/DIPLOMAC.c#L5902)), [`DIPL_GetOffMyLawn`](../MoM/src/DIPLOMAC.c#L5995). Build clean (Debug, MSVC), no obvious inversions.
 - [ ] **10F** [`NPC_To_Human_Diplomacy__WIP`](../MoM/src/DIPLOMAC.c#L5453) — still `__WIP`. AI-to-human diplomatic action dispatcher.
 - [ ] **10G** [`Resolve_Delayed_Diplomacy_Orders`](../MoM/src/DIPLOMAC.c#L5649) — processes queued diplomacy actions from prior turns.
 - [ ] **10H** [`End_Of_Turn_Diplomacy_Adjustments`](../MoM/src/DIPLOMAC.c#L5719) — final tweaks to `Hostility[]` / `Personality` / `Contacted[]`.
@@ -164,7 +165,7 @@ Next_Turn_Proc()  [NEXTTURN.c:264]
 │   │   ├── All_City_Nightshade_Count()   Wave 9C
 │   │   ├── Diplomacy_Growth()            Wave 10C
 │   │   ├── Determine_First_Contacts()    Wave 10D
-│   │   ├── [NPC_To_NPC_Treaty_Negotiations__STUB — TODO]  Wave 10E
+│   │   ├── NPC_To_NPC_Treaty_Negotiations()  Wave 10E ✓
 │   │   ├── NPC_To_Human_Diplomacy__WIP() Wave 10F
 │   │   ├── Resolve_Delayed_Diplomacy_Orders()  Wave 10G
 │   │   ├── End_Of_Turn_Diplomacy_Adjustments() Wave 10H
@@ -207,7 +208,6 @@ Next_Turn_Proc()  [NEXTTURN.c:264]
 | `Players_Apply_Upkeeps__WIP` | `__WIP` | 7G | Gold/mana upkeep application. |
 | `Diplomacy_Growth_For_Enchantments__WIP` | `__WIP` | 10A | Enchantment-based diplomacy adjustments. |
 | `NPC_To_Human_Diplomacy__WIP` | `__WIP` | 10F | AI-to-human diplomatic actions. |
-| `NPC_To_NPC_Treaty_Negotiations__STUB` | `__STUB` | 10E | Not-yet-reconstructed body (TODO-commented at call site). |
 
 ### Out-of-scope / infrastructure notes
 

@@ -2,11 +2,11 @@
     Diplomacy
 
     WIZARDS.EXE
-        ovr084
-        ovr085
-        ovr086
-        ovr087
-        ovr088
+        ovr084  DIP-SCRN
+        ovr085  ¿ ?
+        ovr086  ¿ ?
+        ovr087  ¿ ?
+        ovr088  ¿ ?
 
 MoO2
     Module: DIPLODEF
@@ -170,7 +170,7 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
 // static void Npc_Diplomacy_Screen(void);
 
 // WZD o86p02
-void NPC_To_NPC_Treaty_Negotiations__STUB(void);
+void NPC_To_NPC_Treaty_Negotiations(void);
 
 // WZD o86p03
 // static int16_t DIPL_sub_72DB6__STUB(void);

@@ -769,7 +769,7 @@ void Next_Turn_Calc(void)
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
-        // TODO  NPC_To_NPC_Treaty_Negotiations__STUB();
+        PHASE(NPC_To_NPC_Treaty_Negotiations());
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
