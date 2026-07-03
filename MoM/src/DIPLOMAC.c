@@ -2843,7 +2843,7 @@ void Diplomacy_Growth(void)
             }
             else
             {
-                _players[itr2].Dipl.Visible_Rel[itr1] = _players[itr1].Dipl.Visible_Rel[itr2];
+                _players[itr1].Dipl.Visible_Rel[itr2] = _players[itr2].Dipl.Visible_Rel[itr1];
             }
         }
     }
