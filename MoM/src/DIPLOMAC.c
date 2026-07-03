@@ -2685,6 +2685,8 @@ static void Diplomacy_Greeting(void)
  *
  * @see Change_Relations(), End_Of_Turn_Diplomacy_Adjustments(), Random()
  */
+void gd_dump_players(const char* point);   /* CLAUDE: GD capture (defined in INITGAME.c) */
+
 void Diplomacy_Growth(void)
 {
     int16_t too_strong_treshold = 0;
@@ -2695,6 +2697,15 @@ void Diplomacy_Growth(void)
     int16_t reaction_value = 0;
     int16_t itr1 = 0;
     int16_t itr2 = 0;
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
+    /* CLAUDE: GD point 620 -- _players BEFORE Diplomacy_Growth (the diplomacy-phase
+     * pass that updates treaty/peace/exchange modifiers, downstream of the
+     * All_Outpost_Population_Growth RNG desync).  Fire once. */
+    { static int gd620_done = 0;
+      if(!gd620_done) { gd620_done = 1; gd_dump_players("620_Diplomacy_Growth_Entry_P"); } }
+
     for(itr1 = 0; itr1 < _num_players; itr1++)
     {
         for(itr2 = (itr1 + 1); itr2 < _num_players; itr2++)
@@ -2787,7 +2798,7 @@ void Diplomacy_Growth(void)
     }
     for(itr1 = 1; itr1 < _num_players; itr1++)
     {
-        for(itr2 = 1; itr2 < _num_players; itr2++)
+        for(itr2 = 0; itr2 < _num_players; itr2++)
         {
             if(Random(105) > abs(_players[itr1].Dipl.Visible_Rel[itr2]))
             {
@@ -2822,9 +2833,9 @@ void Diplomacy_Growth(void)
             }
         }
     }
-    for(itr1 = 1; itr1 < _num_players; itr1++)
+    for(itr1 = 0; itr1 < _num_players; itr1++)
     {
-        for(itr2 = 1; itr2 < _num_players; itr2++)
+        for(itr2 = 0; itr2 < _num_players; itr2++)
         {
             if(itr2 == itr1)
             {
@@ -2836,6 +2847,12 @@ void Diplomacy_Growth(void)
             }
         }
     }
+
+    /* CLAUDE: GD point 621 -- _players AFTER Diplomacy_Growth.  Pairs with 620 to show
+     * whether the treaty/peace/exchange modifier divergence is introduced by this pass
+     * (drawing from the desynced RNG stream) or already present on entry.  Fire once. */
+    { static int gd621_done = 0;
+      if(!gd621_done) { gd621_done = 1; gd_dump_players("621_Diplomacy_Growth_Return_P"); } }
 }
 
 
