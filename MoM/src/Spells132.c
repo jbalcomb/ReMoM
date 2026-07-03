@@ -10,21 +10,25 @@
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/GENDRAW.h"
+#include "../../MoX/src/LBX_Load.h"
+#include "../../MoX/src/MOM_DAT.h"
+#include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_SET.h"
 #include "../../MoX/src/MOX_T4.h"
-#include "../../MoX/src/LBX_Load.h"
-#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_TYPE.h"
+#include "../../MoX/src/random.h"
 #include "../../MoX/src/SOUND.h"
+#include "../../MoX/src/special.h"
 
 #include "AISPELL.h"
+#include "City_ovr55.h"
 #include "CITYCALC.h"
 #include "HIRE.h"
+#include "Items.h"
 #include "Explore.h"
-#include "../../MoX/src/MOM_DEF.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "SCastScr.h"
@@ -34,10 +38,14 @@
 #include "NEXTTURN.h"
 #include "SBookScr.h"
 #include "Spellbook.h"
+#include "Spells129.h"
 #include "Spells137.h"
 #include "Terrain.h"
+#include "TerrType.h"
 #include "UNITTYPE.h"
 #include "UnitMove.h"
+#include "WZD_o059.h"
+#include "WZD_o143.h"
 
 #include "../../ext/stu_compat.h"
 
@@ -371,8 +379,10 @@ void Cast_Incarnation(int16_t player_idx)
 
 }
 
+
 // WZD o132p03
 // CTY_ChaosRift()
+
 
 // WZD o132p04
 void WIZ_MeteorStorm(int Player_Index)
@@ -1222,12 +1232,12 @@ void WIZ_GreatWasting(int16_t Player_Index)
     int16_t XPos = 0;
     int16_t YPos = 0;
     int16_t Plane = 0;
-    int16_t UU_Array1 = 0;
-    int16_t UU_Array2 = 0;
+    int8_t * UU_Array1 = 0;
+    int8_t * UU_Array2 = 0;
     int16_t si = 0;
     int16_t success = 0;
-    UU_Array1 = Near_Allocate_First(50);
-    UU_Array2 = Near_Allocate_Next(50);
+    UU_Array1 = (int8_t *)Near_Allocate_First(50);
+    UU_Array2 = (int8_t *)Near_Allocate_Next(50);
     Tiles_To_Corrupt = Random(3) + 3;
     Tiles_Corrupted = 0;
     while(Tiles_Corrupted < Tiles_To_Corrupt)
@@ -1255,7 +1265,7 @@ void WIZ_GreatWasting(int16_t Player_Index)
             {
                 success = 0;
             }
-            if(Square_Has_Corrruption(XPos, YPos, Plane) != 0)
+            if(Square_Has_Corruption(XPos, YPos, Plane) != 0)
             {
                 success = 0;
             }
@@ -1271,6 +1281,7 @@ void WIZ_GreatWasting(int16_t Player_Index)
 
 // WZD o132p12
 // CTY_GaiasBlessing()
+
 
 // WZD o132p13
 void WIZ_Armageddon(int Player_Index)
@@ -1305,11 +1316,10 @@ void WIZ_Armageddon(int Player_Index)
             {
                 success = 0;
             }
-            if(Terrain_Is_River(XPos, YPos, Plane) != 0)
+            if(Square_Is_River(XPos, YPos, Plane) != 0)
             {
                 success = 0;
             }
-            
             terrain_type = (p_world_map[Plane][YPos][XPos] % NUM_TERRAIN_TYPES);
             if(terrain_type == tt_ChaosNode || terrain_type == tt_SorceryNode || terrain_type == tt_NatureNode)
             {

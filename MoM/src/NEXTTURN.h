@@ -186,7 +186,7 @@ void Heal_Unit(int16_t unit_idx, int16_t fraction, int16_t flag);
 void Heal_All_Units(void);
 
 // WZD o140p24
-void Diplomacy_Growth_For_Enchantments__WIP(void);
+void Diplomacy_Growth_For_Enchantments(void);
 
 // WZD o140p25
 void Do_All_Units_XP_Check(void);

@@ -88,7 +88,7 @@ Outpost growth, city changes, nightshade counts, and building removal.
 ### Wave 10 — Diplomacy cluster
 NPC diplomatic actions, contact discovery, treaty adjustments. Most functions carry `__WIP` / `__STUB` suffixes.
 
-- [ ] **10A** [`Diplomacy_Growth_For_Enchantments__WIP`](../MoM/src/NEXTTURN.c#L4050) — still `__WIP`. Adjusts diplomacy based on active overland enchantments.
+- [x] **10A** [`Diplomacy_Growth_For_Enchantments`](../MoM/src/NEXTTURN.c#L4030) — **done-done** (`__WIP` dropped), doc [NextTurn/NEXTTURN-Diplomacy_Growth_For_Enchantments.md](NextTurn/NEXTTURN-Diplomacy_Growth_For_Enchantments.md). Per-turn, per-player: reset casting-cost cache + `Change_Relations_For_Enchantments` for each of 22 active global enchantments (weight `10`, or `2` for Spell of Mastery), with `WIZ_GreatWasting`/`WIZ_MeteorStorm`/`WIZ_Armageddon` map effects first. Verified 1:1 against `ovr140/Diplomacy_Growth_For_Enchantments__WIP.asm`. This session: fixed a compile-blocking `]` typo (Wind Mastery block), dropped the IDA `j_` prefix off the three `WIZ_*` thunk calls, and those callees are now reconstructed ([Spells132.c](../MoM/src/Spells132.c)); builds clean.
 - [x] **10B** [`Determine_Offer`](../MoM/src/NEXTTURN.c#L3359) — **done-done**, doc [NextTurn/NEXTTURN-Determine_Offer.md](NextTurn/NEXTTURN-Determine_Offer.md). Per-player wandering-merchant / mercenary / hero-for-hire offers (human popups, AI auto-resolve); verified 1:1 against `ovr140/Determine_Offer.asm`, no divergences. Preserved OGBUGs: B1 (`player_fame` never per-player), B2 (item affordability tested before Charismatic discount). `IDK`→`offer_chance_pct` + locals lowercased this session.
 - [x] **10C** [`Diplomacy_Growth`](../MoM/src/DIPLOMAC.c#L2652) — **done-done**, doc [NextTurn/DIPLOMAC-Diplomacy_Growth.md](NextTurn/DIPLOMAC-Diplomacy_Growth.md). Per-turn wizard-relations drift (pact/alliance goodwill, human military-threat + overextension penalties, gravitate-to-default, symmetrize); verified 1:1 against `ovr085/Diplomacy_Growth.asm`. R1 (overextension `*= 2`→`*= 4`) and R2 (16-bit `too_strong_treshold` → int32_t) fixed; locals lowercased + `Dipl_182h_Field`→`default_relations` this session.
   - Downstream helper: [`Change_Relations`](../MoM/src/DIPLOMAC.c#L3344) (was `Change_Relations__WIP`; on-disk OG `Change_Relations__WIP`) — **done-done**, doc [NextTurn/DIPLOMAC-Change_Relations.md](NextTurn/DIPLOMAC-Change_Relations.md). Central diplomatic-relation applier (reciprocation/personality/charisma scaling, war & overextension, side modifiers, hostility); verified 1:1 against `ovr085/Change_Relations__WIP.asm`. R1 (symmetrize wrote `Dipl_Status`, should be `Visible_Rel`) fixed; `__WIP` dropped + locals renamed (`value`→`relation_value`, `NoCharisma_RelValue`→`relation_value_pre_charisma`, `Rel_Divisor`→`diminishing_returns_divisor`) this session. Preserved OGBUG: Earth-Lore→Declare_War (should be Spell_Of_Mastery).
@@ -163,7 +163,7 @@ Next_Turn_Proc()  [NEXTTURN.c:264]
 │   │   ├── EMMDATAH_Map()                (verified 1:1, no walkthrough)
 │   │   ├── All_Outpost_Population_Growth()  Wave 9A
 │   │   ├── Apply_City_Changes()          Wave 9B
-│   │   ├── Diplomacy_Growth_For_Enchantments__WIP()  Wave 10A
+│   │   ├── Diplomacy_Growth_For_Enchantments()       Wave 10A
 │   │   ├── [Grand Vizier — TODO]
 │   │   ├── Determine_Offer()             Wave 10B
 │   │   ├── All_City_Nightshade_Count()   Wave 9C
@@ -210,7 +210,7 @@ Next_Turn_Proc()  [NEXTTURN.c:264]
 | `Chancellor_Screen__WIP` | `__WIP` | 3A | End-of-turn Chancellor summary. |
 | `City_Screen__WIP` | `__WIP` | 3B | Per-city popup for building-complete messages. |
 | `Players_Apply_Upkeeps__WIP` | `__WIP` | 7G | Gold/mana upkeep application. |
-| `Diplomacy_Growth_For_Enchantments__WIP` | `__WIP` | 10A | Enchantment-based diplomacy adjustments. |
+| `Diplomacy_Growth_For_Enchantments` | done | 10A | Enchantment-based diplomacy adjustments. Reconstructed & verified 1:1. |
 | `NPC_To_Human_Diplomacy__WIP` | `__WIP` | 10F | AI-to-human diplomatic actions. |
 
 ### Out-of-scope / infrastructure notes
