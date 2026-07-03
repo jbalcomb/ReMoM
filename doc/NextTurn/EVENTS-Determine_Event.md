@@ -60,7 +60,7 @@ Line refs are production [EVENTS.c](../../MoM/src/EVENTS.c); cross-checked again
 ## ReMoM additions (not OG)
 
 - **`DBG_trigger_event` hooks** ([295](../../MoM/src/EVENTS.c#L295) force `event_pressure_accumulator = 512`; [314](../../MoM/src/EVENTS.c#L314) force `player_idx = HUMAN`) — debug triggers, not in the asm.
-- **`if(event_type > ST_UNDEFINED)` guard before `Get_Event_Victim`** ([309-312](../../MoM/src/EVENTS.c#L309-L312)) — a defensive guard added to silence MSVC **C6385** (invalid-read on `m_event_good_array`). Behaviorally a no-op: `event_type` was just set by `Random(18)` (always `0..17`), so the guard is always true and the asm's unconditional call is preserved in effect.
+- **`if(event_type > ST_UNDEFINED)` guard before `Get_Event_Victim`** ([309-312](../../MoM/src/EVENTS.c#L309-L312)) — a defensive guard added to silence MSVC **C6385** (invalid-read on `m_event_good_array`). Behaviorally a no-op: `event_type` was just set by `Random(18)` (1-based, always `1..18` — the event ids directly), so the guard is always true and the asm's unconditional call is preserved in effect.
 
 ## Related references
 

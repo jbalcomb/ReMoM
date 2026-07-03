@@ -1630,36 +1630,60 @@ void Get_Event_Message(void)
 
 
 // WZD s081p03
-// EVNT_SelectTarget()
 // MoO2  Module: EVENTS  Get_Event_Victim_()
-/*
-; selects a target for an event using a weighted roll
-; based on either the strength of the remaining wizards
-; (bad events), or the inverse of that (good events)
-; returns the selected target, or -1 if none qualify
-*/
-/*
-
-*/
+/**
+ * @brief Selects a target wizard for a random event using weighted power.
+ *
+ * @details
+ * Builds per-player selection weights from each wizard's astrologer totals:
+ * magic power, spell research, and army strength. The @p event_type argument
+ * controls whether strong or weak wizards are favored.
+ *
+ * Weight construction:
+ * - Base weight per active player: 
+ *   @code
+ *   astrologer.magic_power + astrologer.spell_research + astrologer.army_strength
+ *   @endcode
+ * - For good events (@c event_type == ST_TRUE), weights are inverted as
+ *   @c (600 - weight), then clamped at 0.
+ * - Total weight is repeatedly halved across all candidates until the sum fits
+ *   within RNG range constraints (<= 500).
+ *
+ * Selection:
+ * - If the final total weight is < 1, returns @c ST_UNDEFINED (no valid victim).
+ * - Otherwise rolls a random remainder in the total-weight range and walks
+ *   player indices from @c HUMAN_PLAYER_IDX upward, subtracting weights until
+ *   the selected bucket is reached.
+ *
+ * @param event_type Event polarity selector used by caller-provided alignment:
+ *                   typically @c ST_TRUE for good-event targeting behavior and
+ *                   @c ST_FALSE for bad-event targeting behavior.
+ *
+ * @return Selected player index in the active player range, or
+ *         @c ST_UNDEFINED when all candidate weights collapse to zero.
+ *
+ * @note Uses only the first @c _num_players entries and ignores inactive slots.
+ * @note The scan starts from @c HUMAN_PLAYER_IDX by design of legacy logic.
+ * @note RNG calls use @c Random(), which returns a 1-based result in this codebase.
+ *
+ * @see Determine_Event(), m_event_good_array, Random()
+ */
 int16_t Get_Event_Victim(int16_t event_type)
 {
     int16_t wizard_power[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
-    int16_t In_RNG_Range = 0;
+    int16_t weight_total_in_range = 0;  /* exit flag for the weight-scaling loop */
     int16_t victim_idx = 0;
-    int16_t Weights_Remainder = 0;
-    int16_t itr = 0;  // _SI_
-    int16_t IDK = 0;  // _DI_
-
+    int16_t roll_remaining = 0;         /* the roulette-wheel position for the weighted pick */
+    int16_t itr = 0;
+    int16_t total_weight = 0;           /* running weight sum */
     for(itr = 0; itr < NUM_PLAYERS; itr++)
     {
         wizard_power[itr] = 0;
     }
-
     for(itr = 0; itr < _num_players; itr++)
     {
         wizard_power[itr] = (_players[itr].astrologer.magic_power + _players[itr].astrologer.spell_research + _players[itr].astrologer.army_strength);
     }
-
     if(event_type == ST_TRUE)
     {
         for(itr = 0; itr < _num_players; itr++)
@@ -1671,19 +1695,15 @@ int16_t Get_Event_Victim(int16_t event_type)
             }
         }
     }
-
-    In_RNG_Range = ST_FALSE;
-
-    while(In_RNG_Range == ST_FALSE)
+    weight_total_in_range = ST_FALSE;
+    while(weight_total_in_range == ST_FALSE)
     {
-        IDK = 0;
-
+        total_weight = 0;
         for(itr = 0; itr < _num_players; itr++)
         {
-            IDK += wizard_power[itr];
+            total_weight += wizard_power[itr];
         }
-
-        if(IDK > 500)
+        if(total_weight > 500)
         {
             for(itr = 0; itr < _num_players; itr++)
             {
@@ -1692,39 +1712,28 @@ int16_t Get_Event_Victim(int16_t event_type)
         }
         else
         {
-            In_RNG_Range = ST_TRUE;
+            weight_total_in_range = ST_TRUE;
         }
-
     }
-
-    if(IDK < 1)
+    if(total_weight < 1)
     {
         return ST_UNDEFINED;
     }
-
-    Weights_Remainder = (Random(IDK) - 1);
-
+    roll_remaining = (Random(total_weight) - 1);
     victim_idx = HUMAN_PLAYER_IDX;
-
-    while(Weights_Remainder >= 0)
+    while(roll_remaining >= 0)
     {
-
         if((_num_players - 1) <= victim_idx)
         {
             break;
         }
-
-        Weights_Remainder -= wizard_power[victim_idx];
-
-        if(Weights_Remainder >= 0)
+        roll_remaining -= wizard_power[victim_idx];
+        if(roll_remaining >= 0)
         {
             victim_idx++;
         }
-
     }
-
     return victim_idx;
-
 }
 
 
