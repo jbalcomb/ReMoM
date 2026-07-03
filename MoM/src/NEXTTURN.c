@@ -4522,21 +4522,42 @@ void Do_All_Units_XP_Check(void)
 
 
 // WZD o140p26
+/**
+ * @brief Randomly converts existing volcano tiles back into mountains.
+ *
+ * @details
+ * Scans every map square on every plane, identifies tiles whose terrain type
+ * is currently @c tt_Volcano, and gives each such tile an independent 3%
+ * chance to cool off during this turn. When the roll succeeds, the tile is
+ * converted to a mountain via @c Set_Terrain_Type_Mountain().
+ *
+ * After the full-world pass completes, the function refreshes volcano-related
+ * bookkeeping by calling @c Volcano_Counts().
+ *
+ * @return This function returns no value.
+ *
+ * @note Terrain classification is derived from
+ *       @c p_world_map[plane][y][x] % NUM_TERRAIN_TYPES.
+ * @note The cooling check is stochastic and performed once per volcano tile
+ *       per end-of-turn invocation.
+ * @note This function affects both Arcanus and Myrror by iterating
+ *       @c NUM_PLANES.
+ *
+ * @see Next_Turn_Calc(), Set_Terrain_Type_Mountain(), Volcano_Counts()
+ */
 void Cool_Off_Volcanoes(void)
 {
-    int16_t terrain_type;
-    int16_t itr_wp;
-    int16_t itr_wy;  // _DI_
-    int16_t itr_wx;  // _SI_
-
+    int16_t terrain_type = 0;
+    int16_t itr_wp = 0;
+    int16_t itr_wy = 0;
+    int16_t itr_wx = 0;
     for(itr_wp = 0; itr_wp < NUM_PLANES; itr_wp++)
     {
         for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
         {
             for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
             {
-                terrain_type = (GET_TERRAIN_TYPE(itr_wx, itr_wy, itr_wp) % _TerType_Count);
-
+                terrain_type = (p_world_map[itr_wp][itr_wy][itr_wx] % NUM_TERRAIN_TYPES);
                 if(terrain_type == tt_Volcano)
                 {
                     if(Random(100) < 3)
@@ -4547,7 +4568,6 @@ void Cool_Off_Volcanoes(void)
             }
         }
     }
-
     Volcano_Counts();
 }
 

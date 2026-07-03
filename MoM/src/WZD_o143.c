@@ -83,20 +83,8 @@ void Set_Terrain_Type_Volcano_With_Owner(int16_t wx, int16_t wy, int16_t wp, int
 
 }
 
+
 // WZD o143p02
-// drake178: TILE_CountVolcanoes()
-/*
-
-XREF:
-    j_TILE_CountVolcanoes()
-        Cast_ChangeTerain()
-        Cast_ChangeTerain()
-        Cast_RaiseVolcano()
-        WIZ_Armageddon()
-        Apply_City_Changes()
-        Cool_Off_Volcanoes()
-
-*/
 void Volcano_Counts(void)
 {
     int16_t volcano_count_array[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -105,37 +93,30 @@ void Volcano_Counts(void)
     int16_t itr_players = 0;
     int16_t itr_wx = 0;
     int16_t itr_wp = 0;
-
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
         volcano_count_array[itr_players] = 0;
     }
-
     for(itr_wp = 0; itr_wp < NUM_PLANES; itr_wp++)
     {
         for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
         {
             for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
             {
-
-                // player_idx = (_map_square_flags[((itr_wp * WORLD_SIZE) + (itr_wy * WORLD_WIDTH) + itr_wx)] & 0x7);
                 player_idx = (GET_MAP_SQUARE_FLAG(itr_wx, itr_wy, itr_wp) & 7 /*0b00000111*/);
-
                 if(player_idx > HUMAN_PLAYER_IDX)
                 {
                     volcano_count_array[(player_idx - 1)] += 1;
                 }
-
             }
         }
     }
-
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
         _players[itr_players].volcanoes = volcano_count_array[itr_players];
     }
-
 }
+
 
 // WZD o143p03
 void Set_Terrain_Type_Grasslands(int16_t wx, int16_t wy, int16_t wp)
