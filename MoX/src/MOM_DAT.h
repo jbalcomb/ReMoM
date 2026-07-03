@@ -1351,7 +1351,7 @@ struct s_WIZ_DIPL
     /* 0042 */ int8_t Dipl_Action[NUM_PLAYERS];     /* option/order/action  MoO2  "Diplomacy Orders" */
     /* 0048 */ int16_t DA_Spell[NUM_PLAYERS];
     /* 0054 */ int8_t DA_City[NUM_PLAYERS];
-    /* 005A */ int8_t Default_Rel[NUM_PLAYERS];         /* 1oom: relation2 */
+    /* 005A */ int8_t Default_Rel[NUM_PLAYERS];         /* default (baseline) relations */ /* 1oom: relation2 */
     /* 0060 */ int8_t Contact_Progress[NUM_PLAYERS];    /* ¿ 1oom have_met[] {0,1,2} ? */
     /* 0066 */ int8_t Broken_Treaty[NUM_PLAYERS];       /* 1oom: broken_treaty */
     // /* 006C */ int16_t Unknown_194h[NUM_PLAYERS];

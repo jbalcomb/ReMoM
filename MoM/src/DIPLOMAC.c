@@ -2648,60 +2648,70 @@ static void Diplomacy_Greeting(void)
 
 
 // WZD o85p02
-// drake178: DIPL_Gravitation()
 // MoO2  Module: DIPLOMAC  Diplomacy_Growth_()
-/*
-; process wizard pact and alliance relation
-; gravitation, military and city overextension, and
-; gravitation towards default relation
-; RE-EXPLORE!
-*/
-/*
-
-*/
+/**
+ * @brief Applies periodic diplomacy drift and relation adjustments between wizards.
+ *
+ * @details
+ * This routine performs several end-of-turn diplomacy maintenance passes:
+ *
+ * 1. Treaty goodwill growth pass:
+ *    - For each player pair, with 50% chance, increment relations when they are
+ *      in a pact/alliance (larger random delta for alliances).
+ * 2. Human military-threat penalty pass:
+ *    - If the human has non-zero army strength, each wizard with weaker army
+ *      can apply a probabilistic negative relation hit against the human
+ *      (type 7 adjustment).
+ * 3. Human expansion pressure pass (every even turn):
+ *    - If human city count exceeds a land-size-derived threshold, compute a
+ *      negative reaction value and apply it (type 14 adjustment) to contacted,
+ *      non-allied relationships.
+ * 4. Gravitation toward default relations:
+ *    - For non-human pairs without active strength pressure
+ *      (@c DA_Strength == 0), visible relations drift toward each pair's
+ *      default relation value, with periodic decay in the opposite direction.
+ * 5. Symmetry and diagonal normalization:
+ *    - Enforce @c Visible_Rel[i][i] = 0 and mirror pairwise relation values.
+ *
+ * @return This function returns no value.
+ *
+ * @note Uses randomized adjustments via @c Random(); outcomes vary by turn.
+ * @note Relation values are clamped to [-100, 100] during gravitation.
+ * @note The city-count expansion pass recomputes human city count per outer
+ *       iteration, preserving original behavior.
+ * @note Human expansion penalties are not applied uniformly: when @c itr1 is
+ *       human, the computed reaction is stronger than for non-human sources.
+ * @note Final mirroring pass ensures matrix consistency for visible relations.
+ *
+ * @see Change_Relations__WIP(), End_Of_Turn_Diplomacy_Adjustments(), Random()
+ */
 void Diplomacy_Growth(void)
 {
-    int16_t Too_Strong_Treshold = 0;
+    int16_t too_strong_treshold = 0;
     int16_t human_army_strength = 0;
-    int16_t Gravitation = 0;
+    int16_t gravitation = 0;
     int16_t human_player_city_count = 0;
-    int16_t Dipl_182h_Field = 0;
-    int16_t Reaction_Value = 0;
-    int16_t itr1 = 0;  // _SI_
-    int16_t itr2 = 0;  // _DI_
-
-    // ; for each wizard, generate a +1-3 diplomatic reaction
-    // ; towards pacted wizards, or a +1-6 one towards allied
-    // ; wizards with a 50% chance
+    int16_t default_relations = 0;
+    int16_t reaction_value = 0;
+    int16_t itr1 = 0;
+    int16_t itr2 = 0;
     for(itr1 = 0; itr1 < _num_players; itr1++)
     {
-
         for(itr2 = (itr1 + 1); itr2 < _num_players; itr2++)
         {
-
             if(Random(2) == 1)
             {
-
                 if(_players[itr1].Dipl.Dipl_Status[itr2] == DIPL_WizardPact)
                 {
-
                     Change_Relations__WIP(Random(3), itr1, itr2, 0, ST_NULL, ST_NULL);
-
                 }
-
                 if(_players[itr1].Dipl.Dipl_Status[itr2] == DIPL_Alliance)
                 {
-
                     Change_Relations__WIP(Random(6), itr1, itr2, 0, ST_NULL, ST_NULL);
-
                 }
-
             }
-
         }
-
     }
-
     /*
         OSG  Page 374  (PDG Page 375)
             Human Threat: Milityary Build Up
@@ -2714,190 +2724,118 @@ void Diplomacy_Growth(void)
                     is based on a sliding scale depending on the strength ratio of your two armed forces.
     */
     human_army_strength = _players[HUMAN_PLAYER_IDX].astrologer.army_strength;
-
     if(human_army_strength > 0)
     {
-
         for(itr1 = 0; itr1 < _num_players; itr1++)
         {
-
             if(
                 (_players[itr1].astrologer.army_strength < human_army_strength)
                 &&
                 (_players[itr1].astrologer.army_strength > 0)
             )
             {
-
-                Too_Strong_Treshold = ((human_army_strength * 50) / _players[itr1].astrologer.army_strength);
-
+                too_strong_treshold = (((int32_t)human_army_strength * 50) / _players[itr1].astrologer.army_strength);
                 if(
-                    (Random(100) >= Too_Strong_Treshold)
+                    (Random(100) >= too_strong_treshold)
                     &&
                     (Random(20) == 1)  /* 5% chance */
                 )
                 {
-
                     Change_Relations__WIP(-10, HUMAN_PLAYER_IDX, itr1, 7, ST_NULL, ST_NULL);
-
                 }
-
             }
-
         }
-
     }
-
-    // ; trigger overextension reactions towards all other
-    // ; wizards based on the human player's city count?
     if((_turn % 2) == 0)
     {
-
         for(itr1 = 0; itr1 < _num_players; itr1++)
         {
-
             human_player_city_count = 0;
-
             for(itr2 = 0; itr2 < _cities; itr2++)
             {
-
                 if(_CITIES[itr2].owner_idx == HUMAN_PLAYER_IDX)
                 {
-
                     human_player_city_count++;
-
                 }
-
             }
-
             if(
                 (((_landsize + 1) * 3) < human_player_city_count)
                 &&
                 (Random(4) == 1)
             )
             {
-
-                Reaction_Value = (((-(human_player_city_count - ((_landsize + 1) * 3)) / ((_landsize + 6) - _difficulty)) * Random(4)) / 3);
-
-                Reaction_Value *= 2;
-
+                reaction_value = (((-(human_player_city_count - ((_landsize + 1) * 3)) / ((_landsize + 6) - _difficulty)) * Random(4)) / 3);
+                reaction_value *= 4;
                 if(itr1 != HUMAN_PLAYER_IDX)
                 {
-
-                    Reaction_Value /= 2;
-
+                    reaction_value /= 2;
                 }
-
-                SETMIN(Reaction_Value, -15);
-
+                SETMIN(reaction_value, -15);
                 for(itr2 = 1; itr2 < _num_players; itr2++)
                 {
-
                     if(
                         (_players[itr1].Dipl.Contacted[itr2] == ST_TRUE)
                         &&
                         (_players[itr1].Dipl.Dipl_Status[itr2] != DIPL_Alliance)
                     )
                     {
-
-                        Change_Relations__WIP(Reaction_Value, itr1, itr2, 14, ST_NULL, ST_NULL);
-
+                        Change_Relations__WIP(reaction_value, itr1, itr2, 14, ST_NULL, ST_NULL);
                     }
-
                 }
-
             }
-
         }
-
     }
-
-    // ; gravitate visible relations toward default relations
     for(itr1 = 1; itr1 < _num_players; itr1++)
     {
-
         for(itr2 = 1; itr2 < _num_players; itr2++)
         {
-
             if(Random(105) > abs(_players[itr1].Dipl.Visible_Rel[itr2]))
             {
-
-                Gravitation = Random(2);
-
+                gravitation = Random(2);
             }
             else
             {
-
-                Gravitation = 0;
-
+                gravitation = 0;
             }
-
             if(
                 (itr2 != itr1)
                 &&
                 (_players[itr1].Dipl.DA_Strength[itr2] == 0)
             )
             {
-
-                Dipl_182h_Field = _players[itr1].Dipl.Default_Rel[itr2];
-
-                if(_players[itr1].Dipl.Visible_Rel[itr2] < Dipl_182h_Field)
+                default_relations = _players[itr1].Dipl.Default_Rel[itr2];
+                if(_players[itr1].Dipl.Visible_Rel[itr2] < default_relations)
                 {
-                    
-                    _players[itr1].Dipl.Visible_Rel[itr2] += Gravitation;
-
-                    SETMAX(_players[itr1].Dipl.Visible_Rel[itr2], (int8_t)Dipl_182h_Field);
-
+                    _players[itr1].Dipl.Visible_Rel[itr2] += gravitation;
+                    SETMAX(_players[itr1].Dipl.Visible_Rel[itr2], (int8_t)default_relations);
                 }
                 else
                 {
-
                     if((_turn % 10) == 0)
                     {
-                    
-                        _players[itr1].Dipl.Visible_Rel[itr2] -= Gravitation;
-
-                        SETMIN(_players[itr1].Dipl.Visible_Rel[itr2], (int8_t)Dipl_182h_Field);
-
+                        _players[itr1].Dipl.Visible_Rel[itr2] -= gravitation;
+                        SETMIN(_players[itr1].Dipl.Visible_Rel[itr2], (int8_t)default_relations);
                     }
-
                 }
-
                 SETMIN(_players[itr1].Dipl.Visible_Rel[itr2], -100);
-
                 SETMAX(_players[itr1].Dipl.Visible_Rel[itr2], 100);
-
             }
-
         }
-
     }
-
-    // ; make visible relations symmetrical, and self fields
-    // ; zero
     for(itr1 = 1; itr1 < _num_players; itr1++)
     {
-
         for(itr2 = 1; itr2 < _num_players; itr2++)
         {
-
             if(itr2 == itr1)
             {
-
                 _players[itr1].Dipl.Visible_Rel[itr2] = 0;
-
             }
             else
             {
-
                 _players[itr2].Dipl.Visible_Rel[itr1] = _players[itr1].Dipl.Visible_Rel[itr2];
-
             }
-
         }
-        
     }
-
-
 }
 
 
