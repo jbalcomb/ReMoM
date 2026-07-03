@@ -951,10 +951,10 @@ int16_t Create_Unit(int16_t unit_type, int16_t owner_idx, int16_t wx, int16_t wy
     did_create_unit = ST_FALSE;
 
     if(
-        (owner_idx == HUMAN_PLAYER_IDX)
-        ||
+        (owner_idx != HUMAN_PLAYER_IDX)
+        &&
         (_units > 950)
-        ||
+        &&
         (R_Param != 2000)
     )
     {
