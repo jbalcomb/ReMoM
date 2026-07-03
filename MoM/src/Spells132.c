@@ -375,7 +375,82 @@ void Cast_Incarnation(int16_t player_idx)
 // CTY_ChaosRift()
 
 // WZD o132p04
-// WIZ_MeteorStorm()
+void WIZ_MeteorStorm(int Player_Index)
+{
+    int16_t Building_List[36] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Unit_List[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Items[3] = { 0, 0, 0 };
+    int16_t Item_Count = 0;
+    int16_t unit_owner_idx = 0;
+    int16_t Unit_Count = 0;
+    int16_t itr_units = 0;
+    char * unit_flags = NULL;
+    int16_t i = 0;
+    unit_flags = (char * /* near */)Near_Allocate_First(_units);
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        unit_flags[itr_units] = 0;
+    }
+    for(itr_units = 0; itr_units < _cities; itr_units++)
+    {
+        Army_At_City(itr_units, &Unit_Count, Unit_List);
+        for(i = 0; i < Unit_Count; i++)
+        {
+            unit_flags[Unit_List[i]] = 1;
+        }
+        if(Apply_Automatic_Spell_Counters(spl_Meteor_Storms, itr_units, 0, 0) != 0)
+        {
+            if(_CITIES[itr_units].owner_idx != Player_Index)
+            {
+                for(i = 0; i < 36; i++)
+                {
+                    Building_List[i] = 0;
+                }
+                Apply_Damage_To_City(itr_units, 0, 1, Building_List);
+                if(_CITIES[itr_units].owner_idx == HUMAN_PLAYER_IDX)
+                {
+                    for(i = 0; i < 36; i++)
+                    {
+                        if(Building_List[i] > 0 && MSG_BldLost_Count < 20)
+                        {
+                            MSG_BldLost_Array[(int)MSG_BldLost_Count].city_idx = (char)itr_units;
+                            MSG_BldLost_Array[(int)MSG_BldLost_Count].bldg_type_idx = Building_List[i];
+                            MSG_BldLost_Count++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        if(unit_flags[itr_units] == 0)
+        {
+            unit_owner_idx = _UNITS[itr_units].owner_idx;
+            Item_Count = 0;
+            item_pool_in_process = ST_TRUE;
+            m_item_wx = _UNITS[itr_units].wx;
+            m_item_wy = _UNITS[itr_units].wy;
+            m_item_wp = _UNITS[itr_units].wp;
+            Cast_Attack_Spell_On_Enemy_Unit(itr_units, spl_Call_Chaos, &Item_Count, Items, 0);
+            Player_Process_Item_Pool(unit_owner_idx, Item_Count, Items);
+            if(unit_owner_idx == HUMAN_PLAYER_IDX)
+            {
+                if(_UNITS[itr_units].owner_idx == -1)
+                {
+                    if(MSG_UnitKilled_Count < 20)
+                    {
+                        MSG_UnitKilled_Array[(int)MSG_UnitKilled_Count].Unit_Type = _UNITS[itr_units].type;
+                        MSG_UnitKilled_Array[(int)MSG_UnitKilled_Count].City = -1;
+                        MSG_UnitKilled_Array[(int)MSG_UnitKilled_Count].Spell = spl_Meteor_Storms;
+                        MSG_UnitKilled_Count++;
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 // WZD o132p05
 // CTY_StreamOfLife()

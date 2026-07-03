@@ -32,7 +32,7 @@ void Cast_Incarnation(int16_t player_idx);
 // CTY_ChaosRift()
 
 // WZD o132p04
-// WIZ_MeteorStorm()
+void WIZ_MeteorStorm(int Player_Index);
 
 // WZD o132p05
 // CTY_StreamOfLife()
