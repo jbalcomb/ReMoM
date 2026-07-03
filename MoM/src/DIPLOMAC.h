@@ -140,7 +140,7 @@ void Diplomacy_Growth(void);
 // static void Adjust_Diplomat_Modifiers(int16_t player1, int16_t player2);
 
 // WZD o85p12
-void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender_idx, int16_t type, int16_t city_idx, int16_t spell_idx);
+void Change_Relations(int16_t value, int16_t attacker_idx, int16_t defender_idx, int16_t type, int16_t city_idx, int16_t spell_idx);
 
 // WZD o85p13
 void Declare_War(int16_t attacker_idx, int16_t defender_idx);

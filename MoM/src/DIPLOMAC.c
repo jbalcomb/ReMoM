@@ -129,7 +129,7 @@ static void Declare_Peace(int16_t player1, int16_t player2);
 // WZD o85p11
 static void Adjust_Diplomat_Modifiers(int16_t player1, int16_t player2);
 // WZD o85p12
-void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender_idx, int16_t type, int16_t city_idx, int16_t spell_idx);
+void Change_Relations(int16_t value, int16_t attacker_idx, int16_t defender_idx, int16_t type, int16_t city_idx, int16_t spell_idx);
 // WZD o85p13
 void Declare_War(int16_t attacker_idx, int16_t defender_idx);
 // WZD o85p14
@@ -2683,7 +2683,7 @@ static void Diplomacy_Greeting(void)
  *       human, the computed reaction is stronger than for non-human sources.
  * @note Final mirroring pass ensures matrix consistency for visible relations.
  *
- * @see Change_Relations__WIP(), End_Of_Turn_Diplomacy_Adjustments(), Random()
+ * @see Change_Relations(), End_Of_Turn_Diplomacy_Adjustments(), Random()
  */
 void Diplomacy_Growth(void)
 {
@@ -2703,11 +2703,11 @@ void Diplomacy_Growth(void)
             {
                 if(_players[itr1].Dipl.Dipl_Status[itr2] == DIPL_WizardPact)
                 {
-                    Change_Relations__WIP(Random(3), itr1, itr2, 0, ST_NULL, ST_NULL);
+                    Change_Relations(Random(3), itr1, itr2, 0, ST_NULL, ST_NULL);
                 }
                 if(_players[itr1].Dipl.Dipl_Status[itr2] == DIPL_Alliance)
                 {
-                    Change_Relations__WIP(Random(6), itr1, itr2, 0, ST_NULL, ST_NULL);
+                    Change_Relations(Random(6), itr1, itr2, 0, ST_NULL, ST_NULL);
                 }
             }
         }
@@ -2741,7 +2741,7 @@ void Diplomacy_Growth(void)
                     (Random(20) == 1)  /* 5% chance */
                 )
                 {
-                    Change_Relations__WIP(-10, HUMAN_PLAYER_IDX, itr1, 7, ST_NULL, ST_NULL);
+                    Change_Relations(-10, HUMAN_PLAYER_IDX, itr1, 7, ST_NULL, ST_NULL);
                 }
             }
         }
@@ -2779,7 +2779,7 @@ void Diplomacy_Growth(void)
                         (_players[itr1].Dipl.Dipl_Status[itr2] != DIPL_Alliance)
                     )
                     {
-                        Change_Relations__WIP(reaction_value, itr1, itr2, 14, ST_NULL, ST_NULL);
+                        Change_Relations(reaction_value, itr1, itr2, 14, ST_NULL, ST_NULL);
                     }
                 }
             }
@@ -3340,29 +3340,62 @@ static void Adjust_Diplomat_Modifiers(int16_t player1, int16_t player2)
 
 
 // WZD o85p12
-// drake178: G_DIPL_Action()
 // MoO2  Module: DIPLOMAC  Change_Relations_()  Module: NETMOX  Russ_Change_Relations_()
-/*
-    Applies a change in diplomatic relations
-
-; multiple BUGs, unfinished subfunctions, and unknown variables; needs further study!
-
-called from End_Of_Combat()
-    |-> G_DIPL_Action(-Diplomatic_Value, _combat_attacker_player, _combat_defender_player, 8, ST_NULL, ST_NULL);
-
-Spellbook_Screen()
-    if(did_select_spell == ST_TRUE)
-        Cast_Spell_Overland_Do(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
-            Change_Relations_For_Enchantments(player_idx, spl_Spell_Of_Mastery, 1)
-                if(spell_idx == spl_Spell_Of_Mastery)
-                    Change_Relations((-50 / divisor), player_idx, itr_players, 10, 0, spell_idx);
-
-*/
-void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender_idx, int16_t type, int16_t city_idx, int16_t spell_idx)
+/**
+ * @brief Applies a diplomatic relation delta between two contacted players.
+ *
+ * @details
+ * This routine is the central relation-adjustment path used by diplomacy events.
+ * It validates participants and context, transforms the input relation delta
+ * using current relation state/personality/charismatic modifiers, then updates
+ * visible relations, treaty/exchange/peace modifiers, hostility, and delayed
+ * diplomacy-action memory fields.
+ *
+ * High-level flow:
+ * 1. Require attacker/defender contact.
+ * 2. In special mode (@c AI_Dipl_Unset_0 == 3), only record a potential human
+ *    diplomatic action for certain negative AI->human events.
+ * 3. Otherwise, for non-monster participants and valid pair/state:
+ *    - Handle sentinel value @c -10000 as a direct diplomatic-action memory case.
+ *    - Apply diminishing-returns scaling based on current visible relation sign/magnitude.
+ *    - Apply defender personality multipliers (Lawful/Maniacal cases).
+ *    - Apply attacker Charismatic trait adjustment.
+ *    - If currently at war and event type is in the low action range, route part
+ *      of negative pressure into peace modifiers and suppress direct relation delta.
+ *    - Apply late-game AI-vs-AI scaling adjustments.
+ *    - If resulting delta is non-zero, write relation and modifier updates,
+ *      clamp ranges, and store strongest recent human-caused diplomatic action.
+ * 4. Enforce post-conditions by treaty state (war/alliance caps), mirror relation
+ *    symmetry, update hostility flags, and reset hostility reevaluation timer.
+ *
+ * @param value Base relation delta to apply (special sentinel: @c -10000).
+ * @param attacker_idx Player index initiating the action.
+ * @param defender_idx Player index receiving the relation change.
+ * @param type Diplomatic action/event type identifier used for branch rules and
+ *             diplomatic-action memory logging.
+ * @param city_idx Optional city context associated with the action.
+ * @param spell_idx Optional spell context associated with the action.
+ *
+ * @return This function returns no value.
+ *
+ * @note This function mutates multiple diplomacy tables for both players,
+ *       including @c Visible_Rel, @c treaty_modifier, @c exchange_modifier,
+ *       @c peace_modifier, @c Dipl_Action, @c DA_Strength, @c DA_Spell,
+ *       @c DA_City, @c Hostility, and reevaluation countdowns.
+ * @note A special-case branch can trigger @c Declare_War() from a spell-context
+ *       check that currently compares against @c spl_Earth_Lore.
+ * @note Relation values are clamped to preserve legal range and treaty-specific
+ *       floors/caps after adjustment.
+ * @note Behavior intentionally preserves existing OGBUG/legacy conditions.
+ *
+ * @see Declare_War(), Break_Treaties(), Diplomacy_Growth(), Adjust_Diplomat_Modifiers()
+ */
+void Change_Relations(int16_t value, int16_t attacker_idx, int16_t defender_idx, int16_t type, int16_t city_idx, int16_t spell_idx)
 {
-    int16_t Rel_Divisor;
-    int16_t NoCharisma_RelValue;
-
+    int16_t diminishing_returns_divisor = 0;
+    int16_t relation_value_pre_charisma = 0;
+    int16_t relation_value = 0;  // DNE in Dasm
+    relation_value = value;  // DNE in Dasm
     if(_players[attacker_idx].Dipl.Contacted[defender_idx] != ST_FALSE)
     {
         if(AI_Dipl_Unset_0 == 3)
@@ -3370,12 +3403,12 @@ void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender
             if(
                 (attacker_idx != HUMAN_PLAYER_IDX)
                 &&
-                (value < 0)
+                (relation_value < 0)
                 &&
                 (defender_idx == HUMAN_PLAYER_IDX)
             )
             {
-                if(Random(100) <= (abs(value) / 10))
+                if(Random(100) <= (abs(relation_value) / 10))
                 {
 
                     _players[HUMAN_PLAYER_IDX].Dipl.DA_Strength[HUMAN_PLAYER_IDX] = 100;
@@ -3396,7 +3429,7 @@ void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender
                 if(
                     (attacker_idx != defender_idx)
                     &&
-                    (value != 0)
+                    (relation_value != 0)
                     &&
                     (defender_idx != HUMAN_PLAYER_IDX)
                     &&
@@ -3407,7 +3440,7 @@ void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender
                     (attacker_idx <= _num_players)
                 )
                 {
-                    if(value == -10000)
+                    if(relation_value == -10000)
                     {
                         if(
                             (attacker_idx == HUMAN_PLAYER_IDX)
@@ -3423,105 +3456,95 @@ void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender
                     }
                     else
                     {
-                        if(value > 0)
+                        if(relation_value > 0)
                         {
                             if(_players[defender_idx].Dipl.Visible_Rel[attacker_idx] < 0)
                             {
-                                value = (value * 2);
+                                relation_value = (relation_value * 2);
 
-                                if((_players[defender_idx].Dipl.Visible_Rel[attacker_idx] + value) > 10)
+                                if((_players[defender_idx].Dipl.Visible_Rel[attacker_idx] + relation_value) > 10)
                                 {
-                                    value = (10 - _players[defender_idx].Dipl.Visible_Rel[attacker_idx]);
+                                    relation_value = (10 - _players[defender_idx].Dipl.Visible_Rel[attacker_idx]);
                                 }
                             }
                             else
                             {
-                                Rel_Divisor = ((_players[defender_idx].Dipl.Visible_Rel[attacker_idx] / 25) + 1);
+                                diminishing_returns_divisor = ((_players[defender_idx].Dipl.Visible_Rel[attacker_idx] / 25) + 1);
 
-                                if(Rel_Divisor == 0)
+                                if(diminishing_returns_divisor == 0)
                                 {
-                                    Rel_Divisor = 1;
+                                    diminishing_returns_divisor = 1;
                                 }
-
-                                value = (value / Rel_Divisor);
+                                relation_value = (relation_value / diminishing_returns_divisor);
                             }
                         }
                         else
                         {
                             if(_players[defender_idx].Dipl.Visible_Rel[attacker_idx] > 0)
                             {
-                                value = (value * 2);
+                                relation_value = (relation_value * 2);
                             }
                             else
                             {
-                                Rel_Divisor = ((_players[defender_idx].Dipl.Visible_Rel[attacker_idx] / -25) + 1);
+                                diminishing_returns_divisor = ((_players[defender_idx].Dipl.Visible_Rel[attacker_idx] / -25) + 1);
 
-                                if(Rel_Divisor == 0)
+                                if(diminishing_returns_divisor == 0)
                                 {
-                                    Rel_Divisor = 1;
+                                    diminishing_returns_divisor = 1;
                                 }
-
-                                value = (value / Rel_Divisor);
+                                relation_value = (relation_value / diminishing_returns_divisor);
                             }
                         }
                     }
-
                     if(
                         (_players[defender_idx].Personality == PRS_Lawful)
                         &&
-                        (value < 0)
+                        (relation_value < 0)
                     )
                     {
-                        value = (value * 2);
+                        relation_value = (relation_value * 2);
                     }
-                    
                     if(
                         (_players[defender_idx].Personality == PRS_Maniacal)
                         &&
-                        (value < 0)
+                        (relation_value < 0)
                     )
                     {
-                        value = ((value * 3) / 2);
+                        relation_value = ((relation_value * 3) / 2);
                     }
-                    
                     if(
                         (_players[defender_idx].Personality == PRS_Maniacal)
                         &&
-                        (value > 0)
+                        (relation_value > 0)
                     )
                     {
-                        value = ((value * 3) / 4);
+                        relation_value = ((relation_value * 3) / 4);
                     }
-                    
-                    NoCharisma_RelValue = value;
-
+                    relation_value_pre_charisma = relation_value;
                     // "... special ability (Charismatic) doubles the effectiveness of any positive diplomatic actions she takes and halves the negative impact ..."
                     // "... Charismatic wizard obtains twice the normal effect from positive diplomatic actions he or she initiates and suffers only half the normal penalty for negative diplomatic actions."
                     if(
                         (_players[attacker_idx].charismatic == ST_TRUE)
                         &&
-                        (value > 0)
+                        (relation_value > 0)
                     )
                     {
-                        value = (value * 2);
+                        relation_value = (relation_value * 2);
                     }
-
                     if(
                         (_players[attacker_idx].charismatic == ST_TRUE)
                         &&
-                        (value < 0)
+                        (relation_value < 0)
                     )
                     {
-                        value = (value / 2);
+                        relation_value = (relation_value / 2);
                     }
-
-
                     if(
                         (_players[defender_idx].Dipl.Dipl_Status[attacker_idx] == DIPL_War)
                         &&
                         (type <= dipact_Overextension)
                         &&
-                        (value < 0)
+                        (relation_value < 0)
                     )
                     {
                         if(
@@ -3530,15 +3553,11 @@ void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender
                             (attacker_idx == HUMAN_PLAYER_IDX)
                         )
                         {
-                            // drake178: ; the result is still negative ; decreasing the target's toward the aggressor
-                            _players[defender_idx].Dipl.peace_modifier[attacker_idx] += (value / 4);
-                            // drake178: ; the result is still negative ; increasing the aggressor's toward the target
-                            _players[attacker_idx].Dipl.peace_modifier[defender_idx] -= (value / 4);
+                            _players[defender_idx].Dipl.peace_modifier[attacker_idx] += (relation_value / 4);
+                            _players[attacker_idx].Dipl.peace_modifier[defender_idx] -= (relation_value / 4);
                         }
-
-                        value = 0;
+                        relation_value = 0;
                     }
-
                     /*
                         BEGIN:  
                     */
@@ -3547,12 +3566,12 @@ void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender
                         &&
                         (defender_idx != HUMAN_PLAYER_IDX)
                         &&
-                        (value > 0)
+                        (relation_value > 0)
                         &&
                         (_turn > 200)
                     )
                     {
-                        value = (value * 2);
+                        relation_value = (relation_value * 2);
                     }
                     /*
                         END:  
@@ -3565,108 +3584,81 @@ void Change_Relations__WIP(int16_t value, int16_t attacker_idx, int16_t defender
                         &&
                         (defender_idx != HUMAN_PLAYER_IDX)
                         &&
-                        (value < 0)
+                        (relation_value < 0)
                         &&
                         (_turn > 200)
                     )
                     {
-                        value = (value / ((_difficulty / 2) + 1));  // {0,1,2,3,4} / 2 = {0,0,1,1,2} + 1 = {1,1,2,2,3} = {100%,100%,50%,50%,33%}
+                        relation_value = (relation_value / ((_difficulty / 2) + 1));  // {0,1,2,3,4} / 2 = {0,0,1,1,2} + 1 = {1,1,2,2,3} = {100%,100%,50%,50%,33%}
                     }
                     /*
                         END:  
                     */
-
-                    if(value != 0)
+                    if(relation_value != 0)  /* Block A (war/overextension path) didn't trigger, do Block B (normal apply path) instead */
                     {
-
-                        _players[defender_idx].Dipl.Visible_Rel[attacker_idx] += value;
-
+                        _players[defender_idx].Dipl.Visible_Rel[attacker_idx] += relation_value;
                         SETMIN(_players[defender_idx].Dipl.Visible_Rel[attacker_idx], -100);
                         SETMAX(_players[defender_idx].Dipl.Visible_Rel[attacker_idx],  100);
-
-                        _players[defender_idx].Dipl.treaty_modifier[attacker_idx] += value;
-                        _players[defender_idx].Dipl.exchange_modifier[attacker_idx] += value;
-
+                        _players[defender_idx].Dipl.treaty_modifier[attacker_idx] += relation_value;
+                        _players[defender_idx].Dipl.exchange_modifier[attacker_idx] += relation_value;
                         _players[attacker_idx].Dipl.treaty_modifier[defender_idx] = _players[defender_idx].Dipl.treaty_modifier[attacker_idx];
                         _players[attacker_idx].Dipl.exchange_modifier[defender_idx] = _players[defender_idx].Dipl.exchange_modifier[attacker_idx];
-
-                        // HERE:  ¿ NoCharisma_RelValue is value, without the Charismatic modifier, but with ?
-                        if(NoCharisma_RelValue < 0)  /* relation change is negative */
+                        if(relation_value_pre_charisma < 0)  /* relation change is negative */
                         {
-                            // drake178: ; double shift if not at war?
-                            _players[attacker_idx].Dipl.peace_modifier[defender_idx] -= (NoCharisma_RelValue / 4);  // more negative
-                            _players[defender_idx].Dipl.peace_modifier[attacker_idx] += (NoCharisma_RelValue / 4);  // less positive
+                            _players[attacker_idx].Dipl.peace_modifier[defender_idx] -= (relation_value_pre_charisma / 4);  // more negative
+                            _players[defender_idx].Dipl.peace_modifier[attacker_idx] += (relation_value_pre_charisma / 4);  // less positive
                         }
                         else
                         {
-                            _players[defender_idx].Dipl.peace_modifier[attacker_idx] += NoCharisma_RelValue;
+                            _players[defender_idx].Dipl.peace_modifier[attacker_idx] += relation_value_pre_charisma;
                         }
-
-                        
                         if(
-                            (spell_idx == spl_Earth_Lore)
+                            (spell_idx == spl_Earth_Lore)  /* OGBUG  should be spl_Spell_Of_Mastery, not spl_Earth_Lore */
                             &&
                             (Random(100) < 11)
                         )
                         {
                             Declare_War(attacker_idx, defender_idx);
                         }
-
-                        
                         if(
                             (attacker_idx == HUMAN_PLAYER_IDX)
                             &&
                             (type != dipact_AuraOfMajesty)
                         )
                         {
-                            if(abs(value) > abs(_players[defender_idx].Dipl.DA_Strength[HUMAN_PLAYER_IDX]))
+                            if(abs(relation_value) > abs(_players[defender_idx].Dipl.DA_Strength[HUMAN_PLAYER_IDX]))
                             {
-                                _players[defender_idx].Dipl.DA_Strength[HUMAN_PLAYER_IDX] = value;
+                                _players[defender_idx].Dipl.DA_Strength[HUMAN_PLAYER_IDX] = relation_value;
                                 _players[defender_idx].Dipl.Dipl_Action[HUMAN_PLAYER_IDX] = (int8_t)type;
                                 _players[defender_idx].Dipl.DA_Spell[HUMAN_PLAYER_IDX] = spell_idx;
                                 _players[defender_idx].Dipl.DA_City[HUMAN_PLAYER_IDX] = (int8_t)city_idx;
                             }
                         }
-
-                    }  /* if(value != 0) */
-
-
-                    if(_players[defender_idx].Dipl.Dipl_Status[attacker_idx] >= 3)  /* DIPL_War */
+                    }  /* if(relation_value != 0) */
+                    if(_players[defender_idx].Dipl.Dipl_Status[attacker_idx] >= DIPL_War)
                     {
                         SETMAX(_players[defender_idx].Dipl.Visible_Rel[attacker_idx], -25);
                     }
-
-                    if(_players[defender_idx].Dipl.Dipl_Status[attacker_idx] != 2)  /* DIPL_Alliance */
+                    if(_players[defender_idx].Dipl.Dipl_Status[attacker_idx] != DIPL_Alliance)
                     {
                         SETMAX(_players[defender_idx].Dipl.Visible_Rel[attacker_idx], 65);
                     }
-
-
-                    _players[attacker_idx].Dipl.Dipl_Status[defender_idx] = _players[defender_idx].Dipl.Dipl_Status[attacker_idx];
-
-
-                    if(_players[defender_idx].Dipl.Dipl_Status[attacker_idx] >= 3)  /* DIPL_War */
+                    _players[attacker_idx].Dipl.Visible_Rel[defender_idx] = _players[defender_idx].Dipl.Visible_Rel[attacker_idx];
+                    if(_players[defender_idx].Dipl.Dipl_Status[attacker_idx] >= DIPL_War)
                     {
                         _players[defender_idx].Hostility[attacker_idx] = 3;
                     }
-
-                    if(_players[defender_idx].Dipl.Dipl_Status[attacker_idx] == 2)  /* DIPL_Alliance */
+                    if(_players[defender_idx].Dipl.Dipl_Status[attacker_idx] == DIPL_Alliance)
                     {
                         _players[defender_idx].Hostility[attacker_idx] = 0;
                     }
-
-
                     _players[defender_idx].reevaluate_hostility_countdown = (15 + Random(10));
-
-
                 }  /* ¿ Normal / Everything ? */
             }
-
         }
-
     }
-
 }
+
 
 // WZD o85p13
 // MoO2  Module: DIPLOMAC  Declare_War_()
@@ -4372,7 +4364,7 @@ static void Diplomacy_Exchange_Spell__WIP(void)
                         Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
                         Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
 
-                        Change_Relations__WIP(5, HUMAN_PLAYER_IDX, m_diplomac_player_idx, 0, ST_NULL, ST_NULL);
+                        Change_Relations(5, HUMAN_PLAYER_IDX, m_diplomac_player_idx, 0, ST_NULL, ST_NULL);
 
                     }
 

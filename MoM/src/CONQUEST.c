@@ -414,7 +414,7 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
         {
 
             // Note, however, that the conquering wizard suffers permanent diplomatic penalties to his or her interactions with other wizards after such an event.
-            Change_Relations__WIP(-40, player_idx, itr_players, 7, 0, 0);
+            Change_Relations(-40, player_idx, itr_players, 7, 0, 0);
 
         }
 

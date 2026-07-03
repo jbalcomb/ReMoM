@@ -4029,7 +4029,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
                     )
                     {
                         // drake178: ; BUG: calling these two functions in this order can allow war without declaring or properly applying it
-                        Change_Relations__WIP(-40, combat_attacker_player_idx, defender_idx, 5, 0, 0);
+                        Change_Relations(-40, combat_attacker_player_idx, defender_idx, 5, 0, 0);
                         Break_Treaties(defender_idx, combat_attacker_player_idx);
                     }
                 }
@@ -4128,7 +4128,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
                     (defender_idx < NUM_PLAYERS)
                 )
                 {
-                    Change_Relations__WIP(-40, combat_attacker_player_idx, defender_idx, 9, _combat_environ_idx, 0);
+                    Change_Relations(-40, combat_attacker_player_idx, defender_idx, 9, _combat_environ_idx, 0);
                 }
 
                 if(
@@ -4189,11 +4189,11 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
                     {
                         if(Player_Fortress_City(defender_idx) != _combat_environ_idx)
                         {
-                            Change_Relations__WIP(-20, combat_attacker_player_idx, defender_idx, 9, _combat_environ_idx, 0);
+                            Change_Relations(-20, combat_attacker_player_idx, defender_idx, 9, _combat_environ_idx, 0);
                         }
                         else
                         {
-                            Change_Relations__WIP(-60, combat_attacker_player_idx, defender_idx, 9, _combat_environ_idx, 0);
+                            Change_Relations(-60, combat_attacker_player_idx, defender_idx, 9, _combat_environ_idx, 0);
                         }
                     }
 
@@ -21031,7 +21031,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         (_combat_attacker_player != NEUTRAL_PLAYER_IDX)
     )
     {
-        Change_Relations__WIP(-Diplomatic_Value, _combat_attacker_player, _combat_defender_player, 8, ST_NULL, ST_NULL);
+        Change_Relations(-Diplomatic_Value, _combat_attacker_player, _combat_defender_player, 8, ST_NULL, ST_NULL);
     }
 
 

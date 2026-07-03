@@ -1409,7 +1409,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                             Spell_Animation_Screen__WIP(_UNITS[spell_target_idx].wx, _UNITS[spell_target_idx].wy, _UNITS[spell_target_idx].wp);
                             Full_Draw_Main_Screen();
                         }
-                        /* SPELLY */  Change_Relations__WIP(-3, player_idx, _UNITS[spell_target_idx].owner_idx, 8, 0, spell_target_idx);
+                        /* SPELLY */  Change_Relations(-3, player_idx, _UNITS[spell_target_idx].owner_idx, 8, 0, spell_target_idx);
                         /* SPELLY */  Cast_Attack_Spell_On_Enemy_Stack(spell_target_idx, spell_idx);
                     }
                 } break;  /* case scc_Fixed_Dmg_Spell: */

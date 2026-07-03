@@ -271,7 +271,7 @@ int16_t Cast_Black_Wind(int16_t player_idx)
 
         // BUGBUG  scsv1 is wx here, not unit_idx ...c&p error
         // BUGBUG  should pass spl_Black_Wind, not scsv1 (which is wx) ...c&p error
-        Change_Relations__WIP(-3, player_idx, _UNITS[scsv1].owner_idx, 8, 0, scsv1);
+        Change_Relations(-3, player_idx, _UNITS[scsv1].owner_idx, 8, 0, scsv1);
 
     }
 
