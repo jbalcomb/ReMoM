@@ -1198,7 +1198,68 @@ void WIZ_GreatWasting(int16_t Player_Index)
 // CTY_GaiasBlessing()
 
 // WZD o132p13
-// WIZ_Armageddon()
+void WIZ_Armageddon(int Player_Index)
+{
+    int16_t Volcanos_Created = 0;
+    int16_t Volcanos_Intended = 0;
+    int16_t Tries = 0;
+    int16_t XPos = 0;
+    int16_t YPos = 0;
+    int16_t Plane = 0;
+    int16_t terrain_type = 0;
+    int16_t success = 0;
+    int16_t di = 0;
+    Volcanos_Intended = Random(3) + 3;
+    Volcanos_Created = 0;
+    while(Volcanos_Created < Volcanos_Intended)
+    {
+        Tries = 0;
+        success = 0;
+        while(success == 0 && Tries < 50)
+        {
+            Tries++;
+            success = 1;
+            XPos = Random(60) - 1;
+            YPos = Random(40) - 1;
+            Plane = Random(2) - 1;
+            if(Square_Is_Sailable(XPos, YPos, Plane) != 0)
+            {
+                success = 0;
+            }
+            if(Square_Is_Volcano(XPos, YPos, Plane) != 0)
+            {
+                success = 0;
+            }
+            if(Terrain_Is_River(XPos, YPos, Plane) != 0)
+            {
+                success = 0;
+            }
+            
+            terrain_type = (p_world_map[Plane][YPos][XPos] % NUM_TERRAIN_TYPES);
+            if(terrain_type == tt_ChaosNode || terrain_type == tt_SorceryNode || terrain_type == tt_NatureNode)
+            {
+                success = 0;
+            }
+            for(di = 0; di < _cities; di++)
+            {
+                if(_CITIES[di].wp == Plane && _CITIES[di].owner_idx == Player_Index)
+                {
+                    if(Delta_XY_With_Wrap(_CITIES[di].wx, _CITIES[di].wy, XPos, YPos, 60) <= 2)
+                    {
+                        success = 0;
+                    }
+                }
+            }
+            if(success == 1)
+            {
+                Set_Terrain_Type_Volcano_With_Owner(XPos, YPos, Plane, Player_Index);
+            }
+        }
+        Volcanos_Created++;
+    }
+    Volcano_Counts();
+}
+
 
 // WZD o132p14
 // drake178: sub_B5D8E()

@@ -59,7 +59,7 @@ void WIZ_GreatWasting(int16_t Player_Index);
 // CTY_GaiasBlessing()
 
 // WZD o132p13
-// WIZ_Armageddon()
+void WIZ_Armageddon(int Player_Index);
 
 // WZD o132p14
 void Cast_Floating_Island(int16_t player_idx);

@@ -420,7 +420,9 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
             Volcano Player, Road - Regular, Road - Enchanted, Corruption
 
 NOTE(JimBalcomb,20260302): These have been deprecated, do not use them anymore - GET_TERRAIN_TYPE, TERRAIN_TYPE, SET_TERRAIN_TYPE, TERRAIN_TYPE_INDEX.
-use `terrain_type = p_world_map[wp][wy][wx];`
+use
+    `terrain_type = p_world_map[wp][wy][wx];`
+    `terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);`
 */
 // #define GET_TERRAIN_TYPE(_value_, _size_) do { GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2))) } while(0)
 /*
