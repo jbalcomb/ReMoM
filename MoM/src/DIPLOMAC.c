@@ -37,7 +37,7 @@ MoO2
 #include "../../MoX/src/MOX_SET.h"
 #include "../../MoX/src/MOX_T4.h"
 #include "../../MoX/src/SOUND.h"
-
+#include "../../MoX/src/special.h"
 
 #include "AIMOVE.h"
 #include "City_ovr55.h"
@@ -5586,14 +5586,14 @@ void NPC_To_Human_Diplomacy__WIP(void)
         if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] == do_None)
         {
 
-            // TODO  G_DIPL_NeedForWar(HUMAN_PLAYER_IDX, player_idx);
+            G_DIPL_NeedForWar(HUMAN_PLAYER_IDX, player_idx);
 
         }
 
         if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] == do_None)
         {
 
-            // TODO  DIPL_GetOffMyLawn(player_idx, HUMAN_PLAYER_IDX);
+            DIPL_GetOffMyLawn(player_idx, HUMAN_PLAYER_IDX);
 
         }
 
@@ -5842,7 +5842,95 @@ void Resolve_Delayed_Diplomacy_Orders(void)
 
 
 // WZD o87p07
-// DIPL_GetOffMyLawn()
+void DIPL_GetOffMyLawn(int16_t player1, int16_t player2)
+{
+    int16_t Random_DA_Value;
+    int16_t Violated_City_Index;
+    int16_t Have_Violation;
+    int16_t Unit_City_Distance;
+    int16_t City_LoopVar;
+    int16_t Unit_LoopVar;
+
+    if (_players[player2].Dipl.Dipl_Status[player1] == DIPL_War) {
+        return;
+    }
+
+    Violated_City_Index = ST_UNDEFINED;
+    Have_Violation = 0;
+    Unit_LoopVar = 0;
+
+    for (Unit_LoopVar = 0; Unit_LoopVar < _units; Unit_LoopVar++) {
+        if (_UNITS[Unit_LoopVar].owner_idx == player2) {
+            if (_UNITS[Unit_LoopVar].owner_idx != ST_UNDEFINED) {
+                if (_UNITS[Unit_LoopVar].owner_idx != NEUTRAL_PLAYER_IDX) {
+                    if ((_unit_type_table[_UNITS[Unit_LoopVar].type].Abilities & UA_CREATEOUTPOST) == 0) {
+                        if (_unit_type_table[_UNITS[Unit_LoopVar].type].Construction < 1) {
+                            for (City_LoopVar = 0; City_LoopVar < _cities; City_LoopVar++) {
+                                if (_CITIES[City_LoopVar].owner_idx == player1) {
+                                    if (_UNITS[Unit_LoopVar].wp == _CITIES[City_LoopVar].wp || _UNITS[Unit_LoopVar].in_tower == ST_TRUE) {
+                                        Unit_City_Distance = Delta_XY_With_Wrap(
+                                            (int16_t)_UNITS[Unit_LoopVar].wx,
+                                            (int16_t)_UNITS[Unit_LoopVar].wy,
+                                            (int16_t)_CITIES[City_LoopVar].wx,
+                                            (int16_t)_CITIES[City_LoopVar].wy,
+                                            WORLD_WIDTH
+                                        );
+                                        if (Unit_City_Distance < 3) {
+                                            Violated_City_Index = City_LoopVar;
+                                            Have_Violation = ST_TRUE;
+                                        }
+                                    }
+                                }
+                                if (Have_Violation != 0) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (Have_Violation != 0) {
+            break;
+        }
+    }
+
+    if (Violated_City_Index == ST_UNDEFINED) {
+        _players[player2].Dipl.G_Warning_Progress[player1] = 0;
+        return;
+    }
+
+    if (_players[player2].Dipl.Dipl_Status[player1] == DIPL_Alliance ||
+        _players[player2].Dipl.Dipl_Status[player1] == DIPL_WizardPact) 
+    {
+        if (_players[player2].Dipl.G_Warning_Progress[player1] == 0) {
+            Random_DA_Value = Random(5);
+            Change_Relations(-Random_DA_Value, player2, player1, 73, Violated_City_Index, 0);
+            _players[player2].Dipl.G_Warning_Progress[player1] = 1;
+        } else if (_players[player2].Dipl.G_Warning_Progress[player1] == 1) {
+            _players[player2].Dipl.G_Warning_Progress[player1] = 2;
+        } else {
+            _players[player2].Dipl.G_Warning_Progress[player1] = 0;
+            Change_Relations(-5, player2, player1, 5, Violated_City_Index, 0);
+            Break_Treaties(player1, player2);
+            Break_Treaties(player2, player1);
+        }
+    } else {
+        _players[player2].Dipl.G_Warning_Progress[player1] = 0;
+        if (Random(100) < 6) {
+            int relations_type;
+            Random_DA_Value = Random(5);
+            if (Random(5) == 1) {
+                relations_type = 73;
+            } else {
+                relations_type = 0;
+            }
+            Change_Relations(-Random_DA_Value, player2, player1, relations_type, Violated_City_Index, 0);
+        }
+    }
+    
+}
+
 
 // WZD o87p08
 /*

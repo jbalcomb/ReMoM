@@ -206,7 +206,7 @@ void G_DIPL_SuperiorityWar(int16_t Player_1, int16_t Player_2);
 void Resolve_Delayed_Diplomacy_Orders(void);
 
 // WZD o87p07
-// DIPL_GetOffMyLawn()
+void DIPL_GetOffMyLawn(int16_t player1, int16_t player2);
 
 // WZD o87p08
 void Decrease_Peace_Duration(void);
