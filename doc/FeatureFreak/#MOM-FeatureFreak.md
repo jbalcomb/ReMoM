@@ -9,7 +9,7 @@ Each feature area below gets a summary paragraph. Areas marked **→ (future chi
 **Companion docs:**
 - [MOM-FeatureFreak-AI-Usage.md](MOM-FeatureFreak-AI-Usage.md) maps every pillar below onto *how the computer player uses it*.
 - [MOM-FeatureFreak-AI-Special-Abilities.md](MOM-FeatureFreak-AI-Special-Abilities.md) walks all 18 Wizard Special Abilities (retorts) — active AI logic vs. passive shared benefit, with the bugs at each site.
-- [MOM-FeatureFreak-AI-Spells.md](MOM-FeatureFreak-AI-Spells.md) walks how the AI selects and casts spells — the overland pipeline & group handlers vs. the stubbed combat path — with the bugs (in progress).
+- [MOM-FeatureFreak-AI-Spells.md](MOM-FeatureFreak-AI-Spells.md) walks how the AI selects and casts spells — the full overland pipeline, 8 group handlers, and AITP target-picker bug cluster; combat casting is a stub (deferred to a dedicated future doc).
 
 ---
 
