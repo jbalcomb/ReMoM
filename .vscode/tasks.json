@@ -63,6 +63,29 @@
             }
         },
         {
+            "label": "format: fix current file",
+            "detail": "clang-format -i the file in the active editor (house style, .clang-format)",
+            "type": "shell",
+            "command": "clang-format -i --style=file \"${file}\"",
+            "problemMatcher": [],
+            "presentation": {
+                "panel": "dedicated",
+                "showReuseMessage": false
+            }
+        },
+        {
+            "label": "format: check staged",
+            "detail": "Dry-run clang-format over staged C/H/CPP files; fails if any need formatting",
+            "type": "shell",
+            "command": "bash tools/format.sh check",
+            "problemMatcher": [],
+            "presentation": {
+                "panel": "dedicated",
+                "revealProblems": "onProblem",
+                "showReuseMessage": false
+            }
+        },
+        {
             "label": "check: safe-to-push",
             "dependsOn": [
                 "build: MSVC-debug",

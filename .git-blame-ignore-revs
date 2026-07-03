@@ -1,0 +1,12 @@
+# Commits listed here are skipped by `git blame` so that large mechanical
+# reformatting does not bury the real authorship of each line.
+#
+# Enable per-clone (one-time):
+#     git config blame.ignoreRevsFile .git-blame-ignore-revs
+#
+# Add a full 40-char commit SHA on its own line whenever you land a commit that
+# is PURELY clang-format / whitespace with no logic change. ReMoM does not
+# bulk-format the tree, so this file is expected to stay mostly empty — add an
+# entry only for a genuine repo-wide (or subsystem-wide) reformat commit.
+#
+# (No reformat commits recorded yet.)

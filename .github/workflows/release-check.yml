@@ -22,6 +22,24 @@ concurrency:
 
 jobs:
 
+  format-check:
+    name: clang-format (changed files)
+    # Only gate PRs: a push has no natural diff base, and the tree as a whole is
+    # intentionally not clang-format-clean (heavy hand-alignment). We check only
+    # the files a PR touches, via tools/format.sh --since.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install pinned clang-format (LLVM 20)
+        run: pipx install "clang-format==20.1.8"
+
+      - name: Check formatting of changed files
+        run: ./tools/format.sh check --since "${{ github.event.pull_request.base.sha }}"
+
   windows-release:
     name: Windows MSVC Release
     runs-on: windows-latest

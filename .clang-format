@@ -1,25 +1,53 @@
-{
+# ReMoM house style — clang-format 20.x (pin to LLVM 20; see doc/#Devel/Devel-Clang.md)
+#
+# This file DESCRIBES the existing hand-written style so that formatting a
+# freshly-touched file converges toward the tree instead of rewriting it.
+# It is NOT safe to bulk-run over the whole tree: the codebase is heavily
+# hand-aligned (column-aligned declarations, offset-annotated packed structs),
+# and clang-format cannot reproduce that alignment. Format per-file as files
+# are touched, and guard byte-layout tables with `// clang-format off/on`.
+#
+# Two knobs are load-bearing and were measured from the tree, not guessed:
+#   PointerAlignment: Middle   ->  `Type * name`   (~2800 sites vs ~400 right)
+#   SpaceBeforeParens: Never   ->  `if( for( while(` (~15700 sites vs ~90 spaced)
+Language:                Cpp
+BasedOnStyle:            LLVM
 
-	BasedOnStyle: LLVM,
-	
-	UseTab: Never,
-	
-	IndentWidth: 4,
-	
-	TabWidth: 4,
-	
-	BreakBeforeBraces: Allman,
-	
-	AllowShortIfStatementsOnASingleLine: false,
-	
-	IndentCaseLabels: false,
-	
-	ColumnLimit: 0,
-	
-	AccessModifierOffset: -4,
-	
-	NamespaceIndentation: All,
-	
-	FixNamespaceComments: false
-	
-}
+# Indentation / braces
+UseTab:                  Never
+IndentWidth:             4
+TabWidth:                4
+BreakBeforeBraces:       Allman
+IndentCaseLabels:        false
+AccessModifierOffset:    -4
+NamespaceIndentation:    All
+FixNamespaceComments:    false
+IndentPPDirectives:      None
+
+# Line handling — manual line breaks and blank-line section separators are
+# load-bearing here, so do not reflow or collapse them.
+ColumnLimit:             0
+MaxEmptyLinesToKeep:     3
+SortIncludes:            false
+IncludeBlocks:           Preserve
+
+# House spacing / pointer style (measured from the tree)
+PointerAlignment:        Middle
+SpaceBeforeParens:       Never
+
+# Never collapse constructs onto one line (house style is Allman, expanded)
+AllowShortIfStatementsOnASingleLine:   false
+AllowShortFunctionsOnASingleLine:      None
+AllowShortLoopsOnASingleLine:          false
+AllowShortBlocksOnASingleLine:         Never
+AllowShortCaseLabelsOnASingleLine:     false
+
+# Preserve the author's hand-alignment wherever clang-format supports "leave
+# as-is". Consecutive alignment was measured to INCREASE churn (over-aligns),
+# so it stays off.
+AlignTrailingComments:
+  Kind:            Leave
+  OverEmptyLines:  0
+AlignConsecutiveMacros:        None
+AlignConsecutiveAssignments:   None
+AlignConsecutiveDeclarations:  None

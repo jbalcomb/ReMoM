@@ -1,0 +1,16 @@
+# clang-format skips any file matching these patterns (clang-format 18+).
+# NOTE: these are POSIX 2.13 patterns with bash globstar (**), NOT gitignore
+# syntax — a bare "ext/" does NOT match files under ext/. Use "ext/**".
+# Patterns are relative to this file's directory (the repo root).
+
+# Vendored / portability shims — not house style, do not touch.
+ext/**
+
+# Visual Studio project mirrors — copies of MoM/tests etc.; format the
+# originals under MoM/, MoX/, STU/, src/, platform/ instead.
+IDE/**
+
+# Generated / build output.
+build/**
+out/**
+autom4te.cache/**

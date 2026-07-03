@@ -54,6 +54,18 @@ run_step()
     fi
 }
 
+# Formatting gate — check only the diff destined for main, and only when a
+# clang-format is actually installed. The tree as a whole is intentionally not
+# clang-format-clean (heavy hand-alignment), so we never format-check it wholesale;
+# tools/format.sh --since limits the check to files this branch touched. Clones
+# without LLVM installed (format.sh warns) simply skip this step rather than block.
+if command -v clang-format-20 >/dev/null 2>&1 || command -v clang-format >/dev/null 2>&1
+then
+    run_step "format: changed vs main" ./tools/format.sh check --since origin/main
+else
+    echo "[pre-push] skip format check: clang-format not found (install LLVM 20 to enable)"
+fi
+
 run_step "build: MSVC-debug"   cmake --build --preset MSVC-debug
 run_step "build: MSVC-release" cmake --build --preset MSVC-release
 run_step "test:  MSVC-release" ctest --preset MSVC-release
