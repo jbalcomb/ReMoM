@@ -5603,7 +5603,151 @@ void NPC_To_Human_Diplomacy__WIP(void)
 
 
 // WZD o87p03
-// G_DIPL_NeedForWar()
+void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
+{
+    int32_t Defense_Strength;
+    int32_t Invasion_Strength;
+    int Superiority_Modifier;
+    int LoopVar_2;
+    int LoopVar_1;
+    int Human_Wars;
+    int Comparison_Score;
+
+    if (AI_Dipl_Unset_0) {
+        for (LoopVar_1 = 1; LoopVar_1 < _num_players; LoopVar_1++) {
+            for (LoopVar_2 = 1; LoopVar_2 < _num_players; LoopVar_2++) {
+                if (LoopVar_1 != LoopVar_2) {
+                    _players[LoopVar_1].Dipl.Dipl_Status[LoopVar_2] = DIPL_Alliance;
+                }
+            }
+        }
+        return;
+    }
+
+    if (Player_1 == _human_player_idx && _turn < 100) {
+        return;
+    }
+
+    if (_players[Player_1].Dipl.Dipl_Status[Player_2] >= DIPL_War || _players[Player_1].Dipl.Contacted[Player_2] != 1) {
+        return;
+    }
+
+    if (_FORTRESSES[Player_1].active == 0) {
+        return;
+    }
+
+    if (_players[Player_2].Personality == PRS_Chaotic) {
+        if (Random(300) <= _difficulty) {
+            if (Player_1 != 0 || _players[Player_1].peace_duration[Player_2] < 1) {
+                _players[Player_1].Dipl.Dipl_Action[Player_2] = 40;
+                _players[Player_1].Dipl.DA_Strength[Player_2] = 2000;
+                Declare_War(Player_2, Player_1);
+                goto loc_73CC0;
+            }
+        }
+    }
+
+    if (Random(20) == 1) {
+        if (_players[Player_2].Objective == OBJ_Militarist || _players[Player_2].Objective == OBJ_Expansionist) {
+            if (_players[Player_2].Personality != PRS_Lawful) {
+                if (Player_1 != 0 || _players[Player_1].peace_duration[Player_2] < 1) {
+                    Invasion_Strength = 0L;
+                    Invader_Army_Strength_Comparison(Player_1, Player_2, &Invasion_Strength, &Defense_Strength);
+
+                    if (Defense_Strength > Invasion_Strength) {
+                        if (Invasion_Strength <= 0L) {
+                            Superiority_Modifier = -100;
+                        } else {
+                            Superiority_Modifier = -((int)((Defense_Strength * 100) / Invasion_Strength)) - 50;
+                        }
+                    } else {
+                        if (Defense_Strength <= 0L) {
+                            Superiority_Modifier = 100;
+                        } else {
+                            Superiority_Modifier = (int)((Invasion_Strength * 100) / Defense_Strength) - 50;
+                        }
+                    }
+
+                    Comparison_Score = (int)_players[Player_1].Dipl.Visible_Rel[Player_2]
+                                     + Superiority_Modifier
+                                     + TBL_AI_PRS_IDK_Mod[_players[Player_2].Personality]
+                                     + (int)_players[Player_1].Dipl.Hidden_Rel[Player_2];
+
+                    if (Comparison_Score <= -150) {
+                        G_DIPL_SuperiorityWar(Player_2, Player_1);
+                    }
+                }
+            }
+        }
+    }
+
+    if (Random(20) == 1) {
+        if (Player_1 != 0 || _players[Player_1].peace_duration[Player_2] < 1) {
+            Invasion_Strength = 0L;
+            Invader_Army_Strength_Comparison(Player_1, Player_2, &Invasion_Strength, &Defense_Strength);
+
+            if (Defense_Strength > Invasion_Strength) {
+                if (Invasion_Strength <= 0L) {
+                    Superiority_Modifier = -100;
+                } else {
+                    Superiority_Modifier = -((int)((Defense_Strength * 100) / Invasion_Strength)) - 50;
+                }
+            } else {
+                if (Defense_Strength <= 0L) {
+                    Superiority_Modifier = 100;
+                } else {
+                    Superiority_Modifier = (int)((Invasion_Strength * 100) / Defense_Strength) - 50;
+                }
+            }
+
+            Comparison_Score = (int)_players[Player_1].Dipl.Visible_Rel[Player_2]
+                             + Superiority_Modifier
+                             + TBL_AI_PRS_IDK_Mod[_players[Player_2].Personality]
+                             + (int)_players[Player_1].Dipl.Hidden_Rel[Player_2];
+
+            if (Comparison_Score <= -150) {
+                G_DIPL_SuperiorityWar(Player_2, Player_1);
+            }
+        }
+    }
+
+loc_73CC0:
+    for (LoopVar_1 = 1; LoopVar_1 < _num_players; LoopVar_1++) {
+        if (_players[0].Dipl.Dipl_Status[LoopVar_1] == DIPL_War) {
+            if (_players[Player_2].Dipl.Dipl_Status[LoopVar_1] == DIPL_Alliance) {
+                if (_players[Player_1].peace_duration[Player_2] < 1) {
+                    if (Random(10) == 1) {
+                        if (_players[Player_2].Dipl.Dipl_Status[Player_1] != DIPL_Alliance) {
+                            G_DIPL_SuperiorityWar(Player_2, Player_1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (_difficulty >= 2) {
+        Human_Wars = 0;
+        for (LoopVar_1 = 1; LoopVar_1 < _num_players; LoopVar_1++) {
+            if (_players[0].Dipl.Dipl_Status[LoopVar_1] >= DIPL_War) {
+                Human_Wars++;
+            }
+        }
+
+        if (Human_Wars < _difficulty) {
+            if (_players[Player_1].Dipl.Visible_Rel[Player_2] < -30) {
+                if (_players[Player_1].peace_duration[Player_2] < 1) {
+                    Comparison_Score = -((int)_players[Player_1].Dipl.Visible_Rel[Player_2]) / 10;
+                    if (Random(15) <= Comparison_Score) {
+                        G_DIPL_SuperiorityWar(Player_2, Player_1);
+                    }
+                }
+            }
+        }
+    }
+
+}
+
 
 // WZD o87p04
 void G_DIPL_SuperiorityWar(int16_t Player_1, int16_t Player_2)

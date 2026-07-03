@@ -194,7 +194,7 @@ void Determine_First_Contacts(void);
 void NPC_To_Human_Diplomacy__WIP(void);
 
 // WZD o87p03
-// G_DIPL_NeedForWar()
+void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2);
 
 // WZD o87p04
 void G_DIPL_SuperiorityWar(int16_t Player_1, int16_t Player_2);
