@@ -1374,7 +1374,7 @@ struct s_WIZ_DIPL
     /* 00A8 */ int16_t field_A8[(NUM_PLAYERS * 6)];     /* 2-byte, signed  spell_idx  ¿ NPC Exchange Spell - Spell List ?  for exchange and tribute?  NUM_PLAYERS * default string list item count */
     /* 00F0 */ int8_t niu_au_tech_trade_num[NUM_PLAYERS];            /* 1-byte, signed  ¿ NPC Exchange Spell - Spell Count ? */
     /* 00F6 */ int16_t offer_gold[NUM_PLAYERS];
-    /* 0102 */ int8_t field_102[NUM_PLAYERS];
+    /* 0102 */ int8_t break_treaty[NUM_PLAYERS];   /* please war with my enemy (enemy_idx @ ally_idx) //NPC_Required_Alliances() */
     /* 0108 */ int8_t field_108[NUM_PLAYERS];
     /* 010E */ int8_t field_10E[NUM_PLAYERS];
     /* 0114 */ int8_t field_114[NUM_PLAYERS];

@@ -168,7 +168,7 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2);
 // WZD o87p04
 void G_DIPL_SuperiorityWar(int16_t Player_1, int16_t Player_2);
 // WZD o87p05
-// IDK_Dipl_s73F1C()
+void NPC_Required_Alliances(int16_t target_player_idx);
 // WZD o87p06
 void Resolve_Delayed_Diplomacy_Orders(void);
 // WZD o87p07
@@ -506,7 +506,7 @@ char * m_diplomacy_message;
 /*
 player_idx for 'Break Alliance with Another Wizard'
 */
-int16_t m_IDK_break_alliance_player3;
+int16_t m_break_treaty_player3;
 // WZD dseg:C3E8
 int16_t m_IDK_old_diplomatic_order;
 // WZD dseg:C3EA
@@ -648,7 +648,7 @@ void Diplomacy_Screen__WIP(void)
 
         m_IDK_diplomatic_flag = 2;
 
-        m_IDK_break_alliance_player3 = _players[HUMAN_PLAYER_IDX].Dipl.field_102[m_diplomac_player_idx];
+        m_break_treaty_player3 = _players[HUMAN_PLAYER_IDX].Dipl.break_treaty[m_diplomac_player_idx];
 
     }
 
@@ -1332,9 +1332,9 @@ static void Diplomacy_Propose_Treaty__WIP(void)
         case 4:  /* Break Alliance with Another Wizard */
         {
 
-            m_IDK_break_alliance_player3 = IDK_Npc_Target_Player__STUB(HUMAN_PLAYER_IDX, 0);
+            m_break_treaty_player3 = IDK_Npc_Target_Player__STUB(HUMAN_PLAYER_IDX, 0);
 
-            if(m_IDK_break_alliance_player3 == HUMAN_PLAYER_IDX)
+            if(m_break_treaty_player3 == HUMAN_PLAYER_IDX)
             {
 
                 _variable = ST_UNDEFINED;
@@ -1346,7 +1346,7 @@ static void Diplomacy_Propose_Treaty__WIP(void)
                 if(_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] > 24)
                 {
 
-                    diplomacy_test_result = Diplomacy_Test((175 + _players[m_diplomac_player_idx].Dipl.Visible_Rel[m_IDK_break_alliance_player3]), 0);
+                    diplomacy_test_result = Diplomacy_Test((175 + _players[m_diplomac_player_idx].Dipl.Visible_Rel[m_break_treaty_player3]), 0);
 
                 }
                 else
@@ -1374,7 +1374,7 @@ static void Diplomacy_Propose_Treaty__WIP(void)
                 if(diplomacy_test_result == 3)
                 {
 
-                    Break_Treaties(m_diplomac_player_idx, m_IDK_break_alliance_player3);
+                    Break_Treaties(m_diplomac_player_idx, m_break_treaty_player3);
 
                 }
 
@@ -4603,7 +4603,7 @@ static void Npc_Diplomacy_Screen(void)
 
         m_IDK_diplomatic_flag = 2;
 
-        m_IDK_break_alliance_player3 = _players[HUMAN_PLAYER_IDX].Dipl.field_102[m_diplomac_player_idx];
+        m_break_treaty_player3 = _players[HUMAN_PLAYER_IDX].Dipl.break_treaty[m_diplomac_player_idx];
 
     }
 
@@ -4711,7 +4711,7 @@ static void Npc_Diplomacy_Screen(void)
                         if(m_IDK_diplomatic_order == do_IDK_war)
                         {
 
-                            Declare_War(HUMAN_PLAYER_IDX, m_IDK_break_alliance_player3);
+                            Declare_War(HUMAN_PLAYER_IDX, m_break_treaty_player3);
 
                         }
 
@@ -5320,7 +5320,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             m_diplomacy_message[pos] = 0;
 
-                            stu_strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.field_102[player_idx]].name);
+                            stu_strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.break_treaty[player_idx]].name);
 
                             pos = (int16_t)strlen(m_diplomacy_message);
 
@@ -5525,7 +5525,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             m_diplomacy_message[pos] = 0;
 
-                            stu_strcat(m_diplomacy_message, _players[m_IDK_break_alliance_player3].name);
+                            stu_strcat(m_diplomacy_message, _players[m_break_treaty_player3].name);
 
                             pos = (int16_t)strlen(m_diplomacy_message);
 
@@ -5768,7 +5768,7 @@ void NPC_To_Human_Diplomacy__WIP(void)
                             else
                             {
 
-                                // TODO  IDK_Dipl_s73F1C(player_idx);
+                                NPC_Required_Alliances(player_idx);
 
                             }
 
@@ -5812,10 +5812,10 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
     int Human_Wars;
     int Comparison_Score;
 
-    if (AI_Dipl_Unset_0) {
-        for (LoopVar_1 = 1; LoopVar_1 < _num_players; LoopVar_1++) {
-            for (LoopVar_2 = 1; LoopVar_2 < _num_players; LoopVar_2++) {
-                if (LoopVar_1 != LoopVar_2) {
+    if(AI_Dipl_Unset_0) {
+        for(LoopVar_1 = 1; LoopVar_1 < _num_players; LoopVar_1++) {
+            for(LoopVar_2 = 1; LoopVar_2 < _num_players; LoopVar_2++) {
+                if(LoopVar_1 != LoopVar_2) {
                     _players[LoopVar_1].Dipl.Dipl_Status[LoopVar_2] = DIPL_Alliance;
                 }
             }
@@ -5823,21 +5823,21 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
         return;
     }
 
-    if (Player_1 == _human_player_idx && _turn < 100) {
+    if(Player_1 == _human_player_idx && _turn < 100) {
         return;
     }
 
-    if (_players[Player_1].Dipl.Dipl_Status[Player_2] >= DIPL_War || _players[Player_1].Dipl.Contacted[Player_2] != 1) {
+    if(_players[Player_1].Dipl.Dipl_Status[Player_2] >= DIPL_War || _players[Player_1].Dipl.Contacted[Player_2] != 1) {
         return;
     }
 
-    if (_FORTRESSES[Player_1].active == 0) {
+    if(_FORTRESSES[Player_1].active == 0) {
         return;
     }
 
-    if (_players[Player_2].Personality == PRS_Chaotic) {
-        if (Random(300) <= _difficulty) {
-            if (Player_1 != 0 || _players[Player_1].peace_duration[Player_2] < 1) {
+    if(_players[Player_2].Personality == PRS_Chaotic) {
+        if(Random(300) <= _difficulty) {
+            if(Player_1 != 0 || _players[Player_1].peace_duration[Player_2] < 1) {
                 _players[Player_1].Dipl.Dipl_Action[Player_2] = 40;
                 _players[Player_1].Dipl.DA_Strength[Player_2] = 2000;
                 Declare_War(Player_2, Player_1);
@@ -5846,21 +5846,21 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
         }
     }
 
-    if (Random(20) == 1) {
-        if (_players[Player_2].Objective == OBJ_Militarist || _players[Player_2].Objective == OBJ_Expansionist) {
-            if (_players[Player_2].Personality != PRS_Lawful) {
-                if (Player_1 != 0 || _players[Player_1].peace_duration[Player_2] < 1) {
+    if(Random(20) == 1) {
+        if(_players[Player_2].Objective == OBJ_Militarist || _players[Player_2].Objective == OBJ_Expansionist) {
+            if(_players[Player_2].Personality != PRS_Lawful) {
+                if(Player_1 != 0 || _players[Player_1].peace_duration[Player_2] < 1) {
                     Invasion_Strength = 0L;
                     Invader_Army_Strength_Comparison(Player_1, Player_2, &Invasion_Strength, &Defense_Strength);
 
-                    if (Defense_Strength > Invasion_Strength) {
-                        if (Invasion_Strength <= 0L) {
+                    if(Defense_Strength > Invasion_Strength) {
+                        if(Invasion_Strength <= 0L) {
                             Superiority_Modifier = -100;
                         } else {
                             Superiority_Modifier = -((int)((Defense_Strength * 100) / Invasion_Strength)) - 50;
                         }
                     } else {
-                        if (Defense_Strength <= 0L) {
+                        if(Defense_Strength <= 0L) {
                             Superiority_Modifier = 100;
                         } else {
                             Superiority_Modifier = (int)((Invasion_Strength * 100) / Defense_Strength) - 50;
@@ -5872,7 +5872,7 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
                                      + TBL_AI_PRS_IDK_Mod[_players[Player_2].Personality]
                                      + (int)_players[Player_1].Dipl.Hidden_Rel[Player_2];
 
-                    if (Comparison_Score <= -150) {
+                    if(Comparison_Score <= -150) {
                         G_DIPL_SuperiorityWar(Player_2, Player_1);
                     }
                 }
@@ -5880,19 +5880,19 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
         }
     }
 
-    if (Random(20) == 1) {
-        if (Player_1 != 0 || _players[Player_1].peace_duration[Player_2] < 1) {
+    if(Random(20) == 1) {
+        if(Player_1 != 0 || _players[Player_1].peace_duration[Player_2] < 1) {
             Invasion_Strength = 0L;
             Invader_Army_Strength_Comparison(Player_1, Player_2, &Invasion_Strength, &Defense_Strength);
 
-            if (Defense_Strength > Invasion_Strength) {
-                if (Invasion_Strength <= 0L) {
+            if(Defense_Strength > Invasion_Strength) {
+                if(Invasion_Strength <= 0L) {
                     Superiority_Modifier = -100;
                 } else {
                     Superiority_Modifier = -((int)((Defense_Strength * 100) / Invasion_Strength)) - 50;
                 }
             } else {
-                if (Defense_Strength <= 0L) {
+                if(Defense_Strength <= 0L) {
                     Superiority_Modifier = 100;
                 } else {
                     Superiority_Modifier = (int)((Invasion_Strength * 100) / Defense_Strength) - 50;
@@ -5904,19 +5904,19 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
                              + TBL_AI_PRS_IDK_Mod[_players[Player_2].Personality]
                              + (int)_players[Player_1].Dipl.Hidden_Rel[Player_2];
 
-            if (Comparison_Score <= -150) {
+            if(Comparison_Score <= -150) {
                 G_DIPL_SuperiorityWar(Player_2, Player_1);
             }
         }
     }
 
 loc_73CC0:
-    for (LoopVar_1 = 1; LoopVar_1 < _num_players; LoopVar_1++) {
-        if (_players[0].Dipl.Dipl_Status[LoopVar_1] == DIPL_War) {
-            if (_players[Player_2].Dipl.Dipl_Status[LoopVar_1] == DIPL_Alliance) {
-                if (_players[Player_1].peace_duration[Player_2] < 1) {
-                    if (Random(10) == 1) {
-                        if (_players[Player_2].Dipl.Dipl_Status[Player_1] != DIPL_Alliance) {
+    for(LoopVar_1 = 1; LoopVar_1 < _num_players; LoopVar_1++) {
+        if(_players[0].Dipl.Dipl_Status[LoopVar_1] == DIPL_War) {
+            if(_players[Player_2].Dipl.Dipl_Status[LoopVar_1] == DIPL_Alliance) {
+                if(_players[Player_1].peace_duration[Player_2] < 1) {
+                    if(Random(10) == 1) {
+                        if(_players[Player_2].Dipl.Dipl_Status[Player_1] != DIPL_Alliance) {
                             G_DIPL_SuperiorityWar(Player_2, Player_1);
                         }
                     }
@@ -5925,19 +5925,19 @@ loc_73CC0:
         }
     }
 
-    if (_difficulty >= 2) {
+    if(_difficulty >= 2) {
         Human_Wars = 0;
-        for (LoopVar_1 = 1; LoopVar_1 < _num_players; LoopVar_1++) {
-            if (_players[0].Dipl.Dipl_Status[LoopVar_1] >= DIPL_War) {
+        for(LoopVar_1 = 1; LoopVar_1 < _num_players; LoopVar_1++) {
+            if(_players[0].Dipl.Dipl_Status[LoopVar_1] >= DIPL_War) {
                 Human_Wars++;
             }
         }
 
-        if (Human_Wars < _difficulty) {
-            if (_players[Player_1].Dipl.Visible_Rel[Player_2] < -30) {
-                if (_players[Player_1].peace_duration[Player_2] < 1) {
+        if(Human_Wars < _difficulty) {
+            if(_players[Player_1].Dipl.Visible_Rel[Player_2] < -30) {
+                if(_players[Player_1].peace_duration[Player_2] < 1) {
                     Comparison_Score = -((int)_players[Player_1].Dipl.Visible_Rel[Player_2]) / 10;
-                    if (Random(15) <= Comparison_Score) {
+                    if(Random(15) <= Comparison_Score) {
                         G_DIPL_SuperiorityWar(Player_2, Player_1);
                     }
                 }
@@ -5951,34 +5951,34 @@ loc_73CC0:
 // WZD o87p04
 void G_DIPL_SuperiorityWar(int16_t Player_1, int16_t Player_2)
 {
-    if (_players[Player_1].Dipl.Dipl_Status[Player_2] == DIPL_Alliance ||
+    if(_players[Player_1].Dipl.Dipl_Status[Player_2] == DIPL_Alliance ||
         _players[Player_1].Dipl.Dipl_Status[Player_2] == DIPL_WizardPact)
     {
-        if (_difficulty < 2)
+        if(_difficulty < 2)
         {
             return;
         }
 
-        if (_players[Player_1].Dipl.Dipl_Status[Player_2] == DIPL_Alliance)
+        if(_players[Player_1].Dipl.Dipl_Status[Player_2] == DIPL_Alliance)
         {
-            if (Random(4) == 1 || (Random(2) == 1 && _players[Player_2].Objective == OBJ_Expansionist))
+            if(Random(4) == 1 || (Random(2) == 1 && _players[Player_2].Objective == OBJ_Expansionist))
             {
                 Change_Relations(-10000, Player_1, Player_2, 30, 0, 0);
                 Break_Treaties(Player_2, Player_1);
-                if (_players[Player_1].Dipl.Visible_Rel[Player_2] > 30)
+                if(_players[Player_1].Dipl.Visible_Rel[Player_2] > 30)
                 {
                     _players[Player_1].Dipl.Visible_Rel[Player_2] = 30;
                     _players[Player_2].Dipl.Visible_Rel[Player_1] = 30;
                 }
             }
         }
-        else if (_players[Player_1].Dipl.Dipl_Status[Player_2] == DIPL_WizardPact)
+        else if(_players[Player_1].Dipl.Dipl_Status[Player_2] == DIPL_WizardPact)
         {
-            if (Random(2) == 1 || _players[Player_2].Objective == OBJ_Expansionist)
+            if(Random(2) == 1 || _players[Player_2].Objective == OBJ_Expansionist)
             {
                 Change_Relations(-10000, Player_1, Player_2, 30, 0, 0);
                 Break_Treaties(Player_2, Player_1);
-                if (_players[Player_1].Dipl.Visible_Rel[Player_2] > 30)
+                if(_players[Player_1].Dipl.Visible_Rel[Player_2] > 30)
                 {
                     _players[Player_1].Dipl.Visible_Rel[Player_2] = 30;
                     _players[Player_2].Dipl.Visible_Rel[Player_1] = 30;
@@ -5988,9 +5988,9 @@ void G_DIPL_SuperiorityWar(int16_t Player_1, int16_t Player_2)
     }
     else
     {
-        if (_players[Player_1].peace_duration[Player_2] < 1)
+        if(_players[Player_1].peace_duration[Player_2] < 1)
         {
-            if (_players[Player_1].Dipl.Visible_Rel[Player_2] < 0)
+            if(_players[Player_1].Dipl.Visible_Rel[Player_2] < 0)
             {
                 Change_Relations(-10000, Player_1, Player_2, 39, 0, 0);
             }
@@ -6005,7 +6005,41 @@ void G_DIPL_SuperiorityWar(int16_t Player_1, int16_t Player_2)
 
 
 // WZD o87p05
-// IDK_Dipl_s73F1C()
+// MoO2  Module: NPCDIPLO  NPC_Required_Alliances_()
+void NPC_Required_Alliances(int16_t target_player_idx)
+{
+    int16_t player1_idx = 0;
+    int16_t player2_idx = 0;
+    int16_t matched_player_idx = 0;
+    int16_t itr_players = 0;
+    player1_idx = HUMAN_PLAYER_IDX;
+    player2_idx = target_player_idx;
+    if(_players[player1_idx].Dipl.Dipl_Status[player2_idx] == DIPL_Alliance)
+    {
+        if(Random(10) == 1)  /* 10% */
+        {
+            matched_player_idx = ST_UNDEFINED;
+            for(itr_players = 0; itr_players < _num_players; itr_players++)
+            {
+                if(itr_players != player1_idx && itr_players != player2_idx)
+                {
+                    if(_players[itr_players].Dipl.Dipl_Status[player2_idx] == DIPL_War)
+                    {
+                        if(_players[player1_idx].Dipl.Contacted[itr_players] == ST_TRUE)
+                        {
+                            if(_players[player1_idx].Dipl.Dipl_Status[itr_players] != DIPL_War)
+                            {
+                                matched_player_idx = itr_players;
+                            }
+                        }
+                    }
+                }
+            }
+            _players[player1_idx].Dipl.break_treaty[player2_idx] = matched_player_idx;
+        }
+    }
+    _players[player1_idx].Dipl.Dipl_Action[player2_idx] = 0;
+}
 
 
 // WZD o87p06
@@ -6039,7 +6073,7 @@ void DIPL_GetOffMyLawn(int16_t player1, int16_t player2)
     int16_t City_LoopVar;
     int16_t Unit_LoopVar;
 
-    if (_players[player2].Dipl.Dipl_Status[player1] == DIPL_War) {
+    if(_players[player2].Dipl.Dipl_Status[player1] == DIPL_War) {
         return;
     }
 
@@ -6047,15 +6081,15 @@ void DIPL_GetOffMyLawn(int16_t player1, int16_t player2)
     Have_Violation = 0;
     Unit_LoopVar = 0;
 
-    for (Unit_LoopVar = 0; Unit_LoopVar < _units; Unit_LoopVar++) {
-        if (_UNITS[Unit_LoopVar].owner_idx == player2) {
-            if (_UNITS[Unit_LoopVar].owner_idx != ST_UNDEFINED) {
-                if (_UNITS[Unit_LoopVar].owner_idx != NEUTRAL_PLAYER_IDX) {
-                    if ((_unit_type_table[_UNITS[Unit_LoopVar].type].Abilities & UA_CREATEOUTPOST) == 0) {
-                        if (_unit_type_table[_UNITS[Unit_LoopVar].type].Construction < 1) {
-                            for (City_LoopVar = 0; City_LoopVar < _cities; City_LoopVar++) {
-                                if (_CITIES[City_LoopVar].owner_idx == player1) {
-                                    if (_UNITS[Unit_LoopVar].wp == _CITIES[City_LoopVar].wp || _UNITS[Unit_LoopVar].in_tower == ST_TRUE) {
+    for(Unit_LoopVar = 0; Unit_LoopVar < _units; Unit_LoopVar++) {
+        if(_UNITS[Unit_LoopVar].owner_idx == player2) {
+            if(_UNITS[Unit_LoopVar].owner_idx != ST_UNDEFINED) {
+                if(_UNITS[Unit_LoopVar].owner_idx != NEUTRAL_PLAYER_IDX) {
+                    if((_unit_type_table[_UNITS[Unit_LoopVar].type].Abilities & UA_CREATEOUTPOST) == 0) {
+                        if(_unit_type_table[_UNITS[Unit_LoopVar].type].Construction < 1) {
+                            for(City_LoopVar = 0; City_LoopVar < _cities; City_LoopVar++) {
+                                if(_CITIES[City_LoopVar].owner_idx == player1) {
+                                    if(_UNITS[Unit_LoopVar].wp == _CITIES[City_LoopVar].wp || _UNITS[Unit_LoopVar].in_tower == ST_TRUE) {
                                         Unit_City_Distance = Delta_XY_With_Wrap(
                                             (int16_t)_UNITS[Unit_LoopVar].wx,
                                             (int16_t)_UNITS[Unit_LoopVar].wy,
@@ -6063,13 +6097,13 @@ void DIPL_GetOffMyLawn(int16_t player1, int16_t player2)
                                             (int16_t)_CITIES[City_LoopVar].wy,
                                             WORLD_WIDTH
                                         );
-                                        if (Unit_City_Distance < 3) {
+                                        if(Unit_City_Distance < 3) {
                                             Violated_City_Index = City_LoopVar;
                                             Have_Violation = ST_TRUE;
                                         }
                                     }
                                 }
-                                if (Have_Violation != 0) {
+                                if(Have_Violation != 0) {
                                     break;
                                 }
                             }
@@ -6078,24 +6112,24 @@ void DIPL_GetOffMyLawn(int16_t player1, int16_t player2)
                 }
             }
         }
-        if (Have_Violation != 0) {
+        if(Have_Violation != 0) {
             break;
         }
     }
 
-    if (Violated_City_Index == ST_UNDEFINED) {
+    if(Violated_City_Index == ST_UNDEFINED) {
         _players[player2].Dipl.G_Warning_Progress[player1] = 0;
         return;
     }
 
-    if (_players[player2].Dipl.Dipl_Status[player1] == DIPL_Alliance ||
+    if(_players[player2].Dipl.Dipl_Status[player1] == DIPL_Alliance ||
         _players[player2].Dipl.Dipl_Status[player1] == DIPL_WizardPact) 
     {
-        if (_players[player2].Dipl.G_Warning_Progress[player1] == 0) {
+        if(_players[player2].Dipl.G_Warning_Progress[player1] == 0) {
             Random_DA_Value = Random(5);
             Change_Relations(-Random_DA_Value, player2, player1, 73, Violated_City_Index, 0);
             _players[player2].Dipl.G_Warning_Progress[player1] = 1;
-        } else if (_players[player2].Dipl.G_Warning_Progress[player1] == 1) {
+        } else if(_players[player2].Dipl.G_Warning_Progress[player1] == 1) {
             _players[player2].Dipl.G_Warning_Progress[player1] = 2;
         } else {
             _players[player2].Dipl.G_Warning_Progress[player1] = 0;
@@ -6105,10 +6139,10 @@ void DIPL_GetOffMyLawn(int16_t player1, int16_t player2)
         }
     } else {
         _players[player2].Dipl.G_Warning_Progress[player1] = 0;
-        if (Random(100) < 6) {
+        if(Random(100) < 6) {
             int relations_type;
             Random_DA_Value = Random(5);
-            if (Random(5) == 1) {
+            if(Random(5) == 1) {
                 relations_type = 73;
             } else {
                 relations_type = 0;

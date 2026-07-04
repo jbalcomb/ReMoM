@@ -287,7 +287,7 @@ static void Dump_Players(FILE *fp, const uint8_t *sav)
             for (k = 0; k < (SD_NUM_PLAYERS * 6); k++) { fprintf(fp, "player[%d].dipl.field_A8[%d] = %d\n",      itr, k, rd_i16(sav, d + 0xA8 + (k * 2))); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.niu_au_tech_trade_num[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0xF0 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.tribute_gold[%d] = %d\n",        itr, p, rd_i16(sav, d + 0xF6 + (p * 2))); }
-            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_102[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x102 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.break_treaty[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x102 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_108[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x108 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_10E[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x10E + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_114[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x114 + p)); }

@@ -103,7 +103,7 @@ static const gd_field_t wizard_fields[] = {
     { 0x01D0, GD_I16  ,  36, "Dipl.field_A8" },
     { 0x0218, GD_I8   ,   6, "Dipl.niu_au_tech_trade_num" },
     { 0x021E, GD_I16  ,   6, "Dipl.offer_gold" },
-    { 0x022A, GD_I8   ,   6, "Dipl.field_102" },
+    { 0x022A, GD_I8   ,   6, "Dipl.break_treaty" },
     { 0x0230, GD_I8   ,   6, "Dipl.field_108" },
     { 0x0236, GD_I8   ,   6, "Dipl.field_10E" },
     { 0x023C, GD_I8   ,   6, "Dipl.field_114" },
