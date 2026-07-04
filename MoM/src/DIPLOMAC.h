@@ -222,7 +222,7 @@ void End_Of_Turn_Diplomacy_Adjustments(void);
 */
 
 // WZD o88p01
-// sub_74420()
+void NPC_Diplo_s74420(int16_t player1_idx, int16_t player2_idx);
 
 // WZD o88p02
 // DIPL_HumanWarOrPeace()
@@ -231,7 +231,7 @@ void End_Of_Turn_Diplomacy_Adjustments(void);
 void Modifier_Diplomacy_Adjustments(void);
 
 // WZD o88p04
-int16_t s88p04_empty_function(void);
+int16_t s88p04_empty_function(int16_t player);
 
 // WZD o88p05
 // sub_74E38()

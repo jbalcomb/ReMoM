@@ -5,6 +5,33 @@ need to go through Get_Diplomacy_Statement() and work out the cases
 looks like 7 and 9 are deprecated code from MoO1
 
 
+## Diplomatic Orders
+
+ 2: ...have niu_bounty_collect
+
+15: Greet New Wizard - PRS_Maniacal
+16: Greet New Wizard - PRS_Ruthless
+17: Greet New Wizard - PRS_Aggressive
+18: Greet New Wizard - PRS_Chaotic
+19: Greet New Wizard - PRS_Lawful
+20: Greet New Wizard - PRS_Peaceful
+
+
+
+
+
+field_6C       ==>  niu_attack_bounty
+field_120      ==>  niu_bounty_collect
+field_9C       ==>  niu_au_want_tech
+field_F0       ==>  niu_au_tech_trade_num
+Tribute_Spell  ==>  offer_spell
+Tribute_Gold   ==>  offer_gold
+Pop_div_10k    ==>  empire_mini_pops
+    /* 035A */ struct s_ASTROLOGER astrologer;  /* populated in Record_History() */
+    /* 0360 */ uint16_t empire_mini_pops;       /* ¿ mini-pops ?  onlu used for history? */
+    /* 0362 */ uint8_t  history[288];           /* ¿ Wizard's Power ? */
+
+
 Get_Diplomacy_Statement()
     m_diplomacy_message[pos] = G_DIPL_ComposedMessage[itr];
     code = m_diplomacy_message[pos];

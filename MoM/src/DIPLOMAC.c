@@ -181,13 +181,13 @@ void End_Of_Turn_Diplomacy_Adjustments(void);
     WIZARDS.EXE  ovr088
 */
 // WZD o88p01
-// sub_74420()
+void NPC_Diplo_s74420(int16_t player1_idx, int16_t player2_idx);
 // WZD o88p02
 // DIPL_HumanWarOrPeace()
 // WZD o88p03
 void Modifier_Diplomacy_Adjustments(void);
 // WZD o88p04
-int16_t s88p04_empty_function(void);
+int16_t s88p04_empty_function(int16_t player);
 // WZD o88p05
 // sub_74E38()
 // WZD o88p06
@@ -431,8 +431,14 @@ uint8_t byte_42E2E[10];
 // WZD dseg:C398
 uint8_t byte_42E38;
 // WZD dseg:C399
+/*
+1-byte, unsigned
+*/
 uint8_t byte_42E39[10];
 // WZD dseg:C3A3
+/*
+1-byte, unsigned
+*/
 uint8_t byte_42E43[10];
 // WZD dseg:C3AD
 uint8_t byte_42E4D;
@@ -456,7 +462,7 @@ uint8_t m_exchange_spell_list[10];
 /*
 1-byte, unsigned
 */
-int16_t m_exchange_spell_count;
+uint8_t m_exchange_spell_count;
 
 
 // WZD dseg:C3C3 00                                              align 2
@@ -811,7 +817,7 @@ void Diplomacy_Screen_Draw__WIP(void)
 // TODO  Message	VCR003	Function '_sub_6ED5D_Draw' can be made static		C:\STU\devel\ReMoM\MoM\src\DIPLOMAC.c	811		
 static void _sub_6ED5D_Draw(void)
 {
-    int16_t si = 0;  // _SI_
+    int16_t player2_idx = 0;  // _SI_
 
     Set_Page_Off();
 
@@ -831,14 +837,14 @@ static void _sub_6ED5D_Draw(void)
 
     Set_Font_LF(1);
 
-    si = Get_Paragraph_Max_Height(245, m_diplomacy_message);
+    player2_idx = Get_Paragraph_Max_Height(245, m_diplomacy_message);
 
-    if(si > 39)
+    if(player2_idx > 39)
     {
 
         Set_Font_LF(0);
 
-        si = Get_Paragraph_Max_Height(245, m_diplomacy_message);
+        player2_idx = Get_Paragraph_Max_Height(245, m_diplomacy_message);
 
     }
 
@@ -1446,14 +1452,14 @@ static void Diplomacy_Display_Response(int16_t diplomatic_order, int16_t IDK2)
 {
     int16_t full_screen_field = 0;
     int16_t leave_screen = 0;
-    int16_t di = 0;  // _DI_
+    int16_t itr_players = 0;  // _DI_
 
-    di = 0;
+    itr_players = 0;
 
     if(diplomatic_order == 57)
     {
 
-        di = 1;
+        itr_players = 1;
 
     }
 
@@ -1464,7 +1470,7 @@ static void Diplomacy_Display_Response(int16_t diplomatic_order, int16_t IDK2)
     )
     {
 
-        di = 1;
+        itr_players = 1;
 
     }
 
@@ -1475,13 +1481,13 @@ static void Diplomacy_Display_Response(int16_t diplomatic_order, int16_t IDK2)
     )
     {
 
-        di = 1;
+        itr_players = 1;
 
     }
 
     m_IDK_diplomatic_order = diplomatic_order;
 
-    if(di != 1)
+    if(itr_players != 1)
     {
         // So, ... NOT {51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66}
 
@@ -1632,16 +1638,16 @@ static int16_t IDK_Npc_Counteroffer__STUB(int16_t arg_0)
     int16_t var_6 = 0;
     int16_t _variable = 0;
     int16_t spell_idx = 0;
-    int16_t si = 0;
+    int16_t player2_idx = 0;
 
     var_6 = 0;
 
-    si = ((((Random(8) + Random(8)) * _turn) / 25) * 25);
+    player2_idx = ((((Random(8) + Random(8)) * _turn) / 25) * 25);
 
-    if(si > _players[HUMAN_PLAYER_IDX].gold_reserve)
+    if(player2_idx > _players[HUMAN_PLAYER_IDX].gold_reserve)
     {
 
-        si = 0;
+        player2_idx = 0;
 
     }
 
@@ -3185,6 +3191,7 @@ static int16_t Find_Worst_Modifier(void)
 
 
 // WZD o85p06
+// MoO2  Module: DIPLOMAC  Limit_Treaty_Modifiers_()
 static void Limit_Temporary_Peace_Modifier(void)
 {
     int16_t itr2 = 0;  // _SI_
@@ -4939,8 +4946,8 @@ void NPC_To_NPC_Treaty_Negotiations(void)
                 continue;
             }
 
-            Base_Score = (int)_players[itr_players1].Dipl.Hidden_Rel[itr_players2] +
-                         (int)_players[itr_players1].Dipl.Visible_Rel[itr_players2] +
+            Base_Score = _players[itr_players1].Dipl.Hidden_Rel[itr_players2] +
+                         _players[itr_players1].Dipl.Visible_Rel[itr_players2] +
                          TBL_AI_PRS_IDK_Mod[_players[itr_players2].Personality];
 
             Total_Score = Base_Score + Random(100);
@@ -4977,10 +4984,10 @@ void NPC_To_NPC_Treaty_Negotiations(void)
             if((_players[itr_players1].Dipl.exchange_modifier[itr_players2] + 80) < Total_Score)
             {
                 Trade_Spell_Count = Get_Differential_Spell_List(itr_players1, itr_players2, 1, m_exchange_spell_list);
-                First_Trade_Spell = (int)m_exchange_spell_list[0];
+                First_Trade_Spell = m_exchange_spell_list[0];
 
                 Other_Players_Count = Get_Differential_Spell_List(itr_players2, itr_players1, 1, m_exchange_spell_list);
-                Trade_For_Spell = (int)m_exchange_spell_list[0];
+                Trade_For_Spell = m_exchange_spell_list[0];
 
                 if(Trade_Spell_Count > 0 && Other_Players_Count > 0)
                 {
@@ -5624,7 +5631,7 @@ void NPC_To_Human_Diplomacy__WIP(void)
     int16_t Total_Score = 0;
     int16_t Lowest_Interest = 0;
     int16_t player_idx = 0;
-    int16_t di = 0;
+    int16_t da_strength = 0;
 
     if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
     {
@@ -5633,7 +5640,7 @@ void NPC_To_Human_Diplomacy__WIP(void)
 
     }
 
-    Limit_Temporary_Peace_Modifier();
+    Limit_Temporary_Peace_Modifier();  // MoO2  OON XREF: Determine_Diplomacy_Messages_()
 
     for(player_idx = 1; player_idx < _num_players; player_idx++)
     {
@@ -5697,7 +5704,7 @@ void NPC_To_Human_Diplomacy__WIP(void)
                 else
                 {
 
-                    di = _players[HUMAN_PLAYER_IDX].Dipl.DA_Strength[player_idx];
+                    da_strength = _players[HUMAN_PLAYER_IDX].Dipl.DA_Strength[player_idx];
 
                     if(_players[HUMAN_PLAYER_IDX].Dipl.DA_Strength[player_idx] < 0)
                     {
@@ -5705,11 +5712,11 @@ void NPC_To_Human_Diplomacy__WIP(void)
                         if(
                             (_players[HUMAN_PLAYER_IDX].Dipl.field_126[player_idx] > 0)
                             ||
-                            (Random(75) < abs(di))
+                            (Random(75) < abs(da_strength))
                         )
                         {
 
-                            // TODO  DIPL_HumanWarOrPeace(player_idx);
+                            DIPL_HumanWarOrPeace(player_idx);
 
                         }
                         else
@@ -5730,7 +5737,7 @@ void NPC_To_Human_Diplomacy__WIP(void)
                         )
                         {
 
-                            // TODO  DIPL_HumanWarOrPeace(player_idx);
+                            DIPL_HumanWarOrPeace(player_idx);
 
                         }
                         else
@@ -5739,12 +5746,12 @@ void NPC_To_Human_Diplomacy__WIP(void)
                             if(_players[HUMAN_PLAYER_IDX].Dipl.field_126[player_idx] == 0)
                             {
 
-                                di += 3;
+                                da_strength += 3;
 
                             }
 
                             if(
-                                (Random(100) < di)
+                                (Random(100) < da_strength)
                                 &&
                                 (Random(4) == 1)
                             )
@@ -5760,7 +5767,7 @@ void NPC_To_Human_Diplomacy__WIP(void)
                                 else
                                 {
 
-                                    // TODO  sub_34C10(player_idx);
+                                    NPC_Diplo_s74420(HUMAN_PLAYER_IDX, player_idx);
 
                                 }
 
@@ -5857,20 +5864,20 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
                         if(Invasion_Strength <= 0L) {
                             Superiority_Modifier = -100;
                         } else {
-                            Superiority_Modifier = -((int)((Defense_Strength * 100) / Invasion_Strength)) - 50;
+                            Superiority_Modifier = -(((Defense_Strength * 100) / Invasion_Strength)) - 50;
                         }
                     } else {
                         if(Defense_Strength <= 0L) {
                             Superiority_Modifier = 100;
                         } else {
-                            Superiority_Modifier = (int)((Invasion_Strength * 100) / Defense_Strength) - 50;
+                            Superiority_Modifier = ((Invasion_Strength * 100) / Defense_Strength) - 50;
                         }
                     }
 
-                    Comparison_Score = (int)_players[Player_1].Dipl.Visible_Rel[Player_2]
+                    Comparison_Score = _players[Player_1].Dipl.Visible_Rel[Player_2]
                                      + Superiority_Modifier
                                      + TBL_AI_PRS_IDK_Mod[_players[Player_2].Personality]
-                                     + (int)_players[Player_1].Dipl.Hidden_Rel[Player_2];
+                                     + _players[Player_1].Dipl.Hidden_Rel[Player_2];
 
                     if(Comparison_Score <= -150) {
                         G_DIPL_SuperiorityWar(Player_2, Player_1);
@@ -5889,20 +5896,20 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
                 if(Invasion_Strength <= 0L) {
                     Superiority_Modifier = -100;
                 } else {
-                    Superiority_Modifier = -((int)((Defense_Strength * 100) / Invasion_Strength)) - 50;
+                    Superiority_Modifier = -(((Defense_Strength * 100) / Invasion_Strength)) - 50;
                 }
             } else {
                 if(Defense_Strength <= 0L) {
                     Superiority_Modifier = 100;
                 } else {
-                    Superiority_Modifier = (int)((Invasion_Strength * 100) / Defense_Strength) - 50;
+                    Superiority_Modifier = ((Invasion_Strength * 100) / Defense_Strength) - 50;
                 }
             }
 
-            Comparison_Score = (int)_players[Player_1].Dipl.Visible_Rel[Player_2]
+            Comparison_Score = _players[Player_1].Dipl.Visible_Rel[Player_2]
                              + Superiority_Modifier
                              + TBL_AI_PRS_IDK_Mod[_players[Player_2].Personality]
-                             + (int)_players[Player_1].Dipl.Hidden_Rel[Player_2];
+                             + _players[Player_1].Dipl.Hidden_Rel[Player_2];
 
             if(Comparison_Score <= -150) {
                 G_DIPL_SuperiorityWar(Player_2, Player_1);
@@ -5936,7 +5943,7 @@ loc_73CC0:
         if(Human_Wars < _difficulty) {
             if(_players[Player_1].Dipl.Visible_Rel[Player_2] < -30) {
                 if(_players[Player_1].peace_duration[Player_2] < 1) {
-                    Comparison_Score = -((int)_players[Player_1].Dipl.Visible_Rel[Player_2]) / 10;
+                    Comparison_Score = -(_players[Player_1].Dipl.Visible_Rel[Player_2]) / 10;
                     if(Random(15) <= Comparison_Score) {
                         G_DIPL_SuperiorityWar(Player_2, Player_1);
                     }
@@ -6238,8 +6245,263 @@ void End_Of_Turn_Diplomacy_Adjustments(void)
 */
 
 // WZD o88p01
-// sub_74420()
 // IDK_Dipl_Npc_Demand__STUB()
+void NPC_Diplo_s74420(int16_t player1_idx, int16_t player2_idx)
+{
+/*
+IDK_modifier= word ptr -14h
+var_12= word ptr -12h
+min_value= word ptr -10h
+var_E= word ptr -0Eh
+divisor= dword ptr -0Ch
+var_8= word ptr -8
+input= word ptr -6
+IDK_relations= word ptr -4
+IDK_message= word ptr -2
+*/
+    int16_t IDK_message = 0;
+    int16_t IDK_relations = 0;
+    int16_t input = 0;
+    int16_t var_8 = 0;
+    int32_t divisor = 0;
+    int16_t var_E = 0;
+    int16_t min_value = 0;
+    int16_t var_12 = 0;
+    int16_t IDK_modifier = 0;
+    int16_t itr_players = 0;
+
+    if(_players[_human_player_idx].Dipl.Contacted[player2_idx] == 0 ||
+        _players[player2_idx].Dipl.Contacted[_human_player_idx] == 0)
+    {
+        if(_players[0].Dipl.DA_Strength[0] == 0 ||
+            _players[0].Dipl.Dipl_Status[player2_idx] >= DIPL_War ||
+            s88p04_empty_function(player2_idx) == ST_TRUE)
+        {
+            _players[0].Dipl.Dipl_Action[player2_idx] = do_None;
+            return;
+        }
+    }
+
+    /* loc_74476 */
+    if(_players[player1_idx].Dipl.Dipl_Action[player2_idx] != do_None)
+    {
+        if(Random(2) == 1)  /* 50% */
+        {
+            return;
+        }
+    }
+
+    /* loc_7449A */
+    IDK_message = 0;
+    var_12 = 0;
+
+    IDK_relations = _players[player1_idx].Dipl.Hidden_Rel[player2_idx] +
+            _players[player1_idx].Dipl.Visible_Rel[player2_idx] +
+            var_12 +
+            TBL_AI_PRS_IDK_Mod[_players[player2_idx].Personality];
+
+    if(_players[player1_idx].Dipl.Dipl_Status[player2_idx] == DIPL_NoTreaty &&
+        _players[player1_idx].Dipl.Visible_Rel[player2_idx] > 15)
+    {
+        input = IDK_relations + Random(100) + _players[player1_idx].Dipl.treaty_modifier[player2_idx];
+        if(input >= 50)
+        {
+            IDK_message = 1;
+        }
+    }
+
+    if((_players[player1_idx].Dipl.Dipl_Status[player2_idx] == DIPL_WizardPact || IDK_message == 1) &&
+        _players[player1_idx].Dipl.Visible_Rel[player2_idx] > 50)
+    {
+        input = IDK_relations + Random(100) + _players[player1_idx].Dipl.treaty_modifier[player2_idx];
+        if(input >= 100)
+        {
+            IDK_message = 2;
+        }
+    }
+
+    if(IDK_message == 0)
+    {
+        /* loc_745A6 */
+        var_8 = 0;
+        for(itr_players = 1; itr_players < _num_players; itr_players++)
+        {
+            if(itr_players == player2_idx)
+            {
+                continue;
+            }
+            if(_players[player2_idx].Dipl.Dipl_Status[itr_players] >= DIPL_War &&
+                _players[_human_player_idx].Dipl.Contacted[itr_players] != ST_TRUE)
+            {
+                var_8 = itr_players;
+            }
+        }
+
+        if(
+            var_8 != 0
+            &&
+            Random(10) == 1
+        )
+        {
+            if(_players[player1_idx].Dipl.niu_attack_bounty[player2_idx] == HUMAN_PLAYER_IDX)
+            {
+                Get_Exchange_Spell_List(player2_idx, 0, 0);
+                *( (int *)&divisor + 1 ) = 0;
+                if(m_exchange_spell_count == 0)
+                {
+                    int temp = (Random(3) + 1) * _turn;
+                    *( (int *)&divisor + 1 ) = (temp / 50) * 50;
+                }
+            }
+        }
+    }
+
+    if(IDK_message == 0)
+    {
+        /* loc_74650 */
+        input = IDK_relations + Random(100);
+        if(input >= 25)
+        {
+            var_12 = 0;
+            IDK_modifier = _players[player1_idx].Dipl.exchange_modifier[player2_idx];
+            if(IDK_modifier > 0)
+            {
+                IDK_modifier = IDK_modifier / 5;
+            }
+            if(IDK_modifier > 30)
+            {
+                IDK_modifier = 30;
+            }
+            if(_players[player2_idx].Dipl.Dipl_Status[player1_idx] == DIPL_Alliance)
+            {
+                IDK_modifier += 25;
+            }
+
+            /* Note: Visble_Rel division by 2 is signed division rounding to 0, matching the cwd/sub ax,dx/sar ax,1 sequence */
+            IDK_relations = _players[player1_idx].Dipl.Hidden_Rel[player2_idx] +
+                    (_players[player1_idx].Dipl.Visible_Rel[player2_idx] / 2) +
+                    var_12 +
+                    TBL_AI_PRS_IDK_Mod[_players[player2_idx].Personality] +
+                    IDK_modifier - 125;
+
+            input = IDK_relations + Random(100) + IDK_modifier - 125;
+            if(input < 0)
+            {
+                divisor = abs(input) + 100;
+            }
+            else
+            {
+                divisor = 20000 / (input + 200);
+            }
+
+            if(divisor < 50)
+            {
+                divisor = 50;
+            }
+
+            Get_Exchange_Spell_List(player2_idx, 0, 0);
+            if(m_exchange_spell_count > 0)
+            {
+                byte_42E43[0] = m_exchange_spell_list[0];
+                byte_42E39[0] = (uint8_t)((100 * (int32_t)m_exchange_spell_values[0]) / (int32_t)divisor);
+                min_value = byte_42E39[0];
+
+                Get_Exchange_Spell_List(player2_idx, 0, min_value);
+                var_E = ST_FALSE;
+                for(itr_players = 0; itr_players < m_exchange_spell_count; itr_players++)
+                {
+                    if(m_exchange_spell_values[itr_players] <= byte_42E39[0])
+                    {
+                        var_E = ST_TRUE;
+                    }
+                }
+
+                if(var_E != ST_FALSE)
+                {
+                    IDK_message = 5;  /* ¿ MoO2  Get_Main_Diplomacy_Choices_()  case 5: Diplomacy_Exchange_Technology_() */
+                }
+            }
+        }
+    }
+
+    /* loc_747D1 */
+    if(IDK_message == 0)
+    {
+        if(_players[0].Dipl.Visible_Rel[player2_idx] > 0 &&
+            _players[player2_idx].empire_mini_pops < _players[0].empire_mini_pops &&
+            _players[0].Dipl.Dipl_Status[player2_idx] == DIPL_NoTreaty)
+        {
+            IDK_message = 1;
+        }
+    }
+
+    if(IDK_message == 1)
+    {
+        _players[0].Dipl.Dipl_Action[player2_idx] = do_IDK_treaty1;
+    }
+    else if(IDK_message == 2)
+    {
+        _players[0].Dipl.Dipl_Action[player2_idx] = do_IDK_treaty2;
+    }
+    else if(IDK_message == 5)  /* MoO2  Get_Main_Diplomacy_Choices_()  case 5: Diplomacy_Exchange_Technology_() */
+    {
+        if(m_exchange_spell_count > 0)
+        {
+            _players[0].Dipl.niu_au_tech_trade_num[player2_idx] = 0;
+            for(itr_players = 0; itr_players < m_exchange_spell_count && itr_players < 6; itr_players++)
+            {
+                if(m_exchange_spell_values[itr_players] <= byte_42E39[0])
+                {
+                    int field_F0_val = _players[0].Dipl.niu_au_tech_trade_num[player2_idx];
+                    int offset_A8 = player2_idx * 6 + field_F0_val;
+                    ((int *)_players[0].Dipl.field_A8)[offset_A8] = m_exchange_spell_list[itr_players];
+                    _players[0].Dipl.niu_au_tech_trade_num[player2_idx]++;
+                }
+            }
+
+            if(_players[0].Dipl.niu_au_tech_trade_num[player2_idx] > 0)
+            {
+                _players[0].Dipl.Dipl_Action[player2_idx] = do_IDK_exchange;
+                _players[0].Dipl.niu_au_want_tech[player2_idx] = byte_42E43[0];
+            }
+
+            _players[player2_idx].Dipl.exchange_modifier[0] = 0;
+            _players[0].Dipl.exchange_modifier[player2_idx] = 0;
+        }
+    }
+
+    if(_players[player2_idx].empire_mini_pops != 0)
+    {
+        if(IDK_message == 1 || IDK_message == 2)
+        {
+            if(_players[player2_idx].Personality > PRS_Ruthless)
+            {
+                if(Random(100) <= (_players[0].empire_mini_pops * 30) / _players[player2_idx].empire_mini_pops)
+                {
+                    if(Random(8) == 1)  /* 12.5% */
+                    {
+                        if(Random(4) <= 1)  /* 1:4 */
+                        {
+                            Get_Exchange_Spell_List(player2_idx, 0, 0);
+                            if(m_exchange_spell_count > 0)
+                            {
+                                _players[0].Dipl.offer_spell[player2_idx] = m_exchange_spell_list[0];
+                            }
+                        }
+                        else  /* 3:4 */
+                        {
+                            int rnd_div = Random(3) + 1;
+                            int temp_gold = (_players[player2_idx].empire_mini_pops / rnd_div) + _turn;
+                            _players[0].Dipl.offer_gold[player2_idx] = (temp_gold / 25) * 25;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+
 
 // WZD o88p02
 // DIPL_HumanWarOrPeace()
@@ -6315,7 +6577,7 @@ void Modifier_Diplomacy_Adjustments(void)
 
 
 // WZD o88p04
-int16_t s88p04_empty_function(void)
+int16_t s88p04_empty_function(int16_t player_idx)
 {
 // push    bp
 // mov     bp, sp
