@@ -3735,19 +3735,19 @@ void Declare_War(int16_t attacker_idx, int16_t defender_idx)
     if(
         (attacker_idx == HUMAN_PLAYER_IDX)
         &&
-        (_players[attacker_idx].Dipl.Contact_Progress[defender_idx] == 0)
+        (_players[attacker_idx].Dipl.contact_stage[defender_idx] == pcs_Unmet)
     )
     {
-        _players[attacker_idx].Dipl.Contact_Progress[defender_idx] = 1;
+        _players[attacker_idx].Dipl.contact_stage[defender_idx] = pcs_Greeted;
     }
 
     if(
         (defender_idx == HUMAN_PLAYER_IDX)
         &&
-        (_players[defender_idx].Dipl.Contact_Progress[attacker_idx] == 0)
+        (_players[defender_idx].Dipl.contact_stage[attacker_idx] == pcs_Unmet)
     )
     {
-        _players[defender_idx].Dipl.Contact_Progress[attacker_idx] = 1;
+        _players[defender_idx].Dipl.contact_stage[attacker_idx] = pcs_Greeted;
     }
 
     if(
@@ -4527,19 +4527,11 @@ static void Cancel_Players_City_Enchantments(int16_t player1, int16_t player2)
 */
 
 // WZD o86p01
-/*
-
-XREF:
-    j_IDK_Dipl_s72690()
-        Resolve_Delayed_Diplomacy_Orders
-            Next_Turn_Calc()
-
-*/
 static void Npc_Diplomacy_Screen(void)
 {
     int16_t full_screen_field = 0;
-    int16_t input_field_idx = 0;  // _DI_
-    int16_t leave_screen = 0;  // _SI_
+    int16_t input_field_idx = 0;
+    int16_t leave_screen = 0;
     int16_t var_4 = 0;
 
     Limit_Temporary_Peace_Modifier();
@@ -4842,7 +4834,6 @@ static void Npc_Diplomacy_Screen(void)
 
     Cache_Graphics_Overland();
 
-    // DOMSDOS  Play_Background_Music__STUB();
     Play_Background_Music();
 
 
@@ -5607,27 +5598,19 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 void Determine_First_Contacts(void)
 {
     int16_t itr = 0;
-
     for(itr = 1; itr < _num_players; itr++)
     {
-
         if(
-            (_players[_human_player_idx].Dipl.Contact_Progress[itr] == 0)
+            (_players[_human_player_idx].Dipl.contact_stage[itr] == pcs_Unmet)
             &&
             (_players[_human_player_idx].Dipl.Contacted[itr] == ST_TRUE)
         )
         {
-
-            _players[_human_player_idx].Dipl.Contact_Progress[itr] = 1;
-
+            _players[_human_player_idx].Dipl.contact_stage[itr] = pcs_Greeted;
             _players[_human_player_idx].Dipl.Dipl_Status[itr] = DIPL_NoTreaty;
-
             _players[itr].Dipl.Dipl_Status[_human_player_idx] = DIPL_NoTreaty;
-
         }
-
     }
-
 }
 
 
@@ -5667,10 +5650,10 @@ void NPC_To_Human_Diplomacy__WIP(void)
             _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = do_None;
 
         }
-        else if(_players[HUMAN_PLAYER_IDX].Dipl.Contact_Progress[player_idx] == 1)  /* ¿ New Contact ? */
+        else if(_players[HUMAN_PLAYER_IDX].Dipl.contact_stage[player_idx] == pcs_Greeted)
         {
 
-            _players[HUMAN_PLAYER_IDX].Dipl.Contact_Progress[player_idx] = 2;
+            _players[HUMAN_PLAYER_IDX].Dipl.contact_stage[player_idx] = pcs_Established;
 
             _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = (15 + _players[player_idx].Personality);
 

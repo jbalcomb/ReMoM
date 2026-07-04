@@ -89,7 +89,7 @@ static const gd_field_t wizard_fields[] = {
     { 0x0170, GD_I16  ,   6, "Dipl.DA_Spell" },
     { 0x017C, GD_I8   ,   6, "Dipl.DA_City" },
     { 0x0182, GD_I8   ,   6, "Dipl.Default_Rel" },
-    { 0x0188, GD_I8   ,   6, "Dipl.Contact_Progress" },
+    { 0x0188, GD_I8   ,   6, "Dipl.contact_stage" },
     { 0x018E, GD_I8   ,   6, "Dipl.Broken_Treaty" },
     { 0x0194, GD_I16  ,   6, "Dipl.niu_attack_bounty" },
     { 0x01A0, GD_I8   ,   6, "Dipl.Hidden_Rel" },

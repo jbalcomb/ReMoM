@@ -348,6 +348,13 @@ enum e_Magic
 
 
 
+enum e_PLAYER_CONTACT_STAGE
+{
+    pcs_Unmet = 0,
+    pcs_Greeted = 1,
+    pcs_Established = 2
+};
+
 /*
     Rival Wizard Relationship Status
 */
@@ -1352,7 +1359,7 @@ struct s_WIZ_DIPL
     /* 0048 */ int16_t DA_Spell[NUM_PLAYERS];
     /* 0054 */ int8_t DA_City[NUM_PLAYERS];
     /* 005A */ int8_t Default_Rel[NUM_PLAYERS];         /* default (baseline) relations */ /* 1oom: relation2 */
-    /* 0060 */ int8_t Contact_Progress[NUM_PLAYERS];    /* ¿ 1oom have_met[] {0,1,2} ? */
+    /* 0060 */ int8_t contact_stage[NUM_PLAYERS];    /* 1:unmet,2:greeted,3:established ¿ 1oom have_met[] {0,1,2} ? */
     /* 0066 */ int8_t Broken_Treaty[NUM_PLAYERS];       /* 1oom: broken_treaty */
     // /* 006C */ int16_t Unknown_194h[NUM_PLAYERS];
     /* 006C */ int16_t niu_attack_bounty[NUM_PLAYERS];           /* 1oom:  attack_bounty */
