@@ -3366,15 +3366,34 @@ static void Declare_Peace(int16_t player1, int16_t player2)
 
 // WZD o85p11
 // MoO2  Module: DIPLOMAC  Adjust_Diplomat_Modifiers_()
+/**
+ * @brief Applies a small uniform decay to bilateral diplomatic modifiers.
+ *
+ * @details
+ * Decrements the acting player's stored modifier values toward another player
+ * by a fixed amount of 10 points for each tracked channel:
+ * - @c treaty_modifier
+ * - @c exchange_modifier
+ * - @c peace_modifier
+ *
+ * This helper updates only the @p player1 -> @p player2 direction; callers
+ * perform additional invocations when symmetric updates are required.
+ *
+ * @param player1 Source player index whose diplomacy modifier arrays are mutated.
+ * @param player2 Target player index selecting the per-opponent slots to adjust.
+ *
+ * @return This function returns no value.
+ *
+ * @note No bounds checks or clamping are performed in this helper.
+ * @note Intended for use from diplomacy relation/treaty progression paths.
+ *
+ * @see Change_Relations(), Diplomacy_Growth()
+ */
 static void Adjust_Diplomat_Modifiers(int16_t player1, int16_t player2)
 {
-
-    _players[player1].Dipl.treaty_modifier[player2] -= 10;
-
+    _players[player1].Dipl.treaty_modifier[player2]   -= 10;
     _players[player1].Dipl.exchange_modifier[player2] -= 10;
-
-    _players[player1].Dipl.peace_modifier[player2] -= 10;
-
+    _players[player1].Dipl.peace_modifier[player2]    -= 10;
 }
 
 
