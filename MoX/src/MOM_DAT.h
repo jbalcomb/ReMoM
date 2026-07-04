@@ -386,8 +386,9 @@ enum e_TREATY_TYPE
     Computer Personality
 
 Gets treated as a scale?  e.g., `> PRS_Ruthless`
+also, like: int16_t TBL_AI_PRS_IDK_Mod[6] = { 0, 10, 20, 30, 40, 50 };
 */
-enum E_AI_PERSONALITY
+enum e_AI_PERSONALITY
 {
     PRS_Maniacal    = 0,
     PRS_Ruthless    = 1,
@@ -400,7 +401,7 @@ enum E_AI_PERSONALITY
 /*
     Computer Objective
 */
-enum E_AI_OBJECTIVE
+enum e_AI_OBJECTIVE
 {
     OBJ_Pragmatist     = 0,
     OBJ_Militarist     = 1,
@@ -1438,8 +1439,8 @@ struct s_WIZARD
     /* 0015 */ uint8_t capital_race;            /* race type of wizard's fortress city */
     /* 0016 */ uint8_t banner_id;               /* 1-byte, signed; enum_BANNER_COLOR_ID */
     /* 0017 */ uint8_t pad2B_17h;               /* ¿ 2-byte alignment padding ? */
-    /* 0018 */ uint16_t Personality;            /* enum E_AI_PERSONALITY */
-    /* 001A */ uint16_t Objective;              /* enum E_AI_OBJECTIVE */
+    /* 0018 */ uint16_t Personality;            /* enum e_AI_PERSONALITY */
+    /* 001A */ uint16_t Objective;              /* enum e_AI_OBJECTIVE */
     /* 001C */ uint8_t Unknown_01Ch[6];         /* ¿  ? */
     /* 0022 */ uint16_t som_research_cost;                 /* in Init_Summoning_Circle_And_Spell_Of_Mastery(), sets to spell_data_table[spl_Spell_Of_Mastery].research_cost;  DEDU  What is this? ¿ 'Spell of Mastery' Research Cost ? ¿ Is it dynamic / why is it not just in the spell data table or a formula/function ? */
     /* 0024 */ uint16_t fame;

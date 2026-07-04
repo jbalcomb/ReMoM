@@ -225,7 +225,7 @@ void End_Of_Turn_Diplomacy_Adjustments(void);
 void NPC_Diplo_s74420(int16_t player1_idx, int16_t player2_idx);
 
 // WZD o88p02
-// DIPL_HumanWarOrPeace()
+void DIPL_HumanWarOrPeace(int16_t player_idx);
 
 // WZD o88p03
 void Modifier_Diplomacy_Adjustments(void);

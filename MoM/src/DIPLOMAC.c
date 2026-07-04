@@ -183,7 +183,7 @@ void End_Of_Turn_Diplomacy_Adjustments(void);
 // WZD o88p01
 void NPC_Diplo_s74420(int16_t player1_idx, int16_t player2_idx);
 // WZD o88p02
-// DIPL_HumanWarOrPeace()
+void DIPL_HumanWarOrPeace(int16_t player_idx);
 // WZD o88p03
 void Modifier_Diplomacy_Adjustments(void);
 // WZD o88p04
@@ -6504,7 +6504,111 @@ IDK_message= word ptr -2
 
 
 // WZD o88p02
-// DIPL_HumanWarOrPeace()
+void DIPL_HumanWarOrPeace(int16_t player_idx)
+{
+    int16_t base_score = 0;
+    int16_t niu_npc_war_bonus = 0;
+    int16_t modded_score = 0;
+    int16_t limit = 0;
+    int16_t divisor = 0;
+
+    niu_npc_war_bonus = 0;  /* ¿ Debug Override ? */
+
+    if(
+        _players[_human_player_idx].Dipl.Contacted[player_idx] != ST_TRUE
+        || 
+        _players[0].Dipl.DA_Strength[player_idx] == 0)
+    {
+        _players[0].Dipl.Dipl_Action[player_idx] = 0;
+        return;
+    }
+
+    base_score = (
+        _players[0].Dipl.Hidden_Rel[player_idx]
+        +
+        _players[0].Dipl.Visible_Rel[player_idx]
+        +
+        niu_npc_war_bonus
+        +
+        TBL_AI_PRS_IDK_Mod[_players[player_idx].Personality]
+    );
+
+    if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[player_idx] < DIPL_War)
+    {
+        if(_players[0].Dipl.Visible_Rel[player_idx] <= -75)
+        {
+            Declare_War(player_idx, 0);
+            _players[0].Dipl.Dipl_Action[player_idx] = 39;
+        }
+        else  /* (_players[0].Dipl.Visible_Rel[player_idx] > -75) */
+        {
+            modded_score = (
+                base_score
+                -
+                Random(100)
+                +
+                _players[0].Dipl.treaty_modifier[player_idx]
+            );
+            if(modded_score <= -100)
+            {
+                if(_players[0].Dipl.field_126[player_idx] <= 0)
+                {
+                    _players[0].Dipl.field_126[player_idx] = 1;
+                }
+                else
+                {
+                    _players[0].Dipl.field_126[player_idx]++;
+                    if(
+                        _players[0].Dipl.field_126[player_idx] > 2
+                        ||
+                        _players[0].Dipl.Dipl_Status[player_idx] == DIPL_NoTreaty
+                    )
+                    {
+                        limit = -(_players[0].Dipl.DA_Strength[player_idx] + TBL_AI_PRS_IDK_Mod[_players[player_idx].Personality] / 2);
+                        if(Random(100) < limit)
+                        {
+                            Declare_War(player_idx, 0);
+                            _players[0].Dipl.Dipl_Action[player_idx] = 39;
+                            _players[0].Dipl.field_126[player_idx] = 1;
+                        }
+                    }
+                    else
+                    {
+                        Break_Treaties(player_idx, 0);
+                    }
+                }
+            }
+        }
+    }
+    else  /* (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[player_idx] >= DIPL_War) */
+    {
+        modded_score = base_score + Random(100) + _players[0].Dipl.peace_modifier[player_idx];
+        if(modded_score >= 50)
+        {
+            if(Random(8) == 1)  /* 12.5% */
+            {
+                _players[0].Dipl.Dipl_Action[player_idx] = 49;
+                if(Random(100) <= (_players[player_idx].empire_mini_pops * 30) / _players[0].empire_mini_pops)
+                {
+                    if(Random(4) > 1)  /* 3:4 */
+                    {
+                        divisor = Random(3) + 1;
+                        _players[0].Dipl.offer_gold[player_idx] = (((_players[player_idx].empire_mini_pops / divisor) + _turn) / 25) * 25;
+                    }
+                    else  /* 1:4 */
+                    {
+                        Get_Exchange_Spell_List(player_idx, 0, 0);
+                        if(m_exchange_spell_count > 0)
+                        {
+                            _players[0].Dipl.offer_spell[player_idx] = m_exchange_spell_list[0];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
 
 
 // WZD o88p03

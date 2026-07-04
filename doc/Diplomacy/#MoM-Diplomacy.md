@@ -16,7 +16,9 @@ looks like 7 and 9 are deprecated code from MoO1
 19: Greet New Wizard - PRS_Lawful
 20: Greet New Wizard - PRS_Peaceful
 
+39: ¿ Declare War ?     //DIPL_HumanWarOrPeace()
 
+49: ¿ Offer Gift ?      //DIPL_HumanWarOrPeace()
 
 
 
