@@ -717,6 +717,8 @@ enum enum_BANNER_COLOR_ID
 #define MAX_CITY_COUNT                   100
 #define MAX_WHAT_COUNT  (MAX_UNIT_COUNT + MAX_CITY_COUNT)  // no idea what to call this ... entity_idx above this is Nodes
 
+#define NATURAL_HEALER_ALREADY_APPLIED              66    /* > max plausible Figures × HP-per-figure */
+
 #define MAX_CITY_POPULATION 25
 #define MAX_CITY_POPULATION_NEUTRAL_PLAYER 8  // NOTE: *should* be ((_difficulty + 1) * 2))  (({0,1,2,3} + 1) * 2) = {2,4,6,8}
 #define MAX_CITY_SIZE        5

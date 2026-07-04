@@ -1830,7 +1830,7 @@ struct s_UNIT
     /* 0D */  uint8_t pad2B_0Dh;    /* 2-byte alignment padding */
     /* 0E */  int16_t XP;  // should be `"ep"
     /* 10 */  int8_t  Move_Failed;  /* used to decide if needs call to Make_Move_Path(); OON set ST_TRUE in Stack_Move_To(); reset to ST_FALSE in AI_Next_Turn(), for all non-human units */
-    /* 11 */  int8_t  Damage;       /* 'Nature's Cures' sets this and only this to 0. ¿ What does that mean for my understanding of Unit/Figure damage, including front_figure_damage ?*/
+    /* 11 */  int8_t  Damage;       /* 1-byte, signed */  /* 'Nature's Cures' sets this and only this to 0. ¿ What does that mean for my understanding of Unit/Figure damage, including front_figure_damage ?*/
     /* 12 */  int8_t  Draw_Priority;    /* ~ draw order, z-index, depth, overlay ... 2-D bitmap graphics  Moo2 ~ _moveable_box_order Box_Order_() */
     /* 13 */  uint8_t pad2B_13h;    /* 2-byte alignment padding */
     /* 14 */  int16_t in_tower;     /* {F,T};  Unit is on/in a Tower of Wizardry */

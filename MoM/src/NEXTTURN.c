@@ -117,8 +117,10 @@ char cnst_TooManyUnits[] = ". You must disband some units if you wish to build o
 // WZD dseg:CA66                                                 BEGIN: ovr140 - Uninitialized Data
 
 // WZD dseg:CA66
-// drake178: UNIT_HealArray
-SAMB_ptr UNIT_HealArray;
+/*
+heal_points = max_hp / divisor
+*/
+SAMB_ptr unit_heal_rate_divisors;
 
 // WZD dseg:CA6A 00 00                                           dw 0
 // WZD dseg:CA6C 00 00                                           dw 0
@@ -865,8 +867,8 @@ void Next_Turn_Calc(void)
 /* CLAUDE */ PHASE(All_City_Removed_Buildings());
 
 
-    // Do_All_Units_XP_Check_();
-/* CLAUDE */ PHASE(Do_All_Units_XP_Check_());
+    // Do_All_Units_XP_Check();
+/* CLAUDE */ PHASE(Do_All_Units_XP_Check());
     /* CLAUDE: GD point 631 -- _UNITS after Do_All_Units_XP_Check (before the following
      * Heal_All_Units), mirroring OG's far-return into Next_Turn_Calc+0x210.  Fire once. */
     { static int gd631x_done = 0; if(!gd631x_done) { gd631x_done = 1; gd_dump_units("631_Do_All_Units_XP_Check_Return_U"); } }
@@ -3728,9 +3730,7 @@ void Players_Check_Spell_Research(void)
 // WZD o140p21
 // MoO2  Module: COLCALC  Player_Gets_Tech_App_()
 /*
-
 handles researched spell, traded/gifted spell, treasure spell, and conquest spell
-
 */
 void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Research)
 {
@@ -3739,9 +3739,7 @@ void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Resear
     int16_t spell_realm_idx;
     int16_t spell_realm;
     int16_t itr;  // _DI_
-
     Was_Research_Target = ST_FALSE;
-
     if(_players[player_idx].som_research_cost > spell_data_table[spell_idx].research_cost)
     {
         _players[player_idx].som_research_cost = spell_data_table[spell_idx].research_cost;
@@ -3750,17 +3748,12 @@ void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Resear
     {
         _players[player_idx].som_research_cost = 0;
     }
-
     spell_realm = ((spell_idx - 1) / NUM_SPELLS_PER_MAGIC_REALM);
-
     spell_realm_idx = ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM);
-
     _players[player_idx].spells_list[((spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx)] = sls_Known;
-
     if(_players[player_idx].researching_spell_idx == spell_idx)
     {
         Was_Research_Target = ST_TRUE;
-
         for(itr = 0; itr < NUM_RESEARCH_SPELLS; itr++)
         {
             if(_players[player_idx].research_spells[itr] == _players[player_idx].researching_spell_idx)
@@ -3769,11 +3762,8 @@ void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Resear
                 _players[player_idx].research_spells[(NUM_RESEARCH_SPELLS - 1)] = 0; // BUG  ¿ drake178: ; already done above ?
             }
         }
-
         spells_cnt = Player_Research_Spells(player_idx);
-
         _players[player_idx].research_cost_remaining = 0;
-
         if(spells_cnt == 0)
         {
             _players[player_idx].researching_spell_idx = spl_UNDEFINED;
@@ -3796,23 +3786,18 @@ void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Resear
             }
         }
     }
-
-
     if(
         (player_idx == HUMAN_PLAYER_IDX)
         &&
         (New_Research == ST_TRUE)
     )
     {
-
         Learn_Spell_Animation(spell_idx, Was_Research_Target);
-
         if(Was_Research_Target == ST_FALSE)
         {
             Stop_All_Sounds__STUB();
             Play_Background_Music();
         }
-
     }
     else if(
         (Was_Research_Target == ST_TRUE)
@@ -3820,90 +3805,89 @@ void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Resear
         (player_idx != HUMAN_PLAYER_IDX)
     )
     {
-
         AI_Spell_Research_Select(player_idx);
-
         if(_players[player_idx].researching_spell_idx == spl_Spell_Of_Mastery)
         {
-
             _players[player_idx].research_cost_remaining = _players[player_idx].som_research_cost;
-
         }
         else
         {
-
             _players[player_idx].research_cost_remaining = spell_data_table[spell_idx].research_cost;
-            
         }
-
     }
-
 }
 
 
 // WZD o140p22
-// drake178: G_UNIT_OvlHealing()
 /*
 Page 74  (PDF Page 79)
 Unit Size and Healing
 Healing rates are 5% of total hit points (of the undamaged figure) per turn when units are outside of cities, 10% when garrisoned in cities, and 15% when garrisoned in cities that have an animist’s guild. 
 Finally, when units occupy map squares with Natural Healers (see Special Unit Abilities), they heal an additional 20% of their total hit points per game turn!
 */
-/*
-
-OON XREF  Repair_All_Units()
-called in two different places
-    one with flag = ST_FALSE
-    one with flag = ST_TRUE
-
-*/
+/**
+ * @brief Applies healing to a single unit using either fractional or fixed-rate logic.
+ *
+ * @details
+ * Computes the unit's total undamaged hit-point pool as:
+ * @c Figures * Unit_Hit_Points(unit_idx), then applies one of two healing modes.
+ *
+ * When @p flag is @c ST_FALSE:
+ * - Interprets @p fraction as a divisor for per-turn healing.
+ * - Converts the fractional rate into whole damage-point recovery using integer
+ *   accumulation plus one probabilistic remainder roll.
+ * - Clamps resulting @c _UNITS[unit_idx].Damage to a minimum of zero.
+ *
+ * When @p flag is nonzero:
+ * - Applies a fixed 20% heal using @c hits_total / 5.
+ * - Marks @c unit_heal_rate_divisors[unit_idx] as
+ *   @c NATURAL_HEALER_ALREADY_APPLIED to prevent duplicate natural-healer
+ *   processing in the same turn.
+ *
+ * @param unit_idx Index of the unit in @c _UNITS[] to heal.
+ * @param fraction Healing-rate divisor used in normal mode
+ *                 (for example, @c 20 => 5%, @c 10 => 10%, @c 6 => ~15%).
+ * @param flag Healing mode selector:
+ *             @c ST_FALSE for divisor-based healing,
+ *             nonzero for fixed 20% natural-healer healing.
+ *
+ * @return This function returns no value.
+ *
+ * @note Healing is skipped in normal mode when the unit already has zero damage.
+ * @note The probabilistic remainder path uses @c Random(fraction).
+ * @note This routine mutates @c _UNITS[unit_idx].Damage directly.
+ *
+ * @see Heal_All_Units(), Unit_Hit_Points()
+ */
 void Heal_Unit(int16_t unit_idx, int16_t fraction, int16_t flag)
 {
-
-    int16_t hits_total;  // _DI_
-
+    int16_t hits_total = 0;
     hits_total = _unit_type_table[_UNITS[unit_idx].type].Figures * Unit_Hit_Points(unit_idx);
-
     if(flag == ST_FALSE)
     {
-
         if(_UNITS[unit_idx].Damage < hits_total)
         {
-
-            // ; BUG: damage over 127 can't be healed
             if(_UNITS[unit_idx].Damage > 0)
             {
-
                 while(hits_total > fraction)
                 {
                     _UNITS[unit_idx].Damage -= 1;
                     hits_total -= fraction;
                 }
-
                 if(Random(fraction) <= hits_total)
                 {
                     _UNITS[unit_idx].Damage -= 1;
                 }
-
                 SETMIN(_UNITS[unit_idx].Damage, 0);
-
             }
-
         }
-
     }
     else
     {
-
-        _UNITS[unit_idx].Damage = (_UNITS[unit_idx].Damage - (hits_total / 5));  // 20%
-
-        // ; BUG: will always remove damage over 127
+        _UNITS[unit_idx].Damage = (_UNITS[unit_idx].Damage - (hits_total / 5));  /* 20% */
         SETMIN(_UNITS[unit_idx].Damage, 0);
-
-        UNIT_HealArray[unit_idx] = 66;  // TODO  DEDU  IDGI
-
+        unit_heal_rate_divisors[unit_idx] = NATURAL_HEALER_ALREADY_APPLIED;
     }
-
 }
 
 
@@ -3914,156 +3898,143 @@ Unit Size and Healing
 Healing rates are 5% of total hit points (of the undamaged figure) per turn when units are outside of cities, 10% when garrisoned in cities, and 15% when garrisoned in cities that have an animist’s guild. 
 Finally, when units occupy map squares with Natural Healers (see Special Unit Abilities), they heal an additional 20% of their total hit points per game turn!
 */
-/*
-
-*/
+/**
+ * @brief Applies end-of-turn healing to all units on the overland map.
+ *
+ * @details
+ * Builds a per-unit healing-rate table, then performs two healing passes:
+ *
+ * 1. Base healing-rate assignment:
+ *    - Initializes every unit to field healing (divisor 20, i.e. 5%).
+ *    - For units returned by @c Army_At_City(), upgrades rate to city healing
+ *      (divisor 10, i.e. 10%).
+ *    - If the city has an Animist's Guild, upgrades to divisor 6 (~15%).
+ *
+ * 2. Unit iteration and healing application:
+ *    - Applies normal fractional healing through @c Heal_Unit(..., ST_FALSE)
+ *      to living, non-undead units (subject to Time Stop filtering).
+ *    - For stacks containing a unit with @c UA_HEALER, applies one extra fixed
+ *      20% natural-healer heal via @c Heal_Unit(..., ST_TRUE) to eligible
+ *      companions not already marked as healed this turn.
+ *
+ * The routine also preserves known legacy behavior in the city/stack filtering
+ * branches, including OGBUG paths retained for compatibility.
+ *
+ * @return This function returns no value.
+ *
+ * @note Allocates and writes @c unit_heal_rate_divisors for per-turn healing
+ *       bookkeeping.
+ * @note Undead and Death-realm race-type units are excluded from healing.
+ * @note Natural-healer extra healing uses
+ *       @c NATURAL_HEALER_ALREADY_APPLIED as a per-unit sentinel.
+ * @note Under Time Stop, only units of the active Time Stop player are
+ *       processed.
+ *
+ * @see Heal_Unit(), Army_At_City(), Army_At_Square_1()
+ */
 void Heal_All_Units(void)
 {
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t var_16[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Human_Player_Units = 0;
+    int16_t troops_has_human_player_units = 0;
     int16_t troop_count = 0;
-    int16_t itr_troops = 0;  // _SI_
-    int16_t itr = 0;  // _DI_
-    int16_t itr_units = 0;  // _DI_
-    int16_t itr_cities = 0;  // _DI_
-
-    // DONT  UNIT_HealArray = SA_MK_FP0(Allocate_First_Block(_screen_seg, (4 + (_units_ / 16))););
-    UNIT_HealArray = Allocate_First_Block(_screen_seg, (4 + (_units / 16)));  // calculate allocation in 16-byte paragraphs/memory segments
-    
-    // ; set every unit to 1/20th per turn natural healing
+    int16_t itr_troops = 0;
+    int16_t itr = 0;
+    int16_t itr_units = 0;
+    int16_t itr_cities = 0;
+    unit_heal_rate_divisors = Allocate_First_Block(_screen_seg, (4 + (_units / 16)));
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-        UNIT_HealArray[itr_units] = 20;
+        unit_heal_rate_divisors[itr_units] = 20;
     }
-
-    // ; set the healing rate for units inside cities
-    // ; BUG: was supposed to mark removed any units that are
-    // ; on a square that has a city with a non-matching owner,
-    // ; but the design is botched, as the function that
-    // ; returns the list of units does not actually include
-    // ; these
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
         Army_At_City(itr_cities, &troop_count, &troops[0]);
-
         for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
         {
-
-            // BUGBUG  ; conflicting condition: will always jump  ; (the function filling the array won't return enemies)
+            /* OGBUG  conflicting condition, will always jump; Army_At_City() already filters by owner */
             if(_UNITS[troops[itr_troops]].owner_idx != _CITIES[itr_cities].owner_idx)
             {
                 Kill_Unit(troops[itr_troops], kt_Disappeared);
             }
         }
-
         for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
         {
-            UNIT_HealArray[troops[itr_troops]] = 10;
+            unit_heal_rate_divisors[troops[itr_troops]] = 10;
         }
-
-        if(_CITIES[itr_cities].bldg_status[ANIMISTS_GUILD] > bs_Replaced)  /* {-1:NotBuilt,0:Replaced,1:Built,2:Removed} */
+        if(_CITIES[itr_cities].bldg_status[ANIMISTS_GUILD] > bs_Replaced)
         {
             for (itr_troops = 0; itr_troops < troop_count; itr_troops++)
             {
-                UNIT_HealArray[troops[itr_troops]] = 6;
+                unit_heal_rate_divisors[troops[itr_troops]] = 6;
             }
         }
-
     }
-
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-
-        /* HACK: */ if(_UNITS[itr_units].owner_idx == ST_UNDEFINED)
+        if(g_timestop_player_num != 0)
         {
-            continue;
+            if(_UNITS[itr_units].owner_idx != (g_timestop_player_num - 1))
+            {
+                continue;
+            }
         }
-
         if(
-            (g_timestop_player_num == 0)
-            ||
-            (_UNITS[itr_units].owner_idx == g_timestop_player_num)
+            (_unit_type_table[_UNITS[itr_units].type].race_type != rt_Death)
+            &&
+            ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
         )
         {
-
-            if(
-                (_unit_type_table[_UNITS[itr_units].type].race_type != rt_Death)
-                &&
-                ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
-            )
+            Heal_Unit(itr_units, unit_heal_rate_divisors[itr_units], ST_FALSE);
+        }
+        if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_HEALER) != 0)
+        {
+            Army_At_Square_1(_UNITS[itr_units].wx, _UNITS[itr_units].wy, _UNITS[itr_units].wp, &troop_count, &troops[0]);
+            /* OGBUG  `(troop_count > MAX_STACK)` is impossible - this whole block is dead code */
+            if(troop_count > MAX_STACK)
             {
-                Heal_Unit(itr_units, UNIT_HealArray[itr_units], ST_FALSE);
-            }
-
-            if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_HEALER) != 0)
-            {
-
-                Army_At_Square_1(_UNITS[itr_units].wx, _UNITS[itr_units].wy, _UNITS[itr_units].wp, &troop_count, &troops[0]);
-
-                if(troop_count > MAX_STACK)
-                {
-                    Human_Player_Units = ST_FALSE;
-
-                    // ; remove any neutral units, check if any of the rest belong to the human player
-                    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
-                    {
-
-                        if(_UNITS[itr_troops].owner_idx == NEUTRAL_PLAYER_IDX)
-                        {
-                            Kill_Unit(troops[itr_troops], kt_Disappeared);
-
-                        }
-
-                        if(_UNITS[itr_troops].owner_idx == HUMAN_PLAYER_IDX)
-                        {
-                            Human_Player_Units = ST_TRUE;
-                        }
-
-                    }
-
-                    if(Human_Player_Units == ST_TRUE)
-                    {
-                        // ; remove any units that don't belong to the human player
-                        for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
-                        {
-
-                            if(_UNITS[itr_troops].owner_idx != HUMAN_PLAYER_IDX)
-                            {
-                                Kill_Unit(troops[itr_troops], kt_Disappeared);
-                            }
-
-                        }
-                    }
-                    else
-                    {
-                        Army_At_Square_1(_UNITS[itr_units].wx, _UNITS[itr_units].wy, _UNITS[itr_units].wp, &troop_count, &troops[0]);
-                    }
-
-                }
-
+                troops_has_human_player_units = ST_FALSE;
                 for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
                 {
-
-                    if(
-                        (_unit_type_table[_UNITS[itr_units].type].race_type != rt_Death)
-                        &&
-                        ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
-                        &&
-                        (UNIT_HealArray[troops[itr_troops]] != 66)  // TODO  DEDU  IDGI
-                    )
+                    if(_UNITS[troops[itr_troops]].owner_idx == NEUTRAL_PLAYER_IDX)
                     {
-                        Heal_Unit(itr_units, UNIT_HealArray[itr_units], ST_FALSE);
+                        Kill_Unit(troops[itr_troops], kt_Disappeared);
                     }
-
+                    if(_UNITS[troops[itr_troops]].owner_idx == HUMAN_PLAYER_IDX)
+                    {
+                        troops_has_human_player_units = ST_TRUE;
+                    }
                 }
-
+                if(troops_has_human_player_units == ST_TRUE)
+                {
+                    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                    {
+                        if(_UNITS[troops[itr_troops]].owner_idx != HUMAN_PLAYER_IDX)
+                        {
+                            Kill_Unit(troops[itr_troops], kt_Disappeared);
+                        }
+                    }
+                }
+                else
+                {
+                    Army_At_Square_1(_UNITS[itr_units].wx, _UNITS[itr_units].wy, _UNITS[itr_units].wp, &troop_count, &troops[0]);
+                }
             }
-
+            for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+            {
+                if(
+                    (_unit_type_table[_UNITS[troops[itr_troops]].type].race_type != rt_Death)
+                    &&
+                    ((_UNITS[troops[itr_troops]].mutations & UM_UNDEAD) == 0)
+                    &&
+                    (unit_heal_rate_divisors[troops[itr_troops]] != NATURAL_HEALER_ALREADY_APPLIED)  /* NOTE: 66 is set in Heal_Unit() */
+                )
+                {
+                    Heal_Unit(troops[itr_troops], 0, ST_TRUE);
+                }
+            }
         }
-
     }
-
 }
 
 
