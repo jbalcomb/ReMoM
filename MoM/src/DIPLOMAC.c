@@ -6027,34 +6027,22 @@ void G_DIPL_SuperiorityWar(int16_t Player_1, int16_t Player_2)
 
 // WZD o87p06
 // MoO2  Module: DIP-SCRN  Resolve_Delayed_Diplomacy_Orders_()
-/*
-OON XREF:  Next_Turn_Calc()
-*/
 void Resolve_Delayed_Diplomacy_Orders(void)
 {
-    int16_t itr = 0;  // _SI_
-    
-    if(_players[_human_player_idx].casting_spell_idx != spl_Spell_Of_Return)
+    int16_t itr = 0;
+    if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
     {
-
-        for(itr = 1; itr < _num_players; itr++)
-        {
-
-            if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[itr] != do_None)
-            {
-
-                m_diplomac_player_idx = itr;
-
-                Npc_Diplomacy_Screen();
-
-            }
-
-            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[itr] = do_None;
-
-        }
-
+        return;
     }
-
+    for(itr = 1; itr < _num_players; itr++)
+    {
+        if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[itr] != do_None)
+        {
+            m_diplomac_player_idx = itr;
+            Npc_Diplomacy_Screen();
+        }
+        _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[itr] = do_None;
+    }
 }
 
 
