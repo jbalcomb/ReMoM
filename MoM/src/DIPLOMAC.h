@@ -231,7 +231,7 @@ void End_Of_Turn_Diplomacy_Adjustments(void);
 void Modifier_Diplomacy_Adjustments(void);
 
 // WZD o88p04
-// sub_74E2F()
+int16_t s88p04_empty_function(void);
 
 // WZD o88p05
 // sub_74E38()

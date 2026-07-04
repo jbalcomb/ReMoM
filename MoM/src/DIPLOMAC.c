@@ -187,7 +187,7 @@ void End_Of_Turn_Diplomacy_Adjustments(void);
 // WZD o88p03
 void Modifier_Diplomacy_Adjustments(void);
 // WZD o88p04
-// sub_74E2F()
+int16_t s88p04_empty_function(void);
 // WZD o88p05
 // sub_74E38()
 // WZD o88p06
@@ -6315,8 +6315,21 @@ void Modifier_Diplomacy_Adjustments(void)
 
 
 // WZD o88p04
-// sub_74E2F()
+int16_t s88p04_empty_function(void)
+{
+// push    bp
+// mov     bp, sp
+// xor     ax, ax
+// jmp     short $+2
+// pop     bp
+// retf
+return ST_FALSE;
+}
+
+
 // WZD o88p05
 // sub_74E38()
+
+
 // WZD o88p06
 // sub_74F4A()
