@@ -6178,47 +6178,54 @@ void Decrease_Peace_Duration(void)
 
 
 // WZD o87p09
+/**
+ * @brief Performs end-of-turn recovery for per-opponent diplomacy modifiers.
+ *
+ * @details
+ * Iterates all ordered player pairs and, for each non-self pairing, increments
+ * these directional diplomacy modifiers by a fixed 10 points when below 100:
+ * - @c Dipl.treaty_modifier
+ * - @c Dipl.exchange_modifier
+ * - @c Dipl.peace_modifier
+ *
+ * This provides gradual turn-based normalization of temporary negative or
+ * reduced modifier values accumulated during diplomacy events.
+ *
+ * @return This function returns no value.
+ *
+ * @note Updates are directional (@c player1 -> @c player2) and therefore each
+ *       pair may be adjusted twice across the full nested-loop pass.
+ * @note No explicit upper clamp is needed here because each modifier is only
+ *       incremented when strictly less than @c 100.
+ *
+ * @see Change_Relations(), Modifier_Diplomacy_Adjustments(),
+ *      Decrease_Peace_Duration()
+ */
 void End_Of_Turn_Diplomacy_Adjustments(void)
 {
-    int16_t itr1 = 0;  // _CX_
-    int16_t itr2 = 0;  // _SI_
-
+    int16_t itr1 = 0;
+    int16_t itr2 = 0;
     for(itr1 = 0; itr1 < _num_players; itr1++)
     {
-
         for(itr2 = 0; itr2 < _num_players; itr2++)
         {
-
             if(itr1 != itr2)
             {
-
                 if(_players[itr1].Dipl.treaty_modifier[itr2] < 100)
                 {
-
                     _players[itr1].Dipl.treaty_modifier[itr2] += 10;
-
                 }
-
                 if(_players[itr1].Dipl.exchange_modifier[itr2] < 100)
                 {
-
                     _players[itr1].Dipl.exchange_modifier[itr2] += 10;
-
                 }
-
                 if(_players[itr1].Dipl.peace_modifier[itr2] < 100)
                 {
-
                     _players[itr1].Dipl.peace_modifier[itr2] += 10;
-
                 }
-
             }
-
         }
-
     }
-
 }
 
 
