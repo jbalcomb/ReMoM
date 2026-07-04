@@ -275,24 +275,24 @@ static void Dump_Players(FILE *fp, const uint8_t *sav)
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.default_rel[%d] = %d\n",         itr, p, rd_i8(sav,  d + 0x5A + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.contact_progress[%d] = %d\n",    itr, p, rd_i8(sav,  d + 0x60 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.broken_treaty[%d] = %d\n",       itr, p, rd_i8(sav,  d + 0x66 + p)); }
-            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_6C[%d] = %d\n",            itr, p, rd_i16(sav, d + 0x6C + (p * 2))); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.niu_attack_bounty[%d] = %d\n",            itr, p, rd_i16(sav, d + 0x6C + (p * 2))); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.hidden_rel[%d] = %d\n",          itr, p, rd_i8(sav,  d + 0x78 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_7E[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0x7E + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_84[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0x84 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_8A[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0x8A + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_90[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0x90 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.tribute_spell[%d] = %d\n",       itr, p, rd_i8(sav,  d + 0x96 + p)); }
-            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_9C[%d] = %d\n",            itr, p, rd_u8(sav,  d + 0x9C + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.niu_au_want_tech[%d] = %d\n",            itr, p, rd_u8(sav,  d + 0x9C + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_A2[%d] = %d\n",            itr, p, rd_u8(sav,  d + 0xA2 + p)); }
             for (k = 0; k < (SD_NUM_PLAYERS * 6); k++) { fprintf(fp, "player[%d].dipl.field_A8[%d] = %d\n",      itr, k, rd_i16(sav, d + 0xA8 + (k * 2))); }
-            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_F0[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0xF0 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.niu_au_tech_trade_num[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0xF0 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.tribute_gold[%d] = %d\n",        itr, p, rd_i16(sav, d + 0xF6 + (p * 2))); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_102[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x102 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_108[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x108 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_10E[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x10E + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_114[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x114 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_11A[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x11A + p)); }
-            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_120[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x120 + p)); }
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.niu_bounty_collect[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x120 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_126[%d] = %d\n",           itr, p, rd_i8(sav,  d + 0x126 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.g_warning_progress[%d] = %d\n",  itr, p, rd_i8(sav,  d + 0x12C + p)); }
         }

@@ -3892,10 +3892,8 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx)
     _players[attacker_idx].Dipl.Dipl_Status[defender_idx] = DIPL_NoTreaty;
     _players[defender_idx].Dipl.Dipl_Status[attacker_idx] = DIPL_NoTreaty;
 
-    // 1oom:  attack_bounty[] = PLAYER_NONE
-    // MoO2:  reward_attack_player
-    _players[attacker_idx].Dipl.field_6C[defender_idx] = 0;
-    _players[defender_idx].Dipl.field_6C[attacker_idx] = 0;
+    _players[attacker_idx].Dipl.niu_attack_bounty[defender_idx] = 0;
+    _players[defender_idx].Dipl.niu_attack_bounty[attacker_idx] = 0;
 
     SETMIN(_players[attacker_idx].Dipl.Visible_Rel[defender_idx], -100);
     _players[defender_idx].Dipl.Visible_Rel[attacker_idx] = _players[attacker_idx].Dipl.Visible_Rel[defender_idx];
@@ -4734,12 +4732,12 @@ static void Npc_Diplomacy_Screen(void)
                         )
                         {
 
-                            Player_Add_Gold(_human_player_idx, _players[HUMAN_PLAYER_IDX].Dipl.Tribute_Gold[m_diplomac_player_idx]);
+                            Player_Add_Gold(_human_player_idx, _players[HUMAN_PLAYER_IDX].Dipl.offer_gold[m_diplomac_player_idx]);
 
-                            if(_players[HUMAN_PLAYER_IDX].Dipl.Tribute_Spell[m_diplomac_player_idx] != spl_NONE)
+                            if(_players[HUMAN_PLAYER_IDX].Dipl.offer_spell[m_diplomac_player_idx] != spl_NONE)
                             {
 
-                                Diplomacy_Player_Gets_Spell(HUMAN_PLAYER_IDX, _players[HUMAN_PLAYER_IDX].Dipl.Tribute_Spell[m_diplomac_player_idx]);
+                                Diplomacy_Player_Gets_Spell(HUMAN_PLAYER_IDX, _players[HUMAN_PLAYER_IDX].Dipl.offer_spell[m_diplomac_player_idx]);
 
                             }
 
@@ -5350,7 +5348,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             m_diplomacy_message[pos] = 0;
 
-                            stu_strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.field_6C[player_idx]].name);
+                            stu_strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.niu_attack_bounty[player_idx]].name);
 
                             pos = (int16_t)strlen(m_diplomacy_message);
 
@@ -5375,7 +5373,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
                             m_diplomacy_message[pos] = 0;
 
-                            _fstrcpy(string, spell_data_table[_players[HUMAN_PLAYER_IDX].Dipl.field_9C[player_idx]].name);
+                            _fstrcpy(string, spell_data_table[_players[HUMAN_PLAYER_IDX].Dipl.niu_au_want_tech[player_idx]].name);
                             assert(string[30] == 0);
 
                             stu_strcat(m_diplomacy_message, string);
@@ -5677,7 +5675,7 @@ void NPC_To_Human_Diplomacy__WIP(void)
             _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = (15 + _players[player_idx].Personality);
 
         }
-        else if(_players[HUMAN_PLAYER_IDX].Dipl.field_120[player_idx] != 0)
+        else if(_players[HUMAN_PLAYER_IDX].Dipl.niu_bounty_collect[player_idx] != 0)
         {
 
             _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = 2;
@@ -6245,117 +6243,69 @@ void End_Of_Turn_Diplomacy_Adjustments(void)
 // WZD o88p03
 // MoO2  Module: DIPLOMAC  Modifier_Diplomacy_Adjustments_()
 // 1oom  game_turn.c  game_turn_update_mood_blunder()
-/*
-
-*/
 void Modifier_Diplomacy_Adjustments(void)
 {
     int16_t itr3 = 0;
-    int16_t IDK_Dipl_Action = 0;
-    int16_t itr2 = 0;  // _DI_
-    int16_t itr1 = 0;  // _SI_
-
+    int16_t niu_dipl_action = 0;
+    int16_t itr2 = 0;
+    int16_t itr1 = 0;
     for(itr1 = 0; itr1 < _num_players; itr1++)
     {
-
         for(itr2 = 1; itr2 < _num_players; itr2++)
         {
-
             if(itr2 != itr1)
             {
-
-                IDK_Dipl_Action = _players[itr1].Dipl.Dipl_Action[itr2];
-
+                niu_dipl_action = _players[itr1].Dipl.Dipl_Action[itr2];
                 if(_players[itr1].Dipl.Dipl_Status[itr2] != DIPL_Crusade)
                 {
-
                     if(_players[itr1].Dipl.treaty_modifier[itr2] < 0)
                     {
-
                         _players[itr1].Dipl.treaty_modifier[itr2] += Random(5);
-
                     }
-
                     if(_players[itr1].Dipl.treaty_modifier[itr2] < 50)
                     {
-
                         _players[itr1].Dipl.treaty_modifier[itr2] += Random(5);
-
                     }
-
-                                        if(_players[itr1].Dipl.exchange_modifier[itr2] < 0)
+                    if(_players[itr1].Dipl.exchange_modifier[itr2] < 0)
                     {
-
                         _players[itr1].Dipl.exchange_modifier[itr2] += Random(5);
-
                     }
-
                     if(_players[itr1].Dipl.exchange_modifier[itr2] < 50)
                     {
-
                         _players[itr1].Dipl.exchange_modifier[itr2] += Random(5);
-
                     }
-                    
                     if(_players[itr1].Dipl.peace_modifier[itr2] < 0)
                     {
-
                         _players[itr1].Dipl.peace_modifier[itr2] += Random(5);
-
                     }
-
                     if(_players[itr1].Dipl.peace_modifier[itr2] < 50)
                     {
-
                         _players[itr1].Dipl.peace_modifier[itr2] += Random(5);
-
                     }
-
                     SETMIN(_players[itr1].Dipl.peace_modifier[itr2], -200);
-
                     SETMAX(_players[itr1].Dipl.peace_modifier[itr2], 200);
-
                 }
-
             }
-
         }
-
     }
-
     // Hereafter, DNE in MoO2
-
     for(itr3 = 0; itr3 < _num_players; itr3++)
     {
-
         for(itr2 = 0; itr2 < _num_players; itr2++)
         {
-
             _players[itr2].Dipl.DA_Strength[itr3] = 0;
-
             _players[itr2].Dipl.Dipl_Action[itr3] = do_None;
-
-            if(_players[itr2].Dipl.field_120[itr3] != 0) // ¿ e_1oom_PLAYER_NONE ?
+            if(_players[itr2].Dipl.niu_bounty_collect[itr3] != 0)
             {
-
-                _players[itr2].Dipl.field_6C[itr3] = 0;
-
-                _players[itr2].Dipl.field_120[itr3] = 0;
-
+                _players[itr2].Dipl.niu_attack_bounty[itr3] = 0;
+                _players[itr2].Dipl.niu_bounty_collect[itr3] = 0;
             }
-
-            _players[itr2].Dipl.field_F0[itr3] = 0;
-
-            _players[itr2].Dipl.Tribute_Spell[itr3] = 0;
-
-            _players[itr2].Dipl.field_9C[itr3] = 0;
-
-            _players[itr2].Dipl.Tribute_Gold[itr3] = 0;
-
+            _players[itr2].Dipl.niu_au_tech_trade_num[itr3] = 0;
+            _players[itr2].Dipl.offer_spell[itr3] = 0;
+            _players[itr2].Dipl.niu_au_want_tech[itr3] = 0;
+            _players[itr2].Dipl.offer_gold[itr3] = 0;
         }
-
     }
-
 }
 
 

@@ -10,6 +10,16 @@
     Diplomatic Relations
     Treaty Status
 
+J:\STU\developp\1oom\src\game\game_types.h
+typedef enum {
+    TREATY_NONE = 0,
+    TREATY_NONAGGRESSION, / *1* /
+    TREATY_ALLIANCE, / *2* /
+    TREATY_WAR, / *3* /
+    TREATY_FINAL_WAR, / *4* /
+    TREATY_NUM
+} treaty_t;
+
 _players[].Dipl.Dipl_Status[]
 _players[].Dipl.Visible_Rel[]
 _players[].Hostility[]
@@ -30,7 +40,7 @@ enum DIPL_Status
     DIPL_WizardPact  = 1,
     DIPL_Alliance    = 2,
     DIPL_War         = 3,
-    DIPL_Crusade     = 4
+    DIPL_Crusade     = 4    /* 1oom: TREATY_FINAL_WAR */
 };
 
 

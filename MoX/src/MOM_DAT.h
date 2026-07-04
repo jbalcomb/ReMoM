@@ -1348,31 +1348,31 @@ struct s_WIZ_DIPL
     /* 002A */ int8_t Visible_Rel[NUM_PLAYERS];  /* 1-byte, signed; "'Diplomatic Relations Scale' position"  ¿ -100 to 120 ?  1oom: relation1 */
     /* 0030 */ int8_t Dipl_Status[NUM_PLAYERS];  /* 1-byte, signed;  1oom: treaty;  enum DIPL_Status { DIPL_NoTreaty, DIPL_WizardPact, DIPL_Alliance, DIPL_War, DIPL_Crusade } */
     /* 0036 */ int16_t DA_Strength[NUM_PLAYERS];
-    /* 0042 */ int8_t Dipl_Action[NUM_PLAYERS];     /* option/order/action  MoO2  "Diplomacy Orders" */
+    /* 0042 */ int8_t Dipl_Action[NUM_PLAYERS];         /* 1-byte, signed */ /* option/order/action  MoO2  "Diplomacy Orders" */
     /* 0048 */ int16_t DA_Spell[NUM_PLAYERS];
     /* 0054 */ int8_t DA_City[NUM_PLAYERS];
     /* 005A */ int8_t Default_Rel[NUM_PLAYERS];         /* default (baseline) relations */ /* 1oom: relation2 */
     /* 0060 */ int8_t Contact_Progress[NUM_PLAYERS];    /* ¿ 1oom have_met[] {0,1,2} ? */
     /* 0066 */ int8_t Broken_Treaty[NUM_PLAYERS];       /* 1oom: broken_treaty */
     // /* 006C */ int16_t Unknown_194h[NUM_PLAYERS];
-    /* 006C */ int16_t field_6C[NUM_PLAYERS];           /* 1oom:  attack_bounty */
+    /* 006C */ int16_t niu_attack_bounty[NUM_PLAYERS];           /* 1oom:  attack_bounty */
     /* 0078 */ int8_t Hidden_Rel[NUM_PLAYERS];          /* 1oom:  trust  moo2x: base_relations */
     /* 007E */ int8_t field_7E[NUM_PLAYERS];            /* target player_idx for a request/deman to break a treaty  moo2x: diplomacy_proposal_war_player */
     /* 0084 */ int8_t field_84[NUM_PLAYERS];
     /* 008A */ int8_t field_8A[NUM_PLAYERS];            /* only used by gift spell messages? spell_idx selected for 'Offer Tribute' - 'Spell' */
     /* 0090 */ int8_t field_90[NUM_PLAYERS];
-    /* 0096 */ int8_t Tribute_Spell[NUM_PLAYERS];
-    /* 009C */ uint8_t field_9C[NUM_PLAYERS];
+    /* 0096 */ int8_t offer_spell[NUM_PLAYERS];
+    /* 009C */ uint8_t niu_au_want_tech[NUM_PLAYERS];
     /* 00A2 */ uint8_t field_A2[NUM_PLAYERS];
     /* 00A8 */ int16_t field_A8[(NUM_PLAYERS * 6)];     /* 2-byte, signed  spell_idx  ¿ NPC Exchange Spell - Spell List ?  for exchange and tribute?  NUM_PLAYERS * default string list item count */
-    /* 00F0 */ int8_t field_F0[NUM_PLAYERS];            /* 1-byte, signed  ¿ NPC Exchange Spell - Spell Count ? */
-    /* 00F6 */ int16_t Tribute_Gold[NUM_PLAYERS];
+    /* 00F0 */ int8_t niu_au_tech_trade_num[NUM_PLAYERS];            /* 1-byte, signed  ¿ NPC Exchange Spell - Spell Count ? */
+    /* 00F6 */ int16_t offer_gold[NUM_PLAYERS];
     /* 0102 */ int8_t field_102[NUM_PLAYERS];
     /* 0108 */ int8_t field_108[NUM_PLAYERS];
     /* 010E */ int8_t field_10E[NUM_PLAYERS];
     /* 0114 */ int8_t field_114[NUM_PLAYERS];
     /* 011A */ int8_t field_11A[NUM_PLAYERS];
-    /* 0120 */ int8_t field_120[NUM_PLAYERS];
+    /* 0120 */ int8_t niu_bounty_collect[NUM_PLAYERS];
     /* 0126 */ int8_t field_126[NUM_PLAYERS];
     /* 012C */ int8_t G_Warning_Progress[NUM_PLAYERS];
     /* 0132 */
