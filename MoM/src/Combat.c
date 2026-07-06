@@ -14380,6 +14380,61 @@ int16_t AITP_Disrupt(int16_t player_idx, int16_t * target_cgx, int16_t * target_
 
 // WZD o112p12
 // drake178: AITP_RecallHero()
+/*
+Recall Hero target picker: picks the own active hero in the most danger - effective strength scaled up by max-HP / current-HP - unless the battle is at the caster's own Fortress
+(never recall the Fortress defense).  Returns the battle unit index or -1.
+*/
+int16_t AITP_RecallHero(int16_t player_idx)
+{
+    int16_t current_hp = 0;       /* Current_HP */
+    int16_t max_hp = 0;           /* Max_HP */
+    int16_t picked_target = 0;    /* Target_Index */
+    int16_t highest_danger = 0;   /* Highest_Danger */
+    int16_t unit_danger = 0;      /* _DI_ */
+    int16_t battle_unit_idx = 0;  /* _SI_ */
+    struct s_BATTLE_UNIT * bu_ptr = NULL;
+
+    highest_danger = 0;
+    picked_target = -1;
+
+    if(
+        (_FORTRESSES[player_idx].wx == _combat_wx)
+        &&
+        (_FORTRESSES[player_idx].wy == _combat_wy)
+        &&
+        (_FORTRESSES[player_idx].wp == _combat_wp)
+    )
+    {
+        return picked_target;  /* -1: never recall out of the own-Fortress battle */
+    }
+
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+        unit_danger = -1;
+        bu_ptr = &battle_units[battle_unit_idx];
+
+        if(bu_ptr->controller_idx != player_idx) continue;
+        if(bu_ptr->status != bus_Active) continue;
+        if(_UNITS[bu_ptr->unit_idx].Hero_Slot <= -1) continue;
+
+        unit_danger = Effective_Battle_Unit_Strength(battle_unit_idx);
+        max_hp = (bu_ptr->Max_Figures * bu_ptr->hits);
+        current_hp = ((bu_ptr->Cur_Figures * bu_ptr->hits) - bu_ptr->front_figure_damage);
+        if(current_hp != 0)
+        {
+            /* Dasm: `imul Max_HP` followed by `cwd` - the product is truncated to 16 bits before the divide */
+            unit_danger = ((int16_t)(unit_danger * max_hp) / current_hp);
+        }
+
+        if(unit_danger > highest_danger)
+        {
+            highest_danger = unit_danger;
+            picked_target = battle_unit_idx;
+        }
+    }
+
+    return picked_target;
+}
 
 
 

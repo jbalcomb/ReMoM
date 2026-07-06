@@ -1708,7 +1708,7 @@ int16_t AITP_Disrupt(int16_t player_idx, int16_t * target_cgx, int16_t * target_
 // UU_AITP_WordofRecall()
 
 // WZD o112p12
-// AITP_RecallHero()
+int16_t AITP_RecallHero(int16_t player_idx);
 
 
 
