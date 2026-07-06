@@ -1699,7 +1699,7 @@ int16_t Combat_Casting_Cost_Multiplier(int16_t player_idx);
 int16_t AITP_EarthToMud(int16_t player_idx, int16_t * target_cgx, int16_t * target_cgy);
 
 // WZD o112p09
-// AITP_Disrupt()
+int16_t AITP_Disrupt(int16_t player_idx, int16_t * target_cgx, int16_t * target_cgy);
 
 // WZD o112p10
 // AITP_CracksCall()

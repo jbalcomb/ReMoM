@@ -14319,6 +14319,58 @@ int16_t AITP_EarthToMud(int16_t player_idx, int16_t * target_cgx, int16_t * targ
 
 // WZD o112p09
 // drake178: AITP_Disrupt()
+/*
+Disrupt target picker: only useful for the attacker against a walled city; probes five wall squares - the gate (8,13), then (8,11), (8,10), (7,13), (7,10) - and returns 99 with
+the first one still standing in *target_cgx / *target_cgy, else -1.
+OGBUG  the wall-state probes index walls[cgy][cgx] without rebasing to walls[cgy - 10][cgx - 5], so the reads land past the end of s_BATTLEFIELD (Dasm raw offsets 15B6h..15D0h) in
+       leftover _screen_seg arena memory - the "uninitialized wall structure offsets" bug noted at the dispatch call site
+*/
+int16_t AITP_Disrupt(int16_t player_idx, int16_t * target_cgx, int16_t * target_cgy)
+{
+    int16_t retn_value = 0;  /* _DX_ */
+
+    retn_value = -1;
+
+    if(_combat_defender_player != player_idx)  /* the defender owns the walls */
+    {
+        if(battlefield->walled == 1)
+        {
+            if(battlefield->walls[13][8] == 1)  /* OGBUG  raw offset 15D0h */
+            {
+                *target_cgx = 8;
+                *target_cgy = 13;
+                retn_value = 99;
+            }
+            else if(battlefield->walls[11][8] == 1)  /* OGBUG  raw offset 15C0h */
+            {
+                *target_cgx = 8;
+                *target_cgy = 11;
+                retn_value = 99;
+            }
+            else if(battlefield->walls[10][8] == 1)  /* OGBUG  raw offset 15B8h */
+            {
+                *target_cgx = 8;
+                *target_cgy = 10;
+                retn_value = 99;
+            }
+            else if(battlefield->walls[13][7] == 1)  /* OGBUG  raw offset 15CEh */
+            {
+                *target_cgx = 7;
+                *target_cgy = 13;
+                retn_value = 99;
+            }
+            else if(battlefield->walls[10][7] == 1)  /* OGBUG  raw offset 15B6h */
+            {
+                *target_cgx = 7;
+                *target_cgy = 10;
+                retn_value = 99;
+            }
+        }
+    }
+
+    return retn_value;
+}
+
 
 // WZD o112p10
 // drake178: AITP_CracksCall()
