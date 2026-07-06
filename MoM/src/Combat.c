@@ -11785,8 +11785,127 @@ int16_t AITP_WarpCreature(int16_t player_idx)
 // UU15_AITP_Disintegrate()
 
 // WZD 111p07
-// drake178: AITP_DispelMagic() 
-// AITP_DispelMagic()
+// drake178: AITP_DispelMagic()
+/*
+Dispel Magic target picker.  Scores every battle unit two ways and keeps the highest: an own active unit carrying combat debuffs (Vertigo, Confusion, Black Sleep, Warp effects,
+...) is worth its strength plus a bonus per debuff; a visible enemy active unit carrying enchantments (or Haste / Creature Binding / Possession / hostile Confusion) is worth its
+strength plus a bonus per enchantment worth stripping.
+OGBUG  the attacker/defender branch fails to swap: both branches assign own = attacker and enemy = defender realm data, so a defending caster evaluates with the attacker's realms
+OGBUG  the enemy-side eligibility test is a SIGNED compare of the combined enchantments, so a unit whose only enchantment is Invulnerability (bit 31) reads as "no enchantments"
+       and is only eligible via the Haste/Binding/Possession/Confusion effects (the "ignores Invulnerability" bug noted at the dispatch call site)
+NOTE   unlike the other AITP pickers, the combined enchantments here do NOT include item_enchantments
+*/
+int16_t AITP_DispelMagic(int16_t player_idx)
+{
+    int16_t rp_realm_value = 0;          /* RP_RealmValue  NIU after assignment */
+    int16_t enemy_spell_realms = 0;      /* NIU after assignment */
+    int16_t own_spell_realms = 0;
+    int16_t * own_unit_realms = NULL;    /* NIU after assignment */
+    int16_t * enemy_unit_realms = NULL;  /* NIU after assignment */
+    int32_t enchantments = 0;            /* Enchants_HO:Enchants_LO */
+    int16_t highest_value = 0;
+    int16_t picked_target = 0;           /* Target_Index */
+    int16_t target_value = 0;            /* _SI_ */
+    int16_t battle_unit_idx = 0;         /* _DI_ */
+    struct s_BATTLE_UNIT * bu_ptr = NULL;
+
+    highest_value = 0;
+    picked_target = -1;
+
+    /* OGBUG  both branches are identical - the defender branch was never swapped */
+    if(player_idx == _combat_attacker_player)
+    {
+        enemy_spell_realms = g_ai_combat_defender_realm_flags;
+        enemy_unit_realms = &g_ai_combat_defender_unit_realms[0];
+        own_spell_realms = g_ai_combat_attacker_realm_flags;
+        own_unit_realms = &g_ai_combat_attacker_unit_realms[0];
+    }
+    else
+    {
+        own_spell_realms = g_ai_combat_attacker_realm_flags;
+        own_unit_realms = &g_ai_combat_attacker_unit_realms[0];
+        enemy_spell_realms = g_ai_combat_defender_realm_flags;
+        enemy_unit_realms = &g_ai_combat_defender_unit_realms[0];
+    }
+    rp_realm_value = g_ai_combat_unset_realm_flags;
+
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+        target_value = -1;
+        bu_ptr = &battle_units[battle_unit_idx];
+
+        enchantments = bu_ptr->enchantments;
+        enchantments |= _UNITS[bu_ptr->unit_idx].enchantments;
+
+        /* Phase 1: own unit carrying combat debuffs - value dispelling them off of it */
+        if(
+            (bu_ptr->status == bus_Active)
+            &&
+            (bu_ptr->controller_idx == player_idx)
+            &&
+            ((bu_ptr->Combat_Effects & (bue_Vertigo | bue_Confusion | bue_Whirlwind | bue_Mind_Storm | bue_Shatter | bue_Weakness | bue_Black_Sleep | bue_Warped_Attack | bue_Warped_Defense | bue_Warped_Resist | bue_Mind_Twist | bue_NoEffect)) != 0)
+        )
+        {
+            target_value = Effective_Battle_Unit_Strength(battle_unit_idx);
+            if(bu_ptr->Combat_Effects & bue_Vertigo) target_value += 20;
+            if((bu_ptr->Combat_Effects & bue_Confusion) && (bu_ptr->Confusion_State != 2)) target_value += 30;
+            if(bu_ptr->Combat_Effects & bue_Mind_Storm) target_value += 40;
+            if(bu_ptr->Combat_Effects & bue_Shatter) target_value += 10;
+            if(bu_ptr->Combat_Effects & bue_Weakness) target_value += 10;
+            if(bu_ptr->Combat_Effects & bue_Black_Sleep) target_value += 40;
+            if(bu_ptr->Combat_Effects & bue_Warped_Attack) target_value += 15;
+            if(bu_ptr->Combat_Effects & bue_Warped_Defense) target_value += 10;
+            if(bu_ptr->Combat_Effects & bue_Warped_Resist) target_value += 10;
+            if(bu_ptr->Combat_Effects & bue_Mind_Twist) target_value += 10;
+        }
+
+        /* Phase 2: enemy unit carrying enchantments / beneficial effects - value stripping them */
+        if(
+            (bu_ptr->status == bus_Active)
+            &&
+            (bu_ptr->controller_idx != player_idx)
+        )
+        {
+            if(
+                (enchantments > 0)  /* OGBUG  signed - Invulnerability-only reads as "no enchantments" */
+                ||
+                ((bu_ptr->Combat_Effects & (bue_Haste | bue_Creature_Binding | bue_Possession)) != 0)
+                ||
+                (((bu_ptr->Combat_Effects & bue_Confusion) != 0) && (bu_ptr->Confusion_State == 2))
+            )
+            {
+                if(!Target_Is_Visible(battle_unit_idx)) continue;  /* skips the Phase 3 compare, as in the Dasm */
+                target_value = Effective_Battle_Unit_Strength(battle_unit_idx);
+                if(enchantments & UE_IMMOLATION) target_value += 20;
+                if((bu_ptr->Combat_Effects & bue_Confusion) && (bu_ptr->Confusion_State != 2)) target_value += 30;
+                if(enchantments & UE_GUARDIAN_WIND) target_value += 10;
+                if(enchantments & UE_CLOAK_OF_FEAR) target_value += 10;
+                if(enchantments & UE_WRAITH_FORM) target_value += 10;
+                if((enchantments & UE_ELEMENTAL_ARMOR) && (((own_spell_realms & 2) != 0) || ((own_spell_realms & 0) != 0))) target_value += 20;  /* OGBUG  `& 0` never passes */
+                if(enchantments & UE_STONE_SKIN) target_value += 10;
+                if(enchantments & UE_IRON_SKIN) target_value += 20;
+                if(enchantments & UE_SPELL_LOCK) target_value -= 10;
+                if(enchantments & UE_INVISIBILITY) target_value += 10;
+                if(enchantments & UE_MAGIC_IMMUNITY) target_value += 25;
+                if((enchantments & UE_TRUE_SIGHT) && ((own_spell_realms & 1) != 0)) target_value += 30;
+                if(enchantments & UE_LION_HEART) target_value += 30;
+                if((enchantments & UE_RIGHTEOUSNESS) && (((own_spell_realms & 2) != 0) || ((own_spell_realms & 8) != 0))) target_value += 30;
+                if(enchantments & UE_INVULNERABILITY) target_value += 40;
+                if(bu_ptr->Combat_Effects & bue_Creature_Binding) target_value += 70;
+                if(bu_ptr->Combat_Effects & bue_Possession) target_value += 70;
+            }
+        }
+
+        /* Phase 3: keep the best-scoring unit */
+        if(target_value > highest_value)
+        {
+            highest_value = target_value;
+            picked_target = battle_unit_idx;
+        }
+    }
+
+    return picked_target;
+}
 
 // WZD 111p08
 // drake178: G_CMB_SpellEffect() 

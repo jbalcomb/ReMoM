@@ -1660,7 +1660,7 @@ int16_t AITP_WarpCreature(int16_t player_idx);
 // UU15_AITP_Disintegrate()
 
 // WZD 111p07
-// AITP_DispelMagic()
+int16_t AITP_DispelMagic(int16_t player_idx);
 
 // WZD 111p08
 void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy, int16_t Mana, int16_t Anims, int16_t UU1, int16_t UU2);
