@@ -11629,8 +11629,49 @@ int16_t AITP_DarknessLight(int16_t Spell_Index)
 
 
 // WZD 111p03
-// drake178: AITP_Healing() 
-// AITP_Healing()
+// drake178: AITP_Healing()
+/*
+Healing / Mass Healing target picker: picks the own active non-Death battle unit missing the most hit-points (missing whole figures * hits-per-figure, plus the damage on the front
+figure), weighted by attack strength (melee + ranged).  Units missing 2 or fewer hit-points are not worth a heal (value 0).
+*/
+int16_t AITP_Healing(int16_t player_idx)
+{
+    int16_t picked_target = 0;    /* BU_Index */
+    int16_t target_value = 0;     /* _SI_ */
+    int16_t highest_value = 0;    /* _DI_ */
+    int16_t battle_unit_idx = 0;  /* _CX_ */
+    struct s_BATTLE_UNIT * bu_ptr = NULL;
+
+    highest_value = 0;
+    picked_target = -1;
+
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+        bu_ptr = &battle_units[battle_unit_idx];
+
+        if(bu_ptr->controller_idx != player_idx) continue;
+        if(bu_ptr->status != bus_Active) continue;
+        if(bu_ptr->race == rt_Death) continue;  /* Death creatures cannot be healed */
+
+        target_value = (((bu_ptr->Max_Figures - bu_ptr->Cur_Figures) * bu_ptr->hits) + bu_ptr->front_figure_damage);
+        if(target_value > 2)
+        {
+            target_value = (target_value * (bu_ptr->melee + bu_ptr->ranged));
+        }
+        else
+        {
+            target_value = 0;
+        }
+
+        if(target_value > highest_value)
+        {
+            highest_value = target_value;
+            picked_target = battle_unit_idx;
+        }
+    }
+
+    return picked_target;
+}
 
 // WZD 111p04
 // drake178: AITP_WarpWood() 

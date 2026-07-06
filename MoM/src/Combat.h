@@ -1648,7 +1648,7 @@ int16_t AITP_CombatSpell__STUB(int16_t spell_idx, int16_t player_idx, int16_t * 
 int16_t AITP_DarknessLight(int16_t Spell_Index);
 
 // WZD 111p03
-// AITP_Healing()
+int16_t AITP_Healing(int16_t player_idx);
 
 // WZD 111p04
 // AITP_WarpWood()
