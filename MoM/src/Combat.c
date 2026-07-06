@@ -24324,7 +24324,98 @@ int16_t Effective_Battle_Unit_Strength(int16_t battle_unit_idx)
 
 // WZD ovr139p05
 // drake178: AI_UnitThreatRealms()
-//AI_UnitThreatRealms()
+/*
+Computes the given player's per-realm unit threat percentages: tallies every own active battle
+unit's attack contributions (melee/ranged strength, breath and gaze attacks, spell-caster and
+touch-attack specials) into a total plus per-realm buckets (indexed by sbr_ realm), then converts
+each bucket into a percentage of the total.
+*/
+void AI_UnitThreatRealms(int16_t player_idx, int16_t * realm_array)
+{
+    int32_t enchantments = 0;     /* Enchants_HO:Enchants_LO */
+    int16_t total_strength = 0;   /* Total_Strength */
+    int16_t itr = 0;              /* _SI_ (realm loops) */
+    int16_t battle_unit_idx = 0;  /* _SI_ (unit loop) */
+    struct s_BATTLE_UNIT * bu_ptr = NULL;
+
+    total_strength = 0;
+    for(itr = 0; itr < 5; itr++)
+    {
+        realm_array[itr] = 0;
+    }
+
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+        bu_ptr = &battle_units[battle_unit_idx];
+        if(bu_ptr->controller_idx != player_idx) continue;
+        if(bu_ptr->status != bus_Active) continue;
+
+        enchantments = bu_ptr->enchantments;
+        enchantments |= bu_ptr->item_enchantments;
+        enchantments |= _UNITS[bu_ptr->unit_idx].enchantments;
+
+        total_strength += (bu_ptr->melee * bu_ptr->Cur_Figures);
+        total_strength += (bu_ptr->ranged * bu_ptr->Cur_Figures);
+
+        if((bu_ptr->ranged_type == srat_FireBreath) || (bu_ptr->ranged_type == srat_Lightning))
+        {
+            realm_array[sbr_Chaos] += (bu_ptr->ranged * bu_ptr->Cur_Figures);
+        }
+        if(bu_ptr->ranged_type == srat_StoneGaze)
+        {
+            realm_array[sbr_Nature] += (bu_ptr->ranged * bu_ptr->Cur_Figures);
+        }
+        if((bu_ptr->Attribs_2 & USA_FIREBALL) || (bu_ptr->Attribs_2 & USA_DOOMBOLT))
+        {
+            total_strength += 10;
+            realm_array[sbr_Chaos] += 10;
+        }
+        if((bu_ptr->Attribs_2 & USA_IMMOLATION) || (enchantments & UE_IMMOLATION))
+        {
+            total_strength += 20;
+            realm_array[sbr_Chaos] += 20;
+        }
+        if((bu_ptr->attack_attributes & Att_LifeSteal) || (bu_ptr->melee_attack_attributes & Att_LifeSteal) || (bu_ptr->ranged_attack_attributes & Att_LifeSteal))
+        {
+            total_strength += ((bu_ptr->Spec_Att_Attrib + 3) * bu_ptr->Cur_Figures);
+            realm_array[sbr_Death] += ((bu_ptr->Spec_Att_Attrib + 3) * bu_ptr->Cur_Figures);
+        }
+        if((bu_ptr->attack_attributes & Att_Destruct) || (bu_ptr->melee_attack_attributes & Att_Destruct) || (bu_ptr->ranged_attack_attributes & Att_Destruct))
+        {
+            total_strength += (bu_ptr->Cur_Figures * 5);
+            realm_array[sbr_Chaos] += (bu_ptr->Cur_Figures * 5);
+        }
+        if((bu_ptr->attack_attributes & Att_StnTouch) || (bu_ptr->melee_attack_attributes & Att_StnTouch) || (bu_ptr->ranged_attack_attributes & Att_StnTouch))
+        {
+            total_strength += (bu_ptr->Cur_Figures * 5);
+            realm_array[sbr_Nature] += (bu_ptr->Cur_Figures * 5);
+        }
+        if((bu_ptr->Attribs_2 & USA_CAUSEFEAR) || (enchantments & UE_CLOAK_OF_FEAR))
+        {
+            total_strength += bu_ptr->Cur_Figures;
+            realm_array[sbr_Death] += bu_ptr->Cur_Figures;
+        }
+        if((bu_ptr->attack_attributes & Att_DthTouch) || (bu_ptr->melee_attack_attributes & Att_DthTouch) || (bu_ptr->ranged_attack_attributes & Att_DthTouch))
+        {
+            total_strength += (bu_ptr->Cur_Figures * 5);
+            realm_array[sbr_Death] += (bu_ptr->Cur_Figures * 5);
+        }
+        if((bu_ptr->attack_attributes & Att_DsplEvil) || (bu_ptr->melee_attack_attributes & Att_DsplEvil) || (bu_ptr->ranged_attack_attributes & Att_DsplEvil))
+        {
+            total_strength += (bu_ptr->Cur_Figures * 5);
+            realm_array[sbr_Life] += (bu_ptr->Cur_Figures * 5);
+        }
+    }
+
+    if(total_strength != 0)
+    {
+        for(itr = 0; itr < 5; itr++)
+        {
+            realm_array[itr] = (int16_t)(((int32_t)realm_array[itr] * 100) / total_strength);
+        }
+    }
+}
+
 
 // WZD ovr139p06
 // drake178: AI_CombatSpellList()

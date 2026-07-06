@@ -1979,7 +1979,7 @@ int16_t Effective_Battle_Unit_Strength(int16_t battle_unit_idx);
 //AI_SetCombatRealms()
 
 // WZD ovr139p05
-//AI_UnitThreatRealms()
+void AI_UnitThreatRealms(int16_t player_idx, int16_t * realm_array);
 
 // WZD ovr139p06
 void AI_CombatSpellList(int16_t caster_id, int16_t * spell_list, int16_t range_mod);
