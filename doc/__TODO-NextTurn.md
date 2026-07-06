@@ -56,6 +56,7 @@ Called immediately after the AI turn dispatch, before the time-stop-vs-normal sp
 - [x] **7D** [`Players_Update_Magic_Power`](../MoM/src/CITYCALC.c#L116) — **done-done** (commit `1830e9fe`, cross-ref [`__TODO-AiTurn.md`](__TODO-AiTurn.md#L28) Wave 3F).
 - [ ] **7E** [`Players_Apply_Magic_Power`](../MoM/src/NEXTTURN.c#L2442) — distributes magic power into mana / research / skill per player's strategy split.
 - [ ] **7F** [`Players_Check_Spell_Research`](../MoM/src/NEXTTURN.c#L3615) — advances research progress; picks new spell if research complete.
+  - [x] [`Player_Gets_Spell`](../MoM/src/NEXTTURN.c#L3778) (o140p21, callee) — **done-done**, doc [NextTurn/NEXTTURN-Player_Gets_Spell.md](NextTurn/NEXTTURN-Player_Gets_Spell.md). Records a learned/traded/gifted/treasure/conquest spell: mark `spells_list`, discount SoM cost, and if it was the research target clear the candidate list + re-select. Verified 1:1 against `ovr140/Player_Gets_Spell.asm`. This session fixed R1 (`som_research_cost` formula — missing `/2`, assign→floor-subtract), R2 (else-loop compared `researching_spell_idx`→`spell_idx`), R3 (remaining-cost `spell_data_table[spell_idx]`→`[researching_spell_idx]`), R4 (`spl_UNDEFINED`→`spl_NONE`); builds clean.
 - [ ] **7G** [`Players_Apply_Upkeeps__WIP`](../MoM/src/NEXTTURN.c#L2497) — still `__WIP` suffix. Deducts unit/enchantment upkeep from gold/mana.
 - [ ] **7H** `OVL_DisableIncmBlink` (pre-turn) + `OVL_EnableIncmBlink` (post-turn) — income-display blink toggles. Sandwich the sim block.
 

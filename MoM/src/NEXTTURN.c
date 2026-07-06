@@ -3729,20 +3729,63 @@ void Players_Check_Spell_Research(void)
 
 // WZD o140p21
 // MoO2  Module: COLCALC  Player_Gets_Tech_App_()
-/*
-handles researched spell, traded/gifted spell, treasure spell, and conquest spell
-*/
+/**
+ * @brief Grants a spell to a player and updates research state/UI follow-up.
+ *
+ * @details
+ * Marks @p spell_idx as known in the player's spell list and reconciles
+ * research bookkeeping for both direct research completion and non-research
+ * acquisition paths (trade, treasure, conquest, or scripted grants).
+ *
+ * High-level behavior:
+ * 1. Applies Spell of Mastery progress carry-over adjustment by reducing
+ *    @c som_research_cost using half the granted spell's research cost.
+ * 2. Maps @p spell_idx into realm-local index space and writes
+ *    @c sls_Known in @c spells_list.
+ * 3. If the granted spell was the current research target:
+ *    - Removes the spell from @c research_spells.
+ *    - Rebuilds available research options.
+ *    - Zeros @c research_cost_remaining.
+ *    - Sets @c researching_spell_idx to @c spl_NONE if no choices remain,
+ *      otherwise stores the negated spell id as the legacy "needs new pick"
+ *      marker.
+ * 4. If the spell was not the active research target:
+ *    - Removes matching entry from @c research_spells (if present) and
+ *      refreshes research options.
+ * 5. Handles post-grant UX/AI flow:
+ *    - Human + @p New_Research true: play learn animation and restore music
+ *      when appropriate.
+ *    - AI + completed research target: choose next research and initialize
+ *      new remaining cost.
+ *
+ * @param player_idx Index of the player receiving the spell.
+ * @param spell_idx Spell identifier being granted.
+ * @param New_Research Nonzero when the spell was newly obtained through
+ *                     research completion (drives animation/UX path).
+ *
+ * @return This function returns no value.
+ *
+ * @note Mutates multiple player research fields, including
+ *       @c som_research_cost, @c spells_list, @c research_spells,
+ *       @c research_cost_remaining, and @c researching_spell_idx.
+ * @note Preserves legacy behavior where a negative
+ *       @c researching_spell_idx indicates pending reselection.
+ * @note The function assumes @p spell_idx is a valid spell-table index.
+ *
+ * @see Player_Research_Spells(), Learn_Spell_Animation(),
+ *      AI_Spell_Research_Select(), Players_Check_Spell_Research()
+ */
 void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Research)
 {
-    int16_t spells_cnt;
-    int16_t Was_Research_Target;
-    int16_t spell_realm_idx;
-    int16_t spell_realm;
-    int16_t itr;  // _DI_
-    Was_Research_Target = ST_FALSE;
-    if(_players[player_idx].som_research_cost > spell_data_table[spell_idx].research_cost)
+    int16_t spells_cnt = 0;
+    int16_t was_research_target = 0;
+    int16_t spell_realm_idx = 0;
+    int16_t spell_realm = 0;
+    int16_t itr = 0;
+    was_research_target = ST_FALSE;
+    if(_players[player_idx].som_research_cost > (spell_data_table[spell_idx].research_cost / 2))
     {
-        _players[player_idx].som_research_cost = spell_data_table[spell_idx].research_cost;
+        _players[player_idx].som_research_cost -= (spell_data_table[spell_idx].research_cost / 2);
     }
     else
     {
@@ -3751,22 +3794,23 @@ void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Resear
     spell_realm = ((spell_idx - 1) / NUM_SPELLS_PER_MAGIC_REALM);
     spell_realm_idx = ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM);
     _players[player_idx].spells_list[((spell_realm * NUM_SPELLS_PER_MAGIC_REALM) + spell_realm_idx)] = sls_Known;
+    /* Check if this spell was the one currently being researched */
     if(_players[player_idx].researching_spell_idx == spell_idx)
     {
-        Was_Research_Target = ST_TRUE;
+        was_research_target = ST_TRUE;
         for(itr = 0; itr < NUM_RESEARCH_SPELLS; itr++)
         {
             if(_players[player_idx].research_spells[itr] == _players[player_idx].researching_spell_idx)
             {
                 Clear_Structure(itr, (uint8_t *)&_players[player_idx].research_spells[0], sizeof(_players[player_idx].research_spells[0]), NUM_RESEARCH_SPELLS);
-                _players[player_idx].research_spells[(NUM_RESEARCH_SPELLS - 1)] = 0; // BUG  ¿ drake178: ; already done above ?
+                _players[player_idx].research_spells[(NUM_RESEARCH_SPELLS - 1)] = 0;
             }
         }
         spells_cnt = Player_Research_Spells(player_idx);
         _players[player_idx].research_cost_remaining = 0;
         if(spells_cnt == 0)
         {
-            _players[player_idx].researching_spell_idx = spl_UNDEFINED;
+            _players[player_idx].researching_spell_idx = spl_NONE;
         }
         else
         {
@@ -3775,13 +3819,13 @@ void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Resear
     }
     else
     {
-        // BUGBUG  ¿ refactor or this just shouldn't being doing the same as above ?
+        /* Spell was learned via other means (e.g. event, treasure, trade) */
         for(itr = 0; itr < NUM_RESEARCH_SPELLS; itr++)
         {
-            if(_players[player_idx].research_spells[itr] == _players[player_idx].researching_spell_idx)
+            if(_players[player_idx].research_spells[itr] == spell_idx)
             {
                 Clear_Structure(itr, (uint8_t *)&_players[player_idx].research_spells[0], sizeof(_players[player_idx].research_spells[0]), NUM_RESEARCH_SPELLS);
-                _players[player_idx].research_spells[(NUM_RESEARCH_SPELLS - 1)] = spl_NONE; // BUG  ¿ drake178: ; this is already done by the above function ?
+                _players[player_idx].research_spells[(NUM_RESEARCH_SPELLS - 1)] = spl_NONE;
                 Player_Research_Spells(player_idx);
             }
         }
@@ -3792,15 +3836,15 @@ void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Resear
         (New_Research == ST_TRUE)
     )
     {
-        Learn_Spell_Animation(spell_idx, Was_Research_Target);
-        if(Was_Research_Target == ST_FALSE)
+        Learn_Spell_Animation(spell_idx, was_research_target);
+        if(was_research_target == ST_FALSE)
         {
             Stop_All_Sounds__STUB();
             Play_Background_Music();
         }
     }
     else if(
-        (Was_Research_Target == ST_TRUE)
+        (was_research_target == ST_TRUE)
         &&
         (player_idx != HUMAN_PLAYER_IDX)
     )
@@ -3812,7 +3856,7 @@ void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Resear
         }
         else
         {
-            _players[player_idx].research_cost_remaining = spell_data_table[spell_idx].research_cost;
+            _players[player_idx].research_cost_remaining = spell_data_table[_players[player_idx].researching_spell_idx].research_cost;
         }
     }
 }
