@@ -1645,7 +1645,7 @@ int16_t Get_Effective_Melee_Strength(int16_t melee, int16_t thrown, int16_t figu
 int16_t AITP_CombatSpell__STUB(int16_t spell_idx, int16_t player_idx, int16_t * Target_X, int16_t * Target_Y);
 
 // WZD 111p02
-// AITP_DarknessLight()
+int16_t AITP_DarknessLight(int16_t Spell_Index);
 
 // WZD 111p03
 // AITP_Healing()

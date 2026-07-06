@@ -11600,8 +11600,33 @@ int16_t AITP_CombatSpell__STUB(int16_t spell_idx, int16_t player_idx, int16_t * 
 }
 
 // WZD 111p02
-// drake178: AITP_DarknessLight() 
-// AITP_DarknessLight()
+int16_t AITP_DarknessLight(int16_t Spell_Index)
+{
+    int16_t Unused_Local;
+    int16_t Picked_Target;
+    int16_t di;
+    Picked_Target = -1;
+    if (Spell_Index == spl_True_Light)
+    {
+        Unused_Local = 1;
+    }
+    else
+    {
+        Unused_Local = 0;
+    }
+    for (di = 0; di < _combat_total_unit_count; di++)
+    {
+        if (battle_units[di].race == rt_Life || battle_units[di].race == rt_Death)
+        {
+            if (battle_units[di].status == bus_Active)
+            {
+                Picked_Target = 99;
+            }
+        }
+    }
+    return Picked_Target;
+}
+
 
 // WZD 111p03
 // drake178: AITP_Healing() 
