@@ -14374,6 +14374,115 @@ int16_t AITP_Disrupt(int16_t player_idx, int16_t * target_cgx, int16_t * target_
 
 // WZD o112p10
 // drake178: AITP_CracksCall()
+/*
+Cracks Call target picker: picks the strongest visible enemy ground unit (not flying, merging, or non-corporeal), with a +30 bonus for a unit standing on an intact wall square
+when attacking a walled city.  If no unit qualifies but the city is walled, falls back to the same five wall-square probes as AITP_Disrupt() and returns 99 with the square.
+OGBUG  both the in-loop wall test and the fallback probes index walls[cgy][cgx] without rebasing (see AITP_Disrupt())
+NOTE  unlike AITP_EarthToMud(), MV_TELEPORT units are NOT excluded
+*/
+int16_t AITP_CracksCall(int16_t player_idx, int16_t * target_cgx, int16_t * target_cgy)
+{
+    int16_t unit_threat = 0;      /* Unit_Threat */
+    int16_t retn_value = 0;       /* Retn_Value */
+    int16_t highest_threat = 0;   /* Highest_Threat */
+    int16_t battle_unit_idx = 0;  /* _DI_ */
+    struct s_BATTLE_UNIT * bu_ptr = NULL;
+
+    highest_threat = 0;
+    retn_value = -1;
+
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+        unit_threat = -1;
+        bu_ptr = &battle_units[battle_unit_idx];
+
+        if(
+            (bu_ptr->controller_idx != player_idx)
+            &&
+            (bu_ptr->status == bus_Active)
+            &&
+            ((bu_ptr->Move_Flags & MV_FLYING) == 0)
+            &&
+            ((bu_ptr->Move_Flags & MV_MERGING) == 0)
+            &&
+            ((bu_ptr->Abilities & UA_NONCORPOREAL) == 0)
+        )
+        {
+            if(!Target_Is_Visible(battle_unit_idx)) continue;  /* skips the best-threat compare, as in the Dasm */
+            unit_threat = Effective_Battle_Unit_Strength(battle_unit_idx);
+            if(
+                (_combat_defender_player != player_idx)
+                &&
+                (battlefield->walled == 1)
+                &&
+                (bu_ptr->cgx >= 5)
+                &&
+                (bu_ptr->cgx <= 7)
+                &&
+                (bu_ptr->cgy >= 11)
+                &&
+                (bu_ptr->cgy <= 13)
+                &&
+                (battlefield->walls[bu_ptr->cgy][bu_ptr->cgx] == 1)  /* OGBUG  unrebased walls index */
+            )
+            {
+                unit_threat += 30;  /* drop the wall out from under it */
+            }
+        }
+
+        if(unit_threat > highest_threat)
+        {
+            highest_threat = unit_threat;
+            retn_value = battle_unit_idx;
+            *target_cgx = bu_ptr->cgx;
+            *target_cgy = bu_ptr->cgy;
+        }
+    }
+
+    /* fallback: no unit target, but the city is walled - target a standing wall square instead */
+    if(
+        (_combat_defender_player != player_idx)
+        &&
+        (battlefield->walled == 1)
+        &&
+        (retn_value == -1)
+    )
+    {
+        if(battlefield->walls[13][8] == 1)  /* OGBUG  raw offset 15D0h */
+        {
+            *target_cgx = 8;
+            *target_cgy = 13;
+            retn_value = 99;
+        }
+        else if(battlefield->walls[11][8] == 1)  /* OGBUG  raw offset 15C0h */
+        {
+            *target_cgx = 8;
+            *target_cgy = 11;
+            retn_value = 99;
+        }
+        else if(battlefield->walls[10][8] == 1)  /* OGBUG  raw offset 15B8h */
+        {
+            *target_cgx = 8;
+            *target_cgy = 10;
+            retn_value = 99;
+        }
+        else if(battlefield->walls[13][7] == 1)  /* OGBUG  raw offset 15CEh */
+        {
+            *target_cgx = 7;
+            *target_cgy = 13;
+            retn_value = 99;
+        }
+        else if(battlefield->walls[10][7] == 1)  /* OGBUG  raw offset 15B6h */
+        {
+            *target_cgx = 7;
+            *target_cgy = 10;
+            retn_value = 99;
+        }
+    }
+
+    return retn_value;
+}
+
 
 // WZD o112p11
 // drake178: UU_AITP_WordofRecall()

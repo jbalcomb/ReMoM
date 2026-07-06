@@ -1702,7 +1702,7 @@ int16_t AITP_EarthToMud(int16_t player_idx, int16_t * target_cgx, int16_t * targ
 int16_t AITP_Disrupt(int16_t player_idx, int16_t * target_cgx, int16_t * target_cgy);
 
 // WZD o112p10
-// AITP_CracksCall()
+int16_t AITP_CracksCall(int16_t player_idx, int16_t * target_cgx, int16_t * target_cgy);
 
 // WZD o112p11
 // UU_AITP_WordofRecall()
