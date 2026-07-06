@@ -1970,7 +1970,7 @@ void Raze_City_Prompt_Draw(void);
 //AI_SelectCmbtSpell()
 
 // WZD ovr139p02
-//AI_EvaluateCmbtSpell()
+int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t threat_idx);
 
 // WZD ovr139p03
 int16_t Effective_Battle_Unit_Strength(int16_t battle_unit_idx);
