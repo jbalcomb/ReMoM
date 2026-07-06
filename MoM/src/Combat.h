@@ -1967,7 +1967,7 @@ void Raze_City_Prompt_Draw(void);
 */
 
 // WZD ovr139p01
-//AI_SelectCmbtSpell()
+int16_t AI_SelectCmbtSpell(int16_t caster_id);
 
 // WZD ovr139p02
 int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t threat_idx);

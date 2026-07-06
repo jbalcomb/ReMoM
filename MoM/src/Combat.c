@@ -24259,7 +24259,61 @@ void Raze_City_Prompt_Draw(void)
 
 // WZD ovr139p01
 // drake178: AI_SelectCmbtSpell()
-//AI_SelectCmbtSpell()
+/*
+Top-level combat spell chooser for one caster (battle unit 0..19 or wizard CASTER_IDX_BASE+player):
+builds the castable-spell list, evaluates every entry with AI_EvaluateCmbtSpell(), and returns the
+highest-scoring spell index (0 = cast nothing).
+*/
+int16_t AI_SelectCmbtSpell(int16_t caster_id)
+{
+    int16_t spell_list[92];       /* Spell_List  [bp-0C2h..bp-0Ah] */
+    int16_t threat_idx = 0;       /* Threat */
+    int16_t player_idx = 0;       /* Player_Index */
+    int16_t list_idx = 0;         /* List_Index */
+    int16_t chosen_spell = 0;     /* Chosen_Spell */
+    int16_t highest_value = 0;    /* Highest_Value */
+    int16_t caster = 0;           /* _SI_ */
+    int16_t spell_value = 0;      /* _DI_  also reused for the cost multiplier */
+
+    caster = caster_id;
+    if(caster > (CASTER_IDX_BASE - 1))
+    {
+        player_idx = (caster - CASTER_IDX_BASE);
+    }
+    else
+    {
+        player_idx = battle_units[caster].controller_idx;
+    }
+
+    highest_value = 0;
+    chosen_spell = 0;
+
+    if(caster > (CASTER_IDX_BASE - 1))
+    {
+        spell_value = Combat_Casting_Cost_Multiplier(caster - CASTER_IDX_BASE);
+    }
+    else
+    {
+        spell_value = 1;
+    }
+
+    AI_CombatSpellList(caster, &spell_list[0], spell_value);
+
+    threat_idx = Get_Player_Mode(player_idx);
+
+    for(list_idx = 0; list_idx < GUI_Multipurpose_Int; list_idx++)
+    {
+        spell_value = AI_EvaluateCmbtSpell(player_idx, spell_list[list_idx], threat_idx);
+        if(spell_value > highest_value)
+        {
+            highest_value = spell_value;
+            chosen_spell = spell_list[list_idx];
+        }
+    }
+
+    return chosen_spell;
+}
+
 
 // WZD ovr139p02
 // drake178: AI_EvaluateCmbtSpell()
