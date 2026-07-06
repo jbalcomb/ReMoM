@@ -1654,7 +1654,7 @@ int16_t AITP_Healing(int16_t player_idx);
 int16_t AITP_WarpWood(int16_t player_idx);
 
 // WZD 111p05
-// AITP_WarpCreature()
+int16_t AITP_WarpCreature(int16_t player_idx);
 
 // WZD 111p06
 // UU15_AITP_Disintegrate()

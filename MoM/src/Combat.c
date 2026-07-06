@@ -11726,8 +11726,59 @@ int16_t AITP_WarpWood(int16_t player_idx)
 }
 
 // WZD 111p05
-// drake178: AITP_WarpCreature() 
-// AITP_WarpCreature()
+// drake178: AITP_WarpCreature()
+/*
+Warp Creature target picker: picks the visible enemy normal (non-Fantastic) unit with the highest attack value scaled by the chance to beat its resistance, skipping units that
+already carry any Warp Creature effect.
+*/
+int16_t AITP_WarpCreature(int16_t player_idx)
+{
+    int32_t enchantments = 0;     /* Enchants_HO:Enchants_LO */
+    int16_t picked_target = 0;    /* BU_Index */
+    int16_t highest_value = 0;    /* Highest_Value */
+    int16_t target_value = 0;     /* Target_Value */
+    int16_t unit_resist = 0;      /* _DI_ */
+    int16_t battle_unit_idx = 0;  /* _SI_ */
+    struct s_BATTLE_UNIT * bu_ptr = NULL;
+
+    picked_target = -1;
+    highest_value = -1;
+
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+        bu_ptr = &battle_units[battle_unit_idx];
+
+        if(bu_ptr->Attribs_1 & USA_IMMUNITY_MAGIC) continue;
+
+        enchantments = _UNITS[bu_ptr->unit_idx].enchantments;
+        enchantments |= bu_ptr->enchantments;
+        enchantments |= bu_ptr->item_enchantments;
+        if(enchantments & UE_RIGHTEOUSNESS) continue;
+
+        if(bu_ptr->Combat_Effects & bue_Warped_Attack) continue;
+        if(bu_ptr->Combat_Effects & bue_Warped_Defense) continue;
+        if(bu_ptr->Combat_Effects & bue_Warped_Resist) continue;
+
+        if(bu_ptr->controller_idx == player_idx) continue;
+        if(bu_ptr->status != bus_Active) continue;
+        if(bu_ptr->race >= rt_Arcane) continue;  /* Fantastic creatures are exempt */
+        if(!Target_Is_Visible(battle_unit_idx)) continue;
+
+        unit_resist = Combat_Effective_Resistance(*bu_ptr, spell_data_table[spl_Warp_Creature].magic_realm);
+        if(unit_resist >= 10) continue;
+
+        /* attack value scaled by the failure chance of the resistance roll */
+        target_value = (((((bu_ptr->melee + bu_ptr->ranged) * bu_ptr->Cur_Figures) * (10 - unit_resist)) + 9) / 10);
+
+        if(target_value > highest_value)
+        {
+            highest_value = target_value;
+            picked_target = battle_unit_idx;
+        }
+    }
+
+    return picked_target;
+}
 
 // WZD 111p06
 // drake178: UU15_AITP_Disintegrate() 
