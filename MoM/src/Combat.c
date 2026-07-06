@@ -24320,7 +24320,72 @@ int16_t Effective_Battle_Unit_Strength(int16_t battle_unit_idx)
 
 // WZD ovr139p04
 // drake178: AI_SetCombatRealms()
-//AI_SetCombatRealms()
+/*
+Combat-start setup for the AI spell-realm bookkeeping: for each side, builds the castable-spell
+list and ORs (1 << magic_realm) into the side's realm flags for every offensive spell (direct
+damage, destroy-unit, resistable, mundane curse, plus Creature Binding - the defender pass also
+counts Chaos Channels, an OG asymmetry), then computes both sides' per-realm unit threat arrays.
+NOTE  the realm flag globals are never cleared first - values accumulate across combats (faithful)
+*/
+void AI_SetCombatRealms(void)
+{
+    int16_t spell_list[92];    /* Spell_List  [bp-0BAh..bp-2] */
+    int16_t range_modifier = 0;   /* Range_Modifier */
+    int16_t list_idx = 0;         /* _SI_ */
+    int16_t spell_type = 0;       /* _DI_ */
+
+    range_modifier = Combat_Casting_Cost_Multiplier(_combat_attacker_player);
+    AI_CombatSpellList((_combat_attacker_player + CASTER_IDX_BASE), &spell_list[0], range_modifier);
+    for(list_idx = 0; list_idx < GUI_Multipurpose_Int; list_idx++)
+    {
+        spell_type = spell_data_table[spell_list[list_idx]].type;
+        if(
+            (spell_type == scc_Direct_Damage_Fixed)
+            ||
+            (spell_type == scc_Direct_Damage_Variable)
+            ||
+            (spell_type == scc_Combat_Destroy_Unit)
+            ||
+            (spell_type == scc_Resistable_Spell)
+            ||
+            (spell_type == scc_Mundane_Curse)
+            ||
+            (spell_list[list_idx] == spl_Creature_Binding)
+        )
+        {
+            g_ai_combat_attacker_realm_flags |= (1 << spell_data_table[spell_list[list_idx]].magic_realm);
+        }
+    }
+
+    range_modifier = Combat_Casting_Cost_Multiplier(_combat_defender_player);
+    AI_CombatSpellList((_combat_defender_player + CASTER_IDX_BASE), &spell_list[0], range_modifier);
+    for(list_idx = 0; list_idx < GUI_Multipurpose_Int; list_idx++)
+    {
+        spell_type = spell_data_table[spell_list[list_idx]].type;
+        if(
+            (spell_type == scc_Direct_Damage_Fixed)
+            ||
+            (spell_type == scc_Combat_Destroy_Unit)
+            ||
+            (spell_type == scc_Direct_Damage_Variable)
+            ||
+            (spell_type == scc_Resistable_Spell)
+            ||
+            (spell_type == scc_Mundane_Curse)
+            ||
+            (spell_list[list_idx] == spl_Creature_Binding)
+            ||
+            (spell_list[list_idx] == spl_Chaos_Channels)  /* defender-pass extra - OG asymmetry */
+        )
+        {
+            g_ai_combat_defender_realm_flags |= (1 << spell_data_table[spell_list[list_idx]].magic_realm);
+        }
+    }
+
+    AI_UnitThreatRealms(_combat_attacker_player, &g_ai_combat_attacker_unit_realms[0]);
+    AI_UnitThreatRealms(_combat_defender_player, &g_ai_combat_defender_unit_realms[0]);
+}
+
 
 // WZD ovr139p05
 // drake178: AI_UnitThreatRealms()

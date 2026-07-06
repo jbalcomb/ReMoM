@@ -1976,7 +1976,7 @@ void Raze_City_Prompt_Draw(void);
 int16_t Effective_Battle_Unit_Strength(int16_t battle_unit_idx);
 
 // WZD ovr139p04
-//AI_SetCombatRealms()
+void AI_SetCombatRealms(void);
 
 // WZD ovr139p05
 void AI_UnitThreatRealms(int16_t player_idx, int16_t * realm_array);
