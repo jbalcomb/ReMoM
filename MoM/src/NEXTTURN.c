@@ -820,8 +820,8 @@ void Next_Turn_Calc(void)
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
-        // NPC_To_Human_Diplomacy__WIP();
-/* CLAUDE */ PHASE(NPC_To_Human_Diplomacy__WIP());
+        // NPC_To_Human_Diplomacy();
+/* CLAUDE */ PHASE(NPC_To_Human_Diplomacy());
 
         // Resolve_Delayed_Diplomacy_Orders();
 /* CLAUDE */ PHASE(Resolve_Delayed_Diplomacy_Orders());

@@ -99,7 +99,7 @@ ninja compile_commands VSC
 Back Around To The Beginning
 [ ] Next_Turn_Proc()
 [ ] Next_Turn_Calc()
-[ ] NPC_To_Human_Diplomacy__WIP()
+[ ] NPC_To_Human_Diplomacy()
 
 [ ] CTY_Gold_Breakdown()    CITYCALC.c  WZD o142p33
 [ ] CTY_Prod_Breakdown()    CITYCALC.c  WZD o142p34

@@ -59,28 +59,36 @@ for 'First Contact
 
 enum e_DIPLOMATIC_ORDERS
 {
-    do_None = 0,
+    do_None                     =  0,
 
+    do_2                        =  2,
+
+    do_Greeting                 = 15,
     // do_first_contact_  15,  /* 15 + 0 personality1 */
     // do_first_contact_  16,  /* 15 + 0 personality1 */
     // do_first_contact_  17,  /* 15 + 0 personality1 */
     // do_first_contact_  18,  /* 15 + 0 personality1 */
     // do_first_contact_  19,  /* 15 + 0 personality1 */
 
-    do_IDK_greeting_positive  = 42,
-    do_IDK_greeting_neutral   = 43,
-    do_IDK_greeting_negative  = 44, /* set in IDK_DiplSts_s70570(), if 'core recation' <= -100 or 'War' */
+    do_30                       = 30,   /* //NPC_To_Human_Diplomacy() */
+    do_39                       = 39,   /* //NPC_To_Human_Diplomacy() */
+    do_40                       = 40,   /* //NPC_To_Human_Diplomacy() */
+    do_41                       = 41,   /* //NPC_To_Human_Diplomacy() */
 
-    do_IDK_treaty1   = 45,
-    do_IDK_treaty2   = 46,
-    do_IDK_war       = 47,
-    do_IDK_exchange  = 48,
-    do_IDK_peace     = 49,
+    do_IDK_greeting_positive    = 42,
+    do_IDK_greeting_neutral     = 43,
+    do_IDK_greeting_negative    = 44, /* set in IDK_DiplSts_s70570(), if 'core recation' <= -100 or 'War' */
+
+    do_IDK_treaty1              = 45,
+    do_IDK_treaty2              = 46,
+    do_IDK_war                  = 47,
+    do_IDK_exchange             = 48,
+    do_IDK_peace                = 49,
 
     // 51
     // 52
     // 53
-    do_IDK_gift_spell = 54,
+    do_IDK_gift_spell           = 54,
     // 55
     // 56
 

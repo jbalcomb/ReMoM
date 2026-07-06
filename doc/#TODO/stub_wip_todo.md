@@ -171,7 +171,7 @@
 - [ ] IDK_Npc_Counteroffer__STUB
 - [ ] IDK_Npc_Target_Player__STUB
 - [ ] Npc_Proposal__WIP
-- [ ] NPC_To_Human_Diplomacy__WIP
+- [ ] NPC_To_Human_Diplomacy
 - [ ] NPC_To_NPC_Treaty_Negotiations__STUB
 
 ## EMM

@@ -38,7 +38,7 @@ Diplomacy_Screen_Draw_Portrait_Mouth_Animation()
 
 
 Diplomacy_Screen__WIP()
-    Limit_Temporary_Peace_Modifier();
+    Limit_Treaty_Modifiers();
     m_diplomacy_current_music = ST_UNDEFINED;
     word_42E7E = ST_UNDEFINED;
     m_diplomacy_message_IDK_group = 0;
@@ -79,7 +79,7 @@ XREF:
 
 
 
-Limit_Temporary_Peace_Modifier()
+Limit_Treaty_Modifiers()
 
 XREF:
     Diplomacy_Screen__WIP()

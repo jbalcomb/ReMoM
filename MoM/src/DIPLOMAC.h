@@ -122,7 +122,7 @@ void Diplomacy_Growth(void);
 // static int16_t DIPL_LowestInterest(void);
 
 // WZD o85p06
-// static void Limit_Temporary_Peace_Modifier(void);
+// static void Limit_Treaty_Modifiers(void);
 
 // WZD o85p07
 // static void WIZ_DIPL_TeachSpell(int16_t player_idx, int16_t spell_idx);
@@ -191,7 +191,7 @@ void NPC_To_NPC_Treaty_Negotiations(void);
 void Determine_First_Contacts(void);
 
 // WZD o87p02
-void NPC_To_Human_Diplomacy__WIP(void);
+void NPC_To_Human_Diplomacy(void);
 
 // WZD o87p03
 void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2);

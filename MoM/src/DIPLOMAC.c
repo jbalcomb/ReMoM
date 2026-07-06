@@ -117,7 +117,7 @@ static int16_t Diplomacy_Test(int16_t type_modifier, int16_t type);
 // WZD o85p05
 static int16_t Find_Worst_Modifier(void);
 // WZD o85p06
-static void Limit_Temporary_Peace_Modifier(void);
+static void Limit_Treaty_Modifiers(void);
 // WZD o85p07
 static void Diplomacy_Player_Gets_Spell(int16_t player_idx, int16_t spell_idx);
 // WZD o85p08
@@ -162,7 +162,7 @@ static void Get_Diplomacy_Statement(int16_t IDK, int16_t player_idx);
 // WZD o87p01
 void Determine_First_Contacts(void);
 // WZD o87p02
-void NPC_To_Human_Diplomacy__WIP(void);
+void NPC_To_Human_Diplomacy(void);
 // WZD o87p03
 void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2);
 // WZD o87p04
@@ -585,7 +585,7 @@ void Diplomacy_Screen__WIP(void)
     int16_t input_field_idx = 0;  // _DI_
     int16_t leave_screen = 0;  // _SI_
 
-    Limit_Temporary_Peace_Modifier();
+    Limit_Treaty_Modifiers();
 
     m_diplomacy_current_music = ST_UNDEFINED;
 
@@ -3192,31 +3192,23 @@ static int16_t Find_Worst_Modifier(void)
 
 // WZD o85p06
 // MoO2  Module: DIPLOMAC  Limit_Treaty_Modifiers_()
-static void Limit_Temporary_Peace_Modifier(void)
+static void Limit_Treaty_Modifiers(void)
 {
-    int16_t itr2 = 0;  // _SI_
-    int16_t itr1 = 0;  // CX_
-
+    int16_t itr2 = 0;
+    int16_t itr1 = 0;
     for(itr1 = 0; itr1 < _num_players; itr1++)
     {
-
         for(itr2 = 0; itr2 < _num_players; itr2++)
         {
-
             if(itr1 != itr2)
             {
-
                 SETMAX(_players[itr1].Dipl.treaty_modifier[itr2], 120);
-
                 SETMIN(_players[itr1].Dipl.treaty_modifier[itr2], -200);
-
             }
-
         }
-
     }
-
 }
+
 
 // WZD o85p07
 // drake178: WIZ_DIPL_TeachSpell()
@@ -4541,7 +4533,7 @@ static void Npc_Diplomacy_Screen(void)
     int16_t leave_screen = 0;
     int16_t var_4 = 0;
 
-    Limit_Temporary_Peace_Modifier();
+    Limit_Treaty_Modifiers();
 
     m_diplomacy_current_music = ST_UNDEFINED;
 
@@ -5623,70 +5615,50 @@ void Determine_First_Contacts(void)
 
 // WZD o87p02
 // MoO2  Module: NPCDIPLO  NPC_To_Human_Diplomacy_()
-/*
-
-*/
-void NPC_To_Human_Diplomacy__WIP(void)
+void NPC_To_Human_Diplomacy(void)
 {
     int16_t Total_Score = 0;
     int16_t Lowest_Interest = 0;
     int16_t player_idx = 0;
     int16_t da_strength = 0;
-
     if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
     {
-
         return;
-
     }
-
-    Limit_Temporary_Peace_Modifier();  // MoO2  OON XREF: Determine_Diplomacy_Messages_()
-
+    Limit_Treaty_Modifiers();  // MoO2  OON XREF: Determine_Diplomacy_Messages_()
     for(player_idx = 1; player_idx < _num_players; player_idx++)
     {
-
         if(_FORTRESSES[player_idx].active == ST_FALSE)
         {
-
             _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = do_None;
-
+            continue;
         }
         else if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[player_idx] == DIPL_Crusade)
         {
-
             _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = do_None;
-
         }
         else if(_players[HUMAN_PLAYER_IDX].Dipl.contact_stage[player_idx] == pcs_Greeted)
         {
-
             _players[HUMAN_PLAYER_IDX].Dipl.contact_stage[player_idx] = pcs_Established;
-
-            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = (15 + _players[player_idx].Personality);
-
+            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = (do_Greeting + _players[player_idx].Personality);
         }
         else if(_players[HUMAN_PLAYER_IDX].Dipl.niu_bounty_collect[player_idx] != 0)
         {
-
-            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = 2;
-
+            _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = do_2;
         }
         else
         {
-
             if(
-                (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] != 39)
+                (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] != do_39)
                 &&
-                (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] != 30)
+                (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] != do_30)
                 &&
-                (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] != 40)
+                (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] != do_40)
                 &&
-                (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] != 41)
+                (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] != do_41)
             )
             {
-
                 m_diplomac_player_idx = player_idx;
-
                 Lowest_Interest = Find_Worst_Modifier();
                 Total_Score = (
                     _players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx]
@@ -5694,117 +5666,78 @@ void NPC_To_Human_Diplomacy__WIP(void)
                     + Lowest_Interest
                     + TBL_AI_PRS_IDK_Mod[_players[m_diplomac_player_idx].Personality]
                 );
-
                 if((Total_Score + _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]) >= -100)
                 {
-
                     _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = do_None;
-
                 }
                 else
                 {
-
-                    da_strength = _players[HUMAN_PLAYER_IDX].Dipl.DA_Strength[player_idx];
-
+                    da_strength = (_players[HUMAN_PLAYER_IDX].Dipl.DA_Strength[player_idx] * 2);
                     if(_players[HUMAN_PLAYER_IDX].Dipl.DA_Strength[player_idx] < 0)
                     {
-
                         if(
                             (_players[HUMAN_PLAYER_IDX].Dipl.field_126[player_idx] > 0)
                             ||
                             (Random(75) < abs(da_strength))
                         )
                         {
-
                             DIPL_HumanWarOrPeace(player_idx);
-
                         }
                         else
                         {
-
                             _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = do_None;
-
                         }
-
                     }
                     else
                     {
-
                         if(
                             (_players[_human_player_idx].Dipl.Dipl_Status[player_idx] == DIPL_War)
                             &&
                             ((30 + Random(100)) < _players[HUMAN_PLAYER_IDX].Dipl.peace_modifier[player_idx])
                         )
                         {
-
                             DIPL_HumanWarOrPeace(player_idx);
-
                         }
                         else
                         {
-
                             if(_players[HUMAN_PLAYER_IDX].Dipl.field_126[player_idx] == 0)
                             {
-
                                 da_strength += 3;
-
                             }
-
                             if(
                                 (Random(100) < da_strength)
                                 &&
                                 (Random(4) == 1)
                             )
                             {
-
                                 if(_players[HUMAN_PLAYER_IDX].Dipl.field_126[player_idx] > 0)
                                 {
-
-                                    // ¿ BUGBUG  doesn't set a diplomatic order ?
+                                    /* ¿ OGBUG  doesn't set a diplomatic order ? */
                                     _players[HUMAN_PLAYER_IDX].Dipl.field_126[player_idx] = 0;
-
                                 }
                                 else
                                 {
-
                                     NPC_Diplo_s74420(HUMAN_PLAYER_IDX, player_idx);
-
                                 }
-
                             }
                             else
                             {
-
                                 NPC_Required_Alliances(player_idx);
-
                             }
-
                         }
-
                     }
-
                 }
-
             }
-
         }
-
         if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] == do_None)
         {
-
             G_DIPL_NeedForWar(HUMAN_PLAYER_IDX, player_idx);
-
         }
-
         if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] == do_None)
         {
-
             DIPL_GetOffMyLawn(player_idx, HUMAN_PLAYER_IDX);
-
         }
-
     }
-
 }
 
 

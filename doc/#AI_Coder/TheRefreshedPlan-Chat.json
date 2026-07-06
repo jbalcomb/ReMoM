@@ -19291,7 +19291,7 @@
                                 {
                                   "type": 2,
                                   "priority": 159,
-                                  "text": "[ ] NPC_To_Human_Diplomacy__WIP()\n",
+                                  "text": "[ ] NPC_To_Human_Diplomacy()\n",
                                   "references": [],
                                   "lineBreakBefore": true
                                 }
