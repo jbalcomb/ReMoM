@@ -3628,51 +3628,59 @@ void Determine_Offer(void)
 
 
 // WZD o140p20
-// drake178: WIZ_ResearchProgress
-/*
-; checks whether any of the wizards has finished their
-; current research, and if so, allows picking a new one
-; if possible, showing the new spell animation for the
-; human player followed by the research dialog
-;
-; WARNING: can temporarily store a negative spell index
-; as the player's researched spell
-*/
-/*
-ALL - HP & CP
-
-Q: Where does research_cost_remaining get updated?
-A: Players_Apply_Magic_Power()
-*/
+/**
+ * @brief Resolves completed research and selects next research targets per player.
+ *
+ * @details
+ * Runs once per turn to process research completion state for all active
+ * players. For each player, the routine:
+ *
+ * 1. Optionally applies a debug shortcut that forces immediate human research
+ *    completion by zeroing @c research_cost_remaining.
+ * 2. Detects completed research
+ *    (@c research_cost_remaining == 0 and valid @c researching_spell_idx) and
+ *    grants the spell through @c Player_Gets_Spell().
+ * 3. When reselection is required (negative research marker or no active spell
+ *    during early setup turns), chooses a new research spell:
+ *    - Human: opens the research selection UI.
+ *    - AI: invokes AI research selection.
+ * 4. Initializes @c research_cost_remaining for the newly selected spell,
+ *    using @c som_research_cost for Spell of Mastery and the spell-table
+ *    research cost otherwise.
+ *
+ * @return This function returns no value.
+ *
+ * @note @c did_learn_spell_anim tracks whether a learn-spell animation path ran
+ *       and gates music restore after human reselection.
+ * @note Mouse cursor list is switched to default/hourglass around the human
+ *       research-selection dialog.
+ * @note This function mutates per-player research fields including
+ *       @c researching_spell_idx and @c research_cost_remaining.
+ *
+ * @see Player_Gets_Spell(), Spell_Research_Select(),
+ *      AI_Spell_Research_Select(), Players_Apply_Magic_Power()
+ */
 void Players_Check_Spell_Research(void)
 {
     int16_t itr_players = 0;
-    int16_t IDK = 0;
-
-    IDK = ST_FALSE;
-
+    int16_t did_learn_spell_anim = 0;
+    did_learn_spell_anim = ST_FALSE;
     if(DBG_trigger_complete_research_spell == ST_TRUE)
     {
         _players[HUMAN_PLAYER_IDX].research_cost_remaining = 0;
         DBG_trigger_complete_research_spell = ST_FALSE;
     }
-
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-
         if(
             (_players[itr_players].research_cost_remaining == 0)
             &&
             (_players[itr_players].researching_spell_idx > spl_NONE)
         )
         {
-
             Player_Gets_Spell(itr_players, _players[itr_players].researching_spell_idx, 1);  // learned from research
-
-            IDK = ST_TRUE;
-
+            did_learn_spell_anim = ST_TRUE;
         }
-
         if(
             (_players[itr_players].researching_spell_idx < spl_NONE)
             ||
@@ -3683,47 +3691,31 @@ void Players_Check_Spell_Research(void)
             )
         )
         {
-
             if(itr_players == HUMAN_PLAYER_IDX)
             {
-
                 Set_Mouse_List(1, mouse_list_default);
-
                 Spell_Research_Select();
-
                 Set_Mouse_List(1, mouse_list_hourglass);
-
-                if(IDK == ST_TRUE)
+                if(did_learn_spell_anim == ST_TRUE)
                 {
                     Stop_All_Sounds__STUB();
                     Play_Background_Music();
                 }
-
             }
             else
             {
-
                 AI_Spell_Research_Select(itr_players);
-
             }
-
             if(_players[itr_players].researching_spell_idx == spl_Spell_Of_Mastery)
             {
-
                 _players[itr_players].research_cost_remaining = _players[itr_players].som_research_cost;
-
             }
             else
             {
-
                 _players[itr_players].research_cost_remaining = spell_data_table[_players[itr_players].researching_spell_idx].research_cost;
-
             }
-
         }
-
     }
-
 }
 
 
