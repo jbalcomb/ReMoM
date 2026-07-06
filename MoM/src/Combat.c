@@ -24328,7 +24328,97 @@ int16_t Effective_Battle_Unit_Strength(int16_t battle_unit_idx)
 
 // WZD ovr139p06
 // drake178: AI_CombatSpellList()
-//AI_CombatSpellList()
+/*
+Builds the list of spells the caster could pay for right now and leaves the entry count in
+GUI_Multipurpose_Int.  A wizard caster (CASTER_IDX_BASE + player) is limited by remaining combat
+casting skill and by (mana reserve * 10 / range multiplier); a battle unit is limited by its own
+mana.  Caster-creature battle units (USA_CASTER_20/40) pick only from their own realm's 40 spells;
+everyone else scans the player's known spell list (wizards price by Casting_Cost(), units by base
+cost), and battle units also offer their hero's four innate spells.
+OGBUG  the hero-spell scan is gated on caster < 19, not < 20, so battle unit #19 never offers hero spells
+OGBUG  hero spell bytes are sign-extended: an innate spell with id > 127 reads as negative and is skipped
+*/
+void AI_CombatSpellList(int16_t caster_id, int16_t * spell_list, int16_t range_mod)
+{
+    int16_t mana_limit = 0;       /* Mana_Limit */
+    int16_t hero_spell_idx = 0;   /* Hero_Spell_Index */
+    int16_t spell_cost = 0;       /* Spell_Cost */
+    int16_t in_realm_idx = 0;     /* InRealm_Index */
+    int16_t realm_idx = 0;        /* Realm_Index */
+    int16_t player_idx = 0;       /* Player_Index */
+    int16_t caster = 0;           /* _DI_ */
+    int16_t spell_idx = 0;        /* _SI_ */
+
+    caster = caster_id;
+    GUI_Multipurpose_Int = 0;
+
+    if(caster > (CASTER_IDX_BASE - 1))
+    {
+        player_idx = (caster - CASTER_IDX_BASE);
+        mana_limit = _players[player_idx].Cmbt_Skill_Left;
+        if((int16_t)(((int32_t)_players[player_idx].mana_reserve * 10) / range_mod) < mana_limit)
+        {
+            mana_limit = (int16_t)(((int32_t)_players[player_idx].mana_reserve * 10) / range_mod);
+        }
+    }
+    else
+    {
+        player_idx = battle_units[caster].controller_idx;
+        mana_limit = (uint8_t)battle_units[caster].mana;
+    }
+
+    if(caster < CASTER_IDX_BASE)
+    {
+        if(battle_units[caster].Attribs_1 & (USA_CASTER_20 | USA_CASTER_40))
+        {
+            /* caster creature: only its own realm's spells (fantastic race - 16 == sbr_ realm) */
+            for(in_realm_idx = 0; in_realm_idx < 40; in_realm_idx++)
+            {
+                spell_idx = (((battle_units[caster].race - 16) * 40) + in_realm_idx + 1);
+                if(spell_data_table[spell_idx].Eligibility == 1) continue;
+                spell_cost = spell_data_table[spell_idx].casting_cost;
+                if(spell_cost > mana_limit) continue;
+                spell_list[GUI_Multipurpose_Int] = spell_idx;
+                GUI_Multipurpose_Int++;
+            }
+            return;
+        }
+    }
+
+    for(realm_idx = 0; realm_idx < 6; realm_idx++)
+    {
+        for(in_realm_idx = 0; in_realm_idx < 40; in_realm_idx++)
+        {
+            spell_idx = ((realm_idx * 40) + in_realm_idx + 1);
+            if(_players[player_idx].spells_list[((realm_idx * 40) + in_realm_idx)] != sls_Known) continue;
+            if(spell_data_table[spell_idx].Eligibility == 1) continue;
+            if(caster > (CASTER_IDX_BASE - 1))
+            {
+                spell_cost = Casting_Cost(player_idx, spell_idx, 1);
+            }
+            else
+            {
+                spell_cost = spell_data_table[spell_idx].casting_cost;
+            }
+            if(spell_cost > mana_limit) continue;
+            spell_list[GUI_Multipurpose_Int] = spell_idx;
+            GUI_Multipurpose_Int++;
+        }
+    }
+
+    if(caster < 19)  /* OGBUG  `cmp di, 13h; jl` - battle unit #19 is excluded */
+    {
+        for(hero_spell_idx = 0; hero_spell_idx < 4; hero_spell_idx++)
+        {
+            spell_idx = (int8_t)_HEROES2[player_idx]->heroes[_UNITS[battle_units[caster].unit_idx].type].Spells[hero_spell_idx];  /* OGBUG  sign-extended byte */
+            if(spell_idx <= 0) continue;
+            if(spell_data_table[spell_idx].Eligibility == 1) continue;
+            if(spell_data_table[spell_idx].casting_cost > mana_limit) continue;
+            spell_list[GUI_Multipurpose_Int] = spell_idx;
+            GUI_Multipurpose_Int++;
+        }
+    }
+}
 
 
 
