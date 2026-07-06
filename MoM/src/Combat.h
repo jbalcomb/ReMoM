@@ -1651,7 +1651,7 @@ int16_t AITP_DarknessLight(int16_t Spell_Index);
 int16_t AITP_Healing(int16_t player_idx);
 
 // WZD 111p04
-// AITP_WarpWood()
+int16_t AITP_WarpWood(int16_t player_idx);
 
 // WZD 111p05
 // AITP_WarpCreature()

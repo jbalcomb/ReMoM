@@ -11674,8 +11674,56 @@ int16_t AITP_Healing(int16_t player_idx)
 }
 
 // WZD 111p04
-// drake178: AITP_WarpWood() 
-// AITP_WarpWood()
+// drake178: AITP_WarpWood()
+/*
+Warp Wood target picker: picks the visible enemy missile unit whose remaining ammunition is worth the most (ranged strength * ammo * figures).  Non-missile units get a value of -10,
+which never beats the -1 starting value, so only missile units can be picked.
+*/
+int16_t AITP_WarpWood(int16_t player_idx)
+{
+    int32_t enchantments = 0;     /* Enchants_HO:Enchants_LO */
+    int16_t picked_target = 0;    /* BU_Index */
+    int16_t highest_value = 0;    /* Target_Value */
+    int16_t target_value = 0;     /* _DI_ */
+    int16_t battle_unit_idx = 0;  /* _SI_ */
+    struct s_BATTLE_UNIT * bu_ptr = NULL;
+
+    picked_target = -1;
+    highest_value = -1;
+
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+        bu_ptr = &battle_units[battle_unit_idx];
+
+        if(bu_ptr->Attribs_1 & USA_IMMUNITY_MAGIC) continue;
+
+        enchantments = _UNITS[bu_ptr->unit_idx].enchantments;
+        enchantments |= bu_ptr->enchantments;
+        enchantments |= bu_ptr->item_enchantments;
+        if(enchantments & UE_RIGHTEOUSNESS) continue;
+
+        if(bu_ptr->controller_idx == player_idx) continue;
+        if(bu_ptr->status != bus_Active) continue;
+        if(!Target_Is_Visible(battle_unit_idx)) continue;
+
+        if((bu_ptr->ranged_type / 10) == rag_Missile)
+        {
+            target_value = ((bu_ptr->ranged * bu_ptr->ammo) * bu_ptr->Cur_Figures);
+        }
+        else
+        {
+            target_value = -10;
+        }
+
+        if(target_value > highest_value)
+        {
+            highest_value = target_value;
+            picked_target = battle_unit_idx;
+        }
+    }
+
+    return picked_target;
+}
 
 // WZD 111p05
 // drake178: AITP_WarpCreature() 
