@@ -1696,7 +1696,7 @@ int16_t Spell_Resistance_Modifier(int16_t spell_idx);
 int16_t Combat_Casting_Cost_Multiplier(int16_t player_idx);
 
 // WZD o112p08
-// AITP_EarthToMud()
+int16_t AITP_EarthToMud(int16_t player_idx, int16_t * target_cgx, int16_t * target_cgy);
 
 // WZD o112p09
 // AITP_Disrupt()

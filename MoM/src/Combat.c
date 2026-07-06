@@ -14198,6 +14198,124 @@ int16_t Combat_Casting_Cost_Multiplier(int16_t player_idx)
 
 // WZD o112p08
 // drake178: AITP_EarthToMud()
+/*
+Earth to Mud target picker: scans every combat map square and scores it by proximity (Chebyshev-ish, see below) to ground-bound units - enemy units within 2 squares add
+(3 - distance), own units within 2 squares subtract (3 - distance).  Returns 99 with the best square in *target_cgx / *target_cgy, or -1 on an ocean battlefield / no positive
+square.  Flying, merging, teleporting, and non-corporeal units are ignored on both sides.
+NOTE  the distance test only scores the LARGER of the two axis deltas: when delta-x > delta-y only delta-x is range-checked, otherwise only delta-y - a faithful quirk, not a
+      reconstruction shortcut
+*/
+int16_t AITP_EarthToMud(int16_t player_idx, int16_t * target_cgx, int16_t * target_cgy)
+{
+    int16_t best_result = 0;      /* Best_Result */
+    int16_t cgy = 0;              /* Y_Loop_Var */
+    int16_t cgx = 0;              /* X_Loop_Var */
+    int16_t retn_value = 0;       /* Retn_Value */
+    int16_t delta_cgy = 0;        /* Y_Dist */
+    int16_t delta_cgx = 0;        /* X_Dist */
+    int16_t square_value = 0;     /* _DI_ */
+    int16_t battle_unit_idx = 0;  /* _SI_ */
+    struct s_BATTLE_UNIT * bu_ptr = NULL;
+
+    retn_value = -1;
+    best_result = 0;
+
+    /* no mud on an ocean battlefield */
+    if(_combat_structure == cs_OceanTerrainType)
+    {
+        return -1;
+    }
+
+    for(cgx = 0; cgx < COMBAT_GRID_WIDTH; cgx++)
+    {
+        for(cgy = 0; cgy < COMBAT_GRID_HEIGHT; cgy++)
+        {
+            square_value = 0;
+            for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+            {
+                bu_ptr = &battle_units[battle_unit_idx];
+
+                if(bu_ptr->controller_idx != player_idx)
+                {
+                    /* enemy unit: mud near it is good */
+                    if(
+                        (bu_ptr->status == bus_Active)
+                        &&
+                        ((bu_ptr->Move_Flags & MV_FLYING) == 0)
+                        &&
+                        ((bu_ptr->Move_Flags & MV_MERGING) == 0)
+                        &&
+                        ((bu_ptr->Move_Flags & MV_TELEPORT) == 0)
+                        &&
+                        ((bu_ptr->Abilities & UA_NONCORPOREAL) == 0)
+                    )
+                    {
+                        delta_cgx = abs(cgx - bu_ptr->cgx);
+                        delta_cgy = abs(cgy - bu_ptr->cgy);
+                        if(delta_cgx > delta_cgy)
+                        {
+                            if(delta_cgx <= 2)
+                            {
+                                square_value += (3 - delta_cgx);
+                            }
+                        }
+                        else
+                        {
+                            if(delta_cgy <= 2)
+                            {
+                                square_value += (3 - delta_cgy);
+                            }
+                        }
+                    }
+                }
+                else  /* (bu_ptr->controller_idx == player_idx) */
+                {
+                    /* own unit: mud near it is bad */
+                    if(
+                        (bu_ptr->status == bus_Active)
+                        &&
+                        ((bu_ptr->Move_Flags & MV_FLYING) == 0)
+                        &&
+                        ((bu_ptr->Move_Flags & MV_MERGING) == 0)
+                        &&
+                        ((bu_ptr->Move_Flags & MV_TELEPORT) == 0)
+                        &&
+                        ((bu_ptr->Abilities & UA_NONCORPOREAL) == 0)
+                    )
+                    {
+                        delta_cgx = abs(cgx - bu_ptr->cgx);
+                        delta_cgy = abs(cgy - bu_ptr->cgy);
+                        if(delta_cgx > delta_cgy)
+                        {
+                            if(delta_cgx <= 2)
+                            {
+                                square_value -= (3 - delta_cgx);
+                            }
+                        }
+                        else
+                        {
+                            if(delta_cgy <= 2)
+                            {
+                                square_value -= (3 - delta_cgy);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(square_value > best_result)
+            {
+                best_result = square_value;
+                *target_cgx = cgx;
+                *target_cgy = cgy;
+                retn_value = 99;
+            }
+        }
+    }
+
+    return retn_value;
+}
+
 
 // WZD o112p09
 // drake178: AITP_Disrupt()
