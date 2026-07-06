@@ -12335,8 +12335,37 @@ case scc_Disjunction_Spell:  // 20
 
 
 // WZD 111p09
-// drake178: AITP_HolyWord() 
-// AITP_HolyWord()
+// drake178: AITP_HolyWord()
+/*
+Holy Word target check: looks for any enemy Fantastic (race >= rt_Arcane) battle unit not protected by Spell Lock.
+OGBUG  the status test is `<= bus_Active` (skip), so only NON-active units (recalled, fled, dead, ...) are ever examined - active enemies never qualify
+OGBUG  does not check Magic Immunity
+OGBUG  the Dasm never moves the result (DI) into AX before returning: when a target is found AX happens to be 0 (left over from the `and ax, 0` in the enchantment test), otherwise
+       AX holds loop scratch that is in practice always >= 0.  Returning the intended found-flag (0 / 99) keeps the observable behavior: the targeter never rejects Holy Word.
+*/
+int16_t AITP_HolyWord(int16_t player_idx)
+{
+    int16_t found_flag = 0;       /* _DI_ */
+    int16_t battle_unit_idx = 0;  /* _SI_ */
+    struct s_BATTLE_UNIT * bu_ptr = NULL;
+
+    found_flag = 0;
+
+    for(battle_unit_idx = 0; ((battle_unit_idx < _combat_total_unit_count) && (found_flag == 0)); battle_unit_idx++)
+    {
+        bu_ptr = &battle_units[battle_unit_idx];
+
+        if(bu_ptr->status <= bus_Active) continue;  /* OGBUG  skips active units */
+        if(bu_ptr->controller_idx == player_idx) continue;
+        if(bu_ptr->race < rt_Arcane) continue;
+        if(bu_ptr->enchantments & UE_SPELL_LOCK) continue;
+        if(_UNITS[bu_ptr->unit_idx].enchantments & UE_SPELL_LOCK) continue;
+
+        found_flag = 99;
+    }
+
+    return found_flag;
+}
 
 
 

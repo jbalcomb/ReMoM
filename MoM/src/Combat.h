@@ -1666,8 +1666,7 @@ int16_t AITP_DarknessLight(int16_t Spell_Index);
 void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy, int16_t Mana, int16_t Anims, int16_t UU1, int16_t UU2);
 
 // WZD 111p09
-// drake178: AITP_HolyWord() 
-// AITP_HolyWord()
+int16_t AITP_HolyWord(int16_t player_idx);
 
 
 
