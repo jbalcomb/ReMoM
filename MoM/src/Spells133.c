@@ -648,22 +648,17 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
 
 
 // WZD o133p07
-// drake178: WIZ_DispelAttempt()
-/*
-; makes a dispel attempt against a spell of the target
-; wizard, using the passed parameters - considers all
-; dispel resistance retorts, but dispel enhancing ones
-; need to be applied beforehand
-; returns 1 if the dispel is successful, or 0 if not
-*/
-/*
-
-*/
-int16_t WIZ_DispelAttempt__STUB(int16_t dispel_strength, int16_t spell_cast, int16_t player_idx, int16_t magic_realm)
+int16_t Combat_Spell_Dispel_Attempt(int16_t dispel_strength, int16_t spell_cast, int16_t player_idx, int16_t magic_realm)
 {
-
-    return ST_FALSE;
-
+    int16_t difficulty;
+    int16_t chance;
+    difficulty = Calculate_Dispel_Difficulty(spell_cast, player_idx, magic_realm) + dispel_strength;
+    chance = (((int32_t)250 * dispel_strength) / difficulty);
+    if(Random(250) > chance)
+    {
+        return ST_FALSE;
+    }
+    return ST_TRUE;
 }
 
 

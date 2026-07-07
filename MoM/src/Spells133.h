@@ -39,7 +39,7 @@ void Wall_Rise(int16_t spell_idx, int16_t caster_idx);
 void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spell_idx, char * title);
 
 // WZD o133p07
-int16_t WIZ_DispelAttempt__STUB(int16_t dispel_strength, int16_t spell_cast, int16_t player_idx, int16_t magic_realm);
+int16_t Combat_Spell_Dispel_Attempt(int16_t dispel_strength, int16_t spell_cast, int16_t player_idx, int16_t magic_realm);
 
 // WZD o133p08
 void Animate_Cracks_Call(int16_t cgx, int16_t cgy, int16_t caster_idx);
