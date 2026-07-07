@@ -93,7 +93,7 @@
 - [ ] AI_MoveBattleUnits__WIP
 - [ ] AI_RestrictToCity__WIP
 - [x] AI_SetBasicAttacks__WIP
-- [ ] AITP_CombatSpell__STUB
+- [ ] AITP_Combat_Spell
 - [ ] Battle_Unit_Action__WIP
 - [ ] Battle_Unit_Attack__WIP
 - [ ] BU_Apply_Battlefield_Effects__WIP

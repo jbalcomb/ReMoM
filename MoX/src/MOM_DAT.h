@@ -1044,29 +1044,43 @@ struct s_SPELL_DATA
     /* 1C */  int16_t research_cost;
     /* 1E */  int8_t Sound;                     /* 1-byte, signed;  positive SOUNDFX.LBX, abs(negative) NEWSOUND.LBX */
     /* 1F */  /* 2-byte alignment padding */
-    // /* 20 */  int8_t Param0;                // 2-byte, signed;  ; unit type, base damage, UE flag, or CE index;  for scc_Global_Enchantment, used to index _players[].Globals[]
-    // /* 21 */  int8_t Param1;
+    /*
+        Polymorphic 4-byte payload at 0x20-0x23.  Which arm is live is selected by `type` (e_SPELL_CASTING_CATEGORY / scc_*):
+
+          scc_* category                    arm                          the bytes mean
+          --------------------------------  ---------------------------  -----------------------------------------------------------------
+          scc_Unit_Enchantment (1)          enchantments (u32)           UE_ bitmask, OR'd into _UNITS[].enchantments
+          combat enchantment / debuff       enchantments (u32)           effect bitmask, tested against s_BATTLE_UNIT.Combat_Effects
+          scc_Direct_Damage_* (4, 22)       strength/immunities/attrs    base damage + immunity flags + ATK_FLAGS attributes
+          scc_Summoning (0)                 unit_type (i16)              ut_ unit type to create           (Create_Unit / IDK_SummonAnim)
+          scc_City_Enchantment_* (2, 3)     ce_idx (i16)                 index into _CITIES[].enchantments
+          scc_Global_Enchantment (9)        oe_idx (i16)                 index into _players[].Globals[] (holds player_num == player_idx + 1)
+
+        Param0 / Param1 / Params2_3 are the generic, name-agnostic view of these same bytes (Param0 = low byte @0x20, Params2_3 = high word @0x22).
+        Older call sites reach for `.Param0` regardless of category; prefer the semantic arm (`.unit_type`, `.ce_idx`, `.strength`, ...) when the category is known.
+        For the full 32-bit effect mask, read `.enchantments` directly:  Param0/Param1 are its low word, Params2_3 is its high word.
+    */
     union
     {
-        uint32_t enchantments;                  // gets OR'd with _UNITS[].enchantments
+        uint32_t enchantments;                  // 0x20  full 32-bit effect mask (enchantment bitmask OR combat-effect / debuff mask)
         struct {
-            /* 20 */  int8_t Param0;            // spell attack strength  e.g., Meteor Storms "...a strength four magic fire attack..."
-            /* 21 */  int8_t Param1;            // passed to Battle_Unit_Defense_Special()
-            /* 22 */  int16_t Params2_3;        // tested as a bit-field against ATK_FLAGS  ; ATK_Flags ; passed to Battle_Unit_Defense_Special()
+            /* 20 */  int8_t  Param0;           // generic low byte    (== strength; low byte of unit_type/ce_idx/oe_idx; low byte of enchantments)
+            /* 21 */  int8_t  Param1;           // generic byte @0x21  (== immunities)
+            /* 22 */  int16_t Params2_3;        // generic high word   (== attributes; high 16 bits of enchantments);  ATK_FLAGS bitfield for damage spells
         };
         struct {
-            int16_t unit_type;                  // 0: scc_Summoning             IDK_SummonAnim_Draw()
+            /* 20 */  int16_t unit_type;        // scc_Summoning (0):  ut_ unit type to create
         };
         struct {
-            int16_t ce_idx;                     // 9: scc_City_Enchantment_Positive      index into _CITIES[].enchantments
+            /* 20 */  int16_t ce_idx;           // scc_City_Enchantment (2, 3):  index into _CITIES[].enchantments
         };
         struct {
-            int16_t oe_idx;                     // 9: scc_Global_Enchantment    indexes into _players[].Globals[], which holds player_num (i.e., player_idx + 1)
+            /* 20 */  int16_t oe_idx;           // scc_Global_Enchantment (9):  index into _players[].Globals[] (holds player_num == player_idx + 1)
         };
         struct {
-            uint8_t strength;                   // AKA base damage  Attack_Strength  Apply_Battle_Unit_Damage_From_Spell()
-            uint8_t immunities;                 //                  Immunity_Flags   Apply_Battle_Unit_Damage_From_Spell()
-            uint16_t attributes;                //                                   Apply_Battle_Unit_Damage_From_Spell()
+            /* 20 */  uint8_t  strength;        // scc_Direct_Damage_* (4, 22):  base damage / attack strength   Apply_Battle_Unit_Damage_From_Spell()
+            /* 21 */  uint8_t  immunities;      //                               immunity flags                  Apply_Battle_Unit_Damage_From_Spell()
+            /* 22 */  uint16_t attributes;      //                               ATK_FLAGS attributes            Apply_Battle_Unit_Damage_From_Spell()
         };
     };
     /* 24 */

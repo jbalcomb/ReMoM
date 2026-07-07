@@ -1129,6 +1129,30 @@ extern int16_t ai_human_hostility;
 // WZD dseg:C418
 extern int16_t _combat_city_damage;
 
+// WZD dseg:9294
+// drake178: RP_AI_UnsetRealmVar1
+extern int16_t g_ai_combat_unset_realm_flags;
+
+// WZD dseg:9296
+// drake178: RP_AI_UnsetRealmVar2
+extern int16_t g_ai_combat_unset_realm_flags_2;
+
+// WZD dseg:9298
+// drake178: AI_DEFR_UnitRealms
+extern int16_t g_ai_combat_defender_unit_realms[5];
+
+// WZD dseg:92A2
+// drake178: AI_ATKR_UnitRealms
+extern int16_t g_ai_combat_attacker_unit_realms[5];
+
+// WZD dseg:92AC
+// drake178: AI_DEFR_RealmFlags
+extern int16_t g_ai_combat_defender_realm_flags;
+
+// WZD dseg:92AE
+// drake178: AI_ATKR_RealmFlags
+extern int16_t g_ai_combat_attacker_realm_flags;
+
 // WZD dseg:C41A
 extern SAMB_ptr SND_CMB_Silence;
 extern uint32_t SND_CMB_Silence_size;  // DNE in Dasm
@@ -1642,7 +1666,7 @@ int16_t Get_Effective_Melee_Strength(int16_t melee, int16_t thrown, int16_t figu
 */
 
 // WZD o111p01
-int16_t AITP_CombatSpell__STUB(int16_t spell_idx, int16_t player_idx, int16_t * Target_X, int16_t * Target_Y);
+int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * target_wx, int16_t * target_wy);
 
 // WZD 111p02
 int16_t AITP_DarknessLight(int16_t Spell_Index);

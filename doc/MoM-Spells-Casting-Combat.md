@@ -176,7 +176,7 @@ Combat_Cast_Spell__WIP()
     ...
     ovr112:0A6D
     @@Target_And_Effect:
-        j_CMB_TargetSpell()  || j_AITP_CombatSpell__STUB()
+        j_CMB_TargetSpell()  || j_AITP_Combat_Spell()
         j_Cast_Spell_On_Battle_Unit()
 
 
@@ -231,7 +231,7 @@ WIZ_DispelAttempt()
 CMB_CounterMessage()
 
 CMB_TargetSpell()
-AITP_CombatSpell__STUB()
+AITP_Combat_Spell()
 
 Cast_Spell_On_Battle_Unit()
 

@@ -186,6 +186,7 @@ void Screen_Control(void)
 #endif
                 // TODO  WZD vs. MGC
                 /* WZD  GameState_01:  ; case 0x1 */
+                /* HACK */ Load_WZD_Resources();
                 prev__Settings_BG_Music = magic_set.background_music;
                 Load_Screen();  /* ... |-> Loaded_Game_Update() */
 #ifdef STU_DEBUG

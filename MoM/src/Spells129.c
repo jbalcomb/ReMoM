@@ -252,7 +252,7 @@ void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_
     int16_t damage_types[NUM_DAMAGE_TYPES] = { 0, 0, 0 };
     int16_t itr2 = 0;
     int16_t itr1 = 0;
-    struct s_BATTLE_UNIT * battleunit;
+    struct s_BATTLE_UNIT * bu_ptr;
 
 
     g_ai_recompute_needed = ST_TRUE;
@@ -283,9 +283,9 @@ void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_
 
     }
 
-    battleunit = &battle_units[0];
+    bu_ptr = &battle_units[0];
 
-    Load_Battle_Unit(unit_idx, &battle_units[0]);
+    Load_Battle_Unit(unit_idx, bu_ptr);
 
     Apply_Battle_Unit_Damage_From_Spell(spell_idx, 0, &damage_types[0], attack_strength_override);
 
@@ -404,7 +404,7 @@ void Apply_Black_Wind(int16_t wx, int16_t wy, int16_t wp, int16_t spell_idx)
 
             }
 
-            Load_Battle_Unit(unit_idx, &battle_units[0]);
+            Load_Battle_Unit(unit_idx, bu_ptr);
 
             for(itr = 0; battle_units[0].Cur_Figures > itr; itr++)
             {

@@ -1208,7 +1208,7 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
     if(!ability_chosen && (bu_ptr->Attribs_2 & USA_DOOMBOLT))
     {
         spell_idx = spl_Doom_Bolt;
-        target_idx = AITP_CombatSpell__STUB(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
+        target_idx = AITP_Combat_Spell(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
 
         if(target_idx > -1)
         {
@@ -1222,7 +1222,7 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
     if(!ability_chosen && (bu_ptr->Attribs_2 & USA_FIREBALL))
     {
         spell_idx = spl_Fireball;
-        target_idx = AITP_CombatSpell__STUB(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
+        target_idx = AITP_Combat_Spell(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
 
         if(target_idx > -1)
         {
@@ -1235,7 +1235,7 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
     if(!ability_chosen && (bu_ptr->Attribs_2 & USA_HEALING))
     {
         spell_idx = spl_Healing;
-        target_idx = AITP_CombatSpell__STUB(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
+        target_idx = AITP_Combat_Spell(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
 
         if(target_idx > -1)
         {
@@ -1249,7 +1249,7 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
     if(!ability_chosen && (bu_ptr->Attribs_2 & USA_WEB))
     {
         spell_idx = spl_Web;
-        target_idx = AITP_CombatSpell__STUB(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
+        target_idx = AITP_Combat_Spell(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
 
         if(target_idx > -1)
         {
@@ -1269,7 +1269,7 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
         if(item_spell_idx > 0 && bu_ptr->Item_Charges > 0)
         {
             spell_idx = item_spell_idx;
-            target_idx = AITP_CombatSpell__STUB(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
+            target_idx = AITP_Combat_Spell(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
             
             if(target_idx > -1)
             {

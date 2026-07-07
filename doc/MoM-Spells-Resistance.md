@@ -77,7 +77,7 @@ UE_RESIST_MAGIC
 XREF:
     Combat_Resistance_Check()
     j_Combat_Effective_Resistance()
-        AITP_CombatSpell__STUB()
+        AITP_Combat_Spell()
         AITP_WarpCreature()
         UU15_AITP_Disintegrate()
         Cast_Spell_On_Battle_Unit()

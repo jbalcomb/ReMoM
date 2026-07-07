@@ -6,7 +6,7 @@
 
 1. **Overland spell casting is richly implemented.** The AI has a real selection pipeline (§A) with **8 group handlers** and **~33 `AITP_*` target pickers**, driven by each spell's `spell_data_table[].AI_Group` field (`SGRP_*`, values 0–90).
 
-2. **Combat spell casting is a stub — the AI currently casts *no* combat spells.** The combined combat-spell target picker `AITP_CombatSpell__STUB` is reconstructed as `return ST_UNDEFINED;` ([Combat.c:11595-11600](../../MoM/src/Combat.c#L11595-L11600)). Since `ST_UNDEFINED` (−1) means "cannot cast," every combat-spell target request from the combat AI (`CMBTAI.c`) fails. The OG was a full picker that drake178 notes "contains numerous BUGs"; the ReMoM reconstruction has not yet ported it (§F). **This is a reconstruction gap (WIP/stub), not an original-game bug** — and the single biggest fact about AI spell usage today.
+2. **Combat spell casting is a stub — the AI currently casts *no* combat spells.** The combined combat-spell target picker `AITP_Combat_Spell` is reconstructed as `return ST_UNDEFINED;` ([Combat.c:11595-11600](../../MoM/src/Combat.c#L11595-L11600)). Since `ST_UNDEFINED` (−1) means "cannot cast," every combat-spell target request from the combat AI (`CMBTAI.c`) fails. The OG was a full picker that drake178 notes "contains numerous BUGs"; the ReMoM reconstruction has not yet ported it (§F). **This is a reconstruction gap (WIP/stub), not an original-game bug** — and the single biggest fact about AI spell usage today.
 
 Consequently, "how the AI uses spells" is overwhelmingly a story about **overland** casting. Combat casting is documented as a known gap.
 
@@ -76,11 +76,11 @@ Cross-referenced: [ComputerPlayer/AISPELL-AI_Spell_Select.md](../ComputerPlayer/
 
 ## §F — Combat spell casting (STUB — AI casts no combat spells)
 
-The combat AI lives in **`CMBTAI.c`**; when the computer player takes its combat turn (`Auto_Cast_Spell_And_Do_Combat_Turn`), any spell it might cast is targeted through **`AITP_CombatSpell__STUB`**. Call sites: [CMBTAI.c:1211,1225,1238,1252,1272](../../MoM/src/CMBTAI.c#L1211) and [Combat.c:13054](../../MoM/src/Combat.c#L13054).
+The combat AI lives in **`CMBTAI.c`**; when the computer player takes its combat turn (`Auto_Cast_Spell_And_Do_Combat_Turn`), any spell it might cast is targeted through **`AITP_Combat_Spell`**. Call sites: [CMBTAI.c:1211,1225,1238,1252,1272](../../MoM/src/CMBTAI.c#L1211) and [Combat.c:13054](../../MoM/src/Combat.c#L13054).
 
 The current body ([Combat.c:11595-11600](../../MoM/src/Combat.c#L11595-L11600)):
 ```c
-int16_t AITP_CombatSpell__STUB(int16_t spell_idx, int16_t player_idx, int16_t * Target_X, int16_t * Target_Y)
+int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * Target_X, int16_t * Target_Y)
 {
     return ST_UNDEFINED;
 }
@@ -261,7 +261,7 @@ Every spell-AI defect found in this walkthrough. **Type:** `STUB/WIP` = not-yet-
 
 | # | Type | Where | Effect | § |
 | --- | --- | --- | --- | --- |
-| 1 | **STUB/WIP** | `AITP_CombatSpell__STUB` [Combat.c:11595](../../MoM/src/Combat.c#L11595) | **AI casts no combat spells at all** — biggest single gap | §F |
+| 1 | **STUB/WIP** | `AITP_Combat_Spell` [Combat.c:11595](../../MoM/src/Combat.c#L11595) | **AI casts no combat spells at all** — biggest single gap | §F |
 | 2 | OGBUG | Spell-of-Mastery detection tests `spl_Fire_Elemental` [AIDUDES.c:742](../../MoM/src/AIDUDES.c#L742), [AIMOVE.c:7321](../../MoM/src/AIMOVE.c#L7321) | AI fails to detect an enemy casting Spell of Mastery → won't rush to stop the winner | §G |
 | 3 | OGBUG | `AITP_Disenchant` OOB `_UNITS[-1]` [AISPELL.c:5735](../../MoM/src/AISPELL.c#L5735) | Overland Disenchant targets garbage coordinates | §E.1 |
 | 4 | OGBUG | `AITP_Attack_Wizard` targets `_cp_hostile_opponents[0]` [AISPELL.c:6194](../../MoM/src/AISPELL.c#L6194) | Anti-wizard spell can hit the wrong wizard | §E.1 |

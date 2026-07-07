@@ -22,7 +22,7 @@ CMB_PrepareTurn__WIP()
 CMB_CE_Refresh__WIP()
 CMB_LoadResources__WIP()
 Strategic_Combat_Allocate()
-AITP_CombatSpell__STUB()
+AITP_Combat_Spell()
 Cast_Spell_On_Battle_Unit()
 Combat_Cast_Spell__WIP()
 Do_Legal_Spell_Check__WIP()
@@ -37,7 +37,7 @@ Cast_Dispel_Magic()
 AI_EvaluateCmbtSpell()
 CMB_LoadResources__WIP()
 Strategic_Combat_Allocate()
-AITP_CombatSpell__STUB()
+AITP_Combat_Spell()
 Do_Legal_Spell_Check__WIP()
 Cast_Disenchant()
 
@@ -57,7 +57,7 @@ CMB_LoadResources__WIP+11C                  mov     [word ptr combat_enchantment
 CMB_LoadResources__WIP:loc_8500A            les     bx, [combat_enchantments]           
 Strategic_Combat_Allocate+3B                mov     [word ptr combat_enchantments], ax  
 Strategic_Combat_Allocate:loc_888F2         les     bx, [combat_enchantments]           
-AITP_CombatSpell__STUB+DED                  add     bx, [word ptr combat_enchantments]  
+AITP_Combat_Spell+DED                  add     bx, [word ptr combat_enchantments]  
 Cast_Spell_On_Battle_Unit+A25               les     bx, [combat_enchantments]           
 Cast_Spell_On_Battle_Unit:loc_8C6C2         les     bx, [combat_enchantments]           
 Combat_Cast_Spell__WIP+58F                  les     bx, [combat_enchantments]           
@@ -117,7 +117,7 @@ AI_EvaluateCmbtSpell+15D                    les     bx, [combat_enchantments]
 AI_EvaluateCmbtSpell:loc_C3211              les     bx, [combat_enchantments]           
 CMB_LoadResources__WIP+118                  mov     [word ptr combat_enchantments+2], dx
 Strategic_Combat_Allocate+37                mov     [word ptr combat_enchantments+2], dx
-AITP_CombatSpell__STUB+DE9                  mov     es, [word ptr combat_enchantments+2]
+AITP_Combat_Spell+DE9                  mov     es, [word ptr combat_enchantments+2]
 Do_Legal_Spell_Check__WIP+523               mov     es, [word ptr combat_enchantments+2]
 Cast_Disenchant+B1                          mov     es, [word ptr combat_enchantments+2]
 Cast_Disenchant+1AA                         mov     es, [word ptr combat_enchantments+2]
