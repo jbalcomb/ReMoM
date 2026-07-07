@@ -29,6 +29,7 @@
 #include "SBookScr.h"
 #include "Spellbook.h"
 #include "Spells129.h"
+#include "UNITTYPE.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -39,18 +40,30 @@
 
 // WZD  dseg:68FC                                                 BEGIN:  ovr133 - Initialized Data
 
-// WZD  dseg:68FC 59 6F 75 72 20 00                               cnst_CounterMsg1 db 'Your ',0           ; DATA XREF: CMB_CounterMessage__STUB+17o
-// WZD  dseg:6902 27 20 00                                        cnst_Apostrophe db 27h,' ',0            ; DATA XREF: CMB_CounterMessage__STUB+66o ...
-// WZD  dseg:6905 27 73 20 00                                     cnst_Possessive db 27h,'s ',0           ; DATA XREF: CMB_CounterMessage__STUB:loc_B6E25o ...
-// WZD  dseg:6909 20 73 70 65 6C 6C 20 68 61 73 20 63 61 75 73 65+cnst_CounterMsg2 db ' spell has caused ',0
-// WZD  dseg:691C 54 68 65 20 70 6F 77 65 72 20 6F 66 20          cnst_CounterMsg3 db 'The power of '     ; DATA XREF: CMB_CounterMessage__STUB:loc_B6E47o
-// WZD  dseg:6929 74 68 65 20 00                                  cnst_CounterMsg7 db 'the ',0            ; DATA XREF: CMB_CounterMessage__STUB:loc_B6F4Do
-// WZD  dseg:692E 53 6F 72 63 65 72 79 00                         cnst_Rlm1_Sorcery_2 db 'Sorcery',0      ; DATA XREF: CMB_CounterMessage__STUB:loc_B6E70o
-// WZD  dseg:6936 43 68 61 6F 73 00                               cnst_Rlm2_Chaos_2 db 'Chaos',0          ; DATA XREF: CMB_CounterMessage__STUB:loc_B6E81o
-// WZD  dseg:693C 4E 61 74 75 72 65 00                            cnst_Rlm0_Nature_2 db 'Nature',0        ; DATA XREF: CMB_CounterMessage__STUB:loc_B6E86o
-// WZD  dseg:6943 20 4E 6F 64 65 20 68 61 73 20 63 61 75 73 65 64+cnst_CounterMsg4 db ' Node has caused ',0
-// WZD  dseg:6955 79 6F 75 72 20 00                               cnst_CounterMsg5 db 'your ',0           ; DATA XREF: CMB_CounterMessage__STUB+E5o
-// WZD  dseg:695B 20 73 70 65 6C 6C 20 74 6F 20 66 69 7A 7A 6C 65+cnst_CounterMsg6 db ' spell to fizzle.',0
+// WZD  dseg:68FC
+char cnst_CounterMsg1[] = "Your ";
+// WZD  dseg:6902
+char cnst_Apostrophe[] = "' ";
+// WZD  dseg:6905
+char cnst_Possessive[] = "'s ";
+// WZD  dseg:6909
+char cnst_CounterMsg2[] = " spell has caused ";
+// WZD  dseg:691C
+char cnst_CounterMsg3[] = "The power of ";
+// WZD  dseg:6929
+char cnst_CounterMsg7[] = "the ";
+// WZD  dseg:692E
+char cnst_Rlm1_Sorcery_2[] = "Sorcery";
+// WZD  dseg:6936
+char cnst_Rlm2_Chaos_2[] = "Chaos";
+// WZD  dseg:693C
+char cnst_Rlm0_Nature_2[] = "Nature";
+// WZD  dseg:6943
+char cnst_CounterMsg4[] = " Node has caused ";
+// WZD  dseg:6955
+char cnst_CounterMsg5[] = "your ";
+// WZD  dseg:695B
+char cnst_CounterMsg6[] = " spell to fizzle.";
 // WZD  dseg:696D
 char soundfx_lbx_file__ovr133__1of2[] = "soundfx";
 // WZD  dseg:6975
@@ -513,21 +526,124 @@ void Wall_Rise(int16_t spell_idx, int16_t caster_idx)
 
 
 // WZD o133p06
-// drake178: CMB_CounterMessage()
-/*
-; displays the combat counter message for having
-; successfully fizzled a spell, either as a type 1 red
-; warning dialog, or an onscreen message for 30 frames
-; if Auto combat is enabled
-*/
-/*
-
-*/
-void CMB_CounterMessage__STUB(int16_t caster_idx, int16_t type, int16_t spell_idx, char * title)
+void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spell_idx, char * title)
 {
+    int di;
+    struct s_BATTLE_UNIT * bu_ptr;
+    char *ut_name;
+    int Display_Counter;
+    int Hero_Slot;
+    char Temp_String[20];
+    if(type == 5)
+    {
+        stu_strcpy(GUI_NearMsgString, cnst_CounterMsg3); /* "The power of " */
+        if(battlefield->Central_Structure == CS_SorceryNode)
+        {
+            stu_strcat(GUI_NearMsgString, cnst_Rlm1_Sorcery_2); /* "Sorcery" */
+        }
+        else if(battlefield->Central_Structure == CS_ChaosNode)
+        {
+            stu_strcat(GUI_NearMsgString, cnst_Rlm2_Chaos_2); /* "Chaos" */
+        }
+        else if(battlefield->Central_Structure == CS_NatureNode)
+        {
+            stu_strcat(GUI_NearMsgString, cnst_Rlm0_Nature_2); /* "Nature" */
+        }
+        stu_strcat(GUI_NearMsgString, cnst_CounterMsg4); /* " Node has caused " */
+    }
+    else if(type == 0)
+    {
+        stu_strcpy(GUI_NearMsgString, cnst_CounterMsg1); /* "Your " */
+        stu_strcat(GUI_NearMsgString, title);
+        stu_strcat(GUI_NearMsgString, cnst_CounterMsg2); /* " spell has caused " */
+    }
+    else
+    {
+        stu_strcpy(GUI_NearMsgString, _players[type].name);
+        di = strlen(_players[type].name);
+        if(_players[type].name[di - 1] == 's')
+        {
+            stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
+        }
+        else
+        {
+            stu_strcat(GUI_NearMsgString, cnst_Possessive); /* "'s " */
+        }
+        stu_strcat(GUI_NearMsgString, title);
+        stu_strcat(GUI_NearMsgString, cnst_CounterMsg2); /* " spell has caused " */
+    }
+    if(caster_idx == CASTER_IDX_BASE)
+    {
+        stu_strcat(GUI_NearMsgString, cnst_CounterMsg5); /* "your " */
+    }
+    else if(caster_idx < CASTER_IDX_BASE)
+    {
+        bu_ptr = &battle_units[caster_idx];
+        Hero_Slot = _UNITS[bu_ptr->unit_idx].Hero_Slot;
 
-
-
+        if(Hero_Slot > -1)
+        {
+            stu_strcpy(Temp_String, _players[bu_ptr->controller_idx].Heroes[Hero_Slot].name);
+            stu_strcat(GUI_NearMsgString, Temp_String);
+            di = stu_strlen(Temp_String);
+            if(Temp_String[di - 1] == 's')
+            {
+                stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
+            }
+            else
+            {
+                stu_strcat(GUI_NearMsgString, cnst_Possessive); /* "'s " */
+            }
+        }
+        else
+        {
+            stu_strcat(GUI_NearMsgString, cnst_CounterMsg7); /* "the " */
+            ut_name = _unit_type_table[_UNITS[bu_ptr->unit_idx].type].name;
+            stu_strcat(GUI_NearMsgString, ut_name);
+            di = stu_strlen(ut_name);
+            if(ut_name[di - 1] == 's')
+            {
+                stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
+            }
+            else
+            {
+                stu_strcat(GUI_NearMsgString, cnst_Possessive); /* "'s " */
+            }
+        }
+    }
+    else
+    {
+        stu_strcat(GUI_NearMsgString, _players[caster_idx - CASTER_IDX_BASE].name);
+        di = stu_strlen(_players[caster_idx - CASTER_IDX_BASE].name);
+        if(_players[caster_idx - CASTER_IDX_BASE].name[di - 1] == 's')
+        {
+            stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
+        }
+        else
+        {
+            stu_strcat(GUI_NearMsgString, cnst_Possessive); /* "'s " */
+        }
+    }
+    stu_strcpy(Temp_String, spell_data_table[spell_idx].name);
+    stu_strcat(GUI_NearMsgString, Temp_String);
+    stu_strcat(GUI_NearMsgString, cnst_CounterMsg6); /* " spell to fizzle." */
+    if(_auto_combat_flag == ST_FALSE)
+    {
+        Warn1(GUI_NearMsgString);
+    }
+    else
+    {
+        Play_Standard_Click();
+        for (Display_Counter = 0; Display_Counter < 30; Display_Counter++)
+        {
+            Mark_Time();
+            Set_Page_Off();
+            Combat_Screen_Draw();
+            GUI_DrawNearMessage();
+            PageFlip_FX();
+            Release_Time(2);
+        }
+    }
 }
 
 
@@ -856,12 +972,12 @@ void BU_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
     int16_t Origin_Draw_X = 0;
 
     int16_t i = 0;
-    struct s_BATTLE_UNIT * unit_ptr = {0};
+    struct s_BATTLE_UNIT * bu_ptr = {0};
     uint32_t Sound_Data_Seg_size = 0;
 
     /* Get screen coordinates for the unit's current (origin) position */
-    unit_ptr = &battle_units[battle_unit_idx];
-    Combat_Grid_Screen_Coordinates(unit_ptr->cgx, unit_ptr->cgy, 4, 4, &Origin_Draw_X, &Origin_Draw_Y);
+    bu_ptr = &battle_units[battle_unit_idx];
+    Combat_Grid_Screen_Coordinates(bu_ptr->cgx, bu_ptr->cgy, 4, 4, &Origin_Draw_X, &Origin_Draw_Y);
 
     /* Get screen coordinates for the teleport destination (target) */
     Combat_Grid_Screen_Coordinates(cgx, cgy, 4, 4, &Target_Draw_X, &Target_Draw_Y);
@@ -883,8 +999,8 @@ void BU_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
     }
 
     /* Store original coordinates for math later */
-    Origin_X = unit_ptr->cgx;
-    Origin_Y = unit_ptr->cgy;
+    Origin_X = bu_ptr->cgx;
+    Origin_Y = bu_ptr->cgy;
 
     Mark_Block(World_Data);
 
@@ -899,7 +1015,7 @@ void BU_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 
     /* Prepare for animation: capture unit image and hide the actual unit */
     BU_CreateImage__SEGRAX(battle_unit_idx);
-    unit_ptr->status = bus_Dead;
+    bu_ptr->status = bus_Dead;
 
     Release_Block(World_Data);
 
@@ -937,13 +1053,13 @@ void BU_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
     }
 
     /* Finalize unit state and position */
-    unit_ptr->status = bus_Active;
-    unit_ptr->cgx = cgx;
-    unit_ptr->cgy = cgy;
+    bu_ptr->status = bus_Active;
+    bu_ptr->cgx = cgx;
+    bu_ptr->cgy = cgy;
 
     /* Adjust smooth-scrolling/target offsets so the unit doesn't "jump" visually after move */
-    unit_ptr->target_cgx -= (Origin_X - cgx);
-    unit_ptr->target_cgy -= (Origin_Y - cgy);
+    bu_ptr->target_cgx -= (Origin_X - cgx);
+    bu_ptr->target_cgy -= (Origin_Y - cgy);
 
     Set_Page_Off();
     Combat_Screen_Draw();
