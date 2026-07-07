@@ -17061,7 +17061,43 @@ void Apply_Mana_Leak(void)
 
 
 // WZD o113p13
-// drake178: GUI_DrawNearMessage()
+/*
+; creates a shaded rectangle at the top middle of the
+; screen using replacement color block 8, then draws
+; the contents of the GUI_NearMsgString into it with
+; the type 1 font (5 by 5+1)
+*/
+void GUI_DrawNearMessage(void)
+{
+    int16_t height = 0;
+    int16_t width = 0;
+    int16_t colors[2] = { 0, 0 };
+    int16_t y2 = 0;
+    int16_t x2 = 0;
+    int16_t x1 = 0;
+    int16_t y1 = 0;
+    colors[0] = 182;
+    colors[1] = 177;
+    Set_Font_Colors_15(0, &colors[0]);
+    Set_Font_Style_Shadow_Down(1, 15, 0, 0);
+    Set_Alias_Color(182);
+    Set_Outline_Color(2);
+    width = Get_Paragraph_Max_Width(150, GUI_NearMsgString, 2);
+    height = Get_Paragraph_Max_Height(150, GUI_NearMsgString, 2);
+    /* Center horizontally on the 320-pixel screen with padding */
+    x1 = 155 - (width / 2);
+    x2 = 168 + (width / 2);
+    y1 = 5;
+    y2 = height + 8;
+    Gradient_Fill(x1, y1, x2, y2, 15, 8, ST_NULL, ST_NULL, ST_NULL);
+    /* Draw border lines */
+    Line(x1, y1, x1, y2, 230);     /* Left border */
+    Line(x1, y1, x2 - 1, y1, 230); /* Top border */
+    Line(x2, y1, x2, y2, 237);     /* Right border */
+    Line(x1 + 1, y2, x2, y2, 237); /* Bottom border */
+    Print_Paragraph(x1 + 6, 8, 150, GUI_NearMsgString, 2);
+}
+
 
 // WZD o113p14
 // drake178: CMB_SpellcastMessage()

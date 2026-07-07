@@ -1778,7 +1778,7 @@ int16_t BU_MeleeWallCheck(int16_t src_battle_unit_idx, int16_t dst_battle_unit_i
 void Apply_Mana_Leak(void);
 
 // WZD o113p13
-// GUI_DrawNearMessage()
+void GUI_DrawNearMessage(void);
 
 // WZD o113p14
 void Combat_Cast_Spell_Message(int16_t caster_idx, int16_t spell_idx);
