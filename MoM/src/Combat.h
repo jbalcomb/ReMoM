@@ -1705,7 +1705,7 @@ void CMB_ComposeBookBG__WIP(void);
 void Combat_Spellbook_Screen_Draw(void);
 
 // WZD o112p03
-int16_t Combat_Cast_Spell__WIP(int16_t caster_id, int16_t wx, int16_t wy, int16_t wp);
+int16_t Combat_Cast_Spell(int16_t caster_id, int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o112p04
 int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell);

@@ -500,14 +500,14 @@ int16_t Get_Paragraph_Max_Height(int16_t max_width, char * string)
 // EXACT  MoO2  Module: paragrph  Get_Paragraph_Max_Width()
 int16_t Get_Paragraph_Max_Width(int16_t max_width, char * string, int16_t print_type)
 {
-    int16_t x2max;
-    int16_t x1min;
-    int16_t width;
-    int16_t xc;
-    int16_t x2;
-    int16_t xmax;
-    int16_t itr;  // _SI_
-    int16_t x1;  // _DI_
+    int16_t x2max = 0;
+    int16_t x1min = 0;
+    int16_t width = 0;
+    int16_t xc = 0;
+    int16_t x2 = 0;
+    int16_t xmax = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t x1 = 0;  // _DI_
 
     Mark_Paragraph(0, 0, max_width, string);
 

@@ -404,7 +404,7 @@ void Apply_Black_Wind(int16_t wx, int16_t wy, int16_t wp, int16_t spell_idx)
 
             }
 
-            Load_Battle_Unit(unit_idx, bu_ptr);
+            Load_Battle_Unit(unit_idx, &battle_units[0]);
 
             for(itr = 0; battle_units[0].Cur_Figures > itr; itr++)
             {

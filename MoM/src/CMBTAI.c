@@ -518,7 +518,7 @@ that will never jump as written, likely intended to find a specific target
         case BUA_UseItem:
         case BUA_CastSpell:
         {
-            spell_result = Combat_Cast_Spell__WIP(battle_unit_idx, _combat_wx, _combat_wy, _combat_wp);
+            spell_result = Combat_Cast_Spell(battle_unit_idx, _combat_wx, _combat_wy, _combat_wp);
             
             if(spell_result == ST_TRUE)
             {

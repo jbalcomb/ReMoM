@@ -2294,7 +2294,7 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
                     if(CMB_WizCastAvailable == ST_TRUE)
                     {
 
-                        cast_status = Combat_Cast_Spell__WIP((CASTER_IDX_BASE + _human_player_idx), _combat_wx, _combat_wy, _combat_wp);
+                        cast_status = Combat_Cast_Spell((CASTER_IDX_BASE + _human_player_idx), _combat_wx, _combat_wy, _combat_wp);
 
                         switch(cast_status)
                         {
@@ -4512,7 +4512,7 @@ void Auto_Cast_Spell_And_Do_Combat_Turn(int16_t player_idx)
     if(player_idx != combat_human_player)
     {
         /* Caster_ID for wizards in combat is 20 + player_idx */
-        // TODO  CP-branch  Combat_Cast_Spell__WIP((20 + player_idx), _combat_wx, _combat_wy, _combat_wp);
+        Combat_Cast_Spell((20 + player_idx), _combat_wx, _combat_wy, _combat_wp);
     }
     winner = Check_For_Winner();  /* ¿ because spell cast may resulted in a win/loss ? */
     /* If no winner has been determined yet, proceed with unit movement */
@@ -9061,7 +9061,7 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
 
     if(CMB_WizCastAvailable != ST_TRUE)
     {
-        cast_status = Combat_Cast_Spell__WIP(caster_id, _combat_wx, _combat_wy, _combat_wp);
+        cast_status = Combat_Cast_Spell(caster_id, _combat_wx, _combat_wy, _combat_wp);
     }
     else
     {
@@ -9073,7 +9073,7 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
         selection_list_idx = Selection_Box(3, &selection_list_text[0], 0, cnst_CasterSelectMsg);  // "Who Will Cast"
         if(selection_list_idx == 0)  /* Player */
         {
-            cast_status = Combat_Cast_Spell__WIP((20 + _human_player_idx), _combat_wx, _combat_wy, _combat_wp);
+            cast_status = Combat_Cast_Spell((20 + _human_player_idx), _combat_wx, _combat_wy, _combat_wp);
             if(cast_status == 2)
             {
                 CMB_WizCastAvailable = ST_FALSE;
@@ -9081,7 +9081,7 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
         }
         else if(selection_list_idx == 1)  /* Battle Unit */
         {
-            cast_status = Combat_Cast_Spell__WIP(caster_id, _combat_wx, _combat_wy, _combat_wp);
+            cast_status = Combat_Cast_Spell(caster_id, _combat_wx, _combat_wy, _combat_wp);
         }
         else  /* Cancel */
         {
@@ -12377,7 +12377,7 @@ int16_t AITP_DispelMagic(int16_t player_idx)
 */
 /*
 
-Combat_Cast_Spell__WIP()
+Combat_Cast_Spell()
     Target = Combat_Spell_Target_Screen__WIP(spell_idx, &Target_X, &Target_Y);
     Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
 
@@ -13134,32 +13134,49 @@ void Combat_Spellbook_Screen_Draw(void)
 }
 
 
+/**
+ * @brief Resolves a combat spell cast for a human player, AI player, or battle unit ability.
+ *
+ * @details
+ * This is the main combat-spell dispatch path. It determines which spell is being
+ * cast, optionally opens the combat spellbook for a human caster, applies legality
+ * checks, handles Counter Magic / combat dispel interception, selects a target, and
+ * then applies the spell effect through Cast_Spell_On_Battle_Unit().
+ *
+ * The function also handles several special cases:
+ * - Battle-unit spell-like abilities such as Doom Bolt, Fireball, Web, Healing, and
+ *   Summon Demon.
+ * - Human cast flow through the combat spellbook and target selection screens.
+ * - AI combat casting, including item-based spell use.
+ * - Mana, skill, and movement-point adjustments after a cast resolves or is countered.
+ *
+ * @param caster_idx
+ * The casting entity. Values below CASTER_IDX_BASE identify a battle unit index;
+ * values at or above CASTER_IDX_BASE identify a player casting directly.
+ * @param wx
+ * The world X coordinate of the combat location. Used when the cast flow needs to
+ * resolve or re-validate battlefield context.
+ * @param wy
+ * The world Y coordinate of the combat location. Used when the cast flow needs to
+ * resolve or re-validate battlefield context.
+ * @param wp
+ * The plane index for the combat location.
+ *
+ * @return The combat cast status.
+ * @return ST_FALSE if the spell cannot be initiated or a summon fails.
+ * @return ST_TRUE for early-success paths such as a resolved summon ability.
+ * @return 2 when a spell is selected and resolved, including countered casts.
+ *
+ * @note This routine mutates global combat state, battle-unit state, player mana,
+ * and combat UI back buffers as part of the cast flow.
+ * @note The function preserves several legacy quirks documented inline, including
+ * known cost, counter, and targeting inconsistencies.
+ */
 // WZD o112p03
-// drake178: G_CMB_CastSpell()
-/*
-; resolves combat spellcasting by the specified entity,
-; from opening the spellbook to casting the spell; or
-; evaluating the castable list, selecting one, and
-; casting it in case of the AI
-; returns 0 if no spell can be cast, 1 if cancelled
-; during targeting, or 2 if resolved (or countered)
-;
-; contains many BUGs related to casting costs, and
-; inherints many more from the targeting-, spell list
-; building-, and spell effect functions
-*/
-/*
-
-not sure about the multiple returns
-handful of variable reuses  (don't make distinct without maintaining the bug(s)!!)
-atleast one BUGBUG with Target
-cast_status seems mixed up
-
-*/
-int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp)
+int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t battle_unit_mana = 0;
-    int16_t Spell_Like_Ability = 0;  // ; set to 1 if the human player uses a Spell ability
+    int16_t Spell_Like_Ability = 0;  /* set to 1 if the human player uses a Spell Ability */
     int16_t cast_status = 0;
     int16_t Opponent_Index = 0;
     int16_t Base_Cost = 0;
@@ -13172,15 +13189,11 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
     int16_t Effective_Cost = 0;
     int16_t Overland_Cast_Save = 0;
     int16_t Can_Cast = 0;
-    int16_t spell_idx = 0;  // _SI_
-    int16_t IDK_mana = 0;  // _DI_
-
+    int16_t spell_idx = 0;
+    int16_t IDK_mana = 0;
     cast_status = ST_TRUE;
-
     Spell_Like_Ability = ST_FALSE;
-
     _combat_caster_idx = caster_idx;
-
     if(caster_idx >= CASTER_IDX_BASE)
     {
         player_idx = (caster_idx - CASTER_IDX_BASE);
@@ -13190,47 +13203,38 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
         player_idx = battle_units[caster_idx].controller_idx;
         battle_unit_mana = battle_units[caster_idx].mana;
     }
-
     if(caster_idx == (CASTER_IDX_BASE + NEUTRAL_PLAYER_IDX))
     {
         return cast_status;
     }
-
     if(
         (player_idx == HUMAN_PLAYER_IDX)
         &&
         (_auto_combat_flag == ST_FALSE)
     )
     {
-
         spell_idx = spl_NONE;
-
         Spell_Like_Ability = ST_FALSE;
-
         /*
             BEGIN:  Caster is Battle Unit
         */
         if(caster_idx < CASTER_IDX_BASE)
         {
-
             if((battle_units[caster_idx].Attribs_2 & USA_DOOMBOLT) != 0)
             {
                 spell_idx = spl_Doom_Bolt;
                 Spell_Like_Ability = ST_TRUE;
             }
-
             if((battle_units[caster_idx].Attribs_2 & USA_FIREBALL) != 0)
             {
                 spell_idx = spl_Fireball;
                 Spell_Like_Ability = ST_TRUE;
             }
-
             if((battle_units[caster_idx].Attribs_2 & USA_WEB) != 0)
             {
                 spell_idx = spl_Web;
                 Spell_Like_Ability = ST_TRUE;
             }
-
             if((battle_units[caster_idx].Attribs_2 & USA_HEALING) != 0)
             {
                 spell_idx = spl_Healing;
@@ -13254,68 +13258,79 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
         /*
             END:  Caster is Battle Unit
         */
-
-    }
-
-    // HERE:  caster is player or handled unit abilities
-    // spell_idx could be Doom Bolt, Fireball, Web, or Healing
-
-    if(spell_idx == spl_NONE)
-    {
-
-        Can_Cast = Combat_Spellbook_Build__WIP(caster_idx);
-
-        if(Can_Cast == ST_FALSE)
+        // HERE:  caster is player or handled unit abilities
+        // spell_idx could be Doom Bolt, Fireball, Web, or Healing
+        if(spell_idx == spl_NONE)
         {
-            return ST_FALSE;
-        }
-
-        do {
-
-            CMB_ComposeBookBG__WIP();  // ... |-> Copy_Off_To_Back();
-
-            // Selected_Spell@  index on page of selected spell
-            // ...gets passed to Combat_Spellbook_Mana_Adder_Screen()
-            // CMB_SpellBookPage is the associated page number
-            spell_idx = Combat_Spellbook_Screen(caster_idx, &Selected_Spell);
-
-            // prep for going right back to the combat screen
+            Can_Cast = Combat_Spellbook_Build__WIP(caster_idx);
+            if(Can_Cast == ST_FALSE)
+            {
+                return ST_FALSE;
+            }
+            do {
+                CMB_ComposeBookBG__WIP();  // ... |-> Copy_Off_To_Back();
+                // Selected_Spell@  index on page of selected spell
+                // ...gets passed to Combat_Spellbook_Mana_Adder_Screen()
+                // CMB_SpellBookPage is the associated page number
+                spell_idx = Combat_Spellbook_Screen(caster_idx, &Selected_Spell);
+                // prep for going right back to the combat screen
+                if(
+                    (spell_idx <= 0)
+                    ||
+                    (spell_data_table[spell_idx].type < scc_Infusable_Spell)
+                )
+                {
+                    _page_flip_effect = pfe_Dissolve;
+                    CMB_ComposeBookBG__WIP();  // ... |-> Copy_Off_To_Back();
+                    // where's the rest of the screen update?
+                }
+            } while(Do_Legal_Spell_Check__WIP(spell_idx) != ST_FALSE);
+            // ...not illegal...
+            // not doing xtramana popup, so go right back to the combat screen
             if(
-                (spell_idx <= 0)
-                ||
                 (spell_data_table[spell_idx].type < scc_Infusable_Spell)
+                ||
+                (Spell_Like_Ability == ST_TRUE)  // ; conflicting condition - will always jump
             )
             {
-                _page_flip_effect = pfe_Dissolve;
-                CMB_ComposeBookBG__WIP();  // ... |-> Copy_Off_To_Back();
-                // where's the rest of the screen update?
+                CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
+                Set_Page_Off();
+                Combat_Screen_Draw();
+                PageFlip_FX();
             }
-
-        } while(Do_Legal_Spell_Check__WIP(spell_idx) != ST_FALSE);
-        // ...not illegal...
-
-        // not doing xtramana popup, so go right back to the combat screen
-        if(
-            (spell_data_table[spell_idx].type < scc_Infusable_Spell)
-            ||
-            (Spell_Like_Ability == ST_TRUE)  // ; conflicting condition - will always jump
-        )
-        {
-            CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
-            Set_Page_Off();
-            Combat_Screen_Draw();
-            PageFlip_FX();
         }
-
     }
-
-
+    else
+    {
+        /* AI / Auto Combat Control path */
+        AI_SetCombatRealms();
+        if (caster_idx < CASTER_IDX_BASE &&
+            battle_units[caster_idx].Item_Charges > 0 &&
+            battle_units[caster_idx].action == BUA_UseItem)
+        {
+            spell_idx = _ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx;
+        }
+        else
+        {
+            spell_idx = AI_SelectCmbtSpell(caster_idx);
+        }
+        if (spell_idx > 0)
+        {
+            if (caster_idx < CASTER_IDX_BASE)
+            {
+                battle_units[caster_idx].target_battle_unit_idx = caster_idx;
+                if (battle_units[caster_idx].controller_idx != HUMAN_PLAYER_IDX)
+                {
+                    _ai_immobile_counter = ST_UNDEFINED;
+                }
+            }
+        }
+    }
     /*
         BEGIN:  
     */
     if(spell_idx != spl_NONE)
     {
-
         /*
             BEGIN:  ¿ Effective_Cost ?
         */
@@ -13325,133 +13340,86 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
             (Spell_Like_Ability != ST_FALSE)
         )
         {
-            
             if(caster_idx > CASTER_IDX_BASE)
             {
-
                 // ; BUG: causes counters to use the effective cost
                 IDK_mana = Casting_Cost(player_idx, spell_idx, 1);
-
             }
             else
             {
-
                 // ; BUG: ignores Evil Omens
                 IDK_mana = spell_data_table[spell_idx].casting_cost;
-
             }
-
             Effective_Cost = IDK_mana;
-
         }
         else  /* (spell_data_table[spell_idx].type >= scc_Infusable_Spell) && (Spell_Like_Ability == ST_FALSE) */
         {
-            
             if(
                 (player_idx == HUMAN_PLAYER_IDX)
                 &&
                 (_auto_combat_flag == ST_FALSE)
             )
             {
-
                 Can_Cast = _players[HUMAN_PLAYER_IDX].casting_cost_remaining;
-
                 Overland_Cast_Save = _players[HUMAN_PLAYER_IDX].casting_spell_idx;
-
                 _players[HUMAN_PLAYER_IDX].casting_spell_idx = spell_idx;
-
                 if(caster_idx >= CASTER_IDX_BASE)
                 {
-
                     _players[HUMAN_PLAYER_IDX].casting_cost_remaining = Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, 1);
-
                 }
                 else
                 {
-
                     // ; BUG: ignores Evil Omens
                     _players[HUMAN_PLAYER_IDX].casting_cost_remaining = spell_data_table[spell_idx].casting_cost;
-
                 }
-
                 IDK_mana = Combat_Spellbook_Mana_Adder_Screen(spell_idx, Selected_Spell, caster_idx);
-
                 if(caster_idx >= CASTER_IDX_BASE)
                 {
-
                     Effective_Cost = (IDK_mana - ((IDK_mana * Casting_Cost_Reduction(player_idx, spell_idx)) / 100));
-
                 }
                 else
                 {
-
                     Effective_Cost = IDK_mana;
-
                 }
-
                 _players[HUMAN_PLAYER_IDX].casting_cost_remaining = Can_Cast;
-
                 _players[HUMAN_PLAYER_IDX].casting_spell_idx = Overland_Cast_Save;
-
                 CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
-
                 Set_Page_Off();
-
                 Combat_Screen_Draw();
-
                 PageFlip_FX();
-
             }
             else  /* (player_idx != HUMAN_PLAYER_IDX) || (_auto_combat_flag != ST_FALSE) */
             {
-
                 if(caster_idx >= CASTER_IDX_BASE)
                 {
-
                     //  ; BUG: ignores the base casting cost
                     IDK_mana = _players[player_idx].Cmbt_Skill_Left;
-
                     // ; BUG: ignores casting cost modifiers
                     if(spell_data_table[spell_idx].casting_cost < IDK_mana)
                     {
-
                         IDK_mana = spell_data_table[spell_idx].casting_cost;
-
                     }
-
                     Extra_Mana = Combat_Casting_Cost_Multiplier(player_idx);
-
                     // ; BUG: ignores casting cost modifiers
                     if(((_players[player_idx].mana_reserve * 10) / Extra_Mana) < spell_data_table[spell_idx].casting_cost)
                     {
-
                         // ; BUG: ignores casting cost modifiers
                         IDK_mana = (((_players[player_idx].mana_reserve * 10) / Extra_Mana) - spell_data_table[spell_idx].casting_cost);
-
                     }
-
                 }
                 else
                 {
-
                     // ; BUG: ignores Evil Omens
                     // ; BUG: infusable item charges will be automatically
                     // ; countered if the user has no mana
                     IDK_mana = (battle_unit_mana - spell_data_table[spell_idx].casting_cost);
-
                     if(spell_data_table[spell_idx].casting_cost < IDK_mana)
                     {
-
                         IDK_mana = spell_data_table[spell_idx].casting_cost;
-
                     }
-
                 }
-
                 Base_Cost = spell_data_table[spell_idx].casting_cost;
-
                 Extra_Mana = 0;
-
                 // ; BUG: Banish has an effective gain of 1/15 mana, not 5
                 if(
                     (spell_idx == spl_Life_Drain)
@@ -13459,47 +13427,31 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
                     (spell_idx == spl_Banish)
                 )
                 {
-
                     Extra_Mana = ((Random(((IDK_mana / 5) + 1)) - 1) * 5);
-
                 }
                 else if(spell_idx == spl_Counter_Magic)
                 {
-
                     Extra_Mana = ((Random(((IDK_mana / 5) + 1)) - 1) * 5);
-
                 }
                 else
                 {
-
                     Extra_Mana = IDK_mana;
-
                 }
-
                 IDK_mana = (Base_Cost + Extra_Mana);
-
                 if(caster_idx > CASTER_IDX_BASE)
                 {
-
                     // ; BUG: ignores Evil Omens (Ice Bolt...)
                     Effective_Cost = (IDK_mana - ((IDK_mana * Casting_Cost_Reduction(player_idx, spell_idx)) / 100));
-
                 }
                 else
                 {
-
                     Effective_Cost = IDK_mana;
-
                 }
-
             }  /* (player_idx != HUMAN_PLAYER_IDX) || (_auto_combat_flag != ST_FALSE) */
-
         }
         /*
             END:  ¿ Effective_Cost ?
         */
-
-
         /*
             BEGIN:  ¿ Counter Magic ?
         */
@@ -13509,7 +13461,6 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
             (Spell_Like_Ability != ST_TRUE)
         )
         {
-
             if(player_idx == _combat_attacker_player)
             {
                 // Target_X = combat_enchantments[COUNTER_MAGIC_ATTKR];
@@ -13522,42 +13473,28 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
                 Target_X = COUNTER_MAGIC_DFNDR;
                 Opponent_Index = _combat_attacker_player;
             }
-
             if(combat_enchantments[Target_X] > 0)
             {
-
-                if(WIZ_DispelAttempt__STUB(combat_enchantments[Target_X], IDK_mana, player_idx, spell_data_table[spell_idx].magic_realm) != ST_FALSE)
+                if(Combat_Spell_Dispel_Attempt(combat_enchantments[Target_X], IDK_mana, player_idx, spell_data_table[spell_idx].magic_realm) != ST_FALSE)
                 {
-
                     Set_Page_Off();
-
                     Combat_Screen_Draw();
-
                     PageFlip_FX();
-
                     Copy_On_To_Off_Page();
-
-                    /* SPELLY */  CMB_CounterMessage__STUB(caster_idx, Opponent_Index, spell_idx, cnst_Counter_Magic);  // "Counter Magic"
-
+                    Combat_Spell_Counter_Message(caster_idx, Opponent_Index, spell_idx, cnst_Counter_Magic);  // "Counter Magic"
                     if(caster_idx >= CASTER_IDX_BASE)
                     {
-
                         // ; BUG: this variable is still in use and needed below!
                         // This code is the same as the 'pay the cost' for when it actually gets cast, below?
                         // This bug could be because it was a macro?
                         Target_X = Combat_Casting_Cost_Multiplier((caster_idx - CASTER_IDX_BASE));
-
                         _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= Effective_Cost;
-
                         _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= (Target_X / 10);
-
                     }
                     else
                     {
-
                         if(Spell_Like_Ability != ST_TRUE)
                         {
-
                             // ; BUG: this may not be the hero's original owner
                             if(
                                 (battle_units[caster_idx].Item_Charges > 0)
@@ -13565,82 +13502,48 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
                                 (_ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
                             )
                             {
-
                                 battle_units[caster_idx].Item_Charges -= 1;
-
                             }
                             else
                             {
-
                                 Effective_Cost -= battle_unit_mana;
-
                             }
-
                             if(battle_unit_mana < 0)
                             {
-
                                 battle_unit_mana = 0;
-
                             }
-
                         }
                         else
                         {
-                            
                             if(spell_idx == spl_Doom_Bolt)
                             {
-
                                 battle_units[caster_idx].Attribs_2 ^= USA_DOOMBOLT;
-
                             }
-
                             if(spell_idx == spl_Web)
                             {
-
                                 battle_units[caster_idx].Attribs_2 ^= USA_WEB;
-
                             }
-
                             if(spell_idx == spl_Fireball)
                             {
-
                                 battle_units[caster_idx].Attribs_2 ^= USA_FIREBALL;
-
                             }
-
                             if(spell_idx == spl_Healing)
                             {
-
                                 battle_units[caster_idx].Attribs_2 ^= USA_HEALING;
-
                             }
-
                         }
-
                         battle_units[caster_idx].movement_points = 0;
-
                     }
-
                     cast_status = 2;
-
                     spell_idx = ST_UNDEFINED;
-
                 }
-
                 combat_enchantments[Target_X] -= 5;
-
                 if(combat_enchantments[Target_X] < 0)
                 {
-
                     combat_enchantments[Target_X] = 0;
-
                     Update_Combat_Enchantments_Icon_And_Help();
-
                 }
-
             }  /* if(combat_enchantments[Target_X] > 0) */
-
-
             if(battlefield->Central_Structure == CS_SorceryNode)
             {
                 Target_X = sbr_Sorcery;
@@ -13657,18 +13560,14 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
             {
                 Target_X = ST_UNDEFINED;
             }
-
             if(
                 (player_idx < _num_players)
                 &&
                 (_players[player_idx].node_mastery > 0)
             )
             {
-
                 Target_X = ST_UNDEFINED;
-
             }
-
             if(
                 (Target_X > ST_UNDEFINED)
                 &&
@@ -13676,39 +13575,24 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
                 &&
                 (spell_data_table[spell_idx].magic_realm != Target_X)
                 &&
-                (WIZ_DispelAttempt__STUB(50, IDK_mana, player_idx, spell_data_table[spell_idx].magic_realm) != ST_FALSE)
+                (Combat_Spell_Dispel_Attempt(50, IDK_mana, player_idx, spell_data_table[spell_idx].magic_realm) != ST_FALSE)
             )            
             {
-
-                // NOTE: copied from above
-
                 Set_Page_Off();
-
                 Combat_Screen_Draw();
-
                 PageFlip_FX();
-
                 Copy_On_To_Off_Page();
-
-                // CMB_CounterMessage__STUB(caster_idx, Opponent_Index, spell_idx, cnst_Counter_Magic);  // "Counter Magic"
-                /* SPELLY */  CMB_CounterMessage__STUB(caster_idx, 5, spell_idx, str_empty_string__ovr112);
-
+                Combat_Spell_Counter_Message(caster_idx, 5, spell_idx, str_empty_string__ovr112);
                 if(caster_idx >= CASTER_IDX_BASE)
                 {
-
                     Target_X = Combat_Casting_Cost_Multiplier((caster_idx - CASTER_IDX_BASE));
-
                     _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= Effective_Cost;
-
                     _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= (Target_X / 10);
-
                 }
                 else
                 {
-
                     if(Spell_Like_Ability != ST_TRUE)
                     {
-
                         // ; BUG: this may not be the hero's original owner
                         if(
                             (battle_units[caster_idx].Item_Charges > 0)
@@ -13716,85 +13600,54 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
                             (_ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
                         )
                         {
-
                             battle_units[caster_idx].Item_Charges -= 1;
-
                         }
                         else
                         {
-
                             Effective_Cost -= battle_unit_mana;
-
                         }
-
                         if(battle_unit_mana < 0)
                         {
-
                             battle_unit_mana = 0;
-
                         }
-
                     }
                     else
                     {
-                        
                         if(spell_idx == spl_Doom_Bolt)
                         {
-
                             battle_units[caster_idx].Attribs_2 ^= USA_DOOMBOLT;
-
                         }
-
                         if(spell_idx == spl_Web)
                         {
-
                             battle_units[caster_idx].Attribs_2 ^= USA_WEB;
-
                         }
-
                         if(spell_idx == spl_Fireball)
                         {
-
                             battle_units[caster_idx].Attribs_2 ^= USA_FIREBALL;
-
                         }
-
                         if(spell_idx == spl_Healing)
                         {
-
                             battle_units[caster_idx].Attribs_2 ^= USA_HEALING;
-
                         }
-
                     }
-
                     battle_units[caster_idx].movement_points = 0;
-
                 }
-
                 cast_status = 2;
-
                 // spell_idx = ST_UNDEFINED;
                 spell_idx = 0;
-
             }
-
         }
         /*
             END:  ¿ Counter Magic ?
         */
-
     }
     /*
         END:  
     */
-
-
     // ovr112:0A6D
     // @@Target_And_Effect:
     if(spell_idx > spl_NONE)
     {
-
         if(
             (spell_data_table[spell_idx].type == scc_Battlefield_Spell)
             ||
@@ -13813,62 +13666,42 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
         }
         else
         {
-
             if(
                 (player_idx == HUMAN_PLAYER_IDX)
                 &&
                 (_auto_combat_flag == ST_FALSE)
             )
             {
-
                 Target = Combat_Spell_Target_Screen__WIP(spell_idx, &Target_X, &Target_Y);
-
             }
             else
             {
-
                 Target = AITP_Combat_Spell(spell_idx, player_idx, &Target_X, &Target_Y);
-
                 if(Target != 99)
                 {
-
                     Target_X = battle_units[Target].cgx;
-
                     Target_Y = battle_units[Target].cgy;
-
                 }
-
             }
-
         }
-
         if(Target != 999)
         {
-
             // ... |-> Tactical_Combat_Draw() |-> CMB_DrawMap__WIP() |-> Copy_Back_To_Off()  // 'combat background' from Combat_Screen_Compose_Background()
             // So, ... What's in back-page here?
             // Maybe, maybe not, we called the Combat_Spellbook_Mana_Adder_Screen()? 
             // Maybe, maybe not, we called the Combat_Spell_Target_Screen__WIP()?
             Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
-
             cast_status = 2;
-
             if(caster_idx >= CASTER_IDX_BASE)
             {
-
                 Target_X = Combat_Casting_Cost_Multiplier((caster_idx - CASTER_IDX_BASE));
-
-                _players[caster_idx].Cmbt_Skill_Left -= Effective_Cost;
-
-                _players[caster_idx].mana_reserve -= ((Effective_Cost * Target_X) / 10);
-
+                _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= Effective_Cost;
+                _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= ((Effective_Cost * Target_X) / 10);
             }
             else  /* caster_idx < CASTER_IDX_BASE */
             {
-
                 if(Spell_Like_Ability != ST_TRUE)
                 {
-
                     // ; BUG: this may not be the hero's original owner
                     if(
                         (battle_units[caster_idx].Item_Charges > 0)
@@ -13876,94 +13709,59 @@ int16_t Combat_Cast_Spell__WIP(int16_t caster_idx, int16_t wx, int16_t wy, int16
                         (_ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
                     )
                     {
-
                         battle_units[caster_idx].Item_Charges -= 1;
-
                     }
                     else
                     {
-
                         Effective_Cost -= battle_unit_mana;
-
                     }
-
                     if(battle_unit_mana < 0)
                     {
-
                         battle_unit_mana = 0;
-
                     }
-
                 }
                 else
                 {
-                    
                     if(spell_idx == spl_Doom_Bolt)
                     {
-
                         battle_units[caster_idx].Attribs_2 ^= USA_DOOMBOLT;
-
                     }
-
                     if(spell_idx == spl_Web)
                     {
-
                         battle_units[caster_idx].Attribs_2 ^= USA_WEB;
-
                     }
-
                     if(spell_idx == spl_Fireball)
                     {
-
                         battle_units[caster_idx].Attribs_2 ^= USA_FIREBALL;
-
                     }
-
                     if(spell_idx == spl_Healing)
                     {
-
                         battle_units[caster_idx].Attribs_2 ^= USA_HEALING;
-
                     }
-
                 }
-
                 battle_units[caster_idx].movement_points = 0;
-
             }  /* caster_idx < CASTER_IDX_BASE */
-
         }
-
     }
-
 // AFTER:
 //     spell_idx > 0
 //     Target
 //     Effect
-
     if(caster_idx < CASTER_IDX_BASE)
     {
-
         battle_units[caster_idx].mana = (int8_t)battle_unit_mana;
-
         if(
             (battle_unit_mana < 3)
             ||
             (battle_units[caster_idx].ammo == 0)
         )
         {
-
             // ; BUG: also removes short range attacks
             battle_units[caster_idx].ranged = 0;
-
             battle_units[caster_idx].ranged_type = ST_UNDEFINED;
-
         }
-
     }
-
     return cast_status;
-
 }
 
 
@@ -15377,7 +15175,7 @@ void Combat_Spell_Target_Screen_Draw(void)
 // drake178: CMB_TargetSpell()
 /*
 
-Combat_Cast_Spell__WIP()
+Combat_Cast_Spell()
     Target = CMB_TargetSpell__WIP(spell_idx, &Target_X, &Target_Y);
 
 */
@@ -17071,7 +16869,7 @@ void GUI_DrawNearMessage(void)
 {
     int16_t height = 0;
     int16_t width = 0;
-    int16_t colors[2] = { 0, 0 };
+    uint8_t colors[2] = { 0, 0 };
     int16_t y2 = 0;
     int16_t x2 = 0;
     int16_t x1 = 0;
@@ -17083,7 +16881,8 @@ void GUI_DrawNearMessage(void)
     Set_Alias_Color(182);
     Set_Outline_Color(2);
     width = Get_Paragraph_Max_Width(150, GUI_NearMsgString, 2);
-    height = Get_Paragraph_Max_Height(150, GUI_NearMsgString, 2);
+    // TODO  height = Get_Paragraph_Max_Height(150, GUI_NearMsgString, 2);
+    height = Get_Paragraph_Max_Height(150, GUI_NearMsgString);
     /* Center horizontally on the 320-pixel screen with padding */
     x1 = 155 - (width / 2);
     x2 = 168 + (width / 2);

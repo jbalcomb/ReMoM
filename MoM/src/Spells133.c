@@ -10,8 +10,9 @@
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/GENDRAW.h"
 #include "../../MoX/src/Graphics.h"
-#include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/LBX_Load.h"
+#include "../../MoX/src/MOM_DAT.h"
+#include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_SET.h"
@@ -21,15 +22,17 @@
 #include "../../MoX/src/Timer.h"
 #include "../../MoX/src/random.h"
 
-#include "../../MoX/src/MOM_DEF.h"
 #include "CMBTDEF.h"
 #include "Combat.h"
 #include "NEXTTURN.h"
+#include "OverSpel.h"  /* Calculate_Dispel_Difficulty() */
 #include "RACETYPE.h"
 #include "SBookScr.h"
 #include "Spellbook.h"
 #include "Spells129.h"
 #include "UNITTYPE.h"
+
+#include "../../ext/stu_compat.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -528,12 +531,12 @@ void Wall_Rise(int16_t spell_idx, int16_t caster_idx)
 // WZD o133p06
 void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spell_idx, char * title)
 {
-    int di;
-    struct s_BATTLE_UNIT * bu_ptr;
-    char *ut_name;
-    int Display_Counter;
-    int Hero_Slot;
-    char Temp_String[20];
+    int16_t di = 0;
+    struct s_BATTLE_UNIT * bu_ptr = NULL;
+    char * ut_name = NULL;
+    int16_t Display_Counter = 0;
+    int16_t Hero_Slot = 0;
+    char Temp_String[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     if(type == 5)
     {
         stu_strcpy(GUI_NearMsgString, cnst_CounterMsg3); /* "The power of " */
@@ -560,7 +563,7 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
     else
     {
         stu_strcpy(GUI_NearMsgString, _players[type].name);
-        di = strlen(_players[type].name);
+        di = (int16_t)strlen(_players[type].name);
         if(_players[type].name[di - 1] == 's')
         {
             stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
@@ -580,12 +583,11 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
     {
         bu_ptr = &battle_units[caster_idx];
         Hero_Slot = _UNITS[bu_ptr->unit_idx].Hero_Slot;
-
         if(Hero_Slot > -1)
         {
             stu_strcpy(Temp_String, _players[bu_ptr->controller_idx].Heroes[Hero_Slot].name);
             stu_strcat(GUI_NearMsgString, Temp_String);
-            di = stu_strlen(Temp_String);
+            di = (int16_t)strlen(Temp_String);
             if(Temp_String[di - 1] == 's')
             {
                 stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
@@ -598,9 +600,9 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
         else
         {
             stu_strcat(GUI_NearMsgString, cnst_CounterMsg7); /* "the " */
-            ut_name = _unit_type_table[_UNITS[bu_ptr->unit_idx].type].name;
+            ut_name = *_unit_type_table[_UNITS[bu_ptr->unit_idx].type].name;
             stu_strcat(GUI_NearMsgString, ut_name);
-            di = stu_strlen(ut_name);
+            di = (int16_t)strlen(ut_name);
             if(ut_name[di - 1] == 's')
             {
                 stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
@@ -614,7 +616,7 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
     else
     {
         stu_strcat(GUI_NearMsgString, _players[caster_idx - CASTER_IDX_BASE].name);
-        di = stu_strlen(_players[caster_idx - CASTER_IDX_BASE].name);
+        di = (int16_t)strlen(_players[caster_idx - CASTER_IDX_BASE].name);
         if(_players[caster_idx - CASTER_IDX_BASE].name[di - 1] == 's')
         {
             stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
