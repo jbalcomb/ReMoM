@@ -101,6 +101,27 @@ set_tests_properties(HeMoM_WorldGen_Fields PROPERTIES
     LABELS "hemom;integration;worldgen"
 )
 
+# --- OOB Autotiling harness (PLAN-Static-Pool-Allocator Phase 3) ---
+# Pins the plane-1 (Myrror) last-row world_map tiles.  During Simtex_Autotiling
+# the south-neighbour autotile reads p_world_map[1][40][x] -- one row past the
+# [2][40][60] array (WORLD_HEIGHT=40): an OG-faithful OOB read into the
+# WORLD_OVERFLOW slack past _world_maps (MAPGEN.c:3987/3998/4011).  The static
+# pool makes that slack addressable and sentinel-deterministic, and
+# gd_ci_inject_world_overrun stamps OG's captured bytes there, so the read no
+# longer faults and the generated world is reproducible.  A pool/inject
+# regression (crash, garbage slack, wrong layout) would perturb these seed-pinned
+# last-row values.  Reuses the HeMoM_WorldGen fixture's SAVE9.txt (no extra run).
+add_test(
+    NAME HeMoM_OOB_Autotiling
+    COMMAND $<TARGET_FILE:check_save_fields>
+        ${HEMOM_TEST_WORKDIR}/SAVE9.txt
+        ${CMAKE_CURRENT_SOURCE_DIR}/assert_oob_autotiling.txt
+)
+set_tests_properties(HeMoM_OOB_Autotiling PROPERTIES
+    FIXTURES_REQUIRED HeMoM_WorldGen
+    LABELS "hemom;integration;worldgen;oob"
+)
+
 
 
 # =========================================================================
