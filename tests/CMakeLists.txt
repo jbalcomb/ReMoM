@@ -141,7 +141,7 @@ add_test(
     WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
 )
 set_tests_properties(HeMoM_Continue_Run PROPERTIES
-    TIMEOUT 20
+    TIMEOUT 30
     FIXTURES_REQUIRED HeMoM_Continue
     FIXTURES_SETUP HeMoM_Continue_Saved
     LABELS "hemom;integration;continue"

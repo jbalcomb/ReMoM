@@ -135,10 +135,11 @@ deferred to Phase 2.
     (e.g., `19_Simtex_Autotiling_W`, `20_River_Path_W`, `27_CRP_NEWG_CreatePathGrids_U`,
     save-game compares) to remain green after the refactor, so that no new
     byte divergences are introduced.
-21. As a ReMoM developer, I want a compile-time check (`static_assert` or
-    equivalent) that `POOL_SIZE >= sum_of_in_scope_sizes + margin`, so that
-    pool sizing is validated at build time and forgetting to grow it cannot
-    silently ship.
+21. As a ReMoM developer, I want a compile-time check that
+    `POOL_ARENA_CAPACITY >= POOL_MIN_ARENA_BYTES` (the measured floor), so that
+    shrinking the pool below the known requirement cannot silently ship;
+    genuine run-time over-capacity is caught loudly by `Pool_Carve`'s fatal
+    `Allocation_Error`.
 22. As a HeMoM headless test runner, I want the same allocator behavior in
     HeMoM as in ReMoMber, so that headless and interactive runs do not
     diverge due to allocator differences.
@@ -160,17 +161,37 @@ deferred to Phase 2.
 
 - **New module `Allocate_Pool`** (in MoX/src/). Deep module; thin public
   interface. Owns the static byte array and the bump-pointer state. Public
-  API: `Pool_Init`, `Pool_Carve`, `Pool_Bytes_Used`, `Pool_Bytes_Free`. No
-  knowledge of SAMB headers or any MoM concept.
+  API: `Pool_Init`, `Pool_Carve`, `Pool_Bytes_Used`, `Pool_Bytes_Free`,
+  `Pool_Bytes_Peak`. No knowledge of SAMB headers or any MoM concept.
 - **Pool storage**: single `static uint8_t` array in BSS, size
-  `POOL_SIZE` set at compile time as the sum of in-scope `Allocate_Space`
-  sizes plus safety margins at both ends: `LEADING_GUARD` (256 B - 4 KB)
-  reserved ahead of the first carve, and a trailing `FIXED_MARGIN` in the
-  4-16 KB range. `Pool_Carve` never hands out guard bytes; the first carve
-  returns `pool_base + LEADING_GUARD`.
-- **Sentinel pattern**: `Pool_Init` fills the entire pool with `0xCC`. Runs
-  once at startup. Sub-block writes overwrite their own bytes; slack stays at
-  the sentinel.
+  `POOL_SIZE = POOL_LEADING_GUARD + POOL_ARENA_CAPACITY + POOL_FIXED_MARGIN`,
+  with `POOL_LEADING_GUARD` (1 KB) reserved ahead of the first carve and a
+  trailing `POOL_FIXED_MARGIN` (8 KB). `Pool_Carve` never hands out guard
+  bytes; the first carve returns `pool_base + POOL_LEADING_GUARD`.
+  `POOL_ARENA_CAPACITY` is sized from the **measured** peak (see Pool sizing
+  below), not a static enumerated sum — the in-scope footprint includes
+  run-time-sized one-time `sa_Single` LBX loads a compile-time sum cannot
+  capture.
+- **Pool sizing (measured)**: the carvable capacity was set from the observed
+  high-water mark, not a paper estimate. `Pool_Bytes_Peak` reports the peak
+  `Pool_Bytes_Used` across a process; the HeMoM Continue scenario (full-game
+  entry — loads a save, enters the game, pulling in many one-time `sa_Single`
+  LBX graphic buffers on top of the ~1.5 MB enumerated arenas) peaks at
+  **~4.58 MB**. `POOL_ARENA_CAPACITY` is set to **16 MB** (~3.5× that peak) to
+  cover heavier game paths, with `POOL_MIN_ARENA_BYTES` (5 MB) as the asserted
+  floor. Because `Pool_Carve` is fatal-on-exhaustion, a path that ever exceeds
+  the capacity fails loudly rather than corrupting — the fix is to raise the
+  constant and re-measure.
+- **Sentinel pattern & init**: `Pool_Init` fills the entire pool with `0xCC`
+  and resets the cursor. `Pool_Carve` **lazily** calls `Pool_Init` on first
+  use (one-time, guarded by a static flag), so production code needs no
+  explicit startup call and no call-ordering assumption; tests that call
+  `Pool_Init` directly still reset it. This is safe because every top-level
+  allocation sequence (`Allocate_Data_Space`, STU world-gen's
+  `Allocate_Game_Data`) runs once per process and the OG allocator never
+  frees, so the never-freeing pool only ever accumulates the persistent
+  footprint. Sub-block writes overwrite their own bytes; slack stays at the
+  sentinel.
 - **`Allocate.c` public API unchanged**:
   - `Allocate_Space(size)` becomes pool-backed via `Pool_Carve((size+1)*16)`,
     then writes the same SAMB header (`_AAAA` sentinel, `MEMSIG1`, `MEMSIG2`,
@@ -208,10 +229,13 @@ deferred to Phase 2.
   but the API and the injected byte patterns are unchanged.
 - **Pool exhaustion** invokes `Allocation_Error` (matching the existing
   fatal-on-allocator-failure pattern). Caller never sees a NULL return.
-- **Build-time sanity**: `static_assert` that `POOL_SIZE >= sum_of_known_sizes
-  + safety_margin`. The sum is expressed as a compile-time constant in a
-  central header; adding a new pool-backed `Allocate_Space` call site adds
-  its size to that constant, forcing the pool to grow.
+- **Build-time sanity**: a compile-time assertion that
+  `POOL_ARENA_CAPACITY >= POOL_MIN_ARENA_BYTES` (the measured floor). These
+  `.c` files build as C90, so this uses the portable negative-array-size idiom
+  (`typedef char check[cond ? 1 : -1]`), not C11 `_Static_assert`. It guards
+  against anyone shrinking the capacity back below the known requirement; true
+  over-capacity at run time is caught by `Pool_Carve`'s fatal
+  `Allocation_Error`.
 - **No public header changes** beyond adding the `Allocate_Pool` module's
   header. The SAMB struct, the paragraph constants, the sentinel values, and
   every existing sub-block layout stay identical.
@@ -282,10 +306,12 @@ Prior art:
 
 ## Further Notes
 
-- **BSS bloat**: the in-scope arenas other than `g_graphics_cache_seg` sum to
-  approximately ~150-170 KB; `g_graphics_cache_seg` adds ~1 MB (65535 PR), so
-  with the leading guard and the 4-16 KB trailing margin the static pool is
-  ~1.2 MB. Still trivial BSS for a modern build.
+- **BSS bloat**: the enumerated in-scope arenas sum to ~1.5 MB
+  (`g_graphics_cache_seg` alone is ~1 MB), but the measured full-game-entry
+  peak is ~4.58 MB once one-time `sa_Single` LBX graphic buffers are counted.
+  `POOL_ARENA_CAPACITY` is set to 16 MB for margin, so `POOL_SIZE` (guard +
+  capacity + margin) is ~16 MB of BSS. Still trivial for a modern build (BSS
+  is zero-fill, not on-disk).
 - **Determinism**: the pool layout is bump-pointer per `Allocate_Space` call
   order. As long as the startup sequence (`Allocate_Data_Space` and the
   individual `Allocate_Space` calls in Fonts.c / Input.c / MOM_DAT.c /

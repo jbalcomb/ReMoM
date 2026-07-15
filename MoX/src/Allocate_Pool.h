@@ -41,8 +41,37 @@ extern "C" {
 /* Trailing margin - absorbs overruns off the last arena. Never carvable. */
 #define POOL_FIXED_MARGIN   (8 * 1024)
 
-/* Phase 1 placeholder for the carvable capacity. Finalized in Phase 2b as the compile-time sum of every in-scope Allocate_Space() call's (size + 1) * 16 bytes. */
-#define POOL_ARENA_CAPACITY (256 * 1024)
+/*
+    Carvable capacity. It must hold every in-scope Allocate_Space() /
+    Allocate_Space_No_Header() arena's (size + 1) * 16 bytes for whichever
+    top-level allocation sequence a given process runs. The OG "Space Alloc"
+    allocator never frees, so every arena is permanent by design and the pool
+    only has to cover that persistent footprint - it is NOT stressed by
+    repeated loads: in-game graphics reuse g_graphics_cache_seg via
+    Graphics_Cache_Reset(), and the STU world-gen loop reuses its arenas via
+    Clear_Game_Data(). Each of the two top-level sequences (the full-game
+    Allocate_Data_Space path and the STU world-gen Allocate_Game_Data path)
+    runs once per process.
+
+    The full-game path dominates: its enumerated footprint is ~1.5 MiB
+    (g_graphics_cache_seg alone is 1 MiB - see the breakdown in
+    PRD-Static-Pool-Allocator.md). POOL_ARENA_CAPACITY carries headroom above
+    POOL_MIN_ARENA_BYTES for the bounded set of one-time sa_Single LBX loads
+    and font-entry buffers whose sizes are only known at run time. Pool_Carve()
+    is fatal-on-exhaustion (Allocation_Error), so an undersize surfaces loudly
+    rather than corrupting silently.
+*/
+/*
+    POOL_MIN_ARENA_BYTES is the measured floor, POOL_ARENA_CAPACITY the shipped
+    size. Measured via Pool_Bytes_Peak(): the HeMoM Continue scenario (full-game
+    entry - loads the save, enters the game, which pulls in many one-time
+    sa_Single LBX graphic buffers on top of the ~1.5 MiB enumerated arenas)
+    peaks at ~4.58 MiB. The capacity carries ~3.5x margin over that for heavier
+    game paths. Pool_Carve() is fatal-on-exhaustion, so any path that exceeds
+    the capacity fails loudly (raise this constant and re-measure).
+*/
+#define POOL_MIN_ARENA_BYTES (5 * 1024 * 1024)    /* measured floor: ~4.58 MiB Continue-scenario peak, rounded up */
+#define POOL_ARENA_CAPACITY  (16 * 1024 * 1024)   /* ~3.5x the measured peak */
 
 #define POOL_SIZE           (POOL_LEADING_GUARD + POOL_ARENA_CAPACITY + POOL_FIXED_MARGIN)
 
@@ -57,6 +86,9 @@ uint32_t Pool_Bytes_Used(void);
 
 /* Bytes not yet reserved, counting the trailing margin (the final POOL_FIXED_MARGIN bytes are reported free but are never carvable). */
 uint32_t Pool_Bytes_Free(void);
+
+/* High-water mark of Pool_Bytes_Used() across the process (reset by Pool_Init). Used to size POOL_ARENA_CAPACITY against the real peak. */
+uint32_t Pool_Bytes_Peak(void);
 
 #ifdef __cplusplus
 }

@@ -11,22 +11,29 @@ Durable decisions that apply across all phases:
   `Check_Allocation`, `Get_Free_Blocks`, `Mark_Block`, `Release_Block`,
   `Reset_First_Block`. Their signatures and return semantics do not change.
 - **New public functions**: the `Allocate_Pool` module's API
-  (`Pool_Init`, `Pool_Carve`, `Pool_Bytes_Used`, `Pool_Bytes_Free`). No
-  new `Allocate_*` wrapper — excluded arenas call `malloc()` directly.
+  (`Pool_Init`, `Pool_Carve`, `Pool_Bytes_Used`, `Pool_Bytes_Free`,
+  `Pool_Bytes_Peak`). No new `Allocate_*` wrapper — excluded arenas call
+  `malloc()` directly.
 - **Pool storage shape**: one `static uint8_t` array in BSS, owned by the
-  new `Allocate_Pool` module. Size is a compile-time constant
-  (`POOL_SIZE`) equal to the sum of in-scope `Allocate_Space` sizes plus
-  safety margins at both ends: `LEADING_GUARD` (256 B - 4 KB) reserved
-  ahead of the first carve, so `-1`-style underruns off the first arena
-  stay inside the pool, and a trailing `FIXED_MARGIN` (4-16 KB) for
-  overruns off the last arena. `Pool_Carve` never hands out guard bytes;
-  the first carve returns `pool_base + LEADING_GUARD`. `static_assert` at
-  build time enforces sufficiency. Arenas between neighbors get incidental
-  OOB coverage in both directions from tight packing.
-- **Sentinel pattern**: `0xCC` byte fill performed exactly once at
-  `Pool_Init`. Sub-block writes overwrite their own bytes; slack stays
-  at sentinel until explicitly written (or until `gd_ci_inject_*` stamps
-  OG-captured bytes into a known OOB region).
+  new `Allocate_Pool` module. `POOL_SIZE = POOL_LEADING_GUARD (1 KB) +
+  POOL_ARENA_CAPACITY + POOL_FIXED_MARGIN (8 KB)`. The leading guard absorbs
+  `-1`-style underruns off the first arena; the trailing margin absorbs
+  overruns off the last. `Pool_Carve` never hands out guard bytes; the first
+  carve returns `pool_base + POOL_LEADING_GUARD`. `POOL_ARENA_CAPACITY` is set
+  from the **measured** peak, not an enumerated sum (see Phase 2b): 16 MB, with
+  `POOL_MIN_ARENA_BYTES` (5 MB) the asserted floor. A C90 negative-array
+  compile-time assertion enforces `POOL_ARENA_CAPACITY >= POOL_MIN_ARENA_BYTES`
+  (these `.c` files build as C90, so `_Static_assert` is unavailable). Arenas
+  between neighbors get incidental OOB coverage in both directions from tight
+  packing.
+- **Sentinel pattern & lazy init**: `0xCC` byte fill performed exactly once, at
+  `Pool_Init`, which `Pool_Carve` calls **lazily** on first use (static-flag
+  guarded) — no explicit startup call or call-ordering assumption. Safe because
+  each top-level allocation sequence (`Allocate_Data_Space`, STU world-gen's
+  `Allocate_Game_Data`) runs once per process and the OG allocator never frees.
+  Sub-block writes overwrite their own bytes; slack stays at sentinel until
+  explicitly written (or until `gd_ci_inject_*` stamps OG-captured bytes into a
+  known OOB region).
 - **SAMB header layout (unchanged)**: 16-byte per-sub-block header with
   `_AAAA` / `_CCCC` sentinels, `MEMSIG1`, `MEMSIG2`, `SIZE`, `USED`,
   `MARK` fields. Same field offsets, same sentinel values.
@@ -147,42 +154,42 @@ explicit and auditable before the implementation swap.
 Wire `Allocate_Space(size)` and `Allocate_Space_No_Header(size)`
 through `Pool_Carve` instead of `malloc`. The SAMB header writes
 (`_AAAA` sentinel, `MEMSIG1`, `MEMSIG2`, `SIZE`, `USED=1`) are
-unchanged; only the underlying memory source changes. `Pool_Init` is
-called once at startup, before any `Allocate_Space` call. `POOL_SIZE`
-is finalized as the compile-time sum of every in-scope
-`Allocate_Space` call's `size` argument plus the leading guard
-(256 B - 4 KB) and the trailing safety margin (4-16 KB); a
-`static_assert` guards the sufficiency (`POOL_SIZE` includes
-`g_graphics_cache_seg`'s ~1 MB). Excluded arenas are unaffected — they
-were moved to direct `malloc()` in Phase 2a. After this phase, every
-formerly-pool-bound OOB access in
-either direction lands inside the static pool's bounds — overruns in
-the next arena's head or the trailing margin, `-1`-style underruns in
-the previous arena's tail or the leading guard — ASan-detectable
-parent-malloc violations from in-scope arenas stop, and the matchup
-byte-compare pipeline continues to pass.
+unchanged; only the underlying memory source changes. `Pool_Init` runs
+**lazily** on the first `Pool_Carve` (no explicit startup wiring needed).
+`POOL_ARENA_CAPACITY` is sized from the **measured** peak, not an enumerated
+compile-time sum: the enumerated arenas are ~1.5 MB (`g_graphics_cache_seg`
+alone ~1 MB), but the real full-game-entry peak — including run-time-sized
+one-time `sa_Single` LBX graphic loads — is ~4.58 MB, measured via
+`Pool_Bytes_Peak` (logged at HeMoM shutdown). Capacity is set to 16 MB with a
+5 MB asserted floor. Excluded arenas are unaffected — they were moved to direct
+`malloc()` in Phase 2a. After this phase, every formerly-pool-bound OOB access
+in either direction lands inside the static pool's bounds — overruns in the
+next arena's head or the trailing margin, `-1`-style underruns in the previous
+arena's tail or the leading guard — ASan-detectable parent-malloc violations
+from in-scope arenas stop, and the byte-compare pipeline continues to pass.
 
 ### Acceptance criteria
 
-- [ ] `Allocate_Space` and `Allocate_Space_No_Header` allocate from the
+- [x] `Allocate_Space` and `Allocate_Space_No_Header` allocate from the
   pool; SAMB header bytes match what the pre-refactor implementation
-  wrote.
-- [ ] `Pool_Init` runs exactly once at startup, before the first
-  `Allocate_Space` call.
-- [ ] `POOL_SIZE` is the compile-time sum of every in-scope
-  `Allocate_Space` call's `size` argument plus `LEADING_GUARD` and the
-  trailing safety margin; `static_assert` enforces sufficiency.
-- [ ] The first pool-backed arena sits at `pool_base + LEADING_GUARD`,
+  wrote. *(WorldGen byte-parity + HeMoM_Continue_Assertions green.)*
+- [x] `Pool_Init` runs exactly once per process, **lazily** on the first
+  `Pool_Carve` (before the first allocation completes).
+- [x] `POOL_ARENA_CAPACITY` is set from the measured peak (~4.58 MB → 16 MB),
+  with `POOL_MIN_ARENA_BYTES` (5 MB) the floor; a C90 negative-array
+  compile-time assert enforces `POOL_ARENA_CAPACITY >= POOL_MIN_ARENA_BYTES`.
+- [x] The first pool-backed arena sits at `pool_base + LEADING_GUARD`,
   so a `-1`-style underrun off it lands in sentinel-filled pool memory
   rather than before the static array.
 - [ ] ReMoMber starts, reaches the Main Screen, plays a turn without
-  crashing.
-- [ ] HeMoM matchup-seed run completes through Simtex_Autotiling and
-  reaches the post-CRP_NEWG_CreatePathGrids dump point without
-  crashing.
-- [ ] All `gd_dump_*` comparison points that were green before this
-  phase remain green after.
+  crashing. *(unverified — no interactive ReMoMber run yet.)*
+- [x] HeMoM run completes through Simtex_Autotiling and reaches the
+  post-CRP_NEWG_CreatePathGrids dump point without crashing.
+  *(HeMoM_WorldGen_Run green.)*
+- [x] All `gd_dump_*` comparison points that were green before this
+  phase remain green after. *(WorldGen_Validate / _Fields green.)*
 - [ ] No new ASan or sanitizer crashes inside in-scope arenas.
+  *(unverified — not yet run under a sanitizer build.)*
 - [ ] Integration tests verify: `Allocate_Space` returns a
   pool-resident pointer with a valid SAMB header;
   `Allocate_First_Block` and `Allocate_Next_Block` carve correctly

@@ -29,6 +29,7 @@
 
 #include "Allocate.h"
 
+#include "Allocate_Pool.h"  /* CLAUDE: Pool_Carve() - static-pool backing for Allocate_Space (PLAN-Static-Pool-Allocator Phase 2b) */
 #include "capture.h"  /* Check_Release_Version() */
 #include "EXIT.h"
 #include "MOX_BASE.h"
@@ -338,7 +339,8 @@ SAMB_ptr Allocate_Space(uint16_t size)
 
     lsize = (size + 1) * 16;
 
-    tmp_SAMB_head = (SAMB_ptr) malloc(lsize);
+    // tmp_SAMB_head = (SAMB_ptr) malloc(lsize);
+    tmp_SAMB_head = (SAMB_ptr) Pool_Carve(lsize);  /* CLAUDE: pool-backed (Phase 2b); Pool_Carve is fatal-on-exhaustion, so the NULL guard below is now defensive/unreachable */
     if(tmp_SAMB_head == NULL) { Allocation_Error(1, size); return NULL; }
     // SAMB_head = tmp_SAMB_head + 12;  // 16-byte paragraph - 4-byte malloc header
     SAMB_head = tmp_SAMB_head;
@@ -373,7 +375,8 @@ SAMB_ptr Allocate_Space_No_Header(uint16_t size)
 
     lsize = (size + 1) * 16;
 
-    tmp_SAMB_head = (SAMB_ptr) malloc(lsize);
+    // tmp_SAMB_head = (SAMB_ptr) malloc(lsize);
+    tmp_SAMB_head = (SAMB_ptr) Pool_Carve(lsize);  /* CLAUDE: pool-backed (Phase 2b); Pool_Carve is fatal-on-exhaustion, so the NULL guard below is now defensive/unreachable */
     if(tmp_SAMB_head == NULL) { Allocation_Error(1, size); }
     SAMB_data = tmp_SAMB_head + 12;  // 16-byte paragraph - 4-byte malloc header
 
