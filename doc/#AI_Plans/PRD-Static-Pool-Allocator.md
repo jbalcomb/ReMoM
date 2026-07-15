@@ -4,7 +4,7 @@
 
 OG-MoM contains a small but documented set of out-of-bounds memory accesses
 (AVRL = Access Violation Reading Location; AVWL = Access Violation Writing Location)
-that are intentional or harmless in DOS real-mode but trigger crashes when faithfully
+that are non-critical in DOS real-mode but trigger crashes when faithfully
 preserved in ReMoM under modern memory protections (ASan, page-based segfaults,
 fortified malloc, etc.). The current Allocate.c implementation calls `malloc`
 once per arena (`Allocate_Space`), and sub-blocks are bump-pointer carved out of
@@ -14,6 +14,8 @@ even though the OG byte is logically harmless.
 
 Reproducing OG's full bug-for-bug behavior requires those OOB writes to land in
 addressable, deterministic memory — and not crash the process.
+Essentially, we have to eliminate the boundaries between individial allocations
+so that every read and write memory access is considered legal, by a single owner.
 
 ## Solution
 
