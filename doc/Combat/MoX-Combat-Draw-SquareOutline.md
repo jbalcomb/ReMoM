@@ -68,8 +68,8 @@ XREF:
     Tactical_Combat__WIP+246     mov     [frame_active_flag], 0         
     Tactical_Combat__WIP+29E     mov     [frame_active_flag], 0         
     Tactical_Combat__WIP+5D5     mov     [frame_active_flag], 0         
-    CMB_ProgressTurnFlow__WIP+C  mov     [frame_active_flag], 0         
-    CMB_ProgressTurnFlow__WIP+34 mov     [frame_active_flag], 0         
+    Combat_Next_Turn+C  mov     [frame_active_flag], 0         
+    Combat_Next_Turn+34 mov     [frame_active_flag], 0         
     Assign_Mouse_Image+E         mov     [frame_active_flag], 0         
     Assign_Mouse_Image+1B        mov     [frame_active_flag], 1         
     Assign_Mouse_Image:loc_7FC8F mov     [frame_active_flag], 0         
@@ -90,8 +90,8 @@ XREF:
     Tactical_Combat__WIP+24C                  mov     [frame_scanned_flag], 0         
     Tactical_Combat__WIP+2A4                  mov     [frame_scanned_flag], 0         
     Tactical_Combat__WIP+5DB                  mov     [frame_scanned_flag], 0         
-    CMB_ProgressTurnFlow__WIP+12              mov     [frame_scanned_flag], 0         
-    CMB_ProgressTurnFlow__WIP+3A              mov     [frame_scanned_flag], 0         
+    Combat_Next_Turn+12              mov     [frame_scanned_flag], 0         
+    Combat_Next_Turn+3A              mov     [frame_scanned_flag], 0         
     Assign_Mouse_Image+98                     mov     [frame_scanned_flag], 0         
     Assign_Mouse_Image:loc_7FD0D              mov     [frame_scanned_flag], e_ST_TRUE 
     Assign_Mouse_Image:loc_7FD28              mov     [frame_scanned_flag], 1         

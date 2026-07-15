@@ -48,7 +48,10 @@ Bypass for emergencies (only meaningful on a main-bound push, since other pushes
 git push --no-verify
 ```
 
-The same gate is also wired up as the VS Code task `check: safe-to-push` (`Tasks: Run Task...`) for on-demand IDE-side runs. See `doc/PRDs/PRD-Git-Hook-Pre-Push-Release-Check.md` and `doc/PRDs/PRD-VSCode-Task-Safe-To-Push.md`.
+The same gate is also wired up as the VS Code task `check: safe-to-push` (`Tasks: Run Task...`) for on-demand IDE-side runs. See `doc/#AI_Plans/PRD-Git-Hook-Pre-Push-Release-Check.md` and `doc/#AI_Plans/PRD-VSCode-Task-Safe-To-Push.md`.
+
+## PRDs and Plans
+- Product requirements documents (`PRD-*.md`) and implementation plans live in `doc/#AI_Plans/`.
 
 ## Glossary of Terms
 - Dasm stands for Disassembly  (the disassembley of the Borland C++ 3.0 code from IDA Pro 5.5)

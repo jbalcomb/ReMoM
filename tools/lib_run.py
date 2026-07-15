@@ -196,7 +196,7 @@ def run_hemom(*,
     cmd = [
         str(HEMOM_EXE),
         "--newgame", str(ini),
-        "--seed", str(seed),
+        "--seed1", str(seed),
         *_driver_args(hms, rmr),
         *list(extra_args),
     ]
@@ -242,7 +242,7 @@ def run_remomber(*,
 
     cmd = [
         str(REMOMBER_EXE),
-        "--seed", str(seed),
+        "--seed1", str(seed),
         *_driver_args(hms, rmr),
         *list(extra_args),
     ]

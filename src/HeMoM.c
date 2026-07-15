@@ -58,6 +58,8 @@
 #include "../MoM/src/MOM_SCR.h"
 #include "../MoM/src/Settings.h"
 #include "../MoM/src/UNITTYPE.h"
+#include "../MoM/src/Combat.h"   /* CLAUDE: Combat__WIP() + CMB_Gold_Reward for --combat test mode */
+#include "../MoM/src/DIPLODEF.h" /* CLAUDE: DIPL_War for --combat test mode */
 #include "../MoM/src/WZD_o143.h"  /* Random_City_Name_By_Race */
 
 #include "ReMoM_Init.h"
@@ -807,6 +809,167 @@ static void HeMoM_Replay_Log_Field_Hit(void *log, int mouse_x, int mouse_y)
 /*  Usage                                                                    */
 /* ========================================================================= */
 
+/* ========================================================================= */
+/*  Combat test mode (--combat)                                              */
+/*                                                                           */
+/*  Loads a named fixture save (SAVECMBT.GAM), patches the minimal overland  */
+/*  state the combat dispatcher expects for a stack-vs-stack attack, seeds   */
+/*  the RNG immediately before combat entry (so overland load history cannot */
+/*  shift the combat rolls), invokes Combat__WIP() directly, and dumps the   */
+/*  results as `key = value` text for the CTest assertion step.              */
+/*                                                                           */
+/*  Both combatants must be computer players: the dispatcher then routes to  */
+/*  Strategic_Combat__WIP() (auto-resolve), which runs headlessly.  A human  */
+/*  combatant would route to the tactical battle screen, which this tracer   */
+/*  does not support yet.                                                    */
+/* ========================================================================= */
+
+#define HEMOM_COMBAT_MAX_TROOPS 9
+#define HEMOM_COMBAT_DUMP_FILE "HEMOM_COMBAT.txt"
+
+static void HeMoM_Combat_Dump_Unit(FILE * fout, const char * prefix, int itr, int16_t unit_idx)
+{
+    fprintf(fout, "%s[%d].unit_idx = %d\n", prefix, itr, unit_idx);
+    fprintf(fout, "%s[%d].owner_idx = %d\n", prefix, itr, _UNITS[unit_idx].owner_idx);
+    fprintf(fout, "%s[%d].type = %d\n", prefix, itr, _UNITS[unit_idx].type);
+    fprintf(fout, "%s[%d].status = %d\n", prefix, itr, _UNITS[unit_idx].Status);
+    fprintf(fout, "%s[%d].level = %d\n", prefix, itr, _UNITS[unit_idx].Level);
+    fprintf(fout, "%s[%d].xp = %d\n", prefix, itr, _UNITS[unit_idx].XP);
+    fprintf(fout, "%s[%d].damage = %d\n", prefix, itr, _UNITS[unit_idx].Damage);
+    fprintf(fout, "%s[%d].wx = %d\n", prefix, itr, _UNITS[unit_idx].wx);
+    fprintf(fout, "%s[%d].wy = %d\n", prefix, itr, _UNITS[unit_idx].wy);
+    fprintf(fout, "%s[%d].wp = %d\n", prefix, itr, _UNITS[unit_idx].wp);
+}
+
+static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int16_t troops[])
+{
+    FILE * fout = NULL;
+    int16_t attacker_player_idx = 0;
+    int16_t defender_player_idx = 0;
+    int16_t defender_stack[HEMOM_COMBAT_MAX_TROOPS];
+    int16_t defender_stack_count = 0;
+    int16_t defender_wx = 0;
+    int16_t defender_wy = 0;
+    int16_t defender_wp = 0;
+    int16_t attacker_won = 0;
+    uint32_t combat_seed = 0;
+    uint64_t rng_calls_before = 0;
+    int16_t itr = 0;
+
+    if(troop_count < 1)
+    {
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] No attacker troops given");
+        return 1;
+    }
+    if(defender_unit_idx < 0 || defender_unit_idx >= _units)
+    {
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] Defender unit idx %d out of range (0..%d)", defender_unit_idx, _units - 1);
+        return 1;
+    }
+    for(itr = 0; itr < troop_count; itr++)
+    {
+        if(troops[itr] < 0 || troops[itr] >= _units)
+        {
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] Attacker unit idx %d out of range (0..%d)", troops[itr], _units - 1);
+            return 1;
+        }
+    }
+
+    attacker_player_idx = _UNITS[troops[0]].owner_idx;
+    defender_player_idx = _UNITS[defender_unit_idx].owner_idx;
+    defender_wx = _UNITS[defender_unit_idx].wx;
+    defender_wy = _UNITS[defender_unit_idx].wy;
+    defender_wp = _UNITS[defender_unit_idx].wp;
+
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] attacker_player=%d defender_player=%d human_player=%d defender_at=(%d,%d,%d)", attacker_player_idx, defender_player_idx, _human_player_idx, defender_wx, defender_wy, defender_wp);
+
+    if(attacker_player_idx == defender_player_idx)
+    {
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] Attacker and defender have the same owner (%d)", attacker_player_idx);
+        return 1;
+    }
+    if((attacker_player_idx == _human_player_idx) || (defender_player_idx == _human_player_idx))
+    {
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] A combatant is the human player; the dispatcher would open the tactical battle screen, which --combat does not support yet");
+        return 1;
+    }
+
+    /* Capture defender stack membership before combat mutates the unit array. */
+    for(itr = 0; itr < _units && defender_stack_count < HEMOM_COMBAT_MAX_TROOPS; itr++)
+    {
+        if(
+            (_UNITS[itr].wx == defender_wx) &&
+            (_UNITS[itr].wy == defender_wy) &&
+            (_UNITS[itr].wp == defender_wp) &&
+            (_UNITS[itr].owner_idx == defender_player_idx)
+        )
+        {
+            defender_stack[defender_stack_count] = itr;
+            defender_stack_count++;
+        }
+    }
+
+    /* Patch diplomacy: Combat__WIP() silently aborts (No_Combat) when a non-human attacker strikes an Alliance/WizardPact partner, so force a state of war between the combatants in both directions. */
+    _players[attacker_player_idx].Dipl.Dipl_Status[defender_player_idx] = DIPL_War;
+    _players[defender_player_idx].Dipl.Dipl_Status[attacker_player_idx] = DIPL_War;
+
+    /* Patch the overland state Combat__WIP() reads for a stack-vs-stack attack.  OVL_Action_OriginX/Y is the square the attackers strike from; Combat__WIP() moves the troops there at entry, so it just needs to be a square adjacent to the defender. */
+    _combat_environ = 0;      /* cnv_Enemy_Stack */
+    _combat_environ_idx = 0;  /* unused for stack-vs-stack */
+    OVL_Action_OriginX = (defender_wx > 0) ? (int16_t)(defender_wx - 1) : (int16_t)(defender_wx + 1);
+    OVL_Action_OriginY = defender_wy;
+    for(itr = 0; itr < troop_count; itr++)
+    {
+        _UNITS[troops[itr]].Status = us_Ready;
+    }
+
+    combat_seed = (_cmd_line_seed != 0) ? (uint32_t)_cmd_line_seed : 12345u;
+    Set_Random_Seed(combat_seed);
+    rng_calls_before = g_random_call_count;
+
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] Invoking Combat__WIP() seed=%u troop_count=%d defender_stack_count=%d", combat_seed, troop_count, defender_stack_count);
+
+    attacker_won = Combat__WIP(attacker_player_idx, defender_unit_idx, troop_count, troops);
+
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] Combat__WIP() returned %d", attacker_won);
+
+    fout = fopen(HEMOM_COMBAT_DUMP_FILE, "w");
+    if(fout == NULL)
+    {
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] Could not create: %s", HEMOM_COMBAT_DUMP_FILE);
+        return 1;
+    }
+
+    fprintf(fout, "# HeMoM Combat Dump\n");
+    fprintf(fout, "# Mode: strategic (direct Combat__WIP invoke)\n");
+    fprintf(fout, "# NOTE: unit indices are pre-combat indices; combat may free dead units, so a dumped slot reflects whatever occupies that index afterwards (deterministic for a fixed fixture + seed).\n");
+    fprintf(fout, "combat.seed = %u\n", combat_seed);
+    fprintf(fout, "combat.attacker_player_idx = %d\n", attacker_player_idx);
+    fprintf(fout, "combat.defender_player_idx = %d\n", defender_player_idx);
+    fprintf(fout, "combat.defender_unit_idx = %d\n", defender_unit_idx);
+    fprintf(fout, "combat.troop_count = %d\n", troop_count);
+    fprintf(fout, "combat.defender_stack_count = %d\n", defender_stack_count);
+    fprintf(fout, "combat.attacker_won = %d\n", attacker_won);
+    fprintf(fout, "combat.gold_reward = %d\n", CMB_Gold_Reward);
+    fprintf(fout, "combat.rng_calls = %llu\n", (unsigned long long)(g_random_call_count - rng_calls_before));
+    fprintf(fout, "combat.random_seed_after = %u\n", Get_Random_Seed());
+    fprintf(fout, "game.units_after = %d\n", _units);
+    for(itr = 0; itr < troop_count; itr++)
+    {
+        HeMoM_Combat_Dump_Unit(fout, "troop", itr, troops[itr]);
+    }
+    for(itr = 0; itr < defender_stack_count; itr++)
+    {
+        HeMoM_Combat_Dump_Unit(fout, "defender", itr, defender_stack[itr]);
+    }
+    fclose(fout);
+
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] Wrote %s", HEMOM_COMBAT_DUMP_FILE);
+    return 0;
+}
+
+
+
 static void Print_Usage(const char *program_name)
 {
     LOG_INFO(LOG_CAT_HEMOM, "HeMoM — Headless Master of Magic\n");
@@ -815,6 +978,7 @@ static void Print_Usage(const char *program_name)
     LOG_INFO(LOG_CAT_HEMOM, "  %s --continue [--scenario test.hms] [--record out.RMR]", program_name);
     LOG_INFO(LOG_CAT_HEMOM, "  %s --load SAVE3.GAM [--scenario test.hms] [--record out.RMR]", program_name);
     LOG_INFO(LOG_CAT_HEMOM, "  %s --newgame [ReMoM.ini] [--replay game.RMR]", program_name);
+    LOG_INFO(LOG_CAT_HEMOM, "  %s --combat DEFENDER_UNIT ATTACKER_UNITS [--seed1 N]", program_name);
     LOG_INFO(LOG_CAT_HEMOM, "\nOptions:");
     LOG_INFO(LOG_CAT_HEMOM, "  --newgame [FILE]   Create new game from config (default: ReMoM.ini)");
     LOG_INFO(LOG_CAT_HEMOM, "  --continue         Load SAVE9.GAM (continue from previous --newgame)");
@@ -823,6 +987,7 @@ static void Print_Usage(const char *program_name)
     LOG_INFO(LOG_CAT_HEMOM, "  --replay FILE      Replay recorded input from .RMR file");
     LOG_INFO(LOG_CAT_HEMOM, "  --record FILE      Record input to .RMR file");
     LOG_INFO(LOG_CAT_HEMOM, "  --dump-save FILE   After Screen_Control returns, dump FILE.GAM to FILE.txt");
+    LOG_INFO(LOG_CAT_HEMOM, "  --combat D A,B,..  Load SAVECMBT.GAM, run strategic combat: attacker units A,B,.. vs the stack of defender unit D; dump results to %s", HEMOM_COMBAT_DUMP_FILE);
     LOG_INFO(LOG_CAT_HEMOM, "  --help             Show this help");
 }
 
@@ -834,10 +999,13 @@ static void Print_Usage(const char *program_name)
 
 int main(int argc, char *argv[])
 {
-    int hemom_mode = 0;  /* 0=none, 1=newgame, 2=load */
+    int hemom_mode = 0;  /* 0=none, 1=newgame, 2=load, 3=combat */
     char hemom_file[260] = { 0 };
     char hemom_scenario[260] = { 0 };
     char hemom_dump_save[260] = { 0 };
+    int16_t combat_defender_unit_idx = ST_UNDEFINED;
+    int16_t combat_troops[HEMOM_COMBAT_MAX_TROOPS] = { 0 };
+    int16_t combat_troop_count = 0;
     int argi;
 
     STU_Log_Startup("ReMoM.ini");
@@ -940,12 +1108,35 @@ int main(int argc, char *argv[])
             LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --dump-save \"%s\"", hemom_dump_save);
 #endif
         }
-        else if(stu_strcmp(argv[argi], "--seed") == 0 && (argi + 1) < argc)
+        else if((stu_strcmp(argv[argi], "--seed1") == 0 || stu_strcmp(argv[argi], "--seed2") == 0) && (argi + 1) < argc)
         {
-            /* CLAUDE: --seed parsing migrated to MOX2::Check_Command_Line_Parameters_().
+            /* CLAUDE: --seed1/--seed2 parsing lives in MOX2::Check_Command_Line_Parameters_().
                Skip the value here so the rest of this loop doesn't see it as
                an "unknown arg". */
             argi++;
+        }
+        else if(stu_strcmp(argv[argi], "--seed") == 0 && (argi + 1) < argc)
+        {
+            /* CLAUDE: --seed was renamed --seed1 in MOX2 (2026-06-28, a8da405b); warn loudly instead of silently running unpinned. */
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --seed is no longer parsed -- use --seed1 N (RNG will NOT be pinned this run)");
+            argi++;
+        }
+        else if(stu_strcmp(argv[argi], "--combat") == 0 && (argi + 2) < argc)
+        {
+            char * token;
+            hemom_mode = 3;
+            stu_strcpy(hemom_file, "SAVECMBT.GAM");
+            argi++;
+            combat_defender_unit_idx = (int16_t)stu_atoi(argv[argi]);
+            argi++;
+            token = strtok(argv[argi], ",");
+            while(token != NULL && combat_troop_count < HEMOM_COMBAT_MAX_TROOPS)
+            {
+                combat_troops[combat_troop_count] = (int16_t)stu_atoi(token);
+                combat_troop_count++;
+                token = strtok(NULL, ",");
+            }
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --combat defender_unit=%d attacker_troop_count=%d", combat_defender_unit_idx, combat_troop_count);
         }
         else if(strcmp(argv[argi], "--ai-metrics") == 0)
         {
@@ -1047,6 +1238,21 @@ int main(int argc, char *argv[])
         Loaded_Game_Update();
         current_screen = scr_Main_Screen;
     }
+    else if(hemom_mode == 3)
+    {
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Loading combat fixture save: %s", hemom_file);
+        Load_WZD_Resources();
+        g_load_save_gam_name_override = hemom_file;
+        Load_SAVE_GAM(ST_UNDEFINED);
+        Loaded_Game_Update();
+        current_screen = scr_Main_Screen;
+        if(HeMoM_Combat_Run(combat_defender_unit_idx, combat_troop_count, combat_troops) != 0)
+        {
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Combat run failed");
+            Shutdown_Platform();
+            return 1;
+        }
+    }
 
     /* Load and register artificial human player scenario */
     if(hemom_scenario[0] != '\0')
@@ -1086,7 +1292,11 @@ int main(int argc, char *argv[])
        Config_Apply_And_Create_New_Game() already wrote SAVE9.GAM, and HeMoM
        has no interactive UI, so entering Screen_Control() here would just
        spin forever waiting for input that can never arrive. */
-    if(hemom_mode == 1 && hemom_scenario[0] == '\0')
+    if(hemom_mode == 3)
+    {
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Combat run complete — skipping Screen_Control()");
+    }
+    else if(hemom_mode == 1 && hemom_scenario[0] == '\0')
     {
         LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Newgame complete — SAVE9.GAM written, skipping Screen_Control()");
 #ifdef STU_DEBUG

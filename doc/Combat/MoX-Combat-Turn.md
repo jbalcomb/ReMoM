@@ -29,7 +29,7 @@ Computer attacks Human
 
 
 
-## CMB_ProgressTurnFlow__WIP()
+## Combat_Next_Turn()
 
 called twice in 'Auto Combat'
 OR
@@ -41,7 +41,7 @@ once right before screen redraw in screen-loop
 
     if((leave_screen == ST_FALSE) && (_human_out_of_moves == ST_TRUE) && (_human_handle_immobile == ST_FALSE))
         _human_out_of_moves = ST_FALSE;  // Where does this get used after this?
-        CMB_ProgressTurnFlow__WIP();
+        Combat_Next_Turn();
         Next_Battle_Unit(_human_player_idx);
         Assign_Combat_Grids();
         input_field_idx = ST_UNDEFINED;
@@ -55,10 +55,10 @@ once right before screen redraw in screen-loop
 
 
 XREF:
-    j_CMB_ProgressTurnFlow__WIP()
-        Combat_Screen__WIP+3B9       call    j_CMB_ProgressTurnFlow__WIP
-        Combat_Screen__WIP:loc_76281 call    j_CMB_ProgressTurnFlow__WIP
-        Combat_Screen__WIP+1180      call    j_CMB_ProgressTurnFlow__WIP
+    j_Combat_Next_Turn()
+        Combat_Screen__WIP+3B9       call    j_Combat_Next_Turn
+        Combat_Screen__WIP:loc_76281 call    j_Combat_Next_Turn
+        Combat_Screen__WIP+1180      call    j_Combat_Next_Turn
 
 
 
@@ -130,12 +130,12 @@ How does a 'Combat Turn' happen?
 
 Battle_Unit_Action__WIP()
 
-CMB_ProgressTurnFlow__WIP() does the turn for the computer player and the auto combat for the human player, but still has nothing for an 'end of turn' indicator.
+Combat_Next_Turn() does the turn for the computer player and the auto combat for the human player, but still has nothing for an 'end of turn' indicator.
 ...calls AI_CMB_PlayTurn__WIP()
 
 At the end of Tactical_Combat__WIP()
     if((leave_screen == ST_FALSE) && (_human_out_of_moves == ST_TRUE) && (_human_handle_immobile == ST_FALSE))
-        CMB_ProgressTurnFlow__WIP()
+        Combat_Next_Turn()
             CMB_PrepareTurn__WIP()
                 Battle_Unit_Moves2()
 
@@ -174,7 +174,7 @@ so, ...
 
         _human_out_of_moves = ST_TRUE;
 
-        CMB_ProgressTurnFlow__WIP();
+        Combat_Next_Turn();
 ...got there
 this is where the AI turn should happen
 so what follows is assuming that it's the human players turn again
@@ -182,11 +182,11 @@ heh.
 blows through 50 turns before I can move again
 CMB_PrepareTurn__WIP() increments _combat_turn
 so, it's getting called when it shouldn't?
-...called by CMB_ProgressTurnFlow__WIP()
+...called by Combat_Next_Turn()
 
 
 
-`CMB_ProgressTurnFlow__WIP()` |-> `CMB_PrepareTurn__WIP()` |-> `Battle_Unit_Moves2()`
+`Combat_Next_Turn()` |-> `CMB_PrepareTurn__WIP()` |-> `Battle_Unit_Moves2()`
 ¿ order in the code ?
     Tactical_Combat__WIP()
         ...
@@ -225,7 +225,7 @@ so, it's getting called when it shouldn't?
 
 ## 'Auto Combat'
 ```c
-    CMB_ProgressTurnFlow__WIP();
+    Combat_Next_Turn();
     Combat_Winner = Check_For_Winner();
 ```
 
@@ -314,12 +314,12 @@ CMB_PrepareTurn__WIP()
 
 AI_CMB_PlayTurn__WIP()
 
-CMB_ProgressTurnFlow__WIP()
+Combat_Next_Turn()
 
 Check_For_Winner()
 
 
-CMB_PrepareTurn__WIP(), AI_CMB_PlayTurn__WIP(), CMB_ProgressTurnFlow__WIP(), Check_For_Winner()
+CMB_PrepareTurn__WIP(), AI_CMB_PlayTurn__WIP(), Combat_Next_Turn(), Check_For_Winner()
 
 
 ...

@@ -1,6 +1,6 @@
 # Plan: Logging Subsystem (STU_LOG) + Log-Curator Agent
 
-> Source PRD: [plans/PRD-Logging-System-And-Curator-Agent.md](PRD-Logging-System-And-Curator-Agent.md) · GH issue: https://github.com/jbalcomb/ReMoM/issues/14
+> Source PRD: [PRD-Logging-System-And-Curator-Agent.md](PRD-Logging-System-And-Curator-Agent.md) · GH issue: https://github.com/jbalcomb/ReMoM/issues/14
 
 ## Architectural decisions
 

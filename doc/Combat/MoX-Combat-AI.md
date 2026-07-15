@@ -68,7 +68,7 @@ Auto_Do_Combat_Turn__WIP()
     if((leave_screen == ST_FALSE) && (_human_out_of_moves == ST_TRUE) && (_human_handle_immobile == ST_FALSE))
     {
         _human_out_of_moves = ST_FALSE;
-        CMB_ProgressTurnFlow__WIP();
+        Combat_Next_Turn();
         Next_Battle_Unit(_human_player_idx);
         // ...
         // ...

@@ -127,8 +127,8 @@ CMB_ComposeBackgrnd__WIP()
         Tactical_Combat__WIP+1127            
         Combat_Cast_Spell_With_Caster:@@Done 
         CMB_ComposeBookBG__WIP+3             
-        Combat_Cast_Spell__WIP:loc_8D121     
-        Combat_Cast_Spell__WIP+35D           
+        Combat_Cast_Spell:loc_8D121     
+        Combat_Cast_Spell+35D           
         Combat_Spellbook_Screen+7A6          
         TILE_DispelMagic+EA2                 
         CMB_RaiseDead+8                      

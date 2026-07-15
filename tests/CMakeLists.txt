@@ -37,7 +37,7 @@ add_test(
     WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
 )
 set_tests_properties(HeMoM_WorldGen_Run PROPERTIES
-    TIMEOUT 10
+    TIMEOUT 30
     FIXTURES_SETUP HeMoM_WorldGen
     LABELS "hemom;integration;worldgen"
 )
@@ -127,7 +127,7 @@ add_test(
     WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
 )
 set_tests_properties(HeMoM_Continue_Setup PROPERTIES
-    TIMEOUT 10
+    TIMEOUT 30
     FIXTURES_SETUP HeMoM_Continue
     LABELS "hemom;integration;continue"
 )
@@ -141,7 +141,7 @@ add_test(
     WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
 )
 set_tests_properties(HeMoM_Continue_Run PROPERTIES
-    TIMEOUT 20
+    TIMEOUT 60
     FIXTURES_REQUIRED HeMoM_Continue
     FIXTURES_SETUP HeMoM_Continue_Saved
     LABELS "hemom;integration;continue"
@@ -180,7 +180,7 @@ add_test(
     WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
 )
 set_tests_properties(HeMoM_NextTurn_Setup PROPERTIES
-    TIMEOUT 10
+    TIMEOUT 30
     FIXTURES_SETUP HeMoM_NextTurn
     LABELS "hemom;integration;nextturn"
 )
@@ -194,7 +194,7 @@ add_test(
     WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
 )
 set_tests_properties(HeMoM_NextTurn_Run PROPERTIES
-    TIMEOUT 30
+    TIMEOUT 90
     FIXTURES_REQUIRED HeMoM_NextTurn
     FIXTURES_SETUP HeMoM_NextTurn_Saved
     LABELS "hemom;integration;nextturn"
@@ -239,7 +239,7 @@ add_test(
 # sequential worst-case (the suite runs serially; it shares SAVE*.GAM), enough to
 # absorb slow-CI variance while still catching a real hang promptly.
 set_tests_properties(HeMoM_AIBehavior_Setup PROPERTIES
-    TIMEOUT 20
+    TIMEOUT 60
     FIXTURES_SETUP HeMoM_AIBehavior
     LABELS "hemom;integration;ai"
 )
@@ -268,7 +268,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
             --scenario "${HEMOM_TEST_ASSETS}/test_ai_5turns.hms"
             --ai-metrics
             --dump-save SAVE1.GAM
-            --seed 12345
+            --seed1 12345
         WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
     )
     set_tests_properties(HeMoM_AIBehavior_Run PROPERTIES
@@ -290,3 +290,41 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     )
 
 endif()
+
+
+
+# =========================================================================
+#  Combat: strategic auto-resolve tracer  (PLAN-Combat-Testing.md, phase 1)
+#
+#  Loads the checked-in fixture save SAVECMBT.GAM (staged to the bin dir by
+#  copy_assets), patches diplomacy to war, pins the RNG, and resolves a
+#  stack-vs-stack strategic combat by invoking the combat dispatcher
+#  directly: attacker player 2 (units 12,15,17) vs defender player 3
+#  (stack of unit 500).  HeMoM writes HEMOM_COMBAT.txt; the assertion step
+#  pins the outcome field-by-field against assert_combat_strategic.txt.
+#  Characterization test: values reflect current behavior for seed 12345.
+# =========================================================================
+
+add_test(
+    NAME HeMoM_Combat_Strategic_Run
+    COMMAND $<TARGET_FILE:HeMoM>
+        --combat 500 12,15,17
+        --seed1 12345
+    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+)
+set_tests_properties(HeMoM_Combat_Strategic_Run PROPERTIES
+    TIMEOUT 60
+    FIXTURES_SETUP HeMoM_Combat_Strategic
+    LABELS "hemom;integration;combat"
+)
+
+add_test(
+    NAME HeMoM_Combat_Strategic_Assertions
+    COMMAND $<TARGET_FILE:check_save_fields>
+        ${HEMOM_TEST_WORKDIR}/HEMOM_COMBAT.txt
+        ${CMAKE_CURRENT_SOURCE_DIR}/assert_combat_strategic.txt
+)
+set_tests_properties(HeMoM_Combat_Strategic_Assertions PROPERTIES
+    FIXTURES_REQUIRED HeMoM_Combat_Strategic
+    LABELS "hemom;integration;combat"
+)

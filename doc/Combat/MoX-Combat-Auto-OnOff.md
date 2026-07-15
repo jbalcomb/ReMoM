@@ -26,7 +26,7 @@ set to on for 'Left-Click Auto Button'
     AI_CMB_PlayTurn__WIP(combat_human_player);
     Combat_Winner = Check_For_Winner();
 ...loop around screen-loop
-    CMB_ProgressTurnFlow__WIP();
+    Combat_Next_Turn();
 
 
 
@@ -39,7 +39,7 @@ Combat_Screen__WIP()
 
 AI_CMB_PlayTurn__WIP()
 
-CMB_ProgressTurnFlow__WIP()
+Combat_Next_Turn()
 
 
 
@@ -56,12 +56,12 @@ CMB_ProgressTurnFlow__WIP()
                 _auto_combat_flag = ST_FALSE;
                 m_cp_took_turn = ST_FALSE;
                 CRP_CMB_NeverChecked1 = ST_TRUE;
-                CMB_ProgressTurnFlow__WIP();
+                Combat_Next_Turn();
                 Turn_Off_Auto_Combat();
                 CRP_CMB_NeverChecked1 = ST_TRUE;
                 _human_handle_immobile = ST_FALSE;
             else  /* do 'Auto Combat' */
-                CMB_ProgressTurnFlow__WIP();
+                Combat_Next_Turn();
             Combat_Winner = Check_For_Winner();
             if(Combat_Winner != ST_UNDEFINED)
                 leave_screen = ST_UNDEFINED;
@@ -89,7 +89,7 @@ CMB_ProgressTurnFlow__WIP()
 
 
 
-## CMB_ProgressTurnFlow__WIP()
+## Combat_Next_Turn()
 
 
 ## AI_CMB_PlayTurn__WIP()

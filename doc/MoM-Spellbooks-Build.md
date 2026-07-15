@@ -52,7 +52,7 @@ used in SmlBook_Compose__WIP() to calc turns to cast, which is used to draw the 
 
 
 Combat_Spellbook_Screen() uses it, doesn't calculate it like Spellbook_Screen() does
-...because, it's calc'd in Combat_Spellbook_Build__WIP(), which is called from Combat_Cast_Spell__WIP(), right before it calls Combat_Spellbook_Screen()
+...because, it's calc'd in Combat_Spellbook_Build__WIP(), which is called from Combat_Cast_Spell(), right before it calls Combat_Spellbook_Screen()
 ...xref/usage in Magic_Screen() is meaningless...
 
 XREF:

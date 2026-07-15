@@ -35,7 +35,7 @@ set in Assign_Mouse_Image(), from CMB_TargetRows[grid_y][grid_x]
 
     Tactical_Combat__WIP+1DC           mov     [_scanned_battle_unit], e_ST_UNDEFINED             
     CMB_PrepareTurn__WIP+1B            mov     [_scanned_battle_unit], e_ST_UNDEFINED             
-    CMB_ProgressTurnFlow__WIP+6        mov     [_scanned_battle_unit], e_ST_UNDEFINED             
+    Combat_Next_Turn+6        mov     [_scanned_battle_unit], e_ST_UNDEFINED             
     Assign_Mouse_Image+8               mov     [_scanned_battle_unit], e_ST_UNDEFINED             
     Assign_Mouse_Image+212             mov     [_scanned_battle_unit], _SI_scanned_battle_unit_idx
     Combat_Figure_Active_Red_Outline+3 mov     ax, [_scanned_battle_unit]                         
@@ -63,7 +63,7 @@ set in Assign_Mouse_Image(), from CMB_TargetRows[grid_y][grid_x]
 Usages?
     Tactical_Combat__WIP+1DC           mov     [_scanned_battle_unit], e_ST_UNDEFINED             
     CMB_PrepareTurn__WIP+1B            mov     [_scanned_battle_unit], e_ST_UNDEFINED             
-    CMB_ProgressTurnFlow__WIP+6        mov     [_scanned_battle_unit], e_ST_UNDEFINED             
+    Combat_Next_Turn+6        mov     [_scanned_battle_unit], e_ST_UNDEFINED             
     Assign_Mouse_Image+8               mov     [_scanned_battle_unit], e_ST_UNDEFINED             
     Combat_Figure_Active_Red_Outline+3 mov     ax, [_scanned_battle_unit]                         
     Draw_Combat_Unit_Display+8         cmp     [_scanned_battle_unit], e_ST_UNDEFINED             

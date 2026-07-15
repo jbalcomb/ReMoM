@@ -23,7 +23,7 @@ Cast_Spell_On_Battle_Unit()
 
 
 Tactical_Combat__WIP()
-    Combat_Cast_Spell__WIP()
+    Combat_Cast_Spell()
         if(spell_idx == spl_NONE)
             Can_Cast = Combat_Spellbook_Build__WIP(caster_idx);
             CMB_ComposeBookBG__WIP();

@@ -43,7 +43,7 @@ AI_CMB_PlayTurn__WIP()
                 |-> Auto_Move_Unit()
 
 
-CMB_ProgressTurnFlow__WIP()
+Combat_Next_Turn()
     |-> AI_CMB_PlayTurn__WIP()
 
 
@@ -76,7 +76,7 @@ PoI's?
 ¿ End_Of_Turn ?
 ...has to have something to do with where _combat_turn gets incremented?
 
-CMB_ProgressTurnFlow__WIP()
+Combat_Next_Turn()
     sets m_turn_is_local = ST_FALSE
     ...does stuff
     sets m_turn_is_local = ST_TRUE

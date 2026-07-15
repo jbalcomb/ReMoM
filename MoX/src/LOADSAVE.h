@@ -69,6 +69,9 @@ void Save_SAVE_GAM(int16_t save_gam_idx);
 // WZD o50p02
 void Load_SAVE_GAM(int16_t save_gam_idx);
 
+/* CLAUDE: test-support -- one-shot filename override for Load_SAVE_GAM(); see LOADSAVE.c. */
+extern const char * g_load_save_gam_name_override;
+
 
 
 #ifdef __cplusplus

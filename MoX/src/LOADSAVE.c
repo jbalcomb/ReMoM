@@ -34,6 +34,9 @@
 
 uint8_t _save_gam[LEN_SAVE_GAM_FILE];
 
+/* CLAUDE: test-support -- when non-NULL, Load_SAVE_GAM() opens this file instead of deriving the name from the slot index. One-shot: cleared on use so normal slot loads are unaffected afterwards. Set by HeMoM's --combat mode to load named fixture saves (e.g. SAVECMBT.GAM). */
+const char * g_load_save_gam_name_override = NULL;
+
 
 
 // WZD o50p01
@@ -228,6 +231,13 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
      * _unit-specific fread, and (c) after the whole function. */
     LOG_INFO(LOG_CAT_LOADSAVE, "Load_SAVE_GAM _unit BEFORE = %d", _unit);
 
+    /* CLAUDE: test-support named-save override (see g_load_save_gam_name_override above). */
+    if(g_load_save_gam_name_override != NULL)
+    {
+        stu_strcpy(file_name, g_load_save_gam_name_override);
+        g_load_save_gam_name_override = NULL;
+    }
+    else
     if(save_gam_idx == ST_UNDEFINED)
     {
         stu_strcpy(file_name, "SAVETEST.GAM");

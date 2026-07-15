@@ -32,7 +32,7 @@ NOTE: 'Blur' is not in the manual, but is in the OSG - ¿ added in v1.2 ?
 
 
 no target / hard-coded to 99
-Combat_Cast_Spell__WIP()
+Combat_Cast_Spell()
     (spell_data_table[spell_idx].type == scc_Battlefield_Spell)
     (spell_data_table[spell_idx].type == scc_Combat_Counter_Magic)
     (spell_data_table[spell_idx].type == scc_Disenchants)

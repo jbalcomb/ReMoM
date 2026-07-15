@@ -35,7 +35,7 @@ In Combat_Screen__WIP(), ...
 
 initialized to false in Combat_Screen__WIP()
 ...promptly set to false in CMB_PrepareTurn__WIP() and set to true right after
-controls if CMB_ProgressTurnFlow__WIP() calls AI_CMB_PlayTurn__WIP(combat_computer_player);
+controls if Combat_Next_Turn() calls AI_CMB_PlayTurn__WIP(combat_computer_player);
 ...then same logic of 'if computer is defender' to call AI_CMB_PlayTurn__WIP(_combat_defender_player) and set m_cp_took_turn to true
 
 
@@ -58,7 +58,7 @@ vs. CMB_PrepareTurn__WIP()
 
 initialized to true in Combat_Screen__WIP()
 
-sets to false in CMB_ProgressTurnFlow__WIP()
+sets to false in Combat_Next_Turn()
 ...then, set to true after the computer player turn
 
 ...controls if "All units are immobilized. Select an action." is printed
@@ -91,7 +91,7 @@ if _human_out_of_moves isn't true, then _human_handle_immobile shouldn't matter?
         )
         {
             _human_out_of_moves = ST_FALSE;  // Where does this get used after this?
-            CMB_ProgressTurnFlow__WIP();
+            Combat_Next_Turn();
             Next_Battle_Unit(_human_player_idx);    // maybe, sets _human_out_of_moves = ST_TRUE and/or _human_handle_immobile = ST_FALSE
             Assign_Combat_Grids();
             ...
@@ -408,7 +408,7 @@ Turn_Off_Auto_Combat+D
 
 Tactical_Combat__WIP()
     ***cancel auto combat***
-        j_CMB_ProgressTurnFlow__WIP()
+        j_Combat_Next_Turn()
         j_Turn_Off_Auto_Combat()
             Turn_Off_Auto_Combat()
                 j_Next_Battle_Unit(_human_player_idx)
@@ -455,7 +455,7 @@ Tactical_Combat__WIP()
     Closing The Loop
         if leave_screen == ST_FALSE && _human_out_of_moves == ST_TRUE && _human_handle_immobile == ST_FALSE
             _human_out_of_moves = ST_FALSE
-            j_CMB_ProgressTurnFlow__WIP()
+            j_Combat_Next_Turn()
             j_Next_Battle_Unit(_human_player_idx)
 
 

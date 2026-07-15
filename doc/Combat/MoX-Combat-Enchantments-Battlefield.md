@@ -24,7 +24,7 @@ CMB_LoadResources__WIP()
 Strategic_Combat_Allocate()
 AITP_Combat_Spell()
 Cast_Spell_On_Battle_Unit()
-Combat_Cast_Spell__WIP()
+Combat_Cast_Spell()
 Do_Legal_Spell_Check__WIP()
 Apply_Mana_Leak()
 AI_MoveBattleUnits__WIP()
@@ -60,12 +60,12 @@ Strategic_Combat_Allocate:loc_888F2         les     bx, [combat_enchantments]
 AITP_Combat_Spell+DED                  add     bx, [word ptr combat_enchantments]  
 Cast_Spell_On_Battle_Unit+A25               les     bx, [combat_enchantments]           
 Cast_Spell_On_Battle_Unit:loc_8C6C2         les     bx, [combat_enchantments]           
-Combat_Cast_Spell__WIP+58F                  les     bx, [combat_enchantments]           
-Combat_Cast_Spell__WIP+5B6                  les     bx, [combat_enchantments]           
-Combat_Cast_Spell__WIP:loc_8D6F4            les     bx, [combat_enchantments]           
-Combat_Cast_Spell__WIP+795                  les     bx, [combat_enchantments]           
-Combat_Cast_Spell__WIP+79F                  les     bx, [combat_enchantments]           
-Combat_Cast_Spell__WIP+7AC                  les     bx, [combat_enchantments]           
+Combat_Cast_Spell+58F                  les     bx, [combat_enchantments]           
+Combat_Cast_Spell+5B6                  les     bx, [combat_enchantments]           
+Combat_Cast_Spell:loc_8D6F4            les     bx, [combat_enchantments]           
+Combat_Cast_Spell+795                  les     bx, [combat_enchantments]           
+Combat_Cast_Spell+79F                  les     bx, [combat_enchantments]           
+Combat_Cast_Spell+7AC                  les     bx, [combat_enchantments]           
 Do_Legal_Spell_Check__WIP+527               add     bx, [word ptr combat_enchantments]  
 Apply_Mana_Leak+7                           les     bx, [combat_enchantments]           
 Apply_Mana_Leak+16                          les     bx, [combat_enchantments]           

@@ -4,7 +4,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr111\AITP_CombatSpell__S
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr111\AITP_CombatSpell__STUB__GEMINI.c   (Gemini translation of the .asm — second opinion, NOT ground truth)
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr111\_misc.asm   (holds the jump table `off_8B1F3`)
 
-Combat_Cast_Spell__WIP()            Combat.c
+Combat_Cast_Spell()            Combat.c
     |-> AITP_Combat_Spell()
 Choose_Target_And_Action()          CMBTAI.c
     |-> AITP_Combat_Spell()

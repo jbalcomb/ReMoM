@@ -3,7 +3,7 @@
 
 
 WHEREIS  add extra mana / slider
-    Combat_Cast_Spell__WIP()
+    Combat_Cast_Spell()
         |-> Combat_Spellbook_Mana_Adder_Screen()
 
 
@@ -15,7 +15,7 @@ before Cast_Spell_On_Battle_Unit()
 ...and, some things override this value...
 ...in Cast_Spell_On_Battle_Unit, case scc_Direct_Damage_Variable: just applies the cost and damage
 
-Combat_Cast_Spell__WIP()
+Combat_Cast_Spell()
     Combat_Spellbook_Build__WIP()
     CMB_ComposeBookBG__WIP()
 Combat.C
@@ -27,7 +27,7 @@ CMB_SliderRedraw()
 Combat_Spellbook_Mana_Adder_Screen()
 
 Combat.C
-Combat_Cast_Spell__WIP()
+Combat_Cast_Spell()
     |-> Combat_Spellbook_Mana_Adder_Screen()
 
 (spell_data_table[spell_idx].type >= sdt_Infusable_Spell)

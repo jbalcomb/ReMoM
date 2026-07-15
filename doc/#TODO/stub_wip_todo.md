@@ -83,17 +83,32 @@
 - [ ] City_Screen_Draw__WIP
 
 ## Combat
-- [ ] AI_BU_AssignAction__WIP
+- [ ] AI_BU_AssignAction__WIP — renamed to AI_BU_AssignAction (CMBTAI.c:968); body substantive, needs done-done review
 - [x] AI_BU_GetAttackValue__STUB
-- [ ] AI_BU_ProcessAction__WIP
-- [ ] AI_BU_SelectAction__WIP
-- [ ] AI_CMB_PlayTurn__WIP
+- [ ] AI_BU_ProcessAction__WIP — renamed to AI_BU_ProcessAction (CMBTAI.c:268); body substantive (holds the AI combat cast call at CMBTAI.c:521), needs done-done review
+- [ ] AI_BU_SelectAction__WIP — renamed to Choose_Target_And_Action (CMBTAI.c:1153); body substantive, needs done-done review
+- [ ] AI_CMB_PlayTurn__WIP — renamed to Auto_Cast_Spell_And_Do_Combat_Turn (Combat.c:4508); body substantive, needs done-done review
+- [ ] AI_CombatSpellList — impl (Combat.c:25959), needs done-done review; AI Combat Spell layer
+- [ ] AI_EvaluateCmbtSpell — impl (Combat.c:24632), needs done-done review; AI Combat Spell layer
 - [x] AI_FightorFlight__STUB
 - [x] AI_GetCombatRallyPt__WIP
 - [ ] AI_MoveBattleUnits__WIP
 - [ ] AI_RestrictToCity__WIP
+- [ ] AI_SelectCmbtSpell — impl (Combat.c:24565), needs done-done review; AI Combat Spell layer
 - [x] AI_SetBasicAttacks__WIP
-- [ ] AITP_Combat_Spell
+- [ ] AI_SetCombatRealms — impl (Combat.c:25792), needs done-done review; AI Combat Spell layer
+- [ ] AI_UnitThreatRealms — impl (Combat.c:25860), needs done-done review; AI Combat Spell layer
+- [x] AITP_Combat_Spell — done-done 2026-07-07 (walkthrough doc doc/ComputerPlayer/Combat-AITP_Combat_Spell.md; faithful 1:1 to AITP_CombatSpell__STUB.asm; R1 summon-exhaustion + R2 buff-mask + R3 case-16 write-back fixed; builds clean)
+- [ ] AITP_CracksCall — impl (Combat.c:14763), needs done-done review; AI Combat Spell layer
+- [ ] AITP_DarknessLight — impl (Combat.c:12065), needs done-done review; AI Combat Spell layer
+- [ ] AITP_DispelMagic — impl (Combat.c:12260), needs done-done review; AI Combat Spell layer
+- [ ] AITP_Disrupt — impl (Combat.c:14708), needs done-done review; AI Combat Spell layer
+- [ ] AITP_EarthToMud — impl (Combat.c:14588), needs done-done review; AI Combat Spell layer
+- [ ] AITP_Healing — impl (Combat.c:12099), needs done-done review; AI Combat Spell layer
+- [ ] AITP_HolyWord — impl (Combat.c:13068), needs done-done review; AI Combat Spell layer
+- [ ] AITP_RecallHero — impl (Combat.c:14876), needs done-done review; AI Combat Spell layer
+- [ ] AITP_WarpCreature — impl (Combat.c:12196), needs done-done review; AI Combat Spell layer
+- [ ] AITP_WarpWood — impl (Combat.c:12144), needs done-done review; AI Combat Spell layer
 - [ ] Battle_Unit_Action__WIP
 - [ ] Battle_Unit_Attack__WIP
 - [ ] BU_Apply_Battlefield_Effects__WIP
@@ -118,7 +133,7 @@
 - [ ] CMB_ComposeBookBG__WIP
 - [ ] CMB_LoadResources__WIP
 - [ ] CMB_PrepareTurn__WIP
-- [ ] CMB_ProgressTurnFlow__WIP
+- [ ] Combat_Next_Turn — renamed from CMB_ProgressTurnFlow__WIP (Combat.c:4528); body substantive, needs done-done review
 - [ ] CMB_SetNearAllocs__WIP
 - [ ] CMB_SpawnDarkWall__WIP
 - [ ] CMB_SpawnFigure__WIP
@@ -129,7 +144,7 @@
 - [ ] CMB_TileGen__WIP
 - [ ] CMB_Units_Init__WIP
 - [ ] Combat__WIP
-- [ ] Combat_Cast_Spell__WIP
+- [x] Combat_Cast_Spell — done-done 2026-07-07 (walkthrough doc in doc/#CodeReview/; renamed from Combat_Cast_Spell__WIP; R1 payment-index + R2 AI-branch/spellbook-gating fixed; Dispel_Attempt/Counter_Message arg orders verified vs asm; whole tree builds clean)
 - [ ] Combat_Figure_Effect__WIP
 - [ ] Combat_Grid_Entities__WIP
 - [ ] Combat_Grid_Entity_Create__WIP
@@ -144,6 +159,7 @@
 - [ ] STK_CaptureCity__WIP
 - [ ] STK_ComposeFleeLost__STUB
 - [ ] Strategic_Combat__WIP
+- [ ] UU15_AITP_Disintegrate — MISSING (comment-only, Combat.c:12245); likely not needed (Disintegrate targeted inline in AITP_Combat_Spell's resistance-kill case); verify no caller, then strike
 - [ ] WIZ_GetLastRangedStr__WIP
 
 ## CONQUEST
@@ -341,10 +357,10 @@
 - [ ] Apply_Call_Chaos__WIP
 - [ ] BU_LifeDrain__WIP
 - [ ] Cast_Call_Chaos__WIP
-- [ ] CMB_CounterMessage__STUB
+- [x] CMB_CounterMessage__STUB — renamed to Combat_Spell_Counter_Message (Spells133.c:532); implemented, compiles clean 2026-07-07
 - [ ] Combat_Spell_Animation_Generic__WIP
 - [ ] TILE_BoltFromAbove__WIP
-- [ ] WIZ_DispelAttempt__STUB
+- [x] WIZ_DispelAttempt__STUB — renamed to Combat_Spell_Dispel_Attempt (Spells133.c:653); implemented, compiles clean 2026-07-07
 
 ## Spells137
 - [ ] Cast_Spell_City_Enchantment_Animation_1__WIP

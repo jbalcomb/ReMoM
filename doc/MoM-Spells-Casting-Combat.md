@@ -2,7 +2,7 @@ MoM-Spells-Casting-Combat.md
 
 
 CMB_SelectCaster()  ==>  Combat_Cast_Spell_With_Caster()
-Combat_Cast_Spell__WIP()   ==> Combat_Cast_Spell__WIP()
+Combat_Cast_Spell()   ==> Combat_Cast_Spell()
 GAME_LoadSpellAnim()  ==>  Spell_Animation_Load_Graphics__WIP()
 CMB_ShowSpellbook__WIP()  ==>  Combat_Spellbook_Screen()
 CMB_RedrawSpellbook__WIP()  ==>  Combat_Spellbook_Screen_Draw()
@@ -32,7 +32,7 @@ CMB_SpellcastMessage()
     manual message box of "[player name] has cast [spell name]", "The [unit type name] [has|have] cast [spell name].", etc.
 
 
-Combat_Cast_Spell__WIP()
+Combat_Cast_Spell()
     USA_SUMMON_DEMON_1 or USA_SUMMON_DEMON_2
     ...
         BU_SummonDemon__SEGRAX()
@@ -71,7 +71,7 @@ Cast_Spell_On_Battle_Unit()
 
 
 
-Combat_Cast_Spell__WIP()
+Combat_Cast_Spell()
     if(Target != 999)
         Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
 'Target' is battle_unit_idx
@@ -81,7 +81,7 @@ Combat_Cast_Spell__WIP()
 no idea what's up with the two unused parameters
 
 ### IDK_mana
-    Combat_Cast_Spell__WIP()
+    Combat_Cast_Spell()
         if(spell_idx != spl_NONE)
             if( (spell_data_table[spell_idx].type < scc_Infusable_Spell) || (Spell_Like_Ability != ST_FALSE) )
                 if(caster_idx > CASTER_IDX_BASE)
@@ -102,7 +102,7 @@ no idea what's up with the two unused parameters
 
 '(Summon) Phantom Warriors'
 Tactical_Combat__WIP()
-    Combat_Cast_Spell__WIP()
+    Combat_Cast_Spell()
         Combat_Spell_Target_Screen__WIP()
         Cast_Spell_On_Battle_Unit()
             Create_Unit
@@ -170,7 +170,7 @@ IMG_CMB_FX_Figure = Allocate_Next_Block(World_Data, 124);  // 124 PR, 1984 B
 
 Code-Path to Human Player Casts Spell
 ...Summoning
-Combat_Cast_Spell__WIP()
+Combat_Cast_Spell()
     ...
     ...
     ...
@@ -196,12 +196,12 @@ there are hard-coded checks for caster_id = { ¿ 20, 21, 22, 23, 24, ... ? }
 
 
 
-#### Combat_Cast_Spell__WIP() vs. Combat_Cast_Spell_With_Caster()
+#### Combat_Cast_Spell() vs. Combat_Cast_Spell_With_Caster()
 Tactical_Combat__WIP()
-    |-> Combat_Cast_Spell__WIP()
+    |-> Combat_Cast_Spell()
     ||
     |-> Combat_Cast_Spell_With_Caster()
-        |-> Combat_Cast_Spell__WIP()
+        |-> Combat_Cast_Spell()
 
 
 
@@ -212,7 +212,7 @@ BU_SummonDemon__STUB()
 BU_HasSpellAbility__WIP()
 
 Combat_Cast_Spell_With_Caster()
-Combat_Cast_Spell__WIP()
+Combat_Cast_Spell()
 Combat_Cast_Spell_Error()
 
 Combat_Spellbook_Build__STUB()
@@ -259,7 +259,7 @@ CMB_WizCastAvailable {F,T}
 
 CMB_CastSpell()
 
-## Combat_Cast_Spell__WIP()
+## Combat_Cast_Spell()
 XREF:
     j_Combat_Cast_Spell__WIP()
         Tactical_Combat__WIP+DF0

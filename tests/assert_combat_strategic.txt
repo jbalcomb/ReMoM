@@ -1,0 +1,83 @@
+# assert_combat_strategic.txt -- Field assertions for the HeMoM_Combat_Strategic test.
+#
+# Characterization baseline for the strategic (auto-resolve) combat tracer:
+#   HeMoM --combat 500 12,15,17 --seed1 12345
+# Fixture: SAVECMBT.GAM (attacker player 2 units 12,15,17 vs defender player 3
+# stack at (20,15,0) = units 500,665,691; diplomacy patched to DIPL_War).
+#
+# Values pin CURRENT behavior (including OGBUGs) for seed 12345.  They are
+# seed-stream-sensitive: any change that adds/removes an RNG draw inside the
+# combat path shifts them, and this file must be re-captured (rerun the
+# command above and copy HEMOM_COMBAT.txt values).
+#
+combat.seed = 12345
+combat.attacker_player_idx = 2
+combat.defender_player_idx = 3
+combat.defender_unit_idx = 500
+combat.troop_count = 3
+combat.defender_stack_count = 3
+combat.attacker_won = 0
+combat.gold_reward = 0
+combat.rng_calls = 24
+combat.random_seed_after = 3898803672
+game.units_after = 842
+troop[0].unit_idx = 12
+troop[0].owner_idx = -1
+troop[0].type = 35
+troop[0].status = 0
+troop[0].level = 3
+troop[0].xp = 120
+troop[0].damage = 0
+troop[0].wx = 19
+troop[0].wy = 15
+troop[0].wp = -1
+troop[1].unit_idx = 15
+troop[1].owner_idx = -1
+troop[1].type = 35
+troop[1].status = 0
+troop[1].level = 3
+troop[1].xp = 120
+troop[1].damage = 0
+troop[1].wx = 19
+troop[1].wy = 15
+troop[1].wp = -1
+troop[2].unit_idx = 17
+troop[2].owner_idx = -1
+troop[2].type = 35
+troop[2].status = 0
+troop[2].level = 3
+troop[2].xp = 120
+troop[2].damage = 0
+troop[2].wx = 19
+troop[2].wy = 15
+troop[2].wp = -1
+defender[0].unit_idx = 500
+defender[0].owner_idx = 3
+defender[0].type = 124
+defender[0].status = 0
+defender[0].level = 2
+defender[0].xp = 74
+defender[0].damage = 0
+defender[0].wx = 20
+defender[0].wy = 15
+defender[0].wp = 0
+defender[1].unit_idx = 665
+defender[1].owner_idx = 3
+defender[1].type = 123
+defender[1].status = 0
+defender[1].level = 1
+defender[1].xp = 60
+defender[1].damage = 3
+defender[1].wx = 20
+defender[1].wy = 15
+defender[1].wp = 0
+defender[2].unit_idx = 691
+defender[2].owner_idx = 3
+defender[2].type = 123
+defender[2].status = 0
+defender[2].level = 1
+defender[2].xp = 56
+defender[2].damage = 0
+defender[2].wx = 20
+defender[2].wy = 15
+defender[2].wp = 0
