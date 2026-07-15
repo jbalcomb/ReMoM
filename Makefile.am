@@ -28,6 +28,7 @@ libstu_a_SOURCES = \
     STU/src/STU_DRAW.c \
     STU/src/STU_EMS.c \
     STU/src/STU_FMT.c \
+    STU/src/STU_GRAF.c \
     STU/src/STU_INT.c \
     STU/src/STU_JSON.c \
     STU/src/STU_LOG.c \

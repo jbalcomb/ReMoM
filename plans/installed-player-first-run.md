@@ -1,0 +1,141 @@
+# Plan: Installed-Player First Run (Data Discovery, Fail-Soft & File Locations)
+
+> Source PRD: [doc/#AI_Plans/PRD-Installed-Player-First-Run.md](../doc/%23AI_Plans/PRD-Installed-Player-First-Run.md)
+
+Make the installed / portable player build "just run" — find the user's game data without a manual `cd`, put per-user files in the right OS locations, and fail with a clear dialog instead of a blank-window crash — **without touching the reconstructed game code**.
+
+## Architectural decisions
+
+Durable decisions that apply across all phases:
+
+- **New module `STU/src/STU_GRAF.c` / `.h` ("Game Resource Archive File")** — the single home for OS/platform path-and-place resolution *and* the data-open functions. Portable C with platform `#ifdef`s (same style as `STU_LOG`'s SEH/POSIX split); **no SDL dependency**. This is the "mechanism" layer; it keeps path policy out of `stu_compat`, out of the SDL/Win32 backends, and out of the game code.
+- **`ext/stu_compat.h` is unchanged.** `STU_GRAF` calls `stu_fopen_ci()` to open an already-resolved full path; the compat shim stays a libc-portability leaf.
+- **Two open functions, two path families:**
+  - `STU_GRAF_Open_Asset(name, mode)` — **read-only** shipped data; walks the ordered read search path.
+  - `STU_GRAF_Open_User(name, mode)` — **writable** per-user files; resolves to the user data dir.
+- **Ordered read search path:** `REMOM_DATA_DIR` (env) → `[Paths] game_data` (config) → `$XDG_CACHE_HOME/ReMoM/` (modified copies) → executable dir → CWD. First hit wins. Unpopulated default = CWD-only (HeMoM/tests/matchup unaffected).
+- **OS locations (all under a `ReMoM` app dir), resolved inside `STU_GRAF`:**
+  | Purpose | XDG role | Linux | Windows | macOS |
+  |---|---|---|---|---|
+  | Original `.LBX` (read-only) | — | user's MoM install | user's MoM install | user's MoM install |
+  | Modified/derived data | `XDG_CACHE_HOME` | `~/.cache/ReMoM/` | `%LOCALAPPDATA%\ReMoM\cache\` | `~/Library/Caches/ReMoM/` |
+  | `CONFIG.MOM`/`MAGIC.SET`/saves (writable) | `XDG_DATA_HOME` | `~/.local/share/ReMoM/` | `%APPDATA%\ReMoM\` | `~/Library/Application Support/ReMoM/` |
+  | Settings (`ReMoM.ini`) | `XDG_CONFIG_HOME` | `~/.config/ReMoM/` | `%APPDATA%\ReMoM\` | `~/Library/Application Support/ReMoM/` |
+  | Logs | `XDG_STATE_HOME` | `~/.local/state/ReMoM/` | `%LOCALAPPDATA%\ReMoM\logs\` | `~/Library/Logs/ReMoM/` |
+- **`STU_LOG` delegates its log-dir resolution to `STU_GRAF`** (shared XDG/mkdir code, no duplication).
+- **Platform layer keeps only `Platform_Show_Error(title, msg)`** (needs the UI backend: `SDL_ShowSimpleMessageBox` / `MessageBoxA` / stderr for headless). Path/place resolution does **not** touch the backend.
+- **Routing the game's opens (no game-logic edits):** `LBX_Load` (libmox, 3 sites) calls `STU_GRAF_Open_Asset` — legal MoX→STU dependency, no function pointers. `CONFIG.MOM`/`MAGIC.SET`/save sites (bounded, in `ReMoM_Init.c`/`Settings.c`/HeMoM newgame) call the `STU_GRAF` open functions.
+- **`profile` at init:** `STU_GRAF_Init(STU_GRAF_PLAYER | STU_GRAF_HEADLESS)`. HEADLESS → CWD-only, no seeding, stderr for errors. Both `main()`s call it.
+- **Startup order (target):** CLI-parse → `STU_GRAF_Init` → `STU_Log_Startup` (into the resolved state dir) → `Startup_Platform` → preflight (dialog/exit) → seed → `ReMoM_Init_Engine` + MAGIC/WIZARDS → run. Bootstrap de-duplication of `ReMoM.c`/`HeMoM.c` and this order-fix are **distributed across phases**, not a separate refactor phase.
+- **Seeding policy:** on first run, copy `CONFIG.MOM`/`MAGIC.SET` from the discovered game-data dir into the user data dir, then **always** read/write the copies (no read-through). Originals never modified.
+
+---
+
+## Phase 1: STU_GRAF module + asset-read relocation
+
+**PRD coverage**: Goals "discovery" + "minimal original-code impact"; FR 1–4; ACs "data-next-to-exe boots," "`REMOM_DATA_DIR` directs discovery," "no `MoM/src`/`MoX/src` game-logic edits."
+
+### What to build
+
+Stand up `STU/src/STU_GRAF.c/.h` with the read side of the machinery: executable-dir resolution, recursive `mkdir`, an ordered read search path (this phase: `REMOM_DATA_DIR` → exe-dir → CWD — config/cache come in Phase 3), and `STU_GRAF_Open_Asset(name, mode)` which walks the path and opens the first hit via `stu_fopen_ci`. Route libmox `LBX_Load`'s three open sites through `STU_GRAF_Open_Asset` (bare LBX names unchanged). Add `STU_GRAF_Init(profile)`; `ReMoMber` calls it as `PLAYER`, `HeMoM` as `HEADLESS`. `stu_compat` is not touched. Default (unpopulated / HEADLESS) resolves CWD-only so existing consumers are unaffected.
+
+### Acceptance criteria
+
+- [ ] With game data **only** next to the executable (not in CWD), `ReMoMber` launched from an unrelated CWD loads its LBX and boots to the title screen.
+- [ ] `REMOM_DATA_DIR=<dir>` directs LBX resolution to `<dir>` regardless of CWD.
+- [ ] `HeMoM` and `ctest` still resolve data from CWD (default path) — no behavior change.
+- [ ] No file under `MoM/src/` or `MoX/src/` game *logic* is modified (only `LBX_Load`'s open-call swap — loader plumbing).
+- [ ] `ext/stu_compat.h` is unchanged.
+- [ ] `STU_GRAF` unit test: file only in the exe-dir-equivalent resolves; `REMOM_DATA_DIR` wins; empty everywhere → open fails; unpopulated → CWD only.
+
+---
+
+## Phase 2: Fail-soft preflight + cross-platform error dialog
+
+**PRD coverage**: FR 10–13; ACs "no data → dialog + exit, no crash," "HeMoM stderr."
+
+### What to build
+
+Add `Platform_Show_Error(title, message)` to the platform API (SDL2/SDL3 `SDL_ShowSimpleMessageBox`, Win32 `MessageBoxA`, headless `stderr`), safe to call before a window exists. Add a preflight in `STU_GRAF` (or called from it) that verifies the required file set (`FONTS.LBX`, `MAINSCRN.LBX`, … aligned with the installer PRD) resolves via the search path; wire it into `ReMoMber`'s `main()` after `STU_GRAF_Init` and before the first asset load. On missing data: log `ERROR`, show the dialog with the missing files + the fix + where it looked, and exit non-zero. Headless prints the same to stderr.
+
+### Acceptance criteria
+
+- [ ] No data discoverable anywhere → GUI dialog names the missing files and the fix, process exits non-zero, no crash / no blank-window flash.
+- [ ] `HeMoM` with missing data prints the same message to stderr and exits non-zero (no GUI call).
+- [ ] Data present → boots normally, no dialog.
+- [ ] `Platform_Show_Error` headless variant is unit-tested (asserts on stderr); GUI variants smoke-checked per backend.
+
+---
+
+## Phase 3: Config + cache entries in the search path
+
+**PRD coverage**: FR 1.2–1.3, 7; installer handshake; AC "`game_data` directs discovery."
+
+### What to build
+
+Extend `STU_GRAF`'s search-path construction to read `[Paths] game_data` from the config file (`$XDG_CONFIG_HOME/ReMoM/ReMoM.ini` on Linux; installer-written path on Windows) and to include `$XDG_CACHE_HOME/ReMoM/` **ahead of** the originals (so any ReMoM-modified copies shadow the shipped ones). Final order: `REMOM_DATA_DIR` → `game_data` → cache → exe-dir → CWD.
+
+### Acceptance criteria
+
+- [ ] `[Paths] game_data=<dir>` in the config file resolves LBX from `<dir>`.
+- [ ] A copy of an asset placed in `$XDG_CACHE_HOME/ReMoM/` shadows the same-named original in the game-data dir.
+- [ ] Search precedence is exactly `REMOM_DATA_DIR` → `game_data` → cache → exe-dir → CWD (unit-tested).
+
+---
+
+## Phase 4: Writable per-user layout + first-run seeding
+
+**PRD coverage**: Goals "writable files"; FR 5–6; ACs "MAGIC.SET/save in data home," "read-only dir saves," "CONFIG.MOM seeded." (Carries the MAGIC/WIZARDS `main()` extraction.)
+
+### What to build
+
+Add user-data-dir resolution (`XDG_DATA_HOME` via the `STU_GRAF` place helpers) and `STU_GRAF_Open_User(name, mode)`. Route `CONFIG.MOM`, `MAGIC.SET`, and save games through it (the bounded set of sites in `ReMoM_Init.c`/`Settings.c`/HeMoM newgame). Implement copy-then-always-read-copy seeding: on first run, copy `CONFIG.MOM` (and `MAGIC.SET` if present) from the discovered game-data dir into the user data dir; thereafter always read/write the copies. As the reorg rides along, extract the inlined MAGIC/WIZARDS init out of `main()` into `ReMoM_Init.c`.
+
+### Acceptance criteria
+
+- [ ] `MAGIC.SET` and a new save are written under the user data dir (`~/.local/share/ReMoM/` etc.), **not** the user's MoM install.
+- [ ] With a **read-only** game-data dir, saving still succeeds.
+- [ ] On first run, `CONFIG.MOM` is copied into the user data dir and read from there afterward; the original is never modified.
+- [ ] Write-family unit test: with a read-only game-data dir, `MAGIC.SET`/save writes land in the user-dir temp, not the source.
+- [ ] `main()` no longer contains inlined MAGIC/WIZARDS init (moved to `ReMoM_Init.c`); build + tests green.
+
+---
+
+## Phase 5: Checksum compatibility pass
+
+**PRD coverage**: Goals "compatibility"; FR 8–9; AC "unrecognized checksum → non-blocking warning."
+
+### What to build
+
+Add a shared-manifest reader (installer PRD's `lbx-hashes.txt` format) and a non-blocking compatibility pass that runs after the presence preflight: hash **every** discovered `.LBX` (~121) and compare against the manifest. On any unrecognized or wrong/unsupported-version hash, warn via the dialog/log but continue (mirrors the installer's "continue anyway"). Presence failure stays blocking.
+
+### Acceptance criteria
+
+- [ ] Data files whose checksums don't match any manifest entry → a non-blocking "unrecognized / wrong version" warning; the game still starts.
+- [ ] Matching checksums → silent boot (no warning).
+- [ ] Manifest reader unit-tested against a small golden manifest + fixture files.
+
+---
+
+## Phase 6: Log relocation to XDG_STATE_HOME (player build only)
+
+**PRD coverage**: Goals "logs → state"; FR 14–15; ACs "player logs in state dir," "HeMoM/ctest/matchup still CWD." (Carries the startup-order fix.)
+
+### What to build
+
+Have `STU_LOG` resolve its log directory through `STU_GRAF`'s place helpers (state dir). Base-dir precedence: `REMOM_LOG_DIR` (env) → caller-supplied dir (ReMoMber passes the resolved state dir) → CWD (default; HeMoM/tests/matchup). Apply the startup-order fix so `STU_GRAF_Init` runs before `STU_Log_Startup`, letting the player build log into the resolved state dir. Rotation runs within the resolved dir; falls back to CWD on failure.
+
+### Acceptance criteria
+
+- [ ] A player-build (`ReMoMber`) run writes `remom_log_*.txt` under the OS state dir (`~/.local/state/ReMoM/` etc.), not the CWD.
+- [ ] `HeMoM`, `ctest`, and the matchup harness still write `remom_log_*.txt` to the CWD — `tools/log-tools/log_triage.py` and `tools/parity_check.py` unaffected.
+- [ ] `REMOM_LOG_DIR=<dir>` overrides for any build; `REMOM_LOG_DIR=.` forces CWD.
+- [ ] 3-file rotation works correctly within the resolved directory; unwritable dir falls back to CWD with the existing stderr note.
+
+---
+
+## Sequencing notes
+
+- Dependencies: **1 → 2 → (3, 4 either order) → 5**. **Phase 6 is independent** (touches only `STU_LOG` + the `STU_GRAF` place helpers from Phase 1) — it can run in parallel or first as a low-risk warm-up.
+- Bootstrap de-duplication of `ReMoM.c`/`HeMoM.c` is incremental: Phase 1 adds `STU_GRAF_Init` to both mains; Phase 4 extracts MAGIC/WIZARDS init; Phase 6 lands the order-fix. No separate refactor-only phase.
+- Reconcile with [PRD-Installer-Game-Data-Setup.md](../doc/%23AI_Plans/PRD-Installer-Game-Data-Setup.md) on the shared checksum manifest (filename/columns) and the `[Paths] game_data` config file name before Phases 3/5.

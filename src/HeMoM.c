@@ -33,6 +33,7 @@
 #include "../STU/src/STU_DBG.h"
 #endif
 #include "../STU/src/STU_LOG.h"
+#include "../STU/src/STU_GRAF.h"
 #include "../platform/include/Platform.h"
 #include "../platform/include/Platform_Replay.h"
 #include "../platform/include/Platform_Keys.h"
@@ -1010,6 +1011,11 @@ int main(int argc, char *argv[])
     int argi;
 
     STU_Log_Startup("ReMoM.ini");
+
+    /* Headless profile: data resolves from CWD (plus REMOM_DATA_DIR override),
+       matching the existing test / matchup harness behavior. */
+    STU_GRAF_Init(STU_GRAF_HEADLESS);
+
     LOG_INFO(LOG_CAT_GENERAL, "BEGIN: HeMoM main() [STU_LOG tracer bullet]");
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: HeMoM  main()", __FILE__, __LINE__);
     LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: BEGIN: HeMoM  main()", __FILE__, __LINE__);

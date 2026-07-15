@@ -7,6 +7,7 @@ set(LIBSTU_SOURCES
     STU_FIO.c
     STU_FMT.c
     STU_FON.c
+    STU_GRAF.c
     STU_INIT.c
     STU_INT.c
     STU_JSON.c

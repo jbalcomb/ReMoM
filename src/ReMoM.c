@@ -32,6 +32,7 @@
 #endif
 
 #include "../STU/src/STU_LOG.h"
+#include "../STU/src/STU_GRAF.h"
 
 #include "../MoX/src/capture.h"
 #include "../MoX/src/CFG.h"
@@ -224,6 +225,10 @@ int main(int argc, char * argv[])
 
     STU_Log_Startup("ReMoM.ini");
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
+    /* Resolve the game-data search path (env -> exe-dir -> CWD) before any
+       asset load, so the installed / portable player boots without a manual cd. */
+    STU_GRAF_Init(STU_GRAF_PLAYER);
 
 #ifdef STU_DEBUG
     AI_Metrics_Startup();
