@@ -189,7 +189,15 @@ void Create_Screen_Buffers(int size)
 
     video_memory_size = (256 * 1024);
 
-    video_memory = (uint8_t *)Allocate_Space(((256 * 1024) / 16));  // 256 * 1024  65536 * 4  262144 / 16 = 16384
+    // video_memory = (uint8_t *)Allocate_Space(((256 * 1024) / 16));  // 256 * 1024  65536 * 4  262144 / 16 = 16384
+    // uint8_t *data = NULL;
+    // data = malloc(HDR_MIDI_LEN + len_evnt * 2);
+    // if(data == NULL)
+    // {
+    //     STU_DEBUG_BREAK();
+    //     return false;
+    // }
+    video_memory = (uint8_t *)malloc((256 * 1024));
 
     video_memory_offset = (0 + (0 * 64 * 1024));
 
@@ -229,10 +237,14 @@ void Create_Screen_Buffers(int size)
 //     dbg_prn("DEBUG: [%s, %d]: video_page_buffer[3] + (320*200*1): %p\n", __FILE__, __LINE__, (uint8_t*)(video_page_buffer[3] + (320 * 200 * 1)));
 // #endif
 
-    video_page_buffer_2x[0] = (uint8_t*)Allocate_Space( ((640 * 400 * 1) / 16) );  // 640 * 400 * 1Bpp = 256000  / 16 = 16000 PR
-    video_page_buffer_2x[1] = (uint8_t*)Allocate_Space( ((640 * 400 * 1) / 16) );
-    video_page_buffer_2x[2] = (uint8_t*)Allocate_Space( ((640 * 400 * 1) / 16) );
-    video_page_buffer_2x[3] = (uint8_t*)Allocate_Space( ((640 * 400 * 1) / 16) );
+    // video_page_buffer_2x[0] = (uint8_t*)Allocate_Space( ((640 * 400 * 1) / 16) );  // 640 * 400 * 1Bpp = 256000  / 16 = 16000 PR
+    // video_page_buffer_2x[1] = (uint8_t*)Allocate_Space( ((640 * 400 * 1) / 16) );
+    // video_page_buffer_2x[2] = (uint8_t*)Allocate_Space( ((640 * 400 * 1) / 16) );
+    // video_page_buffer_2x[3] = (uint8_t*)Allocate_Space( ((640 * 400 * 1) / 16) );
+    video_page_buffer_2x[0] = (uint8_t*)malloc( (640 * 400 * 1) );
+    video_page_buffer_2x[1] = (uint8_t*)malloc( (640 * 400 * 1) );
+    video_page_buffer_2x[2] = (uint8_t*)malloc( (640 * 400 * 1) );
+    video_page_buffer_2x[3] = (uint8_t*)malloc( (640 * 400 * 1) );
     memset(video_page_buffer_2x[0], 0, screen_pixel_size * 2);
     memset(video_page_buffer_2x[1], 0, screen_pixel_size * 2);
     memset(video_page_buffer_2x[2], 0, screen_pixel_size * 2);
@@ -249,10 +261,14 @@ void Create_Screen_Buffers(int size)
 //     dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[3] + (640*400*1): %p\n", __FILE__, __LINE__, (uint8_t*)(video_page_buffer_2x[3] + (640 * 400 * 1)));
 // #endif
 
-    video_page_buffer_2x_XBGR[0] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );  // 640 * 400 * 4Bpp = 1000000  / 16 = 64000 PR
-    video_page_buffer_2x_XBGR[1] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );
-    video_page_buffer_2x_XBGR[2] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );
-    video_page_buffer_2x_XBGR[3] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );
+    // video_page_buffer_2x_XBGR[0] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );  // 640 * 400 * 4Bpp = 1000000  / 16 = 64000 PR
+    // video_page_buffer_2x_XBGR[1] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );
+    // video_page_buffer_2x_XBGR[2] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );
+    // video_page_buffer_2x_XBGR[3] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );
+    video_page_buffer_2x_XBGR[0] = (uint8_t*)malloc( (640 * 400 * 4) );
+    video_page_buffer_2x_XBGR[1] = (uint8_t*)malloc( (640 * 400 * 4) );
+    video_page_buffer_2x_XBGR[2] = (uint8_t*)malloc( (640 * 400 * 4) );
+    video_page_buffer_2x_XBGR[3] = (uint8_t*)malloc( (640 * 400 * 4) );
     memset(video_page_buffer_2x_XBGR[0], 0, (640 * 400 * 4));
     memset(video_page_buffer_2x_XBGR[1], 0, (640 * 400 * 4));
     memset(video_page_buffer_2x_XBGR[2], 0, (640 * 400 * 4));

@@ -126,6 +126,7 @@ libplatform_headless_a_CFLAGS = $(AM_CFLAGS) \
 libmox_a_SOURCES = \
     MoX/src/AIL.c \
     MoX/src/Allocate.c \
+    MoX/src/Allocate_Pool.c \
     MoX/src/angle.c \
     MoX/src/capture.c \
     MoX/src/CFG.c \

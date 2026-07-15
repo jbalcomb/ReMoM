@@ -10,14 +10,19 @@ Durable decisions that apply across all phases:
   `Allocate_Space_No_Header`, `Allocate_First_Block`, `Allocate_Next_Block`,
   `Check_Allocation`, `Get_Free_Blocks`, `Mark_Block`, `Release_Block`,
   `Reset_First_Block`. Their signatures and return semantics do not change.
-- **New public functions**: `Allocate_Space_Heap(size)` (carve-out shim,
-  legacy malloc behavior), and the `Allocate_Pool` module's API
-  (`Pool_Init`, `Pool_Carve`, `Pool_Bytes_Used`, `Pool_Bytes_Free`).
+- **New public functions**: the `Allocate_Pool` module's API
+  (`Pool_Init`, `Pool_Carve`, `Pool_Bytes_Used`, `Pool_Bytes_Free`). No
+  new `Allocate_*` wrapper — excluded arenas call `malloc()` directly.
 - **Pool storage shape**: one `static uint8_t` array in BSS, owned by the
   new `Allocate_Pool` module. Size is a compile-time constant
-  (`POOL_SIZE`) equal to the sum of in-scope `Allocate_Space` sizes plus a
-  small fixed safety margin (4-16 KB). `static_assert` at build time
-  enforces sufficiency.
+  (`POOL_SIZE`) equal to the sum of in-scope `Allocate_Space` sizes plus
+  safety margins at both ends: `LEADING_GUARD` (256 B - 4 KB) reserved
+  ahead of the first carve, so `-1`-style underruns off the first arena
+  stay inside the pool, and a trailing `FIXED_MARGIN` (4-16 KB) for
+  overruns off the last arena. `Pool_Carve` never hands out guard bytes;
+  the first carve returns `pool_base + LEADING_GUARD`. `static_assert` at
+  build time enforces sufficiency. Arenas between neighbors get incidental
+  OOB coverage in both directions from tight packing.
 - **Sentinel pattern**: `0xCC` byte fill performed exactly once at
   `Pool_Init`. Sub-block writes overwrite their own bytes; slack stays
   at sentinel until explicitly written (or until `gd_ci_inject_*` stamps
@@ -25,19 +30,23 @@ Durable decisions that apply across all phases:
 - **SAMB header layout (unchanged)**: 16-byte per-sub-block header with
   `_AAAA` / `_CCCC` sentinels, `MEMSIG1`, `MEMSIG2`, `SIZE`, `USED`,
   `MARK` fields. Same field offsets, same sentinel values.
-- **Carve-out boundary**: video, audio, and large graphics arenas remain
-  on `malloc` via `Allocate_Space_Heap`. Specifically: Video2.c
-  (`video_memory` + per-page buffers), SOUND.c (`state_table`,
-  `timbre_cache`, `timb_seg`), ALLOC.c (`EmmHndl_FIGUREX`,
-  `EmmHndl_TILEXXX`, `GfxBuf_2400B`, `g_graphics_cache_seg`). Every other
-  in-scope `Allocate_Space` call site moves to pool transparently.
+- **Pool/heap boundary**: video, audio, and EMS/graphics-bank arenas are
+  not System RAM and call `malloc()` directly (no SAMB header, sized in
+  bytes). Specifically: Video2.c (`video_memory` + per-page buffers),
+  SOUND.c (`state_table`, `timbre_cache`, `timb_seg`), ALLOC.c
+  (`EmmHndl_FIGUREX`, `EmmHndl_TILEXXX`, `GfxBuf_2400B`).
+  `g_graphics_cache_seg` is *not* on this list — it is a SAMB arena
+  (`Allocate_First_Block` in `Graphics_Cache_Reset()`) and stays
+  pool-backed. Every other in-scope `Allocate_Space` call site moves to
+  pool transparently.
 - **Pool exhaustion**: invokes `Allocation_Error` (matching existing
   fatal-on-allocator-failure pattern). Caller never sees a NULL return.
-- **CI byte injection invariant**: `gd_ci_inject_world_overrun` and any
-  future OOB-region inject hooks compute slack addresses from base
-  pointers. The base pointers now point into the static pool instead of
-  into a malloc block; the inject API and the OG-captured byte payloads
-  are unchanged.
+- **CI byte injection invariant**: `gd_ci_inject_world_overrun`, its
+  existing companion `gd_ci_inject_flags_overrun`, and any future
+  OOB-region inject hooks compute slack addresses from base pointers.
+  The base pointers now point into the static pool instead of into a
+  malloc block; the inject API and the OG-captured byte payloads are
+  unchanged.
 - **HeMoM ↔ ReMoMber parity**: both targets consume MoX/src/Allocate.c
   and the new `Allocate_Pool` module identically. No per-target
   conditional behavior.
@@ -65,7 +74,11 @@ end-to-end against the module's public API alone — no integration with
 ### Acceptance criteria
 
 - [ ] `Pool_Init` fills the entire pool with sentinel byte `0xCC`,
-  observable via byte reads at any offset.
+  observable via byte reads at any offset — including the leading guard
+  and trailing margin.
+- [ ] The first `Pool_Carve` after `Pool_Init` returns
+  `pool_base + LEADING_GUARD`; guard bytes are never handed out and stay
+  at the sentinel until explicitly written.
 - [ ] `Pool_Carve(N)` returns a pointer that advances the next-free
   cursor by exactly N bytes; back-to-back carves return adjacent
   addresses.
@@ -84,35 +97,36 @@ end-to-end against the module's public API alone — no integration with
 
 ---
 
-## Phase 2a: Carve-out shim (no behavioral change)
+## Phase 2a: Route excluded arenas to malloc (no behavioral change)
 
-**User stories**: 4, 9, 23
+**User stories**: 4, 5, 9, 23
 
 ### What to build
 
-Introduce `Allocate_Space_Heap(size)` as a new public function whose
-behavior is identical to today's malloc-backed `Allocate_Space`. Edit
-the ~10 carve-out call sites — Video2.c (`video_memory` + per-page
-buffers), SOUND.c (`state_table`, `timbre_cache`, `timb_seg`), ALLOC.c
-(`EmmHndl_FIGUREX`, `EmmHndl_TILEXXX`, `GfxBuf_2400B`,
-`g_graphics_cache_seg`) — to call `Allocate_Space_Heap` instead of
-`Allocate_Space`. Each edited call site gets a brief comment explaining
-why it's carve-out (graphics / audio / EMM / video buffer). At the end
-of this phase, `Allocate_Space` is still malloc-backed for the
-remaining call sites; no game behavior changes. The phase exists to
+Edit the excluded (non-System-RAM) call sites to allocate directly via
+`malloc()` instead of `Allocate_Space` — Video2.c (`video_memory` plus
+the three 1x and three XBGR-2x page buffers, indices 1-3), SOUND.c
+(`state_table`, `timbre_cache`, `timb_seg`), ALLOC.c (`EmmHndl_FIGUREX`,
+`EmmHndl_TILEXXX`, `GfxBuf_2400B`). Each of these arenas is a flat
+buffer that is never sub-divided and never reads its SAMB header, so the
+`malloc()` is sized in bytes to the buffer's real requirement and drops
+both the SAMB header and the paragraph `+1` rounding that `Allocate_Space`
+applied. Each edited call site gets a brief comment explaining why it
+bypasses the pool (VGA hardware / sound driver / EMS bank).
+`g_graphics_cache_seg` is deliberately left on `Allocate_Space` — it is a
+SAMB arena (`Allocate_First_Block` in `Graphics_Cache_Reset()`) and rides
+the pool. At the end of this phase, `Allocate_Space` is still malloc-backed
+for the remaining call sites; no game behavior changes. The phase exists to
 make the pool/heap boundary explicit and auditable before the
 implementation swap.
 
 ### Acceptance criteria
 
-- [ ] `Allocate_Space_Heap` declared in the public header alongside
-  `Allocate_Space`.
-- [ ] `Allocate_Space_Heap` implemented identically to today's
-  `Allocate_Space` (single malloc per call, same SAMB header writes).
-- [ ] All carve-out call sites in Video2.c, SOUND.c, and ALLOC.c use
-  `Allocate_Space_Heap`.
-- [ ] Every edited call site has an inline comment explaining the
-  carve-out reason.
+- [ ] All excluded call sites in Video2.c, SOUND.c, and ALLOC.c allocate
+  via `malloc()` directly, sized in bytes to the buffer's requirement.
+- [ ] `g_graphics_cache_seg` still uses `Allocate_Space` (unchanged).
+- [ ] Every edited call site has an inline comment explaining why it
+  bypasses the pool.
 - [ ] ReMoMber boots to the Main Screen with no behavior change.
 - [ ] Matchup pipeline runs to completion with all `gd_dump_*`
   comparison points still green.
@@ -123,7 +137,7 @@ implementation swap.
 
 ## Phase 2b: Pool-backed swap
 
-**User stories**: 1, 2, 3, 5, 6, 8, 10, 11, 22
+**User stories**: 1, 2, 3, 6, 8, 10, 11, 22, 25
 
 ### What to build
 
@@ -133,13 +147,17 @@ through `Pool_Carve` instead of `malloc`. The SAMB header writes
 unchanged; only the underlying memory source changes. `Pool_Init` is
 called once at startup, before any `Allocate_Space` call. `POOL_SIZE`
 is finalized as the compile-time sum of every in-scope
-`Allocate_Space` call's `size` argument plus the fixed safety margin
-(4-16 KB); a `static_assert` guards the sufficiency. Carve-out arenas
-are unaffected — they continue to use `Allocate_Space_Heap` from
-Phase 2a. After this phase, every formerly-pool-bound OOB write lands
-inside the static pool's bounds, ASan-detectable parent-malloc
-overruns from in-scope arenas stop, and the matchup byte-compare
-pipeline continues to pass.
+`Allocate_Space` call's `size` argument plus the leading guard
+(256 B - 4 KB) and the trailing safety margin (4-16 KB); a
+`static_assert` guards the sufficiency (`POOL_SIZE` includes
+`g_graphics_cache_seg`'s ~1 MB). Excluded arenas are unaffected — they
+were moved to direct `malloc()` in Phase 2a. After this phase, every
+formerly-pool-bound OOB access in
+either direction lands inside the static pool's bounds — overruns in
+the next arena's head or the trailing margin, `-1`-style underruns in
+the previous arena's tail or the leading guard — ASan-detectable
+parent-malloc violations from in-scope arenas stop, and the matchup
+byte-compare pipeline continues to pass.
 
 ### Acceptance criteria
 
@@ -149,8 +167,11 @@ pipeline continues to pass.
 - [ ] `Pool_Init` runs exactly once at startup, before the first
   `Allocate_Space` call.
 - [ ] `POOL_SIZE` is the compile-time sum of every in-scope
-  `Allocate_Space` call's `size` argument plus the safety margin;
-  `static_assert` enforces sufficiency.
+  `Allocate_Space` call's `size` argument plus `LEADING_GUARD` and the
+  trailing safety margin; `static_assert` enforces sufficiency.
+- [ ] The first pool-backed arena sits at `pool_base + LEADING_GUARD`,
+  so a `-1`-style underrun off it lands in sentinel-filled pool memory
+  rather than before the static array.
 - [ ] ReMoMber starts, reaches the Main Screen, plays a turn without
   crashing.
 - [ ] HeMoM matchup-seed run completes through Simtex_Autotiling and

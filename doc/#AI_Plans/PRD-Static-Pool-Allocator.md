@@ -9,20 +9,32 @@ preserved in ReMoM under modern memory protections (ASan, page-based segfaults,
 fortified malloc, etc.). The current Allocate.c implementation calls `malloc`
 once per arena (`Allocate_Space`), and sub-blocks are bump-pointer carved out of
 that arena via `Allocate_First_Block` / `Allocate_Next_Block`. When an OG OOB
-write spills past the parent malloc's boundary, ASan or the OS faults ReMoM
-even though the OG byte is logically harmless.
+access spills outside the parent malloc's boundary — past its end (overrun) or,
+via `-1`-style indexing, before its start (underrun) — ASan or the OS faults
+ReMoM even though the OG byte is logically harmless. A documented underrun
+example is AISPELL.c's `_ai_all_own_stacks[best_stack_idx]` read when
+`best_stack_idx` is `ST_UNDEFINED` (-1); documented overrun examples are
+Simtex_Autotiling's `wy+1` row read and Generate_Roads' writes past
+`_world_maps`.
 
-Reproducing OG's full bug-for-bug behavior requires those OOB writes to land in
-addressable, deterministic memory — and not crash the process.
+Reproducing OG's full bug-for-bug behavior requires those OOB accesses — in
+both directions — to land in addressable, deterministic memory, and not crash
+the process.
 
 ## Solution
 
 Replace the per-arena `malloc` inside `Allocate_Space` with a single large
 static pool. The pool is sized at compile time as the sum of all in-scope
-`Allocate_Space` sizes plus a small fixed safety margin (4-16 KB). Arenas are
+`Allocate_Space` sizes plus fixed safety margins at both ends: a small leading
+guard (`LEADING_GUARD`, 256 B - 4 KB) ahead of the first arena so `-1`-style
+underruns off the first carve stay inside the pool, and a trailing margin
+(`FIXED_MARGIN`, 4-16 KB) so overruns off the last arena do too. Arenas are
 carved out of the pool by a new internal `Pool_Carve` bump-pointer allocator;
 sub-blocks within each arena continue to use the existing
-`Allocate_First_Block` / `Allocate_Next_Block` headers unchanged.
+`Allocate_First_Block` / `Allocate_Next_Block` headers unchanged. Arenas
+between neighbors get incidental OOB coverage in both directions from tight
+packing: an underrun lands in the previous arena's tail, an overrun in the
+next arena's head.
 
 The static pool is initialized to a sentinel byte pattern (`0xCC`) so accidental
 OOB reads in non-OG-faithful code produce visible garbage rather than silent
@@ -31,10 +43,14 @@ patterns into known OOB regions (e.g., the slack past `_world_maps`) continues
 to work unchanged — the slack address is now inside the pool instead of inside
 a malloc block, but the inject API is unchanged.
 
-Video, audio, and large graphics buffers stay on `malloc` via a new function
-`Allocate_Space_Heap` (identical behavior to today's `Allocate_Space`). Only
-the carve-out call sites (~10 sites) are edited; everything else is a drop-in
-internal swap.
+Video, audio, and hardware/expanded-memory buffers are not System RAM: they
+model VGA hardware (the framebuffer and page buffers), the sound driver's
+tables, and EMS/expanded-memory banks. Those buffers bypass the Space Alloc
+subsystem entirely and call `malloc()` directly to reach the OS allocator.
+None of them are sub-divided, so they carry no SAMB header — each site is
+edited to allocate a raw byte buffer via `malloc()`. Everything that is System
+RAM (including `g_graphics_cache_seg`, which is a SAMB arena sub-divided via
+`Allocate_First_Block`) stays inside the pool via a drop-in internal swap.
 
 ASan sub-block tracking (poisoning the slack between arena sub-blocks so OOBs
 into the slack still flag) is explicitly out of scope for this MVP and is
@@ -54,15 +70,14 @@ deferred to Phase 2.
    `Release_Block`, `Reset_First_Block`) to keep unchanged signatures, so that
    the ~30 in-scope call sites need no edits.
 4. As a ReMoM developer, I want video buffers (Video2.c), audio buffers
-   (SOUND.c state_table / timbre_cache / timb_seg), and large graphics
-   allocations (`EmmHndl_FIGUREX`, `EmmHndl_TILEXXX`, `GfxBuf_2400B`,
-   `g_graphics_cache_seg`) to keep their current `malloc` behavior, so that
-   they don't bloat the static pool and so that their existing ASan tracking
-   stays as it is.
-5. As a ReMoM developer, I want a new `Allocate_Space_Heap(size)` function
-   exposed alongside `Allocate_Space`, so that the carve-out call sites can
-   opt into the legacy `malloc` behavior explicitly and the boundary is
-   auditable.
+   (SOUND.c state_table / timbre_cache / timb_seg), and the EMS/graphics
+   banks (`EmmHndl_FIGUREX`, `EmmHndl_TILEXXX`, `GfxBuf_2400B`) to be
+   allocated via `malloc()` directly, so that they don't bloat the static
+   pool and so that their existing ASan tracking stays as it is.
+5. As a ReMoM developer, I want the excluded (non-System-RAM) call sites to
+   call `malloc()` directly instead of going through the Space Alloc API, so
+   that the pool/heap boundary is explicit and auditable and those buffers
+   plainly model hardware / expanded memory rather than System RAM.
 6. As a ReMoM developer, I want the static pool filled with sentinel byte
    `0xCC` at startup, so that accidental OOB reads in non-OG-faithful code
    produce visible garbage rather than silent zero.
@@ -75,12 +90,13 @@ deferred to Phase 2.
    offsets), so that the layout matches what the CI byte-capture pipeline
    expects.
 9. As a ReMoM developer, I want the pool size set as
-   `sum_of_in_scope_Allocate_Space_sizes + FIXED_MARGIN` (FIXED_MARGIN in the
-   4-16 KB range), so that the pool is auditable, tight, and forces new OOB
-   accommodations to be explicit.
+   `LEADING_GUARD + sum_of_in_scope_Allocate_Space_sizes + FIXED_MARGIN`
+   (LEADING_GUARD in the 256 B - 4 KB range, FIXED_MARGIN in the 4-16 KB
+   range), so that the pool is auditable, tight, and forces new OOB
+   accommodations — before or after the arenas — to be explicit.
 10. As a ReMoM developer, I want `Allocate_Space_No_Header` to be pool-backed
-    too, so that all SAMB-style arenas behave uniformly with the carve-out as
-    the only exception.
+    too, so that all SAMB-style arenas behave uniformly with the
+    `malloc()`-direct excluded buffers as the only exception.
 11. As a ReMoM developer, I want pool exhaustion to be a fatal error via
     `Allocation_Error`, so that pool-sizing bugs surface loudly at startup
     rather than via silent corruption.
@@ -125,13 +141,19 @@ deferred to Phase 2.
 22. As a HeMoM headless test runner, I want the same allocator behavior in
     HeMoM as in ReMoMber, so that headless and interactive runs do not
     diverge due to allocator differences.
-23. As a future-maintainer, I want each `Allocate_Space_Heap` call site to
-    carry a brief comment explaining why that arena is carve-out, so that
-    the pool/heap boundary remains auditable and intentional over time.
+23. As a future-maintainer, I want each excluded `malloc()` call site to
+    carry a brief comment explaining why that arena bypasses the pool (VGA
+    hardware / sound driver / EMS bank), so that the pool/heap boundary
+    remains auditable and intentional over time.
 24. As a Phase-2 implementer, I want the MVP's pool layout to be compatible
     with future ASan sub-block annotation (deterministic offsets, sentinel
     slack, no compile-time obstacles), so that the suballocation/shadow-memory
     tracking work can layer on without a second refactor.
+25. As a ReMoM developer, I want OG-faithful underruns (`-1`-style reads and
+    writes before an arena's start) to land inside the pool just like
+    overruns do — via the leading guard for the first arena and via tight
+    packing for every arena after it — so that both OOB directions are
+    crash-free and deterministic.
 
 ## Implementation Decisions
 
@@ -141,7 +163,10 @@ deferred to Phase 2.
   knowledge of SAMB headers or any MoM concept.
 - **Pool storage**: single `static uint8_t` array in BSS, size
   `POOL_SIZE` set at compile time as the sum of in-scope `Allocate_Space`
-  sizes plus a fixed safety margin in the 4-16 KB range.
+  sizes plus safety margins at both ends: `LEADING_GUARD` (256 B - 4 KB)
+  reserved ahead of the first carve, and a trailing `FIXED_MARGIN` in the
+  4-16 KB range. `Pool_Carve` never hands out guard bytes; the first carve
+  returns `pool_base + LEADING_GUARD`.
 - **Sentinel pattern**: `Pool_Init` fills the entire pool with `0xCC`. Runs
   once at startup. Sub-block writes overwrite their own bytes; slack stays at
   the sentinel.
@@ -154,15 +179,20 @@ deferred to Phase 2.
     `Get_Free_Blocks`, `Mark_Block`, `Release_Block`, `Reset_First_Block`
     are unchanged — they only operate inside an already-allocated arena
     header.
-- **New function `Allocate_Space_Heap(size)`** exposed alongside
-  `Allocate_Space`. Identical implementation to today's `malloc`-based
-  `Allocate_Space`. Used by the carve-out call sites.
-- **Carve-out call sites** (~10 sites), edited to call
-  `Allocate_Space_Heap`:
-  - Video2.c: `video_memory` and the 4×16000 + 4×64000 PR buffers.
+- **Excluded call sites call `malloc()` directly.** These arenas are not
+  System RAM, so they bypass the Space Alloc subsystem and allocate a raw
+  byte buffer straight from the OS allocator. None are sub-divided, so none
+  carry a SAMB header; each site is sized in bytes (not paragraphs) to the
+  buffer's real requirement, and the paragraph `+1` / 16-byte-header rounding
+  that `Allocate_Space` applied is dropped. Sites:
+  - Video2.c: `video_memory` and the 4×16000 + 4×64000 PR page buffers.
   - SOUND.c: `state_table`, `timbre_cache`, `timb_seg`.
-  - ALLOC.c: `EmmHndl_FIGUREX`, `EmmHndl_TILEXXX`, `GfxBuf_2400B`,
-    `g_graphics_cache_seg`.
+  - ALLOC.c: `EmmHndl_FIGUREX`, `EmmHndl_TILEXXX`, `GfxBuf_2400B`.
+- **`g_graphics_cache_seg` stays pool-backed.** Unlike the buffers above it
+  is a SAMB arena — `Graphics_Cache_Reset()` calls
+  `Allocate_First_Block(g_graphics_cache_seg, 1)` (LOADER.c), which relies on
+  the arena header `Allocate_Space` writes. It therefore rides the pool with
+  every other in-scope `Allocate_Space` arena (adds ~1 MB to `POOL_SIZE`).
 - **`_screen_seg` moves to pool**. Its sub-blocks (`near_buffer_save`,
   `help_pict_seg`, `IMG_SBK_PageText`) automatically come with it via the
   existing `Allocate_First_Block` / `Allocate_Next_Block` calls.
@@ -176,10 +206,9 @@ deferred to Phase 2.
   + safety_margin`. The sum is expressed as a compile-time constant in a
   central header; adding a new pool-backed `Allocate_Space` call site adds
   its size to that constant, forcing the pool to grow.
-- **No public header changes** beyond adding `Allocate_Space_Heap`'s
-  declaration and the `Allocate_Pool` module's header. The SAMB struct, the
-  paragraph constants, the sentinel values, and every existing sub-block
-  layout stay identical.
+- **No public header changes** beyond adding the `Allocate_Pool` module's
+  header. The SAMB struct, the paragraph constants, the sentinel values, and
+  every existing sub-block layout stay identical.
 - **HeMoM and ReMoMber both consume MoX/src/Allocate.c** and the new
   Allocate_Pool module identically; no per-target conditional behavior.
 
@@ -221,26 +250,35 @@ Prior art:
 
 - **Near_Allocate_* family** (the 4400 B near buffer and its First / Next /
   Mark / Undo / Reset siblings). Stays on its current backing. Deferred.
-- **Video2.c arenas**: `video_memory` and the per-page buffers stay on
-  `malloc` via `Allocate_Space_Heap`.
-- **SOUND.c arenas**: `state_table`, `timbre_cache`, `timb_seg` stay on
-  `malloc`.
-- **Large graphics arenas in ALLOC.c**: `EmmHndl_FIGUREX`, `EmmHndl_TILEXXX`,
-  `GfxBuf_2400B`, `g_graphics_cache_seg` stay on `malloc`.
+  NOTE: the documented `_ai_all_own_stacks[-1]` underrun (AISPELL.c, read of
+  `_ai_all_own_stacks[best_stack_idx]` with `best_stack_idx == ST_UNDEFINED`)
+  is backed by `Near_Allocate_Next` and therefore rides with this deferral —
+  the static pool does not cover it.
+- **Video2.c arenas**: `video_memory` and the per-page buffers call
+  `malloc()` directly (VGA hardware).
+- **SOUND.c arenas**: `state_table`, `timbre_cache`, `timb_seg` call
+  `malloc()` directly (sound driver tables).
+- **EMS/graphics banks in ALLOC.c**: `EmmHndl_FIGUREX`, `EmmHndl_TILEXXX`,
+  `GfxBuf_2400B` call `malloc()` directly. (`g_graphics_cache_seg` is *not*
+  excluded — it is a SAMB arena and stays pool-backed.)
 - **ASan sub-block tracking** via `__asan_poison_memory_region` /
   `__sanitizer_annotate_contiguous_container`: Phase 2.
 - **Build-flag-gated ASan sub-block detection**: Phase 2.
 - **Dynamic pool resizing**: pool size is compile-time fixed.
-- **Per-arena slack inside the pool**: arenas pack tightly; an OOB write
-  from one arena spills into the next arena's start or into the trailing
-  safety margin. Per-arena padding is Phase 2 if needed.
+- **Per-arena slack inside the pool**: arenas pack tightly; an OOB access
+  from one arena spills into a neighboring arena's bytes (next arena's head
+  on overrun, previous arena's tail on underrun) or into the leading /
+  trailing guard regions at the pool's ends. Per-arena padding is Phase 2
+  if needed.
 - **`Allocate_Dos_Space` / `Allocate_Dos_Data_Space`**: DOS-only wrappers
   with minimal use in ReMoM; left as-is.
 
 ## Further Notes
 
-- **BSS bloat**: in-scope sum is approximately ~150-170 KB. With a 4-16 KB
-  margin, the static pool is well under 200 KB. Acceptable for a modern build.
+- **BSS bloat**: the in-scope arenas other than `g_graphics_cache_seg` sum to
+  approximately ~150-170 KB; `g_graphics_cache_seg` adds ~1 MB (65535 PR), so
+  with the leading guard and the 4-16 KB trailing margin the static pool is
+  ~1.2 MB. Still trivial BSS for a modern build.
 - **Determinism**: the pool layout is bump-pointer per `Allocate_Space` call
   order. As long as the startup sequence (`Allocate_Data_Space` and the
   individual `Allocate_Space` calls in Fonts.c / Input.c / MOM_DAT.c /
