@@ -298,21 +298,20 @@ so, 300 PRs, + 1 for the SAMB header
     // MoO2  Module: MOX  data (0 bytes) _global_music_handle  Address: 02:0018B17C
     SND_Music_Segment = Allocate_Space(350);  // 350 PR, 5600 B
 
-    _ai_landmass_war_targets[0]               = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17E8) );  // 12 bytes
-    _ai_landmass_war_targets[1]               = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17F4) );  // 12 bytes
-    _ai_reevaluate_continents_countdown       = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1800) );  // 16 bytes
-    Wiz5_Spell_28h                            = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1810) );  // 20 bytes
-    Wiz5_Spell_3Ch                            = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1824) );  // 20 bytes
-    Wiz5_Spell_50h                            = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1838) );  // 20 bytes
-    Wiz5_Spell_64h                            = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x184C) );  // 20 bytes
-    _ai_landmass_settler_targets[0]           = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1860) );  // 20 bytes
-    _ai_landmass_settler_targets[1]           = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1874) );  // 20 bytes
-    _ai_landmass_settler_targets_wx_array[0]  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1888) );  // 20 bytes
-    _ai_landmass_settler_targets_wx_array[1]  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x189C) );  // 20 bytes
-    _ai_landmass_settler_targets_wy_array[0]  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18B0) );  // 12 bytes
-    _ai_landmass_settler_targets_wy_array[1]  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18BC) );  // 12 bytes
-    // _ai_reevaluate_summoning_circle_countdown = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18C8) );  // 16 bytes
-    _ai_reevaluate_summoning_circle_countdown = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + 0x70              );  // &spells_list[224] = _players[5]+0x344 (OG) ... changed because of some divergence bug
+    _ai_landmass_war_targets[0]               = ( (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17E8) ) );  // 12 bytes  (+0x00 bytes; uint8* base so the int16* cast doesn't double the offset)
+    _ai_landmass_war_targets[1]               = ( (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17F4 - 0x17E8) ) );  // 12 bytes  (+0x0C bytes)
+    _ai_reevaluate_continents_countdown       = ( (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x1800 - 0x17E8) ) );  // 16 bytes  (+0x18 bytes)
+    Wiz5_Spell_28h                            = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1810 - 0x17E8)   );  // 20 bytes
+    Wiz5_Spell_3Ch                            = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1824 - 0x17E8)   );  // 20 bytes
+    Wiz5_Spell_50h                            = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1838 - 0x17E8)   );  // 20 bytes
+    Wiz5_Spell_64h                            = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x184C - 0x17E8)   );  // 20 bytes
+    _ai_landmass_settler_targets[0]           = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1860 - 0x17E8)   );  // 20 bytes
+    _ai_landmass_settler_targets[1]           = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1874 - 0x17E8)   );  // 20 bytes
+    _ai_landmass_settler_targets_wx_array[0]  = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1888 - 0x17E8)   );  // 20 bytes
+    _ai_landmass_settler_targets_wx_array[1]  = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x189C - 0x17E8)   );  // 20 bytes
+    _ai_landmass_settler_targets_wy_array[0]  = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x18B0 - 0x17E8)   );  // 12 bytes
+    _ai_landmass_settler_targets_wy_array[1]  = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x18BC - 0x17E8)   );  // 12 bytes
+    _ai_reevaluate_summoning_circle_countdown = ( (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x18C8 - 0x17E8) ) );  // 16 bytes  (+0xE0 = &spells_list[224] = _players[5]+0x344 OG)
 
     // TODO  EMM_ContXXX_H = EMM_GetHandle(4, cnst_EMM_ContH_Name, 1)
     EmmHndl_CONTXXX = Allocate_Space(4096);   //  4 * 16384 EMM Page Size = 65536 B / 16 = 4096 PR

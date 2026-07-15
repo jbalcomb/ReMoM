@@ -309,9 +309,10 @@ void Next_Turn_Proc(void)
 
 
     Delete_Dead_Units();
-    /* CLAUDE: GD 619 -- _UNITS after Next_Turn_Proc's 1st Delete_Dead_Units (before
-     * All_Units_In_Towers), matching OG's j_All_Units_In_Towers landmark #1.  Fire once. */
-    { static int gd624_done = 0; if(!gd624_done) { gd624_done = 1; gd_dump_units("619_Delete_Dead_Units_NextTurnProc_1_U"); } }
+    /* CLAUDE: GD 600 -- _UNITS after Next_Turn_Proc's 1st Delete_Dead_Units (before
+     * All_Units_In_Towers), matching OG's j_All_Units_In_Towers landmark #1.  This is the
+     * FIRST Next-Turn capture (before Next_Turn_Calc), hence 600 < 601.  Fire once. */
+    { static int gd624_done = 0; if(!gd624_done) { gd624_done = 1; gd_dump_units("600_Delete_Dead_Units_NextTurnProc_1_U"); } }
     All_Units_In_Towers();
 
 
