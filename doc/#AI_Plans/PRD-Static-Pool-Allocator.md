@@ -43,14 +43,16 @@ patterns into known OOB regions (e.g., the slack past `_world_maps`) continues
 to work unchanged — the slack address is now inside the pool instead of inside
 a malloc block, but the inject API is unchanged.
 
-Video, audio, and hardware/expanded-memory buffers are not System RAM: they
-model VGA hardware (the framebuffer and page buffers), the sound driver's
-tables, and EMS/expanded-memory banks. Those buffers bypass the Space Alloc
-subsystem entirely and call `malloc()` directly to reach the OS allocator.
-None of them are sub-divided, so they carry no SAMB header — each site is
-edited to allocate a raw byte buffer via `malloc()`. Everything that is System
-RAM (including `g_graphics_cache_seg`, which is a SAMB arena sub-divided via
-`Allocate_First_Block`) stays inside the pool via a drop-in internal swap.
+Video and hardware/expanded-memory buffers are not System RAM: they model
+VGA hardware (the framebuffer and page buffers) and EMS/expanded-memory banks.
+Those buffers bypass the Space Alloc subsystem entirely and call `malloc()`
+directly to reach the OS allocator. None of them are sub-divided, so they
+carry no SAMB header — each site is edited to allocate a raw byte buffer via
+`malloc()`. Everything that is System RAM stays inside the pool via a drop-in
+internal swap — including `g_graphics_cache_seg` (a SAMB arena sub-divided via
+`Allocate_First_Block`) and the AIL/XMIDI audio buffers in `Audio_Init__WIP`
+(`state_table`, `timbre_cache`, `timb_seg`), which are conventional-RAM driver
+tables and stay on `Allocate_Space`.
 
 ASan sub-block tracking (poisoning the slack between arena sub-blocks so OOBs
 into the slack still flag) is explicitly out of scope for this MVP and is
@@ -69,8 +71,7 @@ deferred to Phase 2.
    `Allocate_Next_Block`, `Check_Allocation`, `Get_Free_Blocks`, `Mark_Block`,
    `Release_Block`, `Reset_First_Block`) to keep unchanged signatures, so that
    the ~30 in-scope call sites need no edits.
-4. As a ReMoM developer, I want video buffers (Video2.c), audio buffers
-   (SOUND.c state_table / timbre_cache / timb_seg), and the EMS/graphics
+4. As a ReMoM developer, I want video buffers (Video2.c) and the EMS/graphics
    banks (`EmmHndl_FIGUREX`, `EmmHndl_TILEXXX`, `GfxBuf_2400B`) to be
    allocated via `malloc()` directly, so that they don't bloat the static
    pool and so that their existing ASan tracking stays as it is.
@@ -186,13 +187,18 @@ deferred to Phase 2.
   buffer's real requirement, and the paragraph `+1` / 16-byte-header rounding
   that `Allocate_Space` applied is dropped. Sites:
   - Video2.c: `video_memory` and the 4×16000 + 4×64000 PR page buffers.
-  - SOUND.c: `state_table`, `timbre_cache`, `timb_seg`.
   - ALLOC.c: `EmmHndl_FIGUREX`, `EmmHndl_TILEXXX`, `GfxBuf_2400B`.
 - **`g_graphics_cache_seg` stays pool-backed.** Unlike the buffers above it
   is a SAMB arena — `Graphics_Cache_Reset()` calls
   `Allocate_First_Block(g_graphics_cache_seg, 1)` (LOADER.c), which relies on
   the arena header `Allocate_Space` writes. It therefore rides the pool with
   every other in-scope `Allocate_Space` arena (adds ~1 MB to `POOL_SIZE`).
+- **The AIL/XMIDI audio buffers stay pool-backed.** `state_table`,
+  `timbre_cache`, and `timb_seg` in `Audio_Init__WIP` (SOUND.c) are
+  conventional-RAM driver tables, not sound-hardware memory, and remain on
+  `Allocate_Space` — so they ride the pool like every other in-scope arena.
+  (`Audio_Init__WIP` is work-in-progress; leaving it on the standard allocator
+  keeps that path untouched by this refactor.)
 - **`_screen_seg` moves to pool**. Its sub-blocks (`near_buffer_save`,
   `help_pict_seg`, `IMG_SBK_PageText`) automatically come with it via the
   existing `Allocate_First_Block` / `Allocate_Next_Block` calls.
@@ -256,8 +262,9 @@ Prior art:
   the static pool does not cover it.
 - **Video2.c arenas**: `video_memory` and the per-page buffers call
   `malloc()` directly (VGA hardware).
-- **SOUND.c arenas**: `state_table`, `timbre_cache`, `timb_seg` call
-  `malloc()` directly (sound driver tables).
+- **SOUND.c audio buffers are NOT excluded**: `state_table`, `timbre_cache`,
+  `timb_seg` in `Audio_Init__WIP` stay on `Allocate_Space` and ride the pool
+  (conventional-RAM AIL/XMIDI driver tables, and a WIP path left untouched).
 - **EMS/graphics banks in ALLOC.c**: `EmmHndl_FIGUREX`, `EmmHndl_TILEXXX`,
   `GfxBuf_2400B` call `malloc()` directly. (`g_graphics_cache_seg` is *not*
   excluded — it is a SAMB arena and stays pool-backed.)

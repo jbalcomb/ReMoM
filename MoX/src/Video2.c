@@ -10,6 +10,7 @@
 
 #include "Video2.h"
 
+#include <stdlib.h> /* malloc() */
 #include <string.h>
 
 

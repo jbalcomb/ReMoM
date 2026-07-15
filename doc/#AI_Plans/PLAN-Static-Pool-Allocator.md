@@ -30,15 +30,15 @@ Durable decisions that apply across all phases:
 - **SAMB header layout (unchanged)**: 16-byte per-sub-block header with
   `_AAAA` / `_CCCC` sentinels, `MEMSIG1`, `MEMSIG2`, `SIZE`, `USED`,
   `MARK` fields. Same field offsets, same sentinel values.
-- **Pool/heap boundary**: video, audio, and EMS/graphics-bank arenas are
-  not System RAM and call `malloc()` directly (no SAMB header, sized in
-  bytes). Specifically: Video2.c (`video_memory` + per-page buffers),
-  SOUND.c (`state_table`, `timbre_cache`, `timb_seg`), ALLOC.c
-  (`EmmHndl_FIGUREX`, `EmmHndl_TILEXXX`, `GfxBuf_2400B`).
-  `g_graphics_cache_seg` is *not* on this list — it is a SAMB arena
-  (`Allocate_First_Block` in `Graphics_Cache_Reset()`) and stays
-  pool-backed. Every other in-scope `Allocate_Space` call site moves to
-  pool transparently.
+- **Pool/heap boundary**: video and EMS/graphics-bank arenas are not
+  System RAM and call `malloc()` directly (no SAMB header, sized in bytes).
+  Specifically: Video2.c (`video_memory` + per-page buffers), ALLOC.c
+  (`EmmHndl_FIGUREX`, `EmmHndl_TILEXXX`, `GfxBuf_2400B`). Two SAMB-shaped /
+  conventional-RAM cases are *not* on this list and stay pool-backed:
+  `g_graphics_cache_seg` (a SAMB arena — `Allocate_First_Block` in
+  `Graphics_Cache_Reset()`), and the AIL/XMIDI audio buffers `state_table`
+  / `timbre_cache` / `timb_seg` in `Audio_Init__WIP` (SOUND.c). Every other
+  in-scope `Allocate_Space` call site moves to pool transparently.
 - **Pool exhaustion**: invokes `Allocation_Error` (matching existing
   fatal-on-allocator-failure pattern). Caller never sees a NULL return.
 - **CI byte injection invariant**: `gd_ci_inject_world_overrun`, its
@@ -105,26 +105,29 @@ end-to-end against the module's public API alone — no integration with
 
 Edit the excluded (non-System-RAM) call sites to allocate directly via
 `malloc()` instead of `Allocate_Space` — Video2.c (`video_memory` plus
-the three 1x and three XBGR-2x page buffers, indices 1-3), SOUND.c
-(`state_table`, `timbre_cache`, `timb_seg`), ALLOC.c (`EmmHndl_FIGUREX`,
-`EmmHndl_TILEXXX`, `GfxBuf_2400B`). Each of these arenas is a flat
-buffer that is never sub-divided and never reads its SAMB header, so the
-`malloc()` is sized in bytes to the buffer's real requirement and drops
-both the SAMB header and the paragraph `+1` rounding that `Allocate_Space`
-applied. Each edited call site gets a brief comment explaining why it
-bypasses the pool (VGA hardware / sound driver / EMS bank).
-`g_graphics_cache_seg` is deliberately left on `Allocate_Space` — it is a
-SAMB arena (`Allocate_First_Block` in `Graphics_Cache_Reset()`) and rides
-the pool. At the end of this phase, `Allocate_Space` is still malloc-backed
-for the remaining call sites; no game behavior changes. The phase exists to
-make the pool/heap boundary explicit and auditable before the
-implementation swap.
+the three 1x and three XBGR-2x page buffers, indices 1-3), ALLOC.c
+(`EmmHndl_FIGUREX`, `EmmHndl_TILEXXX`, `GfxBuf_2400B`). Each of these
+arenas is a flat buffer that is never sub-divided and never reads its SAMB
+header, so the `malloc()` is sized in bytes to the buffer's real
+requirement and drops both the SAMB header and the paragraph `+1` rounding
+that `Allocate_Space` applied. Each edited call site gets a brief comment
+explaining why it bypasses the pool (VGA hardware / EMS bank). Two cases
+are deliberately left on `Allocate_Space` and ride the pool:
+`g_graphics_cache_seg` (a SAMB arena — `Allocate_First_Block` in
+`Graphics_Cache_Reset()`), and the AIL/XMIDI audio buffers `state_table`
+/ `timbre_cache` / `timb_seg` in `Audio_Init__WIP` (SOUND.c;
+conventional-RAM driver tables, WIP path). At the end of this phase,
+`Allocate_Space` is still malloc-backed for the remaining call sites; no
+game behavior changes. The phase exists to make the pool/heap boundary
+explicit and auditable before the implementation swap.
 
 ### Acceptance criteria
 
-- [ ] All excluded call sites in Video2.c, SOUND.c, and ALLOC.c allocate
-  via `malloc()` directly, sized in bytes to the buffer's requirement.
-- [ ] `g_graphics_cache_seg` still uses `Allocate_Space` (unchanged).
+- [ ] All excluded call sites in Video2.c and ALLOC.c allocate via
+  `malloc()` directly, sized in bytes to the buffer's requirement.
+- [ ] `g_graphics_cache_seg` and the `Audio_Init__WIP` audio buffers
+  (`state_table`, `timbre_cache`, `timb_seg`) still use `Allocate_Space`
+  (unchanged).
 - [ ] Every edited call site has an inline comment explaining why it
   bypasses the pool.
 - [ ] ReMoMber boots to the Main Screen with no behavior change.
