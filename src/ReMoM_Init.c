@@ -116,6 +116,35 @@ void ReMoM_Seed_User_Files(void)
 
 
 
+void ReMoM_Check_Data_Compat(void)
+{
+    STU_GRAF_Compat_Report report;
+    char message[1024];
+
+    STU_GRAF_Check_Data_Compat(&report);
+
+    /* Empty embedded manifest, or every installed file matched a supported
+       v1.31 distribution -> nothing to say. */
+    if(!report.manifest_found || report.problem_count == 0)
+    {
+        return;
+    }
+
+    snprintf(message, sizeof(message),
+             "ReMoM is built for Master of Magic v1.31, but some of your game\n"
+             "data files don't match a recognized v1.31 distribution:\n\n"
+             "%s\n\n"
+             "The game will still start, but may behave unexpectedly.\n"
+             "See PLAYING.md for the supported versions.",
+             report.summary);
+
+    LOG_WARN(LOG_CAT_GENERAL, "Data compatibility: %d file(s) flagged: %s",
+             report.problem_count, report.summary);
+    Platform_Show_Error("ReMoM - Data Compatibility", message);
+}
+
+
+
 void ReMoM_Init_Engine(void)
 {
     char found_file[LEN_STRING] = { 0 };

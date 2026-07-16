@@ -115,13 +115,17 @@ Add user-data-dir resolution (`XDG_DATA_HOME` via the `STU_GRAF` place helpers) 
 
 ### What to build
 
-Add a shared-manifest reader (installer PRD's `lbx-hashes.txt` format) and a non-blocking compatibility pass that runs after the presence preflight: hash **every** discovered `.LBX` (~121) and compare against the manifest. On any unrecognized or wrong/unsupported-version hash, warn via the dialog/log but continue (mirrors the installer's "continue anyway"). Presence failure stays blocking.
+A dependency-free SHA-256 and a non-blocking compatibility pass that runs after the presence preflight: SHA-256 each installed `.LBX` the manifest knows about and classify it (supported v1.31 / wrong-version / unrecognized). On any problem, warn via the dialog/log but continue; presence failure stays blocking.
+
+> **Design change (2026-07-16):** the manifest is **compiled into the binary** (`g_lbx_manifest` in `STU/src/lbx_manifest.c`), **not** an external `lbx-hashes.txt` read at runtime. The runtime can't depend on a file that goes missing/drifts/tampers, and the v1.31 hashes belong with the release. A committed generator CLI — **`lbx_hashes <mom-dir> <version-tag>`** — emits the C table rows (one run per MoM distribution the owner holds; sorted, pasteable). The installer PRD's external `lbx-hashes.txt` remains that project's concern; if a shared text export is ever wanted, the generator can emit it too. Multiple MoM versions coexist as extra rows (tag-driven: `v1.31*` = supported).
 
 ### Acceptance criteria
 
-- [ ] Data files whose checksums don't match any manifest entry → a non-blocking "unrecognized / wrong version" warning; the game still starts.
-- [ ] Matching checksums → silent boot (no warning).
-- [ ] Manifest reader unit-tested against a small golden manifest + fixture files.
+- [x] Data files whose checksums don't match any manifest entry → a non-blocking "unrecognized / wrong version" warning; the game still starts. *(unit-proven `CompatUnrecognizedHashWarns` + `CompatUnsupportedVersionWarns` → `problem_count=1`, summary populated; `ReMoM_Check_Data_Compat` shows the dialog then **returns** — startup continues, never exits. GUI dialog not run locally.)*
+- [x] Matching checksums → silent boot (no warning). *(unit-proven `CompatSupportedMatchIsSilent` + `CompatMultiDistroPicksSupported` → `problem_count=0`; `CompatEmptyManifestIsSilentNoop` + `CompatShippedManifestIsEmptyNoop` → `manifest_found=0`. `ReMoM_Check_Data_Compat` returns early in each — no dialog.)*
+- [x] Manifest reader unit-tested against a small golden manifest + fixture files. *(7 compat tests driving the core with in-memory manifest arrays + on-disk fixtures, on a verified SHA-256: 5 FIPS-180-4 vector tests incl. empty / abc / 56-byte-boundary / 1M-a / stream — and the SHA-256 output cross-checks against system `sha256sum`.)*
+
+> **Status (uncommitted):** `STU_HASH` (dependency-free SHA-256, wired into CMake + autotools) + `STU_GRAF_Check_Data_Compat(report)` over the **compiled-in** `g_lbx_manifest` (hashes each installed LBX once; classifies supported-v1.31 / wrong-version / unrecognized). Testable core `STU_GRAF_Check_Compat_Against(table, report)` lets tests supply a synthetic manifest. Orchestrated by `ReMoM_Check_Data_Compat()` (non-blocking warning via `Platform_Show_Error`), at PLAYER startup after seeding. Generator **`lbx_hashes`** (tools/) authors the table. **Silent until authored** — `lbx_manifest.c` ships empty (terminator only) → `manifest_found=0` no-op, so dev/player runs never false-warn. **51/51 STU tests green.**
 
 ---
 
@@ -146,4 +150,4 @@ Have `STU_LOG` resolve its log directory through `STU_GRAF`'s place helpers (sta
 
 - Dependencies: **1 → 2 → (3, 4 either order) → 5**. **Phase 6 is independent** (touches only `STU_LOG` + the `STU_GRAF` place helpers from Phase 1) — it can run in parallel or first as a low-risk warm-up.
 - Bootstrap de-duplication of `ReMoM.c`/`HeMoM.c` is incremental: Phase 1 adds `STU_GRAF_Init` to both mains; Phase 4 extracts MAGIC/WIZARDS init; Phase 6 lands the order-fix. No separate refactor-only phase.
-- Reconcile with [PRD-Installer-Game-Data-Setup.md](PRD-Installer-Game-Data-Setup.md) on the shared checksum manifest (filename/columns) and the `[Paths] game_data` config file name before Phases 3/5.
+- Reconcile with [PRD-Installer-Game-Data-Setup.md](PRD-Installer-Game-Data-Setup.md) on the `[Paths] game_data` config file name (Phase 3, done). **Manifest divergence (resolved):** the *runtime* uses a **compiled-in** table (`lbx_manifest.c`), not the installer's shared external `lbx-hashes.txt` — the two now share the `lbx_hashes` **generator** and the `(name, sha256, version-tag)` schema rather than a single file. The installer keeps its own text manifest for install-time validation; the generator can emit that form too if we want one source artifact later.

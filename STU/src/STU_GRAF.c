@@ -11,6 +11,7 @@
 
 #include "../../ext/stu_compat.h"  /* stu_fopen_ci() */
 #include "STU_LOG.h"
+#include "STU_HASH.h"  /* STU_SHA256_Stream() -- data-compatibility pass */
 
 #include <string.h>
 #include <stdlib.h>   /* getenv */
@@ -678,4 +679,186 @@ void STU_GRAF_Init(STU_GRAF_Profile profile)
     LOG_INFO(LOG_CAT_GENERAL, "STU_GRAF: %s profile, %d search dir(s)",
              (profile == STU_GRAF_PLAYER) ? "PLAYER" : "HEADLESS",
              g_search_dir_count);
+}
+
+/* ---- Data-compatibility pass (checksum manifest) ------------------------- */
+
+/* A version-tag containing this token counts as a supported distribution.  A
+   file that only matches hashes without it is flagged "wrong version". */
+#define STU_GRAF_SUPPORTED_VERSION "v1.31"
+#define STU_GRAF_COMPAT_MAX_FILES  256
+
+typedef struct
+{
+    char name[64];
+    char actual_hash[65];
+    int  present;      /* file resolved on the read search path */
+    int  recognized;   /* matched some manifest hash (any version) */
+    int  supported;    /* matched a hash tagged with the supported version */
+} graf_compat_file;
+
+/* Case-insensitive equality of two NUL-terminated strings. */
+static int graf_str_ieq(const char * a, const char * b)
+{
+    while(*a != '\0' && *b != '\0')
+    {
+        if(tolower((unsigned char)*a) != tolower((unsigned char)*b))
+        {
+            return 0;
+        }
+        a++;
+        b++;
+    }
+    return (*a == '\0' && *b == '\0');
+}
+
+/* Case-insensitive: is needle a substring of hay? */
+static int graf_ci_contains(const char * hay, const char * needle)
+{
+    size_t nlen = strlen(needle);
+    if(nlen == 0)
+    {
+        return 1;
+    }
+    for(; *hay != '\0'; hay++)
+    {
+        size_t i = 0;
+        while(i < nlen && hay[i] != '\0' &&
+              tolower((unsigned char)hay[i]) == tolower((unsigned char)needle[i]))
+        {
+            i++;
+        }
+        if(i == nlen)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int STU_GRAF_Check_Compat_Against(const STU_LBX_Manifest_Entry * manifest,
+                                  STU_GRAF_Compat_Report * report)
+{
+    graf_compat_file files[STU_GRAF_COMPAT_MAX_FILES];
+    int nfiles = 0;
+    int e;
+    int i;
+
+    if(report == NULL)
+    {
+        return 0;
+    }
+    memset(report, 0, sizeof(*report));
+
+    if(manifest == NULL || manifest[0].name == NULL)
+    {
+        /* Empty embedded manifest -> not authored yet; stay silent. */
+        LOG_INFO(LOG_CAT_GENERAL, "STU_GRAF: empty compat manifest; skipping data check");
+        return 0;
+    }
+    report->manifest_found = 1;
+
+    for(e = 0; manifest[e].name != NULL; e++)
+    {
+        const char * name = manifest[e].name;
+        const char * hash = manifest[e].sha256;
+        const char * tag  = (manifest[e].version != NULL) ? manifest[e].version : "";
+        graf_compat_file * rec = NULL;
+
+        if(hash == NULL || name[0] == '\0')
+        {
+            continue;  /* malformed row */
+        }
+
+        for(i = 0; i < nfiles; i++)
+        {
+            if(graf_str_ieq(files[i].name, name))
+            {
+                rec = &files[i];
+                break;
+            }
+        }
+        if(rec == NULL)
+        {
+            FILE * afp;
+            if(nfiles >= STU_GRAF_COMPAT_MAX_FILES)
+            {
+                LOG_WARN(LOG_CAT_GENERAL,
+                         "STU_GRAF: compat manifest exceeds %d files; truncating check",
+                         STU_GRAF_COMPAT_MAX_FILES);
+                break;
+            }
+            rec = &files[nfiles++];
+            stu_strcpy(rec->name, name);
+            rec->actual_hash[0] = '\0';
+            rec->present = 0;
+            rec->recognized = 0;
+            rec->supported = 0;
+
+            /* Hash the installed file once, on first sight of its name. */
+            afp = STU_GRAF_Open_Asset(name, "rb");
+            if(afp != NULL)
+            {
+                if(STU_SHA256_Stream(afp, rec->actual_hash))
+                {
+                    rec->present = 1;
+                }
+                fclose(afp);
+            }
+        }
+
+        if(rec->present && graf_str_ieq(rec->actual_hash, hash))
+        {
+            rec->recognized = 1;
+            if(graf_ci_contains(tag, STU_GRAF_SUPPORTED_VERSION))
+            {
+                rec->supported = 1;
+            }
+        }
+    }
+
+    for(i = 0; i < nfiles; i++)
+    {
+        graf_compat_file * rec = &files[i];
+        const char * why;
+        size_t used;
+        size_t need;
+
+        if(!rec->present)
+        {
+            continue;  /* not installed -> not this pass's concern */
+        }
+        report->files_checked++;
+        if(rec->supported)
+        {
+            report->ok_count++;
+            continue;
+        }
+
+        report->problem_count++;
+        why = rec->recognized ? " (wrong/unsupported version)" : " (unrecognized)";
+        LOG_WARN(LOG_CAT_GENERAL, "STU_GRAF: data compat: %s%s", rec->name, why);
+
+        used = strlen(report->summary);
+        need = strlen(rec->name) + strlen(why) + 2;
+        if(used + need < sizeof(report->summary))
+        {
+            if(used > 0)
+            {
+                stu_strcat(report->summary, "; ");
+            }
+            stu_strcat(report->summary, rec->name);
+            stu_strcat(report->summary, why);
+        }
+    }
+
+    LOG_INFO(LOG_CAT_GENERAL,
+             "STU_GRAF: compat pass -- %d checked, %d ok, %d problem(s)",
+             report->files_checked, report->ok_count, report->problem_count);
+    return report->problem_count;
+}
+
+int STU_GRAF_Check_Data_Compat(STU_GRAF_Compat_Report * report)
+{
+    return STU_GRAF_Check_Compat_Against(g_lbx_manifest, report);
 }

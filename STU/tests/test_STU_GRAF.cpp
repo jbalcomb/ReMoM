@@ -15,6 +15,7 @@
 
 extern "C" {
 #include "../src/STU_GRAF.h"
+#include "../src/STU_HASH.h"
 }
 
 namespace fs = std::filesystem;
@@ -399,3 +400,171 @@ TEST(STU_GRAF, HeadlessUserFamilyUsesCwd)
 }
 
 #endif
+
+// ---- Phase 5: data-compatibility pass (embedded manifest table) --------------
+// Search-path based (not user-data), so these are platform-independent.  The
+// runtime uses the compiled-in g_lbx_manifest; tests drive the core
+// (STU_GRAF_Check_Compat_Against) with a synthetic in-memory manifest, while
+// still writing the fixture .LBX files a search dir so they get hashed.
+
+namespace
+{
+    std::string hex_of(const std::string & content)
+    {
+        char out[65] = {0};
+        STU_SHA256_Bytes(content.data(), content.size(), out);
+        return std::string(out);
+    }
+}
+
+TEST(STU_GRAF, CompatSupportedMatchIsSilent)
+{
+    TempTree t("compat_ok");
+    t.write("FONTS.LBX", "font-bytes-v131");
+    std::string h = hex_of("font-bytes-v131");
+    STU_LBX_Manifest_Entry m[] = {
+        { "FONTS.LBX", h.c_str(), "v1.31-floppy-1995" },
+        { nullptr, nullptr, nullptr }
+    };
+
+    STU_GRAF_Reset();
+    STU_GRAF_Add_Search_Dir(t.dir().c_str());
+
+    STU_GRAF_Compat_Report r;
+    EXPECT_EQ(STU_GRAF_Check_Compat_Against(m, &r), 0);
+    EXPECT_EQ(r.manifest_found, 1);
+    EXPECT_EQ(r.files_checked, 1);
+    EXPECT_EQ(r.ok_count, 1);
+    EXPECT_EQ(r.problem_count, 0);
+    STU_GRAF_Reset();
+}
+
+TEST(STU_GRAF, CompatUnrecognizedHashWarns)
+{
+    TempTree t("compat_unk");
+    t.write("MYSTERY.LBX", "modified-or-unknown");
+    // Manifest lists a different (all-zero) hash -> no match -> unrecognized.
+    STU_LBX_Manifest_Entry m[] = {
+        { "MYSTERY.LBX",
+          "0000000000000000000000000000000000000000000000000000000000000000",
+          "v1.31-floppy-1995" },
+        { nullptr, nullptr, nullptr }
+    };
+
+    STU_GRAF_Reset();
+    STU_GRAF_Add_Search_Dir(t.dir().c_str());
+
+    STU_GRAF_Compat_Report r;
+    EXPECT_EQ(STU_GRAF_Check_Compat_Against(m, &r), 1);
+    EXPECT_EQ(r.ok_count, 0);
+    EXPECT_EQ(r.problem_count, 1);
+    EXPECT_NE(std::string(r.summary).find("MYSTERY.LBX"), std::string::npos);
+    EXPECT_NE(std::string(r.summary).find("unrecognized"), std::string::npos);
+    STU_GRAF_Reset();
+}
+
+TEST(STU_GRAF, CompatUnsupportedVersionWarns)
+{
+    TempTree t("compat_old");
+    t.write("OLD.LBX", "v1.0-content");
+    std::string h = hex_of("v1.0-content");
+    // Actual hash IS in the manifest, but tagged as an unsupported version.
+    STU_LBX_Manifest_Entry m[] = {
+        { "OLD.LBX", h.c_str(), "v1.0-floppy" },
+        { nullptr, nullptr, nullptr }
+    };
+
+    STU_GRAF_Reset();
+    STU_GRAF_Add_Search_Dir(t.dir().c_str());
+
+    STU_GRAF_Compat_Report r;
+    EXPECT_EQ(STU_GRAF_Check_Compat_Against(m, &r), 1);
+    EXPECT_EQ(r.ok_count, 0);
+    EXPECT_EQ(r.problem_count, 1);
+    EXPECT_NE(std::string(r.summary).find("OLD.LBX"), std::string::npos);
+    EXPECT_NE(std::string(r.summary).find("version"), std::string::npos);
+    STU_GRAF_Reset();
+}
+
+TEST(STU_GRAF, CompatMultiDistroPicksSupported)
+{
+    TempTree t("compat_multi");
+    t.write("FONTS.LBX", "canonical-v131");
+    std::string h = hex_of("canonical-v131");
+    // Two rows for one file: a non-matching cdrom row + the matching floppy row.
+    STU_LBX_Manifest_Entry m[] = {
+        { "FONTS.LBX",
+          "1111111111111111111111111111111111111111111111111111111111111111",
+          "v1.31-cdrom" },
+        { "FONTS.LBX", h.c_str(), "v1.31-floppy-1995" },
+        { nullptr, nullptr, nullptr }
+    };
+
+    STU_GRAF_Reset();
+    STU_GRAF_Add_Search_Dir(t.dir().c_str());
+
+    STU_GRAF_Compat_Report r;
+    EXPECT_EQ(STU_GRAF_Check_Compat_Against(m, &r), 0);
+    EXPECT_EQ(r.ok_count, 1);
+    STU_GRAF_Reset();
+}
+
+TEST(STU_GRAF, CompatEmptyManifestIsSilentNoop)
+{
+    TempTree t("compat_none");
+    t.write("FONTS.LBX", "whatever");
+    // Empty manifest (just the terminator) -- as shipped before authoring.
+    STU_LBX_Manifest_Entry m[] = {
+        { nullptr, nullptr, nullptr }
+    };
+
+    STU_GRAF_Reset();
+    STU_GRAF_Add_Search_Dir(t.dir().c_str());
+
+    STU_GRAF_Compat_Report r;
+    EXPECT_EQ(STU_GRAF_Check_Compat_Against(m, &r), 0);
+    EXPECT_EQ(r.manifest_found, 0);
+    EXPECT_EQ(r.files_checked, 0);
+    STU_GRAF_Reset();
+}
+
+TEST(STU_GRAF, CompatUninstalledManifestFileNotCounted)
+{
+    TempTree t("compat_ghost");
+    t.write("FONTS.LBX", "present-ok");
+    std::string h1 = hex_of("present-ok");
+    std::string h2 = hex_of("does-not-exist");
+    // Manifest references a present file (ok) and a GHOST that isn't on disk.
+    STU_LBX_Manifest_Entry m[] = {
+        { "FONTS.LBX", h1.c_str(), "v1.31-floppy-1995" },
+        { "GHOST.LBX", h2.c_str(), "v1.31-floppy-1995" },
+        { nullptr, nullptr, nullptr }
+    };
+
+    STU_GRAF_Reset();
+    STU_GRAF_Add_Search_Dir(t.dir().c_str());
+
+    STU_GRAF_Compat_Report r;
+    EXPECT_EQ(STU_GRAF_Check_Compat_Against(m, &r), 0);
+    EXPECT_EQ(r.files_checked, 1);  // GHOST.LBX absent -> not counted
+    EXPECT_EQ(r.ok_count, 1);
+    STU_GRAF_Reset();
+}
+
+TEST(STU_GRAF, ShippedManifestIsWellFormed)
+{
+    // Guard the committed g_lbx_manifest against a botched paste/generation:
+    // every row must carry a name, a 64-hex SHA-256, and a version tag.
+    int n = 0;
+    for(const STU_LBX_Manifest_Entry * e = g_lbx_manifest; e->name != nullptr; ++e)
+    {
+        ++n;
+        ASSERT_NE(e->sha256, nullptr) << e->name << ": null hash";
+        std::string h(e->sha256);
+        EXPECT_EQ(h.size(), 64u) << e->name << ": sha256 not 64 chars";
+        EXPECT_EQ(h.find_first_not_of("0123456789abcdefABCDEF"), std::string::npos)
+            << e->name << ": sha256 has a non-hex char";
+        EXPECT_NE(e->version, nullptr) << e->name << ": null version tag";
+    }
+    EXPECT_GT(n, 0) << "shipped manifest is empty";
+}

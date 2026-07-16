@@ -36,6 +36,21 @@ set_target_properties(rmr2hms PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
 
+
+# --- lbx_hashes: generate the compiled-in known-good LBX SHA-256 manifest ---
+# Point it at a Master of Magic install dir + version tag; it prints C rows for
+# STU/src/lbx_manifest.c.  See that file's header for the workflow.
+
+add_executable(lbx_hashes
+    lbx_hashes.c
+)
+
+target_link_libraries(lbx_hashes PRIVATE STU)
+
+set_target_properties(lbx_hashes PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
+)
+
 # --- Extract_FONTS_LBX: extract FONTS.LBX data into embeddable C source ---
 # cd ~/STU/devel/ReMoM/ && cmake --build build --target Extract_FONTS_LBX
 # cd ~/STU/devel/ReMoM/build/bin/Debug && ./Extract_FONTS_LBX

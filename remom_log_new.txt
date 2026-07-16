@@ -1,0 +1,1 @@
+[2026-07-16T13:05:56Z] [INFO ] [GENERAL                ] test_STU_LOG_strip.cpp:76 TestBody: info kept 1

@@ -44,6 +44,16 @@ int ReMoM_Preflight_Game_Data(void);
  */
 void ReMoM_Seed_User_Files(void);
 
+/**
+ * Non-blocking data-compatibility check.  Hashes the installed .LBX files
+ * against the compiled-in known-good manifest (STU's g_lbx_manifest) and, when
+ * some don't match a supported v1.31 distribution, shows a one-time
+ * informational warning and continues.  A silent no-op when the manifest is
+ * empty (not yet authored) or every file matches.  Player builds only; call
+ * after preflight/seeding.
+ */
+void ReMoM_Check_Data_Compat(void);
+
 #ifdef __cplusplus
 }
 #endif

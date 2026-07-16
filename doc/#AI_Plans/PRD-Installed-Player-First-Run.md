@@ -1,6 +1,6 @@
 # PRD — Installed-Player First Run: Data Discovery, Fail-Soft & File Locations
 
-**Status:** In progress — Phases 1–3 committed (read search path, fail-soft preflight, config+cache); Phase 4 implemented, uncommitted (writable per-user layout + first-run seeding); Phases 5–6 pending (checksums, log relocation). **Design note:** the writable dir is resolved by `STU_GRAF` itself (XDG / `%APPDATA%` / `~/Library`), *not* `SDL_GetPrefPath()` as sketched in Implementation Notes — this keeps the seam SDL-free and consistent with Phases 1–3; the `Platform_Get_User_Data_Dir` backend is therefore not needed.
+**Status:** In progress — Phases 1–3 committed (read search path, fail-soft preflight, config+cache); Phases 4–5 implemented, uncommitted (writable per-user layout + first-run seeding; checksum compatibility pass on a dependency-free SHA-256 against a **compiled-in** manifest table, authored by the new `lbx_hashes` generator); Phase 6 pending (log relocation). **Design note:** the writable dir is resolved by `STU_GRAF` itself (XDG / `%APPDATA%` / `~/Library`), *not* `SDL_GetPrefPath()` as sketched in Implementation Notes — this keeps the seam SDL-free and consistent with Phases 1–3; the `Platform_Get_User_Data_Dir` backend is therefore not needed.
 **Owner:** TBD
 **Date:** 2026-07-03 (updated 2026-07-15)
 **Tracks:** Alpha-quality first-run experience (portable ZIP / installed player build)
@@ -90,6 +90,8 @@ Two distinct resolution rules follow from this:
 8. **Checksum manifest** of known-good SHA256s covering **every `.LBX` file** (~121 in a full v1.31 install; exact set defined by the manifest) per MoM version, authored authoritatively by the project owner (who holds every version), in the installer PRD's `lbx-hashes.txt` format (shared, single source).
 9. **Preflight compatibility pass** (non-blocking, after the presence pass): hash **every** discovered `.LBX` file and compare against the manifest; if any are unrecognized or match a wrong/unsupported version, warn via the dialog/log (do not hard-block — mirrors the installer's "continue anyway" posture). Presence failure remains blocking.
 
+> **Implemented deviation (2026-07-16):** the *runtime* manifest is **compiled into the binary** (`STU/src/lbx_manifest.c`, `extern g_lbx_manifest`), not read from an external `lbx-hashes.txt` — a runtime file can go missing/drift/tamper, and the v1.31 hashes belong with the release. The shared piece is now the `(name, sha256, version-tag)` **schema** and the **`lbx_hashes` generator** (`tools/`), not a single file. The installer keeps its own text manifest for install-time validation. An empty compiled-in table = silent no-op, so the owner authors it (one `lbx_hashes` run per MoM distribution) without any stock build false-warning.
+
 ### Fail-soft preflight + dialog
 
 10. **Preflight** `STU_Preflight_Check_Game_Data(...)` verifies the required set (`FONTS.LBX`, `MAINSCRN.LBX`, … — aligned with the installer PRD) resolves via the search path. Home: the TODO at [STU/src/STU_INIT.c:87](../../STU/src/STU_INIT.c#L87).
@@ -112,7 +114,7 @@ Two distinct resolution rules follow from this:
 - [x] With a read-only game-data dir, saving still succeeds (writes go to the data dir, not the source). *(P4 — writes target the user-data dir, disjoint from the read-only source; unit-proven source-untouched)*
 - [x] On first run, `CONFIG.MOM` is copied into `XDG_DATA_HOME` and read from there on later runs; the original in the game-data dir is never modified. *(P4 — `STU_GRAF_Seed_User_File` unit-proven + wired at PLAYER startup)*
 - [x] No data discoverable anywhere → GUI dialog names the missing files + fix, exits non-zero, no crash; HeMoM prints the same to stderr. *(P2 — verified end-to-end on both builds; ctest `HeMoM_Preflight_Missing_Data`)*
-- [ ] Data files whose checksums don't match any manifest entry → a non-blocking "unrecognized/……" warning (presence still passing). *(P5 — not started)*
+- [x] Data files whose checksums don't match any manifest entry → a non-blocking "unrecognized/……" warning (presence still passing). *(P5 — `STU_GRAF_Check_Data_Compat` over the **compiled-in** `g_lbx_manifest` on a verified SHA-256; unit-proven; silent until the manifest is authored via the `lbx_hashes` generator)*
 - [ ] `HeMoM`/`ctest`/matchup still resolve data from CWD and write `remom_log_*.txt` to CWD ([tools/log-tools/log_triage.py](../../tools/log-tools/log_triage.py), [tools/parity_check.py](../../tools/parity_check.py) unaffected). *(P1/P6 — CWD-data half verified; logs-stay-CWD is true today but its regression guard lands with P6)*
 - [ ] Player-build logs land under `~/.local/state/ReMoM/`, not CWD. *(P6 — not started)*
 - [x] No `MoM/src` / `MoX/src` game-logic file is modified for discovery. *(git-verified: only `MoX/src/LBX_Load.c` open-call plumbing changed)*
