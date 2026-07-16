@@ -14713,31 +14713,39 @@ int16_t AITP_Disrupt(int16_t player_idx, int16_t * target_cgx, int16_t * target_
     {
         if(battlefield->walled == 1)
         {
-            if(battlefield->walls[13][8] == 1)  /* OGBUG  raw offset 15D0h */
+            /* OGBUG  each probe below reads walls[cgy][cgx] instead of the
+             *   rebased walls[cgy - 10][cgx - 5], so it lands past the end of
+             *   walls[4][4] in leftover _screen_seg memory (Dasm raw offsets
+             *   15B6h..15D0h).  We preserve the OG OOB read via pointer
+             *   arithmetic on a flat int16_t* so -Warray-bounds doesn't fire.
+             *   OG (preserved):    ((int16_t*)&walls[0][0])[cgy * 4 + cgx]
+             *   Correct rebased:   battlefield->walls[cgy - 10][cgx - 5]  */
+            int16_t * walls_flat = (int16_t *)&battlefield->walls[0][0];
+            if(walls_flat[13 * 4 + 8] == 1)       /* OGBUG 15D0h; rebased: walls[3][3] */
             {
                 *target_cgx = 8;
                 *target_cgy = 13;
                 retn_value = 99;
             }
-            else if(battlefield->walls[11][8] == 1)  /* OGBUG  raw offset 15C0h */
+            else if(walls_flat[11 * 4 + 8] == 1)  /* OGBUG 15C0h; rebased: walls[1][3] */
             {
                 *target_cgx = 8;
                 *target_cgy = 11;
                 retn_value = 99;
             }
-            else if(battlefield->walls[10][8] == 1)  /* OGBUG  raw offset 15B8h */
+            else if(walls_flat[10 * 4 + 8] == 1)  /* OGBUG 15B8h; rebased: walls[0][3] */
             {
                 *target_cgx = 8;
                 *target_cgy = 10;
                 retn_value = 99;
             }
-            else if(battlefield->walls[13][7] == 1)  /* OGBUG  raw offset 15CEh */
+            else if(walls_flat[13 * 4 + 7] == 1)  /* OGBUG 15CEh; rebased: walls[3][2] */
             {
                 *target_cgx = 7;
                 *target_cgy = 13;
                 retn_value = 99;
             }
-            else if(battlefield->walls[10][7] == 1)  /* OGBUG  raw offset 15B6h */
+            else if(walls_flat[10 * 4 + 7] == 1)  /* OGBUG 15B6h; rebased: walls[0][2] */
             {
                 *target_cgx = 7;
                 *target_cgy = 10;
@@ -14826,31 +14834,37 @@ int16_t AITP_CracksCall(int16_t player_idx, int16_t * target_cgx, int16_t * targ
         (retn_value == ST_UNDEFINED)
     )
     {
-        if(battlefield->walls[13][8] == 1)  /* OGBUG  raw offset 15D0h */
+        /* OGBUG  same unrebased walls[cgy][cgx] pattern as AITP_Disrupt() —
+         *   see the header comment there for details.  Preserved via
+         *   pointer arithmetic on a flat int16_t*.
+         *   OG (preserved):    ((int16_t*)&walls[0][0])[cgy * 4 + cgx]
+         *   Correct rebased:   battlefield->walls[cgy - 10][cgx - 5]  */
+        int16_t * walls_flat = (int16_t *)&battlefield->walls[0][0];
+        if(walls_flat[13 * 4 + 8] == 1)       /* OGBUG 15D0h; rebased: walls[3][3] */
         {
             *target_cgx = 8;
             *target_cgy = 13;
             retn_value = 99;
         }
-        else if(battlefield->walls[11][8] == 1)  /* OGBUG  raw offset 15C0h */
+        else if(walls_flat[11 * 4 + 8] == 1)  /* OGBUG 15C0h; rebased: walls[1][3] */
         {
             *target_cgx = 8;
             *target_cgy = 11;
             retn_value = 99;
         }
-        else if(battlefield->walls[10][8] == 1)  /* OGBUG  raw offset 15B8h */
+        else if(walls_flat[10 * 4 + 8] == 1)  /* OGBUG 15B8h; rebased: walls[0][3] */
         {
             *target_cgx = 8;
             *target_cgy = 10;
             retn_value = 99;
         }
-        else if(battlefield->walls[13][7] == 1)  /* OGBUG  raw offset 15CEh */
+        else if(walls_flat[13 * 4 + 7] == 1)  /* OGBUG 15CEh; rebased: walls[3][2] */
         {
             *target_cgx = 7;
             *target_cgy = 13;
             retn_value = 99;
         }
-        else if(battlefield->walls[10][7] == 1)  /* OGBUG  raw offset 15B6h */
+        else if(walls_flat[10 * 4 + 7] == 1)  /* OGBUG 15B6h; rebased: walls[0][2] */
         {
             *target_cgx = 7;
             *target_cgy = 10;
