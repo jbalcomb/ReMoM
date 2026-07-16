@@ -11649,9 +11649,7 @@ int16_t Get_Effective_Melee_Strength(int16_t melee, int16_t thrown, int16_t figu
  */
 int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * target_wx, int16_t * target_wy)
 {
-    int16_t Reg_Dmg = 0;
-    int16_t Undeath_Dmg = 0;
-    int16_t Irrev_Dmg = 0;
+    int16_t damage_types[3] = { 0, 0, 0 };
     int16_t Resist_Modifier = 0;
     int32_t enchantments = 0;
     int16_t Unit_Resist = 0;
@@ -11677,9 +11675,9 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
         case scc_Direct_Damage_Variable:  /* Direct Damage */
             for (battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                Reg_Dmg = 0;
-                Undeath_Dmg = 0;
-                Irrev_Dmg = 0;
+                damage_types[0] = 0;
+                damage_types[1] = 0;
+                damage_types[2] = 0;
                 bu_ptr = &battle_units[battle_unit_idx];
                 if(bu_ptr->Attribs_1 & USA_IMMUNITY_MAGIC) continue;
                 if(spell_idx == spl_Star_Fires)
@@ -11708,14 +11706,14 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 {
                     /* Manual effective resistance check for Life Drain */
                     Unit_Resist = Combat_Effective_Resistance(*bu_ptr, sbr_Death);
-                    Undeath_Dmg = 13 - Unit_Resist;
-                    if(Undeath_Dmg < 0) Undeath_Dmg = 0;
+                    damage_types[1] = 13 - Unit_Resist;
+                    if(damage_types[1] < 0) damage_types[1] = 0;
                 }
                 else
                 {
-                    Apply_Battle_Unit_Damage_From_Spell(spell_idx, battle_unit_idx, &Reg_Dmg, 25);
+                    Apply_Battle_Unit_Damage_From_Spell(spell_idx, battle_unit_idx, &damage_types[0], 25);
                 }
-                Target_Value = Reg_Dmg + Undeath_Dmg + Irrev_Dmg;
+                Target_Value = damage_types[0] + damage_types[1] + damage_types[2];
                 if(Target_Value > 0)
                 {
                     /* MoM AI heuristic: Prioritize damaged/weakened units */
