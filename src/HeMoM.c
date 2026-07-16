@@ -45,6 +45,7 @@
 #include "../MoX/src/MOX_T4.h"
 #include "../MoX/src/Fields.h"
 #include "../MoX/src/LBX_Load.h"
+#include "../MoX/src/Allocate_Pool.h"  /* CLAUDE: Pool_Bytes_Peak() - static-pool high-water mark logged at shutdown */
 #include "../MoX/src/LOADSAVE.h"
 #include "../MoX/src/random.h"
 #include "../MoX/src/MOX2.h"  /* CLAUDE: Check_Command_Line_Parameters_() */
@@ -1379,6 +1380,8 @@ int main(int argc, char *argv[])
 #ifdef STU_DEBUG
     AI_Metrics_Shutdown();
 #endif
+
+    LOG_INFO(LOG_CAT_GENERAL, "[POOL] peak bytes used = %u  (vs POOL_ARENA_CAPACITY)", Pool_Bytes_Peak());  /* CLAUDE: static-pool high-water mark; informs POOL_ARENA_CAPACITY sizing (PLAN-Static-Pool-Allocator Phase 2b) */
 
     LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: END: HeMoM  main()", __FILE__, __LINE__);
 

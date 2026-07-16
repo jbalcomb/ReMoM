@@ -6,6 +6,7 @@
 #include <gtest/gtest.h>
 #include <cstring>
 #include "../src/Allocate.h"
+#include "../src/Allocate_Pool.h"   /* Pool_Init / Pool_Bytes_Used / POOL_SENTINEL_BYTE - Allocate_Space is now pool-backed */
 #include "../src/MOX_BASE.h"
 #include "../src/MOX_TYPE.h"
 
@@ -13,12 +14,17 @@
 class AllocateTest : public ::testing::Test {
 protected:
     void SetUp() override {
+        // Allocate_Space is now static-pool-backed (Pool_Carve), not malloc.
+        // Reset the pool each test so carves are deterministic and don't
+        // accumulate across the fixture.  Pool memory is never freed, so the
+        // free() calls that paired with the old malloc backing are gone.
+        Pool_Init();
         // Reset near buffer state before each test
         Near_Allocate_Reset();
     }
 
     void TearDown() override {
-        // Cleanup is handled by test-specific logic
+        // Pool memory is never freed; nothing to clean up.
     }
 };
 
@@ -43,9 +49,7 @@ TEST_F(AllocateTest, Allocate_Space_NormalAllocation)
     EXPECT_EQ(SA_GET_USED(block), 1);
     EXPECT_EQ(GET_2B_OFS((block), SAMB_unknown), _AAAA);
     EXPECT_EQ(GET_2B_OFS((block), SAMB_MARK), _AAAA);
-    
-    free(block);
-}
+    }
 
 TEST_F(AllocateTest, Allocate_Space_MinimumSize) {
     uint16_t size = 0;
@@ -55,9 +59,7 @@ TEST_F(AllocateTest, Allocate_Space_MinimumSize) {
     EXPECT_EQ(SA_GET_SIZE(block), size);
     EXPECT_EQ(SA_GET_MEMSIG1(block), _SA_MEMSIG1);
     EXPECT_EQ(SA_GET_MEMSIG2(block), _SA_MEMSIG2);
-    
-    free(block);
-}
+    }
 
 TEST_F(AllocateTest, Allocate_Space_LargeSize) {
     uint16_t size = 1000;
@@ -66,9 +68,7 @@ TEST_F(AllocateTest, Allocate_Space_LargeSize) {
     ASSERT_NE(block, nullptr);
     EXPECT_EQ(SA_GET_SIZE(block), size);
     EXPECT_EQ(SA_GET_USED(block), 1);
-    
-    free(block);
-}
+    }
 
 TEST_F(AllocateTest, Allocate_Space_MaximumSize) {
     uint16_t size = 4000;  // Large but reasonable size
@@ -76,9 +76,7 @@ TEST_F(AllocateTest, Allocate_Space_MaximumSize) {
     
     ASSERT_NE(block, nullptr);
     EXPECT_EQ(SA_GET_SIZE(block), size);
-    
-    free(block);
-}
+    }
 
 TEST_F(AllocateTest, Allocate_Space_CalculatesCorrectByteSize) {
     uint16_t size = 10;
@@ -90,9 +88,7 @@ TEST_F(AllocateTest, Allocate_Space_CalculatesCorrectByteSize) {
     // Verify we can access memory up to the expected size
     // Write pattern to verify allocation size
     memset(block, 0xFF, expected_bytes);
-    
-    free(block);
-}
+    }
 
 // ==============================================================================
 // Check_Allocation Tests
@@ -104,9 +100,7 @@ TEST_F(AllocateTest, Check_Allocation_ValidBlock) {
     
     int16_t result = Check_Allocation(block);
     EXPECT_EQ(result, ST_SUCCESS);
-    
-    free(block);
-}
+    }
 
 TEST_F(AllocateTest, Check_Allocation_InvalidSignature1) {
     SAMB_ptr block = Allocate_Space(50);
@@ -117,9 +111,7 @@ TEST_F(AllocateTest, Check_Allocation_InvalidSignature1) {
     
     int16_t result = Check_Allocation(block);
     EXPECT_EQ(result, ST_FAILURE);
-    
-    free(block);
-}
+    }
 
 TEST_F(AllocateTest, Check_Allocation_InvalidSignature2) {
     SAMB_ptr block = Allocate_Space(50);
@@ -130,9 +122,7 @@ TEST_F(AllocateTest, Check_Allocation_InvalidSignature2) {
     
     int16_t result = Check_Allocation(block);
     EXPECT_EQ(result, ST_FAILURE);
-    
-    free(block);
-}
+    }
 
 // ==============================================================================
 // Allocate_First_Block Tests
@@ -164,8 +154,6 @@ TEST_F(AllocateTest, Allocate_First_Block_Success)
     EXPECT_EQ(SA_GET_USED(sub_header), 1);
     EXPECT_EQ(GET_2B_OFS((sub_header), SAMB_unknown), _BBBB);
     EXPECT_EQ(SA_GET_MARK(sub_header), 1);
-
-    free(main_block);
 }
 
 TEST_F(AllocateTest, Allocate_First_Block_SubBlockOffsetCorrect) {
@@ -182,9 +170,7 @@ TEST_F(AllocateTest, Allocate_First_Block_SubBlockOffsetCorrect) {
     ptrdiff_t expected_offset = 32;
     ptrdiff_t actual_offset = sub_block - main_block;
     EXPECT_EQ(actual_offset, expected_offset);
-    
-    free(main_block);
-}
+    }
 
 // ==============================================================================
 // Allocate_Next_Block Tests
@@ -219,8 +205,6 @@ TEST_F(AllocateTest, Allocate_Next_Block_AfterFirst) {
     EXPECT_EQ(SA_GET_USED(next_header), 1);
     EXPECT_EQ(GET_2B_OFS((next_header), SAMB_unknown), _CCCC);
     EXPECT_EQ(GET_2B_OFS((next_header), SAMB_MARK), _CCCC);
-
-    free(main_block);
 }
 
 TEST_F(AllocateTest, Allocate_Next_Block_MultipleAllocations) {
@@ -245,9 +229,7 @@ TEST_F(AllocateTest, Allocate_Next_Block_MultipleAllocations) {
     EXPECT_NE(block2, block3);
     EXPECT_LT(block1, block2);
     EXPECT_LT(block2, block3);
-    
-    free(main_block);
-}
+    }
 
 // ==============================================================================
 // Get_Free_Blocks Tests
@@ -261,9 +243,7 @@ TEST_F(AllocateTest, Get_Free_Blocks_InitialState) {
     // Initial free blocks should be size - 1 (used starts at 1)
     uint16_t free_blocks = Get_Free_Blocks(block);
     EXPECT_EQ(free_blocks, size - 1);
-    
-    free(block);
-}
+    }
 
 TEST_F(AllocateTest, Get_Free_Blocks_AfterSubAllocations) {
     uint16_t main_size = 200;
@@ -279,9 +259,7 @@ TEST_F(AllocateTest, Get_Free_Blocks_AfterSubAllocations) {
     // Each allocation consumes size + 1 blocks
     EXPECT_LT(free_after_second, free_after_first);
     EXPECT_EQ(free_after_first - free_after_second, 31); // 30 + 1
-    
-    free(main_block);
-}
+    }
 
 // ==============================================================================
 // Mark_Block and Release_Block Tests
@@ -307,9 +285,7 @@ TEST_F(AllocateTest, Mark_And_Release_Block) {
     // Release back to mark
     Release_Block(main_block);
     EXPECT_EQ(SA_GET_USED(main_block), used_after_first);
-    
-    free(main_block);
-}
+    }
 
 TEST_F(AllocateTest, Reset_First_Block) {
     uint16_t main_size = 100;
@@ -322,9 +298,7 @@ TEST_F(AllocateTest, Reset_First_Block) {
     // Reset should set used back to 1
     Reset_First_Block(main_block);
     EXPECT_EQ(SA_GET_USED(main_block), 1);
-    
-    free(main_block);
-}
+    }
 
 // ==============================================================================
 // Near Buffer Allocation Tests
@@ -414,9 +388,42 @@ TEST_F(AllocateTest, Allocate_Space_No_Header_Success)
     // This version returns data pointer at offset +12 from the allocated base
     // Verify the offset is correct
     EXPECT_EQ(block, base_ptr + 12);
-    
-    // Free from the actual malloc'd address
-    free(base_ptr);
+}
+
+// ==============================================================================
+// Pool Backing Tests (static-pool-backed Allocate_Space, Phase 2b/4)
+// ==============================================================================
+
+TEST_F(AllocateTest, Allocate_Space_Is_Pool_Backed)
+{
+    // The arena comes from the static pool (Pool_Carve), not malloc: the pool's
+    // used-cursor advances by exactly the arena's (size + 1) * 16 bytes.
+    uint32_t used_before = Pool_Bytes_Used();
+    uint16_t size = 100;
+    SAMB_ptr block = Allocate_Space(size);
+    ASSERT_NE(block, nullptr);
+    EXPECT_EQ(Pool_Bytes_Used(), used_before + (uint32_t)((size + 1) * 16));
+}
+
+TEST_F(AllocateTest, Sentinel_Slack_In_Sub_Block_Data_Stays_0xCC)
+{
+    // SetUp's Pool_Init filled the pool with POOL_SENTINEL_BYTE.  Carve an arena
+    // and two sub-blocks; write only the first sub-block's data.  The second
+    // sub-block's data region was never written, so it must still hold the
+    // sentinel - slack inside the arena is visible garbage, not silent zero.
+    SAMB_ptr main = Allocate_Space(100);
+    ASSERT_NE(main, nullptr);
+    SAMB_ptr sub1 = Allocate_First_Block(main, 20);
+    SAMB_ptr sub2 = Allocate_Next_Block(main, 20);
+    ASSERT_NE(sub1, nullptr);
+    ASSERT_NE(sub2, nullptr);
+
+    memset(sub1, 0x5A, 20 * SZ_PARAGRAPH_B);
+
+    for (int i = 0; i < 20 * SZ_PARAGRAPH_B; i++)
+    {
+        ASSERT_EQ((uint8_t)sub2[i], (uint8_t)POOL_SENTINEL_BYTE) << "sub2 data offset " << i;
+    }
 }
 
 // ==============================================================================
@@ -469,8 +476,6 @@ TEST_F(AllocateTest, Integration_CompleteAllocationCycle) {
     // Verify we can allocate again
     SAMB_ptr sub4 = Allocate_Next_Block(main, 40);
     ASSERT_NE(sub4, nullptr);
-    
-    free(main);
 }
 
 TEST_F(AllocateTest, Integration_NearAndFarAllocation) {
@@ -490,6 +495,4 @@ TEST_F(AllocateTest, Integration_NearAndFarAllocation) {
     // Both should be usable
     memset(near_ptr, 0xAA, 100);
     memset(far_ptr, 0xBB, 16);
-    
-    free(far_ptr);
 }

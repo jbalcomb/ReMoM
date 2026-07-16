@@ -19,6 +19,7 @@
 #include "INITGAME.h"  /* gd_ci_inject_world_overrun (CI overrun inject) */
 
 #include <stdio.h>
+#include <stdlib.h> /* malloc() */
 
 
 
@@ -48,8 +49,10 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
 
     // TODO  EmmHndl_FIGUREX = EMM_GetHandle(28, EmmHndlNm_FIGUREX, 1);
     // TODO  EmmHndl_TILEXXX = EMM_GetHandle( 3, EmmHndlNm_TILEXXX, 1);
-    EmmHndl_FIGUREX = Allocate_Space(28672);  // 28 * 16384 EMM Page Size = 458752 B / 16 = 28672 PR
-    EmmHndl_TILEXXX = Allocate_Space(3072);   //  3 * 16384 EMM Page Size =  49152 B / 16 =  3072 PR
+    // 28 * 16384 EMM Page Size = 458752 B / 16 = 28672 PR
+    EmmHndl_FIGUREX = malloc(28672 * 16);
+    //  3 * 16384 EMM Page Size =  49152 B / 16 =  3072 PR
+    EmmHndl_TILEXXX = malloc(3072 * 16);
 
     // MGC: 6100
     // WZD: 4600
@@ -60,16 +63,14 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
 
     // lair_confirm_pict: 41 x 43 = 1763
     // ¿ MoO2  Module: MOX  data (0 bytes) _global_bitmap_seg  Address: 02:0018B2D0 ?
-    GfxBuf_2400B = Allocate_Space(150);  // 150 PR  2400 B  ~ 48 x 48 = 2304 B w/ 6 headers ... 50 x 48 = 2400
+    // 150 PR  2400 B  ~ 48 x 48 = 2304 B w/ 6 headers ... 50 x 48 = 2400
+    GfxBuf_2400B = malloc(150 * 16);
 
 // World_Data
 // ¿ everything from a SAVE_GAM ? also, COMBAT.TMP ? 
 
     // 635 PR, 10160 B  / 198 = 51.3131 bytes per STATFIG pict?
-    // GFX_Swap_Seg = Allocate_Space(635);
-    // GFX_Swap_Seg = Allocate_Space(4092);
-    // GFX_Swap_Seg = Allocate_Space(4092);
-    // GFX_Swap_Seg = Allocate_Space((65536 * 3));
+
     g_graphics_cache_seg = Allocate_Space(65535);
     /*
         1024 * 1024 = 1048576

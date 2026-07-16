@@ -2,6 +2,7 @@
 set(LIBMOX_SOURCES
     AIL.c
     Allocate.c
+    Allocate_Pool.c
     angle.c
     capture.c
     CFG.c
