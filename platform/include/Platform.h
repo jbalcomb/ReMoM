@@ -115,6 +115,14 @@ extern "C" {
 void Startup_Platform(void);
 
 /**
+ * Show a modal error message to the user, then return.  On graphical backends
+ * this is a simple message box (safe to call before Startup_Platform / with no
+ * window); on the headless backend it writes to stderr.  Used for fail-soft
+ * startup errors such as missing game data.
+ */
+void Platform_Show_Error(const char * title, const char * message);
+
+/**
  * Shut down the platform layer and release all resources.
  * No Platform_* functions may be called after this.
  */

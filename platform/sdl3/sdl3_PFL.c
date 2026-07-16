@@ -29,6 +29,14 @@
 #endif
 
 
+void Platform_Show_Error(const char * title, const char * message)
+{
+    /* stderr first so the message survives even when no display is available
+       (e.g. a --headless run); then the GUI box for interactive players. */
+    fprintf(stderr, "%s: %s\n", title, message);
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title, message, NULL);
+}
+
 
 // static SDL_Window * sdl3_window;                    // static SDL_Window *screen;
 SDL_Window * sdl3_window;

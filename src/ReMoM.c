@@ -305,6 +305,13 @@ int main(int argc, char * argv[])
         }
     }
 
+    /* Fail soft if the game data isn't present: show a clear, actionable
+       message and exit *before* creating a window (no blank-window flash). */
+    if(ReMoM_Preflight_Game_Data() != 0)
+    {
+        return 1;
+    }
+
     LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: BEFORE: Startup_Platform()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEFORE: Startup_Platform()", __FILE__, __LINE__);
 

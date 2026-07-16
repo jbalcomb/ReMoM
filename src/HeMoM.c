@@ -1016,6 +1016,13 @@ int main(int argc, char *argv[])
        matching the existing test / matchup harness behavior. */
     STU_GRAF_Init(STU_GRAF_HEADLESS);
 
+    /* Fail soft (to stderr, via the headless Platform_Show_Error) if the game
+       data isn't present. */
+    if(ReMoM_Preflight_Game_Data() != 0)
+    {
+        return 1;
+    }
+
     LOG_INFO(LOG_CAT_GENERAL, "BEGIN: HeMoM main() [STU_LOG tracer bullet]");
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: HeMoM  main()", __FILE__, __LINE__);
     LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: BEGIN: HeMoM  main()", __FILE__, __LINE__);

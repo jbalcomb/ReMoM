@@ -15,6 +15,12 @@
 #include <stdio.h>
 
 
+void Platform_Show_Error(const char * title, const char * message)
+{
+    /* No GUI in headless mode -- stderr is the channel HeMoM / CI observes. */
+    fprintf(stderr, "%s: %s\n", title, message);
+}
+
 
 /* ========================================================================= */
 /*  Synthetic Player Callback                                                */

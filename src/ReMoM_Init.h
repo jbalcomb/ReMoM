@@ -24,6 +24,16 @@ extern "C" {
  */
 void ReMoM_Init_Engine(void);
 
+/**
+ * Fail-soft check for the presence of the original Master of Magic game data.
+ * Resolves a small set of required .LBX files via the STU_GRAF search path.
+ * If any are missing, shows a clear, actionable error (GUI box on player
+ * builds, stderr on headless) and returns non-zero; the caller should exit.
+ * Returns 0 when the data is present.  Call after STU_GRAF_Init() and before
+ * the first asset load.
+ */
+int ReMoM_Preflight_Game_Data(void);
+
 #ifdef __cplusplus
 }
 #endif

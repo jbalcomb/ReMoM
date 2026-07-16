@@ -33,6 +33,10 @@
 
 #include "../ext/stu_compat.h"
 
+#include "../STU/src/STU_LOG.h"
+#include "../STU/src/STU_GRAF.h"
+#include "../platform/include/Platform.h"
+
 #include "ReMoM_Init.h"
 
 #ifdef STU_DEBUG
@@ -41,6 +45,62 @@
 
 
 extern char MOM_FONT_FILE[];
+
+
+
+int ReMoM_Preflight_Game_Data(void)
+{
+    /* Small, high-signal set: if these can't be resolved, the player has not
+       supplied the game data.  Kept minimal so a legitimately-present install
+       never false-fails.  (Aligned with the installer PRD's presence check.) */
+    static const char * const required[] =
+    {
+        "FONTS.LBX", "MAINSCRN.LBX", "WIZARDS.LBX", "SPELLDAT.LBX"
+    };
+    const int required_count = (int)(sizeof(required) / sizeof(required[0]));
+    char missing_list[256];
+    char message[768];
+    int n_missing = 0;
+    int i;
+
+    missing_list[0] = '\0';
+    for(i = 0; i < required_count; i++)
+    {
+        FILE * fp = STU_GRAF_Open_Asset(required[i], "rb");
+        if(fp != NULL)
+        {
+            fclose(fp);
+        }
+        else
+        {
+            if(n_missing > 0)
+            {
+                stu_strcat(missing_list, ", ");
+            }
+            stu_strcat(missing_list, required[i]);
+            n_missing++;
+        }
+    }
+
+    if(n_missing == 0)
+    {
+        return 0;
+    }
+
+    snprintf(message, sizeof(message),
+             "ReMoM could not find your Master of Magic game data.\n\n"
+             "Missing: %s\n\n"
+             "Copy every .LBX file and CONFIG.MOM from your original\n"
+             "Master of Magic v1.31 installation into the same folder as\n"
+             "the ReMoMber executable (or set the REMOM_DATA_DIR environment\n"
+             "variable to point at them).\n\n"
+             "See PLAYING.md for details.",
+             missing_list);
+
+    LOG_ERROR(LOG_CAT_GENERAL, "Preflight: missing game data: %s", missing_list);
+    Platform_Show_Error("ReMoM - Missing Game Data", message);
+    return 1;
+}
 
 
 
