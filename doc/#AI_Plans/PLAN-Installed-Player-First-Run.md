@@ -28,7 +28,8 @@ Durable decisions that apply across all phases:
 - **Routing the game's opens (no game-logic edits):** `LBX_Load` (libmox, 3 sites) calls `STU_GRAF_Open_Asset` — legal MoX→STU dependency, no function pointers. `CONFIG.MOM`/`MAGIC.SET`/save sites (bounded, in `ReMoM_Init.c`/`Settings.c`/HeMoM newgame) call the `STU_GRAF` open functions.
 - **`profile` at init:** `STU_GRAF_Init(STU_GRAF_PLAYER | STU_GRAF_HEADLESS)`. HEADLESS → CWD-only, no seeding, stderr for errors. Both `main()`s call it.
 - **Startup order (target):** CLI-parse → `STU_GRAF_Init` → `STU_Log_Startup` (into the resolved state dir) → `Startup_Platform` → preflight (dialog/exit) → seed → `ReMoM_Init_Engine` + MAGIC/WIZARDS → run. Bootstrap de-duplication of `ReMoM.c`/`HeMoM.c` and this order-fix are **distributed across phases**, not a separate refactor phase.
-- **Seeding policy:** on first run, copy `CONFIG.MOM`/`MAGIC.SET` from the discovered game-data dir into the user data dir, then **always** read/write the copies (no read-through). Originals never modified.
+- **Seeding policy:** on first run, copy `CONFIG.MOM`/`MAGIC.SET` **and any existing `SAVE1-9.GAM`** from the discovered game-data dir into the user data dir (copy-if-absent), then **always** read/write the copies (no read-through). Originals never modified. *(Saves added post-plan — without them, existing save games that live beside the data were orphaned on the move to per-user dirs.)*
+- **File maintenance (post-plan enhancement):** `ReMoMber --orig-files` force-refreshes `CONFIG.MOM`/`MAGIC.SET`/`SAVE1-9.GAM` from the originals, first moving current copies into a timestamped `backup-YYYYMMDD-HHMMSS/` subdir of the user data dir. STU_GRAF seam: `STU_GRAF_Backup_And_Reseed_User_File`.
 
 ---
 

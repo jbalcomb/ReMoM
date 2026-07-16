@@ -325,10 +325,31 @@ int main(int argc, char * argv[])
         return 1;
     }
 
-    /* First run: copy CONFIG.MOM / MAGIC.SET into the user-data dir so the
-       engine reads and writes its own copies (the original install stays
-       read-only).  PLAYER only -- a no-op for HeMoM. */
-    ReMoM_Seed_User_Files();
+    /* --orig-files forces a refresh of the writable per-user files from the
+       originals (backing up any existing copies); otherwise it's a first-run
+       copy-if-absent of CONFIG.MOM / MAGIC.SET / SAVE1-9.GAM into the user-data
+       dir so the engine reads/writes its own copies (the install stays
+       read-only).  PLAYER only -- both are no-ops for HeMoM. */
+    {
+        int argi;
+        int orig_files = 0;
+        for(argi = 1; argi < argc; argi++)
+        {
+            if(stu_strcmp(argv[argi], "--orig-files") == 0)
+            {
+                orig_files = 1;
+                break;
+            }
+        }
+        if(orig_files)
+        {
+            ReMoM_Reseed_User_Files();
+        }
+        else
+        {
+            ReMoM_Seed_User_Files();
+        }
+    }
 
     /* Non-blocking: warn (once) if the installed data doesn't match a supported
        v1.31 distribution.  Silent no-op until the embedded manifest is authored

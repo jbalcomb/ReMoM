@@ -512,21 +512,34 @@ long STU_GRAF_User_LOF(const char * name)
     return size;
 }
 
+/* Copy src to dst (both already open); returns 1 on success, 0 on a short write. */
+static int graf_copy_stream(FILE * src, FILE * dst)
+{
+    char buf[4096];
+    size_t n;
+    while((n = fread(buf, 1, sizeof(buf), src)) > 0)
+    {
+        if(fwrite(buf, 1, n, dst) != n)
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 int STU_GRAF_Seed_User_File(const char * name)
 {
     char dir[STU_GRAF_PATH_MAX];
     char full[STU_GRAF_PATH_MAX];
     FILE * src;
     FILE * dst;
-    char buf[4096];
-    size_t n;
+    int ok;
 
     /* No seeding under HEADLESS: reads already resolve to the CWD copy. */
     if(g_profile == STU_GRAF_HEADLESS)
     {
         return 1;
     }
-
     if(!STU_GRAF_User_Data_Dir(dir, sizeof(dir)))
     {
         return 0;
@@ -557,19 +570,85 @@ int STU_GRAF_Seed_User_File(const char * name)
         LOG_WARN(LOG_CAT_GENERAL, "STU_GRAF: cannot create user copy of '%s'", name);
         return 0;
     }
-    while((n = fread(buf, 1, sizeof(buf), src)) > 0)
-    {
-        if(fwrite(buf, 1, n, dst) != n)
-        {
-            LOG_ERROR(LOG_CAT_GENERAL, "STU_GRAF: short write seeding '%s'", name);
-            fclose(src);
-            fclose(dst);
-            return 0;
-        }
-    }
+    ok = graf_copy_stream(src, dst);
     fclose(src);
     fclose(dst);
+    if(!ok)
+    {
+        LOG_ERROR(LOG_CAT_GENERAL, "STU_GRAF: short write seeding '%s'", name);
+        return 0;
+    }
     LOG_INFO(LOG_CAT_GENERAL, "STU_GRAF: seeded user copy of '%s'", name);
+    return 1;
+}
+
+int STU_GRAF_Backup_And_Reseed_User_File(const char * name, const char * backup_subdir)
+{
+    char dir[STU_GRAF_PATH_MAX];
+    char user_full[STU_GRAF_PATH_MAX];
+    char bdir[STU_GRAF_PATH_MAX];
+    char bfull[STU_GRAF_PATH_MAX];
+    FILE * orig;
+    FILE * cur;
+    FILE * dst;
+    int ok;
+
+    if(g_profile == STU_GRAF_HEADLESS)
+    {
+        return 0;
+    }
+    if(!STU_GRAF_User_Data_Dir(dir, sizeof(dir)))
+    {
+        return 0;
+    }
+
+    /* Nothing to re-copy if there's no original on the search path. */
+    orig = STU_GRAF_Open_Asset(name, "rb");
+    if(orig == NULL)
+    {
+        return 0;
+    }
+
+    graf_mkpath(dir);
+    graf_join(user_full, sizeof(user_full), dir, name);
+
+    /* Back up an existing user copy into <user-data>/<backup_subdir>/ first. */
+    cur = stu_fopen_ci(user_full, "rb");
+    if(cur != NULL)
+    {
+        graf_join(bdir, sizeof(bdir), dir, backup_subdir);
+        graf_mkpath(bdir);
+        graf_join(bfull, sizeof(bfull), bdir, name);
+        dst = stu_fopen_ci(bfull, "wb");
+        if(dst != NULL)
+        {
+            graf_copy_stream(cur, dst);
+            fclose(dst);
+        }
+        else
+        {
+            LOG_WARN(LOG_CAT_GENERAL, "STU_GRAF: cannot back up '%s'", name);
+        }
+        fclose(cur);
+    }
+
+    /* Overwrite the user copy from the original. */
+    dst = stu_fopen_ci(user_full, "wb");
+    if(dst == NULL)
+    {
+        fclose(orig);
+        LOG_WARN(LOG_CAT_GENERAL, "STU_GRAF: cannot overwrite user copy of '%s'", name);
+        return 0;
+    }
+    ok = graf_copy_stream(orig, dst);
+    fclose(orig);
+    fclose(dst);
+    if(!ok)
+    {
+        LOG_ERROR(LOG_CAT_GENERAL, "STU_GRAF: short write re-seeding '%s'", name);
+        return 0;
+    }
+    LOG_INFO(LOG_CAT_GENERAL, "STU_GRAF: re-seeded '%s' from original", name);
     return 1;
 }
 

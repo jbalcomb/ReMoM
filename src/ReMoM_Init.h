@@ -54,6 +54,14 @@ void ReMoM_Seed_User_Files(void);
  */
 void ReMoM_Check_Data_Compat(void);
 
+/**
+ * Force-refresh the writable per-user files (CONFIG.MOM, MAGIC.SET, SAVE1-9.GAM)
+ * from the discovered originals, backing up any existing copies into a
+ * timestamped backup-YYYYMMDD-HHMMSS/ subdir of the user data dir first.  Wired
+ * to the --orig-files flag; use instead of ReMoM_Seed_User_Files().  Player only.
+ */
+void ReMoM_Reseed_User_Files(void);
+
 #ifdef __cplusplus
 }
 #endif

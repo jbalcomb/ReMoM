@@ -105,6 +105,11 @@ long STU_GRAF_User_LOF(const char * name);
    original on the search path is never modified. */
 int STU_GRAF_Seed_User_File(const char * name);
 
+/* Re-copy a per-user file from its read-only original, first backing up any
+   existing user copy into <user-data>/<backup_subdir>/.  Returns 1 if re-copied,
+   0 if there was no original (existing copy left as-is).  No-op under HEADLESS. */
+int STU_GRAF_Backup_And_Reseed_User_File(const char * name, const char * backup_subdir);
+
 /* Read the [Paths] game_data value from the given INI file.  Returns 1 and
    fills out on success, 0 otherwise (missing file/section/key).  Section and
    key match case-insensitively.  Exposed for testing. */

@@ -90,7 +90,7 @@ int ReMoM_Preflight_Game_Data(void)
     snprintf(message, sizeof(message),
              "ReMoM could not find your Master of Magic game data.\n\n"
              "Missing: %s\n\n"
-             "Copy every .LBX file and CONFIG.MOM from your original\n"
+             "Copy every .LBX file from your original\n"
              "Master of Magic v1.31 installation into the same folder as\n"
              "the ReMoMber executable (or set the REMOM_DATA_DIR environment\n"
              "variable to point at them).\n\n"
@@ -104,17 +104,81 @@ int ReMoM_Preflight_Game_Data(void)
 
 
 
-void ReMoM_Seed_User_Files(void)
+/* The writable per-user files ReMoM manages: CONFIG.MOM, MAGIC.SET, and the nine
+   save slots.  Index 0/1 are the config files; 2..10 are SAVE1..SAVE9.GAM. */
+#define REMOM_USER_SAVE_SLOTS 9
+#define REMOM_USER_FILE_COUNT (2 + REMOM_USER_SAVE_SLOTS)
+
+static void ReMoM_User_File_Name(int idx, char * out, size_t cap)
 {
-    /* CONFIG.MOM is expected for a real boot; MAGIC.SET is optional (the engine
-       creates one with defaults in the user-data dir if the install had none).
-       STU_GRAF only copies when the user copy is absent and never touches the
-       original -- and does nothing at all under the HEADLESS profile. */
-    STU_GRAF_Seed_User_File(str_CONFIG_MOM);
-    STU_GRAF_Seed_User_File(str_MAGIC_SET);
+    if(idx == 0)
+    {
+        snprintf(out, cap, "%s", str_CONFIG_MOM);
+    }
+    else if(idx == 1)
+    {
+        snprintf(out, cap, "%s", str_MAGIC_SET);
+    }
+    else
+    {
+        snprintf(out, cap, "SAVE%d.GAM", idx - 1);
+    }
 }
 
+void ReMoM_Seed_User_Files(void)
+{
+    int i;
+    char name[32];
 
+    /* Copy-if-absent from the discovered game data into the user data dir; the
+       originals are never modified and this is a no-op under HEADLESS.  Covers
+       CONFIG.MOM, MAGIC.SET, and any existing SAVE1-9.GAM that live alongside the
+       game data (so saved games aren't orphaned on the move to per-user dirs). */
+    for(i = 0; i < REMOM_USER_FILE_COUNT; i++)
+    {
+        ReMoM_User_File_Name(i, name, sizeof(name));
+        STU_GRAF_Seed_User_File(name);
+    }
+}
+
+void ReMoM_Reseed_User_Files(void)
+{
+    char backup_subdir[64];
+    char name[32];
+    time_t t;
+    struct tm tmv;
+    int i;
+    int recopied = 0;
+
+    /* Timestamped backup dir so successive --orig-files runs don't clobber. */
+    t = time(NULL);
+    if(stu_localtime(&t, &tmv) != NULL)
+    {
+        strftime(backup_subdir, sizeof(backup_subdir), "backup-%Y%m%d-%H%M%S", &tmv);
+    }
+    else
+    {
+        stu_strcpy(backup_subdir, "backup");
+    }
+
+    for(i = 0; i < REMOM_USER_FILE_COUNT; i++)
+    {
+        ReMoM_User_File_Name(i, name, sizeof(name));
+        if(STU_GRAF_Backup_And_Reseed_User_File(name, backup_subdir))
+        {
+            recopied++;
+        }
+    }
+
+    LOG_INFO(LOG_CAT_GENERAL,
+             "--orig-files: re-copied %d file(s) from originals (prior copies backed up to %s/)",
+             recopied, backup_subdir);
+    fprintf(stderr,
+            "ReMoM: --orig-files re-copied %d file(s) from your original Master of Magic\n"
+            "       data; any existing copies were backed up to '%s/' in your ReMoM\n"
+            "       data folder.\n",
+            recopied, backup_subdir);
+}
 
 void ReMoM_Check_Data_Compat(void)
 {
@@ -166,22 +230,14 @@ void ReMoM_Init_Engine(void)
 
     // TODO(JimBalcomb,20260502)  MoO2  main_() |-> Check_Command_Line_Parameters_() ... if(strstr_(_cmd_line_saveset, aSeed) != 0) { _cmd_line_seed = Get_Value_From_String_(aSeed, _cmd_line_saveset); }
 
-    if(STU_GRAF_User_DIR(str_CONFIG_MOM, found_file) == 0)  /* CLAUDE: -> user-data */
+    /* CONFIG.MOM is optional (like MAGIC.SET): default to an empty/zeroed sound
+       config, then overlay it from the file only if present.  A missing file no
+       longer crashes -- the old `DIR(...) == 0` guard was dead (DIR never returns
+       0), so the read ran unconditionally and stu_fread(NULL) was UB.  CLAUDE */
+    memset(&config_mom, 0, sizeof(config_mom));
+    file_handle = STU_GRAF_Open_User(str_CONFIG_MOM, str_RB);  /* CLAUDE: -> user-data */
+    if(file_handle != NULL)
     {
-        config_mom.MIDI_IO = 0;
-        config_mom.MIDI_ID = 0;
-        config_mom.MIDI_IRQ = 0;
-        config_mom.DIGI_IO = 0;
-        config_mom.DIGI_IRQ = 0;
-        config_mom.DIGI_DMA = 0;
-        config_mom.DIGI_ID = 0;
-        config_mom.NIU_0E = 0;
-        config_mom.NIU_10 = 0;
-        config_mom.NIU_12 = 0;
-    }
-    else
-    {
-        file_handle = STU_GRAF_Open_User(str_CONFIG_MOM, str_RB);  /* CLAUDE: -> user-data */
         stu_fread(&config_mom, sizeof(struct s_CONFIG_MOM_18), 1, file_handle);
         stu_fclose(file_handle);
     }

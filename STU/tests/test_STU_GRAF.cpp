@@ -416,6 +416,45 @@ TEST(STU_GRAF, UserStateDirResolvesAndCreates)
     unset_env("XDG_STATE_HOME");
 }
 
+TEST(STU_GRAF, BackupAndReseedRestoresOriginalAndBacksUp)
+{
+    TempTree data("reseeddata");
+    TempTree game("reseedgame");
+    game.write("TST.DAT", "orig-content");
+    set_env("XDG_DATA_HOME", data.dir().c_str());
+    STU_GRAF_Init(STU_GRAF_PLAYER);
+    STU_GRAF_Reset();
+    STU_GRAF_Add_Search_Dir(game.dir().c_str());
+
+    // The user has an edited working copy.
+    FILE * w = STU_GRAF_Open_User("TST.DAT", "wb");
+    ASSERT_NE(w, nullptr);
+    fputs("edited", w);
+    fclose(w);
+
+    ASSERT_EQ(STU_GRAF_Backup_And_Reseed_User_File("TST.DAT", "bak"), 1);
+
+    // Working copy now matches the original again...
+    FILE * r = STU_GRAF_Open_User("TST.DAT", "rb");
+    ASSERT_NE(r, nullptr);
+    EXPECT_EQ(read_all(r), "orig-content");
+    fclose(r);
+
+    // ...and the edited copy was preserved under <user-data>/bak/.
+    fs::path bak = fs::path(data.dir()) / "ReMoM" / "bak" / "TST.DAT";
+    ASSERT_TRUE(fs::exists(bak));
+    FILE * bf = fopen(bak.string().c_str(), "rb");
+    ASSERT_NE(bf, nullptr);
+    EXPECT_EQ(read_all(bf), "edited");
+    fclose(bf);
+
+    // No original -> no-op, returns 0.
+    EXPECT_EQ(STU_GRAF_Backup_And_Reseed_User_File("NOPE.DAT", "bak"), 0);
+
+    STU_GRAF_Reset();
+    unset_env("XDG_DATA_HOME");
+}
+
 #endif
 
 // ---- Phase 5: data-compatibility pass (embedded manifest table) --------------
