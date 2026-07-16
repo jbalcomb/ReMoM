@@ -36,12 +36,16 @@ between neighbors get incidental OOB coverage in both directions from tight
 packing: an underrun lands in the previous arena's tail, an overrun in the
 next arena's head.
 
-The static pool is initialized to a sentinel byte pattern (`0xCC`) so accidental
-OOB reads in non-OG-faithful code produce visible garbage rather than silent
-zero. The existing `gd_ci_inject_*` infrastructure for stamping OG-captured byte
-patterns into known OOB regions (e.g., the slack past `_world_maps`) continues
-to work unchanged — the slack address is now inside the pool instead of inside
-a malloc block, but the inject API is unchanged.
+The static pool is initialized to a sentinel byte pattern (`0xCC`) so OOB reads
+land on deterministic, visible bytes rather than silent zero or heap garbage.
+Through the pool swap (Phases 1-4) the pre-existing `gd_ci_inject_*`
+infrastructure — which stamped OG-captured byte patterns into known OOB regions
+such as the slack past `_world_maps` — kept working unchanged (the slack address
+just moved from a malloc block into the pool). Once the pool is in place, that
+injection, together with the `WORLD_OVERFLOW` over-allocation padding it wrote
+into, is redundant scaffolding: **Phase 5 retires both** and lets the pool's own
+deterministic content back the OOB reads, trading OG-value fidelity in those
+regions for a smaller, self-contained system.
 
 Video and hardware/expanded-memory buffers are not System RAM: they model
 VGA hardware (the framebuffer and page buffers) and EMS/expanded-memory banks.
@@ -82,10 +86,11 @@ deferred to Phase 2.
 6. As a ReMoM developer, I want the static pool filled with sentinel byte
    `0xCC` at startup, so that accidental OOB reads in non-OG-faithful code
    produce visible garbage rather than silent zero.
-7. As a ReMoM developer, I want the existing `gd_ci_inject_world_overrun` and
-   future companion injection hooks to work unchanged over the pool, so that
-   OG-captured byte patterns at known OOB sites continue to be observable in
-   ReMoM runs.
+7. As a ReMoM developer, I want the OOB reads backed by the pool's own
+   deterministic memory rather than an external OG-capture injection, so that
+   the OOB-safety mechanism is self-contained. The `gd_ci_inject_*` hooks and
+   the `WORLD_OVERFLOW` padding keep working through the pool swap
+   (Phases 1-4) and are then retired in Phase 5.
 8. As a ReMoM developer, I want the pool's bump-pointer carving to be
    deterministic across runs (same `Allocate_Space` call order → same per-arena
    offsets), so that the layout matches what the CI byte-capture pipeline
@@ -126,11 +131,12 @@ deferred to Phase 2.
     sub-block writes, so that accidental sub-block-boundary corruption can be
     detected.
 19. As a matchup-pipeline runner, I want an end-to-end HeMoM-scripted harness
-    that starts a new game with the `matchup_hemom` seed, drives it through
-    Simtex_Autotiling at the wp=1/wy=39 OOB read site, asserts the process
-    doesn't crash, and asserts that the byte read at the OOB address equals
-    the CI-injected OG value, so that the refactor's success criterion is
-    empirically validated.
+    that drives a new game through Simtex_Autotiling at the wp=1/wy=39 OOB read
+    site, asserts the process doesn't crash, and asserts that the OOB-influenced
+    output is deterministic (pinned to a seed-stable baseline), so that the
+    refactor's success criterion is empirically validated. (Realized in Phase 3
+    as `HeMoM_OOB_Autotiling`; a direct injected-byte comparison is a CI-only
+    concern, dropped once Phase 5 retires the inject.)
 20. As a ReMoM developer, I want existing `gd_dump_*` byte-compare points
     (e.g., `19_Simtex_Autotiling_W`, `20_River_Path_W`, `27_CRP_NEWG_CreatePathGrids_U`,
     save-game compares) to remain green after the refactor, so that no new
@@ -223,10 +229,12 @@ deferred to Phase 2.
 - **`_screen_seg` moves to pool**. Its sub-blocks (`near_buffer_save`,
   `help_pict_seg`, `IMG_SBK_PageText`) automatically come with it via the
   existing `Allocate_First_Block` / `Allocate_Next_Block` calls.
-- **CI byte injection unchanged**. `gd_ci_inject_world_overrun` and any
-  future companion injection hooks compute slack addresses from base
-  pointers; those pointers now point into the pool instead of into malloc,
-  but the API and the injected byte patterns are unchanged.
+- **CI byte injection: unchanged through Phase 4, retired in Phase 5**.
+  `gd_ci_inject_world_overrun` / `gd_ci_inject_flags_overrun` compute slack
+  addresses from base pointers; through the pool swap those pointers simply
+  point into the pool instead of into malloc, API unchanged. Phase 5 then
+  removes the injectors and the `WORLD_OVERFLOW` padding they wrote into — the
+  pool's own sentinel / neighbouring-arena content becomes the OOB backing.
 - **Pool exhaustion** invokes `Allocation_Error` (matching the existing
   fatal-on-allocator-failure pattern). Caller never sees a NULL return.
 - **Build-time sanity**: a compile-time assertion that
@@ -260,10 +268,11 @@ visible effects.
   inside a pool-backed arena; slack between sub-blocks remains at the
   sentinel pattern after normal sub-block writes.
 - **End-to-end OOB harness** (driven via HeMoM scenario script): start a
-  new game with the matchup seed; let Simtex_Autotiling run; assert the
-  process doesn't crash through the wp=1/wy=39 dump point; extract the
-  byte at the OOB read address from the existing `gd_dump_*` channel;
-  assert it equals the CI-injected OG value.
+  new game; let Simtex_Autotiling run; assert the process doesn't crash
+  through the wp=1/wy=39 site; assert the OOB-influenced output (the plane-1
+  last-row tiles) matches a seed-pinned baseline. Realized in Phase 3 as
+  `HeMoM_OOB_Autotiling` — it proves crash-free determinism; the injected-byte
+  diff is a CI-only concern, retired with the inject in Phase 5.
 - **Existing dump regression**: re-run the matchup pipeline; assert all
   currently-green `gd_dump_*` comparison points stay green.
 
@@ -272,9 +281,9 @@ Prior art:
   (CTest + Google Test inside MoM/tests/).
 - `tools/parity_check.py` for the end-to-end pipeline that compares dump
   outputs against an OG-captured baseline.
-- Existing `gd_dump_*` infrastructure in MAPGEN.c and the
-  `gd_ci_inject_world_overrun` hook in ALLOC.c for the byte-capture and
-  injection mechanism the OOB harness relies on.
+- Existing `gd_dump_*` infrastructure in MAPGEN.c. (Through Phase 4 the
+  `gd_ci_inject_world_overrun` hook in ALLOC.c supplied the OOB bytes; Phase 5
+  retires it, so the harness relies on pool-backed determinism, not injection.)
 
 ## Out of Scope
 
@@ -323,7 +332,9 @@ Prior art:
 - **HeMoM ↔ ReMoMber parity**: both targets share MoX/src/Allocate.c and the
   new Allocate_Pool module, so the refactor is uniform across them. No
   per-target conditionals.
-- **CI baseline capture**: the existing capture-and-inject pipeline for OG
-  OOB bytes (currently exercised for `_world_maps` overrun) is the model
-  for any future OOB site discovered post-MVP. Adding a new captured-OOB
-  region is a small additive change to the inject hook, not a restructure.
+- **CI baseline capture**: through Phase 4 the capture-and-inject pipeline for
+  OG OOB bytes (exercised for `_world_maps` overrun) supplied OG-faithful values
+  at the OOB sites. Phase 5 retires it in favour of pool-backed OOB reads, and
+  re-baselines the OOB-influenced goldens to the pool's deterministic output.
+  (The `gd_ci_get` RNG/count-alignment use of the same subsystem is a separate
+  concern, out of Phase 5's scope.)

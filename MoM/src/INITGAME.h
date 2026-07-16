@@ -37,14 +37,15 @@ void gd_dump_map_square_flags(const char* point); /* defined in MAPGEN.c */
 void gd_dump_ai_continents(const char* point);    /* defined in AIMOVE.c */
 
 /* Capture/Inject (CI), ReMoM side.  Reads og-game-data-capture.fwv (produced by
- * extract-ci-stage0.py from the OG [CI] probe) and injects OG's exact bytes for
- * values ReMoM cannot reproduce on its own -- uninitialized stack autos and
- * OOB-overrun reads.  Distinct from the gd_dump_* [GD] capture (which compares).
- * Defined in INITGAME.c.  Loads lazily on first use; idempotent. */
+ * extract-ci-stage0.py from the OG [CI] probe) and supplies OG's exact bytes for
+ * values ReMoM cannot reproduce on its own -- OG's uninitialized stack autos
+ * (e.g. Choose_Landmass_For_Settler centroid, Generate_Towers `tries`).
+ * Distinct from the gd_dump_* [GD] capture (which compares).
+ * Defined in INITGAME.c.  Loads lazily on first use; idempotent.
+ * CLAUDE Phase 5a: the OOB-overrun byte injectors are gone - the static pool now
+ * backs those OG-faithful OOB reads directly. */
 int  gd_ci_load(void);                                                  /* -> record count, or -1 on failure */
 int  gd_ci_get(const char* key, const char* site, long* out, int max);  /* -> values copied, or -1 if absent */
-void gd_ci_inject_world_overrun(const char* site);                      /* write OG's OOB int16 past _world_maps */
-void gd_ci_inject_flags_overrun(const char* site);                      /* write OG's OOB uint8 past _map_square_flags */
 
 // MGC o56p1
 void Init_Computer_Players(void);

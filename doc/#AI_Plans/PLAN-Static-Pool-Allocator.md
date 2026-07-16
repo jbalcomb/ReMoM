@@ -287,3 +287,124 @@ tests rather than new bespoke ones (see criteria). Document the catalog.
 - [x] Documentation: `doc/Static-Pool-Tests.md` (test catalog) and
   `doc/HeMoM-OOB-Autotiling-Harness.md` describe what each target covers and how
   to run it.
+
+---
+
+## Phase 5a: Remove the OOB-avoidance scaffolding
+
+**User stories**: supersedes 7 (previously "gd_ci_inject works unchanged over
+the pool"); realizes the pool's original purpose — OG-faithful OOB accesses no
+longer need external help to be safe.
+
+### What to build
+
+The static pool now makes every OG-faithful OOB access land in addressable,
+deterministic memory on its own. So the two mechanisms that predated it and were
+kept "unchanged" through Phases 1-4 — the `WORLD_OVERFLOW` over-allocation
+padding and the `gd_ci_inject_*` value injection — are now redundant scaffolding
+and get removed. **Decision (locked):** the OOB reads will be backed by the
+pool's own deterministic content (sentinel / neighbouring arena), not by an
+injected OG capture. This trades OG-*value* fidelity in the OOB regions for a
+much smaller, self-contained system; OG-*behavior* fidelity (the access happens,
+against addressable memory) is preserved by the pool.
+
+This phase is the **code change only**. It will turn the OOB-dependent goldens
+red — that is expected and is repaired in Phase 5b. 5a's own gates are
+no-crash + determinism + capacity, not byte-parity.
+
+Concretely:
+
+- **Remove the `WORLD_OVERFLOW` padding** from the pool-backed arenas —
+  `_world_maps`, `_map_square_terrain_specials`, `_map_square_flags` (ALLOC.c),
+  and the STU world-gen equivalents (STU_WRLD.c). Arenas are sized to their
+  exact valid extent; the OOB address (a fixed offset from the arena base — the
+  access site is unchanged) now lands in the next pool arena or the trailing
+  margin.
+- **Remove the OOB injectors** — the `gd_ci_inject_world_overrun` (ALLOC.c:111,
+  MAPGEN.c:3918/6258/7040) and `gd_ci_inject_flags_overrun` (MAPGEN.c:6028) call
+  sites and their definitions/declarations (INITGAME.c/.h). The pool supplies
+  the bytes.
+- **Remove superseded crash-only scaffolding** — e.g. the old defensive
+  memset-zero of the overflow region that inject already replaced.
+- **Leave the OOB accesses themselves alone.** The `OGBUG … OOB AVRL/AVWL`
+  reads (MAPGEN.c:4312/4328/4349/6141/6298/7044/7046, AISPELL.c:5738-5740,
+  AIMOVE.c, AIDATA.c, CITYCALC.c) are the faithful behavior the pool exists to
+  support — untouched.
+- **Out of scope:** the `gd_ci_*` load/get subsystem's **uninitialized-stack-auto**
+  injection (`gd_ci_get` for `centroid` in AIMOVE.c and `tries` in MAPGEN.c —
+  seeding locals OG left uninitialized) is a separate fidelity concern, not
+  OOB-avoidance. Keep the subsystem if those consumers remain; a later phase can
+  revisit it. (If removing the injectors leaves `gd_ci_get` as the only consumer,
+  note that rather than silently
+  deleting shared code.)
+
+### Risks / watch-items
+
+- **Determinism must hold after the shift.** With the padding gone the OOB lands
+  in a *neighbouring arena* whose contents may be written during generation
+  (e.g. `connectivity_grid_land` follows `_world_maps`). Verify the value is
+  deterministic run-to-run and, ideally, that it reads sentinel (not
+  gen-order-dependent live data) at the read point — if it turns out
+  gen-order-dependent, decide whether that's acceptable or whether a small
+  guard region is warranted.
+- **Layout shift is global.** Dropping padding moves every subsequent arena's
+  pool offset, so re-measure `Pool_Bytes_Peak` and expect broad re-baselining
+  (done in 5b).
+
+### Acceptance criteria
+
+- [x] `WORLD_OVERFLOW` / `+60+1` padding removed from the pool-backed arena
+  allocations (ALLOC.c + STU_WRLD.c); arenas sized to their exact valid extent
+  (`_world_maps` 602 PR, `_map_square_*` 302 PR).
+- [x] All `gd_ci_inject_world_overrun` / `gd_ci_inject_flags_overrun` call sites,
+  definitions, and declarations removed; repo-wide `*.{c,h}` grep finds no
+  references.
+- [x] The OOB reads still land inside the pool (no fault) and are deterministic
+  run-to-run — two fresh WorldGen runs produced byte-identical `world_map`
+  output; both exit 0; no `Insufficient memory`.
+- [x] `gd_ci_*` load/get subsystem retained (still used by the two
+  uninitialized-stack-auto consumers: `centroid` in AIMOVE.c, `tries` in
+  MAPGEN.c), with a note in INITGAME.c/.h.
+- [x] `POOL_ARENA_CAPACITY` re-checked: post-shift WorldGen peak 3.56 MB, well
+  under the 16 MB capacity / 5 MB floor — no change needed.
+- [x] Builds clean (Debug + Release); no new crashes under a normal run.
+
+**Outcome:** the byte-parity goldens stayed **green**, not red — the OG capture
+`og-game-data-capture.fwv` is absent in this repo, so `gd_ci_inject` was already
+a no-op (`[CI] load FAILED … No injection`) and the goldens already reflected
+sentinel-backed OOB reads. Removing the inert inject + padding left the pinned
+outputs unchanged (the OOB still lands on deterministic sentinel; the layout
+shift didn't perturb them). So Phase 5b's golden re-baseline is a **no-op in this
+repo** — its value is the doc/PRD reconciliation (much of which is already done)
+and a note that a `.fwv`-present CI environment would re-baseline for real.
+
+---
+
+## Phase 5b: Re-baseline and reconcile docs
+
+**User stories**: 20 (`gd_dump_*` comparison points stay green — re-established
+against the new pool-backed baseline).
+
+### What to build
+
+Repair everything Phase 5a's code change perturbed: re-baseline the goldens and
+field assertions against 5a's new deterministic output, review the sanitizer
+suppressions, and reconcile the docs and PRD that still describe the retired
+inject mechanism. Purely mechanical + documentation — no behavior change beyond
+5a.
+
+### Acceptance criteria
+
+- [ ] Affected goldens/assertions re-baselined and green: `assert_worldgen.txt`,
+  `assert_oob_autotiling.txt`, `assert_continue_save.txt`,
+  `assert_continue_next_turn.txt`, `assert_ai_5turns.txt`, plus the save-size
+  checks (`validate_save.cmake` expected sizes).
+- [ ] `valgrind-suppressions-all.supp` reviewed; suppressions that existed only
+  for the removed padding/inject sites are dropped.
+- [ ] Docs reconciled: `doc/NewGame/MAPGEN-Simtex_Autotiling.md`,
+  `doc/HeMoM-OOB-Autotiling-Harness.md`, and `doc/Static-Pool-Tests.md` describe
+  the pool (not `gd_ci_inject`) as the OOB backing.
+- [ ] PRD reconciled: user story 7 and the "CI byte injection unchanged"
+  decision reflect the pool-backed OOB and point to Phase 5.
+- [ ] Full test suite green (`ctest`); the OOB harness re-baseline confirmed
+  deterministic across two fresh runs.

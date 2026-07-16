@@ -3912,11 +3912,6 @@ void Simtex_Autotiling(void)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    /* CI: inject OG's exact OOB-overrun bytes (captured at this function's entry
-     * in OG) so the OG-faithful south-edge reads below (wp=1/wy=39 ->
-     * p_world_map[1][40][x]) return OG's values instead of ReMoM heap garbage. */
-    gd_ci_inject_world_overrun("simtex_entry");
-
     terrtype = (int16_t *)Near_Allocate_First((5 * 512));
     LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, (SAMB_ptr)terrtype, 0, 5, 512);
 
@@ -6021,11 +6016,6 @@ void Generate_Roads(int16_t wp)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    /* CI: inject OG's _map_square_flags overrun bytes so this function's OGBUG OOB
-     * access (_map_square_flags[(1*2400)+(40*60)+60]=4860, the wp=1 pass) reads OG's
-     * values instead of ReMoM's over-allocation padding.  Fires both plane calls;
-     * the wp=1 one sets up its OOB reads. */
-    gd_ci_inject_flags_overrun("gen_roads_entry");
 
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
@@ -6249,13 +6239,6 @@ void Generate_Terrain_Specials(int16_t wp)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    /* CI: inject OG's _world_maps overrun bytes so this function's OGBUG pick
-     * (wy = itr_wy + Random(radius*2)) reading past WORLD_HEIGHT on the wp=1 pass
-     * returns OG's values instead of ReMoM's over-allocation garbage.  Otherwise
-     * those OOB tiles misclassify (e.g. desert vs not) and OG draws a
-     * *_Terrain_Special ReMoM doesn't, knocking the RNG stream one draw out of
-     * phase downstream.  Fires both plane calls; the wp=1 one sets up its reads. */
-    gd_ci_inject_world_overrun("gen_ts_entry");
 
     /* Clear specials and flags map squares for the selected plane */
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
@@ -7032,12 +7015,6 @@ void Animate_Oceans(void)
     
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    /* CI: inject OG's exact overrun bytes (captured after CRP_NEWG_CreatePathGrids
-     * fills connectivity_grid_land, the block OG keeps right after _world_maps) so the OGBUG `<=`
-     * OOB loop below reads OG's values at plane-1 row 40 instead of ReMoM's zeroed
-     * over-allocation.  Otherwise ~30 OOB cells read as tte_Ocean(0) and draw
-     * spurious Random(5) calls that desync the whole downstream RNG stream. */
-    gd_ci_inject_world_overrun("animate_oceans_entry");
 
     for(wp = 0; wp < NUM_PLANES; wp++)
     {

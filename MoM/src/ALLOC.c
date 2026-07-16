@@ -16,7 +16,6 @@
 #include "../../ext/stu_compat.h"  /* CLAUDE 2026-06-24: snprintf in the [connectivity_grids] byte-dump (via transitive <stdio.h>) */
 
 #include "Combat.h"
-#include "INITGAME.h"  /* gd_ci_inject_world_overrun (CI overrun inject) */
 
 #include <stdio.h>
 #include <stdlib.h> /* malloc() */
@@ -100,15 +99,10 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
             e.g.,   Simtex_Autotiling()
 
     */
-    _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, ( ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERFLOW) * sizeof(int16_t)) / SZ_PARAGRAPH_B) + 2) );  // 602 PR, 9632 B  ... still don't know how they got the +2 for the headers. maybe header and subheader
+    /* CLAUDE Phase 5a: retired the WORLD_OVERFLOW padding; the static pool makes the OG-faithful OOB read (Simtex_Autotiling p_world_map[1][40][x]) safe, so size to the exact valid extent - the OOB now lands in the neighbouring pool arena. */
+    // _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, ( ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERFLOW) * sizeof(int16_t)) / SZ_PARAGRAPH_B) + 2) );  // padded (retired)
+    _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, ( (((NUM_PLANES * WORLD_SIZE) * sizeof(int16_t)) / SZ_PARAGRAPH_B) + 2) );  // 602 PR, 9632 B
     p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
-
-    /* CI: inject OG's exact OOB-overrun bytes (captured right after this same
-     * allocation in OG) into the over-allocated region past _world_maps, so the
-     * OG-faithful OOB south-edge reads in Simtex_Autotiling (wp=1/wy=39 ->
-     * p_world_map[1][40][x]) return OG's values rather than heap garbage.
-     * Supersedes the old debug memset-zero of this region. */
-    gd_ci_inject_world_overrun("post_alloc");
 
     connectivity_grid_land = (int8_t *)Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
     connectivity_grid_sea = (int8_t *)Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
@@ -148,13 +142,17 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
         OGBUG  same OOB AVRL/AVWL issue as _world_maps
         Generate_Terrain_Specials() goes as far out as wx=63,wy=45,p=1,offset = 5163; 2400 + 2400 + 363; 363 / 16 = 22.6875
     */
-    _map_square_terrain_specials = (uint8_t *)Allocate_Next_Block(World_Data, ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERFLOW) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // ORIG: 302 PR, 4832 B
+    /* CLAUDE Phase 5a: retired the WORLD_OVERFLOW padding (Generate_Terrain_Specials OOB is now pool-safe). */
+    // _map_square_terrain_specials = (uint8_t *)Allocate_Next_Block(World_Data, ((((NUM_PLANES * WORLD_SIZE) + WORLD_OVERFLOW) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // padded (retired)
+    _map_square_terrain_specials = (uint8_t *)Allocate_Next_Block(World_Data, (((NUM_PLANES * WORLD_SIZE) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // 302 PR, 4832 B
 
     /*
         OGBUG  same OOB AVRL/AVWL issue as _world_maps
         Generate_Roads () ... (60, 40)
     */
-    _map_square_flags = (uint8_t *)Allocate_Next_Block(World_Data, ((((NUM_PLANES * WORLD_SIZE) + 60 + 1) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // ORIG: 302 PR, 4832 B
+    /* CLAUDE Phase 5a: retired the +60+1 over-allocation padding (Generate_Roads wp=1 OOB is now pool-safe). */
+    // _map_square_flags = (uint8_t *)Allocate_Next_Block(World_Data, ((((NUM_PLANES * WORLD_SIZE) + 60 + 1) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // padded (retired)
+    _map_square_flags = (uint8_t *)Allocate_Next_Block(World_Data, (((NUM_PLANES * WORLD_SIZE) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // 302 PR, 4832 B
 
     _square_explored  = (uint8_t *)Allocate_Next_Block(World_Data, (((NUM_PLANES * WORLD_SIZE) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // 302 PR, 4832 B
 
