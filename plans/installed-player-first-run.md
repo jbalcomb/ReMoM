@@ -13,7 +13,7 @@ Durable decisions that apply across all phases:
 - **Two open functions, two path families:**
   - `STU_GRAF_Open_Asset(name, mode)` — **read-only** shipped data; walks the ordered read search path.
   - `STU_GRAF_Open_User(name, mode)` — **writable** per-user files; resolves to the user data dir.
-- **Ordered read search path:** `REMOM_DATA_DIR` (env) → `[Paths] game_data` (config) → `$XDG_CACHE_HOME/ReMoM/` (modified copies) → executable dir → CWD. First hit wins. Unpopulated default = CWD-only (HeMoM/tests/matchup unaffected).
+- **Ordered read search path:** `REMOM_DATA_DIR` (env) → `$XDG_CACHE_HOME/ReMoM/` (modified copies) → `[Paths] game_data` (config) → executable dir → CWD. First hit wins — cache precedes game_data so ReMoM-modified copies shadow the originals. Unpopulated default = CWD-only (HeMoM/tests/matchup unaffected).
 - **OS locations (all under a `ReMoM` app dir), resolved inside `STU_GRAF`:**
   | Purpose | XDG role | Linux | Windows | macOS |
   |---|---|---|---|---|
@@ -73,13 +73,13 @@ Add `Platform_Show_Error(title, message)` to the platform API (SDL2/SDL3 `SDL_Sh
 
 ### What to build
 
-Extend `STU_GRAF`'s search-path construction to read `[Paths] game_data` from the config file (`$XDG_CONFIG_HOME/ReMoM/ReMoM.ini` on Linux; installer-written path on Windows) and to include `$XDG_CACHE_HOME/ReMoM/` **ahead of** the originals (so any ReMoM-modified copies shadow the shipped ones). Final order: `REMOM_DATA_DIR` → `game_data` → cache → exe-dir → CWD.
+Extend `STU_GRAF`'s search-path construction to read `[Paths] game_data` from the config file (`$XDG_CONFIG_HOME/ReMoM/ReMoM.ini` on Linux; installer-written path on Windows) and to include `$XDG_CACHE_HOME/ReMoM/` **ahead of** the originals (so any ReMoM-modified copies shadow the shipped ones). Final order: `REMOM_DATA_DIR` → cache → `game_data` → exe-dir → CWD.
 
 ### Acceptance criteria
 
 - [ ] `[Paths] game_data=<dir>` in the config file resolves LBX from `<dir>`.
 - [ ] A copy of an asset placed in `$XDG_CACHE_HOME/ReMoM/` shadows the same-named original in the game-data dir.
-- [ ] Search precedence is exactly `REMOM_DATA_DIR` → `game_data` → cache → exe-dir → CWD (unit-tested).
+- [ ] Search precedence is exactly `REMOM_DATA_DIR` → cache → `game_data` → exe-dir → CWD (unit-tested).
 
 ---
 

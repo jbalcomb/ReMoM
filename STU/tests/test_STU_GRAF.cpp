@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <cstdio>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -59,6 +60,33 @@ namespace
             out.append(buf, n);
         }
         return out;
+    }
+
+    void set_env(const char * k, const char * v)
+    {
+#ifdef _WIN32
+        _putenv_s(k, v);
+#else
+        setenv(k, v, 1);
+#endif
+    }
+    void unset_env(const char * k)
+    {
+#ifdef _WIN32
+        _putenv_s(k, "");
+#else
+        unsetenv(k);
+#endif
+    }
+
+    // Read STU_GRAF_Read_Game_Data_From_Ini for a given ini body; returns "" on miss.
+    std::string parse_game_data(const std::string & dir, const std::string & body)
+    {
+        std::string ini = (fs::path(dir) / "ReMoM.ini").string();
+        std::ofstream(ini, std::ios::binary) << body;
+        char out[1024] = {0};
+        int ok = STU_GRAF_Read_Game_Data_From_Ini(ini.c_str(), out, sizeof(out));
+        return ok ? std::string(out) : std::string();
     }
 }
 
@@ -138,3 +166,105 @@ TEST(STU_GRAF, PathNameOpenedDirectly)
     EXPECT_EQ(read_all(fp), "abs-content");
     fclose(fp);
 }
+
+// ---- Phase 3: config [Paths] game_data parsing ----
+
+TEST(STU_GRAF, IniGameDataBasic)
+{
+    TempTree t("ini_basic");
+    EXPECT_EQ(parse_game_data(t.dir(), "[Paths]\ngame_data=/opt/mom\n"), "/opt/mom");
+}
+
+TEST(STU_GRAF, IniGameDataSpacesAndQuotes)
+{
+    TempTree t("ini_sp");
+    // Value keeps embedded spaces; surrounding quotes are stripped.
+    EXPECT_EQ(parse_game_data(t.dir(),
+                              "[Paths]\ngame_data = \"C:\\GOG Games\\Master of Magic\"\n"),
+              "C:\\GOG Games\\Master of Magic");
+}
+
+TEST(STU_GRAF, IniGameDataCaseInsensitive)
+{
+    TempTree t("ini_ci");
+    EXPECT_EQ(parse_game_data(t.dir(), "[PATHS]\n; a comment\nGAME_DATA=/x/y\n"), "/x/y");
+}
+
+TEST(STU_GRAF, IniGameDataMissing)
+{
+    TempTree t("ini_miss");
+    EXPECT_EQ(parse_game_data(t.dir(), "[Other]\ngame_data=/nope\n"), "");  // wrong section
+    EXPECT_EQ(parse_game_data(t.dir(), "[Paths]\nfoo=bar\n"), "");          // key absent
+    char out[64] = {0};
+    std::string nofile = (fs::path(t.dir()) / "does_not_exist.ini").string();
+    EXPECT_EQ(STU_GRAF_Read_Game_Data_From_Ini(nofile.c_str(), out, sizeof(out)), 0);
+}
+
+TEST(STU_GRAF, UserDirsResolve)
+{
+    char cfg[1024] = {0};
+    char cache[1024] = {0};
+    ASSERT_EQ(STU_GRAF_User_Config_Dir(cfg, sizeof(cfg)), 1);
+    ASSERT_EQ(STU_GRAF_User_Cache_Dir(cache, sizeof(cache)), 1);
+    EXPECT_NE(std::string(cfg).find("ReMoM"), std::string::npos);
+    EXPECT_NE(std::string(cache).find("ReMoM"), std::string::npos);
+}
+
+// ---- Phase 3: end-to-end search-path order (XDG is honored only on Linux) ----
+#if !defined(_WIN32) && !defined(__APPLE__)
+
+TEST(STU_GRAF, InitUsesConfigGameData)
+{
+    TempTree cfg("initcfg");
+    TempTree cache("initcache");
+    TempTree data("initdata");
+    data.write("CFGUNIQ.DAT", "via-config");
+    fs::create_directories(fs::path(cfg.dir()) / "ReMoM");
+    std::ofstream(fs::path(cfg.dir()) / "ReMoM" / "ReMoM.ini", std::ios::binary)
+        << "[Paths]\ngame_data=" << data.dir() << "\n";
+
+    unset_env("REMOM_DATA_DIR");
+    set_env("XDG_CONFIG_HOME", cfg.dir().c_str());
+    set_env("XDG_CACHE_HOME", cache.dir().c_str());
+
+    STU_GRAF_Init(STU_GRAF_PLAYER);
+    FILE * fp = STU_GRAF_Open_Asset("CFGUNIQ.DAT", "rb");
+    ASSERT_NE(fp, nullptr);
+    EXPECT_EQ(read_all(fp), "via-config");
+    fclose(fp);
+
+    unset_env("XDG_CONFIG_HOME");
+    unset_env("XDG_CACHE_HOME");
+    STU_GRAF_Reset();
+}
+
+TEST(STU_GRAF, InitCacheShadowsConfigGameData)
+{
+    TempTree cfg("shadowcfg");
+    TempTree cache("shadowcache");
+    TempTree data("shadowdata");
+    // Same-named asset in both the cache dir and the configured game-data dir:
+    // the cache copy must win.
+    fs::create_directories(fs::path(cache.dir()) / "ReMoM");
+    std::ofstream(fs::path(cache.dir()) / "ReMoM" / "DUP.DAT", std::ios::binary) << "from-cache";
+    data.write("DUP.DAT", "from-data");
+    fs::create_directories(fs::path(cfg.dir()) / "ReMoM");
+    std::ofstream(fs::path(cfg.dir()) / "ReMoM" / "ReMoM.ini", std::ios::binary)
+        << "[Paths]\ngame_data=" << data.dir() << "\n";
+
+    unset_env("REMOM_DATA_DIR");
+    set_env("XDG_CONFIG_HOME", cfg.dir().c_str());
+    set_env("XDG_CACHE_HOME", cache.dir().c_str());
+
+    STU_GRAF_Init(STU_GRAF_PLAYER);
+    FILE * fp = STU_GRAF_Open_Asset("DUP.DAT", "rb");
+    ASSERT_NE(fp, nullptr);
+    EXPECT_EQ(read_all(fp), "from-cache");
+    fclose(fp);
+
+    unset_env("XDG_CONFIG_HOME");
+    unset_env("XDG_CACHE_HOME");
+    STU_GRAF_Reset();
+}
+
+#endif

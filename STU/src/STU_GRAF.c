@@ -14,6 +14,7 @@
 
 #include <string.h>
 #include <stdlib.h>   /* getenv */
+#include <ctype.h>    /* tolower */
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -68,6 +69,32 @@ static void graf_join(char * out, size_t cap, const char * dir, const char * nam
     {
         snprintf(out, cap, "%s/%s", dir, name);
     }
+}
+
+/* Compose "<base>/<sub>/" into out (trailing separator).  Returns 1 on success. */
+static int graf_compose_dir(char * out, size_t cap, const char * base, const char * sub)
+{
+    int n = snprintf(out, cap, "%s/%s/", base, sub);
+    return (n > 0 && (size_t)n < cap) ? 1 : 0;
+}
+
+/* Case-insensitive compare of the first len chars of s against a NUL-terminated
+   key; true only when they are equal AND key is exactly len chars long. */
+static int graf_key_is(const char * s, size_t len, const char * key)
+{
+    size_t i;
+    for(i = 0; i < len; i++)
+    {
+        if(key[i] == '\0')
+        {
+            return 0;
+        }
+        if(tolower((unsigned char)s[i]) != tolower((unsigned char)key[i]))
+        {
+            return 0;
+        }
+    }
+    return key[len] == '\0';
 }
 
 void STU_GRAF_Reset(void)
@@ -190,6 +217,188 @@ int STU_GRAF_Executable_Dir(char * out, size_t cap)
     return 1;
 }
 
+int STU_GRAF_User_Config_Dir(char * out, size_t cap)
+{
+#if defined(_WIN32)
+    const char * base = getenv("APPDATA");
+    if(base == NULL || base[0] == '\0')
+    {
+        return 0;
+    }
+    return graf_compose_dir(out, cap, base, "ReMoM");
+#elif defined(__APPLE__)
+    const char * home = getenv("HOME");
+    if(home == NULL || home[0] == '\0')
+    {
+        return 0;
+    }
+    return graf_compose_dir(out, cap, home, "Library/Application Support/ReMoM");
+#else
+    char fallback[STU_GRAF_PATH_MAX];
+    const char * base = getenv("XDG_CONFIG_HOME");
+    if(base == NULL || base[0] == '\0')
+    {
+        const char * home = getenv("HOME");
+        if(home == NULL || home[0] == '\0')
+        {
+            return 0;
+        }
+        snprintf(fallback, sizeof(fallback), "%s/.config", home);
+        base = fallback;
+    }
+    return graf_compose_dir(out, cap, base, "ReMoM");
+#endif
+}
+
+int STU_GRAF_User_Cache_Dir(char * out, size_t cap)
+{
+#if defined(_WIN32)
+    const char * base = getenv("LOCALAPPDATA");
+    if(base == NULL || base[0] == '\0')
+    {
+        return 0;
+    }
+    return graf_compose_dir(out, cap, base, "ReMoM/cache");
+#elif defined(__APPLE__)
+    const char * home = getenv("HOME");
+    if(home == NULL || home[0] == '\0')
+    {
+        return 0;
+    }
+    return graf_compose_dir(out, cap, home, "Library/Caches/ReMoM");
+#else
+    char fallback[STU_GRAF_PATH_MAX];
+    const char * base = getenv("XDG_CACHE_HOME");
+    if(base == NULL || base[0] == '\0')
+    {
+        const char * home = getenv("HOME");
+        if(home == NULL || home[0] == '\0')
+        {
+            return 0;
+        }
+        snprintf(fallback, sizeof(fallback), "%s/.cache", home);
+        base = fallback;
+    }
+    return graf_compose_dir(out, cap, base, "ReMoM");
+#endif
+}
+
+int STU_GRAF_Read_Game_Data_From_Ini(const char * ini_path, char * out, size_t cap)
+{
+    FILE * fp;
+    char line[STU_GRAF_PATH_MAX];
+    int in_paths = 0;
+    int found = 0;
+
+    fp = fopen(ini_path, "r");
+    if(fp == NULL)
+    {
+        return 0;
+    }
+
+    while(fgets(line, sizeof(line), fp) != NULL)
+    {
+        char * p = line;
+        char * eq;
+        char * key_end;
+        char * val;
+        char * end;
+
+        while(*p == ' ' || *p == '\t')
+        {
+            p++;
+        }
+        if(*p == '#' || *p == ';' || *p == '\n' || *p == '\r' || *p == '\0')
+        {
+            continue;
+        }
+
+        if(*p == '[')
+        {
+            char * close = strchr(p, ']');
+            in_paths = (close != NULL &&
+                        graf_key_is(p + 1, (size_t)(close - (p + 1)), "paths"));
+            continue;
+        }
+        if(!in_paths)
+        {
+            continue;
+        }
+
+        eq = strchr(p, '=');
+        if(eq == NULL)
+        {
+            continue;
+        }
+        key_end = eq;
+        while(key_end > p && (key_end[-1] == ' ' || key_end[-1] == '\t'))
+        {
+            key_end--;
+        }
+        if(!graf_key_is(p, (size_t)(key_end - p), "game_data"))
+        {
+            continue;
+        }
+
+        /* Value = everything after '=', trimmed; keep embedded spaces (paths). */
+        val = eq + 1;
+        while(*val == ' ' || *val == '\t')
+        {
+            val++;
+        }
+        end = val + strlen(val);
+        while(end > val &&
+              (end[-1] == ' ' || end[-1] == '\t' || end[-1] == '\n' || end[-1] == '\r'))
+        {
+            end--;
+        }
+        *end = '\0';
+        if(val[0] == '"' && end > val + 1 && end[-1] == '"')
+        {
+            end[-1] = '\0';
+            val++;
+        }
+
+        if(val[0] != '\0' && strlen(val) + 1 <= cap)
+        {
+            stu_strcpy(out, val);
+            found = 1;
+        }
+        break;
+    }
+
+    fclose(fp);
+    return found;
+}
+
+/* Add the user's configured game-data dir (from <config>/ReMoM.ini) if present. */
+static void graf_add_config_game_data(void)
+{
+    char cfg_dir[STU_GRAF_PATH_MAX];
+    char ini_path[STU_GRAF_PATH_MAX];
+    char game_data[STU_GRAF_PATH_MAX];
+
+    if(!STU_GRAF_User_Config_Dir(cfg_dir, sizeof(cfg_dir)))
+    {
+        return;
+    }
+    graf_join(ini_path, sizeof(ini_path), cfg_dir, "ReMoM.ini");
+    if(STU_GRAF_Read_Game_Data_From_Ini(ini_path, game_data, sizeof(game_data)))
+    {
+        STU_GRAF_Add_Search_Dir(game_data);
+    }
+}
+
+/* Add the per-user cache dir (holds any ReMoM-modified copies). */
+static void graf_add_cache_dir(void)
+{
+    char cache_dir[STU_GRAF_PATH_MAX];
+    if(STU_GRAF_User_Cache_Dir(cache_dir, sizeof(cache_dir)))
+    {
+        STU_GRAF_Add_Search_Dir(cache_dir);
+    }
+}
+
 void STU_GRAF_Init(STU_GRAF_Profile profile)
 {
     const char * env_dir;
@@ -204,17 +413,22 @@ void STU_GRAF_Init(STU_GRAF_Profile profile)
         STU_GRAF_Add_Search_Dir(env_dir);
     }
 
-    /* 2. Player builds also look beside the executable (portable ZIP layout). */
+    /* Player builds add the full stack.  Order matters: cache holds any
+       ReMoM-modified copies and must shadow the originals, so it precedes the
+       configured install and the portable (exe-dir) layout. */
     if(profile == STU_GRAF_PLAYER)
     {
+        graf_add_cache_dir();          /* 2. XDG_CACHE_HOME/ReMoM (modified copies) */
+        graf_add_config_game_data();   /* 3. [Paths] game_data (user's MoM install) */
         if(STU_GRAF_Executable_Dir(exe_dir, sizeof(exe_dir)))
         {
-            STU_GRAF_Add_Search_Dir(exe_dir);
+            STU_GRAF_Add_Search_Dir(exe_dir);  /* 4. beside the executable */
         }
     }
 
-    /* 3. Current working directory (legacy default; last so it never shadows an
-          explicit override). */
+    /* Current working directory (legacy default; last so it never shadows an
+       explicit override).  For HEADLESS this is the only entry besides an
+       optional REMOM_DATA_DIR -- keeps the test / matchup harness deterministic. */
     STU_GRAF_Add_Search_Dir(".");
 
     LOG_INFO(LOG_CAT_GENERAL, "STU_GRAF: %s profile, %d search dir(s)",

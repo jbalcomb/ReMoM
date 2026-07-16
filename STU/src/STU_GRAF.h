@@ -52,6 +52,18 @@ FILE * STU_GRAF_Open_Asset(const char * name, const char * mode);
    Returns 1 on success, 0 on failure. */
 int STU_GRAF_Executable_Dir(char * out, size_t cap);
 
+/* Per-user config / cache directories (with a trailing separator), resolved
+   from the platform conventions: XDG on Linux, %APPDATA% / %LOCALAPPDATA% on
+   Windows, ~/Library on macOS.  Return 1 on success.  Public so STU_LOG and
+   tests can reuse them. */
+int STU_GRAF_User_Config_Dir(char * out, size_t cap);
+int STU_GRAF_User_Cache_Dir(char * out, size_t cap);
+
+/* Read the [Paths] game_data value from the given INI file.  Returns 1 and
+   fills out on success, 0 otherwise (missing file/section/key).  Section and
+   key match case-insensitively.  Exposed for testing. */
+int STU_GRAF_Read_Game_Data_From_Ini(const char * ini_path, char * out, size_t cap);
+
 #ifdef __cplusplus
 }
 #endif
