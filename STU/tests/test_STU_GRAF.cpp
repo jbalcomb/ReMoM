@@ -585,3 +585,39 @@ TEST(STU_GRAF, ShippedManifestIsWellFormed)
     }
     EXPECT_GT(n, 0) << "shipped manifest is empty";
 }
+
+// ---- Auto-detect: first candidate dir that looks like a MoM install ----------
+// (a "MoM install" = a dir containing the signature FONTS.LBX)
+
+TEST(STU_GRAF, FirstGameDataDirPicksSignatureDir)
+{
+    TempTree a("autodet_a");
+    TempTree b("autodet_b");
+    b.write("FONTS.LBX", "x");                    // only b looks like an install
+    std::string da = a.dir(), db = b.dir();       // keep the strings alive
+    const char * cands[] = { da.c_str(), db.c_str(), nullptr };
+    EXPECT_STREQ(STU_GRAF_First_Game_Data_Dir(cands), db.c_str());
+}
+
+TEST(STU_GRAF, FirstGameDataDirFirstMatchWins)
+{
+    TempTree a("autodet_fa");
+    TempTree b("autodet_fb");
+    a.write("FONTS.LBX", "x");
+    b.write("FONTS.LBX", "y");
+    std::string da = a.dir(), db = b.dir();
+    const char * cands[] = { da.c_str(), db.c_str(), nullptr };
+    EXPECT_STREQ(STU_GRAF_First_Game_Data_Dir(cands), da.c_str());
+}
+
+TEST(STU_GRAF, FirstGameDataDirNoneOrEmptyReturnsNull)
+{
+    TempTree a("autodet_none");                   // no FONTS.LBX
+    std::string da = a.dir();
+    const char * cands[] = { da.c_str(), nullptr };
+    EXPECT_EQ(STU_GRAF_First_Game_Data_Dir(cands), nullptr);
+
+    const char * empty[] = { nullptr };
+    EXPECT_EQ(STU_GRAF_First_Game_Data_Dir(empty), nullptr);
+    EXPECT_EQ(STU_GRAF_First_Game_Data_Dir(nullptr), nullptr);
+}

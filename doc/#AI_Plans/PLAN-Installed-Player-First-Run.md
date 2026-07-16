@@ -13,7 +13,8 @@ Durable decisions that apply across all phases:
 - **Two open functions, two path families:**
   - `STU_GRAF_Open_Asset(name, mode)` — **read-only** shipped data; walks the ordered read search path.
   - `STU_GRAF_Open_User(name, mode)` — **writable** per-user files; resolves to the user data dir.
-- **Ordered read search path:** `REMOM_DATA_DIR` (env) → `$XDG_CACHE_HOME/ReMoM/` (modified copies) → `[Paths] game_data` (config) → executable dir → CWD. First hit wins — cache precedes game_data so ReMoM-modified copies shadow the originals. Unpopulated default = CWD-only (HeMoM/tests/matchup unaffected).
+- **Ordered read search path:** `REMOM_DATA_DIR` (env) → `$XDG_CACHE_HOME/ReMoM/` (modified copies) → `[Paths] game_data` (config) → executable dir → **auto-detected common install locations (GOG/Steam/CD)** → CWD. First hit wins — cache precedes game_data so ReMoM-modified copies shadow the originals. Unpopulated default = CWD-only (HeMoM/tests/matchup unaffected).
+- **Zero-config auto-detect (post-plan UX enhancement):** the PLAYER profile probes a built-in candidate list and adds the first dir containing the signature `FONTS.LBX`. Order: dev checkout (`./assets`, `../assets`, `../../assets` — matches the checksum manifest exactly) first, then common installs (`~/GOG Games/Master of Magic`, Steam `…/common/Master of Magic Classic`, `C:\MPS\MAGIC`, …). So a standard GOG/Steam/CD install **and** a running-from-the-repo dev both boot with **no configuration**; non-standard installs still use `REMOM_DATA_DIR` / `[Paths] game_data`. HEADLESS never probes. Testable seam: `STU_GRAF_First_Game_Data_Dir(candidates)`.
 - **OS locations (all under a `ReMoM` app dir), resolved inside `STU_GRAF`:**
   | Purpose | XDG role | Linux | Windows | macOS |
   |---|---|---|---|---|

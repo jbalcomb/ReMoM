@@ -74,7 +74,10 @@ Two distinct resolution rules follow from this:
    2. `XDG_CACHE_HOME/ReMoM/` (ReMoM-modified copies, if any).
    3. `[Paths] game_data` from the config file (`$XDG_CONFIG_HOME/ReMoM/ReMoM.ini` on Linux; installer-written path on Windows).
    4. The executable's own directory (portable ZIP: data beside the binary).
-   5. CWD (legacy/default).
+   5. **Auto-detected common install locations** (GOG/Steam/CD) — see note below.
+   6. CWD (legacy/default).
+
+   > **Zero-config auto-detect (implemented, post-plan enhancement):** the PLAYER profile probes a built-in candidate list and adds the first dir containing the signature `FONTS.LBX` — a dev checkout (`./assets` and parents) first, then well-known installs (`~/GOG Games/Master of Magic`, Steam `…/steamapps/common/Master of Magic Classic`, `C:\MPS\MAGIC`, …). A standard install, or a dev running from the repo, boots with **no configuration at all**; this is the recommended, lowest-effort path in PLAYING.md, with `REMOM_DATA_DIR` / `[Paths] game_data` as fallbacks for non-standard locations. HEADLESS (HeMoM/tests/matchup) never probes.
 2. **Population API** in the support layer (`stu_data_path_reset()` / `stu_data_path_add(dir)`), called **once** by ReMoMber at startup.
 3. **Default = CWD only** when unpopulated (HeMoM, tests, matchup) — `stu_fopen_ci` behaves exactly as today.
 4. **Bare filenames unchanged;** resolution happens entirely inside `stu_fopen_ci`. No `MoM/src` or `MoX/src` game-logic edits.

@@ -689,6 +689,126 @@ static void graf_add_cache_dir(void)
     }
 }
 
+/* True if `dir` looks like a Master of Magic install (has the signature LBX). */
+static int graf_dir_has_signature(const char * dir)
+{
+    char path[STU_GRAF_PATH_MAX];
+    FILE * fp;
+    if(dir == NULL || dir[0] == '\0')
+    {
+        return 0;
+    }
+    graf_join(path, sizeof(path), dir, "FONTS.LBX");
+    fp = stu_fopen_ci(path, "rb");
+    if(fp != NULL)
+    {
+        fclose(fp);
+        return 1;
+    }
+    return 0;
+}
+
+const char * STU_GRAF_First_Game_Data_Dir(const char * const * candidates)
+{
+    int i;
+    if(candidates == NULL)
+    {
+        return NULL;
+    }
+    for(i = 0; candidates[i] != NULL; i++)
+    {
+        if(graf_dir_has_signature(candidates[i]))
+        {
+            return candidates[i];
+        }
+    }
+    return NULL;
+}
+
+/* Best-effort: probe well-known install locations and add the first real one to
+   the search path, so a standard install (or a dev's repo checkout) is found
+   with zero configuration.  Non-standard installs use REMOM_DATA_DIR or the
+   ReMoM.ini game_data path.  PLAYER only (see STU_GRAF_Init). */
+static void graf_add_autodetected_game_data(void)
+{
+    const char * hit;
+
+    /* Developer convenience, checked first: a repo checkout keeps the game data
+       in ./assets (which also matches the checksum manifest exactly).  Relative
+       to the CWD, so it works on every OS. */
+    static const char * const dev_cands[] =
+    {
+        "assets", "../assets", "../../assets", NULL
+    };
+
+#if defined(_WIN32)
+    char b0[STU_GRAF_PATH_MAX];
+    const char * pf86 = getenv("ProgramFiles(x86)");
+    const char * cands[6];
+    int n = 0;
+    cands[n++] = "C:\\GOG Games\\Master of Magic";
+    if(pf86 != NULL && pf86[0] != '\0')
+    {
+        snprintf(b0, sizeof(b0),
+                 "%s\\Steam\\steamapps\\common\\Master of Magic Classic", pf86);
+        cands[n++] = b0;
+    }
+    cands[n++] = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Master of Magic Classic";
+    cands[n++] = "C:\\MPS\\MAGIC";
+    cands[n] = NULL;
+#elif defined(__APPLE__)
+    char b0[STU_GRAF_PATH_MAX];
+    char b1[STU_GRAF_PATH_MAX];
+    const char * home = getenv("HOME");
+    const char * cands[3];
+    int n = 0;
+    if(home != NULL && home[0] != '\0')
+    {
+        snprintf(b0, sizeof(b0), "%s/GOG Games/Master of Magic", home);
+        cands[n++] = b0;
+        snprintf(b1, sizeof(b1),
+                 "%s/Library/Application Support/Steam/steamapps/common/Master of Magic Classic", home);
+        cands[n++] = b1;
+    }
+    cands[n] = NULL;
+#else
+    char b0[STU_GRAF_PATH_MAX];
+    char b1[STU_GRAF_PATH_MAX];
+    char b2[STU_GRAF_PATH_MAX];
+    char b3[STU_GRAF_PATH_MAX];
+    const char * home = getenv("HOME");
+    const char * cands[5];
+    int n = 0;
+    if(home != NULL && home[0] != '\0')
+    {
+        snprintf(b0, sizeof(b0), "%s/GOG Games/Master of Magic", home);
+        cands[n++] = b0;
+        snprintf(b1, sizeof(b1), "%s/Games/Master of Magic", home);
+        cands[n++] = b1;
+        snprintf(b2, sizeof(b2),
+                 "%s/.steam/steam/steamapps/common/Master of Magic Classic", home);
+        cands[n++] = b2;
+        snprintf(b3, sizeof(b3),
+                 "%s/.local/share/Steam/steamapps/common/Master of Magic Classic", home);
+        cands[n++] = b3;
+    }
+    cands[n] = NULL;
+#endif
+
+    /* Prefer a dev repo checkout (./assets) over an installed copy, then fall
+       back to the OS install locations. */
+    hit = STU_GRAF_First_Game_Data_Dir(dev_cands);
+    if(hit == NULL)
+    {
+        hit = STU_GRAF_First_Game_Data_Dir(cands);
+    }
+    if(hit != NULL)
+    {
+        LOG_INFO(LOG_CAT_GENERAL, "STU_GRAF: auto-detected game data at '%s'", hit);
+        STU_GRAF_Add_Search_Dir(hit);
+    }
+}
+
 void STU_GRAF_Init(STU_GRAF_Profile profile)
 {
     const char * env_dir;
@@ -715,6 +835,7 @@ void STU_GRAF_Init(STU_GRAF_Profile profile)
         {
             STU_GRAF_Add_Search_Dir(exe_dir);  /* 4. beside the executable */
         }
+        graf_add_autodetected_game_data(); /* 5. common GOG/Steam/CD install paths */
     }
 
     /* Current working directory (legacy default; last so it never shadows an
