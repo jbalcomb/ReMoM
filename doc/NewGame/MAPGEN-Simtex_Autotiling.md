@@ -51,7 +51,7 @@ The table is loaded once (`Near_Allocate_First(5*512)` + `LBX_Load_Data_Static(�
 
 ## OG bugs preserved (do **not** "fix" in baseline ReMoM)
 
-- **B1 — south-edge bound is `wy < WORLD_HEIGHT` instead of `(wy+1) < WORLD_HEIGHT`** (all four passes — the S / SE / SW neighbor checks). At `wy == WORLD_HEIGHT-1` these read `p_world_map[wp][40][x]`, one row past the map. Faithful to the asm (which has the same always-true guard); the OOB read is absorbed by the `WORLD_OVERFLOW` padding on `_world_maps` (same mechanism as Animate_Oceans / Generate_Terrain_Specials).
+- **B1 — south-edge bound is `wy < WORLD_HEIGHT` instead of `(wy+1) < WORLD_HEIGHT`** (all four passes — the S / SE / SW neighbor checks). At `wy == WORLD_HEIGHT-1` these read `p_world_map[wp][40][x]`, one row past the map. Faithful to the asm (which has the same always-true guard); the OOB read lands in the static pool that backs `_world_maps` — addressable, sentinel-initialized, deterministic — so it neither faults nor reads heap garbage (same mechanism as Animate_Oceans / Generate_Terrain_Specials).
 - **B2 — Hills "no cardinal neighbor" → Grasslands4** ([4553-4556](../../MoM/src/MAPGEN.c#L4553-L4556)). Mountain and Hills share the `terrtype[256+mask]` table, which holds **Mountain** tile indices. Hills adds `+16` to remap a mountain *variant* (`_Mount0010..1001` = 0x103..0x112) to the aligned hills variant (`_Hills_0010..` = 0x113..) — the two blocks are exactly 16 apart (`_Hills_0010` = `_Mount0010` + 16). But when a tile has **no cardinal same-type neighbor**, the table returns the *base* `tte_Mountain` (0xA4) rather than a variant, and:
 
   ```
@@ -60,9 +60,9 @@ The table is loaded once (`Near_Allocate_First(5*512)` + `LBX_Load_Data_Static(�
 
   So an isolated / diagonal-only hill is overwritten as `tt_Grasslands4` (grassland). The Mountain pass is immune — it writes `terrtype[256+mask]` with **no** `+16`, so the base stays `tte_Mountain` (a lone mountain remains a mountain). This is drake178's "turns certain single map square hills into grasslands." *(The `terrtype[256 + <no-cardinal mask>] == tte_Mountain` link is inferred from the arithmetic landing exactly on `tt_Grasslands4`; the literal table byte is in `TERRTYPE.LBX` record 1.)*
 
-## CI / test-determinism note (not in the OG)
+## OOB backing note (not in the OG)
 
-`gd_ci_inject_world_overrun("simtex_entry")` ([3919](../../MoM/src/MAPGEN.c#L3919)) seeds the `_world_maps` overflow padding with the exact bytes OG had past the array at this point, so the B1 OOB south reads return OG's values instead of ReMoM heap contents — making seed-pinned golden tests reproducible. It does not alter the generation logic; it only makes an OG out-of-bounds read deterministic. (DNE in Dasm.)
+The B1 south-edge OOB read is backed by the **static pool** (see [PLAN-Static-Pool-Allocator](../%23AI_Plans/PLAN-Static-Pool-Allocator.md)): the read lands in addressable, `0xCC`-sentinel pool memory, so it neither faults under a sanitizer nor reads process-heap garbage, and is deterministic run-to-run. Earlier ReMoM used a `WORLD_OVERFLOW` over-allocation padding plus a `gd_ci_inject_world_overrun` CI hook to stamp OG's exact bytes into that padding; **both were retired in Phase 5a** once the pool made the read safe on its own. (Neither the OOB read's backing nor the pool is in the Dasm — the pool is a ReMoM platform accommodation.)
 
 ## Verification against the asm
 
@@ -78,11 +78,10 @@ No reconstruction errors; the only divergences are name aliases (`tte_Grasslands
 ## Sub-functions / external calls
 
 - **`Near_Allocate_First`** / **`LBX_Load_Data_Static`** — load the 5×512 `TERRTYPE.LBX` mask→variant table.
-- **`gd_ci_inject_world_overrun`** — CI test-determinism helper (not in OG).
 
 ## Related references
 
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\Simtex_Autotiling.asm` — IDA Pro 5.5 disassembly (authority); pass guards (`tte_Ocean` 57 / `tte_Mountain` 438 / `_Tundra00001000` 983 / `tte_Hills` 1456), writes (`add ax,600` 1394 / `[si+200h]` 894 / `add ax,16` 1901).
 - [MAPGEN.c:584-585](../../MoM/src/MAPGEN.c#L584-L585) — call site + dump.
-- [MAPGEN-Desert_Autotile.md](MAPGEN-Desert_Autotile.md) / [MAPGEN-River_Autotile.md](MAPGEN-River_Autotile.md) — sibling bitmask autotilers; [MAPGEN-Generate_Terrain_Specials.md](MAPGEN-Generate_Terrain_Specials.md) — same `WORLD_OVERFLOW` OOB-padding pattern.
+- [MAPGEN-Desert_Autotile.md](MAPGEN-Desert_Autotile.md) / [MAPGEN-River_Autotile.md](MAPGEN-River_Autotile.md) — sibling bitmask autotilers; [MAPGEN-Generate_Terrain_Specials.md](MAPGEN-Generate_Terrain_Specials.md) — same pool-backed OOB pattern.
 - [TerrType.h](../../MoM/src/TerrType.h) — `tte_Mountain`=0xA4, `tt_Grasslands4`=0xB4 (the B2 landing); `_Mount0010..1001`=0x103..0x112, `_Hills_0010..1Hills2`=0x113..0x123.

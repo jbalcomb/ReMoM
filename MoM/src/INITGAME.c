@@ -140,54 +140,11 @@ int gd_ci_get(const char* key, const char* site, long* out, int max)
     return -1;
 }
 
-void gd_ci_inject_world_overrun(const char* site)
-{
-    long     vals[WORLD_OVERFLOW];
-    int16_t* dst;
-    int      n, i;
-
-    if (!_world_maps) {
-        LOG_INFO(LOG_CAT_GENERAL, "[CI] inject overrun (%s): _world_maps NULL -- skipped.", site);
-        return;
-    }
-    n = gd_ci_get("world_maps_overrun", site, vals, WORLD_OVERFLOW);
-    if (n < 0) {
-        LOG_INFO(LOG_CAT_GENERAL, "[CI] inject overrun (%s): no record -- skipped.", site);
-        return;
-    }
-    /* OG-faithful OOB target: one past the last valid cell, p_world_map[1][40][0]. */
-    dst = (int16_t*)_world_maps + (NUM_PLANES * WORLD_SIZE);
-    for (i = 0; i < n; i++) { dst[i] = (int16_t)vals[i]; }
-    LOG_INFO(LOG_CAT_GENERAL,
-        "[CI] inject overrun (%s): wrote %d int16 at _world_maps+%d.",
-        site, n, (int)(NUM_PLANES * WORLD_SIZE));
-}
-
-/* As gd_ci_inject_world_overrun, but for _map_square_flags (uint8/tile).
- * Generate_Roads' wp=1 pass reads/writes one square-row past the logical array
- * (index 4860); OG's adjacent bytes differ from ReMoM's over-allocation padding. */
-void gd_ci_inject_flags_overrun(const char* site)
-{
-    long     vals[WORLD_WIDTH + 1];   /* matches ALLOC.c _map_square_flags +WORLD_WIDTH+1 over-alloc */
-    uint8_t* dst;
-    int      n, i;
-
-    if (!_map_square_flags) {
-        LOG_INFO(LOG_CAT_GENERAL, "[CI] inject flags overrun (%s): _map_square_flags NULL -- skipped.", site);
-        return;
-    }
-    n = gd_ci_get("map_square_flags_overrun", site, vals, WORLD_WIDTH + 1);
-    if (n < 0) {
-        LOG_INFO(LOG_CAT_GENERAL, "[CI] inject flags overrun (%s): no record -- skipped.", site);
-        return;
-    }
-    /* OG-faithful OOB target: one past the last valid square, _map_square_flags[4800]. */
-    dst = _map_square_flags + (NUM_PLANES * WORLD_SIZE);
-    for (i = 0; i < n; i++) { dst[i] = (uint8_t)vals[i]; }
-    LOG_INFO(LOG_CAT_GENERAL,
-        "[CI] inject flags overrun (%s): wrote %d bytes at _map_square_flags+%d.",
-        site, n, (int)(NUM_PLANES * WORLD_SIZE));
-}
+/* CLAUDE Phase 5a: the OOB-overrun byte injectors were removed here - the static
+ * pool now backs those OG-faithful OOB reads directly, so no external OG-capture
+ * injection is needed. The gd_ci_load / gd_ci_get subsystem above remains, used
+ * only by its separate uninitialized-stack-auto consumers (centroid in AIMOVE.c,
+ * `tries` in MAPGEN.c) -- a distinct fidelity concern, not OOB avoidance. */
 
 /* ---- Game-data capture (CaptureGameData PRD/PLAN, Phase 4, ReMoM side) ----
  * Dump _players in the SAME [GD] format as the OG-side STU-DOSBox probe,

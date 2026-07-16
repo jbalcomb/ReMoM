@@ -83,7 +83,7 @@ The map is flat memory (`offset = wp*WORLD_SIZE + wy*WORLD_WIDTH + wx`, word-str
 - **Phantom column** `wx = 60`: `offset(wy,60) = wy*60+60 = (wy+1)*60+0 = offset(wy+1,0)`. The loop ends a row at `wx=60` and immediately re-reads that same tile as `wx=0` of the next row → **column-0 tiles of rows 1..40 are processed twice, consecutively**. This is the source of the *sequential-pair* divergences when the older `<` form was in place.
 - **Phantom row** `wy = 40`: reaches `offset = wp*2400 + 2400`, i.e. into the next plane's data (for `wp=0`) or past the logical array (for `wp=1`).
 
-These out-of-bounds reads/writes are absorbed by `WORLD_OVERFLOW` (`= 4 * WORLD_WIDTH = 240` tiles, [MOM_DEF.h:275](../../MoX/src/MOM_DEF.h#L275)): `_world_maps` is allocated as `((NUM_PLANES*WORLD_SIZE + WORLD_OVERFLOW) * 2)/16 + 2 = 632` paragraphs = `10112` bytes = `5056` tiles ([ALLOC.c:100](../../MoM/src/ALLOC.c#L100)). The max access — plane 1, `wy=40`, `wx=60` = tile `4860` — sits safely inside. **Faithful; preserve** — the inclusive bounds are required for both RNG alignment and the doubled column-0 animation.
+These out-of-bounds reads/writes are made safe by the **static pool** backing `_world_maps`: the max access — plane 1, `wy=40`, `wx=60` = tile `4860` — lands in addressable, `0xCC`-sentinel pool memory rather than faulting. *(Historical: pre-Phase-5a ReMoM over-allocated `_world_maps` with `WORLD_OVERFLOW` padding to keep the overrun in-arena; **Phase 5a retired that padding**.)* **Faithful; preserve** — the inclusive bounds are required for both RNG alignment and the doubled column-0 animation.
 
 ## Verification against the asm
 

@@ -75,7 +75,7 @@ The in-code `/* OGBUG should all be ||, not && */` is correct; production
 reproduces the dead `&&`, with bounds `WORLD_HEIGHT-2`/`WORLD_WIDTH-2` = 38/58
 matching the asm. **Faithful; preserve.**
 
-### B2 — out-of-bounds scatter, absorbed by overflow padding ([MAPGEN.c:6283-6285](../../MoM/src/MAPGEN.c#L6283-L6285))
+### B2 — out-of-bounds scatter, backed by the static pool ([MAPGEN.c:6283-6285](../../MoM/src/MAPGEN.c#L6283-L6285))
 
 The jitter `itr + Random(radius*2)` can push the target past the map edge. Exact
 maxima (`itr` stops at the last multiple of `radius` below the dimension, plus the
@@ -91,20 +91,20 @@ Worst byte offset is Myrror `wy=45, wx=63` → `2400 + 45*60 + 63 = 5163`. The O
 (via `p_world_map` and the `Square_Is_*` reads) out of bounds; benign in DOS real
 mode (adjacent memory), an access violation in a modern flat allocation.
 
-ReMoM reproduces the OG faithfully (no guard) and **sizes the buffers to absorb
-the overrun** (`WORLD_OVERFLOW = 7 * WORLD_WIDTH = 420`, [MOM_DEF.h:286](../../MoX/src/MOM_DEF.h#L286)):
+ReMoM reproduces the OG faithfully (no guard). The OOB read/write is made safe by
+the **static pool** that backs these arenas: it lands in addressable,
+`0xCC`-sentinel pool memory (a neighbouring arena or the trailing margin) rather
+than faulting. `_map_square_flags` is only touched by the clear loop here
+(≤4799), so it is not overrun by *this* function.
 
-| array | bytes | covers offset 5163? |
-|---|---|---|
-| `_map_square_terrain_specials` | 5248 | ✅ +84 B |
-| `_world_maps` (word) | 10464 | ✅ (5232 tiles, +68) |
+*Historical (pre-Phase-5a):* ReMoM instead sized these buffers to absorb the
+overrun in-arena via `WORLD_OVERFLOW = 7 * WORLD_WIDTH = 420` padding — the
+`_map_square_terrain_specials` arena (5248 B) and `_world_maps` (10464 B) both
+covered the worst offset 5163. **Phase 5a retired that padding** once the pool
+made the OOB safe on its own.
 
-(both [ALLOC.c:102/150](../../MoM/src/ALLOC.c#L150) and [STU_WRLD.c:1708/1710](../../STU/src/STU_WRLD.c#L1710)).
-`_map_square_flags` is only touched by the clear loop here (≤4799), so it is not
-overrun by *this* function.
-
-**RNG caveat:** the padding the overrun reads is ≈ocean (zero), not the OG's
-adjacent-heap garbage. So OOB cells classify as non-grass/non-forest and no-op —
+**RNG caveat:** the pool memory the overrun reads is not grass/forest, unlike the
+OG's adjacent-heap garbage. So OOB cells classify as non-grass/non-forest and no-op —
 the two cell-pick draws still fire (aligned), but where the OG's garbage *would*
 have read as grass/forest and drawn `Random(2)`/`Random(7)`, production does not.
 This residual desync is inherent (garbage reads can't be reproduced); it is not a
@@ -118,7 +118,7 @@ bug to fix.
 | `radius` | `wp==0 → 4`, else `3` | `ARCANUS → 4`, else `3` ✓ |
 | Scatter loops | `itr_wy/itr_wx += radius`, `< WORLD_HEIGHT/WIDTH` (`jge` exit) | same ✓ |
 | Cell jitter | `wy = itr_wy + Random(radius*2)`, then `wx` (same order) | same ✓ (overshoot — see **B2**) |
-| OOB handling | no guard; indexes OOB | no guard; OOB absorbed by padding — **B2** |
+| OOB handling | no guard; indexes OOB | no guard; OOB backed by the static pool — **B2** |
 | Site scans | lair (`NUM_LAIRS`), tower (`NUM_TOWERS`), city (`_cities`) match on `wp/wx/wy` | same ✓ |
 | Skip gate | special≠0, has-city, has-site, dead corner `&&` (2/38/2/58) | same ✓ (corner = **B1**) |
 | Terrain gate | `Grassland \|\| (Forest && Random(2)==1)` (grassland short-circuits the `Random(2)`) | same ✓ |
@@ -135,4 +135,4 @@ bug to fix.
 
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\Generate_Terrain_Specials.asm` — IDA Pro 5.5 disassembly (authority); `off_4C371` terrain jump table; corner test `loc_4C167` (dead `&&`); no OOB guard.
 - [MAPGEN.c:573-576](../../MoM/src/MAPGEN.c#L573-L576) — call sites + dumps.
-- [MOM_DEF.h:286](../../MoX/src/MOM_DEF.h#L286) — `WORLD_OVERFLOW` (the B2 padding); [ALLOC.c:98-156](../../MoM/src/ALLOC.c#L98-L156) — the padded allocations.
+- [ALLOC.c:98-157](../../MoM/src/ALLOC.c#L98-L157) — the arena allocations (padding retired in Phase 5a; `WORLD_OVERFLOW` at [MOM_DEF.h:287](../../MoX/src/MOM_DEF.h#L287) is now used only by tests). See [PLAN-Static-Pool-Allocator](../%23AI_Plans/PLAN-Static-Pool-Allocator.md).

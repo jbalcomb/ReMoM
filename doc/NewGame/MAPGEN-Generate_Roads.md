@@ -65,14 +65,17 @@ identical values (verified against `MAGIC.inc`):
 - **B3 — final loop ignores `wp` and flags every city** ([6123](../../MoM/src/MAPGEN.c#L6123)). The per-city road pass has no plane filter, so both planes' cities get `MSF_ROAD` on each call. Faithful.
 - **B4 — Myrror Enchanted-Road write uses stale `(wx,wy)`, not city coords** ([6147-6166](../../MoM/src/MAPGEN.c#L6147-L6166)). The `wp==MYRROR` branch `|= MSF_EROAD` at the leftover `(wx,wy)` (and param `wp`), not the city's square — so town roads on Myrror never get the enchant, and the write lands on whatever square `(wx,wy)` last held. Faithful.
 
-### B4 OOB and the `_map_square_flags` padding
+### B4 OOB, backed by the static pool
 
 When no city pair qualifies, the road loops never run, so `(wx,wy)` retain
 `(60,40)` from the clear loop's exit. The B4 write then indexes
 `_map_square_flags[wp=1][40][60]` = offset `1*2400 + 40*60 + 60 = `**`4860`** — past
 the logical `4800`. The OG just touches adjacent memory (DOS); a modern flat
-allocation would fault. ReMoM absorbs it by sizing `_map_square_flags` with
-`+ WORLD_WIDTH + 1` ([ALLOC.c:156](../../MoM/src/ALLOC.c#L156), [STU_WRLD.c:1711](../../STU/src/STU_WRLD.c#L1711)) → 4880 bytes, covering index 4860 (+19 B margin). Seed 12345 dodges this (its loops leave `(43,9)`); other seeds hit the `(60,40)` case.
+allocation would fault. ReMoM makes it safe via the **static pool** backing
+`_map_square_flags`: the write lands in addressable, `0xCC`-sentinel pool memory
+rather than faulting. *(Historical: pre-Phase-5a ReMoM sized the buffer with
+`+ WORLD_WIDTH + 1` → 4880 bytes to cover index 4860 in-arena; **Phase 5a retired
+that padding**.)* Seed 12345 dodges this (its loops leave `(43,9)`); other seeds hit the `(60,40)` case.
 
 ## Sub-functions / external calls
 
@@ -84,5 +87,5 @@ allocation would fault. ReMoM absorbs it by sizing `_map_square_flags` with
 
 - `C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\MAGIC\ovr051\Generate_Roads.asm` — IDA Pro 5.5 disassembly (authority); `Path_Wrap` call (`loc_4BBC8`), validity scan (`loc_4BBF9`), stale-coord EROAD write (`loc_4BF0F` region).
 - [MAPGEN.c:578-579](../../MoM/src/MAPGEN.c#L578-L579) — call sites.
-- [ALLOC.c:156](../../MoM/src/ALLOC.c#L156) / [STU_WRLD.c:1711](../../STU/src/STU_WRLD.c#L1711) — the `_map_square_flags` B4 padding.
-- [MAPGEN-Generate_Terrain_Specials.md](MAPGEN-Generate_Terrain_Specials.md) — sibling pass with the same OOB-into-padding pattern (`WORLD_OVERFLOW`).
+- [ALLOC.c:157](../../MoM/src/ALLOC.c#L157) / [STU_WRLD.c:1711](../../STU/src/STU_WRLD.c#L1711) — the `_map_square_flags` allocation (B4 `+WORLD_WIDTH+1` padding retired in Phase 5a; pool-backed now).
+- [MAPGEN-Generate_Terrain_Specials.md](MAPGEN-Generate_Terrain_Specials.md) — sibling pass with the same pool-backed OOB pattern.
