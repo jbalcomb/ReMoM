@@ -10,14 +10,15 @@ guarded only by the always-true `(wy < WORLD_HEIGHT)`
 ([MAPGEN.c:3987/3998/4011](../MoM/src/MAPGEN.c#L3987)). At the last row
 `wy = 39` this reads `p_world_map[wp][40][wx]` — one row **past** the
 `[2][40][60]` world-map array (`WORLD_HEIGHT = 40`). For plane 1 (Myrror) that
-address is `_world_maps + 4800`, i.e. inside the `WORLD_OVERFLOW` slack past the
-array: an OG-faithful out-of-bounds read.
+address is `_world_maps + 4800` — one row past the array: an OG-faithful
+out-of-bounds read.
 
 Under the old per-arena `malloc`, that read could fault under ASan or
-page-protection. With the static pool the slack is addressable, sentinel-filled,
-and deterministic, and `gd_ci_inject_world_overrun`
-([INITGAME.c:143](../MoM/src/INITGAME.c#L143)) stamps OG's captured bytes into
-it — so the read no longer crashes and the generated world is reproducible.
+page-protection. With the static pool it lands in addressable, `0xCC`-sentinel
+pool memory (the neighbouring arena / trailing margin), so it no longer crashes
+and is deterministic run-to-run — which is what makes the generated world
+reproducible. (Phase 5a retired the earlier `WORLD_OVERFLOW` padding and the
+`gd_ci_inject_world_overrun` CI hook; the pool alone backs the read now.)
 
 ## What it asserts
 
@@ -25,17 +26,16 @@ it — so the read no longer crashes and the generated world is reproducible.
 (`world_map[1][40*wx + 39]`, `wx = 0..59`) of the seed-pinned generated world to
 their known-good values, checked by `check_save_fields` against the
 `HeMoM_WorldGen` fixture's `SAVE9.txt`. These are the squares physically
-adjacent to — and, during autotiling, computed from — the OOB slack. A
-pool/inject regression (a crash, garbage in the slack, or a changed pool layout)
+adjacent to — and, during autotiling, computed from — the OOB read location. A
+pool regression (a crash, non-deterministic slack, or a changed pool layout)
 perturbs the OOB read and therefore these values, failing the test.
 
-Scope note: the injected byte *values* come from an untracked CI capture
-(`og-game-data-capture.fwv`), and the wy=40 slack itself is never written to the
-save, so this harness proves the read is **crash-free and deterministic
-end-to-end** rather than directly diffing the injected bytes. The direct
-byte-for-byte comparison of the injected slack is a CI-only concern (it needs the
-`.fwv` baseline and the Debug-only `gd_dump_world_map` log), covered transitively
-by the deterministic output pinned here.
+Scope note: the wy=40 slack itself is never written to the save, so this harness
+proves the read is **crash-free and deterministic end-to-end** (the pool makes
+the OOB land on stable, sentinel-backed memory) rather than diffing raw slack
+bytes. It does not assert OG-*value* fidelity at the OOB site: Phase 5a
+deliberately dropped that — the OOB now reads pool content, not OG's captured
+bytes — so the pinned values are the pool-backed deterministic output.
 
 ## Running it standalone
 

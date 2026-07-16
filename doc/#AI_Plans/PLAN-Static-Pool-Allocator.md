@@ -395,16 +395,23 @@ inject mechanism. Purely mechanical + documentation — no behavior change beyon
 
 ### Acceptance criteria
 
-- [ ] Affected goldens/assertions re-baselined and green: `assert_worldgen.txt`,
-  `assert_oob_autotiling.txt`, `assert_continue_save.txt`,
-  `assert_continue_next_turn.txt`, `assert_ai_5turns.txt`, plus the save-size
-  checks (`validate_save.cmake` expected sizes).
-- [ ] `valgrind-suppressions-all.supp` reviewed; suppressions that existed only
-  for the removed padding/inject sites are dropped.
-- [ ] Docs reconciled: `doc/NewGame/MAPGEN-Simtex_Autotiling.md`,
-  `doc/HeMoM-OOB-Autotiling-Harness.md`, and `doc/Static-Pool-Tests.md` describe
-  the pool (not `gd_ci_inject`) as the OOB backing.
-- [ ] PRD reconciled: user story 7 and the "CI byte injection unchanged"
-  decision reflect the pool-backed OOB and point to Phase 5.
-- [ ] Full test suite green (`ctest`); the OOB harness re-baseline confirmed
+- [x] Goldens/assertions green — **re-baseline was a no-op** (see 5a outcome:
+  `.fwv` absent, so removing the inert inject + padding didn't move any pinned
+  output): `assert_worldgen.txt`, `assert_oob_autotiling.txt`,
+  `assert_continue_save.txt`, `assert_continue_next_turn.txt`,
+  `assert_ai_5turns.txt` all pass, and `HeMoM_WorldGen_Validate` confirms the
+  save size is unchanged (123300).
+- [~] `valgrind-suppressions-all.supp` — **not present in this worktree** (no
+  `*.supp` anywhere), so there was nothing to review/drop. If it exists in the
+  main tree, re-check there when merging.
+- [x] Docs reconciled: `MAPGEN-Simtex_Autotiling.md`,
+  `HeMoM-OOB-Autotiling-Harness.md` (and `Static-Pool-Tests.md`, which had no
+  stale refs) describe the pool as the OOB backing. Also reconciled the three
+  sibling walkthroughs that referenced the padding —
+  `MAPGEN-Generate_Terrain_Specials.md`, `MAPGEN-Generate_Roads.md`,
+  `MAPGEN-Animate_Oceans.md` (retired-padding framing marked *Historical*).
+- [x] PRD reconciled (done in the earlier PRD/plan pass): user story 7 and the
+  "CI byte injection" decision reflect the pool-backed OOB and point to Phase 5.
+- [x] Full test suite green (`ctest`, 48/48 on Release; Golden disabled); OOB
+  harness re-baseline confirmed
   deterministic across two fresh runs.
