@@ -223,6 +223,19 @@ int main(int argc, char * argv[])
 #endif
 #endif
 
+    /* Route player logs to the per-user state dir (XDG_STATE_HOME/ReMoM etc.)
+       instead of the CWD.  The resolver is standalone (no STU_GRAF_Init needed)
+       and creates the dir; hand it to STU_LOG before startup.  HeMoM / tests /
+       matchup never do this, so they keep logging to the CWD.  REMOM_LOG_DIR
+       overrides; an unwritable dir falls back to the CWD. */
+    {
+        char log_state_dir[1024];
+        if(STU_GRAF_User_State_Dir(log_state_dir, sizeof(log_state_dir)))
+        {
+            STU_Log_Set_Base_Dir(log_state_dir);
+        }
+    }
+
     STU_Log_Startup("ReMoM.ini");
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 

@@ -390,6 +390,52 @@ static int graf_mkpath(const char * dir)
     return graf_mkdir_one(tmp);
 }
 
+int STU_GRAF_User_State_Dir(char * out, size_t cap)
+{
+    /* Placed after graf_mkpath so it can create the dir on resolution -- the log
+       writer (STU_LOG) opens files here but does not itself mkdir. */
+#if defined(_WIN32)
+    const char * base = getenv("LOCALAPPDATA");
+    if(base == NULL || base[0] == '\0')
+    {
+        return 0;
+    }
+    if(!graf_compose_dir(out, cap, base, "ReMoM/logs"))
+    {
+        return 0;
+    }
+#elif defined(__APPLE__)
+    const char * home = getenv("HOME");
+    if(home == NULL || home[0] == '\0')
+    {
+        return 0;
+    }
+    if(!graf_compose_dir(out, cap, home, "Library/Logs/ReMoM"))
+    {
+        return 0;
+    }
+#else
+    char fallback[STU_GRAF_PATH_MAX];
+    const char * base = getenv("XDG_STATE_HOME");
+    if(base == NULL || base[0] == '\0')
+    {
+        const char * home = getenv("HOME");
+        if(home == NULL || home[0] == '\0')
+        {
+            return 0;
+        }
+        snprintf(fallback, sizeof(fallback), "%s/.local/state", home);
+        base = fallback;
+    }
+    if(!graf_compose_dir(out, cap, base, "ReMoM"))
+    {
+        return 0;
+    }
+#endif
+    graf_mkpath(out);  /* ensure it exists for the log writer */
+    return 1;
+}
+
 FILE * STU_GRAF_Open_User(const char * name, const char * mode)
 {
     char dir[STU_GRAF_PATH_MAX];

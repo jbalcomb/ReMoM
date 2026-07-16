@@ -1,8 +1,8 @@
 # PRD — Installed-Player First Run: Data Discovery, Fail-Soft & File Locations
 
-**Status:** In progress — Phases 1–3 committed (read search path, fail-soft preflight, config+cache); Phases 4–5 implemented, uncommitted (writable per-user layout + first-run seeding; checksum compatibility pass on a dependency-free SHA-256 against a **compiled-in** manifest table, authored by the new `lbx_hashes` generator); Phase 6 pending (log relocation). **Design note:** the writable dir is resolved by `STU_GRAF` itself (XDG / `%APPDATA%` / `~/Library`), *not* `SDL_GetPrefPath()` as sketched in Implementation Notes — this keeps the seam SDL-free and consistent with Phases 1–3; the `Platform_Get_User_Data_Dir` backend is therefore not needed.
+**Status:** All six phases implemented — Phases 1–3 committed (read search path, fail-soft preflight, config+cache); Phases 4–6 uncommitted (writable per-user layout + first-run seeding; checksum compatibility pass on a dependency-free SHA-256 against a **compiled-in** manifest, authored by the new `lbx_hashes` generator and populated from the v1.31 assets; **log relocation to `XDG_STATE_HOME` for the player build**). **Design notes:** (a) the writable dir is resolved by `STU_GRAF` itself (XDG / `%APPDATA%` / `~/Library`), *not* `SDL_GetPrefPath()` as sketched below — keeps the seam SDL-free; `Platform_Get_User_Data_Dir` isn't needed. (b) The log dir is passed to `STU_LOG` by the caller (ReMoMber) via `STU_Log_Set_Base_Dir`, not resolved inside `STU_LOG`, avoiding an `STU_LOG`↔`STU_GRAF` cycle.
 **Owner:** TBD
-**Date:** 2026-07-03 (updated 2026-07-15)
+**Date:** 2026-07-03 (updated 2026-07-16)
 **Tracks:** Alpha-quality first-run experience (portable ZIP / installed player build)
 
 > **References:**
@@ -102,7 +102,7 @@ Two distinct resolution rules follow from this:
 ### Log relocation (player build only)
 
 14. **Base-dir precedence** in `STU_LOG`: `REMOM_LOG_DIR` → caller-supplied dir (ReMoMber passes the state dir) → CWD (default).
-15. **`STU_State_Log_Dir()`** resolves `$XDG_STATE_HOME/ReMoM/` (Linux) / `%LOCALAPPDATA%\ReMoM\logs\` / `~/Library/Logs/ReMoM/`, creating it; the 3-file rotation runs within it. Falls back to CWD on failure.
+15. **`STU_GRAF_User_State_Dir()`** (implemented name) resolves `$XDG_STATE_HOME/ReMoM/` (Linux) / `%LOCALAPPDATA%\ReMoM\logs\` / `~/Library/Logs/ReMoM/`, creating it; ReMoMber passes it to `STU_Log_Set_Base_Dir()` and the 3-file rotation runs within it. Falls back to CWD on failure.
 
 ## Acceptance Criteria
 
@@ -115,8 +115,8 @@ Two distinct resolution rules follow from this:
 - [x] On first run, `CONFIG.MOM` is copied into `XDG_DATA_HOME` and read from there on later runs; the original in the game-data dir is never modified. *(P4 — `STU_GRAF_Seed_User_File` unit-proven + wired at PLAYER startup)*
 - [x] No data discoverable anywhere → GUI dialog names the missing files + fix, exits non-zero, no crash; HeMoM prints the same to stderr. *(P2 — verified end-to-end on both builds; ctest `HeMoM_Preflight_Missing_Data`)*
 - [x] Data files whose checksums don't match any manifest entry → a non-blocking "unrecognized/……" warning (presence still passing). *(P5 — `STU_GRAF_Check_Data_Compat` over the **compiled-in** `g_lbx_manifest` on a verified SHA-256; unit-proven; silent until the manifest is authored via the `lbx_hashes` generator)*
-- [ ] `HeMoM`/`ctest`/matchup still resolve data from CWD and write `remom_log_*.txt` to CWD ([tools/log-tools/log_triage.py](../../tools/log-tools/log_triage.py), [tools/parity_check.py](../../tools/parity_check.py) unaffected). *(P1/P6 — CWD-data half verified; logs-stay-CWD is true today but its regression guard lands with P6)*
-- [ ] Player-build logs land under `~/.local/state/ReMoM/`, not CWD. *(P6 — not started)*
+- [x] `HeMoM`/`ctest`/matchup still resolve data from CWD and write `remom_log_*.txt` to CWD ([tools/log-tools/log_triage.py](../../tools/log-tools/log_triage.py), [tools/parity_check.py](../../tools/parity_check.py) unaffected). *(P1/P6 — end-to-end: HeMoM with `XDG_STATE_HOME` set still logged to CWD, 0 in the state dir; `STU_LOG` default (no `Set_Base_Dir`) = CWD, byte-identical)*
+- [x] Player-build logs land under `~/.local/state/ReMoM/`, not CWD. *(P6 — end-to-end: ReMoMber `--headless` wrote its log under `XDG_STATE_HOME/ReMoM/`, 0 in its CWD; unit-tested)*
 - [x] No `MoM/src` / `MoX/src` game-logic file is modified for discovery. *(git-verified: only `MoX/src/LBX_Load.c` open-call plumbing changed)*
 
 ## Implementation Notes

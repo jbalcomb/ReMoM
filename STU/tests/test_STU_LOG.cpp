@@ -9,6 +9,8 @@ extern "C" {
 #endif
 
 #include <cstdio>
+#include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <regex>
 #include <sstream>
@@ -372,4 +374,142 @@ TEST(stu_log_test, CrashHandlerWritesMarkerOnFatalSignal)
 	std::string contents = slurp_log_file("remom_log_new.txt");
 	EXPECT_NE(contents.find("before crash marker"), std::string::npos);
 	EXPECT_NE(contents.find("[CRASH]"), std::string::npos);
+}
+
+
+// ---- Phase 6: log-output directory (base dir / REMOM_LOG_DIR / CWD fallback) ----
+// Each test restores CWD routing afterward so the CWD-expecting tests above are
+// unaffected regardless of run order.
+
+namespace
+{
+	void log_set_env(const char * k, const char * v)
+	{
+#ifdef _WIN32
+		_putenv_s(k, v);
+#else
+		setenv(k, v, 1);
+#endif
+	}
+	void log_unset_env(const char * k)
+	{
+#ifdef _WIN32
+		_putenv_s(k, "");
+#else
+		unsetenv(k);
+#endif
+	}
+	std::string log_make_temp_dir(const std::string & tag)
+	{
+		std::filesystem::path p = std::filesystem::temp_directory_path() / ("stu_log_" + tag);
+		std::error_code ec;
+		std::filesystem::remove_all(p, ec);
+		std::filesystem::create_directories(p);
+		return p.string();
+	}
+	bool log_file_in(const std::string & dir, const char * name)
+	{
+		return std::filesystem::exists(std::filesystem::path(dir) / name);
+	}
+	std::string log_slurp_in(const std::string & dir, const char * name)
+	{
+		return slurp_log_file((std::filesystem::path(dir) / name).string().c_str());
+	}
+	void log_reset_routing()  /* back to CWD default for the next test */
+	{
+		log_unset_env("REMOM_LOG_DIR");
+		STU_Log_Set_Base_Dir(NULL);
+	}
+}
+
+TEST(stu_log_test, BaseDirRoutesLogIntoDir)
+{
+	std::string dir = log_make_temp_dir("base");
+	log_unset_env("REMOM_LOG_DIR");
+	STU_Log_Set_Base_Dir(dir.c_str());
+
+	STU_Log_Startup(NULL);
+	LOG_INFO(LOG_CAT_GENERAL, "hello-state-dir");
+	STU_Log_Shutdown();
+
+	ASSERT_TRUE(log_file_in(dir, "remom_log_new.txt"));
+	EXPECT_NE(log_slurp_in(dir, "remom_log_new.txt").find("hello-state-dir"), std::string::npos);
+
+	log_reset_routing();
+	std::error_code ec; std::filesystem::remove_all(dir, ec);
+}
+
+TEST(stu_log_test, RemomLogDirEnvOverridesBaseDir)
+{
+	std::string base = log_make_temp_dir("base_lo");
+	std::string env  = log_make_temp_dir("env_hi");
+	STU_Log_Set_Base_Dir(base.c_str());
+	log_set_env("REMOM_LOG_DIR", env.c_str());
+
+	STU_Log_Startup(NULL);
+	LOG_INFO(LOG_CAT_GENERAL, "env-wins");
+	STU_Log_Shutdown();
+
+	EXPECT_TRUE(log_file_in(env, "remom_log_new.txt"));
+	EXPECT_FALSE(log_file_in(base, "remom_log_new.txt"));
+
+	log_reset_routing();
+	std::error_code ec;
+	std::filesystem::remove_all(base, ec);
+	std::filesystem::remove_all(env, ec);
+}
+
+TEST(stu_log_test, RemomLogDirDotForcesCwd)
+{
+	std::string base = log_make_temp_dir("base_dot");
+	STU_Log_Set_Base_Dir(base.c_str());
+	log_set_env("REMOM_LOG_DIR", ".");
+	std::remove("remom_log_new.txt");
+
+	STU_Log_Startup(NULL);
+	LOG_INFO(LOG_CAT_GENERAL, "dot-is-cwd");
+	STU_Log_Shutdown();
+
+	EXPECT_TRUE(std::filesystem::exists("remom_log_new.txt"));   /* CWD */
+	EXPECT_FALSE(log_file_in(base, "remom_log_new.txt"));
+
+	log_reset_routing();
+	std::error_code ec; std::filesystem::remove_all(base, ec);
+}
+
+TEST(stu_log_test, UnwritableBaseDirFallsBackToCwd)
+{
+	/* Parent doesn't exist -> fopen fails (STU_LOG doesn't mkdir) -> CWD. */
+	std::string bogus = (std::filesystem::temp_directory_path() / "stu_log_nope_zzz" / "sub").string();
+	log_unset_env("REMOM_LOG_DIR");
+	STU_Log_Set_Base_Dir(bogus.c_str());
+	std::remove("remom_log_new.txt");
+
+	STU_Log_Startup(NULL);
+	LOG_INFO(LOG_CAT_GENERAL, "fallback-to-cwd");
+	STU_Log_Shutdown();
+
+	ASSERT_TRUE(std::filesystem::exists("remom_log_new.txt"));   /* fell back to CWD */
+	EXPECT_NE(slurp_log_file("remom_log_new.txt").find("fallback-to-cwd"), std::string::npos);
+
+	log_reset_routing();
+}
+
+TEST(stu_log_test, RotatesWithinBaseDir)
+{
+	std::string dir = log_make_temp_dir("rotate");
+	std::ofstream((std::filesystem::path(dir) / "remom_log_current.txt")) << "OLD_CURRENT\n";
+	std::ofstream((std::filesystem::path(dir) / "remom_log_new.txt")) << "OLD_NEW\n";
+	log_unset_env("REMOM_LOG_DIR");
+	STU_Log_Set_Base_Dir(dir.c_str());
+
+	STU_Log_Startup(NULL);
+	STU_Log_Shutdown();
+
+	/* previous <- old current ; current <- old new ; fresh new */
+	EXPECT_NE(log_slurp_in(dir, "remom_log_previous.txt").find("OLD_CURRENT"), std::string::npos);
+	EXPECT_NE(log_slurp_in(dir, "remom_log_current.txt").find("OLD_NEW"), std::string::npos);
+
+	log_reset_routing();
+	std::error_code ec; std::filesystem::remove_all(dir, ec);
 }

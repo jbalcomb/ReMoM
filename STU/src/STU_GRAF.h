@@ -67,6 +67,13 @@ int STU_GRAF_User_Cache_Dir(char * out, size_t cap);
    ~/Library/Application Support/ReMoM on macOS.  Returns 1 on success. */
 int STU_GRAF_User_Data_Dir(char * out, size_t cap);
 
+/* Per-user *state* directory (with a trailing separator): the writable home for
+   logs.  XDG_STATE_HOME/ReMoM on Linux, %LOCALAPPDATA%\ReMoM\logs on Windows,
+   ~/Library/Logs/ReMoM on macOS.  Unlike the other resolvers this also *creates*
+   the directory (the log writer opens files here but does not itself mkdir).
+   Returns 1 on success. */
+int STU_GRAF_User_State_Dir(char * out, size_t cap);
+
 /* Open a writable per-user file by bare name (e.g. "MAGIC.SET", "SAVE1.GAM"),
    resolved into the user-data dir (created on demand for write modes).  Same
    signature as stu_fopen_ci, so the reconstructed write sites swap

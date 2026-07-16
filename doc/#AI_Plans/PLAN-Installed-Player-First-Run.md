@@ -22,7 +22,7 @@ Durable decisions that apply across all phases:
   | `CONFIG.MOM`/`MAGIC.SET`/saves (writable) | `XDG_DATA_HOME` | `~/.local/share/ReMoM/` | `%APPDATA%\ReMoM\` | `~/Library/Application Support/ReMoM/` |
   | Settings (`ReMoM.ini`) | `XDG_CONFIG_HOME` | `~/.config/ReMoM/` | `%APPDATA%\ReMoM\` | `~/Library/Application Support/ReMoM/` |
   | Logs | `XDG_STATE_HOME` | `~/.local/state/ReMoM/` | `%LOCALAPPDATA%\ReMoM\logs\` | `~/Library/Logs/ReMoM/` |
-- **`STU_LOG` delegates its log-dir resolution to `STU_GRAF`** (shared XDG/mkdir code, no duplication).
+- **`STU_LOG` gets its log dir from the caller, not by calling `STU_GRAF`** (avoids an `STU_LOG`↔`STU_GRAF` cycle). ReMoMber resolves it via `STU_GRAF_User_State_Dir` (the shared XDG/mkdir resolver — no duplication) and passes it through `STU_Log_Set_Base_Dir`. *(Implemented in Phase 6.)*
 - **Platform layer keeps only `Platform_Show_Error(title, msg)`** (needs the UI backend: `SDL_ShowSimpleMessageBox` / `MessageBoxA` / stderr for headless). Path/place resolution does **not** touch the backend.
 - **Routing the game's opens (no game-logic edits):** `LBX_Load` (libmox, 3 sites) calls `STU_GRAF_Open_Asset` — legal MoX→STU dependency, no function pointers. `CONFIG.MOM`/`MAGIC.SET`/save sites (bounded, in `ReMoM_Init.c`/`Settings.c`/HeMoM newgame) call the `STU_GRAF` open functions.
 - **`profile` at init:** `STU_GRAF_Init(STU_GRAF_PLAYER | STU_GRAF_HEADLESS)`. HEADLESS → CWD-only, no seeding, stderr for errors. Both `main()`s call it.
@@ -135,14 +135,18 @@ A dependency-free SHA-256 and a non-blocking compatibility pass that runs after 
 
 ### What to build
 
-Have `STU_LOG` resolve its log directory through `STU_GRAF`'s place helpers (state dir). Base-dir precedence: `REMOM_LOG_DIR` (env) → caller-supplied dir (ReMoMber passes the resolved state dir) → CWD (default; HeMoM/tests/matchup). Apply the startup-order fix so `STU_GRAF_Init` runs before `STU_Log_Startup`, letting the player build log into the resolved state dir. Rotation runs within the resolved dir; falls back to CWD on failure.
+`STU_LOG` gains a base-output-dir with precedence `REMOM_LOG_DIR` (env) → caller-supplied dir → CWD (default). ReMoMber resolves the state dir via `STU_GRAF_User_State_Dir` and hands it to `STU_Log_Set_Base_Dir()` before `STU_Log_Startup`; HeMoM/tests/matchup never do, so they stay CWD. Rotation runs within the resolved dir; an unwritable dir falls back to CWD.
+
+> **Design refinement:** rather than `STU_LOG` *calling* `STU_GRAF` (which would create an `STU_LOG`↔`STU_GRAF` cycle, since `STU_GRAF` logs via `STU_LOG`), the **caller resolves and passes** the dir via a `STU_Log_Set_Base_Dir` side-channel. Dependency stays one-way (`STU_GRAF`→`STU_LOG`; ReMoMber→both); `STU_Log_Startup`'s signature is unchanged (no HeMoM/test ripple). No startup-**order** move was needed — `STU_GRAF_User_State_Dir` is standalone (no `STU_GRAF_Init`), so ReMoMber resolves the dir *before* `STU_Log_Startup` without reordering `STU_GRAF_Init` (which keeps its own startup log line).
 
 ### Acceptance criteria
 
-- [ ] A player-build (`ReMoMber`) run writes `remom_log_*.txt` under the OS state dir (`~/.local/state/ReMoM/` etc.), not the CWD.
-- [ ] `HeMoM`, `ctest`, and the matchup harness still write `remom_log_*.txt` to the CWD — `tools/log-tools/log_triage.py` and `tools/parity_check.py` unaffected.
-- [ ] `REMOM_LOG_DIR=<dir>` overrides for any build; `REMOM_LOG_DIR=.` forces CWD.
-- [ ] 3-file rotation works correctly within the resolved directory; unwritable dir falls back to CWD with the existing stderr note.
+- [x] A player-build (`ReMoMber`) run writes `remom_log_*.txt` under the OS state dir (`~/.local/state/ReMoM/` etc.), not the CWD. *(end-to-end: ReMoMber `--headless` with `XDG_STATE_HOME=<tmp>` wrote the log under `<tmp>/ReMoM/`, 0 files in its CWD; unit `BaseDirRoutesLogIntoDir` + `UserStateDirResolvesAndCreates`.)*
+- [x] `HeMoM`, `ctest`, and the matchup harness still write `remom_log_*.txt` to the CWD — `tools/log-tools/log_triage.py` and `tools/parity_check.py` unaffected. *(end-to-end: HeMoM with `XDG_STATE_HOME` set still logged to its CWD, 0 files in the state dir — it never calls `Set_Base_Dir`. Default `log_base_dir=""` → CWD, byte-identical to before.)*
+- [x] `REMOM_LOG_DIR=<dir>` overrides for any build; `REMOM_LOG_DIR=.` forces CWD. *(end-to-end override honored; unit `RemomLogDirEnvOverridesBaseDir` + `RemomLogDirDotForcesCwd`.)*
+- [x] 3-file rotation works correctly within the resolved directory; unwritable dir falls back to CWD with the existing stderr note. *(unit `RotatesWithinBaseDir` + `UnwritableBaseDirFallsBackToCwd`.)*
+
+> **Status (uncommitted):** `STU_GRAF_User_State_Dir` (resolves + creates `XDG_STATE_HOME/ReMoM` etc.) + `STU_Log_Set_Base_Dir` side-channel + path-aware rotation/open with CWD fallback in `STU_LOG`. ReMoMber routes to the state dir at startup (PLAYER only); HeMoM/tests/matchup stay CWD. **57/57 STU tests** (6 new) + all three ACs confirmed against the real binaries. Debug + Release build clean.
 
 ---
 

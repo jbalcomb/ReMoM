@@ -7016,26 +7016,38 @@ void Animate_Oceans(void)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 
+    /* OGBUG  the wy/wx loops use `<=` so the final iteration reads (and possibly
+     *   writes) one row/column past the declared world map bounds.  The extra
+     *   reads land in the WORLD_OVERFLOW padding at the tail of the _world_maps
+     *   allocation (7 * WORLD_WIDTH int16_t cells) — always allocated, but past
+     *   the [WORLD_HEIGHT][WORLD_WIDTH] bound the typed p_world_map advertises.
+     *   Access via a flat int16_t* keeps GCC's -Waggressive-loop-optimizations
+     *   quiet while preserving OG's OOB read/write behavior (RNG-relevant —
+     *   the OOB cells drive Random(5) calls that must match OG's stream).
+     *   OG (preserved):    ((int16_t*)_world_maps)[wp*WORLD_SIZE + wy*WORLD_WIDTH + wx]
+     *   Correct loops:     for(wy = 0; wy < WORLD_HEIGHT; wy++) / wx < WORLD_WIDTH  */
+    int16_t * flat_map = (int16_t *)_world_maps;
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
         for(wy = 0; wy <= WORLD_HEIGHT; wy++)  /* OGBUG  OOB AVRL; should be <, not <=; overruns by 1 */
         {
             for(wx = 0; wx <= WORLD_WIDTH; wx++)  /* OGBUG  OOB AVRL; should be <, not <=; overruns by 1 */
             {
+                int32_t map_idx = ((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
                 /* Check for Ocean on Arcanus plane */
-                if(p_world_map[wp][wy][wx] == tte_Ocean)
+                if(flat_map[map_idx] == tte_Ocean)
                 {
                     if(Random(5) == 1)  /* 1:5  20% */
                     {
-                        p_world_map[wp][wy][wx] = tte_OceanAnim;
+                        flat_map[map_idx] = tte_OceanAnim;
                     }
                 }
                 /* OGBUG conflicting condition - will always jump (myrran square types are only valid in graphics) - coded as if Myrror has its own terrain type indices */
-                if(p_world_map[wp][wy][wx] == (TerType_Count + tte_Ocean))
+                if(flat_map[map_idx] == (TerType_Count + tte_Ocean))
                 {
                     if(Random(5) == 1)  /* 1:5  20% */
                     {
-                        p_world_map[wp][wy][wx] = (TerType_Count + tte_OceanAnim);
+                        flat_map[map_idx] = (TerType_Count + tte_OceanAnim);
                     }
                 }
             }

@@ -399,6 +399,23 @@ TEST(STU_GRAF, HeadlessUserFamilyUsesCwd)
     STU_GRAF_Reset();  // restore PLAYER default for later tests
 }
 
+TEST(STU_GRAF, UserStateDirResolvesAndCreates)
+{
+    // The log-state resolver both resolves AND creates the dir (STU_LOG opens
+    // files there but does not itself mkdir).
+    TempTree t("statehome");
+    set_env("XDG_STATE_HOME", t.dir().c_str());
+
+    char d[1024] = {0};
+    ASSERT_EQ(STU_GRAF_User_State_Dir(d, sizeof(d)), 1);
+    std::string s(d);
+    EXPECT_NE(s.find("ReMoM"), std::string::npos);
+    EXPECT_NE(s.find(t.dir()), std::string::npos);          // under our XDG_STATE_HOME
+    EXPECT_TRUE(fs::exists(fs::path(t.dir()) / "ReMoM"));    // created on resolution
+
+    unset_env("XDG_STATE_HOME");
+}
+
 #endif
 
 // ---- Phase 5: data-compatibility pass (embedded manifest table) --------------

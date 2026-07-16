@@ -84,6 +84,13 @@ enum log_category
    without dragging libMOX in.  Random_at() in MoX/src/random.c increments it. */
 extern uint64_t g_random_call_count;
 
+/* Preferred log-output directory, applied by the *next* STU_Log_Startup().  Call
+   before STU_Log_Startup(); pass NULL/"" to reset to the CWD.  The runtime
+   precedence is REMOM_LOG_DIR (env) -> this base dir -> CWD; an unwritable dir
+   falls back to the CWD.  ReMoMber passes the resolved XDG state dir here;
+   HeMoM / tests / matchup never call it, so they keep logging to the CWD. */
+void STU_Log_Set_Base_Dir(const char * dir);
+
 /* ini_path: path to an INI file with a [Logging] section, or NULL for built-in defaults. Missing file or missing section is non-fatal — defaults apply. */
 void STU_Log_Startup(const char * ini_path);
 void STU_Log_Shutdown(void);
