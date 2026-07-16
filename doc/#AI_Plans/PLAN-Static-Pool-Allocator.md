@@ -247,42 +247,43 @@ inject/pool path), and the direct byte diff remains a CI/`.fwv` matter.
 
 ### What to build
 
-Consolidate the new test artifacts introduced in Phases 1-3 into a
-discoverable, single-command-runnable test suite, and add the
-cross-phase tests that don't fit naturally in earlier phases.
-Specifically: wire `test_Allocate_Pool` and `test_Allocate_Space` (the
-unit and integration test files from Phases 1 and 2b) into the
-project's CTest target so `ctest` runs them alongside existing tests;
-make the Phase 3 OOB harness invokable from the matchup pipeline as a
-gate. Add new tests that span phases: pool-layout determinism (same
-`Allocate_Data_Space` call order across two runs produces identical
-pool offsets and identical sentinel content in slack), HeMoM ↔
-ReMoMber parity (both targets observe identical pool layout
-post-init), and a `gd_dump_*` regression check that fails if any
-previously-green comparison point goes red. Verify Phase-2 readiness
-properties: deterministic offsets, sentinel slack between sub-blocks,
-no compile-time obstacles to future ASan annotation.
+Consolidate the Phase 1-3 test artifacts into one CTest-discoverable suite and
+fix what Phase 2b silently broke. The pool-backed swap turned
+`test_Allocate.cpp`'s `Allocate_Space` returns into pool-interior pointers, so
+its `free()` calls became undefined behaviour (the suite crashed on the first
+case). That file **is** the pool-backed `Allocate_Space` integration test
+(stories 16/17): reset the pool per test (`Pool_Init` in `SetUp`), drop the
+`free()`s, and add pool-specific cases — pool-residency (`Pool_Bytes_Used`
+advances by `(size+1)*16`) and sentinel slack inside a sub-block (story 18).
+`test_Allocate_Pool` (Phase 1) and `HeMoM_OOB_Autotiling` (Phase 3) are already
+CTest tests. Determinism and `gd_dump_*` regression are covered by existing
+tests rather than new bespoke ones (see criteria). Document the catalog.
 
 ### Acceptance criteria
 
-- [ ] `ctest` discovers and runs `test_Allocate_Pool`,
-  `test_Allocate_Space`, and the matchup-pipeline OOB harness as a
-  single combined suite.
-- [ ] Layout-determinism test: two back-to-back runs of
-  `Allocate_Data_Space` produce identical pool offsets for every arena
-  and identical sentinel content in every slack region.
-- [ ] HeMoM ↔ ReMoMber parity test: both binaries report identical
-  pool offsets for each in-scope `Allocate_Space` call after
-  startup.
-- [ ] `gd_dump_*` regression check: runs the matchup pipeline and
-  fails the test suite if any previously-green comparison point
-  diverges.
-- [ ] `static_assert` for POOL_SIZE sufficiency is reachable from the
-  test build and verified to fire on a deliberately-undersized pool.
-- [ ] Phase-2 readiness verified: sub-block offsets are stable and
-  exposable in a form usable by future `__asan_poison_memory_region`
-  calls; sentinel slack between sub-blocks is intact post-normal-run.
-- [ ] CI workflow (or equivalent project task) runs the consolidated
-  suite on every push; gate fails block merging.
-- [ ] Documentation update: brief section in the project README (or
-  test directory README) describing what each test target covers.
+- [x] `ctest` discovers and runs `test_Allocate_Pool` (11 `AllocatePoolTest`),
+  the pool-backed `Allocate_Space` integration tests (26 `AllocateTest` in
+  `MOX_tests`), and the OOB harness (`HeMoM_OOB_Autotiling`) as one suite.
+- [x] Layout determinism: covered at the pool layer by
+  `AllocatePoolTest.Reinit_Produces_Identical_Carve_Sequence` and end-to-end by
+  the verified byte-identical `HeMoM_WorldGen`/`OOB` output (full
+  `Allocate_Data_Space` call order). *(No bespoke per-arena offset dump — the
+  two existing layers cover it.)*
+- [ ] HeMoM ↔ ReMoMber pool-layout parity test. *(Deferred — needs a ReMoMber
+  harness to expose pool offsets; ReMoMber is the windowed target.)*
+- [x] `gd_dump_*` regression check: `HeMoM_WorldGen_Fields` / `_Validate` and
+  `HeMoM_OOB_Autotiling` fail the suite if their pinned save fields diverge.
+- [~] Capacity assert (`POOL_ARENA_CAPACITY >= POOL_MIN_ARENA_BYTES`) is present
+  and reachable from the test build (compiled into `Allocate_Pool.c`).
+  *(A dedicated compile-failure test that it fires on a deliberately-undersized
+  pool is deferred — needs a `try_compile`-expect-fail harness.)*
+- [x] Phase-2 readiness: sub-block offsets are stable (determinism tests) and
+  sentinel slack inside a sub-block is intact post-normal-run
+  (`AllocateTest.Sentinel_Slack_In_Sub_Block_Data_Stays_0xCC`); no compile-time
+  obstacle to future `__asan_poison_memory_region` annotation.
+- [x] Project gate runs the suite: the repo `pre-push` hook / VS Code
+  `check: safe-to-push` task builds Debug+Release and runs the suite on
+  main-bound pushes. *(No new GitHub Actions workflow added.)*
+- [x] Documentation: `doc/Static-Pool-Tests.md` (test catalog) and
+  `doc/HeMoM-OOB-Autotiling-Harness.md` describe what each target covers and how
+  to run it.
