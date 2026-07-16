@@ -30306,85 +30306,86 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp)
 
     EMM_TILEX_Init__HACK();
 
-    if(cts != cts_Water)
+    if(cts == cts_Water)
+    {
+        return;
+    }
+    
+    if(
+        (cts == cts_Plains)
+        ||
+        (cts == cts_Hills)
+        ||
+        (cts == cts_Forest)
+    )
     {
 
-        if(
-            (cts == cts_Plains)
-            ||
-            (cts == cts_Hills)
-            ||
-            (cts == cts_Forest)
-        )
+        if(wp == ARCANUS_PLANE)
         {
 
-            if(wp == ARCANUS_PLANE)
-            {
-
-                stu_strcpy(combat_terrain_set_lbx_filename, cmbgrass_lbx_file__ovr163);
-
-            }
-            else  /* MYRROR_PLANE */
-            {
-
-                stu_strcpy(combat_terrain_set_lbx_filename, cmbgrasc_lbx_file__ovr163);
-
-            }
+            stu_strcpy(combat_terrain_set_lbx_filename, cmbgrass_lbx_file__ovr163);
 
         }
-        else if(cts == cts_Desert)
+        else  /* MYRROR_PLANE */
         {
-            
-            if(wp == ARCANUS_PLANE)
-            {
 
-                stu_strcpy(combat_terrain_set_lbx_filename, cmbdesrt_lbx_file__ovr163);
-
-            }
-            else  /* MYRROR_PLANE */
-            {
-
-                stu_strcpy(combat_terrain_set_lbx_filename, cmbdesrc_lbx_file__ovr163);
-
-            }
-
-        }
-        else if(cts == cts_Mountains)
-        {
-            
-            if(wp == ARCANUS_PLANE)
-            {
-
-                stu_strcpy(combat_terrain_set_lbx_filename, cmbmount_lbx_file__ovr163);
-
-            }
-            else  /* MYRROR_PLANE */
-            {
-
-                stu_strcpy(combat_terrain_set_lbx_filename, cmbmounc_lbx_file__ovr163);
-
-            }
-
-        }
-        else if(cts == cts_Tundra)
-        {
-            
-            if(wp == ARCANUS_PLANE)
-            {
-
-                stu_strcpy(combat_terrain_set_lbx_filename, cmbtundr_lbx_file__ovr163);
-
-            }
-            else  /* MYRROR_PLANE */
-            {
-
-                stu_strcpy(combat_terrain_set_lbx_filename, cmbtundc_lbx_file__ovr163);
-
-            }
+            stu_strcpy(combat_terrain_set_lbx_filename, cmbgrasc_lbx_file__ovr163);
 
         }
 
     }
+    else if(cts == cts_Desert)
+    {
+        
+        if(wp == ARCANUS_PLANE)
+        {
+
+            stu_strcpy(combat_terrain_set_lbx_filename, cmbdesrt_lbx_file__ovr163);
+
+        }
+        else  /* MYRROR_PLANE */
+        {
+
+            stu_strcpy(combat_terrain_set_lbx_filename, cmbdesrc_lbx_file__ovr163);
+
+        }
+
+    }
+    else if(cts == cts_Mountains)
+    {
+        
+        if(wp == ARCANUS_PLANE)
+        {
+
+            stu_strcpy(combat_terrain_set_lbx_filename, cmbmount_lbx_file__ovr163);
+
+        }
+        else  /* MYRROR_PLANE */
+        {
+
+            stu_strcpy(combat_terrain_set_lbx_filename, cmbmounc_lbx_file__ovr163);
+
+        }
+
+    }
+    else if(cts == cts_Tundra)
+    {
+        
+        if(wp == ARCANUS_PLANE)
+        {
+
+            stu_strcpy(combat_terrain_set_lbx_filename, cmbtundr_lbx_file__ovr163);
+
+        }
+        else  /* MYRROR_PLANE */
+        {
+
+            stu_strcpy(combat_terrain_set_lbx_filename, cmbtundc_lbx_file__ovr163);
+
+        }
+
+    }
+
 
     temp_seg = Allocate_First_Block(EMS_PFBA, 1);
 
