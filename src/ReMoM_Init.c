@@ -104,6 +104,18 @@ int ReMoM_Preflight_Game_Data(void)
 
 
 
+void ReMoM_Seed_User_Files(void)
+{
+    /* CONFIG.MOM is expected for a real boot; MAGIC.SET is optional (the engine
+       creates one with defaults in the user-data dir if the install had none).
+       STU_GRAF only copies when the user copy is absent and never touches the
+       original -- and does nothing at all under the HEADLESS profile. */
+    STU_GRAF_Seed_User_File(str_CONFIG_MOM);
+    STU_GRAF_Seed_User_File(str_MAGIC_SET);
+}
+
+
+
 void ReMoM_Init_Engine(void)
 {
     char found_file[LEN_STRING] = { 0 };
@@ -125,7 +137,7 @@ void ReMoM_Init_Engine(void)
 
     // TODO(JimBalcomb,20260502)  MoO2  main_() |-> Check_Command_Line_Parameters_() ... if(strstr_(_cmd_line_saveset, aSeed) != 0) { _cmd_line_seed = Get_Value_From_String_(aSeed, _cmd_line_saveset); }
 
-    if(DIR(str_CONFIG_MOM, found_file) == 0)
+    if(STU_GRAF_User_DIR(str_CONFIG_MOM, found_file) == 0)  /* CLAUDE: -> user-data */
     {
         config_mom.MIDI_IO = 0;
         config_mom.MIDI_ID = 0;
@@ -140,7 +152,7 @@ void ReMoM_Init_Engine(void)
     }
     else
     {
-        file_handle = stu_fopen_ci(str_CONFIG_MOM, str_RB);
+        file_handle = STU_GRAF_Open_User(str_CONFIG_MOM, str_RB);  /* CLAUDE: -> user-data */
         stu_fread(&config_mom, sizeof(struct s_CONFIG_MOM_18), 1, file_handle);
         stu_fclose(file_handle);
     }
@@ -329,12 +341,12 @@ void ReMoM_Init_Engine(void)
             stu_strcpy(file_name, str_SAVE_NAME);
             stu_strcat(file_name, found_file);
             stu_strcat(file_name, str_SAVE_EXT);
-            DIR(file_name, found_file);
+            STU_GRAF_User_DIR(file_name, found_file);  /* CLAUDE: save-scan -> user-data */
             if(found_file[0] == '\0')
             {
                 magic_set.Have_Save[(itr_savegams - 1)] = ST_FALSE;
                 stu_strcpy(magic_set.Save_Names[(itr_savegams - 1)], empty_string__MAIN);
-                file_handle = stu_fopen_ci(str_MAGIC_SET, str_WB);
+                file_handle = STU_GRAF_Open_User(str_MAGIC_SET, str_WB);  /* CLAUDE: -> user-data */
                 fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_handle);
                 fclose(file_handle);
             }

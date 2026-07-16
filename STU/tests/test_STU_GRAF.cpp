@@ -210,6 +210,15 @@ TEST(STU_GRAF, UserDirsResolve)
     EXPECT_NE(std::string(cache).find("ReMoM"), std::string::npos);
 }
 
+// ---- Phase 4: writable per-user family (data dir / open / DIR / LOF / seed) ----
+
+TEST(STU_GRAF, UserDataDirResolves)
+{
+    char d[1024] = {0};
+    ASSERT_EQ(STU_GRAF_User_Data_Dir(d, sizeof(d)), 1);
+    EXPECT_NE(std::string(d).find("ReMoM"), std::string::npos);
+}
+
 // ---- Phase 3: end-to-end search-path order (XDG is honored only on Linux) ----
 #if !defined(_WIN32) && !defined(__APPLE__)
 
@@ -265,6 +274,128 @@ TEST(STU_GRAF, InitCacheShadowsConfigGameData)
     unset_env("XDG_CONFIG_HOME");
     unset_env("XDG_CACHE_HOME");
     STU_GRAF_Reset();
+}
+
+TEST(STU_GRAF, OpenUserWritesUnderDataDir)
+{
+    TempTree data("userwrite");
+    STU_GRAF_Init(STU_GRAF_PLAYER);  // opt into the user-data family
+    set_env("XDG_DATA_HOME", data.dir().c_str());
+
+    FILE * fp = STU_GRAF_Open_User("T.DAT", "wb");
+    ASSERT_NE(fp, nullptr);
+    fputs("hi", fp);
+    fclose(fp);
+
+    // The file lands under <XDG_DATA_HOME>/ReMoM/, never in the CWD.
+    EXPECT_TRUE(fs::exists(fs::path(data.dir()) / "ReMoM" / "T.DAT"));
+
+    // DIR/LOF resolve to the same place.
+    char found[64] = {0};
+    EXPECT_EQ(STU_GRAF_User_DIR("T.DAT", found), STU_GRAF_DIR_FOUND);
+    EXPECT_STREQ(found, "T.DAT");
+    EXPECT_EQ(STU_GRAF_User_LOF("T.DAT"), 2L);
+
+    FILE * rp = STU_GRAF_Open_User("T.DAT", "rb");
+    ASSERT_NE(rp, nullptr);
+    EXPECT_EQ(read_all(rp), "hi");
+    fclose(rp);
+
+    unset_env("XDG_DATA_HOME");
+}
+
+TEST(STU_GRAF, UserDirAndLofAbsentAreZero)
+{
+    TempTree data("userabsent");
+    STU_GRAF_Init(STU_GRAF_PLAYER);  // opt into the user-data family
+    set_env("XDG_DATA_HOME", data.dir().c_str());
+
+    char found[64];
+    found[0] = 'X';
+    EXPECT_EQ(STU_GRAF_User_DIR("NOPE.DAT", found), STU_GRAF_DIR_ABSENT);
+    EXPECT_EQ(found[0], '\0');
+    EXPECT_EQ(STU_GRAF_User_LOF("NOPE.DAT"), 0L);
+
+    unset_env("XDG_DATA_HOME");
+}
+
+TEST(STU_GRAF, SeedCopiesOriginalAndLeavesSourceUntouched)
+{
+    TempTree data("seeduser");  // XDG_DATA_HOME (writable destination)
+    TempTree game("seedgame");  // read-only original game-data dir
+    game.write("CONFIG.MOM", "orig-bytes");
+
+    set_env("XDG_DATA_HOME", data.dir().c_str());
+    STU_GRAF_Init(STU_GRAF_PLAYER);  // PLAYER profile...
+    STU_GRAF_Reset();                // ...then isolate the search path to our fixture
+    STU_GRAF_Add_Search_Dir(game.dir().c_str());  // Open_Asset finds the original
+
+    ASSERT_EQ(STU_GRAF_Seed_User_File("CONFIG.MOM"), 1);
+
+    // User copy exists with the original's bytes...
+    FILE * fp = STU_GRAF_Open_User("CONFIG.MOM", "rb");
+    ASSERT_NE(fp, nullptr);
+    EXPECT_EQ(read_all(fp), "orig-bytes");
+    fclose(fp);
+
+    // ...and the original was never modified.
+    FILE * op = fopen((fs::path(game.dir()) / "CONFIG.MOM").string().c_str(), "rb");
+    ASSERT_NE(op, nullptr);
+    EXPECT_EQ(read_all(op), "orig-bytes");
+    fclose(op);
+
+    // Idempotent: a second seed must not clobber the user's working copy.
+    FILE * w = STU_GRAF_Open_User("CONFIG.MOM", "wb");
+    ASSERT_NE(w, nullptr);
+    fputs("user-edited", w);
+    fclose(w);
+    EXPECT_EQ(STU_GRAF_Seed_User_File("CONFIG.MOM"), 1);
+    FILE * fp2 = STU_GRAF_Open_User("CONFIG.MOM", "rb");
+    ASSERT_NE(fp2, nullptr);
+    EXPECT_EQ(read_all(fp2), "user-edited");
+    fclose(fp2);
+
+    STU_GRAF_Reset();
+    unset_env("XDG_DATA_HOME");
+}
+
+TEST(STU_GRAF, SeedMissingOriginalReturnsZero)
+{
+    TempTree data("seednone");
+    set_env("XDG_DATA_HOME", data.dir().c_str());
+    STU_GRAF_Init(STU_GRAF_PLAYER);  // PLAYER profile...
+    STU_GRAF_Reset();                // ...with an empty search path -> no original to copy
+
+    EXPECT_EQ(STU_GRAF_Seed_User_File("ABSENT.MOM"), 0);
+
+    unset_env("XDG_DATA_HOME");
+}
+
+// HEADLESS profile must keep the user-family CWD-relative (HeMoM / matchup
+// determinism): a swapped open/DIR under HEADLESS behaves like the original
+// stu_fopen_ci, regardless of XDG_DATA_HOME.
+TEST(STU_GRAF, HeadlessUserFamilyUsesCwd)
+{
+    TempTree data("headlessxdg");
+    set_env("XDG_DATA_HOME", data.dir().c_str());
+    STU_GRAF_Init(STU_GRAF_HEADLESS);
+
+    FILE * fp = STU_GRAF_Open_User("GRAFHDL.DAT", "wb");
+    ASSERT_NE(fp, nullptr);
+    fputs("x", fp);
+    fclose(fp);
+
+    // Landed in the CWD, NOT under XDG_DATA_HOME/ReMoM.
+    EXPECT_TRUE(fs::exists("GRAFHDL.DAT"));
+    EXPECT_FALSE(fs::exists(fs::path(data.dir()) / "ReMoM" / "GRAFHDL.DAT"));
+
+    char found[64] = {0};
+    EXPECT_EQ(STU_GRAF_User_DIR("GRAFHDL.DAT", found), STU_GRAF_DIR_FOUND);
+    EXPECT_EQ(STU_GRAF_User_LOF("GRAFHDL.DAT"), 1L);
+
+    std::remove("GRAFHDL.DAT");
+    unset_env("XDG_DATA_HOME");
+    STU_GRAF_Reset();  // restore PLAYER default for later tests
 }
 
 #endif

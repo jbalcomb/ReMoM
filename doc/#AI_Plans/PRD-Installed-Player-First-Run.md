@@ -1,8 +1,8 @@
 # PRD — Installed-Player First Run: Data Discovery, Fail-Soft & File Locations
 
-**Status:** Draft
+**Status:** In progress — Phases 1–3 committed (read search path, fail-soft preflight, config+cache); Phase 4 implemented, uncommitted (writable per-user layout + first-run seeding); Phases 5–6 pending (checksums, log relocation). **Design note:** the writable dir is resolved by `STU_GRAF` itself (XDG / `%APPDATA%` / `~/Library`), *not* `SDL_GetPrefPath()` as sketched in Implementation Notes — this keeps the seam SDL-free and consistent with Phases 1–3; the `Platform_Get_User_Data_Dir` backend is therefore not needed.
 **Owner:** TBD
-**Date:** 2026-07-03
+**Date:** 2026-07-03 (updated 2026-07-15)
 **Tracks:** Alpha-quality first-run experience (portable ZIP / installed player build)
 
 > **References:**
@@ -104,16 +104,18 @@ Two distinct resolution rules follow from this:
 
 ## Acceptance Criteria
 
-- [ ] Game data **only** next to the exe (not CWD) → `ReMoMber` from an unrelated CWD boots to the title screen.
-- [ ] `REMOM_DATA_DIR=<dir>` and `[Paths] game_data=<dir>` each direct discovery to `<dir>`.
-- [ ] `MAGIC.SET` and a new save are written under `~/.local/share/ReMoM/` (or the OS `SDL_GetPrefPath` location), **not** into the user's read-only MoM install.
-- [ ] With a read-only game-data dir, saving still succeeds (writes go to the data dir, not the source).
-- [ ] On first run, `CONFIG.MOM` is copied into `XDG_DATA_HOME` and read from there on later runs; the original in the game-data dir is never modified.
-- [ ] No data discoverable anywhere → GUI dialog names the missing files + fix, exits non-zero, no crash; HeMoM prints the same to stderr.
-- [ ] Data files whose checksums don't match any manifest entry → a non-blocking "unrecognized/……" warning (presence still passing).
-- [ ] `HeMoM`/`ctest`/matchup still resolve data from CWD and write `remom_log_*.txt` to CWD ([tools/log-tools/log_triage.py](../../tools/log-tools/log_triage.py), [tools/parity_check.py](../../tools/parity_check.py) unaffected).
-- [ ] Player-build logs land under `~/.local/state/ReMoM/`, not CWD.
-- [ ] No `MoM/src` / `MoX/src` game-logic file is modified for discovery.
+<!-- Phase mapping: 1=STU_GRAF+read; 2=fail-soft; 3=config+cache; 4=writable+seeding; 5=checksums; 6=log relocation. Phases 1-3 committed (bcc2a9b7 / d827d9be / 56e2680a). -->
+
+- [ ] Game data **only** next to the exe (not CWD) → `ReMoMber` from an unrelated CWD boots to the title screen. *(P1 — mechanism in place; data-complete GUI boot not run locally)*
+- [ ] `REMOM_DATA_DIR=<dir>` and `[Paths] game_data=<dir>` each direct discovery to `<dir>`. *(P1/P3 — `game_data` half unit-verified `InitUsesConfigGameData`; a REMOM_DATA_DIR-positive test is the gap)*
+- [x] `MAGIC.SET` and a new save are written under `~/.local/share/ReMoM/` (or the OS `SDL_GetPrefPath` location), **not** into the user's read-only MoM install. *(P4 — via `STU_GRAF_Open_User` → `XDG_DATA_HOME/ReMoM`, resolved in STU (not SDL); mechanism unit-proven, save sites swapped; GUI save-cycle not run locally)*
+- [x] With a read-only game-data dir, saving still succeeds (writes go to the data dir, not the source). *(P4 — writes target the user-data dir, disjoint from the read-only source; unit-proven source-untouched)*
+- [x] On first run, `CONFIG.MOM` is copied into `XDG_DATA_HOME` and read from there on later runs; the original in the game-data dir is never modified. *(P4 — `STU_GRAF_Seed_User_File` unit-proven + wired at PLAYER startup)*
+- [x] No data discoverable anywhere → GUI dialog names the missing files + fix, exits non-zero, no crash; HeMoM prints the same to stderr. *(P2 — verified end-to-end on both builds; ctest `HeMoM_Preflight_Missing_Data`)*
+- [ ] Data files whose checksums don't match any manifest entry → a non-blocking "unrecognized/……" warning (presence still passing). *(P5 — not started)*
+- [ ] `HeMoM`/`ctest`/matchup still resolve data from CWD and write `remom_log_*.txt` to CWD ([tools/log-tools/log_triage.py](../../tools/log-tools/log_triage.py), [tools/parity_check.py](../../tools/parity_check.py) unaffected). *(P1/P6 — CWD-data half verified; logs-stay-CWD is true today but its regression guard lands with P6)*
+- [ ] Player-build logs land under `~/.local/state/ReMoM/`, not CWD. *(P6 — not started)*
+- [x] No `MoM/src` / `MoX/src` game-logic file is modified for discovery. *(git-verified: only `MoX/src/LBX_Load.c` open-call plumbing changed)*
 
 ## Implementation Notes
 

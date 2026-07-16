@@ -11,6 +11,7 @@
 // #endif
 
 #include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_GRAF.h"  /* STU_GRAF_Open_User / _User_LOF -- writable saves + MAGIC.SET */
 
 #include "../../ext/stu_compat.h"
 
@@ -61,7 +62,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
         stu_strcat(file_name,".GAM");
     }
 
-    file_pointer = stu_fopen_ci(file_name, "wb");
+    file_pointer = STU_GRAF_Open_User(file_name, "wb");  /* CLAUDE: save -> user-data (HEADLESS: CWD) */
     assert(file_pointer != NULL);
 
     file_pointer_position = stu_ftell(file_pointer);
@@ -199,7 +200,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
         if(save_gam_idx < 8)
         {
             magic_set.Have_Save[save_gam_idx] = ST_TRUE;
-            file_pointer = stu_fopen_ci("MAGIC.SET", "wb");
+            file_pointer = STU_GRAF_Open_User("MAGIC.SET", "wb");  /* CLAUDE: -> user-data */
             stu_fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
             fclose(file_pointer);
         }
@@ -250,7 +251,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
         stu_strcat(file_name,".GAM");
     }
 
-    file_size = LOF(file_name);
+    file_size = STU_GRAF_User_LOF(file_name);  /* CLAUDE: save -> user-data (HEADLESS: CWD) */
     // DONT  assert(file_size != 0);  crashes if there are no game-save files, like on first run
     
     // dx 1, ax 57764 === 65536 + 57764 = 123300
@@ -261,7 +262,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
 
     // TODO  gfile_pointer = gfopen(file_name, "rb");
-    file_pointer = stu_fopen_ci(file_name, "rb");
+    file_pointer = STU_GRAF_Open_User(file_name, "rb");  /* CLAUDE: save -> user-data (HEADLESS: CWD) */
     assert(file_pointer != NULL);
 
     file_pointer_position = stu_ftell(file_pointer);

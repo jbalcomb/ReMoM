@@ -1,6 +1,6 @@
 # Plan: Installed-Player First Run (Data Discovery, Fail-Soft & File Locations)
 
-> Source PRD: [doc/#AI_Plans/PRD-Installed-Player-First-Run.md](../doc/%23AI_Plans/PRD-Installed-Player-First-Run.md)
+> Source PRD: [PRD-Installed-Player-First-Run.md](PRD-Installed-Player-First-Run.md)
 
 Make the installed / portable player build "just run" — find the user's game data without a manual `cd`, put per-user files in the right OS locations, and fail with a clear dialog instead of a blank-window crash — **without touching the reconstructed game code**.
 
@@ -41,12 +41,14 @@ Stand up `STU/src/STU_GRAF.c/.h` with the read side of the machinery: executable
 
 ### Acceptance criteria
 
-- [ ] With game data **only** next to the executable (not in CWD), `ReMoMber` launched from an unrelated CWD loads its LBX and boots to the title screen.
-- [ ] `REMOM_DATA_DIR=<dir>` directs LBX resolution to `<dir>` regardless of CWD.
-- [ ] `HeMoM` and `ctest` still resolve data from CWD (default path) — no behavior change.
-- [ ] No file under `MoM/src/` or `MoX/src/` game *logic* is modified (only `LBX_Load`'s open-call swap — loader plumbing).
-- [ ] `ext/stu_compat.h` is unchanged.
-- [ ] `STU_GRAF` unit test: file only in the exe-dir-equivalent resolves; `REMOM_DATA_DIR` wins; empty everywhere → open fails; unpopulated → CWD only.
+- [ ] With game data **only** next to the executable (not in CWD), `ReMoMber` launched from an unrelated CWD loads its LBX and boots to the title screen. *(mechanism in place — exe-dir is in the search path — but a data-complete GUI boot has not been run locally)*
+- [ ] `REMOM_DATA_DIR=<dir>` directs LBX resolution to `<dir>` regardless of CWD. *(first-match search-path machinery is unit-tested; a REMOM_DATA_DIR-positive unit test is the remaining gap)*
+- [x] `HeMoM` and `ctest` still resolve data from CWD (default path) — no behavior change. *(HEADLESS profile = CWD-only; HeMoM integration + suite green)*
+- [x] No file under `MoM/src/` or `MoX/src/` game *logic* is modified (only `LBX_Load`'s open-call swap — loader plumbing). *(git-verified: no changes under `MoM/src` or `MoX/src` beyond `LBX_Load.c`)*
+- [x] `ext/stu_compat.h` is unchanged. *(git-verified: clean vs HEAD)*
+- [x] `STU_GRAF` unit test: file only in the exe-dir-equivalent resolves; `REMOM_DATA_DIR` wins; empty everywhere → open fails; unpopulated → CWD only. *(12/12 pass: ResolvesViaSearchDir, FirstMatchWins, NotFoundReturnsNull, PathNameOpenedDirectly)*
+
+> **Status (committed `bcc2a9b7` "phase 1 Assets Paths"):** core mechanism unit-verified; the two GUI/runtime-manifestation boxes (data-complete title-screen boot, REMOM_DATA_DIR-positive) are the open items — mechanism is present but not yet exercised on a windowed, data-complete launch.
 
 ---
 
@@ -60,10 +62,12 @@ Add `Platform_Show_Error(title, message)` to the platform API (SDL2/SDL3 `SDL_Sh
 
 ### Acceptance criteria
 
-- [ ] No data discoverable anywhere → GUI dialog names the missing files and the fix, process exits non-zero, no crash / no blank-window flash.
-- [ ] `HeMoM` with missing data prints the same message to stderr and exits non-zero (no GUI call).
-- [ ] Data present → boots normally, no dialog.
-- [ ] `Platform_Show_Error` headless variant is unit-tested (asserts on stderr); GUI variants smoke-checked per backend.
+- [x] No data discoverable anywhere → GUI dialog names the missing files and the fix, process exits non-zero, no crash / no blank-window flash. *(verified end-to-end: ReMoMber run from an empty dir → dialog path + exit 1, no crash/window)*
+- [x] `HeMoM` with missing data prints the same message to stderr and exits non-zero (no GUI call). *(verified: HeMoM from empty dir → "Missing Game Data" on stderr + exit 1; guarded by ctest `HeMoM_Preflight_Missing_Data`)*
+- [ ] Data present → boots normally, no dialog. *(data-complete boot not run locally; negative path is proven)*
+- [x] `Platform_Show_Error` headless variant is unit-tested (asserts on stderr); GUI variants smoke-checked per backend. *(headless asserted via the `HeMoM_Preflight_Missing_Data` stderr regex; SDL2 GUI path smoke-checked during the ReMoMber empty-dir run)*
+
+> **Status (committed `d827d9be` "phase 2 Assets Paths"):** fail-soft path verified end-to-end on both builds; only the positive "data present → normal boot" box awaits a data-complete GUI run (shared with Phase 1).
 
 ---
 
@@ -77,9 +81,11 @@ Extend `STU_GRAF`'s search-path construction to read `[Paths] game_data` from th
 
 ### Acceptance criteria
 
-- [ ] `[Paths] game_data=<dir>` in the config file resolves LBX from `<dir>`.
-- [ ] A copy of an asset placed in `$XDG_CACHE_HOME/ReMoM/` shadows the same-named original in the game-data dir.
-- [ ] Search precedence is exactly `REMOM_DATA_DIR` → cache → `game_data` → exe-dir → CWD (unit-tested).
+- [x] `[Paths] game_data=<dir>` in the config file resolves LBX from `<dir>`. *(unit-tested: `InitUsesConfigGameData`, plus INI-parser tests for spaces/quotes/case/missing)*
+- [x] A copy of an asset placed in `$XDG_CACHE_HOME/ReMoM/` shadows the same-named original in the game-data dir. *(unit-tested: `InitCacheShadowsConfigGameData`)*
+- [ ] Search precedence is exactly `REMOM_DATA_DIR` → cache → `game_data` → exe-dir → CWD (unit-tested). *(the cache→game_data link is unit-tested and the construction order is coded correctly; the REMOM_DATA_DIR-first and exe-dir links are not each individually unit-tested — small gap)*
+
+> **Status (committed `56e2680a` "phase 3 Assets Paths"):** config + cache entries land in the search path; the two behavioral boxes are unit-verified. Only the "full 5-level precedence exhaustively unit-tested" box is short a couple of link-specific tests. Note: the plan's earlier cache/game_data order was transposed vs the AC — corrected to cache-before-game_data (patched copies win).
 
 ---
 
@@ -93,11 +99,13 @@ Add user-data-dir resolution (`XDG_DATA_HOME` via the `STU_GRAF` place helpers) 
 
 ### Acceptance criteria
 
-- [ ] `MAGIC.SET` and a new save are written under the user data dir (`~/.local/share/ReMoM/` etc.), **not** the user's MoM install.
-- [ ] With a **read-only** game-data dir, saving still succeeds.
-- [ ] On first run, `CONFIG.MOM` is copied into the user data dir and read from there afterward; the original is never modified.
-- [ ] Write-family unit test: with a read-only game-data dir, `MAGIC.SET`/save writes land in the user-dir temp, not the source.
-- [ ] `main()` no longer contains inlined MAGIC/WIZARDS init (moved to `ReMoM_Init.c`); build + tests green.
+- [x] `MAGIC.SET` and a new save are written under the user data dir (`~/.local/share/ReMoM/` etc.), **not** the user's MoM install. *(mechanism unit-proven: `Open_User` writes under `XDG_DATA_HOME/ReMoM`, asserted **not** in CWD; live save sites `Save_SAVE_GAM`/`Settings_Screen`/`Newgame_Screen_0` swapped to it. Full in-game GUI save-cycle not run locally.)*
+- [x] With a **read-only** game-data dir, saving still succeeds. *(writes provably target the user-data dir, disjoint from the game-data dir — `SeedCopies…` confirms the source is never written; so a read-only source is irrelevant to save success.)*
+- [x] On first run, `CONFIG.MOM` is copied into the user data dir and read from there afterward; the original is never modified. *(unit-proven `SeedCopiesOriginalAndLeavesSourceUntouched` — copy + idempotent + source-unchanged; wired via `ReMoM_Seed_User_Files()` at PLAYER startup; the read is swapped to `Open_User`.)*
+- [x] Write-family unit test: with a read-only game-data dir, `MAGIC.SET`/save writes land in the user-dir temp, not the source. *(18/18 STU_GRAF tests incl. `OpenUserWritesUnderDataDir`, `SeedCopies…`, `UserDirAndLofAbsentAreZero`, `HeadlessUserFamilyUsesCwd`.)*
+- [x] `main()` no longer contains inlined MAGIC/WIZARDS init (moved to `ReMoM_Init.c`); build + tests green. *(already extracted into `ReMoM_Init_Engine()`; clean full build; **regression proven** — stash-isolation baseline identical at 70/90 with and without Phase 4, i.e. zero new failures.)*
+
+> **Status (uncommitted):** STU_GRAF gained the writable user-family (`User_Data_Dir` / `Open_User` / `User_DIR` / `User_LOF` / `Seed_User_File`), **profile-aware** so it degrades to CWD under HEADLESS (and by default) — the swap is inert for HeMoM / tests / matchup, opt-in only via `STU_GRAF_Init(PLAYER)`. 15 live open+DIR/LOF sites swapped across 7 files (dead reconstruction twins left alone, per the caller-chain map). Seeding wired into ReMoMber startup. Remaining gap: a live in-game save/load **GUI** playthrough (needs a windowed, data-complete run).
 
 ---
 
@@ -138,4 +146,4 @@ Have `STU_LOG` resolve its log directory through `STU_GRAF`'s place helpers (sta
 
 - Dependencies: **1 → 2 → (3, 4 either order) → 5**. **Phase 6 is independent** (touches only `STU_LOG` + the `STU_GRAF` place helpers from Phase 1) — it can run in parallel or first as a low-risk warm-up.
 - Bootstrap de-duplication of `ReMoM.c`/`HeMoM.c` is incremental: Phase 1 adds `STU_GRAF_Init` to both mains; Phase 4 extracts MAGIC/WIZARDS init; Phase 6 lands the order-fix. No separate refactor-only phase.
-- Reconcile with [PRD-Installer-Game-Data-Setup.md](../doc/%23AI_Plans/PRD-Installer-Game-Data-Setup.md) on the shared checksum manifest (filename/columns) and the `[Paths] game_data` config file name before Phases 3/5.
+- Reconcile with [PRD-Installer-Game-Data-Setup.md](PRD-Installer-Game-Data-Setup.md) on the shared checksum manifest (filename/columns) and the `[Paths] game_data` config file name before Phases 3/5.

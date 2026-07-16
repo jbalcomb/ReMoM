@@ -40,6 +40,7 @@
 
 #include "NewGame.h"
 #include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_GRAF.h"  /* STU_GRAF_Open_User / _User_DIR / _User_LOF -- MAGIC.SET -> user-data */
 
 
 
@@ -1715,9 +1716,9 @@ int16_t Newgame_Screen_0(void)
     m_shared_pict_segs[3] = LBX_Reload_Next(newgame_lbx_file__ovr050, 7, _screen_seg);
 
     if(
-        (DIR(str_MAGIC_SET__ovr050, file_found) == 0)
+        (STU_GRAF_User_DIR(str_MAGIC_SET__ovr050, file_found) == 0)  /* CLAUDE: -> user-data */
         ||
-        (LOF(str_MAGIC_SET__ovr050) == 0)
+        (STU_GRAF_User_LOF(str_MAGIC_SET__ovr050) == 0)  /* CLAUDE: -> user-data */
     )
     {
 
@@ -1727,7 +1728,7 @@ int16_t Newgame_Screen_0(void)
     else
     {
 
-        file_pointer = stu_fopen_ci(str_MAGIC_SET__ovr050, str_rb__ovr050);
+        file_pointer = STU_GRAF_Open_User(str_MAGIC_SET__ovr050, str_rb__ovr050);  /* CLAUDE: -> user-data */
 
         fread(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
 
@@ -1829,7 +1830,7 @@ int16_t Newgame_Screen_0(void)
             DBG_Compare_MAGIC_SET(&magic_set_snapshot, &magic_set, "Newgame_Screen_0 before save");
 #endif
 
-            file_pointer = stu_fopen_ci(str_MAGIC_SET__ovr050, str_wb__ovr050);
+            file_pointer = STU_GRAF_Open_User(str_MAGIC_SET__ovr050, str_wb__ovr050);  /* CLAUDE: -> user-data */
             stu_fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
             stu_fclose(file_pointer);
 

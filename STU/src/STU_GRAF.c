@@ -15,6 +15,14 @@
 #include <string.h>
 #include <stdlib.h>   /* getenv */
 #include <ctype.h>    /* tolower */
+#include <errno.h>    /* EEXIST  */
+
+#if defined(_WIN32)
+#include <direct.h>   /* _mkdir  */
+#else
+#include <sys/stat.h> /* mkdir   */
+#include <sys/types.h>
+#endif
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -30,6 +38,13 @@
 
 static char g_search_dirs[STU_GRAF_MAX_DIRS][STU_GRAF_PATH_MAX];
 static int  g_search_dir_count = 0;
+
+/* Selected by STU_GRAF_Init(); gates the writable user-family.  Defaults to
+   HEADLESS so any code that never calls STU_GRAF_Init() -- HeMoM, the unit-test
+   binaries, the matchup harness -- keeps the original CWD-relative behavior.
+   The user-data redirect is therefore inert until ReMoMber opts in with
+   STU_GRAF_Init(STU_GRAF_PLAYER). */
+static STU_GRAF_Profile g_profile = STU_GRAF_HEADLESS;
 
 /* True if the name is already a path (absolute or contains a separator), in
    which case STU_GRAF must not prepend a search directory. */
@@ -99,7 +114,7 @@ static int graf_key_is(const char * s, size_t len, const char * key)
 
 void STU_GRAF_Reset(void)
 {
-    g_search_dir_count = 0;
+    g_search_dir_count = 0;  /* profile is owned by STU_GRAF_Init(), not reset here */
 }
 
 void STU_GRAF_Add_Search_Dir(const char * dir)
@@ -283,6 +298,234 @@ int STU_GRAF_User_Cache_Dir(char * out, size_t cap)
 #endif
 }
 
+int STU_GRAF_User_Data_Dir(char * out, size_t cap)
+{
+#if defined(_WIN32)
+    const char * base = getenv("APPDATA");
+    if(base == NULL || base[0] == '\0')
+    {
+        return 0;
+    }
+    return graf_compose_dir(out, cap, base, "ReMoM");
+#elif defined(__APPLE__)
+    const char * home = getenv("HOME");
+    if(home == NULL || home[0] == '\0')
+    {
+        return 0;
+    }
+    return graf_compose_dir(out, cap, home, "Library/Application Support/ReMoM");
+#else
+    char fallback[STU_GRAF_PATH_MAX];
+    const char * base = getenv("XDG_DATA_HOME");
+    if(base == NULL || base[0] == '\0')
+    {
+        const char * home = getenv("HOME");
+        if(home == NULL || home[0] == '\0')
+        {
+            return 0;
+        }
+        snprintf(fallback, sizeof(fallback), "%s/.local/share", home);
+        base = fallback;
+    }
+    return graf_compose_dir(out, cap, base, "ReMoM");
+#endif
+}
+
+/* Create a single directory; success is "now exists" (EEXIST counts). */
+static int graf_mkdir_one(const char * path)
+{
+#if defined(_WIN32)
+    if(_mkdir(path) == 0)
+    {
+        return 1;
+    }
+#else
+    if(mkdir(path, 0777) == 0)
+    {
+        return 1;
+    }
+#endif
+    return (errno == EEXIST) ? 1 : 0;
+}
+
+/* Recursively create every component of dir (like `mkdir -p`).  Intermediate
+   failures are tolerated; the return reflects whether the final dir exists. */
+static int graf_mkpath(const char * dir)
+{
+    char tmp[STU_GRAF_PATH_MAX];
+    size_t len;
+    size_t i;
+
+    if(dir == NULL || dir[0] == '\0')
+    {
+        return 0;
+    }
+    len = strlen(dir);
+    if(len + 1 > sizeof(tmp))
+    {
+        return 0;
+    }
+    memcpy(tmp, dir, len + 1);
+    /* Drop any trailing separator so the loop's final component is the dir. */
+    while(len > 1 && (tmp[len - 1] == '/' || tmp[len - 1] == '\\'))
+    {
+        tmp[--len] = '\0';
+    }
+
+    for(i = 1; i < len; i++)
+    {
+        if(tmp[i] == '/' || tmp[i] == '\\')
+        {
+            char sep = tmp[i];
+            tmp[i] = '\0';
+            /* Skip roots like "C:" that mkdir can't (and needn't) create. */
+            if(!(i == 2 && tmp[1] == ':'))
+            {
+                graf_mkdir_one(tmp);
+            }
+            tmp[i] = sep;
+        }
+    }
+    return graf_mkdir_one(tmp);
+}
+
+FILE * STU_GRAF_Open_User(const char * name, const char * mode)
+{
+    char dir[STU_GRAF_PATH_MAX];
+    char full[STU_GRAF_PATH_MAX];
+
+    /* A name that is already a path is honored verbatim. */
+    if(graf_name_is_path(name))
+    {
+        return stu_fopen_ci(name, mode);
+    }
+
+    /* HEADLESS (HeMoM / tests / matchup) keeps the original CWD-relative
+       behavior so the determinism tooling is byte-for-byte unaffected. */
+    if(g_profile == STU_GRAF_HEADLESS)
+    {
+        return stu_fopen_ci(name, mode);
+    }
+
+    if(!STU_GRAF_User_Data_Dir(dir, sizeof(dir)))
+    {
+        /* No HOME/APPDATA -- degrade to legacy CWD behavior rather than fail. */
+        LOG_WARN(LOG_CAT_GENERAL,
+                 "STU_GRAF: no user-data dir; opening '%s' in CWD", name);
+        return stu_fopen_ci(name, mode);
+    }
+
+    /* Ensure the destination exists for writes/appends. */
+    if(mode != NULL &&
+       (mode[0] == 'w' || mode[0] == 'a' || mode[0] == 'W' || mode[0] == 'A'))
+    {
+        graf_mkpath(dir);
+    }
+
+    graf_join(full, sizeof(full), dir, name);
+    return stu_fopen_ci(full, mode);
+}
+
+int STU_GRAF_User_DIR(const char * name, char * found)
+{
+    FILE * fp = STU_GRAF_Open_User(name, "rb");
+    if(fp == NULL)
+    {
+        if(found != NULL)
+        {
+            found[0] = '\0';
+        }
+        return STU_GRAF_DIR_ABSENT;
+    }
+    fclose(fp);
+    if(found != NULL)
+    {
+        /* Mirror MoX DIR(): report the requested name as the match. */
+        stu_strcpy(found, name);
+    }
+    return STU_GRAF_DIR_FOUND;
+}
+
+long STU_GRAF_User_LOF(const char * name)
+{
+    long size = 0;
+    FILE * fp = STU_GRAF_Open_User(name, "rb");
+    if(fp != NULL)
+    {
+        if(fseek(fp, 0, SEEK_END) == 0)
+        {
+            long pos = ftell(fp);
+            if(pos >= 0)
+            {
+                size = pos;
+            }
+        }
+        fclose(fp);
+    }
+    return size;
+}
+
+int STU_GRAF_Seed_User_File(const char * name)
+{
+    char dir[STU_GRAF_PATH_MAX];
+    char full[STU_GRAF_PATH_MAX];
+    FILE * src;
+    FILE * dst;
+    char buf[4096];
+    size_t n;
+
+    /* No seeding under HEADLESS: reads already resolve to the CWD copy. */
+    if(g_profile == STU_GRAF_HEADLESS)
+    {
+        return 1;
+    }
+
+    if(!STU_GRAF_User_Data_Dir(dir, sizeof(dir)))
+    {
+        return 0;
+    }
+    graf_mkpath(dir);
+    graf_join(full, sizeof(full), dir, name);
+
+    /* Already seeded?  Never clobber the user's working copy. */
+    dst = stu_fopen_ci(full, "rb");
+    if(dst != NULL)
+    {
+        fclose(dst);
+        return 1;
+    }
+
+    /* Pull the original from the read-only search path (never modified). */
+    src = STU_GRAF_Open_Asset(name, "rb");
+    if(src == NULL)
+    {
+        LOG_INFO(LOG_CAT_GENERAL,
+                 "STU_GRAF: nothing to seed for '%s' (no original found)", name);
+        return 0;
+    }
+    dst = stu_fopen_ci(full, "wb");
+    if(dst == NULL)
+    {
+        fclose(src);
+        LOG_WARN(LOG_CAT_GENERAL, "STU_GRAF: cannot create user copy of '%s'", name);
+        return 0;
+    }
+    while((n = fread(buf, 1, sizeof(buf), src)) > 0)
+    {
+        if(fwrite(buf, 1, n, dst) != n)
+        {
+            LOG_ERROR(LOG_CAT_GENERAL, "STU_GRAF: short write seeding '%s'", name);
+            fclose(src);
+            fclose(dst);
+            return 0;
+        }
+    }
+    fclose(src);
+    fclose(dst);
+    LOG_INFO(LOG_CAT_GENERAL, "STU_GRAF: seeded user copy of '%s'", name);
+    return 1;
+}
+
 int STU_GRAF_Read_Game_Data_From_Ini(const char * ini_path, char * out, size_t cap)
 {
     FILE * fp;
@@ -405,6 +648,7 @@ void STU_GRAF_Init(STU_GRAF_Profile profile)
     char exe_dir[STU_GRAF_PATH_MAX];
 
     STU_GRAF_Reset();
+    g_profile = profile;
 
     /* 1. Explicit override. */
     env_dir = getenv("REMOM_DATA_DIR");

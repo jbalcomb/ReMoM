@@ -312,6 +312,11 @@ int main(int argc, char * argv[])
         return 1;
     }
 
+    /* First run: copy CONFIG.MOM / MAGIC.SET into the user-data dir so the
+       engine reads and writes its own copies (the original install stays
+       read-only).  PLAYER only -- a no-op for HeMoM. */
+    ReMoM_Seed_User_Files();
+
     LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: BEFORE: Startup_Platform()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEFORE: Startup_Platform()", __FILE__, __LINE__);
 

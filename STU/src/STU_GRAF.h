@@ -10,10 +10,12 @@
     shim a pure libc-portability leaf and keeping this policy out of the SDL /
     Win32 backends.
 
-    Phase 1 scope: the read-only asset search path (REMOM_DATA_DIR -> executable
-    directory -> CWD) plus STU_GRAF_Open_Asset().  The writable-user family,
-    config/cache search entries, XDG dir resolution, and seeding arrive in later
-    phases.
+    Two path families live here, and must not be conflated:
+      - the read-only asset search path (REMOM_DATA_DIR -> cache -> [Paths]
+        game_data -> exe-dir -> CWD) via STU_GRAF_Open_Asset(); and
+      - the writable per-user family (STU_GRAF_User_Data_Dir / _Open_User /
+        _User_DIR / _User_LOF / _Seed_User_File) rooted at XDG_DATA_HOME, which
+        holds the mutable CONFIG.MOM/MAGIC.SET/save copies seeded on first run.
 */
 
 #ifndef STU_GRAF_H
@@ -58,6 +60,43 @@ int STU_GRAF_Executable_Dir(char * out, size_t cap);
    tests can reuse them. */
 int STU_GRAF_User_Config_Dir(char * out, size_t cap);
 int STU_GRAF_User_Cache_Dir(char * out, size_t cap);
+
+/* Per-user *data* directory (with a trailing separator): the writable home for
+   the game's mutable files (CONFIG.MOM working copy, MAGIC.SET, save games).
+   XDG_DATA_HOME/ReMoM on Linux, %APPDATA%\ReMoM on Windows,
+   ~/Library/Application Support/ReMoM on macOS.  Returns 1 on success. */
+int STU_GRAF_User_Data_Dir(char * out, size_t cap);
+
+/* Open a writable per-user file by bare name (e.g. "MAGIC.SET", "SAVE1.GAM"),
+   resolved into the user-data dir (created on demand for write modes).  Same
+   signature as stu_fopen_ci, so the reconstructed write sites swap
+   stu_fopen_ci -> this.  A name that already carries a path is opened directly.
+   Under the HEADLESS profile (HeMoM / tests / matchup) this degrades to a plain
+   CWD-relative open -- byte-identical to the pre-swap behavior -- as does a
+   PLAYER build that cannot resolve a user-data dir. */
+FILE * STU_GRAF_Open_User(const char * name, const char * mode);
+
+/* Return values for STU_GRAF_User_DIR: chosen to match MoX's DIR() contract
+   (ST_SUCCESS = -1 found, ST_FAILURE = 1 absent) so reconstructed call sites
+   swap DIR() -> STU_GRAF_User_DIR() with no change to their comparisons.  (STU
+   does not include the MoX headers, hence the local names.) */
+#define STU_GRAF_DIR_FOUND  (-1)
+#define STU_GRAF_DIR_ABSENT ( 1)
+
+/* User-data-aware equivalents of MoX's DIR()/LOF(), so an existence / length
+   check beside a swapped open resolves to the same place the open uses (the
+   user-data dir for PLAYER, the CWD for HEADLESS) rather than always the CWD.
+   STU_GRAF_User_DIR fills found (name on hit, "" on miss) and returns
+   STU_GRAF_DIR_FOUND / STU_GRAF_DIR_ABSENT.  STU_GRAF_User_LOF returns the byte
+   length, or 0 when absent -- identical to LOF(). */
+int  STU_GRAF_User_DIR(const char * name, char * found);
+long STU_GRAF_User_LOF(const char * name);
+
+/* First-run seeding: if <user-data>/<name> is absent, copy it there from the
+   read-only search path (STU_GRAF_Open_Asset).  Returns 1 when the user copy
+   exists afterwards (already-present or freshly seeded), 0 otherwise.  The
+   original on the search path is never modified. */
+int STU_GRAF_Seed_User_File(const char * name);
 
 /* Read the [Paths] game_data value from the given INI file.  Returns 1 and
    fills out on success, 0 otherwise (missing file/section/key).  Section and

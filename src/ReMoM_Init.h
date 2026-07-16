@@ -34,6 +34,16 @@ void ReMoM_Init_Engine(void);
  */
 int ReMoM_Preflight_Game_Data(void);
 
+/**
+ * First-run seeding of the writable per-user files.  Copies CONFIG.MOM (and
+ * MAGIC.SET, if the install ships one) from the discovered game-data dir into
+ * the user-data dir the first time; thereafter the engine reads/writes those
+ * copies and the originals are never modified.  A no-op under the HEADLESS
+ * profile (HeMoM keeps CWD).  Call after ReMoM_Preflight_Game_Data() succeeds
+ * and before ReMoM_Init_Engine().
+ */
+void ReMoM_Seed_User_Files(void);
+
 #ifdef __cplusplus
 }
 #endif
