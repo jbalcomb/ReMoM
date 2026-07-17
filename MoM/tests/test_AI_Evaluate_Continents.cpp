@@ -7,6 +7,7 @@
 extern "C" {
 #endif
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/Allocate_Pool.h"  /* Pool_Init() - static pool reset between tests */
 #include "../../MoX/src/EMS/EMS.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
@@ -44,6 +45,8 @@ protected:
     {
         int wp = 0;
         int landmass_idx = 0;
+
+        Pool_Init();  // EmmHndl_CONTXXX is static-pool-backed (Allocate_Space); reset the arena each test.
 
         saved_cities = _CITIES;
         saved_fortresses = _FORTRESSES;
@@ -119,7 +122,8 @@ protected:
     {
         int wp = 0;
 
-        free(EmmHndl_CONTXXX);
+        // EmmHndl_CONTXXX is static-pool-backed (Allocate_Space) -- not freed here;
+        // Pool_Init() in SetUp reclaims it.
         EmmHndl_CONTXXX = saved_contxxx;
         _EMMDATAH_seg = saved_datah;
         EMS_PFBA = saved_ems_pfba;

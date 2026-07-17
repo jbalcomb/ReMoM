@@ -4,6 +4,7 @@
 extern "C" {
 #endif
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/Allocate_Pool.h"  /* Pool_Init() - static pool reset between tests */
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_DEF.h"
@@ -65,6 +66,8 @@ class Square_Food2_NewGame_test : public ::testing::Test
 protected:
     void SetUp() override
     {
+        Pool_Init();  // Allocate_Space() is static-pool-backed; reset the arena each test.
+
         // Allocate _world_maps: 2 planes * 2400 tiles * 2 bytes = 9600 bytes = 600 paragraphs
         _world_maps = (uint8_t *)Allocate_Space(602);
 
@@ -78,7 +81,8 @@ protected:
 
     void TearDown() override
     {
-        free(_world_maps);
+        // _world_maps is static-pool-backed (Allocate_Space); the pool is never freed
+        // per-allocation -- Pool_Init() in SetUp reclaims it.
         _world_maps = NULL;
         p_world_map = NULL;  // CLAUDE
     }

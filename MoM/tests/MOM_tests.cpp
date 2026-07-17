@@ -40,6 +40,7 @@ Spells132.c
 extern "C" {
 #endif
 #include "../../MoX/src/Allocate.h" /* _cities[], _UNITS[] */
+#include "../../MoX/src/Allocate_Pool.h" /* Pool_Init() - static pool reset between tests */
 #include "../../MoX/src/LBX_Load.h" /* LBX_Load_Data_Static() */
 #include "../../MoX/src/LOADSAVE.h"
 #include "../../MoX/src/MOM_DAT.h" /* _cities[], _UNITS[] */
@@ -88,6 +89,7 @@ protected:
     void SetUp() override {
         // // Initialize resources (e.g., create new objects, open files/DB connections)
         // my_object = new MyClass();
+        Pool_Init();  // Allocate_Space() is static-pool-backed; reset the arena each test.
         _units = 0;
         _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
         _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
@@ -106,16 +108,8 @@ protected:
         // // Clean up resources (e.g., delete objects, close connections)
         // delete my_object;
         // my_object = nullptr; // Best practice to prevent dangling pointers
-        free(_FORTRESSES);
-        free(spell_data_table);
-        free(hero_names_table);
-        free(_HEROES2[5]);
-        free(_HEROES2[4]);
-        free(_HEROES2[3]);
-        free(_HEROES2[2]);
-        free(_HEROES2[1]);
-        free(_HEROES2[0]);
-        free(_UNITS);
+        // All fixtures above are static-pool-backed (Allocate_Space); the pool is never
+        // freed per-allocation -- Pool_Init() in SetUp reclaims the arena.
         _units = 0;
     }
 
