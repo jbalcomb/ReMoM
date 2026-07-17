@@ -208,7 +208,7 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
 {
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Forfeited = 0;
-    int16_t City_Count = 0;
+    int16_t city_count = 0;
     // uint32_t * city_enchantments = 0;
     // uint8_t city_enchantments[NUM_CITY_ENCHANTMENTS];
     uint8_t * city_enchantments;
@@ -227,13 +227,13 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
     int16_t itr_oench = 0;  // _SI_
     int16_t itr_players = 0;  // _SI_
 
-    for(itr_cities = 0, City_Count = 0; ((itr_cities < _cities) && (City_Count < 2)); itr_cities++)
+    for(itr_cities = 0, city_count = 0; ((itr_cities < _cities) && (city_count < 2)); itr_cities++)
     {
 
         if(_CITIES[itr_cities].owner_idx == city_owner_idx)
         {
 
-            City_Count++;
+            city_count++;
 
         }
 
@@ -241,7 +241,7 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
 
     Forfeited = ST_FALSE;
 
-    if(City_Count > 1)  /* not about to lose very last city */
+    if(city_count > 1)  /* not about to lose very last city */
     {
 
         Forfeited = WIZ_Banishment__STUB(city_owner_idx, player_idx);
@@ -249,7 +249,7 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
     }
 
     if(
-        (City_Count >= 2)
+        (city_count >= 2)
         &&
         (Forfeited < 1)
     )
@@ -437,7 +437,7 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
     else
     {
 
-        if(GAME_IsWon__STUB() == ST_TRUE)
+        if(CP_Is_Dead() == ST_TRUE)
         {
 
             GAME_PlayVictoryAnim__STUB(_human_player_idx);
@@ -471,7 +471,7 @@ WIZ_Conquer__WIP()
 void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
 {
     char Space_String[4] = { 0, 0, 0, 0 };
-    int16_t City_Count = 0;
+    int16_t city_count = 0;
     SAMB_ptr Music_Data_Seg = 0;
     uint32_t Music_Data_Seg_size = 0;  // HACK  DNE in Dasm
     int16_t Esc_Hotkey_Index = 0;
@@ -512,13 +512,13 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
     Toggle_Pages();
 
     // ; count the cities of the conquered wizard
-    for(itr_cities = 0, City_Count = 0; ((itr_cities < _cities) && (City_Count < 2)); itr_cities++)
+    for(itr_cities = 0, city_count = 0; ((itr_cities < _cities) && (city_count < 2)); itr_cities++)
     {
 
         if(_CITIES[itr_cities].owner_idx == GAME_Conquered_Wiz)
         {
 
-            City_Count++;
+            city_count++;
 
         }
 
@@ -546,7 +546,7 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
     {
         stu_strcpy(GUI_String_1, _players[player_idx].name);
         stu_strcat(GUI_String_1, &Space_String[0]);
-        if(City_Count > 1)
+        if(city_count > 1)
         {
             stu_strcat(GUI_String_1, cnst_Conquest_Msg3);  // "banishes"
         }
@@ -564,7 +564,7 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
         stu_strcat(GUI_String_1, cnst_Conquest_Msg1);  // "destroy"
         stu_strcat(GUI_String_1, Space_String);
         stu_strcpy(GUI_String_2, _players[city_owner_idx].name);
-        if(City_Count > 1)
+        if(city_count > 1)
         {
             Possessive(GUI_String_2);
             stu_strcat(GUI_String_1, GUI_String_2);
@@ -931,19 +931,53 @@ void sub_79907__WIP(void)
 
 
 // WZD 093p09
-// drake178: GAME_IsWon()
-/*
-; returns 1 if there are no active AI players left in
-; the game, or 0 otherwise
+/* 
+OON XREF:  WIZ_Conquer()
 */
-/*
-
-*/
-int16_t GAME_IsWon__STUB(void)
+/**
+ * @brief Determines whether all non-human opponents have been eliminated.
+ *
+ * Iterates over player slots 1 through (_num_players - 1), skipping the
+ * presumed human slot at index 0. A player is considered still active if
+ * they have an active fortress, or if they own at least one city.
+ *
+ * @return int16_t ST_TRUE if no active non-human opponents remain;
+ *         otherwise ST_FALSE.
+ */
+int16_t CP_Is_Dead(void)
 {
-
+    int16_t city_count = 0;
+    int16_t itr_cities = 0;
+    int16_t itr_players = 0;
+    int16_t active_computer_players = 0;
+    active_computer_players = 0;
+    for(itr_players = 1; itr_players < _num_players; itr_players++)
+    {
+        if(_FORTRESSES[itr_players].active == ST_TRUE)
+        {
+            active_computer_players++;
+        }
+        else
+        {
+            city_count = 0;
+            for(itr_cities = 0; ((itr_cities < _cities) && (city_count < 2)); itr_cities++)
+            {
+                if(_CITIES[itr_cities].owner_idx == itr_players)
+                {
+                    city_count++;
+                }
+            }
+            if(city_count > 0)
+            {
+                active_computer_players++;
+            }
+        }
+    }
+    if(active_computer_players == 0)
+    {
+        return ST_TRUE;
+    }
     return ST_FALSE;
-
 }
 
 

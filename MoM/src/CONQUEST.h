@@ -48,7 +48,7 @@ void GAME_DrawZapping__STUB(void);
 void sub_79907__WIP(void);
 
 // WZD 093p09
-int16_t GAME_IsWon__STUB(void);
+int16_t CP_Is_Dead(void);
 
 // WZD 093p10
 void GAME_PlayVictoryAnim__STUB(int16_t player_idx);
