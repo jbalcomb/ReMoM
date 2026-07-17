@@ -29,6 +29,10 @@ protected:
         ASSERT_NE(_world_maps, nullptr);
         memset(_world_maps, 0, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
 
+        /* Build_Dock_Linked_List() -> Square_Is_Shoreline() reads through p_world_map;
+           bind it to _world_maps the same way the sibling worldgen fixtures do. */
+        p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
+
         _landmasses = (uint8_t *)malloc(WORLD_SIZE * NUM_PLANES);
         ASSERT_NE(_landmasses, nullptr);
         memset(_landmasses, 0, WORLD_SIZE * NUM_PLANES);
