@@ -842,7 +842,7 @@ static void HeMoM_Combat_Dump_Unit(FILE * fout, const char * prefix, int itr, in
     fprintf(fout, "%s[%d].wp = %d\n", prefix, itr, _UNITS[unit_idx].wp);
 }
 
-static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int16_t troops[])
+static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int16_t troops[], int16_t tactical)
 {
     FILE * fout = NULL;
     int16_t attacker_player_idx = 0;
@@ -889,10 +889,24 @@ static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
         LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] Attacker and defender have the same owner (%d)", attacker_player_idx);
         return 1;
     }
-    if((attacker_player_idx == _human_player_idx) || (defender_player_idx == _human_player_idx))
+    if(tactical == 1)
     {
-        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] A combatant is the human player; the dispatcher would open the tactical battle screen, which --combat does not support yet");
-        return 1;
+        /* The dispatcher only routes to the tactical battle screen when a human participates and the "Strategic Combat Only" option is off; g_cmbt_force_auto_combat then makes the AI drive both sides so no input is needed. */
+        if((attacker_player_idx != _human_player_idx) && (defender_player_idx != _human_player_idx))
+        {
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] --combat-tactical requires one combatant to be the human player (%d); the dispatcher would auto-resolve an AI-vs-AI fight", _human_player_idx);
+            return 1;
+        }
+        magic_set.strategic_combat_only = ST_FALSE;
+        g_cmbt_force_auto_combat = ST_TRUE;
+    }
+    else
+    {
+        if((attacker_player_idx == _human_player_idx) || (defender_player_idx == _human_player_idx))
+        {
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] A combatant is the human player; the dispatcher would open the tactical battle screen -- use --combat-tactical for that");
+            return 1;
+        }
     }
 
     /* Capture defender stack membership before combat mutates the unit array. */
@@ -924,6 +938,14 @@ static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
         _UNITS[troops[itr]].Status = us_Ready;
     }
 
+    if(tactical == 1)
+    {
+        /* Cosmetic-only settings the tactical battle screen honors; disabling them skips per-frame draw/sleep loops (movement animations especially) that make a headless AI-vs-AI battle enormously slow without affecting the combat outcome. */
+        magic_set.movement_animations = ST_FALSE;
+        magic_set.sound_effects = ST_FALSE;
+        magic_set.background_music = ST_FALSE;
+    }
+
     combat_seed = (_cmd_line_seed != 0) ? (uint32_t)_cmd_line_seed : 12345u;
     Set_Random_Seed(combat_seed);
     rng_calls_before = g_random_call_count;
@@ -931,6 +953,8 @@ static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
     LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] Invoking Combat__WIP() seed=%u troop_count=%d defender_stack_count=%d", combat_seed, troop_count, defender_stack_count);
 
     attacker_won = Combat__WIP(attacker_player_idx, defender_unit_idx, troop_count, troops);
+
+    g_cmbt_force_auto_combat = ST_FALSE;
 
     LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] Combat__WIP() returned %d", attacker_won);
 
@@ -942,7 +966,7 @@ static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
     }
 
     fprintf(fout, "# HeMoM Combat Dump\n");
-    fprintf(fout, "# Mode: strategic (direct Combat__WIP invoke)\n");
+    fprintf(fout, "# Mode: %s (direct Combat__WIP invoke)\n", (tactical == 1) ? "tactical AI-vs-AI (forced auto-combat)" : "strategic");
     fprintf(fout, "# NOTE: unit indices are pre-combat indices; combat may free dead units, so a dumped slot reflects whatever occupies that index afterwards (deterministic for a fixed fixture + seed).\n");
     fprintf(fout, "combat.seed = %u\n", combat_seed);
     fprintf(fout, "combat.attacker_player_idx = %d\n", attacker_player_idx);
@@ -950,7 +974,10 @@ static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
     fprintf(fout, "combat.defender_unit_idx = %d\n", defender_unit_idx);
     fprintf(fout, "combat.troop_count = %d\n", troop_count);
     fprintf(fout, "combat.defender_stack_count = %d\n", defender_stack_count);
+    fprintf(fout, "combat.tactical = %d\n", tactical);
     fprintf(fout, "combat.attacker_won = %d\n", attacker_won);
+    fprintf(fout, "combat.turns = %d\n", _combat_turn);
+    fprintf(fout, "combat.winner_player_idx = %d\n", _combat_winner);
     fprintf(fout, "combat.gold_reward = %d\n", CMB_Gold_Reward);
     fprintf(fout, "combat.rng_calls = %llu\n", (unsigned long long)(g_random_call_count - rng_calls_before));
     fprintf(fout, "combat.random_seed_after = %u\n", Get_Random_Seed());
@@ -989,6 +1016,7 @@ static void Print_Usage(const char *program_name)
     LOG_INFO(LOG_CAT_HEMOM, "  --record FILE      Record input to .RMR file");
     LOG_INFO(LOG_CAT_HEMOM, "  --dump-save FILE   After Screen_Control returns, dump FILE.GAM to FILE.txt");
     LOG_INFO(LOG_CAT_HEMOM, "  --combat D A,B,..  Load SAVECMBT.GAM, run strategic combat: attacker units A,B,.. vs the stack of defender unit D; dump results to %s", HEMOM_COMBAT_DUMP_FILE);
+    LOG_INFO(LOG_CAT_HEMOM, "  --combat-tactical D A,B,..  Same, but run the tactical battle screen with forced auto-combat (one side must be the human player)");
     LOG_INFO(LOG_CAT_HEMOM, "  --help             Show this help");
 }
 
@@ -1007,6 +1035,7 @@ int main(int argc, char *argv[])
     int16_t combat_defender_unit_idx = ST_UNDEFINED;
     int16_t combat_troops[HEMOM_COMBAT_MAX_TROOPS] = { 0 };
     int16_t combat_troop_count = 0;
+    int16_t combat_tactical = 0;
     int argi;
 
     STU_Log_Startup("ReMoM.ini");
@@ -1122,10 +1151,11 @@ int main(int argc, char *argv[])
             LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --seed is no longer parsed -- use --seed1 N (RNG will NOT be pinned this run)");
             argi++;
         }
-        else if(stu_strcmp(argv[argi], "--combat") == 0 && (argi + 2) < argc)
+        else if((stu_strcmp(argv[argi], "--combat") == 0 || stu_strcmp(argv[argi], "--combat-tactical") == 0) && (argi + 2) < argc)
         {
             char * token;
             hemom_mode = 3;
+            combat_tactical = (stu_strcmp(argv[argi], "--combat-tactical") == 0) ? 1 : 0;
             stu_strcpy(hemom_file, "SAVECMBT.GAM");
             argi++;
             combat_defender_unit_idx = (int16_t)stu_atoi(argv[argi]);
@@ -1137,7 +1167,7 @@ int main(int argc, char *argv[])
                 combat_troop_count++;
                 token = strtok(NULL, ",");
             }
-            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --combat defender_unit=%d attacker_troop_count=%d", combat_defender_unit_idx, combat_troop_count);
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: %s defender_unit=%d attacker_troop_count=%d", combat_tactical ? "--combat-tactical" : "--combat", combat_defender_unit_idx, combat_troop_count);
         }
         else if(strcmp(argv[argi], "--ai-metrics") == 0)
         {
@@ -1247,7 +1277,7 @@ int main(int argc, char *argv[])
         Load_SAVE_GAM(ST_UNDEFINED);
         Loaded_Game_Update();
         current_screen = scr_Main_Screen;
-        if(HeMoM_Combat_Run(combat_defender_unit_idx, combat_troop_count, combat_troops) != 0)
+        if(HeMoM_Combat_Run(combat_defender_unit_idx, combat_troop_count, combat_troops, combat_tactical) != 0)
         {
             LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Combat run failed");
             Shutdown_Platform();

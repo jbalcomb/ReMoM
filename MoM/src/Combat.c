@@ -758,6 +758,9 @@ int16_t m_cp_took_turn;
 // WZD dseg:C432
 int16_t _auto_combat_flag;
 
+/* CLAUDE: test-support -- when ST_TRUE, Combat_Screen__WIP() re-enables _auto_combat_flag right after its entry reset, so the tactical battle runs AI-vs-AI with no human input (HeMoM --combat-tactical). Normal gameplay leaves this ST_FALSE. */
+int16_t g_cmbt_force_auto_combat = ST_FALSE;
+
 /*
     CP, NPC, or MONSTER
     (either attacker or defender)
@@ -1570,7 +1573,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     _combat_attacker_player = combat_attacker_player_idx;
     _combat_defender_player = combat_defender_player_idx;
     Cache_Graphics_Combat();
-    CMB_Terrain_Init__WIP(wx, wy, wp);  // CMB_ComposeBackgrnd__WIP() |-> Copy_Off_To_Back()
+    CMB_Terrain_Init__WIP(wx, wy, wp);
     defender_unit_count = CMB_Units_Init__WIP(troop_count, troops);
     Clear_Fields();
     Deactivate_Auto_Function();
@@ -1632,6 +1635,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     leave_screen = ST_FALSE;
     m_turn_is_local = ST_TRUE;
     _auto_combat_flag = ST_FALSE;
+    /* CLAUDE */ if(g_cmbt_force_auto_combat == ST_TRUE) { _auto_combat_flag = ST_TRUE; }  /* test-support: see g_cmbt_force_auto_combat definition */
     CMB_PrepareTurn__WIP();
     _human_handle_immobile = ST_FALSE;
     // ; NONE of the above functions change the focus unit
@@ -2552,14 +2556,15 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
         */
 
 
-        // NOTE(JimBalcomb,20260331): this debug-break still has never been hit
         // NOTE(JimBalcomb,20250729): this debug-break still has never been hit
+        // NOTE(JimBalcomb,20260331): this debug-break still has never been hit
+        // NOTE(JimBalcomb,20260717): this debug-break has now been hit  (don't know why)
         // What is this?  sanity check? hack bug-fix?  should actually never happen?
         // When does _active_battle_unit ever get set to a battle_unit_idx that is not created/owner/controlled by the human player?
         if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
         {
 
-            STU_DEBUG_BREAK();
+            // STU_DEBUG_BREAK();
             
             _human_out_of_moves = ST_TRUE;  // human turn is over
 
@@ -28543,6 +28548,7 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
 
     }
 
+
     // ¿ BUG ? already caught in Square_Is_Forest()
     if(Location_Type == clt_NatureNode)
     {
@@ -30383,6 +30389,7 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp)
         }
 
     }
+
 
 
     temp_seg = Allocate_First_Block(EMS_PFBA, 1);

@@ -1,0 +1,70 @@
+# assert_combat_s2.txt -- Field assertions for tactical combat scenario 2.
+#
+# Scenario 2: two stacks of Human Halberdiers (player 0; 405/412/415/578 at
+# 12,16 and 387/398/557/565 at 12,17) march on the Klackon city Fa-rul (player
+# 2, at 7,17) and assault it via the in-combat Auto button.
+#
+# This is a MULTI-TURN scenario: the stacks need two turns to reach the city,
+# and each turn-end runs the AI's turn (Next Turn = the 'n' hotkey in the .hms).
+# One en-route AI combat cost the stack a unit before it arrived.  The game is
+# single-player / synchronous / turn-based, so the whole sequence -- movement,
+# AI turns, en-route combats, and the assault -- is deterministic under seed
+# 12345.  The turn-ends compact the unit/city arrays, so combatants are pinned
+# by their (deterministic) FINAL index and identified by position (7,17).
+#
+# Pipeline (channel 1 -- real tactical screen, windowed, scripted):
+#   copy SAVECMBT.GAM SAVE9.GAM
+#   ReMoMber --continue --seed1 12345 --scenario combat_s2.hms   (writes SAVE1.GAM)
+#   savedump SAVE1.GAM SAVE1.txt
+#   check_save_fields SAVE1.txt assert_combat_s2.txt
+#
+# Characterization baseline: pins CURRENT behavior for seed 12345, incl. OGBUGs.
+# Padding fields (pad2B_*) are uninitialized memory and deliberately NOT asserted.
+
+# --- Global outcome: two turns elapsed, Fa-rul razed (58 -> 57 cities) ---
+game.turn = 617
+game.units = 841
+game.cities = 57
+
+# --- Assault at the city square (7,17): survivor + casualties ---
+# Sole surviving attacker: one Halberdier, 8 figure-damage, XP 120 -> 144.
+unit[554].owner_idx = 0
+unit[554].type = 112
+unit[554].damage = 8
+unit[554].xp = 144
+unit[554].wx = 7
+unit[554].wy = 17
+
+# Dead attacker Halberdiers (owner_idx = -1, type 112) left on the city square.
+unit[382].owner_idx = -1
+unit[382].type = 112
+unit[382].wx = 7
+unit[382].wy = 17
+unit[393].owner_idx = -1
+unit[393].type = 112
+unit[393].wx = 7
+unit[393].wy = 17
+unit[399].owner_idx = -1
+unit[399].type = 112
+unit[405].owner_idx = -1
+unit[405].type = 112
+unit[408].owner_idx = -1
+unit[408].type = 112
+unit[546].owner_idx = -1
+unit[546].type = 112
+
+# Dead defender garrison (owner_idx = -1, type 119 = Stag Beetle) on the square.
+unit[540].owner_idx = -1
+unit[540].type = 119
+unit[564].owner_idx = -1
+unit[564].type = 119
+unit[569].owner_idx = -1
+unit[569].type = 119
+unit[610].owner_idx = -1
+unit[610].type = 119
+unit[662].owner_idx = -1
+unit[662].type = 119
+unit[708].owner_idx = -1
+unit[708].type = 119
+unit[743].owner_idx = -1
+unit[743].type = 119

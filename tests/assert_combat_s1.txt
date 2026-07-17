@@ -1,0 +1,63 @@
+# assert_combat_s1.txt -- Field assertions for tactical combat scenario 1.
+#
+# Scenario 1: 4 Human Halberdiers (player 0, units 110/418/534/669 at 12,18)
+# attack 4 Stag Beetles (player 2, units 498/517/535/779 at 10,19), resolved
+# via the in-combat Auto button.
+#
+# Pipeline (channel 1 -- real tactical screen, windowed, scripted):
+#   copy SAVECMBT.GAM SAVE9.GAM
+#   ReMoMber --continue --seed1 12345 --scenario combat_s1.hms   (writes SAVE1.GAM)
+#   savedump SAVE1.GAM SAVE1.txt
+#   check_save_fields SAVE1.txt assert_combat_s1.txt
+#
+# Characterization baseline: pins CURRENT behavior for seed 12345, including any
+# OGBUGs.  Seed-stream-sensitive -- any change that adds/removes an RNG draw in
+# the combat path shifts these and the file must be re-captured from a fresh run.
+#
+# Padding fields (pad2B_*) are uninitialized memory and deliberately NOT asserted.
+
+# --- Outcome summary ---
+# Attackers wiped 0/4; defenders 1/4 survive (unit 517); AI summoned a Fire
+# Elemental mid-combat (unit count 842 -> 843).
+game.turn = 615
+game.cities = 58
+game.units = 843
+
+# --- ATTACKER: 4 Human Halberdiers (type 112), all killed (owner_idx = -1) ---
+# Dead units retain XP and their final staging position (11,19); no damage field
+# change because a dead unit's figure damage is not tracked post-mortem.
+unit[110].owner_idx = -1
+unit[110].type = 112
+unit[110].xp = 120
+unit[110].damage = 0
+unit[110].wx = 11
+unit[110].wy = 19
+unit[418].owner_idx = -1
+unit[418].xp = 120
+unit[418].wx = 11
+unit[418].wy = 19
+unit[534].owner_idx = -1
+unit[534].xp = 119
+unit[534].wx = 11
+unit[534].wy = 19
+unit[669].owner_idx = -1
+unit[669].xp = 87
+unit[669].wx = 11
+unit[669].wy = 19
+
+# --- DEFENDER: 4 Stag Beetles (type 119), 3 killed + 1 survivor ---
+unit[498].owner_idx = -1
+unit[535].owner_idx = -1
+unit[779].owner_idx = -1
+# Survivor: unit 517 lives at (10,19) with 10 figure-damage and +2 XP (88 -> 90).
+unit[517].owner_idx = 2
+unit[517].type = 119
+unit[517].damage = 10
+unit[517].xp = 90
+unit[517].wx = 10
+unit[517].wy = 19
+
+# --- AI combat summon: Fire Elemental (type 158) created in slot 842 ---
+# owner_idx = -1 because the summon is dismissed when combat ends; the unit-count
+# bump to 843 is the durable evidence the summon happened.
+unit[842].type = 158

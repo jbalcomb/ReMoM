@@ -350,3 +350,195 @@ set_tests_properties(HeMoM_Combat_Strategic_Assertions PROPERTIES
     FIXTURES_REQUIRED HeMoM_Combat_Strategic
     LABELS "hemom;integration;combat"
 )
+
+
+
+# =========================================================================
+#  Tactical Combat: Scenario 1  (channel 1 -- real battle screen, scripted)
+#
+#  4 Human Halberdiers (player 0) attack 4 Stag Beetles (player 2); resolved
+#  via the in-combat Auto button.  Outcome: attackers wiped 0/4, defender 517
+#  survives (10 dmg), AI summons a Fire Elemental.  See assert_combat_s1.txt.
+#
+#  The full scenario runs WINDOWED -- ReMoMber drives the real tactical screen
+#  from combat_s1.hms, which needs a display.  So the RUN step is gated behind
+#  ENABLE_WINDOWED_COMBAT_TESTS and executed on demand.  The CHECK step is
+#  automated and headless: it dumps the committed baseline save (the outcome the
+#  scenario reproduces) and asserts the pinned combat fields, guarding the
+#  baseline+assert pair in CI without a display.
+# =========================================================================
+
+# --- Automated check against the committed baseline (headless, CI) ---
+add_test(
+    NAME Combat_S1_Baseline_Dump
+    COMMAND $<TARGET_FILE:savedump>
+        ${HEMOM_TEST_ASSETS}/combat_s1_baseline.GAM
+        ${HEMOM_TEST_WORKDIR}/combat_s1_baseline.txt
+)
+set_tests_properties(Combat_S1_Baseline_Dump PROPERTIES
+    FIXTURES_SETUP Combat_S1_Baseline
+    LABELS "combat;tactical"
+)
+
+add_test(
+    NAME Combat_S1_Check
+    COMMAND $<TARGET_FILE:check_save_fields>
+        ${HEMOM_TEST_WORKDIR}/combat_s1_baseline.txt
+        ${CMAKE_CURRENT_SOURCE_DIR}/assert_combat_s1.txt
+)
+set_tests_properties(Combat_S1_Check PROPERTIES
+    FIXTURES_REQUIRED Combat_S1_Baseline
+    LABELS "combat;tactical"
+)
+
+# --- On-demand windowed replay: regenerate SAVE1 through the real screen ---
+# Needs a display; OFF by default.  Enable with -DENABLE_WINDOWED_COMBAT_TESTS=ON
+# then run:  ctest -R Combat_S1_Replay
+option(ENABLE_WINDOWED_COMBAT_TESTS "Enable windowed (display-required) tactical combat replay tests" OFF)
+if(ENABLE_WINDOWED_COMBAT_TESTS)
+
+    add_test(
+        NAME Combat_S1_Replay_Stage
+        COMMAND ${CMAKE_COMMAND} -E copy
+            ${HEMOM_TEST_ASSETS}/SAVECMBT.GAM
+            ${HEMOM_TEST_WORKDIR}/SAVE9.GAM
+    )
+    set_tests_properties(Combat_S1_Replay_Stage PROPERTIES
+        FIXTURES_SETUP Combat_S1_Replay_Staged
+        LABELS "combat;tactical;windowed"
+    )
+
+    add_test(
+        NAME Combat_S1_Replay
+        COMMAND $<TARGET_FILE:ReMoMber>
+            --continue --seed1 12345
+            --scenario ${HEMOM_TEST_ASSETS}/combat_s1.hms
+        WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+    )
+    set_tests_properties(Combat_S1_Replay PROPERTIES
+        TIMEOUT 180
+        FIXTURES_REQUIRED Combat_S1_Replay_Staged
+        FIXTURES_SETUP Combat_S1_Replayed
+        LABELS "combat;tactical;windowed"
+    )
+
+    add_test(
+        NAME Combat_S1_Replay_Dump
+        COMMAND $<TARGET_FILE:savedump>
+            ${HEMOM_TEST_WORKDIR}/SAVE1.GAM
+            ${HEMOM_TEST_WORKDIR}/SAVE1.txt
+    )
+    set_tests_properties(Combat_S1_Replay_Dump PROPERTIES
+        FIXTURES_REQUIRED Combat_S1_Replayed
+        FIXTURES_SETUP Combat_S1_Replay_Dumped
+        LABELS "combat;tactical;windowed"
+    )
+
+    add_test(
+        NAME Combat_S1_Replay_Check
+        COMMAND $<TARGET_FILE:check_save_fields>
+            ${HEMOM_TEST_WORKDIR}/SAVE1.txt
+            ${CMAKE_CURRENT_SOURCE_DIR}/assert_combat_s1.txt
+    )
+    set_tests_properties(Combat_S1_Replay_Check PROPERTIES
+        FIXTURES_REQUIRED Combat_S1_Replay_Dumped
+        LABELS "combat;tactical;windowed"
+    )
+
+endif()
+
+
+
+# =========================================================================
+#  Tactical Combat: Scenario 2  (channel 1 -- multi-turn city assault)
+#
+#  Two stacks of 8 Human Halberdiers march two turns to the Klackon city Fa-rul
+#  and assault it (Auto).  MULTI-TURN: each turn-end runs the AI (Next Turn = the
+#  'n' hotkey); one en-route AI combat costs the stack a unit.  Deterministic
+#  under seed 12345 (single-player, synchronous, turn-based).  Outcome: Fa-rul
+#  razed, one attacker survives at the city square.  See assert_combat_s2.txt.
+#
+#  Same structure as scenario 1: automated headless check against the committed
+#  baseline; on-demand windowed replay gated by ENABLE_WINDOWED_COMBAT_TESTS.
+# =========================================================================
+
+# --- Automated check against the committed baseline (headless, CI) ---
+add_test(
+    NAME Combat_S2_Baseline_Dump
+    COMMAND $<TARGET_FILE:savedump>
+        ${HEMOM_TEST_ASSETS}/combat_s2_baseline.GAM
+        ${HEMOM_TEST_WORKDIR}/combat_s2_baseline.txt
+)
+set_tests_properties(Combat_S2_Baseline_Dump PROPERTIES
+    FIXTURES_SETUP Combat_S2_Baseline
+    LABELS "combat;tactical"
+)
+
+add_test(
+    NAME Combat_S2_Check
+    COMMAND $<TARGET_FILE:check_save_fields>
+        ${HEMOM_TEST_WORKDIR}/combat_s2_baseline.txt
+        ${CMAKE_CURRENT_SOURCE_DIR}/assert_combat_s2.txt
+)
+set_tests_properties(Combat_S2_Check PROPERTIES
+    FIXTURES_REQUIRED Combat_S2_Baseline
+    LABELS "combat;tactical"
+)
+
+# --- On-demand windowed replay (needs a display; OFF by default) ---
+# The windowed replays share SAVE1.GAM/SAVE9.GAM in the work dir, so RESOURCE_LOCK
+# serializes them against scenario 1's replay.
+if(ENABLE_WINDOWED_COMBAT_TESTS)
+
+    add_test(
+        NAME Combat_S2_Replay_Stage
+        COMMAND ${CMAKE_COMMAND} -E copy
+            ${HEMOM_TEST_ASSETS}/SAVECMBT.GAM
+            ${HEMOM_TEST_WORKDIR}/SAVE9.GAM
+    )
+    set_tests_properties(Combat_S2_Replay_Stage PROPERTIES
+        FIXTURES_SETUP Combat_S2_Replay_Staged
+        RESOURCE_LOCK combat_savegame
+        LABELS "combat;tactical;windowed"
+    )
+
+    add_test(
+        NAME Combat_S2_Replay
+        COMMAND $<TARGET_FILE:ReMoMber>
+            --continue --seed1 12345
+            --scenario ${HEMOM_TEST_ASSETS}/combat_s2.hms
+        WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+    )
+    set_tests_properties(Combat_S2_Replay PROPERTIES
+        TIMEOUT 360
+        FIXTURES_REQUIRED Combat_S2_Replay_Staged
+        FIXTURES_SETUP Combat_S2_Replayed
+        RESOURCE_LOCK combat_savegame
+        LABELS "combat;tactical;windowed"
+    )
+
+    add_test(
+        NAME Combat_S2_Replay_Dump
+        COMMAND $<TARGET_FILE:savedump>
+            ${HEMOM_TEST_WORKDIR}/SAVE1.GAM
+            ${HEMOM_TEST_WORKDIR}/SAVE1_s2.txt
+    )
+    set_tests_properties(Combat_S2_Replay_Dump PROPERTIES
+        FIXTURES_REQUIRED Combat_S2_Replayed
+        FIXTURES_SETUP Combat_S2_Replay_Dumped
+        RESOURCE_LOCK combat_savegame
+        LABELS "combat;tactical;windowed"
+    )
+
+    add_test(
+        NAME Combat_S2_Replay_Check
+        COMMAND $<TARGET_FILE:check_save_fields>
+            ${HEMOM_TEST_WORKDIR}/SAVE1_s2.txt
+            ${CMAKE_CURRENT_SOURCE_DIR}/assert_combat_s2.txt
+    )
+    set_tests_properties(Combat_S2_Replay_Check PROPERTIES
+        FIXTURES_REQUIRED Combat_S2_Replay_Dumped
+        LABELS "combat;tactical;windowed"
+    )
+
+endif()

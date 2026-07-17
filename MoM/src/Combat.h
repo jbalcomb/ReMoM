@@ -1160,6 +1160,9 @@ extern uint32_t SND_CMB_Silence_size;  // DNE in Dasm
 // WZD dseg:C432
 extern int16_t _auto_combat_flag;
 
+/* CLAUDE: test-support -- forces _auto_combat_flag back on after Combat_Screen__WIP()'s entry reset; see Combat.c. */
+extern int16_t g_cmbt_force_auto_combat;
+
 // WZD dseg:C47C
 extern int16_t _combat_wp;
 
@@ -1200,6 +1203,9 @@ extern int16_t * CMB_NearDispel_UEs;
 
 // WZD dseg:C972
 extern int16_t _combat_winner;
+
+/* CLAUDE: test-support -- exposes the per-battle turn counter (defined Combat.c) for HeMoM's combat results dump. */
+extern int16_t _combat_turn;
 
 // WZD dseg:C974
 extern int16_t GAME_RazeCity;

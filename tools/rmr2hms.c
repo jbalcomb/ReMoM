@@ -11,14 +11,14 @@
  *   - Reads the per-frame CSV rows from the .RMR
  *   - Drops idle frames (no input state change)
  *   - Emits one HMS action per state-change event:
- *       click X Y           (mouse button press, edge-triggered)
+ *       click X Y / rclick X Y  (left/right mouse button press, edge-triggered)
  *       backspace / enter / escape   (special key codes)
  *       key K               (single non-printable key)
  *       type "STRING"       (consecutive printable-character keys grouped)
  *   - Inserts `wait Nms` between actions based on inter-event timestamp gaps
  *
  * Limitations:
- *   - Right-click and middle-click not yet emitted (only mouse_buttons & 1)
+ *   - Middle-click not yet emitted (only left mouse_buttons & 1 and right & 2)
  *   - Modifier keys not preserved on individual `key` actions
  *   - Wait granularity is exact ms; user may want to round/coarsen by hand
  *   - Mouse coordinates are emitted as-recorded (already in 320x200 game units)
@@ -108,11 +108,21 @@ static void Emit_Wait(FILE *out, uint64_t now_ms)
 /*  Action emission                                                          */
 /* ========================================================================= */
 
-static void Emit_Click(FILE *out, uint64_t now_ms, int x, int y)
+static void Emit_Click(FILE *out, uint64_t now_ms, int x, int y, int buttons)
 {
     Flush_Pending_Type(out);
     Emit_Wait(out, now_ms);
-    fprintf(out, "click %d %d\n", x, y);
+    /* RMR mouse_buttons bitmask: 1 = ST_LEFT_BUTTON, 2 = ST_RIGHT_BUTTON.
+       Prefer right when the right bit is set so a right-click round-trips to
+       the HMS `rclick` verb instead of collapsing to a left `click`. */
+    if(buttons & 2)  /* ST_RIGHT_BUTTON */
+    {
+        fprintf(out, "rclick %d %d\n", x, y);
+    }
+    else
+    {
+        fprintf(out, "click %d %d\n", x, y);
+    }
 }
 
 static void Emit_Key(FILE *out, uint64_t now_ms, uint32_t packed)
@@ -320,7 +330,7 @@ int main(int argc, char *argv[])
         /* Mouse-button edge: 0 -> nonzero is a click. */
         if(mouse_buttons != 0 && prev_mouse_buttons == 0)
         {
-            Emit_Click(fout, timestamp_ms, mouse_x, mouse_y);
+            Emit_Click(fout, timestamp_ms, mouse_x, mouse_y, mouse_buttons);
             actions_emitted++;
         }
 
@@ -334,6 +344,17 @@ int main(int argc, char *argv[])
                 Emit_Key(fout, timestamp_ms, key0);
                 actions_emitted++;
             }
+        }
+
+        /* Key release (1 -> 0) ends a discrete keypress: flush any pending
+           `type` run so distinct hotkey presses (e.g. 'n' then 'a') become
+           separate `type n` / `type a` actions instead of merging into
+           `type na`.  A genuinely typed string arrives buffered — key_pressed
+           stays 1 while key0 cycles — so it accumulates without a release and
+           is unaffected. */
+        if(key_pressed == 0 && prev_key_pressed == 1)
+        {
+            Flush_Pending_Type(fout);
         }
 
         prev_mouse_buttons = mouse_buttons;

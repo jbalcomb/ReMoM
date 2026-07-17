@@ -501,6 +501,18 @@ static const char * STU_Log_SEH_Code_Name(DWORD code)
 static LONG WINAPI STU_Log_SEH_Filter(EXCEPTION_POINTERS * ep)
 {
     STU_Log_Emit_Crash_Marker(STU_Log_SEH_Code_Name(ep->ExceptionRecord->ExceptionCode));
+    if(log_file != NULL)
+    {
+        char dt[32];
+        void * base = (void *)GetModuleHandleA(NULL);
+        void * addr = (void *)ep->ExceptionRecord->ExceptionAddress;
+        get_datetime(dt);
+        fprintf(log_file, "[%s] [CRASH] code=0x%08lX addr=%p module_base=%p rva=0x%llX\n",
+                dt,
+                (unsigned long)ep->ExceptionRecord->ExceptionCode,
+                addr, base,
+                (unsigned long long)((char *)addr - (char *)base));
+    }
     STU_Log_Flush_All();
     if(log_file != NULL)
     {

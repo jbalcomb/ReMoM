@@ -20,6 +20,7 @@
 #ifdef _WIN32
 #define _CRT_NONSTDC_NO_DEPRECATE
 #include <conio.h>
+#include <io.h>      /* CLAUDE: _isatty */
 #endif
 
 
@@ -236,8 +237,15 @@ void Quit_With_Message(char * string)
     // getch();  not without _CRT_INTERNAL_NONSTDC_NAMES
     // _getch();  // 6031 Return value ignored
     // char ch = _getch();
-    #pragma warning(suppress : 6031)  // 6031 Return value ignored
-    _getch();
+    /* CLAUDE: only pause for a keypress at an interactive console.  Under a
+       headless / redirected-stdin run (HeMoM, CTest, CI) _getch() blocks
+       forever waiting for a key that never arrives, turning every fatal
+       error into a hang instead of a clean exit-with-message. */
+    if(_isatty(_fileno(stdin)))
+    {
+        #pragma warning(suppress : 6031)  // 6031 Return value ignored
+        _getch();
+    }
 
 #endif
 
