@@ -67,7 +67,7 @@
 #include "MOX_TYPE.h"
 #include "Timer.h"
 
-#include <malloc.h>  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
+#include <stdlib.h>  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
 #include <string.h>
 
 #include "Util.h"
