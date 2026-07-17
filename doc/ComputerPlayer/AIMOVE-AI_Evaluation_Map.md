@@ -15,9 +15,9 @@ AI_Next_Turn()
 
 | Function | Location | Role |
 |---|---|---|
-| `AI_Evaluation_Map` | [AIMOVE.c:6796-7016](../../MoM/src/AIMOVE.c#L6796-L7016) | Per-AI-player: rebuild `g_ai_evaluation_map[NUM_PLANES][WORLD_SIZE]` — the per-square "what's here?" bitmap consumed by downstream AI targeting/movement passes. Low 14 bits = packed strength value (enemy unit strength/10, plus lair guardian strength/10, plus `+1` for non-own cities). Upper 2 bits = flags: `0x4000` = `AI_TARGET_NONHOSTILE` (own-side unit of a non-hostile player here), `0x8000` = `AI_TARGET_SITE` (city / intact lair / node here). |
+| `AI_Evaluation_Map` | [AIMOVE.c:6911-7087](../../MoM/src/AIMOVE.c#L6911-L7087) | Per-AI-player: rebuild `g_ai_evaluation_map[NUM_PLANES][WORLD_SIZE]` — the per-square "what's here?" bitmap consumed by downstream AI targeting/movement passes. Low 14 bits = packed strength value (enemy unit strength/10, plus lair guardian strength/10, plus `+1` for non-own cities). Upper 2 bits = flags: `0x4000` = `AI_TARGET_NONHOSTILE` (own-side unit of a non-hostile player here), `0x8000` = `AI_TARGET_SITE` (city / intact lair / node here). |
 
-The `/* HACK */` blocks throughout the body are explicit OG-bug **mitigations** required to keep modern Windows from raising access violations on out-of-bounds reads the OG bugs would produce. See [Bug catalog (OG bugs + HACK mitigations)](#bug-catalog-og-bugs--hack-mitigations).
+Function body is now 1:1 with the OG asm, including the preserved OG bugs listed in the [Bug catalog](#bug-catalog-preserved-og-bugs). The `/* HACK */ continue;` mitigations that previously guarded each OOB access site have been removed — the static-pool memory subsystem now provides enough guard/padding memory that the OG's out-of-bounds reads no longer raise access violations, so the mitigations became defensive-in-depth over a safe substrate and were retired.
 
 ## Purpose
 
@@ -116,35 +116,31 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 
 Maps onto asm `loc_F8427`/`loc_F8441`/`loc_F8447` (lines 70-94). `map_square_count` is stack-cached (asm line 70) to avoid re-loading the `WORLD_SIZE` immediate inside the hot inner loop — production preserves the variable rather than inlining the constant. Faithful.
 
-### Phase 3 — Unit pass ([6846-6887](../../MoM/src/AIMOVE.c#L6846-L6887))
+### Phase 3 — Unit pass ([6987-7023](../../MoM/src/AIMOVE.c#L6987-L7023))
 
 ```c
 for(itr_units = 0; itr_units < _units; itr_units++)
 {
     p_unit = &_UNITS[itr_units];
 
-    // OGBUG  by (bad) design  assert(_UNITS[itr_units].owner_idx != ST_UNDEFINED);
-    /* HACK */  if(p_unit->owner_idx == ST_UNDEFINED) { continue; }
-    assert(p_unit->wp != ST_UNDEFINED);
-    /* HACK */  if(p_unit->wp == ST_UNDEFINED) { continue; }
+    unit_owner_idx = p_unit->owner_idx;  /* OGBUG  OOB AVRL  _UNITS[itr_units].owner_idx is ST_UNDEFINED */
 
-    unit_owner_idx = p_unit->owner_idx;
     if(
         (unit_owner_idx == player_idx)
-        || (p_unit->owner_idx == player_idx)  // conflicting condition - will always jump
+        || (p_unit->owner_idx == player_idx)  /* OGBUG  conflicting condition - will always jump */
     )
     { continue; }
 
-    wp = p_unit->wp;
+    wp = p_unit->wp;  /* OGBUG  OOB AVRL  p_unit->wp is ST_UNDEFINED */
     xy_ofst = ((p_unit->wy * WORLD_WIDTH) + p_unit->wx);
 
-    strength = Effective_Unit_Strength(itr) / 10;
-    g_ai_evaluation_map[wp][xy_ofst] += strength;
+    strength = Effective_Unit_Strength(itr_units) / 10;
+    g_ai_evaluation_map[wp][xy_ofst] += strength;  /* OGBUG  could index g_ai_evaluation_map with wp = -1 */
 
-    // OGBUG  will index nonhostiles[] with unit_owner_idx = ST_UNDEFINED, ...
+    /* OGBUG  OOB AVRL  will index nonhostiles[] with unit_owner_idx = ST_UNDEFINED */
     if(nonhostiles[unit_owner_idx] == ST_TRUE)
     {
-        g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_NONHOSTILE;
+        g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_NONHOSTILE;  /* OGBUG  OOB AVRL  wp = -1 */
     }
 }
 ```
@@ -157,7 +153,7 @@ Maps onto asm `loc_F8451`-`loc_F8524`:
 - `g_ai_evaluation_map[wp][xy_ofst] += strength` (asm:159-166) ↔ production line 6878.
 - Nonhostile flag (asm:167-189): `cmp [nonhostiles+bx], ST_TRUE; jnz skip; OR 4000h` ↔ production lines 6882-6885. `AI_TARGET_NONHOSTILE = 0x4000` (asm line 181: `or ax, 4000h`).
 
-### Phase 4 — Lair pass 1: guardian strength ([6890-6926](../../MoM/src/AIMOVE.c#L6890-L6926))
+### Phase 4 — Lair pass 1: guardian strength ([7027-7044](../../MoM/src/AIMOVE.c#L7027-L7044))
 
 ```c
 for(itr = 0; itr < NUM_LAIRS; itr++)
@@ -167,10 +163,7 @@ for(itr = 0; itr < NUM_LAIRS; itr++)
         && (_LAIRS[itr].guard1_count > 0)
     )
     {
-        assert((_LAIRS[itr].wp >= WORLD_PMIN) && (_LAIRS[itr].wp <= WORLD_PMAX));
-        /* HACK */ ... range-check skips ...
-
-        wp = _LAIRS[itr].wp;
+        wp = _LAIRS[itr].wp;  /* OGBUG  OOB AVRL if _LAIRS[itr] record corrupted/uninit */
         xy_ofst = ((_LAIRS[itr].wy * WORLD_WIDTH) + _LAIRS[itr].wx);
 
         strength = (Effective_Unit_Type_Strength(_LAIRS[itr].guard1_unit_type) / 10) * (_LAIRS[itr].guard1_count & 0x0F);
@@ -190,15 +183,13 @@ Maps onto asm `loc_F8533`-`loc_F8644`:
 - Guard1 strength (asm:251-283): `Effective_Unit_Type_Strength(guard1_unit_type) / 10`, then `* (guard1_count & 0x0F)`. The `& 0x0F` extracts the **low nibble** = current remaining guardians. `Set_Upper_Lair_Guardian_Count` packs initial count into the high nibble at world-gen, so low nibble is the live count. Production line 6917.
 - Guard2 strength (asm:284-316) ↔ production line 6921. Same pattern.
 
-### Phase 5 — City pass: SITE flag + value bump ([6929-6957](../../MoM/src/AIMOVE.c#L6929-L6957))
+### Phase 5 — City pass: SITE flag + value bump ([7046-7058](../../MoM/src/AIMOVE.c#L7046-L7058))
 
 ```c
 for(itr = 0; itr < _cities; itr++)
 {
     p_city = &_CITIES[itr];
-    assert(...); /* HACK */ ... range checks ...
-
-    wp = p_city->wp;
+    wp = p_city->wp;  /* OGBUG  OOB AVRL if _CITIES[itr] record has out-of-range wp/wx/wy */
     xy_ofst = ((p_city->wy * WORLD_WIDTH) + p_city->wx);
 
     g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_SITE;
@@ -216,7 +207,7 @@ Maps onto asm `loc_F8652`-`loc_F86EC`:
 - `OR 0x8000` (asm:358-374): `mov ax, [es:bx]; or ax, 8000h; mov [es:bx], ax`. **`AI_TARGET_SITE = 0x8000`**. Production line 6949.
 - Owner check + `+1` (asm:375-391): `cmp owner_idx, player_idx; jz skip; inc [word ptr es:bx]`. Production lines 6952-6955.
 
-### Phase 6 — Lair pass 2: SITE flag for not-FALSE lairs ([6960-6988](../../MoM/src/AIMOVE.c#L6960-L6988))
+### Phase 6 — Lair pass 2: SITE flag for not-FALSE lairs ([7061-7070](../../MoM/src/AIMOVE.c#L7061-L7070))
 
 ```c
 for(itr = 0; itr < NUM_LAIRS; itr++)
@@ -225,9 +216,7 @@ for(itr = 0; itr < NUM_LAIRS; itr++)
 
     if(p_lair->intact != ST_FALSE)  /* CAUTION: 0xC0 != ST_FALSE */
     {
-        /* HACK */ ... range checks ...
-
-        wp = p_lair->wp;
+        wp = p_lair->wp;  /* OGBUG  OOB AVRL if _LAIRS[itr] record has out-of-range wp/wx/wy */
         xy_ofst = ((p_lair->wy * WORLD_WIDTH) + p_lair->wx);
 
         g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_SITE;
@@ -240,15 +229,13 @@ Maps onto asm `loc_F86FB`-`loc_F877D`:
 - Intact filter (asm:403-410): `cmp intact, e_ST_FALSE; jz skip` — **different from Phase 4**. Phase 4 only fires when `intact == ST_TRUE` (= 1); Phase 6 fires whenever `intact != ST_FALSE` (catches both 1 = ST_TRUE and 0xC0 partially-intact). The inline comment "CAUTION: 0xC0 != ST_FALSE" names the gotcha — `intact` is a byte field with non-boolean values, so `!=` rather than `==` is the deliberate OG choice. Faithful.
 - Rest of the loop is structurally identical to Phase 5 (compute offset, OR 0x8000). Production lines 6981-6984.
 
-### Phase 7 — Node pass: SITE flag for all nodes ([6991-7014](../../MoM/src/AIMOVE.c#L6991-L7014))
+### Phase 7 — Node pass: SITE flag for all nodes ([7073-7079](../../MoM/src/AIMOVE.c#L7073-L7079))
 
 ```c
 for(itr = 0; itr < NUM_NODES; itr++)
 {
     p_node = &_NODES[itr];
-    assert(...); /* HACK */ ... range checks ...
-
-    wp = p_node->wp;
+    wp = p_node->wp;  /* OGBUG  OOB AVRL if _NODES[itr] record has out-of-range wp/wx/wy */
     xy_ofst = ((p_node->wy * WORLD_WIDTH) + p_node->wx);
 
     g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_SITE;
@@ -276,21 +263,19 @@ A square that's been the staging tile for an enemy army in a friendly wizard's t
 - **`(guardN_count & 0x0F)` low-nibble extraction** — the high nibble is the initial count (set by `Set_Upper_Lair_Guardian_Count` at world-gen); the low nibble is the live count. Strength contribution scales with live count. Faithful (asm:272, 305).
 - **No EMM restore at exit** — the function only calls `CONTXXX_Map()` on entry; there's no matching `EMMDATAH_Map()` at exit. The caller chain (downstream `AI_Set_Unit_Orders` Phase 5) handles the restore. Asm:16 has the entry call but no matching exit call before `retf` at line 522. Faithful.
 
-## Bug catalog (OG bugs + HACK mitigations)
+## Bug catalog (preserved OG bugs)
 
-The OG asm trusts every read-index. On 1990s DOS, an out-of-bounds read just returned whatever garbage was there and execution continued. On modern Windows, the same read can hit a guard page and raise an access violation, crashing the process. So production preserves the OG behavior *up to* the point of the OOB and then short-circuits with a `/* HACK */ continue;` to avoid the crash. The HACKs are crash-protection mitigations, not arbitrary additions — they sidestep specific OG bugs the OG would have done badly under any OS anyway.
+The OG asm trusts every read-index. On 1990s DOS, an out-of-bounds read just returned whatever garbage was there and execution continued — the garbage got summed/OR'd into `g_ai_evaluation_map[]` and quietly corrupted downstream AI targeting/movement decisions, but the process didn't crash. On modern Windows the same OOB read historically hit a guard page and raised an access violation (AVRL), which is why production carried `/* HACK */ continue;` guards for a period. With the static-pool memory subsystem now live, those OOB reads land on padded/scratch memory instead of guard pages — the AVRL is caught by the substrate, so the HACK guards were removed. The OG bugs themselves are preserved (garbage still gets read and written into the eval map, just harmlessly instead of crashily).
 
-| # | OG bug (preserved up to the crash point) | HACK mitigation | Line refs |
+| # | OG bug | Access sites | Semantic effect |
 |---|---|---|---|
-| **B1** | Unit with `owner_idx == ST_UNDEFINED` reaches `nonhostiles[unit_owner_idx]` (line 6882), indexing with `-1` → OOB read → modern-OS access violation. The OG comment at production line 6850 names this as a "(bad) design" choice: the OG explicitly sanitizes `owner_idx` to `ST_UNDEFINED` at turn start and then trusts the bitmap pass to skip such units somehow — except it doesn't. | `/* HACK */ if(owner_idx == ST_UNDEFINED) continue;` at [6851-6854](../../MoM/src/AIMOVE.c#L6851-L6854). | OGBUG comment at [6850](../../MoM/src/AIMOVE.c#L6850), inline OGBUG at [6881](../../MoM/src/AIMOVE.c#L6881). |
-| **B2** | Unit with `wp == ST_UNDEFINED` reaches `g_ai_evaluation_map[wp][...]` (line 6878), indexing the plane axis with `-1` → OOB. | `/* HACK */ if(wp == ST_UNDEFINED) continue;` at [6856-6859](../../MoM/src/AIMOVE.c#L6856-L6859). | Paired `assert(p_unit->wp != ST_UNDEFINED);` at [6855](../../MoM/src/AIMOVE.c#L6855) catches it in debug builds. |
-| **B3** | Lair / city / node with an out-of-range `(wp, wx, wy)` (corrupted record, save-load bug, partial init) reaches `g_ai_evaluation_map[wp][xy_ofst]` and indexes with garbage. The OG asm trusts these records and would OOB. | `/* HACK */ if(wp/wx/wy out of range) continue;` at four sites: lair pass 1 [6902-6911](../../MoM/src/AIMOVE.c#L6902-L6911), city pass [6935-6944](../../MoM/src/AIMOVE.c#L6935-L6944), lair pass 2 [6970-6979](../../MoM/src/AIMOVE.c#L6970-L6979), node pass [6998-7007](../../MoM/src/AIMOVE.c#L6998-L7007). | Paired `assert(...)` at each site (lines [6899-6901](../../MoM/src/AIMOVE.c#L6899-L6901), [6932-6934](../../MoM/src/AIMOVE.c#L6932-L6934), [6967-6969](../../MoM/src/AIMOVE.c#L6967-L6969), [6995-6997](../../MoM/src/AIMOVE.c#L6995-L6997)). |
+| **B1** | Unit with `owner_idx == ST_UNDEFINED` reaches `nonhostiles[unit_owner_idx]`, indexing with `-1`. AVRL under a naïve OS; safe read of adjacent scratch memory under the SRAM subsystem. Whatever byte sits at that scratch slot decides whether the NONHOSTILE flag fires. | Unit pass — [nonhostiles read at 7018](../../MoM/src/AIMOVE.c#L7018), [flag write at 7020](../../MoM/src/AIMOVE.c#L7020). Inline OGBUG comment at [6992](../../MoM/src/AIMOVE.c#L6992). | Spurious `AI_TARGET_NONHOSTILE` flag may set on the square (or not, depending on scratch value). Downstream targeting may treat it as friendly territory. |
+| **B2** | Unit with `wp == ST_UNDEFINED` (= -1) reaches `g_ai_evaluation_map[wp][...]`, indexing the plane axis with `-1`. AVRL under a naïve OS; safe read/write to padding under the SRAM subsystem. Root cause is upstream: a `Create_Unit` call site passes an uninitialized `wp` (e.g., `_players[player_idx].summon_wp` never re-initialized after banishment). See [OverSpel.c:842](../../MoM/src/OverSpel.c#L842), [HIRE.c:815](../../MoM/src/HIRE.c#L815), [Spells132.c:500](../../MoM/src/Spells132.c#L500), [NEXTTURN.c:985](../../MoM/src/NEXTTURN.c#L985). | Unit pass — inline OGBUG at [7004](../../MoM/src/AIMOVE.c#L7004); crash-site OGBUGs at [7014](../../MoM/src/AIMOVE.c#L7014) and [7020](../../MoM/src/AIMOVE.c#L7020). | Strength / NONHOSTILE writes go to scratch memory instead of a real plane, so the unit doesn't contribute to `g_ai_evaluation_map` on either Arcanus or Myrror. Silently under-counts strength for that square. |
+| **B3** | Lair / city / node with an out-of-range `(wp, wx, wy)` (corrupted record, save-load bug, partial init) reaches `g_ai_evaluation_map[wp][xy_ofst]` with garbage. The OG asm trusts these records unconditionally. Same substrate story — reads/writes land in padding/scratch, no AVRL. | Lair pass 1 [7039 / 7042](../../MoM/src/AIMOVE.c#L7039); city pass [7052 / 7056](../../MoM/src/AIMOVE.c#L7052); lair pass 2 [7068](../../MoM/src/AIMOVE.c#L7068); node pass [7078](../../MoM/src/AIMOVE.c#L7078). | Writes to scratch don't reach the real eval map; garbage-indexed reads (if any) return scratch values. Downstream sees an incomplete/off-plane record's contribution as missing. |
 
-The function's preamble at [AIMOVE.c:6792-6794](../../MoM/src/AIMOVE.c#L6792-L6794) acknowledges the situation:
+The OG author's stance on B1 is captured in the preserved inline comment at [AIMOVE.c:6992](../../MoM/src/AIMOVE.c#L6992) and echoed at the other OGBUG comment sites. The design apparently expected upstream code to prevent `ST_UNDEFINED` from ever leaking into this pass — but the sanitization at [AI_Next_Turn Phase 1](AIDUDES-AI_Next_Turn.md#phase-1--unit-position-sanity-180-202) *sets* `owner_idx = ST_UNDEFINED` on OOB units rather than removing them, so units with `owner_idx == ST_UNDEFINED` reach `AI_Evaluation_Map` routinely.
 
-> The implementation is still under reverse-engineering and contains defensive range checks and naming that do not yet fully describe the final intent of the original routine.
-
-These HACKs are necessary as long as the OG bug-classes above remain unfixed elsewhere (e.g., proper invariants on `_UNITS[]`/`_LAIRS[]`/`_CITIES[]`/`_NODES[]` initialization, or upstream prevention of `owner_idx == ST_UNDEFINED` leaking into this pass). If those root causes are addressed later, the HACKs become provably-dead defensive code and can be removed in a single sweep.
+**Fixing at the root** — proper invariants on `_UNITS[]` / `_LAIRS[]` / `_CITIES[]` / `_NODES[]` initialization, and upstream prevention of `owner_idx == ST_UNDEFINED` / `wp == ST_UNDEFINED` leaking here (e.g., a `Delete_Dead_Units` call between AI_Next_Turn Phase 1 and the per-wizard loop, or clean-slate re-initialization of `summon_wp` after banishment). These fixes belong upstream; `AI_Evaluation_Map` stays OG-faithful.
 
 ## Sub-functions / external calls
 
