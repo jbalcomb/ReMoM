@@ -54,3 +54,4 @@ Status legend: **[done-done]** reviewed 1:1 + doc + builds · **[impl]** substan
 - **Reachable & live:** the AI cast at [CMBTAI.c:521](../MoM/src/CMBTAI.c#L521) is inside `AI_BU_ProcessAction`'s live dispatch switch — no disable/TODO guard. The full selection → scoring → targeting chain runs in a real AI turn.
 - The cast entry has **no `__WIP` symbol** — the real `Combat_Cast_Spell` is what's called.
 - `impl` ≠ done-done: those bodies are real code that builds, but have **not** had the 1:1-against-asm fidelity pass. Elevating them is the remaining work.
+- **Exercised by tests:** the AI cast/summon path runs live in the combat characterization tests — combat scenario 1 has the AI defender summon a Fire Elemental mid-battle (pinned in `tests/assert_combat_s1.txt`), so `Combat_Cast_Spell` → selection/scoring → `AITP_Combat_Spell` and the summon resolution are covered by a deterministic baseline. See [__TODO-Combat.md § Test coverage](__TODO-Combat.md).

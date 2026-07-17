@@ -36,12 +36,25 @@ Legend: **[done]** reconstructed/reviewed · **[impl]** substantive, not yet don
 | **AI Combat Spell** | selection/scoring + `AITP_*` pickers — see [__TODO-Combat-AI-Spell.md](__TODO-Combat-AI-Spell.md) | **done / impl** (review-only) |
 | End / capture / strategic | `End_Of_Combat__WIP`, `STK_CaptureCity__WIP`, `STK_ComposeFleeLost__STUB`, `Strategic_Combat__WIP`, `Lair_Combat__WIP` (`Lair.c`) | **WIP** |
 
+## Test coverage
+
+Combat now has deterministic characterization tests (seed 12345); reconstruction work can be regression-checked against pinned baselines. See [BRA-Combat-Testing.md](#AI_Plans/BRA-Combat-Testing.md) / [PRD-Combat-Testing.md](#AI_Plans/PRD-Combat-Testing.md) for the channel model.
+
+| Channel | Path | Runner | CTest |
+|---|---|---|---|
+| Strategic (auto-resolve) | `Strategic_Combat__WIP`, headless | `HeMoM --combat` | `HeMoM_Combat_Strategic_*` (automated) |
+| Tactical (real battle screen) | `Combat_Screen__WIP`, windowed, scripted `.hms` | `ReMoMber --continue --scenario` | `Combat_S1_*`, `Combat_S2_*` — automated check vs committed baseline; windowed replay gated by `ENABLE_WINDOWED_COMBAT_TESTS` |
+
+- Scenario 1: open-field stack fight (Halberdiers vs Stag Beetles). Scenario 2: multi-turn city assault (razes Fa-rul). Assertions in `tests/assert_combat_s{1,2}.txt`; fixtures/baselines in `assets/combat_s{1,2}.*`.
+- **Tactical combat does not run headless** — the battle screen is entangled with the rendering/animation layer; the windowed path is authoritative. See the BRA doc for the substrate rationale.
+
 # To-Do List
 
 - [ ] **Battle host & turn flow** — reconstruct `Combat__WIP` / `Combat_Screen__WIP`; done-done `Combat_Next_Turn` (impl).
 - [ ] **Map build & spawn** — `Generate_Combat_Map__WIP`, `CMB_TileGen/Terrain_Init/Units_Init__WIP`, the `CMB_Spawn*__WIP` set.
 - [ ] **Unit action / attack / movement** — the `Battle_Unit_*` / `BU_*__WIP` set and `Move_Battle_Unit__WIP` (the largest remaining cluster).
 - [ ] **Draw layer** — `CMB_Compose*__WIP`, `Combat_Screen_Map_Draw*__WIP`, grid-entity + figure-effect helpers.
+- [ ] **Water / shore combat rendering** — combat on a coastal/ocean square (`cts_Water`) is unreconstructed: `Load_Combat_Terrain_Pictures` early-returns for `cts_Water` (no tileset loaded), and `CMB_ComposeBackgrnd__WIP` then `assert`s on ocean battlefield tiles (`btt_Ocean` 48–51 vs its `< 48` guard). Surfaced when a tactical combat lands on a shore tile. OG supports coastal combat, so this is a reconstruction gap, not "unsupported."
 - [ ] **Human spellcasting UI** — `Combat_Spell_Target_Screen__WIP`, `Do_Legal_Spell_Check__WIP`, `Combat_Spellbook_Build__WIP`.
 - [ ] **Resolution** — `End_Of_Combat__WIP`, `STK_CaptureCity__WIP`, `Strategic_Combat__WIP`, `Lair_Combat__WIP`.
 - [ ] **AI Combat** — finish the review/reconstruction tracked in [__TODO-Combat-AI.md](__TODO-Combat-AI.md).

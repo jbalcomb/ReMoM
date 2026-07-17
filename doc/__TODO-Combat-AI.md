@@ -26,8 +26,9 @@ Status legend: **[done-done]** reviewed 1:1 + doc · **[impl]** substantive body
 |---|---|---|---|
 | `Combat_Next_Turn` | [Combat.c:4528](../MoM/src/Combat.c#L4528) | **impl** | turn-flow: cp/defender/human turns, `m_cp_took_turn` gate; **was `CMB_ProgressTurnFlow__WIP`** |
 | `Auto_Cast_Spell_And_Do_Combat_Turn` | [Combat.c:4508](../MoM/src/Combat.c#L4508) | **impl** | AI casts a spell then does its unit turn; **was `AI_CMB_PlayTurn__WIP`** |
-| `Auto_Do_Combat_Turn` | [Combat.c:4522](../MoM/src/Combat.c#L4522) (call) | (not assessed) | the unit-movement half of the AI turn |
+| `Auto_Do_Combat_Turn` | [Combat.c:4522](../MoM/src/Combat.c#L4522) (call) | **impl** | the unit-movement half of the AI turn; **runs substantively** — observed executing real ranged/melee `CMB_AttackRoll`/`CMB_DefenseRoll` and summoning (Fire Elemental) under `HeMoM --combat`/`--combat-tactical` |
 | `AI_BU_ProcessAction` | [CMBTAI.c:268](../MoM/src/CMBTAI.c#L268) | **impl** | action-dispatch switch; contains the AI cast call at [521](../MoM/src/CMBTAI.c#L521) |
+| `AI_BU_ProcessAction` → `case bua_Healing` | [CMBTAI.c:515](../MoM/src/CMBTAI.c#L515) | **STUB** | AI combat-heal action is unreconstructed: `STU_DEBUG_BREAK(); /* DNE in Dasm */`. Any AI unit assigned `bua_Healing` aborts the battle. Surfaced by tactical AI-vs-AI testing. |
 | `Choose_Target_And_Action` | [CMBTAI.c:1153](../MoM/src/CMBTAI.c#L1153) | **impl** | per-unit target/action chooser (Summon Demon, Doom Bolt, Fireball, item/spell, scoring); **was `AI_BU_SelectAction__WIP`** |
 | `AI_BU_AssignAction` | [CMBTAI.c:968](../MoM/src/CMBTAI.c#L968) | **impl** | assigns the chosen action |
 | `AI_BU_GetAttackValue` | Combat.c | **done-done** | tracker `[x]` |
@@ -41,7 +42,8 @@ Status legend: **[done-done]** reviewed 1:1 + doc · **[impl]** substantive body
 
 - [ ] **Done-done the turn drivers** — `Combat_Next_Turn`, `Auto_Cast_Spell_And_Do_Combat_Turn`: 1:1 walkthrough vs their `ovr98` disassembly + docs + checkboxes.
 - [ ] **Done-done the per-unit action chain** — `AI_BU_ProcessAction`, `Choose_Target_And_Action`, `AI_BU_AssignAction` (all substantive in `CMBTAI.c`).
-- [ ] **Assess `Auto_Do_Combat_Turn`** — not yet classified (stub vs substantive); it is the movement half of the AI turn.
+- [ ] **Reconstruct `bua_Healing`** — the `case bua_Healing` arm of `AI_BU_ProcessAction` ([CMBTAI.c:515](../MoM/src/CMBTAI.c#L515)) is a bare `STU_DEBUG_BREAK()` (DNE in Dasm). Implement the AI combat-heal action from the `ovr98` disassembly so AI-vs-AI battles with a healer don't abort.
+- [x] **Assess `Auto_Do_Combat_Turn`** — classified **impl** (substantive): confirmed executing real attack/defense rolls and summons during combat testing.
 - [ ] **Reconstruct the WIP movement helpers** — `AI_MoveBattleUnits__WIP`, `AI_RestrictToCity__WIP`.
 - [ ] **Tracker hygiene** — [stub_wip_todo.md](#TODO/stub_wip_todo.md) still lists `AI_CMB_PlayTurn__WIP` / `AI_BU_ProcessAction__WIP` / `AI_BU_SelectAction__WIP` / `AI_BU_AssignAction__WIP` as `[ ]`, but their renamed/real bodies exist and are substantive; reconcile.
 
@@ -52,4 +54,5 @@ Status legend: **[done-done]** reviewed 1:1 + doc · **[impl]** substantive body
   - `CMB_ProgressTurnFlow__WIP` → `Combat_Next_Turn` ([Combat.c:4528](../MoM/src/Combat.c#L4528))
   - `AI_BU_SelectAction__WIP` → `Choose_Target_And_Action` ([CMBTAI.c:1153](../MoM/src/CMBTAI.c#L1153))
 - The AI combat turn is **reachable and running** — `Combat_Next_Turn` calls `Auto_Cast_Spell_And_Do_Combat_Turn` for the cp/defender/auto-combat human ([4539](../MoM/src/Combat.c#L4539)/[4546](../MoM/src/Combat.c#L4546)/[4552](../MoM/src/Combat.c#L4552)).
-- Down here the work is mostly **review (impl → done-done)**, not fresh reconstruction, except the two `__WIP` movement helpers.
+- Down here the work is mostly **review (impl → done-done)**, not fresh reconstruction, except the two `__WIP` movement helpers and the `bua_Healing` stub.
+- **Now regression-testable:** the AI combat turn is exercised end-to-end by the combat characterization tests (`HeMoM --combat` strategic, plus tactical scenarios via `ReMoMber --scenario`); see [__TODO-Combat.md § Test coverage](__TODO-Combat.md). Reconstructing/finalizing the functions above can be validated against the pinned baselines.
