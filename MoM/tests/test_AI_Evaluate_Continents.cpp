@@ -267,7 +267,11 @@ TEST_F(AIEvaluateContinentsTest, SeededLandmassesProduceMeaningfulClassification
     AI_Evaluate_Continents(0);
 
     EXPECT_EQ(_ai_continents.plane[ARCANUS_PLANE].player[0].type_array[1], lmt_Contested);
-    EXPECT_EQ(_ai_continents.plane[ARCANUS_PLANE].player[0].wx_array[1], 10);
+    /* The stage square deliberately avoids occupied / target-site squares
+       (g_ai_evaluation_map != 0).  (10,10) is flagged above, so
+       AI_Evaluate_Continents stages on the nearest unoccupied land square of the
+       landmass -- (12,10) -- not the city square itself. */
+    EXPECT_EQ(_ai_continents.plane[ARCANUS_PLANE].player[0].wx_array[1], 12);
     EXPECT_EQ(_ai_continents.plane[ARCANUS_PLANE].player[0].wy_array[1], 10);
 
     EXPECT_EQ(_ai_continents.plane[ARCANUS_PLANE].player[0].type_array[2], lmt_NoOwnCityAndAllyHasCity);

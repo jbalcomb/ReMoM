@@ -1131,18 +1131,21 @@ vs. Square_Is_OceanLike()?
 int16_t Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
-    int16_t is_embarkable = 0;  // DNE in Dasm
     terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
-    if(terrain_type == tt_BugGrass)   { is_embarkable = ST_FALSE; }
-    if(terrain_type == tt_Lake)       { is_embarkable = ST_FALSE; }
-    if(terrain_type < _Shore11101110) { is_embarkable = ST_TRUE;  }
-    if(terrain_type < _Shore10111000) { is_embarkable = ST_FALSE; }
-    if(terrain_type < tte_Grasslands) { is_embarkable = ST_TRUE;  }
-    if(terrain_type < _Shore00001R10) { is_embarkable = ST_FALSE; }
-    if(terrain_type < _River1100_3)   { is_embarkable = ST_TRUE;  }
-    if(terrain_type < _Shore1100000R) { is_embarkable = ST_FALSE; }
-    if(terrain_type < _Shore1000111R) { is_embarkable = ST_TRUE;  }
-    return is_embarkable;
+    /* CLAUDE  In the Dasm each check jumps straight to its return; the earlier
+       is_embarkable accumulator (DNE in Dasm) let the later `<` bands overwrite
+       the BugGrass/Lake and range results (so everything below the shore range
+       came back ST_TRUE).  Restore the short-circuit early returns. */
+    if(terrain_type == tt_BugGrass)   { return ST_FALSE; }
+    if(terrain_type == tt_Lake)       { return ST_FALSE; }
+    if(terrain_type < _Shore11101110) { return ST_TRUE;  }
+    if(terrain_type < _Shore10111000) { return ST_FALSE; }
+    if(terrain_type < tte_Grasslands) { return ST_TRUE;  }
+    if(terrain_type < _Shore00001R10) { return ST_FALSE; }
+    if(terrain_type < _River1100_3)   { return ST_TRUE;  }
+    if(terrain_type < _Shore1100000R) { return ST_FALSE; }
+    if(terrain_type < _Shore1000111R) { return ST_TRUE;  }
+    return ST_FALSE;
 }
 
 
