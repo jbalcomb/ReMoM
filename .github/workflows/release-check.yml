@@ -42,7 +42,9 @@ jobs:
 
   windows-release:
     name: Windows MSVC Release
-    runs-on: windows-latest
+    # Pinned: windows-latest now ships VS2026, but the MSVC-release preset uses the
+    # "Visual Studio 17 2022" generator. windows-2022 is the image that has VS2022.
+    runs-on: windows-2022
 
     steps:
       - uses: actions/checkout@v6
