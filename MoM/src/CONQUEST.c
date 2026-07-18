@@ -9,7 +9,6 @@ Module: ERIC
 */
 
 #include "../../MoX/src/MOX_TYPE.h"
-
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/FLIC_Draw.h"
@@ -20,19 +19,19 @@ Module: ERIC
 #include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/Timer.h"
 #include "../../MoX/src/Util.h"
-
 #include "../../MoX/src/MOM_DAT.h"  /* _cities[], _UNITS[] */
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOM_DEF.h"  /* NEUTRAL_PLAYER_IDX */
 #include "../../MoX/src/MOX_DEF.h"  /* NEUTRAL_PLAYER_IDX */
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
-#include "UNITTYPE.h"  /* _unit_type_table[] */
 
 #include "City_ovr55.h"
 #include "CITYCALC.h"
 #include "DIPLOMAC.h"
 #include "MainScr.h"  /* Play_Background_Music() */
+#include "Spellbook.h"
 #include "Spells128.h"
+#include "UNITTYPE.h"  /* _unit_type_table[] */
 #include "WZD_o059.h"
 
 #include "../../ext/stu_compat.h"
@@ -456,19 +455,14 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
 
 
 // WZD 093p02
-// drake178: WIZ_Conquest()
 /*
-; plays the conquest animation (banishment or defeat)
-; and, if the conqueror is the human player, sets the
-; bit in their Defeated_Wizard bitfield
+"banishes", "defeats", "destroy", "fortress"
+WIZ_Conquer()
+    Conquest_Animation(city_owner_idx, player_idx);
+Banish_Wizard()
+    Conquest_Animation(loser_idx, winner_idx);
 */
-/*
-"baniches", "defeats", "destroy", "fortress"
-WIZ_Conquer__WIP()
-    WIZ_Conquest__WIP(city_owner_idx, player_idx);
-
-*/
-void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
+void Conquest_Animation(int16_t city_owner_idx, int16_t player_idx)
 {
     char Space_String[4] = { 0, 0, 0, 0 };
     int16_t city_count = 0;
@@ -477,11 +471,9 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
     int16_t Esc_Hotkey_Index = 0;
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
-    int16_t itr_cities = 0;  // _SI_
-    SAMB_ptr wizlab_seg = 0;  // _SI_
-
+    int16_t itr_cities = 0;
+    SAMB_ptr wizlab_seg = 0;
     stu_strcpy(Space_String, cnst_Conquest_Msg0__ovr093);  // char cnst_Conquest_Msg0__ovr093[] = " ";
-
     if(
         (player_idx != NEUTRAL_PLAYER_IDX)
         &&
@@ -490,58 +482,37 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
     {
         return;
     }
-
     if(player_idx == _human_player_idx)
     {
-
         Set_Bit_Field_Near(city_owner_idx, (char *)&_players[_human_player_idx].Defeated_Wizards);
-
     }
-
     GAME_Conquered_Wiz = city_owner_idx;
-
     GAME_Conquering_Wiz = player_idx;
-
     Stop_All_Sounds__STUB();
-
     Set_Mouse_List(1, mouse_list_none);
     Clear_Fields();
     Fade_Out();
     Set_Page_Off();
     Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
     Toggle_Pages();
-
     // ; count the cities of the conquered wizard
     for(itr_cities = 0, city_count = 0; ((itr_cities < _cities) && (city_count < 2)); itr_cities++)
     {
-
         if(_CITIES[itr_cities].owner_idx == GAME_Conquered_Wiz)
         {
-
             city_count++;
-
         }
-
     }
-
     Load_Palette(3, ST_UNDEFINED, ST_NULL);  // ; WILZAB - conquest palette
-
     Apply_Palette();
-
     Set_Page_Off();
-
     // WIZLAB.LBX, 019    "WIZLAB"      ""
     wizlab_seg = LBX_Reload(wizlab_lbx_file__ovr093, 19, _screen_seg);
-
     FLIC_Draw(0, 0, wizlab_seg);
-
     Copy_Off_To_Back();
-
     Copy_Off_To_Page4();
-
     GUI_String_1 = (char *)Near_Allocate_First(100);
-    GUI_String_2 = (char *)Near_Allocate_First(100);
-
+    GUI_String_2 = (char *)Near_Allocate_Next(100);
     if(GAME_Conquering_Wiz != NEUTRAL_PLAYER_IDX)
     {
         stu_strcpy(GUI_String_1, _players[player_idx].name);
@@ -577,7 +548,6 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
         }
         stu_strcat(GUI_String_1, cnst_Dot7);
     }
-
     // WIZLAB.LBX, 000    "MERLIN"      ""
     // WIZLAB.LBX, 001    "RAVEN"       ""
     // WIZLAB.LBX, 002    "SHAREE"      ""
@@ -593,7 +563,6 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
     // WIZLAB.LBX, 012    "TLALOC"      ""
     // WIZLAB.LBX, 013    "KALI"        ""
     wizlab_wizard_seg__ovr093 = LBX_Reload(wizlab_lbx_file__ovr093, _players[city_owner_idx].wizard_id, _screen_seg);
-
     // CONQUEST.LBX, 000    "MERLIN"    ""
     // CONQUEST.LBX, 001    "SHAMAN"    ""
     // CONQUEST.LBX, 002    "SHAREE"    ""
@@ -609,16 +578,12 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
     // CONQUEST.LBX, 012    "AZTEC"     ""
     // CONQUEST.LBX, 013    "KALI"      ""
     conquest_wizard_seg = LBX_Reload_Next(conquest_lbx_file__ovr093, _players[player_idx].wizard_id, _screen_seg);
-
     // CONQUEST.LBX, 014    "CONEHEAD"  ""
     conquest_conehead_seg = LBX_Reload_Next(conquest_lbx_file__ovr093, 14, _screen_seg);
-
     // CONQUEST.LBX, 015    "AXEBOY"    ""
     conquest_axeboy_seg = LBX_Reload_Next(conquest_lbx_file__ovr093, 15, _screen_seg);
-
     // CONQUEST.LBX, 017    "ZAP"       ""
     Open_File_Animation__HACK(conquest_lbx_file__ovr093, 17);
-
     if(magic_set.background_music == ST_TRUE)
     {
         itr_cities = 109;  /* MUSIC_WIN_Military */
@@ -626,307 +591,283 @@ void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx)
         {
             itr_cities = 110;  /* MUSIC_LOSE_Military */
         }
-
         Music_Data_Seg = LBX_Reload(music_lbx_file__ovr093, itr_cities, SND_Music_Segment);
         Music_Data_Seg_size = lbxload_entry_length;
-
         Play_Sound(Music_Data_Seg, Music_Data_Seg_size);
-
     }
-
-    Assign_Auto_Function(Conquest_Draw__WIP, 6);
-
+    Assign_Auto_Function(Conquest_Animation_Draw, 6);
     m_conquest_anim_stage = 0;
-
     leave_screen = ST_FALSE;
-
     for(itr_cities = 0; itr_cities < 3; itr_cities++)
     {
-
         Mark_Time();
-
-        Conquest_Draw__WIP();
-
+        Conquest_Animation_Draw();
         m_conquest_anim_stage = 0;
-
         PageFlip_FX();
-
         Release_Time(5);
-
     }
-
     m_conquest_anim_stage = 0;
-
     Set_Input_Delay(3);
-
     while(leave_screen == ST_FALSE)
     {
-
         Mark_Time();
-
         Clear_Fields();
-
         Esc_Hotkey_Index = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)cnst_HOTKEY_Esc10[0], ST_UNDEFINED);
-
         input_field_idx = Get_Input();
-
         if(input_field_idx == Esc_Hotkey_Index)
         {
-
             leave_screen = ST_UNDEFINED;
-
         }
-
         if(m_conquest_anim_stage > 30)
         {
-
             leave_screen = ST_UNDEFINED;
-
         }
-
         if(leave_screen == ST_FALSE)
         {
-
-            Conquest_Draw__WIP();
-
+            Conquest_Animation_Draw();
             PageFlip_FX();
-
             Release_Time(5);
-
         }
-
     }
-
     Stop_All_Sounds__STUB();
     Clear_Fields();
     Reset_Window();
     Clear_Fields();
     Deactivate_Auto_Function();
     Fade_Out();
-
     Load_Palette(0, ST_UNDEFINED, ST_NULL);  // ; EMPERATO - main game palette
-
     Reset_Cycle_Palette_Color();
-
     Clear_Palette_Changes(0, 255);
-
     Set_Palette_Changes(0, 223);
-
     Calculate_Remap_Colors();
-
     Set_Page_Off();
     Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
-
     Toggle_Pages();
-
     Set_Mouse_List(1, mouse_list_default);
-
-    // DOMSDOS  Play_Background_Music__STUB();
     Play_Background_Music();
-
 }
 
 
 // WZD 093p03
-// drake178: GAME_DrawConqstAnim()
-/*
-; plays a frame of the conquest animation based on the
-; global GAME_ConqstAnimStage variable (which it
-; increments in the end), changing memory allocation
-; halfway through to load and play the appropriate
-; scream sound
-*/
-/*
-
-*/
-void Conquest_Draw__WIP(void)
+void Conquest_Animation_Draw(void)
 {
-
     Set_Page_Off();
-
     Reset_Window();
-
     Copy_Back_To_Off();
-
     if(m_conquest_anim_stage == 0)
     {
-
         FLIC_Draw(69, 75, wizlab_wizard_seg__ovr093);
-
     }
-
     if(m_conquest_anim_stage > 0)
     {
-
         if(m_conquest_anim_stage < 7)
         {
-
-            GAME_DrawConquerors__STUB();
-
+            Conquest_Animation_Draw_Conquerors_Approach();
         }
-        else if(m_conquest_anim_stage < 7)
+        else
         {
-
-            GAME_DrawConquerors__STUB();
-
-        }
-        else if(m_conquest_anim_stage == 7)
-        {
-
-            GAME_Conqest_Scene2__STUB();
-
-        }
-        else if(m_conquest_anim_stage < 11)
-        {
-
-            GAME_DrawZappedWiz__STUB(1);
-
-        }
-        else if(m_conquest_anim_stage < 19)
-        {
-
-            if(
-                (GAME_Conquering_Wiz != NEUTRAL_PLAYER_IDX)
-                &&
-                (
-                    (m_conquest_anim_stage == 11)
-                    ||
-                    (magic_set.sound_effects == ST_TRUE)
-                )
-            )
+            if(m_conquest_anim_stage == 7)
             {
-
-                Play_Sound(SND_GAME_Scream, SND_GAME_Scream_size);
-
+                Conquest_Animation_Draw_Setup_Zap_Scene();
             }
-
-            GAME_DrawZapping__STUB();
-
+            if(m_conquest_anim_stage < 11)
+            {
+                Conquest_Animation_Draw_Zapped_Wizard(1);
+            }
+            else if(m_conquest_anim_stage < 19)
+            {
+                if(
+                    (GAME_Conquering_Wiz != NEUTRAL_PLAYER_IDX)
+                    &&
+                    (
+                        (m_conquest_anim_stage == 11)
+                        ||
+                        (magic_set.sound_effects == ST_TRUE)
+                    )
+                )
+                {
+                    Play_Sound(SND_GAME_Scream, SND_GAME_Scream_size);
+                }
+                Conquest_Animation_Draw_Zap_Strike();
+            }
+            else if(m_conquest_anim_stage < 23)
+            {
+                Conquest_Animation_Draw_Zapped_Wizard(0);
+            }
         }
-        else if(m_conquest_anim_stage < 23)
-        {
-
-            GAME_DrawZappedWiz__STUB(0);
-
-        }
-
     }
-
     if(
         (m_conquest_anim_stage > 6)
         &&
         (GAME_Conquering_Wiz == NEUTRAL_PLAYER_IDX)
     )
     {
-
         FLIC_Draw(69, 75, wizlab_wizard_seg__ovr093);
-
-        sub_79907__WIP();
-
+        Conquest_Animation_Draw_End_Pose();
     }
-
     Set_Font_Style_Outline_Heavy(5, 5, 0, 0);
-
     Set_Outline_Color(1);
-
     Print_Centered(160, 6, GUI_String_1);
-
     m_conquest_anim_stage++;
-
 }
 
 
 // WZD 093p04
-// drake178: GAME_DrawConquerors()
-/*
-*/
-/*
-
-*/
-void GAME_DrawConquerors__STUB(void)
+void Conquest_Animation_Draw_Conquerors_Approach(void)
 {
-
-
-
+    int si;
+    int di;
+    FLIC_Draw(0x45, 0x4B, wizlab_wizard_seg__ovr093);
+    Set_Window(0, 0, 0x13F, 0xC7);
+    si = 0x42 - ((m_conquest_anim_stage - 1) * 0x0B);
+    di = -(m_conquest_anim_stage + 5);
+    Clipped_Draw(si + 0xFC, di + 0x58, conquest_axeboy_seg);
+    if(GAME_Conquering_Wiz != NEUTRAL_PLAYER_IDX)
+    {
+        si = 0x5A - ((m_conquest_anim_stage - 1) * 0x0F);
+        di = 0x4E - ((m_conquest_anim_stage - 1) * 0x0D);
+        Clipped_Draw(si + 0xD0, di + 0x3C, conquest_wizard_seg);
+    }
+    si = 0x1E - ((m_conquest_anim_stage - 1) * 5);
+    di = 0x3C - ((m_conquest_anim_stage - 1) * 10);
+    Clipped_Draw(si + 0x64, di + 0x78, conquest_conehead_seg);
 }
 
 
 // WZD 093p05
-// drake178: GAME_Conqest_Scene2()
-/*
-; re-saves draw frame 3 with conehead, axeboy, and the
-; conquering wizard already present, loads new
-; animations, and loads the appropriate scream sound
-*/
-/*
-
-*/
-void GAME_Conqest_Scene2__STUB(void)
+void Conquest_Animation_Draw_Setup_Zap_Scene(void)
 {
-
+    int16_t Entry_Index = 0;
+    int16_t si = 0;
+    int16_t di = 0;
+    int16_t wizard_id = 0;
+    unsigned int bx = 0;
     if(GAME_Conquering_Wiz == NEUTRAL_PLAYER_IDX)
     {
         return;
     }
-
-
-
+    Set_Window(0, 0, 319, 199);
+    si = 66 - (m_conquest_anim_stage - 1) * 11;
+    di = -(m_conquest_anim_stage + 5);
+    Clipped_Draw(si + 252, di + 88, conquest_axeboy_seg);
+    si = 90 - (m_conquest_anim_stage - 1) * 15;
+    di = 78 - (m_conquest_anim_stage - 1) * 13;
+    Clipped_Draw(si + 208, di + 60, conquest_wizard_seg);
+    si = 30 - (m_conquest_anim_stage - 1) * 5;
+    di = 60 - (m_conquest_anim_stage - 1) * 10;
+    Clipped_Draw(si + 100, di + 120, conquest_conehead_seg);
+    Copy_Off_To_Back();
+    wizlab_wizard_seg__ovr093 = LBX_Reload(wizlab_lbx_file__ovr093, _players[GAME_Conquered_Wiz].wizard_id, _screen_seg);
+    conquest_wizard_seg = LBX_Reload_Next(conquest_lbx_file__ovr093, _players[GAME_Conquering_Wiz].wizard_id + 33, _screen_seg);
+    IMG_GAME_ZappedWiz = LBX_Reload_Next(conquest_lbx_file__ovr093, _players[GAME_Conquered_Wiz].wizard_id + 18, _screen_seg);
+    IMG_GAME_GrowZap = LBX_Reload_Next(conquest_lbx_file__ovr093, 16, _screen_seg);
+    conquest_conehead_seg = LBX_Reload_Next(conquest_lbx_file__ovr093, 32, _screen_seg);
+    if(magic_set.sound_effects == 1)
+    {
+        wizard_id = _players[GAME_Conquered_Wiz].wizard_id;
+        bx = wizard_id - 2;
+        if(bx > 11)
+        {
+            Entry_Index = SFX_MaleScream;
+        }
+        else
+        {
+            switch(bx)
+            {
+                case 0:  /* Sharee */
+                case 6:  /* Kali */
+                case 9:  /* Ariel */
+                case 10: /* Freya */
+                    Entry_Index = SFX_FemaleScream;
+                    break;
+                default:
+                    Entry_Index = SFX_MaleScream;
+                    break;
+            }
+        }
+        SND_GAME_Scream = LBX_Reload_Next(soundfx_lbx_file__ovr093, Entry_Index, _screen_seg);
+    }
+    return;
 }
 
 
 // WZD 093p06
-// drake178: GAME_DrawZappedWiz()
-/*
-*/
-/*
-
-*/
-void GAME_DrawZappedWiz__STUB(int16_t flag)
+void Conquest_Animation_Draw_Zapped_Wizard(int16_t flag)
 {
-
-
-
+    int16_t Zap_Frame_Count = 0;
+    int16_t frame = 0;
+    if(GAME_Conquering_Wiz == NEUTRAL_PLAYER_IDX)
+    {
+        return;
+    }
+    Zap_Frame_Count = FLIC_Get_FrameCount(IMG_GAME_GrowZap);
+    frame = FLIC_Get_CurrentFrame(IMG_GAME_GrowZap);
+    if(flag == ST_TRUE)
+    {
+        FLIC_Draw(0x45, 0x4B, wizlab_wizard_seg__ovr093);
+        FLIC_Draw(0xB1, 0x3E, IMG_GAME_GrowZap);
+    }
+    else
+    {
+        FLIC_Draw(0xB1, 0x3E, IMG_GAME_GrowZap);
+        Set_Animation_Frame(IMG_GAME_GrowZap, frame - 1);
+        frame = FLIC_Get_CurrentFrame(IMG_GAME_ZappedWiz);
+        if(frame <= 3)
+        {
+            switch(frame)
+            {
+                case 3:
+                    Set_Animation_Frame(IMG_GAME_ZappedWiz, 0);
+                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
+                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
+                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
+                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
+                    break;
+                case 2:
+                    Set_Animation_Frame(IMG_GAME_ZappedWiz, 0);
+                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
+                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
+                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
+                    break;
+                case 1:
+                    Set_Animation_Frame(IMG_GAME_ZappedWiz, 0);
+                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
+                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
+                    break;
+                case 0:
+                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
+                    break;
+            }
+        }
+    }
+    Clipped_Draw(0xD0, 0x3C, conquest_wizard_seg);
+    Clipped_Draw(0x64, 0x78, conquest_conehead_seg);
 }
 
 
 // WZD 093p07
-// drake178: GAME_DrawZapping()
-/*
-*/
-/*
-
-*/
-void GAME_DrawZapping__STUB(void)
+void Conquest_Animation_Draw_Zap_Strike(void)
 {
-
-
-    
+    if(GAME_Conquering_Wiz == NEUTRAL_PLAYER_IDX)
+    {
+        return;
+    }
+    FLIC_Draw(0x45, 0x4B, wizlab_wizard_seg__ovr093);
+    Draw_File_Animation();
+    Clipped_Draw(0xD0, 0x3C, conquest_wizard_seg);
+    Clipped_Draw(0x64, 0x78, conquest_conehead_seg);
 }
 
 
 // WZD 093p08
-// drake178: sub_79907()
-/*
-    Draws Axeboy and Conehead, and maybe Conquering Wizard.
-
-If the conquerer is the neutral player, then do not draw a wizard.
-But, only called is GAME_Conquering_Wiz == NEUTRAL_PLAYER_IDX?!?
-
-*/
-void sub_79907__WIP(void)
+void Conquest_Animation_Draw_End_Pose(void)
 {
-
     Clipped_Draw(252, 88, conquest_axeboy_seg);
-
     if(GAME_Conquering_Wiz != NEUTRAL_PLAYER_IDX)
     {
-
         Clipped_Draw(208, 60, conquest_wizard_seg);
-
     }
-
     Clipped_Draw(100, 120, conquest_conehead_seg);
-
 }
 
 

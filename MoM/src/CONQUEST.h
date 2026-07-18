@@ -27,25 +27,25 @@ extern "C" {
 void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_idx);
 
 // WZD 093p02
-void WIZ_Conquest__WIP(int16_t city_owner_idx, int16_t player_idx);
+void Conquest_Animation(int16_t city_owner_idx, int16_t player_idx);
 
 // WZD 093p03
-void Conquest_Draw__WIP(void);
+void Conquest_Animation_Draw(void);
 
 // WZD 093p04
-void GAME_DrawConquerors__STUB(void);
+void Conquest_Animation_Draw_Conquerors_Approach(void);
 
 // WZD 093p05
-void GAME_Conqest_Scene2__STUB(void);
+void Conquest_Animation_Draw_Setup_Zap_Scene(void);
 
 // WZD 093p06
-void GAME_DrawZappedWiz__STUB(int16_t flag);
+void Conquest_Animation_Draw_Zapped_Wizard(int16_t flag);
 
 // WZD 093p07
-void GAME_DrawZapping__STUB(void);
+void Conquest_Animation_Draw_Zap_Strike(void);
 
 // WZD 093p08
-void sub_79907__WIP(void);
+void Conquest_Animation_Draw_End_Pose(void);
 
 // WZD 093p09
 int16_t CP_Is_Dead(void);
