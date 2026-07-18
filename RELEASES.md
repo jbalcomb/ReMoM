@@ -50,7 +50,10 @@ see [Future phase — Dev / Modder tooling](#future-phase--dev--modder-tooling).
 | Windows x64 | `ReMoM-<ver>-Windows-AMD64.zip`, NSIS `.exe` installer | native **Win32** | **Silent** — the Win32 backend links no audio library yet. Self-contained (no DLLs). |
 | Linux x86_64 | `ReMoM-<ver>-x86_64.AppImage` (recommended), `ReMoM-<ver>-Linux-*.zip` / `.tar.gz` | **SDL2** + SDL2_mixer | The **AppImage bundles SDL** (via `linuxdeploy`) and is self-contained. The plain ZIP/TGZ does **not** bundle SDL — use it only if SDL2 is already installed. |
 | ~~macOS arm64~~ | — | — | **Deferred (TBD)** — does not ship in the current release; arm64 link fails on the `pack(2)` DOS structs. See *Known limitations* below. |
-| Source | `ReMoM-<ver>-Source.zip` / `.tar.gz` | — | Excludes `assets/`, build dirs, and `.git`. |
+
+(No source package is shipped — the tree carries ~100 MB of docs, IDE packages, and
+reverse-engineering reference material that a CPack source tarball would sweep in.
+Source lives on GitHub; a curated source distribution is out of scope for v0.x.)
 
 What the **player must supply** (documented in `PLAYING.md`): every `.LBX` file
 plus `CONFIG.MOM` from an original Master of Magic v1.31 (DOS) installation,

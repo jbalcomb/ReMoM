@@ -154,9 +154,6 @@ jobs:
       - name: Package binaries (ZIP + TGZ, engine-only)
         run: cmake --build out/build/clang-release --target package
 
-      - name: Package source (ZIP + TGZ)
-        run: cmake --build out/build/clang-release --target package_source
-
       - name: Upload Linux binary artifact
         uses: actions/upload-artifact@v6
         with:
@@ -165,14 +162,6 @@ jobs:
             ReMoM-*.AppImage
             out/build/clang-release/ReMoM-*-Linux-*.zip
             out/build/clang-release/ReMoM-*-Linux-*.tar.gz
-
-      - name: Upload source artifact
-        uses: actions/upload-artifact@v6
-        with:
-          name: ReMoM-source
-          path: |
-            out/build/clang-release/ReMoM-*-Source.zip
-            out/build/clang-release/ReMoM-*-Source.tar.gz
 
   # ── macOS (AppleClang, SDL2, self-contained ZIP via dylibbundler) ──────
   macos:
@@ -253,4 +242,3 @@ jobs:
           files: |
             dist/ReMoM-windows-x64/**/*
             dist/ReMoM-linux-x86_64/**/*
-            dist/ReMoM-source/**/*
