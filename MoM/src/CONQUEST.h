@@ -66,11 +66,10 @@ void GAME_LimboFallAnim__STUB(int16_t player_idx);
 int16_t WIZ_Banishment__STUB(int16_t loser_idx, int16_t winner_idx);
 
 // WZD 093p15
-// GAME_ReturnDialog()
+void Return_Animation(int16_t player_idx);
 
 // WZD 093p16
-// GAME_DrawReturnAnim()
-
+void Return_Animation_Draw(void);
 
 
 

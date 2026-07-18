@@ -81,7 +81,7 @@ char str_empty_string__ovr093[] = "";
 char str_JENNY__ovr093[] = "JENNY";
 
 // WZD dseg:5204
-char cnst_Conquest_Msg0__ovr093[] = " ";
+char str_SPACE__ovr093[] = " ";
 
 // WZD dseg:5206
 char wizlab_lbx_file__ovr093[] = "WIZLAB";
@@ -167,7 +167,7 @@ uint32_t SND_GAME_Scream_size;  // DNE in Dasm
 // WZD dseg:C5C8
 int16_t m_conquest_anim_stage;
 // WZD dseg:C5CA
-SAMB_ptr IMG_GAME_ZappedWiz;
+SAMB_ptr conquest_effect_seg;
 // WZD dseg:C5CC
 SAMB_ptr IMG_GAME_GrowZap;
 // WZD dseg:C5CE
@@ -468,12 +468,12 @@ void Conquest_Animation(int16_t city_owner_idx, int16_t player_idx)
     int16_t city_count = 0;
     SAMB_ptr Music_Data_Seg = 0;
     uint32_t Music_Data_Seg_size = 0;  // HACK  DNE in Dasm
-    int16_t Esc_Hotkey_Index = 0;
+    int16_t full_screen_esc = 0;
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
     int16_t itr_cities = 0;
     SAMB_ptr wizlab_seg = 0;
-    stu_strcpy(Space_String, cnst_Conquest_Msg0__ovr093);  // char cnst_Conquest_Msg0__ovr093[] = " ";
+    stu_strcpy(Space_String, str_SPACE__ovr093);  // char str_SPACE__ovr093[] = " ";
     if(
         (player_idx != NEUTRAL_PLAYER_IDX)
         &&
@@ -612,9 +612,9 @@ void Conquest_Animation(int16_t city_owner_idx, int16_t player_idx)
     {
         Mark_Time();
         Clear_Fields();
-        Esc_Hotkey_Index = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)cnst_HOTKEY_Esc10[0], ST_UNDEFINED);
+        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)cnst_HOTKEY_Esc10[0], ST_UNDEFINED);
         input_field_idx = Get_Input();
-        if(input_field_idx == Esc_Hotkey_Index)
+        if(input_field_idx == full_screen_esc)
         {
             leave_screen = ST_UNDEFINED;
         }
@@ -759,7 +759,7 @@ void Conquest_Animation_Draw_Setup_Zap_Scene(void)
     Copy_Off_To_Back();
     wizlab_wizard_seg__ovr093 = LBX_Reload(wizlab_lbx_file__ovr093, _players[GAME_Conquered_Wiz].wizard_id, _screen_seg);
     conquest_wizard_seg = LBX_Reload_Next(conquest_lbx_file__ovr093, _players[GAME_Conquering_Wiz].wizard_id + 33, _screen_seg);
-    IMG_GAME_ZappedWiz = LBX_Reload_Next(conquest_lbx_file__ovr093, _players[GAME_Conquered_Wiz].wizard_id + 18, _screen_seg);
+    conquest_effect_seg = LBX_Reload_Next(conquest_lbx_file__ovr093, _players[GAME_Conquered_Wiz].wizard_id + 18, _screen_seg);
     IMG_GAME_GrowZap = LBX_Reload_Next(conquest_lbx_file__ovr093, 16, _screen_seg);
     conquest_conehead_seg = LBX_Reload_Next(conquest_lbx_file__ovr093, 32, _screen_seg);
     if(magic_set.sound_effects == 1)
@@ -811,31 +811,31 @@ void Conquest_Animation_Draw_Zapped_Wizard(int16_t flag)
     {
         FLIC_Draw(0xB1, 0x3E, IMG_GAME_GrowZap);
         Set_Animation_Frame(IMG_GAME_GrowZap, frame - 1);
-        frame = FLIC_Get_CurrentFrame(IMG_GAME_ZappedWiz);
+        frame = FLIC_Get_CurrentFrame(conquest_effect_seg);
         if(frame <= 3)
         {
             switch(frame)
             {
                 case 3:
-                    Set_Animation_Frame(IMG_GAME_ZappedWiz, 0);
-                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
-                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
-                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
-                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
+                    Set_Animation_Frame(conquest_effect_seg, 0);
+                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
+                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
+                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
+                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
                     break;
                 case 2:
-                    Set_Animation_Frame(IMG_GAME_ZappedWiz, 0);
-                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
-                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
-                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
+                    Set_Animation_Frame(conquest_effect_seg, 0);
+                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
+                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
+                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
                     break;
                 case 1:
-                    Set_Animation_Frame(IMG_GAME_ZappedWiz, 0);
-                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
-                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
+                    Set_Animation_Frame(conquest_effect_seg, 0);
+                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
+                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
                     break;
                 case 0:
-                    FLIC_Draw(0x42, 0x10, IMG_GAME_ZappedWiz);
+                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
                     break;
             }
         }
@@ -984,10 +984,67 @@ int16_t WIZ_Banishment__STUB(int16_t loser_idx, int16_t winner_idx)
 
 
 // WZD 093p15
-// drake178: GAME_ReturnDialog()
-// GAME_ReturnDialog()
+void Return_Animation(int16_t player_idx)
+{
+    char niu_space[4] = { 0, 0, 0, 0 };
+    int16_t full_screen_esc = 0;
+    int16_t input_field_idx = 0;
+    int16_t leave_screen = 0;
+    stu_strcpy(niu_space, str_SPACE__ovr093);
+    GUI_String_1 = Near_Allocate_First(100);
+    stu_strcpy(GUI_String_1, _players[player_idx].name);
+    stu_strcat(GUI_String_1, cnst_SoReturn_Msg3);  // " begins casting the Spell Of Return."
+    // VORTEX.LBX, 000   "VORTEX2"  ""
+    conquest_effect_seg = LBX_Reload(vortex_lbx_file__ovr093, 0, _screen_seg);
+    // CMBTFX.LBX, 027  "UNDEADBK"  ""
+    conquest_conehead_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr093, 27, _screen_seg);
+    Assign_Auto_Function(Return_Animation_Draw, 6);
+    m_conquest_anim_stage = 0;
+    leave_screen = ST_FALSE;
+    m_conquest_anim_stage = 0;
+    Set_Input_Delay(3);
+    while(leave_screen == ST_FALSE)
+    {
+        Mark_Time();
+        Clear_Fields();
+        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)cnst_HOTKEY_Esc10[0], ST_UNDEFINED);
+        input_field_idx = Get_Input();
+        if (input_field_idx == full_screen_esc)
+        {
+            leave_screen = ST_UNDEFINED;
+        }
+        if (m_conquest_anim_stage > 40)
+        {
+            leave_screen = ST_UNDEFINED;
+        }
+        if (leave_screen == 0)
+        {
+            Return_Animation_Draw();
+            PageFlip_FX();
+            Release_Time(5);
+        }
+    }
+    Clear_Fields();
+    Reset_Window();
+    Clear_Fields();
+    Deactivate_Auto_Function();
+}
+
 
 // WZD 093p16
-// drake178: GAME_DrawReturnAnim()
-// GAME_DrawReturnAnim()
-
+void Return_Animation_Draw(void)
+{
+    int16_t x = 0;
+    int16_t y = 0;
+    x = 51;
+    y = 28;
+    Set_Page_Off();
+    Copy_Back_To_Off();
+    FLIC_Draw(x, y, conquest_conehead_seg);
+    FLIC_Draw(x + 8, y + 8, conquest_effect_seg);
+    Set_Outline_Color(16);
+    Set_Font_Style_Shadow_Down(4, 4, 0, 0);
+    Set_Alias_Color(190);
+    Print_Paragraph(x + 7, y + 114, 165, GUI_String_1, 2);
+    m_conquest_anim_stage++;
+}
