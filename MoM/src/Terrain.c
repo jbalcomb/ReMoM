@@ -1132,10 +1132,6 @@ int16_t Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
     terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
-    /* CLAUDE  In the Dasm each check jumps straight to its return; the earlier
-       is_embarkable accumulator (DNE in Dasm) let the later `<` bands overwrite
-       the BugGrass/Lake and range results (so everything below the shore range
-       came back ST_TRUE).  Restore the short-circuit early returns. */
     if(terrain_type == tt_BugGrass)   { return ST_FALSE; }
     if(terrain_type == tt_Lake)       { return ST_FALSE; }
     if(terrain_type < _Shore11101110) { return ST_TRUE;  }

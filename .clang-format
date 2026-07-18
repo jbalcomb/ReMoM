@@ -35,12 +35,16 @@ IncludeBlocks:           Preserve
 PointerAlignment:        Middle
 SpaceBeforeParens:       Never
 
-# Never collapse constructs onto one line (house style is Allman, expanded)
-AllowShortIfStatementsOnASingleLine:   false
-AllowShortFunctionsOnASingleLine:      None
-AllowShortLoopsOnASingleLine:          false
-AllowShortBlocksOnASingleLine:         Never
-AllowShortCaseLabelsOnASingleLine:     false
+# Preserve the author's one-line idioms instead of forcing expansion. The tree
+# deliberately uses them: ~763 braced one-line ifs, ~635 one-line case labels,
+# ~487 unbraced guard-clause ifs, ~13 one-line functions. Under ColumnLimit: 0
+# these "Allow" values KEEP an existing one-liner on one line WITHOUT collapsing
+# an already-expanded block (verified empirically with clang-format 20).
+AllowShortIfStatementsOnASingleLine:   AllIfsAndElse
+AllowShortFunctionsOnASingleLine:      All
+AllowShortLoopsOnASingleLine:          true
+AllowShortBlocksOnASingleLine:         Always
+AllowShortCaseLabelsOnASingleLine:     true
 
 # Preserve the author's hand-alignment wherever clang-format supports "leave
 # as-is". Consecutive alignment was measured to INCREASE churn (over-aligns),
