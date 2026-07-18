@@ -14,6 +14,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef __unix__
+#include <dlfcn.h>
+#endif
+
 #include "sdl2_Audio.h"
 
 // SOUND.C
@@ -157,8 +161,47 @@ int16_t wav_buffer_idx = 0;
 
 
 
+/* SDL2_mixer's MIDI backend on Linux is FluidSynth, which spams stderr with
+   "Ignoring unrecognized meta event type 0x20" for every MIDI Channel-Prefix
+   meta event in the XMI-derived files.  It's cosmetic — FluidSynth doesn't
+   need those events, and we don't ship them for a reason.  Install a filter
+   that drops only that specific message and passes all other FluidSynth WARN
+   output through to stderr so real problems still surface.
+   FluidSynth isn't a direct build dep; look it up in the already-loaded
+   library set via dlsym and skip silently if it isn't there. */
+#ifdef __unix__
+typedef void (*fluid_log_function_t)(int level, const char * message, void * data);
+typedef fluid_log_function_t (*fluid_set_log_function_fn)(int level, fluid_log_function_t fun, void * data);
+
+static fluid_log_function_t s_fluid_prev_warn = NULL;
+
+static void filtered_fluid_warn(int level, const char * msg, void * data)
+{
+    if(msg && strstr(msg, "Ignoring unrecognized meta event") != NULL) { return; }
+    if(s_fluid_prev_warn) { s_fluid_prev_warn(level, msg, data); }
+    else                  { fprintf(stderr, "fluidsynth: %s\n", msg ? msg : "(null)"); }
+}
+
+static void suppress_fluidsynth_meta_spam(void)
+{
+    void * h = dlopen("libfluidsynth.so.3", RTLD_LAZY | RTLD_NOLOAD);
+    if(!h) { h = dlopen("libfluidsynth.so.2", RTLD_LAZY | RTLD_NOLOAD); }
+    if(!h) { h = dlopen("libfluidsynth.so",   RTLD_LAZY | RTLD_NOLOAD); }
+    if(!h) { return; }  /* not loaded → nothing to suppress */
+    fluid_set_log_function_fn set_log = (fluid_set_log_function_fn)dlsym(h, "fluid_set_log_function");
+    /* FLUID_WARN == 2.  Keep PANIC(0) and ERR(1) audible. */
+    if(set_log) { s_fluid_prev_warn = set_log(2, filtered_fluid_warn, NULL); }
+    dlclose(h);  /* RTLD_NOLOAD refcount only; symbol stays resolved. */
+}
+#else
+static void suppress_fluidsynth_meta_spam(void) { }
+#endif
+
 void sdl2_Audio_Init(void)
 {
+    /* Must run before Mix_Init: SDL2_mixer initializes its MIDI backend there,
+       which is when FluidSynth may start emitting meta-event chatter. */
+    suppress_fluidsynth_meta_spam();
 
     // // // // // Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);  // Expands to: AUDIO_S16SYS
     // // // // Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 2048);

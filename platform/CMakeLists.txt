@@ -101,6 +101,9 @@ else()
     if(NOT DISABLE_AUDIO)
         list(APPEND PLATFORM_SOURCES sdl2/sdl2_Audio.c)
         list(APPEND PLATFORM_LINK_LIBS SDL2_mixer::SDL2_mixer)
+        # sdl2_Audio.c uses dlsym() to filter transitively-loaded FluidSynth's
+        # log spam; CMAKE_DL_LIBS is "dl" on Linux, empty on Windows.
+        list(APPEND PLATFORM_LINK_LIBS ${CMAKE_DL_LIBS})
     endif()
 endif()
 
