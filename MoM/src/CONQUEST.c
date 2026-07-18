@@ -966,26 +966,80 @@ void GAME_LimboFallAnim__STUB(int16_t player_idx)
 // drake178: GAME_DrawLimboFall()
 // GAME_DrawLimboFall()
 
+
 // WZD 093p14
-// drake178: WIZ_Banishment()
-/*
-; banishes the target player, handles the decision for
-; casting the spell of return, and if cast, plays the
-; banishment animations and awards spells to the human
-; player if they are the conqueror
-; returns 1 or 99 if the player forfeits, 0 if not
-;
-; BUG: fails to award spells to the AI if they banish
-; the human player
-*/
-/*
-
-*/
-int16_t WIZ_Banishment__STUB(int16_t loser_idx, int16_t winner_idx)
+/**
+ * @brief Handles wizard banishment, return spell setup, and post-defeat resolution.
+ *
+ * For non-human losers, checks whether the defeated wizard has enough casting
+ * strength and mana to continue; if not, returns 99 immediately. Otherwise,
+ * disables the loser’s fortress, grants the winner fame and mana, plays the
+ * conquest animation, applies diplomatic penalties, and then resolves the
+ * return dialog or return animation depending on whether the loser was human.
+ *
+ * @param loser_idx Index of the wizard being banished.
+ * @param winner_idx Index of the wizard who won the conquest.
+ * @return int16_t ST_FALSE when the human player is prompted and declines is
+ *         not yet resolved, 99 when an AI wizard cannot continue, or the
+ *         resignation result from the human confirmation dialog.
+ */
+int16_t Banish_Wizard(int16_t loser_idx, int16_t winner_idx)
 {
-
-    return ST_FALSE;
-
+    char buffer[50] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char niu_space[4] = { 0, 0, 0, 0 };
+    int16_t turns_to_return = 0;
+    int16_t resign = 0;
+    int16_t itr_players = 0;
+    stu_strcpy(niu_space, str_SPACE__ovr093);
+    _players[loser_idx].casting_spell_idx = spl_Spell_Of_Return;
+    _players[loser_idx].casting_cost_remaining = Casting_Cost(loser_idx, spl_Spell_Of_Return, 0);
+    _players[loser_idx].casting_cost_original = Casting_Cost(loser_idx, spl_Spell_Of_Return, 0);
+    turns_to_return = _players[loser_idx].casting_cost_remaining / _players[loser_idx].Nominal_Skill;
+    if(loser_idx != _human_player_idx)
+    {
+        if(
+            (Player_Base_Casting_Skill(loser_idx) + Player_Hero_Casting_Skill(loser_idx) < 40)
+            ||
+            (_players[loser_idx].mana_reserve < 1)
+        )
+        {
+            return 99;
+        }
+    }
+    _FORTRESSES[loser_idx].active = ST_FALSE;
+    _players[winner_idx].fame += 5;
+    _players[loser_idx].mana_reserve /= 2;
+    Player_Add_Mana(winner_idx, _players[loser_idx].mana_reserve);
+    Conquest_Animation(loser_idx, winner_idx);
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        if(itr_players != loser_idx && itr_players != winner_idx)
+        {
+            Change_Relations(-20, winner_idx, itr_players, 7, 0, 0);
+        }
+    }
+    resign = ST_FALSE;
+    Allocate_Reduced_Map();
+    Full_Draw_Main_Screen();
+    Copy_On_To_Off_Page();
+    if(loser_idx == _human_player_idx)
+    {
+        itoa(turns_to_return, buffer, 10);
+        strcpy(GUI_NearMsgString, cnst_SoReturn_Msg1);  // "There are at least "
+        strcat(GUI_NearMsgString, buffer);
+        strcat(GUI_NearMsgString, cnst_SoReturn_Msg2);  // " turns remaining until you may return. Do you wish to resign?"
+        resign = Confirmation_Box(GUI_NearMsgString);
+    }
+    else
+    {
+        if(loser_idx != NEUTRAL_PLAYER_IDX)
+        {
+            Copy_Off_To_Back();
+            Return_Animation(loser_idx);
+            Conquest_Spells(winner_idx, loser_idx);
+        }
+    }
+    return resign;
 }
 
 
@@ -1015,15 +1069,15 @@ void Return_Animation(int16_t player_idx)
         Clear_Fields();
         full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)cnst_HOTKEY_Esc10[0], ST_UNDEFINED);
         input_field_idx = Get_Input();
-        if (input_field_idx == full_screen_esc)
+        if(input_field_idx == full_screen_esc)
         {
             leave_screen = ST_UNDEFINED;
         }
-        if (m_conquest_anim_stage > 40)
+        if(m_conquest_anim_stage > 40)
         {
             leave_screen = ST_UNDEFINED;
         }
-        if (leave_screen == 0)
+        if(leave_screen == ST_FALSE)
         {
             Return_Animation_Draw();
             PageFlip_FX();
