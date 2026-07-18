@@ -129,10 +129,11 @@ jobs:
           if [ -f assets/icon.png ]; then
             cp assets/icon.png remom.png
           else
-            # Minimal VALID 1x1 PNG (base64) so linuxdeploy's icon deploy doesn't
-            # fail. A hand-written byte string had a bad IDAT checksum; this one is
-            # generated + CRC/zlib-verified. Replace with assets/icon.png when we have one.
-            printf '%s' 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVR42mNgAAAAAgAB5Sfe/AAAAABJRU5ErkJggg==' | base64 -d > remom.png
+            # Valid 256x256 PNG placeholder (base64) so linuxdeploy's icon deploy
+            # succeeds -- it rejects non-standard sizes (1x1 "has invalid resolution"),
+            # so this is a standard 256x256. Generated + CRC/zlib-verified. Replace
+            # with a real assets/icon.png when we have one.
+            printf '%s' 'iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAACAUlEQVR42u3TMQ0AAAgEsdfDgAD8C2NGA02q4JJL9cBbkQADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAABhABQwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgAA6iAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGACuBQgDCI+OKrm5AAAAAElFTkSuQmCC' | base64 -d > remom.png
           fi
 
           curl -fSL -o linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
