@@ -10,13 +10,16 @@ Module: ERIC
 
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/EXIT.h"
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/GENDRAW.h"
 #include "../../MoX/src/Graphics.h"
 #include "../../MoX/src/LBX_Load.h"
+#include "../../MoX/src/paragrph.h"
 #include "../../MoX/src/SOUND.h"
+#include "../../MoX/src/MOX_T4.h"
 #include "../../MoX/src/Timer.h"
 #include "../../MoX/src/Util.h"
 #include "../../MoX/src/MOM_DAT.h"  /* _cities[], _UNITS[] */
@@ -28,7 +31,10 @@ Module: ERIC
 #include "City_ovr55.h"
 #include "CITYCALC.h"
 #include "DIPLOMAC.h"
-#include "MainScr.h"  /* Play_Background_Music() */
+#include "MainScr.h"  /* Allocate_Reduced_Map(); Play_Background_Music() */
+#include "NEXTTURN.h"
+#include "SBookScr.h"   /* Full_Draw_Main_Screen() */
+#include "SCORE.h"
 #include "Spellbook.h"
 #include "Spells128.h"
 #include "UNITTYPE.h"  /* _unit_type_table[] */
@@ -853,7 +859,7 @@ void Conquest_Animation_Draw_Zap_Strike(void)
         return;
     }
     FLIC_Draw(0x45, 0x4B, wizlab_wizard_seg__ovr093);
-    Draw_File_Animation();
+    Draw_File_Animation__HACK();
     Clipped_Draw(0xD0, 0x3C, conquest_wizard_seg);
     Clipped_Draw(0x64, 0x78, conquest_conehead_seg);
 }
@@ -991,7 +997,7 @@ void Return_Animation(int16_t player_idx)
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
     stu_strcpy(niu_space, str_SPACE__ovr093);
-    GUI_String_1 = Near_Allocate_First(100);
+    GUI_String_1 = (char *)Near_Allocate_First(100);
     stu_strcpy(GUI_String_1, _players[player_idx].name);
     stu_strcat(GUI_String_1, cnst_SoReturn_Msg3);  // " begins casting the Spell Of Return."
     // VORTEX.LBX, 000   "VORTEX2"  ""

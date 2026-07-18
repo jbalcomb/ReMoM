@@ -873,7 +873,7 @@ int UU_DBG_SelectDialog(char /* near */ *Q_ptr, char /* near */ *A1_ptr, char /*
         }
 
         /* Screen-wide field to handle clicks outside buttons (Abort) */
-        abort_id = Add_Hidden_Field(0, 0, 319, 199, 0, ST_UNDEFINED);
+        abort_id = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0, ST_UNDEFINED);
         
         Toggle_Pages();
     }

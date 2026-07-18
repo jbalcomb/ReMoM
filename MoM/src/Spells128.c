@@ -3,12 +3,14 @@
         ovr128
 */
 
-#include "CITYCALC.h"
+#include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
+
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/Util.h"
-#include "Spells128.h"
-
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/GENDRAW.h"
+#include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_DAT.h"
 #include "../../MoX/src/MOX_DEF.h"
@@ -16,9 +18,37 @@
 #include "../../MoX/src/random.h"
 
 #include "AISPELL.h"
+#include "CITYCALC.h"
 #include "DIPLOMAC.h"
+#include "MainScr.h"
+#include "NEXTTURN.h"
+#include "SBookScr.h"   /* Full_Draw_Main_Screen() */
 #include "Spellbook.h"
-#include "../../STU/src/STU_LOG.h"
+
+#include "../../ext/stu_compat.h"
+
+#include "Spells128.h"
+
+
+
+// WZD 36AA:661C                                                 BEGIN:  ovr128 - Initialized Data
+
+// WZD 36AA:661C
+char cnst_ConqSpell_Msg1[] = "You find no new spells in the ruins.";
+// WZD 36AA:6641
+char cnst_ConqSpell_Msg2[] = "You found a ";
+// WZD 36AA:664E
+char cnst_ConqSpell_Msg3[] = " spell in the ruins.";
+// WZD 36AA:6663
+char cnst_ConqSpell_Msg4[] = " spell and a ";
+// WZD 36AA:6671
+char cnst_ConqSpell_Msg5[] = " spell, a ";
+// WZD 36AA:667C
+char spellscr_lbx_file__ovr128[] = "Spellscr";
+
+// WZD 36AA:6685 00                                                  align 2
+
+// WZD 36AA:6685                                                 END:  ovr128 - Initialized Data
 
 
 
@@ -158,7 +188,7 @@ int16_t Player_Research_Spells(int16_t player_idx)
         (skip_som == ST_FALSE)
     )
     {
-        for (itr = 0; itr < spells_max; itr++)
+        for(itr = 0; itr < spells_max; itr++)
         {
             if(_players[player_idx].research_spells[itr] == spl_NONE)
             {
@@ -190,7 +220,7 @@ int16_t Player_Research_Spells(int16_t player_idx)
             AI_Spell_Research_Select(player_idx);
         }
         /* Set the research cost remaining for the newly selected spell */
-        if (_players[player_idx].researching_spell_idx == spl_Spell_Of_Mastery)
+        if(_players[player_idx].researching_spell_idx == spl_Spell_Of_Mastery)
         {
             _players[player_idx].research_cost_remaining = _players[player_idx].som_research_cost;
         }
@@ -260,7 +290,7 @@ void Build_Research_List(int16_t player_idx, int16_t research_list[])
             {
                 rarity = (itr_spells / 10);  // updates until the first 'knowable'
             }
-            if ((itr_spells / 10) > rarity)
+            if((itr_spells / 10) > rarity)
             {
                 break;
             }
@@ -1098,15 +1128,78 @@ void WIZ_AddSpellRank__WIP(int16_t player_idx, int16_t magic_realm)
 
 
 // WZD o128p11
-// drake178: WIZ_ConquestSpells()
-/*
-*/
-/*
-
-*/
-void WIZ_ConquestSpells__STUB(int16_t player_idx, int16_t city_owner_idx)
+void Conquest_Spells(int16_t winner_idx, int16_t loser_idx)
 {
-
-
-
+    uint8_t spell_list[60] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t spell_list_idx = 0;
+    SAMB_ptr new_spell_img = 0;
+    // char p_spell_name;  /* OGBUG  should have been `char *`? */
+    // char * p_spell_name;
+    char p_spell_name[LEN_SPELLDAT_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t awarded_spells[3] = { 0, 0, 0 };
+    int16_t spell_idx = 0;
+    int16_t spell_count = 0;
+    int16_t awarded_count = 0;
+    if(winner_idx == NEUTRAL_PLAYER_IDX || loser_idx == NEUTRAL_PLAYER_IDX)
+    {
+        return;
+    }
+    spell_count = Get_Differential_Spell_List(winner_idx, loser_idx, 0, &spell_list[0]);
+    for(awarded_count = 0; awarded_count < spell_count && awarded_count < 2;)
+    {
+        spell_list_idx = (Random(spell_count) - 1);
+        spell_idx = spell_list[spell_list_idx];
+        if(spell_idx != spl_NONE)
+        {
+            Player_Gets_Spell(winner_idx, spell_idx, 0);
+            spell_list[spell_list_idx] = spl_NONE;
+            awarded_spells[awarded_count] = spell_idx;
+            awarded_count++;
+        }
+    }
+    if(winner_idx == 0)
+    {
+        Allocate_Reduced_Map();
+        Full_Draw_Main_Screen();
+        Copy_On_To_Off_Page();
+        Copy_Off_To_Back();
+        switch(awarded_count)
+        {
+            case 0:
+                stu_strcpy(GUI_NearMsgString, cnst_ConqSpell_Msg1);  // "You find no new spells in the ruins."
+                break;
+            case 1:
+                stu_strcpy(GUI_NearMsgString, cnst_ConqSpell_Msg2);  // "You found a "
+                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[0]].name);     // ; BUG: value passed as pointer!
+                stu_strcat(GUI_NearMsgString, p_spell_name);                            // ; BUG: value passed as pointer!
+                stu_strcat(GUI_NearMsgString, cnst_ConqSpell_Msg3);  // " spell in the ruins."
+                break;
+            case 2:
+                stu_strcpy(GUI_NearMsgString, cnst_ConqSpell_Msg2);  // "You found a "
+                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[0]].name);     // ; BUG: value passed as pointer!
+                stu_strcat(GUI_NearMsgString, p_spell_name);                            // ; BUG: value passed as pointer!
+                stu_strcat(GUI_NearMsgString, cnst_ConqSpell_Msg4);  // " spell and a "
+                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[1]].name);     // ; BUG: value passed as pointer!
+                stu_strcat(GUI_NearMsgString, p_spell_name);                            // ; BUG: value passed as pointer!
+                stu_strcat(GUI_NearMsgString, cnst_ConqSpell_Msg3);  // " spell in the ruins."
+                break;
+            case 3:
+                stu_strcpy(GUI_NearMsgString, cnst_ConqSpell_Msg2);  // "You found a "
+                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[0]].name);     // ; BUG: value passed as pointer!
+                stu_strcat(GUI_NearMsgString, p_spell_name);                            // ; BUG: value passed as pointer!
+                stu_strcat(GUI_NearMsgString, cnst_ConqSpell_Msg5);  // " spell, a "
+                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[1]].name);     // ; BUG: value passed as pointer!
+                stu_strcat(GUI_NearMsgString, p_spell_name);                            // ; BUG: value passed as pointer!
+                stu_strcat(GUI_NearMsgString, cnst_ConqSpell_Msg4);  // " spell and a "
+                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[2]].name);     // ; BUG: value passed as pointer!
+                stu_strcat(GUI_NearMsgString, p_spell_name);                            // ; BUG: value passed as pointer!
+                stu_strcat(GUI_NearMsgString, cnst_ConqSpell_Msg3);  // " spell in the ruins."
+                break;
+            default:
+                break;
+        }
+        // SPELLSCR.LBX, 060  "SMLRESCH"    ""
+        new_spell_img = LBX_Reload_Next(spellscr_lbx_file__ovr128, 60, _screen_seg);
+        Notify2(0, 40, 2, GUI_NearMsgString, 0, new_spell_img, 0, 9, 0, 0, 0, 1, 0);
+    }
 }

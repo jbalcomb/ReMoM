@@ -7,6 +7,9 @@
     SPELLSCR.LBX
 */
 
+#include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"
+
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _screen_seg */
@@ -38,7 +41,6 @@
 #include <stdlib.h>
 
 #include "SBookScr.h"
-#include "../../STU/src/STU_LOG.h"
 
 
 
@@ -652,7 +654,7 @@ XREF:
         IDK_SummonAnim()
         Player_Process_Item_Pool()
         WIZ_Banishment()
-        WIZ_ConquestSpells()
+        Conquest_Spells()
 
 */
 void Full_Draw_Main_Screen(void)

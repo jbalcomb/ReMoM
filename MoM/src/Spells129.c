@@ -1902,7 +1902,7 @@ void Call_Forth_The_Force_Of_Nature(int16_t player_idx)
     Clear_Fields();
     
     /* Add a full-screen hidden field to allow clicking past animation */
-    some_var = Add_Hidden_Field(0, 0, 319, 199, 0, 0); 
+    some_var = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0, 0); 
 
     /* Animation Loop (Screen Shaking) */
     for(itr = 0; itr < 120; itr++)

@@ -49,6 +49,6 @@ Faithful points (asm `si=0x33`/`di=0x1C` → production `x=51`/`y=28`):
 ## Related references
 
 - `…\ovr093\GAME_ReturnDialog.asm` + `…\ovr093\GAME_DrawReturnAnim.asm` — IDA Pro 5.5 disassembly (**the authority**); Gemini `.c` files are a second opinion.
-- [`Banish_Wizard`](../../MoM/src/CONQUEST.c#L855) — sole caller; invokes `Return_Animation(loser_idx)` on the non-human banishment path (then awards spells via `WIZ_ConquestSpells`).
+- [`Banish_Wizard`](../../MoM/src/CONQUEST.c#L855) — sole caller; invokes `Return_Animation(loser_idx)` on the non-human banishment path (then awards spells via `Conquest_Spells`).
 - `Assign_Auto_Function` / `Deactivate_Auto_Function` — register/unregister `Return_Animation_Draw` as the per-frame auto callback.
 - Shares the `m_conquest_anim_stage` counter, `GUI_String_1`, `conquest_effect_seg`, and `conquest_conehead_seg` globals with the [`Conquest_Animation`](CONQUEST-Conquest_Animation.md) cut-scene.

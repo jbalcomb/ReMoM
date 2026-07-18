@@ -1,9 +1,9 @@
 CONQUEST-CP_Is_Dead.md
 
-C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr093\GAME_IsWon__STUB.asm   (ground truth — IDA Pro 5.5 disassembly; OG/IDA name GAME_IsWon, the `__STUB` suffix is the Piethawn extraction convention, not a stub body)
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr093\GAME_IsWon__STUB.asm   (ground truth — IDA Pro 5.5 disassembly; the `__STUB` suffix is the Piethawn extraction convention, not a stub body)
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr093\GAME_IsWon__STUB.c     (Gemini translation of the .asm — second opinion, NOT ground truth)
 
-WIZ_Conquer()
+Resolve_Wizard_Conquest()
     |-> CP_Is_Dead()
 
 ---
@@ -12,7 +12,7 @@ WIZ_Conquer()
 
 | Function | Location | Role |
 |---|---|---|
-| `CP_Is_Dead` | [CONQUEST.c:947-981](../../MoM/src/CONQUEST.c#L947-L981) | drake178 `GAME_IsWon` (IDA `ovr093:0DAF`, WZD 093p09). Scans player slots `1 … _num_players-1` and counts how many are still "alive" — a slot counts if it has an active fortress **or** owns at least one city. Returns `ST_TRUE` when zero opponents remain (human victory / all computer players eliminated), else `ST_FALSE`. |
+| `CP_Is_Dead` | [CONQUEST.c:947-981](../../MoM/src/CONQUEST.c#L947-L981) | IDA `ovr093:0DAF`, WZD 093p09. Scans player slots `1 … _num_players-1` and counts how many are still "alive" — a slot counts if it has an active fortress **or** owns at least one city. Returns `ST_TRUE` when zero opponents remain (human victory / all computer players eliminated), else `ST_FALSE`. |
 
 > **Status: done-done — faithful to `GAME_IsWon__STUB.asm` 1:1.** Structure, loop bounds, the `active_computer_players` accumulator, the two "alive" tests, and the inverted return all match the disassembly instruction-for-instruction. The Gemini `.c` agrees. No deviations.
 
@@ -44,9 +44,9 @@ Locals map onto the asm's frame / register slots exactly:
 
 ## Notes
 
-- **Return inversion vs. the OG name.** drake178 called this `GAME_IsWon`; production renames it `CP_Is_Dead`. Both describe the identical test from opposite sides: "no opponents left" ⇔ "human has won" ⇔ "all computer players dead." The `ST_TRUE`-on-zero-survivors semantics are preserved verbatim.
+- **Return framing.** The function returns `ST_TRUE` when *no* opponents remain — the test reads equally as "all computer players dead" or "the human has won" (opposite sides of the same condition). The `ST_TRUE`-on-zero-survivors semantics are preserved verbatim.
 
-- **Slot 0 skipped (`itr_players` starts at 1).** The scan covers `1 … _num_players-1`; index 0 is never examined. The code's own doc comment ([941](../../MoM/src/CONQUEST.c#L941)) calls it the "presumed human slot." The caller `WIZ_Conquer` ([440](../../MoM/src/CONQUEST.c#L440)) only reaches `CP_Is_Dead` on the `city_owner_idx != _human_player_idx` branch, consistent with slot 0 being the human. This is the OG behaviour — the start-at-1 is in the asm (`mov itr_players, 1`), not a reconstruction choice.
+- **Slot 0 skipped (`itr_players` starts at 1).** The scan covers `1 … _num_players-1`; index 0 is never examined. The code's own doc comment ([941](../../MoM/src/CONQUEST.c#L941)) calls it the "presumed human slot." The caller `Resolve_Wizard_Conquest` ([440](../../MoM/src/CONQUEST.c#L440)) only reaches `CP_Is_Dead` on the `city_owner_idx != _human_player_idx` branch, consistent with slot 0 being the human. This is the OG behaviour — the start-at-1 is in the asm (`mov itr_players, 1`), not a reconstruction choice.
 
 ## Inner-loop cap `city_count < 2` — matches
 
@@ -65,4 +65,4 @@ Neither is redundant-to-remove: dropping 952 would break the zero-init conventio
 
 - `…\ovr093\GAME_IsWon__STUB.asm` — IDA Pro 5.5 disassembly (**the authority**).
 - `…\ovr093\GAME_IsWon__STUB.c` — Gemini translation (second opinion; agrees).
-- [`WIZ_Conquer`](../../MoM/src/CONQUEST.c#L425-L453) — sole caller; invokes `CP_Is_Dead` at [440](../../MoM/src/CONQUEST.c#L440) on the non-human-conquest branch to gate `GAME_PlayVictoryAnim__STUB(_human_player_idx)`.
+- [`Resolve_Wizard_Conquest`](../../MoM/src/CONQUEST.c#L191) — sole caller; invokes `CP_Is_Dead` at [440](../../MoM/src/CONQUEST.c#L440) on the non-human-conquest branch to gate `GAME_PlayVictoryAnim__STUB(_human_player_idx)`.

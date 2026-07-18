@@ -15,6 +15,9 @@
 
 */
 
+#include "../../STU/src/STU_DBG.h"    /* DLOG() */
+#include "../../STU/src/STU_LOG.h"
+
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/GENDRAW.h"
@@ -60,10 +63,6 @@
 #include "Explore.h"
 #include "Lair.h"
 
-#ifdef STU_DEBUG
-#include "../../STU/src/STU_DBG.h"    /* DLOG() */
-#endif
-
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -71,7 +70,6 @@
 #include "../../platform/include/Platform.h"
 
 #include "MainScr.h"
-#include "../../STU/src/STU_LOG.h"
 
 
 

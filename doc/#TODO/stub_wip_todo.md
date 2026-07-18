@@ -348,7 +348,7 @@
 
 ## Spells128
 - [ ] WIZ_AddSpellRank__WIP
-- [ ] WIZ_ConquestSpells__STUB
+- [x] Conquest_Spells
 
 ## Spells131
 - [ ] Combat_Spell_Animation__WIP
