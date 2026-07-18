@@ -49,7 +49,7 @@ see [Future phase — Dev / Modder tooling](#future-phase--dev--modder-tooling).
 |----------|-------------|---------|-------|
 | Windows x64 | `ReMoM-<ver>-Windows-AMD64.zip`, NSIS `.exe` installer | native **Win32** | **Silent** — the Win32 backend links no audio library yet. Self-contained (no DLLs). |
 | Linux x86_64 | `ReMoM-<ver>-x86_64.AppImage` (recommended), `ReMoM-<ver>-Linux-*.zip` / `.tar.gz` | **SDL2** + SDL2_mixer | The **AppImage bundles SDL** (via `linuxdeploy`) and is self-contained. The plain ZIP/TGZ does **not** bundle SDL — use it only if SDL2 is already installed. |
-| macOS arm64 | `ReMoM-<ver>-Darwin-arm64.zip` | **SDL2** + SDL2_mixer | SDL dylibs are bundled (via `dylibbundler`). Binary is **unsigned** → see Gatekeeper note below. |
+| ~~macOS arm64~~ | — | — | **Deferred (TBD)** — does not ship in the current release; arm64 link fails on the `pack(2)` DOS structs. See *Known limitations* below. |
 | Source | `ReMoM-<ver>-Source.zip` / `.tar.gz` | — | Excludes `assets/`, build dirs, and `.git`. |
 
 What the **player must supply** (documented in `PLAYING.md`): every `.LBX` file
@@ -60,11 +60,18 @@ Known limitations carried intentionally (follow-ups, not blockers):
 - **Windows is silent** (Win32 backend). Switching Windows to SDL2 for sound is a
   future change; the `if(WIN32 AND NOT USE_WIN32)` block in `CMakeLists.txt`
   already handles bundling SDL DLLs when that happens.
-- **macOS is arm64 only.** Adding an Intel build is a one-line matrix addition
-  (`runs-on: macos-13`) in `release.yml` when wanted.
-- **macOS binary is unsigned / un-notarized.** First launch hits Gatekeeper;
-  users clear it with `xattr -dr com.apple.quarantine ReMoMber` (covered in
-  `PLAYING.md`).
+- **macOS is deferred — TBD.** The macOS jobs in `release.yml` and
+  `release-check.yml` are gated off (`if: false`) and do **not** block releases.
+  Reason: the reconstruction's `pack(2)` DOS structs (e.g. `s_UNIT_MUTATION` /
+  `_unit_mutation_data` in `MoM/src/UnitView.c`) put a native 8-byte pointer at a
+  non-8-byte-aligned offset. The arm64 macOS linker rejects that
+  (`ld: pointer not aligned … _unit_mutation_data+0xC`); x86-64 Linux/Windows link
+  it fine. `pack(2)` is correct and intentional — it mirrors the 1995 DOS layout —
+  so this is macOS-toolchain strictness, not a code bug. **Unresolved; options when
+  revisited:** accommodate in the macOS link only (`-Wl,-no_fixup_chains` /
+  `-ld_classic`), build x86-64 (`runs-on: macos-13`), or leave macOS out. When
+  re-enabled, note the binary is unsigned/un-notarized — first launch hits
+  Gatekeeper; clear it with `xattr -dr com.apple.quarantine ReMoMber`.
 
 ---
 

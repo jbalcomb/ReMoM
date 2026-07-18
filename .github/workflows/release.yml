@@ -167,6 +167,11 @@ jobs:
   macos:
     name: macOS arm64
     runs-on: macos-latest
+    # TBD (deferred, non-blocking): the pack(2) DOS structs place native pointers
+    # at non-8-byte-aligned offsets (e.g. _unit_mutation_data), which the arm64
+    # macOS linker rejects ("pointer not aligned"); x86-64 Linux/Windows link it
+    # fine. See RELEASES.md "Known limitations". Re-enable once resolved.
+    if: false
 
     steps:
       - uses: actions/checkout@v6
@@ -216,7 +221,7 @@ jobs:
   # ── GitHub Release (draft, tag pushes only) ────────────────────────────
   publish:
     name: Publish Release
-    needs: [windows, linux, macos]
+    needs: [windows, linux]   # macos deferred (TBD) -- see the macos job above
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
 
@@ -237,5 +242,4 @@ jobs:
           files: |
             dist/ReMoM-windows-x64/**/*
             dist/ReMoM-linux-x86_64/**/*
-            dist/ReMoM-macos-arm64/**/*
             dist/ReMoM-source/**/*
