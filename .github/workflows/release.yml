@@ -34,6 +34,12 @@ jobs:
     # Pinned: windows-latest now ships VS2026, but the MSVC-release preset uses the
     # "Visual Studio 17 2022" generator. windows-2022 is the image that has VS2022.
     runs-on: windows-2022
+    # Run every step under bash: the default PowerShell mangles the cmake arg
+    # `-DREMOM_VERSION=0.0.1` into a stray `.0.1` path. bash is proven on this
+    # runner (the version step already uses it) and parses args like Linux/macOS.
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - uses: actions/checkout@v6
@@ -123,8 +129,10 @@ jobs:
           if [ -f assets/icon.png ]; then
             cp assets/icon.png remom.png
           else
-            # Minimal 1x1 PNG placeholder so linuxdeploy doesn't fail.
-            printf '\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDATx\x9cc\xf8\x0f\x00\x00\x01\x01\x00\x05\x18\xd8N\x00\x00\x00\x00IEND\xaeB`\x82' > remom.png
+            # Minimal VALID 1x1 PNG (base64) so linuxdeploy's icon deploy doesn't
+            # fail. A hand-written byte string had a bad IDAT checksum; this one is
+            # generated + CRC/zlib-verified. Replace with assets/icon.png when we have one.
+            printf '%s' 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVR42mNgAAAAAgAB5Sfe/AAAAABJRU5ErkJggg==' | base64 -d > remom.png
           fi
 
           curl -fSL -o linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
