@@ -6,6 +6,13 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 
 # Project general coding standards
 
+## Editing Original Game Code — 100% fidelity to the disassembly is the target (hard rule)
+- **The target is 100% fidelity to the disassembly.** The asm is ground truth. "Original code" means the reconstruction that is *faithful to the asm*.
+- **NEVER delete code that is faithful to the asm** (anything with an asm counterpart) — not a line, a declaration, a comment, commented-out scratch, or whitespace. There is no "it's dead / unused / stale / scratch / cleaner" excuse. If faithful code must change, **comment out the original and add the replacement below it**, and mark changes `/* CLAUDE */`.
+- **Phantom code — production text with NO asm counterpart** (e.g. extra locals that merely duplicate the parameters, defensive guards the asm doesn't have) — is itself an infidelity. The fidelity fix is to **REMOVE it**, not comment it out (commenting out just preserves cruft the asm never had). Example: `Resolve_Wizard_Conquest` had three unused locals `Target`/`Conqueror`/`City`; those names are the *parameters* in the asm frame (`bp+6`/`bp+8`/`bp+0Ah`), not locals, so the local declarations were phantom and were removed.
+- **VERIFY against the asm before classifying anything as phantom.** Faithful-but-ugly code, `; `-style asm-derived comments, and reconstruction notes are NOT phantom — preserve them. When you cannot verify no-asm-counterpart, do NOT delete — ask.
+- **Deleting and style-matching are two COMPLETELY DIFFERENT concerns.** Style conformance (renaming a reconstructed local to `lower_snake_case`, whitespace/formatting) removes nothing — allowed. Deleting faithful code is forbidden.
+
 ## Style Guide
 - Use Allman style braces
 - Wrap block comments at 180 characters

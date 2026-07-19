@@ -30,6 +30,7 @@ Module: ERIC
 
 #include "City_ovr55.h"
 #include "CITYCALC.h"
+#include "Combat.h"
 #include "DIPLOMAC.h"
 #include "MainScr.h"  /* Allocate_Reduced_Map(); Play_Background_Music() */
 #include "NEXTTURN.h"
@@ -48,34 +49,47 @@ Module: ERIC
 
 // WZD dseg:511C                                                 BEGIN:  ovr093 - Initialized Data
 
-// WZD dseg:511C 00 00 5A 00 00 00 64 00 0C 00 49 00 0A 00 64 00+TBL_DefeatAnimSteps Spiral_Anim_Step <0, 90, 0, 100, 0>
-// WZD dseg:511C 19 00 39 00 14 00 64 00 20 00 2D 00 1E 00 64 00+                                        ; DATA XREF: GAME_DrawLimboFall+1Fr ...
-// WZD dseg:511C 28 00 1D 00 28 00 64 00 2A 00 0F 00 32 00 64 00+Spiral_Anim_Step <12, 73, 10, 100, 0>
-// WZD dseg:511C 37 00 03 00 3C 00 64 00 4D 00 FC FF 46 00 64 00+Spiral_Anim_Step <25, 57, 20, 100, 0>
-// WZD dseg:511C 77 00 F6 FF 50 00 5F 00 93 00 F8 FF 5A 00 5A 00+Spiral_Anim_Step <32, 45, 30, 100, 0>
-// WZD dseg:511C AA 00 FB FF 64 00 55 00 BE 00 07 00 6E 00 50 00+Spiral_Anim_Step <40, 29, 40, 100, 0>
-// WZD dseg:511C D4 00 13 00 78 00 4B 00 DA 00 28 00 82 00 46 00+Spiral_Anim_Step <42, 15, 50, 100, 0>
-// WZD dseg:511C E3 00 3B 00 8C 00 41 00 D9 00 4F 00 96 00 3C 00+Spiral_Anim_Step <55, 3, 60, 100, 0>
-// WZD dseg:511C D4 00 61 00 A0 00 37 00 C4 00 6A 00 AA 00 32 00+Spiral_Anim_Step <77, 65532, 70, 100, 0>
-// WZD dseg:511C B3 00 71 00 B4 00 2D 00 A0 00 6D 00 BE 00 28 00+Spiral_Anim_Step <119, 65526, 80, 95, 0>
-// WZD dseg:511C 91 00 69 00 C8 00 23 00 87 00 64 00 D2 00 1E 00+Spiral_Anim_Step <147, 65528, 90, 90, 0>
-// WZD dseg:511C 82 00 5E 00 DC 00 19 00 87 00 57 00 E6 00 14 00+Spiral_Anim_Step <170, 65531, 100, 85, 0>
-// WZD dseg:511C 93 00 57 00 F0 00 0F 00 98 00 59 00 FA 00 0A 00+Spiral_Anim_Step <190, 7, 110, 80, 0>
-// WZD dseg:511C 9F 00 62 00 04 01 05 00                         Spiral_Anim_Step <212, 19, 120, 75, 0>
-// WZD dseg:511C                                                 Spiral_Anim_Step <218, 40, 130, 70, 0>
-// WZD dseg:511C                                                 Spiral_Anim_Step <227, 59, 140, 65, 0>
-// WZD dseg:511C                                                 Spiral_Anim_Step <217, 79, 150, 60, 0>
-// WZD dseg:511C                                                 Spiral_Anim_Step <212, 97, 160, 55, 0>
-// WZD dseg:511C                                                 Spiral_Anim_Step <196, 106, 170, 50, 0>
-// WZD dseg:511C                                                 Spiral_Anim_Step <179, 113, 180, 45, 0>
-// WZD dseg:511C                                                 Spiral_Anim_Step <160, 109, 190, 40, 0>
-// WZD dseg:511C                                                 Spiral_Anim_Step <145, 105, 200, 35, 0>
-// WZD dseg:511C                                                 Spiral_Anim_Step <135, 100, 210, 30, 0>
-// WZD dseg:511C                                                 Spiral_Anim_Step <130, 94, 220, 25, 0>
-// WZD dseg:511C                                                 Spiral_Anim_Step <135, 87, 230, 20, 0>
-// WZD dseg:511C                                                 Spiral_Anim_Step <147, 87, 240, 15, 0>
-// WZD dseg:511C                                                 Spiral_Anim_Step <152, 89, 250, 10, 0>
-// WZD dseg:511C                                                 Spiral_Anim_Step <159, 98, 260, 5, 0>
+// sizeof  0x8  8d
+#pragma pack(push)
+#pragma pack(2)
+struct Spiral_Anim_Step
+{
+    /* 00 */ int16_t x;
+    /* 02 */ int16_t y;
+    /* 04 */ int16_t a;
+    /* 06 */ int16_t s;
+};
+#pragma pack(pop)
+
+struct Spiral_Anim_Step TBL_DefeatAnimSteps[27] = {
+    {   0,  90,   0, 100 },
+    {  12,  73,  10, 100 },
+    {  25,  57,  20, 100 },
+    {  32,  45,  30, 100 },
+    {  40,  29,  40, 100 },
+    {  42,  15,  50, 100 },
+    {  55,   3,  60, 100 },
+    {  77,  -4,  70, 100 },
+    { 119, -10,  80,  95 },
+    { 147,  -8,  90,  90 },
+    { 170,  -5, 100,  85 },
+    { 190,   7, 110,  80 },
+    { 212,  19, 120,  75 },
+    { 218,  40, 130,  70 },
+    { 227,  59, 140,  65 },
+    { 217,  79, 150,  60 },
+    { 212,  97, 160,  55 },
+    { 196, 106, 170,  50 },
+    { 179, 113, 180,  45 },
+    { 160, 109, 190,  40 },
+    { 145, 105, 200,  35 },
+    { 135, 100, 210,  30 },
+    { 130,  94, 220,  25 },
+    { 135,  87, 230,  20 },
+    { 147,  87, 240,  15 },
+    { 152,  89, 250,  10 },
+    { 159,  98, 260,   5 }
+};
 
 // WZD dseg:51F4
 char magic_exe_file__ovr093[] = "MAGIC.EXE";
@@ -158,7 +172,7 @@ char cmbtfx_lbx_file__ovr093[] = "CMBTFX";
 // WZD dseg:C5BA
 SAMB_ptr IMG_GAME_LimboFall;
 // WZD dseg:C5BC
-SAMB_ptr GAME_LimboFall_Stage;
+int16_t GAME_LimboFall_Stage;
 // WZD dseg:C5BE
 SAMB_ptr IMG_GAME_WizHandsUp;
 // WZD dseg:C5C0
@@ -929,23 +943,160 @@ int16_t CP_Is_Dead(void)
 
 
 // WZD 093p10
-// drake178: GAME_PlayVictoryAnim()
-/*
-*/
-/*
-
-*/
-void GAME_PlayVictoryAnim__STUB(int16_t player_idx)
+void Win_Animation(int16_t player_idx)
 {
-
-
-
+    int16_t leave_screen = 0;
+    int16_t input_field_idx = 0;
+    int16_t full_screen_esc = 0;
+    SAMB_ptr sound_data_seg = ST_NULL;
+    uint32_t sound_data_seg_size = 0;  // HACK  DNE in Dasm
+    int16_t hands_type = 0;
+    SAMB_ptr temp_seg = ST_NULL;
+    Combat_Cache_Write();
+    // ; OGBUG: overwrites the city data pointer, only to be overwritten itself by an LBXE_LoadReplace...
+    _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);
+    Stop_All_Sounds__STUB();
+    Set_Mouse_List(1, mouse_list_none);
+    Clear_Fields();
+    Fade_Out();
+    Set_Page_Off();
+    Fill(0, 0, 319, 199, 0);
+    Toggle_Pages();
+    Load_Palette(5, ST_UNDEFINED, ST_NULL);
+    Apply_Palette();
+    Set_Page_Off();
+    // WIN.LBX, 000  "BACKGRND" "'
+    temp_seg = LBX_Reload(win_lbx_file__ovr093, 0, _screen_seg);
+    FLIC_Draw(0, 0, temp_seg);
+    switch(_players[player_idx].wizard_id)
+    {
+        case 1:  { hands_type = 20; } break;
+        case 2:  { hands_type = 19; } break;
+        case 3:  { hands_type = 21; } break;
+        case 4:  { hands_type = 22; } break;
+        case 5:  { hands_type = 18; } break;
+        default: { hands_type = 17; } break;
+    }
+    // WIN.LBX, 017  "MHANDS"   "male hands"
+    // WIN.LBX, 018  "FHANDS"   "female hands"
+    // WIN.LBX, 019  "PHANDS"   "priestess hands"
+    // WIN.LBX, 020  "SHANDS"   "shaman hands"
+    // WIN.LBX, 021  "OHANDS"   "oberic hands"
+    // WIN.LBX, 022  "DHANDS"   "draconian hands"
+    temp_seg = LBX_Reload(win_lbx_file__ovr093, hands_type, _screen_seg);
+    FLIC_Draw(22, 143, temp_seg);
+    Copy_Off_To_Back();
+    Copy_Off_To_Page4();  /* OGBUG  ; this image is never loaded back from here */
+    // WIN.LBX, 003  "MERLBLUE" ""
+    // WIN.LBX, 004  "SHAMBLUE" ""
+    // WIN.LBX, 005  "PRIEBLUE" ""
+    // WIN.LBX, 006  "WUBLUE"   ""
+    // WIN.LBX, 007  "ARABBLUE" ""
+    // WIN.LBX, 008  "OBERBLUE" ""
+    // WIN.LBX, 009  "WRAIBLUE" ""
+    // WIN.LBX, 010  "DRACBLUE" ""
+    // WIN.LBX, 011  "NMOIBLUE" ""
+    // WIN.LBX, 012  "FREYBLUE" ""
+    // WIN.LBX, 013  "GALEBLUE" ""
+    // WIN.LBX, 014  "ARIEBLUE" ""
+    // WIN.LBX, 015  "AZTEBLUE" ""
+    // WIN.LBX, 016  "KARLBLUE" ""
+    IMG_GAME_WizHandsUp = LBX_Reload(win_lbx_file__ovr093, (3 + _players[player_idx].wizard_id), _screen_seg);
+    // WIN.LBX, 001  "REDPOINT" "'
+    IMG_GAME_RedSparkle = LBX_Reload(win_lbx_file__ovr093, 1, World_Data);
+    // WIN.LBX, 002  "PLANETS"  ""
+    Open_File_Animation__HACK(win_lbx_file__ovr093, 2);
+    if(magic_set.background_music == ST_TRUE)
+    {
+        sound_data_seg = LBX_Reload(music_lbx_file__ovr093, MUSIC_WIN_Military, SND_Music_Segment);
+        sound_data_seg_size = lbxload_entry_length;
+        Play_Sound(sound_data_seg, sound_data_seg_size);
+    }
+    /* Note: Segment stub093 used as base for function pointer */
+    Assign_Auto_Function(Win_Animation_Draw, 4);
+    leave_screen = 0;
+    m_conquest_anim_stage = 0;
+    Set_Input_Delay(3);
+    while(leave_screen == 0)
+    {
+        Mark_Time();
+        Clear_Fields();
+        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)cnst_HOTKEY_Esc10[0], ST_UNDEFINED);
+        input_field_idx = Get_Input();
+        if(input_field_idx == full_screen_esc)
+        {
+            leave_screen = ST_UNDEFINED;
+        }
+        if(m_conquest_anim_stage > 90)
+        {
+            leave_screen = ST_UNDEFINED;
+        }
+        if(leave_screen == ST_FALSE)
+        {
+            Win_Animation_Draw();
+            PageFlip_FX();
+            Release_Time(4);
+        }
+    }
+    Stop_All_Sounds__STUB();
+    Clear_Fields();
+    Reset_Window();
+    Clear_Fields();
+    Deactivate_Auto_Function();
+    Fade_Out();
+    Load_Palette(0, ST_UNDEFINED, ST_NULL);
+    Reset_Cycle_Palette_Color();
+    Clear_Palette_Changes(0, 255);
+    Set_Palette_Changes(0, 223);
+    Calculate_Remap_Colors();
+    Set_Page_Off();
+    Fill(0, 0, 319, 199, 0);
+    Toggle_Pages();
+    Set_Mouse_List(1, mouse_list_default);
+    Play_Background_Music();
+    Combat_Cache_Read();
 }
 
 
 // WZD 093p11
-// drake178: GAME_Draw_WIN_Anim()
-// GAME_Draw_WIN_Anim()
+void Win_Animation_Draw(void)
+{
+    char niu_space[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t frame = 0;
+    int16_t itr = 0;
+    stu_strcpy(niu_space, str_SPACE__ovr093);
+    Set_Page_Off();
+    Reset_Window();
+    Copy_Back_To_Off();
+    frame = FLIC_Get_CurrentFrame(IMG_GAME_WizHandsUp);
+    Set_Animation_Frame(IMG_GAME_WizHandsUp, 0);
+    for(itr = 0; itr <= frame; itr++)
+    {
+        FLIC_Draw(93, 2, IMG_GAME_WizHandsUp);
+    }
+    FLIC_Draw(0, 0, IMG_GAME_RedSparkle);
+    Draw_File_Animation__HACK();
+    Set_Font_Style_Outline_Heavy(5, 5, 0, 0);
+    Set_Outline_Color(0);
+    if(m_conquest_anim_stage < 15)
+    {
+        stu_strcpy(GUI_String_1, cnst_WIN_Msg_1);  // "Having conquered both the"
+    }
+    else if(m_conquest_anim_stage < 30)
+    {
+        stu_strcpy(GUI_String_1, cnst_WIN_Msg_2);  // "world of Arcanus and Myrror,"
+    }
+    else if(m_conquest_anim_stage < 45)
+    {
+        stu_strcpy(GUI_String_1, cnst_WIN_Msg_3);  // "I and only I, remain the one"
+    }
+    else if(m_conquest_anim_stage < 60)
+    {
+        stu_strcpy(GUI_String_1, cnst_WIN_Msg_4);  // "and true Master of Magic."
+    }
+    Print_Centered(160, 180, GUI_String_1);
+    m_conquest_anim_stage++;
+}
 
 
 // WZD 093p12

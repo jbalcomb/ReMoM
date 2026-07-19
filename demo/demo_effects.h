@@ -21,5 +21,6 @@ extern const Demo_Effect effect_earthquake;
 extern const Demo_Effect effect_screen;
 extern const Demo_Effect effect_summon;
 extern const Demo_Effect effect_lose;
+extern const Demo_Effect effect_win;
 
 #endif /* DEMO_EFFECTS_H */

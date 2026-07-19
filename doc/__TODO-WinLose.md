@@ -50,11 +50,12 @@ OON XREF:  Change_City_Ownership() |-> j_WIZ_Conquer() |-> WIZ_Conquer() |-> CP_
 [x]             |-> Conquest_Animation()
 [x]             |-> Conquest_Spells
 [x]             |-> Lose_Animation()
-[ ]             |-> GAME_PlayVictoryAnim__STUB(_human_player_idx);
+[x]             |-> Win_Animation()
 [ ]             |-> GAME_OVER();
 [x]             |-> s01p16_empty_function();
 [ ]             |-> GAME_EXE_Swap(cnst_MAGIC_EXE_File, cnst_MAGICEXE_arg0, cnst_ZeroString_7, cnst_ZeroString_7);
 
+¿ should be Banish_Animation() ? ¿ Conquest is unclear relative to Lose/Win ?
 [x] Conquest_Animation()
 [x]     |-> Conquest_Animation_Draw()
 [x]          |-> GAME_DrawConquerors();
@@ -76,6 +77,37 @@ OON XREF:  Change_City_Ownership() |-> j_WIZ_Conquer() |-> WIZ_Conquer() |-> CP_
 
 [x] Lose_Animation()
 [x]     |-> Lose_Animation_Draw()
+
+[x] Win_Animation()
+[x]     |-> Win_Animation_Draw()
+
+spell of return over?
+spell of mastery win * lose
+GAME_OVER
+switch EXE
+
+
+
+LBX_IMG_VShiftRect
+
+// WZD o138p01
+void Spell_Of_Mastery_Lose_Load(int16_t wizard_id)
+// WZD o138p02
+void Spell_Of_Mastery_Lose_Draw(void)
+// WZD o138p03
+void Spell_Of_Mastery_Lose(void)
+// WZD o138p04
+void SoM_Started_Draw__STUB(void)
+// WZD o138p05
+// Cast_Spell_Of_Mastery
+void SoM_Started__STUB(int16_t player_idx)
+// WZD o138p06
+void Spell_Of_Mastery_Load(void)
+// WZD o138p07
+void Spell_Of_Mastery_Draw(void)
+// WZD o138p08
+void Spell_Of_Mastery(int16_t player_idx)
+
 
 
 

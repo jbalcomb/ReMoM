@@ -19,6 +19,7 @@ add_executable(demo_vga
     effect_screen.c
     effect_summon.c
     effect_lose.c
+    effect_win.c
 )
 
 set_target_properties(demo_vga PROPERTIES POSITION_INDEPENDENT_CODE ON)

@@ -51,10 +51,10 @@ void Conquest_Animation_Draw_End_Pose(void);
 int16_t CP_Is_Dead(void);
 
 // WZD 093p10
-void GAME_PlayVictoryAnim__STUB(int16_t player_idx);
+void Win_Animation(int16_t player_idx);
 
 // WZD 093p11
-// GAME_Draw_WIN_Anim()
+void Win_Animation_Draw(void);
 
 // WZD 093p12
 void Lose_Animation(int16_t player_idx);

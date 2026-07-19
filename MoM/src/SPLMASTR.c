@@ -28,6 +28,7 @@ MoO2
 #include "../../MoX/src/random.h"
 
 #include "Combat.h"
+#include "Conquest.h"
 #include "MagicScr.h"
 #include "MainScr.h"
 #include "NEXTTURN.h"
@@ -2335,7 +2336,7 @@ void Spell_Of_Mastery(int16_t player_idx)
 
     Combat_Cache_Read();
 
-    // SPELLY  GAME_PlayVictoryAnim(HUMAN_PLAYER_IDX);
+    Win_Animation(HUMAN_PLAYER_IDX);
 
     // SPELLY  GAME_OVER();
 

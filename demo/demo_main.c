@@ -17,7 +17,8 @@ static const Demo_Effect * const g_effects[] =
     &effect_earthquake,
     &effect_screen,
     &effect_summon,
-    &effect_lose
+    &effect_lose,
+    &effect_win
 };
 #define DEMO_EFFECT_COUNT  ((int)(sizeof(g_effects) / sizeof(g_effects[0])))
 

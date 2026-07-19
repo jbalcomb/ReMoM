@@ -148,6 +148,18 @@ self-terminating loop).  Harness only allocates _screen_seg and sets _players[0]
 confirmed it runs at a good pace and looks correct.  (Depends on the FLIC_Draw.c rotate/texture
 reconstruction: VGA_WndDrawRotateImg / VGA_RotateRect / VGA_DrawTexture.)
 
+## Win animation path (DONE — effect_win.c; visually confirmed)
+`demo_vga win <wizard 0-13>` calls the REAL Win_Animation() directly (like lose).  Setup beyond the
+trimmed boot: Allocate_Data_Space() (World_Data + _screen_seg, which Win_Animation needs for
+Combat_Cache_Write, _CITIES, and the RedSparkle/image loads) and GUI_String_1 (a char* the game
+allocates during conquest-screen setup; Win_Animation_Draw strcpy's the victory text into it, else
+NULL deref).
+CORRECTION: an earlier note here called CONQUEST.c:877 `Allocate_First_Block(714, World_Data)` an
+OGBUG that reads address 714.  That was WRONG -- it was a Gemini param-swap reconstruction error
+(714 is the SIZE; signature is Allocate_First_Block(block, size)).  User fixed it to
+`Allocate_First_Block(World_Data, 714)`, so the real function is callable and there is NO OGBUG /
+no null-page fault.
+
 ## Remaining (optional)
 - More effects: reconstruct & demo other seg026/027 transitions (CrossSlide, Interleave, Wipe,
   SliceFlip, SquaresFlip...) -- still stubs.
