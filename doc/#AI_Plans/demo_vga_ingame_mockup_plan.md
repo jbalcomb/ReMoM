@@ -142,6 +142,12 @@ Goal: watch IDK_SummonAnim's animation for a given summon type.
   a MONSTER.LBX figure-index formula the reconstruction flags as uncertain -> deferred.
 - CAVEAT: summon visuals are NOT self-verifiable (headless smoke only crash-checks); needs user eyeball.
 
+## Lose animation path (DONE — effect_lose.c; visually confirmed)
+`demo_vga lose <wizard 0-13>` calls the REAL Lose_Animation() directly (self-contained, no world,
+self-terminating loop).  Harness only allocates _screen_seg and sets _players[0].wizard_id.  User
+confirmed it runs at a good pace and looks correct.  (Depends on the FLIC_Draw.c rotate/texture
+reconstruction: VGA_WndDrawRotateImg / VGA_RotateRect / VGA_DrawTexture.)
+
 ## Remaining (optional)
 - More effects: reconstruct & demo other seg026/027 transitions (CrossSlide, Interleave, Wipe,
   SliceFlip, SquaresFlip...) -- still stubs.

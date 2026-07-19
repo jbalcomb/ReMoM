@@ -17,6 +17,7 @@ MoO2 Module: shear
 
 #include "../../ext/stu_compat.h"
 
+#include "angle.h"
 #include "file_ani.h"
 #include "Fonts.h"
 #include "Graphics.h"
@@ -439,10 +440,10 @@ void Copy_Bitmap_To_Bitmap(SAMB_ptr target_bitmap, SAMB_ptr source_bitmap)
     int16_t height = 0;
     int16_t length = 0;
 
-    // DOMSDOS  width = farpeekw(source_bitmap, FLIC_HDR_POS_WIDTH);
+    // DOMSDOS  width = GET_2B_OFS(source_bitmap, FLIC_HDR_POS_WIDTH);
     width = GET_2B_OFS(source_bitmap, FLIC_HDR_POS_WIDTH);
 
-    // height = farpeekw(source_bitmap, FLIC_HDR_POS_HEIGHT);
+    // height = GET_2B_OFS(source_bitmap, FLIC_HDR_POS_HEIGHT);
     height = GET_2B_OFS(source_bitmap, FLIC_HDR_POS_HEIGHT);
 
     length = (SZ_FLIC_HDR + (width * height));
@@ -523,8 +524,8 @@ void LBX_IMG_VShiftRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr
     int16_t itr;
     int16_t ofst;
 
-    // width = farpeekw(bitmap, 0);
-    // height = farpeekw(bitmap, 2); /* s_FLIC_HDR.height */
+    // width = GET_2B_OFS(bitmap, 0);
+    // height = GET_2B_OFS(bitmap, 2); /* s_FLIC_HDR.height */
     width = GET_2B_OFS(bitmap, 0);
     height = GET_2B_OFS(bitmap, 2);
 
@@ -560,7 +561,7 @@ void LBX_IMG_VShiftRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr
     
     ofst = height * x1;
 
-    for (itr_width = x1; itr_width <= x2; itr_width++)
+    for(itr_width = x1; itr_width <= x2; itr_width++)
     {
         current_shear = (int16_t)(shear / 1000);
 
@@ -573,11 +574,11 @@ void LBX_IMG_VShiftRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr
                 if(New_Height > 0)
                 {
                     /* New_Height = (height + current_shear) > 0 */
-                    for (itr = ofst; itr < (ofst + New_Height); itr++)
+                    for(itr = ofst; itr < (ofst + New_Height); itr++)
                     {
                         bitmap_data[itr] = bitmap_data[itr - current_shear];
                     }
-                    for (itr = New_Height; itr < height; itr++)
+                    for(itr = New_Height; itr < height; itr++)
                     {
                         bitmap_data[ofst + itr] = ST_TRANSPARENT;
                     }
@@ -585,7 +586,7 @@ void LBX_IMG_VShiftRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr
                 else
                 {
                     /* New_Height = (height + current_shear) < 0 */
-                    for (itr = ofst; itr < (ofst + height); itr++)
+                    for(itr = ofst; itr < (ofst + height); itr++)
                     {
                         bitmap_data[itr] = ST_TRANSPARENT;
                     }
@@ -598,11 +599,11 @@ void LBX_IMG_VShiftRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr
                 if(New_Height > 0)
                 {
                     /* (height - current_shear) > 0 */
-                    for (itr = (ofst + height - 1); itr >= (ofst + current_shear); itr--)
+                    for(itr = (ofst + height - 1); itr >= (ofst + current_shear); itr--)
                     {
                         bitmap_data[itr] = bitmap_data[itr - current_shear];
                     }
-                    for (itr = 0; itr < current_shear; itr++)
+                    for(itr = 0; itr < current_shear; itr++)
                     {
                         bitmap_data[ofst + itr] = ST_TRANSPARENT;
                     }
@@ -610,7 +611,7 @@ void LBX_IMG_VShiftRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr
                 else
                 {
                     /* (height - current_shear) < 0 */
-                    for (itr = ofst; itr < (ofst + height); itr++)
+                    for(itr = ofst; itr < (ofst + height); itr++)
                     {
                         bitmap_data[itr] = ST_TRANSPARENT;
                     }
@@ -1095,16 +1096,300 @@ int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header)
 
 
 // WZD s30p20
-// VGA_WndDrawRotateImg()
+// MoO2  Module: bitmap  Draw_Bitmap_Rotated()
+/* GEMINI */
+void Draw_Bitmap_Rotated(int16_t x, int16_t y, int16_t angle, SAMB_ptr pict_seg)
+{
+    int16_t tr_x = 0;
+    int16_t tr_y = 0;
+    int16_t br_x = 0;
+    int16_t br_y = 0;
+    int16_t bl_x = 0;
+    int16_t bl_y = 0;
+    int16_t width = 0;
+    int16_t height = 0;
+    width = GET_2B_OFS(pict_seg, FLIC_HDR_POS_WIDTH);
+    height = GET_2B_OFS(pict_seg, FLIC_HDR_POS_HEIGHT);
+
+    /* Execute matrix math to populate the output corners (TR, BR, BL) based on the angle */
+    Get_Rotated_Pixels(angle, width, height, &x, &y, &tr_x, &tr_y, &br_x, &br_y, &bl_x, &bl_y);
+
+    /* Forward the fully computed quadrilateral into the linear, refactored frame buffer pipeline */
+    Draw_Bitmap_Animation_Block(x, y, tr_x, tr_y, br_x, br_y, bl_x, bl_y, pict_seg, height, width);
+}
+
 
 // WZD s30p21
-// VGA_WndDrawImageRect()
+// MoO2  Module: bitmap  Draw_Bitmap_Animation_Block()
+/* GEMINI */
+/**
+ * High-level coordinate transformation and clipping pipeline.
+ */
+void Draw_Bitmap_Animation_Block(int16_t tl_x, int16_t tl_y, int16_t tr_x, int16_t tr_y, int16_t br_x, int16_t br_y, int16_t bl_x, int16_t bl_y, SAMB_ptr pict_seg, uint16_t height, uint16_t width)
+{
+    /* Local stack mirrors mapping to internal assembly workspace stack frames */
+    int16_t x[5], y[5];
+    int16_t left_corner, corner_2, corner_3, right_corner;
+    int16_t min_y, max_y;
+    int loop_x, loop_y;
+    
+    int16_t replacement_colors = 0; /* Extracted via conceptual farpeekb */
+    int16_t draw_left, draw_top, draw_width, draw_height;
+    int16_t col1_hgt, col_height_incr, skip_width;
+    int16_t next_draw_line, up_slope, nl_constant;
+    
+    int16_t horizontal_read_skip, vertical_read_skip;
+    int16_t horizontal_x_slope, horizontal_left_pixel, horizontal_down_pixel;
+    int16_t vertical_x_slope, vertical_y_slope, vertical_left_pixel, vertical_down_pixel;
+    
+    int read_offset;
+    int di_fractional;
+
+    uint8_t* vga_frame_buffer;
+    const uint8_t* texture_data;
+    const uint8_t* remap_palettes;
+
+    col1_hgt = 0;  /* OGBUG  uninitialized variable */
+
+
+    /* Populate geometric workspace arrays */
+    x[1] = tl_x; x[2] = tr_x; x[3] = br_x; x[4] = bl_x;
+    y[1] = tl_y; y[2] = tr_y; y[3] = br_y; y[4] = bl_y;
+
+    left_corner = 1; corner_2 = 2; corner_3 = 3; right_corner = 4;
+    max_y = 10000; min_y = 0;
+
+    /* Execute sorting pass to establish geometric structure */
+    for(loop_y = 0; loop_y < 4; loop_y++) {
+        if(y[loop_y + 1] < min_y) min_y = y[loop_y + 1];
+        if(y[loop_y + 1] > max_y) max_y = y[loop_y + 1];
+        
+        for(loop_x = 0; loop_x < 3; loop_x++) {
+            if(x[loop_x + 1] > x[loop_x + 2]) {
+                Swap_Short(&x[loop_x + 1], &x[loop_x + 2]);
+                Swap_Short(&y[loop_x + 1], &y[loop_x + 2]);
+                /* Replicate internal hardware corner tracking flag swaps */
+                if(loop_x == 0) Swap_Short(&left_corner, &corner_2);
+                if(loop_x == 1) Swap_Short(&corner_2, &corner_3);
+                if(loop_x == 2) Swap_Short(&corner_3, &right_corner);
+            }
+        }
+    }
+
+    /* Out of bounds window clipping guard checks */
+    if(x[1] > screen_window_x2 || x[4] < screen_window_x1 || 
+        min_y > screen_window_y2 || max_y < screen_window_y1) {
+        return;
+    }
+
+    /* Route execution depending on if drawing a standard uniform rect or transformed quad */
+    /* [Standard Uniform Bounding Path - Reference Context Part 1] */
+    if(x[1] == x[2]) {
+        /* Standard Axis-Aligned bounding path implementation */
+        if(y[1] > y[2]) {
+            Swap_Short(&x[1], &x[2]);
+            Swap_Short(&y[1], &y[2]);
+            Swap_Short(&left_corner, &corner_2);
+        }
+
+        draw_left = x[1];
+        draw_top = y[1];
+        col1_hgt = y[2] - y[1] + 1;
+        col_height_incr = 0;
+        draw_width = x[3] - x[1] + 1;
+        nl_constant = 0; up_slope = 0; next_draw_line = 0;
+
+        /* Calculate source index parameters depending on rotation state index flags */
+        read_offset = 0;
+        horizontal_x_slope = ((int32_t)width << 8) / (x[3] - x[1] + 1);
+        vertical_y_slope = ((int32_t)height << 8) / (y[2] - y[1] + 1);
+        vertical_x_slope = 0;
+        di_fractional = 0;
+        
+        horizontal_read_skip = 0;
+        vertical_read_skip = 0;
+
+        /* Execute window bounds clip adjustments */
+        if(x[3] >= screen_window_x1 && x[1] <= screen_window_x2) {
+            skip_width = screen_window_x1 - x[1] - 1;
+            if(screen_window_x2 < x[3]) {
+                draw_width = screen_window_x2 - x[1] + 1;
+            }
+
+            /* Initialize parameter structure package fields */
+            TextureRenderParams p;
+            p.start_x = draw_left; p.start_y = draw_top; p.width = draw_width; p.col1_hgt = col1_hgt;
+            p.ch_slope = col_height_incr; p.ch_incr = horizontal_x_slope; p.up_slope = up_slope; p.nl = nl_constant;
+            p.read_off = read_offset + di_fractional;
+            p.pict_data = &pict_seg[16];  // data, no header
+            p.h_rskip = horizontal_read_skip; p.x_vslope = vertical_x_slope; p.x_down = 0;
+            p.x_hslope = horizontal_x_slope; p.x_left = 0; p.v_rskip = vertical_read_skip;
+            p.y_vslope = vertical_y_slope; p.y_down = 0; p.y_hslope = 0; p.y_left = 0;
+            p.skip_width = skip_width; 
+            p.min_off = screen_window_y1 * SCREEN_WIDTH;
+            p.max_off = (screen_window_y2 + 1) * SCREEN_WIDTH;
+
+            if(replacement_colors == 0) {
+                VGA_DrawTexture(&p);
+            } else {
+                VGA_DrawTexture_R(&p);
+            }
+        }
+    } else {
+        /* Transformed perspective polygon rendering path... */
+        /* Assembly lines 21942 to 22512 process full quad rendering by breaking down gradients */
+        /* To preserve readability, parameters are derived step-by-step per sub-strip here */
+        /* loc_21942: Transformed Perspective Multi-Strip Pipeline */
+draw_left = x[1];
+        draw_top = y[1];
+        draw_width = x[2] - x[1] + 1;
+
+        if(y[2] < y[1]) {
+            int32_t delta_y = (int32_t)(y[3] - y[1]) * (x[2] - x[1]);
+            draw_height = (int16_t)(delta_y / (x[3] - x[1])) + y[1] - y[2] + 1;
+            /* OGBUG  uninitialized variable */
+            if(col1_hgt < 1) col1_hgt = 1;
+        } else {
+            int32_t delta_y = (int32_t)(y[1] - y[3]) * (x[2] - x[1]);
+            draw_height = (int16_t)(delta_y / (x[3] - x[1])) + y[2] - y[1] + 1;
+        }
+
+        col1_hgt = 1;
+        col_height_incr = ((int32_t)(draw_height - col1_hgt) << 8) / (draw_width - 1);
+        next_draw_line = -SCREEN_WIDTH;
+
+        if(y[2] < y[3]) {
+            up_slope = ((int32_t)(y[1] - y[2]) << 8) / (x[2] - x[1]);
+        } else {
+            up_slope = ((int32_t)(y[1] - y[3]) << 8) / (x[3] - x[1]);
+        }
+
+        if(up_slope < 0x100) {
+            nl_constant = 0;
+        } else {
+            // nl_constant = (up_slope / 0x100) * -80;
+            nl_constant = (up_slope / 0x100) * -SCREEN_WIDTH;
+            up_slope %= 0x100;
+        }
+
+        /* Set sampling directions based on sorted index positions */
+        if(left_corner == 1 || left_corner == 3) {
+            if(y[2] < y[3]) {
+                vertical_x_slope = ((int32_t)(width - 1) << 8) / (draw_height - 1);
+                int32_t term = ((int32_t)(y[2] - y[1]) * (x[2] - x[1])) / (x[3] - x[1]);
+                vertical_y_slope = ((int32_t)(height - 1) << 8) / term;
+            } else {
+                int32_t term = ((int32_t)(y[3] - y[1]) * (x[2] - x[1])) / (x[3] - x[1]);
+                vertical_x_slope = ((int32_t)(width - 1) << 8) / term;
+                vertical_y_slope = ((int32_t)(height - 1) << 8) / (draw_height - 1);
+            }
+        } else {
+            /* Alternating shear interpolation fallback maps */
+            vertical_x_slope = ((int32_t)(width - 1) << 8) / (draw_height - 1);
+            vertical_y_slope = ((int32_t)(height - 1) << 8) / (draw_height - 1);
+        }
+
+        /* Strip Pipeline Step Execution Dispatcher */
+        if(x[2] >= screen_window_x1 && x[1] <= screen_window_x2) {
+            skip_width = screen_window_x1 - x[1] - 1;
+            if(screen_window_x2 < x[2]) {
+                draw_width = screen_window_x2 - x[1] + 1;
+            }
+
+            TextureRenderParams p;
+            p.start_x = draw_left; p.start_y = draw_top; p.width = draw_width; p.col1_hgt = col1_hgt;
+            p.ch_slope = col_height_incr; p.ch_incr = up_slope; p.up_slope = up_slope; p.nl = nl_constant;
+            p.read_off = 0;
+            p.pict_data = &pict_seg[16];  // data, no header
+            p.h_rskip = 0; p.x_vslope = vertical_x_slope; p.x_down = 0;
+            p.x_hslope = 0; p.x_left = 0; p.v_rskip = 0;
+            p.y_vslope = vertical_y_slope; p.y_down = 0; p.y_hslope = 0; p.y_left = 0;
+            p.skip_width = skip_width;
+            p.min_off = screen_window_y1 * SCREEN_WIDTH;
+            p.max_off = (screen_window_y2 + 1) * SCREEN_WIDTH;
+
+            if(replacement_colors == 0) {
+                VGA_DrawTexture(&p);
+            } else {
+                VGA_DrawTexture_R(&p);
+            }
+        }
+    }
+}
+
 
 // WZD s30p22
-// UU_VGA_WndDrawTransform()
+/* GEMINI */
+void UU_VGA_WndDrawTransform(int16_t lm_x, int16_t lm_y, int16_t rm_x, int16_t rm_y, SAMB_ptr pict_seg)
+{
+    int16_t BR_X;
+    int16_t BR_Y;
+    int16_t BL_X;
+    int16_t BL_Y;
+    int16_t Y_Dist;
+    int16_t X_Dist;
+    int16_t Width;
+    int16_t angle;
+    int16_t UU_Replacement_Colors;
+    int16_t Transform_Angle;
+    int16_t Half_Height_Cos;
+    int16_t Half_Height_Sin;
+    int16_t height;
+    Width = GET_2B_OFS(pict_seg, FLIC_HDR_POS_WIDTH);
+    height = GET_2B_OFS(pict_seg, FLIC_HDR_POS_HEIGHT);
+    UU_Replacement_Colors = GET_2B_OFS(pict_seg, FLIC_HDR_POS_LOOP_FRAME);
+    X_Dist = rm_x - lm_x;
+    Y_Dist = rm_y - lm_y;
+    angle = Get_Angle(X_Dist, Y_Dist);
+    Transform_Angle = 90 - angle;
+    if(Transform_Angle < 0)
+    {
+        Transform_Angle += 360;
+    }
+    Half_Height_Cos = Cos(Transform_Angle, height) / 2;
+    Half_Height_Sin = Sin(Transform_Angle, height) / 2;
+    lm_x += Half_Height_Cos;
+    lm_y -= Half_Height_Sin;
+    rm_x += Half_Height_Cos;
+    rm_y -= Half_Height_Sin;
+    BR_X = rm_x - (Sin(angle, height * 12) / 10);
+    BR_Y = rm_y + Cos(angle, height);
+    BL_X = lm_x - (Sin(angle, height * 12) / 10);
+    BL_Y = lm_y + Cos(angle, height);
+    Draw_Bitmap_Animation_Block(lm_x, lm_y, rm_x, rm_y, BR_X, BR_Y, BL_X, BL_Y, pict_seg, height, Width);
+}
+
 
 // WZD s30p23
-// VGA_RotateRect()
+// MoO2  Module: bitmap  Get_Rotated_Pixels()
+/* GEMINI */
+void Get_Rotated_Pixels(int16_t angle, int16_t Width, int16_t Height, int16_t * TL_X_ptr, int16_t * TL_Y_ptr, int16_t * TR_X_ptr, int16_t * TR_Y_ptr, int16_t * BR_X_ptr, int16_t * BR_Y_ptr, int16_t * BL_X_ptr, int16_t * BL_Y_ptr)
+{
+    int16_t Center_X;
+    int16_t Center_Y;
+    int16_t Original_X;
+    Center_X = *TL_X_ptr + Width / 2;
+    Center_Y = *TL_Y_ptr + Height / 2;
+    *TR_X_ptr = *TL_X_ptr + Width - 1;
+    *TR_Y_ptr = *TL_Y_ptr;
+    *BR_X_ptr = *TL_X_ptr + Width - 1;
+    *BR_Y_ptr = *TL_Y_ptr + Height - 1;
+    *BL_X_ptr = *TL_X_ptr;
+    *BL_Y_ptr = *TL_Y_ptr + Height - 1;
+    Original_X = *TL_X_ptr;
+    *TL_X_ptr = Center_X + Cos(angle, *TL_X_ptr - Center_X) - (Sin(angle, (*TL_Y_ptr - Center_Y) * 12) / 10);
+    *TL_Y_ptr = Center_Y + Cos(angle, *TL_Y_ptr - Center_Y) + (Sin(angle, (Original_X - Center_X) * 22) / 25);
+    Original_X = *TR_X_ptr;
+    *TR_X_ptr = Center_X + Cos(angle, *TR_X_ptr - Center_X) - (Sin(angle, (*TR_Y_ptr - Center_Y) * 12) / 10);
+    *TR_Y_ptr = Center_Y + Cos(angle, *TR_Y_ptr - Center_Y) + (Sin(angle, (Original_X - Center_X) * 22) / 25);
+    Original_X = *BR_X_ptr;
+    *BR_X_ptr = Center_X + Cos(angle, *BR_X_ptr - Center_X) - (Sin(angle, (*BR_Y_ptr - Center_Y) * 12) / 10);
+    *BR_Y_ptr = Center_Y + Cos(angle, *BR_Y_ptr - Center_Y) + (Sin(angle, (Original_X - Center_X) * 22) / 25);
+    Original_X = *BL_X_ptr;
+    *BL_X_ptr = Center_X + Cos(angle, *BL_X_ptr - Center_X) - (Sin(angle, (*BL_Y_ptr - Center_Y) * 12) / 10);
+    *BL_Y_ptr = Center_Y + Cos(angle, *BL_Y_ptr - Center_Y) + (Sin(angle, (Original_X - Center_X) * 22) / 25);
+}
+
 
 
 // WZD s30p24
@@ -1356,7 +1641,7 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
 // MoO2  Module: bitmap  Mask_Out_Bitmap_With_Bitmap() |-> Mask_Bitmap_Pixels_Inverse_()
 /*
 ; overlays one LBX image onto another, trimming the
-; source if necessary; Left and Top are the coordinates
+; source if necessary; x and y are the coordinates
 ; in the target image, the source is always wholly
 ; copied if possible
 */
@@ -1517,8 +1802,8 @@ void Transparent_Color_Range(SAMB_ptr bitmap, int16_t color_start, int16_t color
     uint16_t dst_ofst;  // _DI_
     uint8_t pixel;
 
-    // TODO  width = farpeekw(bitmap, FLIC_HDR_POS_WIDTH);
-    // TODO  height = farpeekw(bitmap, FLIC_HDR_POS_HEIGHT);
+    // TODO  width = GET_2B_OFS(bitmap, FLIC_HDR_POS_WIDTH);
+    // TODO  height = GET_2B_OFS(bitmap, FLIC_HDR_POS_HEIGHT);
     width = GET_2B_OFS(bitmap, FLIC_HDR_POS_WIDTH);
     height = GET_2B_OFS(bitmap, FLIC_HDR_POS_HEIGHT);
 
@@ -1580,8 +1865,8 @@ void Clear_Bitmap_Region(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_pt
     int16_t itr_draw_width = 0;
     byte_ptr rvr_bitm = NULL;
 
-    // width  = farpeekw(bitm, 0);
-    // height = farpeekw(bitm, 2);
+    // width  = GET_2B_OFS(bitm, 0);
+    // height = GET_2B_OFS(bitm, 2);
     width  = FLIC_GET_WIDTH(bitm);
     height = FLIC_GET_HEIGHT(bitm);
 
@@ -1929,7 +2214,7 @@ mov     bp, sp
 mov     ax, s_FLIC_HDR.current_frame
 push    ax                              ; Offset
 push    [file_animation_header]         ; Segment
-call    farpeekw
+call    GET_2B_OFS
 pop     cx
 pop     cx
 jmp     short $+2
@@ -2214,7 +2499,7 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
 
 // WZD s30p44
 // MoO2: Bitmap_Aura() |-> Bitmap_Aura_Pixels_()
-// replaces a selected color in an image with one of the eight indexes in the passed color array, constantly changing the next one to be written using a 16 color long repeat sequence
+// replaces a selected color in an image with one of the eight indexes in the passed color array, constantly changing the next one to be written using a 16 color int32_t repeat sequence
 void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t aura_color, uint8_t * color_list)
 {
     int16_t width;
@@ -2272,8 +2557,8 @@ void Get_Bitmap_Actual_Size(SAMB_ptr bitmap_addr, int16_t * x1, int16_t * y1, in
     int16_t flic_width;
     int16_t flic_height;
 
-    // flic_width  = farpeekw(pict_seg, s_FLIC_HDR.Width);
-    // flic_height = farpeekw(pict_seg, s_FLIC_HDR.Height);
+    // flic_width  = GET_2B_OFS(pict_seg, s_FLIC_HDR.Width);
+    // flic_height = GET_2B_OFS(pict_seg, s_FLIC_HDR.Height);
     flic_width  = FLIC_GET_WIDTH(bitmap_addr);
     flic_height = FLIC_GET_HEIGHT(bitmap_addr);
 
@@ -2576,7 +2861,7 @@ static void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t he
                 frame_data++;
                 packet_byte_count -= data_count + 2;
                 copy_loop_height:
-                for (;;)
+                for(;;)
                 {
                     line_count--;
                     if(line_count < 0) { frame_data += data_count; break; }
@@ -3174,8 +3459,8 @@ void Flip_Bitmap(SAMB_ptr pict_seg)
     w = FLIC_GET_WIDTH(pict_seg);
     h = FLIC_GET_HEIGHT(pict_seg);
     p = (pict_seg + SZ_FLIC_HDR);
-    for (y = 0; y < h; ++y) {
-        for (x = 0; x < (w / 2); ++x) {
+    for(y = 0; y < h; ++y) {
+        for(x = 0; x < (w / 2); ++x) {
             t = p[x];
             p[x] = p[w - 1 - x];
             p[w - 1 - x] = t;

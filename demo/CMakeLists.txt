@@ -18,6 +18,7 @@ add_executable(demo_vga
     effect_earthquake.c
     effect_screen.c
     effect_summon.c
+    effect_lose.c
 )
 
 set_target_properties(demo_vga PROPERTIES POSITION_INDEPENDENT_CODE ON)

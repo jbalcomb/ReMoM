@@ -43,13 +43,13 @@ OON XREF:  Change_City_Ownership() |-> j_WIZ_Conquer() |-> WIZ_Conquer() |-> CP_
 [ ] Change_City_Ownership()
 [ ]     |-> j_Resolve_Wizard_Conquest()
 [ ]         |-> Resolve_Wizard_Conquest()
-[ ]             |-> Banish_Wizard()
+[x]             |-> Banish_Wizard()
 [x]                 |-> Conquest_Animation()
 [x]                 |-> Return_Animation()
 [x]                 |-> Conquest_Spells()
 [x]             |-> Conquest_Animation()
 [x]             |-> Conquest_Spells
-[ ]             |-> GAME_LimboFallAnim__STUB(city_owner_idx);
+[x]             |-> Lose_Animation()
 [ ]             |-> GAME_PlayVictoryAnim__STUB(_human_player_idx);
 [ ]             |-> GAME_OVER();
 [x]             |-> s01p16_empty_function();
@@ -73,6 +73,9 @@ OON XREF:  Change_City_Ownership() |-> j_WIZ_Conquer() |-> WIZ_Conquer() |-> CP_
 
 [x] Return_Animation()
 [x]     |-> Return_Animation_Draw()
+
+[x] Lose_Animation()
+[x]     |-> Lose_Animation_Draw()
 
 
 

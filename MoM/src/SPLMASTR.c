@@ -1941,7 +1941,7 @@ void Spell_Of_Mastery_Lose(void)
 
     Combat_Cache_Read();
 
-    // SPELLY  GAME_LimboFallAnim(HUMAN_PLAYER_IDX);
+    Lose_Animation(HUMAN_PLAYER_IDX);
 
     // SPELLY  GAME_OVER();
 

@@ -27,6 +27,35 @@ extern "C" {
 
 
 
+/* Structured configuration state matching the routine's stack signature */
+typedef struct {
+    uint16_t start_x;
+    uint16_t start_y;
+    uint16_t width;
+    uint16_t col1_hgt;
+    uint16_t ch_slope;
+    uint16_t ch_incr;
+    uint16_t up_slope;
+    uint16_t nl;
+    uint16_t read_off;
+    SAMB_ptr pict_data;
+    uint16_t h_rskip;
+    uint16_t x_vslope;
+    uint16_t x_down;
+    uint16_t x_hslope;
+    uint16_t x_left;
+    uint16_t v_rskip;
+    uint16_t y_vslope;
+    uint16_t y_down;
+    uint16_t y_hslope;
+    uint16_t y_left;
+    uint16_t skip_width;
+    uint16_t min_off;
+    uint16_t max_off;
+} TextureRenderParams;
+
+
+
 /*
     WIZARDS.EXE  seg034
 */
@@ -46,10 +75,10 @@ int16_t Cos(int16_t angle, int16_t radius);
 int16_t Sin(int16_t angle, int16_t radius);
 
 // WZD s34p05
-// drake178: VGA_DrawTexture()
+void VGA_DrawTexture(TextureRenderParams * params);
 
 // WZD s34p06
-// drake178: VGA_DrawTexture_R()
+void VGA_DrawTexture_R(TextureRenderParams * params);
 
 
 

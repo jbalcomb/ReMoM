@@ -947,24 +947,112 @@ void GAME_PlayVictoryAnim__STUB(int16_t player_idx)
 // drake178: GAME_Draw_WIN_Anim()
 // GAME_Draw_WIN_Anim()
 
+
 // WZD 093p12
-// drake178: GAME_LimboFallAnim()
-/*
-*/
-/*
-
-*/
-void GAME_LimboFallAnim__STUB(int16_t player_idx)
+void Lose_Animation(int16_t player_idx)
 {
-
-
-
+    SAMB_ptr music_data_seg = ST_NULL;
+    uint32_t music_data_seg_size = 0;  // HACK  DNE in Dasm
+    int16_t full_screen_esc = 0;
+    int16_t input_field_idx = 0;
+    int16_t leave_screen = 0;
+    Stop_All_Sounds__STUB();
+    Set_Mouse_List(1, mouse_list_none);
+    Clear_Fields();
+    Fade_Out();
+    Set_Page_Off();
+    Fill(0, 0, 319, 199, 0);
+    Toggle_Pages();
+    Load_Palette(6, ST_UNDEFINED, ST_NULL);
+    Apply_Palette();
+    Set_Page_Off();
+    GAME_LimboFall_Stage = 0;
+    // LOSE.LBX, 001    "MERLIWIN"  ""
+    // LOSE.LBX, 002    "SHAMMWIN"  ""
+    // LOSE.LBX, 003    "SHAREWIN"  ""
+    // LOSE.LBX, 004    "LOPANWIN"  ""
+    // LOSE.LBX, 005    "ARABWIN"   ""
+    // LOSE.LBX, 006    "OBERWIN"   ""
+    // LOSE.LBX, 007    "RJAKWIN"   ""
+    // LOSE.LBX, 008    "DRACOWIN"  ""
+    // LOSE.LBX, 009    "TAURNWIN"  ""
+    // LOSE.LBX, 010    "FREYAWIN"  ""
+    // LOSE.LBX, 011    "HORUSWIN"  ""
+    // LOSE.LBX, 012    "ARIELWIN"  ""
+    // LOSE.LBX, 013    "AZTECWIN"  ""
+    // LOSE.LBX, 014    "KALIWIN"   ""
+    IMG_GAME_WizHandsUp = LBX_Reload(lose_lbx_file__ovr093, (1 + _players[player_idx].wizard_id), _screen_seg);
+    IMG_GAME_LimboFall = Allocate_Next_Block(_screen_seg, 0x190);
+    // LOSE.LBX, 000    "VORTEX"    ""
+    Open_File_Animation__HACK(lose_lbx_file__ovr093, 0);
+    if(magic_set.background_music == 1)
+    {
+        music_data_seg = LBX_Reload(music_lbx_file__ovr093, MUSIC_LOSE_Military, SND_Music_Segment);
+        music_data_seg_size = lbxload_entry_length;
+        Play_Sound(music_data_seg, music_data_seg_size);
+    }
+    Assign_Auto_Function(Lose_Animation_Draw, 4);
+    leave_screen = ST_FALSE;
+    m_conquest_anim_stage = 0;
+    Set_Input_Delay(3);
+    while(leave_screen == 0)
+    {
+        Mark_Time();
+        Clear_Fields();
+        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_empty_string__ovr093[0], ST_UNDEFINED);
+        input_field_idx = Get_Input();
+        if(input_field_idx == full_screen_esc)
+        {
+            leave_screen = ST_UNDEFINED;
+        }
+        if(m_conquest_anim_stage > 45)
+        {
+            leave_screen = ST_UNDEFINED;
+        }
+        if(leave_screen == ST_FALSE)
+        {
+            Lose_Animation_Draw();
+            PageFlip_FX();
+            Release_Time(4);
+        }
+    }
+    Stop_All_Sounds__STUB();
+    Clear_Fields();
+    Reset_Window();
+    Clear_Fields();
+    Deactivate_Auto_Function();
+    Fade_Out();
+    Load_Palette(0, ST_UNDEFINED, ST_NULL);
+    Reset_Cycle_Palette_Color();
+    Clear_Palette_Changes(0, 255);
+    Set_Palette_Changes(0, 223);
+    Calculate_Remap_Colors();
+    Set_Page_Off();
+    Fill(0, 0, 319, 199, 0);
+    Toggle_Pages();
+    Set_Mouse_List(1, mouse_list_default);
+    Play_Background_Music();
 }
 
 
 // WZD 093p13
-// drake178: GAME_DrawLimboFall()
-// GAME_DrawLimboFall()
+void Lose_Animation_Draw(void)
+{
+    int16_t y = 0;
+    int16_t x = 0;
+    Set_Page_Off();
+    Draw_File_Animation__HACK();
+    if(GAME_LimboFall_Stage < 27)
+    {
+        x = (int16_t)TBL_DefeatAnimSteps[GAME_LimboFall_Stage].x;
+        y = (int16_t)TBL_DefeatAnimSteps[GAME_LimboFall_Stage].y;
+        Draw_Picture_To_Bitmap(IMG_GAME_WizHandsUp, IMG_GAME_LimboFall);
+        Scale_Bitmap(IMG_GAME_LimboFall, (int16_t)TBL_DefeatAnimSteps[GAME_LimboFall_Stage].s, (int16_t)TBL_DefeatAnimSteps[GAME_LimboFall_Stage].s);
+        Draw_Bitmap_Rotated(x, y, (int16_t)TBL_DefeatAnimSteps[GAME_LimboFall_Stage].a, IMG_GAME_LimboFall);
+    }
+    m_conquest_anim_stage++;
+    GAME_LimboFall_Stage++;
+}
 
 
 // WZD 093p14

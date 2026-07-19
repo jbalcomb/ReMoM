@@ -57,10 +57,10 @@ void GAME_PlayVictoryAnim__STUB(int16_t player_idx);
 // GAME_Draw_WIN_Anim()
 
 // WZD 093p12
-void GAME_LimboFallAnim__STUB(int16_t player_idx);
+void Lose_Animation(int16_t player_idx);
 
 // WZD 093p13
-// GAME_DrawLimboFall()
+void Lose_Animation_Draw(void);
 
 // WZD 093p14
 int16_t Banish_Wizard(int16_t loser_idx, int16_t winner_idx);

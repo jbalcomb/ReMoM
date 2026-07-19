@@ -260,16 +260,16 @@ int16_t FLIC_Get_Width(SAMB_ptr p_FLIC_Header);
 int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header);
 
 // WZD s30p20
-// VGA_WndDrawRotateImg()
+void Draw_Bitmap_Rotated(int16_t x, int16_t y, int16_t Angle, SAMB_ptr IMG_Seg);
 
 // WZD s30p21
-// VGA_WndDrawImageRect()
+void Draw_Bitmap_Animation_Block(int16_t tl_x, int16_t tl_y, int16_t tr_x, int16_t tr_y, int16_t br_x, int16_t br_y, int16_t bl_x, int16_t bl_y, SAMB_ptr pict_seg, uint16_t height, uint16_t width);
 
 // WZD s30p22
-// UU_VGA_WndDrawTransform()
+void UU_VGA_WndDrawTransform(int16_t lm_x, int16_t lm_y, int16_t rm_x, int16_t rm_y, SAMB_ptr pict_seg);
 
 // WZD s30p23
-// VGA_RotateRect()
+void Get_Rotated_Pixels(int16_t angle, int16_t width, int16_t height, int16_t * tl_x_ptr, int16_t * tl_y_ptr, int16_t * tr_x_ptr, int16_t * tr_y_ptr, int16_t * br_x_ptr, int16_t * br_y_ptr, int16_t * bl_x_ptr, int16_t * bl_y_ptr);
 
 // WZD s30p24
 void Draw_Picture(int16_t x, int16_t y, byte_ptr pict_seg);

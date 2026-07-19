@@ -17,7 +17,10 @@ static const uint16_t tbl_math_cos[]
 
 */
 
+#include "Fonts.h"
+#include "MOX_DEF.h"
 #include "MOX_TYPE.h"
+
 #include "angle.h"
 
 
@@ -289,13 +292,13 @@ int16_t Get_Base_Angle(unsigned int y, unsigned int x) {
         /* Angle is between 0 and 44 degrees */
         if(ratio < 103) {
             /* Scan 0 to 21 */
-            for (i = 0; i <= 21; i++) {
+            for(i = 0; i <= 21; i++) {
                 if(ratio < Tangents_0_44[i]) return i - 1 < 0 ? 0 : i - 1;
             }
             return 21;
         } else {
             /* Scan 22 to 44 */
-            for (i = 22; i <= 44; i++) {
+            for(i = 22; i <= 44; i++) {
                 if(ratio < Tangents_0_44[i]) return i - 1;
             }
             return 44;
@@ -304,13 +307,13 @@ int16_t Get_Base_Angle(unsigned int y, unsigned int x) {
         /* Angle is between 45 and 89 degrees */
         if(ratio < 603) {
             /* Scan 45 to 66 */
-            for (i = 0; i <= 21; i++) {
+            for(i = 0; i <= 21; i++) {
                 if(ratio < Tangents_45_89[i]) return i + 45 - 1;
             }
             return 66; /* 45 + 21 */
         } else {
             /* Scan 67 to 89 */
-            for (i = 22; i <= 44; i++) {
+            for(i = 22; i <= 44; i++) {
                 if(ratio < Tangents_45_89[i]) return i + 45 - 1;
             }
             return 89;
@@ -411,16 +414,223 @@ int16_t Sin(int16_t angle, int16_t radius) {
 
 
 // WZD s34p05
-// drake178: VGA_DrawTexture()
-/*
-*/
-/*
-draw rotated?
-*/
+/* GEMINI */
+/**
+ * Standard Opaque Column Engine (Refactored for Linear Framebuffer)
+ */
+void VGA_DrawTexture(TextureRenderParams * params)
+{
+    byte_ptr vga_frame_buffer = current_video_page;
+    // screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
+
+    int16_t skip_width          = (int16_t)params->skip_width;
+    uint16_t min_write_offset     = params->min_off;
+    uint16_t max_write_offset     = params->max_off;
+    
+    uint16_t col_height_frac      = params->col1_hgt << 8; 
+    uint16_t up_error             = 128;
+    uint16_t horz_left_error      = 128;
+    uint16_t horz_down_error      = 128;
+    uint16_t current_width        = params->width;
+    
+    /* Establish standard flat memory coordinate starting address index */
+    int dest_pixel_index      = (params->start_y * SCREEN_WIDTH) + params->start_x;
+    int source_pixel_index    = params->read_off;
+
+    while (current_width > 0) {
+        int col_dest_index   = dest_pixel_index;
+        int col_source_index = source_pixel_index;
+        
+        uint16_t active_col_frac = col_height_frac;
+        uint16_t loop_count      = active_col_frac >> 8; 
+
+        if(skip_width < 0) {
+            uint16_t bh_accum = 0;
+            uint16_t dh_accum = 0;
+            uint16_t i;
+
+            for(i = 0; i < loop_count; ++i) {
+                uint8_t texel = params->pict_data[col_source_index];
+                
+                /* Bounds verification mapping safely onto flat linear indices */
+                if(col_dest_index >= (int)min_write_offset && col_dest_index < (int)max_write_offset) {
+                    if(texel != ST_TRANSPARENT)  /* skip */
+                    {
+                        vga_frame_buffer[col_dest_index] = texel;
+                    }
+                }
+
+                /* Step vertically down exactly one linear stride row */
+                col_dest_index += SCREEN_WIDTH; 
+                col_source_index += params->v_rskip;
+
+                dh_accum += params->y_hslope;
+                if((dh_accum >> 8) > 0) {
+                    dh_accum &= 0xFF;
+                    col_source_index += params->y_left;
+                }
+
+                bh_accum += params->y_vslope;
+                if((bh_accum >> 8) > 0) {
+                    bh_accum &= 0xFF;
+                    col_source_index += params->y_down;
+                }
+            }
+        }
+
+        skip_width--;
+        current_width--;
+        if(current_width == 0) {
+            break;
+        }
+
+        /* Fixed Point Step Adjustments for the Outer Column Loop */
+        dest_pixel_index += (int16_t)params->ch_incr;
+        
+        up_error += params->up_slope;
+        if((up_error >> 8) > 0) {
+            up_error &= 0xFF;
+            dest_pixel_index += (int16_t)params->nl;
+        }
+
+        col_height_frac += params->ch_slope;
+        source_pixel_index += params->h_rskip;
+
+        horz_left_error += params->x_hslope;
+        if((horz_left_error >> 8) > 0) {
+            horz_left_error &= 0xFF;
+            source_pixel_index += params->x_left;
+        }
+
+        horz_down_error += params->x_vslope;
+        if((horz_down_error >> 8) > 0) {
+            horz_down_error &= 0xFF;
+            source_pixel_index += params->x_down;
+        }
+
+        /* CRITICAL CORRECTION: Advance exactly +1 pixel horizontally to next screen column */
+        dest_pixel_index++;
+    }
+}
+
+
 // WZD s34p06
-// drake178: VGA_DrawTexture_R()
-/*
-*/
-/*
-remap draw rotated?
-*/
+/* GEMINI */
+/**
+ * Executes the affine-mapped column texture draw operation onto a linear surface.
+ * Replaces VGA plane-masking with direct index operations into the 8-bit frame buffer.
+ */
+/**
+ * Translucent/Remapped Column Engine (Refactored for Linear Framebuffer)
+ */
+// void VGA_DrawTexture_R(int Start_X, int Start_Y, int Width, int Col1Hgt, int CH_Slope, int CH_Incr, int UpSlope, int NL, int ReadOff, int IMG_Data, int H_RSkip, int X_VSlope, int X_Down, int X_HSlope, int X_Left, int V_RSkip, int Y_VSlope, int Y_Down, int Y_HSlope, int Y_Left, int Skip_Width, int MinOff, int MaxOff)
+void VGA_DrawTexture_R(TextureRenderParams * params)
+{
+    byte_ptr vga_frame_buffer = current_video_page;
+    // screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
+    uint8_t remap_block;
+    uint8_t remap_block_index;
+    uint8_t remap_color;
+
+    int16_t skip_width          = (int16_t)params->skip_width;
+    uint16_t min_write_offset     = params->min_off;
+    uint16_t max_write_offset     = params->max_off;
+    
+    uint16_t col_height_frac      = params->col1_hgt << 8; 
+    uint16_t up_error             = 0x80;
+    uint16_t horz_left_error      = 0x80;
+    uint16_t horz_down_error      = 0x80;
+    uint16_t current_width        = params->width;
+    
+    int dest_pixel_index      = (params->start_y * SCREEN_WIDTH) + params->start_x;
+    int source_pixel_index    = params->read_off;
+
+    while(current_width > 0)
+    {
+        int col_dest_index   = dest_pixel_index;
+        int col_source_index = source_pixel_index;
+        
+        uint16_t active_col_frac = col_height_frac;
+        uint16_t loop_count      = active_col_frac >> 8; 
+
+        if(skip_width < 0)
+        {
+            uint16_t bh_accum = 0;
+            uint16_t dh_accum = 0;
+            uint16_t i;
+
+            for(i = 0; i < loop_count; ++i)
+            {
+                uint8_t texel = params->pict_data[col_source_index];
+                
+                if(col_dest_index >= (int)min_write_offset && col_dest_index < (int)max_write_offset)
+                {
+                    if(texel != ST_TRANSPARENT)  /* skip */
+                    {
+                        if(texel >= 232)
+                        {
+                            // Remap_Draw_Picture_ASM()
+                            // remap_block = data_byte - 232;  /* index of picture_remap_color_list[] */
+                            // remap_block_index = *screen_pos;  // MoO2: "screen_data"
+                            // remap_color = *(remap_color_palettes + (remap_block * (16 * 16)) + remap_block_index);
+                            // *screen_pos = remap_color;
+                            remap_block = texel - 232;
+                            remap_block_index = vga_frame_buffer[col_dest_index];
+                            remap_color = *(remap_color_palettes + (remap_block * (16 * 16)) + remap_block_index);
+                            vga_frame_buffer[col_dest_index] = remap_color;
+                        } else {
+                            vga_frame_buffer[col_dest_index] = texel;
+                        }
+                    }
+                }
+
+                col_dest_index += SCREEN_WIDTH;
+                col_source_index += params->v_rskip;
+
+                dh_accum += params->y_hslope;
+                if((dh_accum >> 8) > 0) {
+                    dh_accum &= 0xFF;
+                    col_source_index += params->y_left;
+                }
+
+                bh_accum += params->y_vslope;
+                if((bh_accum >> 8) > 0) {
+                    bh_accum &= 0xFF;
+                    col_source_index += params->y_down;
+                }
+            }
+        }
+
+        skip_width--;
+        current_width--;
+        if(current_width == 0) {
+            break;
+        }
+
+        dest_pixel_index += (int16_t)params->ch_incr;
+        
+        up_error += params->up_slope;
+        if((up_error >> 8) > 0) {
+            up_error &= 0xFF;
+            dest_pixel_index += (int16_t)params->nl;
+        }
+
+        col_height_frac += params->ch_slope;
+        source_pixel_index += params->h_rskip;
+
+        horz_left_error += params->x_hslope;
+        if((horz_left_error >> 8) > 0) {
+            horz_left_error &= 0xFF;
+            source_pixel_index += params->x_left;
+        }
+
+        horz_down_error += params->x_vslope;
+        if((horz_down_error >> 8) > 0) {
+            horz_down_error &= 0xFF;
+            source_pixel_index += params->x_down;
+        }
+
+        /* CRITICAL CORRECTION: Advance exactly +1 pixel horizontally to next screen column */
+        dest_pixel_index++;
+    }
+}
