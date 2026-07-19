@@ -95,7 +95,8 @@ void Set_Bit_Field(int16_t bit_idx, uint8_t * bit_field);
 // WZD s22p25
 void Clear_Bit_Field(int16_t bit_idx, uint8_t * bit_field);
 
-// WZD s22p26 MEM_TestBit_Near()
+// WZD s22p26
+int16_t Test_Bit_Field_Near(int16_t bit_idx, char * bit_field);
 
 // WZD s22p27
 void Set_Bit_Field_Near(int bit_idx, char * bit_field);

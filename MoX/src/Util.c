@@ -693,7 +693,14 @@ void Clear_Bit_Field(int16_t bit_idx, uint8_t * bit_field)
 }
 
 
-// WZD s22p26 MEM_TestBit_Near()
+// WZD s22p26
+int16_t Test_Bit_Field_Near(int16_t bit_idx, char * bit_field)
+{
+    int16_t result;
+    result = (bit_field[bit_idx >> 3] >> (bit_idx & 7)) & 1;
+    return result;
+}
+
 
 // WZD s22p27
 // drake178: MEM_SetBit_Near()
