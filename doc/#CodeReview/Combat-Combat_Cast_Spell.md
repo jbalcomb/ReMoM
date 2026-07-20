@@ -1,6 +1,6 @@
 Combat-Combat_Cast_Spell.md
 
-C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr112\Combat_Cast_Spell__WIP.asm         (ground truth — IDA Pro 5.5 disassembly; OG name keeps __WIP)
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr112\Combat_Cast_Spell__WIP.asm         (ground truth — IDA Pro 5.5 disassembly)
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr112\Combat_Cast_Spell__WIP__GEMINI.c   (Gemini translation of the .asm — second opinion, NOT ground truth)
 
 Combat_Screen__WIP()                    Combat
@@ -16,7 +16,7 @@ Auto_Cast_Spell_And_Do_Combat_Turn()    Combat  // WZD o98p04
 
 | Function | Location | Role |
 |---|---|---|
-| `Combat_Cast_Spell` | [Combat.c:13176-13806](../../MoM/src/Combat.c#L13176-L13806) | drake178 `G_CMB_CastSpell`. Resolves combat spellcasting by one entity (a battle unit's spell-like ability, a human at the combat spellbook, or an AI/CP wizard): selects the spell, computes the effective mana cost, resolves opposing Counter Magic / node-realm counters, targets, casts, and pays. Returns `0` = nothing cast, `1` = cancelled during targeting, `2` = resolved (or countered). |
+| `Combat_Cast_Spell` | [Combat.c:13176-13806](../../MoM/src/Combat.c#L13176-L13806) | Resolves combat spellcasting by one entity (a battle unit's spell-like ability, a human at the combat spellbook, or an AI/CP wizard): selects the spell, computes the effective mana cost, resolves opposing Counter Magic / node-realm counters, targets, casts, and pays. Returns `0` = nothing cast, `1` = cancelled during targeting, `2` = resolved (or countered). |
 
 > **Status: DONE-DONE (2026-07-07) — faithful to `Combat_Cast_Spell__WIP.asm` phase-for-phase; whole tree builds clean.** The human-interactive path, the AI/CP selection branch (`loc_8D138`), all three cast-payment blocks, both counter-magic paths, and the shared target/cast/cleanup are reconstructed and match the disassembly. The reconstruction preserves a long list of OG casting-cost bugs as inline `; BUG:` comments (kept faithfully — see [Preserved OG bugs](#preserved-og-bugs-b--faithful-to-the-asm)). The two counter-magic subfunctions `Combat_Spell_Dispel_Attempt` and `Combat_Spell_Counter_Message` (`Spells133.c`) are now **implemented**; the remaining `__WIP` spellbook/screen helpers it calls (`Combat_Spellbook_Build__WIP`, the `CMB_*__WIP` compose calls, `Combat_Spell_Target_Screen__WIP`) are still WIP and tracked separately. The `.asm` is the authority; the Gemini `.c` is a second opinion. The function's own header comments flag "not sure about the multiple returns", "handful of variable reuses (don't make distinct…)", and "cast_status seems mixed up" — those are design notes, not defects, and are left untouched.
 
@@ -82,7 +82,7 @@ The three near-identical XOR-toggle / item-charge / mana-debit payment blocks (`
 
 ## Related references
 
-- `…\ovr112\Combat_Cast_Spell__WIP.asm` — IDA Pro 5.5 disassembly (**the authority**; OG name keeps `__WIP`).
+- `…\ovr112\Combat_Cast_Spell__WIP.asm` — IDA Pro 5.5 disassembly (**the authority**).
 - `…\ovr112\Combat_Cast_Spell__WIP__GEMINI.c` — Gemini translation (second opinion).
 - [`AITP_Combat_Spell`](../ComputerPlayer/Combat-AITP_Combat_Spell.md) — the AI target picker invoked at [13679](../../MoM/src/Combat.c#L13679) for the non-human targeting path.
 - [`Cast_Spell_On_Battle_Unit`](../../MoM/src/Combat.c#L12382) — applies the chosen spell ([13693](../../MoM/src/Combat.c#L13693)).

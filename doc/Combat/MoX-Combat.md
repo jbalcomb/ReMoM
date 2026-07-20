@@ -129,7 +129,7 @@ Combat()
 
 Combat()
     |-> Change_City_Ownership()
-        |-> WIZ_Conquer__WIP()
+        |-> Resolve_Wizard_Conquest()
 
 Combat() |-> STK_CaptureCity()
     |-> CTY_RampageVictory()
@@ -144,10 +144,10 @@ Combat() |-> Strategic_Combat()
 Combat() |-> Tactical_Combat()
 
 
-WIZ_Conquer__WIP
+Resolve_Wizard_Conquest
     |-> WIZ_Banishment__STUB()
     |-> WIZ_Conquest__WIP()
-    |-> WIZ_ConquestSpells__STUB()
+    |-> Conquest_Spells()
     ...
     |-> GAME_LimboFallAnim__STUB()
     |-> GAME_OVER__STUB()

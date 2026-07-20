@@ -261,81 +261,53 @@ SAMB_ptr IMG_GAME_HoF_Pop;
 // WZD o106p01
 void Hall_Of_Fame_Screen(void)
 {
-    int16_t full_screen_ESC_field;
-    int16_t input_field_idx;
-    SAMB_ptr hof_background_seg;
-    int16_t leave_screen_flag;
-
+    int16_t full_screen_esc = 0;
+    int16_t input_field_idx = 0;
+    SAMB_ptr hof_background_seg = ST_NULL;
+    int16_t leave_screen_flag = 0;
     Deactivate_Auto_Function();
-
     Set_Mouse_List(1, mouse_list_none);
-
     Clear_Fields();
-
     Fade_Out();
-
     Set_Page_Off();
-
     Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);
-
     Toggle_Pages();
-
     Set_Page_Off();
-
     // HALOFAM.LBX, 000  HALOFAM     hof background
     hof_background_seg = LBX_Reload(halofam_lbx_file__ovr106, 0, _screen_seg);
-
     FLIC_Draw(0, 0, hof_background_seg);
-
     Apply_Palette();
-
     Copy_Off_To_Back();
-
     Copy_Off_To_Page4();
-
     GUI_String_1 = (char *)Near_Allocate_First(100);
     GUI_String_2 = (char *)Near_Allocate_Next(100);
-    
     Deactivate_Help_List();
-
     Assign_Auto_Function(Hall_Of_Fame_Screen_Draw, 1);
-
     leave_screen_flag = ST_FALSE;
-
     while(leave_screen_flag == ST_FALSE)
     {
-
         Mark_Time();
-
         Clear_Fields();
-
-        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr106, ST_UNDEFINED);
-
+        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr106, ST_UNDEFINED);
         input_field_idx = Get_Input();
-
-        if(input_field_idx == full_screen_ESC_field)
+        if(input_field_idx == full_screen_esc)
         {
             leave_screen_flag = ST_UNDEFINED;
         }
-
         if(leave_screen_flag == ST_FALSE)
         {
             Hall_Of_Fame_Screen_Draw();
             PageFlip_FX();
             Release_Time(2);
         }
-
     }
-
     Clear_Fields();
     Reset_Window();
     Clear_Fields();
     Deactivate_Auto_Function();
     Deactivate_Help_List();
-
     Fade_Out();
-
-    Load_Palette(0, -1, 0);
+    Load_Palette(0, ST_UNDEFINED, ST_NULL);
     Reset_Cycle_Palette_Color();
     Clear_Palette_Changes(0, 255);
     Set_Palette_Changes(0, 223);
@@ -345,23 +317,20 @@ void Hall_Of_Fame_Screen(void)
     Toggle_Pages();
     Apply_Palette();
     Set_Mouse_List(1, mouse_list_default);
-
 }
 
 // MGC o061p02
 // WZD o106p02
 void Hall_Of_Fame_Screen_Draw(void)
 {
-    uint8_t color_array[16];
-    int16_t score_percent;
-    char str_SPACE[2];
-    int16_t print_x;
-    int16_t print_y;
-    int16_t itr_color_array;
-    int16_t itr_scores;
-
+    uint8_t color_array[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t score_percent = 0;
+    char str_SPACE[2] = { 0, 0 };
+    int16_t print_x = 0;
+    int16_t print_y = 0;
+    int16_t itr_color_array = 0;
+    int16_t itr_scores = 0;
     stu_strcpy(str_SPACE, str_SPACE__ovr106);
-
     color_array[ 0] = 246;
     color_array[ 1] =  49;
     color_array[ 2] = 176;
@@ -378,38 +347,28 @@ void Hall_Of_Fame_Screen_Draw(void)
     color_array[13] = 246;
     color_array[14] = 246;
     color_array[15] = 246;
-
     Set_Page_Off();
     Reset_Window();
     Copy_Back_To_Off();
-
-    Set_Font_Colors_15(2, &color_array[0]);     // set font style num 0; set font colors block 15
-    Set_Font_Style_Shadow_Down(5, 15, 0, 0);    // set font style num 0; set normal,highlight,special colors - blocks 15,0,0; set shadow bottom right
-
+    Set_Font_Colors_15(2, &color_array[0]);
+    Set_Font_Style_Shadow_Down(5, 15, 0, 0);
     Set_Outline_Color(250);
-
     stu_strcpy(GUI_String_1, cnst_HoF_String_B);  // "Hall"
     stu_strcat(GUI_String_1, str_SPACE);          // " "
     stu_strcat(GUI_String_1, cnst_Of);            // "Of"
     stu_strcat(GUI_String_1, str_SPACE);          // " "
     stu_strcat(GUI_String_1, cnst_Fame);          // "Fame"
-
     Print_Centered(160, 7, GUI_String_1);
-
     for(itr_color_array = 0; itr_color_array < 16; itr_color_array++)
     {
         color_array[itr_color_array] = 179;
     }
-
     color_array[0] = 246;
-
     Set_Font_Colors_15(2, &color_array[0]);
     Set_Font_Style_Shadow_Down(2, 15, 0, 0);
     Set_Outline_Color(250);
-
     print_x = 72;
     print_y = 42;
-
     for(itr_scores = 0; itr_scores < NUM_SCORES; itr_scores++)
     {
         if(magic_set.hof_scores[itr_scores] != ST_FALSE)
@@ -425,26 +384,20 @@ void Hall_Of_Fame_Screen_Draw(void)
                 stu_strcat(GUI_String_1, str_PAREN_CLOSE);  // ")"
                 Print_Right(print_x, print_y, GUI_String_1);
             }
-
             stu_strcpy(GUI_String_1, magic_set.hof_names[itr_scores]);
             stu_strcat(GUI_String_1, cnst_HoF_String_D);  // " of the "
             stu_strcat(GUI_String_1, TBL_HoF_RaceStrings[magic_set.hof_races[itr_scores]]);
             Print((print_x + 9), print_y, GUI_String_1);  // ¿ 9 is ~ x offset for title column ?
             Print_Integer_Right((print_x + 170), print_y, magic_set.hof_scores[itr_scores]);  // ¿ 9 is ~ x offset for score column ?
-
-            // score_percent = (8000 / (magic_set.hof_scores[itr_scores] * 100));  // ... 8000 ... 100 ... LXMUL ... LDIV ...
-            score_percent = ((magic_set.hof_scores[itr_scores] * 100) / 8000);
-
+            score_percent = (((int32_t)magic_set.hof_scores[itr_scores] * 100) / 8000);
             stu_itoa(score_percent, GUI_String_2, 10);
             stu_strcpy(GUI_String_1, str_PAREN_OPEN);  // "("
             stu_strcat(GUI_String_1, GUI_String_2);
             stu_strcat(GUI_String_1, cnst_HoF_String_E);  // "%)"
             Print_Right((print_x + 198), print_y, GUI_String_1);  // ¿ 198 is ~ x offset for  column ?
-
             print_y += 13;
         }
     }
-
 }
 
 

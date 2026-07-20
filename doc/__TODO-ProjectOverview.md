@@ -1,3 +1,4 @@
+
 Draw_Expanding_Bitmap is an animated screen transition effect — a "grow-out" or zoom-in reveal. It takes a source image and progressively scales it up from a starting point until it fills the full 320x200 screen.
 
 Here's how it works step by step:
@@ -446,8 +447,6 @@ sdl2_Play_Background_Music__WIP
 
 
 
-TODO  add test for WIZ_Conquest()
-
 TODO  review CMB_TileGen__WIP() and friends
 CMB_Units_Init__WIP()
 
@@ -487,6 +486,7 @@ DEMOHACK
 DEMO
 HACK
 STUB
+EOG_HACK
 
 
 
@@ -514,6 +514,7 @@ When?
 
 // TODO  BU_Teleport(battle_unit_idx, target_cgx, target_cgy);
 // TODO  BU_TunnelTo(battle_unit_idx, target_cgx, target_cgy);
+
 
 
 Turn 0
@@ -613,6 +614,7 @@ DOMSDOS
 DEDU
     to be deduced - IDK, IDGI, could/would/should figure out
 
+OGBUG
 BUGBUG
     *real* bugs in OG-MoM
 
@@ -621,5 +623,3 @@ BUGBUG
 ¿ // MSDOS ?  ...Allocate.C
 ¿ // PLATFORM  MSDOS ?  ..Fonts.C, Fonts.H
 ¿ // PLATFORM ?  ...Fonts.C, Fonts.H, Input.C, Input.H, Mouse.C, Mouse.H, Video.H
-
-

@@ -24,7 +24,7 @@ extern "C" {
 */
 
 // WZD 093p01
-void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_idx);
+void Resolve_Wizard_Conquest(int16_t city_owner_idx, int16_t player_idx, int16_t city_idx);
 
 // WZD 093p02
 void Conquest_Animation(int16_t city_owner_idx, int16_t player_idx);

@@ -766,6 +766,9 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
         }
     }
 
+    /*
+        Banish HP or CP
+    */
     if(
         (city_owner_idx != NEUTRAL_PLAYER_IDX)
         &&
@@ -777,7 +780,7 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
     )
     {
 
-        WIZ_Conquer__WIP(city_owner_idx, player_idx, city_idx);
+        Resolve_Wizard_Conquest(city_owner_idx, player_idx, city_idx);
 
     }
 

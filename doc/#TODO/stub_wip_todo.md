@@ -163,18 +163,18 @@
 - [ ] WIZ_GetLastRangedStr__WIP
 
 ## CONQUEST
-- [ ] Conquest_Draw__WIP
-- [ ] GAME_Conqest_Scene2__STUB
-- [ ] GAME_DrawConquerors__STUB
-- [ ] GAME_DrawZappedWiz__STUB
-- [ ] GAME_DrawZapping__STUB
-- [ ] GAME_IsWon__STUB
-- [ ] GAME_LimboFallAnim__STUB
-- [ ] GAME_PlayVictoryAnim__STUB
-- [ ] sub_79907__WIP
-- [ ] WIZ_Banishment__STUB
-- [ ] WIZ_Conquer__WIP
-- [ ] WIZ_Conquest__WIP
+- [x] Conquest_Animation_Draw
+- [x] Conquest_Animation_Draw_Setup_Zap_Scene
+- [x] Conquest_Animation_Draw_Conquerors_Approach
+- [x] Conquest_Animation_Draw_Zapped_Wizard
+- [x] Conquest_Animation_Draw_Zap_Strike
+- [x] CP_Is_Dead
+- [x] Lose_Animation
+- [x] Win_Animation
+- [x] Conquest_Animation_Draw_End_Pose
+- [x] Banish_Wizard
+- [x] Resolve_Wizard_Conquest
+- [x] Conquest_Animation
 
 ## DIPLOMAC
 - [ ] Change_Relations__WIP
@@ -311,8 +311,8 @@
 - [ ] Spell_Casting_Screen__WIP
 
 ## SCORE
-- [ ] GAME_DrawScoreBrkdwn__STUB
-- [ ] GAME_OVER__STUB
+- [x] End_Of_Game_Score_Draw
+- [x] End_Of_Game_Score
 
 ## SETTLE
 - [ ] AI_Execute_Orders

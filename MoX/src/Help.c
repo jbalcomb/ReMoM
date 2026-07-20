@@ -246,6 +246,6 @@ void Set_Advisor_Screen_Help_List(void)
 // HLPENTRY.LBX, 40  "score Help"
 void Set_Score_Screen_Help_List(void)
 {
-    LBX_Load_Data_Static(hlpentry_lbx_file, 27, (SAMB_ptr)_help_entries, 0, 6, 10);
-    Set_Help_List((char *)&_help_entries[0], 27);  /* OGBUG  ¿ someone put entry_num instead of help_count ? */
+    LBX_Load_Data_Static(hlpentry_lbx_file, 40, (SAMB_ptr)_help_entries, 0, 7, 10);
+    Set_Help_List((char *)&_help_entries[0], 7);
 }

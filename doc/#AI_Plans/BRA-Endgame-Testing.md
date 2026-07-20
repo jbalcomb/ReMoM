@@ -50,8 +50,8 @@ The goal is therefore threefold, mirroring the combat decision:
 
 | Piece | Location | Notes |
 |---|---|---|
-| `Change_City_Ownership` → conquest bridge | [City_ovr55.c:730](../../MoM/src/City_ovr55.c#L730) → [:780](../../MoM/src/City_ovr55.c#L780) | calls `WIZ_Conquer__WIP` |
-| `WIZ_Conquer__WIP` — counts loser cities, drives banish path | [CONQUEST.c:207](../../MoM/src/CONQUEST.c#L207) | WIP but functional for state |
+| `Change_City_Ownership` → conquest bridge | [City_ovr55.c:730](../../MoM/src/City_ovr55.c#L730) → [:780](../../MoM/src/City_ovr55.c#L780) | calls `Resolve_Wizard_Conquest` |
+| `Resolve_Wizard_Conquest` — counts loser cities, drives banish path | [CONQUEST.c:207](../../MoM/src/CONQUEST.c#L207) | WIP but functional for state |
 | `_FORTRESSES[loser].active = ST_FALSE` on banishment | [CONQUEST.c:267](../../MoM/src/CONQUEST.c#L267) | the concrete "wizard out" mutation |
 | `Defeated_Wizards` bit set when **human** conquers | [CONQUEST.c:497](../../MoM/src/CONQUEST.c#L497) | AI-conqueror path does NOT set it — see §7 |
 | "banishes" vs "defeats" message by city count | [CONQUEST.c:551](../../MoM/src/CONQUEST.c#L551) / [:555](../../MoM/src/CONQUEST.c#L555) | `cnst_Conquest_Msg3` / `_Msg4` |
@@ -111,11 +111,11 @@ the wizard, etc.).
 
 - **Pros:** trivial, fully headless, deterministic, no combat needed.
 - **Cons:** tests the *readers* of the state, not the *transition that produces it*. Won't catch a
-  regression in `WIZ_Conquer__WIP` itself.
+  regression in `Resolve_Wizard_Conquest` itself.
 
 ### Option B — Patch-to-brink + drive a real capture
 Patch a wizard down to one city, then script an actual combat that captures it, letting
-`Change_City_Ownership → WIZ_Conquer__WIP` fire naturally.
+`Change_City_Ownership → Resolve_Wizard_Conquest` fire naturally.
 
 - **Pros:** exercises the real transition end-to-end.
 - **Cons:** needs the tactical/strategic combat substrate (windowed per `BRA-Combat-Testing.md`);
@@ -124,7 +124,7 @@ Patch a wizard down to one city, then script an actual combat that captures it, 
 ### Option C — HeMoM direct-invoke hook (recommended for the logic layer)
 Add a headless entry mode to `HeMoM.c`, **exactly analogous to the existing `--combat` mode**
 ([HeMoM.c `--combat`](../../src/HeMoM.c)), that loads a patched save and calls one endgame entry point
-directly — `WIZ_Conquer__WIP`, `Cast_Spell_Of_Return`, `Spell_Of_Mastery`, or `GAME_IsWon__STUB` — then
+directly — `Resolve_Wizard_Conquest`, `Cast_Spell_Of_Return`, `Spell_Of_Mastery`, or `GAME_IsWon__STUB` — then
 dumps the resulting save for `check_save_fields`.
 
 - **Pros:** exercises the real transition function on the correct (screen-free) substrate;
@@ -159,10 +159,10 @@ Subject × condition. "Blocked-by-stub" names what the cell *cannot* yet assert.
 
 | # | Subject | Condition | Trigger (layer) | Assert now (implemented) | Blocked-by-stub |
 |---|---|---|---|---|---|
-| 1 | Human | Banished (non-last city lost) | `WIZ_Conquer__WIP` (C) | `fortress[H].active=0`; human still owns ≥1 city | `GAME_LimboFallAnim`, `GAME_OVER` |
-| 2 | AI | Banished | `WIZ_Conquer__WIP` (C) | `fortress[AI].active=0`; human `Defeated_Wizards` bit set | `WIZ_Banishment` decision |
-| 3 | Human | Defeated (last city lost) | `WIZ_Conquer__WIP` (C) | `fortress[H].active=0`; human owns 0 cities | `GAME_OVER` (human loss) |
-| 4 | AI | Defeated (last AI) → **elimination win** | `WIZ_Conquer__WIP` + `GAME_IsWon` (C) | AI `active=0`; last-AI precondition | `GAME_IsWon__STUB`, `GAME_PlayVictoryAnim`, `GAME_OVER` |
+| 1 | Human | Banished (non-last city lost) | `Resolve_Wizard_Conquest` (C) | `fortress[H].active=0`; human still owns ≥1 city | `GAME_LimboFallAnim`, `End_Of_Game_Score` |
+| 2 | AI | Banished | `Resolve_Wizard_Conquest` (C) | `fortress[AI].active=0`; human `Defeated_Wizards` bit set | `WIZ_Banishment` decision |
+| 3 | Human | Defeated (last city lost) | `Resolve_Wizard_Conquest` (C) | `fortress[H].active=0`; human owns 0 cities | `End_Of_Game_Score` (human loss) |
+| 4 | AI | Defeated (last AI) → **elimination win** | `Resolve_Wizard_Conquest` + `GAME_IsWon` (C) | AI `active=0`; last-AI precondition | `GAME_IsWon__STUB`, `GAME_PlayVictoryAnim`, `End_Of_Game_Score` |
 | 5 | Human | Spell of Return | `Cast_Spell_Of_Return` (C) | fortress/capital relocated to target; **verify `active` reset** (§7 bug) | — |
 | 6 | AI | Spell of Return | `Cast_Spell_Of_Return` (C, AI path) | AI fortress relocated | — |
 | 7 | Human | Spell of Mastery (win) | `Spell_Of_Mastery` (C) | `GAME_SoM_Cast_By=H`; SoM enchantment/relations set | victory finalize, `End_Of_Game_Score` |
@@ -228,7 +228,7 @@ regression net already exists and the finishing work is validated as it lands, n
 ```mermaid
 graph TD
     subgraph Conquest["Conquest / elimination path"]
-        CCO["Change_City_Ownership<br/>City_ovr55.c:730"] --> WCW["WIZ_Conquer__WIP<br/>CONQUEST.c:207"]
+        CCO["Change_City_Ownership<br/>City_ovr55.c:730"] --> WCW["Resolve_Wizard_Conquest<br/>CONQUEST.c:207"]
         WCW --> FA["write _FORTRESSES[loser].active = FALSE<br/>CONQUEST.c:267"]
         WCW --> WCQ["WIZ_Conquest__WIP<br/>CONQUEST.c:471"]
         WCQ --> DWB["set Defeated_Wizards bit (human only)<br/>CONQUEST.c:497"]
@@ -270,7 +270,7 @@ graph TD
 | id | kind | file:line | status |
 |---|---|---|---|
 | `Change_City_Ownership` | function | [City_ovr55.c:730](../../MoM/src/City_ovr55.c#L730) | impl |
-| `WIZ_Conquer__WIP` | function | [CONQUEST.c:207](../../MoM/src/CONQUEST.c#L207) | WIP (functional for state) |
+| `Resolve_Wizard_Conquest` | function | [CONQUEST.c:207](../../MoM/src/CONQUEST.c#L207) | WIP (functional for state) |
 | `WIZ_Conquest__WIP` | function | [CONQUEST.c:471](../../MoM/src/CONQUEST.c#L471) | WIP |
 | `_FORTRESSES[].active` | field (`s_FORTRESS` +0x03) | [MOM_DAT.h:2062](../../MoX/src/MOM_DAT.h#L2062) | impl (alive/in-game flag) |
 | `Defeated_Wizards` | field (`s_WIZARD` +0x354) | [MOM_DAT.h:1522](../../MoX/src/MOM_DAT.h#L1522) | impl (elimination bitfield) |
@@ -295,9 +295,9 @@ graph TD
 | from | to | relation |
 |---|---|---|
 | `Eliminated_Opponent` | `_combat_winner` → `Change_City_Ownership` | produces / triggers |
-| `Change_City_Ownership` | `WIZ_Conquer__WIP` | calls |
-| `WIZ_Conquer__WIP` | `_FORTRESSES[].active` | writes FALSE (banish) |
-| `WIZ_Conquer__WIP` | `WIZ_Conquest__WIP` | calls (message + bit) |
+| `Change_City_Ownership` | `Resolve_Wizard_Conquest` | calls |
+| `Resolve_Wizard_Conquest` | `_FORTRESSES[].active` | writes FALSE (banish) |
+| `Resolve_Wizard_Conquest` | `WIZ_Conquest__WIP` | calls (message + bit) |
 | `WIZ_Conquest__WIP` | `Defeated_Wizards` | writes bit (human conqueror only) |
 | `Resolve_Wizard_Conquest` | `WIZ_Banishment__STUB` | delegates (blocked) |
 | `Resolve_Wizard_Conquest` | `GAME_IsWon__STUB` | calls (blocked) |
@@ -308,5 +308,5 @@ graph TD
 | `Cast_Spell_Of_Return` | fortress/capital fields | writes (relocate; active-reset gap) |
 | `Spell_Of_Mastery` | `GAME_SoM_Cast_By` | writes |
 | `Spell_Of_Mastery` | `Spell_Of_Mastery_Lose` | calls when caster is AI |
-| `Spell_Of_Mastery` / `Spell_Of_Mastery_Lose` | `GAME_OVER()` | dispatches-to (commented) |
-| `casting_spell_idx == Return` | `WIZ_Conquer__WIP`, `Spell_Of_Mastery` | gates (skip banished/returning wizard) |
+| `Spell_Of_Mastery` / `Spell_Of_Mastery_Lose` | `End_Of_Game_Score()` | dispatches-to (commented) |
+| `casting_spell_idx == Return` | `Resolve_Wizard_Conquest`, `Spell_Of_Mastery` | gates (skip banished/returning wizard) |

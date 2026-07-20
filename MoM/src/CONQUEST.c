@@ -93,51 +93,36 @@ struct Spiral_Anim_Step TBL_DefeatAnimSteps[27] = {
 
 // WZD dseg:51F4
 char magic_exe_file__ovr093[] = "MAGIC.EXE";
-
 // WZD dseg:51FD
 char str_empty_string__ovr093[] = "";
-
 // WZD dseg:51FE
 char str_JENNY__ovr093[] = "JENNY";
-
 // WZD dseg:5204
 char str_SPACE__ovr093[] = " ";
-
 // WZD dseg:5206
 char wizlab_lbx_file__ovr093[] = "WIZLAB";
-
 // WZD dseg:520D
 char cnst_Conquest_Msg3[] = "banishes";
-
 // WZD dseg:5216
 char cnst_Conquest_Msg4[] = "defeats";
-
 // WZD dseg:521E
 char cnst_Raiders_2[] = "Raiders";
-
 // WZD dseg:5226
 char cnst_Conquest_Msg1[] = "destroy";
-
 // WZD dseg:522E
 char cnst_Conquest_Msg2[] = "fortress";
-
 // WZD dseg:5237
 char cnst_Dot7[] = ".";
-
 // WZD dseg:5239
 char conquest_lbx_file__ovr093[] = "CONQUEST";
-
 // WZD dseg:5242
 char music_lbx_file__ovr093[] = "MUSIC";
-// WZD dseg:5248 1B 00                                           
-char cnst_HOTKEY_Esc10[] = "\x1B";
-
+// WZD dseg:5248
+char str_hotkey_ESC__ovr093[] = "\x1B";
 // WZD dseg:524A
 char soundfx_lbx_file__ovr093[] = "SOUNDFX";
-
 // WZD dseg:5252
 char win_lbx_file__ovr093[] = "WIN";
-
 // WZD dseg:5256
 char cnst_WIN_Msg_1 [] = "Having conquered both the";
 // WZD dseg:5270
@@ -146,20 +131,16 @@ char cnst_WIN_Msg_2 [] = "world of Arcanus and Myrror,";
 char cnst_WIN_Msg_3 [] = "I and only I, remain the one";
 // WZD dseg:52AA
 char cnst_WIN_Msg_4 [] = "and true Master of Magic.";
-
 // WZD dseg:52C4
 char lose_lbx_file__ovr093[] = "LOSE";
-
 // WZD dseg:52C9
 char cnst_SoReturn_Msg1[] = "There are at least ";
 // WZD dseg:52DD
 char cnst_SoReturn_Msg2[] = " turns remaining until you may return. Do you wish to resign?";
 // WZD dseg:531B
 char cnst_SoReturn_Msg3[] = " begins casting the Spell Of Return.";
-
 // WZD dseg:5340
 char vortex_lbx_file__ovr093[] = "VORTEX";
-
 // WZD dseg:5347
 char cmbtfx_lbx_file__ovr093[] = "CMBTFX";
 
@@ -204,89 +185,51 @@ SAMB_ptr wizlab_wizard_seg__ovr093;
 
 
 // WZD 093p01
-// drake178: WIZ_Conquer()
 /*
-; handles all actions associated with one wizard
-; conquering another, including the banishment/defeat
-; decision, animations, and displaying scoring if the
-; human or last AI player is defeated, in which case
-; the function will never return either, but will
-; load MAGIC.EXE instead
+OON XREF:  Change_City_Ownership() |-> j_Resolve_Wizard_Conquest() |-> Resolve_Wizard_Conquest()
 */
-/*
-
-Change_City_Ownership()
-    WIZ_Conquer(city_owner_idx, player_idx, city_idx);
-
-WIZ_Conquer(city_owner_idx, player_idx, city_idx);
-// |-> WIZ_Banishment()
-// MoO2 Module: COLCALC Eliminate_Player_
-
-*/
-void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_idx)
+void Resolve_Wizard_Conquest(int16_t loser_Idx, int16_t winner_idx, int16_t city_idx)
 {
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Forfeited = 0;
+    int16_t resign = 0;
     int16_t city_count = 0;
-    // uint32_t * city_enchantments = 0;
-    // uint8_t city_enchantments[NUM_CITY_ENCHANTMENTS];
     uint8_t * city_enchantments;
-    // uint32_t * overland_enchantments = 0;
-    // uint8_t overland_enchantments[NUM_OVERLAND_ENCHANTMENTS];
     uint8_t * overland_enchantments;
     int16_t troop_count = 0;
     int16_t itr_cench = 0;
-    int16_t itr_troops = 0;  // uses itr_cench
-    int16_t Target = 0;
-    int16_t Conqueror = 0;
-    int16_t City = 0;
-    int16_t itr_cities = 0;  // _SI_
-    int16_t itr_nodes = 0;  // _SI_
-    int16_t itr_units = 0;  // _SI_
-    int16_t itr_oench = 0;  // _SI_
-    int16_t itr_players = 0;  // _SI_
-
+    int16_t itr_troops = 0;
+    int16_t itr_cities = 0;
+    int16_t itr_nodes = 0;
+    int16_t itr_units = 0;
+    int16_t itr_oench = 0;
+    int16_t itr_players = 0;
+    /* EOG_HACK */ if(magic_master_idx != ST_UNDEFINED) { return; }  /* JIC, AI wins, but then Event_Twiddle - Rebellion */
     for(itr_cities = 0, city_count = 0; ((itr_cities < _cities) && (city_count < 2)); itr_cities++)
     {
-
-        if(_CITIES[itr_cities].owner_idx == city_owner_idx)
+        if(_CITIES[itr_cities].owner_idx == loser_Idx)
         {
-
             city_count++;
-
         }
-
     }
-
-    Forfeited = ST_FALSE;
-
+    resign = ST_FALSE;
     if(city_count > 1)  /* not about to lose very last city */
     {
-
-        Forfeited = WIZ_Banishment__STUB(city_owner_idx, player_idx);
-
+        resign = Banish_Wizard(loser_Idx, winner_idx);
     }
-
     if(
         (city_count >= 2)
         &&
-        (Forfeited < 1)
+        (resign < ST_TRUE)
     )
     {
         return;
     }
-
     if(city_idx != ST_UNDEFINED)
     {
-
-        _CITIES[city_idx].owner_idx = (int8_t)player_idx;
-
+        _CITIES[city_idx].owner_idx = (int8_t)winner_idx;
     }
-
-    _FORTRESSES[city_owner_idx].active = ST_FALSE;
-
-    _players[player_idx].fame += 5;
-
+    _FORTRESSES[loser_Idx].active = ST_FALSE;
+    _players[winner_idx].fame += 5;
     // ; remove all city enchantments and garrisoned heroes or
     // ; fantastic units owned by the target, turn all of
     // ; their garrisoned normal units neutral, and if they
@@ -294,183 +237,113 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
     // ; neutral too
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-
-        // TODO  Warning	C4133	'=': incompatible types - from 'uint8_t *' to 'uint32_t *'	003_MoM	C:\STU\devel\ReMoM\MoM\src\CONQUEST.c	273		
         city_enchantments = &_CITIES[itr_cities].enchantments[0];
-
-        // ; remove all city enchantments owned by the defeated
-        // ; player
+        // ; remove all city enchantments owned by the defeated player
         for(itr_cench = 0; itr_cench < NUM_CITY_ENCHANTMENTS; itr_cench++)
         {
-        
             if(city_enchantments[itr_cench] > 0)
             {
-
-                if(city_enchantments[itr_cench] == city_owner_idx)
+                if((city_enchantments[itr_cench] - 1) == loser_Idx)
                 {
-
                     city_enchantments[itr_cench] = 0;
-
                 }
-
             }
-
         }
-
-        if(_CITIES[itr_cities].owner_idx == city_owner_idx)
+        if(_CITIES[itr_cities].owner_idx == loser_Idx)
         {
-
             Army_At_City(itr_cities, &troop_count, &troops[0]);
-
-            // ; dismiss all fantastic units or heroes from the city,
-            // ; but transfer normal units to the neutral player
+            // ; dismiss all fantastic units or heroes from the city, but transfer normal units to the neutral player
             for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
             {
-
-                // ; conflicting condition: the called function can only
-                // ; return these, nothing else - will always jump
-                if(_UNITS[troops[itr_troops]].owner_idx == city_owner_idx)
+                // ; conflicting condition: the called function can only return these, nothing else - will always jump
+                if(_UNITS[troops[itr_troops]].owner_idx == loser_Idx)
                 {
-
                     if((_unit_type_table[_UNITS[troops[itr_troops]].type].Abilities & UA_FANTASTIC) != 0)
                     {
-
-                        Kill_Unit(troops[itr_troops], 1);
-
+                        Kill_Unit(troops[itr_troops], kt_Dismissed);
                     }
                     else if(_UNITS[troops[itr_troops]].Hero_Slot != -1)
                     {
-
-                        Kill_Unit(troops[itr_troops], 1);
-
+                        Kill_Unit(troops[itr_troops], kt_Dismissed);
                     }
                     else
                     {
-
                         _UNITS[troops[itr_troops]].owner_idx = NEUTRAL_PLAYER_IDX;
-
                     }
-
                 }
-
             }
-
-            if(_CITIES[itr_cities].owner_idx == _human_player_idx)  /* BUGBUG  DEDU  Why just human player? */
+            if(_CITIES[itr_cities].owner_idx != _human_player_idx)  /* OGBUG  DEDU  Why just human player? */
             {
-
                 _CITIES[itr_cities].owner_idx = NEUTRAL_PLAYER_IDX;
-
             }
-
         }
-        
     }
-
-    // ; reset the meld flags and the owners of all nodes
-    // ; controlled by the target
+    // ; reset the meld flags and the owners of all nodes controlled by the target
     for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
     {
-
-        if(_NODES[itr_nodes].owner_idx == city_owner_idx)
+        if(_NODES[itr_nodes].owner_idx == loser_Idx)
         {
-
             _NODES[itr_nodes].owner_idx = ST_UNDEFINED;
-
             _NODES[itr_nodes].flags = NF_NONE;
-
         }
-
     }
-
     // Finally, when enemy cities are conquered, the conquering wizard gets a portion of the previous owner's gold reserve as loot.
-    Player_Add_Gold(player_idx, (_players[city_owner_idx].gold_reserve / 2));
-
+    Player_Add_Gold(winner_idx, (_players[loser_Idx].gold_reserve / 2));
     // When a wizard's enchanted fortress is captured by another wizard, the conqueror steals 50% of his opponent’s mana reserves, ...
-    Player_Add_Mana(player_idx, (_players[city_owner_idx].mana_reserve / 2));
-
-    // ; dismiss the target's remaining units (i.e. those that
-    // ; were not in cities)
+    Player_Add_Mana(winner_idx, (_players[loser_Idx].mana_reserve / 2));
+    // ; dismiss the target's remaining units (i.e. those that were not in cities)
     for(itr_units = 0; itr_units < _units; itr_units++)
-    
     {
-        if(_UNITS[itr_units].owner_idx == city_owner_idx)
+        if(_UNITS[itr_units].owner_idx == loser_Idx)
         {
-
-            Kill_Unit(itr_units, 1);
-
+            Kill_Unit(itr_units, kt_Dismissed);
         }
-
     }
-
     // ; remove all of the target's overland enchantments
-    // TODO  Warning	C4047	'=': 'uint32_t *' differs in levels of indirection from 'uint8_t (*)[24]'	003_MoM	C:\STU\devel\ReMoM\MoM\src\CONQUEST.c	380		
-    overland_enchantments = &_players[city_owner_idx].Globals[0];
-
+    overland_enchantments = &_players[loser_Idx].Globals[0];
     for(itr_oench = 0; itr_oench < NUM_OVERLAND_ENCHANTMENTS; itr_oench++)
     {
-
         overland_enchantments[itr_oench] = 0;
-
     }
-
-
-    WIZ_Conquest__WIP(city_owner_idx, player_idx);
-
-
-    // ; zero the diplomatic status of the target with all
-    // ; remaining wizards, and generate a type 7 (-40)
-    // ; diplomatic action towards the conqueror for them
+    if(resign != ST_TRUE)
+    {
+        Conquest_Animation(loser_Idx, winner_idx);
+    }
+    // ; zero the diplomatic status of the target with all remaining wizards, and generate a type 7 (-40) diplomatic action towards the conqueror for them
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-
-        _players[itr_players].Dipl.Dipl_Status[city_owner_idx] = 0;
-        _players[city_owner_idx].Dipl.Dipl_Status[itr_players] = 0;
-
-        _players[itr_players].Dipl.Contacted[city_owner_idx] = 0;
-        _players[city_owner_idx].Dipl.Contacted[itr_players] = 0;
-
-        if(itr_players != city_owner_idx)
+        _players[itr_players].Dipl.Dipl_Status[loser_Idx] = 0;
+        _players[loser_Idx].Dipl.Dipl_Status[itr_players] = 0;
+        _players[itr_players].Dipl.Contacted[loser_Idx] = 0;
+        _players[loser_Idx].Dipl.Contacted[itr_players] = 0;
+        if(
+            (itr_players != loser_Idx)
+            &&
+            (itr_players != winner_idx)
+        )
         {
-
             // Note, however, that the conquering wizard suffers permanent diplomatic penalties to his or her interactions with other wizards after such an event.
-            Change_Relations(-40, player_idx, itr_players, 7, 0, 0);
-
+            Change_Relations(-40, winner_idx, itr_players, 7, 0, 0);
         }
-
     }
-
-    WIZ_ConquestSpells__STUB(player_idx, city_owner_idx);
-
-    if(city_owner_idx == _human_player_idx)
+    Conquest_Spells(winner_idx, loser_Idx);
+    if(loser_Idx == _human_player_idx)
     {
-
-        GAME_LimboFallAnim__STUB(city_owner_idx);
-
-        // GAME_OVER();
-
-        // s01p16_empty_function();
-
-        // GAME_EXE_Swap(cnst_MAGIC_EXE_File, cnst_MAGICEXE_arg0, cnst_ZeroString_7, cnst_ZeroString_7);
-
+        Lose_Animation(loser_Idx);
+        End_Of_Game_Score();
+        s01p16_empty_function();
+        /* EOG_HACK */  // DONT  Respawn(magic_exe_file__ovr093, str_JENNY__ovr093, str_empty_string__ovr093, str_empty_string__ovr093);
     }
     else
     {
-
         if(CP_Is_Dead() == ST_TRUE)
         {
-
-            GAME_PlayVictoryAnim__STUB(_human_player_idx);
-
-            // GAME_OVER();
-
-            // s01p16_empty_function();
-
-            // GAME_EXE_Swap(cnst_MAGIC_EXE_File, cnst_MAGICEXE_arg0, cnst_ZeroString_7, cnst_ZeroString_7);
-
+            Win_Animation(_human_player_idx);
+            End_Of_Game_Score();
+            s01p16_empty_function();
+            /* EOG_HACK */  // DONT  Respawn(magic_exe_file__ovr093, str_JENNY__ovr093, str_empty_string__ovr093, str_empty_string__ovr093);
         }
-
     }
-
 }
 
 
@@ -478,11 +351,11 @@ void WIZ_Conquer__WIP(int16_t city_owner_idx, int16_t player_idx, int16_t city_i
 /*
 "banishes", "defeats", "destroy", "fortress"
 WIZ_Conquer()
-    Conquest_Animation(city_owner_idx, player_idx);
+    Conquest_Animation(loser_Idx, winner_idx);
 Banish_Wizard()
     Conquest_Animation(loser_idx, winner_idx);
 */
-void Conquest_Animation(int16_t city_owner_idx, int16_t player_idx)
+void Conquest_Animation(int16_t loser_Idx, int16_t winner_idx)
 {
     char Space_String[4] = { 0, 0, 0, 0 };
     int16_t city_count = 0;
@@ -495,19 +368,19 @@ void Conquest_Animation(int16_t city_owner_idx, int16_t player_idx)
     SAMB_ptr wizlab_seg = 0;
     stu_strcpy(Space_String, str_SPACE__ovr093);  // char str_SPACE__ovr093[] = " ";
     if(
-        (player_idx != NEUTRAL_PLAYER_IDX)
+        (winner_idx != NEUTRAL_PLAYER_IDX)
         &&
-        (city_owner_idx != NEUTRAL_PLAYER_IDX)
+        (loser_Idx != NEUTRAL_PLAYER_IDX)
     )
     {
         return;
     }
-    if(player_idx == _human_player_idx)
+    if(winner_idx == _human_player_idx)
     {
-        Set_Bit_Field_Near(city_owner_idx, (char *)&_players[_human_player_idx].Defeated_Wizards);
+        Set_Bit_Field_Near(loser_Idx, (char *)&_players[_human_player_idx].Defeated_Wizards);
     }
-    GAME_Conquered_Wiz = city_owner_idx;
-    GAME_Conquering_Wiz = player_idx;
+    GAME_Conquered_Wiz = loser_Idx;
+    GAME_Conquering_Wiz = winner_idx;
     Stop_All_Sounds__STUB();
     Set_Mouse_List(1, mouse_list_none);
     Clear_Fields();
@@ -535,7 +408,7 @@ void Conquest_Animation(int16_t city_owner_idx, int16_t player_idx)
     GUI_String_2 = (char *)Near_Allocate_Next(100);
     if(GAME_Conquering_Wiz != NEUTRAL_PLAYER_IDX)
     {
-        stu_strcpy(GUI_String_1, _players[player_idx].name);
+        stu_strcpy(GUI_String_1, _players[winner_idx].name);
         stu_strcat(GUI_String_1, &Space_String[0]);
         if(city_count > 1)
         {
@@ -546,7 +419,7 @@ void Conquest_Animation(int16_t city_owner_idx, int16_t player_idx)
             stu_strcat(GUI_String_1, cnst_Conquest_Msg4);  // "defeats"
         }
         stu_strcat(GUI_String_1, Space_String);
-        stu_strcat(GUI_String_1, _players[city_owner_idx].name);
+        stu_strcat(GUI_String_1, _players[loser_Idx].name);
     }
     else
     {
@@ -554,7 +427,7 @@ void Conquest_Animation(int16_t city_owner_idx, int16_t player_idx)
         stu_strcat(GUI_String_1, Space_String);
         stu_strcat(GUI_String_1, cnst_Conquest_Msg1);  // "destroy"
         stu_strcat(GUI_String_1, Space_String);
-        stu_strcpy(GUI_String_2, _players[city_owner_idx].name);
+        stu_strcpy(GUI_String_2, _players[loser_Idx].name);
         if(city_count > 1)
         {
             Possessive(GUI_String_2);
@@ -582,7 +455,7 @@ void Conquest_Animation(int16_t city_owner_idx, int16_t player_idx)
     // WIZLAB.LBX, 011    "ARIEL"       ""
     // WIZLAB.LBX, 012    "TLALOC"      ""
     // WIZLAB.LBX, 013    "KALI"        ""
-    wizlab_wizard_seg__ovr093 = LBX_Reload(wizlab_lbx_file__ovr093, _players[city_owner_idx].wizard_id, _screen_seg);
+    wizlab_wizard_seg__ovr093 = LBX_Reload(wizlab_lbx_file__ovr093, _players[loser_Idx].wizard_id, _screen_seg);
     // CONQUEST.LBX, 000    "MERLIN"    ""
     // CONQUEST.LBX, 001    "SHAMAN"    ""
     // CONQUEST.LBX, 002    "SHAREE"    ""
@@ -597,7 +470,7 @@ void Conquest_Animation(int16_t city_owner_idx, int16_t player_idx)
     // CONQUEST.LBX, 011    "ARIEL"     ""
     // CONQUEST.LBX, 012    "AZTEC"     ""
     // CONQUEST.LBX, 013    "KALI"      ""
-    conquest_wizard_seg = LBX_Reload_Next(conquest_lbx_file__ovr093, _players[player_idx].wizard_id, _screen_seg);
+    conquest_wizard_seg = LBX_Reload_Next(conquest_lbx_file__ovr093, _players[winner_idx].wizard_id, _screen_seg);
     // CONQUEST.LBX, 014    "CONEHEAD"  ""
     conquest_conehead_seg = LBX_Reload_Next(conquest_lbx_file__ovr093, 14, _screen_seg);
     // CONQUEST.LBX, 015    "AXEBOY"    ""
@@ -607,9 +480,9 @@ void Conquest_Animation(int16_t city_owner_idx, int16_t player_idx)
     if(magic_set.background_music == ST_TRUE)
     {
         itr_cities = 109;  /* MUSIC_WIN_Military */
-        if(city_owner_idx == _human_player_idx) 
+        if(loser_Idx == _human_player_idx) 
         {
-            itr_cities = 110;  /* MUSIC_LOSE_Military */
+            itr_cities = MUSIC_LOSE_Military;
         }
         Music_Data_Seg = LBX_Reload(music_lbx_file__ovr093, itr_cities, SND_Music_Segment);
         Music_Data_Seg_size = lbxload_entry_length;
