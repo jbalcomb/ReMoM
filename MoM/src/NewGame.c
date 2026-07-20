@@ -1615,7 +1615,7 @@ void GAME_WizardsLaunch__WIP(int16_t save_gam_idx)
         Load_SAVE_GAM(save_gam_idx);
         Save_SAVE_GAM(8);
     }
-    // TODO  GAME_EXE_Swap(cnst_EXESwap_File, cnst_EXESwap_Arg, cnst_EXESwap_Arg, empty_string__ovr050);
+    /* EOG_HACK */  // DONT  Respawn(cnst_EXESwap_File, cnst_EXESwap_Arg, cnst_EXESwap_Arg, empty_string__ovr050);
 }
 
 

@@ -1,5 +1,3 @@
-
-#include "../../ext/stu_compat.h"
 /*
     WIZARDS.EXE
     ovr057
@@ -46,6 +44,7 @@
 #include "MOM_DBG.h"
 #include "MOM_SCR.h"
 #include "MainScr_Maps.h"
+#include "NEXTTURN.h"
 #include "SCastScr.h"  /* World_To_Screen() */
 #include "SETTLE.h"
 #include "Spellbook.h"
@@ -62,6 +61,8 @@
 #include "Combat.h"
 #include "Explore.h"
 #include "Lair.h"
+
+#include "../../ext/stu_compat.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -1909,6 +1910,12 @@ g_dbg_fields_trace = 1;
 */
 
         }
+
+        /* EOG_HACK */  if(magic_master_idx != ST_UNDEFINED)
+        /* EOG_HACK */  {
+        /* EOG_HACK */      current_screen  = scr_Main_Menu_Screen;
+        /* EOG_HACK */      leave_screen_flag = ST_TRUE;
+        /* EOG_HACK */  }
 
 
 
@@ -5400,6 +5407,7 @@ Combat_Handlers:
     {
 
 combat_result = Combat__WIP(player_idx, defender_idx, troop_count, &troops[0]);
+/* EOG_HACK */  magic_master_idx = Get_Winner();
 // ...units gets moved if they win
 if(combat_result == 1)
 {

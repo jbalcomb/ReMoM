@@ -213,6 +213,10 @@ void AI_Next_Turn(void)
     /* Main AI Player processing loop (Skip Human Player 0) */
     for (player_idx = 1; player_idx < _num_players; player_idx++)
     {
+
+        /* The planning loop runs Cast_Spell_Overland @262 (AI SoM), which can end the game before movement even starts. */
+        /* EOG_HACK */  if(magic_master_idx != ST_UNDEFINED) { break; }
+
         /* Check for Time Stop effect */
         if(g_timestop_player_num != 0)
         {
@@ -260,6 +264,7 @@ void AI_Next_Turn(void)
         if(_players[player_idx].casting_cost_remaining <= 0 && _players[player_idx].casting_spell_idx != spl_NONE)
         {
             PHASE(Cast_Spell_Overland(player_idx));
+            /* EOG_HACK */  magic_master_idx = Get_Winner();
             PHASE(EMMDATAH_Map());
             _players[player_idx].casting_spell_idx = spl_NONE;
             if(g_ai_recompute_needed == ST_TRUE)
@@ -329,6 +334,10 @@ void AI_Next_Turn(void)
 #endif
     for (player_idx = 1; player_idx < _num_players; player_idx++)
     {
+
+        /* Stops the remaining AI players' movement/combat. */
+        /* EOG_HACK */  if(magic_master_idx != ST_UNDEFINED) { break; }
+
         /* Check for Time Stop effect */
         if(g_timestop_player_num != 0)
         {
@@ -367,6 +376,9 @@ void AI_Next_Turn(void)
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: NPC movement done");
 #endif
+
+    /* The neutral turn can end the game (a rampaging stack takes the human's last city). If it does, skip Make_Raiders/Make_Monsters/cleanup and return. */
+    /* EOG_HACK */  if(magic_master_idx != ST_UNDEFINED) { return; }
 
     /* Event Generation */
     PHASE(Make_Raiders());

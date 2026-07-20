@@ -21,6 +21,7 @@
 #include "Combat.h"
 #include "Lair.h"
 #include "MainScr.h"
+#include "NEXTTURN.h"
 #include "Outpost.h"
 #include "Terrain.h"
 #include "UnitMove.h"   // WTFMATE
@@ -159,6 +160,9 @@ void AI_Execute_Orders(int16_t player_idx)
     /* Iterate through all units in the game world */
     for (unit_idx = 0; unit_idx < _units; unit_idx++)
     {
+
+        /* Stops the current player's remaining units the instant one of its combats ends the game. Covers both CP and NP (same function). */
+        /* EOG_HACK */  if(magic_master_idx != ST_UNDEFINED) { break; }
 
         /* Check if unit belongs to the player currently processing AI moves */
         if(_UNITS[unit_idx].owner_idx == (int8_t)player_idx)

@@ -32,6 +32,7 @@
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "MOM_DBG.h"
+#include "NEXTTURN.h"
 #include "RACETYPE.h"
 #include "SBookScr.h"
 #include "Spells129.h"
@@ -992,6 +993,7 @@ void Event_Twiddle(void)
             }
         }
         Change_City_Ownership(m_event_city_idx, NEUTRAL_PLAYER_IDX);
+        /* EOG_HACK */  magic_master_idx = Get_Winner();
         Show_Event_Message();
     }
     /*

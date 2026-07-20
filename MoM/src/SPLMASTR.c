@@ -183,6 +183,9 @@ char monster_lbx_file__ovr138[] = "Monster";
 SAMB_ptr word_43494;
 
 // WZD dseg:C9F6
+/*
+OON XREF:  Spell_Of_Mastery_Load()
+*/
 int16_t cast_spell_of_mastery_player_idx;
 
 // WZD dseg:C9F8 00                                              db    0
@@ -277,6 +280,7 @@ SAMB_ptr IMG_OVL_TargetWizBG;
 ; HoF will skip turn count points if this is not -1 or
 ; the index of the human player, and SoM if it is not
 ; the human player
+¿ ~== MoO2 _count_winner ?
 */
 int16_t GAME_SoM_Cast_By;
 
@@ -1949,7 +1953,7 @@ void Spell_Of_Mastery_Lose(void)
 
     s01p16_empty_function();
 
-    // SPELLY  GAME_EXE_Swap(cnst_MAGIC_EXE_File2, cnst_MAGICEXE_arg0_2, &spellose_lbx_file__ovr138[8], &spellose_lbx_file__ovr138[8]);
+    /* EOG_HACK */  // DONT  Respawn(cnst_MAGIC_EXE_File2, cnst_MAGICEXE_arg0_2, &spellose_lbx_file__ovr138[8], &spellose_lbx_file__ovr138[8]);
 
 }
 
@@ -2208,6 +2212,8 @@ void Spell_Of_Mastery(int16_t player_idx)
     int16_t itr_players = 0;  // _DI_
     int16_t IDK = 0;  // _SI_
 
+    /* EOG_HACK */  if(magic_master_idx != ST_UNDEFINED) { return; }  /* JIC, two players cast SoM in the same turn (impossible?) */
+    
     GAME_SoM_Cast_By = player_idx;
 
     Combat_Cache_Write();
@@ -2343,7 +2349,7 @@ void Spell_Of_Mastery(int16_t player_idx)
 
     s01p16_empty_function();
 
-    // SPELLY  GAME_EXE_Swap(cnst_MAGIC_EXE_File2, cnst_MAGICEXE_arg0_2, &spellose_lbx_file__ovr138[0], &spellose_lbx_file__ovr138[0]);
+    /* EOG_HACK */  // DONT  Respawn(cnst_MAGIC_EXE_File2, cnst_MAGICEXE_arg0_2, &spellose_lbx_file__ovr138[0], &spellose_lbx_file__ovr138[0]);
 
 }
 

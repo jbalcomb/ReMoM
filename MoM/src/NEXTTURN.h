@@ -21,6 +21,10 @@ extern "C" {
 
 
 
+/* EOG_HACK */  extern int16_t magic_master_idx;
+
+
+
 /*
     WIZARDS.EXE  ovr060
 */
@@ -208,6 +212,18 @@ void AI_Calculate_Average_Unit_Cost(void);
 
 // WZD o141p01
 void Do_Autosave(void);
+
+
+
+// DNE in MoM
+// MoO2  Module: NEXTTURN  Get_Winner_()
+int16_t Get_Winner(void);
+
+// MoO2  COLCALC  N_Living_Players_()
+int16_t N_Living_Players(void);
+
+// MoO2  COLCALC  N_Living_Human_Players_()
+int16_t N_Living_Human_Players(void);
 
 
 

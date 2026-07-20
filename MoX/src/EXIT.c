@@ -45,6 +45,12 @@ char * cnst_Quit_Report4 = "k   Worst";         // dseg:3CE1
 char * cnst_Quit_Report5 = "k   EMM: ";         // dseg:3CEB
 char * cnst_Quit_Report6 = " blocks";           // dseg:3CF5
 
+/* EOG_HACK */  // DONT  // WZD dseg:3CFD
+/* EOG_HACK */  // DONT  char cnst_ProgSwap_Error1[] = "Error- game file ";
+/* EOG_HACK */  // DONT  // WZD dseg:3D0F
+/* EOG_HACK */  // DONT  char cnst_ProgSwap_Error2[] = " could not be found";
+
+
 
 
 // s05p01
@@ -129,14 +135,45 @@ void Reset_System(void)
 // WZD s05p03
 // void Exit_With_Value(int16_t value);
 
+
 // WZD s05p04
-// GAME_EXE_Swap()
+/* EOG_HACK */  // DONT  void Respawn(char * exe_name, char * argv0, char * argv1, char * argv2)
+/* EOG_HACK */  // DONT  {
+/* EOG_HACK */  // DONT      char exit_message[82];
+/* EOG_HACK */  // DONT      int handle_index;
+/* EOG_HACK */  // DONT      Stop_Music__STUB();
+/* EOG_HACK */  // DONT      if(!Check_Default_Video_Page())
+/* EOG_HACK */  // DONT      {
+/* EOG_HACK */  // DONT          Copy_On_To_Off_Page();
+/* EOG_HACK */  // DONT          Toggle_Pages();
+/* EOG_HACK */  // DONT      }
+/* EOG_HACK */  // DONT      Reset_System_Mouse();
+/* EOG_HACK */  // DONT      Audio_Uninit__STUB();
+/* EOG_HACK */  // DONT      fcloseall();
+/* EOG_HACK */  // DONT      for(handle_index = 5; handle_index < 30; handle_index++)
+/* EOG_HACK */  // DONT      {
+/* EOG_HACK */  // DONT          /* INT 21h AH=3Eh: Close file handle */
+/* EOG_HACK */  // DONT          union REGS regs;
+/* EOG_HACK */  // DONT          regs.h.ah = 0x3E;
+/* EOG_HACK */  // DONT          regs.x.bx = (unsigned int)handle_index;
+/* EOG_HACK */  // DONT          int86(0x21, &regs, &regs);
+/* EOG_HACK */  // DONT      }
+/* EOG_HACK */  // DONT      EMM_Release_Resd();
+/* EOG_HACK */  // DONT      execl(exe_name, exe_name, argv0, argv1, argv2, (char *)0);
+/* EOG_HACK */  // DONT      strcpy(exit_message, cnst_ProgSwap_Error1);
+/* EOG_HACK */  // DONT      strcat(exit_message, exe_name);
+/* EOG_HACK */  // DONT      strcat(exit_message, cnst_ProgSwap_Error2);
+/* EOG_HACK */  // DONT      Exit_With_Message(exit_message);
+/* EOG_HACK */  // DONT  }
+
 
 // WZD s05p05
 // Update_MemFreeWorst_KB()
 
+
 // WZD s05p06
 // UU_VGA_B800Dump()
+
 
 // WZD s05p07
 // UU_VGA_TextModeString()

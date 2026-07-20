@@ -456,13 +456,10 @@ void Load_Screen(void)
         if(input_field_idx == loadsave_quit_button)
         {
             // ~== current_screen = scr_Main_Menu_Screen
-            // DONT  loadsave_settings_flag = ST_UNDEFINED;
-            // DONT  s01p15_Empty_pFxn();
-            // DONT  Save_SAVE_GAM(8);
-            // DONT  GAME_EXE_Swap("MAGIC.EXE", "JENNY", str_empty_string__ovr160, str_empty_string__ovr160);
-
             loadsave_settings_flag = ST_UNDEFINED;
+            // TODO  s01p15_Empty_pFxn();
             Save_SAVE_GAM(8);
+            /* EOG_HACK */  // DONT  Respawn("MAGIC.EXE", "JENNY", str_empty_string__ovr160, str_empty_string__ovr160);
             current_screen = scr_Main_Menu_Screen;
             leave_screen_flag = ST_TRUE;
         }

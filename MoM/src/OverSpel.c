@@ -808,8 +808,8 @@ void Cast_Spell_Overland(int16_t player_idx)
         SBK_Spell_Index = spell_idx;
         if(spell_idx == spl_Spell_Of_Mastery)
         {
-            Spell_Of_Mastery(player_idx);
-            g_ai_recompute_needed = ST_TRUE;
+            Spell_Of_Mastery(player_idx);  /* OG-MoM NO_RETURN; HACK  set flag, fall back to Screen_Control() */
+            g_ai_recompute_needed = ST_TRUE;  /* ¿ OGBUG  unreachable code ? */
         }
         else
         {

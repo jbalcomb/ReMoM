@@ -31,7 +31,7 @@ void Exit_With_Message(char * string);
 // void Exit_With_Value(int16_t value);
 
 // WZD s05p04
-// GAME_EXE_Swap()
+/* EOG_HACK */  // DONT  void Respawn(char * exe, char * arg0, char * arg1, char * arg2);
 
 // WZD s05p05
 // Update_MemFreeWorst_KB()

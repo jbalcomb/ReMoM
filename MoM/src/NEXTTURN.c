@@ -62,6 +62,7 @@
 #include "Spells128.h"
 #include "Spells129.h"
 #include "Spells130.h"
+#include "SPLMASTR.h"
 #include "TerrType.h"
 #include "Terrain.h"
 #include "UNITSTK.h"
@@ -77,6 +78,13 @@
 #include <string.h>
 
 #include "Spells132.h"
+
+
+/*
+Claude Code suggested "g_game_over", but I already had "magic_master_idx" in-mind.
+
+*/
+/* EOG_HACK */  int16_t magic_master_idx = ST_UNDEFINED;
 
 
 
@@ -424,7 +432,9 @@ void Next_Turn_Proc(void)
         END: Messages
     */
 
-    current_screen = scr_Main_Screen;
+
+    /* EOG_HACK */  // current_screen = scr_Main_Screen;
+
 
     g_bldg_msg_ctr = 0;
 
@@ -448,8 +458,11 @@ void Next_Turn_Proc(void)
 
         Cast_Spell_Overland(_human_player_idx);
 
+        /* EOG_HACK */  magic_master_idx = Get_Winner();
+
     }
 
+    /* EOG_HACK */  if(magic_master_idx != ST_UNDEFINED) { current_screen = scr_Main_Menu_Screen; } else { current_screen = scr_Main_Screen; }
 
     all_units_moved = ST_FALSE;
 
@@ -4737,4 +4750,69 @@ void Do_Autosave(void)
 
     IDK_autosave = ST_FALSE;
 
+}
+
+
+
+// DNE in MoM
+// MoO2  Module: NEXTTURN  Get_Winner_()
+/*
+e.g., `magic_master_idx = Get_Winner();`
+*/
+int16_t Get_Winner(void)
+{
+    int16_t winner_idx = 0;
+    int16_t player_idx = 0;
+    winner_idx = ST_UNDEFINED;
+    if(GAME_SoM_Cast_By != ST_UNDEFINED)
+    {
+        winner_idx = GAME_SoM_Cast_By;
+    }
+    else
+    {
+        if((N_Living_Human_Players() == 0) || (N_Living_Players() == 1))  /* Human Player is Dead or Alone */
+        {
+            for(player_idx = 0; player_idx < _num_players; player_idx++)
+            {
+                if(_FORTRESSES[player_idx].active)
+                {
+                    winner_idx = player_idx;
+                }
+            }
+        }
+    }
+    return winner_idx;
+}
+
+// MoO2  COLCALC  N_Living_Players_()
+int16_t N_Living_Players(void)
+{
+    int16_t n_living_players = 0;
+    int16_t player_idx = 0;
+    for(player_idx = 0; player_idx < _num_players; player_idx++)
+    {
+        if(_FORTRESSES[player_idx].active)
+        {
+            n_living_players++;
+        }
+    }
+    return n_living_players;
+}
+
+// MoO2  COLCALC  N_Living_Human_Players_()
+int16_t N_Living_Human_Players(void)
+{
+    int16_t n_living_human_players = 0;
+    int16_t player_idx = 0;
+    for(player_idx = 0; player_idx < _num_players; player_idx++)
+    {
+        if(_FORTRESSES[player_idx].active)
+        {
+            if(player_idx == HUMAN_PLAYER_IDX)
+            {
+                n_living_human_players++;
+            }
+        }
+    }
+    return n_living_human_players;
 }
