@@ -1136,7 +1136,7 @@ int16_t Banish_Wizard(int16_t loser_idx, int16_t winner_idx)
     Copy_On_To_Off_Page();
     if(loser_idx == _human_player_idx)
     {
-        itoa(turns_to_return, buffer, 10);
+        stu_itoa(turns_to_return, buffer, 10);
         stu_strcpy(GUI_NearMsgString, cnst_SoReturn_Msg1);  // "There are at least "
         strcat(GUI_NearMsgString, buffer);
         strcat(GUI_NearMsgString, cnst_SoReturn_Msg2);  // " turns remaining until you may return. Do you wish to resign?"
