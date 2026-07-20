@@ -58,12 +58,14 @@ collect_since() {
 }
 
 files=()
+base=""   # non-empty => diff-scoped: enforce house style on freshly-changed LINES only
 if [ $# -eq 0 ]; then
     mapfile -t files < <(collect_staged | grep -E "$SRC_RE" || true)
-    scope="staged"
+    scope="staged"; base="HEAD"
 elif [ "$1" = "--since" ]; then
-    mapfile -t files < <(collect_since "${2:-origin/main}" | grep -E "$SRC_RE" || true)
-    scope="changed vs ${2:-origin/main}"
+    base="${2:-origin/main}"
+    mapfile -t files < <(collect_since "$base" | grep -E "$SRC_RE" || true)
+    scope="changed vs $base"
 else
     for f in "$@"; do [[ "$f" =~ $SRC_RE ]] && files+=("$f"); done
     scope="explicit"
@@ -80,6 +82,28 @@ if [ ${#files[@]} -eq 0 ] || [ -z "${files[0]:-}" ]; then
 fi
 
 echo "format.sh: $mode ${#files[@]} file(s) [$scope] with $CF ($($CF --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1))"
+
+# The tree is heavily hand-aligned, so for diff-scoped runs (staged or --since)
+# we enforce house style only on the LINES that actually changed, via
+# git-clang-format. Explicit FILE arguments are still whole-file (you asked for
+# it). This keeps freshly-touched code converging to house style without ever
+# flagging the pre-existing hand-alignment of a file just because it was touched.
+if [ -n "$base" ]; then
+    if [ "$mode" = "fix" ]; then
+        git clang-format --binary "$CF" "$base" -- "${files[@]}"
+        echo "format.sh: formatted changed lines in place. Review with 'git diff'."
+        exit 0
+    fi
+    out="$(git clang-format --binary "$CF" --diff "$base" -- "${files[@]}" 2>&1 || true)"
+    case "$out" in
+        "" | "no modified files to format" | "clang-format did not modify any files")
+            echo "format.sh: OK — changed lines already match house style."; exit 0 ;;
+        *)
+            printf '%s\n' "$out"
+            echo "format.sh: FAIL — changed lines need formatting. Run: tools/format.sh fix ${1:-} ${2:-}" >&2
+            exit 1 ;;
+    esac
+fi
 
 if [ "$mode" = "fix" ]; then
     "$CF" -i --style=file "${files[@]}"

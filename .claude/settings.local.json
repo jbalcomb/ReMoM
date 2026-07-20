@@ -6,7 +6,11 @@
       "Bash(cmake .. -DCMAKE_BUILD_TYPE=Debug)",
       "Bash(ctest -L ai -V)",
       "Bash(cmake ..)",
-      "Bash(cmake --build --preset MSVC-debug)"
+      "Bash(cmake --build --preset MSVC-debug)",
+      "Bash(cmake --build --preset clang-debug)",
+      "Bash(cmake --build --preset clang-debug --config Debug)",
+      "Bash(touch /home/jbalcomb/STU/devel/ReMoM/MoM/src/NEXTTURN.c /home/jbalcomb/STU/devel/ReMoM/MoM/src/Combat.c /home/jbalcomb/STU/devel/ReMoM/MoM/src/Terrain.c)",
+      "Bash(touch /home/jbalcomb/STU/devel/ReMoM/MoM/src/Combat.c)"
     ]
   }
 }

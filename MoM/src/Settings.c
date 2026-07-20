@@ -16,6 +16,7 @@ MoO2
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_GRAF.h"  /* STU_GRAF_Open_User / _User_DIR / _User_LOF -- MAGIC.SET -> user-data */
 
 #include "../../ext/stu_compat.h"
 
@@ -277,13 +278,13 @@ void Settings_Screen(void)
         IMG_GUI_ChkBoxDn[itr] = LBX_Reload_Next(load_lbx_file__ovr125, (19 + itr), _screen_seg);
     }
 
-    if(DIR(settings_file__ovr125, found_file) == ST_FAILURE)  // "MAGIC.SET"
+    if(STU_GRAF_User_DIR(settings_file__ovr125, found_file) == ST_FAILURE)  // "MAGIC.SET"  /* CLAUDE: -> user-data */
     {
         Set_Default_Game_Settings();
     }
     else
     {
-        file_pointer = stu_fopen_ci(settings_file__ovr125, str_RB__ovr125);  // "MAGIC.SET", "rb"
+        file_pointer = STU_GRAF_Open_User(settings_file__ovr125, str_RB__ovr125);  // "MAGIC.SET", "rb"  /* CLAUDE: -> user-data */
         fread(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
         fclose(file_pointer);
     }
@@ -357,7 +358,7 @@ void Settings_Screen(void)
 
         if(input_field_idx == loadsave_ok_button)
         {
-            file_pointer = stu_fopen_ci(settings_file__ovr125, str_WB__ovr125);  // "MAGIC.SET", "wb"
+            file_pointer = STU_GRAF_Open_User(settings_file__ovr125, str_WB__ovr125);  // "MAGIC.SET", "wb"  /* CLAUDE: -> user-data */
             fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
             fclose(file_pointer);
             leave_screen = ST_TRUE;
@@ -583,19 +584,19 @@ void Load_MAGIC_SET(void)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     if(
-        (DIR("MAGIC.SET", found_file) == ST_FAILURE)
+        (STU_GRAF_User_DIR("MAGIC.SET", found_file) == ST_FAILURE)  /* CLAUDE: -> user-data */
         ||
-        (LOF("MAGIC.SET") != sizeof(struct s_MAGIC_SET))
+        (STU_GRAF_User_LOF("MAGIC.SET") != sizeof(struct s_MAGIC_SET))  /* CLAUDE: -> user-data */
     )
     {
         // STU_DEBUG_BREAK();
         Set_Default_Game_Settings();
-        file_pointer = stu_fopen_ci("MAGIC.SET","wb");
+        file_pointer = STU_GRAF_Open_User("MAGIC.SET","wb");  /* CLAUDE: -> user-data */
         stu_fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
     }
     else
     {
-        file_pointer = stu_fopen_ci("MAGIC.SET","rb");
+        file_pointer = STU_GRAF_Open_User("MAGIC.SET","rb");  /* CLAUDE: -> user-data */
         stu_fread(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
     }
     stu_fclose(file_pointer);
@@ -615,7 +616,7 @@ void Load_MAGIC_SET(void)
         }
     }
 
-    file_pointer = stu_fopen_ci("MAGIC.SET","wb");
+    file_pointer = STU_GRAF_Open_User("MAGIC.SET","wb");  /* CLAUDE: -> user-data */
     stu_fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
     stu_fclose(file_pointer);
 

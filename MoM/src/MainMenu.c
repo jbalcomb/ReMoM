@@ -36,6 +36,7 @@
 
 #include "MainMenu.h"
 #include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_GRAF.h"  /* STU_GRAF_User_DIR -- save-game scan resolves to user-data */
 
 
 
@@ -355,7 +356,7 @@ int16_t Main_Menu_Screen(void)
         stu_itoa(itr_saves__retval, Conversion_String, 10);
         stu_strcat(File_Name, Conversion_String);
         stu_strcat(File_Name, ".GAM");
-        if(DIR(File_Name, Found_File_Name) != ST_FAILURE)
+        if(STU_GRAF_User_DIR(File_Name, Found_File_Name) != ST_FAILURE)  /* CLAUDE: save-scan -> user-data */
         {
             if(itr_saves__retval < 9)
             {

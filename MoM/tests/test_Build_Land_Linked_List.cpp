@@ -4,6 +4,7 @@
 extern "C" {
 #endif
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/Allocate_Pool.h"  /* Pool_Init() - static pool reset between tests */
 #include "../../MoX/src/EMS/EMS.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
@@ -21,6 +22,8 @@ class Build_Land_Linked_List_test : public ::testing::Test
 protected:
     void SetUp() override
     {
+        Pool_Init();  // EmmHndl_CONTXXX is static-pool-backed (Allocate_Space); reset the arena each test.
+
         _landmasses = (uint8_t *)malloc(WORLD_SIZE * NUM_PLANES);
         ASSERT_NE(_landmasses, nullptr);
         memset(_landmasses, 0, WORLD_SIZE * NUM_PLANES);
@@ -42,7 +45,8 @@ protected:
         _ai_landmass_land_squares_wy_array[MYRROR_PLANE] = nullptr;
         EMS_PFBA = nullptr;
 
-        free(EmmHndl_CONTXXX);
+        // EmmHndl_CONTXXX is static-pool-backed (Allocate_Space) -- not freed here;
+        // Pool_Init() in SetUp reclaims it.  _landmasses is real malloc -- free it.
         EmmHndl_CONTXXX = nullptr;
 
         free(_landmasses);

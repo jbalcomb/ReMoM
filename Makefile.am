@@ -28,6 +28,8 @@ libstu_a_SOURCES = \
     STU/src/STU_DRAW.c \
     STU/src/STU_EMS.c \
     STU/src/STU_FMT.c \
+    STU/src/STU_GRAF.c \
+    STU/src/STU_HASH.c \
     STU/src/STU_INT.c \
     STU/src/STU_JSON.c \
     STU/src/STU_LOG.c \
@@ -39,6 +41,7 @@ libstu_a_SOURCES = \
     STU/src/STU_VLD.c \
     STU/src/STU_WAV.c \
     STU/src/STU_WRLD.c \
+    STU/src/lbx_manifest.c \
     ext/stu_compat.c
 
 libstu_a_CFLAGS = $(AM_CFLAGS) \

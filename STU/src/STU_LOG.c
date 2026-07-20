@@ -67,6 +67,13 @@ static size_t log_tail = 0;
 static FILE * log_file = NULL;
 static size_t log_dropped_since_last_pump = 0;
 
+/* Log-output directory.  base_dir is the caller's preferred location (ReMoMber
+   passes the resolved XDG state dir; HeMoM/tests/matchup leave it empty = CWD).
+   effective_dir is what a given startup actually uses, after applying the
+   REMOM_LOG_DIR override and any not-writable fallback to CWD.  Empty = CWD. */
+static char   log_base_dir[512] = "";
+static char   log_effective_dir[512] = "";
+
 struct log_config
 {
     int sev_threshold;
@@ -455,12 +462,73 @@ static void STU_Log_Emit_Drop_Marker(void)
     log_dropped_since_last_pump = 0;
 }
 
+void STU_Log_Set_Base_Dir(const char * dir)
+{
+    if(dir == NULL || dir[0] == '\0')
+    {
+        log_base_dir[0] = '\0';
+    }
+    else
+    {
+        snprintf(log_base_dir, sizeof(log_base_dir), "%s", dir);
+    }
+}
+
+/* Compose "<effective_dir>/<filename>" (or the bare filename when effective_dir
+   is empty = CWD) into out. */
+static void STU_Log_Build_Path(char * out, size_t cap, const char * filename)
+{
+    size_t n = strlen(log_effective_dir);
+    if(n == 0)
+    {
+        snprintf(out, cap, "%s", filename);
+    }
+    else if(log_effective_dir[n - 1] == '/' || log_effective_dir[n - 1] == '\\')
+    {
+        snprintf(out, cap, "%s%s", log_effective_dir, filename);
+    }
+    else
+    {
+        snprintf(out, cap, "%s/%s", log_effective_dir, filename);
+    }
+}
+
+/* Resolve the effective log dir for this startup: REMOM_LOG_DIR (env) wins, then
+   the caller's base_dir, then the CWD.  REMOM_LOG_DIR="." forces the CWD. */
+static void STU_Log_Resolve_Dir(void)
+{
+    const char * env = getenv("REMOM_LOG_DIR");
+    const char * src = "";
+    if(env != NULL && env[0] != '\0')
+    {
+        src = env;
+    }
+    else if(log_base_dir[0] != '\0')
+    {
+        src = log_base_dir;
+    }
+    if(src[0] == '\0' || (src[0] == '.' && src[1] == '\0'))
+    {
+        log_effective_dir[0] = '\0';  /* CWD -- keep paths bare */
+    }
+    else
+    {
+        snprintf(log_effective_dir, sizeof(log_effective_dir), "%s", src);
+    }
+}
+
 static void STU_Log_Rotate_Files(void)
 {
+    char prev[600];
+    char cur[600];
+    char nw[600];
+    STU_Log_Build_Path(prev, sizeof(prev), LOG_FILE_PREVIOUS);
+    STU_Log_Build_Path(cur,  sizeof(cur),  LOG_FILE_CURRENT);
+    STU_Log_Build_Path(nw,   sizeof(nw),   LOG_FILE_NEW);
     /* remove(<missing>) returns -1 and rename(<missing>, ...) does the same; both are safe to ignore. */
-    remove(LOG_FILE_PREVIOUS);
-    rename(LOG_FILE_CURRENT, LOG_FILE_PREVIOUS);
-    rename(LOG_FILE_NEW,     LOG_FILE_CURRENT);
+    remove(prev);
+    rename(cur, prev);
+    rename(nw,  cur);
 }
 
 static void STU_Log_Emit_Crash_Marker(const char * signal_name)
@@ -586,12 +654,27 @@ void STU_Log_Startup(const char * ini_path)
     STU_Log_Config_Set_Defaults();
     STU_Log_Config_Load_INI(ini_path);
 
+    STU_Log_Resolve_Dir();
     STU_Log_Rotate_Files();
 
-    log_file = fopen(LOG_FILE_NEW, "w");
-    if(log_file == NULL)
     {
-        fprintf(stderr, "STU_LOG: failed to open '%s' for writing\n", LOG_FILE_NEW);
+        char nw[600];
+        STU_Log_Build_Path(nw, sizeof(nw), LOG_FILE_NEW);
+        log_file = fopen(nw, "w");
+        if(log_file == NULL && log_effective_dir[0] != '\0')
+        {
+            /* Directory not writable/creatable -> fall back to the CWD. */
+            fprintf(stderr, "STU_LOG: log dir '%s' not writable; using CWD\n",
+                    log_effective_dir);
+            log_effective_dir[0] = '\0';
+            STU_Log_Rotate_Files();
+            STU_Log_Build_Path(nw, sizeof(nw), LOG_FILE_NEW);
+            log_file = fopen(nw, "w");
+        }
+        if(log_file == NULL)
+        {
+            fprintf(stderr, "STU_LOG: failed to open '%s' for writing\n", nw);
+        }
     }
 
     if(!atexit_registered)

@@ -42,7 +42,9 @@ jobs:
 
   windows-release:
     name: Windows MSVC Release
-    runs-on: windows-latest
+    # Pinned: windows-latest now ships VS2026, but the MSVC-release preset uses the
+    # "Visual Studio 17 2022" generator. windows-2022 is the image that has VS2022.
+    runs-on: windows-2022
 
     steps:
       - uses: actions/checkout@v6
@@ -120,6 +122,10 @@ jobs:
   macos-release:
     name: macOS Clang Release
     runs-on: macos-latest
+    # TBD (deferred, non-blocking): pack(2) DOS structs place native pointers at
+    # non-8-byte-aligned offsets, which the arm64 macOS linker rejects. Link fails
+    # on arm64; x86-64 Linux/Windows are fine. See RELEASES.md "Known limitations".
+    if: false
 
     steps:
       - uses: actions/checkout@v6

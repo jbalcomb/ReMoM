@@ -1,12 +1,1 @@
-[2026-05-31T01:19:44Z] [INFO ] [GENERAL                ] HeMoM.c:513 main: BEGIN: HeMoM main() [STU_LOG tracer bullet]
-[2026-05-31T01:19:44Z] [DEBUG] [GENERAL                ] HeMoM.c:514 main: DEBUG: [src/HeMoM.c, 514]: BEGIN: HeMoM  main()
-[2026-05-31T01:19:44Z] [TRACE] [GENERAL                ] HeMoM.c:515 main: TRACE: [src/HeMoM.c, 515]: BEGIN: HeMoM  main()
-[2026-05-31T01:19:44Z] [INFO ] [HEMOM                  ] HeMoM.c:518 main: [HeMoM] argc=2
-[2026-05-31T01:19:44Z] [INFO ] [HEMOM                  ] HeMoM.c:525 main: [HeMoM] argv[0]="./HeMoM"
-[2026-05-31T01:19:44Z] [INFO ] [HEMOM                  ] HeMoM.c:525 main: [HeMoM] argv[1]="--continue"
-[2026-05-31T01:19:44Z] [INFO ] [HEMOM                  ] HeMoM.c:577 main: [HeMoM] CLI: --continue (SAVE9.GAM)
-[2026-05-31T01:19:44Z] [INFO ] [HEMOM                  ] HeMoM.c:640 main: [HeMoM] Parsed: mode=2 file="SAVE9.GAM" scenario=""
-[2026-05-31T01:19:44Z] [INFO ] [HEADLESS_PFL           ] headless_PFL.c:43 Startup_Platform: [headless] Platform started (no display, no audio)
-[2026-05-31T01:19:44Z] [INFO ] [HEMOM                  ] HeMoM.c:679 main: [HeMoM] Initializing engine...
-[2026-05-31T01:19:44Z] [INFO ] [RANDOM                 ] random.c:190 Randomize: [RNG] Randomize() called  timer=0x00646525  (clobbers prior seed 0x35683568)  random_calls=0
-[2026-05-31T01:19:44Z] [INFO ] [EXIT                   ] EXIT.c:233 Quit_With_Message: MAINSCRN.LBX [entry 0]  could not be found.
+[2026-07-16T13:05:56Z] [INFO ] [GENERAL                ] test_STU_LOG_strip.cpp:55 TestBody: kept info

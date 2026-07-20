@@ -4,6 +4,7 @@
 extern "C" {
 #endif
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/Allocate_Pool.h"  /* Pool_Init() - static pool reset between tests */
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_DEF.h"
@@ -21,6 +22,8 @@ class NEWG_TileIsleExtend__WIP_test : public ::testing::Test
 protected:
     void SetUp() override
     {
+        Pool_Init();  // Allocate_Space() is static-pool-backed; reset the arena each test.
+
         _world_maps = (uint8_t *)Allocate_Space(602);
         _TOWERS = (struct s_TOWER *)Allocate_Space((sizeof(struct s_TOWER) * NUM_TOWERS / SZ_PARAGRAPH_B) + 2);
 
@@ -35,9 +38,8 @@ protected:
 
     void TearDown() override
     {
-        free(_TOWERS);
+        // _TOWERS and _world_maps are static-pool-backed; reclaimed by Pool_Init() in SetUp.
         _TOWERS = nullptr;
-        free(_world_maps);
         _world_maps = nullptr;
         p_world_map = nullptr;
     }

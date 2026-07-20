@@ -24,6 +24,44 @@ extern "C" {
  */
 void ReMoM_Init_Engine(void);
 
+/**
+ * Fail-soft check for the presence of the original Master of Magic game data.
+ * Resolves a small set of required .LBX files via the STU_GRAF search path.
+ * If any are missing, shows a clear, actionable error (GUI box on player
+ * builds, stderr on headless) and returns non-zero; the caller should exit.
+ * Returns 0 when the data is present.  Call after STU_GRAF_Init() and before
+ * the first asset load.
+ */
+int ReMoM_Preflight_Game_Data(void);
+
+/**
+ * First-run seeding of the writable per-user files.  Copies CONFIG.MOM (and
+ * MAGIC.SET, if the install ships one) from the discovered game-data dir into
+ * the user-data dir the first time; thereafter the engine reads/writes those
+ * copies and the originals are never modified.  A no-op under the HEADLESS
+ * profile (HeMoM keeps CWD).  Call after ReMoM_Preflight_Game_Data() succeeds
+ * and before ReMoM_Init_Engine().
+ */
+void ReMoM_Seed_User_Files(void);
+
+/**
+ * Non-blocking data-compatibility check.  Hashes the installed .LBX files
+ * against the compiled-in known-good manifest (STU's g_lbx_manifest) and, when
+ * some don't match a supported v1.31 distribution, shows a one-time
+ * informational warning and continues.  A silent no-op when the manifest is
+ * empty (not yet authored) or every file matches.  Player builds only; call
+ * after preflight/seeding.
+ */
+void ReMoM_Check_Data_Compat(void);
+
+/**
+ * Force-refresh the writable per-user files (CONFIG.MOM, MAGIC.SET, SAVE1-9.GAM)
+ * from the discovered originals, backing up any existing copies into a
+ * timestamped backup-YYYYMMDD-HHMMSS/ subdir of the user data dir first.  Wired
+ * to the --orig-files flag; use instead of ReMoM_Seed_User_Files().  Player only.
+ */
+void ReMoM_Reseed_User_Files(void);
+
 #ifdef __cplusplus
 }
 #endif

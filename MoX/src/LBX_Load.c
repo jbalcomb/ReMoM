@@ -56,6 +56,7 @@
 
 #include "LBX_Load.h"
 #include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_GRAF.h"  /* STU_GRAF_Open_Asset -- data-dir search path */
 #include "random.h"  /* g_random_call_count for CALL_TRACE */
 
 
@@ -231,7 +232,7 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
         stu_strcpy(lbx_file_name, lbx_name);
         stu_strcat(lbx_file_name, ".LBX");
 
-        /* CLAUDE */ lbxload_fptr = stu_fopen_ci(lbx_file_name, "rb");
+        /* CLAUDE */ lbxload_fptr = STU_GRAF_Open_Asset(lbx_file_name, "rb");
 
         if(NULL == lbxload_fptr)
         {
@@ -443,7 +444,7 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
         stu_strcpy(lbx_file_name, lbx_name);
         stu_strcat(lbx_file_name, ".LBX");
 
-        /* CLAUDE */ lbxload_fptr = stu_fopen_ci(lbx_file_name, "rb");
+        /* CLAUDE */ lbxload_fptr = STU_GRAF_Open_Asset(lbx_file_name, "rb");
 
         if(NULL == lbxload_fptr)
         {
@@ -707,7 +708,7 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
         stu_strcpy(lbx_file_name, lbx_name);
         stu_strcat(lbx_file_name, ".LBX");
 
-        /* CLAUDE */ lbxload_fptr = stu_fopen_ci(lbx_file_name, "rb");
+        /* CLAUDE */ lbxload_fptr = STU_GRAF_Open_Asset(lbx_file_name, "rb");
 
         if(NULL == lbxload_fptr)
         {

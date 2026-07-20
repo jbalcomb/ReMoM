@@ -64,6 +64,15 @@ static const CHAR win_window_class_name[] = "MoM_Wnd_Cls";
 static const CHAR win_window_title[] = "(ReMoM) Master of Magic v1.31 - Win32 (v" REMOM_VERSION_STRING ")";
 
 
+void Platform_Show_Error(const char * title, const char * message)
+{
+    /* stderr first so the message survives even without a console/window,
+       then the modal box for interactive players. */
+    fprintf(stderr, "%s: %s\n", title, message);
+    MessageBoxA(NULL, message, title, MB_OK | MB_ICONERROR);
+}
+
+
 
 /* ========================================================================= */
 /*  Forward Declarations                                                     */

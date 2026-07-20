@@ -22,6 +22,7 @@ MoO2  Module: LOADSAVE
 
 #include "../../STU/src/STU_DBG.h"
 #include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_GRAF.h"  /* STU_GRAF_User_DIR -- save-game scan resolves to user-data */
 #include "../../STU/src/STU_TST.h"
 #include "../../STU/src/STU_VLD.h"
 
@@ -358,7 +359,7 @@ void Load_Screen(void)
         stu_itoa(itr, buffer2, 10);
         stu_strcat(match_string, buffer2);
         stu_strcat(match_string, cnst_SAVE_ext3);
-        if(DIR(match_string, found_file) == ST_FAILURE)  /* File Not Found */
+        if(STU_GRAF_User_DIR(match_string, found_file) == ST_FAILURE)  /* File Not Found */  /* CLAUDE: save-scan -> user-data */
         {
             save_game_slots__ovr160[save_game_count__ovr160] = ST_UNDEFINED;
         }

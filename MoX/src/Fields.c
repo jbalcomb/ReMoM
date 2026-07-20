@@ -24,7 +24,7 @@
 #include "../../platform/include/Platform.h"  /* CLAUDE: Hw_Textinput_Stop() */
 
 #include <assert.h>
-#include <malloc.h>     /* malloc() */
+#include <stdlib.h>     /* malloc() */
 #include <string.h>     /* stu_strcat(), stu_strcpy() */
 
 #define FIELDS_C_IMPL  /* suppress Add_*Field macro wrappers inside Fields.c itself */

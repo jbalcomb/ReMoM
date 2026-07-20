@@ -80,7 +80,7 @@ int gd_ci_load(void)
 
     gd_ci_nrecs = 0;
     while (fgets(line, sizeof(line), f)) {
-        char  key[64], site[64];
+        char  key[32], site[24];
         int   count = 0, consumed = 0, n = 0;
         char* p = line;
         char* endp;
@@ -92,13 +92,13 @@ int gd_ci_load(void)
             LOG_INFO(LOG_CAT_GENERAL, "[CI] WARNING: >%d records; rest ignored.", GD_CI_MAX_RECS);
             break;
         }
-        if (sscanf(p, "%63s %63s %d%n", key, site, &count, &consumed) != 3) {
+        /* sscanf widths kept in sync with r->key[32] / r->site[24] so the
+           subsequent copies can't possibly truncate (GCC -Wformat-truncation). */
+        if (sscanf(p, "%31s %23s %d%n", key, site, &count, &consumed) != 3) {
             LOG_INFO(LOG_CAT_GENERAL, "[CI] WARNING: malformed record skipped.");
             continue;
         }
         r = &gd_ci_recs[gd_ci_nrecs];
-        /* CLAUDE 2026-06-24: snprintf in lieu of strncpy + manual NUL —
-           always NUL-terminates, sidesteps GCC -Wstringop-truncation. */
         snprintf(r->key,  sizeof(r->key),  "%s", key);
         snprintf(r->site, sizeof(r->site), "%s", site);
 

@@ -7,6 +7,8 @@ set(LIBSTU_SOURCES
     STU_FIO.c
     STU_FMT.c
     STU_FON.c
+    STU_GRAF.c
+    STU_HASH.c
     STU_INIT.c
     STU_INT.c
     STU_JSON.c
@@ -20,6 +22,7 @@ set(LIBSTU_SOURCES
     STU_WAV.c
     STU_WRLD.c
     STU_XTRC.c
+    lbx_manifest.c
     ${PROJECT_SOURCE_DIR}/ext/stu_compat.c
 )
 

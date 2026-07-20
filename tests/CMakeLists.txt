@@ -542,3 +542,20 @@ if(ENABLE_WINDOWED_COMBAT_TESTS)
     )
 
 endif()
+
+# --- Fail-soft: missing game data ---
+# HeMoM with nothing on its search path must print the actionable message and
+# exit cleanly (headless Platform_Show_Error -> stderr), not crash.  Runs in an
+# empty working dir with REMOM_DATA_DIR cleared so nothing resolves.
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/no_data")
+add_test(
+    NAME HeMoM_Preflight_Missing_Data
+    COMMAND $<TARGET_FILE:HeMoM>
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/no_data"
+)
+set_tests_properties(HeMoM_Preflight_Missing_Data PROPERTIES
+    PASS_REGULAR_EXPRESSION "Missing Game Data"
+    ENVIRONMENT "REMOM_DATA_DIR="
+    TIMEOUT 20
+    LABELS "hemom;integration;preflight"
+)

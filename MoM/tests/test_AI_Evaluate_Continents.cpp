@@ -7,6 +7,7 @@
 extern "C" {
 #endif
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/Allocate_Pool.h"  /* Pool_Init() - static pool reset between tests */
 #include "../../MoX/src/EMS/EMS.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
@@ -44,6 +45,8 @@ protected:
     {
         int wp = 0;
         int landmass_idx = 0;
+
+        Pool_Init();  // EmmHndl_CONTXXX is static-pool-backed (Allocate_Space); reset the arena each test.
 
         saved_cities = _CITIES;
         saved_fortresses = _FORTRESSES;
@@ -119,7 +122,8 @@ protected:
     {
         int wp = 0;
 
-        free(EmmHndl_CONTXXX);
+        // EmmHndl_CONTXXX is static-pool-backed (Allocate_Space) -- not freed here;
+        // Pool_Init() in SetUp reclaims it.
         EmmHndl_CONTXXX = saved_contxxx;
         _EMMDATAH_seg = saved_datah;
         EMS_PFBA = saved_ems_pfba;
@@ -263,7 +267,11 @@ TEST_F(AIEvaluateContinentsTest, SeededLandmassesProduceMeaningfulClassification
     AI_Evaluate_Continents(0);
 
     EXPECT_EQ(_ai_continents.plane[ARCANUS_PLANE].player[0].type_array[1], lmt_Contested);
-    EXPECT_EQ(_ai_continents.plane[ARCANUS_PLANE].player[0].wx_array[1], 10);
+    /* The stage square deliberately avoids occupied / target-site squares
+       (g_ai_evaluation_map != 0).  (10,10) is flagged above, so
+       AI_Evaluate_Continents stages on the nearest unoccupied land square of the
+       landmass -- (12,10) -- not the city square itself. */
+    EXPECT_EQ(_ai_continents.plane[ARCANUS_PLANE].player[0].wx_array[1], 12);
     EXPECT_EQ(_ai_continents.plane[ARCANUS_PLANE].player[0].wy_array[1], 10);
 
     EXPECT_EQ(_ai_continents.plane[ARCANUS_PLANE].player[0].type_array[2], lmt_NoOwnCityAndAllyHasCity);

@@ -4,6 +4,7 @@
 extern "C" {
 #endif
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/Allocate_Pool.h"  /* Pool_Init() - static pool reset between tests */
 #include "../../MoX/src/EMS/EMS.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
@@ -22,9 +23,15 @@ class Build_Dock_Linked_List_test : public ::testing::Test
 protected:
     void SetUp() override
     {
+        Pool_Init();  // Allocate_Space() is static-pool-backed; reset the arena each test.
+
         _world_maps = (uint8_t *)Allocate_Space(602);
         ASSERT_NE(_world_maps, nullptr);
         memset(_world_maps, 0, WORLD_SIZE * NUM_PLANES * sizeof(uint16_t));
+
+        /* Build_Dock_Linked_List() -> Square_Is_Shoreline() reads through p_world_map;
+           bind it to _world_maps the same way the sibling worldgen fixtures do. */
+        p_world_map = (int16_t (*)[WORLD_HEIGHT][WORLD_WIDTH])_world_maps;
 
         _landmasses = (uint8_t *)malloc(WORLD_SIZE * NUM_PLANES);
         ASSERT_NE(_landmasses, nullptr);
@@ -47,13 +54,13 @@ protected:
         _ai_landmass_dock_squares_wy_array[MYRROR_PLANE] = nullptr;
         EMS_PFBA = nullptr;
 
-        free(EmmHndl_CONTXXX);
+        // EmmHndl_CONTXXX and _world_maps are static-pool-backed (Allocate_Space) -- not
+        // freed here; Pool_Init() in SetUp reclaims them.  _landmasses is real malloc -- free it.
         EmmHndl_CONTXXX = nullptr;
 
         free(_landmasses);
         _landmasses = nullptr;
 
-        free(_world_maps);
         _world_maps = nullptr;
     }
 

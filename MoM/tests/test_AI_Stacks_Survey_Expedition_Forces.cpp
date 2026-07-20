@@ -7,6 +7,7 @@
 extern "C" {
 #endif
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/Allocate_Pool.h"  /* Pool_Init() - static pool reset between tests */
 #include "../../MoX/src/EMS/EMS.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
@@ -50,6 +51,8 @@ protected:
     {
         int stack_idx = 0;
         int list_idx = 0;
+
+        Pool_Init();  // EmmHndl_CONTXXX is static-pool-backed (Allocate_Space); reset the arena each test.
 
         saved_units = _UNITS;
         saved_unit_count = _units;
@@ -105,7 +108,8 @@ protected:
         free(global_battle_unit);
         global_battle_unit = saved_battle_unit;
 
-        free(EmmHndl_CONTXXX);
+        // EmmHndl_CONTXXX is static-pool-backed (Allocate_Space) -- not freed here;
+        // Pool_Init() in SetUp reclaims it.
         EmmHndl_CONTXXX = saved_emm_handle;
         EMS_PFBA = saved_ems_pfba;
 

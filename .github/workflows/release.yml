@@ -31,7 +31,15 @@ jobs:
   # ── Windows (MSVC, native Win32 backend, ZIP + NSIS) ──────────────────
   windows:
     name: Windows x64
-    runs-on: windows-latest
+    # Pinned: windows-latest now ships VS2026, but the MSVC-release preset uses the
+    # "Visual Studio 17 2022" generator. windows-2022 is the image that has VS2022.
+    runs-on: windows-2022
+    # Run every step under bash: the default PowerShell mangles the cmake arg
+    # `-DREMOM_VERSION=0.0.1` into a stray `.0.1` path. bash is proven on this
+    # runner (the version step already uses it) and parses args like Linux/macOS.
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - uses: actions/checkout@v6
@@ -121,8 +129,11 @@ jobs:
           if [ -f assets/icon.png ]; then
             cp assets/icon.png remom.png
           else
-            # Minimal 1x1 PNG placeholder so linuxdeploy doesn't fail.
-            printf '\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDATx\x9cc\xf8\x0f\x00\x00\x01\x01\x00\x05\x18\xd8N\x00\x00\x00\x00IEND\xaeB`\x82' > remom.png
+            # Valid 256x256 PNG placeholder (base64) so linuxdeploy's icon deploy
+            # succeeds -- it rejects non-standard sizes (1x1 "has invalid resolution"),
+            # so this is a standard 256x256. Generated + CRC/zlib-verified. Replace
+            # with a real assets/icon.png when we have one.
+            printf '%s' 'iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAACAUlEQVR42u3TMQ0AAAgEsdfDgAD8C2NGA02q4JJL9cBbkQADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAABhABQwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgAA6iAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGACuBQgDCI+OKrm5AAAAAElFTkSuQmCC' | base64 -d > remom.png
           fi
 
           curl -fSL -o linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
@@ -143,9 +154,6 @@ jobs:
       - name: Package binaries (ZIP + TGZ, engine-only)
         run: cmake --build out/build/clang-release --target package
 
-      - name: Package source (ZIP + TGZ)
-        run: cmake --build out/build/clang-release --target package_source
-
       - name: Upload Linux binary artifact
         uses: actions/upload-artifact@v6
         with:
@@ -155,18 +163,15 @@ jobs:
             out/build/clang-release/ReMoM-*-Linux-*.zip
             out/build/clang-release/ReMoM-*-Linux-*.tar.gz
 
-      - name: Upload source artifact
-        uses: actions/upload-artifact@v6
-        with:
-          name: ReMoM-source
-          path: |
-            out/build/clang-release/ReMoM-*-Source.zip
-            out/build/clang-release/ReMoM-*-Source.tar.gz
-
   # ── macOS (AppleClang, SDL2, self-contained ZIP via dylibbundler) ──────
   macos:
     name: macOS arm64
     runs-on: macos-latest
+    # TBD (deferred, non-blocking): the pack(2) DOS structs place native pointers
+    # at non-8-byte-aligned offsets (e.g. _unit_mutation_data), which the arm64
+    # macOS linker rejects ("pointer not aligned"); x86-64 Linux/Windows link it
+    # fine. See RELEASES.md "Known limitations". Re-enable once resolved.
+    if: false
 
     steps:
       - uses: actions/checkout@v6
@@ -216,7 +221,7 @@ jobs:
   # ── GitHub Release (draft, tag pushes only) ────────────────────────────
   publish:
     name: Publish Release
-    needs: [windows, linux, macos]
+    needs: [windows, linux]   # macos deferred (TBD) -- see the macos job above
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
 
@@ -237,5 +242,3 @@ jobs:
           files: |
             dist/ReMoM-windows-x64/**/*
             dist/ReMoM-linux-x86_64/**/*
-            dist/ReMoM-macos-arm64/**/*
-            dist/ReMoM-source/**/*
