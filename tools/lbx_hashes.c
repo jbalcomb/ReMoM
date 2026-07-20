@@ -17,6 +17,8 @@
 
 #include "../STU/src/STU_HASH.h"
 
+#include "../../../../ext/stu_compat.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
