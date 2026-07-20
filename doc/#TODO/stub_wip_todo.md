@@ -367,8 +367,8 @@
 - [ ] Cast_Spell_City_Enchantment_Animation_2__WIP
 
 ## SPLMASTR
-- [ ] SoM_Started__STUB
-- [ ] SoM_Started_Draw__STUB
+- [x] Cast_Spell_Of_Mastery
+- [x] Cast_Spell_Of_Mastery_Draw
 - [ ] Spell_Target_Global_Enchantment_Bind__WIP
 - [ ] Spell_Target_Global_Enchantment_Disjunct__WIP
 

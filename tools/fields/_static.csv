@@ -262,7 +262,7 @@ MoM/src/SCORE.c,220,Hall_Of_Fame_Screen,Add_Hidden_Field,full_screen_ESC_field,"
 MoM/src/SCastScr.c,794,Spell_Casting_Screen_Add_Fields,Add_Grid_Field,_main_map_grid_field,"MAP_SCREEN_X, MAP_SCREEN_Y, SQUARE_WIDTH, SQUARE_HEIGHT, MAP_WIDTH, MAP_HEIGHT, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED",
 MoM/src/SCastScr.c,803,Spell_Casting_Screen_Add_Fields,Add_Grid_Field,_minimap_grid_field,"REDUCED_MAP_SCREEN_X, REDUCED_MAP_SCREEN_Y, REDUCED_MAP_SQUARE_WIDTH, REDUCED_MAP_SQUARE_HEIGHT, REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED",
 MoM/src/SCastScr.c,806,Spell_Casting_Screen_Add_Fields,Add_Button_Field,_osc_cancel_button_field,"263, 181, str_empty_string__ovr070, cast_cancel_button, str_hotkey_C__ovr070[0], ST_UNDEFINED",
-MoM/src/SPLMASTR.c,2038,SoM_Started__STUB,Add_Hidden_Field,full_screen_ESC_field,"SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr138[0], ST_UNDEFINED",
+MoM/src/SPLMASTR.c,2038,Cast_Spell_Of_Mastery,Add_Hidden_Field,full_screen_ESC_field,"SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr138[0], ST_UNDEFINED",
 MoM/src/Settings.c,295,Settings_Screen,Add_Hot_Key,hotkey_ESC,str_hotkey_ESC__ovr125[0],
 MoM/src/Settings.c,297,Settings_Screen,Add_Hidden_Field,loadsave_ok_button,"265, 175, 306, 189, str_hotkey_O__ovr125[0], ST_UNDEFINED",
 MoM/src/Settings.c,307,Settings_Screen,Add_Hidden_Field,Option_Control_Indices[itr],"31, Local_Settings_Tops[row], 175, (Local_Settings_Tops[row] + 9), str_empty_string__ovr125[0], ST_UNDEFINED",

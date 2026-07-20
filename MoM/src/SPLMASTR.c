@@ -1959,131 +1959,82 @@ void Spell_Of_Mastery_Lose(void)
 
 
 // WZD o138p04
-void SoM_Started_Draw__STUB(void)
+void Cast_Spell_Of_Mastery_Draw(void)
 {
-    int16_t itr_frames = 0;  // _SI_
-    int16_t frame_count = 0;  // _DI_
-
+    int16_t itr_frames = 0;
+    int16_t frame_count = 0;
     frame_count = (Get_File_Animation_Frame() + 1);
-
     Set_File_Animation_Frame(0);
-
     Set_Page_Off();
-
     for(itr_frames = 0; itr_frames < frame_count; itr_frames++)
     {
-
+        Draw_File_Animation__HACK();
     }
-
     Set_Outline_Color(0);
-
     Set_Font_Style_Outline(5, 5, 0, 0);
-
-    // SPELLY  Print_Centered(160, 160, GUI_NearMsgString, 2);
-    Print_Centered(160, 160, GUI_NearMsgString);
-
+    Print_Centered(160, 160, GUI_NearMsgString);  /* OGBUG  extra parameter - `Print_Centered(160, 160, GUI_NearMsgString, 2);` */
     Print_Centered(160, 180, strSpellOfMastery);
-
     _combat_wx++;
-
 }
 
 // WZD o138p05
-// Cast_Spell_Of_Mastery
-void SoM_Started__STUB(int16_t player_idx)
+void Cast_Spell_Of_Mastery(int16_t player_idx)
 {
-    int16_t full_screen_ESC_field = 0;
-
+    int16_t full_screen_esc = 0;
     Deactivate_Auto_Function();
-
     Stop_All_Sounds__STUB();
-
     stu_strcpy(GUI_NearMsgString, _players[player_idx].name);
-
     stu_strcat(GUI_NearMsgString, strHasStartedCastingThe);  // " has started casting the"
-
     SND_Spell_Music = LBX_Reload(music_lbx_file__ovr138, MUSIC_SoM_Started, SND_Music_Segment);
     SND_Spell_Music_size = lbxload_entry_length;
-
     // SPELLSCR.LBX, 067  "VORTEX3" ""
     Open_File_Animation__HACK(spellscr_lbx_file__ovr138, 67);
-
     _temp_sint_4 = 67;  // ¿ DEDU ?
-
     Set_Mouse_List(1, mouse_list_none);
-
     Fade_Out();
-
     Set_Page_On();
-
     Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_BLACK);
-
     Copy_On_To_Off_Page();
-
     Toggle_Pages();
-
-    // TODO  Load_Palette(4, -1);  // ; TEST - spell mastery palette
-    Load_Palette(4, 0, 255);
-
+    Load_Palette(4, ST_UNDEFINED, ST_NULL);  /* TEST - spell mastery palette */
     Set_Page_Off();
-
-    SoM_Started_Draw__STUB();
-
+    Cast_Spell_Of_Mastery_Draw();
     Toggle_Pages();
-
     Fade_In();
-
-    Assign_Auto_Function(SoM_Started_Draw__STUB, 2);
-
+    Assign_Auto_Function(Cast_Spell_Of_Mastery_Draw, 2);
     if(magic_set.background_music == ST_TRUE)
     {
         Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
     }
-
     Clear_Fields();
-
-    full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr138[0], ST_UNDEFINED);
-
-    _combat_wx = 0;
-    /* incremented in SoM_Started_Draw__STUB() */
-    while((_combat_wx < 200) && (Get_Input() != full_screen_ESC_field))
+    full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr138[0], ST_UNDEFINED);
+    _combat_wx = 0;  /* incremented in Cast_Spell_Of_Mastery_Draw() */
+    while((_combat_wx < 200) && (Get_Input() != full_screen_esc))
     {
-
         if(_combat_wx == 17)
         {
-
             Open_File_Animation__HACK(spellscr_lbx_file__ovr138, 68);
-
         }
         else if(_combat_wx == 33)
         {
-
             Open_File_Animation__HACK(spellscr_lbx_file__ovr138, 69);
-
         }
         else if(_combat_wx == 49)
         {
-
             Open_File_Animation__HACK(spellscr_lbx_file__ovr138, 70);
-
         }
-
+        Mark_Time();
+        Set_Page_Off();
+        Cast_Spell_Of_Mastery_Draw();
+        Toggle_Pages();
+        Release_Time(3);
     }
-
     Stop_All_Sounds__STUB();
-
-    // DOMSDOS  Play_Background_Music__STUB();
     Play_Background_Music();
-
     Fade_Out();
-
-    // SPELLY  Load_Palette(0, -1);  // ; EMPERATO - main game palette
-    Load_Palette(0, ST_UNDEFINED, ST_NULL);
-
+    Load_Palette(0, ST_UNDEFINED, ST_NULL);  /* EMPERATO - main game palette */
     Allocate_Reduced_Map();
-
     Assign_Auto_Function(Main_Screen_Draw, 2);
-
     if(player_idx == HUMAN_PLAYER_IDX)
     {
         Set_Mouse_List(1, mouse_list_default);
@@ -2092,17 +2043,11 @@ void SoM_Started__STUB(int16_t player_idx)
     {
         Set_Mouse_List(1, mouse_list_hourglass);
     }
-
     Set_Page_Off();
-
     Main_Screen_Draw();
-
     Toggle_Pages();
-
     Copy_On_To_Off_Page();
-
     Fade_In();
-
 }
 
 // WZD o138p06

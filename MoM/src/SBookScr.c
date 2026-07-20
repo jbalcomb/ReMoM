@@ -555,7 +555,7 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
             if(spell_idx == spl_Spell_Of_Mastery)
             {
 
-                SoM_Started__STUB(player_idx);
+                Cast_Spell_Of_Mastery(player_idx);
 
                 Change_Relations_For_Enchantments(player_idx, spl_Spell_Of_Mastery, 1);
 

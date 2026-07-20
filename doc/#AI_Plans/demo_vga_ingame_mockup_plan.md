@@ -177,6 +177,16 @@ full engine boot itself.
   crash-clean; real assets/MAGIC.SET untouched.  Windowed visual still to be eyeballed.
 - setvbuf(stdout, _IONBF) added to demo main() so progress prints survive a headless kill.
 
+## Spell of Mastery path (DONE — effect_mastery.c; DIRECT test, real function, visual unverified)
+`demo_vga mastery` DIRECTLY tests the real Cast_Spell_Of_Mastery() from a save -- same full_boot +
+save-load pattern as `score` (Cast_Spell_Of_Mastery reads _players[].name and ends with
+Allocate_Reduced_Map + Main_Screen_Draw, needing a loaded world).
+  ReMoM_Init_Engine -> Load_WZD_Resources -> Load_SAVE_GAM(-1 -> SAVETEST.GAM) -> Loaded_Game_Update
+  -> Cast_Spell_Of_Mastery(HUMAN_PLAYER_IDX)
+Self-terminating (_combat_wx < 200) or ESC, then returns to the overland; effect holds.  MOM_FONT_FILE
+defined once in effect_score.c (shared).  Headless smoke reached the casting animation crash-clean in
+the isolated dir.  Windowed visual still to be eyeballed.
+
 ## Remaining (optional)
 - More effects: reconstruct & demo other seg026/027 transitions (CrossSlide, Interleave, Wipe,
   SliceFlip, SquaresFlip...) -- still stubs.

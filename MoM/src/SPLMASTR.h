@@ -98,10 +98,10 @@ void Spell_Of_Mastery_Lose_Draw(void);
 void Spell_Of_Mastery_Lose(void);
 
 // WZD o138p04
-void SoM_Started_Draw__STUB(void);
+void Cast_Spell_Of_Mastery_Draw(void);
 
 // WZD o138p05
-void SoM_Started__STUB(int16_t player_idx);
+void Cast_Spell_Of_Mastery(int16_t player_idx);
 
 // WZD o138p06
 void Spell_Of_Mastery_Load(void);
