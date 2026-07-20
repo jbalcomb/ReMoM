@@ -14,6 +14,8 @@ typedef struct Demo_Effect
     const char * name;          /* command-line selector */
     const char * description;   /* one-line description shown in the listing */
     void (*run)(void);          /* self-driving loop; returns when Demo_Quit() is true */
+    int full_boot;              /* 1 = effect does its own full ReMoM_Init_Engine boot (main only
+                                   calls Startup_Platform); 0 (default) = trimmed Demo_Boot */
 } Demo_Effect;
 
 extern const Demo_Effect effect_dissolve;
@@ -22,5 +24,7 @@ extern const Demo_Effect effect_screen;
 extern const Demo_Effect effect_summon;
 extern const Demo_Effect effect_lose;
 extern const Demo_Effect effect_win;
+extern const Demo_Effect effect_collage;
+extern const Demo_Effect effect_score;
 
 #endif /* DEMO_EFFECTS_H */

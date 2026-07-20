@@ -43,7 +43,7 @@ The goal is therefore threefold, mirroring the combat decision:
 ## 2. Current-state finding (the fact that reshaped the effort)
 
 **The state-tracking layer is implemented and testable today. The terminal transitions are not — every
-`GAME_OVER()` call is commented out, so no code path currently ends the game.** Verified in-source
+`End_Of_Game_Score()` call is commented out, so no code path currently ends the game.** Verified in-source
 2026-07-17:
 
 ### Implemented (assertable now)
@@ -70,7 +70,7 @@ The goal is therefore threefold, mirroring the combat decision:
 | `GAME_PlayVictoryAnim__STUB` | [CONQUEST.c:957](../../MoM/src/CONQUEST.c#L957) | empty |
 | `GAME_LimboFallAnim__STUB` | [CONQUEST.c:976](../../MoM/src/CONQUEST.c#L976) | empty |
 | `SoM_Started__STUB` — "X has started casting SoM" warning | [SPLMASTR.c:1987](../../MoM/src/SPLMASTR.c#L1987) | partial (draw loop empty) |
-| `GAME_OVER()` call sites | CONQUEST.c:430 / :445, SPLMASTR.c:1946 / :2340 | all `// GAME_OVER();` / `// SPELLY` |
+| `End_Of_Game_Score()` call sites | CONQUEST.c:430 / :445, SPLMASTR.c:1946 / :2340 | all `// End_Of_Game_Score();` / `// SPELLY` |
 
 **Consequence for testing:** we can pin the *intermediate* state the game moves through (fortress
 active flag, `Defeated_Wizards`, `casting_spell_idx`, fortress relocation, `GAME_SoM_Cast_By`), but we
@@ -165,8 +165,8 @@ Subject × condition. "Blocked-by-stub" names what the cell *cannot* yet assert.
 | 4 | AI | Defeated (last AI) → **elimination win** | `WIZ_Conquer__WIP` + `GAME_IsWon` (C) | AI `active=0`; last-AI precondition | `GAME_IsWon__STUB`, `GAME_PlayVictoryAnim`, `GAME_OVER` |
 | 5 | Human | Spell of Return | `Cast_Spell_Of_Return` (C) | fortress/capital relocated to target; **verify `active` reset** (§7 bug) | — |
 | 6 | AI | Spell of Return | `Cast_Spell_Of_Return` (C, AI path) | AI fortress relocated | — |
-| 7 | Human | Spell of Mastery (win) | `Spell_Of_Mastery` (C) | `GAME_SoM_Cast_By=H`; SoM enchantment/relations set | victory finalize, `GAME_OVER` |
-| 8 | AI | Spell of Mastery (human loses) | `Spell_Of_Mastery` (C) | `GAME_SoM_Cast_By=AI`; `Spell_Of_Mastery_Lose` reached | `GAME_LimboFallAnim`, `GAME_OVER` |
+| 7 | Human | Spell of Mastery (win) | `Spell_Of_Mastery` (C) | `GAME_SoM_Cast_By=H`; SoM enchantment/relations set | victory finalize, `End_Of_Game_Score` |
+| 8 | AI | Spell of Mastery (human loses) | `Spell_Of_Mastery` (C) | `GAME_SoM_Cast_By=AI`; `Spell_Of_Mastery_Lose` reached | `GAME_LimboFallAnim`, `End_Of_Game_Score` |
 
 State fields and their save offsets (player *i* base `P = 2536 + 1224*i`, all little-endian; from
 [Game_Save_Dump.c](../../src/Game_Save_Dump.c)): `casting_spell_idx` `P+0x52` (Return=214, Mastery=213),
@@ -204,7 +204,7 @@ State fields and their save offsets (player *i* base `P = 2536 + 1224*i`, all li
   the sequences once their finalizers exist.
 
 **Did not fit:**
-- Asserting a terminal "game won/lost" headlessly *today* — blocked by the `GAME_OVER` stubs. Recorded
+- Asserting a terminal "game won/lost" headlessly *today* — blocked by the `End_Of_Game_Score` stubs. Recorded
   as blocked, not forced.
 - Driving every endgame via full scripted playthroughs — too slow/brittle; reachability is solved by
   patching + direct-invoke, not by playing the whole game.
@@ -236,7 +236,7 @@ graph TD
         WCW --> GIW["GAME_IsWon__STUB<br/>CONQUEST.c:942"]
         GIW -.win.-> GPV["GAME_PlayVictoryAnim__STUB<br/>CONQUEST.c:957"]
         WCW -.human loss.-> GLF["GAME_LimboFallAnim__STUB<br/>CONQUEST.c:976"]
-        GPV -.-> GOV["GAME_OVER()  (commented)"]
+        GPV -.-> GOV["End_Of_Game_Score()  (commented)"]
         GLF -.-> GOV
     end
 
@@ -279,7 +279,7 @@ graph TD
 | `GAME_IsWon__STUB` | function | [CONQUEST.c:942](../../MoM/src/CONQUEST.c#L942) | stub (`return ST_FALSE`) |
 | `GAME_PlayVictoryAnim__STUB` | function | [CONQUEST.c:957](../../MoM/src/CONQUEST.c#L957) | stub (empty) |
 | `GAME_LimboFallAnim__STUB` | function | [CONQUEST.c:976](../../MoM/src/CONQUEST.c#L976) | stub (empty) |
-| `GAME_OVER()` | function | CONQUEST.c:430/445, SPLMASTR.c:1946/2340 | commented at all call sites |
+| `End_Of_Game_Score()` | function | CONQUEST.c:430/445, SPLMASTR.c:1946/2340 | commented at all call sites |
 | `Eliminated_Opponent` | function | [Combat.c:17074](../../MoM/src/Combat.c#L17074) | impl |
 | `OverSpel` dispatch | function | [OverSpel.c:811](../../MoM/src/OverSpel.c#L811) / [:1423](../../MoM/src/OverSpel.c#L1423) | impl |
 | `Cast_Spell_Of_Return` | function | [Spells132.c:1697](../../MoM/src/Spells132.c#L1697) | impl (active-reset gap) |
@@ -299,10 +299,10 @@ graph TD
 | `WIZ_Conquer__WIP` | `_FORTRESSES[].active` | writes FALSE (banish) |
 | `WIZ_Conquer__WIP` | `WIZ_Conquest__WIP` | calls (message + bit) |
 | `WIZ_Conquest__WIP` | `Defeated_Wizards` | writes bit (human conqueror only) |
-| `WIZ_Conquer__WIP` | `WIZ_Banishment__STUB` | delegates (blocked) |
-| `WIZ_Conquer__WIP` | `GAME_IsWon__STUB` | calls (blocked) |
-| `GAME_IsWon__STUB` | `GAME_PlayVictoryAnim__STUB` → `GAME_OVER()` | dispatches-to (blocked/commented) |
-| `WIZ_Conquer__WIP` | `GAME_LimboFallAnim__STUB` → `GAME_OVER()` | dispatches-to (blocked/commented) |
+| `Resolve_Wizard_Conquest` | `WIZ_Banishment__STUB` | delegates (blocked) |
+| `Resolve_Wizard_Conquest` | `GAME_IsWon__STUB` | calls (blocked) |
+| `GAME_IsWon__STUB` | `GAME_PlayVictoryAnim__STUB` → `End_Of_Game_Score()` | dispatches-to (blocked/commented) |
+| `Resolve_Wizard_Conquest` | `GAME_LimboFallAnim__STUB` → `End_Of_Game_Score()` | dispatches-to (blocked/commented) |
 | `OverSpel` dispatch | `Cast_Spell_Of_Return` | dispatches-to |
 | `OverSpel` dispatch | `Spell_Of_Mastery` | dispatches-to |
 | `Cast_Spell_Of_Return` | fortress/capital fields | writes (relocate; active-reset gap) |

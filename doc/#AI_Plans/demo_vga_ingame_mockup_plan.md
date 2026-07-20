@@ -160,6 +160,23 @@ OGBUG that reads address 714.  That was WRONG -- it was a Gemini param-swap reco
 `Allocate_First_Block(World_Data, 714)`, so the real function is callable and there is NO OGBUG /
 no null-page fault.
 
+## Score screen path (DONE — effect_score.c; DIRECT test, real function, visually confirmed)
+`demo_vga score` DIRECTLY tests the real End_Of_Game_Score() from a save (no manufactured data).
+It's the first effect with full_boot=1: main() calls only Startup_Platform(); the effect does the
+full engine boot itself.
+  ReMoM_Init_Engine() -> Load_WZD_Resources() -> Load_SAVE_GAM(ST_UNDEFINED == -1 -> SAVETEST.GAM)
+  -> Loaded_Game_Update() -> End_Of_Game_Score()
+- ReMoM_Init.c is compiled into the demo target (defines the boot); effect_score.c defines
+  MOM_FONT_FILE (the one ReMoM.c global ReMoM_Init.c needs).
+- SAVETEST.GAM IS in assets/ (I was wrong earlier).  Load_SAVE_GAM(-1) loads it by name
+  (LOADSAVE.c:241).
+- End_Of_Game_Score is INTERACTIVE (ESC advances the score screen + Hall of Fame) and WRITES the
+  SET file on the hi-score upsert -> run from an ISOLATED copy of assets so it can't clobber the
+  real SET file.  Verified: copy assets/ to a temp dir, cd there, run bin/Debug/demo_vga.exe (DLLs
+  load from the exe dir, data + SET write from cwd).  Headless smoke reached the score screen
+  crash-clean; real assets/MAGIC.SET untouched.  Windowed visual still to be eyeballed.
+- setvbuf(stdout, _IONBF) added to demo main() so progress prints survive a headless kill.
+
 ## Remaining (optional)
 - More effects: reconstruct & demo other seg026/027 transitions (CrossSlide, Interleave, Wipe,
   SliceFlip, SquaresFlip...) -- still stubs.

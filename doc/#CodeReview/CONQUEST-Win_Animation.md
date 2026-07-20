@@ -57,5 +57,5 @@ The victory cut-scene: when `Resolve_Wizard_Conquest` finds the last computer pl
 ## Related references
 
 - `…\ovr093\GAME_PlayVictoryAnim.asm` + `…\ovr093\GAME_Draw_WIN_Anim.asm` — IDA Pro 5.5 disassembly (**the authority**); Gemini `.c` files are a second opinion.
-- [`Resolve_Wizard_Conquest`](CONQUEST-Resolve_Wizard_Conquest.md) — sole caller; plays `Win_Animation(_human_player_idx)` on the last-AI-eliminated branch (after `CP_Is_Dead`), before `GAME_OVER` / `MAGIC.EXE`.
+- [`Resolve_Wizard_Conquest`](CONQUEST-Resolve_Wizard_Conquest.md) — sole caller; plays `Win_Animation(_human_player_idx)` on the last-AI-eliminated branch (after `CP_Is_Dead`), before `End_Of_Game_Score` / `MAGIC.EXE`.
 - Structural twin of [`Lose_Animation`](CONQUEST-Lose_Animation.md) — same auto-function loop shape; shares `m_conquest_anim_stage`, `IMG_GAME_WizHandsUp`, `GUI_String_1`.

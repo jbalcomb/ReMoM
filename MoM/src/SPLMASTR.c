@@ -34,6 +34,7 @@ MoO2
 #include "NEXTTURN.h"
 #include "OverSpel.h"
 #include "SBookScr.h"
+#include "SCORE.h"
 #include "Spellbook.h"
 #include "UNITTYPE.h"
 
@@ -1944,7 +1945,7 @@ void Spell_Of_Mastery_Lose(void)
 
     Lose_Animation(HUMAN_PLAYER_IDX);
 
-    // SPELLY  GAME_OVER();
+    End_Of_Game_Score();
 
     s01p16_empty_function();
 
@@ -2338,7 +2339,7 @@ void Spell_Of_Mastery(int16_t player_idx)
 
     Win_Animation(HUMAN_PLAYER_IDX);
 
-    // SPELLY  GAME_OVER();
+    End_Of_Game_Score();
 
     s01p16_empty_function();
 

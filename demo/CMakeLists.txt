@@ -20,6 +20,9 @@ add_executable(demo_vga
     effect_summon.c
     effect_lose.c
     effect_win.c
+    effect_collage.c
+    effect_score.c
+    ${PROJECT_SOURCE_DIR}/src/ReMoM_Init.c   # full engine boot for the `score` effect
 )
 
 set_target_properties(demo_vga PROPERTIES POSITION_INDEPENDENT_CODE ON)

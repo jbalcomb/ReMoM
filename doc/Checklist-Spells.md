@@ -7,7 +7,6 @@ Combat_Spell_Target_Screen__WIP()
 CMB_DrawMap__WIP()
 OVL_ConvSpellAttack()
 
-GAME_PlayVictoryAnim(); GAME_OVER(); s01p16_empty_function(); GAME_EXE_Swap();
 
 
 

@@ -67,7 +67,10 @@ void Hall_Of_Fame_Screen_Draw(void);
 */
 
 // WZD o107p01
+void End_Of_Game_Score(void);
+
 // WZD o107p02
+void End_Of_Game_Score_Draw(void);
 
 
 

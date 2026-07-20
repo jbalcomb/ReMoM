@@ -37,7 +37,7 @@ OON XREF:  Change_City_Ownership() |-> j_WIZ_Conquer() |-> WIZ_Conquer() |-> CP_
     WIZ_Conquest__WIP(city_owner_idx, player_idx);
     GAME_LimboFallAnim__STUB(city_owner_idx);
     GAME_PlayVictoryAnim__STUB(_human_player_idx);
-    GAME_OVER();
+    End_Of_Game_Score();
     GAME_EXE_Swap(cnst_MAGIC_EXE_File, cnst_MAGICEXE_arg0, cnst_ZeroString_7, cnst_ZeroString_7);
 
 [ ] Change_City_Ownership()
@@ -51,7 +51,7 @@ OON XREF:  Change_City_Ownership() |-> j_WIZ_Conquer() |-> WIZ_Conquer() |-> CP_
 [x]             |-> Conquest_Spells
 [x]             |-> Lose_Animation()
 [x]             |-> Win_Animation()
-[ ]             |-> GAME_OVER();
+[x]             |-> End_Of_Game_Score();
 [x]             |-> s01p16_empty_function();
 [ ]             |-> GAME_EXE_Swap(cnst_MAGIC_EXE_File, cnst_MAGICEXE_arg0, cnst_ZeroString_7, cnst_ZeroString_7);
 
@@ -81,9 +81,11 @@ OON XREF:  Change_City_Ownership() |-> j_WIZ_Conquer() |-> WIZ_Conquer() |-> CP_
 [x] Win_Animation()
 [x]     |-> Win_Animation_Draw()
 
+[x] End_Of_Game_Score()
+[x]     |-> End_Of_Game_Score_Draw()
+
 spell of return over?
 spell of mastery win * lose
-GAME_OVER
 switch EXE
 
 

@@ -1320,7 +1320,7 @@ void Set_TaxCollector_Window_Help_List(void);
 void Set_Advisor_Screen_Help_List(void);
 
 // WZD o104p24
-void HLP_Load_HallofFame(void);
+void Set_Score_Screen_Help_List(void);
 
 
 

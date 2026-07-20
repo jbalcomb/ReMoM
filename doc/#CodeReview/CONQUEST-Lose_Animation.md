@@ -95,6 +95,6 @@ Faithful 1:1 ([972-988](../../MoM/src/CONQUEST.c#L972-L988)): `Set_Page_Off` / `
 ## Related references
 
 - `…\ovr093\GAME_LimboFallAnim.asm` + `…\ovr093\GAME_DrawLimboFall.asm` — IDA Pro 5.5 disassembly (**the authority**) for the game logic; the `seg030`/`seg034` asm are the Mode Y source for the bitmap chain; Gemini `.c` files are a second opinion.
-- [`Resolve_Wizard_Conquest`](CONQUEST-Resolve_Wizard_Conquest.md) — sole caller; plays `Lose_Animation(city_owner_idx)` on the human-defeat branch (before `GAME_OVER` / `MAGIC.EXE` swap).
+- [`Resolve_Wizard_Conquest`](CONQUEST-Resolve_Wizard_Conquest.md) — sole caller; plays `Lose_Animation(city_owner_idx)` on the human-defeat branch (before `End_Of_Game_Score` / `MAGIC.EXE` swap).
 - `TBL_DefeatAnimSteps` — the 27-entry spiral table (`x`, `y`, `a`, `s`) driving the fall.
 - Shares `m_conquest_anim_stage`, `IMG_GAME_WizHandsUp`, `IMG_GAME_LimboFall`, `GAME_LimboFall_Stage` with the [`Conquest_Animation`](CONQUEST-Conquest_Animation.md) machinery. The bitmap chain (`Draw_Bitmap_*`, `Get_Rotated_Pixels`, `VGA_DrawTexture*`) is shared MoX platform code (MoO2 "bitmap" module), used well beyond this cut-scene.

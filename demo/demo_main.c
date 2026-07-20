@@ -8,6 +8,8 @@
 #include "demo_harness.h"
 #include "demo_effects.h"
 
+#include "../platform/include/Platform.h"  /* Startup_Platform (full-boot effects) */
+
 #include <stdio.h>
 #include <string.h>
 
@@ -18,7 +20,9 @@ static const Demo_Effect * const g_effects[] =
     &effect_screen,
     &effect_summon,
     &effect_lose,
-    &effect_win
+    &effect_win,
+    &effect_collage,
+    &effect_score
 };
 #define DEMO_EFFECT_COUNT  ((int)(sizeof(g_effects) / sizeof(g_effects[0])))
 
@@ -40,6 +44,9 @@ int main(int argc, char * argv[])
 {
     const Demo_Effect * selected;
     int i;
+
+    /* Unbuffered stdout so progress prints survive if the process is killed (headless smoke). */
+    setvbuf(stdout, NULL, _IONBF, 0);
 
     selected = NULL;
     if(argc >= 2)
@@ -70,7 +77,15 @@ int main(int argc, char * argv[])
     /* Pass any arguments after the effect name through to the effect (screen overrides). */
     Demo_Set_Args(argc - 2, argv + 2);
 
-    Demo_Boot();
+    if(selected->full_boot)
+    {
+        /* Effect does its own full ReMoM_Init_Engine boot; just bring up the platform. */
+        Startup_Platform();
+    }
+    else
+    {
+        Demo_Boot();
+    }
     printf("Running effect: %s -- close the window to exit\n", selected->name);
     selected->run();
     Demo_Shutdown();

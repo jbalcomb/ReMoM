@@ -24,8 +24,9 @@
 #include "demo_effects.h"
 
 #include "../MoX/src/Video.h"      /* video_page_buffer, draw_page_num, current_video_page, Set_Page_Off, Page_Flip, Copy_Off_To_Back */
+#include "../MoX/src/Video2.h"     /* screen_pixel_size */
 #include "../MoX/src/FLIC_Draw.h"  /* FLIC_Draw, Load_Palette_From_Animation */
-#include "../MoX/src/Fonts.h"      /* Apply_Palette */
+#include "../MoX/src/Fonts.h"      /* Load_Palette, Apply_Palette, Calculate_Remap_Colors */
 #include "../MoX/src/MOX_TYPE.h"   /* SAMB_ptr */
 #include "../MoX/src/MOX_SET.h"    /* magic_set */
 #include "../MoX/src/MOX_DEF.h"    /* HUMAN_PLAYER_IDX, ST_TRUE */
@@ -36,6 +37,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 /* Summon-overlay sprite segments — defined (external linkage) in MoM/src/Spells137.c, not
    header-declared.  The real IDK_SummonAnim_Draw reads these. */
@@ -60,7 +62,7 @@ extern int16_t _temp_sint_1;
 #define SPELLSCR_WIZ_BASE        46   /* per-wizard summon flic = base + wizard_id (wizard 0 here) */
 
 #define DEMO_SUMMON_FRAMES      130
-#define DEMO_SUMMON_FRAME_MS     40   /* ~25 fps */
+#define DEMO_SUMMON_FRAME_MS     80   /* slowed so the rising-figure animation is watchable */
 
 
 
@@ -117,8 +119,13 @@ static void Effect_Summon_Run(void)
     /* Build the frozen back-buffer scene on the off page: overland backdrop + the flame frame,
        then switch to the summon palette (mirrors IDK_SummonAnim_Load's order), then Copy_Off_To_Back. */
     off_page = 1 - draw_page_num;
-    Demo_Load_Screen("MAIN", 0, 0, off_page);     /* MAIN backdrop + game palette 0 + remap */
     current_video_page = video_page_buffer[off_page];
+    /* Neutral (black) backdrop: the real summon draws over the live overland (Main_Screen_Draw),
+       which the harness can't reproduce; a static MAIN.LBX substitute showed the HUD's corner panel
+       as a "wall" artifact.  Black keeps the focus on the summon overlay. */
+    memset(current_video_page, 0, (size_t)screen_pixel_size);
+    Load_Palette(0, -1, 0);                        /* base palette + remap tables for overlay remap pixels */
+    Calculate_Remap_Colors();
     FLIC_Draw(30, 42, SPELLSCR_FLAMEFR1_seg);
     Load_Palette_From_Animation(palette_flic);     /* switch to the summon palette */
     Apply_Palette();

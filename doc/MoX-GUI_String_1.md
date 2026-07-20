@@ -11,7 +11,7 @@ Down w CMB_SetNearAllocs+78                  mov     [GUI_String_1@], ax        
 Down w Hall_Of_Fame_Screen+8D                mov     [GUI_String_1@], ax             ; 100 LBX_NearAlloc_First bytes or 20 _Next in combat
 Up   w City_Built_Building_Message+3A        mov     [GUI_String_1@], ax             ; 100 LBX_NearAlloc_First bytes or 20 _Next in combat
 Down w GAME_ReturnDialog+20                  mov     [GUI_String_1@], ax             ; 100 LBX_NearAlloc_First bytes or 20 _Next in combat
-Down w GAME_OVER+C6                          mov     [GUI_String_1@], ax             ; 100 LBX_NearAlloc_First bytes or 20 _Next in combat
+Down w End_Of_Game_Score+C6                          mov     [GUI_String_1@], ax             ; 100 LBX_NearAlloc_First bytes or 20 _Next in combat
 Down w Hero_LevelUp_Popup+124                mov     [GUI_String_1@], ax             ; 100 LBX_NearAlloc_First bytes or 20 _Next in combat
 Down w WIZ_Conquest+115                      mov     [GUI_String_1@], ax             ; 100 LBX_NearAlloc_First bytes or 20 _Next in combat
      w USW_MemAlloc+D                        mov     [GUI_String_1@], ax             ; 100 LBX_NearAlloc_First bytes or 20 _Next in combat

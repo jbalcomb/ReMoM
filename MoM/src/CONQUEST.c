@@ -632,7 +632,7 @@ void Conquest_Animation(int16_t city_owner_idx, int16_t player_idx)
     {
         Mark_Time();
         Clear_Fields();
-        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)cnst_HOTKEY_Esc10[0], ST_UNDEFINED);
+        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr093[0], ST_UNDEFINED);
         input_field_idx = Get_Input();
         if(input_field_idx == full_screen_esc)
         {
@@ -1021,7 +1021,7 @@ void Win_Animation(int16_t player_idx)
     {
         Mark_Time();
         Clear_Fields();
-        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)cnst_HOTKEY_Esc10[0], ST_UNDEFINED);
+        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr093[0], ST_UNDEFINED);
         input_field_idx = Get_Input();
         if(input_field_idx == full_screen_esc)
         {
@@ -1264,7 +1264,7 @@ int16_t Banish_Wizard(int16_t loser_idx, int16_t winner_idx)
     if(loser_idx == _human_player_idx)
     {
         itoa(turns_to_return, buffer, 10);
-        strcpy(GUI_NearMsgString, cnst_SoReturn_Msg1);  // "There are at least "
+        stu_strcpy(GUI_NearMsgString, cnst_SoReturn_Msg1);  // "There are at least "
         strcat(GUI_NearMsgString, buffer);
         strcat(GUI_NearMsgString, cnst_SoReturn_Msg2);  // " turns remaining until you may return. Do you wish to resign?"
         resign = Confirmation_Box(GUI_NearMsgString);
@@ -1306,7 +1306,7 @@ void Return_Animation(int16_t player_idx)
     {
         Mark_Time();
         Clear_Fields();
-        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)cnst_HOTKEY_Esc10[0], ST_UNDEFINED);
+        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr093[0], ST_UNDEFINED);
         input_field_idx = Get_Input();
         if(input_field_idx == full_screen_esc)
         {
