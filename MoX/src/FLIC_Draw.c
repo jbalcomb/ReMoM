@@ -3300,7 +3300,8 @@ int16_t CS_height;
 int16_t CS_width;
 // WZD seg033:0251
 int16_t CS_skip_add;
-
+// WZD 2459:0253
+// proc Draw_Picture_ASM far
 
 // WZD s33p05
 // MoO2 Draw_Bitmap_Sprite_
@@ -3699,120 +3700,48 @@ void Enlarge_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y)
 // WZD s33p15
 // MoO2  Module: bitmap  Vanish_Bitmap()
 // MoO2  Moudle: shear   Vanish_Bitmap_Pixels_()
+// WZD seg033:06E3
+static uint16_t m_vanish_bitmap_dither_seed = 0;
+// WZD seg033:06E5
+uint8_t m_dither_threshold_matrix[] = {42,68,35,1,70,25,79,59,63,65,6,46,82,28,62,92,96,43,28,37,92,5,3,54,93,83,22,17,19,96,48,27,72,39,70,13,68,100,36,95,4,12,23,34,74,65,42,12,54,69,48,45,63,58,38,60,24,42,30,79,17,36,91,43,89,7,41,43,65,49,47,6,91,30,71,51,7,2,94,49,30,24,85,55,57,41,67,77,32,9,45,40,27,24,38,39,19,83,30,42,34,16,40,59,5,31,78,7,74,87,22,46,25,73,71,30,78,74,98,13,87,91,62,37,56,68,56,75,32,53,51,51,42,25,67,31,8,92,8,38,58,88,54,84,46,10,10,59,22,89,23,47,7,31,14,69,1,92,63,56,11,60,25,38,49,84,96,42,3,51,92,37,75,21,97,22,49,100,69,85,82,35,54,100,19,39,1,89,28,68,29,94,49,84,8,22,11,18,14,15,10,17,36,52,1,50,20,57,99,4,25,9,45,10,90,3,96,86,94,44,24,88,15,4,49,1,59,19,81,97,99,82,90,99,10,58,73,23,39,93,39,80,91,58,59,92,16,89,57,12,3,35,73,56,29,47};
+// WZD 2459:07E5
+// proc Vanish_Bitmap far
 /*
-; deletes an amount of random pixels from an LBX image
-; roughly corresponding to the specified percent (they
-; are replaced with transparent pixels - color #00)
-; uses three local RNGs, not the global one
+'Spell Of Mastery' does 'dematerialize'
+¿ 'Cityscape' does 'materialize' for 'create building' and 'dematerialize' for 'destroy building' ?
 */
 /*
-push    [Percent]                       ; percent
-push    [GfxBuf_2400B]                  ; bitmap
-call    Jumble_Bitmap  
-
-bitmap is a segment address
-
+XREF:
+    Cast_Plane_Shift()
+    BU_Teleport()
+    BU_TunnelTo()
+    BU_CombatSummon__SEGRAX()
+    Spell_Target_Global_Enchantment_Disjunct__WIP()
+    Spell_Of_Mastery_Lose_Draw()
+    Cityscape_Draw_Buildings()
+    Draw_Map_Nodes()
 */
-// WZD seg033:06E3 00 00                                           _CS_GFX_RNG_TempSeed dw 0
-// WZD seg033:06E5 2A 44 23 01 46 19 4F 3B 3F 41 06 2E 52 1C 3E 5C+_CS_GFX_RND100_Lookup db 42,68,35,1,70,25,79,59,63,65,6,46,82,28,62,92,96,43,28,37,92,5,3,54,93,83,22,17,19,96,48,27,72,39,70,13,68,100,36,95,4,12,23,34,74,65,42,12,54,69,48,45,63,58,38,60,24,42,30,79,17,36,91,43,89,7,41,43,65,49,47,6,91,30,71,51,7,2,94,49,30,24,85,55,57,41,67
-// WZD seg033:06E5 60 2B 1C 25 5C 05 03 36 5D 53 16 11 13 60 30 1B+
-// WZD seg033:06E5 48 27 46 0D 44 64 24 5F 04 0C 17 22 4A 41 2A 0C+db 77,32,9,45,40,27,24,38,39,19,83,30,42,34,16,40,59,5,31,78,7,74,87,22,46,25,73,71,30,78,74,98,13,87,91,62,37,56,68,56,75,32,53,51,51,42,25,67,31,8,92,8,38,58,88,54,84,46,10,10,59,22,89,23,47,7,31,14,69,1,92,63,56,11,60,25,38,49,84,96,42,3,51,92,37,75,21
-// WZD seg033:06E5 36 45 30 2D 3F 3A 26 3C 18 2A 1E 4F 11 24 5B 2B+db 97,22,49,100,69,85,82,35,54,100,19,39,1,89,28,68,29,94,49,84,8,22,11,18,14,15,10,17,36,52,1,50,20,57,99,4,25,9,45,10,90,3,96,86,94,44,24,88,15,4,49,1,59,19,81,97,99,82,90,99,10,58,73,23,39,93,39,80,91,58,59,92,16,89,57,12,3,35,73,56,29,47
-static uint16_t _CS_GFX_RNG_TempSeed = 0;
-uint8_t _CS_GFX_RND100_Lookup[] = {42,68,35,1,70,25,79,59,63,65,6,46,82,28,62,92,96,43,28,37,92,5,3,54,93,83,22,17,19,96,48,27,72,39,70,13,68,100,36,95,4,12,23,34,74,65,42,12,54,69,48,45,63,58,38,60,24,42,30,79,17,36,91,43,89,7,41,43,65,49,47,6,91,30,71,51,7,2,94,49,30,24,85,55,57,41,67,77,32,9,45,40,27,24,38,39,19,83,30,42,34,16,40,59,5,31,78,7,74,87,22,46,25,73,71,30,78,74,98,13,87,91,62,37,56,68,56,75,32,53,51,51,42,25,67,31,8,92,8,38,58,88,54,84,46,10,10,59,22,89,23,47,7,31,14,69,1,92,63,56,11,60,25,38,49,84,96,42,3,51,92,37,75,21,97,22,49,100,69,85,82,35,54,100,19,39,1,89,28,68,29,94,49,84,8,22,11,18,14,15,10,17,36,52,1,50,20,57,99,4,25,9,45,10,90,3,96,86,94,44,24,88,15,4,49,1,59,19,81,97,99,82,90,99,10,58,73,23,39,93,39,80,91,58,59,92,16,89,57,12,3,35,73,56,29,47};
-static uint16_t _CS_width = 0;
-void Vanish_Bitmap__WIP(SAMB_ptr bitmap, int16_t percent)
+void Vanish_Bitmap(SAMB_ptr bitmap, int16_t percent)
 {
-    int16_t offset = 0;  // _DI_
-    int16_t _AX_ = 0;
-    int16_t _BX_ = 0;
-    int16_t _CX_ = 0;
-    int16_t _DX_ = 0;
-    void * _DS_ = NULL;
-    void * _SI_ = NULL;
-    void * _ES_ = NULL;
-    void * _DI_ = NULL;
-
-    _CS_GFX_RNG_TempSeed = RNG_GFX_Random__WIP(1000);
-
-    // mov     ax, [bp+bitmap]
-    // mov     es, ax
-
+    uint16_t offset = 0;
+    uint8_t  dither_idx = 0;
+    uint16_t height = 0;
+    m_vanish_bitmap_dither_seed = Vanish_Bitmap_Dither_Seed(1000);  // MoO2 just uses Random()
+    CS_width  = FLIC_GET_WIDTH(bitmap);
     offset = SZ_FLIC_HDR;
-
-    // _CS_width = *((struct s_FLIC_Header *)bitmap)->width;
-    _CX_ = GET_2B_OFS(bitmap, FLIC_HDR_POS_WIDTH);
-
-    // mov     dx, [bp+percent]
-    _DX_ = percent;
-
-    // mov     ax, cs
-    // mov     ds, ax
-
     do {
-
-        _AX_ = rnd_bitfiddle__1oom(_CS_GFX_RNG_TempSeed);
-        _CS_GFX_RNG_TempSeed = _AX_;
-
-        // mov     al, ah
-        // xor     ah, ah
-        _AX_ >>= 8;
-        _AX_ &= 0x0F;
-
-        // mov     bx, ax
-        _BX_ = _AX_;
-
-        // mov     si, bx
-        // add     si, offset GFX_RND100_Lookup
-        // _SI_ = _BX_;
-        // _SI_ += _CS_GFX_RND100_Lookup;
-        // ~ &_CS_GFX_RND100_Lookup[_BX_]
-        _SI_ = &_CS_GFX_RND100_Lookup[_BX_];
-
-        // mov     cx, [es:s_FLIC_HDR.height]
-        _CX_ = GET_2B_OFS(bitmap, FLIC_HDR_POS_HEIGHT);
-
-        while(--_CX_)
-        {
-            
-            // ; AL = byte ptr [DS:SI]
-            // lodsb
-            _AX_ = *(uint8_t *)_SI_;
-            // inc     _DI_offset
-            offset++;
-
-            // cmp     al, dl
-            // jz      short loc_24DCD
-            if(
-                (_AX_ & 0x0F) != (_DX_ * 0x0F)
-                &&
-                (_AX_ & 0x0F) >= (_DX_ * 0x0F)
-            )
+        m_vanish_bitmap_dither_seed = Dither_Scramble_Seed(m_vanish_bitmap_dither_seed);
+        dither_idx = (uint8_t)(m_vanish_bitmap_dither_seed >> 8);
+        height = FLIC_GET_HEIGHT(bitmap);
+        do {
+            if(m_dither_threshold_matrix[dither_idx] > percent)
             {
-                // xor     al, al
-                _AX_ &= 0xF0; 
-                // dec     _DI_offset
-                offset--;
-                // stosb 
-                // ES:DI = AL
                 bitmap[offset] = ST_TRANSPARENT;
-
-                // inc     bx
-                _BX_++;
-                // xor     bh, bh
-                _BX_ &= 0x0F;
-                // mov     si, bx
-                // add     si, offset _CS_GFX_RND100_Lookup
-                _SI_ = &_CS_GFX_RND100_Lookup[_BX_];
-
-                // loop    loc_24DC1
-
             }
-
-        }
-
-    } while(--_CS_width != 0);
-
+            offset++;
+            dither_idx++;
+        } while(--height != 0);
+    } while(--CS_width != 0);
 }
 
 
@@ -3927,159 +3856,93 @@ void LBX_IMG_RevGrayscale__STUB(byte_ptr bitmap, int16_t color_index)
 
 
 // WZD s33p19
+// WZD 2459:09E3
+static uint32_t m_dither_random_seed = 0x0A2893UL;
+// WZD 2459:09E7
+// proc Vanish_Bitmap_Dither_Seed far
+/**
+ * Bounded 32-bit secondary shift register generator.
+ */
+/**
+ * 32-bit Custom Multi-State LFSR Column Root Value Sampler.
+ * Generates an uncorrelated 10-bit seed using a unified 32-bit tap feedback path.
+ */
 /*
-drake178:
-    a secondary linear feedback shift register
-    using the same feedback polynomial as RNG_Random,
-    also shifted 9 states per call,
-    but actually returning the lowest order 10 bits of the resulting state (1-1023)
-    rather than the shifted out return value
+SEEALSO:  random.c  line 299  int16_t Random(int16_t n)
 */
-// WZD seg033:09E3 93 28                                           _CS_Local_LFSR_LO dw 2893h                  ; DATA XREF: RNG_GFX_Random__NOP+1Ar ...
-// WZD seg033:09E5 0A 00                                           _CS_Local_LFSR_HI dw 0Ah                    ; DATA XREF: RNG_GFX_Random__NOP+1Fr ...
-static uint16_t _CS_Local_LFSR_LO = 0x2893;
-static uint16_t _CS_Local_LFSR_HI = 0x0A;
-static uint32_t _bitmap_random_seed = 0x0A2893;  /* 665747 */
-int16_t RNG_GFX_Random__WIP(int16_t max)
+int16_t Vanish_Bitmap_Dither_Seed(int16_t n)
 {
-    int16_t result = 0;
-    uint16_t _AX_ = 0;
-    uint16_t _BX_ = 0;
-    uint16_t _CX_ = 0;
-    uint16_t _DX_ = 0;
-    // void * _SI_ = NULL;
-    // void * _DI_ = NULL;
-    uint16_t _SI_ = 0;
-    uint16_t _DI_ = 0;
-    uint16_t _CF_ = 0;
+    int16_t step = 0;
+    uint16_t seed_lo = 0;
+    uint16_t seed_hi = 0;
 
-    if(max == 0)
+    if(n == 0)
     {
-        max = 1;
+        n = 1;
     }
 
-    result = 0;
+    seed_lo = (uint16_t)(m_dither_random_seed & 0xFFFFU);
+    seed_hi = (uint16_t)((m_dither_random_seed >> 16) & 0xFFFFU);
 
-    // mov     si, [cs:_CS_Local_LFSR_LO]
-    _SI_ = _CS_Local_LFSR_LO;
+    step = 9;
+    do {
+        uint16_t parity_accumulator = seed_lo;
+        uint16_t tap_source_lo      = seed_lo;
+        uint16_t tap_source_hi      = seed_hi;
 
-    // mov     di, [cs:_CS_Local_LFSR_HI]
-    _DI_ = _CS_Local_LFSR_HI;
+        /* Step 1: Track the composite tap sequence across the unified 32-bit field */
+        tap_source_lo = (tap_source_lo >> 1) | ((tap_source_hi & 1) << 15);
+        tap_source_hi >>= 1;
+        parity_accumulator ^= tap_source_lo;
 
-    // mov     cx, 9
-    _CX_ = 9;
+        /* Step 2: Extract intermediate feedback parity elements */
+        tap_source_lo = (tap_source_lo >> 1) | ((tap_source_hi & 1) << 15);
+        tap_source_hi >>= 1;
+        parity_accumulator ^= tap_source_lo;
 
-// loc_24F9E:
-do {
-_AX_ = _SI_;    // mov     ax, si
-_BX_ = _SI_;    // mov     bx, si
-_DX_ = _DI_;    // mov     dx, di
-_DX_ >>= 1;     // shr     dx, 1
+        /* Step 3: Advance past uniform bit intervals */
+        tap_source_lo = (tap_source_lo >> 1) | ((tap_source_hi & 1) << 15);
+        tap_source_hi >>= 1;
+        tap_source_lo = (tap_source_lo >> 1) | ((tap_source_hi & 1) << 15);
+        tap_source_hi >>= 1;
+        parity_accumulator ^= tap_source_lo;
 
-// rcr     bx, 1
-    if(_BX_ & 0x0001) { _CF_ = 0x0001; }  // ~== set the Carry Flag, if a bit is going to shift out
-    _BX_ >>= _BX_;
-    _BX_ &= _CF_;
+        /* Step 4: Isolate trailing tap structures */
+        tap_source_lo = (tap_source_lo >> 1) | ((tap_source_hi & 1) << 15);
+        tap_source_hi >>= 1;
+        tap_source_lo = (tap_source_lo >> 1) | ((tap_source_hi & 1) << 15);
+        tap_source_hi >>= 1;
+        parity_accumulator ^= tap_source_lo;
+        tap_source_hi >>= 1;
 
-_AX_ ^= _BX_;   // xor     ax, bx
-_DX_ >>= 1;     // shr     dx, 1
+        /* Step 5: Evaluate the high-register alignment parity bit shift (xor al, dh) */
+        parity_accumulator ^= ((tap_source_hi >> 8) & 0x00FFU);
 
-// rcr     bx, 1
-    if(_BX_ & 0x0001) { _CF_ = 0x0001; }
-    _BX_ >>= _BX_;
-    _BX_ &= _CF_;
+        /* Step 6: Inject computed feedback back into the continuous 32-bit right-shift loop */
+        {
+            uint16_t feedback_bit = parity_accumulator & 1;
+            uint16_t carry_to_low = seed_hi & 1;
+            
+            seed_hi = (seed_hi >> 1) | (feedback_bit << 15);
+            seed_lo = (seed_lo >> 1) | (carry_to_low << 15);
+        }
+    } while(--step != 0);
 
-_AX_ ^= _BX_;   // xor     ax, bx
-_DX_ >>= 1;     // shr     dx, 1
-
-// rcr     bx, 1
-    if(_BX_ & 0x0001) { _CF_ = 0x0001; }
-    _BX_ >>= _BX_;
-    _BX_ &= _CF_;
-
-_DX_ >>= 1;     // shr     dx, 1
-
-// rcr     bx, 1
-    if(_BX_ & 0x0001) { _CF_ = 0x0001; }
-    _BX_ >>= _BX_;
-    _BX_ &= _CF_;
-
-_AX_ ^= _BX_;   // xor     ax, bx
-_DX_ >>= 1;     // shr     dx, 1
-
-// rcr     bx, 1
-    if(_BX_ & 0x0001) { _CF_ = 0x0001; }
-    _BX_ >>= _BX_;
-    _BX_ &= _CF_;
-
-_DX_ >>= 1;     // shr     dx, 1
-
-// rcr     bx, 1
-    if(_BX_ & 0x0001) { _CF_ = 0x0001; }
-    _BX_ >>= _BX_;
-    _BX_ &= _CF_;
-
-_AX_ ^= _BX_;   // xor     ax, bx
-_DX_ >>= 1;     // shr     dx, 1
-_AX_ = (_AX_ & 0x0F) ^ (_DX_ & 0xF0);   // xor     al, dh
-_DX_ = _AX_;    // mov     dx, ax
-_DX_ >>= 1;     // shr     dx, 1
-
-// rcl     [bp+result], 1
-    if(result & 0x8000) {_CF_ = 0x0001; }
-    result >>= result;
-    result &= _CF_;
-
-_AX_ >>= 1;     // shr     ax, 1
-
-// rcr     di, 1
-    if(_DI_ & 0x0001) { _CF_ = 0x0001; }
-    _DI_ >>= _DI_;
-    _DI_ &= _CF_;
-
-// rcr     si, 1
-    if(_SI_ & 0x0001) { _CF_ = 0x0001; }
-    _SI_ >>= _SI_;
-    _SI_ &= _CF_;
-
-} while(--_CX_ != 0);
-// loop    loc_24F9E
-
-
-// cmp     si, 0
-// jnz     short loc_24FE4
-// cmp     di, 0
-// jnz     short loc_24FE4
-// mov     si, 12478
-if(
-    (_SI_ == 0)
-    &&
-    (_DI_ == 0)
-)
-{
-    _SI_ = 0x30BE;
-}
-
-// loc_24FE4:
-// mov     [word ptr cs:_CS_random_seed], si
-// mov     [word ptr cs:_CS_random_seed+2], di
-    _CS_Local_LFSR_LO = _SI_;
-    _CS_Local_LFSR_HI = _DI_;
-// mov     ax, si
-// and     ax, 3FFh
-    _AX_ = _SI_;
-    _AX_ &= 0x03FF;  // 001111111111 take the first ten bits  <= 1023
-    
-// loc_24FF3:
-// cmp     ax, [bp+max]
-// jb      short @@Done
-// sub     ax, [bp+max]
-// jmp     short loc_24FF3
-    while(!(_AX_ < max))
+    /* Prevent lockup condition if state drops completely to zero */
+    if(seed_lo == 0 && seed_hi == 0)
     {
-        _AX_ -= max;
+        seed_lo = 0x30BE;
     }
 
-    return _AX_;
+    m_dither_random_seed = ((uint32_t)seed_hi << 16) | seed_lo;
 
+    /* Extract the lower 10 bits and filter using the deterministic sieve */
+    {
+        uint16_t bounded_seed = seed_lo & 0x3FFU;  // DNE in Random()
+        while(bounded_seed >= n)
+        {
+            bounded_seed -= n;
+        }
+        return bounded_seed;
+    }
 }

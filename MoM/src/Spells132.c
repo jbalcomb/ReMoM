@@ -962,7 +962,7 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
 
                     Main_Screen_Draw();
 
-                    Vanish_Bitmap__WIP(bitmap, itr);
+                    Vanish_Bitmap(bitmap, itr);
 
                     Draw_Picture(scsv4, scsv5, bitmap);
 
@@ -1027,7 +1027,7 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
 
                         Main_Screen_Draw();
 
-                        Vanish_Bitmap__WIP(bitmap, itr);
+                        Vanish_Bitmap(bitmap, itr);
 
                         Draw_Picture(scsv4, scsv5, bitmap);
 
@@ -1051,7 +1051,7 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
                             
                             Main_Screen_Draw();
 
-                            Vanish_Bitmap__WIP(bitmap, itr);
+                            Vanish_Bitmap(bitmap, itr);
 
                             Draw_Picture(scsv4, scsv5, bitmap);
 
@@ -1196,7 +1196,7 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
 
                 Main_Screen_Draw();
 
-                Vanish_Bitmap__WIP(bitmap, itr);
+                Vanish_Bitmap(bitmap, itr);
 
                 Draw_Picture(scsv4, scsv5, bitmap);
 

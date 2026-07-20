@@ -187,6 +187,15 @@ Self-terminating (_combat_wx < 200) or ESC, then returns to the overland; effect
 defined once in effect_score.c (shared).  Headless smoke reached the casting animation crash-clean in
 the isolated dir.  Windowed visual still to be eyeballed.
 
+## Vanish_Bitmap path (DONE — effect_vanish.c; visual unverified)
+`demo_vga vanish [LBX entry]` demos Vanish_Bitmap (the dither materialize/dematerialize), modeled on
+Cityscape_Draw_Buildings: each frame render a fresh raw copy (Draw_Picture_To_Bitmap) -> dither at a
+visibility percent (Vanish_Bitmap: pixel transparent if dither_threshold > percent) ->
+FLIC_Set_LoopFrame_1 -> Draw_Picture.  percent 0->100 materializes, 100->0 dematerializes; loops.
+Vanish_Bitmap is destructive so the copy is re-rendered every frame.  Default sprite = CITYSCAP.LBX
+building (entries 42+, per LOADER.c:1190); LBX/entry CLI-overridable.  Trimmed boot -- no world/state,
+no file writes (run from bin/Debug directly).  Headless smoke: loaded CITYSCAP 42, looped crash-clean.
+
 ## Remaining (optional)
 - More effects: reconstruct & demo other seg026/027 transitions (CrossSlide, Interleave, Wipe,
   SliceFlip, SquaresFlip...) -- still stubs.

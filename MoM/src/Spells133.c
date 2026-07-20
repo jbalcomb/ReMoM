@@ -1029,8 +1029,8 @@ void BU_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
         {
             Create_Picture(45, 42, GfxBuf_2400B);
             Copy_Bitmap_To_Bitmap(IMG_CMB_FX_Figure, GfxBuf_2400B);
-            /* Vanish_Bitmap__WIP(bitmap, visibility_percent) */
-            Vanish_Bitmap__WIP(GfxBuf_2400B, i - 50);
+            /* Vanish_Bitmap(bitmap, visibility_percent) */
+            Vanish_Bitmap(GfxBuf_2400B, i - 50);
             FLIC_Set_LoopFrame_1(GfxBuf_2400B);
             Draw_Picture_Windowed(Origin_Draw_X, Origin_Draw_Y, GfxBuf_2400B);
         }
@@ -1040,7 +1040,7 @@ void BU_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
         {
             Create_Picture(45, 42, GfxBuf_2400B);
             Copy_Bitmap_To_Bitmap(IMG_CMB_FX_Figure, GfxBuf_2400B);
-            Vanish_Bitmap__WIP(GfxBuf_2400B, 100 - i);
+            Vanish_Bitmap(GfxBuf_2400B, 100 - i);
             FLIC_Set_LoopFrame_1(GfxBuf_2400B);
             Draw_Picture_Windowed(Target_Draw_X, Target_Draw_Y, GfxBuf_2400B);
         }
@@ -1125,7 +1125,7 @@ void BU_TunnelTo(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
         /* Prepare the figure bitmap with a "vanish" effect */
         Create_Picture(45, 42, GfxBuf_2400B);
         Copy_Bitmap_To_Bitmap(IMG_CMB_FX_Figure, GfxBuf_2400B);
-        Vanish_Bitmap__WIP(GfxBuf_2400B, i * 20); /* percent = 80, 60, 40, 20 */
+        Vanish_Bitmap(GfxBuf_2400B, i * 20); /* percent = 80, 60, 40, 20 */
 
         /* Set a window to clip the unit as it "sinks" into the ground */
         Set_Window(0, 0, 319, Origin_Draw_Y + 30);
@@ -1156,7 +1156,7 @@ void BU_TunnelTo(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 
         Create_Picture(45, 42, GfxBuf_2400B);
         Copy_Bitmap_To_Bitmap(IMG_CMB_FX_Figure, GfxBuf_2400B);
-        Vanish_Bitmap__WIP(GfxBuf_2400B, i * 20); /* percent = 0, 20, 40, 60, 80 */
+        Vanish_Bitmap(GfxBuf_2400B, i * 20); /* percent = 0, 20, 40, 60, 80 */
 
         /* Set a window to clip the unit as it "rises" from the ground */
         Set_Window(0, 0, 319, Target_Draw_Y + 30);
@@ -1288,7 +1288,7 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
         )
         {
 
-            Vanish_Bitmap__WIP(GfxBuf_2400B, ((anim_ctr - 6) * 14));
+            Vanish_Bitmap(GfxBuf_2400B, ((anim_ctr - 6) * 14));
 
             Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, (screen_y + 30));
 

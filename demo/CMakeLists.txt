@@ -23,6 +23,7 @@ add_executable(demo_vga
     effect_collage.c
     effect_score.c
     effect_mastery.c
+    effect_vanish.c
     ${PROJECT_SOURCE_DIR}/src/ReMoM_Init.c   # full engine boot for the `score` / `mastery` effects
 )
 

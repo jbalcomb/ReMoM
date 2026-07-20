@@ -1423,7 +1423,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
                     Draw_Picture_To_Bitmap(bldg_picts_seg[cr_bldg_idx], GfxBuf_2400B);
                     if(cr_bldg_idx == new_bldg_idx)
                     {
-                        Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+                        Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
                     }
                     FLIC_Set_LoopFrame_1(GfxBuf_2400B);
                 }
@@ -1436,7 +1436,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
                     Draw_Picture_To_Bitmap(cityscape_evilpresence_seg, GfxBuf_2400B);
                     if(cr_bldg_idx == new_bldg_idx)
                     {
-                        Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+                        Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
                     }
                     FLIC_Set_LoopFrame_1(GfxBuf_2400B);
                     Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
@@ -1456,7 +1456,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
                 Draw_Picture_To_Bitmap(cityscape_darkrituals_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+                    Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
                 }
                 FLIC_Set_LoopFrame_1(GfxBuf_2400B);
                 Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
@@ -1475,7 +1475,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
                 Draw_Picture_To_Bitmap(cityscape_summon_circle_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+                    Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
                 }
                 FLIC_Set_LoopFrame_1(GfxBuf_2400B);
                 Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
@@ -1494,7 +1494,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
                 Draw_Picture_To_Bitmap(cityscape_earthgate_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+                    Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
                 }
                 FLIC_Set_LoopFrame_1(GfxBuf_2400B);
                 Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
@@ -1513,7 +1513,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
                 Draw_Picture_To_Bitmap(cityscape_streamoflife_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+                    Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
                 }
                 FLIC_Set_LoopFrame_1(GfxBuf_2400B);
                 FLIC_Set_LoopFrame_1(GfxBuf_2400B);  // NOTE: definitely duplicated
@@ -1533,7 +1533,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
                 Draw_Picture_To_Bitmap(cityscape_astralgate_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+                    Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
                 }
                 FLIC_Set_LoopFrame_1(GfxBuf_2400B);
                 Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
@@ -1552,7 +1552,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
                 Draw_Picture_To_Bitmap(cityscape_fortress_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+                    Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
                 }
                 FLIC_Set_LoopFrame_1(GfxBuf_2400B);
                 Draw_Picture(col_sx, (row_sy - 47), GfxBuf_2400B);
@@ -1571,7 +1571,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
                 Draw_Picture_To_Bitmap(cityscape_altarofbattle_seg, GfxBuf_2400B);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+                    Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
                 }
                 FLIC_Set_LoopFrame_1(GfxBuf_2400B);
                 Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
@@ -1597,7 +1597,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
         Draw_Picture_To_Bitmap(cityscape_city_walls_seg, GfxBuf_2400B);
         if(cr_bldg_idx == new_bldg_idx)
         {
-            Vanish_Bitmap__WIP(GfxBuf_2400B, cityscape_build_anim_ctr);
+            Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
         }
         FLIC_Set_LoopFrame_1(GfxBuf_2400B);
         Draw_Picture(x_start, (y_start + 82), GfxBuf_2400B);

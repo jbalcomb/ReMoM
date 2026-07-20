@@ -1080,50 +1080,68 @@ void ui_draw_line_ctbl(int x1, int y1, int x2, int y2, const uint8_t *colortbl, 
 // MoO2  
 // UU_VGA_CreateColorWave
 
+
 // WZD s16p06
 // drake178: UU_VGA_DiagColumns()
 // MoO2  
 // UU_VGA_DiagColumns
 
-// WZD s16p07
-// drake178: RNG_Direct_LFSR()
-// MoO2  
-// 1oom  rnd.c  rnd_bitfiddle()
-uint16_t rnd_bitfiddle__1oom(uint16_t ax)
-{
-    int16_t loops = 0;  // _CX_
-    uint16_t bx;
-    uint16_t dx;
 
-    if(ax == 0) {
-        return 0x35c8;
+// WZD s16p07
+// MoO2  DNE, just uses Random()
+// 1oom  rnd.c  rnd_bitfiddle()
+/**
+ * Simulates the 16-bit 8-state linear feedback shift register bit-fiddler.
+ */
+/**
+ * Advanced 16-bit LFSR (Linear Feedback Shift Register)
+ * Advances the internal state by 8 clock cycles to create pseudo-random entropy.
+ */
+uint16_t Dither_Scramble_Seed(uint16_t seed)
+{
+    int16_t step = 0;
+    uint16_t lfsr_state = 0;
+
+    lfsr_state = seed;
+
+    /* Replicate the zero lock-out safety reset tap parameter */
+    if(lfsr_state == 0)
+    {
+        lfsr_state = 0x35C8;
     }
 
-    loops = 8;
-
+    step = 8;
     do {
-        dx = ax;    // mov     dx, ax
-        bx = ax;    // mov     bx, ax      ; using 1..16 indexing:
-        bx >>= 1;   // shr     bx, 1
-        ax ^= bx;   // xor     ax, bx      ; bit #15
-        bx >>= 1;   // shr     bx, 1
-        ax ^= bx;   // xor     ax, bx      ; bit #14
-        bx >>= 1;   // shr     bx, 1
-        bx >>= 1;   // shr     bx, 1
-        ax ^= bx;   // xor     ax, bx      ; bit #12
-        bx >>= 1;   // shr     bx, 1
-        bx >>= 1;   // shr     bx, 1
-        ax ^= bx;   // xor     ax, bx      ; bit #10
-        bx >>= 1;   // shr     bx, 1
-        ax ^= bx;   // xor     al, bh      ; bit #5
+        uint16_t feedback_tap = lfsr_state;
+        uint16_t working_bits = lfsr_state;
 
-                    // shr     ax, 1
-        dx >>= 1;   // rcr     dx, 1
-        if(ax & 1) { dx |= 0x8000; }
+        /* Apply taps using the polynomial characteristic feedback path mask configuration */
+        working_bits >>= 1; lfsr_state ^= working_bits; /* Tap Mask #15 */
+        working_bits >>= 1; lfsr_state ^= working_bits; /* Tap Mask #14 */
+        working_bits >>= 1; 
+        working_bits >>= 1; lfsr_state ^= working_bits; /* Tap Mask #12 */
+        working_bits >>= 1; 
+        working_bits >>= 1; lfsr_state ^= working_bits; /* Tap Mask #10 */
+        working_bits >>= 1; 
 
-        ax = dx;    // mov     ax, dx
-    } while(--loops);
-    return ax;
+        /* Tap Mask #5: */
+        /* Correctly align high register byte shifts into the lower byte (xor al, bh) */
+        lfsr_state ^= ((working_bits >> 8) & 0x00FFU);
+
+        /* Replicate the true x86 Carry flag link between instructions */
+        {
+            uint16_t carry_flag = lfsr_state & 1; /* shr ax, 1 -> carry flag output */
+            
+            /* rcr dx, 1 -> captures the carry flag straight into the top bit position */
+            feedback_tap = (uint16_t)((feedback_tap >> 1) | (carry_flag << 15));
+            
+            /* mov ax, dx -> maps the updated state back to the execution register */
+            lfsr_state = feedback_tap;
+        }
+
+    } while(--step != 0);
+
+    return lfsr_state;
 }
 
 

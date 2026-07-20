@@ -55,7 +55,7 @@ uint32_t Get_Random_Seed(void);
 void Randomize(void);
 
 // WZD s22p08
-int16_t Random(int16_t max);
+int16_t Random(int16_t n);
 
 /* CLAUDE 2026-06-01: call-site-tracing wrapper.  Every translation
  * unit that includes random.h gets `Random(n)` macro-expanded to

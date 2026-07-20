@@ -428,7 +428,7 @@ void Reduce_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y);
 void Enlarge_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y);
 
 // WZD s33p15
-void Vanish_Bitmap__WIP(SAMB_ptr bitmap, int16_t percent);
+void Vanish_Bitmap(SAMB_ptr bitmap, int16_t percent);
 
 // WZD s33p16
 // MoO2: Gray_Scale_Bitmap()
@@ -441,7 +441,7 @@ void LBX_IMG_RevGrayscale__STUB(byte_ptr bitmap, int16_t color_index);
 // UU_DUP_RevGrayscale()
 
 // WZD s33p19
-int16_t RNG_GFX_Random__WIP(int16_t max);
+int16_t Vanish_Bitmap_Dither_Seed(int16_t n);
 
 
 

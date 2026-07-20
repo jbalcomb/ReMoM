@@ -248,7 +248,7 @@ int16_t Random(int16_t n) {
 That's Marsaglia's xorshift32 with shifts 13/17/5 — published in 2003. MoM shipped in 1994. xorshift32 literally didn't exist when MoM was compiled. It cannot be what WIZARDS.EXE actually does.
 Below it, commented out, is a 9-bit LFSR with the GEMINI annotation containing very specific disassembly traces:
 / * Assembly: rcl [bp+result], 1 * /
-…and explicit feedback taps (low_seed ^ (low_seed >> 1) ^ (low_seed >> 2) ^ (low_seed >> 4) ^ (low_seed >> 6) ^ (high_seed >> 15)). That's the kind of detail you only get from staring at the actual WIZARDS.EXE disassembly. The "1oom" attribution on the active version suggests the xorshift was borrowed from MoO1's reimplementation — a different game's RNG, probably plugged in as a placeholder.
+…and explicit feedback taps (seed_lo ^ (seed_lo >> 1) ^ (seed_lo >> 2) ^ (seed_lo >> 4) ^ (seed_lo >> 6) ^ (seed_hi >> 15)). That's the kind of detail you only get from staring at the actual WIZARDS.EXE disassembly. The "1oom" attribution on the active version suggests the xorshift was borrowed from MoO1's reimplementation — a different game's RNG, probably plugged in as a placeholder.
 So the strong hypothesis: your active Random() is wrong, and the commented-out LFSR is the right shape. Your "lingering question" is well-founded.
 */
 /* CLAUDE 2026-05-27: disabled the xorshift32 implementation below
@@ -285,53 +285,61 @@ int16_t Random(int16_t n)
  *
  * Structure verified against the assembly:
  *   - 9-iteration loop (`mov cx, 9` / `loop ...`)
- *   - feedback taps at bits 0/1/2/4/6 of `low_seed` (= asm `si`)
- *     and bit 15 of `high_seed` (= asm `di`)
+ *   - feedback taps at bits 0/1/2/4/6 of `seed_lo` (= asm `si`)
+ *     and bit 15 of `seed_hi` (= asm `di`)
  *   - feedback bit shifted into result accumulator (asm `rcl [bp+result], 1`)
  *   - 32-bit seed shifted right by 1 with feedback bit at top
  *     (asm `shr ax,1` / `rcr di,1` / `rcr si,1`)
  *   - stuck-at-zero guard with magic value 12478
  *   - return value is (result % n) + 1, range 1..n
  */
+/*
+SEEALSO:  Vanish_Bitmap_Dither_Seed()
+*/
 int16_t Random(int16_t n)
 {
-    int16_t  i;
-    uint16_t result    = 0;
-    uint16_t low_seed;
-    uint16_t high_seed;
-    uint16_t new_bit;
-    uint16_t carry_bit;
-    int16_t  ret;
+    int16_t  step = 0;
+    uint16_t result = 0;
+    uint16_t seed_lo = 0;
+    uint16_t seed_hi = 0;
+    uint16_t new_bit = 0;
+    uint16_t carry_bit = 0;
+    int16_t  bounded_seed = 0;
 
-    if(n == 0) Exit_With_Message("RND no 0's");
+    if(n == 0)
+    {
+        Exit_With_Message("RND no 0's");
+    }
 
-    low_seed  = (uint16_t)(random_seed & 0xFFFF);
-    high_seed = (uint16_t)(random_seed >> 16);
+    seed_lo  = (uint16_t)(random_seed & 0xFFFF);
+    seed_hi = (uint16_t)(random_seed >> 16);
 
-    for (i = 0; i < 9; i++) {
-        new_bit = (uint16_t)((low_seed
-                              ^ (low_seed >> 1)
-                              ^ (low_seed >> 2)
-                              ^ (low_seed >> 4)
-                              ^ (low_seed >> 6)
-                              ^ (high_seed >> 15)) & 1);
+    step = 9;
+    do {
+        new_bit = (uint16_t)((seed_lo
+                              ^ (seed_lo >> 1)
+                              ^ (seed_lo >> 2)
+                              ^ (seed_lo >> 4)
+                              ^ (seed_lo >> 6)
+                              ^ (seed_hi >> 15)) & 1);
 
         result = (uint16_t)((result << 1) | new_bit);
 
-        carry_bit = (uint16_t)(high_seed & 1);
-        low_seed  = (uint16_t)((low_seed  >> 1) | (carry_bit << 15));
-        high_seed = (uint16_t)((high_seed >> 1) | (new_bit   << 15));
+        carry_bit = (uint16_t)(seed_hi & 1);
+        seed_lo  = (uint16_t)((seed_lo  >> 1) | (carry_bit << 15));
+        seed_hi = (uint16_t)((seed_hi >> 1) | (new_bit   << 15));
+    } while(--step != 0);
+
+    if(seed_lo == 0 && seed_hi == 0)
+    {
+        seed_lo = 12478;
     }
 
-    if(low_seed == 0 && high_seed == 0) {
-        low_seed = 12478;
-    }
+    random_seed = ((uint32_t)seed_hi << 16) | (uint32_t)seed_lo;
 
-    random_seed = ((uint32_t)high_seed << 16) | (uint32_t)low_seed;
+    bounded_seed = (int16_t)((result % n) + 1);
 
-    ret = (int16_t)((result % n) + 1);
-
-    return ret;
+    return bounded_seed;
 }
 
 /* CLAUDE 2026-06-01: call-site-traced wrapper around Random().
@@ -403,13 +411,13 @@ int16_t Random_at(int16_t n, const char *file, int line, const char *func)
 // int16_t Random(int n) {
 //     int16_t i = 0;
 //     uint16_t result = 0;
-//     uint16_t low_seed = 0;
-//     uint16_t high_seed = 0;
+//     uint16_t seed_lo = 0;
+//     uint16_t seed_hi = 0;
 //     uint16_t new_bit = 0;
 //     uint16_t carry_bit = 0;
 // 
-//     low_seed = (uint16_t)(random_seed & 0xFFFF);
-//     high_seed = (uint16_t)(random_seed >> 16);
+//     seed_lo = (uint16_t)(random_seed & 0xFFFF);
+//     seed_hi = (uint16_t)(random_seed >> 16);
 // 
 //     if(n == 0) Exit_With_Message("RND no 0's");
 // 
@@ -420,12 +428,12 @@ int16_t Random_at(int16_t n, const char *file, int line, const char *func)
 //          * By shifting them all down, the feedback result ends up in bit 0.
 //          * We use '& 1' at the end to mask off everything except that final bit.
 //          */
-//         new_bit = (low_seed ^ 
-//                   (low_seed >> 1) ^ 
-//                   (low_seed >> 2) ^ 
-//                   (low_seed >> 4) ^ 
-//                   (low_seed >> 6) ^ 
-//                   (high_seed >> 15)) & 1;
+//         new_bit = (seed_lo ^ 
+//                   (seed_lo >> 1) ^ 
+//                   (seed_lo >> 2) ^ 
+//                   (seed_lo >> 4) ^ 
+//                   (seed_lo >> 6) ^ 
+//                   (seed_hi >> 15)) & 1;
 // 
 //         /* 2. Push the generated bit into the 9-bit result queue */
 //         /* Assembly: rcl [bp+result], 1 */
@@ -433,25 +441,25 @@ int16_t Random_at(int16_t n, const char *file, int line, const char *func)
 //         
 //         /* 3. The 32-bit Shift Right
 //          * Because C89 in DOS uses 16-bit integers, we have to manually 
-//          * carry the bit that falls off the bottom of high_seed into 
-//          * the top of low_seed, just like the assembly's RCR instructions.
+//          * carry the bit that falls off the bottom of seed_hi into 
+//          * the top of seed_lo, just like the assembly's RCR instructions.
 //          */
 //         
-//         /* Grab the lowest bit of high_seed before we shift it */
-//         carry_bit = high_seed & 1; 
+//         /* Grab the lowest bit of seed_hi before we shift it */
+//         carry_bit = seed_hi & 1; 
 //         
-//         /* Shift low_seed right, and drop the carry_bit into its 16th slot (bit 15) */
-//         low_seed = (low_seed >> 1) | (carry_bit << 15);
+//         /* Shift seed_lo right, and drop the carry_bit into its 16th slot (bit 15) */
+//         seed_lo = (seed_lo >> 1) | (carry_bit << 15);
 //         
-//         /* Shift high_seed right, and drop our calculated new_bit into ITS top slot */
-//         high_seed = (high_seed >> 1) | (new_bit << 15);
+//         /* Shift seed_hi right, and drop our calculated new_bit into ITS top slot */
+//         seed_hi = (seed_hi >> 1) | (new_bit << 15);
 //     }
 // 
-//     if(low_seed == 0 && high_seed == 0) {
-//         low_seed = 12478; /* Prevent the LFSR from getting stuck at 0 */
+//     if(seed_lo == 0 && seed_hi == 0) {
+//         seed_lo = 12478; /* Prevent the LFSR from getting stuck at 0 */
 //     }
 // 
-//     random_seed = ((uint32_t)high_seed << 16) | low_seed;
+//     random_seed = ((uint32_t)seed_hi << 16) | seed_lo;
 // 
 //     /* Modulo division to fit the requested range, returns 1 to N */
 //     return (result % n) + 1;
