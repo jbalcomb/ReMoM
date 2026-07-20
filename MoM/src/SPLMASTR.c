@@ -28,7 +28,7 @@ MoO2
 #include "../../MoX/src/random.h"
 
 #include "Combat.h"
-#include "Conquest.h"
+#include "CONQUEST.h"
 #include "MagicScr.h"
 #include "MainScr.h"
 #include "NEXTTURN.h"
