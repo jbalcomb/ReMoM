@@ -1860,14 +1860,14 @@ void Call_Forth_The_Force_Of_Nature(int16_t player_idx)
     }
 
     /* Build message */
-    strcpy(GUI_NearMsgString, aNatureSWrathSt); /* "Nature's Wrath strikes " */
+    stu_strcpy(GUI_NearMsgString, aNatureSWrathSt); /* "Nature's Wrath strikes " */
     if(player_idx == HUMAN_PLAYER_IDX)
     {
-        strcat(GUI_NearMsgString, aYou); /* "you" */
+        stu_strcat(GUI_NearMsgString, aYou); /* "you" */
     }
     else
     {
-        strcat(GUI_NearMsgString, _players[player_idx].name);
+        stu_strcat(GUI_NearMsgString, _players[player_idx].name);
     }
 
     /* Prepare visual effects */

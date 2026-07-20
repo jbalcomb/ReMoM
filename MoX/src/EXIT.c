@@ -160,9 +160,9 @@ void Reset_System(void)
 /* EOG_HACK */  // DONT      }
 /* EOG_HACK */  // DONT      EMM_Release_Resd();
 /* EOG_HACK */  // DONT      execl(exe_name, exe_name, argv0, argv1, argv2, (char *)0);
-/* EOG_HACK */  // DONT      strcpy(exit_message, cnst_ProgSwap_Error1);
-/* EOG_HACK */  // DONT      strcat(exit_message, exe_name);
-/* EOG_HACK */  // DONT      strcat(exit_message, cnst_ProgSwap_Error2);
+/* EOG_HACK */  // DONT      stu_strcpy(exit_message, cnst_ProgSwap_Error1);
+/* EOG_HACK */  // DONT      stu_strcat(exit_message, exe_name);
+/* EOG_HACK */  // DONT      stu_strcat(exit_message, cnst_ProgSwap_Error2);
 /* EOG_HACK */  // DONT      Exit_With_Message(exit_message);
 /* EOG_HACK */  // DONT  }
 

@@ -12,7 +12,7 @@
         IMG_GAME_RedSparkle / _CITIES into it) and _screen_seg.  This is the game's own data-space
         init (the trimmed harness boot skips it).
       - GUI_String_1: a char* the game allocates during conquest-screen setup and Win_Animation_Draw
-        strcpy's the victory text into; allocate it here or it's a NULL deref.
+        stu_strcpy's the victory text into; allocate it here or it's a NULL deref.
 
     Choose the wizard with:  demo_vga win <wizard_id>   (0..13)
 */
@@ -57,7 +57,7 @@ static void Effect_Win_Run(void)
         Allocate_Data_Space(WIN_DATA_SPACE_PARAS);
     }
 
-    /* Win_Animation_Draw strcpy's the victory text into GUI_String_1 (a char* the game allocates). */
+    /* Win_Animation_Draw stu_strcpy's the victory text into GUI_String_1 (a char* the game allocates). */
     if(GUI_String_1 == NULL)
     {
         GUI_String_1 = (char *)malloc(100);

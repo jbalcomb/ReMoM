@@ -152,7 +152,7 @@ int Demo_Load_Screen(const char * lbx, int entry, int palette_entry, int page)
 
     /* Existence-check first: LBX_Load() aborts the process via Exit_With_Message on a missing file. */
     stu_strcpy(lbx_file, lbx);
-    strcat(lbx_file, ".LBX");
+    stu_strcat(lbx_file, ".LBX");
     if(Demo_File_Exists(lbx_file) == 0)
     {
         return 0;
@@ -197,7 +197,7 @@ void * Demo_Lbx_Load(const char * lbx, int entry)
 
     /* Existence-check first: LBX_Load() aborts the process via Exit_With_Message on a missing file. */
     stu_strcpy(lbx_file, lbx);
-    strcat(lbx_file, ".LBX");
+    stu_strcat(lbx_file, ".LBX");
     if(Demo_File_Exists(lbx_file) == 0)
     {
         return NULL;

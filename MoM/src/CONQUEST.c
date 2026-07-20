@@ -1138,8 +1138,8 @@ int16_t Banish_Wizard(int16_t loser_idx, int16_t winner_idx)
     {
         stu_itoa(turns_to_return, buffer, 10);
         stu_strcpy(GUI_NearMsgString, cnst_SoReturn_Msg1);  // "There are at least "
-        strcat(GUI_NearMsgString, buffer);
-        strcat(GUI_NearMsgString, cnst_SoReturn_Msg2);  // " turns remaining until you may return. Do you wish to resign?"
+        stu_strcat(GUI_NearMsgString, buffer);
+        stu_strcat(GUI_NearMsgString, cnst_SoReturn_Msg2);  // " turns remaining until you may return. Do you wish to resign?"
         resign = Confirmation_Box(GUI_NearMsgString);
     }
     else

@@ -87,7 +87,7 @@ int main(int argc, char ** argv)
             if(has_lbx_ext(fd.cFileName) && count < MAX_FILES &&
                strlen(fd.cFileName) < NAME_LEN)
             {
-                strcpy(names[count++], fd.cFileName);
+                stu_strcpy(names[count++], fd.cFileName);
             }
         } while(FindNextFileA(h, &fd));
         FindClose(h);
@@ -106,7 +106,7 @@ int main(int argc, char ** argv)
             if(has_lbx_ext(ent->d_name) && count < MAX_FILES &&
                strlen(ent->d_name) < NAME_LEN)
             {
-                strcpy(names[count++], ent->d_name);
+                stu_strcpy(names[count++], ent->d_name);
             }
         }
         closedir(d);
