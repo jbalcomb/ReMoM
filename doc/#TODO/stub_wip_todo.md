@@ -204,7 +204,7 @@
 - [ ] GUI_MoveDlgHighlight__STUB
 
 ## FLIC_Draw
-- [ ] LBX_IMG_VShiftRect            // WZD s30p03
+- [x] Shear_Bitmap_Y            // WZD s30p03
 - [ ] LBX_IMG_VertWarp              // WZD s30p04
 - [ ] LBX_IMG_HorzWarp              // WZD s30p05
 - [ ] UU_LBX_IMG_ColorShift         // WZD s30p07

@@ -76,7 +76,7 @@ switch EXE
 
 
 // WZD s30p03
-[x] LBX_IMG_VShiftRect
+[x] Shear_Bitmap_Y
 // WZD s30p04
 // LBX_IMG_VertWarp
 // WZD s30p05

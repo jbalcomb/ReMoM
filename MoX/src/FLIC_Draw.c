@@ -510,115 +510,160 @@ void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg)
 
 
 // WZD s30p03
-/* GEMINI */
-void LBX_IMG_VShiftRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr bitmap)
+// MoO2  Module: bitmap  Shear_Bitmap_Y()
+// 1oom ?
+/*
+    function (0 bytes) Shear_Bitmap_Y
+    Address: 01:0012DB3B
+        Num params: 4
+        Return type: void (1 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        pointer (4 bytes) 
+        Locals:
+            signed integer (2 bytes) x1
+            signed integer (2 bytes) shear1
+            signed integer (2 bytes) x2
+            signed integer (2 bytes) shear2
+            pointer (4 bytes) bitmap
+            signed integer (2 bytes) width
+            signed integer (2 bytes) height
+            signed integer (2 bytes) x
+            signed integer (2 bytes) i
+            signed integer (4 bytes) shear_add
+            signed integer (4 bytes) shear
+            signed integer (2 bytes) current_shear
+            pointer (4 bytes) bitmap_array
+            pointer (4 bytes) frame_offset
+            pointer (4 bytes) frame_offset_table
+*/
+/**
+ * In-place vertical column shearing and perspective distortion engine.
+ * Refactored for linear flat memory arrays from legacy 16-bit register syntax.
+ */
+void Shear_Bitmap_Y(int16_t x1, int16_t shear1, int16_t x2, int16_t shear2, byte_ptr bitmap)
 {
-    uint8_t * bitmap_data;
-    int16_t New_Height;
-    int16_t current_shear;
-    int32_t shear;
-    int32_t shear_add;
-    int16_t itr_width;
-    int16_t height;
-    int16_t width;
-    int16_t itr;
-    int16_t ofst;
+    int16_t width = 0;
+    int16_t height = 0;
+    int16_t x = 0;  // the horizontal loop column cursor
+    int16_t i = 0;  // the vertical row cursor loop index ..  handles both the pixel-shifting iteration and the transparency-filling loops
+    int32_t shear_add = 0;
+    int32_t shear = 0;
+    int16_t current_shear = 0;
+    byte_ptr bitmap_array = NULL;
+    // pointer (4 bytes) frame_offset
+    // pointer (4 bytes) frame_offset_table
+    int16_t ofst = 0;  // _DI_
+    int16_t clipped_image_height = 0;  // DNE in Shear_Bitmap_Y(), calc'd in Shear_Y_Negative_()/Shear_Y_Positive_()
 
-    // width = GET_2B_OFS(bitmap, 0);
-    // height = GET_2B_OFS(bitmap, 2); /* s_FLIC_HDR.height */
-    width = GET_2B_OFS(bitmap, 0);
-    height = GET_2B_OFS(bitmap, 2);
+    /* Extract dimensions directly from the raw asset header descriptors */
+    width = GET_2B_OFS(bitmap, FLIC_HDR_POS_WIDTH);
+    height = GET_2B_OFS(bitmap, FLIC_HDR_POS_HEIGHT);
 
-    if(x1 < 0)
-    {
-        x1 = 0;
-    }
-
-    if(x2 > width)
-    {
-        x2 = width;
-    }
+    /* Horizontal bounding box safety clip adjustments */
+    if(x1 < 0) { x1 = 0; }
+    if(x2 > width) { x2 = width; }
 
     if(x1 > x2)
     {
         Swap_Short(&x1, &x2);
-        Swap_Short(&y1, &y2);
+        Swap_Short(&shear1, &shear2);
     }
 
-    shear = (int32_t)y1 * 1000;
+    /* Compute initial 16.16 fixed-point accumulation values scaled by 1000 */
+    shear = (int32_t)shear1 * 1000;
 
-    if(x2 != x1)
-    {
-        shear_add = ((int32_t)(y2 - y1) * 1000) / (x2 - x1);
-    }
-    else
+    if(x2 == x1)
     {
         shear_add = 0;
     }
-
-    // bitmap_data = (unsigned char *)SA_MK_FP0(bitmap + 1);
-    bitmap_data = (uint8_t *)(bitmap + SZ_PARAGRAPH_B);
-    
-    ofst = height * x1;
-
-    for(itr_width = x1; itr_width <= x2; itr_width++)
+    else
     {
-        current_shear = (int16_t)(shear / 1000);
+        /* Replicate long multiplication/division gradient path scaling updates */
+        shear_add = ((int32_t)(shear2 - shear1) * 1000) / (x2 - x1);
+    }
+
+    /* Locate the pixel data segment following standard header layouts */
+    bitmap_array = (bitmap + SZ_FLIC_HDR);
+
+    /* Initialize workspace tracker offsets mapping to column-major layouts */
+    ofst = (x1 * height);
+    
+    for(x = x1; x <= x2; ++x)
+    {
+        current_shear = (shear / 1000);
 
         if(current_shear != 0)
         {
             if(current_shear < 0)
             {
                 /* MoO2 Shear_Y_Negative_() */
-                New_Height = height + current_shear;
-                if(New_Height > 0)
+                /* Negative Shear Path: Shift column up, erase trailing bottom pixels */
+                clipped_image_height = (height + current_shear);
+                
+                if(clipped_image_height > 0)
                 {
-                    /* New_Height = (height + current_shear) > 0 */
-                    for(itr = ofst; itr < (ofst + New_Height); itr++)
+                    i = 0;
+                    do {
+                        bitmap_array[ofst + i] = bitmap_array[ofst + i - current_shear];
+                        i++;
+                    } while(i < clipped_image_height);
+                    
+                    /* Pad clear remaining column slots down to image floor */
+                    while(i < height)
                     {
-                        bitmap_data[itr] = bitmap_data[itr - current_shear];
-                    }
-                    for(itr = New_Height; itr < height; itr++)
-                    {
-                        bitmap_data[ofst + itr] = ST_TRANSPARENT;
+                        bitmap_array[i + ofst] = ST_TRANSPARENT;
+                        i++;
                     }
                 }
                 else
                 {
-                    /* New_Height = (height + current_shear) < 0 */
-                    for(itr = ofst; itr < (ofst + height); itr++)
-                    {
-                        bitmap_data[itr] = ST_TRANSPARENT;
-                    }
+                    /* If shear exceeds bounds, fill the entire active column tracking row with zero */
+                    i = 0;
+                    do {
+                        bitmap_array[i + ofst] = ST_TRANSPARENT;
+                        i++;
+                    } while(i < height);
                 }
-            }
+            } 
             else
             {
                 /* MoO2 Shear_Y_Positive_() */
-                New_Height = height - current_shear;
-                if(New_Height > 0)
+                /* Positive Shear Path: Shift column down, erase top pixels */
+                clipped_image_height = (height - current_shear);
+                
+                if(clipped_image_height > 0)
                 {
-                    /* (height - current_shear) > 0 */
-                    for(itr = (ofst + height - 1); itr >= (ofst + current_shear); itr--)
+                    /* Process from bottom to top to prevent copy collisions */
+                    i = height - 1;
+                    do {
+                        bitmap_array[ofst + i] = bitmap_array[ofst + i - current_shear];
+                        i--;
+                    } while(i >= current_shear);
+                    
+                    /* Pad clear remaining column headers from top down */
+                    i = 0;
+                    while(i < current_shear)
                     {
-                        bitmap_data[itr] = bitmap_data[itr - current_shear];
-                    }
-                    for(itr = 0; itr < current_shear; itr++)
-                    {
-                        bitmap_data[ofst + itr] = ST_TRANSPARENT;
+                        bitmap_array[ofst + i] = ST_TRANSPARENT;
+                        i++;
                     }
                 }
                 else
                 {
-                    /* (height - current_shear) < 0 */
-                    for(itr = ofst; itr < (ofst + height); itr++)
-                    {
-                        bitmap_data[itr] = ST_TRANSPARENT;
-                    }
+                    /* Total shear collapse coverage safety override */
+                    i = 0;
+                    do {
+                        bitmap_array[ofst + i] = ST_TRANSPARENT;
+                        i++;
+                    } while(i < height);
                 }
             }
         }
 
+        /* Update fixed point accumulations and step pointer to next column */
         shear += shear_add;
         ofst += height;
     }

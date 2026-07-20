@@ -2152,50 +2152,50 @@ void BigBook_PageTurn(short int direction)
         /* Apply distortion effects based on animation stage to simulate page curve */
         if((direction >= 1 && page_turn_stage == 0) || (direction == 0 && page_turn_stage == 3))
         {
-            LBX_IMG_VShiftRect(0, 0, 4, -6, pict_seg);
-            LBX_IMG_VShiftRect(5, -7, 12, -12, pict_seg);
-            LBX_IMG_VShiftRect(13, -13, 29, -19, pict_seg);
-            LBX_IMG_VShiftRect(30, -19, 41, -19, pict_seg);
-            LBX_IMG_VShiftRect(42, -19, 67, -14, pict_seg);
-            LBX_IMG_VShiftRect(68, -13, 84, -7, pict_seg);
-            LBX_IMG_VShiftRect(85, -6, 115, 8, pict_seg);
+            Shear_Bitmap_Y(0, 0, 4, -6, pict_seg);
+            Shear_Bitmap_Y(5, -7, 12, -12, pict_seg);
+            Shear_Bitmap_Y(13, -13, 29, -19, pict_seg);
+            Shear_Bitmap_Y(30, -19, 41, -19, pict_seg);
+            Shear_Bitmap_Y(42, -19, 67, -14, pict_seg);
+            Shear_Bitmap_Y(68, -13, 84, -7, pict_seg);
+            Shear_Bitmap_Y(85, -6, 115, 8, pict_seg);
             Draw_Picture_Windowed(165, -24, pict_seg);
         }
 
         if((direction >= 1 && page_turn_stage == 1) || (direction == 0 && page_turn_stage == 2))
         {
-            LBX_IMG_VShiftRect(0, -4, 5, -9, pict_seg);
-            LBX_IMG_VShiftRect(6, -10, 14, -18, pict_seg);
-            LBX_IMG_VShiftRect(15, -19, 32, -26, pict_seg);
-            LBX_IMG_VShiftRect(33, -26, 42, -28, pict_seg);
-            LBX_IMG_VShiftRect(43, -28, 56, -25, pict_seg);
-            LBX_IMG_VShiftRect(57, -25, 69, -18, pict_seg);
-            LBX_IMG_VShiftRect(70, -18, 76, -12, pict_seg);
+            Shear_Bitmap_Y(0, -4, 5, -9, pict_seg);
+            Shear_Bitmap_Y(6, -10, 14, -18, pict_seg);
+            Shear_Bitmap_Y(15, -19, 32, -26, pict_seg);
+            Shear_Bitmap_Y(33, -26, 42, -28, pict_seg);
+            Shear_Bitmap_Y(43, -28, 56, -25, pict_seg);
+            Shear_Bitmap_Y(57, -25, 69, -18, pict_seg);
+            Shear_Bitmap_Y(70, -18, 76, -12, pict_seg);
             Draw_Picture_Windowed(165, -26, pict_seg);
         }
 
         if((direction >= 1 && page_turn_stage == 2) || (direction == 0 && page_turn_stage == 1))
         {
-            LBX_IMG_VShiftRect(0, -20, 6, -25, pict_seg);
-            LBX_IMG_VShiftRect(7, -25, 16, -30, pict_seg);
-            LBX_IMG_VShiftRect(17, -30, 24, -32, pict_seg);
-            LBX_IMG_VShiftRect(25, -32, 32, -33, pict_seg);
-            LBX_IMG_VShiftRect(33, -33, 47, -29, pict_seg);
-            LBX_IMG_VShiftRect(48, -29, 61, -21, pict_seg);
-            LBX_IMG_VShiftRect(62, -20, 70, -12, pict_seg);
-            LBX_IMG_VShiftRect(71, -11, 75, 0, pict_seg);
+            Shear_Bitmap_Y(0, -20, 6, -25, pict_seg);
+            Shear_Bitmap_Y(7, -25, 16, -30, pict_seg);
+            Shear_Bitmap_Y(17, -30, 24, -32, pict_seg);
+            Shear_Bitmap_Y(25, -32, 32, -33, pict_seg);
+            Shear_Bitmap_Y(33, -33, 47, -29, pict_seg);
+            Shear_Bitmap_Y(48, -29, 61, -21, pict_seg);
+            Shear_Bitmap_Y(62, -20, 70, -12, pict_seg);
+            Shear_Bitmap_Y(71, -11, 75, 0, pict_seg);
             Draw_Picture_Windowed(80, -20, pict_seg);
         }
 
         if((direction >= 1 && page_turn_stage == 3) || (direction == 0 && page_turn_stage == 0))
         {
-            LBX_IMG_VShiftRect(0, 0, 36, -18, pict_seg);
-            LBX_IMG_VShiftRect(37, -18, 64, -26, pict_seg);
-            LBX_IMG_VShiftRect(65, -26, 73, -27, pict_seg);
-            LBX_IMG_VShiftRect(74, -27, 84, -26, pict_seg);
-            LBX_IMG_VShiftRect(85, -25, 92, -23, pict_seg);
-            LBX_IMG_VShiftRect(93, -22, 102, -18, pict_seg);
-            LBX_IMG_VShiftRect(103, -17, 115, -6, pict_seg);
+            Shear_Bitmap_Y(0, 0, 36, -18, pict_seg);
+            Shear_Bitmap_Y(37, -18, 64, -26, pict_seg);
+            Shear_Bitmap_Y(65, -26, 73, -27, pict_seg);
+            Shear_Bitmap_Y(74, -27, 84, -26, pict_seg);
+            Shear_Bitmap_Y(85, -25, 92, -23, pict_seg);
+            Shear_Bitmap_Y(93, -22, 102, -18, pict_seg);
+            Shear_Bitmap_Y(103, -17, 115, -6, pict_seg);
             Draw_Picture_Windowed(39, -22, pict_seg);
         }
 
