@@ -312,7 +312,7 @@ int16_t Platform_Audio_Play_Sound(void *sound_buffer, uint32_t sound_buffer_size
             // m = &mustbl[0];
             m = &mustbl;
             fmt_mus_convert_xmid(sound_buffer, sound_buffer_size, &xmi_sound_buffer, &xmi_sound_buffer_size, &m->loops);
-            SDL_RWops* sdl2_rw_ops = SDL_RWFromConstMem(xmi_sound_buffer, xmi_sound_buffer_size);
+            sdl2_rw_ops = SDL_RWFromConstMem(xmi_sound_buffer, xmi_sound_buffer_size);
             m->music = Mix_LoadMUSType_RW(sdl2_rw_ops, m->sdlmtype, 0);
             SDL_FreeRW(sdl2_rw_ops);
             free(xmi_sound_buffer);
