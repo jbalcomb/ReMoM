@@ -51,6 +51,37 @@ set_target_properties(lbx_hashes PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
 
+# --- lbx_extract: extract LBX archive entries to standalone files ---
+# Standalone container reader; no engine dependencies.  Strips the 16-byte
+# 0xDEAF sound wrapper so MUSIC.LBX / SOUNDFX.LBX entries come out as plain
+# .XMI / .VOC that external tools (wildmidi, etc.) accept.
+#   lbx_extract --list assets/MUSIC.LBX
+#   lbx_extract -o out assets/MUSIC.LBX 0     -> out/MUSIC_000.XMI
+
+add_executable(lbx_extract
+    lbx_extract.c
+)
+
+set_target_properties(lbx_extract PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
+)
+
+
+# --- gtl2op2: Miles/AIL Global Timbre Library -> DMX GENMIDI (.op2) FM bank ---
+# Transcodes FAT.OPL / FAT.AD into a bank WildMIDI can load, so MoM's own
+# timbres voice the music instead of generic General MIDI.
+#   gtl2op2 assets/__FAT/FAT.OPL out/xmi/fatman.op2
+#   wildmidi -c out/xmi/fatman.op2 -o track.wav out/xmi/MUSIC_100.XMI
+
+add_executable(gtl2op2
+    gtl2op2.c
+)
+
+set_target_properties(gtl2op2 PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
+)
+
+
 # --- Extract_FONTS_LBX: extract FONTS.LBX data into embeddable C source ---
 # cd ~/STU/devel/ReMoM/ && cmake --build build --target Extract_FONTS_LBX
 # cd ~/STU/devel/ReMoM/build/bin/Debug && ./Extract_FONTS_LBX
