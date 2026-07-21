@@ -47,7 +47,7 @@ see [Future phase — Dev / Modder tooling](#future-phase--dev--modder-tooling).
 
 | Platform | Artifact(s) | Backend | Notes |
 |----------|-------------|---------|-------|
-| Windows x64 | `ReMoM-<ver>-Windows-AMD64.zip`, NSIS `.exe` installer | native **Win32** | **Silent** — the Win32 backend links no audio library yet. Self-contained (no DLLs). |
+| Windows x64 | `ReMoM-<ver>-Windows-AMD64.zip`, NSIS `.exe` installer | **SDL2** + SDL2_mixer | Has audio. Self-contained — `SDL2.dll`, `SDL2_mixer.dll`, and the MSVC runtime DLLs are bundled next to the exe. |
 | Linux x86_64 | `ReMoM-<ver>-x86_64.AppImage` (recommended), `ReMoM-<ver>-Linux-*.zip` / `.tar.gz` | **SDL2** + SDL2_mixer | The **AppImage bundles SDL** (via `linuxdeploy`) and is self-contained. The plain ZIP/TGZ does **not** bundle SDL — use it only if SDL2 is already installed. |
 | ~~macOS arm64~~ | — | — | **Deferred (TBD)** — does not ship in the current release; arm64 link fails on the `pack(2)` DOS structs. See *Known limitations* below. |
 
@@ -60,9 +60,9 @@ plus `CONFIG.MOM` from an original Master of Magic v1.31 (DOS) installation,
 copied next to the executable.
 
 Known limitations carried intentionally (follow-ups, not blockers):
-- **Windows is silent** (Win32 backend). Switching Windows to SDL2 for sound is a
-  future change; the `if(WIN32 AND NOT USE_WIN32)` block in `CMakeLists.txt`
-  already handles bundling SDL DLLs when that happens.
+- **Windows uses the SDL2 backend** (default), so the release has audio and bundles
+  `SDL2.dll` / `SDL2_mixer.dll`. A silent, self-contained native-Win32 build (no SDL)
+  is still available on demand via the `MSVC-win32-*` presets (`USE_WIN32=TRUE`).
 - **macOS is deferred — TBD.** The macOS jobs in `release.yml` and
   `release-check.yml` are gated off (`if: false`) and do **not** block releases.
   Reason: the reconstruction's `pack(2)` DOS structs (e.g. `s_UNIT_MUTATION` /
