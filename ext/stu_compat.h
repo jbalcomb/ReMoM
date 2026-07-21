@@ -34,6 +34,7 @@
  *   - stu_strncpy()       portable strncpy() with NULL check (suppresses MSVC C4996)
  *   - stu_strchr()        portable strchr() with NULL check
  *   - stu_strcmp()        portable strcmp() with NULL check
+ *   - stu_strlen()        portable strlen() with NULL check
  *   - stu_atoi()          portable atoi() with NULL check
  *   - stu_debugbreak()    portable debug breakpoint
  *
@@ -188,6 +189,9 @@ char *stu_strchr(const char *str, int ch);
 
 /* Portable strcmp wrapper with NULL check. NULL is treated as less-than non-NULL; two NULLs compare equal. */
 int stu_strcmp(const char *lhs, const char *rhs);
+
+/* Portable strlen wrapper with NULL check. Returns 0 if str is NULL. */
+size_t stu_strlen(const char *str);
 
 /* ============================================================================
  * Compatibility aliases (optional, define STU_COMPAT_ALIASES to enable)
@@ -755,6 +759,18 @@ int stu_strcmp(const char *lhs, const char *rhs)
         return 1;
     }
     return strcmp(lhs, rhs);
+}
+
+/* --------------------------------------------------------------------------
+ * stu_strlen - portable strlen wrapper with NULL check
+ * -------------------------------------------------------------------------- */
+size_t stu_strlen(const char *str)
+{
+    if(str == NULL)
+    {
+        return 0;
+    }
+    return strlen(str);
 }
 
 /* --------------------------------------------------------------------------
