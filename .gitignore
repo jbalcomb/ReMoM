@@ -72,8 +72,15 @@ misc/
 
 ext/ail214
 
+# The Fat Man
 assets/__FAT
-
+FAT.AD
+FAT.CAT
+FAT.MT
+FAT.OPL
+FAT-GEN.CAT
+FAT-OPL3.BNK
+FATV10.BNK
 
 # MoM
 
