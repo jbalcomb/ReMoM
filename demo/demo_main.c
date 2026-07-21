@@ -11,7 +11,55 @@
 #include "../platform/include/Platform.h"  /* Startup_Platform (full-boot effects) */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+/* Files the full-boot effects (score/mastery/somlose) write in the working dir: the high-score/
+   settings file and the combat cache.  So the demo can be run straight from bin/Debug without
+   clobbering the staged copies, we snapshot MAGIC.SET before the run and restore it after (and
+   remove the throwaway COMBAT.TMP).  Self-isolation -- no temp dir, no wrapper needed. */
+static unsigned char * g_set_backup = NULL;
+static long            g_set_backup_len = 0;
+
+static void Demo_Snapshot_Writable_Files(void)
+{
+    FILE * f = fopen("MAGIC.SET", "rb");
+    if(f != NULL)
+    {
+        fseek(f, 0, SEEK_END);
+        g_set_backup_len = ftell(f);
+        fseek(f, 0, SEEK_SET);
+        if(g_set_backup_len > 0)
+        {
+            g_set_backup = (unsigned char *)malloc((size_t)g_set_backup_len);
+            if(g_set_backup != NULL)
+            {
+                if(fread(g_set_backup, 1, (size_t)g_set_backup_len, f) != (size_t)g_set_backup_len)
+                {
+                    free(g_set_backup);
+                    g_set_backup = NULL;
+                }
+            }
+        }
+        fclose(f);
+    }
+}
+
+static void Demo_Restore_Writable_Files(void)
+{
+    if(g_set_backup != NULL)
+    {
+        FILE * f = fopen("MAGIC.SET", "wb");
+        if(f != NULL)
+        {
+            fwrite(g_set_backup, 1, (size_t)g_set_backup_len, f);
+            fclose(f);
+        }
+        free(g_set_backup);
+        g_set_backup = NULL;
+    }
+    remove("COMBAT.TMP");
+}
 
 static const Demo_Effect * const g_effects[] =
 {
@@ -82,7 +130,9 @@ int main(int argc, char * argv[])
 
     if(selected->full_boot)
     {
-        /* Effect does its own full ReMoM_Init_Engine boot; just bring up the platform. */
+        /* Effect does its own full ReMoM_Init_Engine boot; just bring up the platform.
+           These effects write MAGIC.SET / COMBAT.TMP, so protect the working dir's copies. */
+        Demo_Snapshot_Writable_Files();
         Startup_Platform();
     }
     else
@@ -91,6 +141,11 @@ int main(int argc, char * argv[])
     }
     printf("Running effect: %s -- close the window to exit\n", selected->name);
     selected->run();
+
+    if(selected->full_boot)
+    {
+        Demo_Restore_Writable_Files();
+    }
     Demo_Shutdown();
 
     return 0;
