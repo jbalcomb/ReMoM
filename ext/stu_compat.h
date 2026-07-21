@@ -29,12 +29,12 @@
  *   - stu_ftell()         portable ftell()
  *   - stu_localtime()     portable thread-safe localtime (MSVC localtime_s / POSIX localtime_r)
  *   - stu_sscanf()        portable sscanf() (suppresses MSVC C4996)
- *   - stu_strcpy()        portable strcpy() (suppresses MSVC C4996)
  *   - stu_strcat()        portable strcat() (suppresses MSVC C4996)
- *   - stu_strncpy()       portable strncpy() with NULL check (suppresses MSVC C4996)
  *   - stu_strchr()        portable strchr() with NULL check
  *   - stu_strcmp()        portable strcmp() with NULL check
+ *   - stu_strcpy()        portable strcpy() (suppresses MSVC C4996)
  *   - stu_strlen()        portable strlen() with NULL check
+ *   - stu_strncpy()       portable strncpy() with NULL check (suppresses MSVC C4996)
  *   - stu_atoi()          portable atoi() with NULL check
  *   - stu_debugbreak()    portable debug breakpoint
  *
@@ -175,14 +175,8 @@ long stu_strtol(const char *str, char **endptr, int base);
 /* Portable sscanf wrapper. Same variadic interface as sscanf. */
 int stu_sscanf(const char *str, const char *format, ...);
 
-/* Portable stu_strcpy wrapper. Same interface as stu_strcpy. */
-char *stu_strcpy(char *dst, const char *src);
-
 /* Portable strcat wrapper. Same interface as strcat. */
 char *stu_strcat(char *dst, const char *src);
-
-/* Portable strncpy wrapper with NULL check. Same interface as strncpy. */
-char *stu_strncpy(char *dst, const char *src, size_t count);
 
 /* Portable strchr wrapper with NULL check. Returns NULL if str is NULL. */
 char *stu_strchr(const char *str, int ch);
@@ -190,8 +184,14 @@ char *stu_strchr(const char *str, int ch);
 /* Portable strcmp wrapper with NULL check. NULL is treated as less-than non-NULL; two NULLs compare equal. */
 int stu_strcmp(const char *lhs, const char *rhs);
 
+/* Portable stu_strcpy wrapper. Same interface as stu_strcpy. */
+char *stu_strcpy(char *dst, const char *src);
+
 /* Portable strlen wrapper with NULL check. Returns 0 if str is NULL. */
 size_t stu_strlen(const char *str);
+
+/* Portable strncpy wrapper with NULL check. Same interface as strncpy. */
+char *stu_strncpy(char *dst, const char *src, size_t count);
 
 /* ============================================================================
  * Compatibility aliases (optional, define STU_COMPAT_ALIASES to enable)
@@ -694,18 +694,6 @@ int stu_sscanf(const char *str, const char *format, ...)
 }
 
 /* --------------------------------------------------------------------------
- * stu_strcpy - portable stu_strcpy wrapper
- * -------------------------------------------------------------------------- */
-char *stu_strcpy(char *dst, const char *src)
-{
-    if(dst == NULL || src == NULL)
-    {
-        return dst;
-    }
-    return strcpy(dst, src);
-}
-
-/* --------------------------------------------------------------------------
  * stu_strcat - portable strcat wrapper
  * -------------------------------------------------------------------------- */
 char *stu_strcat(char *dst, const char *src)
@@ -715,18 +703,6 @@ char *stu_strcat(char *dst, const char *src)
         return dst;
     }
     return strcat(dst, src);
-}
-
-/* --------------------------------------------------------------------------
- * stu_strncpy - portable strncpy wrapper with NULL check
- * -------------------------------------------------------------------------- */
-char *stu_strncpy(char *dst, const char *src, size_t count)
-{
-    if(dst == NULL || src == NULL)
-    {
-        return dst;
-    }
-    return strncpy(dst, src, count);
 }
 
 /* --------------------------------------------------------------------------
@@ -762,6 +738,18 @@ int stu_strcmp(const char *lhs, const char *rhs)
 }
 
 /* --------------------------------------------------------------------------
+ * stu_strcpy - portable stu_strcpy wrapper
+ * -------------------------------------------------------------------------- */
+char *stu_strcpy(char *dst, const char *src)
+{
+    if(dst == NULL || src == NULL)
+    {
+        return dst;
+    }
+    return strcpy(dst, src);
+}
+
+/* --------------------------------------------------------------------------
  * stu_strlen - portable strlen wrapper with NULL check
  * -------------------------------------------------------------------------- */
 size_t stu_strlen(const char *str)
@@ -771,6 +759,18 @@ size_t stu_strlen(const char *str)
         return 0;
     }
     return strlen(str);
+}
+
+/* --------------------------------------------------------------------------
+ * stu_strncpy - portable strncpy wrapper with NULL check
+ * -------------------------------------------------------------------------- */
+char *stu_strncpy(char *dst, const char *src, size_t count)
+{
+    if(dst == NULL || src == NULL)
+    {
+        return dst;
+    }
+    return strncpy(dst, src, count);
 }
 
 /* --------------------------------------------------------------------------
