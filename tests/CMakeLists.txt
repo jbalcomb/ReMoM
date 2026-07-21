@@ -361,35 +361,13 @@ set_tests_properties(HeMoM_Combat_Strategic_Assertions PROPERTIES
 #  survives (10 dmg), AI summons a Fire Elemental.  See assert_combat_s1.txt.
 #
 #  The full scenario runs WINDOWED -- ReMoMber drives the real tactical screen
-#  from combat_s1.hms, which needs a display.  So the RUN step is gated behind
-#  ENABLE_WINDOWED_COMBAT_TESTS and executed on demand.  The CHECK step is
-#  automated and headless: it dumps the committed baseline save (the outcome the
-#  scenario reproduces) and asserts the pinned combat fields, guarding the
-#  baseline+assert pair in CI without a display.
+#  from combat_s1.hms, which needs a display.  So the replay is gated behind
+#  ENABLE_WINDOWED_COMBAT_TESTS and executed on demand.  There is no headless
+#  CI check: tactical combat is a rendering screen and cannot run under
+#  Platform_Headless (see BRA-Combat-Testing.md), so the assertions in
+#  assert_combat_s1.txt can only be produced and checked through the windowed
+#  replay below.
 # =========================================================================
-
-# --- Automated check against the committed baseline (headless, CI) ---
-add_test(
-    NAME Combat_S1_Baseline_Dump
-    COMMAND $<TARGET_FILE:savedump>
-        ${HEMOM_TEST_ASSETS}/combat_s1_baseline.GAM
-        ${HEMOM_TEST_WORKDIR}/combat_s1_baseline.txt
-)
-set_tests_properties(Combat_S1_Baseline_Dump PROPERTIES
-    FIXTURES_SETUP Combat_S1_Baseline
-    LABELS "combat;tactical"
-)
-
-add_test(
-    NAME Combat_S1_Check
-    COMMAND $<TARGET_FILE:check_save_fields>
-        ${HEMOM_TEST_WORKDIR}/combat_s1_baseline.txt
-        ${CMAKE_CURRENT_SOURCE_DIR}/assert_combat_s1.txt
-)
-set_tests_properties(Combat_S1_Check PROPERTIES
-    FIXTURES_REQUIRED Combat_S1_Baseline
-    LABELS "combat;tactical"
-)
 
 # --- On-demand windowed replay: regenerate SAVE1 through the real screen ---
 # Needs a display; OFF by default.  Enable with -DENABLE_WINDOWED_COMBAT_TESTS=ON
@@ -458,32 +436,10 @@ endif()
 #  under seed 12345 (single-player, synchronous, turn-based).  Outcome: Fa-rul
 #  razed, one attacker survives at the city square.  See assert_combat_s2.txt.
 #
-#  Same structure as scenario 1: automated headless check against the committed
-#  baseline; on-demand windowed replay gated by ENABLE_WINDOWED_COMBAT_TESTS.
+#  Same structure as scenario 1: on-demand windowed replay gated by
+#  ENABLE_WINDOWED_COMBAT_TESTS.  No headless CI check -- tactical combat
+#  cannot run under Platform_Headless (see BRA-Combat-Testing.md).
 # =========================================================================
-
-# --- Automated check against the committed baseline (headless, CI) ---
-add_test(
-    NAME Combat_S2_Baseline_Dump
-    COMMAND $<TARGET_FILE:savedump>
-        ${HEMOM_TEST_ASSETS}/combat_s2_baseline.GAM
-        ${HEMOM_TEST_WORKDIR}/combat_s2_baseline.txt
-)
-set_tests_properties(Combat_S2_Baseline_Dump PROPERTIES
-    FIXTURES_SETUP Combat_S2_Baseline
-    LABELS "combat;tactical"
-)
-
-add_test(
-    NAME Combat_S2_Check
-    COMMAND $<TARGET_FILE:check_save_fields>
-        ${HEMOM_TEST_WORKDIR}/combat_s2_baseline.txt
-        ${CMAKE_CURRENT_SOURCE_DIR}/assert_combat_s2.txt
-)
-set_tests_properties(Combat_S2_Check PROPERTIES
-    FIXTURES_REQUIRED Combat_S2_Baseline
-    LABELS "combat;tactical"
-)
 
 # --- On-demand windowed replay (needs a display; OFF by default) ---
 # The windowed replays share SAVE1.GAM/SAVE9.GAM in the work dir, so RESOURCE_LOCK
