@@ -5,6 +5,7 @@
  */
 
 #include "../../platform/include/Platform.h"
+#include "../include/Platform_Capture.h"
 
 #include "sdl2_PFL.h"
 #include <SDL.h>
@@ -76,6 +77,12 @@ void Platform_Video_Update(void)
     int pitch;
 
 
+
+    /* CLAUDE: demo capture -- submit the finished frame before presenting it. */
+    if(Platform_Capture_Active())
+    {
+        Platform_Capture_Video_Frame(video_page_buffer[draw_page_num], screen_pixel_width, screen_pixel_height, platform_palette_buffer);
+    }
 
     assert(sdl2_surface_RGB666 != NULL);
     assert(sdl2_surface_ARGB8888 != NULL);

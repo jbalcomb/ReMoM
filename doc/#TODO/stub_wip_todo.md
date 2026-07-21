@@ -40,7 +40,7 @@
 - [ ] TILE_NextFreeLand
 
 ## AISPELL
-- [ ] AI_Research_Picker__STUB
+- [ ] AI_Research_Picker__STUB — NOT FOUND: no definition in source; only a comment reference at CITYCALC.c:988 (verified 2026-07-21)
 - [x] AI_Spell_Select — done-done 2026-06-11 (walkthrough doc, `__STUB` suffix dropped, GEMINI deleted, variable casing normalized, 9 leaf pickers stubbed `return 0;`)
 - [ ] AITP_Change_Terrain
 - [ ] AITP_Spell_Ward
@@ -52,7 +52,7 @@
 
 ## capture
 - [x] F11_Key__WIP
-- [x] Screen_Flic_Capture__STUB
+- [x] Screen_Flic_Capture — was Screen_Flic_Capture__STUB; suffix dropped in source, def capture.c:132 (verified 2026-07-21)
 - [x] VGA_GetDACBlock
 - [x] VGA_ReadScreenLine
 - [x] Screen_Picture_Capture()  // WZD s24p07  // MoO2  Module: capture  Screen_Flic_Capture()
@@ -83,19 +83,19 @@
 - [ ] City_Screen_Draw__WIP
 
 ## Combat
-- [ ] AI_BU_AssignAction__WIP — renamed to AI_BU_AssignAction (CMBTAI.c:968); body substantive, needs done-done review
+- [ ] AI_BU_AssignAction — renamed from AI_BU_AssignAction__WIP; impl (CMBTAI.c:968), needs done-done review (name verified 2026-07-21)
 - [x] AI_BU_GetAttackValue__STUB
-- [ ] AI_BU_ProcessAction__WIP — renamed to AI_BU_ProcessAction (CMBTAI.c:268); body substantive (holds the AI combat cast call at CMBTAI.c:521), needs done-done review
+- [ ] AI_BU_ProcessAction — renamed from AI_BU_ProcessAction__WIP; impl (CMBTAI.c:268), needs done-done review (name verified 2026-07-21)
 - [ ] AI_BU_SelectAction__WIP — renamed to Choose_Target_And_Action (CMBTAI.c:1153); body substantive, needs done-done review
 - [ ] AI_CMB_PlayTurn__WIP — renamed to Auto_Cast_Spell_And_Do_Combat_Turn (Combat.c:4508); body substantive, needs done-done review
 - [ ] AI_CombatSpellList — impl (Combat.c:25959), needs done-done review; AI Combat Spell layer
 - [ ] AI_EvaluateCmbtSpell — impl (Combat.c:24632), needs done-done review; AI Combat Spell layer
 - [x] AI_FightorFlight__STUB
-- [x] AI_GetCombatRallyPt__WIP
+- [x] AI_GetCombatRallyPt — was AI_GetCombatRallyPt__WIP; suffix dropped in source, def CMBTAI.c:658 (verified 2026-07-21)
 - [ ] AI_MoveBattleUnits__WIP
 - [ ] AI_RestrictToCity__WIP
 - [ ] AI_SelectCmbtSpell — impl (Combat.c:24565), needs done-done review; AI Combat Spell layer
-- [x] AI_SetBasicAttacks__WIP
+- [x] AI_SetBasicAttacks — was AI_SetBasicAttacks__WIP; suffix dropped in source, def CMBTAI.c:103 (verified 2026-07-21)
 - [ ] AI_SetCombatRealms — impl (Combat.c:25792), needs done-done review; AI Combat Spell layer
 - [ ] AI_UnitThreatRealms — impl (Combat.c:25860), needs done-done review; AI Combat Spell layer
 - [x] AITP_Combat_Spell — done-done 2026-07-07 (walkthrough doc doc/ComputerPlayer/Combat-AITP_Combat_Spell.md; faithful 1:1 to AITP_CombatSpell__STUB.asm; R1 summon-exhaustion + R2 buff-mask + R3 case-16 write-back fixed; builds clean)
@@ -109,7 +109,7 @@
 - [ ] AITP_RecallHero — impl (Combat.c:14876), needs done-done review; AI Combat Spell layer
 - [ ] AITP_WarpCreature — impl (Combat.c:12196), needs done-done review; AI Combat Spell layer
 - [ ] AITP_WarpWood — impl (Combat.c:12144), needs done-done review; AI Combat Spell layer
-- [ ] Battle_Unit_Action__WIP
+- [ ] Battle_Unit_Action — renamed from Battle_Unit_Action__WIP; impl (Combat.c:3418), needs done-done review (name verified 2026-07-21)
 - [ ] Battle_Unit_Attack__WIP
 - [ ] BU_Apply_Battlefield_Effects__WIP
 - [x] BU_ApplyDamage  AKA BU_ApplyDamage__WIP__SEGRAX
@@ -119,16 +119,16 @@
 - [ ] BU_GetInstaMoveType__WIP
 - [ ] BU_HasSpellAbility__WIP
 - [x] BU_IsVisible__STUB
-- [ ] BU_MeleeWallCheck__WIP
+- [ ] BU_MeleeWallCheck — renamed from BU_MeleeWallCheck__WIP; impl (Combat.c:16682), needs done-done review (name verified 2026-07-21)
 - [ ] BU_MoveConfused__WIP
 - [ ] BU_ProcessAttack__WIP
 - [ ] BU_SetBaseAnims__WIP
 - [ ] BU_SetCityMovement__WIP
-- [ ] BU_SetVisibility__WIP
+- [ ] BU_SetVisibility — renamed from BU_SetVisibility__WIP; impl (Combat.c:9696), needs done-done review (name verified 2026-07-21)
 - [x] BU_SortSlowestFirst__WIP
-- [x] Check_For_Winner__WIP
+- [x] Check_For_Winner — was Check_For_Winner__WIP; suffix dropped in source, def Combat.c:9134 (verified 2026-07-21)
 - [ ] CMB_BaseAllocs__WIP
-- [ ] CMB_CE_Refresh__WIP
+- [ ] CMB_CE_Refresh__WIP — NOT FOUND: no definition in source; appears only in comments (verified 2026-07-21)
 - [ ] CMB_ComposeBackgrnd__WIP
 - [ ] CMB_ComposeBookBG__WIP
 - [ ] CMB_LoadResources__WIP
@@ -154,7 +154,7 @@
 - [ ] Combat_Spell_Target_Screen__WIP
 - [ ] Do_Legal_Spell_Check__WIP
 - [ ] End_Of_Combat__WIP
-- [ ] Generate_Combat_Map__WIP
+- [ ] Generate_Combat_Map — renamed from Generate_Combat_Map__WIP; impl (Combat.c:28636), needs done-done review (name verified 2026-07-21)
 - [ ] Move_Battle_Unit__WIP
 - [ ] STK_CaptureCity__WIP
 - [ ] STK_ComposeFleeLost__STUB
@@ -177,7 +177,7 @@
 - [x] Conquest_Animation
 
 ## DIPLOMAC
-- [ ] Change_Relations__WIP
+- [ ] Change_Relations — renamed from Change_Relations__WIP; impl (DIPLOMAC.c:3450), needs done-done review (name verified 2026-07-21)
 - [ ] DIPL_sub_72DB6__STUB
 - [ ] Diplomacy_Exchange_Spell__WIP
 - [ ] Diplomacy_Propose_Treaty__WIP
@@ -188,7 +188,7 @@
 - [ ] IDK_Npc_Target_Player__STUB
 - [ ] Npc_Proposal__WIP
 - [ ] NPC_To_Human_Diplomacy
-- [ ] NPC_To_NPC_Treaty_Negotiations__STUB
+- [ ] NPC_To_NPC_Treaty_Negotiations — renamed from NPC_To_NPC_Treaty_Negotiations__STUB; impl (DIPLOMAC.c:4894), needs done-done review (name verified 2026-07-21)
 
 ## EMM
 - [ ] EMM_ReleaseAll__STUB
@@ -198,7 +198,7 @@
 - [ ] DBG_Open_ERROR_LOG__STUB
 
 ## Explore
-- [ ] Update_Scouted_And_Contacted__WIP
+- [ ] Update_Scouted_And_Contacted — renamed from Update_Scouted_And_Contacted__WIP; impl (Explore.c:292), needs done-done review (name verified 2026-07-21)
 
 ## Fields
 - [ ] GUI_MoveDlgHighlight__STUB
@@ -254,7 +254,7 @@
 - [ ] Lair_Combat__WIP
 
 ## LOADER
-- [ ] Spellbook_Load_Small_Pictures__WIP
+- [ ] Spellbook_Load_Small_Pictures — renamed from Spellbook_Load_Small_Pictures__WIP; impl (LOADER.c:1614), needs done-done review (name verified 2026-07-21)
 
 ## MainScr
 - [ ] CTY_CheckSpellWard__STUB
@@ -267,7 +267,7 @@
 - [ ] Build_Connectivity_Graph
 - [ ] Build_Connectivity_Graphs
 - [ ] Generate_Home_City__WIP
-- [ ] Generate_Neutral_Cities__WIP
+- [ ] Generate_Neutral_Cities — renamed from Generate_Neutral_Cities__WIP; impl (MAPGEN.c:5511), needs done-done review (name verified 2026-07-21)
 
 ## NewGame
 - [ ] GAME_WizardsLaunch__WIP
@@ -286,7 +286,7 @@
 
 ## NEXTTURN
 - [ ] Create_Unit
-- [ ] Diplomacy_Growth_For_Enchantments__WIP
+- [ ] Diplomacy_Growth_For_Enchantments — renamed from Diplomacy_Growth_For_Enchantments__WIP; impl (NEXTTURN.c:4125), needs done-done review (name verified 2026-07-21)
 - [ ] Players_Apply_Upkeeps__WIP
 - [ ] WIZ_MatchFoodUpkeep__WIP
 - [ ] WIZ_MatchManaUpkeep__WIP
@@ -342,7 +342,7 @@
 - [ ] SBK_DrawSpellDecode__STUB
 - [ ] SBK_LoadSpellDescs__WIP
 - [ ] SmlBook_Compose__WIP
-- [x] SmlBook_Draw__WIP
+- [x] SmlBook_Draw — was SmlBook_Draw__WIP; suffix dropped in source, def Spellbook.c:1526 (verified 2026-07-21)
 - [x] SmlBook_PageTurn__WIP
 - [ ] UU_IDK_turn_to_cast__STUB
 

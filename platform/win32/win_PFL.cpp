@@ -21,6 +21,7 @@
 #include "../../platform/include/Platform_Keys.h"
 /* CLAUDE: needed for Platform_Record_Active() / Replay_Capture_Frame() used in Platform_Event_Handler. */
 #include "../../platform/include/Platform_Replay.h"
+#include "../../platform/include/Platform_Capture.h"
 #include "win_PFL.h"
 
 /* REMOM_VERSION_STRING comes from the CMake-generated remom_version.h (built from
@@ -231,6 +232,12 @@ void Platform_Video_Update(void)
 {
     assert(video_page_buffer[draw_page_num] != NULL);
     assert(win_video_back_buffer.Memory != NULL);
+
+    /* CLAUDE: demo capture -- submit the finished frame before presenting it. */
+    if (Platform_Capture_Active())
+    {
+        Platform_Capture_Video_Frame(video_page_buffer[draw_page_num], screen_pixel_width, screen_pixel_height, platform_palette_buffer);
+    }
 
     Win_Convert_Engine_Pixels_To_Back_Buffer(&win_video_back_buffer);
     Win_Blit_Back_Buffer(&win_video_back_buffer, win_device_context, win_window_width, win_window_height);

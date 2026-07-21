@@ -107,6 +107,10 @@ else()
     endif()
 endif()
 
+# In-engine A/V capture for rendering the scripted demo video.  Backend-agnostic: each backend's
+# Platform_Video_Update() feeds it frames; the SDL backends also feed it post-mix audio.
+list(APPEND PLATFORM_SOURCES capture/PFL_Capture.c)
+
 add_library(Platform STATIC ${PLATFORM_SOURCES})
 
 if(PLATFORM_DEFINES)

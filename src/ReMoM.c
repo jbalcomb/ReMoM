@@ -64,6 +64,7 @@
 
 #include "../platform/include/Platform.h"
 #include "../platform/include/Platform_Replay.h"
+#include "../platform/include/Platform_Capture.h"
 
 #include "ReMoM_Init.h"
 #include "Artificial_Human_Player.h"  /* HeMoM_Player_Frame() */
@@ -372,8 +373,32 @@ int main(int argc, char * argv[])
     /* CLAUDE: Record, Replay, and Startup Mode CLI flags. */
     {
         int argi;
+        /* CLAUDE: --capture is collected across the whole loop (so --capture-fps may appear on
+           either side of it) and started once, after parsing.  See
+           doc/#AI_Plans/PRD-Scripted-Demo-Capture.md. */
+        const char * capture_dir = NULL;
+        int capture_fps = 0;
         for(argi = 1; argi < argc; argi++)
         {
+            if(stu_strcmp(argv[argi], "--capture") == 0 && (argi + 1) < argc)
+            {
+
+                LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: --capture flag detected", __FILE__, __LINE__);
+
+                argi++;
+                capture_dir = argv[argi];
+                continue;
+            }
+            else if(stu_strcmp(argv[argi], "--capture-fps") == 0 && (argi + 1) < argc)
+            {
+
+                LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: --capture-fps flag detected", __FILE__, __LINE__);
+
+                argi++;
+                capture_fps = atoi(argv[argi]);
+                continue;
+            }
+
             if(stu_strcmp(argv[argi], "--record") == 0 && (argi + 1) < argc)
             {
 
@@ -433,6 +458,18 @@ int main(int argc, char * argv[])
                 {
                     Platform_Register_Frame_Callback(HeMoM_Player_Frame);
                 }
+            }
+        }
+
+        /* CLAUDE: start capture last, so its t=0 is as close as possible to the first presented
+           frame, and register the finalizer -- the game exits through several paths that never
+           return here (Exit_With_Message, the endgame Respawn hack), so atexit is what guarantees
+           the WAV header and capture_info.txt get written. */
+        if(capture_dir != NULL)
+        {
+            if(Platform_Capture_Start(capture_dir, capture_fps) == 0)
+            {
+                atexit(Platform_Capture_Stop);
             }
         }
     }
