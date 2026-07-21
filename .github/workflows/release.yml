@@ -54,6 +54,18 @@ jobs:
           echo "version=${RAW#v}" >> "$GITHUB_OUTPUT"
           echo "Building version: ${RAW#v}"
 
+      - name: Fetch SDL2 + SDL2_mixer (VC dev libraries)
+        # MSVC-release is now the SDL2 backend; the runner has no SDL2, so fetch the
+        # official VC dev packages to the exact paths CMakeLists.txt looks for.
+        run: |
+          set -euo pipefail
+          mkdir -p /c/devellib && cd /c/devellib
+          curl -fSL -o SDL2.zip       https://github.com/libsdl-org/SDL/releases/download/release-2.32.2/SDL2-devel-2.32.2-VC.zip
+          curl -fSL -o SDL2_mixer.zip https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.8.1/SDL2_mixer-devel-2.8.1-VC.zip
+          unzip -q SDL2.zip
+          unzip -q SDL2_mixer.zip
+          ls -d SDL2-2.32.2 SDL2_mixer-2.8.1   # fail early if the extracted names differ
+
       - name: Configure (MSVC-release preset)
         # CMAKE_INSTALL_BINDIR=. keeps the portable ZIP / NSIS layout flat
         # (ReMoMber at the package root); a plain local install uses bin/.
