@@ -34,6 +34,7 @@
  *   - stu_strcmp()        portable strcmp() with NULL check
  *   - stu_strcpy()        portable strcpy() (suppresses MSVC C4996)
  *   - stu_strlen()        portable strlen() with NULL check
+ *   - stu_strncat()       portable strncat() with NULL check (suppresses MSVC C4996)
  *   - stu_strncpy()       portable strncpy() with NULL check (suppresses MSVC C4996)
  *   - stu_atoi()          portable atoi() with NULL check
  *   - stu_debugbreak()    portable debug breakpoint
@@ -189,6 +190,9 @@ char *stu_strcpy(char *dst, const char *src);
 
 /* Portable strlen wrapper with NULL check. Returns 0 if str is NULL. */
 size_t stu_strlen(const char *str);
+
+/* Portable strncat wrapper with NULL check. Same interface as strncat. */
+char *stu_strncat(char *dst, const char *src, size_t count);
 
 /* Portable strncpy wrapper with NULL check. Same interface as strncpy. */
 char *stu_strncpy(char *dst, const char *src, size_t count);
@@ -759,6 +763,18 @@ size_t stu_strlen(const char *str)
         return 0;
     }
     return strlen(str);
+}
+
+/* --------------------------------------------------------------------------
+ * stu_strncat - portable strncat wrapper with NULL check
+ * -------------------------------------------------------------------------- */
+char *stu_strncat(char *dst, const char *src, size_t count)
+{
+    if(dst == NULL || src == NULL)
+    {
+        return dst;
+    }
+    return strncat(dst, src, count);
 }
 
 /* --------------------------------------------------------------------------
