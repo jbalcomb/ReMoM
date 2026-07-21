@@ -1142,7 +1142,6 @@ int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header)
 
 // WZD s30p20
 // MoO2  Module: bitmap  Draw_Bitmap_Rotated()
-/* GEMINI */
 void Draw_Bitmap_Rotated(int16_t x, int16_t y, int16_t angle, SAMB_ptr pict_seg)
 {
     int16_t tr_x = 0;
@@ -1155,10 +1154,8 @@ void Draw_Bitmap_Rotated(int16_t x, int16_t y, int16_t angle, SAMB_ptr pict_seg)
     int16_t height = 0;
     width = GET_2B_OFS(pict_seg, FLIC_HDR_POS_WIDTH);
     height = GET_2B_OFS(pict_seg, FLIC_HDR_POS_HEIGHT);
-
     /* Execute matrix math to populate the output corners (TR, BR, BL) based on the angle */
     Get_Rotated_Pixels(angle, width, height, &x, &y, &tr_x, &tr_y, &br_x, &br_y, &bl_x, &bl_y);
-
     /* Forward the fully computed quadrilateral into the linear, refactored frame buffer pipeline */
     Draw_Bitmap_Animation_Block(x, y, tr_x, tr_y, br_x, br_y, bl_x, bl_y, pict_seg, height, width);
 }
@@ -1166,7 +1163,6 @@ void Draw_Bitmap_Rotated(int16_t x, int16_t y, int16_t angle, SAMB_ptr pict_seg)
 
 // WZD s30p21
 // MoO2  Module: bitmap  Draw_Bitmap_Animation_Block()
-/* GEMINI */
 /**
  * High-level coordinate transformation and clipping pipeline.
  */
@@ -1177,38 +1173,28 @@ void Draw_Bitmap_Animation_Block(int16_t tl_x, int16_t tl_y, int16_t tr_x, int16
     int16_t left_corner, corner_2, corner_3, right_corner;
     int16_t min_y, max_y;
     int loop_x, loop_y;
-    
     int16_t replacement_colors = 0; /* Extracted via conceptual farpeekb */
     int16_t draw_left, draw_top, draw_width, draw_height;
     int16_t col1_hgt, col_height_incr, skip_width;
     int16_t next_draw_line, up_slope, nl_constant;
-    
     int16_t horizontal_read_skip, vertical_read_skip;
     int16_t horizontal_x_slope, horizontal_left_pixel, horizontal_down_pixel;
     int16_t vertical_x_slope, vertical_y_slope, vertical_left_pixel, vertical_down_pixel;
-    
     int read_offset;
     int di_fractional;
-
     uint8_t* vga_frame_buffer;
     const uint8_t* texture_data;
     const uint8_t* remap_palettes;
-
     col1_hgt = 0;  /* OGBUG  uninitialized variable */
-
-
     /* Populate geometric workspace arrays */
     x[1] = tl_x; x[2] = tr_x; x[3] = br_x; x[4] = bl_x;
     y[1] = tl_y; y[2] = tr_y; y[3] = br_y; y[4] = bl_y;
-
     left_corner = 1; corner_2 = 2; corner_3 = 3; right_corner = 4;
     max_y = 10000; min_y = 0;
-
     /* Execute sorting pass to establish geometric structure */
     for(loop_y = 0; loop_y < 4; loop_y++) {
         if(y[loop_y + 1] < min_y) min_y = y[loop_y + 1];
         if(y[loop_y + 1] > max_y) max_y = y[loop_y + 1];
-        
         for(loop_x = 0; loop_x < 3; loop_x++) {
             if(x[loop_x + 1] > x[loop_x + 2]) {
                 Swap_Short(&x[loop_x + 1], &x[loop_x + 2]);
@@ -1220,13 +1206,11 @@ void Draw_Bitmap_Animation_Block(int16_t tl_x, int16_t tl_y, int16_t tr_x, int16
             }
         }
     }
-
     /* Out of bounds window clipping guard checks */
     if(x[1] > screen_window_x2 || x[4] < screen_window_x1 || 
         min_y > screen_window_y2 || max_y < screen_window_y1) {
         return;
     }
-
     /* Route execution depending on if drawing a standard uniform rect or transformed quad */
     /* [Standard Uniform Bounding Path - Reference Context Part 1] */
     if(x[1] == x[2]) {
@@ -1236,31 +1220,26 @@ void Draw_Bitmap_Animation_Block(int16_t tl_x, int16_t tl_y, int16_t tr_x, int16
             Swap_Short(&y[1], &y[2]);
             Swap_Short(&left_corner, &corner_2);
         }
-
         draw_left = x[1];
         draw_top = y[1];
         col1_hgt = y[2] - y[1] + 1;
         col_height_incr = 0;
         draw_width = x[3] - x[1] + 1;
         nl_constant = 0; up_slope = 0; next_draw_line = 0;
-
         /* Calculate source index parameters depending on rotation state index flags */
         read_offset = 0;
         horizontal_x_slope = ((int32_t)width << 8) / (x[3] - x[1] + 1);
         vertical_y_slope = ((int32_t)height << 8) / (y[2] - y[1] + 1);
         vertical_x_slope = 0;
         di_fractional = 0;
-        
         horizontal_read_skip = 0;
         vertical_read_skip = 0;
-
         /* Execute window bounds clip adjustments */
         if(x[3] >= screen_window_x1 && x[1] <= screen_window_x2) {
             skip_width = screen_window_x1 - x[1] - 1;
             if(screen_window_x2 < x[3]) {
                 draw_width = screen_window_x2 - x[1] + 1;
             }
-
             /* Initialize parameter structure package fields */
             TextureRenderParams p;
             p.start_x = draw_left; p.start_y = draw_top; p.width = draw_width; p.col1_hgt = col1_hgt;
@@ -1273,7 +1252,6 @@ void Draw_Bitmap_Animation_Block(int16_t tl_x, int16_t tl_y, int16_t tr_x, int16
             p.skip_width = skip_width; 
             p.min_off = screen_window_y1 * SCREEN_WIDTH;
             p.max_off = (screen_window_y2 + 1) * SCREEN_WIDTH;
-
             if(replacement_colors == 0) {
                 VGA_DrawTexture(&p);
             } else {
@@ -1288,7 +1266,6 @@ void Draw_Bitmap_Animation_Block(int16_t tl_x, int16_t tl_y, int16_t tr_x, int16
 draw_left = x[1];
         draw_top = y[1];
         draw_width = x[2] - x[1] + 1;
-
         if(y[2] < y[1]) {
             int32_t delta_y = (int32_t)(y[3] - y[1]) * (x[2] - x[1]);
             draw_height = (int16_t)(delta_y / (x[3] - x[1])) + y[1] - y[2] + 1;
@@ -1298,17 +1275,14 @@ draw_left = x[1];
             int32_t delta_y = (int32_t)(y[1] - y[3]) * (x[2] - x[1]);
             draw_height = (int16_t)(delta_y / (x[3] - x[1])) + y[2] - y[1] + 1;
         }
-
         col1_hgt = 1;
         col_height_incr = ((int32_t)(draw_height - col1_hgt) << 8) / (draw_width - 1);
         next_draw_line = -SCREEN_WIDTH;
-
         if(y[2] < y[3]) {
             up_slope = ((int32_t)(y[1] - y[2]) << 8) / (x[2] - x[1]);
         } else {
             up_slope = ((int32_t)(y[1] - y[3]) << 8) / (x[3] - x[1]);
         }
-
         if(up_slope < 0x100) {
             nl_constant = 0;
         } else {
@@ -1316,7 +1290,6 @@ draw_left = x[1];
             nl_constant = (up_slope / 0x100) * -SCREEN_WIDTH;
             up_slope %= 0x100;
         }
-
         /* Set sampling directions based on sorted index positions */
         if(left_corner == 1 || left_corner == 3) {
             if(y[2] < y[3]) {
@@ -1333,14 +1306,12 @@ draw_left = x[1];
             vertical_x_slope = ((int32_t)(width - 1) << 8) / (draw_height - 1);
             vertical_y_slope = ((int32_t)(height - 1) << 8) / (draw_height - 1);
         }
-
         /* Strip Pipeline Step Execution Dispatcher */
         if(x[2] >= screen_window_x1 && x[1] <= screen_window_x2) {
             skip_width = screen_window_x1 - x[1] - 1;
             if(screen_window_x2 < x[2]) {
                 draw_width = screen_window_x2 - x[1] + 1;
             }
-
             TextureRenderParams p;
             p.start_x = draw_left; p.start_y = draw_top; p.width = draw_width; p.col1_hgt = col1_hgt;
             p.ch_slope = col_height_incr; p.ch_incr = up_slope; p.up_slope = up_slope; p.nl = nl_constant;
@@ -1352,10 +1323,12 @@ draw_left = x[1];
             p.skip_width = skip_width;
             p.min_off = screen_window_y1 * SCREEN_WIDTH;
             p.max_off = (screen_window_y2 + 1) * SCREEN_WIDTH;
-
-            if(replacement_colors == 0) {
+            if(replacement_colors == 0)
+            {
                 VGA_DrawTexture(&p);
-            } else {
+            }
+            else
+            {
                 VGA_DrawTexture_R(&p);
             }
         }

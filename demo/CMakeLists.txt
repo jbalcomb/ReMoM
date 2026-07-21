@@ -14,6 +14,7 @@
 add_executable(demo_vga
     demo_main.c
     demo_harness.c
+    demo_crash.c
     effect_dissolve.c
     effect_earthquake.c
     effect_screen.c
@@ -25,6 +26,7 @@ add_executable(demo_vga
     effect_mastery.c
     effect_vanish.c
     effect_somlose.c
+    effect_somwin.c
     ${PROJECT_SOURCE_DIR}/src/ReMoM_Init.c   # full engine boot for the `score` / `mastery` effects
 )
 

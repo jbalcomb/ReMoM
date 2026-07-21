@@ -138,7 +138,7 @@ void Screen_Control(void)
     // WZD _players[NEUTRAL_PLAYER_IDX].banner_id = 5;  // enum Banner_Color {BNR_Brown = 5 }
     // WZD Clear_Fields();
     // WZD Loaded_Game_Update_WZD();
-    // WZD GAME_SoM_Cast_By = ST_UNDEFINED;
+    // WZD m_magic_winner_idx = ST_UNDEFINED;
 
                 // MGC  fid0_Continue:                            ; case 0x0
                 // MGC  Stop_Music__STUB()
@@ -173,7 +173,7 @@ void Screen_Control(void)
                 _players[NEUTRAL_PLAYER_IDX].banner_id = BNR_Brown;
                 Clear_Fields();
                 Loaded_Game_Update();
-                GAME_SoM_Cast_By = ST_UNDEFINED;
+                m_magic_winner_idx = ST_UNDEFINED;
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu LEAVE screen=Continue next=%d\n", (unsigned long long)Platform_Get_Millies(), current_screen);
 #endif
@@ -204,7 +204,7 @@ void Screen_Control(void)
                 }
 #endif
 
-                GAME_SoM_Cast_By = ST_UNDEFINED;
+                m_magic_winner_idx = ST_UNDEFINED;
                 GAME_RazeCity = ST_FALSE;
                 if(prev__Settings_BG_Music != magic_set.background_music)
                 {

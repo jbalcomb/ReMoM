@@ -73,7 +73,8 @@ static const Demo_Effect * const g_effects[] =
     &effect_score,
     &effect_mastery,
     &effect_vanish,
-    &effect_somlose
+    &effect_somlose,
+    &effect_somwin
 };
 #define DEMO_EFFECT_COUNT  ((int)(sizeof(g_effects) / sizeof(g_effects[0])))
 
@@ -98,6 +99,9 @@ int main(int argc, char * argv[])
 
     /* Unbuffered stdout so progress prints survive if the process is killed (headless smoke). */
     setvbuf(stdout, NULL, _IONBF, 0);
+
+    /* Report faults with a symbolized stack rather than a bare "Segmentation fault". */
+    Demo_Install_Crash_Handler();
 
     selected = NULL;
     if(argc >= 2)

@@ -196,6 +196,43 @@ Vanish_Bitmap is destructive so the copy is re-rendered every frame.  Default sp
 building (entries 42+, per LOADER.c:1190); LBX/entry CLI-overridable.  Trimmed boot -- no world/state,
 no file writes (run from bin/Debug directly).  Headless smoke: loaded CITYSCAP 42, looped crash-clean.
 
+## Crash reporter (DONE — demo_crash.c)
+`Demo_Install_Crash_Handler()` (called first thing in main) installs a SetUnhandledExceptionFilter
+that prints the exception code, the faulting/read address, and a DbgHelp-symbolized call stack from
+the MSVC-debug PDBs.  Windows-only; no-op elsewhere.  This turned a bare "Segmentation fault" in the
+`som` effect into `Get_String_Width (Fonts.c:2516) <- Print_Centered <- Win_Animation_Draw
+(CONQUEST.c:971) <- Win_Animation <- Spell_Of_Mastery (SPLMASTR.c:2098)` in one run.  Use it before
+guessing at any future demo fault.
+
+## Spell_Of_Mastery path (DONE — effect_somwin.c; DIRECT test, real function, runs to completion)
+`demo_vga somwin` DIRECTLY tests the real Spell_Of_Mastery(HUMAN_PLAYER_IDX) -- the WIN path: wizlab
+SoM screen animation (one 60-frame pass per rival wizard) -> Combat_Cache_Read -> Win_Animation ->
+End_Of_Game_Score.  Same full_boot + save-load pattern as `score` / `mastery` / `somlose`.
+  ReMoM_Init_Engine -> Load_WZD_Resources -> Load_SAVE_GAM(-1 -> SAVETEST.GAM) -> Loaded_Game_Update
+  -> magic_master_idx = ST_UNDEFINED -> GUI_String_1 alloc -> Spell_Of_Mastery(HUMAN_PLAYER_IDX)
+Two setup fixups:
+- `magic_master_idx = ST_UNDEFINED` — Spell_Of_Mastery early-returns if a magic master is recorded.
+- `GUI_String_1 = Near_Allocate_First(100)` — the engine's shared scratch string.  Every screen
+  allocates its own (AdvsrScr/CityScr/Combat/... all do `Near_Allocate_First(100)`), and in-game
+  Win_Animation inherits whatever the previous screen left behind.  The demo never enters one of
+  those screens, so Win_Animation_Draw's `stu_strcpy(GUI_String_1, ...)` / `Print_Centered` hit NULL.
+  (effect_win.c does the same thing with malloc.)
+No Combat_Cache_Write fixup needed -- Spell_Of_Mastery does its own.
+Smoke: exit 0, whole sequence unattended, MAGIC.SET byte-identical, COMBAT.TMP removed.
+
+### Reconstruction bug this found: 16-bit wraparound in the SoM frame gate (FIXED, SPLMASTR.c)
+`if(((_osc_anim_ctr + 65530) % 60) == 0)` -- in Borland C++ 3.0 `int` is 16-bit and the literal
+65530 does not fit a signed int, so it has type `unsigned int` and the whole expression evaluates in
+16-bit unsigned arithmetic.  At `_osc_anim_ctr == 6` the sum is 65536, which wraps to 0, so the gate
+fires at 6, 66, 126, ... -- exactly the wizard-cycle boundary `Spell_Of_Mastery_Draw()` keys on with
+`_osc_anim_ctr <= 6` / `(_osc_anim_ctr - 6) % 60`.  Promoted to 32-bit int, 65536 % 60 == 16, so the
+gate never fires at 6; it first fires at 50.  Since `Draw_File_Animation__HACK()` is reached from
+ctr == 7 onward, the 32-bit form drew before `Open_File_Animation__HACK()` had ever run ->
+`FLIC_Draw` asserted on a NULL `file_animation_header` (FLIC_Draw.c:788).
+Fixed by casting the sum to `uint16_t` to restore the original wrap (marked `/* CLAUDE */`, original
+line commented out above it).  Worth sweeping for other `+ 65NNN` / large-unsigned-literal
+arithmetic in the reconstruction -- same class of bug.
+
 ## Remaining (optional)
 - More effects: reconstruct & demo other seg026/027 transitions (CrossSlide, Interleave, Wipe,
   SliceFlip, SquaresFlip...) -- still stubs.

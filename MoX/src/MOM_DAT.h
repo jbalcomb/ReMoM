@@ -4758,7 +4758,7 @@ extern int16_t _xtra_mana_pos;
 // WZD dseg:CA1A 00 00 00 00 00 00 00 00 00 00                   word_434BA dw 5 dup(0)                  ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+308w ...
 
 // WZD dseg:CA24
-extern SAMB_ptr word_434C4;
+extern SAMB_ptr som_twinkle_seg;
 
 // WZD dseg:CA26
 extern SAMB_ptr IMG_SBK_SliderBG;

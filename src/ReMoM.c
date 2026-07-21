@@ -555,7 +555,7 @@ int MOM_main(int argc, char** argv)
     // WZD _players[NEUTRAL_PLAYER_IDX].banner_id = 5;  // enum Banner_Color {BNR_Brown = 5 }
     // WZD Clear_Fields();
     // WZD Loaded_Game_Update_WZD();
-    // WZD GAME_SoM_Cast_By = ST_UNDEFINED;
+    // WZD m_magic_winner_idx = ST_UNDEFINED;
 
     // MGC Menu_Screen_Control();
     // MGC Save_SAVE_GAM(8);

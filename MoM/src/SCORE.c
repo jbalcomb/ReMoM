@@ -49,7 +49,7 @@
 // SPLMASTR.c
 // WZD dseg:CA56                                                 BEGIN: ovr138 - Uninitialized Data
 // WZD dseg:CA56
-extern int16_t GAME_SoM_Cast_By;
+extern int16_t m_magic_winner_idx;
 
 
 
@@ -465,7 +465,7 @@ void End_Of_Game_Score(void)
     IMG_GAME_HoF_Pop = LBX_Reload_Next(halofam_lbx_file__ovr107, (15 + _players[_human_player_idx].capital_race), _screen_seg);
     Assign_Auto_Function(End_Of_Game_Score_Draw, 2);
     /* If SoM Win, make all other Wizards as Banished */
-    if(GAME_SoM_Cast_By == _human_player_idx)
+    if(m_magic_winner_idx == _human_player_idx)
     {
         for(itr = 1; itr < _num_players; itr++)
         {
@@ -725,9 +725,9 @@ void End_Of_Game_Score_Draw(void)
         _FORTRESSES[_human_player_idx].active == ST_TRUE
         &&
         (
-            GAME_SoM_Cast_By == ST_UNDEFINED
+            m_magic_winner_idx == ST_UNDEFINED
             ||
-            GAME_SoM_Cast_By == _human_player_idx
+            m_magic_winner_idx == _human_player_idx
         )
     )
     {
@@ -749,7 +749,7 @@ void End_Of_Game_Score_Draw(void)
     stu_strcat(GUI_String_1, cnst_HoF_String_9);
     stu_strcat(GUI_String_1, Bonus_Pts_String);
     temp_val = 0;
-    if(GAME_SoM_Cast_By == _human_player_idx)
+    if(m_magic_winner_idx == _human_player_idx)
     {
         temp_val = 250;
     }

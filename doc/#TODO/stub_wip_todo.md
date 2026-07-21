@@ -372,6 +372,9 @@
 - [x] Spell_Of_Mastery_Lose_Load
 - [x] Spell_Of_Mastery_Lose_Draw
 - [x] Spell_Of_Mastery_Lose
+- [x] Spell_Of_Mastery_Load
+- [x] Spell_Of_Mastery_Draw
+- [x] Spell_Of_Mastery
 - [ ] Spell_Target_Global_Enchantment_Bind__WIP
 - [ ] Spell_Target_Global_Enchantment_Disjunct__WIP
 

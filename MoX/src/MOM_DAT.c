@@ -3533,7 +3533,7 @@ int16_t _xtra_mana_pos;
 // WZD dseg:CA1A 00 00 00 00 00 00 00 00 00 00                   word_434BA dw 5 dup(0)                  ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+308w ...
 
 // WZD dseg:CA24
-SAMB_ptr word_434C4;
+SAMB_ptr som_twinkle_seg;
 
 // WZD dseg:CA26
 /*

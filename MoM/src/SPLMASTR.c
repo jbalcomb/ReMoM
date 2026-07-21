@@ -180,7 +180,7 @@ char monster_lbx_file__ovr138[] = "Monster";
 // WZD dseg:C9F3 00                                              db    0
 
 // WZD dseg:C9F4
-SAMB_ptr word_43494;
+SAMB_ptr som_wizlab_seg;
 
 // WZD dseg:C9F6
 /*
@@ -241,7 +241,7 @@ index of first/current element in the player's subset of the ovl_ench_list_spell
 int16_t ovl_ench_list_fst[(NUM_PLAYERS - 1)] = { 0, 0, 0, 0, 0};
 
 // WZD dseg:CA24
-// MOM_Data  SAMB_ptr word_434C4;
+// MOM_Data  SAMB_ptr som_twinkle_seg;
 
 // WZD dseg:CA26 00 00                                           IMG_SBK_SliderBG@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+38w ...
 // WZD dseg:CA28 00 00                                           GAME_MP_SpellVar_2 dw 0                 ; DATA XREF: CMB_SliderRedraw+3Fr ...
@@ -275,14 +275,14 @@ SAMB_ptr IMG_OVL_TargetWizBG;
 // WZD dseg:CA56                                                 BEGIN: ovr138 - Uninitialized Data
 
 // WZD dseg:CA56
-// drake178: GAME_SoM_Cast_By
+// drake178: m_magic_winner_idx
 /*
 ; HoF will skip turn count points if this is not -1 or
 ; the index of the human player, and SoM if it is not
 ; the human player
 ¿ ~== MoO2 _count_winner ?
 */
-int16_t GAME_SoM_Cast_By;
+int16_t m_magic_winner_idx;
 
 // WZD dseg:CA58
 SAMB_ptr spellose_wizard_sphere_seg;
@@ -1681,7 +1681,7 @@ void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t pl
 */
 
 // WZD o138p01
-void Spell_Of_Mastery_Lose_Load(int16_t wizard_id)
+static void Spell_Of_Mastery_Lose_Load(int16_t wizard_id)
 {
     // SPELLOSE.LBX, 028  "WIZLAB"    ""
     IMG_SBK_SliderBG = LBX_Reload(spellose_lbx_file__ovr138, 28, _screen_seg);
@@ -1696,7 +1696,7 @@ void Spell_Of_Mastery_Lose_Load(int16_t wizard_id)
     Set_Page_Off();
     FLIC_Draw(0, 0, IMG_SBK_SliderBG);
     Copy_Off_To_Back();
-    stu_strcpy(GUI_NearMsgString, _players[GAME_SoM_Cast_By].name);
+    stu_strcpy(GUI_NearMsgString, _players[m_magic_winner_idx].name);
     stu_strcat(GUI_NearMsgString, strHasCastThe);  // " has cast the"
     // SPELLOSE.LBX, 029  "SPHERE"    ""
     spellose_sphere_seg = LBX_Reload(spellose_lbx_file__ovr138, 29, _screen_seg);
@@ -1735,7 +1735,7 @@ void Spell_Of_Mastery_Lose_Load(int16_t wizard_id)
 
 
 // WZD o138p02
-void Spell_Of_Mastery_Lose_Draw(void)
+static void Spell_Of_Mastery_Lose_Draw(void)
 {
     uint8_t colors[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t start_x = 0;
@@ -1861,7 +1861,7 @@ void Spell_Of_Mastery_Lose(void)
 
 
 // WZD o138p04
-void Cast_Spell_Of_Mastery_Draw(void)
+static void Cast_Spell_Of_Mastery_Draw(void)
 {
     int16_t itr_frames = 0;
     int16_t frame_count = 0;
@@ -1954,251 +1954,148 @@ void Cast_Spell_Of_Mastery(int16_t player_idx)
 }
 
 // WZD o138p06
-// IDK_SomScr_Load()
-/*
-
-*/
-void Spell_Of_Mastery_Load(void)
+static void Spell_Of_Mastery_Load(void)
 {
-
     Set_Page_Off();
-
-    word_43494 = LBX_Reload(wizlab_lbx_file__ovr138, 19, _screen_seg);
-
-    FLIC_Draw(0, 0, word_43494);
-
+    // WIZLAB.LBX, 019    "WIZLAB"      ""
+    som_wizlab_seg = LBX_Reload(wizlab_lbx_file__ovr138, 19, _screen_seg);
+    FLIC_Draw(0, 0, som_wizlab_seg);
     Copy_Off_To_Back();
-
     Set_Page_On();
-
+    // SPLMASTR.LBX, 029    "VORTEXS"   "Vortex start"
     wizlab_blue_column_seg = LBX_Reload(splmastr_lbx_file__ovr138, 29, _screen_seg);
-
+    // ¿ broken - `14 +` doesn't line up ?
     IDK_wizard_id_thing_seg = LBX_Reload(splmastr_lbx_file__ovr138, (14 + _players[cast_spell_of_mastery_player_idx].wizard_id), World_Data);
-
-    word_434C4 = LBX_Reload_Next(splmastr_lbx_file__ovr138, 28, World_Data);
-
+    // SPLMASTR.LBX, 028    "TWINKLE"   ""
+    som_twinkle_seg = LBX_Reload_Next(splmastr_lbx_file__ovr138, 28, World_Data);
 }
 
 
 // WZD o138p07
-// IDK_SomScr_Draw()
-/*
-
-*/
-void Spell_Of_Mastery_Draw(void)
+static void Spell_Of_Mastery_Draw(void)
 {
-
     Copy_Back_To_Off();
-
     FLIC_Draw(90, 0, wizlab_blue_column_seg);
-
     if(_osc_anim_ctr <= 6)
     {
-
         Reset_Animation_Frame(IDK_wizard_id_thing_seg);
-
         FLIC_Draw(69, 75, IDK_wizard_id_thing_seg);
-
     }
     else
     {
-
         if(((_osc_anim_ctr - 6) % 60) < 10)
         {
-
             Set_Animation_Frame(IDK_wizard_id_thing_seg, (((_osc_anim_ctr - 6) % 60) / 2));
-
         }
         else
         {
-
             if(((_osc_anim_ctr - 6) % 60) > 50)
             {
-
                 Set_Animation_Frame(IDK_wizard_id_thing_seg, ((60 - ((_osc_anim_ctr - 6) % 60)) / 2));
-
             }
             else
             {
-
                 Set_Animation_Frame(IDK_wizard_id_thing_seg, 4);
-
             }
-
         }
-
         FLIC_Draw(69, 75, IDK_wizard_id_thing_seg);
-
         if((6 + ((_num_players - 1) * 60)) > _osc_anim_ctr)
         {
-
             Draw_File_Animation__HACK();
-
             if(((_osc_anim_ctr - 6) % 60) < 9)
             {
-
-                FLIC_Draw(95, 55, word_434C4);
-
+                FLIC_Draw(95, 55, som_twinkle_seg);
             }
-
         }
-
     }
-
 }
 
 
 // WZD o138p08
-// IDK_SomScr()
-/*
-
-*/
 void Spell_Of_Mastery(int16_t player_idx)
 {
-    int16_t var_4 = 0;
-    int16_t hotkey_ESC = 0;
-    int16_t itr_players = 0;  // _DI_
-    int16_t IDK = 0;  // _SI_
-
+    int16_t parade_frame_total = 0;
+    int16_t full_screen_esc = 0;
+    int16_t itr_players = 0;
+    int16_t parade_player_idx = 0;
     /* EOG_HACK */  if(magic_master_idx != ST_UNDEFINED) { return; }  /* JIC, two players cast SoM in the same turn (impossible?) */
-    
-    GAME_SoM_Cast_By = player_idx;
-
+    m_magic_winner_idx = player_idx;
     Combat_Cache_Write();
-
     Deactivate_Auto_Function();
-
     if(player_idx != HUMAN_PLAYER_IDX)
     {
         Spell_Of_Mastery_Lose();
+        /* EOG_HACK */  return;  /* OG-MoM: Spell_Of_Mastery_Lose() ends in Respawn and never returns */
     }
-    
     _osc_anim_ctr = 0;
-
     cast_spell_of_mastery_player_idx = player_idx;
-
-    // DOMSDOS  Stop_All_Sounds__STUB();
-
+    Stop_All_Sounds__STUB();
     SND_Spell_Music = LBX_Reload(music_lbx_file__ovr138, MUSIC_SoM_Started, SND_Music_Segment);  // MUSIC.LBX, 012 "MOM62 XM"    "Spell Mastery Started"
     SND_Spell_Music_size = lbxload_entry_length;
-
     Set_Mouse_List(1, mouse_list_none);
-
     Fade_Out();
-
     Spell_Of_Mastery_Load();
-
     CLROFF();
-
     Toggle_Pages();
-
     Copy_On_To_Off_Page();
-
     Set_Page_Off();
-
     Spell_Of_Mastery_Draw();
-
     Toggle_Pages();
-
     Fade_In();
-
     if(magic_set.background_music == ST_TRUE)
     {
         Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
     }
-
     Clear_Fields();
-
-    hotkey_ESC = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr138[0], ST_UNDEFINED);
-
-    var_4 = 12 + ((_num_players - 1) * 60);
-
+    full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr138[0], ST_UNDEFINED);
+    parade_frame_total = (12 + ((_num_players - 1) * 60));
     for(itr_players = 1; itr_players < _num_players; itr_players++)
     {
-
         if(_players[itr_players].casting_spell_idx == spl_Spell_Of_Return)
         {
-            var_4 -= 60;
+            parade_frame_total -= 60;
         }
-
     }
-
-    IDK = 0;
-
+    parade_player_idx = 0;
     _osc_anim_ctr = 0;
-
-    while((_osc_anim_ctr < var_4) && (Get_Input() != hotkey_ESC))
+    while((_osc_anim_ctr < parade_frame_total) && (Get_Input() != full_screen_esc))
     {
-
-        // IDGI
-        if(((_osc_anim_ctr + 65530) % 60) == 0)
+        if((((int16_t)(_osc_anim_ctr + 65530)) % 60) == 0)
         {
-            while(_players[++IDK].casting_spell_idx == spl_Spell_Of_Return) {}
-
-            Open_File_Animation__HACK(splmastr_lbx_file__ovr138, _players[IDK].wizard_id);
-
-            Reset_Animation_Frame(word_434C4);
+            while(_players[++parade_player_idx].casting_spell_idx == spl_Spell_Of_Return) {}
+            Open_File_Animation__HACK(splmastr_lbx_file__ovr138, _players[parade_player_idx].wizard_id);
+            Reset_Animation_Frame(som_twinkle_seg);
         }
-
-        if((var_4 - 6) == _osc_anim_ctr)
+        if((parade_frame_total - 6) == _osc_anim_ctr)
         {
-
             Release_Block(_screen_seg);
-
             Mark_Block(_screen_seg);
-
             wizlab_blue_column_seg = LBX_Reload(splmastr_lbx_file__ovr138, 31, _screen_seg);
-
         }
-
         if(_osc_anim_ctr == 7)
         {
-
             wizlab_blue_column_seg = LBX_Reload(splmastr_lbx_file__ovr138, 30, _screen_seg);
-
         }
-
         Mark_Time();
-
         Set_Page_Off();
-
         Spell_Of_Mastery_Draw();
-
         Toggle_Pages();
-
         Release_Time(3);
-
         _osc_anim_ctr++;
-
     }
-
-    // DOMSDOS  Stop_All_Sounds__STUB();
-
-    // DOMSDOS Play_Background_Music__STUB();
+    Stop_All_Sounds__STUB();
     Play_Background_Music();
-
     Fade_Out();
-
-    Load_Palette(0, -1, ST_NULL);
-
+    Load_Palette(0, ST_UNDEFINED, ST_NULL);
     CLROFF();
-
     Toggle_Pages();
-
     Copy_On_To_Off_Page();
-
     Fade_In();
-
     Combat_Cache_Read();
-
     Win_Animation(HUMAN_PLAYER_IDX);
-
     End_Of_Game_Score();
-
     s01p16_empty_function();
-
-    /* EOG_HACK */  // DONT  Respawn(cnst_MAGIC_EXE_File2, cnst_MAGICEXE_arg0_2, &spellose_lbx_file__ovr138[0], &spellose_lbx_file__ovr138[0]);
-
+    /* EOG_HACK */  // DONT  Respawn(cnst_MAGIC_EXE_File2, cnst_MAGICEXE_arg0_2, &spellose_lbx_file__ovr138[8], &spellose_lbx_file__ovr138[8]);
 }
 
 

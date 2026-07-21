@@ -62,7 +62,15 @@ The `Move_Units` combat set is shared by the human and AI/neutral combat paths (
 - `Resolve_Wizard_Conquest` entry — [CONQUEST.c:206](../../MoM/src/CONQUEST.c#L206) — `if (magic_master_idx != ST_UNDEFINED) return;`. All capture routes funnel through it (combat 4184/4248/4263/4270, rampage 22724, rebellion 994) because `Change_City_Ownership` ([City_ovr55.c:769-782](../../MoM/src/City_ovr55.c#L769)) only calls it on genuine elimination (**old owner non-neutral AND (fortress OR last city)**). One guard here stops a second Win/Lose animation once a winner exists. **This guard is REQUIRED** — the AI-conquest-then-rebellion case double-presents without it (rebellion's `Event_Twiddle` runs after `AI_Next_Turn` in `Next_Turn_Calc`, with no guard between).
 - `Spell_Of_Mastery` entry — [SPLMASTR.c:2215](../../MoM/src/SPLMASTR.c#L2215), before `GAME_SoM_Cast_By = player_idx` — covers both SoM outcomes (`Spell_Of_Mastery_Lose` is only reached from here).
 
-### Optional prompt-stop (UX latency, not correctness) — wired 2026-07-20
+### Prompt-stop — mostly latency, but NOT always (corrected 2026-07-20) — wired 2026-07-20
+
+> **Correction.** These were originally classified "UX latency, not correctness". That is wrong where the
+> skipped work has **side effects OG never performed**. The `Next_Turn_Calc` tail is the confirmed case:
+> OG `Respawn`ed on the rebellion path, so its ~25 remaining phases never ran, and `Do_Autosave()` was
+> overwriting the player's Continue slot with an already-finished game. That guard
+> ([NEXTTURN.c:772](../../MoM/src/NEXTTURN.c#L772)) is **mandatory**. See `BRA-Endgame-Testing.md` §10.6.
+> Test for the rest: latency-only if the skipped work is merely redundant; correctness-critical if it
+> writes state OG never wrote.
 
 Because REACT is at the turn boundary, the model **lets the current turn finish** and evaluates once — no mid-stack unwinding is required for correctness (the GUARD prevents double-present). Trade-off: after an AI kills the human mid-turn, the Lose screen plays deep (as OG did right before `Respawn`), then the remaining AI/NP turns would still compute before the menu. These short-circuits kill that pause. All keyed `if (magic_master_idx != ST_UNDEFINED)`:
 
@@ -135,7 +143,7 @@ All sites wired (`/* EOG_HACK */` markers) and `momlib` compiles/links clean:
 
 ## Implementation Notes
 
-- **The `Resolve_Wizard_Conquest` GUARD is the linchpin.** Every capture route funnels through it, so one entry guard makes the correctness property (no double-presentation) hold regardless of how promptly outer frames unwind. Everything in "Optional prompt-stop" is latency, not correctness.
+- **The `Resolve_Wizard_Conquest` GUARD is the linchpin.** Every capture route funnels through it, so one entry guard makes the correctness property (no double-presentation) hold regardless of how promptly outer frames unwind. **Corrected 2026-07-20:** the prompt-stops are *not* uniformly latency-only — the `Next_Turn_Calc` tail guard ([NEXTTURN.c:772](../../MoM/src/NEXTTURN.c#L772)) is mandatory, because OG `Respawn`ed there and the phases it skips include a `Do_Autosave()` that clobbers the Continue slot. See `BRA-Endgame-Testing.md` §10.6.
 - **Let-the-turn-finish.** Because REACT is at the turn boundary, the model does not unwind mid-turn by default. That's the big simplification over a flag-and-guard scheme: the AI turn completes on a valid board (a wizard just has no cities), then the boundary evaluates once.
 - **Presentation timing (B1).** For an AI kill, the Win/Lose animation plays mid-AI-turn — which is where OG played it (right before `Respawn`). B2 moves it to loop level at a fidelity cost.
 - **Fidelity ledger.** B1 adds `Get_Winner()` (new, MoO2-ported) + `magic_master_idx` SET/REACT/GUARD lines (new `/* CLAUDE HACK */` control flow justified by the platform substitution) and keeps every faithful call in place. B2 relocates `Win/Lose_Animation`/`End_Of_Game_Score`; log that in the walkthrough docs.

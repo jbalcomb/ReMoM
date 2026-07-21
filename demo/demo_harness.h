@@ -19,6 +19,10 @@
 
 #include <stdint.h>
 
+/* Install the unhandled-exception reporter (symbolized crash stack; see demo_crash.c).  The demos
+   drive real game code from real saves, so a fault should name a function, not just say "crashed". */
+void Demo_Install_Crash_Handler(void);
+
 /* Bring up / tear down the engine state an effect needs (asset-aware; see above). */
 void Demo_Boot(void);
 void Demo_Shutdown(void);

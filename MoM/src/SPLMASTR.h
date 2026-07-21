@@ -25,13 +25,13 @@ extern "C" {
 // WZD dseg:CA56                                                 BEGIN: ovr138 - Uninitialized Data
 
 // WZD dseg:CA56
-// drake178: GAME_SoM_Cast_By
+// drake178: m_magic_winner_idx
 /*
 ; HoF will skip turn count points if this is not -1 or
 ; the index of the human player, and SoM if it is not
 ; the human player
 */
-extern int16_t GAME_SoM_Cast_By;
+extern int16_t m_magic_winner_idx;
 
 // WZD dseg:CA58 00 00                                           spellose_wizard_sphere_seg dw 0                         ; DATA XREF: IDK_SomScr_Lose_Load+B1w ...
 // WZD dseg:CA5A 00 00                                           spellose_sphere_seg dw 0                         ; DATA XREF: IDK_SomScr_Lose_Load+9Dw ...
@@ -89,25 +89,25 @@ void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t pl
 
 
 // WZD o138p01
-void Spell_Of_Mastery_Lose_Load(int16_t wizard_id);
+// static void Spell_Of_Mastery_Lose_Load(int16_t wizard_id);
 
 // WZD o138p02
-void Spell_Of_Mastery_Lose_Draw(void);
+// static void Spell_Of_Mastery_Lose_Draw(void);
 
 // WZD o138p03
 void Spell_Of_Mastery_Lose(void);
 
 // WZD o138p04
-void Cast_Spell_Of_Mastery_Draw(void);
+// static void Cast_Spell_Of_Mastery_Draw(void);
 
 // WZD o138p05
 void Cast_Spell_Of_Mastery(int16_t player_idx);
 
 // WZD o138p06
-void Spell_Of_Mastery_Load(void);
+// static void Spell_Of_Mastery_Load(void);
 
 // WZD o138p07
-void Spell_Of_Mastery_Draw(void);
+// static void Spell_Of_Mastery_Draw(void);
 
 // WZD o138p08
 void Spell_Of_Mastery(int16_t player_idx);

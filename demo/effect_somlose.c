@@ -7,8 +7,8 @@
     and `mastery` -- this uses the full_boot + save-load path and calls the REAL function.
 
     Two setup fixups so the real function runs from a mid-game save:
-      - GAME_SoM_Cast_By: the save has no Spell-of-Mastery caster (ST_UNDEFINED), and _Load indexes
-        _players[GAME_SoM_Cast_By], so point it at a valid wizard.
+      - m_magic_winner_idx: the save has no Spell-of-Mastery caster (ST_UNDEFINED), and _Load indexes
+        _players[m_magic_winner_idx], so point it at a valid wizard.
       - Combat_Cache_Write(): Spell_Of_Mastery_Lose calls Combat_Cache_Read (reads COMBAT.TMP); write
         it first (from the loaded World_Data) so the read has a file.
 
@@ -25,7 +25,7 @@
 #include "../MoM/src/LOADER.h"     /* Load_WZD_Resources() */
 #include "../MoM/src/LoadScr.h"    /* Loaded_Game_Update() */
 #include "../MoM/src/Combat.h"     /* Combat_Cache_Write() */
-#include "../MoM/src/SPLMASTR.h"   /* Spell_Of_Mastery_Lose(), GAME_SoM_Cast_By */
+#include "../MoM/src/SPLMASTR.h"   /* Spell_Of_Mastery_Lose(), m_magic_winner_idx */
 
 #include "../src/ReMoM_Init.h"     /* ReMoM_Init_Engine() */
 
@@ -47,7 +47,7 @@ static void Effect_SomLose_Run(void)
 
     /* Point the "X has cast the Spell of Mastery" caption at a valid wizard, and create the
        combat cache Spell_Of_Mastery_Lose's Combat_Cache_Read expects. */
-    GAME_SoM_Cast_By = SOMLOSE_CASTER_IDX;
+    m_magic_winner_idx = SOMLOSE_CASTER_IDX;
     Combat_Cache_Write();
 
     printf("[somlose] save loaded; running Spell_Of_Mastery_Lose (ESC advances)\n");

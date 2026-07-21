@@ -78,6 +78,6 @@ The Spell-of-Mastery **defeat** cut-scene: when an AI completes the Spell of Mas
 
 - `…\ovr138\Spell_Of_Mastery_Lose{,_Draw,_Load}.asm` — IDA Pro 5.5 disassembly (**the authority**); Gemini `.c` second opinions.
 - Caller: `Spell_Of_Mastery` — invokes `_Lose` for a non-human SoM caster ([SPLMASTR.c:2073](../../MoM/src/SPLMASTR.c#L2073)); its endgame GUARD covers this path.
-- [`Vanish_Bitmap`](FLIC_Draw-Vanish_Bitmap.md) ([FLIC_Draw.c:3712](../../MoX/src/FLIC_Draw.c#L3712)) — the dissolve driving the sphere-reveal in `_Draw`.
-- [`Shear_Bitmap_Y`](../#CodeReview/FLIC_Draw-Shear_Bitmap_Y.md) ([FLIC_Draw.c:546](../../MoX/src/FLIC_Draw.c#L546)) — the vertical-shear wobble used by the `_Draw` collapse stages.
+- [`Vanish_Bitmap`](../___LBX/FLIC_Draw-Vanish_Bitmap.md) ([FLIC_Draw.c:3712](../../MoX/src/FLIC_Draw.c#L3712)) — the dissolve driving the sphere-reveal in `_Draw`.
+- [`Shear_Bitmap_Y`](FLIC_Draw-Shear_Bitmap_Y.md) ([FLIC_Draw.c:546](../../MoX/src/FLIC_Draw.c#L546)) — the vertical-shear wobble used by the `_Draw` collapse stages.
 - Structural twin: `Cast_Spell_Of_Mastery` / `_Draw` (the SoM-*started* announcement) — shares the `Print_Centered` **B1** quirk.

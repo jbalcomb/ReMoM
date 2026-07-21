@@ -769,7 +769,8 @@ void Next_Turn_Calc(void)
         }
 
         // Event_Twiddle();
-/* CLAUDE */ PHASE(Event_Twiddle());
+        /* CLAUDE */ PHASE(Event_Twiddle());
+        /* EOG_HACK */  if(magic_master_idx != ST_UNDEFINED) { return; }  /* OG-MoM: rebellion Respawned here; skip the post-endgame tail */
 
 /* CLAUDE */ LOG_INFO(LOG_CAT_NEXTTURN, "[GOLD] BEFORE Players_Apply_Upkeeps: gold_reserve=%d", _players[0].gold_reserve);
         // Players_Apply_Upkeeps__WIP();
@@ -4764,9 +4765,9 @@ int16_t Get_Winner(void)
     int16_t winner_idx = 0;
     int16_t player_idx = 0;
     winner_idx = ST_UNDEFINED;
-    if(GAME_SoM_Cast_By != ST_UNDEFINED)
+    if(m_magic_winner_idx != ST_UNDEFINED)
     {
-        winner_idx = GAME_SoM_Cast_By;
+        winner_idx = m_magic_winner_idx;
     }
     else
     {
