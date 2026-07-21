@@ -46,6 +46,8 @@
 #include "Items.h"
 #include "WZD_o059.h"
 
+#include "../../ext/stu_compat.h"
+
 #include "Spells129.h"
 
 extern int16_t * _battlefield_holybonus;

@@ -256,8 +256,14 @@ add_subdirectory(demo)
 # Magic data files (every *.LBX plus CONFIG.MOM) at runtime — those are NOT
 # shipped.  The dev/QA tools (HeMoM, savedump, rmr2hms, check_*, compare_*) stay
 # buildable but are deliberately excluded from the installed/packaged set.
+# GNUInstallDirs gives CMAKE_INSTALL_BINDIR (default "bin"), so a plain
+# `cmake --install --prefix /usr/local` lands ReMoMber in /usr/local/bin, matching
+# the autotools `make install`.  The release/CPack builds override
+# CMAKE_INSTALL_BINDIR=. (see .github/workflows/release.yml) to keep the portable
+# ZIP / NSIS layout flat (ReMoMber at the package root).
+include(GNUInstallDirs)
 install(TARGETS ReMoMber
-    RUNTIME DESTINATION .
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 # Bundle SDL DLLs on Windows so the player doesn't need them installed.
@@ -265,10 +271,10 @@ install(TARGETS ReMoMber
 # only matters for SDL-based Windows packaging.
 if(WIN32 AND NOT USE_WIN32)
     if(_sdl_imported_loc)
-        install(FILES "${_sdl_imported_loc}" DESTINATION .)
+        install(FILES "${_sdl_imported_loc}" DESTINATION ${CMAKE_INSTALL_BINDIR})
     endif()
     if(NOT DISABLE_AUDIO AND _mixer_imported_loc)
-        install(FILES "${_mixer_imported_loc}" DESTINATION .)
+        install(FILES "${_mixer_imported_loc}" DESTINATION ${CMAKE_INSTALL_BINDIR})
     endif()
 endif()
 

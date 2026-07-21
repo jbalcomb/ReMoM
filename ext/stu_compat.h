@@ -29,8 +29,8 @@
  *   - stu_ftell()         portable ftell()
  *   - stu_localtime()     portable thread-safe localtime (MSVC localtime_s / POSIX localtime_r)
  *   - stu_sscanf()        portable sscanf() (suppresses MSVC C4996)
- *   - stu_strcpy()        portable stu_strcpy() (suppresses MSVC C4996)
- *   - stu_strcat()        portable stu_strcat() (suppresses MSVC C4996)
+ *   - stu_strcpy()        portable strcpy() (suppresses MSVC C4996)
+ *   - stu_strcat()        portable strcat() (suppresses MSVC C4996)
  *   - stu_strncpy()       portable strncpy() with NULL check (suppresses MSVC C4996)
  *   - stu_strchr()        portable strchr() with NULL check
  *   - stu_strcmp()        portable strcmp() with NULL check
@@ -177,7 +177,7 @@ int stu_sscanf(const char *str, const char *format, ...);
 /* Portable stu_strcpy wrapper. Same interface as stu_strcpy. */
 char *stu_strcpy(char *dst, const char *src);
 
-/* Portable stu_strcat wrapper. Same interface as stu_strcat. */
+/* Portable strcat wrapper. Same interface as strcat. */
 char *stu_strcat(char *dst, const char *src);
 
 /* Portable strncpy wrapper with NULL check. Same interface as strncpy. */
@@ -698,11 +698,11 @@ char *stu_strcpy(char *dst, const char *src)
     {
         return dst;
     }
-    return stu_strcpy(dst, src);
+    return strcpy(dst, src);
 }
 
 /* --------------------------------------------------------------------------
- * stu_strcat - portable stu_strcat wrapper
+ * stu_strcat - portable strcat wrapper
  * -------------------------------------------------------------------------- */
 char *stu_strcat(char *dst, const char *src)
 {
@@ -710,7 +710,7 @@ char *stu_strcat(char *dst, const char *src)
     {
         return dst;
     }
-    return stu_strcat(dst, src);
+    return strcat(dst, src);
 }
 
 /* --------------------------------------------------------------------------

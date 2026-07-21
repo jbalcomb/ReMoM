@@ -55,7 +55,9 @@ jobs:
           echo "Building version: ${RAW#v}"
 
       - name: Configure (MSVC-release preset)
-        run: cmake --preset MSVC-release -DREMOM_VERSION=${{ steps.ver.outputs.version }}
+        # CMAKE_INSTALL_BINDIR=. keeps the portable ZIP / NSIS layout flat
+        # (ReMoMber at the package root); a plain local install uses bin/.
+        run: cmake --preset MSVC-release -DREMOM_VERSION=${{ steps.ver.outputs.version }} -DCMAKE_INSTALL_BINDIR=.
 
       - name: Build
         run: cmake --build out/build/MSVC-release --config Release
@@ -100,7 +102,9 @@ jobs:
           sudo apt-get install -y build-essential cmake ninja-build clang pkg-config file libsdl2-dev libsdl2-mixer-dev
 
       - name: Configure (clang-release preset)
-        run: cmake --preset clang-release -DREMOM_VERSION=${{ steps.ver.outputs.version }}
+        # CMAKE_INSTALL_BINDIR=. keeps the portable ZIP / TGZ layout flat
+        # (ReMoMber at the package root); a plain local install uses bin/.
+        run: cmake --preset clang-release -DREMOM_VERSION=${{ steps.ver.outputs.version }} -DCMAKE_INSTALL_BINDIR=.
 
       - name: Build
         run: cmake --build out/build/clang-release
