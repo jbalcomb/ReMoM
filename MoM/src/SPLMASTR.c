@@ -265,7 +265,7 @@ SAMB_ptr spellscr_oversbut_seg;
 // WZD dseg:CA32
 SAMB_ptr IMG_OVL_TargetWizBG;
 
-// WZD dseg:CA34 00 00                                           IMG_SBK_Anims@ dw 0                     ; DATA XREF: CMB_ShowSpellbook+30w ...
+// WZD dseg:CA34 00 00                                           spl_anim_compose_seg@ dw 0                     ; DATA XREF: CMB_ShowSpellbook+30w ...
 // WZD dseg:CA36 00 00                                           IMG_SBK_PageText@ dw 0                  ; DATA XREF: Learn_Spell_Animation+34Bw ...
 
 // WZD dseg:CA36                                                 END: ovr136 - Uninitialized Data
@@ -605,7 +605,7 @@ void Combat_Spellbook_Mana_Adder_Load(void)
     // SPELLSCR.LBX, 042  "XTRABUTT"    "var ok button"
     xtramana_ok_button_seg = LBX_Reload_Next(spellscr_lbx_file__ovr136, 42, _screen_seg);
 
-    IMG_SBK_Anims = Allocate_Next_Block(_screen_seg, 1090);
+    spl_anim_compose_seg = Allocate_Next_Block(_screen_seg, 1090);
 
     for(itr = 0; itr < 6; itr++)
     {
@@ -953,7 +953,7 @@ void Spell_Target_Global_Enchantment_Screen_Load(int16_t spell_idx)
     // MAGIC.LBX, 051  "GEMS"      "broken grey gem"
     broken_grey_gem_seg       = LBX_Reload_Next(magic_lbx_file__ovr136, 51, _screen_seg);
 
-    IMG_SBK_Anims = Allocate_Next_Block(_screen_seg, 100);
+    spl_anim_compose_seg = Allocate_Next_Block(_screen_seg, 100);
 
     IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 100);
 
@@ -1644,16 +1644,16 @@ void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t pl
         )
         {
 
-            Draw_Picture_To_Bitmap(spellscr_oversbut_seg, IMG_SBK_Anims);
+            Draw_Picture_To_Bitmap(spellscr_oversbut_seg, spl_anim_compose_seg);
 
             if(((itr - 11) * 10) < 100)
             {
 
-                Vanish_Bitmap(IMG_SBK_Anims, ((itr - 11) * 10));
+                Vanish_Bitmap(spl_anim_compose_seg, ((itr - 11) * 10));
 
             }
 
-            Draw_Picture(x, y, IMG_SBK_Anims);
+            Draw_Picture(x, y, spl_anim_compose_seg);
 
         }
 
@@ -1730,7 +1730,7 @@ void Spell_Of_Mastery_Lose_Load(int16_t wizard_id)
     // SPELLOSE.LBX, 026  "AZTECWIN"  ""
     // SPELLOSE.LBX, 027  "KARLAWIN"  ""
     wizlab_wizard_seg = LBX_Reload_Next(spellose_lbx_file__ovr138, (14 + wizard_id), _screen_seg);
-    IMG_SBK_Anims = Allocate_Next_Block(_screen_seg, 900);  // 900 PR  14400 B
+    spl_anim_compose_seg = Allocate_Next_Block(_screen_seg, 900);  // 900 PR  14400 B
 }
 
 
@@ -1745,22 +1745,22 @@ void Spell_Of_Mastery_Lose_Draw(void)
     int16_t y1 = 0;
     int16_t x1 = 0;
     int16_t itr = 0;
-    int16_t IDK = 0;
+    int16_t max_shear = 0;  // the peak vertical-shear amplitude for the sphere's wobble-collapse
     for(itr = 0; itr < 16; itr++)
     {
         colors[itr] = 5;
     }
     Copy_Back_To_Off();
     Reset_Animation_Frame(wizlab_wizard_seg);
-    Draw_Picture_To_Bitmap(wizlab_wizard_seg, IMG_SBK_Anims);
-    Get_Bitmap_Actual_Size(IMG_SBK_Anims, &x1, &y1, &width, &height);
+    Draw_Picture_To_Bitmap(wizlab_wizard_seg, spl_anim_compose_seg);
+    Get_Bitmap_Actual_Size(spl_anim_compose_seg, &x1, &y1, &width, &height);
     start_x = 35 + x1 + (width / 2);
     Reset_Animation_Frame(wizlab_wizard_seg);
     Set_Font_Colors_15(5, &colors[0]);
     Set_Outline_Color(0);
     Set_Font_Style_Outline(5, 15, 0, 0);
-    Print_Centered(160, 5, GUI_NearMsgString);/* OGBUG  extra parameter `Print_Centered(160, 5, GUI_NearMsgString, 2);` */
-    Print_Centered(160, 25, strSpellOfMastery);  // "Spell of Mastery"  /* OGBUG  extra parameter `Print_Centered(160, 25, strSpellOfMastery, ST_NULL);` */
+    Print_Centered(160, 5, GUI_NearMsgString);  /* OGBUG  extra parameter `Print_Centered(160, 5, GUI_NearMsgString, 2);` */
+    Print_Centered(160, 25, strSpellOfMastery);  // "Spell of Mastery"
     if(_osc_anim_ctr < 12)
     {
         FLIC_Draw(61, 68, wizlab_wizard_seg);
@@ -1773,39 +1773,39 @@ void Spell_Of_Mastery_Lose_Draw(void)
         {
             Set_Animation_Frame(spellose_sphere_seg, 5);
             FLIC_Draw(start_x, 34, spellose_sphere_seg);
-            x = 61;  // BUGBUG  never used
-            IDK = -y1;
+            x = 61;  /* OGBUG  gets overwritten before used */
+            max_shear = -y1;
             if(((_osc_anim_ctr - 12) / 2) < 2)
             {
-                // SPELLY  LBX_IMG_VShiftRect(x1, 0, (x1 + (width / 4)), (IDK / 6), IMG_SBK_Anims);
-                // SPELLY  LBX_IMG_VShiftRect((x1 + (width / 4) + 1), (IDK / 6), (x1 + (width / 2)), (IDK / 3), IMG_SBK_Anims);
-                // SPELLY  LBX_IMG_VShiftRect((x1 + (width / 2) + 1), (IDK / 3), (x1 + ((width * 3) / 4)), (IDK / 6), IMG_SBK_Anims);
-                // SPELLY  LBX_IMG_VShiftRect((x1 + ((width * 3) / 4) + 1), (IDK / 6), (x1 + width), 0, IMG_SBK_Anims);
+                Shear_Bitmap_Y(x1, 0, (x1 + (width / 4)), (max_shear / 6), spl_anim_compose_seg);
+                Shear_Bitmap_Y((x1 + (width / 4) + 1), (max_shear / 6), (x1 + (width / 2)), (max_shear / 3), spl_anim_compose_seg);
+                Shear_Bitmap_Y((x1 + (width / 2) + 1), (max_shear / 3), (x1 + ((width * 3) / 4)), (max_shear / 6), spl_anim_compose_seg);
+                Shear_Bitmap_Y((x1 + ((width * 3) / 4) + 1), (max_shear / 6), (x1 + width), 0, spl_anim_compose_seg);
             }
             else
             {
                 if(((_osc_anim_ctr - 12) / 2) < 4)
                 {
-                    // SPELLY  LBX_IMG_VShiftRect(x1, 0, (x1 + (width / 4)), (IDK / 4), IMG_SBK_Anims);
-                    // SPELLY  LBX_IMG_VShiftRect((x1 + (width / 4) + 1), (IDK / 4), (x1 + (width / 2)), (IDK / 2), IMG_SBK_Anims);
-                    // SPELLY  LBX_IMG_VShiftRect((x1 + (width / 2) + 1), (IDK / 2), (x1 + ((width * 3) / 4)), (IDK / 4), IMG_SBK_Anims);
-                    // SPELLY  LBX_IMG_VShiftRect((x1 + ((width * 3) / 4) + 1), (IDK / 4), (x1 + width), 0, IMG_SBK_Anims);
+                    Shear_Bitmap_Y(x1, 0, (x1 + (width / 4)), (max_shear / 4), spl_anim_compose_seg);
+                    Shear_Bitmap_Y((x1 + (width / 4) + 1), (max_shear / 4), (x1 + (width / 2)), (max_shear / 2), spl_anim_compose_seg);
+                    Shear_Bitmap_Y((x1 + (width / 2) + 1), (max_shear / 2), (x1 + ((width * 3) / 4)), (max_shear / 4), spl_anim_compose_seg);
+                    Shear_Bitmap_Y((x1 + ((width * 3) / 4) + 1), (max_shear / 4), (x1 + width), 0, spl_anim_compose_seg);
                 }
                 else
                 {
-                    // SPELLY  LBX_IMG_VShiftRect(x1, 0, (x1 + (width / 4)), (IDK / 2), IMG_SBK_Anims);
-                    // SPELLY  LBX_IMG_VShiftRect((x1 + (width / 2) + 1), (IDK / 2), (x1 + (width / 2)), IDK, IMG_SBK_Anims);
-                    // SPELLY  LBX_IMG_VShiftRect((x1 + (width / 2) + 1), IDK, (x1 + ((width * 3) / 4)), (IDK / 2), IMG_SBK_Anims);
-                    // SPELLY  LBX_IMG_VShiftRect((x1 + ((width * 3) / 4) + 1), (IDK / 2), (x1 + width), 0, IMG_SBK_Anims);
+                    Shear_Bitmap_Y(x1, 0, (x1 + (width / 4)), (max_shear / 2), spl_anim_compose_seg);
+                    Shear_Bitmap_Y((x1 + (width / 2) + 1), (max_shear / 2), (x1 + (width / 2)), max_shear, spl_anim_compose_seg);
+                    Shear_Bitmap_Y((x1 + (width / 2) + 1), max_shear, (x1 + ((width * 3) / 4)), (max_shear / 2), spl_anim_compose_seg);
+                    Shear_Bitmap_Y((x1 + ((width * 3) / 4) + 1), (max_shear / 2), (x1 + width), 0, spl_anim_compose_seg);
                 }
             }
-            Scale_Bitmap(IMG_SBK_Anims, (100 - ((_osc_anim_ctr - 12) * 6)), 100);
+            Scale_Bitmap(spl_anim_compose_seg, (100 - ((_osc_anim_ctr - 12) * 6)), 100);
             x = (61 + (((_osc_anim_ctr - 12) * 714) / 200));
-            Draw_Picture(x, 68, IMG_SBK_Anims);
+            Draw_Picture(x, 68, spl_anim_compose_seg);
             Reset_Animation_Frame(spellose_wizard_sphere_seg);
-            Draw_Picture_To_Bitmap(spellose_wizard_sphere_seg, IMG_SBK_Anims);
-            // SPELLY  Vanish_Bitmap(IMG_SBK_Anims, ((_osc_anim_ctr - 12) * 8));
-            Draw_Picture(start_x, 34, IMG_SBK_Anims);
+            Draw_Picture_To_Bitmap(spellose_wizard_sphere_seg, spl_anim_compose_seg);
+            Vanish_Bitmap(spl_anim_compose_seg, ((_osc_anim_ctr - 12) * 8));
+            Draw_Picture(start_x, 34, spl_anim_compose_seg);
         }
         else
         {
@@ -1832,6 +1832,7 @@ void Spell_Of_Mastery_Lose(void)
     {
         Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
     }
+    Fade_Out();
     Set_Mouse_List(1, mouse_list_none);
     CLROFF();
     Toggle_Pages();
@@ -1850,7 +1851,6 @@ void Spell_Of_Mastery_Lose(void)
         Spell_Of_Mastery_Lose_Draw();
         PageFlip_FX();
         Release_Time(2);
-        _osc_anim_ctr++;
     }
     Combat_Cache_Read();
     Lose_Animation(HUMAN_PLAYER_IDX);

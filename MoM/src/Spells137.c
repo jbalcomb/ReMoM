@@ -1014,7 +1014,7 @@ void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx)
         specfx_entry_num = spell_data_table[spell_idx].Param0;
     }
 
-    IMG_SBK_Anims = Allocate_Next_Block(_screen_seg, 770);  // 770 PR, 12320 B
+    spl_anim_compose_seg = Allocate_Next_Block(_screen_seg, 770);  // 770 PR, 12320 B
 
     IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 770);  // 770 PR, 12320 B
 
@@ -1163,11 +1163,11 @@ void OVL_DrawGlobalAnim(void)
 
             FLIC_Draw((start_x + 12), (start_y + 12), ge_anim_moodwiz_seg);
 
-            Draw_Picture_To_Bitmap(GAME_MP_SpellVar_2, IMG_SBK_Anims);
+            Draw_Picture_To_Bitmap(GAME_MP_SpellVar_2, spl_anim_compose_seg);
 
             Draw_Picture_To_Bitmap(IMG_SBK_SliderBG, IMG_SBK_PageText);
 
-            Clipped_Copy_Mask(0, 0, IMG_SBK_PageText, IMG_SBK_Anims);
+            Clipped_Copy_Mask(0, 0, IMG_SBK_PageText, spl_anim_compose_seg);
 
             Draw_Picture((start_x + 12), (start_y + 12), IMG_SBK_PageText);
 
@@ -1191,13 +1191,13 @@ void OVL_DrawGlobalAnim(void)
 
             FLIC_Draw((start_x + 10), (start_y + 8), spell_animation_seg);
 
-            Draw_Picture_To_Bitmap(GAME_MP_SpellVar_2, IMG_SBK_Anims);
+            Draw_Picture_To_Bitmap(GAME_MP_SpellVar_2, spl_anim_compose_seg);
 
             Reset_Animation_Frame(ge_anim_moodwiz_seg);
 
             Draw_Picture_To_Bitmap(ge_anim_moodwiz_seg, IMG_SBK_PageText);
 
-            Clipped_Copy_Mask(0, 0, IMG_SBK_PageText, IMG_SBK_Anims);
+            Clipped_Copy_Mask(0, 0, IMG_SBK_PageText, spl_anim_compose_seg);
 
             Draw_Picture((start_x + 12), (start_y + 12), IMG_SBK_PageText);
 

@@ -13804,7 +13804,7 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
 
     Mark_Block(_screen_seg);
 
-    IMG_SBK_Anims = Allocate_Next_Block(_screen_seg, 1090);
+    spl_anim_compose_seg = Allocate_Next_Block(_screen_seg, 1090);
 
     // {Nature, Sorcery, Chaos, Life, Death, Arcane}
     for(itr = 0; itr < NUM_MAGIC_REALMS; itr++)
@@ -13901,7 +13901,7 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
                 SmlBook_PageTurn__WIP(1, 1, caster_idx);
                 SBK_OpenPage += 2;
                 Mark_Block(_screen_seg);
-                IMG_SBK_Anims = Allocate_Next_Block(_screen_seg, 1090);
+                spl_anim_compose_seg = Allocate_Next_Block(_screen_seg, 1090);
                 for(itr = 0; itr < NUM_MAGIC_REALMS; itr++)
                 {
                     spellbook_symbols_bitm[itr] = Allocate_Next_Block(_screen_seg, 4);  // 4 PR  64 B
@@ -13923,7 +13923,7 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
                 SmlBook_PageTurn__WIP(0, 1, caster_idx);
                 SBK_OpenPage -= 2;
                 Mark_Block(_screen_seg);
-                IMG_SBK_Anims = Allocate_Next_Block(_screen_seg, 1090);
+                spl_anim_compose_seg = Allocate_Next_Block(_screen_seg, 1090);
                 for(itr = 0; itr < NUM_MAGIC_REALMS; itr++)
                 {
                     spellbook_symbols_bitm[itr] = Allocate_Next_Block(_screen_seg, 4);  // 4 PR  64 B

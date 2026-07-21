@@ -28,5 +28,6 @@ extern const Demo_Effect effect_collage;
 extern const Demo_Effect effect_score;
 extern const Demo_Effect effect_mastery;
 extern const Demo_Effect effect_vanish;
+extern const Demo_Effect effect_somlose;
 
 #endif /* DEMO_EFFECTS_H */

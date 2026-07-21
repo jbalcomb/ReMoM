@@ -4785,7 +4785,7 @@ extern SAMB_ptr xtramana_ok_button_seg;
 // WZD dseg:CA32 00 00                                           IMG_OVL_TargetWizBG@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+39w ...
 
 // WZD dseg:CA34
-extern SAMB_ptr IMG_SBK_Anims;
+extern SAMB_ptr spl_anim_compose_seg;
 
 // WZD dseg:CA36
 extern SAMB_ptr IMG_SBK_PageText;

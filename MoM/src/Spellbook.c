@@ -1640,9 +1640,9 @@ void CmbBook_Draw__WIP(int16_t x, int16_t y, int16_t caster_idx)
 
     // SmlBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], spellbook_bitmap);
     // spellbook_bitmap  allocated in SmlBook_Draw(), passed to SmlBook_Compose__WIP()
-    CmbBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], IMG_SBK_Anims, caster_idx);
+    CmbBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], spl_anim_compose_seg, caster_idx);
 
-    Draw_Picture((x + 16), (y + 21), IMG_SBK_Anims);
+    Draw_Picture((x + 16), (y + 21), spl_anim_compose_seg);
 
     colors[0] = 53;
 
@@ -1655,12 +1655,12 @@ void CmbBook_Draw__WIP(int16_t x, int16_t y, int16_t caster_idx)
 
     Print_Centered((x + 70), (y + 6), m_spellbook_pages[SBK_OpenPage].title);
 
-    Draw_Picture_To_Bitmap(_spellbook_small_text, IMG_SBK_Anims);
+    Draw_Picture_To_Bitmap(_spellbook_small_text, spl_anim_compose_seg);
 
     // SmlBook_Compose__WIP(m_spellbook_pages[(SBK_OpenPage + 1)], spellbook_bitmap);
-    CmbBook_Compose__WIP(m_spellbook_pages[(SBK_OpenPage + 1)], IMG_SBK_Anims, caster_idx);
+    CmbBook_Compose__WIP(m_spellbook_pages[(SBK_OpenPage + 1)], spl_anim_compose_seg, caster_idx);
 
-    Draw_Picture((x + 148), (y + 21), IMG_SBK_Anims);
+    Draw_Picture((x + 148), (y + 21), spl_anim_compose_seg);
 
     colors[0] = 53;
 
@@ -2677,14 +2677,14 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 1800);  // 1800 PR, 28800 B
 
-        IMG_SBK_Anims = Allocate_Next_Block(_screen_seg, 325);  // 325 PR, 5200 B
+        spl_anim_compose_seg = Allocate_Next_Block(_screen_seg, 325);  // 325 PR, 5200 B
 
         // SPECFX.LBX, 049  "NEWSPELL"  ""
         spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr118, 49, _screen_seg);
 
         _fstrcpy(Spell_Description, SBK_Descriptions[((Spell_on_Side * 4) + itr_spellbook_page_spell_count)]);
 
-        Create_Picture(129, 37, IMG_SBK_Anims);
+        Create_Picture(129, 37, spl_anim_compose_seg);
 
         casting_cost = Casting_Cost(HUMAN_PLAYER_IDX, SBK_Spell_Index, ST_FALSE);
 
@@ -2697,21 +2697,21 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         _fstrcpy(Spell_Name, spell_data_table[SBK_Spell_Index].name);
 
-        Print_To_Bitmap(0, 0, Spell_Name, IMG_SBK_Anims);
+        Print_To_Bitmap(0, 0, Spell_Name, spl_anim_compose_seg);
 
         Set_Font_Colors_15(6, &Blink_Color_Array[0]);
 
-        Print_To_Bitmap(0, 11, cnst_SP_Cost, IMG_SBK_Anims);
+        Print_To_Bitmap(0, 11, cnst_SP_Cost, spl_anim_compose_seg);
 
         stu_itoa(casting_cost, Conversion_String, 10);
 
-        Print_Right_To_Bitmap(42, 11, Conversion_String, IMG_SBK_Anims);
+        Print_Right_To_Bitmap(42, 11, Conversion_String, spl_anim_compose_seg);
 
         Set_Font_LF(0);
 
         Set_Font_Spacing(1);
 
-        Print_Paragraph_To_Bitmap(0, 17, 128, Spell_Description, 0, IMG_SBK_Anims);
+        Print_Paragraph_To_Bitmap(0, 17, 128, Spell_Description, 0, spl_anim_compose_seg);
 
         Clear_Fields();
 
@@ -2860,7 +2860,7 @@ struct s_SPELL_DECODE var_C = { 0, 0, 0, 0, 0, 0 };
 
         Clear_Bitmap_Region(var_44[SBK_NewSpellAnim_Stg], (48 + (GUI_Multipurpose_Int * 37)), 129, (82 + (GUI_Multipurpose_Int * 37)), IMG_SBK_PageText);
 
-        Clear_Bitmap_Region(var_38[SBK_NewSpellAnim_Stg], 0, var_44[SBK_NewSpellAnim_Stg], 37, IMG_SBK_Anims);
+        Clear_Bitmap_Region(var_38[SBK_NewSpellAnim_Stg], 0, var_44[SBK_NewSpellAnim_Stg], 37, spl_anim_compose_seg);
 
     }
 
@@ -2872,7 +2872,7 @@ struct s_SPELL_DECODE var_C = { 0, 0, 0, 0, 0, 0 };
         if(SBK_NewSpellAnim_Stg < 27)
         {
 
-            Draw_Picture(25, (28 + (GUI_Multipurpose_Int * 37)), IMG_SBK_Anims);
+            Draw_Picture(25, (28 + (GUI_Multipurpose_Int * 37)), spl_anim_compose_seg);
             
         }
 
@@ -2898,7 +2898,7 @@ struct s_SPELL_DECODE var_C = { 0, 0, 0, 0, 0, 0 };
         if(SBK_NewSpellAnim_Stg < 27)
         {
 
-            Draw_Picture(173, (28 + (GUI_Multipurpose_Int * 37)), IMG_SBK_Anims);
+            Draw_Picture(173, (28 + (GUI_Multipurpose_Int * 37)), spl_anim_compose_seg);
 
         }
 

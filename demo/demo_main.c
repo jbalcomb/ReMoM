@@ -24,7 +24,8 @@ static const Demo_Effect * const g_effects[] =
     &effect_collage,
     &effect_score,
     &effect_mastery,
-    &effect_vanish
+    &effect_vanish,
+    &effect_somlose
 };
 #define DEMO_EFFECT_COUNT  ((int)(sizeof(g_effects) / sizeof(g_effects[0])))
 

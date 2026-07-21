@@ -3591,10 +3591,10 @@ SAMB_ptr xtramana_ok_button_seg;
 CmbBook_Draw__WIP() vs. SmlBook_Draw()
     // SmlBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], spellbook_bitmap);
     // spellbook_bitmap  allocated in SmlBook_Draw(), passed to SmlBook_Compose__WIP()
-    CmbBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], IMG_SBK_Anims, caster_idx);
+    CmbBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], spl_anim_compose_seg, caster_idx);
 
 */
-SAMB_ptr IMG_SBK_Anims;
+SAMB_ptr spl_anim_compose_seg;
 
 // WZD dseg:CA36
 // drake178: IMG_SBK_PageText

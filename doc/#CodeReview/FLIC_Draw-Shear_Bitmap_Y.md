@@ -2,7 +2,7 @@ FLIC_Draw-Shear_Bitmap_Y.md
 
 BEGIN:  Jim's Notes
 
-LBX_IMG_VShiftRect()  ==>  Shear_Bitmap_Y()
+Shear_Bitmap_Y==>  Shear_Bitmap_Y()
 
 There's not Shear_Bitmap_X() in MoM.
 
@@ -44,7 +44,7 @@ BEGIN:  Claude's Notes
 
 ## Ground truth
 
-Authority for ReMoM is the **MoM** disassembly `…\WIZARDS\seg030\LBX_IMG_VShiftRect.asm` (the MoO2 `Shear_Bitmap_Y` is the same function, confirmed by Jim). An in-place per-column vertical shear: for each column x1..x2, shift the column's pixels up/down by a fixed-point-interpolated amount (`shear1`→`shear2` at the two ends) and pad the vacated end with `ST_TRANSPARENT`.
+Authority for ReMoM is the **MoM** disassembly `…\WIZARDS\seg030\Shear_Bitmap_Y` (the MoO2 `Shear_Bitmap_Y` is the same function, confirmed by Jim). An in-place per-column vertical shear: for each column x1..x2, shift the column's pixels up/down by a fixed-point-interpolated amount (`shear1`→`shear2` at the two ends) and pad the vacated end with `ST_TRANSPARENT`.
 
 asm frame: `x1= bp+6 ; shear1= bp+8 ; x2= bp+0Ah ; shear2= bp+0Ch ; bitmap= bp+0Eh` → params `(x1, shear1, x2, shear2, bitmap)` (**bitmap last**).
 - 32-bit fixed point: `shear = shear1 * 1000` (`LXMUL@`), `shear_add = (shear2-shear1)*1000 / (x2-x1)` (`LXMUL@`/`LDIV@`); per column `current_shear = shear / 1000`.
@@ -54,9 +54,9 @@ asm frame: `x1= bp+6 ; shear1= bp+8 ; x2= bp+0Ah ; shear2= bp+0Ch ; bitmap= bp+0
 
 ## `Shear_Bitmap_Y` ([FLIC_Draw.c:546](../../MoX/src/FLIC_Draw.c#L546)) — DONE-DONE ✓
 
-> **Status: DONE-DONE (2026-07-20) — faithful to `LBX_IMG_VShiftRect.asm` 1:1; builds clean (MSVC-debug); sole implementation.**
+> **Status: DONE-DONE (2026-07-20) — faithful to `Shear_Bitmap_Y` 1:1; builds clean (MSVC-debug); sole implementation.**
 
-Verified 1:1 against `LBX_IMG_VShiftRect.asm`:
+Verified 1:1 against `Shear_Bitmap_Y`:
 - Signature `(int16_t x1, int16_t shear1, int16_t x2, int16_t shear2, byte_ptr bitmap)` matches the frame (bitmap last). ✓
 - `shear = shear1 * 1000`, `shear_add = (shear2-shear1)*1000 / (x2-x1)`, `current_shear = shear/1000`. ✓
 - Pixel base `SZ_FLIC_HDR` = **16** ([FLIC_Draw.h:64](../../MoX/src/FLIC_Draw.h#L64)) ≡ `SZ_PARAGRAPH_B` **16** ([MOX_BASE.h:82](../../MoX/src/MOX_BASE.h#L82)) ≡ the asm's `bitmap+1` paragraph. ✓ The two constants are deliberately equal — the header slot occupies a full paragraph.
@@ -65,7 +65,7 @@ Verified 1:1 against `LBX_IMG_VShiftRect.asm`:
 
 ## Sole implementation & callers
 
-The old `LBX_IMG_VShiftRect` reconstruction has been deleted; `Shear_Bitmap_Y` is the only copy, and every caller now uses it:
+The old `Shear_Bitmap_Yconstruction has been deleted; `Shear_Bitmap_Y` is the only copy, and every caller now uses it:
 - `Spell_Of_Mastery_Lose_Draw` — the SoM-loss sphere-wobble ([SPLMASTR.c:1780-1799](../../MoM/src/SPLMASTR.c#L1780)).
 - `SmlBook_PageTurn__WIP` / `BigBook_PageTurn` — the spellbook page-turn shear ([Spellbook.c:2155-2198](../../MoM/src/Spellbook.c#L2155)).
 

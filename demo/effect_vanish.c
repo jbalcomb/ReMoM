@@ -21,6 +21,7 @@
 #include "../MoX/src/Graphics.h"   /* Fill */
 #include "../MoX/src/FLIC_Draw.h"  /* Draw_Picture_To_Bitmap, Vanish_Bitmap, FLIC_Set_LoopFrame_1, Draw_Picture, Set_Animation_Frame */
 #include "../MoX/src/Fonts.h"      /* Load_Palette, Apply_Palette, Calculate_Remap_Colors */
+#include "../MoX/src/Keyboard.h"   /* Keyboard_Status, Read_Key (ESC) */
 #include "../MoX/src/MOX_TYPE.h"   /* SAMB_ptr */
 
 #include "../platform/include/Platform.h"
@@ -46,6 +47,7 @@ static void Effect_Vanish_Run(void)
     uint8_t * work;
     int percent;
     int dir;
+    int done;
 
     if(Demo_Assets_Ready() == 0)
     {
@@ -74,8 +76,17 @@ static void Effect_Vanish_Run(void)
 
     percent = 0;
     dir = VANISH_STEP;
-    while(Demo_Quit() == 0)
+    done = 0;
+    while((done == 0) && (Demo_Quit() == 0))
     {
+        int w;
+        int h;
+
+        while(Keyboard_Status())
+        {
+            if(Read_Key() == 27) { done = 1; }   /* ESC */
+        }
+
         current_video_page = video_page_buffer[draw_page_num];
         Fill(0, 0, 319, 199, 0);
 
@@ -84,7 +95,11 @@ static void Effect_Vanish_Run(void)
         Draw_Picture_To_Bitmap(src, (SAMB_ptr)work);
         Vanish_Bitmap((SAMB_ptr)work, (int16_t)percent);
         FLIC_Set_LoopFrame_1((SAMB_ptr)work);
-        Draw_Picture(VANISH_DRAW_X, VANISH_DRAW_Y, (SAMB_ptr)work);
+
+        /* Center the sprite by its center (not its top-left). */
+        w = FLIC_GET_WIDTH((SAMB_ptr)work);
+        h = FLIC_GET_HEIGHT((SAMB_ptr)work);
+        Draw_Picture(160 - (w / 2), 100 - (h / 2), (SAMB_ptr)work);
 
         Demo_Present();
 
