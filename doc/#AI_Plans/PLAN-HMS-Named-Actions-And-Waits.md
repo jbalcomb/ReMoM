@@ -39,39 +39,65 @@ static handles the ~100 literal/const-foldable rows.
 
 ---
 
-## Phase 0 — Static catalog builder: per-type signature parsers + constant folder
+## Phase 0 — Static catalog builder: per-type signature parsers + constant folder — **CORE DONE**
 
 Primary catalog builder. Pure tooling; no engine change; no game run; testable in isolation.
+Built clean-room as the package [tools/field_catalog/](../../tools/field_catalog/) (not derived from
+the old `fields_extract.py`): `constants.py`, `signatures.py`, `scan.py`, `build.py`, `__main__.py`.
+Run with `python -m tools.field_catalog`; output is [tools/fields/catalog.fwv](../../tools/fields/catalog.fwv)
+(fixed-width, a **new** file that does not touch the old per-screen CSVs). The `runtime` column is what
+the plan text below calls `rt_needed`.
 
-1. Extend `fields_extract.py` (or a sibling) with a **parser per add-field function**, each keyed to
-   its signature so args become named/typed columns instead of one opaque `args` blob. Signatures are
-   in [Fields.h](../../MoX/src/Fields.h): `Add_Hidden_Field(xmin,ymin,xmax,ymax,hotkey,help)`
+1. **Per-add-field signature parser** — `signatures.py` transcribes all ten from
+   [Fields.h](../../MoX/src/Fields.h): `Add_Hidden_Field(xmin,ymin,xmax,ymax,hotkey,help)`
    ([:686](../../MoX/src/Fields.h#L686)), `Add_Button_Field(xmin,ymin,string,pict_seg,hotkey,help)`
    ([:679](../../MoX/src/Fields.h#L679), no extent), `Add_Scroll_Field(...,width,height,...)`
    ([:702](../../MoX/src/Fields.h#L702)), `Add_Picture_Field` ([:667](../../MoX/src/Fields.h#L667)),
-   `Add_Hot_Key`, `Add_Grid_Field`, etc. — the ten intercepted at
-   [Fields.h:854-862](../../MoX/src/Fields.h#L854-L862).
-2. **Constant folder:** the coordinate macros live in
-   [MoX/src/MOM_DEF.h](../../MoX/src/MOM_DEF.h) and [MoX/src/MOX_DEF.h](../../MoX/src/MOX_DEF.h)
-   (`SCREEN_XMIN/XMAX/YMIN/YMAX`, `WORLD_WIDTH`, `MAP_HEIGHT`, `SQUARE_WIDTH`, …). Build a
-   `name -> value` table and constant-fold coord expressions. **Gotcha:** several are defined more than
-   once with conflicting values behind resolution `#ifdef`s — e.g. `SCREEN_XMAX` is `319`
-   ([MOX_DEF.h:767](../../MoX/src/MOX_DEF.h#L767)) **and** `639`
-   ([:777](../../MoX/src/MOX_DEF.h#L777), [:787](../../MoX/src/MOX_DEF.h#L787)); `WORLD_WIDTH` and
-   `MAP_HEIGHT` appear in both headers. The folder must pin the **320×200 branch** (the HMS coordinate
-   space), not take first-match. Fold what folds; leave a symbolic form + `rt_needed=1` flag on rows
-   that don't (loop/state vars, sprite extents).
-3. Emit per row: `file, line, function, add_func, symbol, hotkey (decoded), xmin, ymin, xmax, ymax (or
-   blank), click_cx, click_cy (when resolvable), guards, rt_needed`.
+   `Add_Hot_Key`, `Add_Grid_Field`, etc. `scan.py` finds call sites with comment/string-aware paren
+   matching, filters out the function definitions themselves, and reports correct current-source line
+   numbers.
+2. **Constant folder** (`constants.py`) — the coordinate macros live in
+   [MoX/src/MOM_DEF.h](../../MoX/src/MOM_DEF.h) and [MoX/src/MOX_DEF.h](../../MoX/src/MOX_DEF.h). It
+   loads 593 defines and pins the **320×200 branch**: several macros are defined more than once behind
+   resolution `#ifdef`s — `SCREEN_XMAX` is `319` ([MOX_DEF.h:767](../../MoX/src/MOX_DEF.h#L767)) **and**
+   `639` ([:777](../../MoX/src/MOX_DEF.h#L777)) — so it accepts `VIDEO_MODE_MODE_Y` and rejects the
+   `_2x` branches. Coord expressions fold via a whitelisted `ast` evaluator (arithmetic + name
+   resolution + cast stripping); unresolvable names (loop/state vars, popup origins) leave the row
+   `runtime=1`.
+3. Emits per row: `file, line, function, symbol, add_func, geom_kind, xmin, ymin, xmax, ymax, box_w,
+   box_h, cols, rows, click_cx, click_cy, hotkey_value, hotkey_name, hotkey_unresolved, runtime,
+   guards, raw_args`. The `guards` column captures the enclosing `if`/`for`/`while`/`switch`
+   condition(s) via a brace-block scanner — 230 / 374 rows carry one, e.g. `_next_turn_button` →
+   `if(all_units_moved == ST_TRUE)`, `_patrol_button` → `if(_unit_stack_count > 0)`. Braceless
+   single-statement guards are the known limitation (none exist before an `Add_*` call today).
 
-**Green when:** the static catalog carries identity + hotkey for all 315 rows and concrete geometry for
-the ~100 literal/const-foldable rows; every unresolved row is flagged `rt_needed=1` with its formula
-preserved.
+**Measured result (374 call sites — more than the old 315 because current source has more, incl. WIP
+screens):**
 
-**Verify:** `python` smoke over a fixture C file with one call of each add-field type (literal, macro,
-loop-var, button) → asserts correct column extraction and the right `rt_needed` flagging. Diff the
-resolved rows against the current runtime-captured `tools/fields/*.csv` for the 38 known fields — they
-must agree (this is the static↔runtime cross-check).
+- **187 / 374 (50%) statically addressable with zero runtime data** — 102 resolve a concrete click
+  point, 85 are key-addressable (`Add_Hot_Key`/`Multi`). Matches the pre-build estimate (~100 click
+  points) almost exactly.
+- 187 flagged `runtime=1` (need the log for pixel geometry); 87 of those are sprite-extent buttons
+  where static still gives the top-left corner.
+- **Static↔runtime cross-check PASSED: 56 / 56 folded coordinates agree** with the runtime-captured
+  `tools/fields/*.csv` (joined on `(file, symbol)` since old line numbers drifted), zero disagreements.
+  The check caught and fixed one real bug — grid extent was the exclusive edge (`xmin+box_w*cols`); the
+  game stores the inclusive last pixel (`-1`).
+
+Documented in [tools/field_catalog/README.md](../../tools/field_catalog/README.md); locked down by a
+hermetic 7-case unit test ([tests/test_catalog.py](../../tools/field_catalog/tests/test_catalog.py),
+run `python -m tools.field_catalog.tests.test_catalog`) that asserts each resolution path over a
+synthetic `fixture_screen.c` without scanning the repo.
+
+**Still open in Phase 0 (deferred, non-blocking):**
+
+- **Hotkey-value resolution** — only 24 / 85 key-addressable rows resolve to a concrete key; 180 pass
+  the hotkey as a string's first char (`str_hotkey_ESC__ovr076[0]`) and 29 use `cnst_HOTKEY_*` outside
+  the DEF headers. Flagged `hotkey_unresolved=1`; the symbol name stays legible for a hand-curated
+  alias table.
+- **Screen attribution** — the `function` column is the enclosing C function, not a normalized screen
+  name; helpers (`Add_Unit_Action_Fields` → `Main_Screen`) need a function→screen map. Belongs to the
+  Phase 1 alias/resolver work.
 
 ---
 
