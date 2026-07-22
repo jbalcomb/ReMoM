@@ -15,6 +15,11 @@ add_dependencies(ReMoMber run_pre_build_task)
 
 set_target_properties(ReMoMber PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
+# Export dynamic symbols so STU_BRAK's POSIX backtrace prints function names
+# instead of raw hex.  On GCC/Clang this is `-rdynamic`; on MSVC it is a no-op
+# (dbghelp resolves symbols via the .pdb).  See doc/#Devel/Devel-Crash-Reports.md.
+set_target_properties(ReMoMber PROPERTIES ENABLE_EXPORTS ON)
+
 if(USE_WIN32)
     target_compile_definitions(ReMoMber PUBLIC _STU_WIN)
 elseif(USE_SDL3)
@@ -58,6 +63,10 @@ set_target_properties(ReMoMber PROPERTIES
 add_executable(HeMoM HeMoM.c ReMoM_Init.c Artificial_Human_Player.c Game_Save_Dump.c)
 
 set_target_properties(HeMoM PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+# Export dynamic symbols so STU_BRAK's POSIX backtrace prints function names
+# instead of raw hex.  See ReMoMber above and doc/#Devel/Devel-Crash-Reports.md.
+set_target_properties(HeMoM PROPERTIES ENABLE_EXPORTS ON)
 
 target_link_libraries(HeMoM PUBLIC
     momlib
