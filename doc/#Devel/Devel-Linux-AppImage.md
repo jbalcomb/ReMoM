@@ -7,9 +7,9 @@ game-data / config / save-file model.
 - Player-facing "how do I run it": see [`PLAYING.md`](../../PLAYING.md).
 - The release/packaging pipeline (the `linuxdeploy` step): see [`RELEASES.md`](../../RELEASES.md).
 
-> **Status:** the file-resolution model below is what ReMoM does today. The custom
-> `AppRun` is the adopted design for the AppImage; where the shipped pipeline still
-> uses the stock symlink `AppRun`, that is called out inline.
+> **Status:** implemented. `packaging/AppRun` is the custom launcher, wired into the
+> AppImage build via `linuxdeploy --custom-apprun` in `release.yml`. The
+> file-resolution model below is what ReMoM does today.
 
 ---
 
