@@ -9,6 +9,7 @@ no geometry — they are addressable by key, so runtime=0 for them.
 """
 import re
 
+from . import fwv
 from .constants import Folder
 from .scan import scan_repo
 from .signatures import SIGNATURES
@@ -136,12 +137,10 @@ COLUMNS = ["file", "line", "function", "symbol", "add_func", "geom_kind",
            "click_cx", "click_cy", "hotkey_value", "hotkey_name", "hotkey_unresolved",
            "runtime", "guards", "raw_args"]
 
-# Right-align numeric columns; left-align text. raw_args is the free-text tail —
-# left-aligned and never right-padded so column offsets stay fixed without
-# every line inheriting the widest arg list's trailing whitespace.
+# Right-aligned in the .fwv output; everything else left-aligned. raw_args is the
+# free-text tail (see fwv.write).
 _NUMERIC = {"line", "xmin", "ymin", "xmax", "ymax", "box_w", "box_h", "cols", "rows",
             "click_cx", "click_cy", "hotkey_value", "hotkey_unresolved", "runtime"}
-_GUTTER = "  "
 
 
 def build_catalog():
@@ -166,29 +165,5 @@ def build_catalog():
 
 
 def write_fwv(rows, path):
-    """Write a fixed-width values file: columns padded to a constant width so
-    every field starts at a fixed offset. The final column (raw_args) is left
-    unpadded on the right."""
-    cells = [[str(r.get(c, "")) for c in COLUMNS] for r in rows]
-    widths = [len(c) for c in COLUMNS]
-    for row in cells:
-        for i, v in enumerate(row):
-            if len(v) > widths[i]:
-                widths[i] = len(v)
-
-    def fmt(values):
-        parts = []
-        last = len(COLUMNS) - 1
-        for i, v in enumerate(values):
-            if i == last:
-                parts.append(v)  # free-text tail: no right padding
-            elif COLUMNS[i] in _NUMERIC:
-                parts.append(v.rjust(widths[i]))
-            else:
-                parts.append(v.ljust(widths[i]))
-        return _GUTTER.join(parts).rstrip()
-
-    with open(path, "w", newline="\n", encoding="utf-8") as f:
-        f.write(fmt(list(COLUMNS)) + "\n")
-        for row in cells:
-            f.write(fmt(row) + "\n")
+    """Write the catalog as a fixed-width values file (see fwv.write)."""
+    fwv.write(rows, COLUMNS, _NUMERIC, path)

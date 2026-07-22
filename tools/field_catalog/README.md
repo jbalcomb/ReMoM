@@ -31,7 +31,23 @@ offset, not by whitespace-splitting — empty numeric cells are space-padded, an
 | `signatures.py` | positional arg schema for all ten `Add_*Field` functions, transcribed from `MoX/src/Fields.h` |
 | `scan.py` | finds call sites (comment/string-aware paren matching), enclosing function, LHS symbol, and enclosing `if`/`for`/`while`/`switch` guards; filters out the function definitions themselves |
 | `build.py` | maps each call's args through its signature, folds geometry, decodes hotkeys, classifies `runtime`, writes the `.fwv` |
-| `tests/` | `fixture_screen.c` + `test_catalog.py` — hermetic assertions over a synthetic screen |
+| `resolver.py` | maps between HMS `Screen.Alias` names and geometry via the curated `tools/fields/aliases.fwv`; `name_for(file,line)` and `resolve("Screen.Alias")`, joined on `(file, symbol)` so it survives line drift, with a staleness `audit()` |
+| `fwv.py` | fixed-width values read/write shared by the catalog and the alias table |
+| `tests/` | `fixture_screen.c` + `test_catalog.py` (parser) + `test_resolver.py` + `test_fwv.py` — hermetic assertions |
+
+## Named actions (`Screen.Alias`)
+
+`tools/fields/aliases.fwv` (`src_file, src_line, symbol, screen, alias`) is the hand-curated map from a
+field's call site to a `Screen.Alias` HMS name. `resolver.py` turns a recorded click's call site into a
+name and a name into a static click point:
+
+```sh
+python -m tools.field_catalog.resolver     # audit the alias table + dump resolutions
+```
+
+Resolution joins alias↔catalog on `(file, symbol)` — the symbol is stable, so an alias whose `src_line`
+has drifted still resolves, and `audit()` flags the drift. Rows that are `runtime=1` in the catalog
+resolve to `(runtime)` until the runtime `FIELDADD` log supplies their geometry.
 
 ## Columns
 

@@ -114,15 +114,15 @@ no LHS or an array-subscript symbol). Scripts use a **curated alias** in the pro
 `Proper_Snake_Case` convention, mapped in a checked-in table:
 
 ```
-# tools/fields/aliases.csv
-# screen,             src_file,         src_line, symbol,        alias
-Main_Menu_Screen,     MoM/src/MainMenu.c, 410,    _new_button,   New_Game_Button
-Main_Screen,          MoM/src/MainScr.c,  2039,   _patrol_button,Patrol_Button
+# tools/fields/aliases.fwv  (fixed-width; columns: src_file, src_line, symbol, screen, alias)
+MoM/src/MainMenu.c   416   _new_button      Main_Menu_Screen  New_Game_Button
+MoM/src/MainScr.c    2039  _patrol_button   Main_Screen       Patrol_Button
 ```
 
-The alias is keyed on `src_file:src_line` (stable across coordinate changes) plus `symbol` (a tripwire
-— if the symbol at that line changes, the row is stale and the tooling should flag it, not silently
-mismap).
+Resolution joins the alias to the catalog on **`(src_file, symbol)`** — the symbol is stable across
+line drift, which `src_file:src_line` is not (we already saw `_new_button` move 410→416). `src_line` is
+kept for humans and the RECORD.log join, and `audit()` flags a row whose line has drifted (`drift`) or
+whose symbol no longer exists (`missing`) instead of silently mis-mapping.
 
 ### Resolution: in-engine, via the RECORD sidecar log
 
@@ -141,7 +141,7 @@ idx=10  mouse=(291,104) btn=1  ...  field[1]=(0,0)-(319,199)
 ```
 
 The design extends that one log line to carry the screen tag and the `Add_*Field` call site, so the
-join to `aliases.csv` is unambiguous:
+join to `aliases.fwv` is unambiguous:
 
 ```
 idx=10  mouse=(291,104) btn=1  ...  field[1]=Main_Menu_Screen@MainMenu.c:410

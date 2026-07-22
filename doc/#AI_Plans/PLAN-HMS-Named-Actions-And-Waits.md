@@ -101,21 +101,29 @@ synthetic `fixture_screen.c` without scanning the repo.
 
 ---
 
-## Phase 1 — Alias table + resolver; runtime log as residue-authority + cross-check
+## Phase 1 — Alias table + resolver; runtime log as residue-authority + cross-check — **RESOLVER SLICE DONE**
 
-Builds naming on the static catalog; wires the runtime log in as authority for `rt_needed` geometry.
+Builds naming on the static catalog; wires the runtime log in as authority for `runtime=1` geometry.
+The pure-Python resolver slice (steps 1–3) is done; the runtime-instrumentation half (step 4) is
+deferred — it feeds `runtime=1` geometry and the RECORD.log screen stamp, which Phases 2–3 consume.
 
-1. Create `tools/fields/aliases.csv` — `src_file, src_line, symbol, screen, alias`. Seed it with the
-   fields existing scenes click (Main_Menu new/continue, Main_Screen patrol / next-turn). `screen` comes
-   from the static parser's function→screen mapping; `file:line` is the join key.
-2. Resolver (Python, alongside `fields_extract.py`) answering both directions off the static catalog:
-   - `alias(file, line) -> Screen.Alias`
-   - `resolve(Screen.Alias) -> (cx, cy)` — from static geometry when present, else from the runtime
-     catalog for `rt_needed` rows.
-3. **Staleness tripwire:** if the `symbol` at `file:line` no longer matches the alias row, error out —
-   never silently mis-map.
-4. **Re-enable the runtime instrumentation** (was the old Phase 0), now scoped to its real job —
-   geometry for `rt_needed` rows and cross-checking the static parse:
+1. **DONE** — [tools/fields/aliases.fwv](../../tools/fields/aliases.fwv) seeded with the fields the
+   existing scenes click: `Main_Menu_Screen.New_Game_Button` / `.Continue_Button`,
+   `Main_Screen.Next_Turn_Button` / `.Patrol_Button`. `screen` is **authored** (the curated-alias
+   decision), not auto-derived; columns `src_file, src_line, symbol, screen, alias`.
+2. **DONE** — [resolver.py](../../tools/field_catalog/resolver.py) answers both directions off the
+   in-memory catalog (decoupled from the `.fwv` serialization):
+   - `name_for(file, line) -> "Screen.Alias"` — a recorded click's call site to a name.
+   - `resolve("Screen.Alias") -> (cx, cy)` — static geometry when present, else `(None, "runtime")`
+     for `runtime=1` rows, `"unknown"`/`"missing"` otherwise. Verified on the seed: `New_Game_Button`
+     → (159,167), `Next_Turn_Button` → (280,187); `Patrol_Button`/`Continue_Button` → `(runtime)`.
+   - **Join by `(file, symbol)`, not `file:line`** — symbol is stable; `name_for` survives alias-table
+     line drift. 8-case hermetic test in [tests/test_resolver.py](../../tools/field_catalog/tests/test_resolver.py).
+3. **DONE — staleness tripwire:** `audit()` reports each alias row `ok` / `drift` (symbol moved lines)
+   / `missing` (symbol gone), instead of silently mis-mapping. `python -m tools.field_catalog.resolver`
+   runs the audit + a resolution dump.
+4. **DEFERRED — re-enable the runtime instrumentation** (was the old Phase 0), scoped to its real job —
+   geometry for `runtime=1` rows and cross-checking the static parse:
    - Un-comment [Fields.c:899](../../MoX/src/Fields.c#L899) (`FIELDADD`) and
      [:905-911](../../MoX/src/Fields.c#L905-L911) (`FIELDSNAPSHOT`); both are already `#ifdef STU_DEBUG`
      with a `g_dbg_fields_trace == 0` early-return, so Release and flag-off Debug are unaffected.
