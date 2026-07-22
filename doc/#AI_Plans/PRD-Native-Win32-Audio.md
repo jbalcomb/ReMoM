@@ -50,6 +50,21 @@ Measured contents of `assets/__FAT/FAT.OPL`: 181 timbres — bank 55 patches 0-1
 
 **Miles two-voice timbres are 4-operator** (`ext/ail214/YAMAHA.INC:342-355`), which is why GENMIDI cannot represent them.
 
+**XMIDI `TIMB` chunk** — the sequence's declaration of which timbres it needs. Layout, decoded from `assets/MUSIC.LBX` entry 100 and cross-checked against `sdl2_Audio.c:1207-1219`:
+
+| Offset (wrapper stripped) | Field |
+|---|---|
+| `0x2E` | `"TIMB"` tag |
+| `0x32` | `uint32` **big-endian** payload length |
+| `0x36` | `uint16` **little-endian** entry count |
+| `0x38` | count × 2 bytes: `{ uint8 patch; uint8 bank; }` |
+
+Payload length is `2 × count + 2` and was verified self-consistent. Note the mixed endianness (BE chunk length, LE count) and that `(patch, bank)` is the same field order as the GTL index record at `SOUND.c:242-248`.
+
+Measured: entry 100 declares 4 timbres, **all bank 55** (patches 24, 0, 72, 49). A survey of all 116 `MUSIC.LBX` tracks found a TIMB chunk in **116 of 116**.
+
+AIL consumes TIMB by iterating `AIL_timbre_request()` and installing each result via `load_global_timbre()` → `AIL_install_timbre()` (`SOUND.c:807-817`). This is the mechanism that binds a sequence to the GTL, and it is the half of the design that a bare GTL loader would still be missing.
+
 ---
 
 ## 6. Requirements
@@ -62,18 +77,47 @@ Measured contents of `assets/__FAT/FAT.OPL`: 181 timbres — bank 55 patches 0-1
 
 *Rationale: doing this first means the Win32 backend consumes shared code rather than creating a third copy.*
 
-### Phase 2 — WildMIDI Tier 1: native GTL loader
+### Phase 2A — WildMIDI: generalize the patch storage model
 
-Work happens in `jbalcomb/wildmidi` (`J:/STU/developp/wildmidi`).
+Work happens in `jbalcomb/wildmidi` (`J:/STU/developp/wildmidi`). **This phase must come first.** See BRA §6.1: WildMIDI's only patch store is a flat GENMIDI image (`synth.c:86`), with the GENMIDI base and key range hardcoded into lookup (`synth.c:602`, `:653`, `:806`) and a strictly 2-operator patch struct (`synth.c:56-67`). A GTL loader written before this phase would write its results into `op2_bank[]` and re-inherit every GENMIDI limitation — it would be `gtl2op2` with the intermediate file deleted.
+
+- **R2A.1** Patch storage is **bank-addressed**, not a flat program-indexed array. MoM uses banks 55 and 127; the model must not assume a single implicit bank.
+- **R2A.2** Percussion is addressed by MIDI key with **no hardcoded range**. The GENMIDI 35-81 clamp at `synth.c:602` and `:806` must not survive. Keys 82-87 are played by 21 MoM tracks (PRD §9.1).
+- **R2A.3** The patch representation holds **two or four operators**. `fm_patch` currently has `mod_*`/`car_*`/`fb` only; operators 3-4 need somewhere to live even though Phase 5 supplies the synthesis.
+- **R2A.4** Existing input formats — GENMIDI/`.op2`, SF2, GUS patches, and the built-in `@opl3` bank (`synth.c:793-795`) — keep working, via a compatibility shim onto the new model if needed.
+- **R2A.5** No audible change to any existing format's output. Verified by re-rendering known tracks and comparing hashes before and after.
+
+**Exit criteria:** `wildmidi -O`, a `.op2` bank, and an `.sf2` all render byte-identically to their pre-change output, while the model is capable of expressing a bank-55 patch, a percussion key of 87, and a 4-operator voice.
+
+### Phase 2B — WildMIDI: native GTL loader and TIMB resolution
+
+Depends on Phase 2A.
 
 - **R2.1** WildMIDI accepts a Miles GTL passed to `WildMidi_Init()` / `-c`, detected **by content**, matching how `.op2` and `.sf2` are already detected (`wildmidi_lib.c:1739-1750`).
-- **R2.2** Melodic bank and percussion bank are selectable, defaulting to 55 and 127. Percussion is not restricted to keys 35-81 — the GENMIDI range limit must not be inherited.
-- **R2.3** 2-operator timbres (`FAT.AD`, 12-byte payload) render at full fidelity using the existing synth path, with no `synth.c` changes.
-- **R2.4** 4-operator timbres (`FAT.OPL`, 23-byte payload) load without error and degrade to their first two operators, clearly documented as a Tier 1 limitation.
+- **R2.2** Melodic bank and percussion bank are selectable, defaulting to 55 and 127, stored in the Phase 2A bank-addressed model. All 181 `FAT.OPL` timbres survive, including percussion keys 82-87.
+- **R2.3** 2-operator timbres (`FAT.AD`, 12-byte payload) render at full fidelity.
+- **R2.4** 4-operator timbres (`FAT.OPL`, 23-byte payload) load and **retain all four operators in storage**, rendering with the first two until Phase 5 supplies 4-op synthesis. Storage must not discard operators 3-4; that is the whole point of R2A.3.
 - **R2.5** KSL/total-level is preserved bit-exactly. The Miles level byte *is* the OPL `0x40` register; do not repack lossily.
-- **R2.6** Structured as a self-contained addition suitable for upstream submission to Mindwerks.
+- **R2.6** **Parse the `TIMB` chunk instead of skipping it.** `f_xmidi.c:193-213` currently reads the length and jumps the payload, with the FIXME "May not be needed for playback as EVNT seems to hold patch events". That assumption is false for MoM: EVNT carries a program number but not the *bank*, and every MoM track relies on bank 55.
+- **R2.7** **Resolve each TIMB `(patch, bank)` pair through the loaded GTL and install the timbre**, mirroring AIL's `AIL_timbre_request` → `load_global_timbre` → `AIL_install_timbre` loop (`SOUND.c:807-817`). Timbre counts are small — 4 for the overland track — so eager loading of a sequence's declared set is acceptable; on-demand is not required.
+- **R2.8** **Define fallback behaviour** for a program change whose patch is absent from TIMB, and for a sequence with no TIMB chunk at all. Fallback must be explicit and logged, never a silent wrong-instrument substitution.
+- **R2.9** Structured as a self-contained addition suitable for upstream submission to Mindwerks.
 
-**Exit criteria:** `wildmidi -c assets/__FAT/FAT.AD out/xmi/MUSIC_100.XMI` renders, and the result is distinguishable from and preferred over the `gtl2op2`-produced GENMIDI equivalent.
+**Exit criteria:** `wildmidi -c assets/__FAT/FAT.AD out/xmi/MUSIC_100.XMI` renders using the four bank-55 timbres declared in that track's TIMB chunk, and the result is distinguishable from and preferred over the `gtl2op2`-produced GENMIDI equivalent.
+
+**Explicitly out of scope for Phase 2B:** the `RBRN` chunk (`f_xmidi.c:215`, "Unknown what this is") is left skipped. No evidence it affects MoM playback; revisit only if a defect points at it.
+
+### Phase 2C — WildMIDI: XMIDI event-stream fidelity
+
+The playback path (`f_xmidi.c`, `_WM_ParseNewXmi`) diverges from AIL's interpreter in two ways that a survey of all 116 `MUSIC.LBX` tracks proved are exercised in the majority of them. These are independent of the timbre-storage work and can proceed in parallel with 2A, though R2C.2 shares the bank model with 2A/2B.
+
+- **R2C.1** **Honour tempo meta-events (`FF 51 03`) instead of discarding them.** `f_xmidi.c:319-322` matches the event and comments `/* Ignore tempo events */`, skipping it. AIL implements tempo fully: `XMIDI_meta` (`ext/ail214/XMIDI.ASM:929`) dispatches `51h` to `__set_tempo` (`:1014`), driving `tempo_percent`/`tempo_target`/`tempo_accum`/`tempo_period` state (`:249-255`). **Measured: 90 of 116 tracks (78%) carry at least one tempo event.** This is the single highest-impact XMIDI divergence — every affected track plays at a wrong, flat tempo regardless of instrument fidelity.
+- **R2C.2** **Interpret controller 114 (`PATCH_BANK_SEL`) as an XMIDI bank select**, routing it to the Phase 2A bank-addressed model rather than passing it through as a generic MIDI CC. AIL defines it as a core XMIDI controller (`ext/ail214/AIL.INC:65`) and logs it per channel (`ctrl_log`, `ext/ail214/XMIDI.ASM:201`). **Measured: 594 events across 87 of 116 tracks.** This is the play-time companion to the TIMB declaration (R2.6-R2.7): TIMB declares the timbre set, CC114 switches to bank 55 during playback. Both are required for correct bank binding.
+- **R2C.3** Controllers 110/111/112 (`CHAN_LOCK`/`CHAN_PROTECT`/`VOICE_PROTECT`) and finite/nested FOR loops are **out of scope** — measured usage across the 116 tracks is zero for 110/111/112 and two events total for CC116, none for CC117. Documented as deliberately unhandled; revisit only if a track is found to need them.
+
+**Exit criteria:** a track with tempo changes (any of the 90) renders at varying tempo matching AIL's timing, and a CC114 bank switch selects the intended bank in the Phase 2A model rather than being ignored.
+
+**Method note:** the usage counts come from a validated EVNT-stream parser (correct XMIDI note-on VLQ-duration handling; 0 desyncs across all 116 tracks), not the earlier raw byte-scan whose controller counts were false positives. See §9.1.
 
 ### Phase 3 — Win32 audio backend (music only)
 
@@ -95,14 +139,16 @@ Work happens in `jbalcomb/wildmidi` (`J:/STU/developp/wildmidi`).
 
 **Exit criteria:** clicking a button during background music produces both sounds, with no drift or dropout over a 10-minute session.
 
-### Phase 5 — WildMIDI Tier 2: 4-operator support
+### Phase 5 — WildMIDI: 4-operator synthesis
+
+Depends on Phase 2A (storage for operators 3-4) and Phase 2B (timbres to put there).
 
 - **R5.1** `synth.c` manages OPL3 connection-select register `0x104`. It currently writes only `0x105` (`synth.c:190`).
 - **R5.2** A 4-operator voice-pair allocator, porting the approach in `ext/ail214/YAMAHA.INC:1403-1420` (`NUM_4OP_VOICES = 6`, pairing at channel offset +3).
 - **R5.3** `FAT.OPL` timbres render as authored, using all four operators.
 - **R5.4** 2-op timbres and existing GENMIDI/SF2/GUS paths are unaffected. Regression-checked by re-rendering known tracks.
 
-**Exit criteria:** `FAT.OPL` output is preferred by ear over both `FAT.AD` and the Tier 1 two-operator degradation.
+**Exit criteria:** `FAT.OPL` output is preferred by ear over both `FAT.AD` and the Phase 2B two-operator rendering.
 
 ### Phase 6 — Dependency and licence record
 
@@ -128,17 +174,39 @@ Both are standalone (no engine link) and CMake-only, matching `rmr2hms`.
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Tier 2 4-op work is larger than estimated | Fidelity goal G2 only partly met | Tier 1 ships real timbres independently; Tier 2 is additive |
+| Phase 2A touches a core WildMIDI data structure | Regresses GENMIDI/SF2/GUS paths for every WildMIDI user, not just ReMoM | R2A.4 compatibility shim; R2A.5 byte-identical re-render of all three existing formats |
+| Phase 5 4-op work is larger than estimated | Fidelity goal G2 only partly met | Phase 2B ships MoM's real timbres (2-op rendering) independently; Phase 5 is additive |
 | Pinned to unreleased WildMIDI `master` | Upstream churn breaks the fork | Fork controls the pin; re-vet on any move |
 | Upstream declines the GTL loader | Permanent fork maintenance | Acceptable — the fork already exists for LGPL reasons |
 | `waveOut` latency is worse than expected | Audible lag on SFX | Latency explicitly a non-goal; revisit only if it affects click feedback |
 | Phase 1 refactor regresses SDL2/SDL3 | Working backends break | R1.3 hash comparison before and after |
-| The GTL mode byte matters and is being ignored | Subtle wrongness | Resolve from `ext/ail214/GLIB.C` during Phase 2 |
+| The GTL mode byte matters and is being ignored | Subtle wrongness | Resolve from `ext/ail214/GLIB.C` during Phase 2B |
 
 ## 9. Open questions
 
 Carried from BRA §10 — items 1, 2, 3, and 5 are inputs to Phases 2, 4, and 5 and should be closed as those phases begin.
 
+### 9.1 XMIDI event handling — surveyed against all 116 tracks
+
+The question "does WildMIDI handle XMIDI the way AIL intended?" was answered by a validated EVNT-stream parser run over all 116 `MUSIC.LBX` tracks (correct XMIDI note-on VLQ-duration handling; 0 desyncs), cross-referenced against AIL's own interpreter.
+
+| Feature | Measured usage | WildMIDI | Disposition |
+|---|---|---|---|
+| Tempo meta `FF 51 03` | **90 / 116 tracks** | discarded (`f_xmidi.c:319-322`) | **R2C.1** |
+| Controller 114 `PATCH_BANK_SEL` | **594 events, 87 / 116 tracks** | passed through as generic CC | **R2C.2** |
+| `TIMB` chunk | **116 / 116 tracks** | skipped (`f_xmidi.c:193-213`) | R2.6-R2.8 |
+| Controller 116 `FOR_LOOP` | 2 events, 2 tracks | partial (`f_xmidi.c:333-335`) | R2C.3 (out of scope) |
+| Controller 117 `NEXT_LOOP` | 0 | — | R2C.3 (out of scope) |
+| Controllers 110/111/112 | 0 | passed through | R2C.3 (out of scope) |
+
+**Conclusion: there is a real XMIDI work item, and it is bigger than the timbre binding alone.** The two highest-impact divergences — tempo (90 tracks) and CC114 bank-select (87 tracks) — are event-stream fidelity issues in `f_xmidi.c`, not timbre-storage issues. Tempo especially: 78% of the soundtrack plays at a wrong flat tempo regardless of instruments. These are Phase 2C.
+
+**Correction of an earlier claim.** A first pass concluded "no general fix-XMIDI work item," based on a raw byte-scan for `0xBn` followed by 116/117 that reported 78 and 74 occurrences. Those counts were false positives — XMIDI's variable-length delta bytes were mistaken for status bytes. The validated parser puts the real counts at 2 and 0, and more importantly the first pass never scanned for tempo or CC114 at all, which are the divergences that actually matter. The lesson is the recurring one in BRA §9: an indicative-but-unvalidated measurement drove a wrong conclusion; the validated one reversed it.
+
 ## 10. Sequencing note
 
-Phases 1-4 deliver G1 and G3 and a large part of G2. Phase 5 completes G2. Phase 6 is not gated on the others and should be started immediately — it is currently three unrecorded items deep and is the only phase with an external obligation attached.
+**Phase 2A is the gate.** It is the only phase that must precede another for correctness rather than convenience: a GTL loader written before the patch model is generalised produces `gtl2op2` with the intermediate file removed — same 175-record ceiling, same percussion clamp, same two operators. See BRA §6.1.
+
+Phase 1 is independent of all WildMIDI work and can proceed in parallel. Phases 3-4 depend on 2B for anything to voice correctly, though a Win32 backend could be brought up against the built-in `@opl3` bank first if that de-risks the `waveOut` work.
+
+Phases 1, 2A, 2B, 3 and 4 deliver G1 and G3 and most of G2. Phase 5 completes G2. Phase 6 is not gated on anything and should be started immediately — it is three unrecorded items deep and is the only phase carrying an external obligation.

@@ -118,10 +118,12 @@ That result is diagnostic, not a preference. It says the second voice was being 
 
 Every loss in the conversion traces to the intermediate format, not to MoM:
 
-1. 4-op voices misrepresented as layered 2-op pairs (the audible defect)
-2. 6 percussion timbres dropped — GENMIDI holds keys 35-81; `FAT.OPL` has 35-87
+1. 4-op voices misrepresented as layered 2-op pairs (the defect that was heard)
+2. **6 percussion timbres silently dropped, and they are played.** GENMIDI's percussion table is indexed by MIDI key over a *fixed range* — records 128-174 = keys 35-81. `FAT.OPL` bank 127 spans keys 35-87, so keys 82-87 fall off the end. A survey of note-on events across all 116 tracks found keys 82 (929 hits), 83 (66), 84 (23) and 87 (151) in use across **21 tracks**; 85 and 86 are unused.
 3. The GTL mode byte discarded — no GENMIDI field for it
 4. Banks 55 and 127 collapsed into GENMIDI's flat 175-record table
+
+Loss 2 deserves emphasis because of *how it presented*. `gtl2op2` reported `DROPPED: 6 percussion timbre(s)` — a clean-looking line next to `128 converted, 0 missing` — and was read as a rounding error. It is not: a fifth of the soundtrack loses percussion, and the failure mode is not a missing sound but a thinner drum line, indistinguishable by ear from "OPL3 sounds a bit flat". **A conversion tool's own success report is not evidence that the conversion was adequate.**
 
 **Lesson, stated generally:** *a format conversion whose losses are all attributable to the target format is a signal that the target format is wrong.* The instinct to reach for the format the tool already accepts is exactly how fidelity gets silently capped. It was audible here; on a less musical subsystem it would not have been.
 
@@ -135,14 +137,36 @@ Every loss in the conversion traces to the intermediate format, not to MoM:
 
 WildMIDI provides the pieces that would otherwise have to be written: a MIDI sequencer, a Miles XMI parser (`src/f_xmidi.c`, `src/xmi2mid.c`), and the Nuked OPL3 emulator core. Verified working against MoM data before adoption: `MUSIC.LBX` entry 100 parsed and rendered to 97 seconds of audio.
 
-The work is split into two tiers because they carry very different risk:
+#### The correction — GENMIDI is WildMIDI's *internal* model, not merely a format it reads
 
-- **Tier 1 — GTL loader, no synth changes.** Read a Miles GTL natively; honour banks 55/127. `FAT.AD` (12-byte payload = the plain 2-operator `BNK` struct) is **fully expressible by WildMIDI's synth as it stands**. `FAT.OPL` degrades gracefully to its first two operators. Self-contained and plausibly upstreamable.
-- **Tier 2 — 4-operator support in `synth.c`.** WildMIDI writes `0x105` (OPL3 NEW mode) at `src/synth.c:190` but **never writes `0x104`**, and has no 4-op channel-pair allocator. The Nuked core underneath does support 4-op (`ch_4op2` in `src/opl3.c`). `ext/ail214/YAMAHA.INC` is the reference implementation.
+An earlier draft of this document split the work into "Tier 1 — GTL loader, no synth changes" and "Tier 2 — 4-operator support", on the assumption that reading a Miles GTL was a self-contained parser addition. **That assumption was wrong**, and the error is worth recording because it is the same mistake as §5 in a new place.
 
-Tier 1 delivers MoM's real timbres with no synthesis risk. Tier 2 is where the fidelity goal is actually met.
+WildMIDI has exactly one patch store, and it is GENMIDI-shaped:
+
+| Fact | Evidence |
+|---|---|
+| The only patch storage is a flat GENMIDI image | `src/synth.c:86` — `static uint8_t op2_bank[OP2_RECORDS * OP2_RECSIZE]` |
+| Melodic lookup indexes it by program | `src/synth.c:653` — `op2_bank + program * OP2_RECSIZE` |
+| Percussion lookup hardcodes the GENMIDI base and key offset | `src/synth.c:602` — `op2_bank + (128 + (key - 35)) * OP2_RECSIZE` |
+| Percussion init hardcodes the key range | `src/synth.c:806` — `for (id = 35; id <= 81; id++)` |
+| Even the built-in `@opl3` GM voices are a GENMIDI image | `src/synth.c:793-795` — `memcpy(op2_bank, synth_builtin_bank, ...)` |
+| The patch struct holds **two operators only** | `src/synth.c:56-67` — `mod_*`, `car_*`, `fb`; no operators 3-4 |
+
+A GTL loader must put its results somewhere, and the only somewhere is `op2_bank[]`. It would therefore re-inherit every limitation the move away from GENMIDI was meant to escape: the flat 175 records, percussion clamped to keys 35-81, and two operators.
+
+**Consequence: "Tier 1" was `gtl2op2` with the intermediate file deleted** — identical fidelity ceiling, including the percussion loss quantified in §5. The conversion being rejected was never really in the `.op2` file; it is in `op2_bank[]`.
+
+#### The corrected ordering — three steps
+
+1. **Generalize the patch storage model.** Bank-addressed rather than flat (MoM uses 55 and 127); no hardcoded percussion key range; a patch representation able to hold two *or* four operators. This is the actual "stop being GENMIDI" work, and it is what makes steps 2 and 3 more than cosmetic.
+2. **GTL loader and TIMB resolution** fill that model. Banks 55/127 and percussion keys 82-87 survive. Sequences bind to timbres the way AIL does, via the TIMB chunk.
+3. **4-operator synthesis.** WildMIDI writes `0x105` (OPL3 NEW mode) at `src/synth.c:190` but **never writes `0x104`**, and has no 4-op channel-pair allocator. The Nuked core underneath does support 4-op (`ch_4op2` in `src/opl3.c`). `ext/ail214/YAMAHA.INC:1403-1420` is the reference implementation.
+
+Step 1 is invasive but bounded: `fm_patch` is a small, well-commented struct with a single consumer, and the existing GENMIDI/SF2/GUS paths can continue to fill it through a compatibility shim. Nothing about this requires breaking WildMIDI's other input formats.
 
 **Rejected alternative — patch the game instead of the library.** Pre-converting timbres in ReMoM and feeding WildMIDI a supported format is Option B by another name, with the same ceiling.
+
+**Upstreamability, revised.** The earlier draft claimed Tier 1 was "plausibly upstreamable" as a self-contained addition. With step 1 in the picture that is a weaker claim — generalising a core data structure is a larger ask of a maintainer than adding a file parser. Worth attempting, but the fork should not be planned around acceptance.
 
 ### 6.2 Output — waveOut (winmm)
 
@@ -199,7 +223,7 @@ Per `doc/#Devel/Dependency-Vetting.md`. **No trust score is produced, by design.
 - WildMIDI as the synthesis engine — supplies sequencer, XMI parser, and OPL3 core; verified against real MoM data before adoption.
 - Forking rather than vendoring patches — satisfies LGPL, controls the pin, keeps upstreaming open.
 - `waveOut` — matched to requirements actually held rather than requirements assumed.
-- The Tier 1 / Tier 2 split — lets real timbres land before the risky synth work.
+- The three-step ordering (§6.1) — generalise the patch model, then load, then synthesise. Lets MoM's real timbres land before the risky 4-op work, without the earlier split's false premise.
 
 **Did not fit:**
 
@@ -221,7 +245,7 @@ Both mistakes share a signature — *the constraint came from the tooling, not f
 ## 10. Open questions
 
 1. **Does the GTL mode byte (`payload[0]`) carry meaning ReMoM needs?** Not yet determined. `ext/ail214/GLIB.C` is the tool that *builds* GTL files and is the authoritative source.
-2. **Is `FAT.OPL` or `FAT.AD` the right default?** `FAT.AD` is the OPL2 bank an actual SoundBlaster would have played in 1994. `FAT.OPL` is richer but needs Tier 2. Resolvable only by listening once Tier 2 exists.
+2. **Is `FAT.OPL` or `FAT.AD` the right default?** `FAT.AD` is the OPL2 bank an actual SoundBlaster would have played in 1994. `FAT.OPL` is richer but needs step 3 (4-op synthesis). Resolvable only by listening once step 3 exists.
 3. **Roland/MT-32 path.** `FAT.MT` (65026 bytes) and the timbre-init sequence at `SNDDRV.LBX` entry 20 (`SOUND.c:713-716`) are out of scope here, but the GTL loader should not foreclose them.
-4. **Will Mindwerks accept a Miles GTL loader upstream?** Worth attempting for Tier 1; it would remove the fork-maintenance burden. Tier 2 (4-op) is a larger ask.
+4. **Will Mindwerks accept any of this upstream?** Weaker prospect than the earlier draft assumed. Step 1 generalises a core data structure; step 3 adds 4-op synthesis. Both are larger asks than a file parser. Worth attempting, but do not plan the fork around acceptance.
 5. **SFX mixing policy.** How many concurrent VOC effects must mix, and what happens on overflow. The DOS original's behaviour is in `MoX/src/SOUND.c` and has not been characterised.
