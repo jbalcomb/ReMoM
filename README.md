@@ -16,7 +16,7 @@ https://youtu.be/d-PlvxV_Ek0
 Pre-built, **engine-only** binaries are available on the [Releases](https://github.com/jbalcomb/ReMoM/releases) page. You supply your own original game data files.
 
 1. Download the artifact for your platform:
-   - **Windows:** the `.zip`, or run the `.exe` installer. *(Audio is not yet wired up on the Windows build — it runs silent.)*
+   - **Windows:** the `.zip`, or run the `.exe` installer. Self-contained — the SDL runtime DLLs are bundled.
    - **Linux:** the `.AppImage` (self-contained) — or the `.zip`/`.tar.gz` if you already have SDL2 installed.
    - **macOS:** the `.zip`. It's unsigned, so on first run clear the quarantine flag: `xattr -dr com.apple.quarantine ReMoMber`.
 2. Extract it (on Linux/macOS, `chmod +x` the AppImage / `ReMoMber`).
@@ -31,7 +31,7 @@ See [PLAYING.md](PLAYING.md) for more details and troubleshooting. Maintainers c
 
 - **CMake** 3.25+ (for preset support)
 - A rendering/audio backend, depending on platform/preset:
-  - **Windows (`MSVC-*` presets):** none — these use the native **Win32** backend (no SDL).
+  - **Windows (`MSVC-*` presets):** **SDL2** + **SDL2_mixer** (default) — CMake looks under `C:\devellib\` (e.g. `SDL2-2.32.2`, `SDL2_mixer-2.8.1`). The native **Win32** backend (no SDL) is opt-in via the `MSVC-win32-*` presets.
   - **Linux / macOS:** **SDL2** + **SDL2_mixer** development files. SDL2 is the default backend; SDL3 is opt-in via `-DUSE_SDL3=ON` (use a no-sound preset to build without the mixer).
 - A C/C++ toolchain:
   - **Windows:** Visual Studio 2022 (x64 C++ tools)
@@ -48,7 +48,7 @@ cmake --workflow --preset=MSVC-debug
 ```
 
 This runs configure, build, test, and package steps in one command. The `MSVC-*`
-presets use the native **Win32** backend, so no SDL install is needed on Windows.
+presets use the **SDL2** backend (needs SDL2 + SDL2_mixer under `C:\devellib\`; see below).
 
 Explicitly without audio:
 
@@ -64,7 +64,7 @@ cmake --build --preset MSVC-debug
 ctest --preset MSVC-debug
 ```
 
-To build an SDL-based Windows binary instead (opt out of the Win32 backend with `-DUSE_WIN32=OFF`), CMake looks for SDL under `C:\devellib\` (e.g. `SDL2-2.32.2`, or `SDL3-3.4.2` with `-DUSE_SDL3=ON`). Pass `-DCMAKE_PREFIX_PATH=C:\your\path` to use a different location. See [BUILDING.md](BUILDING.md).
+The `MSVC-*` presets need SDL under `C:\devellib\` (e.g. `SDL2-2.32.2` + `SDL2_mixer-2.8.1`, or `SDL3-3.4.2` with `-DUSE_SDL3=ON`); pass `-DCMAKE_PREFIX_PATH=C:\your\path` to use a different location. For the self-contained **silent native-Win32** build (no SDL), use the `MSVC-win32-*` presets instead. See [BUILDING.md](BUILDING.md).
 
 ---
 
