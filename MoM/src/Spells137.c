@@ -170,21 +170,23 @@ char message_lbx_file__ovr137[] = "message";
 // WZD dseg:CA38                                                 BEGIN: ovr137 - Uninitialized Data
 
 // WZD dseg:CA38
-SAMB_ptr IDK_MONSTER_seg;
-
+SAMB_ptr spell_subject_figure_seg;
 // WZD dseg:CA3A
-SAMB_ptr SPELLSCR_ENCHANT_seg;
-
+SAMB_ptr summon_fx_front_seg;
 // WZD dseg:CA3C
-SAMB_ptr SPELLSCR_FLAMEFR1_seg;
-
+SAMB_ptr summon_flame_frame_seg;
 // WZD dseg:CA3E
-SAMB_ptr SPELLSCR_GLOBALMK_seg;
+SAMB_ptr summon_fx_back_seg;
 
-// WZD dseg:CA40 00 00                                           IMG_SBK_SliderBar@ dw 0                 ; DATA XREF: ITEM_LoadCraftingRes+188w ...
-// WZD dseg:CA40                                                                                         ; also the item crafting right arrow (2 state image)
-// WZD dseg:CA42 00 00                                           IMG_SBK_SliderDot@ dw 0                 ; DATA XREF: ITEM_LoadCraftingRes+171w ...
-// WZD dseg:CA42                                                                                         ; also the item crafting left arrow (2 state image)
+// WZD dseg:CA40
+// WZD dseg:CA42
+/*
+Item_Make_Screen()
+    IMG_SBK_SliderDot is used to hold the pict for m_itemmake_icon_window_left_arrow_button
+    IMG_SBK_SliderBar is used to hold the pict for m_itemmake_icon_window_right_arrow_button
+*/
+SAMB_ptr IMG_SBK_SliderBar;
+SAMB_ptr IMG_SBK_SliderDot;
 
 // WZD dseg:CA44
 /*
@@ -199,39 +201,39 @@ SAMB_ptr ge_anim_moodwiz_seg;
 // WZD dseg:CA4A 00                                              db    0
 // WZD dseg:CA4B 00                                              db    0
 
-// WZD dseg:CA4C 00 00                                           _osc_leave_screen dw 0               ; DATA XREF: SBK_SpellSlider+D5w ...
-// WZD dseg:CA4E 00 00                                           _osc_need_target_flag dw 0          ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+20Ar ...
+// WZD dseg:CA4C
+/*
+WIZ_GlobalSpellAnim()
+    used as leave_screen flag
+*/
+int16_t _osc_leave_screen;
+// WZD dseg:CA4E
+/*
+    {F,T} 'need target' for wizard or wizard spell
+    BUGBUG in Cast_Spell_City_Enchantment_Animation_1__WIP()
+*/
+int16_t _osc_need_target_flag;
+// Spells137.c  // WZD dseg:CA50
+// Spells137.c  int16_t _temp_sint_1;
 // WZD dseg:CA50 00 00                                           _osc_player_idx dw 0                 ; DATA XREF: SBK_SliderRedraw+8r ...
-// WZD dseg:CA50                                                                                         ; clicked spell label index during combat sliders
-// WZD dseg:CA50                                                                                         ; player_idx during global cast anims
-// MOX/MOM_Data.c  // WZD dseg:CA50
-// MOX/MOM_Data.c  
 int16_t _temp_sint_1;
 #define _osc_player_idx _temp_sint_1
 #define _osc_spell_idx _temp_sint_1
 #define _osc_city_idx _temp_sint_1
 #define _osc_bldg_idx _temp_sint_1
 
-// WZD dseg:CA50                                                                                         ; city_idx during ¿ ?
-// WZD dseg:CA52 00 00                                           word_434F2 dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+25Fr ...
+
 // WZD dseg:CA52
-// WZD dseg:CA52                                                 END: ovr136 - Uninitialized Data
-
-
-
-// WZD dseg:CA54                                                 BEGIN: ovr137 - Uninitialized Data
+/*
+in IDK_Spell_Cityscape_Draw()
+passed to  Cityscape_Window__WIP
+as bldg_idx_1 and bldg_idx_2
+*/
+int16_t _ce_bldg_idx;
 
 // WZD dseg:CA54
-/*
-
-IDK_SummonAnimLoad()
-    IDK_wizard_id_thing_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, (46 + _players[player_idx].wizard_id), _screen_seg);
-
-Cast_Spell_Of_Mastery_Load()
-    IDK_wizard_id_thing_seg = LBX_Reload(splmastr_lbx_file__ovr138, (14 + _players[cast_spell_of_mastery_player_idx].wizard_id), World_Data);
-
-*/
-SAMB_ptr IDK_wizard_id_thing_seg;
+/* DEDU  ¿ any way to estimate the likelihood of this having been in ovr137 vs. ovr138 ? */
+SAMB_ptr spell_caster_figure_seg;
 
 // WZD dseg:CA54                                                 END: ovr137 - Uninitialized Data
 
@@ -242,116 +244,69 @@ SAMB_ptr IDK_wizard_id_thing_seg;
 */
 
 // WZD o137p01
-// drake178: sub_BE860()
-/*
-
-¿ parameter is spell index or unit type / index into MONSTER.LBX ?
-
-Cast_Spell_Overland()
-    IDK_SummonAnim(spell_data_table[spell_idx].Param0, MultiPurpose_Local_Var, player_idx);
-e.g.,
-    'Magic Spirit'  (201)
-    spell_data_table[spl_Magic_Spirit].Param0 == 154  AKA ut_Magic_Spirit
-    // MONSTER.LBX, 000  "MONSTER1" "Magic Spirit"
-    200 - 154 = 46
-    46 - 46 = 0
-    'Demon Lord'    (200)
-    spell_data_table[spl_Demon_Lord].Param0 == 173  AKA ut_Demon_Lord
-    // MONSTER.LBX, 019  "MONSTER2" "Demon Lord"
-    200 - 173 = 27
-    46 - 27 = 19
-*/
-void IDK_SummonAnim_Load(int16_t type_or_other, int16_t player_idx)
+void Summon_Animation_Load(int16_t type_or_other, int16_t player_idx)
 {
-    SAMB_ptr IDK_flic_for_palette_seg = 0;
-    int16_t unit_race = 0;  // _DI_
-    int16_t DBG_entry_num = 0;
-
+    SAMB_ptr summon_palette_seg = NULL;
+    int16_t unit_race = 0;
     if(type_or_other < 0)
     {
-        unit_race = rt_Arcane;
+        unit_race = rt_Arcane;  /* rt_Arcane = 15; 46 + 15 = 61; WTF? / * SPELLSCR.LBX, 059  "SUMMGREY"    "" * / */
     }
     else
     {
         unit_race = _unit_type_table[type_or_other].race_type;
     }
-
-    unit_race += 46;  // ¿ WTF ?  {0,...,20} + 46 = {46,...,66}
-
+    unit_race += 46;  // DEDU  ¿ WTF ?  {0,...,20} + 46 = {46,...,66}
     Mark_Block(_screen_seg);
-
     // SPELLSCR.LBX, 009  "FLAMEFR1"    ""
-    SPELLSCR_FLAMEFR1_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, 9, _screen_seg);
-
-    // SPELLSCR.LBX, 046  "SUMMON02"    ""
-    // SPELLSCR.LBX, 047  "SUMMON03"    ""
-    // SPELLSCR.LBX, 048  "SUMMON04"    ""
-    // SPELLSCR.LBX, 049  "SUMMON05"    ""
-    // SPELLSCR.LBX, 050  "SUMMON06"    ""
-    // SPELLSCR.LBX, 051  "SUMMON07"    ""
-    // SPELLSCR.LBX, 052  "SUMMON08"    ""
-    // SPELLSCR.LBX, 053  "SUMMON09"    ""
-    // SPELLSCR.LBX, 054  "SUMMON10"    "horus"
-    // SPELLSCR.LBX, 055  "SUMMON11"    "ariel"
-    // SPELLSCR.LBX, 056  "SUMMON12"    "tlaloc"
-    // SPELLSCR.LBX, 057  "SUMMON13"    "kali"
-    // SPELLSCR.LBX, 058  "SMLRESCH"    ""
-    // SPELLSCR.LBX, 059  "SUMMGREY"    ""
-    // SPELLSCR.LBX, 060  "SUMGREEN"    ""
-    // SPELLSCR.LBX, 061  "SUMMBLUE"    ""
-    // SPELLSCR.LBX, 062  "SUMMRED"     ""
-    // SPELLSCR.LBX, 063  "SUMWHITE"    ""
-    // SPELLSCR.LBX, 064  "SUMMPURP"    ""
-    // SPELLSCR.LBX, 065  "VORTEX1"     ""
-    // SPELLSCR.LBX, 066  "VORTEX2"     ""
-    IDK_flic_for_palette_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, unit_race, _screen_seg);
-
-    Load_Palette_From_Animation(IDK_flic_for_palette_seg);
-
+    summon_flame_frame_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, 9, _screen_seg);
+    // SPELLSCR.LBX, 046  "SUMMON00"    ""
+    // SPELLSCR.LBX, 047  "SUMMON01"    ""
+    // SPELLSCR.LBX, 048  "SUMMON02"    ""
+    // SPELLSCR.LBX, 049  "SUMMON03"    ""
+    // SPELLSCR.LBX, 050  "SUMMON04"    ""
+    // SPELLSCR.LBX, 051  "SUMMON05"    ""
+    // SPELLSCR.LBX, 052  "SUMMON06"    ""
+    // SPELLSCR.LBX, 053  "SUMMON07"    ""
+    // SPELLSCR.LBX, 054  "SUMMON08"    ""
+    // SPELLSCR.LBX, 055  "SUMMON09"    ""
+    // SPELLSCR.LBX, 056  "SUMMON10"    "horus"
+    // SPELLSCR.LBX, 057  "SUMMON11"    "ariel"
+    // SPELLSCR.LBX, 058  "SUMMON12"    "tlaloc"
+    // SPELLSCR.LBX, 059  "SUMMON13"    "kali"
+    // SPELLSCR.LBX, 060  "SMLRESCH"    ""
+    // SPELLSCR.LBX, 061  "SUMMGREY"    ""
+    // SPELLSCR.LBX, 062  "SUMGREEN"    ""
+    // SPELLSCR.LBX, 063  "SUMMBLUE"    ""
+    // SPELLSCR.LBX, 064  "SUMMRED"     ""
+    // SPELLSCR.LBX, 065  "SUMWHITE"    ""
+    // SPELLSCR.LBX, 066  "SUMMPURP"    ""
+    summon_palette_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, unit_race, _screen_seg);
+    Load_Palette_From_Animation(summon_palette_seg);
     Set_Page_Off();
-
     Main_Screen_Draw();
-
-    FLIC_Draw(30, 42, SPELLSCR_FLAMEFR1_seg);
-
+    FLIC_Draw(30, 42, summon_flame_frame_seg);
     Copy_Off_To_Back();
-
     Release_Block(_screen_seg);
-
     Mark_Block(_screen_seg);
-
     // SPELLSCR.LBX, 010  "GLOBALMK"    ""
-    SPELLSCR_GLOBALMK_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, 10, _screen_seg);
-
+    summon_fx_back_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, 10, _screen_seg);
     // SPELLSCR.LBX, 011  "ENCHANT"     ""
-    SPELLSCR_ENCHANT_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, 11, _screen_seg);
-
+    summon_fx_front_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, 11, _screen_seg);
     if(type_or_other > 0)
     {
-
         // MONSTER.LBX, 000  "MONSTER1" "Magic Spirit"
         // ...
         // MONSTER.LBX, 043  "MONSTER4" "Nagas"
-        // IDK_MONSTER_seg = LBX_Reload_Next(monster_lbx_file__ovr137, (46 - (200 - spell_data_table[type_or_other].Param0)), _screen_seg);
-        // DBG_entry_num = (46 - (200 - spell_data_table[type_or_other].Param0));
-        // DBG_entry_num = (46 - (200 - spell_data_table[type_or_other].unit_type));
-        DBG_entry_num = spell_data_table[type_or_other].Param0;
-        DBG_entry_num = spell_data_table[type_or_other].unit_type;
-        DBG_entry_num = (200 - DBG_entry_num);
-        DBG_entry_num = (46 - DBG_entry_num);
-        DBG_entry_num = (46 - (200 - type_or_other));
-        IDK_MONSTER_seg = LBX_Reload_Next(monster_lbx_file__ovr137, DBG_entry_num, _screen_seg);
-
+        // DEDU  WTF? (type_or_other - spell_data_table[201].Param0)?
+        spell_subject_figure_seg = LBX_Reload_Next(monster_lbx_file__ovr137, (type_or_other - spell_data_table[201].unit_type), _screen_seg);
     }
     else
     {
-
         if(type_or_other == -1)
         {
-
             // MONSTER.LBX, 046  "MONSTER2" "Sword"
-            IDK_MONSTER_seg = LBX_Reload_Next(monster_lbx_file__ovr137, 46, _screen_seg);
-
+            spell_subject_figure_seg = LBX_Reload_Next(monster_lbx_file__ovr137, 46, _screen_seg);
         }
         else if(
             (type_or_other == -2)
@@ -359,10 +314,8 @@ void IDK_SummonAnim_Load(int16_t type_or_other, int16_t player_idx)
             (type_or_other == -20)
         )
         {
-
             // MONSTER.LBX, 045  "MONSTER4" "Male Hero"
-            IDK_MONSTER_seg = LBX_Reload_Next(monster_lbx_file__ovr137, 45, _screen_seg);
-
+            spell_subject_figure_seg = LBX_Reload_Next(monster_lbx_file__ovr137, 45, _screen_seg);
         }
         else if(
             (type_or_other == -3)
@@ -370,45 +323,67 @@ void IDK_SummonAnim_Load(int16_t type_or_other, int16_t player_idx)
             (type_or_other == -30)
         )
         {
-
             // MONSTER.LBX, 044  "MONSTER4" "Female Hero"
-            IDK_MONSTER_seg = LBX_Reload_Next(monster_lbx_file__ovr137, 44, _screen_seg);
-
+            spell_subject_figure_seg = LBX_Reload_Next(monster_lbx_file__ovr137, 44, _screen_seg);
         }
-
     }
-
-    IDK_wizard_id_thing_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, (46 + _players[player_idx].wizard_id), _screen_seg);
-
-    IDK_flic_for_palette_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, unit_race, _screen_seg);
-
-    Load_Palette_From_Animation(IDK_flic_for_palette_seg);
-
+    /*
+        DEDU  ¿ HERE: type_or_other == 0 leaves spell_subject_figure_seg uninitialized ?
+    */
+    // SPELLSCR.LBX, 046  "SUMMON00"    ""
+    // SPELLSCR.LBX, 047  "SUMMON01"    ""
+    // SPELLSCR.LBX, 048  "SUMMON02"    ""
+    // SPELLSCR.LBX, 049  "SUMMON03"    ""
+    // SPELLSCR.LBX, 050  "SUMMON04"    ""
+    // SPELLSCR.LBX, 051  "SUMMON05"    ""
+    // SPELLSCR.LBX, 052  "SUMMON06"    ""
+    // SPELLSCR.LBX, 053  "SUMMON07"    ""
+    // SPELLSCR.LBX, 054  "SUMMON08"    ""
+    // SPELLSCR.LBX, 055  "SUMMON09"    ""
+    // SPELLSCR.LBX, 056  "SUMMON10"    "horus"
+    // SPELLSCR.LBX, 057  "SUMMON11"    "ariel"
+    // SPELLSCR.LBX, 058  "SUMMON12"    "tlaloc"
+    // SPELLSCR.LBX, 059  "SUMMON13"    "kali"
+    spell_caster_figure_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, (46 + _players[player_idx].wizard_id), _screen_seg);
+    // SPELLSCR.LBX, 046  "SUMMON00"    ""
+    // SPELLSCR.LBX, 047  "SUMMON01"    ""
+    // SPELLSCR.LBX, 048  "SUMMON02"    ""
+    // SPELLSCR.LBX, 049  "SUMMON03"    ""
+    // SPELLSCR.LBX, 050  "SUMMON04"    ""
+    // SPELLSCR.LBX, 051  "SUMMON05"    ""
+    // SPELLSCR.LBX, 052  "SUMMON06"    ""
+    // SPELLSCR.LBX, 053  "SUMMON07"    ""
+    // SPELLSCR.LBX, 054  "SUMMON08"    ""
+    // SPELLSCR.LBX, 055  "SUMMON09"    ""
+    // SPELLSCR.LBX, 056  "SUMMON10"    "horus"
+    // SPELLSCR.LBX, 057  "SUMMON11"    "ariel"
+    // SPELLSCR.LBX, 058  "SUMMON12"    "tlaloc"
+    // SPELLSCR.LBX, 059  "SUMMON13"    "kali"
+    // SPELLSCR.LBX, 060  "SMLRESCH"    ""
+    // SPELLSCR.LBX, 061  "SUMMGREY"    ""
+    // SPELLSCR.LBX, 062  "SUMGREEN"    ""
+    // SPELLSCR.LBX, 063  "SUMMBLUE"    ""
+    // SPELLSCR.LBX, 064  "SUMMRED"     ""
+    // SPELLSCR.LBX, 065  "SUMWHITE"    ""
+    // SPELLSCR.LBX, 066  "SUMMPURP"    ""
+    summon_palette_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, unit_race, _screen_seg);
+    Load_Palette_From_Animation(summon_palette_seg);
     Apply_Palette();
-
 }
 
 
 // WZD o137p02
-// drake178: sub_BE9FF()
-void IDK_SummonAnim_Draw(void)
+void Summon_Animation_Draw(void)
 {
-    int16_t start_y = 0;  // _SI_
-    int16_t start_x = 0;  // _DI_
-
+    int16_t start_y = 0;
+    int16_t start_x = 0;
     start_x = 30;
     start_y = 42;
-
     Copy_Back_To_Off();
-
     Set_Window((start_x + 7), (start_y + 8), SCREEN_XMAX, SCREEN_YMAX);
-
-    Clipped_Draw((start_x + 8), (start_y + 3), IDK_wizard_id_thing_seg);
-
-    FLIC_Draw((start_x + 55), (start_y + 54), SPELLSCR_GLOBALMK_seg);
-
+    Clipped_Draw((start_x + 8), (start_y + 3), spell_caster_figure_seg);
+    FLIC_Draw((start_x + 55), (start_y + 54), summon_fx_back_seg);
     Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, (start_y + 105));
-
     if(
         (_osc_anim_ctr < 30)
         &&
@@ -417,113 +392,70 @@ void IDK_SummonAnim_Draw(void)
         (_osc_player_idx == HUMAN_PLAYER_IDX)
     )
     {
-
-        Clipped_Draw((start_x + 76), (start_y + 110 - (_osc_anim_ctr * 3)), IDK_MONSTER_seg);
-
+        Clipped_Draw((start_x + 76), (start_y + 110 - (_osc_anim_ctr * 3)), spell_subject_figure_seg);
     }
     else
     {
-
-        Clipped_Draw((start_x + 76), (start_y + 18), IDK_MONSTER_seg);
-
+        Clipped_Draw((start_x + 76), (start_y + 18), spell_subject_figure_seg);
     }
-
-    FLIC_Draw((start_x + 64), (start_y + 80), SPELLSCR_ENCHANT_seg);
-
+    FLIC_Draw((start_x + 64), (start_y + 80), summon_fx_front_seg);
     Set_Outline_Color(16);
-
     Set_Font_Style_Shadow_Down(4, 4, 0, 0);
-
     Set_Alias_Color(190);
-
     if(_osc_summon_unit_type > 0)
     {
-
         stu_strcpy(GUI_NearMsgString, *_unit_type_table[spell_data_table[_players[_osc_player_idx].casting_spell_idx].unit_type].name);
-
         stu_strcat(GUI_NearMsgString, aSummoned);
-
     }
     else
     {
         if(_osc_summon_unit_type == -1)
         {
-
             stu_strcpy(GUI_NearMsgString, aItemEnchanted);
-
         }
         else
         {
-
             if(_osc_summon_unit_type > -10)
             {
-
                 stu_strcpy(GUI_NearMsgString, aHeroSummoned_0);
-
             }
             else
             {
-
                 stu_strcpy(GUI_NearMsgString, aChampionSumm_0);
-
             }
-
         }
-
     }
-
     Print_Centered((start_x + 90), (start_y + 117), GUI_NearMsgString);
-
 }
 
 
 // WZD o137p03
-// drake178: sub_BEB92()
-/*
-
-¿ magic_realm_spell_idx is Spell_Rarity ?
-    MultiPurpose_Local_Var = ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM);
-    MultiPurpose_Local_Var = (MultiPurpose_Local_Var / 10);
-
-*/
-void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t player_idx)
+void Summon_Animation(int16_t unit_type, int16_t rarity, int16_t player_idx)
 {
     int16_t anim_stg_cnt;
     int16_t input_field_idx;
     int16_t full_screen_field;
-
-    // DOMSDOS  Stop_All_Sounds__STUB();
-
-    SND_Spell_Music = LBX_Reload(music_lbx_file__ovr137, (MUSIC_Weak_Summon + magic_realm_spell_idx), SND_Music_Segment);
+    Stop_All_Sounds__STUB();
+    // MUSIC.LBX, 013 "MOM56 XM"    "Weak Creature Summons"
+    // MUSIC.LBX, 014 "MOM57 XM"    "Avg Creature Summons"
+    // MUSIC.LBX, 015 "MOM58 XM"    "Powerful Creature Summ"
+    // MUSIC.LBX, 016 "MOM59 XM"    "Mighty Creature Summon"
+    SND_Spell_Music = LBX_Reload(music_lbx_file__ovr137, (MUSIC_Weak_Summon + rarity), SND_Music_Segment);
     SND_Spell_Music_size = lbxload_entry_length;
-
     if(magic_set.background_music == ST_TRUE)
     {
-
         Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
-
     }
-
     _osc_anim_ctr = 0;
-
     _osc_player_idx = player_idx;
-
     _osc_summon_unit_type = unit_type;
-
     Allocate_Reduced_Map();
-
     Full_Draw_Main_Screen();
-
-    IDK_SummonAnim_Load(unit_type, player_idx);
-
-    Assign_Auto_Function(IDK_SummonAnim_Draw, 2);
-
+    Summon_Animation_Load(unit_type, player_idx);
+    Assign_Auto_Function(Summon_Animation_Draw, 2);
     _page_flip_effect = pfe_Dissolve;
-
     Clear_Fields();
-
     full_screen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, empty_string__ovr137[0], ST_UNDEFINED);
-
     if(magic_set.spell_animations == ST_TRUE)
     {
         anim_stg_cnt = 130;
@@ -532,43 +464,26 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
     {
         anim_stg_cnt = 40;
     }
-
     _osc_leave_screen = ST_FALSE;
-
     for(_osc_anim_ctr = 0; ((_osc_anim_ctr < anim_stg_cnt) && (_osc_leave_screen == ST_FALSE)); _osc_anim_ctr++)
     {
-
         Mark_Time();
-
         input_field_idx = Get_Input();
-
         if(input_field_idx == full_screen_field)
         {
             _osc_leave_screen = ST_TRUE;
         }
-
         Set_Page_Off();
-
-        IDK_SummonAnim_Draw();
-
+        Summon_Animation_Draw();
         PageFlip_FX();
-
         Release_Time(2);
-
         _page_flip_effect = pfe_None;
-
     }
-
     Deactivate_Auto_Function();
-
     Dissolve_Main_Screen();
-
     Stop_All_Sounds__STUB();
-
     Release_Block(_screen_seg);
-
     Play_Background_Music();
-
     if(player_idx == HUMAN_PLAYER_IDX)
     {
         Set_Mouse_List(1, mouse_list_default);
@@ -577,8 +492,8 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
     {
         Set_Mouse_List(1, mouse_list_hourglass);
     }
-
 }
+
 
 // WZD o137p04
 // drake178: sub_BECD9()

@@ -1112,6 +1112,10 @@ int16_t g_timestop_player_num;
 /*
 ALLOC.c
 Allocate_Data_Space()
+LOADER.c
+// WZD o52p16
+void Load_SPELLDAT(void)
+215 records of 36 bytes each - sizeof(struct s_SPELL_DATA)
 */
 struct s_SPELL_DATA * spell_data_table;
 
@@ -3616,61 +3620,7 @@ Combat_Spellbook_Mana_Adder_Draw()
 */
 SAMB_ptr IMG_SBK_PageText;
 
-// WZD dseg:CA38 00 00                                           IDK_MONSTER_seg dw 0                    ; DATA XREF: IDK_SummonAnim_Load+EEw ...
-// WZD dseg:CA3A 00 00                                           word_434DA dw 0                         ; DATA XREF: IDK_SummonAnim_Load+CBw ...
-// WZD dseg:CA3C 00 00                                           SPELLSCR_FLAMEFR1_seg dw 0                ; DATA XREF: IDK_SummonAnim_Load+49w ...
-// WZD dseg:CA3E 00 00                                           word_434DE dw 0                         ; DATA XREF: IDK_SummonAnim_Load+B4w ...
-
-// WZD dseg:CA40
-// WZD dseg:CA42
-/*
-
-Item_Make_Screen()
-    IMG_SBK_SliderDot is used to hold the pict for m_itemmake_icon_window_left_arrow_button
-    IMG_SBK_SliderBar is used to hold the pict for m_itemmake_icon_window_right_arrow_button
-*/
-SAMB_ptr IMG_SBK_SliderBar;
-SAMB_ptr IMG_SBK_SliderDot;
-
-// WZD dseg:CA44 00 00                                           IMG_MoodWizPortrait@ dw 0               ; DATA XREF: OVL_LoadGlobalAnim+28w ...
-// WZD dseg:CA46 00                                              db    0
-// WZD dseg:CA47 00                                              db    0
-// WZD dseg:CA48 00                                              db    0
-// WZD dseg:CA49 00                                              db    0
-// WZD dseg:CA4A 00                                              db    0
-// WZD dseg:CA4B 00                                              db    0
-
-// WZD dseg:CA4C
-// drake178: GUI_Interaction_Done
-/*
-
-WIZ_GlobalSpellAnim()
-    used as leave_screen flag
-*/
-int16_t _osc_leave_screen;
-
-// WZD dseg:CA4E
-/*
-    {F,T} 'need target' for wizard or wizard spell
-    BUGBUG in Cast_Spell_City_Enchantment_Animation_1__WIP()
-*/
-int16_t _osc_need_target_flag;
-
-// Spells137.c  // WZD dseg:CA50
-// Spells137.c  int16_t _temp_sint_1;
-
-// WZD dseg:CA52
-// AKA word_434F2
-/*
-in IDK_Spell_Cityscape_Draw()
-passed to  Cityscape_Window__WIP
-as bldg_idx_1 and bldg_idx_2
-*/
-int16_t _ce_bldg_idx;
-
-// WZD dseg:CA52                                                 END: ovr136 - Uninitialized Data
-
-
+// WZD dseg:CA36                                                 END: ovr136 - Uninitialized Data
 
 
 

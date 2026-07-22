@@ -651,7 +651,7 @@ XREF:
         Show_Event_Message()
         Hero_LevelUp_Popup()
         Hire_Hero_Popup()
-        IDK_SummonAnim()
+        Summon_Animation()
         Player_Process_Item_Pool()
         WIZ_Banishment()
         Conquest_Spells()

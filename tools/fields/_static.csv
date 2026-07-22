@@ -277,7 +277,7 @@ MoM/src/Spellbook.c,3114,Apprentice_Screen__WIP,Add_Hidden_Field,dogear_right_fi
 MoM/src/Spellbook.c,3116,Apprentice_Screen__WIP,Add_Hidden_Field,full_screen_ESC_field,"SCREEN_XMIN, 25, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr118[0], ST_UNDEFINED",
 MoM/src/Spellbook.c,3606,Spell_Research_Select,Add_Hidden_Field,Spell_GUI_Controls[itr],"Left_X, Top_Y, (Left_X + 110), (Top_Y + 33), str_empty_string__ovr118[0], ST_UNDEFINED",
 MoM/src/Spells133.c,1452,Vortex_Move_Screen,Add_Grid_Field,combat_grid_field,"0, 0, 1, 1, 319, 168, &grid_sx, &grid_sy, ST_UNDEFINED",
-MoM/src/Spells137.c,524,IDK_SummonAnim,Add_Hidden_Field,full_screen_field,"SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, empty_string__ovr137[0], ST_UNDEFINED",
+MoM/src/Spells137.c,524,Summon_Animation,Add_Hidden_Field,full_screen_field,"SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, empty_string__ovr137[0], ST_UNDEFINED",
 MoM/src/Spells137.c,1330,WIZ_GlobalSpellAnim,Add_Hidden_Field,fullscreen_ESC_field,"SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, empty_string__ovr137[0], ST_UNDEFINED",
 MoM/src/Surveyor.c,299,Surveyor_Screen,Add_Hot_Key,hotkey_ESC_field,str_hotkey_ESC__ovr094[0],
 MoM/src/Surveyor.c,381,Surveyor_Screen_Add_Fields,Add_Grid_Field,_main_map_grid_field,"MAP_SCREEN_X, MAP_SCREEN_Y, SQUARE_WIDTH, SQUARE_HEIGHT, MAP_WIDTH, MAP_HEIGHT, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED",

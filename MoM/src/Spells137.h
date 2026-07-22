@@ -16,18 +16,50 @@ extern "C" {
 
 
 
+// WZD dseg:CA40
+extern SAMB_ptr IMG_SBK_SliderBar;
+#define m_itemmake_icon_window_right_arrow_seg IMG_SBK_SliderBar
+extern SAMB_ptr IMG_SBK_SliderDot;
+#define m_itemmake_icon_window_left_arrow_seg IMG_SBK_SliderDot
+
+// WZD dseg:CA4C
+extern int16_t _osc_leave_screen;
+
+// WZD dseg:CA4E
+extern int16_t _osc_need_target_flag;
+
+// WZD dseg:CA50
+/*
+AKA  _osc_bldg_idx
+AKA  _osc_city_idx
+AKA  _osc_player_idx
+AKA  _osc_spell_Idx
+SmlBook XtraMana & CmbBook XtraMana
+    spellbook field index; used to position the popup window
+*/
+// Spells137.c  extern int16_t _temp_sint_1;
+// #define _osc_player_idx _temp_sint_1
+// #define _osc_spell_idx _temp_sint_1
+// #define _osc_city_idx _temp_sint_1
+// #define _osc_bldg_idx _temp_sint_1
+
+// WZD dseg:CA52
+extern int16_t _ce_bldg_idx;
+
+
+
 /*
     WIZARDS.EXE  ovr137
 */
 
 // WZD o137p01
-void IDK_SummonAnim_Load(int16_t unit_type, int16_t player_idx);
+void Summon_Animation_Load(int16_t unit_type, int16_t player_idx);
 
 // WZD o137p02
-void IDK_SummonAnim_Draw(void);
+void Summon_Animation_Draw(void);
 
 // WZD o137p03
-void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t player_idx);
+void Summon_Animation(int16_t unit_type, int16_t rarity, int16_t player_idx);
 
 // WZD o137p04
 void Cast_Spell_City_Enchantment_Animation_Load(int16_t spell_idx,int16_t  player_idx);

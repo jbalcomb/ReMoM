@@ -129,11 +129,11 @@ product-izing (dropped).  Grow it by adding paths that exercise real engine draw
 ## Summon animation path (IMPLEMENTED — effect_summon.c; visual unverified)
 Goal: watch IDK_SummonAnim's animation for a given summon type.
 - IDK_SummonAnim (full) needs music + Allocate_Reduced_Map + Full_Draw_Main_Screen + input loop =
-  a whole game world.  IDK_SummonAnim_Load also calls Main_Screen_Draw (world).  Too heavy.
+  a whole game world.  Summon_Animation_Load also calls Main_Screen_Draw (world).  Too heavy.
 - The actual animation is in IDK_SummonAnim_Draw; the only thing that animates is the monster
   rising (frames 0..29), gated on magic_set.spell_animations && _osc_player_idx == HUMAN.
 - Approach: harness loads the summon sprites itself (LBX_Load of the SPELLSCR/MONSTER entries that
-  IDK_SummonAnim_Load uses), substitutes a MAIN backdrop for Main_Screen_Draw, sets the globals
+  Summon_Animation_Load uses), substitutes a MAIN backdrop for Main_Screen_Draw, sets the globals
   (magic_set.spell_animations, _temp_sint_1=_osc_player_idx, _temp_sint_4=_osc_summon_unit_type,
   _osc_anim_ctr), builds the back buffer, then loops the REAL IDK_SummonAnim_Draw at the game's
   Set_Page_Off/Page_Flip cadence.

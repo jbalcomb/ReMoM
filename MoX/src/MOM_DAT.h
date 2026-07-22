@@ -1052,7 +1052,7 @@ struct s_SPELL_DATA
           scc_Unit_Enchantment (1)          enchantments (u32)           UE_ bitmask, OR'd into _UNITS[].enchantments
           combat enchantment / debuff       enchantments (u32)           effect bitmask, tested against s_BATTLE_UNIT.Combat_Effects
           scc_Direct_Damage_* (4, 22)       strength/immunities/attrs    base damage + immunity flags + ATK_FLAGS attributes
-          scc_Summoning (0)                 unit_type (i16)              ut_ unit type to create           (Create_Unit / IDK_SummonAnim)
+          scc_Summoning (0)                 unit_type (i16)              ut_ unit type to create           (Create_Unit / Summon_Animation)
           scc_City_Enchantment_* (2, 3)     ce_idx (i16)                 index into _CITIES[].enchantments
           scc_Global_Enchantment (9)        oe_idx (i16)                 index into _players[].Globals[] (holds player_num == player_idx + 1)
 
@@ -4789,53 +4789,8 @@ extern SAMB_ptr spl_anim_compose_seg;
 
 // WZD dseg:CA36
 extern SAMB_ptr IMG_SBK_PageText;
-// WZD dseg:CA36                                                                                         ; 708h paragraphs in the sandbox, or 28h for sliders
-// WZD dseg:CA38 00 00                                           IDK_MONSTER_seg dw 0                    ; DATA XREF: IDK_SummonAnim_Load+EEw ...
-// WZD dseg:CA3A 00 00                                           word_434DA dw 0                         ; DATA XREF: IDK_SummonAnim_Load+CBw ...
-// WZD dseg:CA3C 00 00                                           SPELLSCR_FLAMEFR1_seg dw 0                ; DATA XREF: IDK_SummonAnim_Load+49w ...
-// WZD dseg:CA3E 00 00                                           word_434DE dw 0                         ; DATA XREF: IDK_SummonAnim_Load+B4w ...
 
-// WZD dseg:CA40
-extern SAMB_ptr IMG_SBK_SliderBar;
-#define m_itemmake_icon_window_right_arrow_seg IMG_SBK_SliderBar
-extern SAMB_ptr IMG_SBK_SliderDot;
-#define m_itemmake_icon_window_left_arrow_seg IMG_SBK_SliderDot
-
-// WZD dseg:CA44 00 00                                           IMG_MoodWizPortrait@ dw 0               ; DATA XREF: OVL_LoadGlobalAnim+28w ...
-// WZD dseg:CA46 00                                              db    0
-// WZD dseg:CA47 00                                              db    0
-// WZD dseg:CA48 00                                              db    0
-// WZD dseg:CA49 00                                              db    0
-// WZD dseg:CA4A 00                                              db    0
-// WZD dseg:CA4B 00                                              db    0
-
-// WZD dseg:CA4C
-extern int16_t _osc_leave_screen;
-
-// WZD dseg:CA4E
-extern int16_t _osc_need_target_flag;
-
-// WZD dseg:CA50
-/*
-AKA  _osc_bldg_idx
-AKA  _osc_city_idx
-AKA  _osc_player_idx
-AKA  _osc_spell_Idx
-SmlBook XtraMana & CmbBook XtraMana
-    spellbook field index; used to position the popup window
-*/
-// Spells137.c  extern int16_t _temp_sint_1;
-// #define _osc_player_idx _temp_sint_1
-// #define _osc_spell_idx _temp_sint_1
-// #define _osc_city_idx _temp_sint_1
-// #define _osc_bldg_idx _temp_sint_1
-
-// WZD dseg:CA52
-extern int16_t _ce_bldg_idx;
-
-// WZD dseg:CA52                                                 END: ovr136 - Uninitialized Data
-
-
+// WZD dseg:CA36                                                 END: ovr136 - Uninitialized Data
 
 
 

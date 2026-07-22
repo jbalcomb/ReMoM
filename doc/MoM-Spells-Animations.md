@@ -4,7 +4,7 @@ SPELLSCR.LBX
 MONSTER.LBX
 SPLMASTR.C
 // WZD o137p01
-void IDK_SummonAnim_Load(int16_t type_or_other, int16_t player_idx)
+void Summon_Animation_Load(int16_t type_or_other, int16_t player_idx)
 // WZD o137p02
 void IDK_SummonAnim_Draw(void)
 // WZD o137p03

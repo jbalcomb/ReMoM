@@ -365,6 +365,9 @@
 ## Spells137
 - [ ] Cast_Spell_City_Enchantment_Animation_1__WIP
 - [ ] Cast_Spell_City_Enchantment_Animation_2__WIP
+- [x] Summon_Animation — was IDK_SummonAnim; done-done 2026-07-21 (walkthrough doc/#CodeReview/Spells137-Summon_Animation.md; faithful 1:1)
+- [x] Summon_Animation_Draw — was IDK_SummonAnim_Draw; done-done 2026-07-21
+- [x] Summon_Animation_Load — was IDK_SummonAnim_Load; done-done 2026-07-21 (former R1 monster-index resolved faithful; B1 type_or_other==0 gap preserved)
 
 ## SPLMASTR
 - [x] Cast_Spell_Of_Mastery

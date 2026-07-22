@@ -36,12 +36,13 @@ MoO2
 #include "SBookScr.h"
 #include "SCORE.h"
 #include "Spellbook.h"
+#include "Spells137.h"
 #include "UNITTYPE.h"
+
+#include "../../ext/stu_compat.h"
 
 #include <stdlib.h>
 #include <string.h>
-
-#include "../../ext/stu_compat.h"
 
 #include "SPLMASTR.h"
 
@@ -82,7 +83,7 @@ extern SAMB_ptr wizlab_blue_column_seg;
 // WZD dseg:CA50
 extern int16_t _temp_sint_1;
 // WZD dseg:CA54
-extern SAMB_ptr IDK_wizard_id_thing_seg;
+extern SAMB_ptr spell_caster_figure_seg;
 
 
 
@@ -1965,7 +1966,7 @@ static void Spell_Of_Mastery_Load(void)
     // SPLMASTR.LBX, 029    "VORTEXS"   "Vortex start"
     wizlab_blue_column_seg = LBX_Reload(splmastr_lbx_file__ovr138, 29, _screen_seg);
     // ¿ broken - `14 +` doesn't line up ?
-    IDK_wizard_id_thing_seg = LBX_Reload(splmastr_lbx_file__ovr138, (14 + _players[cast_spell_of_mastery_player_idx].wizard_id), World_Data);
+    spell_caster_figure_seg = LBX_Reload(splmastr_lbx_file__ovr138, (14 + _players[cast_spell_of_mastery_player_idx].wizard_id), World_Data);
     // SPLMASTR.LBX, 028    "TWINKLE"   ""
     som_twinkle_seg = LBX_Reload_Next(splmastr_lbx_file__ovr138, 28, World_Data);
 }
@@ -1978,27 +1979,27 @@ static void Spell_Of_Mastery_Draw(void)
     FLIC_Draw(90, 0, wizlab_blue_column_seg);
     if(_osc_anim_ctr <= 6)
     {
-        Reset_Animation_Frame(IDK_wizard_id_thing_seg);
-        FLIC_Draw(69, 75, IDK_wizard_id_thing_seg);
+        Reset_Animation_Frame(spell_caster_figure_seg);
+        FLIC_Draw(69, 75, spell_caster_figure_seg);
     }
     else
     {
         if(((_osc_anim_ctr - 6) % 60) < 10)
         {
-            Set_Animation_Frame(IDK_wizard_id_thing_seg, (((_osc_anim_ctr - 6) % 60) / 2));
+            Set_Animation_Frame(spell_caster_figure_seg, (((_osc_anim_ctr - 6) % 60) / 2));
         }
         else
         {
             if(((_osc_anim_ctr - 6) % 60) > 50)
             {
-                Set_Animation_Frame(IDK_wizard_id_thing_seg, ((60 - ((_osc_anim_ctr - 6) % 60)) / 2));
+                Set_Animation_Frame(spell_caster_figure_seg, ((60 - ((_osc_anim_ctr - 6) % 60)) / 2));
             }
             else
             {
-                Set_Animation_Frame(IDK_wizard_id_thing_seg, 4);
+                Set_Animation_Frame(spell_caster_figure_seg, 4);
             }
         }
-        FLIC_Draw(69, 75, IDK_wizard_id_thing_seg);
+        FLIC_Draw(69, 75, spell_caster_figure_seg);
         if((6 + ((_num_players - 1) * 60)) > _osc_anim_ctr)
         {
             Draw_File_Animation__HACK();

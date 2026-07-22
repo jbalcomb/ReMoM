@@ -1,7 +1,7 @@
 /*
     effect_collage.c — debug inspector for the summon animation elements.
 
-    Left: a COMPOSITE panel showing all elements assembled the way IDK_SummonAnim_Draw lays them out
+    Left: a COMPOSITE panel showing all elements assembled the way Summon_Animation_Draw lays them out
     (flame frame, wizard, summoning circle, monster, enchant sparkle).
     Right: each element on its own, in a labelled thumbnail panel.
 
@@ -63,7 +63,7 @@ struct Collage_Elem
     int          off_y;
 };
 
-/* The summon animation's drawable elements, with their IDK_SummonAnim_Draw layout offsets. */
+/* The summon animation's drawable elements, with their Summon_Animation_Draw layout offsets. */
 static const struct Collage_Elem g_collage[] =
 {
     { "FLAME",   "SPELLSCR",  9,  0,  0 },   /* FLIC_Draw(30,42) -> rel (0,0)   */
@@ -74,7 +74,7 @@ static const struct Collage_Elem g_collage[] =
 };
 #define COLLAGE_COUNT  ((int)(sizeof(g_collage) / sizeof(g_collage[0])))
 
-/* Composite draw order: back-to-front, matching IDK_SummonAnim_Draw. */
+/* Composite draw order: back-to-front, matching Summon_Animation_Draw. */
 static const int g_composite_order[COLLAGE_COUNT] =
 {
     IDX_FLAME, IDX_WIZARD, IDX_CIRCLE, IDX_MONSTER, IDX_ENCHANT

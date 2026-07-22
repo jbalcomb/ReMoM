@@ -15,27 +15,27 @@ but, the names and descriptions are incongruent/misaligned
 // drake178: enum Race_Code
 enum e_RACE_TYPE
 {
-    rt_Barbarian  = 0,
-    rt_Beastmen   = 1,
-    rt_Dark_Elf   = 2,
-    rt_Draconian  = 3,
-    rt_Dwarf      = 4,
-    rt_Gnoll      = 5,
-    rt_Halfling   = 6,
-    rt_High_Elf   = 7,
-    rt_High_Men   = 8,
-    rt_Klackon    = 9,
+    rt_Barbarian  =  0, /* SPELLSCR.LBX, 046  "SUMMON00"    "" */
+    rt_Beastmen   =  1,
+    rt_Dark_Elf   =  2,
+    rt_Draconian  =  3,
+    rt_Dwarf      =  4,
+    rt_Gnoll      =  5,
+    rt_Halfling   =  6,
+    rt_High_Elf   =  7,
+    rt_High_Men   =  8,
+    rt_Klackon    =  9,
     rt_Lizardman  = 10,
     rt_Nomad      = 11,
     rt_Orc        = 12,
     rt_Troll      = 13,
-    rt_Standard   = 14,
-    rt_Arcane     = 15,     /* SPELLSCR.LBX, 059  "SUMMGREY"    "" */
-    rt_Nature     = 16,     /* SPELLSCR.LBX, 060  "SUMGREEN"    "" */
-    rt_Sorcery    = 17,     /* SPELLSCR.LBX, 061  "SUMMBLUE"    "" */
-    rt_Chaos      = 18,     /* SPELLSCR.LBX, 062  "SUMMRED"     "" */
-    rt_Life       = 19,     /* SPELLSCR.LBX, 063  "SUMWHITE"    "" */
-    rt_Death      = 20      /* SPELLSCR.LBX, 064  "SUMMPURP"    "" */
+    rt_Standard   = 14, /* SPELLSCR.LBX, 060  "SMLRESCH"    "" */
+    rt_Arcane     = 15, /* SPELLSCR.LBX, 059  "SUMMGREY"    "" */
+    rt_Nature     = 16, /* SPELLSCR.LBX, 060  "SUMGREEN"    "" */
+    rt_Sorcery    = 17, /* SPELLSCR.LBX, 061  "SUMMBLUE"    "" */
+    rt_Chaos      = 18, /* SPELLSCR.LBX, 062  "SUMMRED"     "" */
+    rt_Life       = 19, /* SPELLSCR.LBX, 063  "SUMWHITE"    "" */
+    rt_Death      = 20  /* SPELLSCR.LBX, 064  "SUMMPURP"    "" */
 };
 
 

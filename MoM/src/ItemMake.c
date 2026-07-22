@@ -24,14 +24,14 @@
 #include "../../MoX/src/Util.h"
 
 #include "ItemView.h"
-#include "../../MoX/src/MOM_DEF.h"
 #include "NEXTTURN.h"
 #include "Spellbook.h"
+#include "Spells137.h"
+
+#include "../../ext/stu_compat.h"
 
 #include <stdlib.h>
 #include <string.h>
-
-#include "../../ext/stu_compat.h"
 
 #include "ItemMake.h"
 

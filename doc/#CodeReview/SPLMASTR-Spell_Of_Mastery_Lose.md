@@ -40,6 +40,7 @@ MoO2
 ...why no Play_.*_Lose_Flic_()? ...Play_Loose_Flic_()?
 
 MUSIC.LBX
+// MUSIC.LBX, 069 "MOM63 XM"    "WINNING  by magic"
 // MUSIC.LBX, 109 "MOM64 XM"    "Winning Military"
 // MUSIC.LBX, 110 "MOM66 XM"    "Losing Military"
 // MUSIC.LBX, 111 "MOM65 XM"    "Losing Magic"

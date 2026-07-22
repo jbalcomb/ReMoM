@@ -148,13 +148,13 @@ void Cast_Summon_Hero(int16_t player_idx, int16_t type)
                     if((_HEROES2[player_idx]->heroes[unit_type].abilities & HSA_FEMALE) != 0)
                     {
 
-                        IDK_SummonAnim(-3, 3, player_idx);
+                        Summon_Animation(-3, 3, player_idx);
 
                     }
                     else
                     {
                         
-                        IDK_SummonAnim(-2, 3, player_idx);
+                        Summon_Animation(-2, 3, player_idx);
 
                     }
 
@@ -176,13 +176,13 @@ void Cast_Summon_Hero(int16_t player_idx, int16_t type)
                     if(type == 1)
                     {
 
-                        IDK_SummonAnim(-3, 3, player_idx);
+                        Summon_Animation(-3, 3, player_idx);
 
                     }
                     else  /* type == 2 */
                     {
 
-                        IDK_SummonAnim(-30, 3, player_idx);
+                        Summon_Animation(-30, 3, player_idx);
 
                     }
 
@@ -193,13 +193,13 @@ void Cast_Summon_Hero(int16_t player_idx, int16_t type)
                     if(type == 1)
                     {
 
-                        IDK_SummonAnim(-2, 3, player_idx);
+                        Summon_Animation(-2, 3, player_idx);
 
                     }
                     else  /* type == 2 */
                     {
 
-                        IDK_SummonAnim(-20, 3, player_idx);
+                        Summon_Animation(-20, 3, player_idx);
 
                     }
 

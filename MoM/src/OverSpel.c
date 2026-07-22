@@ -839,9 +839,10 @@ void Cast_Spell_Overland(int16_t player_idx)
                         }
                         else
                         {
-                            Create_Unit(spell_data_table[spell_idx].Param0, player_idx, _players[player_idx].summon_wx, _players[player_idx].summon_wy, _players[player_idx].summon_wp, ST_UNDEFINED);
+                            Create_Unit(spell_data_table[spell_idx].unit_type, player_idx, _players[player_idx].summon_wx, _players[player_idx].summon_wy, _players[player_idx].summon_wp, ST_UNDEFINED);
                             Evict_Weakest_Unit((_units - 1));
                         }
+                        /* ~ rarity === {"Weak", "Avg", "Powerful", "Mighty"} - "Creature Summons" in MUSIC.LBX */
                         MultiPurpose_Local_Var = ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM);
                         MultiPurpose_Local_Var = (MultiPurpose_Local_Var / 10);
                         if(spell_idx != spl_Floating_Island)
@@ -859,7 +860,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                                 )
                             )
                             {
-                                IDK_SummonAnim(spell_data_table[spell_idx].Param0, MultiPurpose_Local_Var, player_idx);
+                                Summon_Animation(spell_data_table[spell_idx].unit_type, MultiPurpose_Local_Var, player_idx);
                                 g_ai_recompute_needed = ST_TRUE;
                             }
                         }
@@ -1622,7 +1623,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                     if(player_idx == HUMAN_PLAYER_IDX)
                     {
 
-                        IDK_SummonAnim(-1, 3, player_idx);
+                        Summon_Animation(-1, 3, player_idx);
 
                         item_list[0] = Activate_Item(MAX_ITEM_COUNT);
 
