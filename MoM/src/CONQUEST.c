@@ -885,6 +885,8 @@ void Win_Animation(int16_t player_idx)
         sound_data_seg_size = lbxload_entry_length;
         Play_Sound(sound_data_seg, sound_data_seg_size);
     }
+    /* OGBUG  Win_Animation_Draw() uses GUI_String_1, but Win_Animation() doesn't allocate it. */
+    GUI_String_1 = (char *)Near_Allocate_First(100);   /* <-- here */
     /* Note: Segment stub093 used as base for function pointer */
     Assign_Auto_Function(Win_Animation_Draw, 4);
     leave_screen = 0;
