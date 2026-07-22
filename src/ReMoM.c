@@ -25,15 +25,19 @@
 #include <windows.h>
 #endif
 
-#ifdef STU_DEBUG
-#include "../STU/src/AI_METRICS.h"
-#include "../STU/src/STU_DBG.h"
-#include "../STU/src/STU_WRLD.h"
-#endif
+#include "../ext/stu_compat.h"
 
-#include "../STU/src/STU_LOG.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "../STU/src/AI_METRICS.h"
 #include "../STU/src/STU_BRAK.h"
+#include "../STU/src/STU_DBG.h"
 #include "../STU/src/STU_GRAF.h"
+#include "../STU/src/STU_LOG.h"
+#include "../STU/src/STU_TST.h"   /* CLAUDE: g_tst_patch_scenario, for --patch */
+#include "../STU/src/STU_WRLD.h"
 
 #include "../MoX/src/capture.h"
 #include "../MoX/src/CFG.h"
@@ -44,6 +48,7 @@
 #include "../MoX/src/Fonts.h"
 #include "../MoX/src/Graphics.h"
 #include "../MoX/src/LBX_Load.h"
+#include "../MoX/src/LOADSAVE.h"  /* CLAUDE: g_load_save_gam_name_override, for --load */
 #include "../MoX/src/MOX_BASE.h"
 #include "../MoX/src/MOM_DAT.h"
 #include "../MoX/src/MOX_DEF.h"
@@ -67,22 +72,8 @@
 #include "../platform/include/Platform_Replay.h"
 #include "../platform/include/Platform_Capture.h"
 
-#include "../MoX/src/LOADSAVE.h"  /* CLAUDE: g_load_save_gam_name_override, for --load */
-#include "../STU/src/STU_TST.h"   /* CLAUDE: g_tst_patch_scenario, for --patch */
-
 #include "ReMoM_Init.h"
 #include "Artificial_Human_Player.h"  /* HeMoM_Player_Frame() */
-
-#include "../ext/stu_compat.h"
-// Reassigns a file pointer. More secure versions of the functions are available; see freopen_s, _wfreopen_s.
-#include <stdio.h>
-// #define _CRT_SECURE_NO_WARNINGS  // '_CRT_SECURE_NO_WARNINGS' previously declared on the command line
-// #define _CRT_SECURE_NO_DEPRECATE
-// #define _CRT_NONSTDC_NO_DEPRECATE
-// #include <stdio.h>
-// 4>C:\STU\devel\ReMoM\src\ReMoM.c(57,9): warning C4005: '_CRT_SECURE_NO_WARNINGS': macro redefinition
-#include <stdlib.h>
-#include <string.h>
 
 /* COPILOT */ /* SDL_main.h redefines main() on some platforms (macOS, iOS, Android).
                       We handle our own main(), so tell SDL not to intercept it.

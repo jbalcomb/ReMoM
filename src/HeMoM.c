@@ -22,19 +22,19 @@
 #include <windows.h>
 #endif
 
+#include "../ext/stu_compat.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-#include "../ext/stu_compat.h"
-#ifdef STU_DEBUG
 #include "../STU/src/AI_METRICS.h"
 #include "../STU/src/STU_DBG.h"
 #include "../STU/src/STU_BRAK.h"
-#endif
 #include "../STU/src/STU_LOG.h"
 #include "../STU/src/STU_GRAF.h"
+
 #include "../platform/include/Platform.h"
 #include "../platform/include/Platform_Replay.h"
 #include "../platform/include/Platform_Keys.h"
