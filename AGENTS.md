@@ -74,3 +74,19 @@ The same gate is also wired up as the VS Code task `check: safe-to-push` (`Tasks
 - dst stands for Destination
 - sgmt stands for Segment
 - ofst stands for Offset
+
+## Vetting third-party dependencies (all agents)
+Before recommending, installing, or adding ANY external binary, library, package, or tool — including
+anything from winget/choco/vcpkg/`FetchContent`, and any DLL committed to the repo — follow
+`doc/#Devel/Dependency-Vetting.md`. Run `python tools/vet_dependency.py --repo OWNER/NAME
+[--upstream OWNER/NAME --author "Exact Name"] [--tier A|B|C]` for the checkable facts.
+
+Two rules that are easy to break:
+- **Never produce a trust score** (no 0-100, no letter grade, no low/medium/high). Report verified
+  facts, flags, and the questions you could not answer. An unchecked item is a gap, never a pass.
+- **Classify blast-radius tier first** (A ships to users / B builds the product / C dev-only scratch).
+  Scrutiny must be proportional. Do not write a rigorous analysis of a dev tool while binaries that
+  ship to users go unexamined.
+
+Note that these checks would all have passed xz-utils (CVE-2024-3094); only build transparency would
+have caught it. Read the policy doc rather than trusting the checklist.
