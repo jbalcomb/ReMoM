@@ -128,10 +128,13 @@ void Platform_Keyboard_Event(SDL_Event * sdl2_event)
             (sdl2_event->text.text[0] != 0)
         )
         {
-            char mox_character = sdl2_event->text.text[0];
+            /* CLAUDE: renamed from mox_character -- it shadowed the function-level mox_character
+               declared at the top of this handler (MSVC /W4 C4456, fatal under /WX).  The SDL2
+               backend had not been built with MSVC before, so this was latent. */
+            char mox_text_character = sdl2_event->text.text[0];
             SDL_StopTextInput();
             SDL_StartTextInput();
-            Platform_Keyboard_Buffer_Add_Key_Press(MOX_KEY_UNKNOWN, MOX_MOD_NONE, mox_character);
+            Platform_Keyboard_Buffer_Add_Key_Press(MOX_KEY_UNKNOWN, MOX_MOD_NONE, mox_text_character);
         }
         break;
         default:
