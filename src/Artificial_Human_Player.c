@@ -17,6 +17,9 @@
 #include "../platform/include/Platform.h"
 #include "../platform/include/Platform_Keys.h"
 #include "../MoX/src/Mouse.h"  /* Set_Pointer_Position — warps the SDL cursor so HMS clicks survive the next SDL_GetMouseState poll */
+#include "../MoX/src/MOX_T4.h"  /* current_screen — so we can log WHICH screen each injected input lands on */
+#include "../MoX/src/Fields.h"  /* p_fields / fields_count — which field a click hits */
+#include "../MoM/src/MOM_SCR.h" /* scr_* screen enum */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -621,6 +624,56 @@ static int Parse_Scenario_File(const char *filepath, int depth)
 /*  Per-Frame Execution                                                      */
 /* ========================================================================= */
 
+/* CLAUDE: name for the current_screen enum, so an injected input's log line says WHICH screen it
+   landed on (overland vs a self-terminating animation vs the Hall of Fame, etc.) instead of leaving
+   us decoding frames to find out.  Values are the scr_* enum in MOM_SCR.h. */
+static const char * HeMoM_Screen_Name(int16_t scr)
+{
+    switch(scr)
+    {
+        case scr_Continue:            return "Continue";
+        case scr_Load_Screen:         return "Load";
+        case scr_New_Game_Screen:     return "NewGame";
+        case scr_Quit_To_DOS:         return "QuitToDOS";
+        case scr_Hall_Of_Fame_Screen: return "HallOfFame";
+        case scr_Settings_Screen:     return "Settings";
+        case scr_City_Screen:         return "City";
+        case scr_Armies_Screen:       return "Armies";
+        case scr_Cities_Screen:       return "Cities";
+        case scr_Quit:                return "Quit";
+        case scr_Main_Screen:         return "MainScreen";
+        case scr_Magic_Screen:        return "Magic";
+        case scr_Road_Build:          return "RoadBuild";
+        case scr_Production_Screen:   return "Production";
+        case scr_Item_Screen:         return "Item";
+        case scr_NextTurn:            return "NextTurn";
+        case scr_Spellbook_Screen:    return "Spellbook";
+        case scr_Advisor_Screen:      return "Advisor";
+        case scr_Diplomacy_Screen:    return "Diplomacy";
+        case scr_Test_Screen:         return "Test";
+        case scr_PoC_Screen:          return "PoC";
+        default:                      return "?";
+    }
+}
+
+/* CLAUDE: log which field (if any) a game-coordinate point falls inside, at input time.  The field
+   list belongs to whatever screen is up, so this reports what a click is about to hit.  Mirrors the
+   replay field hit-test in ReMoM.c. */
+static void HeMoM_Log_Field_Hit(unsigned long long t_now, int16_t px, int16_t py)
+{
+    int16_t fi;
+
+    for(fi = 0; fi < fields_count; fi++)
+    {
+        if((px >= p_fields[fi].x1) && (px <= p_fields[fi].x2) && (py >= p_fields[fi].y1) && (py <= p_fields[fi].y2))
+        {
+            LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms   -> hits field[%d] rect=(%d,%d)-(%d,%d) type=%d selectable=%d", t_now, fi, p_fields[fi].x1, p_fields[fi].y1, p_fields[fi].x2, p_fields[fi].y2, p_fields[fi].type, p_fields[fi].Selectable);
+            return;
+        }
+    }
+    LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms   -> hits NO field (of %d)", t_now, fields_count);
+}
+
 void HeMoM_Player_Frame(void)
 {
     struct s_HeMoM_Action *act;
@@ -657,6 +710,10 @@ void HeMoM_Player_Frame(void)
 
     {
         unsigned long long t_now = (unsigned long long)Platform_Get_Millies();
+
+        /* CLAUDE: context for every injected input -- WHICH screen it lands on.  This is the line that
+           answers "did that escape hit the Hall of Fame or the animation?" without decoding frames. */
+        LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms [screen=%d %s, fields=%d]", t_now, current_screen, HeMoM_Screen_Name(current_screen), fields_count);
 
         switch (act->type)
         {
@@ -743,8 +800,9 @@ void HeMoM_Player_Frame(void)
                 if(act->type == act_CLICK)
                 {
                     platform_frame_mouse_buttons |= ST_LEFT_BUTTON;
-                    User_Mouse_Handler(ST_LEFT_BUTTON, wx, wy);
                     LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms click (%d, %d)", t_now, act->x, act->y);
+                    HeMoM_Log_Field_Hit(t_now, act->x, act->y);  /* CLAUDE: log the field BEFORE the handler consumes/clears it */
+                    User_Mouse_Handler(ST_LEFT_BUTTON, wx, wy);
 #ifdef STU_DEBUG
                     LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms click (%d, %d)", t_now, act->x, act->y);
                     LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms click (%d, %d)", t_now, act->x, act->y);
@@ -753,8 +811,9 @@ void HeMoM_Player_Frame(void)
                 else
                 {
                     platform_frame_mouse_buttons |= ST_RIGHT_BUTTON;
-                    User_Mouse_Handler(ST_RIGHT_BUTTON, wx, wy);
                     LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms rclick (%d, %d)", t_now, act->x, act->y);
+                    HeMoM_Log_Field_Hit(t_now, act->x, act->y);  /* CLAUDE: log the field BEFORE the handler consumes/clears it */
+                    User_Mouse_Handler(ST_RIGHT_BUTTON, wx, wy);
 #ifdef STU_DEBUG
                     LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms rclick (%d, %d)", t_now, act->x, act->y);
                     LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms rclick (%d, %d)", t_now, act->x, act->y);

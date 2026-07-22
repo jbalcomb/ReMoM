@@ -8,6 +8,8 @@
 
 #include "../include/Platform_Capture.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,19 +58,22 @@ static uint64_t   m_audio_bytes = 0;
 /*  Helpers                                                                  */
 /* ========================================================================= */
 
+/* Defined below; called from Platform_Capture_Start(), which appears above the definition. */
+static void Capture_Open_Wav_If_Ready(void);
+
 static void Capture_Join_Path(char * dst, size_t dst_size, const char * dir, const char * name)
 {
     size_t len;
 
     dst[0] = '\0';
-    strncat(dst, dir, dst_size - 1);
-    len = strlen(dst);
+    stu_strncat(dst, dir, dst_size - 1);
+    len = stu_strlen(dst);
     if((len > 0) && (dst[len - 1] != '/') && (dst[len - 1] != '\\') && (len + 1 < dst_size))
     {
         dst[len] = '/';
         dst[len + 1] = '\0';
     }
-    strncat(dst, name, dst_size - strlen(dst) - 1);
+    stu_strncat(dst, name, dst_size - stu_strlen(dst) - 1);
 }
 
 
@@ -79,7 +84,7 @@ static int Capture_Make_Dirs(const char * path)
     size_t i;
 
     work[0] = '\0';
-    strncat(work, path, sizeof(work) - 1);
+    stu_strncat(work, path, sizeof(work) - 1);
 
     for(i = 0; work[i] != '\0'; i++)
     {
@@ -156,7 +161,7 @@ static void Capture_Finalize_Wav(void)
     fseek(m_audio_file, 40, SEEK_SET);
     Capture_Write_LE32(m_audio_file, (uint32_t)m_audio_bytes);
 
-    fclose(m_audio_file);
+    stu_fclose(m_audio_file);
     m_audio_file = NULL;
 }
 
@@ -167,7 +172,7 @@ static void Capture_Write_Info(void)
     FILE * f;
 
     Capture_Join_Path(path, sizeof(path), m_out_dir, "capture_info.txt");
-    f = fopen(path, "wb");
+    f = stu_fopen_ci(path, "wb");
     if(f == NULL)
     {
         return;
@@ -193,7 +198,7 @@ static void Capture_Write_Info(void)
         fprintf(f, "audio_file=\n");   /* silent capture (e.g. the win32 backend) */
     }
 
-    fclose(f);
+    stu_fclose(f);
 }
 
 
@@ -218,13 +223,13 @@ int Platform_Capture_Start(const char * out_dir, int fps)
     }
 
     m_out_dir[0] = '\0';
-    strncat(m_out_dir, out_dir, sizeof(m_out_dir) - 1);
+    stu_strncat(m_out_dir, out_dir, sizeof(m_out_dir) - 1);
     Capture_Make_Dirs(m_out_dir);
 
     m_fps = (fps > 0) ? fps : CAPTURE_DEFAULT_FPS;
 
     Capture_Join_Path(path, sizeof(path), m_out_dir, "video_rgb24.raw");
-    m_video_file = fopen(path, "wb");
+    m_video_file = stu_fopen_ci(path, "wb");
     if(m_video_file == NULL)
     {
         fprintf(stderr, "[capture] cannot open '%s' for writing\n", path);
@@ -243,6 +248,9 @@ int Platform_Capture_Start(const char * out_dir, int fps)
     m_start_millies = Platform_Get_Millies();
     m_active = 1;
 
+    /* The audio backend normally declared its format during Startup_Platform(), before we existed. */
+    Capture_Open_Wav_If_Ready();
+
     /* Write capture_info.txt up front as well as at Stop().  A render that is killed rather than
        exiting cleanly still leaves an encodable capture -- frame_count is recoverable from the raw
        file size, and everything else in the info file is known at start. */
@@ -259,19 +267,48 @@ int Platform_Capture_Active(void)
 }
 
 
-void Platform_Capture_Set_Audio_Format(int frequency, int channels, int bits_per_sample, int is_float)
+/*
+    Open the WAV once BOTH facts are known: that a capture is running, and what the audio device
+    format is.  These arrive in either order and, in practice, the unhelpful one:
+    Startup_Platform() initialises audio (and declares the format) BEFORE the CLI is parsed and
+    Platform_Capture_Start() runs.  An earlier version bailed out of Set_Audio_Format when capture
+    was not yet active, which silently produced video-only captures.  Hence this is called from both
+    Start() and Set_Audio_Format(), and is idempotent.
+*/
+static void Capture_Open_Wav_If_Ready(void)
 {
     char path[CAPTURE_MAX_PATH];
 
-    if(m_active == 0)
+    if((m_active == 0) || (m_audio_file != NULL))
     {
         return;
     }
-    if(m_audio_file != NULL)
+    if((m_audio_frequency <= 0) || (m_audio_channels <= 0) || (m_audio_bits <= 0))
     {
-        return;   /* format already declared; a mid-capture device change is not supported */
+        return;   /* format not declared yet -- the audio backend will call us back */
     }
 
+    Capture_Join_Path(path, sizeof(path), m_out_dir, "audio.wav");
+    m_audio_file = stu_fopen_ci(path, "wb");
+    if(m_audio_file == NULL)
+    {
+        fprintf(stderr, "[capture] cannot open '%s' for writing; audio not captured\n", path);
+        return;
+    }
+
+    Capture_Write_Wav_Header(m_audio_file);
+    fprintf(stderr, "[capture] audio: %d Hz, %d ch, %d bits%s\n", m_audio_frequency, m_audio_channels, m_audio_bits, (m_audio_is_float != 0) ? " (float)" : "");
+}
+
+
+void Platform_Capture_Set_Audio_Format(int frequency, int channels, int bits_per_sample, int is_float)
+{
+    if(m_audio_file != NULL)
+    {
+        return;   /* already writing; a mid-capture device change is not supported */
+    }
+
+    /* Recorded unconditionally -- this usually arrives BEFORE the capture is started. */
     m_audio_frequency = frequency;
     m_audio_channels = channels;
     m_audio_bits = bits_per_sample;
@@ -283,16 +320,7 @@ void Platform_Capture_Set_Audio_Format(int frequency, int channels, int bits_per
         return;
     }
 
-    Capture_Join_Path(path, sizeof(path), m_out_dir, "audio.wav");
-    m_audio_file = fopen(path, "wb");
-    if(m_audio_file == NULL)
-    {
-        fprintf(stderr, "[capture] cannot open '%s' for writing; audio not captured\n", path);
-        return;
-    }
-
-    Capture_Write_Wav_Header(m_audio_file);
-    fprintf(stderr, "[capture] audio: %d Hz, %d ch, %d bits%s\n", frequency, channels, bits_per_sample, (is_float != 0) ? " (float)" : "");
+    Capture_Open_Wav_If_Ready();
 }
 
 
@@ -391,7 +419,7 @@ void Platform_Capture_Stop(void)
 
     if(m_video_file != NULL)
     {
-        fclose(m_video_file);
+        stu_fclose(m_video_file);
         m_video_file = NULL;
     }
 

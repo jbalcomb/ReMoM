@@ -482,6 +482,15 @@ int main(int argc, char * argv[])
                 /* CLAUDE: --load trace point 1 of 3 -- just after remom_load_file is assigned. */
                 LOG_INFO(LOG_CAT_LOADSAVE, "[--load] ASSIGN remom_load_file: argv[%d]=\"%s\" -> remom_load_file=%p \"%s\" (len=%d) remom_load_flag=%d", argi, argv[argi], (void *)remom_load_file, remom_load_file, (int)strlen(remom_load_file), remom_load_flag);
             }
+            else if(stu_strcmp(argv[argi], "--patch") == 0 && (argi + 1) < argc)
+            {
+                /* CLAUDE: --patch <name> selects a scenario for TST_Patch_Game_Data(), which runs
+                   from Loaded_Game_Update() after every save load.  Ships in Release and is inert
+                   unless named here -- see doc/#Devel/Scenario-Patching.md. */
+                argi++;
+                g_tst_patch_scenario = argv[argi];
+                LOG_INFO(LOG_CAT_REMOM, "[ReMoM] CLI: --patch \"%s\"", g_tst_patch_scenario);
+            }
             else if(stu_strcmp(argv[argi], "--demo") == 0)
             {
 

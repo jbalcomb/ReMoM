@@ -1,0 +1,72 @@
+# 08b_som_complete.hms -- Spell of Mastery, part 2 of 2: completing the cast and winning.
+#
+#   ReMoMber.exe --load SAVETEST.GAM --patch som_casting --scenario 08b_som_complete.hms
+#
+# Part 1 (08a) films the human BEGINNING the cast.  This films it COMPLETING and the endgame
+# playing out.  The ~28 turns of accumulation between them are not filmed -- editing, not
+# fabrication.  See doc/#AI_Plans/BRA-Demo-Reel.md section 9.2.
+#
+# The `som_casting` patch leaves less than one turn's casting to do.  One Next Turn completes it and,
+# inside that single turn, the game runs three things back to back:
+#     1. Spell_Of_Mastery  -- the wizlab SoM screen: ONE pass per rival wizard.  SELF-TERMINATES.
+#     2. Win_Animation     -- the victory animation.  SELF-TERMINATES.
+#     3. End_Of_Game_Score -- the Hall of Fame.  A static screen; waits for ESC to dismiss.
+#
+# NO escape during the two animations -- they ARE the showcase, and ESC cuts them short (both loops
+# exit early on Get_Input()==ESC).  The waits below just hold the player idle so each plays out in
+# full.  The ONE escape at the end dismisses the Hall of Fame, which never self-terminates.
+#
+# Timing (SAVETEST.GAM has 5 players -> 4 opponents):
+#   SoM screen  ~6 s per opponent (measured) x 4 + before/after  ~= 27 s
+#   Win anim    self-terminates (~90 stages); ESTIMATE ~15 s -- verify and tune
+# Waits are deliberately generous so the dismiss ESC can only land on the Hall of Fame, never
+# mid-animation.  Tune after eyeballing a render.  Nothing here casts anything or forces the endgame.
+
+# === Settle on the overland Main Screen ===
+wait 3s
+
+# === Clear units awaiting orders, then end the turn ===
+# The Next Turn field only EXISTS when all_units_moved (MainScr.c:2011) -- with a unit awaiting
+# orders, 'N' has no field to hit and silently does nothing.  Patrol each waiting stack first.
+# _patrol_button is at (280,176); this is the same pattern test_ai_5turns.hms uses before every N.
+
+# click the second unit in unit window (center, top)
+click 279 88
+wait 200ms
+# 'Main Screen' - 'Patrol Button'
+click 290 180
+wait 800ms
+# 'Main Screen' - 'Patrol Button'
+click 290 180
+wait 800ms
+# 'Main Screen' - 'Patrol Button'
+click 290 180
+wait 800ms
+
+# === One Next Turn completes the cast ===
+key N
+
+# === Turn processing (fade out, AI turns) before the SoM screen appears ===
+wait 6s
+
+# === Spell of Mastery screen -- ONE pass per rival wizard.  NO ESCAPE: let it play in full. ===
+# Measured: proc+SoM+Win runs ~58 s at full speed (once TRACE/[GD] logging is filtered).
+wait 34s
+
+# === Victory animation.  NO ESCAPE: let it play in full. ===
+wait 22s
+
+# === End of game -- TWO ESC-driven score screens in sequence (End_Of_Game_Score, SCORE.c) ===
+# Neither self-terminates; each needs its own ESC.  The FIRST ESC must land after the endgame screens
+# appear (~N+58 s); the waits above total 62 s so screen 1 is up before this hold.
+#
+# Screen 1: personal score breakdown ("... Final Score: NNNN").
+wait 8s
+escape
+# Screen 2: Hall of Fame leaderboard ("Master <wizard> ... NNNN (18%)").
+wait 5s
+escape
+# Both dismissed -> game returns to the Main Menu, where quit takes effect and the process exits.
+wait 3s
+
+quit

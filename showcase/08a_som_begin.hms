@@ -1,0 +1,34 @@
+# 08a_som_begin.hms -- Spell of Mastery, part 1 of 2: the human BEGINS casting it.
+#
+#   ReMoMber.exe --load SAVETEST.GAM --patch som_ready --scenario 08a_som_begin.hms
+#
+# Counterpart to 08b (which films the cast COMPLETING and the win).  This films the human opening the
+# spellbook and starting the cast: clicking the Spell of Mastery hands it to Cast_Spell_Of_Mastery()
+# (SBookScr.c:558), which shows "<wizard> has started casting the Spell of Mastery".  BRA §9.2.
+#
+# The `som_ready` patch makes the human KNOW the Spell of Mastery and have the mana/skill to cast it.
+# Nothing here forces anything -- the player opens the book and casts it, all real game logic.
+#
+# Cleaned up from a hand recording (som_ready.rmr -> rmr2hms): coordinates as-recorded (320x200 game
+# units), waits rounded, the trailing manual-exit clicks replaced by a hold + quit.
+
+# === Settle on the overland Main Screen ===
+wait 2s
+
+# === Open the spellbook (top menu-bar "Spells") ===
+click 80 14
+wait 3s
+
+# === Page forward to the Special section that holds the Spell of Mastery ('F'/corner turns) ===
+click 278 22
+wait 2500ms
+click 278 22
+wait 3s
+
+# === Cast the Spell of Mastery (left page slot) -> "has started casting the Spell of Mastery" ===
+# This is the showcase beat.  Cast_Spell_Of_Mastery_Draw self-terminates; the hold lets it play in
+# full, then returns to the overland.  Tune the hold after eyeballing a render.
+click 76 143
+wait 23s
+
+quit

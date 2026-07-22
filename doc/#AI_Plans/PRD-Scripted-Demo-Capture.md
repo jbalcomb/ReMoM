@@ -58,12 +58,11 @@ Consequence: the demo must be **rendered from an SDL backend**.  Options, cheape
 Decision needed before the audio phase; the video phase is backend-agnostic and can start on either.
 
 ## External dependency
-`ffmpeg` is **not installed** on this machine (not on PATH).  Needed for muxing/encoding only, not at
-capture time.  Install with either:
-```
-winget install Gyan.FFmpeg
-choco install ffmpeg
-```
+`ffmpeg` -- INSTALLED 2026-07-21: version 8.1.2-full_build (gyan.dev), with libx264.  Needed for
+encoding only, never at capture time; it reads a scratch directory of raw pixels and writes an mp4.
+Tier C under `doc/#Devel/Dependency-Vetting.md` (dev-only, offline, scratch data).  Vetting record:
+`python tools/vet_dependency.py --repo GyanD/codexffmpeg --upstream FFmpeg/FFmpeg --author "Gyan Doshi" --tier C`
+-- no flags triggered; open gaps are build reproducibility and key-compromise exposure.
 
 ## Design
 
@@ -112,12 +111,12 @@ Nearest-neighbour is deliberate — the pixels are the point.
 `--record` / `--replay` / `--demo` / `--scenario` flags in [ReMoM.c](../../src/ReMoM.c#L377).
 Typical render invocation:
 ```
-ReMoMber.exe --scenario demo/scenes/03_overland.hms --capture out/capture/03_overland
+ReMoMber.exe --scenario showcase/03_overland.hms --capture out/capture/03_overland
 ```
 
 ### Repo home
-- `demo/scenes/*.hms` — the scripted scenes (the editable source of the video).
-- `demo/scenes/*.RMR` — the raw recordings the scripts were derived from (kept for re-derivation).
+- `showcase/*.hms` — the scripted scenes (the editable source of the video).
+- `showcase/*.RMR` — the raw recordings the scripts were derived from (kept for re-derivation).
 - `tools/render_demo.*` — drives scenario → capture → ffmpeg for one scene, then concatenates.
 - A VS Code task + CMake target so the whole reel re-renders from a clean checkout.
 
@@ -145,17 +144,64 @@ Known gap, not blocking: a scenario has to *end* for the clean finalize path to 
 recordings did not reach their quit within the test window, so both tracer runs were killed — hence
 the up-front info file.  Demo scenes should end with an explicit quit.
 
-### Phase 2 — SDL backend + audio
-Settle the backend question above.  Wire capture into `sdl2_Video.c` / `sdl3_Video.c`, add the
-`Mix_SetPostMix` tap and WAV writer.  **Gate**: a scripted scene renders with audible, in-sync game
-music and SFX.
+### Phase 2 -- SDL backend + audio -- COMPLETE
+**Backend decision: a new `MSVC-sdl2-debug` preset** (MSVC toolchain, `USE_WIN32=FALSE`).  The
+`clang-debug` preset was tried first and is BROKEN independently of this work -- clang cannot find the
+MSVC CRT headers (`inttypes.h` not found in `sdl2_KD.c` / `sdl2_PFL.c`), so it needs a VS developer
+environment.  MSVC + SDL2 sidesteps that and keeps the render on the same toolchain as everything
+else.  SDL2 2.32.2 and SDL2_mixer 2.8.1 are present at `C:/devellib/`.
+
+- `Mix_SetPostMix` tap in [sdl2_Audio.c](../../platform/sdl2/sdl2_Audio.c) feeds
+  `Platform_Capture_Audio` the final mixed device stream -- music plus every SFX channel, exactly
+  what the player hears.
+- **Two pre-existing `/WX` C4456 shadowed-local errors had to be fixed first**, in `sdl2_KD.c`
+  (`mox_character`) and `sdl2_Audio.c` (`sdl2_rw_ops`).  They were latent because the SDL2 backend
+  had apparently never been compiled with MSVC `/W4 /WX`.  Neither was introduced here.
+
+**Gate passed.**  A 39.1 s render produced 1920x1080 H.264 + 44.1 kHz stereo AAC.  Audio verified as
+real signal by measuring the raw WAV: peak amplitude 24576/32767, ~50% of samples above the noise
+floor.  A/V alignment is structural -- both streams share `t = 0` and the video is constant-rate.
+
+Three bugs found and fixed by actually running it, all of them mine:
+1. **Ordering.** `Startup_Platform()` initialises audio (and declares the device format) BEFORE the
+   CLI is parsed and `Platform_Capture_Start()` runs.  `Set_Audio_Format` had bailed out when capture
+   was not yet active, silently producing video-only captures.  The WAV is now opened by
+   `Capture_Open_Wav_If_Ready()`, called from both entry points and idempotent.
+2. **SDL format bitfield.** The float test was hand-rolled as `format & 0x8000` -- but in SDL that bit
+   is `SDL_AUDIO_MASK_SIGNED`; float is `0x100`.  Every capture was labelling signed 16-bit PCM as
+   IEEE_FLOAT, and ffmpeg reported `codec_name=unknown`.  Now uses `SDL_AUDIO_ISFLOAT` /
+   `SDL_AUDIO_BITSIZE` -- do not hand-roll this.
+3. **Unfinalized WAV header** when a scene is killed by `--max-seconds`; `render_demo.py` now patches
+   the RIFF/data sizes from the file length, alongside the raw-video partial-frame truncation.
+
+Rendering with audio:
+```
+python tools/render_demo.py --scene NAME --scenario showcase/NAME.hms     --game out/build/MSVC-sdl2-debug/bin/Debug/ReMoMber.exe
+```
+Note `--target ReMoMber` alone does not stage assets (`copy_assets` is a separate `ALL` target); build
+`copy_assets` once per preset, or build without `--target`.
+
 
 ### Phase 3 — scene authoring
 Record and hand-tune the highlight-reel scenes.  This is the bulk of the *time* but none of the risk;
 it's editing text files and re-running.
 
-### Phase 4 — render pipeline
-`render_demo` script: per-scene capture → encode → concat → titles.  VS Code task.
+### Phase 4 -- render pipeline -- SUBSTANTIALLY DONE (titles + VS Code task outstanding)
+[tools/render_demo.py](../../tools/render_demo.py) does capture -> encode -> concat in one command:
+```
+python tools/render_demo.py --scene overland --scenario showcase/03_overland.hms
+python tools/render_demo.py --concat "out/demo/*.mp4" --output out/demo/reel.mp4
+```
+Verified end to end: a 19.2 s capture encoded to a 1920x1080 H.264 mp4 (1.4 MB) with correct 4:3
+pillarboxing and crisp nearest-neighbour pixels, confirmed by extracting a frame back out of the
+finished mp4.  Encoding runs faster than real time.  `--square-pixels` switches to the 16:10
+square-pixel look; `--seed` pins the RNG; the large raw intermediate is deleted after a successful
+encode unless `--keep-raw`.
+
+Killing the game via `--max-seconds` can interrupt a frame mid-write; the script truncates the raw
+to a whole number of frames before encoding, which removes ffmpeg's "Invalid buffer size" complaint.
+(Verified with a synthetic 3-frames-plus-1000-bytes file, since a real capture happened to land on a
+frame boundary and would not have exercised the path.)  Scenes that end by quitting never hit this.
 
 ## Risks being watched
 - **Scenario robustness over minutes.** `.hms` is coordinate- and timing-based; a scene that depends

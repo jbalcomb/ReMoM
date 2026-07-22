@@ -19,6 +19,10 @@
 #endif
 
 #include "sdl2_Audio.h"
+#include "../include/Platform_Capture.h"
+
+/* CLAUDE: demo A/V capture -- defined below, called from sdl2_Audio_Init() above the definition. */
+static void sdl2_Capture_Install_Audio_Tap(void);
 
 // SOUND.C
 // WZD dseg:82AC
@@ -234,6 +238,9 @@ void sdl2_Audio_Init(void)
         LOG_INFO(LOG_CAT_SDL2_AUDIO, "SUCCESS:  Mix_OpenAudio():  %s", SDL_GetError());
     }
 
+    /* CLAUDE: install the demo-capture post-mix tap now that the device is open. */
+    sdl2_Capture_Install_Audio_Tap();
+
     // Set the volume of the music to 50% (half the MAX_VOLUME)
     LOG_INFO(LOG_CAT_SDL2_AUDIO, "Mix_VolumeMusic():  %d", Mix_VolumeMusic(-1));
     Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
@@ -275,6 +282,46 @@ wav_sound_chunk3 = Mix_LoadWAV_RW(SDL_RWFromMem(wav_sound_buffer3, wav_sound_buf
 Mix_PlayChannel(0, wav_sound_chunk3, 0);
 
 */
+
+/* CLAUDE: demo A/V capture -- SDL_mixer post-mix tap.  Mix_SetPostMix hands us the FINAL mixed
+   device stream (music + all SFX channels), i.e. exactly what the player hears, already summed and
+   already in the device format.  Writing that gives an audio track that lines up with the captured
+   video by construction.  Costs nothing when no capture is running.
+   See doc/#AI_Plans/PRD-Scripted-Demo-Capture.md. */
+static void sdl2_Capture_PostMix(void * userdata, uint8_t * stream, int len)
+{
+    (void)userdata;
+
+    if(Platform_Capture_Active())
+    {
+        Platform_Capture_Audio(stream, len);
+    }
+}
+
+
+/* CLAUDE: declare the opened device's real format to the capture module and install the tap.  Called
+   right after the mixer is open, so a capture started later already has a correct WAV header. */
+static void sdl2_Capture_Install_Audio_Tap(void)
+{
+    int frequency = 0;
+    int channels = 0;
+    uint16_t format = 0;
+
+    if(Mix_QuerySpec(&frequency, &format, &channels) == 0)
+    {
+        LOG_INFO(LOG_CAT_SDL2_AUDIO, "capture: Mix_QuerySpec failed; demo audio capture unavailable");
+        return;
+    }
+
+    /* CLAUDE: use SDL's own accessors -- do NOT hand-roll this bitfield.  An earlier version tested
+       0x8000 for "is float", but in SDL that bit is SDL_AUDIO_MASK_SIGNED; float is 0x100.  The
+       result was every capture labelling signed 16-bit PCM as IEEE_FLOAT in the WAV header, which
+       ffmpeg then reported as codec_name=unknown. */
+    Platform_Capture_Set_Audio_Format(frequency, channels, (int)SDL_AUDIO_BITSIZE(format), SDL_AUDIO_ISFLOAT(format) ? 1 : 0);
+
+    Mix_SetPostMix(sdl2_Capture_PostMix, NULL);
+}
+
 int16_t Platform_Audio_Play_Sound(void *sound_buffer, uint32_t sound_buffer_size)
 {
     int16_t lbx_sound_type = 0;
@@ -312,9 +359,12 @@ int16_t Platform_Audio_Play_Sound(void *sound_buffer, uint32_t sound_buffer_size
             // m = &mustbl[0];
             m = &mustbl;
             fmt_mus_convert_xmid(sound_buffer, sound_buffer_size, &xmi_sound_buffer, &xmi_sound_buffer_size, &m->loops);
-            SDL_RWops* sdl2_rw_ops = SDL_RWFromConstMem(xmi_sound_buffer, xmi_sound_buffer_size);
-            m->music = Mix_LoadMUSType_RW(sdl2_rw_ops, m->sdlmtype, 0);
-            SDL_FreeRW(sdl2_rw_ops);
+            /* CLAUDE: renamed from sdl2_rw_ops -- it shadowed the function-level sdl2_rw_ops
+               (MSVC /W4 C4456, fatal under /WX).  Latent until the SDL2 backend was first built
+               with MSVC via the MSVC-sdl2-debug preset. */
+            SDL_RWops* sdl2_rw_ops_xmi = SDL_RWFromConstMem(xmi_sound_buffer, xmi_sound_buffer_size);
+            m->music = Mix_LoadMUSType_RW(sdl2_rw_ops_xmi, m->sdlmtype, 0);
+            SDL_FreeRW(sdl2_rw_ops_xmi);
             free(xmi_sound_buffer);
             // ...
             ui_data_mus = sound_buffer;
