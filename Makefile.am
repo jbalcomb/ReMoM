@@ -24,6 +24,7 @@ noinst_LIBRARIES = \
 # -------------------------------------------------------------------------
 
 libstu_a_SOURCES = \
+    STU/src/STU_BRAK.c \
     STU/src/STU_DBG.c \
     STU/src/STU_DRAW.c \
     STU/src/STU_EMS.c \
@@ -62,6 +63,7 @@ PLATFORM_CORE_SOURCES = \
     platform/sdl3/sdl3_State.c \
     platform/sdl3/sdl3_Timer.c \
     platform/sdl3/sdl3_Video.c \
+    platform/capture/PFL_Capture.c \
     platform/replay/Replay.c
 PLATFORM_BACKEND_DIR = platform/sdl3
 else
@@ -74,6 +76,7 @@ PLATFORM_CORE_SOURCES = \
     platform/sdl2/sdl2_State.c \
     platform/sdl2/sdl2_Timer.c \
     platform/sdl2/sdl2_Video.c \
+    platform/capture/PFL_Capture.c \
     platform/replay/Replay.c
 PLATFORM_BACKEND_DIR = platform/sdl2
 endif
