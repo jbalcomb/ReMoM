@@ -32,6 +32,7 @@
 #endif
 
 #include "../STU/src/STU_LOG.h"
+#include "../STU/src/STU_BRAK.h"
 #include "../STU/src/STU_GRAF.h"
 
 #include "../MoX/src/capture.h"
@@ -238,6 +239,11 @@ int main(int argc, char * argv[])
     }
 
     STU_Log_Startup("ReMoM.ini");
+
+    /* CLAUDE: install crash reporting right after logging exists.  The handler flushes STU_LOG
+       before reporting -- the log is buffered, so an abort otherwise discards the whole run's log.
+       Catches abort()/failed assertions as well as CPU faults; see STU/src/STU_BRAK.h. */
+    STU_BRAK_Install();
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     /* Resolve the game-data search path (env -> exe-dir -> CWD) before any

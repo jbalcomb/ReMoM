@@ -31,6 +31,7 @@
 #ifdef STU_DEBUG
 #include "../STU/src/AI_METRICS.h"
 #include "../STU/src/STU_DBG.h"
+#include "../STU/src/STU_BRAK.h"
 #endif
 #include "../STU/src/STU_LOG.h"
 #include "../STU/src/STU_GRAF.h"
@@ -1040,6 +1041,11 @@ int main(int argc, char *argv[])
     int argi;
 
     STU_Log_Startup("ReMoM.ini");
+
+    /* CLAUDE: install crash reporting right after logging exists.  The handler flushes STU_LOG
+       before reporting -- the log is buffered, so an abort otherwise discards the whole run's log.
+       Catches abort()/failed assertions as well as CPU faults; see STU/src/STU_BRAK.h. */
+    STU_BRAK_Install();
 
     /* Headless profile: data resolves from CWD (plus REMOM_DATA_DIR override),
        matching the existing test / matchup harness behavior. */
