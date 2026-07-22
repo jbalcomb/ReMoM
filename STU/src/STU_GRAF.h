@@ -99,12 +99,16 @@ int STU_GRAF_User_State_Dir(char * out, size_t cap);
    PLAYER build that cannot resolve a user-data dir. */
 FILE * STU_GRAF_Open_User(const char * name, const char * mode);
 
-/* Return values for STU_GRAF_User_DIR: chosen to match MoX's DIR() contract
-   (ST_SUCCESS = -1 found, ST_FAILURE = 1 absent) so reconstructed call sites
-   swap DIR() -> STU_GRAF_User_DIR() with no change to their comparisons.  (STU
-   does not include the MoX headers, hence the local names.) */
+/* Return values for STU_GRAF_User_DIR: numerically identical to MoX's
+   ST_SUCCESS (-1) and ST_FAILURE (0) so reconstructed call sites that compare
+   the DIR() result against ST_SUCCESS / ST_FAILURE work unchanged.  (STU does
+   not include the MoX headers, hence the local names.  An earlier version of
+   this header claimed the OG MoX contract was ST_FAILURE = 1 = absent; that
+   was wrong — MoX's ST_FAILURE is 0, and STU_GRAF_DIR_ABSENT was 1, which
+   made every `!= ST_FAILURE` / `== ST_FAILURE` check at call sites silently
+   evaluate as "file present" regardless of whether it was.) */
 #define STU_GRAF_DIR_FOUND  (-1)
-#define STU_GRAF_DIR_ABSENT ( 1)
+#define STU_GRAF_DIR_ABSENT ( 0)
 
 /* User-data-aware equivalents of MoX's DIR()/LOF(), so an existence / length
    check beside a swapped open resolves to the same place the open uses (the
