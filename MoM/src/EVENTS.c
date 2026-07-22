@@ -303,8 +303,8 @@ void Determine_Event(void)
      * the global _event_delay_count (post the "< 5" increment above).  Fire once. */
     { static int gd640_done = 0;
       if(!gd640_done) { gd640_done = 1;
-        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 620_Determine_Event event_pressure_accumulator = %d", (int)event_pressure_accumulator);
-        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 620_Determine_Event _event_delay_count = %d", (int)_event_delay_count); } }
+        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 620_Determine_Event event_pressure_accumulator = %d", (int)event_pressure_accumulator);
+        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 620_Determine_Event _event_delay_count = %d", (int)_event_delay_count); } }
 
     /* fire test  (¿ power of two avoids modulo bias ?)*/
     if(Random(512) > event_pressure_accumulator)

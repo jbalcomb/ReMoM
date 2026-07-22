@@ -133,7 +133,7 @@ void AI_Execute_Orders(int16_t player_idx)
      * 615 to isolate this call's effect on _UNITS (the 911 movement divergence).
      * player_idx scalar records WHICH player.  Fire once (first AI player). */
     if(!gd614_done) { gd614_done = 1;
-        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 614_AI_Execute_Orders_Entry_U player_idx = %d", (int)player_idx);
+        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 614_AI_Execute_Orders_Entry_U player_idx = %d", (int)player_idx);
         gd_dump_units("614_AI_Execute_Orders_Entry_U"); }
 
     /* Store current map state to restore later */

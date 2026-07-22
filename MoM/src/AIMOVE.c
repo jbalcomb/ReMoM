@@ -235,7 +235,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
      * (both sides fire on the first AI player -> must match).  Fire once. */
     { static int gd612_done = 0;
       if(!gd612_done) { gd612_done = 1;
-        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 612_AI_Set_Unit_Orders_Entry_U player_idx = %d", (int)player_idx);
+        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 612_AI_Set_Unit_Orders_Entry_U player_idx = %d", (int)player_idx);
         gd_dump_units("612_AI_Set_Unit_Orders_Entry_U"); } }
 
 
@@ -6344,7 +6344,7 @@ void AI_Evaluate_Continents(int16_t player_idx)
         if(!aievalcont_gd_entry_done) {
             aievalcont_gd_entry_done = 1;
             gd_dump_ai_continents("610_AI_Evaluate_Continents_Entry_Continents");
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 610_AI_Evaluate_Continents_Entry_Continents player_idx = %d", (int)player_idx);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] 610_AI_Evaluate_Continents_Entry_Continents player_idx = %d", (int)player_idx);
         }
     }
 
@@ -6894,7 +6894,7 @@ static void gd_dump_ai_evaluation_map(const char* point)
             for(i = base; i < end; i++)
                 q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%u" : "%u",
                               (unsigned)g_ai_evaluation_map[wp][i]);
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s g_ai_evaluation_map[%d]@%d = %s",
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s g_ai_evaluation_map[%d]@%d = %s",
                       point, wp, base, buf);
         }
         STU_Log_Flush_All();
@@ -7007,9 +7007,7 @@ void AI_Evaluation_Map(int16_t player_idx)
         /* Add 1/10th of the unit's effective strength to the map square */
         strength = Effective_Unit_Strength(itr_units);   /* raw (before /10) */
         if(aiem_capture_strength)
-            LOG_DEBUG(LOG_CAT_GENERAL,
-                      "[GD] 608_AI_Evaluation_Map_Strength unit_strength[%d].s = %d",
-                      (int)itr_units, (int)strength);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] 608_AI_Evaluation_Map_Strength unit_strength[%d].s = %d", (int)itr_units, (int)strength);
         strength = strength / 10;
         g_ai_evaluation_map[wp][xy_ofst] += strength;  /* OGBUG  could index g_ai_evaluation_map with wp = -1 */
 
@@ -7130,7 +7128,7 @@ void gd_dump_ai_landmass_squares(const char* point)
             for(i = base; i < end; i++)
                 q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
                               (int)_ai_landmass_land_squares_heads[wp][i]);
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].heads@%d = %s",
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].heads@%d = %s",
                       point, (int)wp, base, buf);
         }
         for(base = 0; base < used; base += 100)
@@ -7140,7 +7138,7 @@ void gd_dump_ai_landmass_squares(const char* point)
             for(i = base; i < end; i++)
                 q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
                               (int)_ai_landmass_land_squares_lists[wp][i]);
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].lists@%d = %s",
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].lists@%d = %s",
                       point, (int)wp, base, buf);
         }
         for(base = 0; base < used; base += 100)
@@ -7150,7 +7148,7 @@ void gd_dump_ai_landmass_squares(const char* point)
             for(i = base; i < end; i++)
                 q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
                               (int)_ai_landmass_land_squares_wx_array[wp][i]);
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].wx_array@%d = %s",
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].wx_array@%d = %s",
                       point, (int)wp, base, buf);
         }
         for(base = 0; base < used; base += 100)
@@ -7160,7 +7158,7 @@ void gd_dump_ai_landmass_squares(const char* point)
             for(i = base; i < end; i++)
                 q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
                               (int)_ai_landmass_land_squares_wy_array[wp][i]);
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].wy_array@%d = %s",
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].wy_array@%d = %s",
                       point, (int)wp, base, buf);
         }
         STU_Log_Flush_All();   /* drain per plane -- avoid async-logger ring overrun */
@@ -7197,7 +7195,7 @@ void gd_dump_ai_dock_squares(const char* point)
             for(i = base; i < end; i++)
                 q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
                               (int)_ai_landmass_dock_squares_heads[wp][i]);
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].heads@%d = %s",
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].heads@%d = %s",
                       point, (int)wp, base, buf);
         }
         for(base = 0; base < used; base += 100)
@@ -7207,7 +7205,7 @@ void gd_dump_ai_dock_squares(const char* point)
             for(i = base; i < end; i++)
                 q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
                               (int)_ai_landmass_dock_squares_lists[wp][i]);
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].lists@%d = %s",
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].lists@%d = %s",
                       point, (int)wp, base, buf);
         }
         for(base = 0; base < used; base += 100)
@@ -7217,7 +7215,7 @@ void gd_dump_ai_dock_squares(const char* point)
             for(i = base; i < end; i++)
                 q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
                               (int)_ai_landmass_dock_squares_wx_array[wp][i]);
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].wx_array@%d = %s",
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].wx_array@%d = %s",
                       point, (int)wp, base, buf);
         }
         for(base = 0; base < used; base += 100)
@@ -7227,7 +7225,7 @@ void gd_dump_ai_dock_squares(const char* point)
             for(i = base; i < end; i++)
                 q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
                               (int)_ai_landmass_dock_squares_wy_array[wp][i]);
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].wy_array@%d = %s",
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].wy_array@%d = %s",
                       point, (int)wp, base, buf);
         }
         STU_Log_Flush_All();
@@ -7258,17 +7256,17 @@ void gd_dump_ai_continents(const char* point)
             for(lm = 0; lm < NUM_LANDMASSES; lm++)
                 q += snprintf(buf + q, sizeof(buf) - q, lm ? ",%d" : "%d",
                               (int)_ai_continents.plane[wp].player[pl].wx_array[lm]);
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_continents[%d].wx_array = %s", point, flat, buf);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_continents[%d].wx_array = %s", point, flat, buf);
             q = 0; buf[0] = 0;
             for(lm = 0; lm < NUM_LANDMASSES; lm++)
                 q += snprintf(buf + q, sizeof(buf) - q, lm ? ",%d" : "%d",
                               (int)_ai_continents.plane[wp].player[pl].wy_array[lm]);
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_continents[%d].wy_array = %s", point, flat, buf);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_continents[%d].wy_array = %s", point, flat, buf);
             q = 0; buf[0] = 0;
             for(lm = 0; lm < NUM_LANDMASSES; lm++)
                 q += snprintf(buf + q, sizeof(buf) - q, lm ? ",%d" : "%d",
                               (int)_ai_continents.plane[wp].player[pl].type_array[lm]);
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ai_continents[%d].type_array = %s", point, flat, buf);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_continents[%d].type_array = %s", point, flat, buf);
         }
     }
 }
@@ -7315,7 +7313,7 @@ void AI_Choose_War_Landmass(int16_t player_idx)
             gd_dump_cities       ("602_AI_Choose_War_Landmass_C");
             gd_dump_ai_continents("603_AI_Choose_War_Landmass_Continents");
             gd_dump_players      ("604_AI_Choose_War_Landmass_P");
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 604_AI_Choose_War_Landmass_P player_idx = %d", (int)player_idx);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] 604_AI_Choose_War_Landmass_P player_idx = %d", (int)player_idx);
         }
     }
 
@@ -7684,21 +7682,21 @@ void AI_Choose_War_Landmass(int16_t player_idx)
                         wbuf[0] = 0;
                         for(wi = 0; wi < NUM_LANDMASSES; wi++)
                             wq += snprintf(wbuf + wq, sizeof(wbuf) - (size_t)wq, wi ? ",%d" : "%d", (int)final_landmass_weights[wi]);
-                        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights final_landmass_weights = %s", wbuf);
+                        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights final_landmass_weights = %s", wbuf);
                         wq = 0; wbuf[0] = 0;
                         for(wi = 0; wi < NUM_LANDMASSES; wi++)
                             wq += snprintf(wbuf + wq, sizeof(wbuf) - (size_t)wq, wi ? ",%d" : "%d", (int)Continent_Values[wi]);
-                        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights Continent_Values = %s", wbuf);
+                        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights Continent_Values = %s", wbuf);
                         wq = 0; wbuf[0] = 0;
                         for(wi = 0; wi < NUM_LANDMASSES; wi++)
                             wq += snprintf(wbuf + wq, sizeof(wbuf) - (size_t)wq, wi ? ",%d" : "%d", (int)gd_min_delta_distance[wi]);
-                        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights min_delta_distance = %s", wbuf);
-                        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights wp = %d", (int)wp);
-                        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights player_idx = %d", (int)player_idx);
-                        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights first_hostile_player_idx = %d", (int)first_hostile_player_idx);
+                        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights min_delta_distance = %s", wbuf);
+                        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights wp = %d", (int)wp);
+                        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights player_idx = %d", (int)player_idx);
+                        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights first_hostile_player_idx = %d", (int)first_hostile_player_idx);
                     }
                 }
-                LOG_DEBUG(LOG_CAT_GENERAL, "[GD] first_hostile_player_idx = %d", first_hostile_player_idx);
+                LOG_TRACE(LOG_CAT_GENERAL, "[GD] first_hostile_player_idx = %d", first_hostile_player_idx);
                 _ai_landmass_war_targets[wp][player_idx] = Get_Weighted_Choice(&final_landmass_weights[0], NUM_LANDMASSES);
             }
 

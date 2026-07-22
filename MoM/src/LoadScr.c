@@ -890,7 +890,7 @@ void Loaded_Game_Update(void)
             cbuf[0] = 0;
             for(ci = 0; ci < NUM_PLAYERS; ci++)
                 cq += snprintf(cbuf + cq, sizeof(cbuf) - cq, ci ? ",%d" : "%d", (int)_ai_reevaluate_continents_countdown[ci]);
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] 317_Loaded_Game_Update_Countdown _ai_reevaluate_continents_countdown = %s", cbuf);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] 317_Loaded_Game_Update_Countdown _ai_reevaluate_continents_countdown = %s", cbuf);
         }
     }
 

@@ -72,8 +72,7 @@ int gd_ci_load(void)
         if (f) { used = cands[i]; break; }
     }
     if (!f) {
-        LOG_INFO(LOG_CAT_GENERAL,
-            "[CI] load FAILED: og-game-data-capture.fwv not found (cwd or build dir). No injection.");
+        LOG_INFO(LOG_CAT_GENERAL, "[CI] load FAILED: og-game-data-capture.fwv not found (cwd or build dir). No injection.");
         gd_ci_loaded = -1;
         return -1;
     }
@@ -111,8 +110,7 @@ int gd_ci_load(void)
             p = endp;
         }
         if (n != count) {
-            LOG_INFO(LOG_CAT_GENERAL,
-                "[CI] WARNING: %s %s declared %d values but found %d.", r->key, r->site, count, n);
+            LOG_INFO(LOG_CAT_GENERAL, "[CI] WARNING: %s %s declared %d values but found %d.", r->key, r->site, count, n);
         }
         r->count = (n < GD_CI_MAX_VALS) ? n : GD_CI_MAX_VALS;
         gd_ci_nrecs++;
@@ -172,10 +170,8 @@ static long gd_rd(const uint8_t* r, int kind) {
         case GD_I8:  return (long)(int8_t)r[0];
         case GD_U16: return (long)(uint16_t)(r[0] | (r[1] << 8));
         case GD_I16: return (long)(int16_t)(uint16_t)(r[0] | (r[1] << 8));
-        case GD_U32: return (long)((uint32_t)r[0] | ((uint32_t)r[1] << 8)
-                                 | ((uint32_t)r[2] << 16) | ((uint32_t)r[3] << 24));
-        case GD_I32: return (long)(int32_t)((uint32_t)r[0] | ((uint32_t)r[1] << 8)
-                                 | ((uint32_t)r[2] << 16) | ((uint32_t)r[3] << 24));
+        case GD_U32: return (long)((uint32_t)r[0] | ((uint32_t)r[1] << 8) | ((uint32_t)r[2] << 16) | ((uint32_t)r[3] << 24));
+        case GD_I32: return (long)(int32_t)((uint32_t)r[0] | ((uint32_t)r[1] << 8) | ((uint32_t)r[2] << 16) | ((uint32_t)r[3] << 24));
         default:     return (long)r[0];   /* U8 */
     }
 }
@@ -208,8 +204,7 @@ void gd_dump_players(const char* point) {
                     if(q > (int)sizeof(val) - 16) break;
                 }
             }
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _players[%d].%s = %s",
-                      point, p, f->name, val);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _players[%d].%s = %s", point, p, f->name, val);
         }
         /* gd_dump_players emits a large [GD] burst in a tight loop with no
          * main-loop pump in between, which overruns the async logger's ring
@@ -249,8 +244,7 @@ void gd_dump_nodes(const char* point) {
                     if(q > (int)sizeof(val) - 16) break;
                 }
             }
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _NODES[%d].%s = %s",
-                      point, n, f->name, val);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _NODES[%d].%s = %s", point, n, f->name, val);
         }
         STU_Log_Flush_All();
     }
@@ -286,8 +280,7 @@ void gd_dump_towers(const char* point) {
                     if(q > (int)sizeof(val) - 16) break;
                 }
             }
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _TOWERS[%d].%s = %s",
-                      point, n, f->name, val);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _TOWERS[%d].%s = %s", point, n, f->name, val);
         }
         STU_Log_Flush_All();
     }
@@ -322,8 +315,7 @@ void gd_dump_fortresses(const char* point) {
                     if(q > (int)sizeof(val) - 16) break;
                 }
             }
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _FORTRESSES[%d].%s = %s",
-                      point, n, f->name, val);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _FORTRESSES[%d].%s = %s", point, n, f->name, val);
         }
         STU_Log_Flush_All();
     }
@@ -358,8 +350,7 @@ void gd_dump_lairs(const char* point) {
                     if(q > (int)sizeof(val) - 16) break;
                 }
             }
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _LAIRS[%d].%s = %s",
-                      point, n, f->name, val);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _LAIRS[%d].%s = %s", point, n, f->name, val);
         }
         STU_Log_Flush_All();
     }
@@ -369,7 +360,7 @@ void gd_dump_cities(const char* point) {
     int n, i, k;
     char val[1100];
     /* placed-city count -> compare-gd masks _CITIES[n >= _cities] (unplaced tail). */
-    LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _cities = %d", point, (int)_cities);
+    LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _cities = %d", point, (int)_cities);
     for (n = 0; n < NUM_CITIES; n++) {
         const uint8_t* base = (const uint8_t*)&_CITIES[n];
         for (i = 0; i < CITY_FIELD_COUNT; i++) {
@@ -396,8 +387,7 @@ void gd_dump_cities(const char* point) {
                     if (q > (int)sizeof(val) - 16) break;
                 }
             }
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _CITIES[%d].%s = %s",
-                      point, n, f->name, val);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _CITIES[%d].%s = %s", point, n, f->name, val);
         }
         STU_Log_Flush_All();
     }
@@ -438,8 +428,7 @@ void gd_dump_heroes(const char* point) {
                     if (q > (int)sizeof(val) - 16) break;
                 }
             }
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _HEROES2[%d].%s = %s",
-                      point, p, f->name, val);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _HEROES2[%d].%s = %s", point, p, f->name, val);
         }
         STU_Log_Flush_All();
     }
@@ -453,7 +442,7 @@ void gd_dump_units(const char* point) {
     int n, i, k;
     char val[1100];
     /* active-unit count -> compare-gd masks _UNITS[n >= _units] (inactive tail). */
-    LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _units = %d", point, (int)_units);
+    LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _units = %d", point, (int)_units);
     for (n = 0; n < NUM_UNITS; n++) {
         const uint8_t* base = (const uint8_t*)&_UNITS[n];
         for (i = 0; i < UNIT_FIELD_COUNT; i++) {
@@ -480,8 +469,7 @@ void gd_dump_units(const char* point) {
                     if (q > (int)sizeof(val) - 16) break;
                 }
             }
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _UNITS[%d].%s = %s",
-                      point, n, f->name, val);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _UNITS[%d].%s = %s", point, n, f->name, val);
         }
         STU_Log_Flush_All();
     }
@@ -520,8 +508,7 @@ void gd_dump_items(const char* point) {
                     if (q > (int)sizeof(val) - 16) break;
                 }
             }
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _ITEMS[%d].%s = %s",
-                      point, n, f->name, val);
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ITEMS[%d].%s = %s", point, n, f->name, val);
         }
         STU_Log_Flush_All();
     }
@@ -589,7 +576,7 @@ void Init_Computer_Players(void)
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-        LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: _players[%d].spellranks[]: N%d, S%d, C%d, L%d, D%d",
+        LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: _players[%d].spellranks[]: N%d, S%d, C%d, L%d, D%d",
                 itr_players,
                 _players[itr_players].spellranks[sbr_Nature],
                 _players[itr_players].spellranks[sbr_Sorcery],
@@ -601,7 +588,7 @@ void Init_Computer_Players(void)
 
     for(itr2 = 0; itr2 < 13; itr2++)
     {
-        LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: _default_spells[%d]: N%d, S%d, C%d, L%d, D%d",
+        LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: _default_spells[%d]: N%d, S%d, C%d, L%d, D%d",
                 itr2,
                 _default_spells[sbr_Nature].spells[itr2],
                 _default_spells[sbr_Sorcery].spells[itr2],
@@ -630,7 +617,7 @@ void Init_Computer_Players(void)
     {
         for(itr2 = 0; itr2 < 13; itr2++)
         {
-            LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: _player_start_spells[%d]: N%d, S%d, C%d, L%d, D%d",
+            LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: _player_start_spells[%d]: N%d, S%d, C%d, L%d, D%d",
                     itr_players,
                     _player_start_spells[itr_players].realms[sbr_Nature].spells[itr2],
                     _player_start_spells[itr_players].realms[sbr_Sorcery].spells[itr2],

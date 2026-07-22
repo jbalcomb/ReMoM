@@ -291,7 +291,7 @@ void gd_dump_world_map(const char* point)
                 int16_t v = p_world_map[plane][y][x];
                 q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", (int)v);
             }
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _world_maps[%d].y%02d = %s",
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _world_maps[%d].y%02d = %s",
                       point, plane, y, row);
         }
         STU_Log_Flush_All();   /* drain the async ring between planes (flood fix) */
@@ -310,7 +310,7 @@ void gd_dump_landmasses(const char* point)
                 int v = GET_LANDMASS(x, y, plane);
                 q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
             }
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _landmasses[%d].y%02d = %s",
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _landmasses[%d].y%02d = %s",
                       point, plane, y, row);
         }
         STU_Log_Flush_All();
@@ -329,7 +329,7 @@ void gd_dump_terrain_specials(const char* point)
                 int v = GET_TERRAIN_SPECIAL(x, y, plane);
                 q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
             }
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _map_square_terrain_specials[%d].y%02d = %s",
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _map_square_terrain_specials[%d].y%02d = %s",
                       point, plane, y, row);
         }
         STU_Log_Flush_All();
@@ -348,7 +348,7 @@ void gd_dump_map_square_flags(const char* point)
                 int v = GET_MAP_SQUARE_FLAG(x, y, plane);
                 q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
             }
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _map_square_flags[%d].y%02d = %s",
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _map_square_flags[%d].y%02d = %s",
                       point, plane, y, row);
         }
         STU_Log_Flush_All();
@@ -367,7 +367,7 @@ static void gd_dump_square_explored(const char* point)
                 int v = GET_SQUARE_EXPLORED(x, y, plane);
                 q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
             }
-            LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s _square_explored[%d].y%02d = %s",
+            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _square_explored[%d].y%02d = %s",
                       point, plane, y, row);
         }
         STU_Log_Flush_All();
@@ -399,7 +399,7 @@ static void gd_dump_movement_mode_cost_maps(const char* point)
                     int v = (int)modes[m]->moves2[(y * WORLD_WIDTH) + x];
                     q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
                 }
-                LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s movement_mode_cost_maps[%d].%s_y%02d = %s",
+                LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s movement_mode_cost_maps[%d].%s_y%02d = %s",
                           point, plane, mode_names[m], y, row);
             }
         }
@@ -419,7 +419,7 @@ static void gd_dump_one_uu_tbl(const char* point, const char* name, const unsign
             int v = (int)tbl[(plane * 96) + i];
             q += snprintf(row + q, sizeof(row) - q, i ? ",%d" : "%d", v);
         }
-        LOG_DEBUG(LOG_CAT_GENERAL, "[GD] %s %s[%d].vals = %s", point, name, plane, row);
+        LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s %s[%d].vals = %s", point, name, plane, row);
     }
 }
 
