@@ -232,6 +232,12 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
      * _unit-specific fread, and (c) after the whole function. */
     LOG_INFO(LOG_CAT_LOADSAVE, "Load_SAVE_GAM _unit BEFORE = %d", _unit);
 
+    /* CLAUDE: --load trace point 3 of 3 -- right before g_load_save_gam_name_override is USED.
+       save_gam_idx is logged alongside it because the override replaces only the FILENAME: the index
+       keeps whatever the caller passed (scr_Continue passes 8, HeMoM's named-save path passes
+       ST_UNDEFINED), and anything downstream keying off the index still sees the caller's value. */
+    LOG_INFO(LOG_CAT_LOADSAVE, "[--load] USE Load_SAVE_GAM: save_gam_idx=%d  g_load_save_gam_name_override=%p \"%s\"", save_gam_idx, (void *)g_load_save_gam_name_override, (g_load_save_gam_name_override != NULL) ? g_load_save_gam_name_override : "(null)");
+
     /* CLAUDE: test-support named-save override (see g_load_save_gam_name_override above). */
     if(g_load_save_gam_name_override != NULL)
     {
@@ -251,6 +257,9 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
         stu_strcat(file_name,".GAM");
     }
 
+    /* CLAUDE: the filename actually resolved, and the index it will be carried alongside. */
+    LOG_INFO(LOG_CAT_LOADSAVE, "[--load] RESOLVED Load_SAVE_GAM: file_name=\"%s\"  save_gam_idx=%d  (override now %s)", file_name, save_gam_idx, (g_load_save_gam_name_override == NULL) ? "consumed/NULL" : "STILL SET");
+
     file_size = STU_GRAF_User_LOF(file_name);  /* CLAUDE: save -> user-data (HEADLESS: CWD) */
     // DONT  assert(file_size != 0);  crashes if there are no game-save files, like on first run
     
@@ -263,7 +272,11 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
     // TODO  gfile_pointer = gfopen(file_name, "rb");
     file_pointer = STU_GRAF_Open_User(file_name, "rb");  /* CLAUDE: save -> user-data (HEADLESS: CWD) */
-    assert(file_pointer != NULL);
+    if(file_pointer == NULL)
+    {
+        LOG_FATAL(LOG_CAT_LOADSAVE, "FATAL: Load_SAVE_GAM() failed to open file \"%s\"", file_name);
+        stu_debugbreak();
+    }
 
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 0);  // BoF

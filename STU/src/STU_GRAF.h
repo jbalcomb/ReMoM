@@ -67,6 +67,22 @@ int STU_GRAF_User_Cache_Dir(char * out, size_t cap);
    ~/Library/Application Support/ReMoM on macOS.  Returns 1 on success. */
 int STU_GRAF_User_Data_Dir(char * out, size_t cap);
 
+/* Override the per-user *data* directory, taking precedence over the platform default above.
+   Set from ReMoM.ini's [Paths] save_dir.  "." means the current working directory, which is what a
+   repo build wants: saves land next to the executable instead of in %APPDATA%\ReMoM.  Passing NULL
+   or an empty string clears the override and restores the platform default.
+
+   The ini is a dev/modder template that is deliberately NOT bundled for players (see the install
+   rules in the root CMakeLists.txt), so a player's install has no override and keeps the per-user
+   directory.  This is config declaring intent, not the binary sniffing its environment. */
+void STU_GRAF_Set_User_Data_Dir(const char * dir);
+
+/* Read a single key from a [section] of a simple INI file.  Returns 1 and fills 'out' when found,
+   0 otherwise.  Section and key matching are case-insensitive; surrounding whitespace and inline
+   '#' / ';' comments are stripped.  Standalone so it can run before any subsystem is initialized --
+   the log directory has to be known before the log file is opened. */
+int STU_GRAF_Read_Ini_Value(const char * ini_path, const char * section, const char * key, char * out, size_t cap);
+
 /* Per-user *state* directory (with a trailing separator): the writable home for
    logs.  XDG_STATE_HOME/ReMoM on Linux, %LOCALAPPDATA%\ReMoM\logs on Windows,
    ~/Library/Logs/ReMoM on macOS.  Unlike the other resolvers this also *creates*

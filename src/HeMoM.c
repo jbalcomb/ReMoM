@@ -1293,6 +1293,9 @@ int main(int argc, char *argv[])
         LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Loading combat fixture save: %s", hemom_file);
         Load_WZD_Resources();
         g_load_save_gam_name_override = hemom_file;
+        /* CLAUDE: --load trace -- mirrors the ReMoM.c --load trace points so the two paths can be
+           compared.  NOTE this path passes ST_UNDEFINED, not a slot index. */
+        LOG_INFO(LOG_CAT_LOADSAVE, "[--load] ASSIGN g_load_save_gam_name_override=%p \"%s\" (HeMoM combat-fixture path) -> Load_SAVE_GAM(ST_UNDEFINED)", (void *)g_load_save_gam_name_override, (g_load_save_gam_name_override != NULL) ? g_load_save_gam_name_override : "(null)");
         Load_SAVE_GAM(ST_UNDEFINED);
         Loaded_Game_Update();
         current_screen = scr_Main_Screen;

@@ -330,6 +330,23 @@ static void STU_Log_Config_Load_INI(const char * path)
         value = STU_Log_Trim_WS(eq + 1);
         key   = STU_Log_Trim_WS(key);
 
+        /* CLAUDE: strip an inline '#'/';' comment from the value, so `severity_threshold = INFO # note`
+           parses as "INFO" rather than the whole trailing string (which silently failed to parse and
+           left the threshold at its default).  Matches STU_GRAF_Read_Ini_Value's behavior. */
+        {
+            char * comment = value;
+            while(*comment != '\0')
+            {
+                if((*comment == '#') || (*comment == ';'))
+                {
+                    *comment = '\0';
+                    break;
+                }
+                comment++;
+            }
+            value = STU_Log_Trim_WS(value);
+        }
+
         if(STU_Log_CI_Eq(key, "severity_threshold"))
         {
             if(STU_Log_Parse_Severity(value, &parsed_int))

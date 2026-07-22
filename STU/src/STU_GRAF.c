@@ -47,6 +47,10 @@ static int  g_search_dir_count = 0;
    STU_GRAF_Init(STU_GRAF_PLAYER). */
 static STU_GRAF_Profile g_profile = STU_GRAF_HEADLESS;
 
+/* ReMoM.ini [Paths] save_dir override for the per-user data dir.  Empty = use the platform
+   default.  See STU_GRAF_Set_User_Data_Dir(). */
+static char g_user_data_dir_override[STU_GRAF_PATH_MAX] = { 0 };
+
 /* True if the name is already a path (absolute or contains a separator), in
    which case STU_GRAF must not prepend a search directory. */
 static int graf_name_is_path(const char * name)
@@ -299,8 +303,137 @@ int STU_GRAF_User_Cache_Dir(char * out, size_t cap)
 #endif
 }
 
+/* Trim leading/trailing whitespace in place; returns the (possibly advanced) start. */
+static char * graf_ini_trim(char * s)
+{
+    char * end;
+
+    while((*s == ' ') || (*s == '\t') || (*s == '\r') || (*s == '\n'))
+    {
+        s++;
+    }
+    end = s + strlen(s);
+    while((end > s) && ((end[-1] == ' ') || (end[-1] == '\t') || (end[-1] == '\r') || (end[-1] == '\n')))
+    {
+        end--;
+    }
+    *end = '\0';
+    return s;
+}
+
+
+int STU_GRAF_Read_Ini_Value(const char * ini_path, const char * section, const char * key, char * out, size_t cap)
+{
+    FILE * fp;
+    char   line[STU_GRAF_PATH_MAX];
+    int    in_section = 0;
+    int    found = 0;
+
+    if((ini_path == NULL) || (section == NULL) || (key == NULL) || (out == NULL) || (cap == 0))
+    {
+        return 0;
+    }
+
+    fp = stu_fopen_ci(ini_path, "r");
+    if(fp == NULL)
+    {
+        return 0;   /* no ini (e.g. a player's install) -- caller keeps its default */
+    }
+
+    while(fgets(line, (int)sizeof(line), fp) != NULL)
+    {
+        char * p = graf_ini_trim(line);
+        char * hash;
+
+        /* Strip inline comments before anything else. */
+        hash = strchr(p, '#');
+        if(hash != NULL)
+        {
+            *hash = '\0';
+        }
+        hash = strchr(p, ';');
+        if(hash != NULL)
+        {
+            *hash = '\0';
+        }
+        p = graf_ini_trim(p);
+
+        if(p[0] == '\0')
+        {
+            continue;
+        }
+
+        if(p[0] == '[')
+        {
+            char * close = strchr(p, ']');
+            if(close != NULL)
+            {
+                *close = '\0';
+                in_section = graf_key_is(p + 1, strlen(p + 1), section);
+            }
+            continue;
+        }
+
+        if(in_section)
+        {
+            char * eq = strchr(p, '=');
+            if(eq != NULL)
+            {
+                char * k;
+                char * v;
+                *eq = '\0';
+                k = graf_ini_trim(p);
+                v = graf_ini_trim(eq + 1);
+                if(graf_key_is(k, strlen(k), key))
+                {
+                    snprintf(out, cap, "%s", v);
+                    found = 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    fclose(fp);
+    return found;
+}
+
+
+void STU_GRAF_Set_User_Data_Dir(const char * dir)
+{
+    if(dir == NULL || dir[0] == '\0')
+    {
+        g_user_data_dir_override[0] = '\0';
+        return;
+    }
+
+    /* Store with a trailing separator, matching what the platform resolvers below produce, so
+       graf_join() callers see one consistent shape. */
+    {
+        size_t len = strlen(dir);
+        if((len > 0) && ((dir[len - 1] == '/') || (dir[len - 1] == '\\')))
+        {
+            snprintf(g_user_data_dir_override, sizeof(g_user_data_dir_override), "%s", dir);
+        }
+        else
+        {
+            snprintf(g_user_data_dir_override, sizeof(g_user_data_dir_override), "%s/", dir);
+        }
+    }
+
+    LOG_INFO(LOG_CAT_STU_GRAF, "user-data dir overridden to \"%s\" (ReMoM.ini [Paths] save_dir)", g_user_data_dir_override);
+}
+
+
 int STU_GRAF_User_Data_Dir(char * out, size_t cap)
 {
+    /* An explicit override wins over the platform default. */
+    if(g_user_data_dir_override[0] != '\0')
+    {
+        int n = snprintf(out, cap, "%s", g_user_data_dir_override);
+        return (n > 0 && (size_t)n < cap) ? 1 : 0;
+    }
+
 #if defined(_WIN32)
     const char * base = getenv("APPDATA");
     if(base == NULL || base[0] == '\0')
@@ -440,6 +573,9 @@ FILE * STU_GRAF_Open_User(const char * name, const char * mode)
 {
     char dir[STU_GRAF_PATH_MAX];
     char full[STU_GRAF_PATH_MAX];
+    FILE * file_pointer;
+
+    LOG_INFO(LOG_CAT_STU_GRAF, "name: \"%s\"", (void *)name, (name != NULL) ? name : "(null)");
 
     /* A name that is already a path is honored verbatim. */
     if(graf_name_is_path(name))
@@ -457,9 +593,14 @@ FILE * STU_GRAF_Open_User(const char * name, const char * mode)
     if(!STU_GRAF_User_Data_Dir(dir, sizeof(dir)))
     {
         /* No HOME/APPDATA -- degrade to legacy CWD behavior rather than fail. */
-        LOG_WARN(LOG_CAT_GENERAL,
-                 "STU_GRAF: no user-data dir; opening '%s' in CWD", name);
-        return stu_fopen_ci(name, mode);
+        LOG_WARN(LOG_CAT_GENERAL, "STU_GRAF: no user-data dir; opening '%s' in CWD", name);
+        file_pointer = stu_fopen_ci(name, mode);
+        if(file_pointer == NULL)
+        {
+            LOG_FATAL(LOG_CAT_LOADSAVE, "FATAL: Load_SAVE_GAM() failed to open file \"%s\"", full);
+            stu_debugbreak();
+        }
+        return file_pointer;
     }
 
     /* Ensure the destination exists for writes/appends. */
@@ -470,7 +611,17 @@ FILE * STU_GRAF_Open_User(const char * name, const char * mode)
     }
 
     graf_join(full, sizeof(full), dir, name);
-    return stu_fopen_ci(full, mode);
+
+    file_pointer = stu_fopen_ci(full, mode);
+
+    if(file_pointer == NULL)
+    {
+        LOG_FATAL(LOG_CAT_LOADSAVE, "FATAL: Load_SAVE_GAM() failed to open file \"%s\"", full);
+        stu_debugbreak();
+    }
+
+    return file_pointer;
+
 }
 
 int STU_GRAF_User_DIR(const char * name, char * found)

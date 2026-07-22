@@ -67,6 +67,9 @@
 #include "../platform/include/Platform_Replay.h"
 #include "../platform/include/Platform_Capture.h"
 
+#include "../MoX/src/LOADSAVE.h"  /* CLAUDE: g_load_save_gam_name_override, for --load */
+#include "../STU/src/STU_TST.h"   /* CLAUDE: g_tst_patch_scenario, for --patch */
+
 #include "ReMoM_Init.h"
 #include "Artificial_Human_Player.h"  /* HeMoM_Player_Frame() */
 
@@ -114,6 +117,14 @@ void Shutdown_Platform(void);
 
 /* --continue: skip Main Menu, go straight to scr_Continue (WIZARDS.EXE path). */
 static int remom_continue_flag = 0;
+
+/* CLAUDE: --load <SAVE.GAM> -- same as --continue, but loads a named save instead of SAVE9.GAM.
+   Mirrors HeMoM's --load (HeMoM.c) so scripted scenes can start from a known state without first
+   navigating the Load Game menu.  It reuses the game's REAL load path: scr_Continue calls
+   Load_WZD_Resources() + Load_SAVE_GAM(), and g_load_save_gam_name_override redirects the filename
+   inside Load_SAVE_GAM.  Nothing about the load sequence is special-cased. */
+static char remom_load_file[260] = { 0 };
+static int  remom_load_flag = 0;
 
 #ifdef STU_VALGRIND
 int16_t remom_start_id;
@@ -230,9 +241,20 @@ int main(int argc, char * argv[])
        and creates the dir; hand it to STU_LOG before startup.  HeMoM / tests /
        matchup never do this, so they keep logging to the CWD.  REMOM_LOG_DIR
        overrides; an unwritable dir falls back to the CWD. */
+    /* CLAUDE: ReMoM.ini [Paths] log_dir wins over the per-user state dir.  The ini is a dev/modder
+       template that is NOT bundled for players, so a repo build (which has the staged ini) logs next
+       to the executable while an installed game keeps %LOCALAPPDATA%\ReMoM\logs.  Config declaring
+       intent, not the binary sniffing its environment.  Full precedence, unchanged otherwise:
+       REMOM_LOG_DIR (env) -> [Paths] log_dir -> per-user state dir -> CWD. */
     {
+        char ini_log_dir[1024];
         char log_state_dir[1024];
-        if(STU_GRAF_User_State_Dir(log_state_dir, sizeof(log_state_dir)))
+
+        if(STU_GRAF_Read_Ini_Value("ReMoM.ini", "Paths", "log_dir", ini_log_dir, sizeof(ini_log_dir)) && (ini_log_dir[0] != '\0'))
+        {
+            STU_Log_Set_Base_Dir(ini_log_dir);
+        }
+        else if(STU_GRAF_User_State_Dir(log_state_dir, sizeof(log_state_dir)))
         {
             STU_Log_Set_Base_Dir(log_state_dir);
         }
@@ -249,6 +271,18 @@ int main(int argc, char * argv[])
     /* Resolve the game-data search path (env -> exe-dir -> CWD) before any
        asset load, so the installed / portable player boots without a manual cd. */
     STU_GRAF_Init(STU_GRAF_PLAYER);
+
+    /* CLAUDE: ReMoM.ini [Paths] save_dir overrides the per-user *data* dir (saves, MAGIC.SET).
+       Same reasoning as log_dir above: a repo build has the staged ini and keeps its saves next to
+       the executable; a player's install has no ini and keeps %APPDATA%\ReMoM.  Set after
+       STU_GRAF_Init so it survives the profile selection, and well before any save is opened. */
+    {
+        char ini_save_dir[1024];
+        if(STU_GRAF_Read_Ini_Value("ReMoM.ini", "Paths", "save_dir", ini_save_dir, sizeof(ini_save_dir)) && (ini_save_dir[0] != '\0'))
+        {
+            STU_GRAF_Set_User_Data_Dir(ini_save_dir);
+        }
+    }
 
 #ifdef STU_DEBUG
     AI_Metrics_Startup();
@@ -434,6 +468,20 @@ int main(int argc, char * argv[])
 
                 remom_continue_flag = 1;
             }
+            else if(stu_strcmp(argv[argi], "--load") == 0 && (argi + 1) < argc)
+            {
+
+                LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: --load flag detected", __FILE__, __LINE__);
+                LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --load flag detected", __FILE__, __LINE__);
+                LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --load flag detected", __FILE__, __LINE__);
+
+                argi++;
+                stu_strcpy(remom_load_file, argv[argi]);
+                remom_load_flag = 1;
+                LOG_INFO(LOG_CAT_REMOM, "[ReMoM] CLI: --load \"%s\"", remom_load_file);
+                /* CLAUDE: --load trace point 1 of 3 -- just after remom_load_file is assigned. */
+                LOG_INFO(LOG_CAT_LOADSAVE, "[--load] ASSIGN remom_load_file: argv[%d]=\"%s\" -> remom_load_file=%p \"%s\" (len=%d) remom_load_flag=%d", argi, argv[argi], (void *)remom_load_file, remom_load_file, (int)strlen(remom_load_file), remom_load_flag);
+            }
             else if(stu_strcmp(argv[argi], "--demo") == 0)
             {
 
@@ -555,7 +603,10 @@ int MOM_main(int argc, char** argv)
     /* OG-MoM: `MAGIC.EXE JENNY` skipped the intro logos */
     /* MS-DOS allowed checking argv[1] even if there wasn't an argument? ... if(!(argv[1][0] == 'J' && argv[1][1] == 'E' && argv[1][2] == 'N' && argv[1][3] == 'N' && argv[1][4] == 'Y') */
     int skip_intro = (argc > 1 && strcmp(argv[1], "JENNY") == 0);
-    if(!skip_intro && !remom_continue_flag)
+    /* CLAUDE: remom_load_flag joins remom_continue_flag here -- --load goes straight into a saved
+       game, so the intro logos are as unwanted as they are for --continue.  Omitting it meant a
+       --load run still sat through the whole logo sequence. */
+    if(!skip_intro && !remom_continue_flag && !remom_load_flag)
     {
         Draw_Logos();
     }
@@ -609,7 +660,20 @@ int MOM_main(int argc, char** argv)
     // WZD Exit_With_Size();
 
 
-    if(remom_continue_flag)
+    if(remom_load_flag)
+    {
+        /* CLAUDE: --load <SAVE.GAM>: the same scr_Continue path as --continue, with the filename
+           redirected.  scr_Continue does Load_WZD_Resources() + Load_SAVE_GAM(8), and
+           g_load_save_gam_name_override replaces the name inside Load_SAVE_GAM (it is consumed on
+           first use, so it affects exactly this one load).  The load sequence itself is the game's
+           own -- nothing here special-cases it. */
+        g_load_save_gam_name_override = remom_load_file;
+        /* CLAUDE: --load trace point 2 of 3 -- just after g_load_save_gam_name_override is assigned,
+           immediately before entering scr_Continue (which calls Load_SAVE_GAM(8)). */
+        LOG_INFO(LOG_CAT_LOADSAVE, "[--load] ASSIGN g_load_save_gam_name_override=%p \"%s\"  (from remom_load_file=%p \"%s\")  -> entering scr_Continue, which calls Load_SAVE_GAM(8)", (void *)g_load_save_gam_name_override, (g_load_save_gam_name_override != NULL) ? g_load_save_gam_name_override : "(null)", (void *)remom_load_file, remom_load_file);
+        current_screen = scr_Continue;
+    }
+    else if(remom_continue_flag)
     {
         /* --continue: skip Main Menu, load SAVE9.GAM, enter game (WIZARDS.EXE path). */
         current_screen = scr_Continue;
