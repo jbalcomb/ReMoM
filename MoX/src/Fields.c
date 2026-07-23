@@ -882,21 +882,53 @@ const char * g_dbg_fields_screen_tag = "";
 const char * g_dbg_fields_call_file = "";
 int32_t g_dbg_fields_call_line = 0;
 
+/* CLAUDE 2026-07-22: per-field-index origin shadow. Records the Add_* call site
+   (file + line, captured by DBG_FIELDS_LOC_SET) for each registered field, so the
+   record/replay field-hit log can stamp a click with the field's originating call
+   site. That basename:line is the join key into tools/fields/catalog.fwv and the
+   HMS alias table (tools/field_catalog/resolver.py). p_fields holds ~150 entries. */
+#define DBG_FIELD_ORIGIN_MAX 256
+static const char * g_dbg_field_origin_file[DBG_FIELD_ORIGIN_MAX];
+static int32_t      g_dbg_field_origin_line[DBG_FIELD_ORIGIN_MAX];
+
+static const char * Dbg_Basename(const char * path)
+{
+    const char * slash;
+    const char * p;
+    if(path == NULL) { return ""; }
+    slash = path;
+    for(p = path; *p != '\0'; p += 1)
+    {
+        if(*p == '/' || *p == '\\') { slash = p + 1; }
+    }
+    return slash;
+}
+
 static void Dbg_Trace_Field_Added(int16_t idx, const char * origin)
 {
-    const char * file;
-    const char * slash;
-    if(g_dbg_fields_trace == 0) { return; }
     if(idx < 0) { return; }
-    file = g_dbg_fields_call_file;
-    /* Strip to basename for compactness in TRACE.LOG. */
-    slash = file;
-    while(*file != '\0')
+    /* Always record the origin (independent of the trace flag) — the record/replay
+       field-hit log needs it whenever recording, not only when tracing is on. */
+    if(idx < DBG_FIELD_ORIGIN_MAX)
     {
-        if(*file == '/' || *file == '\\') { slash = file + 1; }
-        file += 1;
+        g_dbg_field_origin_file[idx] = g_dbg_fields_call_file;
+        g_dbg_field_origin_line[idx] = g_dbg_fields_call_line;
     }
-    // trc_prn("FIELDADD,%s,%d,%s,%s:%d,type=%d,x1=%d,y1=%d,x2=%d,y2=%d,hotkey=%d,help=%d\n", g_dbg_fields_screen_tag, (int)idx, origin, slash, (int)g_dbg_fields_call_line, (int)p_fields[idx].type, (int)p_fields[idx].x1, (int)p_fields[idx].y1, (int)p_fields[idx].x2, (int)p_fields[idx].y2, (int)p_fields[idx].hotkey, (int)p_fields[idx].help);
+    if(g_dbg_fields_trace == 0) { return; }
+    // trc_prn("FIELDADD,%s,%d,%s,%s:%d,type=%d,x1=%d,y1=%d,x2=%d,y2=%d,hotkey=%d,help=%d\n", g_dbg_fields_screen_tag, (int)idx, origin, Dbg_Basename(g_dbg_fields_call_file), (int)g_dbg_fields_call_line, (int)p_fields[idx].type, (int)p_fields[idx].x1, (int)p_fields[idx].y1, (int)p_fields[idx].x2, (int)p_fields[idx].y2, (int)p_fields[idx].hotkey, (int)p_fields[idx].help);
+}
+
+/* CLAUDE 2026-07-22: origin accessors for the record/replay field-hit log. */
+const char * Dbg_Field_Origin_File(int16_t idx)
+{
+    if(idx < 0 || idx >= DBG_FIELD_ORIGIN_MAX) { return ""; }
+    return Dbg_Basename(g_dbg_field_origin_file[idx]);
+}
+
+int32_t Dbg_Field_Origin_Line(int16_t idx)
+{
+    if(idx < 0 || idx >= DBG_FIELD_ORIGIN_MAX) { return 0; }
+    return g_dbg_field_origin_line[idx];
 }
 
 void Dump_Fields_CSV(const char * screen_tag)
@@ -1309,7 +1341,14 @@ void Clear_Fields(void)
     /* 20 */  p_fields[itr].Param5 = 0;
     /* 22 */  p_fields[itr].Param6 = 0;
     /* 24 */  p_fields[itr].hotkey = 0;
-    }   
+    }
+#ifdef STU_DEBUG
+    /* CLAUDE 2026-07-22: clear the origin shadow for the fields just cleared. */
+    for(itr = 0; itr < fields_count; itr++)
+    {
+        if(itr < DBG_FIELD_ORIGIN_MAX) { g_dbg_field_origin_file[itr] = NULL; g_dbg_field_origin_line[itr] = 0; }
+    }
+#endif
     fields_count = 1;
     down_mouse_button = ST_UNDEFINED;
     auto_input_variable = 0;

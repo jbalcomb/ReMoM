@@ -843,6 +843,9 @@ extern const char * g_dbg_fields_screen_tag;
 extern const char * g_dbg_fields_call_file;
 extern int32_t g_dbg_fields_call_line;
 void Dump_Fields_CSV(const char * screen_tag);
+/* CLAUDE 2026-07-22: origin of the field at index idx (basename / line of its Add_* call site). */
+const char * Dbg_Field_Origin_File(int16_t idx);
+int32_t Dbg_Field_Origin_Line(int16_t idx);
 
 /*
     Macro wrappers capture __FILE__/__LINE__ at each call site without requiring

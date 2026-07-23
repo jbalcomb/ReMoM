@@ -801,6 +801,14 @@ static void HeMoM_Replay_Log_Field_Hit(void *log, int mouse_x, int mouse_y)
         if(mouse_x >= p_fields[fi].x1 && mouse_x <= p_fields[fi].x2 && mouse_y >= p_fields[fi].y1 && mouse_y <= p_fields[fi].y2)
         {
             fprintf(fp, "  field[%d]=(%d,%d)-(%d,%d)", fi, p_fields[fi].x1, p_fields[fi].y1, p_fields[fi].x2, p_fields[fi].y2);
+#ifdef STU_DEBUG
+            /* CLAUDE 2026-07-22: stamp the field's Add_* origin (basename:line) — the join
+               key into the field catalog / HMS alias table for rmr2hms naming. */
+            {
+                const char *origin_file = Dbg_Field_Origin_File((int16_t)fi);
+                if(origin_file[0] != '\0') { fprintf(fp, "@%s:%ld", origin_file, (long)Dbg_Field_Origin_Line((int16_t)fi)); }
+            }
+#endif
             break;
         }
     }

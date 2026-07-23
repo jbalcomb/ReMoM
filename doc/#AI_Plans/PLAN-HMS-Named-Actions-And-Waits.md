@@ -141,22 +141,31 @@ MSVC-debug` and `--preset MSVC-release` both link (catches `trc_prn` leakage int
 
 ---
 
-## Phase 2 — Record log carries screen + call site
+## Phase 2 — Record log carries call site (`@basename:line`) — **DONE**
 
 One-line-per-hit change to the replay field-hit callback, in both targets.
 
-1. Extend the debug-only shadow state: alongside the `FIELDADD` emit, record each field index's
-   originating `g_dbg_fields_screen_tag` + `g_dbg_fields_call_file:g_dbg_fields_call_line` into a
-   parallel array keyed by field index. **Do not touch `s_Field`** — it is byte-offset-faithful to the
-   disassembly ([Fields.h:90-154](../../MoX/src/Fields.h#L90-L154)).
-2. Change `HeMoM_Replay_Log_Field_Hit` ([HeMoM.c:795](../../src/HeMoM.c#L795)) and the ReMoMber
-   equivalent ([ReMoM.c:200](../../src/ReMoM.c#L200)) to print
-   `field[N]=<screen>@<basename>:<line>` when the shadow entry exists, else the current
-   index+rect form.
+1. **DONE** — debug-only per-field-index origin shadow `g_dbg_field_origin_file/_line[]`
+   ([Fields.c](../../MoX/src/Fields.c), populated in `Dbg_Trace_Field_Added` at the single Add_* choke
+   point, cleared in `Clear_Fields`, read via `Dbg_Field_Origin_File/_Line`). Captured **independent of
+   `g_dbg_fields_trace`** so recording gets origins without the FIELDADD trace on. **`s_Field`
+   untouched** (byte-offset-faithful, [Fields.h:90-154](../../MoX/src/Fields.h#L90-L154)) — the origin
+   lives in a parallel array, all under `#ifdef STU_DEBUG`.
+2. **DONE** — `HeMoM_Replay_Log_Field_Hit` ([HeMoM.c:795](../../src/HeMoM.c#L795)) and the ReMoMber
+   equivalent ([ReMoM.c:191](../../src/ReMoM.c#L191)) append `@<basename>:<line>` to the hit line under
+   `#ifdef STU_DEBUG`, else the current rect-only form. **Screen name deliberately omitted** — the
+   resolver derives the screen from the alias table, so `file:line` alone is the sufficient join key;
+   `current_screen`→name mapping is an optional readability add, not required.
 
-**Green when:** a RECORD.log from a menu click shows `field[..]=Main_Menu_Screen@MainMenu.c:410`.
+**Green (verified live):** a fresh RECORD.log from `HeMoM --newgame --scenario test_ai_5turns.hms
+--record` shows `field[3]=(0,20)-(239,199)@MainScr.c:2019` and `field[5]=...@ItemScrn.c:1145`. Both
+join to the catalog: `MainScr.c:2019` = `_main_map_grid_field` with **identical geometry**
+(0,20,239,199, static `runtime=0`); `ItemScrn.c:1145` = a `runtime=1` sprite whose pixel rect the log
+supplies (residue-authority working). Debug **and** Release both build; no debug-symbol leakage.
 
-**Verify:** record a short session in a Debug build; inspect the sidecar log.
+**Bridge note for Phase 3:** the log stamps the **basename** (`MainScr.c`); the catalog/resolver key on
+the repo-relative path (`MoM/src/MainScr.c`). `rmr2hms` joins on basename — the same basename join the
+static↔runtime cross-check already validated.
 
 ---
 
