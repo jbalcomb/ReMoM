@@ -17,7 +17,7 @@ Pre-built, **engine-only** binaries are available on the [Releases](https://gith
 
 1. Download the artifact for your platform:
    - **Windows:** the `.zip`, or run the `.exe` installer. Self-contained — the SDL runtime DLLs are bundled.
-   - **Linux:** the `.AppImage` (self-contained) — or the `.zip`/`.tar.gz` if you already have SDL2 installed.
+   - **Linux:** the `.deb` on Debian/Ubuntu (`sudo apt install ./remom_<ver>_amd64.deb` — installs it properly, `apt` pulls in SDL2); the `.AppImage` on any other distro (self-contained); or the `.zip`/`.tar.gz` if you already have SDL2 installed.
    - **macOS:** the `.zip`. It's unsigned, so on first run clear the quarantine flag: `xattr -dr com.apple.quarantine ReMoMber`.
 2. Extract it (on Linux/macOS, `chmod +x` the AppImage / `ReMoMber`).
 3. Copy your original **Master of Magic v1.31** game files (all `.LBX` files and `CONFIG.MOM`) into the same folder as the executable.

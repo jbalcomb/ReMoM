@@ -198,6 +198,17 @@
             }
         },
         {
+            "name": "linux-package-release",
+            "displayName": "Linux Clang Release (FHS layout, .deb)",
+            "description": "Linux Clang Release configured for a native distro package: FHS layout (bin/, share/) instead of the flat portable-archive layout, in its own build dir so CMAKE_INSTALL_BINDIR=. can never leak in from clang-release",
+            "inherits": "clang-release",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_BINDIR": "bin"
+            }
+        },
+        {
             "name": "macos-release",
             "displayName": "macOS Release",
             "description": "macOS (AppleClang) single-config Release build for distribution packaging",
@@ -311,6 +322,12 @@
             ]
         },
         {
+            "name": "linux-package-release",
+            "displayName": "Linux .deb",
+            "configurePreset": "linux-package-release",
+            "configuration": "Release"
+        },
+        {
             "name": "macos-debug",
             "displayName": "macOS",
             "configurePreset": "macos-debug",
@@ -370,6 +387,17 @@
             "configurations": [
                 "Debug"
             ]
+        },
+        {
+            "name": "linux-package-release",
+            "displayName": "Linux .deb",
+            "configurePreset": "linux-package-release",
+            "generators": [
+                "DEB"
+            ],
+            "configurations": [
+                "Release"
+            ]
         }
     ],
     "testPresets": [
@@ -420,6 +448,12 @@
             "displayName": "macOS",
             "configurePreset": "macos-debug",
             "configuration": "Debug"
+        },
+        {
+            "name": "linux-package-release",
+            "displayName": "Linux .deb",
+            "configurePreset": "linux-package-release",
+            "configuration": "Release"
         }
     ],
     "workflowPresets": [

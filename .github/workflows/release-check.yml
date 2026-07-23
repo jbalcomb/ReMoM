@@ -162,6 +162,83 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+  deb-package:
+    name: Linux .deb packaging
+    # Same runner as the release job: pinned for the GLIBC FLOOR, and it also
+    # proves ReMoM still builds against 22.04's older SDL2 headers.
+    runs-on: ubuntu-22.04
+    # Packaging gate only -- linux-release above already runs the test suite on
+    # the same code, so this job skips ctest and checks that the .deb still
+    # builds and still contains exactly what it should.
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install build tools and SDL2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build clang pkg-config \
+                                  libsdl2-dev libsdl2-mixer-dev dpkg-dev lintian
+
+      - name: Cache CMake build directory
+        uses: actions/cache@v4
+        with:
+          path: out/build/linux-package-release
+          key: cmake-${{ runner.os }}-linux-package-release-${{ hashFiles('CMakePresets.json', '**/CMakeLists.txt') }}
+          restore-keys: |
+            cmake-${{ runner.os }}-linux-package-release-
+
+      - name: Configure (linux-package-release preset, FHS layout)
+        run: cmake --preset linux-package-release
+
+      - name: Build
+        run: cmake --build out/build/linux-package-release
+
+      - name: Build .deb
+        run: cd out/build/linux-package-release && cpack -G DEB
+
+      - name: Verify package contents and metadata
+        run: |
+          set -euo pipefail
+          DEB="$(ls out/build/linux-package-release/remom_*_*.deb)"
+          dpkg -I "$DEB"
+          dpkg -c "$DEB"
+
+          ACTUAL="$(dpkg -c "$DEB" | awk '$1 !~ /^d/ {print $6}' | sed 's|^\./|/|' | sort)"
+          EXPECTED="$(printf '%s\n' \
+            /usr/bin/ReMoMber \
+            /usr/share/applications/remom.desktop \
+            /usr/share/doc/remom/PLAYING.md \
+            /usr/share/doc/remom/changelog.gz \
+            /usr/share/doc/remom/copyright \
+            /usr/share/icons/hicolor/256x256/apps/remom.png \
+            /usr/share/lintian/overrides/remom \
+            /usr/share/man/man6/ReMoMber.6.gz | sort)"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "::error::packaged file set changed"; diff <(echo "$EXPECTED") <(echo "$ACTUAL"); exit 1
+          fi
+
+          dpkg -I "$DEB" | grep -q 'Depends:.*libsdl2-2\.0-0' \
+            || { echo "::error::no libsdl2 dependency -- shlibdeps did not run?"; exit 1; }
+          dpkg -I "$DEB" | grep -q 'Depends:.*libsdl2-mixer' \
+            || { echo "::error::no libsdl2-mixer dependency -- was audio disabled?"; exit 1; }
+
+      - name: Lint the package (lintian, non-blocking)
+        continue-on-error: true
+        run: lintian --no-tag-display-limit out/build/linux-package-release/remom_*_*.deb
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: cmake-logs-deb-${{ github.run_id }}
+          path: |
+            out/build/linux-package-release/CMakeFiles/CMakeOutput.log
+            out/build/linux-package-release/CMakeFiles/CMakeError.log
+            out/build/linux-package-release/**/*.log
+          if-no-files-found: ignore
+          retention-days: 7
+
   macos-release:
     name: macOS Clang Release
     runs-on: macos-latest

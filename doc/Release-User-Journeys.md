@@ -17,13 +17,38 @@ executable. Per platform:
 | Platform | Download | Notes |
 |----------|----------|-------|
 | Windows x64 | `ReMoM-<ver>-Windows-AMD64.zip` or the `.exe` installer | Native Win32 backend. Self-contained. **Silent** (no audio yet). |
-| Linux x86_64 | `ReMoM-<ver>-x86_64.AppImage` (recommended) or `.zip`/`.tar.gz` | AppImage bundles SDL2 → runs anywhere. The ZIP needs SDL2 already installed. |
+| Linux x86_64 | `remom_<ver>_amd64.deb`, `ReMoM-<ver>-x86_64.AppImage`, or `.zip`/`.tar.gz` | See **Which Linux download?** below. |
 | macOS arm64 | `ReMoM-<ver>-Darwin-arm64.zip` | SDL dylibs bundled. **Unsigned** → clear quarantine on first run. |
 
-> **Status:** the plan *enables* this journey, but no release is published yet
-> (0 tags), and the release test-gate blocks the first tag until the pre-existing
-> failing tests are resolved. Everything below describes the experience once the
-> first `v*` tag is cut.
+> **Status:** live. `v0.0.1` is published, the release test-gate is green on
+> Windows and Linux, and `tools/do_github_release.py` cuts subsequent releases in
+> one command. macOS remains deferred (TBD) — see
+> [RELEASES.md](../RELEASES.md) *Known limitations*.
+
+---
+
+## Which Linux download?
+
+Linux users see three artifacts and need to know which is theirs. In the order
+most people want them:
+
+| Download | Use it when | How |
+|----------|-------------|-----|
+| `remom_<ver>_amd64.deb` | Debian / Ubuntu / Mint / Pop!_OS, and you want it **installed** — application menu, `apt remove`, SDL2 handled for you | `sudo apt install ./remom_<ver>_amd64.deb` |
+| `ReMoM-<ver>-x86_64.AppImage` | Any other distro, or you'd rather not install anything. Bundles SDL2. | `chmod +x`, then run |
+| `ReMoM-<ver>-Linux-*.zip` / `.tar.gz` | You want the bare binary and already have SDL2 | extract, `./ReMoMber` |
+
+Two rough edges to be aware of:
+
+- **No `apt upgrade` path.** There is no APT repository yet (Tier 2, deferred), so
+  an installed `.deb` never updates itself. The user must notice a new release and
+  install the newer `.deb` over the top. Documented in `PLAYING.md`, but it is
+  still a thing they have to remember.
+- **Portable mode is AppImage-only.** Dropping the MoM files next to the
+  `.AppImage` keeps saves and settings right there; an installed `.deb` always
+  uses the per-user XDG folders. That is correct for a system install, but it
+  means the two Linux artifacts behave differently in a way the user has to read
+  about rather than discover.
 
 ---
 

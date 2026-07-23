@@ -1,0 +1,12 @@
+# Lintian overrides for the ReMoM Debian package.
+# Installed as /usr/share/lintian/overrides/remom.
+# Every entry here must carry a reason -- see doc/#AI_Plans/PRD-Linux-Package-Install.md.
+
+# ReMoMber is installed to /usr/bin, not /usr/games, so lintian's "Section: games
+# but nothing in /usr/games" heuristic fires. Deliberate: this package is
+# distributed on GitHub Releases rather than through the Debian archive, and
+# /usr/bin is on PATH in every environment while /usr/games is only guaranteed on
+# desktop installs. Section stays "games" because that is what the package IS.
+# Flip the binary to /usr/games and drop this override if we ever target Debian
+# proper (see the rejected Tier 3 in BRA-Linux-Package-Install.md).
+remom: package-section-games-but-contains-no-game

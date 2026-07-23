@@ -48,7 +48,7 @@ see [Future phase — Dev / Modder tooling](#future-phase--dev--modder-tooling).
 | Platform | Artifact(s) | Backend | Notes |
 |----------|-------------|---------|-------|
 | Windows x64 | `ReMoM-<ver>-Windows-AMD64.zip`, NSIS `.exe` installer | **SDL2** + SDL2_mixer | Has audio. Self-contained — `SDL2.dll`, `SDL2_mixer.dll`, and the MSVC runtime DLLs are bundled next to the exe. |
-| Linux x86_64 | `ReMoM-<ver>-x86_64.AppImage` (recommended), `ReMoM-<ver>-Linux-*.zip` / `.tar.gz` | **SDL2** + SDL2_mixer | The **AppImage bundles SDL** (via `linuxdeploy`) and is self-contained. The plain ZIP/TGZ does **not** bundle SDL — use it only if SDL2 is already installed. |
+| Linux x86_64 | `remom_<ver>_amd64.deb`, `ReMoM-<ver>-x86_64.AppImage`, `ReMoM-<ver>-Linux-*.zip` / `.tar.gz` | **SDL2** + SDL2_mixer | Three shapes, on purpose. The **`.deb` depends on the distro's SDL2** and installs to `/usr` (FHS + desktop entry) — `sudo apt install ./remom_<ver>_amd64.deb`. The **AppImage bundles SDL** (via `linuxdeploy`), so it runs on any distro. The plain ZIP/TGZ bundles nothing — only for a box that already has SDL2. |
 | ~~macOS arm64~~ | — | — | **Deferred (TBD)** — does not ship in the current release; arm64 link fails on the `pack(2)` DOS structs. See *Known limitations* below. |
 
 (No source package is shipped — the tree carries ~100 MB of docs, IDE packages, and
@@ -92,6 +92,45 @@ plus `CONFIG.MOM` from an original Master of Magic v1.31 (DOS) installation,
 copied next to the executable — or pointed at via the `REMOM_DATA_DIR` environment
 variable. If the data is missing, `ReMoMber` does **not** crash: it shows a dialog
 naming the missing files and where to put them.
+
+### The Linux `.deb` — what it is and isn't
+
+Built by the `deb` job from the **`linux-package-release`** preset, which is a
+*separate configure* from `clang-release`: the portable archives need the flat
+layout (`CMAKE_INSTALL_BINDIR=.`, `ReMoMber` at the archive root) while a `.deb`
+needs FHS (`bin/`, `share/`). One build directory cannot serve both — that
+mismatch is what previously left a stale `CMAKE_INSTALL_BINDIR=.` in a cache and
+sent a local `cmake --install` to the wrong place. Hence two build dirs.
+
+Contents are asserted in CI (`Verify package contents and metadata`) as exactly:
+
+```
+/usr/bin/ReMoMber                                 (stripped)
+/usr/share/applications/remom.desktop
+/usr/share/doc/remom/PLAYING.md
+/usr/share/doc/remom/changelog.gz
+/usr/share/doc/remom/copyright
+/usr/share/icons/hicolor/256x256/apps/remom.png
+/usr/share/lintian/overrides/remom
+/usr/share/man/man6/ReMoMber.6.gz
+```
+
+`Depends:` is **derived** by `dpkg-shlibdeps` from the built ELF, never typed —
+CI fails the job if SDL2 or SDL2_mixer drops out of it. The desktop entry and
+icon come from `packaging/`, the same two files `linuxdeploy` feeds the AppImage,
+so the two artifacts cannot drift.
+
+The `deb` job is pinned to **`ubuntu-22.04` for the glibc floor, not for
+recency** — a package built on a newer runner silently refuses to install on
+older distros, and nobody finds out until a user reports it. Don't bump it to
+`-latest`.
+
+> **Tier 2 (deferred):** there is no APT repository, so `apt install remom` bare
+> does not work and `apt upgrade` won't update it — users re-download. Adding a
+> signed flat repo on GitHub Pages consumes this same `.deb` unchanged; the cost
+> is a GPG signing key the project holds forever. See
+> [PRD-Linux-Package-Install.md](doc/%23AI_Plans/PRD-Linux-Package-Install.md)
+> and [BRA-Linux-Package-Install.md](doc/%23AI_Plans/BRA-Linux-Package-Install.md).
 
 Known limitations carried intentionally (follow-ups, not blockers):
 - **Windows uses the SDL2 backend** (default), so the release has audio and bundles
@@ -165,6 +204,9 @@ the default download stays dead-simple. The template already lives at
      version.
    - Sanity-check at least one artifact (e.g. run the Linux AppImage on a clean
      box to confirm SDL is bundled).
+   - For the `.deb`, the useful check is on a box **without** SDL2 installed:
+     `sudo apt install ./remom_<ver>_amd64.deb` should pull SDL2 in as part of
+     the transaction, and `sudo apt remove remom` should clean up afterwards.
    - Edit the release notes.
 5. **Publish** the draft.
 
@@ -202,4 +244,7 @@ never published; otherwise bump PATCH).
 | `.github/workflows/release-check.yml` | Per-push/PR release-build gate (Win/Linux/macOS); pass/fail only, no artifacts. |
 | `CMakeLists.txt` | `REMOM_VERSION` handling, generated `remom_version.h`, engine-only install rules, CPack config. |
 | `cmake/remom_version.h.in` | Template for the generated version header. |
-| `CMakePresets.json` | `MSVC-release`, `clang-release`, `macos-release` (+ debug) presets used by CI. |
+| `CMakePresets.json` | `MSVC-release`, `clang-release`, `linux-package-release`, `macos-release` (+ debug) presets used by CI. |
+| `packaging/remom.desktop`, `packaging/remom.png` | Desktop entry + icon. Shared by the `.deb` install rules and the AppImage's `linuxdeploy` step, so the two can't drift. |
+| `packaging/AppRun` | AppImage launcher (portable-mode detection). |
+| `tools/do_github_release.py` | One-command release: bump → tag → push → watch CI → publish the draft on green. |

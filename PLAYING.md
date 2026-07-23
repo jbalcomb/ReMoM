@@ -10,7 +10,8 @@ You need the original game data files to play.
 
 2. Run the game:
    - **Windows:** `ReMoMber.exe`
-   - **Linux:** the `.AppImage` (`chmod +x` it first), or `./ReMoMber` from the ZIP if you have SDL2 installed.
+   - **Linux:** see **Which Linux download?** below — the `.deb` to install it
+     properly, or the `.AppImage` to just run it.
    - **macOS:** `./ReMoMber`. It's unsigned, so the first time clear the quarantine flag:
      `xattr -dr com.apple.quarantine ReMoMber`.
 
@@ -20,6 +21,35 @@ You need the original game data files to play.
 
 3. If ReMoM can't find your data, it shows a dialog saying so. Point it at your
    Master of Magic folder — see **Telling ReMoM where your data is** below.
+
+## Which Linux download?
+
+Three artifacts, in the order most people want them:
+
+| Download | Use it when | How |
+|----------|-------------|-----|
+| `remom_<ver>_amd64.deb` | You're on Debian, Ubuntu, Mint, Pop!_OS… and want it **installed** — in your application menu, uninstallable, SDL2 handled by the package manager. | `sudo apt install ./remom_<ver>_amd64.deb` |
+| `ReMoM-<ver>-x86_64.AppImage` | Any other distro, or you'd rather not install anything. Bundles SDL2, so it runs anywhere. | `chmod +x` it, then run it |
+| `ReMoM-<ver>-Linux-*.zip` / `.tar.gz` | You want the bare binary and already have SDL2. | extract, `./ReMoMber` |
+
+The `.deb` puts `ReMoMber` on your `PATH`, so you can launch it from the menu or
+just type `ReMoMber`. `apt` pulls in SDL2 and SDL2_mixer for you. To remove it:
+
+```sh
+sudo apt remove remom
+```
+
+That deletes the program but leaves your saves and settings alone (they live in
+your home directory — see below). There is no repository to add yet, so `apt`
+won't auto-update it; watch the [Releases](https://github.com/jbalcomb/ReMoM/releases)
+page and install the newer `.deb` over the top when one appears.
+
+**The AppImage has a portable mode the `.deb` does not.** Put your Master of Magic
+files in the same folder as the `.AppImage` and it keeps everything — data, saves,
+settings, logs — right there in a `ReMoM/` subfolder instead of your home directory.
+See [Devel-Linux-AppImage.md](doc/%23Devel/Devel-Linux-AppImage.md). An installed
+`.deb` always uses the per-user folders below, which is what you want for a system
+install.
 
 ## Telling ReMoM where your data is
 

@@ -1,0 +1,6 @@
+remom (@REMOM_VERSION@) unstable; urgency=medium
+
+  * ReMoM @REMOM_VERSION@.
+    Release notes: https://github.com/jbalcomb/ReMoM/releases
+
+ -- @CPACK_DEBIAN_PACKAGE_MAINTAINER@  @REMOM_DEB_CHANGELOG_DATE@

@@ -131,27 +131,6 @@ jobs:
           set -euo pipefail
           export APPIMAGE_EXTRACT_AND_RUN=1   # ubuntu-24.04 runners lack libfuse2
 
-          # Desktop entry + icon — required by linuxdeploy.
-          cat > remom.desktop <<'EOF'
-          [Desktop Entry]
-          Type=Application
-          Name=ReMoM
-          Comment=Reassembly of Master of Magic v1.31
-          Exec=ReMoMber
-          Icon=remom
-          Categories=Game;StrategyGame;
-          Terminal=false
-          EOF
-          if [ -f assets/icon.png ]; then
-            cp assets/icon.png remom.png
-          else
-            # Valid 256x256 PNG placeholder (base64) so linuxdeploy's icon deploy
-            # succeeds -- it rejects non-standard sizes (1x1 "has invalid resolution"),
-            # so this is a standard 256x256. Generated + CRC/zlib-verified. Replace
-            # with a real assets/icon.png when we have one.
-            printf '%s' 'iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAACAUlEQVR42u3TMQ0AAAgEsdfDgAD8C2NGA02q4JJL9cBbkQADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAABhABQwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgAA6iAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGACuBQgDCI+OKrm5AAAAAElFTkSuQmCC' | base64 -d > remom.png
-          fi
-
           curl -fSL -o linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
           curl -fSL -o linuxdeploy-plugin-appimage https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
           chmod +x linuxdeploy linuxdeploy-plugin-appimage
@@ -163,8 +142,8 @@ jobs:
           ./linuxdeploy \
             --appdir AppDir \
             --executable "$REMOMBER_BIN" \
-            --desktop-file remom.desktop \
-            --icon-file remom.png \
+            --desktop-file packaging/remom.desktop \
+            --icon-file packaging/remom.png \
             --custom-apprun "$GITHUB_WORKSPACE/packaging/AppRun" \
             --output appimage
 
@@ -179,6 +158,99 @@ jobs:
             ReMoM-*.AppImage
             out/build/clang-release/ReMoM-*-Linux-*.zip
             out/build/clang-release/ReMoM-*-Linux-*.tar.gz
+
+  # ── Linux .deb (native distro package; depends on the distro's SDL2) ───
+  #
+  # Separate from the `linux` job on purpose: that one builds the FLAT layout
+  # (CMAKE_INSTALL_BINDIR=.) for the portable ZIP/TGZ + AppImage, while a .deb
+  # needs the FHS layout (bin/, share/). One build dir cannot serve both, so the
+  # linux-package-release preset gets its own. See PRD-Linux-Package-Install.md.
+  deb:
+    name: Linux .deb (amd64)
+    # Pinned for the GLIBC FLOOR, not for recency: a package built on a newer
+    # runner silently refuses to install on older distros. ubuntu-22.04 (glibc
+    # 2.35) covers Ubuntu 22.04+ and Debian 12+. Do not bump to -latest.
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Determine version
+        id: ver
+        run: |
+          if [ -n "${{ inputs.tag }}" ]; then RAW="${{ inputs.tag }}";
+          elif [[ "$GITHUB_REF" == refs/tags/* ]]; then RAW="$GITHUB_REF_NAME";
+          else RAW="0.0.0-dev"; fi
+          echo "version=${RAW#v}" >> "$GITHUB_OUTPUT"
+          echo "Building version: ${RAW#v}"
+
+      - name: Install build tools and SDL2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build clang pkg-config file \
+                                  libsdl2-dev libsdl2-mixer-dev dpkg-dev lintian
+
+      - name: Configure (linux-package-release preset, FHS layout)
+        run: cmake --preset linux-package-release -DREMOM_VERSION=${{ steps.ver.outputs.version }}
+
+      - name: Build
+        run: cmake --build out/build/linux-package-release
+
+      - name: Test (release gate)
+        run: ctest --test-dir out/build/linux-package-release ${{ env.CTEST_ARGS }}
+
+      - name: Build .deb
+        run: cd out/build/linux-package-release && cpack -G DEB
+
+      - name: Verify package contents and metadata
+        run: |
+          set -euo pipefail
+          DEB="$(ls out/build/linux-package-release/remom_*_*.deb)"
+          echo "::group::dpkg -I"; dpkg -I "$DEB"; echo "::endgroup::"
+          echo "::group::dpkg -c"; dpkg -c "$DEB"; echo "::endgroup::"
+
+          # Engine-only: exactly these files, nothing else. No .LBX, no saves, no
+          # test fixtures, no bundled libSDL2.
+          ACTUAL="$(dpkg -c "$DEB" | awk '$1 !~ /^d/ {print $6}' | sed 's|^\./|/|' | sort)"
+          EXPECTED="$(printf '%s\n' \
+            /usr/bin/ReMoMber \
+            /usr/share/applications/remom.desktop \
+            /usr/share/doc/remom/PLAYING.md \
+            /usr/share/doc/remom/changelog.gz \
+            /usr/share/doc/remom/copyright \
+            /usr/share/icons/hicolor/256x256/apps/remom.png \
+            /usr/share/lintian/overrides/remom \
+            /usr/share/man/man6/ReMoMber.6.gz | sort)"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "::error::packaged file set changed"; diff <(echo "$EXPECTED") <(echo "$ACTUAL"); exit 1
+          fi
+
+          # The shipped binary must be stripped -- an unstripped one roughly
+          # doubles the download and is a lintian error.
+          dpkg-deb --fsys-tarfile "$DEB" | tar -xO ./usr/bin/ReMoMber > /tmp/ReMoMber.bin
+          file /tmp/ReMoMber.bin | grep -q 'not stripped' \
+            && { echo "::error::shipped binary is not stripped"; exit 1; } || true
+
+          # Dependencies must be DERIVED and must include SDL2 -- a package that
+          # bundles SDL2, or that lost the dependency, is a packaging bug.
+          dpkg -I "$DEB" | grep -q 'Depends:.*libsdl2-2\.0-0' \
+            || { echo "::error::no libsdl2 dependency -- shlibdeps did not run?"; exit 1; }
+          dpkg -I "$DEB" | grep -q 'Depends:.*libsdl2-mixer' \
+            || { echo "::error::no libsdl2-mixer dependency -- was audio disabled?"; exit 1; }
+
+          # Record the glibc floor in the log so a bump is visible in the diff of
+          # a CI run rather than discovered by a user on an older distro.
+          dpkg -I "$DEB" | grep -o 'libc6 ([^)]*)' || true
+
+      - name: Lint the package (lintian, non-blocking)
+        continue-on-error: true
+        run: lintian --no-tag-display-limit out/build/linux-package-release/remom_*_*.deb
+
+      - name: Upload .deb artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ReMoM-linux-deb
+          path: out/build/linux-package-release/remom_*_*.deb
 
   # ── macOS (AppleClang, SDL2, self-contained ZIP via dylibbundler) ──────
   macos:
@@ -238,7 +310,7 @@ jobs:
   # ── GitHub Release (draft, tag pushes only) ────────────────────────────
   publish:
     name: Publish Release
-    needs: [windows, linux]   # macos deferred (TBD) -- see the macos job above
+    needs: [windows, linux, deb]   # macos deferred (TBD) -- see the macos job above
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
 
@@ -259,3 +331,4 @@ jobs:
           files: |
             dist/ReMoM-windows-x64/**/*
             dist/ReMoM-linux-x86_64/**/*
+            dist/ReMoM-linux-deb/**/*

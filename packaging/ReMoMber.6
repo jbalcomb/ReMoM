@@ -1,0 +1,121 @@
+.TH REMOMBER 6 "2026" "ReMoM" "Games"
+.SH NAME
+ReMoMber \- reassembly of Master of Magic v1.31
+.SH SYNOPSIS
+.B ReMoMber
+.RI [ OPTIONS ]
+.SH DESCRIPTION
+.B ReMoM
+is a source-code reconstruction of
+.IR "Master of Magic" ,
+the 1994 turn-based fantasy strategy game by Simtex, rebuilt in C from a
+disassembly of the original DOS executable.
+.B ReMoMber
+is the player executable.
+.PP
+This package contains the game engine only. It ships
+.B no
+game content. You must own a copy of Master of Magic v1.31 (DOS) and supply its
+data files \(em every
+.I *.LBX
+plus
+.I CONFIG.MOM
+\(em yourself.
+.B ReMoMber
+locates them through an ordered search path and will show an error dialog rather
+than crash if they cannot be found. Run without options to play normally.
+.SH OPTIONS
+.TP
+.B \-\-continue
+Resume the most recent save on startup, skipping the main menu.
+.TP
+.BI \-\-load " FILE"
+Load the named save game on startup.
+.TP
+.B \-\-orig\-files
+Re-seed the per-user working copies of
+.IR CONFIG.MOM ,
+.I MAGIC.SET
+and
+.I SAVE1\-9.GAM
+from the original game data, first moving the current copies into a timestamped
+.RI backup\- YYYYMMDD \- HHMMSS
+directory so nothing is lost.
+.TP
+.B \-\-headless
+Run without opening a window. Intended for automated testing.
+.TP
+.BI \-\-record " FILE"
+Record the input stream to
+.I FILE
+for later replay.
+.TP
+.BI \-\-replay " FILE"
+Replay a previously recorded input stream.
+.TP
+.BI \-\-demo " [FILE]"
+Replay
+.I FILE
+as a demo, defaulting to
+.I DEMO.RMR
+when no filename is given.
+.TP
+.BI \-\-capture " DIR"
+Write captured frames to
+.IR DIR .
+.TP
+.BI \-\-capture\-fps " N"
+Capture at
+.I N
+frames per second. May appear before or after
+.BR \-\-capture .
+.TP
+.BI \-\-scenario " FILE"
+Load and run a scripted scenario.
+.TP
+.BI \-\-patch " NAME"
+Select a named data-patch scenario, applied after every save load. Inert unless
+named.
+.SH ENVIRONMENT
+.TP
+.B REMOM_DATA_DIR
+Directory holding the original Master of Magic data files. Takes precedence over
+every other entry in the search path.
+.TP
+.B XDG_DATA_HOME
+Saved games,
+.I MAGIC.SET
+and
+.I CONFIG.MOM
+working copies are kept in
+.IR $XDG_DATA_HOME/ReMoM/ ,
+by default
+.IR ~/.local/share/ReMoM/ .
+.TP
+.B XDG_CONFIG_HOME
+.I ReMoM.ini
+is read from
+.IR $XDG_CONFIG_HOME/ReMoM/ ,
+by default
+.IR ~/.config/ReMoM/ .
+.TP
+.B XDG_STATE_HOME
+Log files are written to
+.IR $XDG_STATE_HOME/ReMoM/ ,
+by default
+.IR ~/.local/state/ReMoM/ .
+.SH FILES
+.TP
+.I /usr/share/doc/remom/PLAYING.md
+Player guide: supplying game data, save locations, troubleshooting.
+.SH NOTES
+Your original Master of Magic installation is treated as read-only and is never
+modified.
+.B ReMoMber
+seeds its own working copies on first run and reads and writes only those.
+.SH BUGS
+Report issues at
+.I https://github.com/jbalcomb/ReMoM/issues
+.SH SEE ALSO
+Project home:
+.I https://github.com/jbalcomb/ReMoM
