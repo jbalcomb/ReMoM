@@ -48,13 +48,13 @@ extern int16_t DBG_ShowTileInfo;
 // WZD dseg:7011
  // PRIVATE uint8_t COL_City_Banner[];
  
-// WZD dseg:7034 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Warp_GFX_Lines db 14h dup(0)        ; DATA XREF: Draw_Map_Nodes+27Er ...
+// WZD dseg:7034 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+m_node_warp_shear_array db 14h dup(0)        ; DATA XREF: Draw_Map_Nodes+27Er ...
 // WZD dseg:7034 00 00 00 00                                                                             ; 20 bytes randomized between -1, 0, or +1
 
 // WZD dseg:7048  9B 9F        WarpNode_SeedSave_LO dw 9F9Bh
 // WZD dseg:704A  0F 00        WarpNode_SeedSave_HO dw 0Fh
 // WZD dseg:7048  9B 9F 0F 00
-extern uint32_t WarpNode_SeedSave;
+extern uint32_t warp_node_seed_save;
 
 // WZD dseg:704A                                                 ? END:  ovr150 ?
 

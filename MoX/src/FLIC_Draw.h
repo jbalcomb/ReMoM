@@ -210,10 +210,10 @@ void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg);
 void Shear_Bitmap_Y(int16_t x1, int16_t shear1, int16_t x2, int16_t shear2, byte_ptr bitmap);
 
 // WZD s30p04
-// LBX_IMG_VertWarp
+void Shear_Array_Bitmap_Y(int8_t * shear_array, SAMB_ptr bitmap);
 
 // WZD s30p05
-// LBX_IMG_HorzWarp
+void Shear_Array_Bitmap_X(int8_t * buffer, SAMB_ptr pict_seg);
 
 // WZD s30p06
 void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint8_t color);

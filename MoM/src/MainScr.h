@@ -112,7 +112,7 @@ extern SAMB_ptr node_warped_seg;                // ; reserved EMM header pointer
 
 // WZD dseg:CB60
 // AKA gsa_OVL_Tile_WorkArea
-extern SAMB_ptr Map_Square_WorkArea;              // alloc in Terrain_Init  // ; 70 * 16 = 1120 bytes
+extern SAMB_ptr map_square_scratchpad_seg;              // alloc in Terrain_Init  // ; 70 * 16 = 1120 bytes
 
 
 // WZD dseg:CB62
@@ -154,7 +154,7 @@ extern SAMB_ptr node_auras_seg[5];               // ; array of 5 reserved EMM he
 // WZD dseg:CB8E                                                                                         ; single-loaded image, called "lumber camp" in the file
 
 // WZD dseg:CB90
-extern SAMB_ptr Warp_Node_WorkArea;                // ; used to save and manipulate the square graphics to ; display the warp node effect
+extern SAMB_ptr node_warp_scratchpad_seg;                // ; used to save and manipulate the square graphics to ; display the warp node effect
 
 // WZD dseg:CB92
 extern SAMB_ptr _unit_colored_backgrounds_seg[6];    // load in Terrain_Init() ovr052

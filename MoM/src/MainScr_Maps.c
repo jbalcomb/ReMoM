@@ -17,6 +17,7 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 
 */
 
+#include "../../MoX/src/capture.h"
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/Graphics.h"
 #include "../../MoX/src/MOX_BITS.h"
@@ -25,6 +26,7 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
 #include "../../MoX/src/MOX_T4.h"
+#include "../../MoX/src/random.h"
 
 /* Copilot TEMP DEBUG: targeted map reveal tracing */
 #include "../../STU/src/STU_DBG.h"
@@ -219,11 +221,9 @@ UU_COL_City_Banner6 db  29,  29,  28,  28,  27
 */
 
 // WZD dseg:7034
-int8_t TBL_Warp_GFX_Lines[20] = {0};              // ; 20 bytes randomized between -1, 0, or +1
-// WZD dseg:7048  9B 9F        WarpNode_SeedSave_LO dw   9F9Bh
-// WZD dseg:704A  0F 00        WarpNode_SeedSave_HO dw     0Fh
-// WZD dseg:7048  9B 9F 0F 00  WarpNode_SeedSave    dd 0F9F9Bh
-uint32_t WarpNode_SeedSave = 0x000F9F9B;
+int8_t m_node_warp_shear_array[20] = {0};              // ; 20 bytes randomized between -1, 0, or +1
+// WZD dseg:7048
+uint32_t warp_node_seed_save = 0xF9F9B;  /* 0F9F9Bh  1023899d  11111001111110011011b */
 
 // WZD dseg:704A                                                 ? END:  ovr150 ?
 
@@ -2237,10 +2237,10 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                         city_size = 4;
                                     }
                                     Set_Animation_Frame(city_pict_seg, city_size);
-                                    Draw_Picture_To_Bitmap(city_pict_seg, Map_Square_WorkArea);
+                                    Draw_Picture_To_Bitmap(city_pict_seg, map_square_scratchpad_seg);
                                     for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
                                     {
-                                        Replace_Color(Map_Square_WorkArea, 214 + itr_color_remap, (COL_City_Banner[((_players[city_owner].banner_id * 5) + itr_color_remap)] - 1));
+                                        Replace_Color(map_square_scratchpad_seg, 214 + itr_color_remap, (COL_City_Banner[((_players[city_owner].banner_id * 5) + itr_color_remap)] - 1));
                                     }
                                 }
                                 else
@@ -2259,14 +2259,14 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                         city_size = 4;
                                     }
                                     Set_Animation_Frame(city_pict_seg, city_size);
-                                    Draw_Picture_To_Bitmap(city_pict_seg, Map_Square_WorkArea);
+                                    Draw_Picture_To_Bitmap(city_pict_seg, map_square_scratchpad_seg);
                                     for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
                                     {
-                                        Replace_Color(Map_Square_WorkArea, 214 + itr_color_remap, 51 + itr_color_remap);
+                                        Replace_Color(map_square_scratchpad_seg, 214 + itr_color_remap, 51 + itr_color_remap);
                                     }
                                 }
 
-                                Draw_Picture_Windowed(screen_start_x, screen_start_y, Map_Square_WorkArea);
+                                Draw_Picture_Windowed(screen_start_x, screen_start_y, map_square_scratchpad_seg);
 
                             }
                         }
@@ -2321,23 +2321,23 @@ void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                             {
                                 // SITES    unowned tower
                                 // SITES    owned tower
-                                Draw_Picture_To_Bitmap(tower_owned_seg, Map_Square_WorkArea);
+                                Draw_Picture_To_Bitmap(tower_owned_seg, map_square_scratchpad_seg);
                                 for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
                                 {
                                     // ; BUG: parameter mismatch, passing a pointer instead of an actual color index!
                                     // ; BUG: this is the index of repeat colors in encoded images (224), the banner replacement colors start at index $D6 instead (214)
                                     // TODO(JimBalcomb,20230701): add this bug to the 'OG MoM v1.31 Bug-List'
-                                    // ~== FLIC_Remap_Color(Map_Square_WorkArea, 214 + itr_color_remap, (COL_City_Banner[((_players[city_owner_idx  ].Banner * 5) + itr_color_remap)] - 1));
-                                    //     FLIC_Remap_Color(Map_Square_WorkArea, 214 + itr_color_remap, (COL_Banners[((_players[towner_owner_idx].Banner * 5) + itr_color_remap)] - 1));
-                                    Replace_Color(Map_Square_WorkArea, 224 + itr_color_remap, *(COL_Banners + (_players[tower_owner_idx].banner_id * 5)));
+                                    // ~== FLIC_Remap_Color(map_square_scratchpad_seg, 214 + itr_color_remap, (COL_City_Banner[((_players[city_owner_idx  ].Banner * 5) + itr_color_remap)] - 1));
+                                    //     FLIC_Remap_Color(map_square_scratchpad_seg, 214 + itr_color_remap, (COL_Banners[((_players[towner_owner_idx].Banner * 5) + itr_color_remap)] - 1));
+                                    Replace_Color(map_square_scratchpad_seg, 224 + itr_color_remap, *(COL_Banners + (_players[tower_owner_idx].banner_id * 5)));
                                 }
                             }
                             else
                             {
-                                Draw_Picture_To_Bitmap(tower_unowned_seg, Map_Square_WorkArea);
+                                Draw_Picture_To_Bitmap(tower_unowned_seg, map_square_scratchpad_seg);
                             }
 
-                            Draw_Picture(start_x, start_y, Map_Square_WorkArea);
+                            Draw_Picture(start_x, start_y, map_square_scratchpad_seg);
 
                         }
                     }
@@ -2437,153 +2437,117 @@ void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 // WZD o150p11
 void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
-    int16_t itr_nodes;
-    int16_t node_owner_idx;
+    uint32_t tmp_random_seed = 0;
+    int16_t current_shear = 0;
+    int16_t start_y = 0;
+    int16_t start_x = 0;
+    int16_t shear_array_idx = 0;
+    SAMB_ptr node_anim_seg = NULL;
+    int16_t niu_node_power = 0;
+    int16_t itr = 0;
+    int16_t node_owner_idx = 0;
+    int16_t itr_nodes = 0;
+    int8_t node_aura_world_x = 0;
+    int8_t node_aura_world_y = 0;
+
     uint8_t node_owner_banner_idx;
-    SAMB_ptr node_anim_seg;
     int8_t node_power;
-    int16_t Tile_Index;
-    uint8_t unexplored_area;
-    int8_t node_aura_world_x;
-    int8_t node_aura_world_y;
     int8_t node_aura_map_x;
     int8_t node_aura_map_y;
-    int16_t start_x;
-    int16_t start_y;
     int16_t node_anim_frame_idx;
-// TODO      int16_t Warp_Byte_Index;
-// TODO      int16_t Warp_Line_Value;
-// TODO      uint32_t tmp_random_seed;
 
     for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
     {
-        if(wp == _NODES[itr_nodes].wp)
+        if(wp != _NODES[itr_nodes].wp)
         {
-            node_owner_idx = _NODES[itr_nodes].owner_idx;
-
-            if(node_owner_idx != ST_UNDEFINED)
+            continue;
+        }
+        node_owner_idx = _NODES[itr_nodes].owner_idx;
+        if(node_owner_idx == ST_UNDEFINED)
+        {
+            continue;
+        }
+        if(magic_set.show_node_owners != ST_TRUE)
+        {
+            continue;
+        }
+        node_owner_banner_idx = _players[node_owner_idx].banner_id;
+        node_anim_seg = node_auras_seg[node_owner_banner_idx];
+        node_power = _NODES[itr_nodes].power;
+        for(itr = 0; itr < node_power; itr++)
+        {
+            node_aura_world_x = _NODES[itr_nodes].Aura_Xs[itr];
+            node_aura_world_y = _NODES[itr_nodes].Aura_Ys[itr];
+            if(GET_SQUARE_EXPLORED(node_aura_world_x, node_aura_world_y, wp) == ST_FALSE)
             {
-                if(magic_set.show_node_owners == ST_TRUE)
-                {
-                    node_owner_banner_idx = _players[node_owner_idx].banner_id;
-
-                    assert(node_owner_banner_idx <= 5);
-                    // //       Severity	Code	Description	Project	File	Line	Suppression State
-                    // // TODO  Warning	C6385	Reading invalid data from 'node_auras_seg':  the readable size is '40' bytes, but 'node_owner_banner_idx' bytes may be read.ReMoM	C : \STU\devel\ReMoM\src\MainScr_Maps.C	1860
-                    // // Reading invalid data from the readable size is bytes but bytes may be read
-                    // // try assert(image_encoders_count * sizeof(ImageCodecInfo) <= image_encoder_array_size);
-                    // // or  assert(image_encoders_count <= image_encoder_array_size / sizeof(ImageCodecInfo));
-                    // // try to use __analysis_assume() instead of assert()
-                    // // node_anim_seg = node_auras_seg[node_owner_banner_idx];
-                    // NOWORKIE  if(node_owner_banner_idx < sizeof(node_auras_seg))
-                    // {
-                    //     node_anim_seg = node_auras_seg[node_owner_banner_idx];
-                    // }
-                    // else
-                    // {
-                    //     __debug_break();
-                    // }
-                    #pragma warning(suppress : 6385)
-                    node_anim_seg = node_auras_seg[node_owner_banner_idx];
-                    node_power = _NODES[itr_nodes].power;
-
-                    Tile_Index = 0;
-                    while(Tile_Index < node_power)
-                    {
-                        node_aura_world_x = _NODES[itr_nodes].Aura_Xs[Tile_Index];
-
-                        node_aura_world_y = _NODES[itr_nodes].Aura_Ys[Tile_Index];
-
-                        // DELETEME  unexplored_area = _square_explored[(wp * WORLD_SIZE) + (node_aura_world_y * WORLD_WIDTH) + (node_aura_world_x)];
-                        unexplored_area = GET_SQUARE_EXPLORED(node_aura_world_x, node_aura_world_y, wp);
-
-                        if(unexplored_area != ST_FALSE)
-                        {
-                            node_aura_map_x = node_aura_world_x - world_grid_x;
-
-                            if(node_aura_map_x < 0)
-                            {
-                                node_aura_map_x = node_aura_map_x + WORLD_WIDTH;
-                            }
-                            node_aura_map_y = node_aura_world_y - world_grid_y;
-
-                            if( (node_aura_map_y >= 0) && (node_aura_map_y < map_grid_height) && (node_aura_map_x >= 0) && (node_aura_map_x < map_grid_width) )
-                            {
-                                start_x = screen_x + (node_aura_map_x * SQUARE_WIDTH);
-
-                                start_y = screen_y + (node_aura_map_y * SQUARE_HEIGHT);
-
-                                node_anim_frame_idx = ((node_anim_ctr + Tile_Index) % 6);
-
-                                Set_Animation_Frame(node_anim_seg, node_anim_frame_idx);
-                                FLIC_Draw(start_x, start_y, node_anim_seg);
-                            }
-                        }
-                        Tile_Index++;
-                    }
-
-// SPELLY                      if( (_NODES[itr_nodes].flags & NF_WARPED) != 0 )
-// SPELLY                      {
-// SPELLY                          node_aura_world_x = _NODES[itr_nodes].Aura_Xs[Tile_Index];
-// SPELLY                          node_aura_world_y = _NODES[itr_nodes].Aura_Ys[Tile_Index];
-// SPELLY                          unexplored_area = _square_explored[(wp * WORLD_SIZE_DB) + (node_aura_world_y) + (node_aura_world_x)];
-// SPELLY                          if(unexplored_area != ST_FALSE)
-// SPELLY                          {
-// SPELLY                              node_aura_map_x = node_aura_world_x - world_grid_x;
-// SPELLY                              if(node_aura_map_x < 0)
-// SPELLY                              {
-// SPELLY                                  node_aura_map_x = node_aura_map_x + WORLD_WIDTH;
-// SPELLY                              }
-// SPELLY                              node_aura_map_y = node_aura_world_y - world_grid_y;
-// SPELLY                              if( (node_aura_map_y >= 0) && (node_aura_map_y < map_grid_height) && (node_aura_map_x >= 0) && (node_aura_map_x < map_grid_width) )
-// SPELLY                              {
-// SPELLY                                  start_x = screen_x + (node_aura_map_y * SQUARE_WIDTH) + node_aura_map_x;
-// SPELLY                                  start_y = screen_y + (node_aura_map_y * SQUARE_HEIGHT) + node_aura_map_x;
-// SPELLY                                  FLIC_Set_CurrentFrame(node_warped_seg, 0);
-// SPELLY                                  Draw_Picture_To_Bitmap(node_warped_seg, Map_Square_WorkArea);
-// SPELLY                                  FLIC_Set_CurrentFrame(node_warped_seg, 0);
-// SPELLY                                  Screen_Picture_Capture(start_x, start_y, start_x + 19, start_y + 17, Warp_Node_WorkArea);
-// SPELLY                                  if(terrain_anim_ctr >= 0)
-// SPELLY                                  {
-// SPELLY                                      WarpNode_SeedSave = Get_Random_Seed();
-// SPELLY                                      for(Warp_Byte_Index = 0; Warp_Byte_Index < 20; Warp_Byte_Index++)
-// SPELLY                                      {
-// SPELLY                                          Warp_Line_Value = (int16_t)TBL_Warp_GFX_Lines[Warp_Byte_Index];
-// SPELLY                                          if(Random(4) == 1)
-// SPELLY                                          {
-// SPELLY                                              Warp_Line_Value++;
-// SPELLY                                          }
-// SPELLY                                          if(Random(4) == 1)
-// SPELLY                                          {
-// SPELLY                                              Warp_Line_Value--;
-// SPELLY                                          }
-// SPELLY                                          if(Warp_Line_Value < -1)
-// SPELLY                                          {
-// SPELLY                                              Warp_Line_Value = -1;
-// SPELLY                                          }
-// SPELLY                                          if(Warp_Line_Value > 1)
-// SPELLY                                          {
-// SPELLY                                              Warp_Line_Value = 1;
-// SPELLY                                          }
-// SPELLY                                          TBL_Warp_GFX_Lines[Warp_Byte_Index] = Warp_Line_Value;
-// SPELLY                                      }
-// SPELLY                                  }
-// SPELLY                                  tmp_random_seed = Get_Random_Seed();
-// SPELLY                                  Set_Random_Seed(WarpNode_SeedSave);
-// SPELLY                                  // TODO  LBX_IMG_RandomDelete(Warp_Node_WorkArea, 50);
-// SPELLY                                  Set_Random_Seed(tmp_random_seed);
-// SPELLY                                  // TODO  LBX_IMG_HorzWarp(&TBL_Warp_GFX_Lines, Warp_Node_WorkArea);
-// SPELLY                                  // TODO  LBX_IMG_VertWarp(&TBL_Warp_GFX_Lines, Warp_Node_WorkArea);
-// SPELLY                                  // TODO  Clipped_Copy_Mask(0, 0, Warp_Node_WorkArea, Map_Square_WorkArea);
-// SPELLY                                  Draw_Picture(start_x, start_y, Warp_Node_WorkArea);
-// SPELLY                              }
-// SPELLY                          }
-// SPELLY                      }
-                }
+                continue;
+            }
+            node_aura_map_x = (node_aura_world_x - world_grid_x);
+            if(node_aura_map_x < 0)
+            {
+                node_aura_map_x += WORLD_WIDTH;
+            }
+            node_aura_map_y = (node_aura_world_y - world_grid_y);
+            if(node_aura_map_y < 0) { continue; }
+            if(node_aura_map_y >= map_grid_height) { continue; }
+            if(node_aura_map_x < 0) { continue; }
+            if(node_aura_map_x >= map_grid_width) { continue; }
+            start_x = (screen_x + (node_aura_map_x * SQUARE_WIDTH));
+            start_y = (screen_y + (node_aura_map_y * SQUARE_HEIGHT));
+            node_anim_frame_idx = ((node_anim_ctr + itr) % 6);
+            Set_Animation_Frame(node_anim_seg, node_anim_frame_idx);
+            FLIC_Draw(start_x, start_y, node_anim_seg);
+        }
+        if(!(_NODES[itr_nodes].flags & NF_WARPED))
+        {
+            continue;
+        }
+        node_aura_map_x = _NODES[itr_nodes].Aura_Xs[0];
+        node_aura_map_y = _NODES[itr_nodes].Aura_Ys[0];
+        if(GET_SQUARE_EXPLORED(node_aura_map_x, node_aura_map_y, wp) == ST_FALSE)
+        {
+            continue;
+        }
+        node_aura_map_x = node_aura_map_x - world_grid_x;
+        if(node_aura_map_x < 0)
+        {
+            node_aura_map_x += WORLD_WIDTH;
+        }
+        node_aura_map_y = node_aura_map_y - world_grid_y;
+        if(node_aura_map_y < 0) { continue; }
+        if(node_aura_map_y >= map_grid_height) { continue; }
+        if(node_aura_map_x < 0) { continue; }
+        if(node_aura_map_x >= map_grid_width) { continue; }
+        start_x = screen_x + (node_aura_map_x * SQUARE_WIDTH);
+        start_y = screen_y + (node_aura_map_y * SQUARE_HEIGHT);
+        Set_Animation_Frame(node_warped_seg, 0);
+        Draw_Picture_To_Bitmap(node_warped_seg, map_square_scratchpad_seg);
+        Set_Animation_Frame(node_warped_seg, 0);
+        Screen_Picture_Capture(start_x, start_y, start_x + 19, start_y + 17, node_warp_scratchpad_seg);
+        if(terrain_anim_ctr >= 0)
+        {
+            /* OGBUG  this is entirely unnecessary here and will have no effect on what follows */
+            warp_node_seed_save = Get_Random_Seed();
+            for (shear_array_idx = 0; shear_array_idx < 20; shear_array_idx++)
+            {
+                current_shear = m_node_warp_shear_array[shear_array_idx];
+                if(Random(4) == 1) { current_shear++; }
+                if(Random(4) == 1) { current_shear--; }
+                SETMIN(current_shear, -1);
+                SETMAX(current_shear, 1);
+                m_node_warp_shear_array[shear_array_idx] = current_shear;
             }
         }
+        /* OGBUG  replacing the random seed is pointless here, as the function inbetween uses its own generator and can't be manipulated this way */
+        tmp_random_seed = Get_Random_Seed();
+        Set_Random_Seed(warp_node_seed_save);
+        Vanish_Bitmap(node_warp_scratchpad_seg, 50);
+        Set_Random_Seed(tmp_random_seed);
+        Shear_Array_Bitmap_X(&m_node_warp_shear_array[0], node_warp_scratchpad_seg);
+        Shear_Array_Bitmap_Y(&m_node_warp_shear_array[0], node_warp_scratchpad_seg);
+        Clipped_Copy_Mask(0, 0, node_warp_scratchpad_seg, map_square_scratchpad_seg);
+        Draw_Picture(start_x, start_y, node_warp_scratchpad_seg);
     }
-
 }
 
 /* CLAUDE  Draw-intent trace hook -- no asm counterpart; observation only, draws nothing.

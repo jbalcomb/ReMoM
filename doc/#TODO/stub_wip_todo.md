@@ -206,8 +206,8 @@
 
 ## FLIC_Draw
 - [x] Shear_Bitmap_Y            // WZD s30p03
-- [ ] LBX_IMG_VertWarp              // WZD s30p04
-- [ ] LBX_IMG_HorzWarp              // WZD s30p05
+- [x] Shear_Array_Bitmap_Y      // WZD s30p04; was LBX_IMG_VertWarp; done-done 2026-07-23 (FLIC_Draw.c:696; faithful 1:1, builds clean)
+- [x] Shear_Array_Bitmap_X      // WZD s30p05; was LBX_IMG_HorzWarp; done-done 2026-07-23 (FLIC_Draw.c:813; faithful 1:1, builds clean; B1-B3 OG bugs preserved)
 - [ ] UU_LBX_IMG_ColorShift         // WZD s30p07
 - [ ] UU_LBX_IMG_CReplaceRect       // WZD s30p08
 - [ ] VGA_WndDrawRotateImg()        // WZD s30p20

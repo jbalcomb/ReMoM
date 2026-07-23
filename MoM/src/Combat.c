@@ -9228,7 +9228,7 @@ void Combat_Figure_Banner_Color(int16_t player_idx)
     for(itr_banner_colors = 0; itr_banner_colors < 5; itr_banner_colors++)
     {
         // Draw_Map_Towers()
-        // Replace_Color(Map_Square_WorkArea, 224 + itr_color_remap, *(COL_Banners + (_players[tower_owner_idx].banner_id * 5)));
+        // Replace_Color(map_square_scratchpad_seg, 224 + itr_color_remap, *(COL_Banners + (_players[tower_owner_idx].banner_id * 5)));
         Replace_Color(GfxBuf_2400B, (214 + itr_banner_colors), COL_Banners[((unit_owner_banner_idx * 5) + itr_banner_colors)]);
     }
 

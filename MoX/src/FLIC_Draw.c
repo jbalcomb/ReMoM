@@ -671,10 +671,242 @@ void Shear_Bitmap_Y(int16_t x1, int16_t shear1, int16_t x2, int16_t shear2, byte
 
 
 // WZD s30p04
-// LBX_IMG_VertWarp
+// MoO2  Module: bitmap  Shear_Array_Bitmap_Y()
+/*
+    function (0 bytes) Shear_Array_Bitmap_Y
+    Address: 01:0012DC95
+        Num params: 2
+        Return type: void (1 bytes) 
+        pointer (4 bytes) 
+        pointer (4 bytes) 
+        Locals:
+            pointer (4 bytes) shear_array
+            pointer (4 bytes) bitmap
+            signed integer (2 bytes) width
+            signed integer (2 bytes) height
+            signed integer (2 bytes) x
+            signed integer (2 bytes) i
+            signed integer (4 bytes) shear_add
+            signed integer (4 bytes) shear
+            signed integer (2 bytes) current_shear
+            pointer (4 bytes) bitmap_array
+            pointer (4 bytes) frame_offset
+            pointer (4 bytes) frame_offset_table
+*/
+void Shear_Array_Bitmap_Y(int8_t * shear_array, SAMB_ptr bitmap)
+{
+    byte_ptr bitmap_array = NULL;
+    int16_t warped_height = 0;
+    int16_t current_shear = 0;
+    int16_t x = 0;
+    int16_t height = 0;
+    int16_t width = 0;
+    int16_t ofst = 0;
+    int16_t i = 0;
+    width = GET_2B_OFS(bitmap, FLIC_HDR_POS_WIDTH);
+    height = GET_2B_OFS(bitmap, FLIC_HDR_POS_HEIGHT);
+    bitmap_array = (bitmap + SZ_FLIC_HDR);
+    ofst = 0;
+    for(x = 0; x < width; x++)
+    {
+        current_shear = shear_array[x];
+        if(current_shear == 0)
+        {
+            continue;
+        }
+        if(current_shear < 0)
+        {
+            /* Negative */
+            /* Warp Up: current_shear pixels towards lower indices (top of screen) */
+            warped_height = (height + current_shear);
+            if(warped_height > 0)
+            {
+                i = 0;
+                while(i < warped_height)
+                {
+                    /* Move pixel from below to current position */
+                    bitmap_array[ofst + i] = bitmap_array[ofst + i - current_shear];
+                    i++;
+                }
+                /* Fill vacated bottom area with transparent color */
+                while(i < height)
+                {
+                    bitmap_array[ofst + i] = ST_TRANSPARENT;
+                    i++;
+                }
+            }
+            else
+            {
+                if(warped_height < 0)
+                {
+                    /* Entire column is shifted out upwards */
+                    for(i = 0; i < height; i++)
+                    {
+                        bitmap_array[ofst + i] = ST_TRANSPARENT;
+                    }
+                }
+            }
+        }
+        else
+        {
+            /* Positive */
+            /* Warp Down: shift pixels towards higher indices (bottom of screen) */
+            warped_height = (height - current_shear);
+            if(warped_height > 0)
+            {
+                /* Move pixels from top to bottom, iterating backwards to avoid overwriting */
+                i = (height - 1);
+                while(i >= current_shear)
+                {
+                    bitmap_array[ofst + i] = bitmap_array[ofst + i - current_shear];
+                    i--;
+                }
+                /* Fill vacated top area with transparent color */
+                for(i = 0; i < current_shear; i++)
+                {
+                    bitmap_array[ofst + i] = ST_TRANSPARENT;
+                }
+            }
+            else
+            {
+                if(warped_height < 0)
+                {
+                    /* Entire column is shifted out downwards */
+                    for(i = 0; i < height; i++)
+                    {
+                        bitmap_array[ofst + i] = ST_TRANSPARENT;
+                    }
+                }
+            }
+        }
+        /* Advance the base memory pointer to the start of the next column */
+        ofst += height;
+    }
+}
+
 
 // WZD s30p05
-// LBX_IMG_HorzWarp
+// MoO2  Module: bitmap  Shear_Array_Bitmap_X()
+/*
+    function (0 bytes) Shear_Array_Bitmap_X
+    Address: 01:0012DED2
+        Num params: 2
+        Return type: void (1 bytes) 
+        pointer (4 bytes) 
+        pointer (4 bytes) 
+        Locals:
+            pointer (4 bytes) shear_array
+            pointer (4 bytes) bitmap
+            signed integer (2 bytes) width
+            signed integer (2 bytes) height
+            signed integer (2 bytes) x
+            signed integer (2 bytes) i
+            signed integer (2 bytes) ypos
+            signed integer (2 bytes) y
+            signed integer (4 bytes) shear_add
+            signed integer (4 bytes) shear
+            signed integer (2 bytes) current_shear
+            pointer (4 bytes) bitmap_array
+            pointer (4 bytes) frame_offset
+            pointer (4 bytes) frame_offset_table
+*/
+void Shear_Array_Bitmap_X(int8_t * shear_array, SAMB_ptr bitmap)
+{
+    int16_t width = 0;
+    int16_t height = 0;
+    int16_t y = 0;
+    int16_t current_shear = 0;
+    int16_t niu_var1 = 0;
+    int16_t niu_var2 = 0;
+    int16_t warped_width = 0;
+    int16_t shear_add = 0;
+    byte_ptr bitmap_array = NULL;
+    int16_t total_pixels = 0;
+    int16_t i = 0;
+    width = GET_2B_OFS(bitmap, FLIC_HDR_POS_WIDTH);
+    height = GET_2B_OFS(bitmap, FLIC_HDR_POS_HEIGHT);
+    /* bitmap_array points to the start of pixel data (header is usually 16 bytes / 1 paragraph) */
+    bitmap_array = (bitmap + SZ_FLIC_HDR);
+    niu_var2 = 0;
+    total_pixels = (width * height);
+    for(y = 0; y < height; y++)
+    {
+        current_shear = shear_array[y];
+        /* Because the image is stored in column-major order, shifting 1 pixel horizontally requires jumping by 'height' bytes in memory. */
+        shear_add = current_shear * height;
+        if(current_shear == 0)
+        {
+            continue;
+        }
+        if(current_shear < 0)
+        {
+            /* Negative Shift (Left) */
+            warped_width = width + current_shear;
+            if(warped_width > 0)
+            {
+                for(i = y; i < total_pixels; i += height)
+                {
+                    /* Shift pixels left by current_shear columns */
+                    bitmap_array[i] = bitmap_array[i - shear_add];
+                    
+                }
+                /* Fill remaining pixels in row with transparent color (0) */
+                for(i = (y + warped_width * height); i < total_pixels; i += height)
+                {
+                    bitmap_array[i + niu_var2] = ST_TRANSPARENT;
+                }
+            }
+            else
+            {
+                /* Entire line shifted out or zero width */
+                /* Shift is larger than the image, zero out the whole row */
+                if(warped_width < 0)
+                {
+                    for(i = y; i < total_pixels; i += height)
+                    {
+                        bitmap_array[i] = ST_TRANSPARENT;
+                    }
+                }
+            }
+        }
+        else
+        {
+            /* Positive Shift (Right) */
+            /* OGBUG  uses height instead of width for warped_width calculation */
+            warped_width = (height - current_shear);
+            if(warped_width > 0)
+            {
+                /* OGBUG  i is undefined here; it contains the last value from the previous block */
+                niu_var1 = bitmap_array[i];
+                /* OGBUG  loop condition 'i >= 0' incorrect; should stop at (i >= shear_add); reads up to -18 on bitmap_array */
+                /* Shift pixels right by current_shear columns */
+                /* Shift pixels right. We iterate backwards to avoid overwriting pixels we haven't shifted yet. */
+                /* Start from the last pixel in the row and move backwards */
+                for(i = (total_pixels - height + y); i >= 0; i -= height)
+                {
+                    bitmap_array[i] = bitmap_array[i - shear_add];
+                }
+                /* Fill the start of the row with transparent color (0) */
+                /* Cleanup: Zero out the left side gap left by the shift */
+                for(i = y; i < shear_add; i += height)
+                {
+                    bitmap_array[i] = ST_TRANSPARENT;
+                }
+            }
+            else
+            {
+                /* Entire line shifted out or zero width */
+                if(warped_width < 0)
+                {
+                    for(i = y; i < total_pixels; i += height)
+                    {
+                        bitmap_array[i] = ST_TRANSPARENT;
+                    }
+                }
+            }
+        }
+    }
+}
 
 
 // WZD s30p06

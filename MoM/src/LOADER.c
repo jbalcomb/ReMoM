@@ -292,8 +292,8 @@ void Units_Upkeeps(void)
         MAPBACK.LBX   ¿ *.* ?
 
     Allocate_Space()
-        Map_Square_WorkArea
-        Warp_Node_WorkArea
+        map_square_scratchpad_seg
+        node_warp_scratchpad_seg
 
 ... Allocate / Load / Init ...
 ... Terrain / Map Data ...
@@ -306,7 +306,7 @@ void Terrain_Init(void)
     uint64_t tmp_address = 0;
 
     // 
-    Map_Square_WorkArea = Allocate_Space(70);  // 70 PR, 1120 B
+    map_square_scratchpad_seg = Allocate_Space(70);  // 70 PR, 1120 B
 
     m_terrain_lbx_001 = (uint16_t *)LBX_Load(terrain_lbx_file, 1);
     m_terrain_lbx_002 = LBX_Load(terrain_lbx_file, 2);
@@ -413,7 +413,7 @@ void Terrain_Init(void)
         }
 
 
-        Warp_Node_WorkArea = Allocate_Space(24);               // ; used to save and manipulate the square graphics to ; display the warp node effect
+        node_warp_scratchpad_seg = Allocate_Space(24);               // ; used to save and manipulate the square graphics to ; display the warp node effect
 
         // Loop MAPBACK 63 to 67:
         for(itr = 0; itr < 5; itr++)
