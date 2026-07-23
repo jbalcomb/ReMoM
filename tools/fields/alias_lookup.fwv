@@ -1,0 +1,5 @@
+origin          name
+MainMenu.c:416  Main_Menu_Screen.New_Game_Button
+MainMenu.c:408  Main_Menu_Screen.Continue_Button
+MainScr.c:2013  Main_Screen.Next_Turn_Button
+MainScr.c:2039  Main_Screen.Patrol_Button

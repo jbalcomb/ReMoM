@@ -169,21 +169,28 @@ static↔runtime cross-check already validated.
 
 ---
 
-## Phase 3 — `rmr2hms` emits named clicks
+## Phase 3 — `rmr2hms` emits named clicks — **DONE**
 
-1. Teach `rmr2hms` to open the `.RMR`'s sibling `*-RECORD.log` (same stem) if present, index it by
-   frame, and for each emitted click look up the frame's `screen@file:line` → alias.
-2. Emit `click Screen.Alias` with the raw coords in a trailing comment; fall back to bare `click X Y`
-   when no field/alias resolves.
-3. `rmr2hms` is C; the resolver is Python. Either (a) shell out, or (b) have the Python merge step
-   pre-bake a compact `file:line,alias,cx,cy` table `rmr2hms` reads. **(b) keeps `rmr2hms`
-   dependency-free — preferred.**
+1. **DONE** — [rmr2hms.c](../../tools/rmr2hms.c) opens the `.RMR`'s sibling `*-RECORD.log`, indexes
+   `idx -> @basename:line`, and at each click edge resolves the frame's origin to a `Screen.Alias`.
+2. **DONE** — emits `click Screen.Alias   # was (X, Y)` (raw coords in a comment); falls back to bare
+   `click X Y` / `rclick X Y` when no origin or no alias resolves.
+3. **DONE via (b)** — `rmr2hms` stays dependency-free (no Python shell-out). The Python side bakes a
+   flat lookup: `python -m tools.field_catalog.resolver export` →
+   [tools/fields/alias_lookup.fwv](../../tools/fields/alias_lookup.fwv) (`origin  name`, i.e.
+   `basename:line  Screen.Alias`). `rmr2hms` reads it with a two-token `sscanf` (`--lookup PATH`,
+   default `tools/fields/alias_lookup.fwv`). Both tables are optional — absent either one, naming is
+   silently skipped.
 
-**Green when:** converting a recording with a sidecar log produces named clicks; converting one
-without a log produces today's output unchanged (no regression).
+**Green (verified):** a crafted `.RMR`+`-RECORD.log` where clicks land on `MainScr.c:2039` /
+`MainMenu.c:416` emits `click Main_Screen.Patrol_Button` / `click Main_Menu_Screen.New_Game_Button`; a
+click on an unaliased origin and a `.RMR` with **no** sidecar log both fall back to bare coords
+(no regression). `rmr2hms` builds clean; `--help` documents `--lookup`.
 
-**Verify:** run `rmr2hms` on `assets/menu_baseline_seed12345.RMR` (has a RECORD.log) and on one
-without; diff against expected.
+**Gap → Phase 4:** the emitted `click Screen.Alias` is not yet executable — the HMS parser
+([Artificial_Human_Player.c](../../src/Artificial_Human_Player.c)) only accepts numeric `click X Y`.
+The output header warns of this. Phase 4 teaches the parser to resolve `Screen.Alias` at parse time
+(reading the same `alias_lookup.fwv`), closing the loop record → name → run.
 
 ---
 

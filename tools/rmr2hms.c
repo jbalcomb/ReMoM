@@ -108,20 +108,23 @@ static void Emit_Wait(FILE *out, uint64_t now_ms)
 /*  Action emission                                                          */
 /* ========================================================================= */
 
-static void Emit_Click(FILE *out, uint64_t now_ms, int x, int y, int buttons)
+static void Emit_Click(FILE *out, uint64_t now_ms, int x, int y, int buttons, const char *name)
 {
-    Flush_Pending_Type(out);
-    Emit_Wait(out, now_ms);
     /* RMR mouse_buttons bitmask: 1 = ST_LEFT_BUTTON, 2 = ST_RIGHT_BUTTON.
        Prefer right when the right bit is set so a right-click round-trips to
        the HMS `rclick` verb instead of collapsing to a left `click`. */
-    if(buttons & 2)  /* ST_RIGHT_BUTTON */
+    const char *verb = (buttons & 2) ? "rclick" : "click";
+    Flush_Pending_Type(out);
+    Emit_Wait(out, now_ms);
+    if(name != NULL)
     {
-        fprintf(out, "rclick %d %d\n", x, y);
+        /* Named action (Screen.Alias) resolved from the field the click landed on;
+           the recorded coordinates are kept in a comment for reference. */
+        fprintf(out, "%s %s   # was (%d, %d)\n", verb, name, x, y);
     }
     else
     {
-        fprintf(out, "click %d %d\n", x, y);
+        fprintf(out, "%s %d %d\n", verb, x, y);
     }
 }
 
@@ -194,6 +197,108 @@ static void Emit_Key(FILE *out, uint64_t now_ms, uint32_t packed)
 
 
 /* ========================================================================= */
+/*  Named-action resolution                                                  */
+/*                                                                           */
+/*  Two flat tables, both dependency-free:                                   */
+/*    - the alias lookup (basename:line -> Screen.Alias), baked by           */
+/*      `python -m tools.field_catalog.resolver export`                      */
+/*    - the RECORD.log's per-frame field origin (idx -> basename:line),      */
+/*      emitted by the engine's replay field-hit log (Phase 2)              */
+/*  A click at frame `idx` -> origin -> alias -> `click Screen.Alias`.       */
+/* ========================================================================= */
+
+struct Alias_Entry { char origin[64]; char name[96]; };
+static struct Alias_Entry g_alias[1024];
+static int g_alias_count = 0;
+
+struct Origin_Entry { int idx; char origin[64]; };
+static struct Origin_Entry g_origin[8192];
+static int g_origin_count = 0;
+
+static const char *Lookup_Alias(const char *origin)
+{
+    int i;
+    for(i = 0; i < g_alias_count; i++)
+    {
+        if(strcmp(g_alias[i].origin, origin) == 0) { return g_alias[i].name; }
+    }
+    return NULL;
+}
+
+static const char *Origin_For_Idx(int idx)
+{
+    int i;
+    for(i = 0; i < g_origin_count; i++)
+    {
+        if(g_origin[i].idx == idx) { return g_origin[i].origin; }
+    }
+    return NULL;
+}
+
+/* Load the baked alias lookup. Silent no-op if the file is absent (naming off). */
+static void Load_Alias_Lookup(const char *path)
+{
+    FILE *f = fopen(path, "r");
+    char ln[256];
+    if(f == NULL) { return; }
+    while(fgets(ln, sizeof(ln), f) != NULL && g_alias_count < (int)(sizeof(g_alias) / sizeof(g_alias[0])))
+    {
+        char origin[64];
+        char name[96];
+        if(ln[0] == '#') { continue; }
+        if(sscanf(ln, "%63s %95s", origin, name) != 2) { continue; }
+        if(strchr(origin, ':') == NULL) { continue; }  /* skip the "origin name" header row */
+        memcpy(g_alias[g_alias_count].origin, origin, strlen(origin) + 1);
+        memcpy(g_alias[g_alias_count].name, name, strlen(name) + 1);
+        g_alias_count++;
+    }
+    fclose(f);
+}
+
+/* Load the RECORD.log sibling of the .RMR (idx -> field origin). Silent no-op if absent. */
+static void Load_Record_Origins(const char *rmr_path)
+{
+    char log_path[1024];
+    size_t len = strlen(rmr_path);
+    FILE *f;
+    char ln[512];
+    if(len + 12 >= sizeof(log_path)) { return; }
+    memcpy(log_path, rmr_path, len + 1);
+    if(len >= 4 && log_path[len - 4] == '.'
+        && (log_path[len - 3] == 'R' || log_path[len - 3] == 'r')
+        && (log_path[len - 2] == 'M' || log_path[len - 2] == 'm')
+        && (log_path[len - 1] == 'R' || log_path[len - 1] == 'r'))
+    {
+        len -= 4;  /* drop ".RMR" */
+    }
+    memcpy(log_path + len, "-RECORD.log", 12);  /* 11 chars + NUL */
+    f = fopen(log_path, "r");
+    if(f == NULL) { return; }
+    while(fgets(ln, sizeof(ln), f) != NULL && g_origin_count < (int)(sizeof(g_origin) / sizeof(g_origin[0])))
+    {
+        char *idx_p = strstr(ln, "idx=");
+        char *at = strrchr(ln, '@');
+        int idx;
+        int n = 0;
+        char *p;
+        if(idx_p == NULL || at == NULL) { continue; }
+        if(sscanf(idx_p + 4, "%d", &idx) != 1) { continue; }
+        p = at + 1;
+        while(*p != '\0' && *p != '\n' && *p != '\r' && *p != ' ' && n < 63)
+        {
+            g_origin[g_origin_count].origin[n++] = *p++;
+        }
+        if(n == 0) { continue; }
+        g_origin[g_origin_count].origin[n] = '\0';
+        g_origin[g_origin_count].idx = idx;
+        g_origin_count++;
+    }
+    fclose(f);
+}
+
+
+
+/* ========================================================================= */
 /*  Frame Parsing                                                            */
 /* ========================================================================= */
 
@@ -226,11 +331,15 @@ static int Parse_Frame(const char *line,
 
 static void Print_Usage(const char *program_name)
 {
-    fprintf(stderr, "Usage: %s <input.RMR> [output.hms]\n", program_name);
+    fprintf(stderr, "Usage: %s <input.RMR> [output.hms] [--lookup alias_lookup.fwv]\n", program_name);
     fprintf(stderr, "\n");
     fprintf(stderr, "Translates a .RMR replay recording into a .hms scenario script.\n");
     fprintf(stderr, "If output.hms is omitted, the output file is named after the input with\n");
     fprintf(stderr, "'.RMR' replaced by '.hms' (or '.hms' appended if no '.RMR' suffix).\n");
+    fprintf(stderr, "\n");
+    fprintf(stderr, "If the input's sibling <name>-RECORD.log and an alias lookup are present,\n");
+    fprintf(stderr, "clicks are emitted as named actions (click Screen.Alias) instead of raw\n");
+    fprintf(stderr, "coordinates. --lookup defaults to tools/fields/alias_lookup.fwv.\n");
 }
 
 int main(int argc, char *argv[])
@@ -249,17 +358,44 @@ int main(int argc, char *argv[])
     int prev_key_pressed = 0;
     uint32_t prev_key0 = 0;
 
-    if(argc < 2 || argc > 3 || strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0)
+    const char *lookup_path = NULL;
+    const char *positional[2] = { NULL, NULL };
+    int np = 0;
+    int ai;
+
+    for(ai = 1; ai < argc; ai++)
+    {
+        if(strcmp(argv[ai], "--help") == 0 || strcmp(argv[ai], "-h") == 0)
+        {
+            Print_Usage(argv[0]);
+            return 1;
+        }
+        if(strcmp(argv[ai], "--lookup") == 0)
+        {
+            if(ai + 1 >= argc) { fprintf(stderr, "rmr2hms: --lookup needs a path\n"); return 1; }
+            lookup_path = argv[++ai];
+            continue;
+        }
+        if(np < 2) { positional[np++] = argv[ai]; }
+        else { fprintf(stderr, "rmr2hms: too many arguments\n"); return 1; }
+    }
+
+    if(np < 1)
     {
         Print_Usage(argv[0]);
         return 1;
     }
 
-    input_path = argv[1];
+    input_path = positional[0];
 
-    if(argc == 3)
+    /* Named-action tables (both optional; naming is skipped if either is absent).
+       Default lookup path is relative to the repo root (the usual CWD). */
+    Load_Alias_Lookup(lookup_path != NULL ? lookup_path : "tools/fields/alias_lookup.fwv");
+    Load_Record_Origins(input_path);
+
+    if(positional[1] != NULL)
     {
-        output_path = argv[2];
+        output_path = positional[1];
     }
     else
     {
@@ -304,6 +440,11 @@ int main(int argc, char *argv[])
 
     fprintf(fout, "# Auto-generated by rmr2hms from %s\n", input_path);
     fprintf(fout, "# Review for correctness before using as a canonical scenario.\n");
+    if(g_alias_count > 0 && g_origin_count > 0)
+    {
+        fprintf(fout, "# Named clicks (click Screen.Alias) resolved from the RECORD.log field origins.\n");
+        fprintf(fout, "# Named clicks require HMS parser support for Screen.Alias to execute.\n");
+    }
     fprintf(fout, "\n");
 
     while(fgets(line, sizeof(line), fin) != NULL)
@@ -330,7 +471,11 @@ int main(int argc, char *argv[])
         /* Mouse-button edge: 0 -> nonzero is a click. */
         if(mouse_buttons != 0 && prev_mouse_buttons == 0)
         {
-            Emit_Click(fout, timestamp_ms, mouse_x, mouse_y, mouse_buttons);
+            /* Resolve the clicked field to a Screen.Alias name via the RECORD.log
+               origin for this frame; NULL falls back to bare `click X Y`. */
+            const char *origin = Origin_For_Idx((int)idx);
+            const char *name = (origin != NULL) ? Lookup_Alias(origin) : NULL;
+            Emit_Click(fout, timestamp_ms, mouse_x, mouse_y, mouse_buttons, name);
             actions_emitted++;
         }
 

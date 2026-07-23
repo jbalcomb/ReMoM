@@ -68,6 +68,20 @@ class Resolver:
             return None, "runtime"
         return (int(row["click_cx"]), int(row["click_cy"])), "ok"
 
+    def export_lookup_rows(self):
+        """Rows for the baked rmr2hms lookup: 'basename:line' -> 'Screen.Alias'.
+        Uses each alias's CURRENT catalog line (by symbol) so the origin matches
+        what the RECORD.log stamps (both come from current source). Aliases whose
+        symbol is missing from the catalog are skipped."""
+        rows = []
+        for a in self.aliases:
+            row = self.by_filesym.get((a["src_file"], a["symbol"]))
+            if row is None:
+                continue
+            origin = f"{os.path.basename(a['src_file'])}:{row['line']}"
+            rows.append({"origin": origin, "name": f"{a['screen']}.{a['alias']}"})
+        return rows
+
     def audit(self):
         """Staleness report: one (qualified, status, detail) per alias row.
         status in {'ok', 'drift', 'missing'}."""
@@ -87,8 +101,20 @@ class Resolver:
         return out
 
 
+LOOKUP_FWV = os.path.join(os.path.dirname(__file__), "..", "fields", "alias_lookup.fwv")
+
+
 def _main():
+    import sys
     r = Resolver.from_repo()
+
+    if len(sys.argv) > 1 and sys.argv[1] == "export":
+        out = os.path.abspath(sys.argv[2]) if len(sys.argv) > 2 else os.path.abspath(LOOKUP_FWV)
+        rows = r.export_lookup_rows()
+        fwv.write(rows, ["origin", "name"], set(), out)
+        print(f"wrote {len(rows)} alias lookups -> {out}")
+        return 0
+
     print("=== alias audit ===")
     stale = 0
     for qual, status, detail in r.audit():
