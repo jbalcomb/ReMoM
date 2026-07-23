@@ -2169,7 +2169,7 @@ void City_Screen_Draw_Population_Row(int16_t city_idx, int16_t xstart, int16_t y
 
     for(itr_townsfolk = 0; itr_townsfolk < rebel_count; itr_townsfolk++)
     {
-        FLIC_Draw((xstart + xadd), ystart, city_rebel_icon_seg[_CITIES[city_idx].race]);
+        FLIC_Draw((xstart + xadd), (ystart - 2), city_rebel_icon_seg[_CITIES[city_idx].race]);
         xadd += icon_space;
     }
 
