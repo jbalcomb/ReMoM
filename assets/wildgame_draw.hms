@@ -1,0 +1,19 @@
+# wildgame_draw.hms
+#
+# Minimal Main-Screen scenario for the wild-game overlay draw test.
+#
+# Loads via `--continue` (caller stages a save with an EXPLORED wild-game
+# square into SAVE9.GAM), lets the overland map render so Draw_Map_Biota runs,
+# then quits cleanly:  Game menu -> Quit -> Main Menu -> Quit To DOS.
+#
+# Draws nothing itself; the assertion is on the BIOTA_DRAW trace lines the
+# render emits.  See tests/check_biota_draws.
+
+wait 2s                   # let the Main Screen + overland map finish rendering
+
+key G                     # Game button hotkey -> Save/Load screen
+wait 1s
+click 62 177              # Quit button (43,171)-(82,184) -> Main Menu
+wait 1s
+key Q                     # Main Menu: Quit To DOS
+end

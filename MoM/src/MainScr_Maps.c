@@ -28,6 +28,7 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 
 /* Copilot TEMP DEBUG: targeted map reveal tracing */
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"  /* CLAUDE  LOG_TRACE for the biota draw-intent hook */
 
 #include "Explore.h"
 #include "MainScr.h"
@@ -2585,6 +2586,25 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 
 }
 
+/* CLAUDE  Draw-intent trace hook -- no asm counterpart; observation only, draws nothing.
+   Resolves the sprite handle ACTUALLY passed to FLIC_Draw back to a symbolic name, so a test can
+   assert which overlay landed on each square.  A branch-entry log would not catch a wrong-sprite
+   substitution (the 2024-08-29 regression drew UU_hunters_lodge_seg from inside the wild-game
+   branch), which is exactly the failure this hook exists to make visible.
+   Compiles to a no-op when STU_LOG_MIN_SEVERITY excludes TRACE. */
+static void DBG_Log_Biota_Draw(int16_t wp, int16_t wx, int16_t wy, SAMB_ptr seg)
+{
+    const char * sprite_name;
+
+    if(seg == IMG_OVL_WildGame)          { sprite_name = "WILDGAME";     }
+    else if(seg == UU_hunters_lodge_seg) { sprite_name = "HUNTERSLODGE"; }
+    else if(seg == IMG_OVL_Nightshade)   { sprite_name = "NIGHTSHADE";   }
+    else if(seg == IMG_OVL_Corruption)   { sprite_name = "CORRUPTION";   }
+    else                                 { sprite_name = "UNKNOWN";      }
+
+    LOG_TRACE(LOG_CAT_MAINSCR, "BIOTA_DRAW p=%d x=%d y=%d sprite=%s", (int)wp, (int)wx, (int)wy, sprite_name);
+}
+
 // WZD o150p12
 /*
     draws Terrain Specials - Biota - Wild Game, Hunters Lodge, Nightshade
@@ -2633,6 +2653,7 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                 {
                     site_pict_seg = IMG_OVL_Corruption;
                     FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
+                    DBG_Log_Biota_Draw(wp, curr_world_x, itr_world_y, site_pict_seg);  /* CLAUDE */
                 }
 
                 if((terrain_special & TS_WILDGAME) != 0)
@@ -2649,15 +2670,14 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                     if(has_city == ST_FALSE)
                     {
                         site_pict_seg = IMG_OVL_WildGame;
-                        // FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
-                        
-                        site_pict_seg = UU_hunters_lodge_seg;
                         FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
+                        DBG_Log_Biota_Draw(wp, curr_world_x, itr_world_y, site_pict_seg);  /* CLAUDE */
 
                         if((terrain_special & TS_HUNTERSLODGE) != 0)
                         {
                             site_pict_seg = UU_hunters_lodge_seg;
                             FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
+                            DBG_Log_Biota_Draw(wp, curr_world_x, itr_world_y, site_pict_seg);  /* CLAUDE */
                         }
                     }
                 }
@@ -2666,6 +2686,7 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                 {
                     site_pict_seg = IMG_OVL_Nightshade;
                     FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
+                    DBG_Log_Biota_Draw(wp, curr_world_x, itr_world_y, site_pict_seg);  /* CLAUDE */
                 }
 
             }
