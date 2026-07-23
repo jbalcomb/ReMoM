@@ -69,32 +69,13 @@ OON XREF:  Change_City_Ownership() |-> j_Resolve_Wizard_Conquest() |-> Resolve_W
 [x] End_Of_Game_Score()
 [x]     |-> End_Of_Game_Score_Draw()
 
-spell of return over?
-spell of mastery win * lose
-switch EXE
-
-
-
-// WZD s30p03
-[x] Shear_Bitmap_Y
-// WZD s30p04
-// LBX_IMG_VertWarp
-// WZD s30p05
-// LBX_IMG_HorzWarp
-
-// WZD o138p01
-void Spell_Of_Mastery_Lose_Load(int16_t wizard_id)
-// WZD o138p02
-void Spell_Of_Mastery_Lose_Draw(void)
-// WZD o138p03
-void Spell_Of_Mastery_Lose(void)
+[x] Spell_Of_Mastery_Lose_Load()
+[x] Spell_Of_Mastery_Lose_Draw()
+[x] Spell_Of_Mastery_Lose()
 
 [x] Cast_Spell_Of_Mastery()
 [x]     |-> Cast_Spell_Of_Mastery_Draw()
 
-// WZD o138p06
-void Spell_Of_Mastery_Load(void)
-// WZD o138p07
-void Spell_Of_Mastery_Draw(void)
-// WZD o138p08
-void Spell_Of_Mastery(int16_t player_idx)
+[x] Spell_Of_Mastery_Load()
+[x] Spell_Of_Mastery_Draw()
+[x] Spell_Of_Mastery()

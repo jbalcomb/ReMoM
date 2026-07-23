@@ -1899,17 +1899,15 @@ int16_t BU_CauseFear__NOOP(int16_t attacker_battle_unit_idx, int16_t defender_ba
 */
 
 // WZD o123p01
-// drake178: CMB_Victory()
 void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_list[], int16_t MsgType);
 
 // WZD o123p02
-// CMB_GetUndeadCreator()
+int16_t Find_Undead_Creator_Type(int16_t player_idx);
 
 // WZD o123p03
 void Combat_Results_Scroll(void);
 
 // WZD o123p04
-// ¿ MoO2  Module: COMBFIND  Strategic_Results_Popup_() ?
 void Combat_Results_Scroll_Draw(void);
 
 // WZD o123p05

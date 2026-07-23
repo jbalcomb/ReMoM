@@ -3804,7 +3804,7 @@ loc_783E8:
     /* If not seen by True Sight, check for proximity detection (adjacent units) */
     if(is_visible == 0)
     {
-        for (other_battle_unit_idx = 0; other_battle_unit_idx < _combat_total_unit_count; other_battle_unit_idx++)
+        for(other_battle_unit_idx = 0; other_battle_unit_idx < _combat_total_unit_count; other_battle_unit_idx++)
         {
             bu_ptr = &battle_units[other_battle_unit_idx];
             
@@ -8793,7 +8793,7 @@ void Move_Confused(int16_t battle_unit_idx)
 
     target_found = ST_FALSE;
 
-    for (i = 0; i < 600; i++)
+    for(i = 0; i < 600; i++)
     {
 
         random_x = (Random(COMBAT_GRID_WIDTH) - 1);
@@ -9141,7 +9141,7 @@ int16_t Check_For_Winner(void)
     defender_count = 0;
 
     /* Count active units on each side, accounting for confusion */
-    for (itr = 0; itr < _combat_total_unit_count; itr++)
+    for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
         if(battle_units[itr].status == bus_Active)
         {
@@ -9191,7 +9191,7 @@ int16_t Check_For_Winner(void)
             if(Retreat_Check(combat_computer_player) == ST_TRUE)
             {
                 /* AI has decided to flee the battle */
-                for (itr = 0; itr < _combat_total_unit_count; itr++)
+                for(itr = 0; itr < _combat_total_unit_count; itr++)
                 {
                     if(battle_units[itr].controller_idx == combat_computer_player)
                     {
@@ -9751,7 +9751,7 @@ void BU_SetVisibility(int16_t battle_unit_idx)
         {
             battle_units[battle_unit_idx].Image_Effect = 5;
 
-            for (i = 0; i < _combat_total_unit_count; i++)
+            for(i = 0; i < _combat_total_unit_count; i++)
             {
                 /* loc_8613E: */
                 if(battle_units[i].status == 1 /* bus_Active */)
@@ -11660,12 +11660,12 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
     int16_t Unit_Resist = 0;
     int16_t Picked_Target = 0;
     int16_t Target_Value = 0;
-    int16_t Highest_Value = 0;
+    int16_t highest_value = 0;
     int16_t battle_unit_idx = 0;
     struct s_BATTLE_UNIT * bu_ptr = NULL;
     uint32_t battle_unit_enchantments = 0;
 
-    Highest_Value = ST_UNDEFINED;
+    highest_value = ST_UNDEFINED;
     Picked_Target = ST_UNDEFINED;
 
     /* OGBUG  switch jump table excludes Wall spells */
@@ -11678,7 +11678,7 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
     {
         case scc_Direct_Damage_Fixed:
         case scc_Direct_Damage_Variable:  /* Direct Damage */
-            for (battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+            for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
                 damage_types[0] = 0;
                 damage_types[1] = 0;
@@ -11725,9 +11725,9 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                     /* Value += (100 - current_total_hp) + current_figure_damage */
                     Target_Value += (100 - (bu_ptr->Cur_Figures * bu_ptr->hits)) + bu_ptr->front_figure_damage;
                 }
-                if(Target_Value > Highest_Value)
+                if(Target_Value > highest_value)
                 {
-                    Highest_Value = Target_Value;
+                    highest_value = Target_Value;
                     Picked_Target = battle_unit_idx;
                 }
             }
@@ -11735,7 +11735,7 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
 
         case scc_Combat_Destroy_Unit:
         case scc_Combat_Banish: /* Resistance-based Kill Spells */
-            for (battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+            for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
                 bu_ptr = &battle_units[battle_unit_idx];
                 if(bu_ptr->controller_idx == player_idx) continue;
@@ -11771,16 +11771,16 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                     /* Scaled strength value based on failure chance */
                     Target_Value = (Effective_Battle_Unit_Strength(battle_unit_idx) * (10 - Unit_Resist) + 9) / 10;
                 }
-                if(Target_Value > Highest_Value)
+                if(Target_Value > highest_value)
                 {
-                    Highest_Value = Target_Value;
+                    highest_value = Target_Value;
                     Picked_Target = battle_unit_idx;
                 }
             }
             break;
 
         case scc_Unit_Enchantment: /* Unit Buffs */
-            for (battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+            for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
                 bu_ptr = &battle_units[battle_unit_idx];
                 if(bu_ptr->controller_idx != player_idx) continue;
@@ -11804,16 +11804,16 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                     if(_UNITS[bu_ptr->unit_idx].Hero_Slot != ST_UNDEFINED) continue;
                 }
                 Target_Value = (bu_ptr->Cur_Figures * 10) + bu_ptr->melee;
-                if(Target_Value > Highest_Value)
+                if(Target_Value > highest_value)
                 {
-                    Highest_Value = Target_Value;
+                    highest_value = Target_Value;
                     Picked_Target = battle_unit_idx;
                 }
             }
             break;
 
         case scc_Unit_Enchantment_Normal_Only:
-            for (battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+            for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
                 bu_ptr = &battle_units[battle_unit_idx];
                 if(bu_ptr->controller_idx != player_idx) continue;
@@ -11825,16 +11825,16 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 if(enchantments & spell_data_table[spell_idx].enchantments) continue;
                 if(spell_idx == spl_Heroism && _UNITS[bu_ptr->unit_idx].Level > 2) continue;
                 Target_Value = (bu_ptr->Cur_Figures * 10) + bu_ptr->melee;
-                if(Target_Value > Highest_Value)
+                if(Target_Value > highest_value)
                 {
-                    Highest_Value = Target_Value;
+                    highest_value = Target_Value;
                     Picked_Target = battle_unit_idx;
                 }
             }
             break;
 
         case scc_Resistable_Spell: /* Combat Enchantments / Debuffs */
-            for (battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+            for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
                 bu_ptr = &battle_units[battle_unit_idx];
                 if(bu_ptr->controller_idx == player_idx) continue;
@@ -11861,16 +11861,16 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 Unit_Resist += Resist_Modifier;
                 if(Unit_Resist >= 10) continue;
                 Target_Value = (Effective_Battle_Unit_Strength(battle_unit_idx) * (10 - Unit_Resist) + 9) / 10;
-                if(Target_Value > Highest_Value)
+                if(Target_Value > highest_value)
                 {
-                    Highest_Value = Target_Value;
+                    highest_value = Target_Value;
                     Picked_Target = battle_unit_idx;
                 }
             }
             break;
 
         case scc_Mundane_Curse: /* Resistance-based Debuffs */
-            for (battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+            for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
                 bu_ptr = &battle_units[battle_unit_idx];
                 if(bu_ptr->Attribs_1 & USA_IMMUNITY_MAGIC) continue;
@@ -11891,16 +11891,16 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 Unit_Resist = Combat_Effective_Resistance(*bu_ptr, spell_data_table[spell_idx].magic_realm);
                 if(Unit_Resist >= 10) continue;
                 Target_Value = (Effective_Battle_Unit_Strength(battle_unit_idx) * (10 - Unit_Resist) + 9) / 10;
-                if(Target_Value > Highest_Value)
+                if(Target_Value > highest_value)
                 {
-                    Highest_Value = Target_Value;
+                    highest_value = Target_Value;
                     Picked_Target = battle_unit_idx;
                 }
             }
             break;
 
         case scc_Unresistable_Spell:
-            for (battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+            for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
                 bu_ptr = &battle_units[battle_unit_idx];
                 if(bu_ptr->controller_idx == player_idx) continue;
@@ -11935,9 +11935,9 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 {
                     Target_Value += 2000;
                 }
-                if(Target_Value > Highest_Value)
+                if(Target_Value > highest_value)
                 {
-                    Highest_Value = Target_Value;
+                    highest_value = Target_Value;
                     Picked_Target = battle_unit_idx;
                 }
             }
@@ -12021,7 +12021,7 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
         case scc_Summoning: /* Unit Summoning (Find valid tile) */
             if(_units == 1000) return ST_UNDEFINED;
             Unit_Resist = 0;
-            for (battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+            for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
                 if(battle_units[battle_unit_idx].controller_idx == player_idx && battle_units[battle_unit_idx].status == bus_Active)
                 {
@@ -12071,7 +12071,7 @@ int16_t AITP_DarknessLight(int16_t Spell_Index)
     int16_t Picked_Target;
     int16_t di;
     Picked_Target = ST_UNDEFINED;
-    if (Spell_Index == spl_True_Light)
+    if(Spell_Index == spl_True_Light)
     {
         Unused_Local = 1;
     }
@@ -12079,11 +12079,11 @@ int16_t AITP_DarknessLight(int16_t Spell_Index)
     {
         Unused_Local = 0;
     }
-    for (di = 0; di < _combat_total_unit_count; di++)
+    for(di = 0; di < _combat_total_unit_count; di++)
     {
-        if (battle_units[di].race == rt_Life || battle_units[di].race == rt_Death)
+        if(battle_units[di].race == rt_Life || battle_units[di].race == rt_Death)
         {
-            if (battle_units[di].status == bus_Active)
+            if(battle_units[di].status == bus_Active)
             {
                 Picked_Target = 99;
             }
@@ -12200,7 +12200,7 @@ int16_t AITP_WarpCreature(int16_t player_idx)
 {
     int32_t enchantments = 0;     /* Enchants_HO:Enchants_LO */
     int16_t picked_target = 0;    /* BU_Index */
-    int16_t highest_value = 0;    /* Highest_Value */
+    int16_t highest_value = 0;    /* highest_value */
     int16_t target_value = 0;     /* Target_Value */
     int16_t unit_resist = 0;      /* _DI_ */
     int16_t battle_unit_idx = 0;  /* _SI_ */
@@ -13307,7 +13307,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
     {
         /* AI / Auto Combat Control path */
         AI_SetCombatRealms();
-        if (caster_idx < CASTER_IDX_BASE &&
+        if(caster_idx < CASTER_IDX_BASE &&
             battle_units[caster_idx].Item_Charges > 0 &&
             battle_units[caster_idx].action == BUA_UseItem)
         {
@@ -13317,12 +13317,12 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
         {
             spell_idx = AI_SelectCmbtSpell(caster_idx);
         }
-        if (spell_idx > 0)
+        if(spell_idx > 0)
         {
-            if (caster_idx < CASTER_IDX_BASE)
+            if(caster_idx < CASTER_IDX_BASE)
             {
                 battle_units[caster_idx].target_battle_unit_idx = caster_idx;
-                if (battle_units[caster_idx].controller_idx != HUMAN_PLAYER_IDX)
+                if(battle_units[caster_idx].controller_idx != HUMAN_PLAYER_IDX)
                 {
                     _ai_immobile_counter = ST_UNDEFINED;
                 }
@@ -17039,7 +17039,7 @@ int16_t Battle_Unit_Pict_Open(void)
         battle_unit_slots[battle_unit_slot_idx] = ST_FALSE;
     }
 
-    for (battle_unit_slot_idx = 0; battle_unit_slot_idx < _combat_total_unit_count; battle_unit_slot_idx++)
+    for(battle_unit_slot_idx = 0; battle_unit_slot_idx < _combat_total_unit_count; battle_unit_slot_idx++)
     {
         struct s_BATTLE_UNIT * battle_unit = &battle_units[battle_unit_slot_idx];
 
@@ -17053,7 +17053,7 @@ int16_t Battle_Unit_Pict_Open(void)
         }
     }
 
-    for (battle_unit_slot_idx = 0; battle_unit_slot_idx < MAX_BATTLE_UNIT_COUNT; battle_unit_slot_idx++)
+    for(battle_unit_slot_idx = 0; battle_unit_slot_idx < MAX_BATTLE_UNIT_COUNT; battle_unit_slot_idx++)
     {
         if(battle_unit_slots[battle_unit_slot_idx] == ST_FALSE)
         {
@@ -18581,7 +18581,7 @@ They may increase (by one) the attack strengths (swords and ranged weapons), def
 void BU_Apply_Battlefield_Effects__WIP(struct s_BATTLE_UNIT * battle_unit)
 {
     int16_t Node_Aura_Applies = 0;
-    int16_t Item_Index = 0;
+    int16_t item_idx = 0;
     int16_t Mutation_Flags = 0;
     uint32_t enchantments = 0;
     int16_t unit_idx = 0;
@@ -21257,7 +21257,7 @@ int16_t BU_CauseFear__NOOP(int16_t attacker_battle_unit_idx, int16_t defender_ba
 // WZD o123p01
 // MoO2  Module: COMBINIT  End_Of_Combat_()
 /*
-    "WIP", cause CMB_CreateUndeadAnim(ut_Zombies) and CMB_CreateUndeadAnim(CMB_GetUndeadCreator(player_idx))
+    "WIP", cause Undead_Animation(ut_Zombies) and Undead_Animation(Find_Undead_Creator_Type(player_idx))
 
     // ; finishes the active combat, processing all related
     // ; events and effects - including the display of the
@@ -22162,7 +22162,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
             stu_strcat(GUI_NearMsgString, cnst_Zombie_Msg_3);
 
-            // TODO  CMB_CreateUndeadAnim(ut_Zombies);
+            Undead_Animation(ut_Zombies);
         }
 
         if(Undead_Created > 0)
@@ -22204,7 +22204,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 }
             }
 
-            // TODO  CMB_CreateUndeadAnim(CMB_GetUndeadCreator(player_idx));
+            Undead_Animation(Find_Undead_Creator_Type(player_idx));
         }
 
     }
@@ -22222,7 +22222,73 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
 
 // WZD o123p02
-// CMB_GetUndeadCreator()
+int16_t Find_Undead_Creator_Type(int16_t player_idx)
+{
+    int16_t item_idx = 0;
+    int16_t unit_value = 0;
+    int16_t highest_value = 0;
+    int16_t unit_type = 0;
+    int16_t itr1 = 0;  /* unit_idx in battle */
+    int16_t itr2 = 0;  /* item_slot_idx */
+    highest_value = -1;
+    unit_type = 10;
+    for(itr1 = 0; itr1 < _combat_total_unit_count; itr1++)
+    {
+        /* Check if current unit is controlled by the player in question */
+        /* Check for natural abilities: Life Steal or Create Undead */
+        if(
+            (battle_units[itr1].controller_idx != player_idx)
+            ||
+            (
+                ((battle_units[itr1].attack_attributes & Att_LifeSteal) == 0)
+                &&
+                ((battle_units[itr1].Abilities & UA_CREATEUNDEAD) == 0)
+            )
+        )
+        {
+            if(highest_value < 10 && player_idx < MOO_MONSTER_PLAYER_IDX)
+            {
+                /* Check for Heroes with Vampiric items */
+                /* Only proceed if we haven't found a "high value" (10+) creator yet and player is not Invalid/Monster */
+                /* Check if this unit is a hero (Hero_Slot != -1) */
+                if(_UNITS[battle_units[itr1].unit_idx].Hero_Slot > -1)
+                {
+                    /* Iterate through the 3 item slots of the hero */
+                    for(itr2 = 0; itr2 < 3; itr2++)
+                    {
+                        /* Access players[player_idx].Heroes[hero_slot].Items[itr2] */
+                        item_idx = _players[player_idx].Heroes[_UNITS[battle_units[itr1].unit_idx].Hero_Slot].Items[itr2];
+                        if(item_idx != -1)
+                        {
+                            /* Check if the item has the Vampiric enchantment */
+                            if((_ITEMS[item_idx].Powers & IP_VAMPIRIC) != 0)
+                            {
+                                highest_value = 10;
+                                unit_type = 10; /* Return generic 'hero' or 'undead' result code */
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else  /* (battle_units[itr1].controller_idx == player_idx) && (((battle_units[itr1].attack_attributes & Att_LifeSteal) != 0) || ((battle_units[itr1].Abilities & UA_CREATEUNDEAD) != 0)) */
+        {
+            /* Calculate a value based on upkeep to prioritize more powerful creators */
+            unit_value = (100 + battle_units[itr1].upkeep);
+            if(unit_value > highest_value)
+            {
+                /* Only consider special unit types (likely monsters/summons) above 'ut_Chosen' */
+                if(_UNITS[battle_units[itr1].unit_idx].type > ut_Chosen)
+                {
+                    highest_value = unit_value;
+                    unit_type = _UNITS[battle_units[itr1].unit_idx].type;
+                }
+            }
+        }
+    }
+    return unit_type;
+}
+
 
 // WZD o123p03
 void Combat_Results_Scroll_Draw(void)
@@ -22661,7 +22727,7 @@ int16_t City_Gold(int16_t city_idx)
         city_owner = _CITIES[city_idx].owner_idx;
 
         /* Calculate total population of the owner's empire */
-        for (itr = 0; itr < _cities; itr++)
+        for(itr = 0; itr < _cities; itr++)
         {
             if(_CITIES[itr].owner_idx == city_owner)
             {
@@ -22701,7 +22767,7 @@ int16_t Rampage_Combat_City(void)
 
     empty_lair_idx = ST_UNDEFINED;
 
-    for (itr = 0; itr < NUM_LAIRS; itr++)
+    for(itr = 0; itr < NUM_LAIRS; itr++)
     {
         if(_LAIRS[itr].intact == ST_FALSE)
         {
@@ -22741,7 +22807,7 @@ int16_t Rampage_Combat_City(void)
     unit_types_found = 0;
 
     /* Identify the two most expensive unit types in the rampaging monster stack to guard the ruins */
-    for (itr = 0; itr < _combat_total_unit_count; itr++)
+    for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
         if(battle_units[itr].status != 1 /* bus_Active */)
         {
@@ -22953,9 +23019,9 @@ void Update_Move_Map_City_Area_Restrictions(int16_t battle_unit_idx)
     // defender or attacker?
     if(Battle_Unit_Is_Within_City(battle_unit_idx))
     {
-        for (i = 0; i < COMBAT_GRID_CITY_AREA_WIDTH; i++)
+        for(i = 0; i < COMBAT_GRID_CITY_AREA_WIDTH; i++)
         {
-            for (j = 0; j < COMBAT_GRID_CITY_AREA_HEIGHT; j++)
+            for(j = 0; j < COMBAT_GRID_CITY_AREA_HEIGHT; j++)
             {
                 // ¿ don't set city walls gate as impassible, unless there is a Flying Fortress ?
                 if(
@@ -23016,9 +23082,9 @@ void Update_Move_Map_City_Area_Restrictions(int16_t battle_unit_idx)
     else
     {
         // sets city perimeter as impassible, except maybe the city walls gate, if there's not a flying fortress
-        for (i = 0; i < COMBAT_GRID_CITY_AREA_WIDTH; i++)
+        for(i = 0; i < COMBAT_GRID_CITY_AREA_WIDTH; i++)
         {
-            for (j = 0; j < COMBAT_GRID_CITY_AREA_HEIGHT; j++)
+            for(j = 0; j < COMBAT_GRID_CITY_AREA_HEIGHT; j++)
             {
                 // ¿ don't set city walls gate as impassible, unless there is a Flying Fortress ?
                 if(
@@ -24153,7 +24219,7 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
         }
 
         /* Loot buildings (10% of cost) */
-        for (itr = 3; itr < 36; itr++)
+        for(itr = 3; itr < 36; itr++)
         {
             /* bs_NotBuilt is -1, Replaced 0, Built 1, Removed 2 */
             if(_CITIES[_combat_environ_idx].bldg_status[itr] > bs_NotBuilt)
@@ -24177,7 +24243,7 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
         if((_unit_type_table[unit_type].Abilities & UA_FANTASTIC) != 0)
         {
             /* Populate battle unit data for the rampage */
-            for (itr = 0; itr < troop_count; itr++)
+            for(itr = 0; itr < troop_count; itr++)
             {
                 battle_units[itr].controller_idx = NEUTRAL_PLAYER_IDX;
                 battle_units[itr].status = bus_Active;
@@ -24189,7 +24255,7 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
             _active_battle_unit = Rampage_Combat_City();
 
             /* Rampaging stack dies after the assault */
-            for (itr = 0; itr < troop_count; itr++)
+            for(itr = 0; itr < troop_count; itr++)
             {
                 Kill_Unit(troops[itr], 0);
             }
@@ -24268,7 +24334,7 @@ int16_t Retreat_Check(int16_t player_idx)
         return ST_FALSE;
     }
 
-    for (i = 0; i < _combat_total_unit_count; i++)
+    for(i = 0; i < _combat_total_unit_count; i++)
     {
         b_unit_ptr = &battle_units[i];
 
@@ -24378,7 +24444,7 @@ int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
     /* BUG? This counts units regardless of owner */
     {
         total_surviving = 0;
-        for (i = 0; i < _combat_total_unit_count; i++)
+        for(i = 0; i < _combat_total_unit_count; i++)
         {
             if(battle_units[i].status == bus_Active)
             {
@@ -24398,7 +24464,7 @@ int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
     own_units_on_landmass = 0;
     city_owner_units_on_landmass = 0;
 
-    for (i = 0; i < _units; i++)
+    for(i = 0; i < _units; i++)
     {
         if(_landmasses[(_UNITS[i].wp * WORLD_WIDTH) + (_UNITS[i].wy * WORLD_WIDTH) + _UNITS[i].wx] == city_landmass)
         {
@@ -24583,10 +24649,10 @@ int16_t AI_SelectCmbtSpell(int16_t caster_id)
 {
     int16_t spell_list[92];       /* Spell_List  [bp-0C2h..bp-0Ah] */
     int16_t threat_idx = 0;       /* Threat */
-    int16_t player_idx = 0;       /* Player_Index */
+    int16_t player_idx = 0;       /* player_idx */
     int16_t list_idx = 0;         /* List_Index */
     int16_t chosen_spell = 0;     /* Chosen_Spell */
-    int16_t highest_value = 0;    /* Highest_Value */
+    int16_t highest_value = 0;    /* highest_value */
     int16_t caster = 0;           /* _SI_ */
     int16_t spell_value = 0;      /* _DI_  also reused for the cost multiplier */
 
@@ -25980,7 +26046,7 @@ void AI_CombatSpellList(int16_t caster_id, int16_t * spell_list, int16_t range_m
     int16_t spell_cost = 0;       /* Spell_Cost */
     int16_t in_realm_idx = 0;     /* InRealm_Index */
     int16_t realm_idx = 0;        /* Realm_Index */
-    int16_t player_idx = 0;       /* Player_Index */
+    int16_t player_idx = 0;       /* player_idx */
     int16_t caster = 0;           /* _DI_ */
     int16_t spell_idx = 0;        /* _SI_ */
 
@@ -28666,9 +28732,9 @@ void Generate_Combat_Map(
 
     battlefield->house_cnt = 0;
 
-    for (j = 0; j <= 3; j++)
+    for(j = 0; j <= 3; j++)
     {
-        for (i = 0; i <= 3; i++)
+        for(i = 0; i <= 3; i++)
         {
             battlefield->walls[j][i] = 0;
         }
@@ -28696,9 +28762,9 @@ void Generate_Combat_Map(
             if(city_population >= 12)
             {
                 house_ctr = 0;
-                for (j = 0; j <= 3; j++)
+                for(j = 0; j <= 3; j++)
                 {
-                    for (i = 0; i <= 3; i++)
+                    for(i = 0; i <= 3; i++)
                     {
                         /* Logic to exclude corners if city walls exist */
                         /* should be ~ if not corner or not walls */
@@ -28742,7 +28808,7 @@ void Generate_Combat_Map(
                         }
                     }
 
-                    for (house_ctr = 0; house_ctr < battlefield->house_cnt; house_ctr++)
+                    for(house_ctr = 0; house_ctr < battlefield->house_cnt; house_ctr++)
                     {
                         if(battlefield->house_cgxs[house_ctr] == i && battlefield->house_cgys[house_ctr] == j)
                         {
@@ -28763,9 +28829,9 @@ void Generate_Combat_Map(
             battlefield->walled = city_walls;
             if(city_walls == ST_TRUE)
             {
-                for (j = 0; j <= 3; j++)
+                for(j = 0; j <= 3; j++)
                 {
-                    for (i = 0; i <= 3; i++)
+                    for(i = 0; i <= 3; i++)
                     {
                         battlefield->walls[j][i] = 1;
                     }
@@ -28785,9 +28851,9 @@ void Generate_Combat_Map(
             if(city_population >= 11)  /* 12 - 1, for fortress cell */
             {
                 house_ctr = 0;
-                for (j = 0; j <= 3; j++)
+                for(j = 0; j <= 3; j++)
                 {
-                    for (i = 0; i <= 3; i++)
+                    for(i = 0; i <= 3; i++)
                     {
                         /* Exclude corners if walls, and center square (1,1) for the fortress */
                         /* should be ~ if not corner or not walls */
@@ -28828,7 +28894,7 @@ void Generate_Combat_Map(
                         }
                     }
 
-                    for (house_ctr = 0; house_ctr < battlefield->house_cnt; house_ctr++)
+                    for(house_ctr = 0; house_ctr < battlefield->house_cnt; house_ctr++)
                     {
                         if(battlefield->house_cgxs[house_ctr] == i && battlefield->house_cgys[house_ctr] == j)
                         {
@@ -28849,9 +28915,9 @@ void Generate_Combat_Map(
             battlefield->walled = city_walls;
             if(city_walls == ST_TRUE)
             {
-                for (j = 0; j <= 3; j++)
+                for(j = 0; j <= 3; j++)
                 {
-                    for (i = 0; i <= 3; i++)
+                    for(i = 0; i <= 3; i++)
                     {
                         battlefield->walls[j][i] = 1;
                     }

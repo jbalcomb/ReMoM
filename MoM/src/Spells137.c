@@ -299,7 +299,7 @@ void Summon_Animation_Load(int16_t type_or_other, int16_t player_idx)
         // ...
         // MONSTER.LBX, 043  "MONSTER4" "Nagas"
         // DEDU  WTF? (type_or_other - spell_data_table[201].Param0)?
-        spell_subject_figure_seg = LBX_Reload_Next(monster_lbx_file__ovr137, (type_or_other - spell_data_table[201].unit_type), _screen_seg);
+        spell_subject_figure_seg = LBX_Reload_Next(monster_lbx_file__ovr137, (type_or_other - spell_data_table[spl_Magic_Spirit].unit_type), _screen_seg);
     }
     else
     {

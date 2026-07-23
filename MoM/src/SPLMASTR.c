@@ -23,6 +23,7 @@ MoO2
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
 #include "../../MoX/src/MOX_TYPE.h"
+#include "../../MoX/src/paragrph.h"
 #include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/Timer.h"
 #include "../../MoX/src/random.h"
@@ -276,7 +277,6 @@ SAMB_ptr IMG_OVL_TargetWizBG;
 // WZD dseg:CA56                                                 BEGIN: ovr138 - Uninitialized Data
 
 // WZD dseg:CA56
-// drake178: m_magic_winner_idx
 /*
 ; HoF will skip turn count points if this is not -1 or
 ; the index of the human player, and SoM if it is not
@@ -290,7 +290,19 @@ SAMB_ptr spellose_wizard_sphere_seg;
 // WZD dseg:CA5A
 SAMB_ptr spellose_sphere_seg;
 
-// WZD dseg:CA5A                                                 END: ovr138 - Uninitialized Data
+// WZD dseg:CA5C
+SAMB_ptr undead_figure_seg;
+// WZD dseg:CA5E
+SAMB_ptr undead_fm_seg;
+// WZD dseg:CA60
+SAMB_ptr undead_rm_seg;
+// WZD dseg:CA62
+SAMB_ptr undead_ms_seg;
+// WZD dseg:CA64
+SAMB_ptr undead_bk_seg;
+
+// WZD dseg:CA64                                                 END: ovr138 - Uninitialized Data
+
 
 
 
@@ -2101,10 +2113,97 @@ void Spell_Of_Mastery(int16_t player_idx)
 
 
 // WZD o138p09
-// CMB_LoadUndeadAnim()
+void Undead_Animation_Load(int16_t unit_type)
+{
+    Mark_Block(_screen_seg);
+    // CMBTFX.LBX, 027  "UNDEADBK"  ""
+    undead_bk_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr138, 27, _screen_seg);
+    // CMBTFX.LBX, 029  "UNDEADMS"  ""
+    undead_ms_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr138, 29, _screen_seg);
+    // CMBTFX.LBX, 030  "UNDEADRM"  ""
+    undead_rm_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr138, 30, _screen_seg);
+    // CMBTFX.LBX, 031  "UNDEADFM"  ""
+    undead_fm_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr138, 31, _screen_seg);
+    if(unit_type > ut_Druid)
+    {
+        undead_figure_seg = LBX_Reload_Next(monster_lbx_file__ovr138, (unit_type - spell_data_table[spl_Magic_Spirit].unit_type), _screen_seg);
+    }
+    else if(unit_type == ut_Druid)
+    {
+        // MONSTER.LBX, 046  "MONSTER2" "Sword"
+        undead_figure_seg = LBX_Reload_Next(monster_lbx_file__ovr138, 46, _screen_seg);
+    }
+    else
+    {
+        // MONSTER.LBX, 047  "BLANK"    ""
+        undead_figure_seg = LBX_Reload_Next(monster_lbx_file__ovr138, 47, _screen_seg);
+    }
+}
+
 
 // WZD o138p10
-// CMB_DrawUndeadAnim()
+void Undead_Animation_Draw(void)
+{
+    int16_t last_rising_frame = 0;
+    int16_t start_x = 0;
+    int16_t y_start = 0;
+    start_x = 70;
+    y_start = 14;
+    last_rising_frame = 40;
+    Copy_Back_To_Off();
+    FLIC_Draw(start_x, y_start, undead_bk_seg);
+    Set_Window(0, 0, 319, y_start + 109);
+    if(_osc_anim_ctr < last_rising_frame)
+    {
+        Clipped_Draw(start_x, y_start + 17 - (_osc_anim_ctr * 17) / last_rising_frame, undead_rm_seg);
+        Clipped_Draw(start_x, y_start + 40 - (_osc_anim_ctr * 40) / last_rising_frame, undead_fm_seg);
+        FLIC_Draw(start_x, y_start, undead_ms_seg);
+        Clipped_Draw(start_x + 78, y_start + 110 - (_osc_anim_ctr * 80) / last_rising_frame, undead_figure_seg);
+    }
+    else
+    {
+        FLIC_Draw(start_x, y_start, undead_rm_seg);
+        FLIC_Draw(start_x, y_start, undead_fm_seg);
+        FLIC_Draw(start_x + 78, y_start + 30, undead_figure_seg);
+    }
+    Reset_Window();
+    Set_Outline_Color(16);
+    Set_Font_Style_Shadow_Down(4, 4, 0, 0);
+    Set_Alias_Color(190);
+    Print_Paragraph(start_x + 7, y_start + 114, 165, GUI_NearMsgString, 2);
+}
+
 
 // WZD o138p11
-// CMB_CreateUndeadAnim()
+void Undead_Animation(int16_t unit_type)
+{
+    int16_t input_field_idx = 0;
+    int16_t fullscreen_ESC_field = 0;
+    int16_t leave_screen = 0;
+    Undead_Animation_Load(unit_type);
+    _osc_anim_ctr = 0;
+    Assign_Auto_Function(Undead_Animation_Draw, 2);
+    Clear_Fields();
+    fullscreen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr138[0], ST_UNDEFINED);
+    leave_screen = ST_FALSE;
+    _osc_anim_ctr = 0;
+    while ((_osc_anim_ctr < 100) && (leave_screen == ST_FALSE))
+    {
+        Mark_Time();
+        input_field_idx = Get_Input();
+        if(input_field_idx == fullscreen_ESC_field)
+        {
+            leave_screen = ST_TRUE;
+        }
+        if(leave_screen == ST_FALSE)
+        {
+            Set_Page_Off();
+            Undead_Animation_Draw();
+            PageFlip_FX();
+        }
+        Release_Time(2);
+        _osc_anim_ctr++;
+    }
+    Release_Block(_screen_seg);
+}
+

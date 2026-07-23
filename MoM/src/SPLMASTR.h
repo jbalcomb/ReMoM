@@ -113,13 +113,13 @@ void Cast_Spell_Of_Mastery(int16_t player_idx);
 void Spell_Of_Mastery(int16_t player_idx);
 
 // WZD o138p09
-// CMB_LoadUndeadAnim()
+void Undead_Animation_Load(int16_t unit_type);
 
 // WZD o138p10
-// CMB_DrawUndeadAnim()
+void Undead_Animation_Draw(void);
 
 // WZD o138p11
-// CMB_CreateUndeadAnim()
+void Undead_Animation(int16_t unit_type);
 
 
 

@@ -83,6 +83,7 @@
 - [ ] City_Screen_Draw__WIP
 
 ## Combat
+- [x] Find_Undead_Creator_Type — was CMB_GetUndeadCreator; done-done 2026-07-23 (Combat.c:22225; faithful 1:1, builds clean; B1 cross-player hero-slot index preserved — see doc/#CodeReview/SPLMASTR-Undead_Animation.md)
 - [ ] AI_BU_AssignAction — renamed from AI_BU_AssignAction__WIP; impl (CMBTAI.c:968), needs done-done review (name verified 2026-07-21)
 - [x] AI_BU_GetAttackValue__STUB
 - [ ] AI_BU_ProcessAction — renamed from AI_BU_ProcessAction__WIP; impl (CMBTAI.c:268), needs done-done review (name verified 2026-07-21)
@@ -378,6 +379,9 @@
 - [x] Spell_Of_Mastery_Load
 - [x] Spell_Of_Mastery_Draw
 - [x] Spell_Of_Mastery
+- [x] Undead_Animation — was CMB_CreateUndeadAnim; done-done 2026-07-23 (walkthrough doc/#CodeReview/SPLMASTR-Undead_Animation.md; faithful 1:1, builds clean)
+- [x] Undead_Animation_Draw — was CMB_DrawUndeadAnim; done-done 2026-07-23
+- [x] Undead_Animation_Load — was CMB_LoadUndeadAnim; done-done 2026-07-23 (segment globals declared+renamed; uy_BeastSwordsmen resolved to MONSTER.LBX 47)
 - [ ] Spell_Target_Global_Enchantment_Bind__WIP
 - [ ] Spell_Target_Global_Enchantment_Disjunct__WIP
 
