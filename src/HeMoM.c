@@ -14,7 +14,7 @@
  *
  * HeMoM is hardwired to the headless platform library — no display, no
  * audio, no external dependencies — regardless of which windowed backend
- * the build's preset chose for ReMoMber.
+ * the build's preset chose for ReMoM.
  */
 
 #ifdef _WIN32
@@ -747,7 +747,7 @@ static void Config_Apply_And_Create_New_Game(struct s_HeMoM_Config *cfg)
         /* Mirror the keyboard popup: typed chars overwrite the random pre-fill
            byte-by-byte, Enter places one '\0' at the cursor, bytes past the
            cursor keep whatever Random_City_Name_By_Race wrote.  stu_strncpy
-           would zero-pad the tail and diverge from ReMoMber's SAVE bytes. */
+           would zero-pad the tail and diverge from ReMoM's SAVE bytes. */
         int i;
         for(i = 0; (i < LEN_CITY_NAME - 1) && (cfg->home_city_name[i] != '\0'); i++)
         {
@@ -1255,7 +1255,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    /* Initialize engine (shared with ReMoMber) */
+    /* Initialize engine (shared with ReMoM) */
     LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Initializing engine...");
     ReMoM_Init_Engine();
 

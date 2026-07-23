@@ -5,7 +5,7 @@
 # game to slot 1 with a timestamped name.
 #
 # Usage:
-#   ReMoMber --continue --scenario test_continue_save.hms
+#   ReMoM --continue --scenario test_continue_save.hms
 #   HeMoM    --continue --scenario test_continue_save.hms
 #
 # Notes:

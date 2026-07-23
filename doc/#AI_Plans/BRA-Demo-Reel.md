@@ -89,7 +89,7 @@ default face; Sss'ra or Horus show the portrait art better. Deferred to the huma
 
 ---
 
-## 4. DECIDED — `ReMoMber --load <SAVE.GAM>` (implemented)
+## 4. DECIDED — `ReMoM --load <SAVE.GAM>` (implemented)
 
 Scenes 3, 4, 5 and 7 each need a specific starting state. Without a load flag every scene had to
 click through the Load Game menu first — the same fragile ~5-second prefix on four scenes, coupled to
@@ -193,7 +193,7 @@ from the **Release** binary an end user downloads (§2.1, "same build a player g
 `STU_DEBUG` gate would mean the setup never runs in the build being filmed.
 
 The real resolution: **the capability ships and is inert by default.** `g_tst_patch_scenario` is
-`NULL` unless ReMoMber's `--patch <name>` names a scenario; with no flag the function returns having
+`NULL` unless ReMoM's `--patch <name>` names a scenario; with no flag the function returns having
 touched nothing. This is exactly how `--capture`, `--load`, `--record`, `--replay` and `--scenario`
 already behave — all present in Release, all doing nothing unless invoked.
 

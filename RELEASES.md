@@ -1,7 +1,7 @@
 # Releasing ReMoM
 
 This is the runbook for cutting a public release. Releases are **engine-only** —
-we ship the `ReMoMber` player executable and the bits needed to run it; the
+we ship the `ReMoM` player executable and the bits needed to run it; the
 player supplies their own original Master of Magic data files.
 
 > Scope note: this document covers the **technical** release process only. Any
@@ -40,7 +40,7 @@ you want to publish one.
 
 ## What ships (per platform)
 
-All artifacts are **engine-only**: just `ReMoMber` and `PLAYING.md`. **No** game
+All artifacts are **engine-only**: just `ReMoM` and `PLAYING.md`. **No** game
 data, save games, test fixtures, or config templates are included. (Power-user
 config such as the `ReMoM.ini` `--newgame` template is intentionally deferred —
 see [Future phase — Dev / Modder tooling](#future-phase--dev--modder-tooling).)
@@ -75,7 +75,7 @@ The NSIS installer is a **per-user install and never prompts for UAC**:
   only ever read — never modified or moved — and **we still ship no game data**; the
   download stays engine-only. This makes the install self-contained, so it keeps working
   if the player later moves or uninstalls their GOG/Steam copy. If the folder isn't
-  found, the player can continue and set it up later; `ReMoMber` fails soft.
+  found, the player can continue and set it up later; `ReMoM` fails soft.
 - Uninstalling removes the copied game data along with the binaries, and leaves
   `%APPDATA%\ReMoM` — which holds the player's **save games** — strictly alone.
 
@@ -90,14 +90,14 @@ is still in effect on every push/PR.
 What the **player must supply** (documented in `PLAYING.md`): every `.LBX` file
 plus `CONFIG.MOM` from an original Master of Magic v1.31 (DOS) installation,
 copied next to the executable — or pointed at via the `REMOM_DATA_DIR` environment
-variable. If the data is missing, `ReMoMber` does **not** crash: it shows a dialog
+variable. If the data is missing, `ReMoM` does **not** crash: it shows a dialog
 naming the missing files and where to put them.
 
 ### The Linux `.deb` — what it is and isn't
 
 Built by the `deb` job from the **`linux-package-release`** preset, which is a
 *separate configure* from `clang-release`: the portable archives need the flat
-layout (`CMAKE_INSTALL_BINDIR=.`, `ReMoMber` at the archive root) while a `.deb`
+layout (`CMAKE_INSTALL_BINDIR=.`, `ReMoM` at the archive root) while a `.deb`
 needs FHS (`bin/`, `share/`). One build directory cannot serve both — that
 mismatch is what previously left a stale `CMAKE_INSTALL_BINDIR=.` in a cache and
 sent a local `cmake --install` to the wrong place. Hence two build dirs.
@@ -105,14 +105,14 @@ sent a local `cmake --install` to the wrong place. Hence two build dirs.
 Contents are asserted in CI (`Verify package contents and metadata`) as exactly:
 
 ```
-/usr/bin/ReMoMber                                 (stripped)
+/usr/bin/ReMoM                                 (stripped)
 /usr/share/applications/remom.desktop
 /usr/share/doc/remom/PLAYING.md
 /usr/share/doc/remom/changelog.gz
 /usr/share/doc/remom/copyright
 /usr/share/icons/hicolor/256x256/apps/remom.png
 /usr/share/lintian/overrides/remom
-/usr/share/man/man6/ReMoMber.6.gz
+/usr/share/man/man6/ReMoM.6.gz
 ```
 
 `Depends:` is **derived** by `dpkg-shlibdeps` from the built ELF, never typed —
@@ -147,7 +147,7 @@ Known limitations carried intentionally (follow-ups, not blockers):
   revisited:** accommodate in the macOS link only (`-Wl,-no_fixup_chains` /
   `-ld_classic`), build x86-64 (`runs-on: macos-13`), or leave macOS out. When
   re-enabled, note the binary is unsigned/un-notarized — first launch hits
-  Gatekeeper; clear it with `xattr -dr com.apple.quarantine ReMoMber`.
+  Gatekeeper; clear it with `xattr -dr com.apple.quarantine ReMoM`.
 
 ---
 

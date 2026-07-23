@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-parity_check.py — Cross-check that ReMoMber and HeMoM produce identical
+parity_check.py — Cross-check that ReMoM and HeMoM produce identical
 behavior and data for a given (config, seed, .RMR) tuple.
 
 The goal is to *prove* they match — not merely claim it. Every comparison
@@ -20,7 +20,7 @@ overwritten on each run.  Nothing is committed.
 
 Phases:
     1. Collect : build both binaries; run HeMoM --newgame; run
-                 ReMoMber --replay (headless); gather artifacts.
+                 ReMoM --replay (headless); gather artifacts.
     2. Compare : a battery of comparators (RNG stream, save files,
                  MAGIC.SET, save-dump text, state-summary anchors).
     3. Report  : per-section PASS/FAIL with evidence; overall verdict.
@@ -76,7 +76,7 @@ def make_layout(preset: str) -> BuildLayout:
     bin_dir = build_dir / "bin" / "Debug"
     # Linux clang preset has bare names; MSVC has .exe.
     hemom_candidates = [bin_dir / "HeMoM", bin_dir / "HeMoM.exe"]
-    remom_candidates = [bin_dir / "ReMoMber", bin_dir / "ReMoMber.exe"]
+    remom_candidates = [bin_dir / "ReMoM", bin_dir / "ReMoM.exe"]
     # Choose the one that exists, or the first as a build target stub.
     hemom_exe = next((p for p in hemom_candidates if p.exists()), hemom_candidates[0])
     remom_exe = next((p for p in remom_candidates if p.exists()), remom_candidates[0])
@@ -235,7 +235,7 @@ def print_overall(results: list[ComparatorResult]) -> int:
 HEMOM_PRODUCED = ["SAVE2.GAM", "SAVE9.txt", "MAGIC.SET"]
 REMOM_PRODUCED = ["SAVE2.GAM", "MAGIC.SET"]
 # SAVE9.GAM is intentionally NOT compared: HeMoM writes it mid-flow (end of
-# MAGIC.EXE equivalent), ReMoMber's auto-save overwrites it post-PreInit_Overland.
+# MAGIC.EXE equivalent), ReMoM's auto-save overwrites it post-PreInit_Overland.
 # OG has no way to snapshot at the same moment on both sides, so the file is
 # structurally incomparable. SAVE2.GAM (the named slot save written by both
 # binaries after Loaded_Game_Update) is the parity probe.
@@ -370,12 +370,12 @@ def run_hemom(layout: BuildLayout, config: Path, seed: int,
 
 def run_remom(layout: BuildLayout, seed: int,
               hms: Optional[Path] = None, rmr: Optional[Path] = None) -> dict[str, Path]:
-    """Launch ReMoMber via lib_run (HMS by default, RMR if given), then snapshot."""
+    """Launch ReMoM via lib_run (HMS by default, RMR if given), then snapshot."""
     print()
     drv_label = "--scenario HMS" if hms else "--replay RMR"
-    print(f"  Run ReMoMber {drv_label} (headless)")
+    print(f"  Run ReMoM {drv_label} (headless)")
     if hms is None and rmr is None:
-        raise Phase1Error("run_remom needs hms= or rmr= to drive ReMoMber non-interactively")
+        raise Phase1Error("run_remom needs hms= or rmr= to drive ReMoM non-interactively")
     if hms is not None and not hms.exists():
         raise Phase1Error(f"HMS file not found: {hms}")
     if rmr is not None and not rmr.exists():
@@ -383,7 +383,7 @@ def run_remom(layout: BuildLayout, seed: int,
     clean_workspace(layout.bin_dir)
     layout.remom_out.mkdir(parents=True, exist_ok=True)
 
-    result = lib_run.run_remomber(
+    result = lib_run.run_remom(
         seed=seed,
         hms=hms,
         rmr=rmr,
@@ -391,18 +391,18 @@ def run_remom(layout: BuildLayout, seed: int,
         stderr_path=layout.bin_dir / "stderr.log",
         save_slot=1,            # matchup writes to SAVE2.GAM
     )
-    # ReMoMber exit code on driver-quit can be non-zero for benign reasons.
+    # ReMoM exit code on driver-quit can be non-zero for benign reasons.
     # Rely on artifact presence below to decide if the run was usable.
     if result.exit_status != 0:
-        print(f"    ReMoMber exited {result.exit_status} "
+        print(f"    ReMoM exited {result.exit_status} "
               f"(often benign on driver quit; checking artifacts)")
     if not result.stderr_path.exists():
-        raise Phase1Error(f"ReMoMber produced no stderr.log at {result.stderr_path}")
+        raise Phase1Error(f"ReMoM produced no stderr.log at {result.stderr_path}")
     shutil.copy2(str(result.stderr_path), str(layout.remom_out / "stderr.log"))
     moved = collect_artifacts(layout.bin_dir, layout.remom_out, REMOM_PRODUCED,
                               since_ts=result.t_start)
     if not (layout.remom_out / "SAVE2.GAM").exists():
-        raise Phase1Error("ReMoMber did not produce SAVE2.GAM — driver may be incompatible")
+        raise Phase1Error("ReMoM did not produce SAVE2.GAM — driver may be incompatible")
     rng_log = layout.remom_out / "rng.log"
     total, rng = filter_rng_log(layout.remom_out / "stderr.log", rng_log)
     print(f"    artifacts in {relpath(layout.remom_out)}/: "
@@ -419,14 +419,14 @@ def phase1_collect(args: argparse.Namespace, layout: BuildLayout) -> tuple[dict[
     layout.analysis_dir.mkdir(parents=True, exist_ok=True)
     if not args.skip_build:
         cmake_build("HeMoM", layout)
-        cmake_build("ReMoMber", layout)
+        cmake_build("ReMoM", layout)
     else:
         print("  (--skip-build)")
 
     # BEFORE HeMoM runs and overwrites bin/Debug, snapshot any ReMoM-side
-    # artifacts left there by a manual ReMoMber run into analysis/remom/.
-    # This is for the workflow: user runs ReMoMber manually, then runs this
-    # tool — without this step, HeMoM would clobber the user's ReMoMber output.
+    # artifacts left there by a manual ReMoM run into analysis/remom/.
+    # This is for the workflow: user runs ReMoM manually, then runs this
+    # tool — without this step, HeMoM would clobber the user's ReMoM output.
     _snapshot_remom_if_newer(layout)
 
     if args.skip_hemom:
@@ -444,12 +444,12 @@ def phase1_collect(args: argparse.Namespace, layout: BuildLayout) -> tuple[dict[
         try:
             remom_artifacts = run_remom(layout, args.seed, hms=hms, rmr=rmr)
         except Phase1Error as e:
-            print(f"    {YELLOW}headless ReMoMber failed: {e}{RESET}")
+            print(f"    {YELLOW}headless ReMoM failed: {e}{RESET}")
             print(f"    falling back to whatever is already in {relpath(layout.remom_out)}/")
             remom_artifacts = _scan_existing(layout.remom_out)
     else:
         print()
-        print("  (default mode — using pre-captured ReMoMber artifacts; pass --run-remom to try headless)")
+        print("  (default mode — using pre-captured ReMoM artifacts; pass --run-remom to try headless)")
         remom_artifacts = _scan_existing(layout.remom_out)
 
     # stderr is the minimum — the RNG trace lives there and is foundational.
@@ -457,7 +457,7 @@ def phase1_collect(args: argparse.Namespace, layout: BuildLayout) -> tuple[dict[
     # with a clear note, and Phase 3 surfaces the SKIPs in the report).
     if "stderr.log" not in remom_artifacts:
         raise Phase1Error(
-            f"ReMoMber stderr.log missing in {relpath(layout.remom_out)}/.\n"
+            f"ReMoM stderr.log missing in {relpath(layout.remom_out)}/.\n"
             "  Populate by running:  ./tools/capture_remom_rng_baseline.sh "
             f"{args.seed}\n"
             "  (the capture script writes its artifacts into analysis/remom/)"
@@ -486,7 +486,7 @@ def _scan_existing(dir_path: Path) -> dict[str, Path]:
 def _snapshot_remom_if_newer(layout: BuildLayout) -> None:
     """If bin/Debug holds SAVE/MAGIC/stderr files newer than what's in analysis/remom/,
     copy them in before HeMoM runs (HeMoM overwrites bin/Debug otherwise).
-    This is the seam that catches "user ran ReMoMber manually, then ran this tool"."""
+    This is the seam that catches "user ran ReMoM manually, then ran this tool"."""
     bin_files = ["SAVE2.GAM", "MAGIC.SET", "stderr.log",
                  "remom_log_current.txt", "remom_log_new.txt"]
     refreshed: list[str] = []
@@ -673,7 +673,7 @@ SAVE_GAM_TOTAL = 123300  # LEN_SAVE_GAM_FILE
 # _HEROES2[] is allocated with malloc() (MoX/src/Allocate.c:341), not calloc(), so
 # the skipped slots contain whatever was on the heap. Those bytes are uninitialized
 # in BOTH binaries — Init_Heroes itself is deterministic (LOG_TRACE output is
-# byte-for-byte identical between ReMoMber and HeMoM at seed=12345), so byte-equality
+# byte-for-byte identical between ReMoM and HeMoM at seed=12345), so byte-equality
 # on SAVE9/SAVE2 cannot be reached without changing the game's allocator.
 #
 # We mask (zero) the heap-garbage slots before md5/diff so the comparison reflects
@@ -1330,7 +1330,7 @@ def state_summary(hemom_save: Path, hemom_magic: Path,
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description="Prove ReMoMber and HeMoM produce identical behavior and data.",
+        description="Prove ReMoM and HeMoM produce identical behavior and data.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
@@ -1339,17 +1339,17 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--seed", type=int, default=12345,
                    help="Deterministic seed (default: 12345)")
     p.add_argument("--hms", default=str(ASSETS_DIR / "matchup_hemom.hms"),
-                   help="HMS scenario for ReMoMber --scenario (default: assets/matchup_hemom.hms)")
+                   help="HMS scenario for ReMoM --scenario (default: assets/matchup_hemom.hms)")
     p.add_argument("--rmr", default=None,
-                   help="RMR recorded-input for ReMoMber --replay "
+                   help="RMR recorded-input for ReMoM --replay "
                         "(if set, overrides --hms)")
     p.add_argument("--preset", default=None,
                    help="CMake preset (auto-detected: clang-debug on Linux, MSVC-headless-debug on Windows)")
     p.add_argument("--skip-build", action="store_true",
                    help="Skip cmake --build; use existing binaries")
     p.add_argument("--run-remom", action="store_true",
-                   help="Launch ReMoMber headlessly via --scenario --hms (or --replay --rmr); "
-                        "default is to use the most recent ReMoMber output already in bin/Debug/.")
+                   help="Launch ReMoM headlessly via --scenario --hms (or --replay --rmr); "
+                        "default is to use the most recent ReMoM output already in bin/Debug/.")
     p.add_argument("--skip-hemom", action="store_true",
                    help="Skip running HeMoM; reuse existing analysis/hemom/ artifacts")
     return p.parse_args()
@@ -1360,7 +1360,7 @@ def main() -> int:
     preset = pick_preset(args.preset)
     layout = make_layout(preset)
 
-    print_section_header("Parity Check: HeMoM vs ReMoMber")
+    print_section_header("Parity Check: HeMoM vs ReMoM")
     print(f"  preset = {preset}")
     print(f"  config = {relpath(Path(args.config))}")
     print(f"  seed   = {args.seed}")
@@ -1398,7 +1398,7 @@ def main() -> int:
 
     # 2d — State anchors (always INFO; surfaces the checkpoints by hand).
     # Reads from SAVE2.GAM — captured at the same moment on both binaries
-    # (after Loaded_Game_Update on the ReMoMber side, after New_Game_Continue
+    # (after Loaded_Game_Update on the ReMoM side, after New_Game_Continue
     # on the HeMoM side).
     results.append(state_summary(
         layout.hemom_out / "SAVE2.GAM",

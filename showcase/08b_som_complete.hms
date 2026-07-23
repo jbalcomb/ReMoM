@@ -1,6 +1,6 @@
 # 08b_som_complete.hms -- Spell of Mastery, part 2 of 2: completing the cast and winning.
 #
-#   ReMoMber.exe --load SAVETEST.GAM --patch som_casting --scenario 08b_som_complete.hms
+#   ReMoM.exe --load SAVETEST.GAM --patch som_casting --scenario 08b_som_complete.hms
 #
 # Part 1 (08a) films the human BEGINNING the cast.  This films it COMPLETING and the endgame
 # playing out.  The ~28 turns of accumulation between them are not filmed -- editing, not

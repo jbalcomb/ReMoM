@@ -1,9 +1,9 @@
 
 # =========================================================================
-#  ReMoMber — windowed Master of Magic.
+#  ReMoM — windowed Master of Magic.
 # =========================================================================
 
-add_executable(ReMoMber ReMoM.c ReMoM_Init.c Artificial_Human_Player.c)
+add_executable(ReMoM ReMoM.c ReMoM_Init.c Artificial_Human_Player.c)
 
 add_custom_target(run_pre_build_task
     COMMAND ${CMAKE_COMMAND} -E echo "Running pre-build task..."
@@ -11,19 +11,19 @@ add_custom_target(run_pre_build_task
     COMMENT "Updating timestamp file in binary directory"
     VERBATIM
 )
-add_dependencies(ReMoMber run_pre_build_task)
+add_dependencies(ReMoM run_pre_build_task)
 
-set_target_properties(ReMoMber PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(ReMoM PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # Export dynamic symbols so STU_BRAK's POSIX backtrace prints function names
 # instead of raw hex.  On GCC/Clang this is `-rdynamic`; on MSVC it is a no-op
 # (dbghelp resolves symbols via the .pdb).  See doc/#Devel/Devel-Crash-Reports.md.
-set_target_properties(ReMoMber PROPERTIES ENABLE_EXPORTS ON)
+set_target_properties(ReMoM PROPERTIES ENABLE_EXPORTS ON)
 
 if(USE_WIN32)
-    target_compile_definitions(ReMoMber PUBLIC _STU_WIN)
+    target_compile_definitions(ReMoM PUBLIC _STU_WIN)
 elseif(USE_SDL3)
-    target_compile_definitions(ReMoMber PUBLIC USE_SDL3)
+    target_compile_definitions(ReMoM PUBLIC USE_SDL3)
 endif()
 
 if(USE_WIN32)
@@ -34,7 +34,7 @@ else()
     set(_sdl_main_lib SDL2::SDL2)
 endif()
 
-target_link_libraries(ReMoMber PUBLIC
+target_link_libraries(ReMoM PUBLIC
     momlib
     MOX
     STU
@@ -42,13 +42,13 @@ target_link_libraries(ReMoMber PUBLIC
     ${_sdl_main_lib}
 )
 
-target_include_directories(ReMoMber PUBLIC
+target_include_directories(ReMoM PUBLIC
     ${PROJECT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/src
 )
 
-set_target_properties(ReMoMber PROPERTIES
-    VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:ReMoMber>"
+set_target_properties(ReMoM PROPERTIES
+    VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:ReMoM>"
 )
 # Asset staging is handled once at the project level (see top-level CMakeLists.txt).
 
@@ -57,7 +57,7 @@ set_target_properties(ReMoMber PROPERTIES
 # =========================================================================
 #  HeMoM — Headless Master of Magic.
 #  Always built, always headless.  Links Platform_Headless directly so it
-#  is not affected by which windowed backend the preset chose for ReMoMber.
+#  is not affected by which windowed backend the preset chose for ReMoM.
 # =========================================================================
 
 add_executable(HeMoM HeMoM.c ReMoM_Init.c Artificial_Human_Player.c Game_Save_Dump.c)
@@ -65,7 +65,7 @@ add_executable(HeMoM HeMoM.c ReMoM_Init.c Artificial_Human_Player.c Game_Save_Du
 set_target_properties(HeMoM PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # Export dynamic symbols so STU_BRAK's POSIX backtrace prints function names
-# instead of raw hex.  See ReMoMber above and doc/#Devel/Devel-Crash-Reports.md.
+# instead of raw hex.  See ReMoM above and doc/#Devel/Devel-Crash-Reports.md.
 set_target_properties(HeMoM PROPERTIES ENABLE_EXPORTS ON)
 
 target_link_libraries(HeMoM PUBLIC

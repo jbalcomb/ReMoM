@@ -32,7 +32,7 @@ ReMoM already ships two Linux artifacts, and neither is a system package.
 |---|---|
 | Linux CPack generators are archive-only | [`CMakeLists.txt:326`](../../CMakeLists.txt#L326) — `set(CPACK_GENERATOR "ZIP;TGZ")` |
 | The AppImage bundles SDL2 rather than depending on it | [`release.yml:158`](../../.github/workflows/release.yml#L158) — `linuxdeploy … --output appimage` |
-| The install set is already engine-only and correct | [`CMakeLists.txt:286`](../../CMakeLists.txt#L286) — `install(TARGETS ReMoMber)` only |
+| The install set is already engine-only and correct | [`CMakeLists.txt:286`](../../CMakeLists.txt#L286) — `install(TARGETS ReMoM)` only |
 | `GNUInstallDirs` is already included, so `bin/` is already the default | [`CMakeLists.txt:285`](../../CMakeLists.txt#L285) |
 | The release build deliberately flattens that | `release.yml` passes `-DCMAKE_INSTALL_BINDIR=.` for the portable ZIP layout |
 | The `.desktop` entry and icon exist only as heredoc/base64 inside CI | [`release.yml:135`](../../.github/workflows/release.yml#L135), and a base64 placeholder PNG at `release.yml:151` |

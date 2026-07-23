@@ -1,6 +1,6 @@
 # 06_summon.hms -- Reel scene 6: casting a summon spell -> the summoning animation.
 #
-#   ReMoMber.exe --load SAVETEST.GAM --patch som_ready --scenario 06_summon.hms
+#   ReMoM.exe --load SAVETEST.GAM --patch som_ready --scenario 06_summon.hms
 #
 # Same real spellbook-cast flow as 08a, pointed at a Summoning spell instead of Spell of Mastery:
 # open the book (page 1 is Summoning), click a summon, and the game plays Summon_Animation -- the

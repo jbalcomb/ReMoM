@@ -32,9 +32,9 @@ cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug && ./rmr2hms.exe next_turn.
 
 e.g.,
 cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug
-ReMoMber.exe --record my_recording.rmr
+ReMoM.exe --record my_recording.rmr
 ...record some sequence of mouse moves, button clicks, keyboard presses
-ReMoMber.exe --replay my_recording.rmr
+ReMoM.exe --replay my_recording.rmr
 ...watch a playback of the recorded sequence
 
 Use `--newgame my_newgame.ini` to automatically create a 'New Game', saved as the 'Continue' save
@@ -56,18 +56,18 @@ cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug &&
 
 Auto-Generate 'New Game', Launch 'Continue', handle 'Name Home City'
 
-C:\STU\devel\ReMoM\out\build\MSVC-debug\bin\Debug\ReMoMber.exe
+C:\STU\devel\ReMoM\out\build\MSVC-debug\bin\Debug\ReMoM.exe
 
 cd C:\STU\devel\ReMoM\out\build\MSVC-debug\bin\Debug\
 .\HeMoM.exe --newgame C:\STU\devel\ReMoM\assets\test_gameplay.ini
-.\ReMoMber.exe --continue
+.\ReMoM.exe --continue
 
 
 
 c:/STU/devel/ReMoM/assets/
 c:/STU/devel/ReMoM/out/build/MSVC-debug/
 c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/
-C:\STU\devel\ReMoM\IDE\VS2022-SDL2\ReMoMber
+C:\STU\devel\ReMoM\IDE\VS2022-SDL2\ReMoM
 
 ...CMake copies c:/STU/devel/ReMoM/assets/ to c:/STU/devel/ReMoM/out/build/MSVC-debug/
 ...CMake copies c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/ to c:/STU/devel/ReMoM/out/build/MSVC-debug/
@@ -81,19 +81,19 @@ copy c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/MAGIC.SET :/STU/devel/ReM
 
 cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/
 .\HeMoM.exe --newgame test_gameplay.ini
-.\ReMoMber.exe --continue --record test-gameplay.rmr
+.\ReMoM.exe --continue --record test-gameplay.rmr
 .\HeMoM.exe --newgame test_gameplay.ini
-.\ReMoMber.exe --continue --replay test-gameplay.rmr
+.\ReMoM.exe --continue --replay test-gameplay.rmr
 .\rmr2hms test-gameplay.rmr test-gameplay.hms
 .\HeMoM.exe --newgame test_gameplay.ini
-.\ReMoMber.exe --continue --scenario test-gameplay.hms
+.\ReMoM.exe --continue --scenario test-gameplay.hms
 
 cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/
 .\HeMoM.exe --newgame test_gameplay.ini
 .\HeMoM.exe --continue --scenario test-gameplay.hms
 
 cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/
-.\ReMoMber.exe --continue --scenario test-gameplay.hms --record test-gameplay2.rmr
+.\ReMoM.exe --continue --scenario test-gameplay.hms --record test-gameplay2.rmr
 
 
 
@@ -126,17 +126,17 @@ cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug/
 .\HeMoM.exe --newgame test_gameplay.ini
 copy .\SAVE9.GAM .\SAVE1.GAM
 .\savedump.exe SAVE9.GAM SAVE9_gameplay.txt
-.\ReMoMber.exe --continue --record test-gameplay.rmr
-.\ReMoMber.exe --continue --replay test-gameplay.rmr
+.\ReMoM.exe --continue --record test-gameplay.rmr
+.\ReMoM.exe --continue --replay test-gameplay.rmr
 .\rmr2hms test-gameplay.rmr test-gameplay.hms
 
 ...the continue save has now been overwritten, so we need to reload another copy...
 
 .\HeMoM.exe --newgame test_gameplay.ini
-.\ReMoMber.exe --continue --scenario test-gameplay-byhand.hms
+.\ReMoM.exe --continue --scenario test-gameplay-byhand.hms
 
 copy .\SAVE1.GAM .\SAVE9.GAM
-.\ReMoMber.exe --loadsave SAVE1.GAM --scenario test-gameplay-byhand.hms
+.\ReMoM.exe --loadsave SAVE1.GAM --scenario test-gameplay-byhand.hms
 
 
 
@@ -150,16 +150,16 @@ PS C:\STU\devel\ReMoM\out\build\MSVC-debug> ./savedump.exe SAVE9.GAM SAVE9_gamep
 savedump: wrote SAVE9_gameplay.txt
 PS C:\STU\devel\ReMoM\out\build\MSVC-debug> 
 
-.\ReMoMber.exe --continue --record test-gameplay.rmr
+.\ReMoM.exe --continue --record test-gameplay.rmr
 .\rmr2hms test-gameplay.rmr test-gameplay.hms
 
-ReMoMber.exe --replay test-gameplay.rmr
+ReMoM.exe --replay test-gameplay.rmr
 rmr2hms test-gameplay.rmr test-gameplay.hms
 
 
-#   ReMoMber --continue --scenario test_continue_save.hms
-# Used with:  ReMoMber --newgame [ReMoM.ini]
-#             ReMoMber --headless --newgame ReMoM.ini --replay game.RMR
+#   ReMoM --continue --scenario test_continue_save.hms
+# Used with:  ReMoM --newgame [ReMoM.ini]
+#             ReMoM --headless --newgame ReMoM.ini --replay game.RMR
 
 ### test_continue_.hms
 used to launch a new-game continue game-save and start from turn 0
@@ -190,7 +190,7 @@ Notes:
             OR
             cmake --preset MSVC-debug
             cmake --build out/build/MSVC-debug --config Debug
-            Builds HeMoM, ReMoMber, savedump, rmr2hms, tests — all into out/build/MSVC-debug/bin/Debug/ alongside SDL DLLs and game assets.
+            Builds HeMoM, ReMoM, savedump, rmr2hms, tests — all into out/build/MSVC-debug/bin/Debug/ alongside SDL DLLs and game assets.
         Per-scenario authoring loop:
             1. Generate deterministic baseline (in bin/Debug/):
                 ./HeMoM.exe --newgame /path/to/your.ini
@@ -198,7 +198,7 @@ Notes:
             2. Snapshot baseline dump (so you can diff later):
                 ./savedump.exe SAVE9.GAM SAVE9_baseline.txt
             3. Play interactively + record:
-                ./ReMoMber.exe --continue --record next_turn.RMR
+                ./ReMoM.exe --continue --record next_turn.RMR
                 Loads SAVE9.GAM, drops you into the game. Play your turn, hit popups, save to a slot, quit normally so the .RMR finalizes.
             4. Translate recording to a draft scenario:
                 ./rmr2hms.exe next_turn.RMR next_turn.hms
@@ -218,7 +218,7 @@ Notes:
 
 cd c:/STU/devel/ReMoM/out/build/MSVC-debug
 ./HeMoM.exe --newgame test_worldgen.ini
-./ReMoMber.exe --continue
+./ReMoM.exe --continue
 ./savedump.exe SAVE9.GAM
 ./rmr2hms.exe next_turn.RMR
 ./check_save_fields.exe SAVE9.txt assert_continue_save.txt
@@ -234,7 +234,7 @@ rmr2hms runs, prints usage
 Correction to my earlier example: the assert_*.txt files live in c:/STU/devel/ReMoM/tests/, not in the install dir. So that line should be:
 
 ./check_save_fields.exe SAVE9.txt c:/STU/devel/ReMoM/tests/assert_continue_save.txt
-I didn't run ReMoMber (it'd open a GUI window mid-conversation), but the .exe is there.
+I didn't run ReMoM (it'd open a GUI window mid-conversation), but the .exe is there.
 
 
 

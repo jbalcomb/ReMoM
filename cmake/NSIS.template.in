@@ -580,7 +580,7 @@ FunctionEnd
 
 ; Directory-page LEAVE handler.  Presence check only (FONTS.LBX), mirroring the
 ; engine's graf_dir_has_signature().  Not finding it is not fatal: the player can
-; continue and configure later -- ReMoMber fails soft with a "missing game data"
+; continue and configure later -- ReMoM fails soft with a "missing game data"
 ; dialog rather than crashing.
 Function ReMoM_ValidateGameDataDir
   StrCpy $OGMOM_VALID 0
@@ -1064,7 +1064,7 @@ inst:
   ; (admin) install, deciding via UserInfo::GetAccountType -- which is why a
   ; non-elevated run surprised us with a $DOCUMENTS default. ReMoM installs
   ; per-user with no elevation: the player drops their .LBX game data next to
-  ; ReMoMber.exe and the engine writes saves/logs there, so the install dir must
+  ; ReMoM.exe and the engine writes saves/logs there, so the install dir must
   ; be user-writable. We always land in @CPACK_NSIS_INSTALL_ROOT@ (%LOCALAPPDATA%)
   ; and keep shortcuts + the uninstall registry in the current-user hive.
   ; $INSTDIR keeps the InstallDir default here (or a /D command-line override).

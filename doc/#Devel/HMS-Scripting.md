@@ -18,7 +18,7 @@ tightened by hand.
 |---|---|---|
 | Parser + per-frame executor | [src/Artificial_Human_Player.c](../../src/Artificial_Human_Player.c) | the only `.hms` interpreter |
 | Header / public API | [src/Artificial_Human_Player.h](../../src/Artificial_Human_Player.h) | |
-| Registration (ReMoMber) | [src/ReMoM.c](../../src/ReMoM.c) (`--scenario`) | |
+| Registration (ReMoM) | [src/ReMoM.c](../../src/ReMoM.c) (`--scenario`) | |
 | Registration (HeMoM) | [src/HeMoM.c](../../src/HeMoM.c) (`--scenario`) | |
 | `.RMR` → `.hms` converter | [tools/rmr2hms.c](../../tools/rmr2hms.c) | standalone CLI |
 | Record/replay format | [platform/replay/Replay.c](../../platform/replay/Replay.c), [platform/include/Platform_Replay.h](../../platform/include/Platform_Replay.h) | text CSV, `# ReMoM Replay v2` |
@@ -27,7 +27,7 @@ tightened by hand.
 Run a scenario:
 
 ```sh
-ReMoMber.exe --scenario demo/scenes/08b_som_complete.hms
+ReMoM.exe --scenario demo/scenes/08b_som_complete.hms
 HeMoM.exe    --scenario assets/test_worldgen.hms --seed1 12345
 ```
 

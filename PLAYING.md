@@ -9,11 +9,11 @@ You need the original game data files to play.
    A GOG, Steam, or original floppy/CD install all work.
 
 2. Run the game:
-   - **Windows:** `ReMoMber.exe`
+   - **Windows:** `ReMoM.exe`
    - **Linux:** see **Which Linux download?** below — the `.deb` to install it
      properly, or the `.AppImage` to just run it.
-   - **macOS:** `./ReMoMber`. It's unsigned, so the first time clear the quarantine flag:
-     `xattr -dr com.apple.quarantine ReMoMber`.
+   - **macOS:** `./ReMoM`. It's unsigned, so the first time clear the quarantine flag:
+     `xattr -dr com.apple.quarantine ReMoM`.
 
    **ReMoM checks the usual GOG / Steam / CD install locations automatically** —
    if your Master of Magic is installed in one of those, it just works, with no
@@ -30,10 +30,10 @@ Three artifacts, in the order most people want them:
 |----------|-------------|-----|
 | `remom_<ver>_amd64.deb` | You're on Debian, Ubuntu, Mint, Pop!_OS… and want it **installed** — in your application menu, uninstallable, SDL2 handled by the package manager. | `sudo apt install ./remom_<ver>_amd64.deb` |
 | `ReMoM-<ver>-x86_64.AppImage` | Any other distro, or you'd rather not install anything. Bundles SDL2, so it runs anywhere. | `chmod +x` it, then run it |
-| `ReMoM-<ver>-Linux-*.zip` / `.tar.gz` | You want the bare binary and already have SDL2. | extract, `./ReMoMber` |
+| `ReMoM-<ver>-Linux-*.zip` / `.tar.gz` | You want the bare binary and already have SDL2. | extract, `./ReMoM` |
 
-The `.deb` puts `ReMoMber` on your `PATH`, so you can launch it from the menu or
-just type `ReMoMber`. `apt` pulls in SDL2 and SDL2_mixer for you. To remove it:
+The `.deb` puts `ReMoM` on your `PATH`, so you can launch it from the menu or
+just type `ReMoM`. `apt` pulls in SDL2 and SDL2_mixer for you. To remove it:
 
 ```sh
 sudo apt remove remom
@@ -46,7 +46,7 @@ page and install the newer `.deb` over the top when one appears.
 
 **The AppImage has a portable mode the `.deb` does not.** Put your Master of Magic
 files in the same folder as the `.AppImage` and it keeps everything — data, saves,
-settings, logs — right there in a `ReMoM/` subfolder instead of your home directory.
+settings, logs — right there in a `remom_app_dir/` subfolder instead of your home directory.
 See [Devel-Linux-AppImage.md](doc/%23Devel/Devel-Linux-AppImage.md). An installed
 `.deb` always uses the per-user folders below, which is what you want for a system
 install.
@@ -59,7 +59,7 @@ one that has the data:
 
 1. the `REMOM_DATA_DIR` environment variable,
 2. the `game_data` path in your `ReMoM.ini`,
-3. the folder next to `ReMoMber`,
+3. the folder next to `ReMoM`,
 4. the usual GOG / Steam / CD install locations (auto-detected),
 5. the current working directory.
 
@@ -68,11 +68,11 @@ Pick whichever is easiest:
 **`REMOM_DATA_DIR` — quickest.** Point it at the folder that holds your `.LBX`
 files:
 
-- **Linux / macOS:** `REMOM_DATA_DIR="/games/Master of Magic" ./ReMoMber`
+- **Linux / macOS:** `REMOM_DATA_DIR="/games/Master of Magic" ./ReMoM`
   (add `export REMOM_DATA_DIR="/games/Master of Magic"` to `~/.bashrc` /
   `~/.zshrc` to make it permanent).
-- **Windows (PowerShell):** `$env:REMOM_DATA_DIR = "D:\Master of Magic"; .\ReMoMber.exe`
-- **Windows (cmd):** `set REMOM_DATA_DIR=D:\Master of Magic` then `ReMoMber.exe`
+- **Windows (PowerShell):** `$env:REMOM_DATA_DIR = "D:\Master of Magic"; .\ReMoM.exe`
+- **Windows (cmd):** `set REMOM_DATA_DIR=D:\Master of Magic` then `ReMoM.exe`
 
 **`ReMoM.ini` — permanent, no environment variable.** Create a plain text file
 named `ReMoM.ini` containing:
@@ -92,7 +92,7 @@ The path may contain spaces (no quotes needed). Put the file here:
 
 (Create the `ReMoM` folder if it doesn't exist.)
 
-**Copy the files next to `ReMoMber`.** Or just drop every `.LBX` file into the
+**Copy the files next to `ReMoM`.** Or just drop every `.LBX` file into the
 same folder as the executable — no config needed. (`CONFIG.MOM` is optional —
 it's the old DOS sound config; without it ReMoM just uses defaults.)
 
@@ -116,7 +116,7 @@ To **reset ReMoM's working files from your original data** — for example after
 replacing your game files — run:
 
 ```sh
-ReMoMber --orig-files
+ReMoM --orig-files
 ```
 
 This re-copies `CONFIG.MOM`, `MAGIC.SET`, and `SAVE1-9.GAM` from your original
@@ -127,7 +127,7 @@ lost).
 ## Troubleshooting
 
 - **"ReMoM could not find your Master of Magic game data"** — the `.LBX` files
-  aren't where ReMoM looked. Either copy them next to `ReMoMber`, or point ReMoM
+  aren't where ReMoM looked. Either copy them next to `ReMoM`, or point ReMoM
   at them with `REMOM_DATA_DIR` or `ReMoM.ini` (see *Telling ReMoM where your
   data is* above). The dialog lists which files are missing.
 

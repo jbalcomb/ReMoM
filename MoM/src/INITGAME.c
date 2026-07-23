@@ -31,7 +31,7 @@ Module: INITGAME
  * ==================================================================== *
  *  Loads og-game-data-capture.fwv (extract-ci-stage0.py output) and hands
  *  OG's captured values to the call sites that inject them.  The file lives in
- *  the ReMoM build's working dir; ReMoMber may run from assets/ or the build
+ *  the ReMoM build's working dir; ReMoM may run from assets/ or the build
  *  dir, so we try a few candidate paths (plus an OG_CI_FWV override) and log
  *  loudly rather than fail silently -- a missing file just means "no inject". */
 

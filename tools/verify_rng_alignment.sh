@@ -134,15 +134,15 @@ echo
 echo "=== Step 4/5: Verify baseline freshness ==="
 RMR_FILE="${ASSETS}/menu_baseline_seed${SEED}.RMR"
 
-# Locate ReMoMber.  On Linux clang-debug it shares the bin dir with HeMoM.
+# Locate ReMoM.  On Linux clang-debug it shares the bin dir with HeMoM.
 # On Windows MSVC-headless-debug only builds HeMoM, so fall back to MSVC-debug
-# where the capture script keeps ReMoMber.
+# where the capture script keeps ReMoM.
 REMOM_EXE=""
 REMOM_PRESET=""
 for candidate in \
-    "${BIN_DIR}/ReMoMber.exe|${BUILD_PRESET}" \
-    "${BIN_DIR}/ReMoMber|${BUILD_PRESET}" \
-    "${REPO_ROOT}/out/build/MSVC-debug/bin/Debug/ReMoMber.exe|MSVC-debug" ; do
+    "${BIN_DIR}/ReMoM.exe|${BUILD_PRESET}" \
+    "${BIN_DIR}/ReMoM|${BUILD_PRESET}" \
+    "${REPO_ROOT}/out/build/MSVC-debug/bin/Debug/ReMoM.exe|MSVC-debug" ; do
     path="${candidate%|*}"
     preset="${candidate##*|}"
     if [ -f "${path}" ]; then
@@ -153,20 +153,20 @@ for candidate in \
 done
 
 if [ -f "${BASELINE_RNG_LOG}" ] && [ -n "${REMOM_EXE}" ]; then
-    # Rebuild ReMoMber (incremental — no-op if up to date) so its mtime
+    # Rebuild ReMoM (incremental — no-op if up to date) so its mtime
     # reflects the current source.  If the rebuild touches the binary, mtime
     # advances and the staleness check below will fire.
     # cmake --build --preset reads CMakePresets.json from CWD; Step 2 cd'd into
     # BIN_DIR, so run from REPO_ROOT in a subshell.
-    ( cd "${REPO_ROOT}" && cmake --build --preset "${REMOM_PRESET}" --target ReMoMber ${CMAKE_CONFIG} ) >/dev/null 2>&1 \
-        || echo "  WARNING: failed to rebuild ReMoMber for staleness check; continuing with existing binary"
+    ( cd "${REPO_ROOT}" && cmake --build --preset "${REMOM_PRESET}" --target ReMoM ${CMAKE_CONFIG} ) >/dev/null 2>&1 \
+        || echo "  WARNING: failed to rebuild ReMoM for staleness check; continuing with existing binary"
 
     if [ "${REMOM_EXE}" -nt "${BASELINE_RNG_LOG}" ]; then
-        echo "  FAIL: baseline is stale — ReMoMber binary is newer than the baseline."
-        echo "         The baseline was captured against an earlier build of ReMoMber, so"
+        echo "  FAIL: baseline is stale — ReMoM binary is newer than the baseline."
+        echo "         The baseline was captured against an earlier build of ReMoM, so"
         echo "         compile-time __LINE__ values (and possibly Random() call counts) no"
         echo "         longer match the current binary.  Re-capture before comparing."
-        echo "    ReMoMber: $(date -r "${REMOM_EXE}" '+%Y-%m-%d %H:%M:%S')"
+        echo "    ReMoM: $(date -r "${REMOM_EXE}" '+%Y-%m-%d %H:%M:%S')"
         echo "    baseline: $(date -r "${BASELINE_RNG_LOG}" '+%Y-%m-%d %H:%M:%S')"
         echo
         echo "  To re-capture the baseline:"
@@ -185,9 +185,9 @@ if [ -f "${BASELINE_RNG_LOG}" ] && [ -n "${REMOM_EXE}" ]; then
         fi
         exit 4
     fi
-    echo "  baseline is current (ReMoMber binary not newer than baseline)"
+    echo "  baseline is current (ReMoM binary not newer than baseline)"
 elif [ -f "${BASELINE_RNG_LOG}" ]; then
-    echo "  WARNING: ReMoMber binary not found; cannot verify baseline freshness."
+    echo "  WARNING: ReMoM binary not found; cannot verify baseline freshness."
     echo "           Searched: ${BIN_DIR}, ${REPO_ROOT}/out/build/MSVC-debug/bin/Debug."
 fi
 
@@ -199,15 +199,15 @@ if [ ! -f "${BASELINE_RNG_LOG}" ]; then
     ${BASELINE_RNG_LOG}
 
   To capture one from ReMoM (one-time, then replayable):
-    1. Build ReMoMber under the same preset as HeMoM.
+    1. Build ReMoM under the same preset as HeMoM.
     2. Decide on a canonical menu-click sequence that matches:
          ${NEWGAME_CONFIG}
        (same wizard / race / banner / difficulty / landsize / magic / opponents).
     3. Record the sequence:
-         ./ReMoMber --seed ${SEED} --record menu_baseline.RMR
+         ./ReMoM --seed ${SEED} --record menu_baseline.RMR
        and click through the new-game menus; quit after SAVE9.GAM is written.
     4. Replay it with stderr capture to produce the baseline:
-         ./ReMoMber --seed ${SEED} --replay menu_baseline.RMR 2> baseline_stderr.log
+         ./ReMoM --seed ${SEED} --replay menu_baseline.RMR 2> baseline_stderr.log
          grep '^\\[RNG-CALL\\]' baseline_stderr.log > ${BASELINE_RNG_LOG}
     5. Commit both menu_baseline.RMR (under assets/) and ${BASELINE_RNG_LOG#${REPO_ROOT}/}.
     6. Re-run this script — it will compare automatically from now on.

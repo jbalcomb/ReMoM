@@ -1795,7 +1795,7 @@ After each phase:
 - Build with SDL3: `cmake -B build -DUSE_SDL3=ON && cmake --build build`
 - Run tests: `ctest --test-dir build --output-on-failure`
 - Run the game and verify: window opens, keyboard input works, mouse works, palette renders correctly, audio plays
-- For replay: `ReMoMber --record test.RMR`, play a few turns, quit, then `ReMoMber --replay test.RMR`
+- For replay: `ReMoM --record test.RMR`, play a few turns, quit, then `ReMoM --replay test.RMR`
 
 ---
 
@@ -1923,7 +1923,7 @@ SOUND.h	Removed #include "sdl2_Audio.h"
 SOUND.c	Removed sdl2_Audio.h include, added Platform.h, updated call to Platform_Audio_Play_Sound
 ReMoM.c	Replaced full SDL includes with just SDL_MAIN_HANDLED + SDL_main.h
 14 platform backend .c files	Replaced #include "MOM_PFL.h" → #include "Platform.h"
-Build verified: SDL3 no-audio Debug builds successfully to ReMoMber.exe.
+Build verified: SDL3 no-audio Debug builds successfully to ReMoM.exe.
 
 Remaining known coupling:
 

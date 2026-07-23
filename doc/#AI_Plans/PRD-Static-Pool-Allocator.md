@@ -147,7 +147,7 @@ deferred to Phase 2.
     genuine run-time over-capacity is caught loudly by `Pool_Carve`'s fatal
     `Allocation_Error`.
 22. As a HeMoM headless test runner, I want the same allocator behavior in
-    HeMoM as in ReMoMber, so that headless and interactive runs do not
+    HeMoM as in ReMoM, so that headless and interactive runs do not
     diverge due to allocator differences.
 23. As a future-maintainer, I want each excluded `malloc()` call site to
     carry a brief comment explaining why that arena bypasses the pool (VGA
@@ -247,7 +247,7 @@ deferred to Phase 2.
 - **No public header changes** beyond adding the `Allocate_Pool` module's
   header. The SAMB struct, the paragraph constants, the sentinel values, and
   every existing sub-block layout stay identical.
-- **HeMoM and ReMoMber both consume MoX/src/Allocate.c** and the new
+- **HeMoM and ReMoM both consume MoX/src/Allocate.c** and the new
   Allocate_Pool module identically; no per-target conditional behavior.
 
 ## Testing Decisions
@@ -329,7 +329,7 @@ Prior art:
   (`__asan_poison_memory_region`) can be applied around each sub-block
   boundary without further restructuring. Sentinel slack, deterministic
   offsets, and a known pool base make instrumentation straightforward.
-- **HeMoM ↔ ReMoMber parity**: both targets share MoX/src/Allocate.c and the
+- **HeMoM ↔ ReMoM parity**: both targets share MoX/src/Allocate.c and the
   new Allocate_Pool module, so the refactor is uniform across them. No
   per-target conditionals.
 - **CI baseline capture**: through Phase 4 the capture-and-inject pipeline for

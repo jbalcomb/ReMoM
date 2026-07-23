@@ -4,7 +4,7 @@
 #
 #  Small CLI utilities that don't depend on the game engine.  These can be
 #  run against save files produced by any version of Master of Magic (OG,
-#  ReMoMber, HeMoM).
+#  ReMoM, HeMoM).
 # =========================================================================
 
 

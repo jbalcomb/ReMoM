@@ -2,7 +2,7 @@
  * ReMoM_Init.h — Shared engine initialization for ReMoM and HeMoM.
  *
  * ReMoM_Init_Engine() performs the core initialization sequence needed by
- * both the full game (ReMoMber) and the headless tool (HeMoM):
+ * both the full game (ReMoM) and the headless tool (HeMoM):
  *   - Load CONFIG.MOM and MAGIC.SET
  *   - Configure sound driver IDs
  *   - Validate save files

@@ -26,7 +26,7 @@ Options:
         --no-install  build but skip 'sudo make install'
         --distclean   'make distclean' before bootstrapping (fully fresh build)
         --keep-data   don't wipe the per-user files (just rebuild + reinstall)
-        --run         launch ReMoMber at the end
+        --run         launch ReMoM at the end
 """
 
 import argparse
@@ -136,7 +136,7 @@ def main():
     ap.add_argument("--keep-data", action="store_true",
                     help="don't wipe the per-user files")
     ap.add_argument("--run", action="store_true",
-                    help="launch ReMoMber at the end")
+                    help="launch ReMoM at the end")
     ap.add_argument("configure_args", nargs=argparse.REMAINDER,
                     help="extra args passed to ./configure after a literal --")
     args = ap.parse_args()
@@ -185,11 +185,11 @@ def main():
 
     step("Done")
     if args.run:
-        info(_c("$ ReMoMber", "1;37"))
+        info(_c("$ ReMoM", "1;37"))
         if not args.dry_run:
-            subprocess.run(["ReMoMber"])
+            subprocess.run(["ReMoM"])
     else:
-        info("Next:  " + _c("ReMoMber", "1;37") + "   (goes through the fresh first-run)")
+        info("Next:  " + _c("ReMoM", "1;37") + "   (goes through the fresh first-run)")
 
 
 if __name__ == "__main__":

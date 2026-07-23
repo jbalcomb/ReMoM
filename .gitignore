@@ -15,7 +15,7 @@ Makefile
 Makefile.in
 autom4te.cache/
 *.a
-ReMoMber
+ReMoM
 
 # Visual Studio Code (VS Code) (VSC)
 .vscode/*

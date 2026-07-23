@@ -3,15 +3,20 @@
 #
 # 1. Point the loader at the bundled libraries (SDL2 etc.).
 # 2. Portable-mode heuristic: if the folder that physically holds the .AppImage
-#    also holds the game data (FONTS.LBX) or a prior ReMoM/ folder, keep the
-#    data + saves (MAGIC.SET) + settings (ReMoM.ini) + logs there -- in a ReMoM/
-#    subfolder -- using $APPIMAGE so it works no matter the current directory.
-#    Otherwise fall back to the normal per-user XDG dirs + GOG/Steam auto-detect.
+#    also holds the game data (FONTS.LBX) or a prior remom_app_dir/ folder, keep
+#    the data + saves (MAGIC.SET) + settings (ReMoM.ini) + logs there -- in a
+#    remom_app_dir/ subfolder -- using $APPIMAGE so it works no matter the current
+#    directory.  Otherwise fall back to the normal per-user XDG dirs + GOG/Steam
+#    auto-detect.
+#
+#    The subfolder is deliberately NOT called "ReMoM": the player executable is
+#    named ReMoM, portable mode puts both in one folder, and a filesystem cannot
+#    hold a file and a directory of the same name.
 
 # $APPDIR is set by the AppImage runtime; default it for an extracted/dev run.
 APPDIR="${APPDIR:-$(dirname "$(readlink -f "$0")")}"
 export LD_LIBRARY_PATH="${APPDIR}/usr/lib:${LD_LIBRARY_PATH}"
-BIN="${APPDIR}/usr/bin/ReMoMber"
+BIN="${APPDIR}/usr/bin/ReMoM"
 
 # The folder that holds the .AppImage file itself -- NOT the read-only mount
 # ($APPDIR) and NOT the current directory. $APPIMAGE is set by the runtime.
@@ -21,14 +26,21 @@ else
     HERE="$(pwd)"
 fi
 
-if [ -w "${HERE}" ] && { [ -e "${HERE}/FONTS.LBX" ] || [ -e "${HERE}/fonts.lbx" ] || [ -d "${HERE}/ReMoM" ]; }; then
-    # Writable files (MAGIC.SET, saves, ReMoM.ini, logs) go in <folder>/ReMoM/.
-    # FORCE these (=, not :=) so the portable folder wins even when the desktop
-    # or a sandbox (snap/flatpak) has already set XDG_*_HOME.  ReMoM appends
-    # "/ReMoM" to each, collapsing data/config/state into one <folder>/ReMoM/.
+if [ -w "${HERE}" ] && { [ -e "${HERE}/FONTS.LBX" ] || [ -e "${HERE}/fonts.lbx" ] || [ -d "${HERE}/remom_app_dir" ]; }; then
+    # Writable files (MAGIC.SET, saves, ReMoM.ini, logs) go in
+    # <folder>/remom_app_dir/.  FORCE these (=, not :=) so the portable folder wins
+    # even when the desktop or a sandbox (snap/flatpak) has already set XDG_*_HOME.
+    # ReMoM appends "/$REMOM_APP_DIR" to each, collapsing data/config/state into
+    # one <folder>/remom_app_dir/.
     export XDG_DATA_HOME="${HERE}"
     export XDG_CONFIG_HOME="${HERE}"
     export XDG_STATE_HOME="${HERE}"
+
+    # The app directory lands in the SAME folder as the executable here, so it must
+    # not be called "ReMoM" -- the player binary is now named ReMoM, and a file and
+    # a directory cannot share a name.  Only portable mode sets this; installed /
+    # XDG users keep ~/.local/share/ReMoM and need no migration.
+    export REMOM_APP_DIR="remom_app_dir"
 
     # Read the game data here only if it is actually here.  If we triggered on a
     # pre-existing ReMoM/ folder (portable saves) without the LBX data, leave the

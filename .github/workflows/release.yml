@@ -68,7 +68,7 @@ jobs:
 
       - name: Configure (MSVC-release preset)
         # CMAKE_INSTALL_BINDIR=. keeps the portable ZIP / NSIS layout flat
-        # (ReMoMber at the package root); a plain local install uses bin/.
+        # (ReMoM at the package root); a plain local install uses bin/.
         run: cmake --preset MSVC-release -DREMOM_VERSION=${{ steps.ver.outputs.version }} -DCMAKE_INSTALL_BINDIR=.
 
       - name: Build
@@ -115,7 +115,7 @@ jobs:
 
       - name: Configure (clang-release preset)
         # CMAKE_INSTALL_BINDIR=. keeps the portable ZIP / TGZ layout flat
-        # (ReMoMber at the package root); a plain local install uses bin/.
+        # (ReMoM at the package root); a plain local install uses bin/.
         run: cmake --preset clang-release -DREMOM_VERSION=${{ steps.ver.outputs.version }} -DCMAKE_INSTALL_BINDIR=.
 
       - name: Build
@@ -136,12 +136,12 @@ jobs:
           chmod +x linuxdeploy linuxdeploy-plugin-appimage
           export PATH="$PWD:$PATH"
 
-          REMOMBER_BIN="$(find out/build/clang-release/bin -type f -name ReMoMber | head -1)"
-          echo "Bundling: $REMOMBER_BIN"
+          REMOM_BIN="$(find out/build/clang-release/bin -type f -name ReMoM | head -1)"
+          echo "Bundling: $REMOM_BIN"
           export OUTPUT="ReMoM-${VERSION}-x86_64.AppImage"
           ./linuxdeploy \
             --appdir AppDir \
-            --executable "$REMOMBER_BIN" \
+            --executable "$REMOM_BIN" \
             --desktop-file packaging/remom.desktop \
             --icon-file packaging/remom.png \
             --custom-apprun "$GITHUB_WORKSPACE/packaging/AppRun" \
@@ -213,22 +213,22 @@ jobs:
           # test fixtures, no bundled libSDL2.
           ACTUAL="$(dpkg -c "$DEB" | awk '$1 !~ /^d/ {print $6}' | sed 's|^\./|/|' | sort)"
           EXPECTED="$(printf '%s\n' \
-            /usr/bin/ReMoMber \
+            /usr/bin/ReMoM \
             /usr/share/applications/remom.desktop \
             /usr/share/doc/remom/PLAYING.md \
             /usr/share/doc/remom/changelog.gz \
             /usr/share/doc/remom/copyright \
             /usr/share/icons/hicolor/256x256/apps/remom.png \
             /usr/share/lintian/overrides/remom \
-            /usr/share/man/man6/ReMoMber.6.gz | sort)"
+            /usr/share/man/man6/ReMoM.6.gz | sort)"
           if [ "$ACTUAL" != "$EXPECTED" ]; then
             echo "::error::packaged file set changed"; diff <(echo "$EXPECTED") <(echo "$ACTUAL"); exit 1
           fi
 
           # The shipped binary must be stripped -- an unstripped one roughly
           # doubles the download and is a lintian error.
-          dpkg-deb --fsys-tarfile "$DEB" | tar -xO ./usr/bin/ReMoMber > /tmp/ReMoMber.bin
-          file /tmp/ReMoMber.bin | grep -q 'not stripped' \
+          dpkg-deb --fsys-tarfile "$DEB" | tar -xO ./usr/bin/ReMoM > /tmp/ReMoM.bin
+          file /tmp/ReMoM.bin | grep -q 'not stripped' \
             && { echo "::error::shipped binary is not stripped"; exit 1; } || true
 
           # Dependencies must be DERIVED and must include SDL2 -- a package that
@@ -293,12 +293,12 @@ jobs:
           set -euo pipefail
           STAGE="ReMoM-${VERSION}-Darwin-arm64"
           mkdir -p "$STAGE"
-          BIN="$(find out/build/macos-release/bin -type f -name ReMoMber | head -1)"
-          cp "$BIN" "$STAGE/ReMoMber"
+          BIN="$(find out/build/macos-release/bin -type f -name ReMoM | head -1)"
+          cp "$BIN" "$STAGE/ReMoM"
           cp PLAYING.md "$STAGE/"
           # Copy SDL dylibs next to the binary and rewrite install names so the
           # app runs without Homebrew present.
-          ( cd "$STAGE" && dylibbundler -od -b -x ./ReMoMber -d ./libs -p @executable_path/libs )
+          ( cd "$STAGE" && dylibbundler -od -b -x ./ReMoM -d ./libs -p @executable_path/libs )
           zip -r "${STAGE}.zip" "$STAGE"
 
       - name: Upload macOS artifact

@@ -1,6 +1,6 @@
 # 02_wizard_select.hms -- Reel scene 2: New Game -> Custom wizard creation.
 #
-#   ReMoMber.exe --scenario 02_wizard_select.hms --seed1 12345
+#   ReMoM.exe --scenario 02_wizard_select.hms --seed1 12345
 #
 # Adapted from assets/Stage_0.hms (a working New-Game script whose click coordinates come from the
 # Add_*_Field definitions in NewGame.c).  Changes for the reel: the machine-speed 500 ms waits are

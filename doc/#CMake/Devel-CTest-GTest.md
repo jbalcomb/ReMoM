@@ -192,12 +192,12 @@ endif()
 
 
 
-# test code from ReMoMber
+# test code from ReMoM
 # # if(WIN32)
 # #     add_custom_command(
-# #         TARGET "ReMoMber" POST_BUILD
-# #         COMMAND "${CMAKE_COMMAND}" -E copy -t "$<TARGET_FILE_DIR:ReMoMber>"
-# #         "$<TARGET_RUNTIME_DLLS:ReMoMber>" USES_TERMINAL COMMAND_EXPAND_LISTS
+# #         TARGET "ReMoM" POST_BUILD
+# #         COMMAND "${CMAKE_COMMAND}" -E copy -t "$<TARGET_FILE_DIR:ReMoM>"
+# #         "$<TARGET_RUNTIME_DLLS:ReMoM>" USES_TERMINAL COMMAND_EXPAND_LISTS
 # #     )
 # # endif()
 # # # [build]   TARGET 'SDL2::Main' is IMPORTED and does not build here.

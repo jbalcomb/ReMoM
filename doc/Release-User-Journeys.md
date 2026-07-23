@@ -9,7 +9,7 @@ It walks two representative use-cases and calls out where the journey is rough.
 
 ## The shipped release, in one line
 
-Public releases are **engine-only**: each artifact is just `ReMoMber` +
+Public releases are **engine-only**: each artifact is just `ReMoM` +
 `PLAYING.md`. The player supplies their own original **Master of Magic v1.31
 (DOS)** data — every `.LBX` file plus `CONFIG.MOM` — dropped next to the
 executable. Per platform:
@@ -36,7 +36,7 @@ most people want them:
 |----------|-------------|-----|
 | `remom_<ver>_amd64.deb` | Debian / Ubuntu / Mint / Pop!_OS, and you want it **installed** — application menu, `apt remove`, SDL2 handled for you | `sudo apt install ./remom_<ver>_amd64.deb` |
 | `ReMoM-<ver>-x86_64.AppImage` | Any other distro, or you'd rather not install anything. Bundles SDL2. | `chmod +x`, then run |
-| `ReMoM-<ver>-Linux-*.zip` / `.tar.gz` | You want the bare binary and already have SDL2 | extract, `./ReMoMber` |
+| `ReMoM-<ver>-Linux-*.zip` / `.tar.gz` | You want the bare binary and already have SDL2 | extract, `./ReMoM` |
 
 Two rough edges to be aware of:
 
@@ -88,7 +88,7 @@ exactly the player the engine-only release is designed for.
    extracts it (see table above).
 3. **Game data — the step Carl breezes through.** Carl already owns the game, so
    instead of "acquire MoM," his task is just "**find the data files in the copy
-   I already have and copy them next to `ReMoMber`.**" Where they live depends on
+   I already have and copy them next to `ReMoM`.**" Where they live depends on
    how he owns it:
    - **Original DOS (CD/floppy install):** the `.LBX` files and `CONFIG.MOM` are
      in the game directory itself — copy them straight across.
@@ -98,7 +98,7 @@ exactly the player the engine-only release is designed for.
      his install directory, finds the `*.LBX` files and `CONFIG.MOM`, and copies
      them over.
    - Either way: **select all `.LBX` files + `CONFIG.MOM` → copy → paste into the
-     folder with `ReMoMber`.**
+     folder with `ReMoM`.**
    > **Version caveat:** ReMoM targets **v1.31** specifically. If Carl's copy is a
    > different revision, most assets still load, but some data may not line up
    > perfectly. If something looks off, the version mismatch is the first suspect.
@@ -114,10 +114,10 @@ they?" problem, not an "acquire the game" problem.
 
 Once the `.LBX` files + `CONFIG.MOM` sit beside the executable:
 
-- **Windows:** double-click `ReMoMber.exe`. Just works (silent).
+- **Windows:** double-click `ReMoM.exe`. Just works (silent).
 - **Linux (AppImage):** `chmod +x ReMoM-*.AppImage`, then run it. Self-contained.
-- **Linux (ZIP):** `./ReMoMber` — only if SDL2 is installed; otherwise use the AppImage.
-- **macOS:** clear the quarantine flag once — `xattr -dr com.apple.quarantine ReMoMber` — then `./ReMoMber`.
+- **Linux (ZIP):** `./ReMoM` — only if SDL2 is installed; otherwise use the AppImage.
+- **macOS:** clear the quarantine flag once — `xattr -dr com.apple.quarantine ReMoM` — then `./ReMoM`.
 
 The window opens titled `(...) Master of Magic v1.31 - Reassembly (v<ver>)`; the
 version banner confirms exactly which build is running.

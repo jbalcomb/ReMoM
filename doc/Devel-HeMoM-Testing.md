@@ -10,10 +10,10 @@ HeMoM is a separate executable that runs the full Master of Magic game engine wi
 | Component | Path | Purpose |
 |-----------|------|---------|
 | **HeMoM executable** | `src/HeMoM.c` | Lean entry point — parse CLI, init engine, create/load game, run |
-| **Shared engine init** | `src/ReMoM_Init.c` + `.h` | CONFIG.MOM, sound config, `Init_Drivers()`, `Allocate_Data_Space()`, resource loading — shared by both ReMoMber and HeMoM |
+| **Shared engine init** | `src/ReMoM_Init.c` + `.h` | CONFIG.MOM, sound config, `Init_Drivers()`, `Allocate_Data_Space()`, resource loading — shared by both ReMoM and HeMoM |
 | **Headless platform backend** | `platform/headless/` | Zero-dependency platform implementation: no SDL, no Win32, no display |
 | **Game config file** | `assets/ReMoM.ini` | INI file specifying new game parameters (difficulty, wizard, books, retorts, race, banner) |
-| **SDL offscreen flag** | `--headless` on ReMoMber | Sets `SDL_VIDEODRIVER=offscreen` (SDL3) or `dummy` (SDL2) before SDL init |
+| **SDL offscreen flag** | `--headless` on ReMoM | Sets `SDL_VIDEODRIVER=offscreen` (SDL3) or `dummy` (SDL2) before SDL init |
 
 
 ## Why We Did It This Way
@@ -36,11 +36,11 @@ The platform abstraction layer (`Platform.h`) was already clean: MoM and MoX nev
 
 HeMoM automatically selects the right approach based on how it was built.
 
-### Separation from ReMoMber
+### Separation from ReMoM
 
-HeMoM is a separate executable rather than flags on ReMoMber because:
+HeMoM is a separate executable rather than flags on ReMoM because:
 
-- **ReMoMber stays faithful to the original game** — its `MOM_main()` is a reconstruction of the original MAGIC.EXE/WIZARDS.EXE entry point, with all the logos, credits, menu music, and save file validation.  Adding `--newgame` / `--load` flags there would pollute the reconstruction.
+- **ReMoM stays faithful to the original game** — its `MOM_main()` is a reconstruction of the original MAGIC.EXE/WIZARDS.EXE entry point, with all the logos, credits, menu music, and save file validation.  Adding `--newgame` / `--load` flags there would pollute the reconstruction.
 - **HeMoM can be opinionated** — it skips logos, credits, and music.  It can add test-specific exits in the future (e.g., create game + save + quit, run N turns + save).
 - **Shared init is extracted** — `ReMoM_Init_Engine()` contains the ~200-line engine initialization sequence that both executables need.  One source of truth, no duplication.
 
@@ -79,8 +79,8 @@ Testing Pyramid for ReMoM:
 
 The replay system (`.RMR` files) is the keystone of integration testing.  It was built before HeMoM and works independently:
 
-- **Record**: `ReMoMber --record session.RMR` — plays the game normally, writes every input frame to a human-readable CSV file.
-- **Replay**: `ReMoMber --replay session.RMR` or `HeMoM --newgame --replay session.RMR` — feeds the recorded input frames back into the engine in place of live OS events.
+- **Record**: `ReMoM --record session.RMR` — plays the game normally, writes every input frame to a human-readable CSV file.
+- **Replay**: `ReMoM --replay session.RMR` or `HeMoM --newgame --replay session.RMR` — feeds the recorded input frames back into the engine in place of live OS events.
 - **Determinism**: The RNG seed is captured at record time and restored at replay time.  If the game logic is purely deterministic given the same inputs and RNG seed, the replay reproduces the exact same game state.
 - **Logging**: Recording creates `session-RECORD.log` and replay creates `session-REPLAY.log`.  These can be diffed to detect divergence.
 
@@ -225,7 +225,7 @@ The game is now waiting for input in the main game loop.  In headless mode with 
 Play the game normally with recording enabled:
 
 ```bash
-./ReMoMber --record test_5turns.RMR
+./ReMoM --record test_5turns.RMR
 ```
 
 Play through: create a game as Freya, click through 5 turns (hit "Next Turn" 5 times), then quit.  The `.RMR` file captures every mouse click and key press.
@@ -246,7 +246,7 @@ After replay completes, `SAVE9.GAM` contains the game state after 5 turns.  You 
 
 - **Compare save files**: `diff` or binary compare against a known-good `SAVE9.GAM` from a previous run.  Byte-identical saves mean the game logic is deterministic.
 - **Compare replay logs**: The replay system writes `test_5turns-REPLAY.log`.  Diff against the original `test_5turns-RECORD.log` to detect divergence.
-- **Load in the real game**: `ReMoMber` with Continue to visually inspect the result.
+- **Load in the real game**: `ReMoM` with Continue to visually inspect the result.
 
 ### Step 6: Automate in CI
 

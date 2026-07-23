@@ -63,7 +63,7 @@ The existing `.github/workflows/release.yml` is a tag-driven *packaging* workflo
 
 ## Implementation Notes
 
-- The existing `release.yml` already establishes the Windows + SDL2 setup pattern (download SDL2 dev libs, configure with `-DSDL2_DIR=...`). This PRD's workflow should reuse that pattern verbatim — copy the `Download SDL2 development libraries` step and the configure step. The only material difference is the build target (`ReMoMber` only, possibly add `HeMoM`) and the lack of packaging.
+- The existing `release.yml` already establishes the Windows + SDL2 setup pattern (download SDL2 dev libs, configure with `-DSDL2_DIR=...`). This PRD's workflow should reuse that pattern verbatim — copy the `Download SDL2 development libraries` step and the configure step. The only material difference is the build target (`ReMoM` only, possibly add `HeMoM`) and the lack of packaging.
 - Consider extracting the SDL2-install logic into a composite action under `.github/actions/setup-sdl2/` so both workflows can reuse it. Out of scope for v1 if there's no immediate pain.
 - Use `actions/checkout@v6` and `actions/cache@v4`. The CMake binary directory at `out/build/MSVC-release/` is a reasonable cache target.
 - Pull-request from forks: secrets are unavailable in PR-from-fork runs by default; this workflow shouldn't need any secrets, so that's fine. Do NOT add `pull_request_target` — it has known security pitfalls and isn't needed here.

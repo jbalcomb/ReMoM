@@ -15,7 +15,7 @@ Test combat all the way through — both tactical (battle screen, turn-by-turn) 
 
 ### Test infrastructure
 
-- **HeMoM** (`src/HeMoM.c`) is the headless integration harness: `--newgame [ReMoM.ini]`, `--load SAVEn.GAM`, `--continue`, `--scenario FILE.hms`, `--record`/`--replay FILE.RMR`, `--dump-save`, `--seed`. It links `momlib MOX STU Platform_Headless` and replicates the ReMoMber menu path's RNG draws (e.g. the 66-draw `Randomize_Book_Heights()`) so seed streams align between headless and windowed runs.
+- **HeMoM** (`src/HeMoM.c`) is the headless integration harness: `--newgame [ReMoM.ini]`, `--load SAVEn.GAM`, `--continue`, `--scenario FILE.hms`, `--record`/`--replay FILE.RMR`, `--dump-save`, `--seed`. It links `momlib MOX STU Platform_Headless` and replicates the ReMoM menu path's RNG draws (e.g. the 66-draw `Randomize_Book_Heights()`) so seed streams align between headless and windowed runs.
 - **Scenario scripts** (`assets/*.hms`, parsed by `src/Artificial_Human_Player.c`) inject one input action per frame (clicks, keys, `next_turn`, `wait`) through the same path the replay system uses.
 - **CTest fixtures** (`tests/CMakeLists.txt`) chain Setup → Run → Assertions so validation only runs after a successful setup (see the `HeMoM_Continue_*` and `HeMoM_AIBehavior_*` groups). Run with `ctest -R "HeMoM_"` — always the whole HeMoM suite, never a single scoped test.
 - **Checkers:** `tests/check_save_fields.c` compares a `Game_Save_Dump` text dump against an `assert_*.txt` file of exact `key = value` expectations, with `# NONDET`-commented opt-outs for fields that are not yet deterministic. `tests/check_ai_metrics.c` evaluates `LIVENESS`/`BOUNDS` range rules against CSV metrics.

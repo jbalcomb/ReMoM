@@ -19,7 +19,7 @@ NN_name.hms   the scene script -- THIS is the artifact we maintain and edit
 ## Authoring one scene
 
 ```sh
-GAME=out/build/MSVC-sdl2-debug/bin/Debug/ReMoMber.exe    # SDL2 build -- the Win32 build is SILENT
+GAME=out/build/MSVC-sdl2-debug/bin/Debug/ReMoM.exe    # SDL2 build -- the Win32 build is SILENT
 
 # 1. record a rough pass by playing it
 $GAME --record showcase/03_overland.RMR --seed1 12345

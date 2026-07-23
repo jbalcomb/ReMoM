@@ -19,7 +19,7 @@ ReMoM is a **C-language reassembly** of Master of Magic v1.31 (Simtex, 1995). Th
 | `MoM/src/`    | Main game logic                | `momlib`      |
 | `MoX/src/`    | Shared engine code             | `MOX`         |
 | `STU/src/`    | Utility / debug code           | `STU`         |
-| `src/`        | Application entry point        | `ReMoMber`    |
+| `src/`        | Application entry point        | `ReMoM`    |
 | `MoM/tests/`  | Unit tests for MoM             | `MOM_tests`   |
 | `MoX/tests/`  | Unit tests for MoX             | `MOX_tests`   |
 

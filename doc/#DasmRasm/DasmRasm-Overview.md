@@ -24,7 +24,7 @@ doc/__TODO-ProjectOverview.md:32K lines across many segments. Here are the natur
 doc/__TODO-ProjectOverview.md:I'd start with the cleanest cuts — the ones with no shared static variables and clear segment boundaries:
 Binary file IDE/VS2019/.vs/ReMoM/v17/Browse.VC.db matches
 IDE/VS2019/MoM/tests/MAPGEN_TEST_DOCUMENTATION.md:5. **Boundary Cases:** Tests include edge cases for map boundaries and coordinate wrapping
-Binary file IDE/VS2019/ReMoMber/DIPLOMSG.LBX matches
+Binary file IDE/VS2019/ReMoM/DIPLOMSG.LBX matches
 MoM/src/MAPGEN.c: * Coordinates are wrapped at map boundaries, so neighborhood walks continue across
 out/build/MSVC-nosound-debug/html/graph_legend.html:A box with a red border denotes a documented struct or class forwhich not all inheritance/containment relations are shown. A graph is truncated if it does not fit within the specified boundaries. </li>
 out/build/MSVC-nosound-debug/html/_m_a_p_g_e_n_8c.html:<p>Coordinates are wrapped at map boundaries, so neighborhood walks continue across edges. All changes are applied in-place through p_world_map.</p>

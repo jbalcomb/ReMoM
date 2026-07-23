@@ -30,7 +30,7 @@ set(LIBSTU_SOURCES
 add_library(STU STATIC ${LIBSTU_SOURCES})
 
 # STU_BRAK.c symbolizes crash stacks via DbgHelp on Windows.  PUBLIC so every consumer of STU
-# (ReMoMber, HeMoM, tests, tools) links it too -- a static lib cannot carry it for them.
+# (ReMoM, HeMoM, tests, tools) links it too -- a static lib cannot carry it for them.
 # The MSVC build also gets it from STU_BRAK.c's #pragma comment(lib), but clang/MinGW do not
 # honour that pragma, so state it here as well.
 if(WIN32)

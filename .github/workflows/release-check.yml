@@ -206,14 +206,14 @@ jobs:
 
           ACTUAL="$(dpkg -c "$DEB" | awk '$1 !~ /^d/ {print $6}' | sed 's|^\./|/|' | sort)"
           EXPECTED="$(printf '%s\n' \
-            /usr/bin/ReMoMber \
+            /usr/bin/ReMoM \
             /usr/share/applications/remom.desktop \
             /usr/share/doc/remom/PLAYING.md \
             /usr/share/doc/remom/changelog.gz \
             /usr/share/doc/remom/copyright \
             /usr/share/icons/hicolor/256x256/apps/remom.png \
             /usr/share/lintian/overrides/remom \
-            /usr/share/man/man6/ReMoMber.6.gz | sort)"
+            /usr/share/man/man6/ReMoM.6.gz | sort)"
           if [ "$ACTUAL" != "$EXPECTED" ]; then
             echo "::error::packaged file set changed"; diff <(echo "$EXPECTED") <(echo "$ACTUAL"); exit 1
           fi

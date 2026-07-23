@@ -116,7 +116,7 @@ endif()
 # All executables and DLLs go to one directory (per-config on multi-config generators).
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$<CONFIG>")
 
-# Single asset-staging step.  All executables (HeMoM, ReMoMber, savedump,
+# Single asset-staging step.  All executables (HeMoM, ReMoM, savedump,
 # rmr2hms, tests, ...) share the same bin/$<CONFIG> directory, so the asset
 # tree is copied there exactly once per build instead of being copied
 # redundantly by each executable's POST_BUILD.
@@ -278,10 +278,10 @@ add_subdirectory(demo)
 # shipped.  The dev/QA tools (HeMoM, savedump, rmr2hms, check_*, compare_*) stay
 # buildable but are deliberately excluded from the installed/packaged set.
 # GNUInstallDirs gives CMAKE_INSTALL_BINDIR (default "bin"), so a plain
-# `cmake --install --prefix /usr/local` lands ReMoMber in /usr/local/bin, matching
+# `cmake --install --prefix /usr/local` lands ReMoM in /usr/local/bin, matching
 # the autotools `make install`.  The release/CPack builds override
 # CMAKE_INSTALL_BINDIR=. (see .github/workflows/release.yml) to keep the portable
-# ZIP / NSIS layout flat (ReMoMber at the package root).
+# ZIP / NSIS layout flat (ReMoM at the package root).
 include(GNUInstallDirs)
 
 # Installed directories get 0755 regardless of the builder's umask.  Without this
@@ -293,12 +293,12 @@ set(CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
     WORLD_READ WORLD_EXECUTE
 )
 
-install(TARGETS ReMoMber
+install(TARGETS ReMoM
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 # Two install shapes, distinguished by CMAKE_INSTALL_BINDIR:
-#   "flat" (BINDIR ".")  -> the portable ZIP / TGZ / NSIS layout: ReMoMber and its
+#   "flat" (BINDIR ".")  -> the portable ZIP / TGZ / NSIS layout: ReMoM and its
 #                           docs sit at the package root, no desktop integration.
 #   "FHS"  (BINDIR "bin") -> /usr, /usr/local, or the .deb staging tree: docs under
 #                           share/doc/, plus a .desktop entry and an icon so the
@@ -358,14 +358,14 @@ if(UNIX AND NOT APPLE AND NOT REMOM_INSTALL_FLAT)
     if(REMOM_GZIP)
         # Man page -- section 6 (games).
         add_custom_command(
-            OUTPUT "${CMAKE_BINARY_DIR}/packaging/ReMoMber.6.gz"
+            OUTPUT "${CMAKE_BINARY_DIR}/packaging/ReMoM.6.gz"
             COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_BINARY_DIR}/packaging"
             COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-                    "${PROJECT_SOURCE_DIR}/packaging/ReMoMber.6"
-                    "${CMAKE_BINARY_DIR}/packaging/ReMoMber.6"
-            COMMAND "${REMOM_GZIP}" -9 -n -f -k "${CMAKE_BINARY_DIR}/packaging/ReMoMber.6"
-            DEPENDS "${PROJECT_SOURCE_DIR}/packaging/ReMoMber.6"
-            COMMENT "Compressing ReMoMber.6 man page"
+                    "${PROJECT_SOURCE_DIR}/packaging/ReMoM.6"
+                    "${CMAKE_BINARY_DIR}/packaging/ReMoM.6"
+            COMMAND "${REMOM_GZIP}" -9 -n -f -k "${CMAKE_BINARY_DIR}/packaging/ReMoM.6"
+            DEPENDS "${PROJECT_SOURCE_DIR}/packaging/ReMoM.6"
+            COMMENT "Compressing ReMoM.6 man page"
             VERBATIM
         )
 
@@ -387,11 +387,11 @@ if(UNIX AND NOT APPLE AND NOT REMOM_INSTALL_FLAT)
         )
 
         add_custom_target(remom_package_docs ALL
-            DEPENDS "${CMAKE_BINARY_DIR}/packaging/ReMoMber.6.gz"
+            DEPENDS "${CMAKE_BINARY_DIR}/packaging/ReMoM.6.gz"
                     "${CMAKE_BINARY_DIR}/packaging/changelog.gz"
         )
 
-        install(FILES "${CMAKE_BINARY_DIR}/packaging/ReMoMber.6.gz"
+        install(FILES "${CMAKE_BINARY_DIR}/packaging/ReMoM.6.gz"
             DESTINATION "${CMAKE_INSTALL_MANDIR}/man6"
         )
         install(FILES "${CMAKE_BINARY_DIR}/packaging/changelog.gz"
@@ -417,7 +417,7 @@ endif()
 
 # Put the MSVC runtime DLLs next to the executable (CMAKE_INSTALL_BINDIR is "." in
 # the flat release package, "bin" for a normal install) so a clean Windows box
-# without the VC++ redistributable can still launch ReMoMber.
+# without the VC++ redistributable can still launch ReMoM.
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_NAME "ReMoM")
@@ -429,10 +429,10 @@ if(WIN32)
     set(CPACK_NSIS_PACKAGE_NAME "ReMoM")
     set(CPACK_NSIS_DISPLAY_NAME "ReMoM ${PROJECT_VERSION}")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "ReMoM")
-    set(CPACK_NSIS_MUI_FINISHPAGE_RUN "ReMoMber.exe")
+    set(CPACK_NSIS_MUI_FINISHPAGE_RUN "ReMoM.exe")
     # Per-user install (no UAC): land in %LOCALAPPDATA%\ReMoM. The engine needs a
     # user-writable install dir -- the player drops their .LBX game data next to
-    # ReMoMber.exe and saves/logs are written there, so Program Files (read-only
+    # ReMoM.exe and saves/logs are written there, so Program Files (read-only
     # for non-admins) is wrong. Our repo-local cmake/NSIS.template.in overrides
     # CPack's stock template to set `RequestExecutionLevel user` and install
     # per-user; this variable feeds that template's InstallDir root. CPack finds
@@ -444,14 +444,14 @@ if(WIN32)
     # only an "Uninstall" link -- the player gets no way to launch the game.
     # CPACK_NSIS_EXECUTABLES_DIRECTORY must track CMAKE_INSTALL_BINDIR: the release
     # package is flat (BINDIR=.), so the default "bin" would generate a shortcut to a
-    # non-existent $INSTDIR\bin\ReMoMber.exe.
-    set(CPACK_PACKAGE_EXECUTABLES "ReMoMber" "ReMoM")
+    # non-existent $INSTDIR\bin\ReMoM.exe.
+    set(CPACK_PACKAGE_EXECUTABLES "ReMoM" "ReMoM")
     set(CPACK_NSIS_EXECUTABLES_DIRECTORY "${CMAKE_INSTALL_BINDIR}")
 
     # The player must copy their own .LBX game data into the install directory, and a
     # per-user install lands under %LOCALAPPDATA% -- a hidden folder.  Ship a Start Menu
     # link straight to it so "where do I put my LBX files?" is one click, matching the
-    # missing-data dialog ReMoMber shows on launch.
+    # missing-data dialog ReMoM shows on launch.
     # NOTE: four backslashes.  These values round-trip through CMake parsing twice
     # (here -> CPackConfig.cmake -> re-parsed by cpack), so a two-backslash form
     # collapses to "\R" and cpack dies with "Invalid character escape".
@@ -460,7 +460,7 @@ if(WIN32)
 elseif(APPLE)
     set(CPACK_GENERATOR "ZIP;TGZ")
 elseif(REMOM_INSTALL_FLAT)
-    # Linux portable archives -- the flat layout, ReMoMber at the archive root.
+    # Linux portable archives -- the flat layout, ReMoM at the archive root.
     set(CPACK_GENERATOR "ZIP;TGZ")
 else()
     # Linux native distro package -- built from the FHS layout by the

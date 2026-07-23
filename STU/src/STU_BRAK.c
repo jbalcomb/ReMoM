@@ -63,7 +63,7 @@ static void STU_BRAK_Flush_Log(void)
 /*
     Emit one report line to BOTH stderr and the log.
 
-    The log copy is not redundant: ReMoMber calls freopen("CON", "w", stderr) during startup, which
+    The log copy is not redundant: ReMoM calls freopen("CON", "w", stderr) during startup, which
     reattaches stderr to the console device, so `2> file` captures nothing from that point on and a
     crash report written only to stderr is invisible to any scripted or unattended run.  The log file
     is the only destination that survives.

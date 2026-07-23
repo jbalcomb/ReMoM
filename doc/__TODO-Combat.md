@@ -43,7 +43,7 @@ Combat now has deterministic characterization tests (seed 12345); reconstruction
 | Channel | Path | Runner | CTest |
 |---|---|---|---|
 | Strategic (auto-resolve) | `Strategic_Combat__WIP`, headless | `HeMoM --combat` | `HeMoM_Combat_Strategic_*` (automated) |
-| Tactical (real battle screen) | `Combat_Screen__WIP`, windowed, scripted `.hms` | `ReMoMber --continue --scenario` | `Combat_S1_*`, `Combat_S2_*` — automated check vs committed baseline; windowed replay gated by `ENABLE_WINDOWED_COMBAT_TESTS` |
+| Tactical (real battle screen) | `Combat_Screen__WIP`, windowed, scripted `.hms` | `ReMoM --continue --scenario` | `Combat_S1_*`, `Combat_S2_*` — automated check vs committed baseline; windowed replay gated by `ENABLE_WINDOWED_COMBAT_TESTS` |
 
 - Scenario 1: open-field stack fight (Halberdiers vs Stag Beetles). Scenario 2: multi-turn city assault (razes Fa-rul). Assertions in `tests/assert_combat_s{1,2}.txt`; fixtures/baselines in `assets/combat_s{1,2}.*`.
 - **Tactical combat does not run headless** — the battle screen is entangled with the rendering/animation layer; the windowed path is authoritative. See the BRA doc for the substrate rationale.

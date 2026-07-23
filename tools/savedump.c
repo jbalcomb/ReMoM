@@ -19,7 +19,7 @@
  *
  * Works on .GAM files produced by:
  *   - OG-MoM (MAGIC.EXE / WIZARDS.EXE)
- *   - ReMoMber
+ *   - ReMoM
  *   - HeMoM
  */
 

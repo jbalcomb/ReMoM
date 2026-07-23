@@ -5,7 +5,7 @@
 ### Dependency Graph
 
 ```
-ReMoMber (executable)
+ReMoM (executable)
     ↓
 [momlib, MOX, STU, Platform, SDL3::SDL3]
 
@@ -31,7 +31,7 @@ Platform (static, 19 sources)
 | File | Purpose |
 |------|---------|
 | CMakeLists.txt | Root — project setup, SDL3, GoogleTest, compiler flags, subdirs |
-| src/CMakeLists.txt | ReMoMber executable, asset copying |
+| src/CMakeLists.txt | ReMoM executable, asset copying |
 | platform/CMakeLists.txt | Platform static lib (SDL3 abstraction layer) |
 | STU/CMakeLists.txt | Passthrough to STU/src and STU/tests |
 | STU/src/CMakeLists.txt | STU static lib |

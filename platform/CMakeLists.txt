@@ -8,7 +8,7 @@
 #   Platform_Headless — no display, no audio, no external deps.  HeMoM and
 #                       the test executables link this.
 #   Platform          — the windowed backend (SDL2 default, or USE_SDL3 /
-#                       USE_WIN32).  ReMoMber links this.
+#                       USE_WIN32).  ReMoM links this.
 
 option(USE_SDL3 "Use SDL3 instead of SDL2 for the windowed backend (default: SDL2)" OFF)
 option(USE_WIN32 "Use native Win32 backend instead of SDL for the windowed backend (no SDL dependency)" OFF)

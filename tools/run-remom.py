@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""run-remom.py — drive ReMoMber non-interactively.
+"""run-remom.py — drive ReMoM non-interactively.
 
 Defaults to the matchup workflow:
     --ini assets/matchup_hemom.ini    (seed comes from [Game] unless --seed)
@@ -9,12 +9,12 @@ Defaults to the matchup workflow:
 
 Output:
     bin/Debug/SAVE<save_slot+1>.GAM   (verified rewritten this run)
-    bin/Debug/stderr.log              (full ReMoMber stderr)
+    bin/Debug/stderr.log              (full ReMoM stderr)
 
 Exit:
-    0  ReMoMber exited 0 AND expected SAVE was rewritten
+    0  ReMoM exited 0 AND expected SAVE was rewritten
     2  setup / prerequisite error (missing binary / INI / driver file)
-    3  ReMoMber exited non-zero OR expected SAVE was not rewritten
+    3  ReMoM exited non-zero OR expected SAVE was not rewritten
 """
 
 import argparse
@@ -44,8 +44,8 @@ def main(argv: list[str]) -> int:
                          "used to verify SAVE<N+1>.GAM was rewritten (default: 1)")
     ap.add_argument("--gui", action="store_true",
                     help="run windowed (default: headless via SDL_VIDEODRIVER=offscreen)")
-    ap.add_argument("remomber_args", nargs="*",
-                    help="extra args forwarded to ReMoMber after --")
+    ap.add_argument("remom_args", nargs="*",
+                    help="extra args forwarded to ReMoM after --")
     args = ap.parse_args(argv)
 
     # --rmr wins if both somehow set; otherwise default --hms applies.
@@ -67,12 +67,12 @@ def main(argv: list[str]) -> int:
     print()
 
     try:
-        result = L.run_remomber(
+        result = L.run_remom(
             seed=seed,
             hms=hms,
             rmr=rmr,
             save_slot=args.save_slot,
-            extra_args=args.remomber_args,
+            extra_args=args.remom_args,
             headless=not args.gui,
         )
     except FileNotFoundError as e:

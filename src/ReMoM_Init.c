@@ -92,7 +92,7 @@ int ReMoM_Preflight_Game_Data(void)
              "Missing: %s\n\n"
              "Copy every .LBX file from your original\n"
              "Master of Magic v1.31 installation into the same folder as\n"
-             "the ReMoMber executable (or set the REMOM_DATA_DIR environment\n"
+             "the ReMoM executable (or set the REMOM_DATA_DIR environment\n"
              "variable to point at them).\n\n"
              "See PLAYING.md for details.",
              missing_list);

@@ -127,7 +127,7 @@ Two layers of evidence — pass both or it isn't working:
 The strict test. If this passes, by construction every downstream `Random()` consumer sees the same value, so the worlds are identical.
 
 1. Pick a fixed seed `S`. Set the same wizard/race/banner/difficulty/landsize/magic/opponents in `assets/ReMoM.ini` *and* in a recorded menu-click sequence.
-2. Run `ReMoMber --seed S` (or equivalent), click through the new-game menus making the same selections, hit OK on Screen 0 → ... → Screen 7. Capture stderr to `remom_seed${S}_stderr.log`.
+2. Run `ReMoM --seed S` (or equivalent), click through the new-game menus making the same selections, hit OK on Screen 0 → ... → Screen 7. Capture stderr to `remom_seed${S}_stderr.log`.
 3. Run `HeMoM --newgame assets/ReMoM.ini --seed S`. Capture stderr to `hemom_seed${S}_stderr.log`.
 4. Filter both to `[RNG-CALL]` lines only (e.g. `*_rng.log`).
 5. `diff remom_seed${S}_rng.log hemom_seed${S}_rng.log` — expect zero difference. The first diverging line names the source file:line of the offending call.

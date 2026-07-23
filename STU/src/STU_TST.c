@@ -92,7 +92,7 @@ void TST_Delete_Stack(int16_t target_unit_idx, int16_t target_wx, int16_t target
     WIZ_NextIdleStack(HUMAN_PLAYER_IDX, &_map_x, &_map_y, &_map_plane);
 }
 
-/* Selected by ReMoMber's `--patch <name>`.  NULL = inert; see STU_TST.h for why this is not gated
+/* Selected by ReMoM's `--patch <name>`.  NULL = inert; see STU_TST.h for why this is not gated
    behind STU_DEBUG. */
 const char * g_tst_patch_scenario = NULL;
 

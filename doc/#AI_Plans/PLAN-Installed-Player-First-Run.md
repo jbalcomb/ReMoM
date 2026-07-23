@@ -23,13 +23,13 @@ Durable decisions that apply across all phases:
   | `CONFIG.MOM`/`MAGIC.SET`/saves (writable) | `XDG_DATA_HOME` | `~/.local/share/ReMoM/` | `%APPDATA%\ReMoM\` | `~/Library/Application Support/ReMoM/` |
   | Settings (`ReMoM.ini`) | `XDG_CONFIG_HOME` | `~/.config/ReMoM/` | `%APPDATA%\ReMoM\` | `~/Library/Application Support/ReMoM/` |
   | Logs | `XDG_STATE_HOME` | `~/.local/state/ReMoM/` | `%LOCALAPPDATA%\ReMoM\logs\` | `~/Library/Logs/ReMoM/` |
-- **`STU_LOG` gets its log dir from the caller, not by calling `STU_GRAF`** (avoids an `STU_LOG`↔`STU_GRAF` cycle). ReMoMber resolves it via `STU_GRAF_User_State_Dir` (the shared XDG/mkdir resolver — no duplication) and passes it through `STU_Log_Set_Base_Dir`. *(Implemented in Phase 6.)*
+- **`STU_LOG` gets its log dir from the caller, not by calling `STU_GRAF`** (avoids an `STU_LOG`↔`STU_GRAF` cycle). ReMoM resolves it via `STU_GRAF_User_State_Dir` (the shared XDG/mkdir resolver — no duplication) and passes it through `STU_Log_Set_Base_Dir`. *(Implemented in Phase 6.)*
 - **Platform layer keeps only `Platform_Show_Error(title, msg)`** (needs the UI backend: `SDL_ShowSimpleMessageBox` / `MessageBoxA` / stderr for headless). Path/place resolution does **not** touch the backend.
 - **Routing the game's opens (no game-logic edits):** `LBX_Load` (libmox, 3 sites) calls `STU_GRAF_Open_Asset` — legal MoX→STU dependency, no function pointers. `CONFIG.MOM`/`MAGIC.SET`/save sites (bounded, in `ReMoM_Init.c`/`Settings.c`/HeMoM newgame) call the `STU_GRAF` open functions.
 - **`profile` at init:** `STU_GRAF_Init(STU_GRAF_PLAYER | STU_GRAF_HEADLESS)`. HEADLESS → CWD-only, no seeding, stderr for errors. Both `main()`s call it.
 - **Startup order (target):** CLI-parse → `STU_GRAF_Init` → `STU_Log_Startup` (into the resolved state dir) → `Startup_Platform` → preflight (dialog/exit) → seed → `ReMoM_Init_Engine` + MAGIC/WIZARDS → run. Bootstrap de-duplication of `ReMoM.c`/`HeMoM.c` and this order-fix are **distributed across phases**, not a separate refactor phase.
 - **Seeding policy:** on first run, copy `CONFIG.MOM`/`MAGIC.SET` **and any existing `SAVE1-9.GAM`** from the discovered game-data dir into the user data dir (copy-if-absent), then **always** read/write the copies (no read-through). Originals never modified. *(Saves added post-plan — without them, existing save games that live beside the data were orphaned on the move to per-user dirs.)*
-- **File maintenance (post-plan enhancement):** `ReMoMber --orig-files` force-refreshes `CONFIG.MOM`/`MAGIC.SET`/`SAVE1-9.GAM` from the originals, first moving current copies into a timestamped `backup-YYYYMMDD-HHMMSS/` subdir of the user data dir. STU_GRAF seam: `STU_GRAF_Backup_And_Reseed_User_File`.
+- **File maintenance (post-plan enhancement):** `ReMoM --orig-files` force-refreshes `CONFIG.MOM`/`MAGIC.SET`/`SAVE1-9.GAM` from the originals, first moving current copies into a timestamped `backup-YYYYMMDD-HHMMSS/` subdir of the user data dir. STU_GRAF seam: `STU_GRAF_Backup_And_Reseed_User_File`.
 
 ---
 
@@ -39,11 +39,11 @@ Durable decisions that apply across all phases:
 
 ### What to build
 
-Stand up `STU/src/STU_GRAF.c/.h` with the read side of the machinery: executable-dir resolution, recursive `mkdir`, an ordered read search path (this phase: `REMOM_DATA_DIR` → exe-dir → CWD — config/cache come in Phase 3), and `STU_GRAF_Open_Asset(name, mode)` which walks the path and opens the first hit via `stu_fopen_ci`. Route libmox `LBX_Load`'s three open sites through `STU_GRAF_Open_Asset` (bare LBX names unchanged). Add `STU_GRAF_Init(profile)`; `ReMoMber` calls it as `PLAYER`, `HeMoM` as `HEADLESS`. `stu_compat` is not touched. Default (unpopulated / HEADLESS) resolves CWD-only so existing consumers are unaffected.
+Stand up `STU/src/STU_GRAF.c/.h` with the read side of the machinery: executable-dir resolution, recursive `mkdir`, an ordered read search path (this phase: `REMOM_DATA_DIR` → exe-dir → CWD — config/cache come in Phase 3), and `STU_GRAF_Open_Asset(name, mode)` which walks the path and opens the first hit via `stu_fopen_ci`. Route libmox `LBX_Load`'s three open sites through `STU_GRAF_Open_Asset` (bare LBX names unchanged). Add `STU_GRAF_Init(profile)`; `ReMoM` calls it as `PLAYER`, `HeMoM` as `HEADLESS`. `stu_compat` is not touched. Default (unpopulated / HEADLESS) resolves CWD-only so existing consumers are unaffected.
 
 ### Acceptance criteria
 
-- [ ] With game data **only** next to the executable (not in CWD), `ReMoMber` launched from an unrelated CWD loads its LBX and boots to the title screen. *(mechanism in place — exe-dir is in the search path — but a data-complete GUI boot has not been run locally)*
+- [ ] With game data **only** next to the executable (not in CWD), `ReMoM` launched from an unrelated CWD loads its LBX and boots to the title screen. *(mechanism in place — exe-dir is in the search path — but a data-complete GUI boot has not been run locally)*
 - [ ] `REMOM_DATA_DIR=<dir>` directs LBX resolution to `<dir>` regardless of CWD. *(first-match search-path machinery is unit-tested; a REMOM_DATA_DIR-positive unit test is the remaining gap)*
 - [x] `HeMoM` and `ctest` still resolve data from CWD (default path) — no behavior change. *(HEADLESS profile = CWD-only; HeMoM integration + suite green)*
 - [x] No file under `MoM/src/` or `MoX/src/` game *logic* is modified (only `LBX_Load`'s open-call swap — loader plumbing). *(git-verified: no changes under `MoM/src` or `MoX/src` beyond `LBX_Load.c`)*
@@ -60,14 +60,14 @@ Stand up `STU/src/STU_GRAF.c/.h` with the read side of the machinery: executable
 
 ### What to build
 
-Add `Platform_Show_Error(title, message)` to the platform API (SDL2/SDL3 `SDL_ShowSimpleMessageBox`, Win32 `MessageBoxA`, headless `stderr`), safe to call before a window exists. Add a preflight in `STU_GRAF` (or called from it) that verifies the required file set (`FONTS.LBX`, `MAINSCRN.LBX`, … aligned with the installer PRD) resolves via the search path; wire it into `ReMoMber`'s `main()` after `STU_GRAF_Init` and before the first asset load. On missing data: log `ERROR`, show the dialog with the missing files + the fix + where it looked, and exit non-zero. Headless prints the same to stderr.
+Add `Platform_Show_Error(title, message)` to the platform API (SDL2/SDL3 `SDL_ShowSimpleMessageBox`, Win32 `MessageBoxA`, headless `stderr`), safe to call before a window exists. Add a preflight in `STU_GRAF` (or called from it) that verifies the required file set (`FONTS.LBX`, `MAINSCRN.LBX`, … aligned with the installer PRD) resolves via the search path; wire it into `ReMoM`'s `main()` after `STU_GRAF_Init` and before the first asset load. On missing data: log `ERROR`, show the dialog with the missing files + the fix + where it looked, and exit non-zero. Headless prints the same to stderr.
 
 ### Acceptance criteria
 
-- [x] No data discoverable anywhere → GUI dialog names the missing files and the fix, process exits non-zero, no crash / no blank-window flash. *(verified end-to-end: ReMoMber run from an empty dir → dialog path + exit 1, no crash/window)*
+- [x] No data discoverable anywhere → GUI dialog names the missing files and the fix, process exits non-zero, no crash / no blank-window flash. *(verified end-to-end: ReMoM run from an empty dir → dialog path + exit 1, no crash/window)*
 - [x] `HeMoM` with missing data prints the same message to stderr and exits non-zero (no GUI call). *(verified: HeMoM from empty dir → "Missing Game Data" on stderr + exit 1; guarded by ctest `HeMoM_Preflight_Missing_Data`)*
 - [ ] Data present → boots normally, no dialog. *(data-complete boot not run locally; negative path is proven)*
-- [x] `Platform_Show_Error` headless variant is unit-tested (asserts on stderr); GUI variants smoke-checked per backend. *(headless asserted via the `HeMoM_Preflight_Missing_Data` stderr regex; SDL2 GUI path smoke-checked during the ReMoMber empty-dir run)*
+- [x] `Platform_Show_Error` headless variant is unit-tested (asserts on stderr); GUI variants smoke-checked per backend. *(headless asserted via the `HeMoM_Preflight_Missing_Data` stderr regex; SDL2 GUI path smoke-checked during the ReMoM empty-dir run)*
 
 > **Status (committed `d827d9be` "phase 2 Assets Paths"):** fail-soft path verified end-to-end on both builds; only the positive "data present → normal boot" box awaits a data-complete GUI run (shared with Phase 1).
 
@@ -107,7 +107,7 @@ Add user-data-dir resolution (`XDG_DATA_HOME` via the `STU_GRAF` place helpers) 
 - [x] Write-family unit test: with a read-only game-data dir, `MAGIC.SET`/save writes land in the user-dir temp, not the source. *(18/18 STU_GRAF tests incl. `OpenUserWritesUnderDataDir`, `SeedCopies…`, `UserDirAndLofAbsentAreZero`, `HeadlessUserFamilyUsesCwd`.)*
 - [x] `main()` no longer contains inlined MAGIC/WIZARDS init (moved to `ReMoM_Init.c`); build + tests green. *(already extracted into `ReMoM_Init_Engine()`; clean full build; **regression proven** — stash-isolation baseline identical at 70/90 with and without Phase 4, i.e. zero new failures.)*
 
-> **Status (uncommitted):** STU_GRAF gained the writable user-family (`User_Data_Dir` / `Open_User` / `User_DIR` / `User_LOF` / `Seed_User_File`), **profile-aware** so it degrades to CWD under HEADLESS (and by default) — the swap is inert for HeMoM / tests / matchup, opt-in only via `STU_GRAF_Init(PLAYER)`. 15 live open+DIR/LOF sites swapped across 7 files (dead reconstruction twins left alone, per the caller-chain map). Seeding wired into ReMoMber startup. Remaining gap: a live in-game save/load **GUI** playthrough (needs a windowed, data-complete run).
+> **Status (uncommitted):** STU_GRAF gained the writable user-family (`User_Data_Dir` / `Open_User` / `User_DIR` / `User_LOF` / `Seed_User_File`), **profile-aware** so it degrades to CWD under HEADLESS (and by default) — the swap is inert for HeMoM / tests / matchup, opt-in only via `STU_GRAF_Init(PLAYER)`. 15 live open+DIR/LOF sites swapped across 7 files (dead reconstruction twins left alone, per the caller-chain map). Seeding wired into ReMoM startup. Remaining gap: a live in-game save/load **GUI** playthrough (needs a windowed, data-complete run).
 
 ---
 
@@ -137,18 +137,18 @@ A dependency-free SHA-256 and a non-blocking compatibility pass that runs after 
 
 ### What to build
 
-`STU_LOG` gains a base-output-dir with precedence `REMOM_LOG_DIR` (env) → caller-supplied dir → CWD (default). ReMoMber resolves the state dir via `STU_GRAF_User_State_Dir` and hands it to `STU_Log_Set_Base_Dir()` before `STU_Log_Startup`; HeMoM/tests/matchup never do, so they stay CWD. Rotation runs within the resolved dir; an unwritable dir falls back to CWD.
+`STU_LOG` gains a base-output-dir with precedence `REMOM_LOG_DIR` (env) → caller-supplied dir → CWD (default). ReMoM resolves the state dir via `STU_GRAF_User_State_Dir` and hands it to `STU_Log_Set_Base_Dir()` before `STU_Log_Startup`; HeMoM/tests/matchup never do, so they stay CWD. Rotation runs within the resolved dir; an unwritable dir falls back to CWD.
 
-> **Design refinement:** rather than `STU_LOG` *calling* `STU_GRAF` (which would create an `STU_LOG`↔`STU_GRAF` cycle, since `STU_GRAF` logs via `STU_LOG`), the **caller resolves and passes** the dir via a `STU_Log_Set_Base_Dir` side-channel. Dependency stays one-way (`STU_GRAF`→`STU_LOG`; ReMoMber→both); `STU_Log_Startup`'s signature is unchanged (no HeMoM/test ripple). No startup-**order** move was needed — `STU_GRAF_User_State_Dir` is standalone (no `STU_GRAF_Init`), so ReMoMber resolves the dir *before* `STU_Log_Startup` without reordering `STU_GRAF_Init` (which keeps its own startup log line).
+> **Design refinement:** rather than `STU_LOG` *calling* `STU_GRAF` (which would create an `STU_LOG`↔`STU_GRAF` cycle, since `STU_GRAF` logs via `STU_LOG`), the **caller resolves and passes** the dir via a `STU_Log_Set_Base_Dir` side-channel. Dependency stays one-way (`STU_GRAF`→`STU_LOG`; ReMoMber→both); `STU_Log_Startup`'s signature is unchanged (no HeMoM/test ripple). No startup-**order** move was needed — `STU_GRAF_User_State_Dir` is standalone (no `STU_GRAF_Init`), so ReMoM resolves the dir *before* `STU_Log_Startup` without reordering `STU_GRAF_Init` (which keeps its own startup log line).
 
 ### Acceptance criteria
 
-- [x] A player-build (`ReMoMber`) run writes `remom_log_*.txt` under the OS state dir (`~/.local/state/ReMoM/` etc.), not the CWD. *(end-to-end: ReMoMber `--headless` with `XDG_STATE_HOME=<tmp>` wrote the log under `<tmp>/ReMoM/`, 0 files in its CWD; unit `BaseDirRoutesLogIntoDir` + `UserStateDirResolvesAndCreates`.)*
+- [x] A player-build (`ReMoM`) run writes `remom_log_*.txt` under the OS state dir (`~/.local/state/ReMoM/` etc.), not the CWD. *(end-to-end: ReMoM `--headless` with `XDG_STATE_HOME=<tmp>` wrote the log under `<tmp>/ReMoM/`, 0 files in its CWD; unit `BaseDirRoutesLogIntoDir` + `UserStateDirResolvesAndCreates`.)*
 - [x] `HeMoM`, `ctest`, and the matchup harness still write `remom_log_*.txt` to the CWD — `tools/log-tools/log_triage.py` and `tools/parity_check.py` unaffected. *(end-to-end: HeMoM with `XDG_STATE_HOME` set still logged to its CWD, 0 files in the state dir — it never calls `Set_Base_Dir`. Default `log_base_dir=""` → CWD, byte-identical to before.)*
 - [x] `REMOM_LOG_DIR=<dir>` overrides for any build; `REMOM_LOG_DIR=.` forces CWD. *(end-to-end override honored; unit `RemomLogDirEnvOverridesBaseDir` + `RemomLogDirDotForcesCwd`.)*
 - [x] 3-file rotation works correctly within the resolved directory; unwritable dir falls back to CWD with the existing stderr note. *(unit `RotatesWithinBaseDir` + `UnwritableBaseDirFallsBackToCwd`.)*
 
-> **Status (uncommitted):** `STU_GRAF_User_State_Dir` (resolves + creates `XDG_STATE_HOME/ReMoM` etc.) + `STU_Log_Set_Base_Dir` side-channel + path-aware rotation/open with CWD fallback in `STU_LOG`. ReMoMber routes to the state dir at startup (PLAYER only); HeMoM/tests/matchup stay CWD. **57/57 STU tests** (6 new) + all three ACs confirmed against the real binaries. Debug + Release build clean.
+> **Status (uncommitted):** `STU_GRAF_User_State_Dir` (resolves + creates `XDG_STATE_HOME/ReMoM` etc.) + `STU_Log_Set_Base_Dir` side-channel + path-aware rotation/open with CWD fallback in `STU_LOG`. ReMoM routes to the state dir at startup (PLAYER only); HeMoM/tests/matchup stay CWD. **57/57 STU tests** (6 new) + all three ACs confirmed against the real binaries. Debug + Release build clean.
 
 ---
 

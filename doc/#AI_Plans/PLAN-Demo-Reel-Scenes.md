@@ -44,7 +44,7 @@ Both scenes therefore need real scripted play, and scene 8 needs an endgame save
 played to that point. That is the most expensive part of the reel; the cost is accepted.
 
 
-## `ReMoMber --load <SAVE.GAM>` — IMPLEMENTED
+## `ReMoM --load <SAVE.GAM>` — IMPLEMENTED
 
 Scenes 3, 4, 5 and 7 each begin in a specific game state.  `--load` now exists in `src/ReMoM.c`,
 mirroring HeMoM's, so no scene has to click through the Load Game menu first.
@@ -75,12 +75,12 @@ and commit it beside the script.
 
 ## Authoring loop (per scene)
 
-1. `ReMoMber.exe --record showcase/NN_name.RMR [--load SAVE.GAM] [--seed1 N]` — play the scene.
+1. `ReMoM.exe --record showcase/NN_name.RMR [--load SAVE.GAM] [--seed1 N]` — play the scene.
 2. `rmr2hms showcase/NN_name.RMR showcase/NN_name.hms` — convert to text.
 3. **Hand-edit for pacing.** This is the real work. A recording of a human hunting for a button reads
    as hesitant; a demo wants confident moves and deliberate pauses. Coarsen the waits, delete
    fumbles, add comments.
-4. `python tools/render_demo.py --scene NN_name --scenario showcase/NN_name.hms --game out/build/MSVC-sdl2-debug/bin/Debug/ReMoMber.exe`
+4. `python tools/render_demo.py --scene NN_name --scenario showcase/NN_name.hms --game out/build/MSVC-sdl2-debug/bin/Debug/ReMoM.exe`
 5. Watch it. Repeat from 3 — that iteration is cheap and is the whole point of the format.
 
 Final cut:

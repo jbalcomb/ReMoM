@@ -1,6 +1,6 @@
 # Stage_0.hms -- ReMoM-side New Game script for Stage 0.
 #
-# Consumed by `ReMomber --seed <S> --scenario ...`
+# Consumed by `ReMoM --seed <S> --scenario ...`
 # (driven by run-remom-stage0.py or run-hemom-stage0.py).
 # Mirrors the OG New Game choices that produced this
 # directory's canonical-save1.GAM, so the # ReMoM-side

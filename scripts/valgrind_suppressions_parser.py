@@ -2,7 +2,7 @@
 
 # Based on https://wiki.wxwidgets.org/Parse_valgrind_suppressions.sh
 # Read from stdin (supports: cat log.txt | python3 parse_suppressions.py)
-# valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --gen-suppressions=all ./ReMoMber 2> ~/STU/devel/ReMoM/valgrind-gen-suppressions-all.npp
+# valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --gen-suppressions=all ./ReMoM 2> ~/STU/devel/ReMoM/valgrind-gen-suppressions-all.npp
 # Z:\home\jbalcomb\STU\devel\ReMoM\valgrind-gen-suppressions-all.npp
 # cat valgrind-gen-suppressions-all.npp | python3 scripts/valgrind_suppressions_parser.py
 # python3 scripts/valgrind_suppressions_parser.py --input-file valgrind-gen-suppressions-all.npp --output-file ReMoM.supp --summary

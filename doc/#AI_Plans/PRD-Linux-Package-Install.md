@@ -37,20 +37,20 @@ Neither answers "install it the normal way." Meanwhile the prerequisites for a p
 
 Two concrete blockers stand in the way:
 
-1. **The release configure flattens the layout.** `release.yml` passes `-DCMAKE_INSTALL_BINDIR=.` so the portable ZIP has `ReMoMber` at its root. A `.deb` built from that same configure would install `/usr/ReMoMber` and `/usr/PLAYING.md`.
+1. **The release configure flattens the layout.** `release.yml` passes `-DCMAKE_INSTALL_BINDIR=.` so the portable ZIP has `ReMoM` at its root. A `.deb` built from that same configure would install `/usr/ReMoM` and `/usr/PLAYING.md`.
 2. **The `.desktop` entry and icon exist only inside CI** — a heredoc and a base64 blob in [release.yml:135](../../.github/workflows/release.yml#L135). A package cannot install files that only exist as shell strings.
 
 ## File & Directory Map (installed `.deb`, FHS)
 
 | Path | Content | Notes |
 |---|---|---|
-| `/usr/bin/ReMoMber` | the player executable, **stripped** | the only binary; dev/QA tools stay unpackaged |
+| `/usr/bin/ReMoM` | the player executable, **stripped** | the only binary; dev/QA tools stay unpackaged |
 | `/usr/share/applications/remom.desktop` | desktop entry | makes it appear in the app menu |
 | `/usr/share/icons/hicolor/256x256/apps/remom.png` | icon | referenced as `Icon=remom` |
 | `/usr/share/doc/remom/PLAYING.md` | player quick start | lowercase dir, matching the package name |
 | `/usr/share/doc/remom/changelog.gz` | Debian changelog | required by policy; native package, so `changelog.gz` not `changelog.Debian.gz` |
 | `/usr/share/doc/remom/copyright` | copyright notice | required by policy; not gzipped. Wording is the owner's — `packaging/copyright` |
-| `/usr/share/man/man6/ReMoMber.6.gz` | man page | section 6 (games) |
+| `/usr/share/man/man6/ReMoM.6.gz` | man page | section 6 (games) |
 | `/usr/share/lintian/overrides/remom` | lintian overrides | one entry, with its reason |
 | *(nothing else)* | | no game data, no saves, no fixtures, no bundled SDL2 |
 
@@ -92,7 +92,7 @@ The AppImage's portable mode does **not** apply to an installed package: `/usr` 
 `packaging/remom.desktop` and an icon at a standard size are real, reviewable files. `release.yml` stops generating them inline and consumes these instead, so the AppImage and the `.deb` are guaranteed to agree.
 
 **FR2 — FHS install rules.**
-`ReMoMber` installs to `${CMAKE_INSTALL_BINDIR}`, `PLAYING.md` to a docdir named for the *package* (`share/doc/remom`, not `share/doc/ReMoM`), the desktop entry to `share/applications`, and the icon to `share/icons/hicolor/<size>/apps`. `PLAYING.md`'s current `DESTINATION .` — which lands it at `/usr/PLAYING.md` under an FHS prefix — is corrected. The desktop/icon rules are Linux-only and must not alter the Windows or macOS install sets.
+`ReMoM` installs to `${CMAKE_INSTALL_BINDIR}`, `PLAYING.md` to a docdir named for the *package* (`share/doc/remom`, not `share/doc/ReMoM`), the desktop entry to `share/applications`, and the icon to `share/icons/hicolor/<size>/apps`. `PLAYING.md`'s current `DESTINATION .` — which lands it at `/usr/PLAYING.md` under an FHS prefix — is corrected. The desktop/icon rules are Linux-only and must not alter the Windows or macOS install sets.
 
 **FR3 — CPack DEB configuration.**
 Package name `remom` (lowercase, per Debian policy) while the archive artifacts keep `ReMoM`. Section `games`, priority `optional`, architecture auto-detected via `dpkg --print-architecture`, a maintainer, a homepage, and a short+long description. Filename per Debian convention: `remom_X.Y.Z_amd64.deb`.
@@ -116,7 +116,7 @@ The release workflow builds it on a runner chosen for glibc floor rather than re
 - [x] Installed directory permissions are `0755` regardless of the builder's umask. *(`CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS`; cleared 10 lintian warnings)*
 - [ ] `dpkg -I` shows `Package: remom`, a correct `Version`, `Architecture: amd64`, `Section: games`, and a `Depends:` line that includes SDL2 and SDL2_mixer without either having been typed by hand.
 - [ ] `sudo apt install ./remom_X.Y.Z_amd64.deb` succeeds on a machine without SDL2 and pulls the SDL2 packages in as part of that transaction.
-- [ ] After install, `ReMoMber` is on `PATH` and launches; with game data present it reaches the title screen.
+- [ ] After install, `ReMoM` is on `PATH` and launches; with game data present it reaches the title screen.
 - [ ] After install, the game appears in the desktop application menu with its icon.
 - [ ] Running the installed binary writes nothing under `/usr`; `MAGIC.SET`, saves, `ReMoM.ini` and logs land in the XDG dirs.
 - [ ] `sudo apt remove remom` removes every packaged file and leaves the user's XDG data intact.

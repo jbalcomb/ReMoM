@@ -31,6 +31,6 @@ ctest -R "AllocatePoolTest|AllocateTest|HeMoM_(WorldGen|OOB)" -C <Debug|Release>
   a C90 negative-array assert enforces the floor at compile time. `Pool_Bytes_Peak()`
   is logged at HeMoM shutdown for re-measurement.
 - **Deferred** (tracked in the plan, not yet built): running the suite under an
-  ASan build; a HeMoM ↔ ReMoMber pool-layout parity test (needs a ReMoMber
+  ASan build; a HeMoM ↔ ReMoM pool-layout parity test (needs a ReMoM
   harness); a compile-failure test that the capacity assert fires when
   deliberately undersized.

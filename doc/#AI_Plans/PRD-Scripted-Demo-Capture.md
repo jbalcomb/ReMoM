@@ -23,7 +23,7 @@ own `.hms`, cut together in post.
 - `.hms` is a human-readable scenario script: `click X Y`, `rclick X Y`, `type "STRING"`,
   `key K`, `escape` / `enter` / `backspace`, `wait Nms`.  Format documented in
   [tools/rmr2hms.c](../../tools/rmr2hms.c).
-- `ReMoMber.exe --scenario FILE.hms` loads it and registers the Artificial Human Player as a
+- `ReMoM.exe --scenario FILE.hms` loads it and registers the Artificial Human Player as a
   per-frame callback ([ReMoM.c:424](../../src/ReMoM.c#L424) →
   `HeMoM_Player_Load_Scenario` + `Platform_Register_Frame_Callback(HeMoM_Player_Frame)`).
   Clicks warp the real cursor via `Set_Pointer_Position`
@@ -107,11 +107,11 @@ ffmpeg -f rawvideo -pix_fmt rgb24 -s 320x200 -r 60 -i video_rgb24.raw -i audio.w
 Nearest-neighbour is deliberate — the pixels are the point.
 
 ### CLI
-`--capture <dir>` and `--capture-fps <n>` on ReMoMber, parsed alongside the existing
+`--capture <dir>` and `--capture-fps <n>` on ReMoM, parsed alongside the existing
 `--record` / `--replay` / `--demo` / `--scenario` flags in [ReMoM.c](../../src/ReMoM.c#L377).
 Typical render invocation:
 ```
-ReMoMber.exe --scenario showcase/03_overland.hms --capture out/capture/03_overland
+ReMoM.exe --scenario showcase/03_overland.hms --capture out/capture/03_overland
 ```
 
 ### Repo home
@@ -135,7 +135,7 @@ ReMoMber.exe --scenario showcase/03_overland.hms --capture out/capture/03_overla
 - `capture_info.txt` is written at Start as well as at Stop, so a run that is killed rather than
   exiting cleanly still leaves an encodable capture (frame count is recoverable from the raw size).
 
-**Gate passed.** `ReMoMber.exe --replay DEMO_QUIT_KD.RMR --capture <dir> --capture-fps 30` produced
+**Gate passed.** `ReMoM.exe --replay DEMO_QUIT_KD.RMR --capture <dir> --capture-fps 30` produced
 2586 frames over an 86-second run — 2586 / 30 = 86.2 s, i.e. the constant-rate sampling tracks wall
 clock exactly.  Decoded frames are pixel-exact with correct palettes (verified on the intro sequence
 and the credits/main-menu screen).  Throughput measured at 5.8 MB/s at 30 fps, as predicted.
@@ -176,9 +176,9 @@ Three bugs found and fixed by actually running it, all of them mine:
 
 Rendering with audio:
 ```
-python tools/render_demo.py --scene NAME --scenario showcase/NAME.hms     --game out/build/MSVC-sdl2-debug/bin/Debug/ReMoMber.exe
+python tools/render_demo.py --scene NAME --scenario showcase/NAME.hms     --game out/build/MSVC-sdl2-debug/bin/Debug/ReMoM.exe
 ```
-Note `--target ReMoMber` alone does not stage assets (`copy_assets` is a separate `ALL` target); build
+Note `--target ReMoM` alone does not stage assets (`copy_assets` is a separate `ALL` target); build
 `copy_assets` once per preset, or build without `--target`.
 
 

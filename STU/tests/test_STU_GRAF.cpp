@@ -11,11 +11,13 @@
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <sstream>
 #include <string>
 
 extern "C" {
 #include "../src/STU_GRAF.h"
 #include "../src/STU_HASH.h"
+#include "../src/STU_LOG.h"
 }
 
 namespace fs = std::filesystem;
@@ -452,6 +454,127 @@ TEST(STU_GRAF, BackupAndReseedRestoresOriginalAndBacksUp)
     EXPECT_EQ(STU_GRAF_Backup_And_Reseed_User_File("NOPE.DAT", "bak"), 0);
 
     STU_GRAF_Reset();
+    unset_env("XDG_DATA_HOME");
+}
+
+// ---- App-directory name (REMOM_APP_DIR) --------------------------------------
+//
+// The per-user app directory is normally "ReMoM".  Portable layouts (the AppImage)
+// put that directory in the SAME folder as the executable -- which is also named
+// ReMoM -- so they override the name via REMOM_APP_DIR.  A filesystem cannot hold a
+// file and a directory of the same name, hence the escape hatch.
+// See doc/#Devel/Devel-Linux-AppImage.md.
+
+TEST(STU_GRAF, AppDirDefaultsToReMoM)
+{
+    TempTree data("appdir_default");
+    STU_GRAF_Init(STU_GRAF_PLAYER);
+    unset_env("REMOM_APP_DIR");
+    set_env("XDG_DATA_HOME", data.dir().c_str());
+
+    FILE * fp = STU_GRAF_Open_User("T.DAT", "wb");
+    ASSERT_NE(fp, nullptr);
+    fclose(fp);
+    EXPECT_TRUE(fs::exists(fs::path(data.dir()) / "ReMoM" / "T.DAT"));
+
+    STU_GRAF_Reset();
+    unset_env("XDG_DATA_HOME");
+}
+
+TEST(STU_GRAF, AppDirHonoursRemomAppDirOverride)
+{
+    TempTree data("appdir_override");
+    STU_GRAF_Init(STU_GRAF_PLAYER);
+    set_env("XDG_DATA_HOME", data.dir().c_str());
+    set_env("REMOM_APP_DIR", "remom_app_dir");
+
+    FILE * fp = STU_GRAF_Open_User("T.DAT", "wb");
+    ASSERT_NE(fp, nullptr);
+    fclose(fp);
+
+    // Lands under the overridden name, and the default name is never created --
+    // so a file called "ReMoM" could sit safely beside it.
+    EXPECT_TRUE(fs::exists(fs::path(data.dir()) / "remom_app_dir" / "T.DAT"));
+    EXPECT_FALSE(fs::exists(fs::path(data.dir()) / "ReMoM"));
+
+    STU_GRAF_Reset();
+    unset_env("REMOM_APP_DIR");
+    unset_env("XDG_DATA_HOME");
+}
+
+TEST(STU_GRAF, AppDirOverrideRejectsPathsAndFallsBack)
+{
+    // The override is a NAME, not a path: anything that could redirect writes out
+    // of the resolved base is refused and the default is used instead.
+    const char * bad[] = { "../escape", "sub/dir", "back\\slash", "..", ".", "" };
+
+    for(size_t i = 0; i < sizeof(bad) / sizeof(bad[0]); i++)
+    {
+        TempTree data("appdir_bad");
+        STU_GRAF_Init(STU_GRAF_PLAYER);
+        set_env("XDG_DATA_HOME", data.dir().c_str());
+        set_env("REMOM_APP_DIR", bad[i]);
+
+        char d[1024] = {0};
+        ASSERT_EQ(STU_GRAF_User_Data_Dir(d, sizeof(d)), 1) << "bad value: " << bad[i];
+        EXPECT_NE(std::string(d).find("ReMoM"), std::string::npos) << "bad value: " << bad[i];
+        EXPECT_EQ(std::string(d).find(".."), std::string::npos) << "bad value: " << bad[i];
+
+        STU_GRAF_Reset();
+        unset_env("REMOM_APP_DIR");
+        unset_env("XDG_DATA_HOME");
+    }
+}
+
+TEST(STU_GRAF, AppDirBlockedByFileFailsCleanly)
+{
+    // Reproduces the AppImage portable-mode collision: a regular FILE occupies the
+    // name the app directory needs.  Expected: no crash, no write, a clean NULL.
+    TempTree data("appdir_blocked");
+    STU_GRAF_Init(STU_GRAF_PLAYER);
+    set_env("XDG_DATA_HOME", data.dir().c_str());
+    set_env("REMOM_APP_DIR", "remom_app_dir");
+
+    fs::path blocker = fs::path(data.dir()) / "remom_app_dir";
+    std::ofstream(blocker.string(), std::ios::binary) << "not a directory";
+    ASSERT_TRUE(fs::is_regular_file(blocker));
+
+    EXPECT_EQ(STU_GRAF_Open_User("T.DAT", "wb"), nullptr);
+    EXPECT_TRUE(fs::is_regular_file(blocker));  // untouched
+
+    STU_GRAF_Reset();
+    unset_env("REMOM_APP_DIR");
+    unset_env("XDG_DATA_HOME");
+}
+
+TEST(STU_GRAF, AppDirBlockedByFileIsDiagnosed)
+{
+    // Regression test for graf_mkdir_one treating EEXIST as success.  Note that the
+    // test above passes EITHER WAY -- STU_GRAF_Open_User returns NULL regardless,
+    // because the doomed fopen() just fails with ENOTDIR instead.  The whole point
+    // of the fix is that the cause stops being silent, so the LOG LINE is the only
+    // thing that actually distinguishes fixed from broken.  Assert on it.
+    TempTree data("appdir_blocked_log");
+    STU_GRAF_Init(STU_GRAF_PLAYER);
+    set_env("XDG_DATA_HOME", data.dir().c_str());
+    set_env("REMOM_APP_DIR", "remom_app_dir");
+
+    std::ofstream((fs::path(data.dir()) / "remom_app_dir").string(), std::ios::binary) << "x";
+
+    std::remove("remom_log_new.txt");
+    STU_Log_Startup(NULL);
+    EXPECT_EQ(STU_GRAF_Open_User("T.DAT", "wb"), nullptr);
+    STU_Log_Shutdown();
+
+    std::ifstream  lf("remom_log_new.txt", std::ios::in | std::ios::binary);
+    std::ostringstream ss;
+    ss << lf.rdbuf();
+    EXPECT_NE(ss.str().find("a non-directory of that name already exists"), std::string::npos)
+        << "graf_mkdir_one must report EEXIST-on-a-regular-file as failure, not as a created directory";
+
+    std::remove("remom_log_new.txt");
+    STU_GRAF_Reset();
+    unset_env("REMOM_APP_DIR");
     unset_env("XDG_DATA_HOME");
 }
 

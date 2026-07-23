@@ -12,7 +12,7 @@ sh autogen.sh
 ./configure
 make
 sudo make install
-# cd assets && ReMoMber
+# cd assets && ReMoM
 
 # cp ~/MPS/MAGIC.LBX assets/
 # cp ~/MPS/MAGIC.MOM assets/
@@ -20,4 +20,4 @@ sudo make install
 # cp ~/MPS/MAGIC.GAM assets/
 
 # ...if SIGSEGV, then:
-# gdb -batch -ex run -ex bt ReMoMber
+# gdb -batch -ex run -ex bt ReMoM

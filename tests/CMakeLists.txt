@@ -360,7 +360,7 @@ set_tests_properties(HeMoM_Combat_Strategic_Assertions PROPERTIES
 #  via the in-combat Auto button.  Outcome: attackers wiped 0/4, defender 517
 #  survives (10 dmg), AI summons a Fire Elemental.  See assert_combat_s1.txt.
 #
-#  The full scenario runs WINDOWED -- ReMoMber drives the real tactical screen
+#  The full scenario runs WINDOWED -- ReMoM drives the real tactical screen
 #  from combat_s1.hms, which needs a display.  So the replay is gated behind
 #  ENABLE_WINDOWED_COMBAT_TESTS and executed on demand.  There is no headless
 #  CI check: tactical combat is a rendering screen and cannot run under
@@ -388,7 +388,7 @@ if(ENABLE_WINDOWED_COMBAT_TESTS)
 
     add_test(
         NAME Combat_S1_Replay
-        COMMAND $<TARGET_FILE:ReMoMber>
+        COMMAND $<TARGET_FILE:ReMoM>
             --continue --seed1 12345
             --scenario ${HEMOM_TEST_ASSETS}/combat_s1.hms
         WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
@@ -460,7 +460,7 @@ if(ENABLE_WINDOWED_COMBAT_TESTS)
 
     add_test(
         NAME Combat_S2_Replay
-        COMMAND $<TARGET_FILE:ReMoMber>
+        COMMAND $<TARGET_FILE:ReMoM>
             --continue --seed1 12345
             --scenario ${HEMOM_TEST_ASSETS}/combat_s2.hms
         WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"

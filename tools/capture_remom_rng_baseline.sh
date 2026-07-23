@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 #
-# capture_remom_rng_baseline.sh — Launch ReMoMber for the one-time capture of
+# capture_remom_rng_baseline.sh — Launch ReMoM for the one-time capture of
 # the ReMoM-side baseline [RNG-CALL] trace that verify_rng_alignment.sh
 # compares HeMoM against.
 #
 # What it does:
-#   1. Builds ReMoMber under clang-debug (Linux) or MSVC-debug (Windows via
+#   1. Builds ReMoM under clang-debug (Linux) or MSVC-debug (Windows via
 #      Git Bash / MSYS).
-#   2. Launches ReMoMber with --seed ${SEED} --record menu_baseline.RMR,
+#   2. Launches ReMoM with --seed ${SEED} --record menu_baseline.RMR,
 #      capturing stderr to a raw log.
 #   3. Waits for you to click through the new-game menus making the choices
 #      that match assets/matchup_hemom.ini, then quit.
-#   4. After ReMoMber exits, filters the [RNG-CALL] stream into
+#   4. After ReMoM exits, filters the [RNG-CALL] stream into
 #      tests/baseline_seed${SEED}_rng.log.
 #   5. Prints the next step (run verify_rng_alignment.sh to compare).
 #
@@ -37,7 +37,7 @@
 #     Click "High Men"
 #   Screen 7 (Banner):
 #     Click Yellow
-#   → SAVE9.GAM is written, game starts, you quit ReMoMber.
+#   → SAVE9.GAM is written, game starts, you quit ReMoM.
 #
 # Usage:
 #   cd /home/jbalcomb/STU/devel/ReMoM
@@ -48,7 +48,7 @@
 # Exit codes:
 #   0  Baseline captured successfully
 #   1  Build or run failure
-#   2  ReMoMber exited but no [RNG-CALL] lines were captured
+#   2  ReMoM exited but no [RNG-CALL] lines were captured
 #      (most likely the --seed flag wasn't honored)
 
 set -euo pipefail
@@ -66,13 +66,13 @@ if [ -d "${REPO_ROOT}/out/build/MSVC-debug/bin/Debug" ]; then
     BUILD_PRESET="MSVC-debug"
     BUILD_DIR="${REPO_ROOT}/out/build/${BUILD_PRESET}"
     BIN_DIR="${BUILD_DIR}/bin/Debug"
-    REMOM_EXE="${BIN_DIR}/ReMoMber.exe"
+    REMOM_EXE="${BIN_DIR}/ReMoM.exe"
     CMAKE_CONFIG="--config Debug"
 elif command -v clang >/dev/null 2>&1; then
     BUILD_PRESET="clang-debug"
     BUILD_DIR="${REPO_ROOT}/out/build/${BUILD_PRESET}"
     BIN_DIR="${BUILD_DIR}/bin/Debug"
-    REMOM_EXE="${BIN_DIR}/ReMoMber"
+    REMOM_EXE="${BIN_DIR}/ReMoM"
     CMAKE_CONFIG=""
 else
     echo "FAIL: no usable build preset found (need clang-debug or MSVC-debug)"
@@ -87,10 +87,10 @@ BASELINE_RNG_LOG="${TESTS_DIR}/baseline_seed${SEED}_rng.log"
 REMOM_STDERR_LOG="${BIN_DIR}/remom_seed${SEED}_stderr.log"
 RMR_FILE="${ASSETS}/menu_baseline_seed${SEED}.RMR"
 
-echo "=== Step 1/4: Build ReMoMber (${BUILD_PRESET}) ==="
-cmake --build --preset "${BUILD_PRESET}" --target ReMoMber ${CMAKE_CONFIG} >/dev/null
+echo "=== Step 1/4: Build ReMoM (${BUILD_PRESET}) ==="
+cmake --build --preset "${BUILD_PRESET}" --target ReMoM ${CMAKE_CONFIG} >/dev/null
 if [ ! -x "${REMOM_EXE}" ]; then
-    echo "FAIL: ReMoMber binary not found at ${REMOM_EXE}"
+    echo "FAIL: ReMoM binary not found at ${REMOM_EXE}"
     exit 1
 fi
 echo "  built: ${REMOM_EXE}"
@@ -98,7 +98,7 @@ echo "  built: ${REMOM_EXE}"
 echo
 echo "=== Step 2/4: Walkthrough reminder ==="
 cat <<'EOF'
-  In ReMoMber, click through the new-game menus exactly as follows.
+  In ReMoM, click through the new-game menus exactly as follows.
   Any deviation here is what shows up as a Layer-A trace divergence.
 
     Screen 0:  Diff=Normal, Opp=Four, Land=Large, Magic=Normal  → OK
@@ -111,11 +111,11 @@ cat <<'EOF'
     Screen 6:  Click "High Men"
     Screen 7:  Click Yellow
 
-  Once SAVE9.GAM is written and the main screen comes up, quit ReMoMber.
+  Once SAVE9.GAM is written and the main screen comes up, quit ReMoM.
 EOF
 
 echo
-echo "=== Step 3/4: Launch ReMoMber --seed ${SEED} --record ${RMR_FILE##*/} ==="
+echo "=== Step 3/4: Launch ReMoM --seed ${SEED} --record ${RMR_FILE##*/} ==="
 echo "  stderr → ${REMOM_STDERR_LOG}"
 echo "  Press Enter to launch..."
 read -r _
@@ -123,7 +123,7 @@ cd "${BIN_DIR}"
 rm -f SAVE9.GAM SAVE9.txt "${REMOM_STDERR_LOG}"
 # Run interactively so the user can play through; stderr captures the RNG stream.
 "${REMOM_EXE}" --seed "${SEED}" --record "${RMR_FILE}" 2> "${REMOM_STDERR_LOG}" || {
-    echo "  NOTE: ReMoMber exit was non-zero (this is normal for a user-initiated quit)."
+    echo "  NOTE: ReMoM exit was non-zero (this is normal for a user-initiated quit)."
 }
 
 echo
@@ -143,7 +143,7 @@ fi
 
 # Also populate the analysis/remom/ directory so tools/parity_check.py can pick
 # up the SAVE files / MAGIC.SET / stderr.log from this run without rerunning
-# ReMoMber.
+# ReMoM.
 ANALYSIS_REMOM="${BIN_DIR}/analysis/remom"
 mkdir -p "${ANALYSIS_REMOM}"
 for name in SAVE9.GAM SAVE2.GAM MAGIC.SET ; do

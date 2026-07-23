@@ -905,8 +905,8 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 
         if(full_flag > 0)
         {
-            // Warning	C4724	potential mod by 0	010_ReMoMber	C:\STU\devel\ReMoM\MoX\src\Fonts.c	1883		
-            // Warning	C4723	potential divide by 0	010_ReMoMber	C:\STU\devel\ReMoM\MoX\src\Fonts.c	1884		
+            // Warning	C4724	potential mod by 0	010_ReMoM	C:\STU\devel\ReMoM\MoX\src\Fonts.c	1883		
+            // Warning	C4723	potential divide by 0	010_ReMoM	C:\STU\devel\ReMoM\MoX\src\Fonts.c	1884		
             // cant actually happen, because the full_flag guards against it
             if(space_count != 0)
             {
@@ -1867,8 +1867,8 @@ int16_t Print_String_To_Bitmap(int16_t x, int16_t y, char * string, int16_t chan
 
         full_flag -= Get_String_Width(string);
 
-        // Warning	C4724	potential mod by 0	010_ReMoMber	C:\STU\devel\ReMoM\MoX\src\Fonts.c	1883		
-        // Warning	C4723	potential divide by 0	010_ReMoMber	C:\STU\devel\ReMoM\MoX\src\Fonts.c	1884		
+        // Warning	C4724	potential mod by 0	010_ReMoM	C:\STU\devel\ReMoM\MoX\src\Fonts.c	1883		
+        // Warning	C4723	potential divide by 0	010_ReMoM	C:\STU\devel\ReMoM\MoX\src\Fonts.c	1884		
         // cant actually happen, because the full_flag guards against it
         if(full_flag > 0)
         {

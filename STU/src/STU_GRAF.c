@@ -20,9 +20,16 @@
 
 #if defined(_WIN32)
 #include <direct.h>   /* _mkdir  */
-#else
-#include <sys/stat.h> /* mkdir   */
+#include <sys/stat.h> /* stat, _S_IFDIR */
 #include <sys/types.h>
+#else
+#include <sys/stat.h> /* mkdir, stat, S_ISDIR */
+#include <sys/types.h>
+#endif
+
+/* MSVC's <sys/stat.h> defines _S_IFDIR but not the POSIX S_ISDIR test macro. */
+#if !defined(S_ISDIR)
+#define S_ISDIR(m) (((m) & _S_IFDIR) != 0)
 #endif
 
 #if defined(_WIN32)
@@ -43,7 +50,7 @@ static int  g_search_dir_count = 0;
 /* Selected by STU_GRAF_Init(); gates the writable user-family.  Defaults to
    HEADLESS so any code that never calls STU_GRAF_Init() -- HeMoM, the unit-test
    binaries, the matchup harness -- keeps the original CWD-relative behavior.
-   The user-data redirect is therefore inert until ReMoMber opts in with
+   The user-data redirect is therefore inert until ReMoM opts in with
    STU_GRAF_Init(STU_GRAF_PLAYER). */
 static STU_GRAF_Profile g_profile = STU_GRAF_HEADLESS;
 
@@ -95,6 +102,64 @@ static void graf_join(char * out, size_t cap, const char * dir, const char * nam
 static int graf_compose_dir(char * out, size_t cap, const char * base, const char * sub)
 {
     int n = snprintf(out, cap, "%s/%s/", base, sub);
+    return (n > 0 && (size_t)n < cap) ? 1 : 0;
+}
+
+/* Name of the per-user application directory -- the "ReMoM" in
+   ~/.local/share/ReMoM, %APPDATA%\ReMoM, ~/Library/Application Support/ReMoM.
+
+   REMOM_APP_DIR overrides it.  That exists for PORTABLE layouts, where the app
+   directory sits in the same folder as the executable and therefore must not be
+   named "ReMoM" -- the player binary is now called ReMoM too, and a filesystem
+   cannot hold a file and a directory of the same name.  The AppImage's AppRun sets
+   REMOM_APP_DIR=remom_app_dir when it engages portable mode; nothing else sets it,
+   so installed/XDG users are unaffected and need no migration.
+   See doc/#Devel/Devel-Linux-AppImage.md.
+
+   The override is deliberately a NAME, not a path: separators, "." and ".." are
+   rejected so it can only ever select a leaf directory under the resolved base and
+   never redirect writes elsewhere.  Read from the environment on every call (these
+   are startup-time path resolutions, not a hot path) so tests can vary it; only the
+   log line is once-per-process, to keep it out of the way. */
+static const char * graf_app_dir_name(void)
+{
+    static int   announced = 0;
+    const char * env;
+    size_t       i;
+
+    env = getenv("REMOM_APP_DIR");
+    if(env == NULL || env[0] == '\0')
+    {
+        return STU_GRAF_APP_DIR_DEFAULT;
+    }
+    if(strcmp(env, ".") == 0 || strcmp(env, "..") == 0)
+    {
+        LOG_WARN(LOG_CAT_STU_GRAF, "ignoring REMOM_APP_DIR=\"%s\": must be a directory name, not a relative path", env);
+        return STU_GRAF_APP_DIR_DEFAULT;
+    }
+    for(i = 0; env[i] != '\0'; i++)
+    {
+        if(env[i] == '/' || env[i] == '\\')
+        {
+            LOG_WARN(LOG_CAT_STU_GRAF, "ignoring REMOM_APP_DIR=\"%s\": must be a bare directory name (no path separators)", env);
+            return STU_GRAF_APP_DIR_DEFAULT;
+        }
+    }
+    if(!announced)
+    {
+        announced = 1;
+        LOG_INFO(LOG_CAT_STU_GRAF, "app directory name overridden to \"%s\" (REMOM_APP_DIR)", env);
+    }
+    return env;
+}
+
+/* graf_compose_dir for the per-user app directory: "<base>/<prefix><app-dir><suffix>/".
+   prefix/suffix carry the platform trimmings, e.g. ("Library/Caches/", "") ->
+   "<home>/Library/Caches/ReMoM/" and ("", "/logs") -> "<base>/ReMoM/logs/". */
+static int graf_compose_app_dir(char * out, size_t cap, const char * base,
+                                const char * prefix, const char * suffix)
+{
+    int n = snprintf(out, cap, "%s/%s%s%s/", base, prefix, graf_app_dir_name(), suffix);
     return (n > 0 && (size_t)n < cap) ? 1 : 0;
 }
 
@@ -245,14 +310,14 @@ int STU_GRAF_User_Config_Dir(char * out, size_t cap)
     {
         return 0;
     }
-    return graf_compose_dir(out, cap, base, "ReMoM");
+    return graf_compose_app_dir(out, cap, base, "", "");
 #elif defined(__APPLE__)
     const char * home = getenv("HOME");
     if(home == NULL || home[0] == '\0')
     {
         return 0;
     }
-    return graf_compose_dir(out, cap, home, "Library/Application Support/ReMoM");
+    return graf_compose_app_dir(out, cap, home, "Library/Application Support/", "");
 #else
     char fallback[STU_GRAF_PATH_MAX];
     const char * base = getenv("XDG_CONFIG_HOME");
@@ -266,7 +331,7 @@ int STU_GRAF_User_Config_Dir(char * out, size_t cap)
         snprintf(fallback, sizeof(fallback), "%s/.config", home);
         base = fallback;
     }
-    return graf_compose_dir(out, cap, base, "ReMoM");
+    return graf_compose_app_dir(out, cap, base, "", "");
 #endif
 }
 
@@ -278,14 +343,14 @@ int STU_GRAF_User_Cache_Dir(char * out, size_t cap)
     {
         return 0;
     }
-    return graf_compose_dir(out, cap, base, "ReMoM/cache");
+    return graf_compose_app_dir(out, cap, base, "", "/cache");
 #elif defined(__APPLE__)
     const char * home = getenv("HOME");
     if(home == NULL || home[0] == '\0')
     {
         return 0;
     }
-    return graf_compose_dir(out, cap, home, "Library/Caches/ReMoM");
+    return graf_compose_app_dir(out, cap, home, "Library/Caches/", "");
 #else
     char fallback[STU_GRAF_PATH_MAX];
     const char * base = getenv("XDG_CACHE_HOME");
@@ -299,7 +364,7 @@ int STU_GRAF_User_Cache_Dir(char * out, size_t cap)
         snprintf(fallback, sizeof(fallback), "%s/.cache", home);
         base = fallback;
     }
-    return graf_compose_dir(out, cap, base, "ReMoM");
+    return graf_compose_app_dir(out, cap, base, "", "");
 #endif
 }
 
@@ -440,14 +505,14 @@ int STU_GRAF_User_Data_Dir(char * out, size_t cap)
     {
         return 0;
     }
-    return graf_compose_dir(out, cap, base, "ReMoM");
+    return graf_compose_app_dir(out, cap, base, "", "");
 #elif defined(__APPLE__)
     const char * home = getenv("HOME");
     if(home == NULL || home[0] == '\0')
     {
         return 0;
     }
-    return graf_compose_dir(out, cap, home, "Library/Application Support/ReMoM");
+    return graf_compose_app_dir(out, cap, home, "Library/Application Support/", "");
 #else
     char fallback[STU_GRAF_PATH_MAX];
     const char * base = getenv("XDG_DATA_HOME");
@@ -461,13 +526,21 @@ int STU_GRAF_User_Data_Dir(char * out, size_t cap)
         snprintf(fallback, sizeof(fallback), "%s/.local/share", home);
         base = fallback;
     }
-    return graf_compose_dir(out, cap, base, "ReMoM");
+    return graf_compose_app_dir(out, cap, base, "", "");
 #endif
 }
 
-/* Create a single directory; success is "now exists" (EEXIST counts). */
+/* Create a single directory; success is "a directory now exists at path".
+   EEXIST alone is NOT success: a regular FILE of the same name also fails with
+   EEXIST, and reporting that as a created directory makes every later open inside
+   it fail with ENOTDIR instead -- a silent, misdiagnosable failure.  The concrete
+   case is the AppImage's portable layout, where the ReMoM save directory and the
+   ReMoM executable would otherwise compete for one name in one folder.  See
+   doc/#Devel/Devel-Linux-AppImage.md. */
 static int graf_mkdir_one(const char * path)
 {
+    struct stat st;
+
 #if defined(_WIN32)
     if(_mkdir(path) == 0)
     {
@@ -479,7 +552,16 @@ static int graf_mkdir_one(const char * path)
         return 1;
     }
 #endif
-    return (errno == EEXIST) ? 1 : 0;
+    if(errno != EEXIST)
+    {
+        return 0;
+    }
+    if(stat(path, &st) == 0 && S_ISDIR(st.st_mode))
+    {
+        return 1;  /* already a directory -- fine */
+    }
+    LOG_ERROR(LOG_CAT_STU_GRAF, "cannot create directory \"%s\": a non-directory of that name already exists", path);
+    return 0;
 }
 
 /* Recursively create every component of dir (like `mkdir -p`).  Intermediate
@@ -533,7 +615,7 @@ int STU_GRAF_User_State_Dir(char * out, size_t cap)
     {
         return 0;
     }
-    if(!graf_compose_dir(out, cap, base, "ReMoM/logs"))
+    if(!graf_compose_app_dir(out, cap, base, "", "/logs"))
     {
         return 0;
     }
@@ -543,7 +625,7 @@ int STU_GRAF_User_State_Dir(char * out, size_t cap)
     {
         return 0;
     }
-    if(!graf_compose_dir(out, cap, home, "Library/Logs/ReMoM"))
+    if(!graf_compose_app_dir(out, cap, home, "Library/Logs/", ""))
     {
         return 0;
     }
@@ -560,7 +642,7 @@ int STU_GRAF_User_State_Dir(char * out, size_t cap)
         snprintf(fallback, sizeof(fallback), "%s/.local/state", home);
         base = fallback;
     }
-    if(!graf_compose_dir(out, cap, base, "ReMoM"))
+    if(!graf_compose_app_dir(out, cap, base, "", ""))
     {
         return 0;
     }

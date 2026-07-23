@@ -14,7 +14,7 @@
 #
 # Pipeline (channel 1 -- real tactical screen, windowed, scripted):
 #   copy SAVECMBT.GAM SAVE9.GAM
-#   ReMoMber --continue --seed1 12345 --scenario combat_s2.hms   (writes SAVE1.GAM)
+#   ReMoM --continue --seed1 12345 --scenario combat_s2.hms   (writes SAVE1.GAM)
 #   savedump SAVE1.GAM SAVE1.txt
 #   check_save_fields SAVE1.txt assert_combat_s2.txt
 #

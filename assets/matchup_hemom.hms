@@ -1,5 +1,5 @@
 # TBD - should match up with the Record & Replay
-# assets/menu_baseline_seed12345.RMR — a recorded mouse/key replay (.RMR) of a human clicking through ReMoMber's new-game menus.
+# assets/menu_baseline_seed12345.RMR — a recorded mouse/key replay (.RMR) of a human clicking through ReMoM's new-game menus.
 # assets/menu_baseline_seed12345-RECORD.log — the stderr capture from that recording run.
 # 
 # Actions (durations require an explicit unit suffix):

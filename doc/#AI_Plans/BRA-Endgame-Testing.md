@@ -155,7 +155,7 @@ default.
 | Layer | Nature tested | Substrate | Harness | Determinism / mode | When run |
 |---|---|---|---|---|---|
 | **Endgame-state regression** | Transition *logic* (banish, defeat, return, mastery flags) | Headless | HeMoM endgame direct-invoke hook + patched save + dump + `check_save_fields` | Seeded, pass/fail | Every build / pre-push / CI |
-| **Endgame-cutscene harness** | *Presentation* (limbo fall, victory anim, SoM sphere, scrolls) | Windowed (real `Platform`) | `demo_vga`-style target / `ReMoMber --scenario` | Observed; `.RMR` replay for repro | Development, debugging, visual verification |
+| **Endgame-cutscene harness** | *Presentation* (limbo fall, victory anim, SoM sphere, scrolls) | Windowed (real `Platform`) | `demo_vga`-style target / `ReMoM --scenario` | Observed; `.RMR` replay for repro | Development, debugging, visual verification |
 | **Endgame predicates** | Individual decisions (`GAME_IsWon`, banish-vs-defeat) | None (unit test) | GTest, synthesized wizard/city state | Seeded, pass/fail | Every build — *after* the stubs are reconstructed |
 
 Guiding principle (inherited): **test code on the substrate it was designed for.**
@@ -209,7 +209,7 @@ State fields and their save offsets (player *i* base `P = 2536 + 1224*i`, all li
 **Fit:**
 - Endgame-state transitions via a HeMoM direct-invoke hook: deterministic, headless, reuses the whole
   save-dump/assert pipeline. Clean fit for regression detection of the implemented layer.
-- Windowed cutscene observation modeled on `demo_vga` / `ReMoMber --scenario`: clean fit for watching
+- Windowed cutscene observation modeled on `demo_vga` / `ReMoM --scenario`: clean fit for watching
   the sequences once their finalizers exist.
 
 **Did not fit:**

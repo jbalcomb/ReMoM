@@ -67,7 +67,7 @@ static size_t log_tail = 0;
 static FILE * log_file = NULL;
 static size_t log_dropped_since_last_pump = 0;
 
-/* Log-output directory.  base_dir is the caller's preferred location (ReMoMber
+/* Log-output directory.  base_dir is the caller's preferred location (ReMoM
    passes the resolved XDG state dir; HeMoM/tests/matchup leave it empty = CWD).
    effective_dir is what a given startup actually uses, after applying the
    REMOM_LOG_DIR override and any not-writable fallback to CWD.  Empty = CWD. */

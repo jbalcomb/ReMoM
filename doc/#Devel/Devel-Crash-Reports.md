@@ -1,6 +1,6 @@
 # Crash reports and symbol resolution
 
-When ReMoMber or HeMoM crashes, [STU_BRAK](../../STU/src/STU_BRAK.c) catches the
+When ReMoM or HeMoM crashes, [STU_BRAK](../../STU/src/STU_BRAK.c) catches the
 signal (`SIGFPE`, `SIGSEGV`, `SIGILL`, `SIGABRT`, `SIGBUS`) and prints a stack
 trace to stderr and the STU_LOG file *before* the process dies. Whether that
 trace shows readable function names or just hex addresses depends on how the
@@ -13,8 +13,8 @@ explains how the pieces fit together and how to turn a hex address into a
 A raw stack trace after a crash looks like a list of return addresses:
 
 ```
-ReMoMber(+0x2a1f4)[0x55f0b8c1a1f4]
-ReMoMber(+0x8b7c1)[0x55f0b8c807c1]
+ReMoM(+0x2a1f4)[0x55f0b8c1a1f4]
+ReMoM(+0x8b7c1)[0x55f0b8c807c1]
 /lib/x86_64-linux-gnu/libc.so.6(+0x2a1ca)[0x7f8e6a02a1ca]
 ```
 
@@ -45,7 +45,7 @@ symbol table, not just the ones that libraries need. After that,
 addresses into names.
 
 The knob is set portably in [src/CMakeLists.txt](../../src/CMakeLists.txt) via
-`set_target_properties(<tgt> PROPERTIES ENABLE_EXPORTS ON)` on both `ReMoMber`
+`set_target_properties(<tgt> PROPERTIES ENABLE_EXPORTS ON)` on both `ReMoM`
 and `HeMoM`. CMake's `ENABLE_EXPORTS`:
 
 - On **GNU/Clang** it passes `-rdynamic` (which the linker turns into
@@ -57,7 +57,7 @@ and `HeMoM`. CMake's `ENABLE_EXPORTS`:
 You can verify it worked on Linux after a rebuild:
 
 ```
-$ nm --dynamic out/build/clang-debug/bin/Debug/ReMoMber | grep -c ' T '
+$ nm --dynamic out/build/clang-debug/bin/Debug/ReMoM | grep -c ' T '
 2049
 ```
 
@@ -67,7 +67,7 @@ A handful (≤10) means the flag didn't stick. Thousands means it did.
 
 - **`static` functions** are still hidden regardless. The compiler gives them
   internal linkage, so the linker has nothing to export. They show up as
-  `ReMoMber+0xNNNN` in the trace even with `-rdynamic`. Resolve them with
+  `ReMoM+0xNNNN` in the trace even with `-rdynamic`. Resolve them with
   `addr2line`.
 - **File:line information.** `-rdynamic` gives you the function name, not the
   source line. That still requires `addr2line`/`atos`/gdb reading the debug
@@ -83,10 +83,10 @@ carries debug information. Both `clang-debug` and `MSVC-debug` presets already
 do this — you just want to know how to read what's there:
 
 - **Linux/glibc, macOS** — debug info lives in DWARF sections inside the
-  executable (`.debug_info`, `.debug_line`, etc.). `addr2line -e ReMoMber ADDR`
+  executable (`.debug_info`, `.debug_line`, etc.). `addr2line -e ReMoM ADDR`
   reads them.
 - **macOS** — DWARF may live inside a `.dSYM` bundle next to the executable if
-  you did a release build with `dsymutil`. `atos -o ReMoMber.dSYM/... ADDR`.
+  you did a release build with `dsymutil`. `atos -o ReMoM.dSYM/... ADDR`.
 - **Windows/MSVC** — debug info is in a separate `.pdb` file. Address→symbol is
   handled by dbghelp *inside* STU_BRAK; the `.pdb` must be next to the `.exe`
   (Debug/Release outputs) or on `_NT_SYMBOL_PATH`.
@@ -126,9 +126,9 @@ file:line).
 Verify:
 
 ```
-$ file out/build/clang-debug/bin/Debug/ReMoMber
+$ file out/build/clang-debug/bin/Debug/ReMoM
 ELF 64-bit LSB pie executable ... with debug_info, not stripped
-$ nm --dynamic .../ReMoMber | grep -c ' T '
+$ nm --dynamic .../ReMoM | grep -c ' T '
 2049
 ```
 
@@ -145,14 +145,14 @@ Linux and STU_BRAK's POSIX path works unchanged.
 For file:line, macOS uses `atos` instead of `addr2line`:
 
 ```
-$ atos -o out/build/clang-debug/bin/Debug/ReMoMber 0x100003a1c
-Sort_Research_List (in ReMoMber) (Spells128.c:963)
+$ atos -o out/build/clang-debug/bin/Debug/ReMoM 0x100003a1c
+Sort_Research_List (in ReMoM) (Spells128.c:963)
 ```
 
 If you built a Release binary with a separate `.dSYM`:
 
 ```
-$ atos -o ReMoMber.dSYM/Contents/Resources/DWARF/ReMoMber 0x100003a1c
+$ atos -o ReMoM.dSYM/Contents/Resources/DWARF/ReMoM 0x100003a1c
 ```
 
 ### Windows (MSVC)
@@ -190,7 +190,7 @@ the Win32 API), but symbol *files* differ:
 ## Static functions and `addr2line`
 
 Even with `-rdynamic`, a frame inside a `static` function shows up as
-`ReMoMber(+0xNNNN)` — the linker never exported the name. The address is still
+`ReMoM(+0xNNNN)` — the linker never exported the name. The address is still
 useful; feed it to `addr2line` to get the source location.
 
 ### The Linux/MinGW workflow
@@ -199,13 +199,13 @@ Extract addresses from the STU_LOG or the terminal capture. STU_BRAK emits them
 in `+0xNNNN` form for POSIX unresolved frames:
 
 ```
-ReMoMber(+0x8b7c1) [0x55f0b8c807c1]
+ReMoM(+0x8b7c1) [0x55f0b8c807c1]
 ```
 
 Feed the offset to `addr2line`:
 
 ```
-$ addr2line -e out/build/clang-debug/bin/Debug/ReMoMber -f -C -i 0x8b7c1
+$ addr2line -e out/build/clang-debug/bin/Debug/ReMoM -f -C -i 0x8b7c1
 Sort_Research_List
 /home/jbalcomb/STU/devel/ReMoM/MoM/src/Spells128.c:963
 ```
@@ -221,7 +221,7 @@ Flags:
 You can feed multiple addresses at once, or pipe them:
 
 ```
-$ echo -e "0x8b7c1\n0x8b0f2\n0x8a4d8" | addr2line -e ReMoMber -f -C -i
+$ echo -e "0x8b7c1\n0x8b0f2\n0x8a4d8" | addr2line -e ReMoM -f -C -i
 ```
 
 ### Extracting the offset from a `[0x...]` absolute address
@@ -246,8 +246,8 @@ number is already the offset, no subtraction needed.
 `addr2line` from LLVM (`llvm-addr2line`) works, but the native tool is `atos`:
 
 ```
-$ atos -o ReMoMber -l 0x100000000 0x100003a1c
-Sort_Research_List (in ReMoMber) (Spells128.c:963)
+$ atos -o ReMoM -l 0x100000000 0x100003a1c
+Sort_Research_List (in ReMoM) (Spells128.c:963)
 ```
 
 `-l` is the load address (from `vmmap <pid>` or the crash report); omit for
@@ -262,7 +262,7 @@ need a separate tool. If you want it out-of-process:
 - WinDbg's `!address` / `.reload` / `ln <addr>` works interactively.
 - `llvm-symbolizer` reads both PDB and DWARF-in-PE:
   ```
-  > llvm-symbolizer.exe --obj=ReMoMber.exe 0x8b7c1
+  > llvm-symbolizer.exe --obj=ReMoM.exe 0x8b7c1
   Sort_Research_List
   C:\path\Spells128.c:963
   ```

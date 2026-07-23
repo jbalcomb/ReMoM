@@ -62,7 +62,7 @@ grep "SCR " mouse_debug.log | awk -F'[= ]' '{t=$2} NR>1{d=t-p; if(d>50) print d"
 
 
 cd /c/STU/devel/ReMoM && cmake -B build -DUSE_SDL3=ON -DMOUSE_DEBUG=ON && cmake --build build
-cd /c/STU/devel/ReMoM/build/bin/Debug && ./ReMoMber.exe
+cd /c/STU/devel/ReMoM/build/bin/Debug && ./ReMoM.exe
 
 
 
@@ -117,7 +117,7 @@ Usage:
 cmake -B build -DUSE_SDL3=ON -DMOUSE_DEBUG=ON && cmake --build build
 
 # Run and capture
-./build/bin/Debug/ReMoMber.exe 2> mouse_debug.log
+./build/bin/Debug/ReMoM.exe 2> mouse_debug.log
 
 # Check handler call frequency (always visible, even without MOUSE_DEBUG)
 grep "DBG frame=" mouse_debug.log
@@ -193,7 +193,7 @@ This is always compiled in (matches existing pattern), no `#ifdef` needed. If `m
 cmake -B build -DUSE_SDL3=ON -DMOUSE_DEBUG=ON && cmake --build build
 
 # Run, redirect stderr to a log file
-./build/bin/Debug/ReMoMber.exe 2> mouse_debug.log
+./build/bin/Debug/ReMoM.exe 2> mouse_debug.log
 
 # Quick check: handler call frequency
 grep HANDLER_START mouse_debug.log | head -20

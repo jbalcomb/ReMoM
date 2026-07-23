@@ -48,9 +48,9 @@ Correct the install layout so a `--prefix /usr` install is FHS-correct. `PLAYING
 
 ### Acceptance criteria
 
-- [ ] `cmake --install <fhs-build> --prefix <scratch>` produces exactly `bin/ReMoMber`, `share/applications/remom.desktop`, `share/icons/hicolor/*/apps/remom.png`, `share/doc/remom/PLAYING.md` — and nothing else.
+- [ ] `cmake --install <fhs-build> --prefix <scratch>` produces exactly `bin/ReMoM`, `share/applications/remom.desktop`, `share/icons/hicolor/*/apps/remom.png`, `share/doc/remom/PLAYING.md` — and nothing else.
 - [ ] No file lands at the prefix root.
-- [ ] The Windows flat layout (`CMAKE_INSTALL_BINDIR=.` → `ReMoMber.exe`, `PLAYING.md`, SDL DLLs, MSVC runtime at the package root) is unchanged; no `.desktop` or icon appears in it.
+- [ ] The Windows flat layout (`CMAKE_INSTALL_BINDIR=.` → `ReMoM.exe`, `PLAYING.md`, SDL DLLs, MSVC runtime at the package root) is unchanged; no `.desktop` or icon appears in it.
 - [ ] The Linux ZIP/TGZ produced by the existing release configure is unchanged in content.
 
 ---
@@ -69,7 +69,7 @@ Add the DEB generator and its metadata — lowercase package name, section, prio
 - [ ] `dpkg -c` lists exactly the Phase 2 file set under `/usr` — no `.LBX`, saves, fixtures, or bundled `libSDL2`.
 - [ ] `dpkg -I` shows `Package: remom`, correct `Version`, `Architecture: amd64`, `Section: games`, and a `Depends:` including SDL2 and SDL2_mixer that was derived, not typed.
 - [ ] `sudo apt install ./remom_X.Y.Z_amd64.deb` succeeds and pulls SDL2 in as part of the transaction on a machine lacking it.
-- [ ] The installed `ReMoMber` is on `PATH`, launches, and reaches the title screen with game data present.
+- [ ] The installed `ReMoM` is on `PATH`, launches, and reaches the title screen with game data present.
 - [ ] The game appears in the desktop application menu with its icon.
 - [ ] Running the installed binary writes nothing under `/usr`; `MAGIC.SET`, saves, `ReMoM.ini` and logs land in the XDG dirs.
 - [ ] `sudo apt remove remom` removes every packaged file and leaves the XDG data intact.

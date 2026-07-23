@@ -128,7 +128,7 @@ The playback path (`f_xmidi.c`, `_WM_ParseNewXmi`) diverges from AIL's interpret
 - **R3.5** `USE_WIN32` no longer unconditionally defines `NO_SOUND_LIBRARY`; `DISABLE_AUDIO` remains available to opt out.
 - **R3.6** Missing or unreadable `FAT.*` degrades to silence with a logged error, never a crash. Errors carry context per `AGENTS.md`.
 
-**Exit criteria:** launching ReMoMber under an MSVC preset plays the overland background track (`MUSIC.LBX` entry 100, `MUSIC_Bkgrnd_Neutral`, `SOUND.h:191`) with MoM's own timbres.
+**Exit criteria:** launching ReMoM under an MSVC preset plays the overland background track (`MUSIC.LBX` entry 100, `MUSIC_Bkgrnd_Neutral`, `SOUND.h:191`) with MoM's own timbres.
 
 ### Phase 4 — Win32 SFX and mixing
 

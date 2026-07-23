@@ -240,7 +240,7 @@
             "configuration": "Debug",
             "targets": [
                 "all",
-                "ReMoMber",
+                "ReMoM",
                 "HeMoM"
             ]
         },
@@ -251,7 +251,7 @@
             "configuration": "Debug",
             "targets": [
                 "ALL_BUILD",
-                "ReMoMber",
+                "ReMoM",
                 "HeMoM"
             ]
         },
@@ -262,7 +262,7 @@
             "configuration": "Debug",
             "targets": [
                 "ALL_BUILD",
-                "ReMoMber",
+                "ReMoM",
                 "HeMoM"
             ]
         },
@@ -273,7 +273,7 @@
             "configuration": "Release",
             "targets": [
                 "ALL_BUILD",
-                "ReMoMber",
+                "ReMoM",
                 "HeMoM"
             ]
         },
@@ -284,7 +284,7 @@
             "configuration": "Debug",
             "targets": [
                 "ALL_BUILD",
-                "ReMoMber",
+                "ReMoM",
                 "HeMoM"
             ]
         },
@@ -295,7 +295,7 @@
             "configuration": "Release",
             "targets": [
                 "ALL_BUILD",
-                "ReMoMber",
+                "ReMoM",
                 "HeMoM"
             ]
         },
@@ -306,7 +306,7 @@
             "configuration": "Debug",
             "targets": [
                 "all",
-                "ReMoMber",
+                "ReMoM",
                 "HeMoM"
             ]
         },
@@ -317,7 +317,7 @@
             "configuration": "Debug",
             "targets": [
                 "all",
-                "ReMoMber",
+                "ReMoM",
                 "HeMoM"
             ]
         },
@@ -334,7 +334,7 @@
             "configuration": "Debug",
             "targets": [
                 "all",
-                "ReMoMber",
+                "ReMoM",
                 "HeMoM"
             ]
         }

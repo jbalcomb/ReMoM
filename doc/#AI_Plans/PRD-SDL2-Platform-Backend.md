@@ -258,7 +258,7 @@ This is the only game source file that references SDL directly (for `SDL_main`).
 | autoconf SDL3 build (Linux) | `./autogen.sh && ./configure --with-sdl3 && make` | Finds SDL3 via pkg-config, builds |
 | autoconf no-audio build | `./configure --disable-audio && make` | Builds without mixer dependency |
 | autoconf static build | `./configure --enable-static-sdl && make` | Links SDL statically |
-| Functional (both backends) | Run `ReMoMber` | Main menu loads, input works, palette cycles, audio plays |
+| Functional (both backends) | Run `ReMoM` | Main menu loads, input works, palette cycles, audio plays |
 | Replay (both backends) | Record a replay on one backend, play on both | Frame-identical playback |
 
 

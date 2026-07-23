@@ -54,7 +54,7 @@ Durable decisions that apply across all phases:
   The base pointers now point into the static pool instead of into a
   malloc block; the inject API and the OG-captured byte payloads are
   unchanged.
-- **HeMoM ↔ ReMoMber parity**: both targets consume MoX/src/Allocate.c
+- **HeMoM ↔ ReMoM parity**: both targets consume MoX/src/Allocate.c
   and the new `Allocate_Pool` module identically. No per-target
   conditional behavior.
 
@@ -98,7 +98,7 @@ end-to-end against the module's public API alone — no integration with
   pool base.
 - [ ] Unit tests for the above live in a new CTest target that builds
   and runs in isolation (no MoM library dependency).
-- [ ] Module compiles and links into both HeMoM and ReMoMber without
+- [ ] Module compiles and links into both HeMoM and ReMoM without
   affecting either binary's runtime behavior (it's wired in but
   nothing else calls it yet).
 
@@ -137,7 +137,7 @@ explicit and auditable before the implementation swap.
   (unchanged).
 - [ ] Every edited call site has an inline comment explaining why it
   bypasses the pool.
-- [ ] ReMoMber boots to the Main Screen with no behavior change.
+- [ ] ReMoM boots to the Main Screen with no behavior change.
 - [ ] Matchup pipeline runs to completion with all `gd_dump_*`
   comparison points still green.
 - [ ] HeMoM headless smoke run completes with no regression.
@@ -181,8 +181,8 @@ from in-scope arenas stop, and the byte-compare pipeline continues to pass.
 - [x] The first pool-backed arena sits at `pool_base + LEADING_GUARD`,
   so a `-1`-style underrun off it lands in sentinel-filled pool memory
   rather than before the static array.
-- [ ] ReMoMber starts, reaches the Main Screen, plays a turn without
-  crashing. *(unverified — no interactive ReMoMber run yet.)*
+- [ ] ReMoM starts, reaches the Main Screen, plays a turn without
+  crashing. *(unverified — no interactive ReMoM run yet.)*
 - [x] HeMoM run completes through Simtex_Autotiling and reaches the
   post-CRP_NEWG_CreatePathGrids dump point without crashing.
   *(HeMoM_WorldGen_Run green.)*
@@ -269,8 +269,8 @@ tests rather than new bespoke ones (see criteria). Document the catalog.
   the verified byte-identical `HeMoM_WorldGen`/`OOB` output (full
   `Allocate_Data_Space` call order). *(No bespoke per-arena offset dump — the
   two existing layers cover it.)*
-- [ ] HeMoM ↔ ReMoMber pool-layout parity test. *(Deferred — needs a ReMoMber
-  harness to expose pool offsets; ReMoMber is the windowed target.)*
+- [ ] HeMoM ↔ ReMoM pool-layout parity test. *(Deferred — needs a ReMoM
+  harness to expose pool offsets; ReMoM is the windowed target.)*
 - [x] `gd_dump_*` regression check: `HeMoM_WorldGen_Fields` / `_Validate` and
   `HeMoM_OOB_Autotiling` fail the suite if their pinned save fields diverge.
 - [~] Capacity assert (`POOL_ARENA_CAPACITY >= POOL_MIN_ARENA_BYTES`) is present

@@ -141,11 +141,11 @@ Same root cause as the Win32 Backspace issue. `Pack_Key_Enter()` was setting `'\
 
 **`--continue` CLI flag**
 
-Added to both HeMoM and ReMoMber. On HeMoM it's sugar for `--load SAVE9.GAM`; on ReMoMber it sets a flag that makes `MOM_main` skip the intro logos (adds a second condition to the existing JENNY-arg check) and makes `Screen_Control()` enter at `scr_Continue` instead of `scr_Main_Menu_Screen`.
+Added to both HeMoM and ReMoM. On HeMoM it's sugar for `--load SAVE9.GAM`; on ReMoM it sets a flag that makes `MOM_main` skip the intro logos (adds a second condition to the existing JENNY-arg check) and makes `Screen_Control()` enter at `scr_Continue` instead of `scr_Main_Menu_Screen`.
 
-**`--scenario` CLI flag on ReMoMber**
+**`--scenario` CLI flag on ReMoM**
 
-Previously only HeMoM supported scenarios. ReMoMber got the same flag plus a link against `Artificial_Human_Player.c`, with registration via `Platform_Register_Frame_Callback()`.
+Previously only HeMoM supported scenarios. ReMoM got the same flag plus a link against `Artificial_Human_Player.c`, with registration via `Platform_Register_Frame_Callback()`.
 
 **`Platform_Register_Frame_Callback()` in Platform.h**
 

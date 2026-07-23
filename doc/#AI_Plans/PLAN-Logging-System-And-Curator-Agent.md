@@ -12,7 +12,7 @@ Durable decisions that apply across all phases. Each phase below assumes these a
 - **Categories**: enum `LOG_CAT_AIMOVE`, `LOG_CAT_COMBAT`, `LOG_CAT_SAVE`, `LOG_CAT_PFL`, `LOG_CAT_IKI`, ... defined centrally in `STU_LOG.h`. New categories added only via that header.
 - **Message format on disk**: one line per message: `[ISO8601] [SEV  ] [CAT] file.c:NNN function: msg`. Severity and category use fixed-width fields so awk/grep one-liners are predictable.
 - **Ring buffer**: 2 MB static `char[2097152]`, single producer/consumer (engine is single-threaded), `size_t head`/`size_t tail`, write-wraps-at-boundary, silently-drops-on-would-overtake-tail.
-- **Pump cadence**: `log_pump()` is publicly exposed; each target calls it at its own frame boundary (ReMoM main loop, HeMoM tick, ReMoMber loop). Pump writes at most 4 KB per call.
+- **Pump cadence**: `log_pump()` is publicly exposed; each target calls it at its own frame boundary (ReMoM main loop, HeMoM tick, ReMoM loop). Pump writes at most 4 KB per call.
 - **File rotation**: at `log_init`, delete `remom_log_previous.txt` if present, rename `remom_log_current.txt` → `_previous.txt`, rename `remom_log_new.txt` → `_current.txt`, open fresh `remom_log_new.txt` for writing. Files live next to the executable.
 - **Runtime config**: `[Logging]` section in `ReMoM.ini` with `severity_threshold=` (one of the six levels) and one boolean per category (`AIMOVE=true`, etc.). Defaults baked in if section absent.
 - **Compile-time floor**: `STU_LOG_MIN_SEVERITY` macro acts as a hard floor; runtime ini cannot lower severity below it. Release builds strip `TRACE`/`DEBUG` via the `((void)sizeof(...))` idiom (no function call, no argument evaluation).
@@ -99,18 +99,18 @@ All six severity macros (`LOG_TRACE` through `LOG_FATAL`). Each message gets the
 
 ---
 
-## Phase 5: HeMoM + ReMoMber integration
+## Phase 5: HeMoM + ReMoM integration
 
 **User stories**: 10, 11 (full)
 
 ### What to build
 
-Wire `log_init`/`log_pump`/`log_shutdown` into the HeMoM tick loop and the ReMoMber loop. Both targets produce `remom_log_*.txt` files in the same format as ReMoM. A headless HeMoM run with a curated scenario produces a log file that the existing tooling (grep, awk) can consume. Verify the rotation works correctly across consecutive runs of each target.
+Wire `log_init`/`log_pump`/`log_shutdown` into the HeMoM tick loop and the ReMoM loop. Both targets produce `remom_log_*.txt` files in the same format as ReMoM. A headless HeMoM run with a curated scenario produces a log file that the existing tooling (grep, awk) can consume. Verify the rotation works correctly across consecutive runs of each target.
 
 ### Acceptance criteria
 
 - [ ] HeMoM headless run produces `remom_log_new.txt` in the expected format.
-- [ ] ReMoMber run produces `remom_log_new.txt` in the expected format.
+- [ ] ReMoM run produces `remom_log_new.txt` in the expected format.
 - [ ] Running HeMoM twice in a row produces a `_current.txt` (from the first run) and a `_new.txt` (from the second), with `_previous.txt` empty or absent on the first cycle.
 - [ ] Build under MSVC-debug succeeds for all targets.
 - [ ] Manual verification: side-by-side comparison of a ReMoM log line and a HeMoM log line shows identical metadata structure.

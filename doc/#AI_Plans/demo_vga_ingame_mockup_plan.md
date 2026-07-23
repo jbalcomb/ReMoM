@@ -14,7 +14,7 @@ and calls their public API.
 - **Boot path**: trimmed asset-boot. A new `Demo_Boot_Assets()` calls only the low-level public
   API the demo needs (memory pool, EMS, video, palette/font, LBX), NOT the game's full
   `ReMoM_Init_Engine()`. Keeps the demo lean and independent of the game's init.
-- **Assets**: the original MoM LBX files are staged into `bin/Debug` (same staging ReMoMber
+- **Assets**: the original MoM LBX files are staged into `bin/Debug` (same staging ReMoM
   uses), so `LBX_Load()` finds them at runtime. Phase 1 verifies this before relying on it.
 - **Showcase screens**: dissolve between MAINSCR (main menu) and a magic/spell screen;
   earthquake shakes the main/overland screen.

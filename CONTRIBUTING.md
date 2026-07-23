@@ -11,7 +11,7 @@ ReMoM is a C-based reassembly/reconstruction of the classic DOS game Master of M
 - `MoM/src/` — Main game logic (MoM library: `momlib`)
 - `MoX/src/` — Shared engine code (MoX library: `MOX`)
 - `STU/src/` — Utility/debug code (STU library)
-- `src/` — Application entry point (`ReMoMber` executable)
+- `src/` — Application entry point (`ReMoM` executable)
 - `MoM/tests/` — Google Test unit tests for MoM
 - `MoX/tests/` — Google Test unit tests for MoX
 - `tests/` — Top-level test targets

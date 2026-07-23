@@ -193,8 +193,8 @@ valgrind --leak-check=yes ./myprogram
 clang -g -O0 your_program.c -o your_program
 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./your_program
 ...add suppressions, use the --gen-suppressions=yes option 
-valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --gen-suppressions=yes ./ReMoMber
-valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --gen-suppressions=all ./ReMoMber
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --gen-suppressions=yes ./ReMoM
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --gen-suppressions=all ./ReMoM
 Here's the suppressions used by a run of valgrind -v --tool=memcheck ls -l:
 
 --suppressions=ReMoM.supp
@@ -212,19 +212,19 @@ grindmerge <input >output
 or, more cleverly:
 valgrind --show-leak-kinds=all --leak-check=full  foo 3>&1 1>&2 2>&3 | grindmerge -f oldrules >newrules
 
-valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --gen-suppressions=all ./ReMoMber
-valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --gen-suppressions=all ./ReMoMber 2> ~/STU/devel/ReMoM/valgrind-gen-suppressions-all.npp
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --gen-suppressions=all ./ReMoM
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --gen-suppressions=all ./ReMoM 2> ~/STU/devel/ReMoM/valgrind-gen-suppressions-all.npp
 
-valgrind ./ReMoMber
-Meh. Can't line up locations of ReMoMber executable, the game assets, and the repo ver of .valgrindrc.
+valgrind ./ReMoM
+Meh. Can't line up locations of ReMoM executable, the game assets, and the repo ver of .valgrindrc.
 cp ~/STU/devel/ReMoM/.valgrindrc ~/
 cd ~/STU/devel/ReMoM/out/build/clang-debug/bin/Debug
-valgrind ./ReMoMber
+valgrind ./ReMoM
 ...some stil showed
 ==509202== For lists of detected and suppressed errors, rerun with: -s
 ==509202== ERROR SUMMARY: 1035 errors from 107 contexts (suppressed: 1887 from 1416)
 
-valgrind --gen-suppressions=all ./ReMoMber 2> ~/STU/devel/ReMoM/valgrind-gen-suppressions-more.npp
+valgrind --gen-suppressions=all ./ReMoM 2> ~/STU/devel/ReMoM/valgrind-gen-suppressions-more.npp
 
 ==509881==  Uninitialised value was created by a stack allocation
 ==509881==    at 0x414A1A0: Startup_Platform (platform/sdl2/sdl2_Init.c:43)
@@ -234,7 +234,7 @@ Program Id      of the definition of the function Startup_Platform()
 
 
 objdump --syms <executable_name>
-jbalcomb@iMustAi:~/STU/devel/ReMoM/out/build/clang-debug/bin/Debug$ objdump --syms ReMoMber | head -10
+jbalcomb@iMustAi:~/STU/devel/ReMoM/out/build/clang-debug/bin/Debug$ objdump --syms ReMoM | head -10
 objdump -h <executable_name> | grep debug
 ...sections like .debug_info, .debug_aranges, etc.
 Display raw DWARF debug information:

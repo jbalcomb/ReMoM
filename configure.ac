@@ -22,7 +22,7 @@ AC_ARG_ENABLE([static-sdl],
     [], [enable_static_sdl=no])
 
 AC_ARG_WITH([sdl3],
-    AS_HELP_STRING([--with-sdl3], [Use SDL3 instead of SDL2 for ReMoMber (default: SDL2). HeMoM is always headless.]),
+    AS_HELP_STRING([--with-sdl3], [Use SDL3 instead of SDL2 for ReMoM (default: SDL2). HeMoM is always headless.]),
     [], [with_sdl3=no])
 
 AM_CONDITIONAL([USE_SDL3], [test "x$with_sdl3" = "xyes"])
@@ -126,7 +126,7 @@ AC_OUTPUT
 echo ""
 echo "  ReMoM $PACKAGE_VERSION"
 echo ""
-echo "  ReMoMber backend: $sdl_backend"
+echo "  ReMoM backend: $sdl_backend"
 echo "  HeMoM backend:    headless (always)"
 echo "  Audio support:    $have_mixer"
 echo "  Static SDL:       $enable_static_sdl"

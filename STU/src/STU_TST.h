@@ -20,7 +20,7 @@ extern "C" {
     --capture / --load / --record / --replay / --scenario, which all ship in the Release binary and do
     nothing unless explicitly asked for.
 
-    Set by ReMoMber's `--patch <name>` flag.  NULL (the default) means "do nothing".
+    Set by ReMoM's `--patch <name>` flag.  NULL (the default) means "do nothing".
 */
 extern const char * g_tst_patch_scenario;
 

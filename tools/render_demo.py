@@ -2,7 +2,7 @@
 """
 render_demo.py - render one scripted demo scene to an mp4, end to end.
 
-Drives ReMoMber through a .hms scenario (or a .RMR replay) with in-engine A/V capture enabled, then
+Drives ReMoM through a .hms scenario (or a .RMR replay) with in-engine A/V capture enabled, then
 encodes the captured raw stream to H.264 with ffmpeg, muxing the captured game audio if there is
 any.  See doc/#AI_Plans/PRD-Scripted-Demo-Capture.md.
 
@@ -29,7 +29,7 @@ import sys
 
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEFAULT_GAME = os.path.join(REPO_ROOT, "out", "build", "MSVC-debug", "bin", "Debug", "ReMoMber.exe")
+DEFAULT_GAME = os.path.join(REPO_ROOT, "out", "build", "MSVC-debug", "bin", "Debug", "ReMoM.exe")
 DEFAULT_OUT = os.path.join(REPO_ROOT, "out", "demo")
 
 # 320x200 was displayed at 4:3 on VGA, so the pixels are not square.  Scaling to 1440x1080 restores
@@ -237,9 +237,9 @@ def main():
     parser.add_argument("--scene", help="Scene name; names the output mp4 and the capture dir")
     parser.add_argument("--scenario", help="Path to a .hms scenario script")
     parser.add_argument("--replay", help="Path to a .RMR replay (alternative to --scenario)")
-    parser.add_argument("--load", help="Save to load before the scenario runs (e.g. SAVETEST.GAM); passed to ReMoMber --load")
-    parser.add_argument("--patch", help="Scenario patch name for TST_Patch_Game_Data (e.g. som_casting); passed to ReMoMber --patch")
-    parser.add_argument("--game", default=DEFAULT_GAME, help="ReMoMber.exe to drive")
+    parser.add_argument("--load", help="Save to load before the scenario runs (e.g. SAVETEST.GAM); passed to ReMoM --load")
+    parser.add_argument("--patch", help="Scenario patch name for TST_Patch_Game_Data (e.g. som_casting); passed to ReMoM --patch")
+    parser.add_argument("--game", default=DEFAULT_GAME, help="ReMoM.exe to drive")
     parser.add_argument("--out-dir", default=DEFAULT_OUT, help="Where mp4s and captures go")
     parser.add_argument("--fps", type=int, default=30, help="Capture/output frame rate")
     parser.add_argument("--crf", type=int, default=18, help="x264 quality (lower = better)")

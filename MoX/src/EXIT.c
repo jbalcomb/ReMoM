@@ -287,7 +287,7 @@ void Quit_With_Message(char * string)
 #endif
 
     exit(EXIT_FAILURE);
-    // Exception thrown at 0x00007FF9012D698B (ntdll.dll) in 010_ReMoMber.exe: 
+    // Exception thrown at 0x00007FF9012D698B (ntdll.dll) in 010_ReMoM.exe: 
     // 0xC0000005: Access violation reading location 0xFFFFFFFFFFFFFFF8.
     
     // PostQuitMessage();

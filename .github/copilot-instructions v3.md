@@ -14,7 +14,7 @@ new file mode 100644
 +- `MoM/src`: game logic and screens (many files map to original overlays and offsets).
 +- `MoX/src`: engine/platform/game-system layer (I/O, graphics, input, sound, data loading).
 +- `STU/src`: support utilities and helpers.
-+- `src/ReMoM.c`: executable entry point (`ReMoMber` target).
++- `src/ReMoM.c`: executable entry point (`ReMoM` target).
 +- `tests/unit` + `tests/mocks`: GoogleTest-based unit tests and C stubs/mocks.
 +
 +## Coding Rules for Suggestions

@@ -7,7 +7,7 @@
 # captured with `--record`.
 #
 # Usage:
-#   ReMoMber --continue --scenario test_continue_pre_next_turn.hms --record next_turn.RMR
+#   ReMoM --continue --scenario test_continue_pre_next_turn.hms --record next_turn.RMR
 #
 # The scenario stops after the Patrol click.  The game is still running and
 # sitting on the Main Screen with all starting units patrolled — ready for a

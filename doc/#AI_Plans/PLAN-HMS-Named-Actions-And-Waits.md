@@ -151,7 +151,7 @@ One-line-per-hit change to the replay field-hit callback, in both targets.
    `g_dbg_fields_trace`** so recording gets origins without the FIELDADD trace on. **`s_Field`
    untouched** (byte-offset-faithful, [Fields.h:90-154](../../MoX/src/Fields.h#L90-L154)) — the origin
    lives in a parallel array, all under `#ifdef STU_DEBUG`.
-2. **DONE** — `HeMoM_Replay_Log_Field_Hit` ([HeMoM.c:795](../../src/HeMoM.c#L795)) and the ReMoMber
+2. **DONE** — `HeMoM_Replay_Log_Field_Hit` ([HeMoM.c:795](../../src/HeMoM.c#L795)) and the ReMoM
    equivalent ([ReMoM.c:191](../../src/ReMoM.c#L191)) append `@<basename>:<line>` to the hit line under
    `#ifdef STU_DEBUG`, else the current rect-only form. **Screen name deliberately omitted** — the
    resolver derives the screen from the alias table, so `file:line` alone is the sufficient join key;

@@ -1,6 +1,6 @@
 # 08a_som_begin.hms -- Spell of Mastery, part 1 of 2: the human BEGINS casting it.
 #
-#   ReMoMber.exe --load SAVETEST.GAM --patch som_ready --scenario 08a_som_begin.hms
+#   ReMoM.exe --load SAVETEST.GAM --patch som_ready --scenario 08a_som_begin.hms
 #
 # Counterpart to 08b (which films the cast COMPLETING and the win).  This films the human opening the
 # spellbook and starting the cast: clicking the Spell of Mastery hands it to Cast_Spell_Of_Mastery()

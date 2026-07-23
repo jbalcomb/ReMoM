@@ -6,7 +6,7 @@
 # to scenario_tail_save_and_quit.hms for the standard save-and-exit sequence.
 #
 # Usage:
-#   ReMoMber --continue --scenario test_continue_save.hms
+#   ReMoM --continue --scenario test_continue_save.hms
 #   HeMoM    --continue --scenario test_continue_save.hms --dump-save SAVE1.GAM
 #
 # Notes:

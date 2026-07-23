@@ -7,7 +7,7 @@
 # the shared save-and-quit tail.
 #
 # Usage:
-#   ReMoMber --continue --scenario test_continue_next_turn.hms
+#   ReMoM --continue --scenario test_continue_next_turn.hms
 #   HeMoM    --continue --scenario test_continue_next_turn.hms --dump-save SAVE1.GAM
 #
 # Expected state changes beyond test_continue_save.hms:

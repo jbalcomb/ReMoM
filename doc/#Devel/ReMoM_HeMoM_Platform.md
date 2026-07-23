@@ -3,7 +3,7 @@
                 ║                          GAME TARGETS                             ║
                 ║                                                                   ║
                 ║    ┌──────────────────────────┐    ┌─────────────────────────┐    ║
-                ║    │   ReMoMber.exe   [1]     │    │   HeMoM.exe       [2]   │    ║
+                ║    │   ReMoM.exe   [1]     │    │   HeMoM.exe       [2]   │    ║
                 ║    │   (windowed game)        │    │   (headless tester)     │    ║
                 ║    │   src/ReMoM.c            │    │   src/HeMoM.c           │    ║
                 ║    │   src/ReMoM_Init.c       │    │   src/ReMoM_Init.c      │    ║
@@ -63,7 +63,7 @@
 
 ### Footnotes
 
- * [1] ReMoMber — the windowed game executable (the user-facing build of the ReMoM project). Linked against momlib + MOX + STU + Platform where Platform is whichever windowed backend the preset chose (SDL2 / SDL3 / Win32).
+ * [1] ReMoM — the windowed game executable (the user-facing build of the ReMoM project). Linked against momlib + MOX + STU + Platform where Platform is whichever windowed backend the preset chose (SDL2 / SDL3 / Win32).
 
  * [2] HeMoM — Headless Master of Magic. A lean entry point hardwired to Platform_Headless, regardless of which windowed backend the preset selected. Supports --newgame, --load SAVE.GAM, --record game.RMR, --replay game.RMR.
 
@@ -73,7 +73,7 @@
 
  * [5] Record & Replay — sits at the Platform_Event_Handler() boundary. On record, every engine-visible input frame is appended to a human-readable .RMR file (with a header line # random_seed=<seed> so the run is reproducible). On replay, the file is the input source — OS events are ignored. platform/replay/Replay.c:1-13
 
- * [6] Artificial Human Player (AHP) — src/Artificial_Human_Player.c. Reads a .hms scenario (wait, key, click, next_turn, quit, …), and on each frame injects synthetic keys/mouse via the same platform entry points a real user's input takes. Linked into both ReMoMber and HeMoM, so the exact same scenario can run windowed or headless. src/Artificial_Human_Player.h:1-19
+ * [6] Artificial Human Player (AHP) — src/Artificial_Human_Player.c. Reads a .hms scenario (wait, key, click, next_turn, quit, …), and on each frame injects synthetic keys/mouse via the same platform entry points a real user's input takes. Linked into both ReMoM and HeMoM, so the exact same scenario can run windowed or headless. src/Artificial_Human_Player.h:1-19
 
  * [a] AHP is compiled into both targets; it stays dormant unless a scenario is loaded.
 
@@ -104,7 +104,7 @@ HeMoM.exe --newgame ReMoM.ini --seed N  (+ optional --record game.RMR or AHP sce
 
 3. ReMoM script — visual confirmation that a script does what we think
 
-ReMoMber.exe --replay game.RMR     (or load the same .hms via AHP)
+ReMoM.exe --replay game.RMR     (or load the same .hms via AHP)
    →  SDL3 backend:   real window, real audio, real timing
    →  Platform_Event_Handler():
         Replay (replay-mode) feeds the recorded frames        [5]

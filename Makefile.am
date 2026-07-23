@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign subdir-objects
 
-bin_PROGRAMS = ReMoMber
+bin_PROGRAMS = ReMoM
 
 # =========================================================================
 #  Compiler flags
@@ -50,7 +50,7 @@ libstu_a_CFLAGS = $(AM_CFLAGS) \
 
 # -------------------------------------------------------------------------
 #  Platform — windowed backend (SDL2 default, SDL3 with --with-sdl3).
-#  ReMoMber links this.
+#  ReMoM links this.
 # -------------------------------------------------------------------------
 
 if USE_SDL3
@@ -108,7 +108,7 @@ endif
 
 # -------------------------------------------------------------------------
 #  Platform_Headless — always built, no external dependencies.
-#  HeMoM links this regardless of the ReMoMber backend choice.
+#  HeMoM links this regardless of the ReMoM backend choice.
 # -------------------------------------------------------------------------
 
 libplatform_headless_a_SOURCES = \
@@ -267,15 +267,15 @@ libmom_a_CFLAGS = $(AM_CFLAGS) \
     -I$(srcdir)/src
 
 # =========================================================================
-#  ReMoMber executable
+#  ReMoM executable
 # =========================================================================
 
-ReMoMber_SOURCES = \
+ReMoM_SOURCES = \
     src/ReMoM.c \
     src/ReMoM_Init.c \
     src/Artificial_Human_Player.c
 
-ReMoMber_CFLAGS = $(AM_CFLAGS) \
+ReMoM_CFLAGS = $(AM_CFLAGS) \
     $(SDL_CFLAGS) \
     -I$(srcdir)/MoX/src \
     -I$(srcdir)/MoM/src \
@@ -283,7 +283,7 @@ ReMoMber_CFLAGS = $(AM_CFLAGS) \
     -I$(srcdir)/STU/src \
     -I$(srcdir)/src
 
-ReMoMber_LDADD = \
+ReMoM_LDADD = \
     libmom.a \
     libmox.a \
     libplatform.a \
@@ -291,10 +291,10 @@ ReMoMber_LDADD = \
     $(SDL_LIBS)
 
 if HAVE_AUDIO
-ReMoMber_LDADD += $(SDL_MIXER_LIBS)
+ReMoM_LDADD += $(SDL_MIXER_LIBS)
 endif
 
-ReMoMber_LDADD += -lm
+ReMoM_LDADD += -lm
 
 # =========================================================================
 #  HeMoM — Headless Master of Magic (testing/CI/replay)

@@ -9,14 +9,14 @@
 
 ## Summary
 
-Extend the NSIS installer so it prompts the user for their existing Master of Magic v1.31 installation directory, validates that the expected `.LBX` game-data files are present, writes the chosen path into a ReMoM configuration file, and offers to launch ReMoMber on completion. ReMoMber reads the config at startup and loads LBX files from the recorded path. Eliminates the current "install, launch, immediate crash" experience without the game data files.
+Extend the NSIS installer so it prompts the user for their existing Master of Magic v1.31 installation directory, validates that the expected `.LBX` game-data files are present, writes the chosen path into a ReMoM configuration file, and offers to launch ReMoM on completion. ReMoM reads the config at startup and loads LBX files from the recorded path. Eliminates the current "install, launch, immediate crash" experience without the game data files.
 
 ## Problem
 
-Today, the NSIS installer drops `ReMoMber.exe` into `%LOCALAPPDATA%\ReMoM\` (a per-user install, no UAC) and the optional finish-page checkbox launches it. Because no LBX files are present, ReMoMber cannot start. There is no in-installer guidance about where to obtain or place LBX files, and no validation that the user has them — the user has to read the missing-data dialog, find their game data, and copy it in by hand before the game is playable.
+Today, the NSIS installer drops `ReMoM.exe` into `%LOCALAPPDATA%\ReMoM\` (a per-user install, no UAC) and the optional finish-page checkbox launches it. Because no LBX files are present, ReMoM cannot start. There is no in-installer guidance about where to obtain or place LBX files, and no validation that the user has them — the user has to read the missing-data dialog, find their game data, and copy it in by hand before the game is playable.
 
 > **Baseline corrections (2026-07-22).** Two premises in the original draft are no longer accurate:
-> - **ReMoMber does not crash on missing data.** It fails soft, showing a dialog that names the
+> - **ReMoM does not crash on missing data.** It fails soft, showing a dialog that names the
 >   missing files (`FONTS.LBX`, `MAINSCRN.LBX`, `WIZARDS.LBX`, `SPELLDAT.LBX`) and explains where to
 >   put them. The "first interaction is a crash dialog" problem statement is stale, which lowers the
 >   urgency of the fail-soft dependency listed below.
@@ -36,9 +36,9 @@ The portable ZIP distribution has the same problem but no installer flow to reme
 - Installer asks the user for the path to an existing Master of Magic v1.31 installation, pre-populating from a candidate list seeded with the floppy installer's default (`C:\MPS\MAGIC\`) and grown via a community-maintained GitHub Issue where users share their actual install paths and 👍 the entries that match their own.
 - Installer validates the chosen directory in two passes: (a) presence of expected LBX filenames, and (b) SHA256-hash comparison against a manifest of known-good v1.31 distributions — seeded with the original 1995 floppy distribution as the canonical reference, expanded over time via community-submitted hashes — to catch wrong-version, corrupted, or repackaged game data before the user sees a crash.
 - Ship a small companion hashing tool with the binary package so the community can compute SHA256s on their own MoM installation and submit them when a new distribution variant is discovered. Variants accepted into the manifest either as additional known-good rows or, when bytes have drifted in ways that affect ReMoM's loader, addressed via a separately-shipped patch that converts the variant into a canonical-equivalent form.
-- Installer writes the validated path into a ReMoM configuration file readable by ReMoMber.
-- Installer's finish page offers to launch ReMoMber, which then boots successfully using LBX files from the recorded path.
-- ReMoMber falls back gracefully (no crash) if the config is absent or invalid — see Dependencies.
+- Installer writes the validated path into a ReMoM configuration file readable by ReMoM.
+- Installer's finish page offers to launch ReMoM, which then boots successfully using LBX files from the recorded path.
+- ReMoM falls back gracefully (no crash) if the config is absent or invalid — see Dependencies.
 
 ## Non-Goals
 
@@ -68,14 +68,14 @@ The portable ZIP distribution has the same problem but no installer flow to reme
    ...
    ```
    Multiple lines per filename allowed (one per known distribution). The trailing tag is informational and drives the version-specific error message. The first row in the file is treated as the canonical reference.
-6. **Skip option.** A button or checkbox labeled "Configure later" allows advancing without either validation pass. If chosen, no config file is written. ReMoMber will fail-soft on first launch and the user can edit the config manually.
+6. **Skip option.** A button or checkbox labeled "Configure later" allows advancing without either validation pass. If chosen, no config file is written. ReMoM will fail-soft on first launch and the user can edit the config manually.
 7. **Config file write at end of install.** Write `<install-dir>\ReMoM.ini` (or a dedicated `<install-dir>\ReMoM.cfg` — see Open Questions) containing the validated path. Format: standard INI, human-editable.
    ```ini
    [Paths]
    game_data=C:\GOG Games\Master of Magic
    ```
-8. **Finish page launch.** Existing `CPACK_NSIS_MUI_FINISHPAGE_RUN` checkbox runs ReMoMber. No change needed.
-9. **Binary-side config consumption.** ReMoMber at startup reads `[Paths] game_data` from `ReMoM.ini` (or `ReMoM.cfg`). If present and the directory contains LBX files, prepend that path to the asset search list. If absent, fall back to existing behavior (search next to the .exe).
+8. **Finish page launch.** Existing `CPACK_NSIS_MUI_FINISHPAGE_RUN` checkbox runs ReMoM. No change needed.
+9. **Binary-side config consumption.** ReMoM at startup reads `[Paths] game_data` from `ReMoM.ini` (or `ReMoM.cfg`). If present and the directory contains LBX files, prepend that path to the asset search list. If absent, fall back to existing behavior (search next to the .exe).
 10. **Uninstaller behavior.** The uninstaller removes everything in `<install-dir>`, including the copied game data (`*.LBX`, `CONFIG.MOM`) and the bundled `lbx-hashes.txt`. It must NOT touch the user's MoM directory at `$OGMOM_DIR`.
 
     > **Correction 2026-07-22 — do not delete `ReMoM.ini`, and never touch `%APPDATA%\ReMoM`.** This clause originally said to remove the generated `ReMoM.ini`, on the assumption it lived in the install directory. It does not: the engine reads it from `STU_GRAF_User_Config_Dir()`, which on Windows is `%APPDATA%\ReMoM` — and `STU_GRAF_User_Data_Dir()` resolves to the *same* directory (`STU_GRAF.c:240`, `:437`), so it holds the player's `SAVE*.GAM` files. Deleting that file or folder on uninstall risks destroying save games. Copied game data lives in `<install-dir>` and is removed there; `%APPDATA%\ReMoM` is left alone entirely.
@@ -89,8 +89,8 @@ The portable ZIP distribution has the same problem but no installer flow to reme
 - [ ] Selecting a directory with the right filenames but unrecognized hashes shows the "doesn't match a recognized distribution" warning with "Choose another folder" / "Continue anyway" options.
 - [ ] Selecting a directory whose hashes match an older-version entry (e.g., v1.0) shows the version-specific "this looks like v1.0" message instead of the generic warning.
 - [ ] On successful install, `<install-dir>\ReMoM.ini` contains a `[Paths] game_data=<chosen-path>` entry.
-- [ ] Selecting "Configure later" advances without writing the config; install completes; ReMoMber on launch shows the fail-soft "place LBX files…" dialog from the related binary work.
-- [ ] Clicking "Run ReMoMber" on the finish page successfully boots into the title screen with no crash, using LBX files at the recorded path.
+- [ ] Selecting "Configure later" advances without writing the config; install completes; ReMoM on launch shows the fail-soft "place LBX files…" dialog from the related binary work.
+- [ ] Clicking "Run ReMoM" on the finish page successfully boots into the title screen with no crash, using LBX files at the recorded path.
 - [ ] Uninstalling removes the ReMoM install directory and the `ReMoM.ini` it wrote, leaving `$OGMOM_DIR` untouched.
 
 ## Implementation Notes
@@ -109,11 +109,11 @@ The portable ZIP distribution has the same problem but no installer flow to reme
 - Hash manifest is bundled as a regular installer resource (`File "share\lbx-hashes.txt"`) and parsed at install time by the same NSIS section that does hash validation. Could also be hard-coded as `!define` constants in the `.nsh` if external file is overkill.
 - Config write: `WriteIniStr "$INSTDIR\ReMoM.ini" "Paths" "game_data" "$OGMOM_DIR"`.
 
-### ReMoMber
+### ReMoM
 
 - Read `ReMoM.ini` at startup using existing INI-handling code (per the project layout, there's already a `ReMoM.ini` shipping in `assets/`, suggesting INI-handling exists).
 - If `[Paths] game_data` is set and points to a real directory, treat that as the primary LBX search location. Otherwise, retain current behavior (LBX next to .exe).
-- The actual asset-loading code change scope depends on whether ReMoMber currently has a single point of LBX path resolution or hard-codes `fopen("FONTS.LBX")` throughout. Investigation needed — see Risks.
+- The actual asset-loading code change scope depends on whether ReMoM currently has a single point of LBX path resolution or hard-codes `fopen("FONTS.LBX")` throughout. Investigation needed — see Risks.
 
 ### CPack/CMake
 
@@ -130,13 +130,13 @@ A small companion utility that lets users compute the SHA256 of LBX files in the
   - Walks the directory, computes SHA256 of each `.LBX` file (or just the canonical hash-set chosen for fingerprinting — see Open Questions).
   - Emits manifest-format lines on stdout: `<FILENAME>  <sha256>  <user-supplied-tag-or-blank>`.
   - Optional `--check <manifest>` mode: compute hashes and compare against an existing manifest, reporting matches / unrecognized / mismatched per file. Useful for users who suspect their copy has been tampered with or modded.
-  - Reads any LBX file format quirks via the same loader as ReMoMber so users running the tool against an oddly-cased filename or a packed format aren't misled.
+  - Reads any LBX file format quirks via the same loader as ReMoM so users running the tool against an oddly-cased filename or a packed format aren't misled.
 - **Distribution.** Ships in the binary package (NSIS install dir + portable ZIP) so any user who installs ReMoM already has it locally. Also runnable from the source build by anyone compiling from source.
 - **Submission flow.** When a user finds an unrecognized distribution, the tool's stdout is in manifest format — they can copy-paste it into a GitHub issue (or eventual PR against the manifest file). Project owners then either add the rows to the manifest as another known-good distribution, or — if loader-relevant byte differences exist — ship a binary patch (see Open Questions) that converts the variant LBX files into the canonical floppy form.
 
 ## Risks / Open Questions
 
-- **Engine asset-loading structure.** If ReMoMber loads LBX files via a centralized `Asset_Open()` function, the binary-side change is a one-line redirect. If it has hard-coded `fopen()` calls scattered through the engine, the refactor is bigger. Needs an investigation pass.
+- **Engine asset-loading structure.** If ReMoM loads LBX files via a centralized `Asset_Open()` function, the binary-side change is a one-line redirect. If it has hard-coded `fopen()` calls scattered through the engine, the refactor is bigger. Needs an investigation pass.
 - **Config file naming.** `ReMoM.ini` is already shipped in `assets/`. Two options: (a) reuse it and have the installer add the `[Paths]` section, or (b) use a separate `ReMoM.cfg` to keep installer-written and shipped configs separate. (b) is cleaner; (a) is one-fewer file.
 - **Config file location after install.** `<install-dir>\ReMoM.ini` lives in `Program Files`, which a non-admin user can't edit without UAC. If the user later wants to change the path, they need elevation. Acceptable for alpha; consider `%APPDATA%\ReMoM\config.ini` for GA.
 - **Re-install behavior.** Running the installer again with a different OG-MoM path overwrites the config. Likely the desired behavior; flag for testing.
@@ -152,7 +152,7 @@ A small companion utility that lets users compute the SHA256 of LBX files in the
 
 ## Dependencies
 
-- **Binary-side fail-soft on missing LBX** — companion change. ReMoMber should not crash if LBX is missing; it should show a clear MessageBox and exit gracefully. This PRD assumes that change exists or is being done in parallel; the "Configure later" path requires it. Worth a separate small PRD or just handled as a coupled change.
+- **Binary-side fail-soft on missing LBX** — companion change. ReMoM should not crash if LBX is missing; it should show a clear MessageBox and exit gracefully. This PRD assumes that change exists or is being done in parallel; the "Configure later" path requires it. Worth a separate small PRD or just handled as a coupled change.
 - Existing `release.yml` Windows job already runs NSIS via Chocolatey to build the installer, and `release-check.yml` now runs a per-push packaging smoke test. No CI infrastructure changes required.
 - The binary that ships in the installer is the **`MSVC-release` preset's SDL2 build** (with audio; bundles `SDL2.dll` / `SDL2_mixer.dll` / MSVC runtime). The preset now pins `USE_WIN32=FALSE` / `USE_SDL3=FALSE`. *(Corrected 2026-07-22 — this line previously claimed `USE_WIN32=TRUE`, which predates the switch to SDL2-as-default.)*
 - `assets/ReMoM.ini` (already tracked) — the existing file may need to be treated as a template or excluded from the install rule depending on the resolution of the config-file-naming open question.

@@ -28,8 +28,8 @@ doc captures that verification pass.
 - `CPACK_PACKAGE_FILE_NAME = ReMoM-${REMOM_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}`
 - Windows generators: `ZIP;NSIS`
 - NSIS: `CPACK_NSIS_PACKAGE_NAME=ReMoM`, display `ReMoM <ver>`, install dir `ReMoM`,
-  finish-page run target = `ReMoMber.exe`.
-- Installed payload (engine-only): `ReMoMber.exe`, `SDL2.dll`, `SDL2_mixer.dll`,
+  finish-page run target = `ReMoM.exe`.
+- Installed payload (engine-only): `ReMoM.exe`, `SDL2.dll`, `SDL2_mixer.dll`,
   MSVC runtime DLLs (`InstallRequiredSystemLibraries`), `PLAYING.md`.
 - **No** LBX/game data, saves, test fixtures, or config templates.
 
@@ -38,7 +38,7 @@ doc captures that verification pass.
 - CMake / CPack: **4.2.3**
 - NSIS: **v3.12** at `C:\Program Files (x86)\NSIS\makensis.exe` (not on PATH)
 - SDL2 dev libs present: `C:/devellib/SDL2-2.32.2`, `C:/devellib/SDL2_mixer-2.8.1`
-- Existing build: `out/build/MSVC-release/bin/Release/` has `ReMoMber.exe`,
+- Existing build: `out/build/MSVC-release/bin/Release/` has `ReMoM.exe`,
   `SDL2.dll`, `SDL2_mixer.dll` (staged 2026-07-22).
 
 ---
@@ -46,7 +46,7 @@ doc captures that verification pass.
 ## Findings
 
 ### F1 — Local build was NOT configured the way CI packages it
-CI configures with `-DCMAKE_INSTALL_BINDIR=.` (flat layout: `ReMoMber.exe` at package
+CI configures with `-DCMAKE_INSTALL_BINDIR=.` (flat layout: `ReMoM.exe` at package
 root). The local `MSVC-release` preset leaves `CMAKE_INSTALL_BINDIR` at the
 GNUInstallDirs default (`bin`), so a local `--target package` would put the exe under
 `bin/`. To reproduce the CI package faithfully, reconfigure with the same flags before
@@ -75,7 +75,7 @@ The existing `out/build/MSVC-release` dir carried `USE_WIN32:BOOL=TRUE` in
 `CMakeCache.txt` (from a prior `MSVC-win32-*` configure). `cmake --preset MSVC-release`
 does **not** pin `USE_WIN32=OFF`, so the stale cached `TRUE` won. Result of the first
 package attempt:
-- `ReMoMber.exe` was built as the **native Win32 backend** (imports `WINMM.dll`, **no
+- `ReMoM.exe` was built as the **native Win32 backend** (imports `WINMM.dll`, **no
   SDL2** — verified via `dumpbin /DEPENDENTS`), silent, no audio.
 - The generated `cmake_install.cmake` had **zero** SDL references, so no SDL DLLs were
   installed. The `SDL2.dll` / `SDL2_mixer.dll` sitting in `bin/Release` were **stale
@@ -100,7 +100,7 @@ the intended backend can't be silently overridden by a stale cache.
 
 1. Reconfigure `MSVC-release` with CI-equivalent flags (`-DREMOM_VERSION`,
    `-DCMAKE_INSTALL_BINDIR=.`). ← reproduce the real release package layout.
-2. Build `ReMoMber` (Release).
+2. Build `ReMoM` (Release).
 3. Run the `package` target → produce `ReMoM-*.zip` + `ReMoM-*.exe`.
 4. Inspect the ZIP contents (flat layout, all DLLs present).
 5. Verify the NSIS `.exe` was produced and, if possible, do a silent install (`/S`)
@@ -118,9 +118,9 @@ All steps run on this Windows box against `out/build/MSVC-release`.
 | Check | Result |
 |-------|--------|
 | Configure (SDL2 found) | ✅ `SDL2 2.32.2`, `SDL2_mixer 2.8.1` found |
-| `ReMoMber.exe` links SDL2 | ✅ `dumpbin /DEPENDENTS` → `SDL2.dll`, `SDL2_mixer.dll` |
+| `ReMoM.exe` links SDL2 | ✅ `dumpbin /DEPENDENTS` → `SDL2.dll`, `SDL2_mixer.dll` |
 | `package` target → ZIP + NSIS | ✅ `ReMoM-0.0.0-test-Windows-AMD64.zip` (2.06 MB) + `.exe` (1.92 MB) |
-| ZIP layout | ✅ **flat** (`ReMoMber.exe` at root), `PLAYING.md`, `SDL2.dll`, `SDL2_mixer.dll`, 8× MSVC runtime DLLs — 12 files, engine-only |
+| ZIP layout | ✅ **flat** (`ReMoM.exe` at root), `PLAYING.md`, `SDL2.dll`, `SDL2_mixer.dll`, 8× MSVC runtime DLLs — 12 files, engine-only |
 | NSIS silent install (`/S /D=<tmp>`) | ✅ exit 0; full payload landed flat + `Uninstall.exe` generated |
 | NSIS silent uninstall (`/S _?=<dir>`) | ✅ exit 0; all payload removed (leftover `Uninstall.exe` is expected in `_?=` sync mode; a real uninstall self-deletes + RMDirs) |
 
@@ -169,7 +169,7 @@ source of truth.
 
 ### Decision (2026-07-22): per-user install into `%LOCALAPPDATA%\ReMoM`
 Chosen because the engine needs a **user-writable** install dir — the player copies their
-`.LBX` game data next to `ReMoMber.exe` and the engine writes saves/logs there, so a
+`.LBX` game data next to `ReMoM.exe` and the engine writes saves/logs there, so a
 read-only `Program Files` install is wrong for this app. Per-user also means **no UAC**.
 
 ### Implementation (applied)
@@ -215,14 +215,14 @@ Stating the goal explicitly, because the shortcut question can't be answered wit
 > fewest obvious steps — and at every point where they must act, the app tells them exactly
 > what to do and where.**
 
-**Correction to an earlier assumption:** ReMoMber does **not** crash on missing game data.
+**Correction to an earlier assumption:** ReMoM does **not** crash on missing game data.
 Verified by running it in an empty directory — it prints/shows:
 
 ```
 ReMoM could not find your Master of Magic game data.
 Missing: FONTS.LBX, MAINSCRN.LBX, WIZARDS.LBX, SPELLDAT.LBX
 Copy every .LBX file from your original Master of Magic v1.31 installation into the
-same folder as the ReMoMber executable (or set the REMOM_DATA_DIR environment
+same folder as the ReMoM executable (or set the REMOM_DATA_DIR environment
 variable to point at them).  See PLAYING.md for details.
 ```
 
@@ -280,7 +280,7 @@ install skips all pages and the LEAVE handler never runs; without that an unatte
 would never copy anything.
 
 **Validation** is presence-only (`FONTS.LBX`), mirroring `graf_dir_has_signature()`. Not
-finding it is non-fatal — Yes/No to continue and set up later — because ReMoMber fails soft
+finding it is non-fatal — Yes/No to continue and set up later — because ReMoM fails soft
 (F6). The PRD's SHA256 hash-manifest half remains unimplemented and separable.
 
 ### Verified / not verified
@@ -290,7 +290,7 @@ finding it is non-fatal — Yes/No to continue and set up later — because ReMo
 | NSIS script compiles, installer generates | ✅ |
 | Copy mechanics (standalone NSIS harness) | ✅ all `*.LBX` incl. lower-case `terrain.lbx`, `CONFIG.MOM` via the guard; `README.TXT` / `SAVE1.GAM` correctly not copied |
 | Earlier path-recording build (before the switch to copying) | ✅ had written `[Paths] game_data`, uninstall removed only that key, unrelated `[Video]` setting preserved, saves intact |
-| Engine consumes `[Paths] game_data` | ✅ with only the INI supplying the path, ReMoMber launched instead of showing the missing-data dialog |
+| Engine consumes `[Paths] game_data` | ✅ with only the INI supplying the path, ReMoM launched instead of showing the missing-data dialog |
 | **Interactive directory page (wording, layout, prepopulation, Yes/No prompt)** | ❌ **NOT verified — needs a manual GUI run** |
 | **End-to-end copy via the real installer UI** | ❌ **NOT verified — autodetect probes fixed paths (`C:\GOG Games`, Steam, `C:\MPS\MAGIC`) that can't be created without writing to protected/system locations** |
 
@@ -307,7 +307,7 @@ Prioritized, all grounded in files/tools this session:
    created only `Uninstall.lnk`. Added a launch shortcut plus a `ReMoM Game Data Folder` link
    (see F6). Also set `CPACK_NSIS_EXECUTABLES_DIRECTORY` to track `CMAKE_INSTALL_BINDIR` —
    the default (`bin`) would have generated a shortcut to a non-existent
-   `$INSTDIR\bin\ReMoMber.exe` in our flat release layout.
+   `$INSTDIR\bin\ReMoM.exe` in our flat release layout.
 2. **CI packaging smoke test** — [DONE]. Added to `release-check.yml`'s Windows job: installs
    NSIS, runs `--target package`, asserts the `.zip`/`.exe` exist, and greps the generated
    `project.nsi` for `RequestExecutionLevel user` + the `$LOCALAPPDATA` `InstallDir` so a
@@ -329,7 +329,7 @@ Prioritized, all grounded in files/tools this session:
 ```sh
 # From repo root. NSIS on PATH: C:\Program Files (x86)\NSIS
 cmake --preset MSVC-release -DREMOM_VERSION=0.0.0-test -DCMAKE_INSTALL_BINDIR=. -DUSE_WIN32=OFF
-cmake --build out/build/MSVC-release --config Release --target ReMoMber
+cmake --build out/build/MSVC-release --config Release --target ReMoM
 cmake --build out/build/MSVC-release --config Release --target package
 # ZIP:  out/build/MSVC-release/ReMoM-0.0.0-test-Windows-AMD64.zip
 # NSIS: out/build/MSVC-release/ReMoM-0.0.0-test-Windows-AMD64.exe

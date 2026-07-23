@@ -12,10 +12,10 @@ testing that needs a hard-to-reach starting state.
 [LoadScr.c:874](../../MoM/src/LoadScr.c#L874) — **immediately after every save load**, which is the
 right seam: the save is fully in memory, and nothing has started running on it yet.
 
-Select a scenario with ReMoMber's `--patch` flag:
+Select a scenario with ReMoM's `--patch` flag:
 
 ```sh
-ReMoMber.exe --load SAVE1.GAM --patch som_ready
+ReMoM.exe --load SAVE1.GAM --patch som_ready
 ```
 
 ## It ships in Release, and that is deliberate
@@ -81,7 +81,7 @@ own logic?** If yes, it is staging. If the scenario itself produced the outcome,
 > The human wizard knows the Spell of Mastery and can afford to cast it.
 
 ```sh
-ReMoMber.exe --load SAVE1.GAM --patch som_ready
+ReMoM.exe --load SAVE1.GAM --patch som_ready
 ```
 
 Sets `spells_list[spl_Spell_Of_Mastery - 1] = sls_Known` and maxes gold/mana/casting skill. Nothing

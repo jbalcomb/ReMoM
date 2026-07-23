@@ -65,7 +65,7 @@ The new logger lands and stabilizes on a separate branch first. Migration of exi
 - Categories are an enum (`LOG_CAT_AIMOVE`, `LOG_CAT_COMBAT`, `LOG_CAT_SAVE`, `LOG_CAT_PFL`, `LOG_CAT_IKI`, ...) defined in `STU_LOG.h`. New categories are added centrally — agent will enforce the convention.
 - Write logic: format to a 1 KB stack buffer with `_vsnprintf`/`vsnprintf` (preprocessor gate), prepend metadata header, copy into ring. If would-overtake-tail: increment a `dropped_since_last_pump` counter and return.
 - `log_pump()`: drains up to 4 KB to disk; if any drops were recorded since last call, emits a single `[LOGGER] N messages dropped` synthetic line first.
-- `log_pump()` is publicly exposed; callers (ReMoM frame loop, HeMoM tick loop, ReMoMber loop) wire it in at their own frame boundary.
+- `log_pump()` is publicly exposed; callers (ReMoM frame loop, HeMoM tick loop, ReMoM loop) wire it in at their own frame boundary.
 - `log_fatal()` (called by `LOG_FATAL` macro after writing its own message) calls a `log_flush_all()` internal function that drains the entire ring synchronously, bypassing the 4 KB cap.
 
 ### Runtime configuration

@@ -1,4 +1,4 @@
-"""tools/lib_run.py — Shared launchers for HeMoM and ReMoMber.
+"""tools/lib_run.py — Shared launchers for HeMoM and ReMoM.
 
 Scope (deliberately narrow): run a binary, capture stderr, verify the
 expected SAVE*.GAM was rewritten this run. Both binaries accept either
@@ -11,12 +11,12 @@ Out of scope — stays in parity_check.py:
     - comparison, struct decode, reporting
 
 Public API:
-    REPO_ROOT, ASSETS_DIR, BUILD_DIR, HEMOM_EXE, REMOMBER_EXE
+    REPO_ROOT, ASSETS_DIR, BUILD_DIR, HEMOM_EXE, REMOM_EXE
     read_seed_from_ini(ini_path) -> int
     slot_to_save_filename(slot)  -> "SAVE<N+1>.GAM"
     RunResult                                          (dataclass)
     run_hemom(*, ini, seed, hms=None, rmr=None, save_slot=None, ...)
-    run_remomber(*, seed, hms=None, rmr=None, save_slot=None, ...)
+    run_remom(*, seed, hms=None, rmr=None, save_slot=None, ...)
 """
 
 import os
@@ -35,7 +35,7 @@ REPO_ROOT    = Path(__file__).resolve().parent.parent
 ASSETS_DIR   = REPO_ROOT / "assets"
 BUILD_DIR    = REPO_ROOT / "out/build/clang-debug/bin/Debug"
 HEMOM_EXE    = BUILD_DIR / "HeMoM"
-REMOMBER_EXE = BUILD_DIR / "ReMoMber"
+REMOM_EXE = BUILD_DIR / "ReMoM"
 
 
 # ----------------------------------------------------------------------
@@ -218,7 +218,7 @@ def run_hemom(*,
     )
 
 
-def run_remomber(*,
+def run_remom(*,
                  seed: int,
                  hms: Optional[Path] = None,
                  rmr: Optional[Path] = None,
@@ -227,21 +227,21 @@ def run_remomber(*,
                  save_slot: Optional[int] = None,
                  extra_args: Iterable[str] = (),
                  headless: bool = True) -> RunResult:
-    """Drive ReMoMber with `--seed N` and an input driver.
+    """Drive ReMoM with `--seed N` and an input driver.
 
-    ReMoMber needs an HMS or RMR to be useful in automation (without one
+    ReMoM needs an HMS or RMR to be useful in automation (without one
     it sits on the title screen waiting for input), so the launcher
     requires at least one of `hms=` or `rmr=`.
     """
-    if not REMOMBER_EXE.is_file():
-        raise FileNotFoundError(f"ReMoMber binary missing: {REMOMBER_EXE}")
+    if not REMOM_EXE.is_file():
+        raise FileNotFoundError(f"ReMoM binary missing: {REMOM_EXE}")
     if hms is None and rmr is None:
-        raise ValueError("ReMoMber needs an input driver: pass hms= or rmr=.")
+        raise ValueError("ReMoM needs an input driver: pass hms= or rmr=.")
     if stderr_path is None:
         stderr_path = cwd / "stderr.log"
 
     cmd = [
-        str(REMOMBER_EXE),
+        str(REMOM_EXE),
         "--seed1", str(seed),
         *_driver_args(hms, rmr),
         *list(extra_args),

@@ -21,7 +21,7 @@ Build a minimal but production-oriented platform layer skeleton that separates O
 14. Add strict compile guards so mixed backend symbols cannot compile into a single translation unit accidentally.
 15. Phase 4 - Build System Integration
 16. Update platform and MoX CMake wiring to choose backend source sets per host OS (SDL2 for Linux/macOS, Win32 for Windows) instead of compiling both families by default.
-17. Keep existing top-level targets intact (ReMoMber, MOM_tests) and link through the same higher-level libraries so rollout is low-risk.
+17. Keep existing top-level targets intact (ReMoM, MOM_tests) and link through the same higher-level libraries so rollout is low-risk.
 18. Preserve existing post-build support file behavior and test data staging while adding any needed platform-specific runtime env handling for tests.
 19. Add/adjust CMake presets for Linux/macOS/Windows developer workflows that exercise the selected backend path.
 20. Phase 5 - Incremental Subsystem Hookover
