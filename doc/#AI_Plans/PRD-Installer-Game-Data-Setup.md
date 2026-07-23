@@ -13,7 +13,21 @@ Extend the NSIS installer so it prompts the user for their existing Master of Ma
 
 ## Problem
 
-Today, the NSIS installer drops `ReMoMber.exe` into `C:\Program Files\ReMoM\` and the optional finish-page checkbox launches it. Because no LBX files are present, ReMoMber crashes on first asset load. The user's first interaction with ReMoM is a crash dialog. There is no in-installer guidance about where to obtain or place LBX files, no validation that the user has them, and no mechanism for the binary to find LBX files anywhere except next to the executable.
+Today, the NSIS installer drops `ReMoMber.exe` into `%LOCALAPPDATA%\ReMoM\` (a per-user install, no UAC) and the optional finish-page checkbox launches it. Because no LBX files are present, ReMoMber cannot start. There is no in-installer guidance about where to obtain or place LBX files, and no validation that the user has them — the user has to read the missing-data dialog, find their game data, and copy it in by hand before the game is playable.
+
+> **Baseline corrections (2026-07-22).** Two premises in the original draft are no longer accurate:
+> - **ReMoMber does not crash on missing data.** It fails soft, showing a dialog that names the
+>   missing files (`FONTS.LBX`, `MAINSCRN.LBX`, `WIZARDS.LBX`, `SPELLDAT.LBX`) and explains where to
+>   put them. The "first interaction is a crash dialog" problem statement is stale, which lowers the
+>   urgency of the fail-soft dependency listed below.
+> - **A path override already exists.** The `REMOM_DATA_DIR` environment variable already points the
+>   engine at game data outside the install directory, so "no mechanism to find LBX anywhere except
+>   next to the executable" is stale. Any config-file design here should reconcile with it rather
+>   than duplicate it.
+>
+> Also note the install location moved from `Program Files` to per-user `%LOCALAPPDATA%\ReMoM`, which
+> changes the config-file-location tradeoff below (no UAC needed to edit it). See
+> `NOTES-Windows-CPack-Installer-Verification.md`.
 
 The portable ZIP distribution has the same problem but no installer flow to remedy it; that's covered by the related "fail-soft binary" work.
 
@@ -28,7 +42,8 @@ The portable ZIP distribution has the same problem but no installer flow to reme
 
 ## Non-Goals
 
-- **Copying LBX files into the install directory.** This is a path-recording feature, not file redistribution.
+- ~~**Copying LBX files into the install directory.** This is a path-recording feature, not file redistribution.~~
+  **REVERSED 2026-07-22 — the installer now copies.** The stated rationale conflated two things: bundling LBX *in the installer* would be redistribution, but copying *from the user's own machine to their own machine* is not. We still ship zero game data and the download stays engine-only (~4.7 MB). Copying makes the install self-contained (survives the player moving/updating/uninstalling their GOG/Steam copy) and needs no configuration, since the install dir is the exe-dir and already on the engine's asset search path. Note this also **replaces** the `[Paths] game_data` config write below: `game_data` precedes `exe-dir` in the search order, so recording the original alongside a copy would shadow the copy. See `NOTES-Windows-CPack-Installer-Verification.md` (F7).
 - **Handling users who don't own MoM v1.31.** ReMoM requires the original game; that's a hard prerequisite, not an installer concern.
 - **Multi-language installer.** Alpha quality is acceptable; English-only is fine.
 - **Code-signed installer.** Unsigned acceptable for alpha; SmartScreen warning is a known wart.
@@ -61,7 +76,9 @@ The portable ZIP distribution has the same problem but no installer flow to reme
    ```
 8. **Finish page launch.** Existing `CPACK_NSIS_MUI_FINISHPAGE_RUN` checkbox runs ReMoMber. No change needed.
 9. **Binary-side config consumption.** ReMoMber at startup reads `[Paths] game_data` from `ReMoM.ini` (or `ReMoM.cfg`). If present and the directory contains LBX files, prepend that path to the asset search list. If absent, fall back to existing behavior (search next to the .exe).
-10. **Uninstaller behavior.** The uninstaller removes everything in `<install-dir>` including the generated `ReMoM.ini` and the bundled `lbx-hashes.txt`. It must NOT touch the user's MoM directory at `$OGMOM_DIR`.
+10. **Uninstaller behavior.** The uninstaller removes everything in `<install-dir>`, including the copied game data (`*.LBX`, `CONFIG.MOM`) and the bundled `lbx-hashes.txt`. It must NOT touch the user's MoM directory at `$OGMOM_DIR`.
+
+    > **Correction 2026-07-22 — do not delete `ReMoM.ini`, and never touch `%APPDATA%\ReMoM`.** This clause originally said to remove the generated `ReMoM.ini`, on the assumption it lived in the install directory. It does not: the engine reads it from `STU_GRAF_User_Config_Dir()`, which on Windows is `%APPDATA%\ReMoM` — and `STU_GRAF_User_Data_Dir()` resolves to the *same* directory (`STU_GRAF.c:240`, `:437`), so it holds the player's `SAVE*.GAM` files. Deleting that file or folder on uninstall risks destroying save games. Copied game data lives in `<install-dir>` and is removed there; `%APPDATA%\ReMoM` is left alone entirely.
 
 ## Acceptance Criteria
 
@@ -80,7 +97,7 @@ The portable ZIP distribution has the same problem but no installer flow to reme
 
 ### Installer (NSIS)
 
-- CPack's stock NSIS template (`Modules/Internal/CPack/NSIS.template.in` in the CMake install) does not expose a hook for adding a custom `MUI_PAGE_DIRECTORY`. Will require a template override, either via `CPACK_NSIS_TEMPLATE` (verify support in the CMake version we ship with) or by placing a customized `NSIS.template.in` earlier on `CMAKE_MODULE_PATH` than CMake's internal copy.
+- CPack's stock NSIS template (`Modules/Internal/CPack/NSIS.template.in` in the CMake install) does not expose a hook for adding a custom `MUI_PAGE_DIRECTORY`, so this needs a template override. **That override now exists** — `cmake/NSIS.template.in` is already in the repo (added for the per-user install work) and CPack picks it up via `CPACK_MODULE_PATH`, which defaults to `CMAKE_MODULE_PATH` and already contains `cmake/`. This page can be added straight to that file; no new plumbing needed. Note there is **no `CPACK_NSIS_TEMPLATE` variable** in our CMake (4.2.3) — verified absent from the shipped modules — so the module-path mechanism is the supported route.
 - Path autodetect: NSIS macros `${If} ${FileExists}` against a hard-coded candidate list. ~10–20 lines.
 - Presence validation: `IfFileExists "$OGMOM_DIR\FONTS.LBX" +2 0` followed by `MessageBox` and `Abort`.
 - Hash validation: NSIS has no built-in SHA256. Three options ranked by simplicity:
@@ -136,6 +153,6 @@ A small companion utility that lets users compute the SHA256 of LBX files in the
 ## Dependencies
 
 - **Binary-side fail-soft on missing LBX** — companion change. ReMoMber should not crash if LBX is missing; it should show a clear MessageBox and exit gracefully. This PRD assumes that change exists or is being done in parallel; the "Configure later" path requires it. Worth a separate small PRD or just handled as a coupled change.
-- Existing `release.yml` Windows job already runs NSIS via Chocolatey on `windows-latest` to build the installer. No CI infrastructure changes required.
-- Existing `MSVC-release` preset with `USE_WIN32=TRUE` (no SDL2 dependency) is the binary that ships in the installer.
+- Existing `release.yml` Windows job already runs NSIS via Chocolatey to build the installer, and `release-check.yml` now runs a per-push packaging smoke test. No CI infrastructure changes required.
+- The binary that ships in the installer is the **`MSVC-release` preset's SDL2 build** (with audio; bundles `SDL2.dll` / `SDL2_mixer.dll` / MSVC runtime). The preset now pins `USE_WIN32=FALSE` / `USE_SDL3=FALSE`. *(Corrected 2026-07-22 — this line previously claimed `USE_WIN32=TRUE`, which predates the switch to SDL2-as-default.)*
 - `assets/ReMoM.ini` (already tracked) — the existing file may need to be treated as a template or excluded from the install rule depending on the resolution of the config-file-naming open question.

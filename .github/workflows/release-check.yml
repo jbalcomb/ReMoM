@@ -72,6 +72,43 @@ jobs:
       - name: Test (MSVC-release preset)
         run: ctest --preset MSVC-release --output-on-failure --timeout 120 --label-exclude integration --exclude-regex "Reload_Melee_Sound_test"
 
+      # Packaging smoke test. release.yml only packages on a tag push, so without
+      # this a broken CPack/NSIS config would not surface until a real release.
+      # We carry a repo-local cmake/NSIS.template.in overriding CPack's stock
+      # template (per-user install, no UAC, Start Menu shortcuts) -- this step is
+      # what catches a regression in it, or a mismatch with the runner's CMake.
+      - name: Install NSIS
+        run: choco install nsis -y --no-progress
+
+      - name: Package smoke test (ZIP + NSIS installer)
+        shell: bash
+        # CMAKE_INSTALL_BINDIR=. mirrors release.yml's flat package layout, so the
+        # generated shortcut paths are exercised exactly as they ship.
+        run: |
+          set -euo pipefail
+          cmake --preset MSVC-release -DCMAKE_INSTALL_BINDIR=.
+          cmake --build out/build/MSVC-release --config Release --target package
+
+      - name: Verify packages were produced
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          zips=(out/build/MSVC-release/ReMoM-*.zip)
+          exes=(out/build/MSVC-release/ReMoM-*.exe)
+          echo "ZIP: ${zips[*]:-<none>}"
+          echo "EXE: ${exes[*]:-<none>}"
+          [ ${#zips[@]} -gt 0 ] || { echo "::error::CPack produced no ZIP"; exit 1; }
+          [ ${#exes[@]} -gt 0 ] || { echo "::error::CPack produced no NSIS installer"; exit 1; }
+          # Guard the template override: the installer must be per-user (no UAC) and
+          # install under %LOCALAPPDATA%, not Program Files.
+          nsi=out/build/MSVC-release/_CPack_Packages/win64/NSIS/project.nsi
+          # -F (fixed string): these contain '$' and '\', which are painful to escape
+          # correctly as a regex. Match them literally instead.
+          grep -qF 'RequestExecutionLevel user' "$nsi" || { echo "::error::NSIS template override lost: expected 'RequestExecutionLevel user'"; exit 1; }
+          grep -qF 'InstallDir "$LOCALAPPDATA\ReMoM"' "$nsi" || { echo "::error::NSIS InstallDir is not the expected per-user LOCALAPPDATA path"; exit 1; }
+          echo "Packaging smoke test passed."
+
       - name: Upload build logs on failure
         if: failure()
         uses: actions/upload-artifact@v6

@@ -322,6 +322,33 @@ if(WIN32)
     set(CPACK_NSIS_DISPLAY_NAME "ReMoM ${PROJECT_VERSION}")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "ReMoM")
     set(CPACK_NSIS_MUI_FINISHPAGE_RUN "ReMoMber.exe")
+    # Per-user install (no UAC): land in %LOCALAPPDATA%\ReMoM. The engine needs a
+    # user-writable install dir -- the player drops their .LBX game data next to
+    # ReMoMber.exe and saves/logs are written there, so Program Files (read-only
+    # for non-admins) is wrong. Our repo-local cmake/NSIS.template.in overrides
+    # CPack's stock template to set `RequestExecutionLevel user` and install
+    # per-user; this variable feeds that template's InstallDir root. CPack finds
+    # the override via CPACK_MODULE_PATH (defaults to CMAKE_MODULE_PATH, which
+    # already includes cmake/ -- see the list(APPEND CMAKE_MODULE_PATH ...) above).
+    set(CPACK_NSIS_INSTALL_ROOT "$LOCALAPPDATA")
+
+    # Start Menu shortcuts.  Without CPACK_PACKAGE_EXECUTABLES the installer creates
+    # only an "Uninstall" link -- the player gets no way to launch the game.
+    # CPACK_NSIS_EXECUTABLES_DIRECTORY must track CMAKE_INSTALL_BINDIR: the release
+    # package is flat (BINDIR=.), so the default "bin" would generate a shortcut to a
+    # non-existent $INSTDIR\bin\ReMoMber.exe.
+    set(CPACK_PACKAGE_EXECUTABLES "ReMoMber" "ReMoM")
+    set(CPACK_NSIS_EXECUTABLES_DIRECTORY "${CMAKE_INSTALL_BINDIR}")
+
+    # The player must copy their own .LBX game data into the install directory, and a
+    # per-user install lands under %LOCALAPPDATA% -- a hidden folder.  Ship a Start Menu
+    # link straight to it so "where do I put my LBX files?" is one click, matching the
+    # missing-data dialog ReMoMber shows on launch.
+    # NOTE: four backslashes.  These values round-trip through CMake parsing twice
+    # (here -> CPackConfig.cmake -> re-parsed by cpack), so a two-backslash form
+    # collapses to "\R" and cpack dies with "Invalid character escape".
+    set(CPACK_NSIS_CREATE_ICONS_EXTRA "CreateShortCut '$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\ReMoM Game Data Folder.lnk' '$INSTDIR'")
+    set(CPACK_NSIS_DELETE_ICONS_EXTRA "Delete '$SMPROGRAMS\\\\$MUI_TEMP\\\\ReMoM Game Data Folder.lnk'")
 else()
     set(CPACK_GENERATOR "ZIP;TGZ")
 endif()

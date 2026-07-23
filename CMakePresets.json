@@ -27,7 +27,15 @@
             "cacheVariables": {
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
                 "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe"
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "USE_WIN32": {
+                    "type": "BOOL",
+                    "value": "FALSE"
+                },
+                "USE_SDL3": {
+                    "type": "BOOL",
+                    "value": "FALSE"
+                }
             }
         },
         {
@@ -46,6 +54,14 @@
                 "DISABLE_AUDIO": {
                     "type": "BOOL",
                     "value": "TRUE"
+                },
+                "USE_WIN32": {
+                    "type": "BOOL",
+                    "value": "FALSE"
+                },
+                "USE_SDL3": {
+                    "type": "BOOL",
+                    "value": "FALSE"
                 }
             }
         },
@@ -61,7 +77,15 @@
             "cacheVariables": {
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
                 "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe"
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "USE_WIN32": {
+                    "type": "BOOL",
+                    "value": "FALSE"
+                },
+                "USE_SDL3": {
+                    "type": "BOOL",
+                    "value": "FALSE"
+                }
             }
         },
         {

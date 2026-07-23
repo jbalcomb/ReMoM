@@ -55,9 +55,43 @@ see [Future phase — Dev / Modder tooling](#future-phase--dev--modder-tooling).
 reverse-engineering reference material that a CPack source tarball would sweep in.
 Source lives on GitHub; a curated source distribution is out of scope for v0.x.)
 
+### Windows installer behaviour
+
+The NSIS installer is a **per-user install and never prompts for UAC**:
+
+- Installs to **`%LOCALAPPDATA%\ReMoM`** (not `Program Files`). The install directory
+  must be user-writable — the player drops their `.LBX` game data in there and the
+  engine writes saves/logs alongside the executable, which a read-only `Program Files`
+  install would break.
+- Registers its uninstall entry in the **current-user** hive (`HKCU`), so it appears in
+  *Add or Remove Programs* for that user only.
+- Creates three per-user Start Menu shortcuts under **ReMoM**: `ReMoM` (launches the
+  game), **`ReMoM Game Data Folder`** (opens the install directory, so "where do I put
+  my LBX files?" is one click, since `%LOCALAPPDATA%` is a hidden path), and `Uninstall`.
+- **Asks for the player's Master of Magic v1.31 folder and copies the game data in.**
+  A second directory page (pre-filled by probing the usual GOG / Steam / `C:\MPS\MAGIC`
+  locations) takes the path to the player's own MoM installation and copies every `.LBX`
+  plus `CONFIG.MOM` into the ReMoM install directory. The player's original files are
+  only ever read — never modified or moved — and **we still ship no game data**; the
+  download stays engine-only. This makes the install self-contained, so it keeps working
+  if the player later moves or uninstalls their GOG/Steam copy. If the folder isn't
+  found, the player can continue and set it up later; `ReMoMber` fails soft.
+- Uninstalling removes the copied game data along with the binaries, and leaves
+  `%APPDATA%\ReMoM` — which holds the player's **save games** — strictly alone.
+
+This behaviour comes from a repo-local **`cmake/NSIS.template.in`**, which overrides
+CPack's stock NSIS template. CPack's stock template hardcodes `RequestExecutionLevel
+admin` and a `$DOCUMENTS` per-user fallback with no variable to change either, so the
+template override is the only way to get a predictable per-user install. CPack picks the
+override up via `CPACK_MODULE_PATH` (which defaults to `CMAKE_MODULE_PATH`, already
+containing `cmake/`). The `release-check.yml` packaging smoke test asserts the override
+is still in effect on every push/PR.
+
 What the **player must supply** (documented in `PLAYING.md`): every `.LBX` file
 plus `CONFIG.MOM` from an original Master of Magic v1.31 (DOS) installation,
-copied next to the executable.
+copied next to the executable — or pointed at via the `REMOM_DATA_DIR` environment
+variable. If the data is missing, `ReMoMber` does **not** crash: it shows a dialog
+naming the missing files and where to put them.
 
 Known limitations carried intentionally (follow-ups, not blockers):
 - **Windows uses the SDL2 backend** (default), so the release has audio and bundles
