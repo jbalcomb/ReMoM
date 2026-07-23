@@ -1,0 +1,75 @@
+# 02_wizard_select.hms -- Reel scene 2: New Game -> Custom wizard creation.
+#
+#   ReMoMber.exe --scenario 02_wizard_select.hms --seed1 12345
+#
+# Adapted from assets/Stage_0.hms (a working New-Game script whose click coordinates come from the
+# Add_*_Field definitions in NewGame.c).  Changes for the reel: the machine-speed 500 ms waits are
+# re-timed so each screen is readable, the home-city name is left as the game's own generated name,
+# and Stage_0's save-to-slot / quit-to-DOS tail is dropped -- this scene ends on the fresh overland.
+#
+# Pin the seed (--seed1 12345) so the generated world is identical every render.
+
+# === Skip the intro logos to the Main Menu ===
+escape
+wait 1s
+
+# === Main Menu: New Game ===
+click 160 168
+wait 2s
+
+# === Game Options: OK (accept defaults) ===
+click 257 189
+wait 2s
+
+# === Wizard Profile: Custom ===
+click 249 180
+wait 2s
+
+# === Wizard Portrait: Rjak ===
+click 173 158
+wait 2s
+
+# === Wizard Name: accept ===
+enter
+wait 2s
+
+# === Abilities & Books: Artificer retort, then spell books (Life x2, Chaos x2, Nature x2, Sorcery x4) ===
+click 183 35
+wait 1500ms
+click 210 58
+wait 1s
+click 210 110
+wait 1s
+click 210 136
+wait 1s
+click 226 162
+wait 1500ms
+click 256 186
+wait 2s
+
+# === Select starting spells: OK through each realm (Life, Chaos, Nature, Sorcery) ===
+click 256 186
+wait 1500ms
+click 256 186
+wait 1500ms
+click 256 186
+wait 1500ms
+click 256 186
+wait 2s
+
+# === Race: Orc ===
+click 216 123
+wait 2s
+
+# === Banner: Yellow -> the game generates the world and starts ===
+click 180 168
+wait 3s
+
+# === Home-city name popup: accept the game's generated name ===
+enter
+wait 1s
+
+# === Hold on the fresh overland (the new game has begun) ===
+wait 4s
+
+quit

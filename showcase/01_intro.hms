@@ -1,0 +1,13 @@
+# 01_intro.hms -- Reel scene 1: the intro cinematic.
+#
+#   ReMoMber.exe --scenario 01_intro.hms
+#
+# Draw_Logos() (INTRO.c) plays 13 scenes from INTRO.LBX with the Merlin voiceover and MOM49 intro
+# music -- the iconic MoM opening.  Zero input: this scene just lets it play in full.
+#
+# The intro checks Get_Input() only to allow a skip; `quit` sets a flag that is honoured at the Main
+# Menu (after the intro), so it does not cut the cinematic short -- it just makes the process exit
+# once the intro finishes and the title screen is up.  Wait length is generous; trim after measuring.
+
+wait 120s
+quit

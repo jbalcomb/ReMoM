@@ -243,7 +243,10 @@ void sdl2_Audio_Init(void)
 
     // Set the volume of the music to 50% (half the MAX_VOLUME)
     LOG_INFO(LOG_CAT_SDL2_AUDIO, "Mix_VolumeMusic():  %d", Mix_VolumeMusic(-1));
-    Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
+    // Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
+    /* CLAUDE: was MIX_MAX_VOLUME / 4 (= 32, 25%), which contradicted the "50%" comment above and did not agree with opt_music_volume (64).  Both volume sites now read
+       opt_music_volume so there is a single source of truth and hw_audio_music_volume() is the only thing that decides the level. */
+    Mix_VolumeMusic(opt_music_volume);
     LOG_INFO(LOG_CAT_SDL2_AUDIO, "Mix_VolumeMusic():  %d", Mix_VolumeMusic(-1));
     // Later, elsewhere, ...
     // // Set the volume of the sound effect to 75%
@@ -809,7 +812,11 @@ void hw_audio_music_play(int mus_index)
             Mix_HaltMusic();
         }
         // 1oom  Mix_VolumeMusic(opt_music_volume);
-        Mix_VolumeMusic(32);  // 128 / 4
+        // Mix_VolumeMusic(32);  // 128 / 4
+        /* CLAUDE: restored the 1oom line above.  The hardcoded 32 re-applied 25% on every play, so a level set through hw_audio_music_volume() never survived the next
+           track change -- the setter was dead in practice.  On Windows this is not cosmetic: SDL_mixer's NATIVEMIDI backend implements Mix_VolumeMusic via
+           midiOutSetVolume, so the 25% was genuinely attenuating the MIDI music a player hears. */
+        Mix_VolumeMusic(opt_music_volume);
         Mix_PlayMusic(mustbl.music, mustbl.loops ? -1 : 0);
         // mus_playing = mus_index;
     // }

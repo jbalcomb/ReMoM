@@ -22,7 +22,7 @@ one scene, never the reel.
 | 3 | Overland, both planes | `.hms` from save | 0:30 | The heart of the game: terrain, cities, units, and the Arcanus/Myrror switch. |
 | 4 | City screen | `.hms` from save | 0:20 | Cityscape with buildings, production, population. Dense and unmistakable. |
 | 5 | Spellbook / research | `.hms` from save | 0:15 | The page-turn animation is distinctive and shows off the renderer. |
-| 6 | Summoning animation | `.hms` from save | 0:10 | Cinematic. Must be reached by actually casting the summon. |
+| 6 | Summoning animation | **DONE** — `06_summon.hms` (real spellbook cast of War Bears) | 0:10 | Cinematic. Reached by actually casting the summon. |
 | 7 | Tactical combat | `.hms` from `SAVECMBT.GAM` | 0:30 | The most impressive system, and the hardest to script. |
 | 8 | Spell of Mastery → victory → Hall of Fame | **DONE** — `08a_som_begin.hms` + `08b_som_complete.hms` | 0:30 | The payoff, and the reel's long pole. Both halves render. |
 

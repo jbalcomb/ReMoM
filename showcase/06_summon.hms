@@ -1,0 +1,26 @@
+# 06_summon.hms -- Reel scene 6: casting a summon spell -> the summoning animation.
+#
+#   ReMoMber.exe --load SAVETEST.GAM --patch som_ready --scenario 06_summon.hms
+#
+# Same real spellbook-cast flow as 08a, pointed at a Summoning spell instead of Spell of Mastery:
+# open the book (page 1 is Summoning), click a summon, and the game plays Summon_Animation -- the
+# creature materialising in the summoning circle.  All real game logic (SBookScr.c cast handler).
+#
+# SAVETEST's wizard already knows the summon spells (they populate the Summoning page); the som_ready
+# patch just gives the mana so the cast is instant.  Spellbook slot geometry: x_start=16, y_start=12,
+# left column x~76, row centres y ~37/59/81/103/125/147 (SBookScr.c:216).  Row 0 = War Bears.
+
+# === Settle on the overland Main Screen ===
+wait 2s
+
+# === Open the spellbook (top menu-bar "Spells") -- opens to the Summoning page ===
+click 80 14
+wait 3s
+
+# === Cast a summon: War Bears (Summoning page, left column, row 0) ===
+click 76 37
+
+# === The summoning animation plays (creature materialises), then returns to the overland ===
+wait 12s
+
+quit
