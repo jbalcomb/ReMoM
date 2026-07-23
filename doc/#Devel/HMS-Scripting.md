@@ -34,30 +34,30 @@ HeMoM.exe    --scenario assets/test_worldgen.hms --seed1 12345
 ## Execution model
 
 - The parser reads the whole file into a fixed action array (`HEMOM_MAX_ACTIONS = 4096`,
-  [Artificial_Human_Player.c:64](../../src/Artificial_Human_Player.c#L64)) at load time. Parse errors
+  [Artificial_Human_Player.c:67](../../src/Artificial_Human_Player.c#L67)) at load time. Parse errors
   log a line and **skip** that action — a bad line never aborts the run.
-- `HeMoM_Player_Frame()` ([:624](../../src/Artificial_Human_Player.c#L624)) runs once per platform
+- `HeMoM_Player_Frame()` ([:779](../../src/Artificial_Human_Player.c#L779)) runs once per platform
   frame, executing at most one action per frame. It is registered as a platform frame callback.
 - Input is injected by writing the engine's input globals
   (`Platform_Keyboard_Buffer_Add_Key_Press`, `platform_frame_mouse_buttons` + `User_Mouse_Handler`),
   so `Get_Input()` / `Interpret_Mouse_Input()` process it through the Fields system normally.
 - When the action list is exhausted, the player sets `quit_game_flag = ST_TRUE`
-  ([:642](../../src/Artificial_Human_Player.c#L642)) — a script that runs off the end quits the game.
+  ([:797](../../src/Artificial_Human_Player.c#L797)) — a script that runs off the end quits the game.
   Use `end` to stop the player but leave the game running.
 
 ### Coordinate space
 
 **All `click`/`rclick` coordinates are in the original 320×200 logical framebuffer.** Do not
 pre-scale for the window: `HeMoM_Player_Frame` multiplies by `Platform_Get_Scale()` itself
-([:734-736](../../src/Artificial_Human_Player.c#L734-L736)) and warps the OS cursor via
+([:893-895](../../src/Artificial_Human_Player.c#L893-L895)) and warps the OS cursor via
 `Set_Pointer_Position` so a second consecutive click is not reverted to the real mouse position by the
-next `SDL_GetMouseState` poll ([:742](../../src/Artificial_Human_Player.c#L742)).
+next `SDL_GetMouseState` poll ([:901](../../src/Artificial_Human_Player.c#L901)).
 
 ### Timing
 
 `1 frame = PLATFORM_MILLISECONDS_PER_FRAME = 55 ms` (the DOS BIOS tick). `wait` is **wall-clock**, not
 frame-counted: it idles until `Platform_Get_Millies()` reaches the target
-([:646-654](../../src/Artificial_Human_Player.c#L646-L654)).
+([:802-808](../../src/Artificial_Human_Player.c#L802-L808)).
 
 ## Command reference (implemented today)
 
@@ -65,34 +65,46 @@ Verbs are case-insensitive. `#` starts a comment (whole-line or trailing). Blank
 
 | Verb | Syntax | Meaning | Parser |
 |---|---|---|---|
-| `include` | `include FILE` | inline another `.hms` (relative to this file); max depth 8 | [:471](../../src/Artificial_Human_Player.c#L471) |
-| `wait` | `wait N{f\|ms\|s\|m}` | idle N frames / ms / s / min. **Unit required** — a bare number is rejected. | [:493](../../src/Artificial_Human_Player.c#L493) |
-| `key` | `key K` | press one key (single char) | [:506](../../src/Artificial_Human_Player.c#L506) |
-| `escape` | `escape` | press Escape | [:514](../../src/Artificial_Human_Player.c#L514) |
-| `enter` | `enter` | press Enter | [:520](../../src/Artificial_Human_Player.c#L520) |
-| `backspace` | `backspace` | press Backspace | [:526](../../src/Artificial_Human_Player.c#L526) |
-| `left` `right` `up` `down` | | move unit stack one square (arrow / numpad) | [:533-536](../../src/Artificial_Human_Player.c#L533-L536) |
-| `upright` `downright` `upleft` `downleft` | | diagonal unit-stack move | [:537-540](../../src/Artificial_Human_Player.c#L537-L540) |
-| `click` | `click X Y` | left-click at (X, Y) in 320×200 space | [:541](../../src/Artificial_Human_Player.c#L541) |
-| `rclick` | `rclick X Y` | right-click at (X, Y) | [:551](../../src/Artificial_Human_Player.c#L551) |
-| `next_turn` | `next_turn` | sugar for `key n` | [:561](../../src/Artificial_Human_Player.c#L561) |
-| `type` | `type STRING` | one key per character; expands `$VAR` | [:579](../../src/Artificial_Human_Player.c#L579) |
-| `quit` | `quit` | set `quit_game_flag` — exit the game | [:568](../../src/Artificial_Human_Player.c#L568) |
-| `end` | `end` | stop the player, leave the game running | [:574](../../src/Artificial_Human_Player.c#L574) |
+| `include` | `include FILE` | inline another `.hms` (relative to this file); max depth 8 | [:576](../../src/Artificial_Human_Player.c#L576) |
+| `wait` | `wait N{f\|ms\|s\|m}` | idle N frames / ms / s / min. **Unit required** — a bare number is rejected. | [:598](../../src/Artificial_Human_Player.c#L598) |
+| `key` | `key K` | press one key (single char) | [:611](../../src/Artificial_Human_Player.c#L611) |
+| `escape` | `escape` | press Escape | [:619](../../src/Artificial_Human_Player.c#L619) |
+| `enter` | `enter` | press Enter | [:625](../../src/Artificial_Human_Player.c#L625) |
+| `backspace` | `backspace` | press Backspace | [:631](../../src/Artificial_Human_Player.c#L631) |
+| `left` `right` `up` `down` | | move unit stack one square (arrow / numpad) | [:638-641](../../src/Artificial_Human_Player.c#L638-L641) |
+| `upright` `downright` `upleft` `downleft` | | diagonal unit-stack move | [:642-645](../../src/Artificial_Human_Player.c#L642-L645) |
+| `click` | `click X Y` \| `click Screen.Alias` | left-click at (X, Y) in 320×200 space, or a named field ([Named actions](#named-actions--clicking-fields-by-name)) | [:646](../../src/Artificial_Human_Player.c#L646) |
+| `rclick` | `rclick X Y` \| `rclick Screen.Alias` | right-click at (X, Y) or a named field | [:656](../../src/Artificial_Human_Player.c#L656) |
+| `next_turn` | `next_turn` | sugar for `key n` | [:666](../../src/Artificial_Human_Player.c#L666) |
+| `type` | `type STRING` | one key per character; expands `$VAR` | [:684](../../src/Artificial_Human_Player.c#L684) |
+| `quit` | `quit` | set `quit_game_flag` — exit the game | [:673](../../src/Artificial_Human_Player.c#L673) |
+| `end` | `end` | stop the player, leave the game running | [:679](../../src/Artificial_Human_Player.c#L679) |
 
 Any other verb logs `unknown action` ([:609](../../src/Artificial_Human_Player.c#L609)) and is skipped.
 
 ### Variables
 
 Only `$SAVE_NAME` exists today — `AHP-YYYYMMDDHHMM`, populated at load
-([:283-302](../../src/Artificial_Human_Player.c#L283-L302)). Substitution runs **only inside `type`**.
+([:286](../../src/Artificial_Human_Player.c#L286)). Substitution runs **only inside `type`**.
 Max 4 variables.
 
-## Named actions — clicking fields by name (design; not yet implemented)
+## Named actions — clicking fields by name
 
 The pain point: a recorded click on the Patrol button lands somewhere inside its rectangle — a
 different `(x, y)` every recording. We want to standardize on the field's center and address it by a
 stable name per screen, so scripts read `click Main_Screen.Patrol_Button` instead of `click 290 180`.
+
+**Status — implemented for statically-resolvable fields.** The pipeline below is built end to end:
+`rmr2hms` emits `click Screen.Alias` from a recording (Phase 3), and the parser resolves it at load
+time (Phase 4). See [PLAN-HMS-Named-Actions-And-Waits.md](../%23AI_Plans/PLAN-HMS-Named-Actions-And-Waits.md)
+for phase status. The one gap: **sprite-button fields (e.g. `Patrol_Button`) have no static click point**
+and resolve only once runtime geometry is merged — they name-resolve in `rmr2hms` output but do not yet
+execute.
+
+The catalog now lives in [tools/field_catalog/](../../tools/field_catalog/) producing
+[tools/fields/catalog.fwv](../../tools/fields/catalog.fwv); the curated aliases in
+[tools/fields/aliases.fwv](../../tools/fields/aliases.fwv); the parser reads the baked
+[tools/fields/alias_points.fwv](../../tools/fields/alias_points.fwv) (`name → cx cy`).
 
 ### The data already exists
 

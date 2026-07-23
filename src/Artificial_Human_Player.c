@@ -343,9 +343,111 @@ static uint64_t Parse_Wait_Duration_Ms(const char *raw)
     return 0;
 }
 
+/* ========================================================================= */
+/*  Named Action Points (Screen.Alias -> click point)                        */
+/*                                                                           */
+/*  Baked by `python -m tools.field_catalog.resolver export` into            */
+/*  tools/fields/alias_points.fwv (fixed-width: name, cx, cy). Lets a         */
+/*  scenario say `click Main_Screen.Next_Turn_Button` instead of raw coords. */
+/*  Only statically-resolvable fields appear; runtime-geometry fields (sprite */
+/*  buttons) are absent until runtime geometry is merged.                     */
+/* ========================================================================= */
+
+#define HEMOM_MAX_ALIAS_POINTS 512
+#define HEMOM_ALIAS_NAME_MAX   128
+
+struct s_HeMoM_Alias_Point
+{
+    char    name[HEMOM_ALIAS_NAME_MAX];
+    int16_t cx;
+    int16_t cy;
+};
+
+static struct s_HeMoM_Alias_Point hemom_alias_points[HEMOM_MAX_ALIAS_POINTS];
+static int  hemom_alias_point_count = 0;
+static int  hemom_alias_points_loaded = 0;
+static char hemom_alias_points_path[512] = "tools/fields/alias_points.fwv";
+
+void HeMoM_Player_Set_Alias_Points_Path(const char *filepath)
+{
+    if(filepath == NULL) { return; }
+    snprintf(hemom_alias_points_path, sizeof(hemom_alias_points_path), "%s", filepath);
+    hemom_alias_points_loaded = 0;  /* force a reload with the new path */
+}
+
+/* Load the name->click-point table. Silent no-op if the file is absent (names won't resolve). */
+static void Load_Alias_Points(void)
+{
+    FILE *fp;
+    char  line[256];
+
+    hemom_alias_point_count = 0;
+    hemom_alias_points_loaded = 1;
+
+    fp = stu_fopen_ci(hemom_alias_points_path, "r");
+    if(fp == NULL)
+    {
+        LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] No alias points table at %s (named clicks won't resolve)", hemom_alias_points_path);
+        return;
+    }
+    while(fgets(line, sizeof(line), fp) != NULL && hemom_alias_point_count < HEMOM_MAX_ALIAS_POINTS)
+    {
+        char name[HEMOM_ALIAS_NAME_MAX];
+        int16_t cx, cy;
+        if(sscanf(line, "%127s %hd %hd", name, &cx, &cy) != 3) { continue; }
+        if(strchr(name, '.') == NULL) { continue; }  /* skip the "name cx cy" header row */
+        snprintf(hemom_alias_points[hemom_alias_point_count].name, HEMOM_ALIAS_NAME_MAX, "%s", name);
+        hemom_alias_points[hemom_alias_point_count].cx = cx;
+        hemom_alias_points[hemom_alias_point_count].cy = cy;
+        hemom_alias_point_count++;
+    }
+    fclose(fp);
+    LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] Loaded %d alias points from %s", hemom_alias_point_count, hemom_alias_points_path);
+}
+
+static int Lookup_Alias_Point(const char *name, int16_t *x, int16_t *y)
+{
+    int itr;
+    for(itr = 0; itr < hemom_alias_point_count; itr++)
+    {
+        if(strcmp(hemom_alias_points[itr].name, name) == 0)
+        {
+            *x = hemom_alias_points[itr].cx;
+            *y = hemom_alias_points[itr].cy;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/**
+ * Parse a click target: either `X Y` (numeric, 320x200) or a `Screen.Alias`
+ * name resolved via the alias points table. Returns 1 on success, 0 on failure.
+ */
+static int Parse_Click_Target(const char *arg, int16_t *x, int16_t *y)
+{
+    char name[HEMOM_ALIAS_NAME_MAX];
+    int  ni = 0;
+
+    if(sscanf(arg, "%hd %hd", x, y) == 2) { return 1; }
+
+    /* Named target: take the first whitespace-delimited token and resolve it. */
+    while(*arg == ' ' || *arg == '\t') { arg++; }
+    while(arg[ni] != '\0' && arg[ni] != ' ' && arg[ni] != '\t' && arg[ni] != '\r' && arg[ni] != '\n' && ni < HEMOM_ALIAS_NAME_MAX - 1)
+    {
+        name[ni] = arg[ni];
+        ni++;
+    }
+    name[ni] = '\0';
+    if(ni == 0) { return 0; }
+    return Lookup_Alias_Point(name, x, y);
+}
+
 int HeMoM_Player_Load_Scenario(const char *filepath)
 {
     int rc;
+
+    if(!hemom_alias_points_loaded) { Load_Alias_Points(); }
 
     hemom_action_count = 0;
     hemom_action_index = 0;
@@ -544,9 +646,9 @@ static int Parse_Scenario_File(const char *filepath, int depth)
         else if(stu_strnicmp(p, "click ", 6) == 0)
         {
             act->type = act_CLICK;
-            if(sscanf(p + 6, "%hd %hd", &act->x, &act->y) != 2)
+            if(!Parse_Click_Target(p + 6, &act->x, &act->y))
             {
-                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: bad click coords: %s", filepath, line_num, p);
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: bad click target (need X Y or Screen.Alias): %s", filepath, line_num, p);
                 continue;
             }
             hemom_action_count++;
@@ -554,9 +656,9 @@ static int Parse_Scenario_File(const char *filepath, int depth)
         else if(stu_strnicmp(p, "rclick ", 7) == 0)
         {
             act->type = act_RCLICK;
-            if(sscanf(p + 7, "%hd %hd", &act->x, &act->y) != 2)
+            if(!Parse_Click_Target(p + 7, &act->x, &act->y))
             {
-                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: bad rclick coords: %s", filepath, line_num, p);
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: bad rclick target (need X Y or Screen.Alias): %s", filepath, line_num, p);
                 continue;
             }
             hemom_action_count++;

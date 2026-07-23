@@ -82,6 +82,18 @@ class Resolver:
             rows.append({"origin": origin, "name": f"{a['screen']}.{a['alias']}"})
         return rows
 
+    def export_points_rows(self):
+        """Rows for the parser's name->click-point table: 'Screen.Alias' -> (cx, cy).
+        Only aliases with static geometry appear; runtime=1 fields (sprites, popup
+        origins) are skipped until runtime geometry is merged."""
+        rows = []
+        for a in self.aliases:
+            pt, _ = self.resolve(f"{a['screen']}.{a['alias']}")
+            if pt is None:
+                continue
+            rows.append({"name": f"{a['screen']}.{a['alias']}", "cx": str(pt[0]), "cy": str(pt[1])})
+        return rows
+
     def audit(self):
         """Staleness report: one (qualified, status, detail) per alias row.
         status in {'ok', 'drift', 'missing'}."""
@@ -102,6 +114,7 @@ class Resolver:
 
 
 LOOKUP_FWV = os.path.join(os.path.dirname(__file__), "..", "fields", "alias_lookup.fwv")
+POINTS_FWV = os.path.join(os.path.dirname(__file__), "..", "fields", "alias_points.fwv")
 
 
 def _main():
@@ -109,10 +122,14 @@ def _main():
     r = Resolver.from_repo()
 
     if len(sys.argv) > 1 and sys.argv[1] == "export":
-        out = os.path.abspath(sys.argv[2]) if len(sys.argv) > 2 else os.path.abspath(LOOKUP_FWV)
-        rows = r.export_lookup_rows()
-        fwv.write(rows, ["origin", "name"], set(), out)
-        print(f"wrote {len(rows)} alias lookups -> {out}")
+        lookup_out = os.path.abspath(LOOKUP_FWV)
+        points_out = os.path.abspath(POINTS_FWV)
+        lrows = r.export_lookup_rows()
+        prows = r.export_points_rows()
+        fwv.write(lrows, ["origin", "name"], set(), lookup_out)
+        fwv.write(prows, ["name", "cx", "cy"], {"cx", "cy"}, points_out)
+        print(f"wrote {len(lrows)} lookups -> {lookup_out}")
+        print(f"wrote {len(prows)} points  -> {points_out}")
         return 0
 
     print("=== alias audit ===")

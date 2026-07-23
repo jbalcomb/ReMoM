@@ -35,6 +35,13 @@ extern "C" {
 int HeMoM_Player_Load_Scenario(const char *filepath);
 
 /**
+ * Set the path to the named-action points table (Screen.Alias -> click point),
+ * baked by `python -m tools.field_catalog.resolver export`. Overrides the default
+ * "tools/fields/alias_points.fwv". Call before HeMoM_Player_Load_Scenario.
+ */
+void HeMoM_Player_Set_Alias_Points_Path(const char *filepath);
+
+/**
  * Called once per frame from Platform_Event_Handler().
  * Executes the current action in the scenario, advancing when wait counts expire.
  * Injects input through Platform_Keyboard_Buffer_Add_Key_Press() and User_Mouse_Handler().

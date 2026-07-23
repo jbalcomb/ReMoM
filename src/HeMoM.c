@@ -1022,6 +1022,7 @@ static void Print_Usage(const char *program_name)
     LOG_INFO(LOG_CAT_HEMOM, "  --continue         Load SAVE9.GAM (continue from previous --newgame)");
     LOG_INFO(LOG_CAT_HEMOM, "  --load FILE        Load a save file (SAVE1.GAM .. SAVE9.GAM, SAVETEST.GAM)");
     LOG_INFO(LOG_CAT_HEMOM, "  --scenario FILE    Run artificial human player from scenario script (.hms)");
+    LOG_INFO(LOG_CAT_HEMOM, "  --alias-points F   Named-action points table for `click Screen.Alias` (alias_points.fwv)");
     LOG_INFO(LOG_CAT_HEMOM, "  --replay FILE      Replay recorded input from .RMR file");
     LOG_INFO(LOG_CAT_HEMOM, "  --record FILE      Record input to .RMR file");
     LOG_INFO(LOG_CAT_HEMOM, "  --dump-save FILE   After Screen_Control returns, dump FILE.GAM to FILE.txt");
@@ -1154,6 +1155,12 @@ int main(int argc, char *argv[])
             LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] CLI: --scenario \"%s\"", hemom_scenario);
             LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --scenario \"%s\"", hemom_scenario);
 #endif
+        }
+        else if(stu_strcmp(argv[argi], "--alias-points") == 0 && (argi + 1) < argc)
+        {
+            argi++;
+            HeMoM_Player_Set_Alias_Points_Path(argv[argi]);
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --alias-points \"%s\"", argv[argi]);
         }
         else if(strcmp(argv[argi], "--dump-save") == 0 && (argi + 1) < argc)
         {

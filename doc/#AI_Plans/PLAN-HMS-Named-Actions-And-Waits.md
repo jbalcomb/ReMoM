@@ -194,21 +194,32 @@ The output header warns of this. Phase 4 teaches the parser to resolve `Screen.A
 
 ---
 
-## Phase 4 — Parser resolves `click Screen.Field`
+## Phase 4 — Parser resolves `click Screen.Alias` — **DONE**
 
 Engine change, smallest that closes the loop.
 
-1. In `Artificial_Human_Player.c`, when a `click`/`rclick` argument is `Screen.Alias` (non-numeric),
-   resolve it to `(cx, cy)` at **parse time** against the baked table from Phase 3(b), so the runtime
-   path is unchanged — it still stores `act->x/act->y`.
-2. Unresolved name → log and skip the action (consistent with existing bad-coord handling at
-   [:546](../../src/Artificial_Human_Player.c#L546)), never click `(0,0)`.
+1. **DONE** — `Parse_Click_Target` in [Artificial_Human_Player.c](../../src/Artificial_Human_Player.c):
+   a `click`/`rclick` arg is tried as numeric `X Y` first; if that fails it is taken as a `Screen.Alias`
+   name and resolved to `(cx, cy)` at **parse time** against the baked points table. The runtime path is
+   unchanged — it still stores `act->x/act->y`. Numeric clicks behave exactly as before.
+2. **DONE** — unresolved name → `bad click target (need X Y or Screen.Alias)` logged and the action
+   skipped (same pattern as the old bad-coord handling), never a `(0,0)` click.
+3. **Points table** — `python -m tools.field_catalog.resolver export` also writes
+   [tools/fields/alias_points.fwv](../../tools/fields/alias_points.fwv) (`name  cx  cy`). Loaded once in
+   `HeMoM_Player_Load_Scenario` from a default path, overridable via
+   `HeMoM_Player_Set_Alias_Points_Path` / HeMoM's `--alias-points` flag. Only statically-resolvable
+   aliases are in it; **`runtime=1` fields (sprite buttons like `Patrol_Button`) are absent** until
+   runtime geometry is merged, so they log-and-skip today.
 
-**Green when:** `click Main_Menu_Screen.New_Game_Button` clicks the button center; an unknown name is
-logged and skipped.
+**Green (verified live):** a HeMoM `--scenario` run of `click Main_Menu_Screen.New_Game_Button` /
+`click Main_Screen.Next_Turn_Button` logs `Loaded 2 alias points` then executes `click (159, 167)` /
+`click (280, 187)`; `Patrol_Button` (runtime) and a bogus name both log `bad click target` and skip.
+Full `ctest -R HeMoM_` stays 14/14 (numeric clicks unbroken); Debug **and** Release build.
 
-**Verify:** a HeMoM `--scenario` smoke that clicks a named field and asserts the resulting screen
-transition in the log.
+**Remaining for the motivating example (`Patrol_Button`):** it is a sprite (`runtime=1`), so it has no
+static click point. Closing that needs runtime geometry merged into the points table — the deferred
+Phase 1 step 4 (re-enable `FIELDADD` + accumulate the RECORD.log rects). Until then, sprite-button
+aliases name-resolve in `rmr2hms` output but do not execute.
 
 ---
 
