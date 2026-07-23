@@ -580,7 +580,12 @@ FILE * STU_GRAF_Open_User(const char * name, const char * mode)
     /* A name that is already a path is honored verbatim. */
     if(graf_name_is_path(name))
     {
-        return stu_fopen_ci(name, mode);
+        file_pointer = stu_fopen_ci(name, mode);
+        if(file_pointer == NULL)
+        {
+            LOG_WARN(LOG_CAT_STU_GRAF, "STU_GRAF_Open_User() failed to open file \"%s\"", name);
+        }
+        return file_pointer;
     }
 
     /* HEADLESS (HeMoM / tests / matchup) keeps the original CWD-relative
@@ -597,8 +602,7 @@ FILE * STU_GRAF_Open_User(const char * name, const char * mode)
         file_pointer = stu_fopen_ci(name, mode);
         if(file_pointer == NULL)
         {
-            LOG_FATAL(LOG_CAT_LOADSAVE, "FATAL: Load_SAVE_GAM() failed to open file \"%s\"", full);
-            stu_debugbreak();
+            LOG_WARN(LOG_CAT_STU_GRAF, "STU_GRAF_Open_User() failed to open file \"%s\"", full);
         }
         return file_pointer;
     }
@@ -616,8 +620,7 @@ FILE * STU_GRAF_Open_User(const char * name, const char * mode)
 
     if(file_pointer == NULL)
     {
-        LOG_FATAL(LOG_CAT_LOADSAVE, "FATAL: Load_SAVE_GAM() failed to open file \"%s\"", full);
-        stu_debugbreak();
+        LOG_WARN(LOG_CAT_STU_GRAF, "STU_GRAF_Open_User() failed to open file \"%s\"", full);
     }
 
     return file_pointer;

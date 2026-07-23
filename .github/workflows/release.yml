@@ -165,6 +165,7 @@ jobs:
             --executable "$REMOMBER_BIN" \
             --desktop-file remom.desktop \
             --icon-file remom.png \
+            --custom-apprun "$GITHUB_WORKSPACE/packaging/AppRun" \
             --output appimage
 
       - name: Package binaries (ZIP + TGZ, engine-only)
