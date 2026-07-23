@@ -19,7 +19,12 @@
       - a file that matches only a non-v1.31 row -> "wrong version" warning;
       - an installed file matching no row at all -> "unrecognized" warning;
       - installed files with no manifest entry, and manifest files not installed,
-        are ignored.
+        are ignored;
+      - files the player may legitimately edit are skipped entirely, by name, via
+        g_lbx_user_modifiable in STU_GRAF.c -- currently ITEMDATA.LBX, which the
+        game rewrites when custom items are created.  Leave their rows here: the
+        skip is by name precisely so regenerating this table cannot reintroduce a
+        check that would fire on every player who has made a custom item.
 
     The array is NULL-terminated (an entry whose name is NULL).  An empty table
     (just the terminator) means "manifest not authored yet" and the compat pass

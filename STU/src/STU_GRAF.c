@@ -1133,6 +1133,35 @@ static int graf_ci_contains(const char * hay, const char * needle)
     return 0;
 }
 
+/* .LBX files the player may legitimately change, so a hash mismatch is expected
+   rather than a sign of corruption or a wrong game version.
+
+   ITEMDATA.LBX carries the item definitions and is rewritten when the player
+   creates custom items (Create Artifact / Enchant Item -- see doc/MoM-Items-Make.md),
+   so it diverges from the factory hash as soon as anyone makes one.
+
+   These are skipped by NAME rather than by dropping their rows from
+   lbx_manifest.c, because those rows are generated output (`lbx_hashes`) and the
+   next regeneration would silently reintroduce the check. */
+static const char * const g_lbx_user_modifiable[] =
+{
+    "ITEMDATA.LBX",
+    NULL
+};
+
+static int graf_lbx_is_user_modifiable(const char * name)
+{
+    int i;
+    for(i = 0; g_lbx_user_modifiable[i] != NULL; i++)
+    {
+        if(graf_str_ieq(name, g_lbx_user_modifiable[i]))
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int STU_GRAF_Check_Compat_Against(const STU_LBX_Manifest_Entry * manifest,
                                   STU_GRAF_Compat_Report * report)
 {
@@ -1165,6 +1194,11 @@ int STU_GRAF_Check_Compat_Against(const STU_LBX_Manifest_Entry * manifest,
         if(hash == NULL || name[0] == '\0')
         {
             continue;  /* malformed row */
+        }
+
+        if(graf_lbx_is_user_modifiable(name))
+        {
+            continue;  /* player-editable data; a hash mismatch is not a defect */
         }
 
         for(i = 0; i < nfiles; i++)
