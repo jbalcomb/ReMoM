@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>  /* CLAUDE: getenv() for the input-metrics gate */
 #include <string.h>
 
 #include "../../platform/include/Platform.h"
@@ -22,6 +23,7 @@
 /* CLAUDE: needed for Platform_Record_Active() / Replay_Capture_Frame() used in Platform_Event_Handler. */
 #include "../../platform/include/Platform_Replay.h"
 #include "../../platform/include/Platform_Capture.h"
+#include "../../platform/include/Platform_Input_Metrics.h"  /* CLAUDE: Platform-Input Layer 1 metrics */
 #include "win_PFL.h"
 
 /* REMOM_VERSION_STRING comes from the CMake-generated remom_version.h (built from
@@ -115,6 +117,22 @@ void Startup_Platform(void)
 
     Build_Key_Xlat();
 
+    /* CLAUDE: Platform-Input Layer 1 -- runtime-gated input responsiveness metrics, OFF by default.
+       REMOM_INPUT_METRICS=1 writes ./remom_input_metrics.fwv; =PATH writes PATH; unset/0 stays off.
+       Mirrors sdl2_Init.c.  See doc/#AI_Plans/{BRA,PRD,PLAN}-Platform-Input.md. */
+    {
+        const char * im_env = getenv("REMOM_INPUT_METRICS");
+        if (im_env != NULL && im_env[0] != '\0' && strcmp(im_env, "0") != 0)
+        {
+            const char * im_path = (strcmp(im_env, "1") == 0) ? "remom_input_metrics.fwv" : im_env;
+            int im_scale = Platform_Get_Scale();
+            if (im_scale < 1) { im_scale = 1; }
+            /* Win32 has no cheap refresh-rate query here; 0 = unknown (recorded in the header). */
+            Input_Metrics_Init(im_path, "Win32", "gdi", im_scale, 0);
+            LOG_INFO(LOG_CAT_WIN_PFL, "CLAUDE: input metrics ENABLED -> %s", im_path);
+        }
+    }
+
 #ifdef STU_DEBUG
     LOG_INFO(LOG_CAT_WIN_PFL, "DEBUG: [%s, %d]: END: Startup_Platform()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_PFL, "DEBUG: [%s, %d]: END: Startup_Platform()", __FILE__, __LINE__);
@@ -127,6 +145,7 @@ void Shutdown_Platform(void)
     LOG_INFO(LOG_CAT_WIN_PFL, "DEBUG: [%s, %d]: BEGIN: Shutdown_Platform()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_PFL, "DEBUG: [%s, %d]: BEGIN: Shutdown_Platform()", __FILE__, __LINE__);
 #endif
+    Input_Metrics_Shutdown();  /* CLAUDE: flush the input-metrics .fwv (also runs via atexit) */
     ShowCursor(TRUE);
     timeEndPeriod(1);
     if (win_window)
@@ -240,7 +259,19 @@ void Platform_Video_Update(void)
     }
 
     Win_Convert_Engine_Pixels_To_Back_Buffer(&win_video_back_buffer);
-    Win_Blit_Back_Buffer(&win_video_back_buffer, win_device_context, win_window_width, win_window_height);
+
+    /* CLAUDE: metrics -- bracket the present (StretchDIBits blit) so block time and inter-present
+       interval are measured.  Off path is one branch; the two clock reads only run when enabled. */
+    if (Input_Metrics_Active())
+    {
+        uint64_t im_t0 = Platform_Get_Millies();
+        Win_Blit_Back_Buffer(&win_video_back_buffer, win_device_context, win_window_width, win_window_height);
+        Input_Metrics_Record_Present(im_t0, Platform_Get_Millies());
+    }
+    else
+    {
+        Win_Blit_Back_Buffer(&win_video_back_buffer, win_device_context, win_window_width, win_window_height);
+    }
 }
 
 
@@ -269,6 +300,7 @@ void Platform_Video_Update(void)
 
 void Platform_Event_Handler(void)
 {
+    if (Input_Metrics_Active()) { Input_Metrics_Note_Tick(Platform_Get_Millies()); }  /* CLAUDE: metrics tick */
 #ifdef MOUSE_DEBUG
     MOUSE_LOG("MOUSEt=%llu HANDLER_START ptr=%d,%d\n", (unsigned long long)Platform_Get_Millies(), pointer_x, pointer_y);
 #endif
@@ -334,6 +366,7 @@ void Platform_Event_Handler(void)
 /* CLAUDE: Pump events AND refresh cursor, matching SDL backends. */
 void Platform_Pump_Events(void)
 {
+    if (Input_Metrics_Active()) { Input_Metrics_Note_Tick(Platform_Get_Millies()); }  /* CLAUDE: metrics tick */
     Win_Pump_Messages();
     Platform_Maybe_Move_Mouse();
 }
@@ -446,6 +479,21 @@ void Platform_Maybe_Move_Mouse(void)
     Platform_Get_Mouse_Position_XY(&mx, &my);
     smx = (int16_t)mx;
     smy = (int16_t)my;
+
+    /* CLAUDE: metrics -- note every sample (moved or not) so net motion between presents is correct. */
+    if (Input_Metrics_Active()) { Input_Metrics_Note_Poll(smx, smy); }
+
+    /* CLAUDE: HW-cursor prototype -- the OS cursor tracks natively, so skip the software redraw/present
+       entirely; just keep the engine's pointer position and cursor shape current for hit-testing.
+       Mirrors sdl2_PFL.c Platform_Maybe_Move_Mouse. */
+    if (Platform_HW_Cursor_Active())
+    {
+        pointer_x = smx;
+        pointer_y = smy;
+        if (current_mouse_list_count >= 2) { Check_Mouse_Shape(smx, smy); }
+        Platform_HW_Cursor_Refresh();
+        return;
+    }
 
     if (smx != pointer_x || smy != pointer_y)
     {
@@ -762,12 +810,29 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
             }
         } break;
 
+        case WM_SETCURSOR:
+        {
+            /* CLAUDE: HW-cursor prototype -- Windows resets to the class cursor (NULL) on every move
+               over the client area; re-assert our cursor and swallow the message so it isn't cleared.
+               Inactive -> fall through to default (software cursor is hidden, class cursor NULL). */
+            if (Platform_HW_Cursor_Active() && LOWORD(lParam) == HTCLIENT)
+            {
+                Win_HW_Cursor_Apply();
+                return TRUE;
+            }
+            return DefWindowProc(hWnd, message, wParam, lParam);
+        }
+
         case WM_CREATE:
         {
             /* CLAUDE: Enable mouse input on window creation so it works from the first frame
                (WM_ACTIVATEAPP also enables it on focus, but that may not fire before first input). */
             Platform_Mouse_Input_Enable();
-            ShowCursor(FALSE);
+            /* CLAUDE: HW-cursor prototype shows the OS cursor; the default path hides it and software-draws. */
+            if (!Platform_HW_Cursor_Active())
+            {
+                ShowCursor(FALSE);
+            }
         } break;
 
         case WM_CLOSE:

@@ -99,14 +99,67 @@ Environment: SDL2 / X11 / 4× scale / 60 Hz. 1455 presents over 83.3 s, clean ex
 - **SDL2** ([`sdl2_MD.c`](../../platform/sdl2/sdl2_MD.c), [`sdl2_Init.c`](../../platform/sdl2/sdl2_Init.c), [`sdl2_PFL.c`](../../platform/sdl2/sdl2_PFL.c)) — **implemented, built, and visually confirmed.**
 - **SDL3** ([`sdl3_MD.c`](../../platform/sdl3/sdl3_MD.c), `sdl3_Init.c`, `sdl3_PFL.c`) — **ported** (SDL3 APIs: `SDL_CreateSurface`, `SDL_DestroySurface`/`SDL_DestroyCursor`, no-arg `SDL_ShowCursor()`/`SDL_HideCursor()`). **Compile-unverified** — SDL3 is not installed in the dev environment; needs a build on an SDL3 host before it can be trusted.
 - **Headless** ([`headless_PFL.c`](../../platform/headless/headless_PFL.c)) — stub (`Active()` returns 0); satisfies the interface `Mouse.c` now calls so HeMoM and the unit tests link.
+- **Win32** ([`win_MD.c`](../../platform/win32/win_MD.c), [`win_PFL.cpp`](../../platform/win32/win_PFL.cpp)) — **implemented, builds clean, runs.** `Platform_HW_Cursor_Active`/`Refresh` build an `HCURSOR` from the sprite via `CreateIconIndirect`; init shows the OS cursor, `WM_SETCURSOR` re-asserts it, `Platform_Maybe_Move_Mouse` skips the software path. Layer 1 metrics hooks also added, so a Windows `.fwv` baseline can be captured. Compile/run-verified on this box (`MSVC-win32-debug`); **cursor smoothness A/B is a pending visual check** (same as the SDL2 confirmation was). See *Win32 port* below.
 
 **Verification.** Visual A/B on the reporting hardware (SDL2/X11): with `REMOM_HW_CURSOR=1` the user reported it "felt a whole lot better" (2026-07-24). **Layer 1 metrics are unchanged by design** — the HW cursor bypasses the framebuffer present, so `dt_ms` still shows ~18 fps; smoothness here is verified visually (and, later, by Layer 3 camera), *not* by the `.fwv`. A metrics run with the flag on is still useful to confirm **no present-side regression**.
 
 **Follow-ups.**
-- **Win32 backend** — same shape of fix, different cursor API (build an `HCURSOR` from the sprite via `CreateIconIndirect`; `SetCursor` + `ShowCursor(TRUE)`; handle `WM_SETCURSOR`/set the window-class cursor so Windows doesn't reset it each move). The shared `Mouse.c` suppression already accommodates it — Win32 only needs its own `Platform_HW_Cursor_Active/Refresh` plus the show/grab hooks. Not started.
+- **Win32 backend** — **not started, and currently a build break.** Same shape of fix, different cursor API. Detailed in *Fix — hardware cursor: Win32 port* below.
 - Per-cursor **hotspot** refinement (via `current_pointer_offset`/`center_offset`) if any cursor's active point isn't top-left.
 - Rebuild the cursor on **palette-cycle** changes (currently rebuilt only on shape change), for cursors that use cycled palette entries.
 - After a soak, consider making `REMOM_HW_CURSOR` the **default** (or an in-game setting) rather than opt-in.
+
+## Fix — hardware cursor: Win32 port (delivered 2026-07-24)
+
+**Status: implemented, builds clean under `/W4 /WX`, runs.** The port both restored the build the SDL2/SDL3 fix commit (`53eb71b`) had broken *and* landed the full hardware cursor + Layer 1 metrics for the native Win32 backend.
+
+### The breakage it resolved (verified before/after)
+
+The shared suppression in `Mouse.c` (`Draw_Mouse_On_Page_`/`Draw_Mouse_Off_Page_`, [`MoX/src/Mouse.c:750,788`](../../MoX/src/Mouse.c#L750)) calls `Platform_HW_Cursor_Active()`. `Mouse.c` links into every backend's player exe, but before this port no `win32/` file defined that symbol (headless got a stub, Win32 did not). A clean `USE_WIN32` build failed at link:
+
+```
+MOX.lib(Mouse.obj) : error LNK2019: unresolved external symbol Platform_HW_Cursor_Active
+    referenced in function Draw_Mouse_On_Page_ [ ... \src\ReMoM.vcxproj ]
+ReMoM.exe : fatal error LNK1120: 1 unresolved externals
+```
+
+(`demo_vga.exe` failed identically; `ReMoM.exe` was not produced.) After the port, `cmake --build --preset MSVC-win32-debug` links `ReMoM.exe` with zero errors/warnings. The symbol is now defined in `win_MD.c`, so the same shared `Mouse.c` suppression that SDL2/SDL3 use applies to Win32.
+
+### Current Win32 cursor / present model (what the port changes)
+
+- OS cursor is **hidden**: `ShowCursor(FALSE)` on `WM_CREATE` ([`win_PFL.cpp`](../../platform/win32/win_PFL.cpp)), and the window class sets `wcex.hCursor = NULL`.
+- Cursor is **software-drawn** into the framebuffer via the shared `Mouse.c` path, same as SDL2.
+- Present is a **`StretchDIBits`** blit (`win_PFL.cpp:228`) inside `Platform_Video_Update` (`:231`).
+- `Platform_Maybe_Move_Mouse()` (`win_PFL.cpp:439`) is the cursor fast path: `Restore_/Save_/Draw_Mouse_On_Page`.
+- Input ticks: `Platform_Event_Handler()` (`win_PFL.cpp:270`) and the `Platform_Pump_Events()` `PeekMessage` loop (`:335,345`).
+
+### What the port did (mirrors `sdl2_MD.c`) — all delivered
+
+1. **Implemented `Platform_HW_Cursor_Active`/`Refresh` in `win_MD.c`** (was empty; already in `PLATFORM_SOURCES` for `USE_WIN32`). Same `REMOM_HW_CURSOR` env gate. `Refresh` builds an `HCURSOR` from the current sprite (`mouse_palette`, image `N-1`, 16×16, **column-major**, index 0 transparent) through `platform_palette_buffer`, nearest-neighbour-upscaled by the window `scale`, rebuilt only when `Get_Pointer_Image_Number()` changes — the SDL2 logic verbatim, only the OS handoff differs:
+   - Build a 32-bit top-down `BITMAPV5HEADER` DIB (BGRA, per-pixel alpha: opaque for palette pixels, 0 for the transparent index), plus a monochrome AND-mask bitmap (all-zero when the color DIB carries alpha).
+   - `ii.fIcon = FALSE` (a cursor, not an icon), `ii.xHotspot = ii.yHotspot = 0` (top-left, matching the engine's hit-test), `hbmColor`/`hbmMask` set → `CreateIconIndirect` → `(HCURSOR)`.
+   - `SetCursor(hcur)`; `DestroyIcon` the previous; `DeleteObject` both bitmaps.
+2. **Show the OS cursor at init (gated):** when `Platform_HW_Cursor_Active()`, do not `ShowCursor(FALSE)` on `WM_CREATE`; leave the OS cursor visible.
+3. **Handle `WM_SETCURSOR` (the Win32-specific wrinkle):** Windows resets the cursor to the class cursor (here `NULL`) on every mouse move over the client area, which would erase our `SetCursor` each frame. Add a `WM_SETCURSOR` case: when the hit-test is `HTCLIENT` and the HW cursor is active, `SetCursor(current_hcursor)` and return `TRUE` to stop default processing. (Alternatively set the class cursor, but per-move `SetCursor` keeps the shape swap trivial.)
+4. **Skip the software fast path (gated):** early-return the `Restore_/Save_/Draw_Mouse_On_Page` block in `Platform_Maybe_Move_Mouse` (`win_PFL.cpp:439`) when the HW cursor is active, and call `Platform_HW_Cursor_Refresh()` on the poll paths so a shape change is picked up. (The shared `Mouse.c` draw suppression already prevents the sprite being drawn; this also avoids the needless framebuffer churn.)
+5. **No grab/relative-mode neuter needed** the way SDL2 needed it — Win32 has no `pfl_mouse_grab` relative-mode analogue — but confirm nothing calls `ShowCursor(FALSE)` after init while the HW cursor is active (`Shutdown_Platform` restoring `ShowCursor(TRUE)` is fine).
+
+Also: `Win_HW_Cursor_Apply()` (defined in `win_MD.c`, declared in `win_PFL.h`) exposes the current `HCURSOR` to the `WM_SETCURSOR` handler in `win_PFL.cpp` without leaking Win32 types into the shared `Platform.h`.
+
+### Layer 1 metrics on Win32 — added
+
+`PFL_Input_Metrics.c` is backend-agnostic (0 SDL refs) and was already compiled into the Win32 backend (`platform/CMakeLists.txt` appends it unconditionally), but its feeding hooks previously existed only in SDL2/SDL3 — on Win32 the module linked yet was never fed. The same hooks were added, mirroring `sdl2_Video.c`/`sdl2_PFL.c`/`sdl2_Init.c`:
+- `Input_Metrics_Init(...,"Win32","gdi",scale,0)` / `Input_Metrics_Shutdown()` in `Startup_/Shutdown_Platform`.
+- `Input_Metrics_Note_Tick(Platform_Get_Millies())` in `Platform_Event_Handler` and `Platform_Pump_Events`.
+- `Input_Metrics_Note_Poll(x,y)` in `Platform_Maybe_Move_Mouse`.
+- `Input_Metrics_Record_Present(t0,t1)` bracketing the `Win_Blit_Back_Buffer` present in `Platform_Video_Update`.
+
+### Verification (2026-07-24, this Windows box)
+
+- **Build:** `cmake --build --preset MSVC-win32-debug` links `ReMoM.exe` with **zero errors/warnings under `/W4 /WX`** (was `LNK2019`/not-produced before the port).
+- **Run:** launched the Win32 `ReMoM.exe` with `REMOM_HW_CURSOR=1 REMOM_INPUT_METRICS=1` — starts into the title screen, no crash, no missing-data dialog.
+- **Metrics fire on Win32:** the run produced a well-formed `.fwv` — `#meta backend=Win32 video_driver=gdi scale=4`, 27 present rows with sensible values (`dt_ms`≈172, ~90 input ticks/present, `max_gap`=16 ms). This confirms the W3 hooks actually execute on Win32, not just compile.
+- **Still pending (same gap SDL2 had at first):** the cursor-smoothness **visual A/B** with the flag on/off, and a proper Windows Layer 1 baseline while actively moving the mouse. Win32 is locally testable (`MSVC-win32-*`), so — unlike the deferred SDL3 port — this can be done here rather than deferred.
 
 ## CTest & build wiring
 
@@ -119,7 +172,7 @@ Environment: SDL2 / X11 / 4× scale / 60 Hz. 1455 presents over 83.3 s, clean ex
 2. **Layer 2 skeleton.** Hand-author `sweep.RMR`; confirm `--replay sweep.RMR --capture out/` produces a clean fixed-fps video of the presented cursor.
 3. **Layer 2 analysis + baseline.** Write `analyze_capture.py`; capture and commit a baseline on the named reference machine; wire the CTest test with relative thresholds.
 4. **Layer 3 procedure + first reading.** Document and take one ground-truth motion-to-photon number; reconcile it against Layer 1's internal input→present number to size the OS/compositor contribution the internal layers can't see.
-5. **Fix effort.** First fix **delivered** — the hardware cursor (see *Fix — hardware cursor* above), chosen directly from the baseline's root cause. SDL2 confirmed; SDL3 ported (unverified); Win32 outstanding.
+5. **Fix effort.** First fix **delivered** — the hardware cursor (see *Fix — hardware cursor* above), chosen directly from the baseline's root cause. SDL2 confirmed; SDL3 ported (unverified); **Win32 implemented, builds clean, runs — build-verified and metrics-verified locally** (see *Fix — hardware cursor: Win32 port*); its cursor-smoothness visual A/B is the one remaining check, and is doable on the dev box.
 
 ## Open risks
 

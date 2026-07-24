@@ -56,10 +56,24 @@ All three report **latency and jitter as separate distributions** (p50/p95/p99),
 - **Distributions, not means** — every reported metric is a percentile set. A regression on p95/p99 fires even if p50 is unchanged.
 - **The harness self-reports its environment** — backend (SDL2/SDL3), window scale, refresh rate, and X11-vs-Wayland — into the FWV file header so numbers are comparable only across like environments.
 
+## Windows (native Win32) backend
+
+Added 2026-07-24. The measure-then-fix discipline and the hardware-cursor fix apply to the native Win32 backend (`USE_WIN32`) as much as to SDL2/SDL3. Two things make Windows distinct from the deferred SDL3 case: the fix commit left it **failing to link**, and — unlike SDL3 — it is **locally buildable and runnable** on the Windows dev box, so it can be fully verified rather than ported-and-hoped.
+
+### Requirements (all delivered 2026-07-24)
+
+- **W1 — Restore the `USE_WIN32` build (blocker). ✅ DONE.** `Platform_HW_Cursor_Active`/`Refresh` are now defined in `win_MD.c`, resolving the `LNK2019`. `ReMoM.exe`/`demo_vga.exe` link again. (Implemented as the full fix, not a stub.)
+- **W2 — Hardware cursor on Win32. ✅ DONE.** `Platform_HW_Cursor_Active`/`Refresh` implemented in `win_MD.c` — `HCURSOR` built from the game sprite via `CreateIconIndirect` (32-bit BGRA `BITMAPV5HEADER` DIB + all-zero mask), same `REMOM_HW_CURSOR` gate, off by default. Same sprite conversion as SDL2 (column-major, index-0 transparent, scale-upscaled, top-left hotspot). `WM_SETCURSOR` handled (re-asserts via `Win_HW_Cursor_Apply`); init shows the OS cursor when active; `Platform_Maybe_Move_Mouse` skips the software path when active.
+- **W3 — Layer 1 metrics on Win32. ✅ DONE.** Tick hooks in `Platform_Event_Handler`/`Platform_Pump_Events`, poll in `Platform_Maybe_Move_Mouse`, present bracket around the `Win_Blit_Back_Buffer` blit, and `Input_Metrics_Init/Shutdown` in `Startup_/Shutdown_Platform`. Verified: `REMOM_INPUT_METRICS=1` produces a real `.fwv` (`backend=Win32`, 27 present rows).
+- **W4 — Verify locally. ✅ Build + run + metrics verified** on this Windows box (`MSVC-win32-debug`): links with zero `/W4 /WX` warnings, launches to the title screen, writes a well-formed Win32 `.fwv`. **Remaining:** the cursor-smoothness **visual A/B** and a mouse-moving Layer 1 baseline — the same visual step the SDL2 fix also needed, and doable locally.
+
+Implementation specifics live in `PLAN-Platform-Input.md` §*Fix — hardware cursor: Win32 port*.
+
 ## Out of Scope
 
 - **Fixing the lag.** This PRD delivers measurement and a regression guard, not corrections. Present-coalescing, vsync strategy, hardware/OS cursor, and `Release_Time` sleep replacement are the gated follow-on (BRA §5, §7).
-- **SDL3 and Win32 parity.** Hooks are placed to make it mechanical later; not measured or validated here.
+- **SDL3 parity.** Hooks are placed to make it mechanical later; not measured or validated here.
+- ~~**Win32 parity.**~~ **Now in scope — see *Windows (native Win32) backend* below.** Promoted because the SDL2/SDL3 fix commit (`53eb71b`) left the `USE_WIN32` backend **not linking** (`Mouse.c`→`Platform_HW_Cursor_Active` unresolved), so Win32 is no longer merely a "later, mechanical" parity item — it is a build regression plus the same smoothness fix.
 - **A byte/pixel diff of the cursor sprite.** Layer 2 locates the cursor centroid; it does not compare sprite pixels to a golden.
 - **An absolute latency SLA.** Set after the baseline exists.
 - **Touch, trackpad-gesture, and gamepad input.** Mouse only.

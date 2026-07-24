@@ -54,6 +54,9 @@ void Build_Key_Xlat(void);
 
 void Win_Pump_Messages(void);
 
+/* CLAUDE: re-assert the hardware cursor (defined in win_MD.c) from WM_SETCURSOR. */
+void Win_HW_Cursor_Apply(void);
+
 
 
 #ifdef __cplusplus

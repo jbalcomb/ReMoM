@@ -122,7 +122,8 @@ Supporting decisions taken with the same stroke:
 
 - **The fixes themselves.** Present-coalescing, vsync strategy, hardware/OS cursor, render-thread decoupling — all deferred to the gated follow-on, chosen by what the baseline shows.
 - **The absolute latency target.** Set after Layer 1 + Layer 3 establish a baseline; expressed relative to it.
-- **SDL3 and Win32 parity.** Hooks are placed to make it mechanical later; not measured now.
+- **SDL3 parity.** Hooks are placed to make it mechanical later; not measured now.
+- ~~**Win32 parity.**~~ **Decided 2026-07-24 — now in scope (§9).** The fix commit left the native Win32 build broken, so Win32 is no longer a deferred "mechanical later" item.
 - **Wayland vs X11 as a supported-matrix question.** Noted as a variance source that can *itself* be the bug; the harness records which is in use, but picking a supported set is out of scope here.
 - **Touch, trackpad-gesture, and gamepad input.** Mouse only.
 
@@ -137,3 +138,19 @@ The first Layer 1 capture on the reporting hardware (SDL2 / X11 / 4× / 60 Hz; r
 - **Actual cause:** the software cursor is drawn into the framebuffer and only reaches the screen at the main loop's ~55 ms BIOS-tick present cadence (~18 fps), while the dedicated cursor-present path fires **0** times. Had we "fixed blind" (Finding A), the obvious first move — attacking vsync/present-coalescing — would have spent effort on a non-cause.
 
 **Consequence for the effort:** the fix is promoted ahead of Layers 2–3, and it is now specific — restore the cursor's independent fast path via a real SDL hardware/OS cursor (the modern equivalent of the DOS hardware sprite). This does not change the layered decision; Layer 2/3 still follow, now as the regression guard around a known fix. It does resolve one "does not decide" item (§7): the fix direction is chosen, by measurement.
+
+---
+
+## 9. Update — native Win32 backend promoted into scope (2026-07-24)
+
+The hardware-cursor fix landed for SDL2 (confirmed) and SDL3 (ported, unverified) in commit `53eb71b`. That commit also changed the **shared** `Mouse.c` to call `Platform_HW_Cursor_Active()` at the software-cursor choke point — a backend-agnostic suppression hook. SDL2, SDL3, and headless each define that symbol; **the native Win32 backend does not**, so a `USE_WIN32` build now fails to link (`LNK2019`, `Platform_HW_Cursor_Active` unresolved in `Mouse.obj`; `ReMoM.exe` not produced). Verified on the Windows dev box, 2026-07-24.
+
+This changes the standing of the "Win32 parity" item that §7 had deferred as "mechanical later":
+
+- **It is a correctness regression, not just an enhancement.** A shared-code change broke a backend that was building before. Restoring the Win32 build (even to a no-op stub, software cursor unchanged) is not optional and is not gated on the smoothness work — it is a build-integrity fix.
+- **The layered measure-before-fix decision is unchanged and now *cheaper* to honour on Windows.** Unlike SDL3 (absent from the dev environment, hence ported-but-unverified), the Win32 backend **builds and runs locally** (`MSVC-win32-*` presets). So the same Layer 1 baseline capture that vindicated the SDL2 diagnosis (§8) can be taken on Windows *before* the fix and re-taken after — no "port and hope."
+- **The fix direction carries over unchanged.** Same root cause (software cursor bound to the ~18 fps present), same remedy (a real OS cursor built from the game sprite), only the OS API differs (`HCURSOR` via `CreateIconIndirect`, plus `WM_SETCURSOR` handling). No new decision is needed — this is the §8 fix on a third backend.
+
+**Decision:** treat Win32 as in-scope now. Sequence: (1) restore the build, (2) add the Layer 1 metric hooks and capture a Windows baseline, (3) port the hardware cursor and A/B it against that baseline — the same discipline applied to SDL2, not a shortcut around it. Requirements in `PRD-Platform-Input.md` §*Windows (native Win32) backend*; implementation in `PLAN-Platform-Input.md` §*Fix — hardware cursor: Win32 port*.
+
+**Outcome (2026-07-24):** delivered. The `USE_WIN32` build is restored (the `Platform_HW_Cursor_Active` symbol is now defined in `win_MD.c`), the hardware cursor is implemented for Win32 (`HCURSOR`/`CreateIconIndirect`, `WM_SETCURSOR` handling), and the Layer 1 metric hooks were added — all build-clean under `/W4 /WX` and run-verified locally (a well-formed `backend=Win32` `.fwv` is produced). The one open item is the cursor-smoothness **visual A/B** — the same measure-vs-feel confirmation step SDL2 also finished on, consistent with the discipline above rather than an exception to it.
