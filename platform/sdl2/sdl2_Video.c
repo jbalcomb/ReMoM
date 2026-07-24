@@ -6,6 +6,7 @@
 
 #include "../../platform/include/Platform.h"
 #include "../include/Platform_Capture.h"
+#include "../include/Platform_Input_Metrics.h"  /* CLAUDE: Platform-Input Layer 1 metrics */
 
 #include "sdl2_PFL.h"
 #include <SDL.h>
@@ -129,7 +130,18 @@ void Platform_Video_Update(void)
 
     SDL_RenderCopy(sdl2_renderer, sdl2_texture, NULL, NULL);
 
-    SDL_RenderPresent(sdl2_renderer);
+    /* CLAUDE: metrics -- bracket the present so block time (vsync stall) and inter-present interval
+       are both measured.  Off path is one branch; the two SDL_GetTicks() only run when enabled. */
+    if(Input_Metrics_Active())
+    {
+        uint64_t im_t0 = (uint64_t)SDL_GetTicks();
+        SDL_RenderPresent(sdl2_renderer);
+        Input_Metrics_Record_Present(im_t0, (uint64_t)SDL_GetTicks());
+    }
+    else
+    {
+        SDL_RenderPresent(sdl2_renderer);
+    }
 
     /* CLAUDE */  DBG_Frame_Reset();
 

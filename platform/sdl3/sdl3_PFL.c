@@ -157,6 +157,17 @@ void Platform_Maybe_Move_Mouse(void)
         SETRANGE(gy, PLATFORM_SCREEN_YMIN, PLATFORM_SCREEN_YMAX);
     }
 
+    /* CLAUDE: HW-cursor prototype -- the OS cursor tracks natively, so skip the software redraw/present
+       entirely; just keep the engine's pointer position and cursor shape current for hit-testing. */
+    if(Platform_HW_Cursor_Active())
+    {
+        pointer_x = gx;
+        pointer_y = gy;
+        if(current_mouse_list_count >= 2) { Check_Mouse_Shape(gx, gy); }
+        Platform_HW_Cursor_Refresh();
+        return;
+    }
+
     /* Only redraw if the cursor has actually moved. */
     if(gx == pointer_x && gy == pointer_y)
     {
@@ -255,6 +266,9 @@ static void pfl_video_input_grab(bool grabbed)
 // not a MoO1/MoM function
 static void pfl_mouse_grab(void)
 {
+    /* CLAUDE: HW-cursor prototype keeps the OS cursor visible; grabbing would hide it and enable
+       relative-mouse mode, both of which break native cursor tracking. */
+    if(Platform_HW_Cursor_Active()) { return; }
     if(!pfl_mouse_grabbed)
     {
         pfl_mouse_grabbed = true;
@@ -266,6 +280,7 @@ static void pfl_mouse_grab(void)
 // not a MoO1/MoM function
 static void pfl_mouse_ungrab(void)
 {
+    if(Platform_HW_Cursor_Active()) { return; }  /* CLAUDE: never grabbed under the HW-cursor prototype */
     if(pfl_mouse_grabbed)
     {
         pfl_mouse_grabbed = false;
@@ -363,6 +378,9 @@ static void Platform_Update_Mouse_Position(int l_mx, int l_my)
         }
         mouse_interrupt_active = ST_FALSE;
     }
+    /* CLAUDE: HW-cursor prototype -- reflect any shape change from Check_Mouse_Shape above into the OS
+       cursor.  Self-gates (no-op when inactive).  The software Draw above is suppressed in Mouse.c. */
+    Platform_HW_Cursor_Refresh();
 }
 
 void Platform_Window_Event(SDL_Event *sdl3_window_event)
