@@ -13,6 +13,7 @@
  *   enter                          — press Enter
  *   click <x> <y> | <Screen.Alias> — left-click at game coordinates or a named field
  *   rclick <x> <y> | <Screen.Alias>— right-click at game coordinates or a named field
+ *   move <x> <y> | <Screen.Alias>  — warp the cursor there (no click) — hover / demo motion
  *   wait_screen <name> [timeout]   — block until current_screen == scr_<name>
  *   wait_turn <n> [timeout]        — block until the strategic turn reaches n
  *   wait_field <Screen.Alias> [t]  — block until a field covers that named point

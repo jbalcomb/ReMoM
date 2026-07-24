@@ -276,30 +276,22 @@ to state-aware waits is left as authoring follow-up, not a code gap.
 
 ---
 
-## Phase 6 — `move` (cursor position without a click)
+## Phase 6 — `move` (cursor position without a click) — **DONE**
 
-Small, independent parser addition. There is no verb today that warps the cursor without dispatching a
-button — `Set_Pointer_Position` is only reached inside the `act_CLICK`/`act_RCLICK` case
-([Artificial_Human_Player.c:742](../../src/Artificial_Human_Player.c#L742)). Useful for demo-reel
-polish (a cursor that glides to a control reads better on video than a teleporting click) and for any
-UI that responds to hover.
+Small, independent parser addition, in [Artificial_Human_Player.c](../../src/Artificial_Human_Player.c).
+Useful for demo-reel polish (cursor motion reads better on video than a teleporting click) and any UI
+that responds to hover.
 
-1. Add `act_MOVE` and a `move X Y` verb, mirroring the `click` coordinate parse
-   ([:541-549](../../src/Artificial_Human_Player.c#L541-L549)) — same 320×200 space, same
-   `sscanf("%hd %hd")`, same bad-coord log-and-skip.
-2. Execution: `Set_Pointer_Position(act->x, act->y)` and update `pointer_x/pointer_y` for the scaled
-   window, **without** touching `platform_frame_mouse_buttons` or calling `User_Mouse_Handler` — i.e.
-   the click case minus the button dispatch.
-3. Once Phase 4 lands, accept a named target too: `move Screen.Field` resolves to the field center via
-   the same parse-time lookup as `click Screen.Field`.
-4. Optional smoothing (`glide X Y over 500ms` interpolating across frames) is out of scope here — a
-   single-frame warp is enough to unblock hover UI and can be revisited if the reel needs eased motion.
+1. **DONE** — `act_MOVE` + a `move X Y` \| `move Screen.Alias` verb reusing `Parse_Click_Target`
+   (numeric first, else the alias points table — same path as `click`), same bad-target log-and-skip.
+2. **DONE** — execution is `Set_Pointer_Position(act->x, act->y)` only; **no** `platform_frame_mouse_buttons`,
+   **no** `User_Mouse_Handler`, **no** field-hit log — the click case minus the button dispatch.
+3. **DONE** — named targets resolve via the same `alias_points.fwv` lookup as `click Screen.Alias`.
+4. Smoothing (`glide … over 500ms`) remains out of scope — a single-frame warp is enough for hover.
 
-**Green when:** `move 160 120` repositions the cursor with no click registered; a following `click`
-still works from the moved position.
-
-**Verify:** HeMoM `--scenario` smoke that issues `move` then reads back the cursor / a hover-triggered
-log line; confirm no spurious field-hit is logged from the `move` alone.
+**Green (verified live):** a HeMoM `--scenario` — `move 100 100` → `move (100, 100)`;
+`move Main_Menu_Screen.New_Game_Button` → `move (159, 167)`; a bogus name → `bad move target` (skipped);
+**no `click` line emitted** by any `move`. Full `ctest -R HeMoM_` stays 14/14; Debug **and** Release build.
 
 ---
 

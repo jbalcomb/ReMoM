@@ -50,6 +50,7 @@ enum e_HeMoM_Action_Type
     act_BACKSPACE,      /* press Backspace */
     act_CLICK,          /* left-click at (x, y) */
     act_RCLICK,         /* right-click at (x, y) */
+    act_MOVE,           /* warp the cursor to (x, y) — no button dispatch */
     act_WAIT_SCREEN,    /* block until current_screen == x (else timeout wait_ms) */
     act_WAIT_TURN,      /* block until _turn >= x (else timeout wait_ms) */
     act_WAIT_FIELD,     /* block until a field covers (x, y) (else timeout wait_ms) */
@@ -760,6 +761,16 @@ static int Parse_Scenario_File(const char *filepath, int depth)
             }
             hemom_action_count++;
         }
+        else if(stu_strnicmp(p, "move ", 5) == 0)
+        {
+            act->type = act_MOVE;
+            if(!Parse_Click_Target(p + 5, &act->x, &act->y))
+            {
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: bad move target (need X Y or Screen.Alias): %s", filepath, line_num, p);
+                continue;
+            }
+            hemom_action_count++;
+        }
         else if(stu_strnicmp(p, "wait_screen ", 12) == 0)
         {
             char *rest = Trim(p + 12);
@@ -1098,6 +1109,19 @@ void HeMoM_Player_Frame(void)
 #endif
                 }
                 hemom_action_index++;
+            } break;
+
+            case act_MOVE:
+            {
+                /* Warp the cursor only — no button, no User_Mouse_Handler. Useful for
+                   hover UI and for cursor motion that reads better on the demo reel. */
+                Set_Pointer_Position(act->x, act->y);
+                hemom_action_index++;
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms move (%d, %d)", t_now, act->x, act->y);
+#ifdef STU_DEBUG
+                LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms move (%d, %d)", t_now, act->x, act->y);
+                LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM Player] t=%llu ms move (%d, %d)", t_now, act->x, act->y);
+#endif
             } break;
 
             case act_QUIT:

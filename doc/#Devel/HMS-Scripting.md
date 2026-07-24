@@ -78,6 +78,7 @@ branch (line numbers are intentionally omitted; they drift with every edit).
 | `upright` `downright` `upleft` `downleft` | | diagonal unit-stack move |
 | `click` | `click X Y` \| `click Screen.Alias` | left-click at (X, Y) in 320×200 space, or a named field ([Named actions](#named-actions--clicking-fields-by-name)) |
 | `rclick` | `rclick X Y` \| `rclick Screen.Alias` | right-click at (X, Y) or a named field |
+| `move` | `move X Y` \| `move Screen.Alias` | warp the cursor there with **no** click (hover UI, demo-reel cursor motion) |
 | `next_turn` | `next_turn` | sugar for `key n` |
 | `type` | `type STRING` | one key per character; expands `$VAR` |
 | `quit` | `quit` | set `quit_game_flag` — exit the game |
