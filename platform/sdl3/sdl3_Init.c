@@ -109,7 +109,15 @@ void Startup_Platform(void)
     sdl3_texture = SDL_CreateTexture(sdl3_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT);
     assert(sdl3_texture != NULL);
 
-    SDL_HideCursor();
+    /* CLAUDE: HW-cursor prototype shows the OS cursor; the default path hides it and software-draws. */
+    if(Platform_HW_Cursor_Active())
+    {
+        SDL_ShowCursor();
+    }
+    else
+    {
+        SDL_HideCursor();
+    }
 
     // SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 

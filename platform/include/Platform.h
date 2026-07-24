@@ -204,6 +204,11 @@ extern int16_t mouse_interrupt_active;
 /** Number of entries in the current mouse cursor region list. */
 extern int16_t current_mouse_list_count;
 
+/* CLAUDE: cursor sprite bank (MoX Fonts.h `byte_ptr mouse_palette`) -- 16 images of
+   CURSOR_WIDTH*CURSOR_HEIGHT indices, column-major, index 0 = transparent.  Exposed here for the
+   hardware-cursor path to build an SDL cursor from the current sprite. */
+extern uint8_t * mouse_palette;
+
 /** Mouse buffer coordinates (click location). */
 extern int16_t mouse_buffer_x;
 extern int16_t mouse_buffer_y;
@@ -234,6 +239,24 @@ void Restore_Mouse_On_Page(void);
 
 /** Update cursor shape if(x, y) falls in a different mouse region. */
 void Check_Mouse_Shape(int16_t x, int16_t y);
+
+
+/* ========================================================================= */
+/*  Hardware-cursor prototype (Platform-Input follow-on)                     */
+/*                                                                           */
+/*  The software cursor is drawn into the framebuffer and only reaches the   */
+/*  screen at the ~18 fps present cadence, so a moving cursor lurches.  This  */
+/*  restores the DOS hardware-sprite behaviour: an SDL cursor built from the  */
+/*  current game sprite that the compositor tracks at native rate.  Opt-in    */
+/*  via REMOM_HW_CURSOR=1; when off, every hook is a single branch.          */
+/*  See doc/#AI_Plans/PLAN-Platform-Input.md.                                */
+/* ========================================================================= */
+
+/** Non-zero when the hardware-cursor prototype is enabled (REMOM_HW_CURSOR). Cheap gate. */
+int Platform_HW_Cursor_Active(void);
+
+/** Rebuild + set the SDL cursor if the game cursor shape changed. No-op when inactive. */
+void Platform_HW_Cursor_Refresh(void);
 
 /** Mouse interrupt handler: process a button event at window coordinates. */
 void User_Mouse_Handler(int16_t buttons, int16_t mx, int16_t my);

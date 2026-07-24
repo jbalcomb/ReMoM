@@ -1,5 +1,6 @@
 
 #include "Platform.h"
+#include "Platform_Input_Metrics.h"  /* CLAUDE: Platform-Input Layer 1 metrics */
 
 #include "sdl2_Audio.h"
 
@@ -17,7 +18,8 @@
 
 #include <assert.h>
 #include <stdio.h>
-#include <stdlib.h>  /* random() */
+#include <stdlib.h>  /* random(), getenv() */
+#include <string.h>  /* CLAUDE: strcmp() for the metrics gate */
 
 /*
     Platform-Layer Screen Buffer / Window Surface
@@ -114,7 +116,15 @@ void Startup_Platform(void)
     sdl2_texture = SDL_CreateTexture(sdl2_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT);
     assert(sdl2_texture != NULL);
 
-    SDL_ShowCursor(SDL_DISABLE);
+    /* CLAUDE: HW-cursor prototype shows the OS cursor; the default path hides it and software-draws. */
+    if(Platform_HW_Cursor_Active())
+    {
+        SDL_ShowCursor(SDL_ENABLE);
+    }
+    else
+    {
+        SDL_ShowCursor(SDL_DISABLE);
+    }
 
     // SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
@@ -124,10 +134,33 @@ void Startup_Platform(void)
     sdl2_Audio_Init();
 #endif
 
+    /* CLAUDE: Platform-Input Layer 1 -- runtime-gated input responsiveness metrics, OFF by default.
+       REMOM_INPUT_METRICS=1 writes ./remom_input_metrics.fwv; =PATH writes PATH; unset/0 stays off.
+       See doc/#AI_Plans/{BRA,PRD,PLAN}-Platform-Input.md. */
+    {
+        const char * im_env = getenv("REMOM_INPUT_METRICS");
+        if(im_env != NULL && im_env[0] != '\0' && strcmp(im_env, "0") != 0)
+        {
+            const char * im_path = (strcmp(im_env, "1") == 0) ? "remom_input_metrics.fwv" : im_env;
+            int im_scale = sdl2_window_width / PLATFORM_SCREEN_WIDTH;
+            int im_refresh = 0;
+            SDL_DisplayMode im_mode;
+            if(im_scale < 1) { im_scale = 1; }
+            if(SDL_GetWindowDisplayMode(sdl2_window, &im_mode) == 0)
+            {
+                im_refresh = im_mode.refresh_rate;
+            }
+            Input_Metrics_Init(im_path, "SDL2", SDL_GetCurrentVideoDriver(), im_scale, im_refresh);
+            LOG_INFO(LOG_CAT_SDL2_INIT, "CLAUDE: input metrics ENABLED -> %s", im_path);
+        }
+    }
+
 }
 
 void Shutdown_Platform(void)
 {
+    Input_Metrics_Shutdown();  /* CLAUDE: flush the input-metrics .fwv (also runs via atexit) */
+
     SDL_ShowCursor(SDL_ENABLE);
 
 #ifndef NO_SOUND_LIBRARY

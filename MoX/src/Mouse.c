@@ -745,6 +745,10 @@ void Draw_Mouse_On_Page_(int16_t x, int16_t y)
     int16_t itr_height;
     uint8_t pixel;
 
+    /* CLAUDE: HW-cursor prototype -- the OS renders the cursor natively; suppress the software draw so
+       there is no second, ~18 fps cursor.  Runtime-gated (REMOM_HW_CURSOR); no-op in the default path. */
+    if(Platform_HW_Cursor_Active()) { return; }
+
     // clip the cursor image to the right and the bottom of the screen
     if(x + CURSOR_WIDTH  < SCREEN_WIDTH ) { width  = CURSOR_WIDTH;  } else { width  = SCREEN_WIDTH  - x; }
     if(y + CURSOR_HEIGHT < SCREEN_HEIGHT) { height = CURSOR_HEIGHT; } else { height = SCREEN_HEIGHT - y; }
@@ -779,6 +783,9 @@ void Draw_Mouse_Off_Page_(int16_t x, int16_t y)
     int16_t itr_width;
     int16_t itr_height;
     uint8_t pixel;
+
+    /* CLAUDE: HW-cursor prototype -- suppress the software draw (see Draw_Mouse_On_Page_). Runtime-gated. */
+    if(Platform_HW_Cursor_Active()) { return; }
 
     // clip the cursor image to the right and the bottom of the screen
     if(x + CURSOR_WIDTH  < SCREEN_WIDTH ) { width  = CURSOR_WIDTH ; } else { width  = SCREEN_WIDTH  - x; }

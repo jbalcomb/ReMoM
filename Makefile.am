@@ -64,6 +64,7 @@ PLATFORM_CORE_SOURCES = \
     platform/sdl3/sdl3_Timer.c \
     platform/sdl3/sdl3_Video.c \
     platform/capture/PFL_Capture.c \
+    platform/metrics/PFL_Input_Metrics.c \
     platform/replay/Replay.c
 PLATFORM_BACKEND_DIR = platform/sdl3
 else
@@ -77,6 +78,7 @@ PLATFORM_CORE_SOURCES = \
     platform/sdl2/sdl2_Timer.c \
     platform/sdl2/sdl2_Video.c \
     platform/capture/PFL_Capture.c \
+    platform/metrics/PFL_Input_Metrics.c \
     platform/replay/Replay.c
 PLATFORM_BACKEND_DIR = platform/sdl2
 endif
@@ -283,6 +285,11 @@ ReMoM_CFLAGS = $(AM_CFLAGS) \
     -I$(srcdir)/STU/src \
     -I$(srcdir)/src
 
+# Export dynamic symbols so STU_BRAK's POSIX backtrace prints function names
+# instead of raw hex.  Mirrors CMake's ENABLE_EXPORTS on ReMoMber.  See
+# doc/#Devel/Devel-Crash-Reports.md for how to symbolicate crash reports.
+ReMoM_LDFLAGS = -rdynamic
+
 ReMoM_LDADD = \
     libmom.a \
     libmox.a \
@@ -315,6 +322,10 @@ HeMoM_CFLAGS = $(AM_CFLAGS) \
     -I$(srcdir)/platform/include \
     -I$(srcdir)/STU/src \
     -I$(srcdir)/src
+
+# Export dynamic symbols so STU_BRAK's POSIX backtrace prints function names
+# instead of raw hex.  See ReMoM_LDFLAGS above.
+HeMoM_LDFLAGS = -rdynamic
 
 HeMoM_LDADD = \
     libmom.a \

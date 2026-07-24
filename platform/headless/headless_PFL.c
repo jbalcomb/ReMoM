@@ -225,3 +225,15 @@ void Platform_Maybe_Move_Mouse(void)
 {
     /* No cursor to draw in headless mode. */
 }
+
+/* CLAUDE: HW-cursor prototype interface (Platform-Input follow-on).  MoX's Draw_Mouse_On_Page_ now
+   asks the platform whether the OS renders the cursor; headless has no OS cursor, so it never does. */
+int Platform_HW_Cursor_Active(void)
+{
+    return 0;
+}
+
+void Platform_HW_Cursor_Refresh(void)
+{
+    /* No OS cursor in headless mode. */
+}

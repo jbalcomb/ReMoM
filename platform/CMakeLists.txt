@@ -111,6 +111,10 @@ endif()
 # Platform_Video_Update() feeds it frames; the SDL backends also feed it post-mix audio.
 list(APPEND PLATFORM_SOURCES capture/PFL_Capture.c)
 
+# Platform-Input Layer 1: input responsiveness/smoothness metrics (runtime-gated, off by default).
+# Backend-agnostic; the windowed backend feeds it ticks, cursor polls, and present timing.
+list(APPEND PLATFORM_SOURCES metrics/PFL_Input_Metrics.c)
+
 add_library(Platform STATIC ${PLATFORM_SOURCES})
 
 if(PLATFORM_DEFINES)
