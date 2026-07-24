@@ -180,9 +180,9 @@ void Platform_Palette_Update(void)
 
     for (itr = 0; itr < 256; itr++)
     {
-        platform_palette_buffer[itr].r = (*(current_palette + (itr * 3) + 2) << 2);
+        platform_palette_buffer[itr].r = (*(current_palette + (itr * 3) + 0) << 2);
         platform_palette_buffer[itr].g = (*(current_palette + (itr * 3) + 1) << 2);
-        platform_palette_buffer[itr].b = (*(current_palette + (itr * 3) + 0) << 2);
+        platform_palette_buffer[itr].b = (*(current_palette + (itr * 3) + 2) << 2);
         platform_palette_buffer[itr].a = 0xFF;
     }
 }
@@ -211,17 +211,22 @@ static void Win_Convert_Engine_Pixels_To_Back_Buffer(struct win32_offscreen_buff
 {
     uint8_t *source_pixels;
     uint32_t *dest_pixels;
-    uint32_t *palette_xbgr;
     int width;
     int height;
     int itr_x;
     int itr_y;
     uint8_t color_index;
     uint32_t color;
-
+    uint32_t palette_lut[256];
+    int lut_i;
+    
     source_pixels = video_page_buffer[draw_page_num];
     dest_pixels = (uint32_t *)buffer->Memory;
-    palette_xbgr = (uint32_t *)platform_palette_buffer;  /* PFL_Color is RGBA, Win32 DIB is XBGR — layout-compatible for StretchDIBits */
+    for (lut_i = 0; lut_i < 256; lut_i++)
+    {
+        PFL_Color c = platform_palette_buffer[lut_i];
+        palette_lut[lut_i] = ((uint32_t)c.r << 16) | ((uint32_t)c.g << 8) | (uint32_t)c.b;
+    }
 
     width = screen_pixel_width;
     height = screen_pixel_height;
@@ -231,7 +236,7 @@ static void Win_Convert_Engine_Pixels_To_Back_Buffer(struct win32_offscreen_buff
         for (itr_x = 0; itr_x < width; itr_x++)
         {
             color_index = *(source_pixels + (itr_y * width) + itr_x);
-            color = palette_xbgr[color_index];
+            color = palette_lut[color_index];
             *(dest_pixels + (itr_y * width) + itr_x) = color;
         }
     }

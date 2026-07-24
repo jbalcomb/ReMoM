@@ -3472,13 +3472,13 @@ void Cycle_Palette(int16_t percent)
                 {
                     ofst = itr * 3;
 
-                    /* CLAUDE */ platform_palette_buffer[itr].a = 0xFF;
+                    platform_palette_buffer[itr].a = 0xFF;
                     color_red = *(tmpcurrpal + ofst++);
-                    platform_palette_buffer[itr].b = (((color_red * color_multiplier) >> 8) << 2);
+                    platform_palette_buffer[itr].r = (((color_red * color_multiplier) >> 8) << 2);
                     color_grn = *(tmpcurrpal + ofst++);
                     platform_palette_buffer[itr].g = (((color_grn * color_multiplier) >> 8) << 2);
                     color_blu = *(tmpcurrpal + ofst++);
-                    platform_palette_buffer[itr].r = (((color_blu * color_multiplier) >> 8) << 2);
+                    platform_palette_buffer[itr].b = (((color_blu * color_multiplier) >> 8) << 2);
 
                 }
             }

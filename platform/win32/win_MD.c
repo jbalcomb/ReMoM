@@ -132,13 +132,7 @@ void Platform_HW_Cursor_Refresh(void)
             else
             {
                 PFL_Color c = platform_palette_buffer[idx];
-                /* NOTE: on Win32, platform_palette_buffer is filled XBGR-swapped -- .r is loaded from
-                   the palette's blue byte and .b from its red byte (Platform_Set_Palette_Color /
-                   Palette_Update, win_PFL.cpp), so the raw bytes line up for StretchDIBits (see the
-                   "layout-compatible" note in Win_Convert_Engine_Pixels_To_Back_Buffer).  Our DIB's red
-                   channel therefore comes from c.b and blue from c.r -- the opposite of sdl2_MD.c, whose
-                   SDL2 palette fills .r with true red.  Getting this wrong renders gold as blue. */
-                argb = ((uint32_t)0xFFu << 24) | ((uint32_t)c.b << 16) | ((uint32_t)c.g << 8) | (uint32_t)c.r;
+                argb = ((uint32_t)0xFFu << 24) | ((uint32_t)c.r << 16) | ((uint32_t)c.g << 8) | (uint32_t)c.b;
             }
             /* nearest-neighbour upscale by the window scale so the OS cursor matches the drawn size */
             for (sy = 0; sy < scale; sy++)
