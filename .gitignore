@@ -15,7 +15,11 @@ Makefile
 Makefile.in
 autom4te.cache/
 *.a
+
+HeMoM
 ReMoM
+HeMoM.exe
+ReMoM.exe
 
 # Visual Studio Code (VS Code) (VSC)
 .vscode/*
