@@ -216,35 +216,63 @@ Engine change, smallest that closes the loop.
 `click (280, 187)`; `Patrol_Button` (runtime) and a bogus name both log `bad click target` and skip.
 Full `ctest -R HeMoM_` stays 14/14 (numeric clicks unbroken); Debug **and** Release build.
 
-**Remaining for the motivating example (`Patrol_Button`):** it is a sprite (`runtime=1`), so it has no
-static click point. Closing that needs runtime geometry merged into the points table — the deferred
-Phase 1 step 4 (re-enable `FIELDADD` + accumulate the RECORD.log rects). Until then, sprite-button
-aliases name-resolve in `rmr2hms` output but do not execute.
+**Motivating example (`Patrol_Button`) — DONE via the runtime-geometry merge (below).**
 
 ---
 
-## Phase 5 — State-aware waits
+## Runtime-geometry merge — sprite/`runtime=1` fields get a click point — **DONE**
+
+Closes the gap for fields with no static geometry, delivering the original Patrol-button example.
+
+- **Insight:** the RECORD.log field-hit stamp (Phase 2) already carries both the field's **runtime rect
+  and its `@basename:line`** — so the runtime geometry is harvestable directly from record sidecars.
+  **No need to re-enable `FIELDADD`** (that was the plan's Phase 1 step 4 path, for regenerating the
+  static per-screen CSVs — a separate concern). This is a cleaner route to the same end.
+- [tools/field_catalog/runtime.py](../../tools/field_catalog/runtime.py) parses `*-RECORD.log` files
+  into `basename:line -> (x1,y1,x2,y2)` and **accumulates** (fill-only) into
+  [tools/fields/runtime_geometry.fwv](../../tools/fields/runtime_geometry.fwv)
+  (`python -m tools.field_catalog.runtime <log>...`).
+- [resolver.py](../../tools/field_catalog/resolver.py) overlays it: a `runtime=1` alias resolves to the
+  **center of its runtime rect** (`"runtime-log"`) when static geometry is absent; static still wins.
+  `export` then bakes those into `alias_points.fwv`.
+- **Green (verified live):** recording a patrol click captured `field[13]=(280,176)-(312,184)
+  @MainScr.c:2039`; merged, `Main_Screen.Patrol_Button` resolves to **(296, 180)**; a HeMoM
+  `--scenario` of `click Main_Screen.Patrol_Button` logs `Loaded 3 alias points` then executes
+  `click (296, 180)`. Hermetic test in
+  [tests/test_runtime.py](../../tools/field_catalog/tests/test_runtime.py).
+- **Coverage caveat:** a `runtime=1` alias resolves only once *some* recording has hit that field
+  (e.g. `Continue_Button` still shows `(runtime)`). This is the same coverage property as any
+  runtime-observed data; `runtime_geometry.fwv` accumulates as more sessions are recorded.
+
+---
+
+## Phase 5 — State-aware waits — **DONE**
 
 Matches the filed proposal at [__TODO-Test.md:695](../__TODO-Test.md#L695) (`act_WAIT_SCREEN`,
-`act_WAIT_TURN`, `act_WAIT_FIELD`).
+`act_WAIT_TURN`, `act_WAIT_FIELD`). All in [Artificial_Human_Player.c](../../src/Artificial_Human_Player.c).
 
-1. Add action types and verbs:
-   - `wait_screen NAME [timeout]` — block until `current_screen == scr_NAME`
-     ([MOX_T4.h:61](../../MoX/src/MOX_T4.h#L61)).
-   - `wait_turn N [timeout]` — block until `_turn >= N`
-     ([MOM_DAT.h:4235](../../MoX/src/MOM_DAT.h#L4235)).
-   - `wait_field Screen.Alias [timeout]` — block until that field is registered and hittable.
-2. `NAME` → `e_SCREENS` via a lookup table mirroring [MOM_SCR.h](../../MoM/src/MOM_SCR.h).
-3. **Mandatory timeout** (reuse the `wait` `N{f|ms|s|m}` grammar; default a generous cap): on
-   expiry, log an error and either abort or continue-and-fail so CI never hangs.
-4. Convert `08b_som_complete.hms` (once `demo/scenes/` is restored) and one HeMoM regression scenario
-   from blind `wait Nms` to state-aware waits as the proof.
+1. **DONE** — three verbs, each polled once per frame (the action stays current until its condition
+   holds or the deadline passes; no busy state added to the wall-clock `wait` path):
+   - `wait_screen NAME [timeout]` — `current_screen == scr_NAME`
+     ([current_screen, MOX_T4.h:61](../../MoX/src/MOX_T4.h#L61)).
+   - `wait_turn N [timeout]` — `_turn >= N` ([_turn, MOM_DAT.h:4235](../../MoX/src/MOM_DAT.h#L4235),
+     reached via a lean `extern`).
+   - `wait_field Screen.Alias [timeout]` — a `p_fields[]` entry covers the alias's resolved point
+     (uses the same `alias_points.fwv` the `click` names use).
+2. **DONE** — `NAME` → `scr_*` via a table mirroring [e_SCREENS](../../MoM/src/MOM_SCR.h), keyed by the
+   same names as the `screen` column of `aliases.fwv`.
+3. **DONE — mandatory timeout** reusing the `wait` `N{f|ms|s|m}` grammar; default cap
+   `HEMOM_STATE_WAIT_DEFAULT_MS = 30000`. On expiry the wait **advances** (continue-and-fail) and logs
+   `LOG_WARN` with the current screen/turn — CI never hangs.
 
-**Green when:** a scenario using `wait_screen`/`wait_turn` completes; a deliberately-unreachable state
-times out with a logged error instead of hanging.
+**Green (verified live):** a HeMoM `--scenario` run — `wait_screen Main_Screen` satisfied at t=0,
+`wait_field Main_Screen.Patrol_Button` satisfied at t=62ms, `wait_turn 1` and a `wait_screen
+Magic_Screen` (never navigated) each hit their timeout and advanced (`WARN … TIMEOUT … turn=0`). Full
+`ctest -R HeMoM_` stays 14/14 (existing numeric-click scenarios unbroken); Debug **and** Release build.
 
-**Verify:** HeMoM `--scenario` runs of both the happy path and the timeout path; full `ctest -R
-"HeMoM_"` since scenarios share golden state.
+**Note:** `_turn` is 0 at the start of a new game, so `wait_turn 1` waits for the first Next Turn to
+complete — as expected. Converting a real scenario (e.g. `08b_som_complete.hms`) from blind `wait Nms`
+to state-aware waits is left as authoring follow-up, not a code gap.
 
 ---
 

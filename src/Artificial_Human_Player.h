@@ -11,8 +11,11 @@
  *   key <character>                — press a key (e.g., key n, key N, key 1)
  *   escape                         — press Escape
  *   enter                          — press Enter
- *   click <x> <y>                  — left-click at game coordinates
- *   rclick <x> <y>                 — right-click at game coordinates
+ *   click <x> <y> | <Screen.Alias> — left-click at game coordinates or a named field
+ *   rclick <x> <y> | <Screen.Alias>— right-click at game coordinates or a named field
+ *   wait_screen <name> [timeout]   — block until current_screen == scr_<name>
+ *   wait_turn <n> [timeout]        — block until the strategic turn reaches n
+ *   wait_field <Screen.Alias> [t]  — block until a field covers that named point
  *   next_turn                      — press 'N' (Next Turn hotkey)
  *   quit                           — press Escape twice (quit to menu, then quit game)
  *   end                            — stop the artificial human player (idle forever or exit)

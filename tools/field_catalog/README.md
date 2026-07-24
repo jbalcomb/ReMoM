@@ -31,9 +31,10 @@ offset, not by whitespace-splitting — empty numeric cells are space-padded, an
 | `signatures.py` | positional arg schema for all ten `Add_*Field` functions, transcribed from `MoX/src/Fields.h` |
 | `scan.py` | finds call sites (comment/string-aware paren matching), enclosing function, LHS symbol, and enclosing `if`/`for`/`while`/`switch` guards; filters out the function definitions themselves |
 | `build.py` | maps each call's args through its signature, folds geometry, decodes hotkeys, classifies `runtime`, writes the `.fwv` |
-| `resolver.py` | maps between HMS `Screen.Alias` names and geometry via the curated `tools/fields/aliases.fwv`; `name_for(file,line)` and `resolve("Screen.Alias")`, joined on `(file, symbol)` so it survives line drift, with a staleness `audit()` |
+| `resolver.py` | maps between HMS `Screen.Alias` names and geometry via the curated `tools/fields/aliases.fwv`; `name_for(file,line)` and `resolve("Screen.Alias")`, joined on `(file, symbol)` so it survives line drift, with a staleness `audit()`; `export` bakes `alias_lookup.fwv` + `alias_points.fwv` |
+| `runtime.py` | harvests field pixel rects from `*-RECORD.log` sidecars (`basename:line → rect`) into `tools/fields/runtime_geometry.fwv`; the resolver overlays it so sprite/`runtime=1` fields get a click point |
 | `fwv.py` | fixed-width values read/write shared by the catalog and the alias table |
-| `tests/` | `fixture_screen.c` + `test_catalog.py` (parser) + `test_resolver.py` + `test_fwv.py` — hermetic assertions |
+| `tests/` | `fixture_screen.c` + `test_catalog.py` (parser) + `test_resolver.py` + `test_fwv.py` + `test_runtime.py` — hermetic assertions |
 
 ## Named actions (`Screen.Alias`)
 
@@ -42,12 +43,16 @@ field's call site to a `Screen.Alias` HMS name. `resolver.py` turns a recorded c
 name and a name into a static click point:
 
 ```sh
-python -m tools.field_catalog.resolver     # audit the alias table + dump resolutions
+python -m tools.field_catalog.resolver              # audit the alias table + dump resolutions
+python -m tools.field_catalog.resolver export        # bake alias_lookup.fwv + alias_points.fwv
+python -m tools.field_catalog.runtime NAME-RECORD.log # merge runtime rects for sprite/runtime fields
 ```
 
 Resolution joins alias↔catalog on `(file, symbol)` — the symbol is stable, so an alias whose `src_line`
 has drifted still resolves, and `audit()` flags the drift. Rows that are `runtime=1` in the catalog
-resolve to `(runtime)` until the runtime `FIELDADD` log supplies their geometry.
+(sprite buttons, popup-relative, loop-registered) have no static click point; they resolve to
+`(runtime)` until a `*-RECORD.log` has hit them and `runtime.py` has merged the rect into
+`runtime_geometry.fwv` — then they resolve to the rect's center (`runtime-log`).
 
 ## Columns
 

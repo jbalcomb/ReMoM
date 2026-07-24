@@ -1,3 +1,4 @@
 name                              cx   cy
 Main_Menu_Screen.New_Game_Button  159  167
 Main_Screen.Next_Turn_Button      280  187
+Main_Screen.Patrol_Button         296  180

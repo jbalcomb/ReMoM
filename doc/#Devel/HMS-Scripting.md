@@ -33,59 +33,64 @@ HeMoM.exe    --scenario assets/test_worldgen.hms --seed1 12345
 
 ## Execution model
 
-- The parser reads the whole file into a fixed action array (`HEMOM_MAX_ACTIONS = 4096`,
-  [Artificial_Human_Player.c:67](../../src/Artificial_Human_Player.c#L67)) at load time. Parse errors
+- The parser reads the whole file into a fixed action array (`HEMOM_MAX_ACTIONS = 4096`) at load time. Parse errors
   log a line and **skip** that action — a bad line never aborts the run.
-- `HeMoM_Player_Frame()` ([:779](../../src/Artificial_Human_Player.c#L779)) runs once per platform
+- `HeMoM_Player_Frame()` runs once per platform
   frame, executing at most one action per frame. It is registered as a platform frame callback.
 - Input is injected by writing the engine's input globals
   (`Platform_Keyboard_Buffer_Add_Key_Press`, `platform_frame_mouse_buttons` + `User_Mouse_Handler`),
   so `Get_Input()` / `Interpret_Mouse_Input()` process it through the Fields system normally.
 - When the action list is exhausted, the player sets `quit_game_flag = ST_TRUE`
-  ([:797](../../src/Artificial_Human_Player.c#L797)) — a script that runs off the end quits the game.
+  — a script that runs off the end quits the game.
   Use `end` to stop the player but leave the game running.
 
 ### Coordinate space
 
 **All `click`/`rclick` coordinates are in the original 320×200 logical framebuffer.** Do not
-pre-scale for the window: `HeMoM_Player_Frame` multiplies by `Platform_Get_Scale()` itself
-([:893-895](../../src/Artificial_Human_Player.c#L893-L895)) and warps the OS cursor via
+pre-scale for the window: `HeMoM_Player_Frame` multiplies by `Platform_Get_Scale()` itself and warps the OS cursor via
 `Set_Pointer_Position` so a second consecutive click is not reverted to the real mouse position by the
-next `SDL_GetMouseState` poll ([:901](../../src/Artificial_Human_Player.c#L901)).
+next `SDL_GetMouseState` poll.
 
 ### Timing
 
 `1 frame = PLATFORM_MILLISECONDS_PER_FRAME = 55 ms` (the DOS BIOS tick). `wait` is **wall-clock**, not
-frame-counted: it idles until `Platform_Get_Millies()` reaches the target
-([:802-808](../../src/Artificial_Human_Player.c#L802-L808)).
+frame-counted: it idles until `Platform_Get_Millies()` reaches the target.
 
 ## Command reference (implemented today)
 
 Verbs are case-insensitive. `#` starts a comment (whole-line or trailing). Blank lines are ignored.
+All verbs are parsed in `Parse_Scenario_File` and executed in `HeMoM_Player_Frame`
+([Artificial_Human_Player.c](../../src/Artificial_Human_Player.c)) — grep the verb string to jump to its
+branch (line numbers are intentionally omitted; they drift with every edit).
 
-| Verb | Syntax | Meaning | Parser |
-|---|---|---|---|
-| `include` | `include FILE` | inline another `.hms` (relative to this file); max depth 8 | [:576](../../src/Artificial_Human_Player.c#L576) |
-| `wait` | `wait N{f\|ms\|s\|m}` | idle N frames / ms / s / min. **Unit required** — a bare number is rejected. | [:598](../../src/Artificial_Human_Player.c#L598) |
-| `key` | `key K` | press one key (single char) | [:611](../../src/Artificial_Human_Player.c#L611) |
-| `escape` | `escape` | press Escape | [:619](../../src/Artificial_Human_Player.c#L619) |
-| `enter` | `enter` | press Enter | [:625](../../src/Artificial_Human_Player.c#L625) |
-| `backspace` | `backspace` | press Backspace | [:631](../../src/Artificial_Human_Player.c#L631) |
-| `left` `right` `up` `down` | | move unit stack one square (arrow / numpad) | [:638-641](../../src/Artificial_Human_Player.c#L638-L641) |
-| `upright` `downright` `upleft` `downleft` | | diagonal unit-stack move | [:642-645](../../src/Artificial_Human_Player.c#L642-L645) |
-| `click` | `click X Y` \| `click Screen.Alias` | left-click at (X, Y) in 320×200 space, or a named field ([Named actions](#named-actions--clicking-fields-by-name)) | [:646](../../src/Artificial_Human_Player.c#L646) |
-| `rclick` | `rclick X Y` \| `rclick Screen.Alias` | right-click at (X, Y) or a named field | [:656](../../src/Artificial_Human_Player.c#L656) |
-| `next_turn` | `next_turn` | sugar for `key n` | [:666](../../src/Artificial_Human_Player.c#L666) |
-| `type` | `type STRING` | one key per character; expands `$VAR` | [:684](../../src/Artificial_Human_Player.c#L684) |
-| `quit` | `quit` | set `quit_game_flag` — exit the game | [:673](../../src/Artificial_Human_Player.c#L673) |
-| `end` | `end` | stop the player, leave the game running | [:679](../../src/Artificial_Human_Player.c#L679) |
+| Verb | Syntax | Meaning |
+|---|---|---|
+| `include` | `include FILE` | inline another `.hms` (relative to this file); max depth 8 |
+| `wait` | `wait N{f\|ms\|s\|m}` | idle N frames / ms / s / min. **Unit required** — a bare number is rejected. |
+| `wait_screen` | `wait_screen NAME [timeout]` | block until `current_screen == scr_NAME`; times out (default 30s) and advances with a `WARN` |
+| `wait_turn` | `wait_turn N [timeout]` | block until the strategic turn `_turn >= N`; same timeout behavior |
+| `wait_field` | `wait_field Screen.Alias [timeout]` | block until a field covers that named point; same timeout behavior |
+| `key` | `key K` | press one key (single char) |
+| `escape` | `escape` | press Escape |
+| `enter` | `enter` | press Enter |
+| `backspace` | `backspace` | press Backspace |
+| `left` `right` `up` `down` | | move unit stack one square (arrow / numpad) |
+| `upright` `downright` `upleft` `downleft` | | diagonal unit-stack move |
+| `click` | `click X Y` \| `click Screen.Alias` | left-click at (X, Y) in 320×200 space, or a named field ([Named actions](#named-actions--clicking-fields-by-name)) |
+| `rclick` | `rclick X Y` \| `rclick Screen.Alias` | right-click at (X, Y) or a named field |
+| `next_turn` | `next_turn` | sugar for `key n` |
+| `type` | `type STRING` | one key per character; expands `$VAR` |
+| `quit` | `quit` | set `quit_game_flag` — exit the game |
+| `end` | `end` | stop the player, leave the game running |
 
-Any other verb logs `unknown action` ([:609](../../src/Artificial_Human_Player.c#L609)) and is skipped.
+Any other verb logs `unknown action` and is skipped. The state-aware waits (`wait_screen` /
+`wait_turn` / `wait_field`) share a mandatory timeout (`HEMOM_STATE_WAIT_DEFAULT_MS`, 30s) so a
+never-satisfied condition advances instead of hanging a CI run; `NAME` maps to `e_SCREENS` in
+[MOM_SCR.h](../../MoM/src/MOM_SCR.h).
 
 ### Variables
 
-Only `$SAVE_NAME` exists today — `AHP-YYYYMMDDHHMM`, populated at load
-([:286](../../src/Artificial_Human_Player.c#L286)). Substitution runs **only inside `type`**.
+Only `$SAVE_NAME` exists today — `AHP-YYYYMMDDHHMM`, populated at load. Substitution runs **only inside `type`**.
 Max 4 variables.
 
 ## Named actions — clicking fields by name
@@ -94,12 +99,14 @@ The pain point: a recorded click on the Patrol button lands somewhere inside its
 different `(x, y)` every recording. We want to standardize on the field's center and address it by a
 stable name per screen, so scripts read `click Main_Screen.Patrol_Button` instead of `click 290 180`.
 
-**Status — implemented for statically-resolvable fields.** The pipeline below is built end to end:
-`rmr2hms` emits `click Screen.Alias` from a recording (Phase 3), and the parser resolves it at load
-time (Phase 4). See [PLAN-HMS-Named-Actions-And-Waits.md](../%23AI_Plans/PLAN-HMS-Named-Actions-And-Waits.md)
-for phase status. The one gap: **sprite-button fields (e.g. `Patrol_Button`) have no static click point**
-and resolve only once runtime geometry is merged — they name-resolve in `rmr2hms` output but do not yet
-execute.
+**Status — implemented end to end.** `rmr2hms` emits `click Screen.Alias` from a recording (Phase 3),
+and the parser resolves it at load time (Phase 4). Fields with static geometry resolve directly;
+**sprite/`runtime=1` fields (e.g. `Patrol_Button`) resolve to the center of their runtime rect** once
+any recording has hit them — the RECORD.log field-hit stamp carries the rect, harvested by
+[tools/field_catalog/runtime.py](../../tools/field_catalog/runtime.py) into
+[tools/fields/runtime_geometry.fwv](../../tools/fields/runtime_geometry.fwv). A `runtime=1` alias not
+yet observed by any recording name-resolves in `rmr2hms` output but does not execute until it is. See
+[PLAN-HMS-Named-Actions-And-Waits.md](../%23AI_Plans/PLAN-HMS-Named-Actions-And-Waits.md) for phase status.
 
 The catalog now lives in [tools/field_catalog/](../../tools/field_catalog/) producing
 [tools/fields/catalog.fwv](../../tools/fields/catalog.fwv); the curated aliases in

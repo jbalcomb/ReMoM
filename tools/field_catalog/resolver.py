@@ -32,17 +32,29 @@ def save_aliases(rows, path=None):
 
 
 class Resolver:
-    def __init__(self, catalog_rows, alias_rows):
+    def __init__(self, catalog_rows, alias_rows, runtime_rects=None):
         self.by_fileline = {(r["file"], int(r["line"])): r for r in catalog_rows}
         self.by_filesym = {(r["file"], r["symbol"]): r for r in catalog_rows if r["symbol"]}
         self.aliases = alias_rows
         self.alias_by_filesym = {(a["src_file"], a["symbol"]): a for a in alias_rows}
         self.alias_by_qualified = {f"{a['screen']}.{a['alias']}": a for a in alias_rows}
+        # Runtime geometry overlay, keyed by "basename:line" (from RECORD.logs).
+        self.runtime_rects = runtime_rects or {}
 
     @classmethod
     def from_repo(cls, alias_path=None):
         from .build import build_catalog
-        return cls(build_catalog(), load_aliases(alias_path))
+        from .runtime import load_runtime
+        return cls(build_catalog(), load_aliases(alias_path), load_runtime())
+
+    def _runtime_point(self, row):
+        """Center from the runtime geometry overlay for a row, or None."""
+        origin = f"{os.path.basename(row['file'])}:{row['line']}"
+        rect = self.runtime_rects.get(origin)
+        if rect is None:
+            return None
+        x1, y1, x2, y2 = rect
+        return ((x1 + x2) // 2, (y1 + y2) // 2)
 
     def name_for(self, file, line):
         """A recorded click's call site (file, current line) -> 'Screen.Alias' or None.
@@ -57,16 +69,20 @@ class Resolver:
     def resolve(self, qualified):
         """'Screen.Alias' -> (cx, cy). Returns (None, reason) when unresolved:
         'unknown' (no such alias), 'missing' (symbol not in catalog),
-        'runtime' (field has no static geometry — needs the runtime log)."""
+        'runtime' (no static geometry AND no runtime-log rect for it yet).
+        Static geometry wins; otherwise the runtime-log overlay supplies the center."""
         a = self.alias_by_qualified.get(qualified)
         if a is None:
             return None, "unknown"
         row = self.by_filesym.get((a["src_file"], a["symbol"]))
         if row is None:
             return None, "missing"
-        if row["click_cx"] == "" or row["click_cy"] == "":
-            return None, "runtime"
-        return (int(row["click_cx"]), int(row["click_cy"])), "ok"
+        if row["click_cx"] != "" and row["click_cy"] != "":
+            return (int(row["click_cx"]), int(row["click_cy"])), "ok"
+        pt = self._runtime_point(row)
+        if pt is not None:
+            return pt, "runtime-log"
+        return None, "runtime"
 
     def export_lookup_rows(self):
         """Rows for the baked rmr2hms lookup: 'basename:line' -> 'Screen.Alias'.

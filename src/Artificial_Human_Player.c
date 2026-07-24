@@ -50,6 +50,9 @@ enum e_HeMoM_Action_Type
     act_BACKSPACE,      /* press Backspace */
     act_CLICK,          /* left-click at (x, y) */
     act_RCLICK,         /* right-click at (x, y) */
+    act_WAIT_SCREEN,    /* block until current_screen == x (else timeout wait_ms) */
+    act_WAIT_TURN,      /* block until _turn >= x (else timeout wait_ms) */
+    act_WAIT_FIELD,     /* block until a field covers (x, y) (else timeout wait_ms) */
     act_QUIT,           /* press Escape to quit */
     act_END             /* stop the artificial human player */
 };
@@ -79,6 +82,15 @@ static uint64_t hemom_wait_until_ms = 0;  /* Platform_Get_Millies() target for t
 static int      hemom_wait_active = 0;    /* nonzero while a wait is in progress */
 static int      hemom_active = 0;
 static int      hemom_quit_phase = 0;     /* for act_QUIT: 0=first ESC, 1=wait, 2=second ESC */
+static int      hemom_poll_active = 0;    /* nonzero while a state-aware wait is polling */
+static uint64_t hemom_poll_deadline_ms = 0; /* Platform_Get_Millies() deadline for the polling wait */
+
+/* Game-state globals polled by state-aware waits. */
+extern int16_t _turn;  /* MoX/src/MOM_DAT.h — current strategic turn */
+
+/* Cap for a state-aware wait with no explicit timeout — so a never-satisfied
+   condition advances (logged) instead of hanging a CI run. */
+#define HEMOM_STATE_WAIT_DEFAULT_MS 30000
 
 
 
@@ -443,6 +455,89 @@ static int Parse_Click_Target(const char *arg, int16_t *x, int16_t *y)
     return Lookup_Alias_Point(name, x, y);
 }
 
+/* ========================================================================= */
+/*  State-aware waits (wait_screen / wait_turn / wait_field)                  */
+/* ========================================================================= */
+
+/* Screen name -> scr_* id, mirroring e_SCREENS in MoM/src/MOM_SCR.h. Names match
+   the `screen` column of tools/fields/aliases.fwv. */
+static const struct { const char *name; int16_t id; } hemom_screen_table[] =
+{
+    { "Main_Menu_Screen",    scr_Main_Menu_Screen },
+    { "Continue",            scr_Continue },
+    { "Load_Screen",         scr_Load_Screen },
+    { "New_Game_Screen",     scr_New_Game_Screen },
+    { "Quit_To_DOS",         scr_Quit_To_DOS },
+    { "Hall_Of_Fame_Screen", scr_Hall_Of_Fame_Screen },
+    { "Settings_Screen",     scr_Settings_Screen },
+    { "City_Screen",         scr_City_Screen },
+    { "Armies_Screen",       scr_Armies_Screen },
+    { "Cities_Screen",       scr_Cities_Screen },
+    { "Quit",                scr_Quit },
+    { "Main_Screen",         scr_Main_Screen },
+    { "Magic_Screen",        scr_Magic_Screen },
+    { "Road_Build",          scr_Road_Build },
+    { "Production_Screen",   scr_Production_Screen },
+    { "Item_Screen",         scr_Item_Screen },
+    { "NextTurn",            scr_NextTurn },
+    { "Spellbook_Screen",    scr_Spellbook_Screen },
+    { "Advisor_Screen",      scr_Advisor_Screen },
+    { "Diplomacy_Screen",    scr_Diplomacy_Screen },
+    { "Test_Screen",         scr_Test_Screen },
+    { "PoC_Screen",          scr_PoC_Screen },
+};
+
+static int Lookup_Screen_Id(const char *name, int16_t *out_id)
+{
+    size_t itr;
+    for(itr = 0; itr < sizeof(hemom_screen_table) / sizeof(hemom_screen_table[0]); itr++)
+    {
+        if(stu_stricmp(name, hemom_screen_table[itr].name) == 0)
+        {
+            *out_id = hemom_screen_table[itr].id;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/* Parse the optional trailing timeout token (wait grammar: NNN{f|ms|s|m});
+   default HEMOM_STATE_WAIT_DEFAULT_MS when absent or unparseable. */
+static uint64_t Parse_State_Wait_Timeout(const char *rest)
+{
+    uint64_t ms;
+    while(*rest == ' ' || *rest == '\t') { rest++; }
+    if(*rest == '\0') { return HEMOM_STATE_WAIT_DEFAULT_MS; }
+    ms = Parse_Wait_Duration_Ms(rest);
+    return (ms == 0) ? HEMOM_STATE_WAIT_DEFAULT_MS : ms;
+}
+
+/* Copy the first whitespace-delimited token of `src` into `dst`; return its length. */
+static int First_Token(const char *src, char *dst, int dst_size)
+{
+    int ni = 0;
+    while(src[ni] != '\0' && src[ni] != ' ' && src[ni] != '\t' && src[ni] != '\r' && src[ni] != '\n' && ni < dst_size - 1)
+    {
+        dst[ni] = src[ni];
+        ni++;
+    }
+    dst[ni] = '\0';
+    return ni;
+}
+
+static int Point_In_Any_Field(int16_t px, int16_t py)
+{
+    int16_t fi;
+    for(fi = 0; fi < fields_count; fi++)
+    {
+        if(px >= p_fields[fi].x1 && px <= p_fields[fi].x2 && py >= p_fields[fi].y1 && py <= p_fields[fi].y2)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int HeMoM_Player_Load_Scenario(const char *filepath)
 {
     int rc;
@@ -453,6 +548,8 @@ int HeMoM_Player_Load_Scenario(const char *filepath)
     hemom_action_index = 0;
     hemom_wait_until_ms = 0;
     hemom_wait_active = 0;
+    hemom_poll_active = 0;
+    hemom_poll_deadline_ms = 0;
     hemom_active = 0;
     hemom_quit_phase = 0;
     hemom_var_count = 0;
@@ -663,6 +760,54 @@ static int Parse_Scenario_File(const char *filepath, int depth)
             }
             hemom_action_count++;
         }
+        else if(stu_strnicmp(p, "wait_screen ", 12) == 0)
+        {
+            char *rest = Trim(p + 12);
+            char  target[64];
+            int   tlen = First_Token(rest, target, sizeof(target));
+            int16_t sid;
+            if(!Lookup_Screen_Id(target, &sid))
+            {
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: wait_screen unknown screen: %s", filepath, line_num, target);
+                continue;
+            }
+            act->type = act_WAIT_SCREEN;
+            act->x = sid;
+            act->wait_ms = Parse_State_Wait_Timeout(rest + tlen);
+            hemom_action_count++;
+        }
+        else if(stu_strnicmp(p, "wait_turn ", 10) == 0)
+        {
+            char *rest = Trim(p + 10);
+            char *endp = NULL;
+            long  target_turn = strtol(rest, &endp, 10);
+            if(endp == rest || target_turn < 0)
+            {
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: wait_turn bad number: %s", filepath, line_num, rest);
+                continue;
+            }
+            act->type = act_WAIT_TURN;
+            act->x = (int16_t)target_turn;
+            act->wait_ms = Parse_State_Wait_Timeout(endp);
+            hemom_action_count++;
+        }
+        else if(stu_strnicmp(p, "wait_field ", 11) == 0)
+        {
+            char *rest = Trim(p + 11);
+            char  target[HEMOM_ALIAS_NAME_MAX];
+            int   tlen = First_Token(rest, target, sizeof(target));
+            int16_t px, py;
+            if(!Lookup_Alias_Point(target, &px, &py))
+            {
+                LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] %s:%d: wait_field unresolved name (need Screen.Alias in alias_points): %s", filepath, line_num, target);
+                continue;
+            }
+            act->type = act_WAIT_FIELD;
+            act->x = px;
+            act->y = py;
+            act->wait_ms = Parse_State_Wait_Timeout(rest + tlen);
+            hemom_action_count++;
+        }
         else if(stu_stricmp(p, "next_turn") == 0)
         {
             act->type = act_KEY;
@@ -831,6 +976,37 @@ void HeMoM_Player_Frame(void)
 #endif
             } break;
 
+            case act_WAIT_SCREEN:
+            case act_WAIT_TURN:
+            case act_WAIT_FIELD:
+            {
+                /* Poll the condition each frame; stay on this action until it holds
+                   or the deadline passes. On the first frame, arm the deadline. */
+                int satisfied = 0;
+                if(!hemom_poll_active)
+                {
+                    hemom_poll_active = 1;
+                    hemom_poll_deadline_ms = Platform_Get_Millies() + act->wait_ms;
+                }
+                if(act->type == act_WAIT_SCREEN)    { satisfied = (current_screen == act->x); }
+                else if(act->type == act_WAIT_TURN) { satisfied = (_turn >= act->x); }
+                else                                { satisfied = Point_In_Any_Field(act->x, act->y); }
+
+                if(satisfied)
+                {
+                    hemom_poll_active = 0;
+                    hemom_action_index++;
+                    LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms wait satisfied (type=%d target=%d/%d)", t_now, act->type, act->x, act->y);
+                }
+                else if(Platform_Get_Millies() >= hemom_poll_deadline_ms)
+                {
+                    hemom_poll_active = 0;
+                    hemom_action_index++;
+                    LOG_WARN(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms TIMEOUT on state-aware wait (type=%d target=%d/%d) — advancing; current_screen=%d %s turn=%d", t_now, act->type, act->x, act->y, current_screen, HeMoM_Screen_Name(current_screen), _turn);
+                }
+                /* else: not yet — remain on this action and poll again next frame. */
+            } break;
+
             case act_KEY:
             {
                 mox_key = (int)(act->packed_key & 0xFF);
@@ -960,4 +1136,6 @@ void HeMoM_Player_Shutdown(void)
     hemom_action_index = 0;
     hemom_wait_until_ms = 0;
     hemom_wait_active = 0;
+    hemom_poll_active = 0;
+    hemom_poll_deadline_ms = 0;
 }
