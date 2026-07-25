@@ -41,7 +41,8 @@ int Platform_HW_Cursor_Active(void)
     if (hwcur_gate < 0)
     {
         const char * env = getenv("REMOM_HW_CURSOR");
-        hwcur_gate = (env != NULL && env[0] != '\0' && strcmp(env, "0") != 0) ? 1 : 0;
+        /* CLAUDE: default ON -- the hardware cursor is the shipped behaviour; only REMOM_HW_CURSOR=0 forces the software cursor. */
+        hwcur_gate = (env != NULL && strcmp(env, "0") == 0) ? 0 : 1;
     }
     return hwcur_gate;
 }

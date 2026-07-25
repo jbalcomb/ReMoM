@@ -134,6 +134,11 @@ lost).
 - **Black screen on launch** — try resizing or alt-tabbing. Some systems
   need a moment for the SDL window to initialize.
 
+- **Mouse cursor looks wrong or disappears** — ReMoM draws the cursor as a
+  hardware/OS cursor for smoothness. If it misbehaves on your GPU or driver, fall
+  back to the old software cursor by setting `REMOM_HW_CURSOR=0` (same way you'd
+  set `REMOM_DATA_DIR` above).
+
 ## Links
 
 - Project page: https://github.com/jbalcomb/ReMoM
