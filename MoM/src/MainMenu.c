@@ -414,25 +414,25 @@ int16_t Main_Menu_Screen(void)
     }
 
     _new_button = Add_Hidden_Field(108, 162, 211, 173, 0, ST_UNDEFINED);
-    _help_entries[1].help_idx = HLP_NEW_GAME;
-    _help_entries[1].x1 = 108;
-    _help_entries[1].y1 = 162;
-    _help_entries[1].x2 = 211;
-    _help_entries[1].y2 = 173;
+    _help_entries[2].help_idx = HLP_NEW_GAME;
+    _help_entries[2].x1 = 108;
+    _help_entries[2].y1 = 162;
+    _help_entries[2].x2 = 211;
+    _help_entries[2].y2 = 173;
 
     _hof_button = Add_Hidden_Field(108, 174, 211, 185, 0, ST_UNDEFINED);
-    _help_entries[2].help_idx = HLP_HALL_OF_FAME;
-    _help_entries[2].x1 = 108;
-    _help_entries[2].y1 = 174;
-    _help_entries[2].x2 = 211;
-    _help_entries[2].y2 = 185;
+    _help_entries[3].help_idx = HLP_HALL_OF_FAME;
+    _help_entries[3].x1 = 108;
+    _help_entries[3].y1 = 174;
+    _help_entries[3].x2 = 211;
+    _help_entries[3].y2 = 185;
 
     _quit_button = Add_Hidden_Field(108, 186, 211, 199, 0, ST_UNDEFINED);
-    _help_entries[2].help_idx = HLP_QUIT_TO_DOS;
-    _help_entries[2].x1 = 108;
-    _help_entries[2].y1 = 186;
-    _help_entries[2].x2 = 211;
-    _help_entries[2].y2 = 199;
+    _help_entries[4].help_idx = HLP_QUIT_TO_DOS;
+    _help_entries[4].x1 = 108;
+    _help_entries[4].y1 = 186;
+    _help_entries[4].x2 = 211;
+    _help_entries[4].y2 = 199;
 
     if(cont_flag == ST_FALSE)
         _continue_hotkey = INVALID_FIELD;
