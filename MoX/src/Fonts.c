@@ -961,7 +961,7 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
             case 20:  /*  ASCII  14h  20d  DC4 (device control 4)      */
             {
                 print_ypos += GET_2B_OFS(font_style_data,FONT_HDR_POS_CURRENT_BASE_HEIGHT);
-                print_xpos += x;
+                print_xpos = x;
             } break;
             case 21:  /*  ASCII  15h  21d  NAK (negative acknowledge)  */
             {
@@ -1925,7 +1925,7 @@ int16_t Print_String_To_Bitmap(int16_t x, int16_t y, char * string, int16_t chan
             case 20:  /*  ASCII  14h  20d  DC4 (device control 4)      */
             {
                 print_ypos += GET_2B_OFS(font_style_data,FONT_HDR_POS_CURRENT_BASE_HEIGHT);
-                print_xpos += x;
+                print_xpos = x;
             } break;
             case 21:  /*  ASCII  15h  21d  NAK (negative acknowledge)  */
             {
