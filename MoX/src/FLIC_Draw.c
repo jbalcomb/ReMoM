@@ -3866,6 +3866,7 @@ void Reduce_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y)
             src--;
             Vert_Remainder += Vert_Ratio;
             src += (Vert_Remainder >> 8);
+            Vert_Remainder &= 0x00FF;
             itr_height--;
         }
         src_ofst = src_ofst_start;
