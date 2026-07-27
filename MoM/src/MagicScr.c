@@ -662,15 +662,15 @@ void Magic_Screen(void)
             screen_changed = ST_TRUE;
             if((WIZ_ManaPerTurn + _players[HUMAN_PLAYER_IDX].mana_reserve) > _players[HUMAN_PLAYER_IDX].Nominal_Skill)
             {
-                SBK_BookManaLimit = _players[HUMAN_PLAYER_IDX].Nominal_Skill;
+                g_spellbook_cast_mana_limit = _players[HUMAN_PLAYER_IDX].Nominal_Skill;
             }
             else if(WIZ_ManaPerTurn > _players[HUMAN_PLAYER_IDX].mana_reserve)
             {
-                SBK_BookManaLimit = (WIZ_ManaPerTurn + _players[HUMAN_PLAYER_IDX].mana_reserve);
+                g_spellbook_cast_mana_limit = (WIZ_ManaPerTurn + _players[HUMAN_PLAYER_IDX].mana_reserve);
             }
             else
             {
-                SBK_BookManaLimit = 0;
+                g_spellbook_cast_mana_limit = 0;
             }
             Deactivate_Help_List();
             Set_Magic_Screen_Help_List();

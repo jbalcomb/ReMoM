@@ -291,7 +291,7 @@ struct s_SPELL_DECODE
 extern int16_t SBK_Candidate_Page;
 
 // WZD dseg:944A
-extern int16_t SBK_SomePageSaveVar;
+extern int16_t g_spellbook_last_left_page;
 
 // WZD dseg:944C
 extern int16_t CMB_SpellBookPage;
@@ -347,7 +347,7 @@ extern SAMB_ptr spellbook_symbols_bitm[NUM_MAGIC_REALMS];
 // drake178:  (lower of mana+manaperturn and skill+heroskill)
 // drake178:  in combat, the highest castable cost
 // updated by 'Magic Screen'
-extern int16_t SBK_BookManaLimit;
+extern int16_t g_spellbook_cast_mana_limit;
 
 // WZD dseg:C90C
 // drake178: NearAlloc_First!
@@ -390,14 +390,14 @@ extern int16_t m_spellbook_page_count;
 // WZD dseg:C922
 // drake178: apprentice: 0 - choose research; 2 - apprentice book
 // drake178: new spell anim: 0 - spell on left; 1 - spell on right
-extern int16_t SBK_Dogears;
+extern int16_t g_spellbook_mode;
 
 // WZD dseg:C924
 // drake178: ; set to the index + 1 (into the page) of the spell
 // drake178: ; being cast while setting up the spellbook display
 // drake178: ; in the apprentice, it is then reset to the page count
 // drake178: ; without the research candidates
-extern int16_t SBK_OpenPage;
+extern int16_t g_spellbook_left_page;
 
 // WZD dseg:C926
 // drake178:  Spell List Count, New Spell Index, ...
@@ -441,7 +441,7 @@ int16_t UU_IDK_turn_to_cast__STUB(int16_t player_idx);
 int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx);
 
 // WZD o117p07
-void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spellbook_bitmap);
+void SmlBook_Compose(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spellbook_bitmap);
 
 // WZD o117p08
 void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spellbook_bitmap, int16_t caster_idx);
@@ -453,14 +453,13 @@ void SmlBook_Draw(int16_t x, int16_t y);
 void CmbBook_Draw__WIP(int16_t x, int16_t y, int16_t caster_idx);
 
 // WZD o117p11
-void SmlBook_PageTurn__WIP(int turn_type, int combat_flag, int player_idx);
+void SmlBook_PageTurn(int turn_type, int combat_flag, int player_idx);
 
 // WZD o117p12
 void Spellbook_Add_Page(int16_t Spell_Count, int16_t Grp_Index, char * Title, int16_t Page_Size);
 
 // WZD o117p13
 void Spellbook_Add_Group_Pages(int16_t Page_Size);
-
 
 
 

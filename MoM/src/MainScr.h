@@ -514,10 +514,10 @@ void Main_Screen_Draw_Summary_Window(void);
 void Main_Screen_Draw_Next_Turn_Button(void);
 
 // WZD o64p06
-void OVL_DisableIncmBlink(void);
+void Main_Screen_Disable_Income_Warning(void);
 
 // WZD o64p07
-void OVL_EnableIncmBlink(void);
+void Main_Screen_Enable_Income_Warning(void);
 
 // WZD o64p08
 void Main_Screen_Draw_Unit_Action_Locked_Buttons(void);

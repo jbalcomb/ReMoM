@@ -1079,7 +1079,7 @@ MoO2
 
 
     Players_Update_Magic_Power();  /* first set of _players[].Power_Base */
-    SBK_SomePageSaveVar = 0;
+    g_spellbook_last_left_page = 0;
     CMB_SpellBookPage = 0;
     SBK_Candidate_Page = 0;
     for(itr_players = 0; itr_players < _num_players; itr_players++)

@@ -37,7 +37,7 @@ void Spellbook_Screen(void);
 int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t spellbook_page_spell_index);
 
 // WZD o134p05
-// sub_B9837()
+void Questionable_Spell_Cast(int16_t spell_idx, int16_t * confirm_result);
 
 // WZD o134p06
 void Full_Draw_Main_Screen(void);

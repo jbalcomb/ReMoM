@@ -11,30 +11,32 @@
 #include "../../STU/src/STU_LOG.h"
 
 #include "../../MoX/src/Allocate.h"
+#include "../../MoX/src/Fields.h"
 #include "../../MoX/src/FLIC_Draw.h"
+#include "../../MoX/src/Fonts.h"
+#include "../../MoX/src/Help.h"
+#include "../../MoX/src/GENDRAW.h"
+#include "../../MoX/src/Graphics.h"
+#include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _screen_seg */
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
 #include "../../MoX/src/SOUND.h"
-#include "../../MoX/src/LBX_Load.h"
-#include "../../MoX/src/Graphics.h"
-#include "../../MoX/src/Fonts.h"
-#include "../../MoX/src/Fields.h"
-#include "../../MoX/src/GENDRAW.h"
 #include "../../MoX/src/paragrph.h"
 #include "../../MoX/src/Timer.h"
 
-#include "MOM_SCR.h"
+#include "CITYCALC.h"
 #include "ItemMake.h"
 #include "Items.h"
+#include "MainScr.h"
+#include "MainScr_Maps.h"
+#include "MOM_SCR.h"
 #include "NEXTTURN.h"
 #include "OverSpel.h"
 #include "SCastScr.h"
 #include "Spellbook.h"
 #include "Spells128.h"
 #include "SPLMASTR.h"
-#include "MainScr.h"
-#include "MainScr_Maps.h"
 
 #include "../../ext/stu_compat.h"
 
@@ -47,22 +49,24 @@
 // WZD dseg:6994                                                 BEGIN:  ovr134 - Initialized Data
 
 // WZD dseg:6994
-// REDEF  char hlpentry_lbx_file [] = "hlpentry";
+char hlpentry_lbx_file__ovr134[] = "hlpentry";
 
 // WZD dseg:699C
-// char empty_string__ovr134[] = "";
-// WZD dseg:699D 46 00                                           hotkey_F__ovr134 db 'F',0             ; DATA XREF: Spellbook_Screen+205o ...
-// WZD dseg:699F 42 00                                           hotkey_B__ovr134 db 'B',0             ; DATA XREF: Spellbook_Screen+232o ...
+char empty_string__ovr134[] = "";
+// WZD dseg:699D
+char hotkey_F__ovr134[] = "F";
+// WZD dseg:699F
+char hotkey_b__ovr134[] = "B";
 
 // WZD dseg:69A1
 char _msg_abort_1[] = "Do you wish to abort ";
 // WZD dseg:69B6
-// cnst_CounterMsg5_2 db 'your ',0         ; DATA XREF: OVL_CounterMessage+10F
 char _msg_abort_2[] = "your ";
 // WZD dseg:69BC
 char _msg_abort_3[] = " spell?";
 
-// WZD dseg:69C4 1B 00                                           hotkey_ESC__ovr134 db 1Bh,0           ; DATA XREF: Spellbook_Screen+75Eo
+// WZD dseg:69C4 1B 00                                           
+char hotkey_ESC__ovr134[] = "\x1B";
 
 // WZD dseg:69C6
 char message_lbx_file__ovr134[] = "message";
@@ -120,7 +124,7 @@ static void Spell_Screen_Load(void)
     FLIC_Draw(16, 10, _spellbook_small_seg);
     Copy_Off_To_Back();
     Set_Page_On();
-    LBX_Load_Data_Static(hlpentry_lbx_file, 0, (SAMB_ptr)_help_entries, 0, 15, 10);  // "Spell Book Help"
+    LBX_Load_Data_Static(hlpentry_lbx_file__ovr134, 0, (SAMB_ptr)_help_entries, 0, 15, 10);  // "Spell Book Help"
 }
 
 
@@ -133,43 +137,36 @@ void Spellbook_Screen_Draw(void)
 
 
 // WZD o134p03
-
 void Spellbook_Screen(void)
 {
     char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t spellbook_pages[(2 * 6)] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t hotkey_B = 0;
-    int16_t hotkey_F = 0;
+    int16_t hotkey_b = 0;
+    int16_t hotkey_f = 0;
     int16_t spellbook_page_spell_index = 0;
     int16_t spell_idx = 0;
-    int16_t Abort_Spell__YN = 0;
-    int16_t hotkey_ESC = 0;
+    int16_t confirmation = 0;
+    int16_t hotkey_esc = 0;
     int16_t y_start = 0;
     int16_t did_select_spell = 0;
     int16_t player_is_casting = 0;
     int16_t itr_page_spell_count = 0;
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
-    int16_t itr_spellbook_page_count = 0;  // _SI_
-    int16_t itr_spellbook_page_fields = 0;  // _SI_
-    int16_t x_start = 0;  // _DI_
-
+    int16_t itr_spellbook_page_count = 0;
+    int16_t itr_spellbook_page_fields = 0;
+    int16_t itr = 0;
+    int16_t x_start = 0;
     did_select_spell = ST_FALSE;
-
-    OVL_DisableIncmBlink();
-
+    Main_Screen_Disable_Income_Warning();
     Load_Palette_From_Animation(_spellbook_small_seg);
     Set_Palette_Changes(0, 223);
     Clear_Palette_Changes(224, 255);
     Update_Remap_Gray_Palette();
     Reset_Cycle_Palette_Color();
-
     Spell_Screen_Load();
-
     Build_Spellbook(slt_Overland, 6);  // Book_Type, Page_Size
-
-    SBK_Dogears = 1;
-
+    g_spellbook_mode = 1;
     player_is_casting = ST_FALSE;
     for(itr_spellbook_page_count = 0; ((itr_spellbook_page_count < m_spellbook_page_count) && (player_is_casting == ST_FALSE)); itr_spellbook_page_count++)
     {
@@ -181,161 +178,134 @@ void Spellbook_Screen(void)
                 {
                     if((itr_spellbook_page_count % 2) != 1)
                     {
-                        SBK_OpenPage = itr_spellbook_page_count;
+                        g_spellbook_left_page = itr_spellbook_page_count;
                     }
                     else
                     {
-                        SBK_OpenPage = (itr_spellbook_page_count - 1);
+                        g_spellbook_left_page = (itr_spellbook_page_count - 1);
                     }
                     player_is_casting = ST_TRUE;
                 }
             }
         }
     }
-
     if(player_is_casting == ST_FALSE)
     {
-        SBK_OpenPage = SBK_SomePageSaveVar;
+        g_spellbook_left_page = g_spellbook_last_left_page;
     }
-
     Assign_Auto_Function(Spellbook_Screen_Draw, 2);
-
     Set_Outline_Color(0);
-
     Set_Font_Style_Shadow_Down(0, 3, 0, 0);
-
     Clear_Fields();
-
     Set_Help_List((char *)&_help_entries[0], 15);
-
     x_start = 16;
     y_start = 12;
-
     for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 6; itr_spellbook_page_fields++)
     {
-        spellbook_pages[(itr_spellbook_page_fields + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + MAX_ITEM_COUNT), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
+        spellbook_pages[(itr_spellbook_page_fields + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 137), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
     }
-
     for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 6; itr_spellbook_page_fields++)
     {
         spellbook_pages[(itr_spellbook_page_fields + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 268), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
     }
-
-    hotkey_ESC = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, ST_UNDEFINED, ST_UNDEFINED);
-    hotkey_F   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, 'F', ST_UNDEFINED);
-    hotkey_B   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, 'B', ST_UNDEFINED);
-
+    hotkey_esc = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, ST_UNDEFINED, ST_UNDEFINED);
+    hotkey_f   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)hotkey_F__ovr134[0], ST_UNDEFINED);
+    hotkey_b   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)hotkey_b__ovr134[0], ST_UNDEFINED);
     leave_screen = ST_FALSE;
-
     while(leave_screen == ST_FALSE)
     {
-
         input_field_idx = Get_Input();
-
-        // TODO  add help fields
-
+        for(itr = 0; itr < 6; itr++)
+        {
+            if(m_spellbook_pages[g_spellbook_left_page].count > itr)
+            {
+                if(abs(m_spellbook_pages[g_spellbook_left_page].spell[itr]) == HLP_PAGE_BACK)
+                {
+                    _help_entries[3 + itr].help_idx = HLP_SPELL_OF_RETURN;
+                }
+                else
+                {
+                    _help_entries[3 + itr].help_idx = abs(m_spellbook_pages[g_spellbook_left_page].spell[itr]);
+                }
+            }
+            else
+            {
+                _help_entries[3 + itr].help_idx = ST_UNDEFINED;
+            }
+        }
+        for(itr = 0; itr < 6; itr++)
+        {
+            if(m_spellbook_pages[g_spellbook_left_page + 1].count > itr)
+            {
+                if(abs(m_spellbook_pages[g_spellbook_left_page + 1].spell[itr]) == HLP_PAGE_BACK)
+                {
+                    _help_entries[9 + itr].help_idx = HLP_SPELL_OF_RETURN;
+                }
+                else
+                {
+                    _help_entries[9 + itr].help_idx = abs(m_spellbook_pages[g_spellbook_left_page + 1].spell[itr]);
+                }
+            }
+            else
+            {
+                _help_entries[9 + itr].help_idx = ST_UNDEFINED;
+            }
+        }
         /*
             Hot-Key ESCAPE
         */
-        if(input_field_idx == hotkey_ESC)
+        if(input_field_idx == hotkey_esc)
         {
             Play_Left_Click__DUPE();
             leave_screen = ST_TRUE;
         }
-
         /*
             Hot-Key Page Forward
         */
-        if(input_field_idx == hotkey_F)
+        if(input_field_idx == hotkey_f)
         {
-            if((m_spellbook_page_count - 2) > SBK_OpenPage)
+            if((m_spellbook_page_count - 2) > g_spellbook_left_page)
             {
                 Play_Left_Click__DUPE();
-                SmlBook_PageTurn__WIP(1, 0, 0);
-                SBK_OpenPage += 2;
+                SmlBook_PageTurn(1, 0, 0);
+                g_spellbook_left_page += 2;
             }
         }
-
         /*
             Hot-Key Page Backward
         */
-        if(input_field_idx == hotkey_B)
+        if(input_field_idx == hotkey_b)
         {
-            if(SBK_OpenPage > 1)
+            if(g_spellbook_left_page > 1)
             {
                 Play_Left_Click__DUPE();
-                SmlBook_PageTurn__WIP(0, 0, 0);
-                SBK_OpenPage -= 2;
+                SmlBook_PageTurn(0, 0, 0);
+                g_spellbook_left_page -= 2;
             }
         }
-
         /*
             BEGIN:  Left-Click Spellbook Page Spell Fields
         */
         for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < (2 * 6); itr_spellbook_page_fields++)
         {
-
             if(spellbook_pages[itr_spellbook_page_fields] == input_field_idx)
             {
-
                 if(itr_spellbook_page_fields < 6)
                 {
-
-                    if(m_spellbook_pages[SBK_OpenPage].count > itr_spellbook_page_fields)
+                    if(m_spellbook_pages[g_spellbook_left_page].count > itr_spellbook_page_fields)
                     {
-
                         Play_Left_Click();
-
                         spellbook_page_spell_index = itr_spellbook_page_fields;
-
-                        spell_idx = m_spellbook_pages[SBK_OpenPage].spell[itr_spellbook_page_fields];
-                        
+                        spell_idx = m_spellbook_pages[g_spellbook_left_page].spell[itr_spellbook_page_fields];
                         if(spell_idx == _players[HUMAN_PLAYER_IDX].casting_spell_idx)
                         {
                             spell_idx = ST_UNDEFINED;
-
                             stu_strcpy(GUI_NearMsgString, _msg_abort_1);
                             stu_strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
                             stu_strcat(GUI_NearMsgString, temp_string);
                             stu_strcat(GUI_NearMsgString, _msg_abort_3);
-                            Abort_Spell__YN = Confirmation_Box(GUI_NearMsgString);
-
-                            if(Abort_Spell__YN == ST_TRUE)
-                            {
-                                _players[HUMAN_PLAYER_IDX].casting_cost_remaining = 0;
-                                _players[HUMAN_PLAYER_IDX].casting_cost_original = 0;
-                                _players[HUMAN_PLAYER_IDX].casting_spell_idx = 0;
-                                spell_idx = ST_UNDEFINED;
-                                leave_screen = ST_TRUE;
-                            }
-                        }
-
-                    }
-
-                }
-                else  /* (itr_spellbook_page_fields >= 6) */
-                {
-
-                    if(m_spellbook_pages[(SBK_OpenPage + 1)].count > (itr_spellbook_page_fields - 6))
-                    {
-
-                        Play_Left_Click();
-
-                        spellbook_page_spell_index = (itr_spellbook_page_fields - 6);
-
-                        spell_idx = m_spellbook_pages[(SBK_OpenPage + 1)].spell[(itr_spellbook_page_fields - 6)];
-                        
-                        if(spell_idx == _players[HUMAN_PLAYER_IDX].casting_spell_idx)
-                        {
-                            spell_idx = ST_UNDEFINED;
-
-                            stu_strcpy(GUI_NearMsgString, _msg_abort_1);
-                            stu_strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
-                            stu_strcat(GUI_NearMsgString, temp_string);
-                            stu_strcat(GUI_NearMsgString, _msg_abort_3);
-                            Abort_Spell__YN = Confirmation_Box(GUI_NearMsgString);
-
-                            if(Abort_Spell__YN == ST_TRUE)
+                            confirmation = Confirmation_Box(GUI_NearMsgString);
+                            if(confirmation == ST_TRUE)
                             {
                                 _players[HUMAN_PLAYER_IDX].casting_cost_remaining = 0;
                                 _players[HUMAN_PLAYER_IDX].casting_cost_original = 0;
@@ -344,24 +314,44 @@ void Spellbook_Screen(void)
                                 leave_screen = ST_TRUE;
                             }
                         }
-
                     }
-
                 }
-
+                else  /* (itr_spellbook_page_fields >= 6) */
+                {
+                    if(m_spellbook_pages[(g_spellbook_left_page + 1)].count > (itr_spellbook_page_fields - 6))
+                    {
+                        Play_Left_Click();
+                        spellbook_page_spell_index = (itr_spellbook_page_fields - 6);
+                        spell_idx = m_spellbook_pages[(g_spellbook_left_page + 1)].spell[(itr_spellbook_page_fields - 6)];
+                        if(spell_idx == _players[HUMAN_PLAYER_IDX].casting_spell_idx)
+                        {
+                            spell_idx = ST_UNDEFINED;
+                            stu_strcpy(GUI_NearMsgString, _msg_abort_1);
+                            stu_strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
+                            stu_strcat(GUI_NearMsgString, temp_string);
+                            stu_strcat(GUI_NearMsgString, _msg_abort_3);
+                            confirmation = Confirmation_Box(GUI_NearMsgString);
+                            if(confirmation == ST_TRUE)
+                            {
+                                _players[HUMAN_PLAYER_IDX].casting_cost_remaining = 0;
+                                _players[HUMAN_PLAYER_IDX].casting_cost_original = 0;
+                                _players[HUMAN_PLAYER_IDX].casting_spell_idx = spl_NONE;
+                                spell_idx = ST_UNDEFINED;
+                                leave_screen = ST_TRUE;
+                            }
+                        }
+                    }
+                }
                 if(spell_idx > ST_UNDEFINED)
                 {
-
                     if(_players[HUMAN_PLAYER_IDX].casting_spell_idx > spl_NONE)
                     {
-                
                         stu_strcpy(GUI_NearMsgString, _msg_abort_1);
                         stu_strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
                         stu_strcat(GUI_NearMsgString, temp_string);
                         stu_strcat(GUI_NearMsgString, _msg_abort_3);
-                        Abort_Spell__YN = Confirmation_Box(GUI_NearMsgString);
-
-                        if(Abort_Spell__YN == ST_TRUE)
+                        confirmation = Confirmation_Box(GUI_NearMsgString);
+                        if(confirmation == ST_TRUE)
                         {
                             _players[HUMAN_PLAYER_IDX].casting_cost_remaining -= _players[HUMAN_PLAYER_IDX].casting_cost_original;
                             _players[HUMAN_PLAYER_IDX].casting_cost_original = 0;
@@ -371,34 +361,25 @@ void Spellbook_Screen(void)
                         {
                             spell_idx = ST_UNDEFINED;
                         }
-
                     }
                     else
                     {
-                        Abort_Spell__YN = ST_TRUE;
+                        confirmation = ST_TRUE;
                     }
-
-                    // TODO  IDK_Check_Spell_Cast(spell_idx, &Abort_Spell__YN);
-
-                    if(Abort_Spell__YN == ST_TRUE)
+                    Questionable_Spell_Cast(spell_idx, &confirmation);
+                    if(confirmation == ST_TRUE)
                     {
                         leave_screen = ST_TRUE;
                         did_select_spell = ST_TRUE;
                         _players[HUMAN_PLAYER_IDX].casting_spell_idx = spell_idx;
                     }
-
                 }
-
             }
-
         }
-
         /*
             END:  Left-Click Spellbook Page Spell Fields
         */
-
         Assign_Auto_Function(Spellbook_Screen_Draw, 2);
-
         if(leave_screen == ST_FALSE)
         {
             Clear_Fields();
@@ -406,36 +387,26 @@ void Spellbook_Screen(void)
             y_start = 12;
             for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 6; itr_spellbook_page_fields++)
             {
-                spellbook_pages[(0 + itr_spellbook_page_fields)] = Add_Hidden_Field((x_start + 16), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + MAX_ITEM_COUNT), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
+                spellbook_pages[(0 + itr_spellbook_page_fields)] = Add_Hidden_Field((x_start + 16), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 137), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
             }
             for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 6; itr_spellbook_page_fields++)
             {
                 spellbook_pages[(6 + itr_spellbook_page_fields)] = Add_Hidden_Field((x_start + 148), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 268), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
             }
-            hotkey_ESC = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, '\x1B', ST_UNDEFINED);
-            hotkey_F   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, 'F',   ST_UNDEFINED);
-            hotkey_B   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, 'B',   ST_UNDEFINED);
-
+            hotkey_esc = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, (int16_t)hotkey_ESC__ovr134[0], ST_UNDEFINED);
+            hotkey_f   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)hotkey_F__ovr134[0],   ST_UNDEFINED);
+            hotkey_b   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)hotkey_b__ovr134[0],   ST_UNDEFINED);
             Set_Page_Off();
             Spellbook_Screen_Draw();
             PageFlip_FX();
         }
-
     }  /* END:  while(leave_screen == ST_FALSE) */
-
-
     Deactivate_Auto_Function();
-
     current_screen = scr_Main_Screen;
-
-    SBK_SomePageSaveVar = SBK_OpenPage;
-
+    g_spellbook_last_left_page = g_spellbook_left_page;
     Clear_Fields();
-
-    OVL_EnableIncmBlink();
-
+    Main_Screen_Enable_Income_Warning();
     Deactivate_Help_List();
-
     if(did_select_spell == ST_TRUE)
     {
         Cast_Spell_Overland_Do(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
@@ -444,7 +415,6 @@ void Spellbook_Screen(void)
     {
         Dissolve_Main_Screen();
     }
-
 }
 
 
@@ -630,8 +600,108 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
 
 }
 
+
 // WZD o134p05
-// sub_B9837()
+void Questionable_Spell_Cast(int16_t spell_idx, int16_t * confirm_result)
+{
+    int16_t i = 0;
+    int16_t confirm = 0;
+    int16_t player_idx = 0;
+    uint8_t * player_globals = NULL;
+    int16_t has_target = 0;
+    int16_t open_slot = 0;
+    confirm = *confirm_result;
+    /* Check 1: Plane Shift spell with Planar Seal active */
+    if(spell_idx == spl_Plane_Shift)
+    {
+        has_target = ST_FALSE;
+        for(i = 0; i < _num_players; i++)
+        {
+            if(_players[i].Globals[PLANAR_SEAL] > 0)
+            {
+                has_target = ST_TRUE;
+            }
+        }
+        if(has_target == ST_TRUE)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr134, 0, (SAMB_ptr)GUI_NearMsgString, 12, 1, 150);
+            confirm = Confirmation_Box(GUI_NearMsgString);
+        }
+    }
+    /* Check 2: Hero / Champion summoning spells with no open hero slot */
+    if(spell_idx == spl_Incarnation || spell_idx == spl_Summon_Hero || spell_idx == spl_Summon_Champion)
+    {
+        open_slot = Hero_Slot_Open(HUMAN_PLAYER_IDX);
+        if(open_slot == ST_UNDEFINED)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr134, 0, (SAMB_ptr)GUI_NearMsgString, 13, 1, 150);
+            confirm = Confirmation_Box(GUI_NearMsgString);
+        }
+    }
+    /* Check 3: Disjunction / Spell Binding with no opponent overland enchantments active */
+    if(spell_idx == spl_Disjunction_True || spell_idx == spl_Disjunction || spell_idx == spl_Spell_Binding)
+    {
+        has_target = ST_FALSE;
+        for(player_idx = 1; player_idx < _num_players && !has_target; player_idx++)
+        {
+            player_globals = (uint8_t *)&_players[player_idx].Globals[0];
+            for(i = 0; i < NUM_OVERLAND_ENCHANTMENTS && !has_target; i++)
+            {
+                if(player_globals[i] > 0)
+                {
+                    has_target = ST_TRUE;
+                }
+            }
+        }
+        if(has_target == ST_FALSE)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr134, 0, (SAMB_ptr)GUI_NearMsgString, 14, 1, 150);
+            confirm = Confirmation_Box(GUI_NearMsgString);
+        }
+    }
+    /* Check 4: Spells targeting enemy fortress when no contacted enemy fortress exists */
+    if(spell_data_table[spell_idx].type == scc_Target_Wizard || spell_data_table[spell_idx].type == scc_Infusable_Spell)
+    {
+        has_target = ST_FALSE;
+        for(player_idx = 1; player_idx < _num_players; player_idx++)
+        {
+            if(_players[player_idx].Dipl.Contacted[HUMAN_PLAYER_IDX] == ST_TRUE)
+            {
+                if(_FORTRESSES[player_idx].active == ST_TRUE)
+                {
+                    has_target = ST_TRUE;
+                }
+            }
+        }
+        if(has_target == ST_FALSE)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr134, 0, (SAMB_ptr)GUI_NearMsgString, 15, 1, 150);
+            confirm = Confirmation_Box(GUI_NearMsgString);
+        }
+    }
+    /* Check 5: Global enchantments already cast by player */
+    if(spell_data_table[spell_idx].type == scc_Global_Enchantment)
+    {
+        player_globals = (uint8_t *)&_players[HUMAN_PLAYER_IDX].Globals[0];
+        if(player_globals[spell_data_table[spell_idx].oe_idx] > 0)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr134, 0, (SAMB_ptr)GUI_NearMsgString, 16, 1, 150);
+            confirm = Confirmation_Box(GUI_NearMsgString);
+        }
+    }
+    /* Check 6: Holy Weapon, when Holy Arms is already active */
+    if(spell_idx == spl_Holy_Weapon)
+    {
+        if(_players[HUMAN_PLAYER_IDX].Globals[HOLY_ARMS] > 0)
+        {
+            LBX_Load_Data_Static(message_lbx_file__ovr134, 0, (SAMB_ptr)GUI_NearMsgString, 17, 1, 150);
+            Warn0(GUI_NearMsgString);
+            confirm = ST_FALSE;
+        }
+    }
+    *confirm_result = confirm;
+}
+
 
 // WZD o134p06
 /*

@@ -1249,7 +1249,7 @@ g_dbg_fields_trace = 1;
             Play_Left_Click();
             if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
             {
-                turns_til_return = _players[HUMAN_PLAYER_IDX].casting_cost_remaining / _players[HUMAN_PLAYER_IDX].Nominal_Skill;
+                turns_til_return = (_players[HUMAN_PLAYER_IDX].casting_cost_remaining / _players[HUMAN_PLAYER_IDX].Nominal_Skill);
                 stu_itoa(turns_til_return, temp_string, 10);
                 stu_strcpy(GUI_NearMsgString, aYouMayNotThrowAnySp);  // "You may not throw any spells while you are banished.  There are at least "
                 stu_strcat(GUI_NearMsgString, temp_string);
@@ -4843,14 +4843,14 @@ void Main_Screen_Draw_Next_Turn_Button(void)
 
 
 // WZD o64p06
-void OVL_DisableIncmBlink(void)
+void Main_Screen_Disable_Income_Warning(void)
 {
     cycle_incomes = -1;
 }
 
 
 // WZD o64p07
-void OVL_EnableIncmBlink(void)
+void Main_Screen_Enable_Income_Warning(void)
 {
     cycle_incomes = 0;
 }

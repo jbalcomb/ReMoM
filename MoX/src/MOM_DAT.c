@@ -1608,7 +1608,7 @@ int16_t all_units_moved;
 int16_t reset_active_stack;
 
 // WZD dseg:9448 00 00                                           SBK_Candidate_Page dw 0                 ; DATA XREF: G_WLD_StaticAssetRfrsh+67w ...
-// WZD dseg:944A 00 00                                           SBK_SomePageSaveVar dw 0                ; DATA XREF: G_WLD_StaticAssetRfrsh+5Bw ...
+// WZD dseg:944A 00 00                                           g_spellbook_last_left_page dw 0                ; DATA XREF: G_WLD_StaticAssetRfrsh+5Bw ...
 // WZD dseg:944C 00 00                                           CMB_SpellBookPage dw 0                  ; DATA XREF: G_WLD_StaticAssetRfrsh+61w ...
 // WZD dseg:944E 00 00                                           dw 0
 // WZD dseg:9450 00 00                                           dw 0
@@ -3222,10 +3222,16 @@ int16_t city_built_bldg_idx;
 // WZD dseg:C08E 00 00                                           STK_HMoves_Left dw 0                    ; DATA XREF: OVL_GetStackHMoves:@@Donew ...
 // WZD dseg:C090 00 00                                           dw 0
 
-// WZD dseg:C092 00 00                                           cycle_incomes dw 0                      ; DATA XREF: Main_Screen_Draw_Summary_Window:@@Gold_Negativer ...
-// WZD dseg:C092                                                                                         ; -1 draws negative incomes with a static color instead
 // WZD dseg:C092
-int16_t cycle_incomes; //  dw 0                      ; -1 draws negative incomes with a static color instead
+/*
+Main_Screen_Draw_Summary_Window()
+{-1,0}: don't/do draw negative income figures with animated warning color → outline color 15 (the palette-cycled blink)
+Main_Screen_Disable_Income_Warning()
+    cycle_incomes = ST_UNDEFINED;
+Main_Screen_Enable_Income_Warning()
+    cycle_incomes = ST_FALSE;
+*/
+int16_t cycle_incomes;
 
 // WZD dseg:C094 00 00                                           dw 0
 // WZD dseg:C096 00 00                                           dw 0
@@ -3593,9 +3599,9 @@ SAMB_ptr xtramana_ok_button_seg;
 /*
 
 CmbBook_Draw__WIP() vs. SmlBook_Draw()
-    // SmlBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], spellbook_bitmap);
-    // spellbook_bitmap  allocated in SmlBook_Draw(), passed to SmlBook_Compose__WIP()
-    CmbBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], spl_anim_compose_seg, caster_idx);
+    // SmlBook_Compose(m_spellbook_pages[g_spellbook_left_page], spellbook_bitmap);
+    // spellbook_bitmap  allocated in SmlBook_Draw(), passed to SmlBook_Compose()
+    CmbBook_Compose__WIP(m_spellbook_pages[g_spellbook_left_page], spl_anim_compose_seg, caster_idx);
 
 */
 SAMB_ptr spl_anim_compose_seg;

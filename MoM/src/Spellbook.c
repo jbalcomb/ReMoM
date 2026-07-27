@@ -72,7 +72,7 @@ char cnst_Space_MP_2[] = " MP";
 char cnst_Item[] = "Item";
 
 // WZD dseg:5D48
-char cnst_BookAnim_File[] = "book";
+char book_lbx_file__ovr117[] = "book";
 
 // WZD dseg:5D4D
 char cnst_SpellGroup1[] = "Summoning";
@@ -183,7 +183,7 @@ char cnst_Research_Cost[] = "Research Cost:";
 int16_t SBK_Candidate_Page;
 
 // WZD dseg:944A
-int16_t SBK_SomePageSaveVar;
+int16_t g_spellbook_last_left_page;
 
 // WZD dseg:944C
 int16_t CMB_SpellBookPage;
@@ -252,7 +252,7 @@ int16_t SBK_NewSpellAnim_Stg;
 SAMB_ptr spellbook_symbols_bitm[NUM_MAGIC_REALMS];
 
 // WZD dseg:C90A
-// drake178:  SBK_BookManaLimit
+// drake178:  g_spellbook_cast_mana_limit
 /*
 ; the predicted amount of mana that the wizard will
 ; be able to channel into a spell each turn?
@@ -263,7 +263,7 @@ SAMB_ptr spellbook_symbols_bitm[NUM_MAGIC_REALMS];
 used to set turns_left for casting
 counterpart to SBK_Research_Incomes[] for researching
 */
-int16_t SBK_BookManaLimit;
+int16_t g_spellbook_cast_mana_limit;
 
 // WZD dseg:C90C
 // drake178: NearAlloc_First!
@@ -283,7 +283,7 @@ SAMB_ptr SBK_Research_Incomes;
 /*
 Build_Spellbook()
 WIZ_ManaPerTurn = (((_players[HUMAN_PLAYER_IDX].mana_ratio * _players[HUMAN_PLAYER_IDX].Power_Base) / 100) - Player_Armies_And_Enchantments_Mana_Upkeep(HUMAN_PLAYER_IDX));
-just used for the calculation for SBK_BookManaLimit
+just used for the calculation for g_spellbook_cast_mana_limit
 no reason this is module scoped?
 */
 int16_t WIZ_ManaPerTurn;
@@ -323,14 +323,14 @@ int16_t SBK_Group_1_Count;
 // WZD dseg:C922 00 00                                           
 // drake178: apprentice: 0 - choose research; 2 - apprentice book
 // drake178: new spell anim: 0 - spell on left; 1 - spell on right
-int16_t SBK_Dogears;
+int16_t g_spellbook_mode;
 
 // WZD dseg:C924
 // drake178: ; set to the index + 1 (into the page) of the spell
 // drake178: ; being cast while setting up the spellbook display
 // drake178: ; in the apprentice, it is then reset to the page count
 // drake178: ; without the research candidates
-int16_t SBK_OpenPage;
+int16_t g_spellbook_left_page;
 
 // WZD dseg:C926
 // drake178:  Spell List Count, New Spell Index, ...
@@ -661,7 +661,7 @@ spell_list_type only used in call to Build_Spell_List()
  *
  * @note This routine updates module-scoped spellbook state including m_spellbook_spell_list,
  * m_spellbook_pages, m_spell_list_count, m_spellbook_page_count, SBK_Research_Incomes, and
- * SBK_BookManaLimit.
+ * g_spellbook_cast_mana_limit.
  * @note The build always targets the human player state and uses HUMAN_PLAYER_IDX throughout.
  */
 void Build_Spellbook(int16_t spell_list_type, int16_t page_spell_count)
@@ -708,18 +708,18 @@ void Build_Spellbook(int16_t spell_list_type, int16_t page_spell_count)
 
     hero_casting_skill = Player_Hero_Casting_Skill(HUMAN_PLAYER_IDX);
 
-    // set SBK_BookManaLimit to min
+    // set g_spellbook_cast_mana_limit to min
     if((WIZ_ManaPerTurn + _players[HUMAN_PLAYER_IDX].mana_reserve) > (_players[HUMAN_PLAYER_IDX].Nominal_Skill + hero_casting_skill))
     {
-        SBK_BookManaLimit = (_players[HUMAN_PLAYER_IDX].Nominal_Skill + hero_casting_skill);
+        g_spellbook_cast_mana_limit = (_players[HUMAN_PLAYER_IDX].Nominal_Skill + hero_casting_skill);
     }
     else if((WIZ_ManaPerTurn + _players[HUMAN_PLAYER_IDX].mana_reserve) > 0)
     {
-        SBK_BookManaLimit = (WIZ_ManaPerTurn + _players[HUMAN_PLAYER_IDX].mana_reserve);
+        g_spellbook_cast_mana_limit = (WIZ_ManaPerTurn + _players[HUMAN_PLAYER_IDX].mana_reserve);
     }
     else
     {
-        SBK_BookManaLimit = 0;
+        g_spellbook_cast_mana_limit = 0;
     }
 
     Build_Spell_List(spell_list_type, m_spellbook_spell_list);
@@ -859,21 +859,21 @@ int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx)
 
         unit_type = Combat_Casting_Cost_Multiplier(HUMAN_PLAYER_IDX);
 
-        SBK_BookManaLimit = _players[HUMAN_PLAYER_IDX].Cmbt_Skill_Left;
+        g_spellbook_cast_mana_limit = _players[HUMAN_PLAYER_IDX].Cmbt_Skill_Left;
 
         // ; BUG: rounds the wrong way
         // ; BUG: x0.5 multiplier results in a negative signed
         // ; value if the player has over 16,383 mana
-        if(((_players[HUMAN_PLAYER_IDX].mana_reserve * 10) / unit_type) < SBK_BookManaLimit)
+        if(((_players[HUMAN_PLAYER_IDX].mana_reserve * 10) / unit_type) < g_spellbook_cast_mana_limit)
         {
-            SBK_BookManaLimit = ((_players[HUMAN_PLAYER_IDX].mana_reserve * 10) / unit_type);
+            g_spellbook_cast_mana_limit = ((_players[HUMAN_PLAYER_IDX].mana_reserve * 10) / unit_type);
         }
 
     }
     else
     {
 
-        SBK_BookManaLimit = battle_units[caster_idx].mana;
+        g_spellbook_cast_mana_limit = battle_units[caster_idx].mana;
 
     }
 
@@ -992,7 +992,7 @@ int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx)
                 // ; be able to channel into a spell each turn?
                 // ; (lower of mana+manaperturn and skill+heroskill)
                 // ; in combat, the highest castable cost
-                if(spell_data_table[abs(m_spellbook_spell_list[itr1])].casting_cost <= SBK_BookManaLimit)
+                if(spell_data_table[abs(m_spellbook_spell_list[itr1])].casting_cost <= g_spellbook_cast_mana_limit)
                 {
 
                     if(
@@ -1029,7 +1029,7 @@ int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx)
         for(itr1 = 0; itr1 < m_spell_list_count; itr1++)
         {
 
-            if(Casting_Cost((caster_idx - CASTER_IDX_BASE), abs(m_spellbook_spell_list[itr1]), 1) <= SBK_BookManaLimit)
+            if(Casting_Cost((caster_idx - CASTER_IDX_BASE), abs(m_spellbook_spell_list[itr1]), 1) <= g_spellbook_cast_mana_limit)
             {
 
                 if(
@@ -1115,8 +1115,7 @@ total_pages += ((SBK_Group_6_Count + 5) / NUM_SPELLS_PER_PAGE_SML);
 
 
 // WZD o117p07
-// drake178: OVL_ComposeBookText()
-void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spellbook_bitmap)
+void SmlBook_Compose(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spellbook_bitmap)
 {
     char spell_name[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     char temp_string[LEN_TEMP_BUFFER] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -1126,11 +1125,9 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
     int16_t casting_cost = 0;
     int16_t spell_idx = 0;
     uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
-    int16_t itr1 = 0;  // _SI_
-    int16_t itr2 = 0;  // _DI_
-
+    int16_t itr1 = 0;
+    int16_t itr2 = 0;
     Draw_Picture_To_Bitmap(_spellbook_small_text, spellbook_bitmap);
-
     for(itr1 = 0; itr1 < 6; itr1++)
     {
         if(spell_book_page.count > itr1)
@@ -1140,11 +1137,8 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
             {
                 colors[itr2] = 187;
             }
-
             Set_Font_Colors_15(1, &colors[0]);
-
             spell_idx = spell_book_page.spell[itr1];
-
             if(abs(spell_idx) != _players[HUMAN_PLAYER_IDX].casting_spell_idx)
             {
                 casting_cost = Casting_Cost(HUMAN_PLAYER_IDX, abs(spell_idx), 0);
@@ -1153,25 +1147,21 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
             {
                 casting_cost = _players[HUMAN_PLAYER_IDX].casting_cost_remaining;
             }
-
-            if(SBK_BookManaLimit != 0)
+            if(g_spellbook_cast_mana_limit != 0)
             {
-                Turns_To_Cast = (casting_cost / SBK_BookManaLimit);
+                Turns_To_Cast = (casting_cost / g_spellbook_cast_mana_limit);
             }
             else
             {
                 Turns_To_Cast = 40;
             }
-
             if(Turns_To_Cast > 40)
             {
                 Turns_To_Cast = 40;
             }
-
             if(Turns_To_Cast < 1)
             {
                 Turns_To_Cast = 1;
-
                 if(_players[HUMAN_PLAYER_IDX].Skill_Left <= _players[HUMAN_PLAYER_IDX].mana_reserve)
                 {
                     Cost_Limit = _players[HUMAN_PLAYER_IDX].Skill_Left;
@@ -1180,10 +1170,9 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
                 {
                     Cost_Limit = _players[HUMAN_PLAYER_IDX].mana_reserve;
                 }
-
                 if(Cost_Limit >= casting_cost)
                 {
-                    if(spell_data_table[abs(spell_idx)].type != 11)  /* scc_Crafting_Spell */
+                    if(spell_data_table[abs(spell_idx)].type != scc_Crafting_Spell)
                     {
                         Text_Width = Get_String_Width(cnst_Instant_Cast);
                         Clear_Bitmap_Region(9, (7 + (itr1 * 22)), (12 + Text_Width), (12 + (itr1 * 22)), spellbook_bitmap);
@@ -1196,9 +1185,7 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
                         Print_To_Bitmap(9, (7 + (itr1 * 22)), cnst_Special_Cost, spellbook_bitmap);
                     }
                 }
-
                 Clear_Bitmap_Region(0, (7 + (itr1 * 22)), 8, (12 + (itr1 * 22)), spellbook_bitmap);
-
                 Clipped_Copy_Bitmap(1, (7 + (itr1 * 22)), spellbook_bitmap, spellbook_symbols_bitm[spell_data_table[abs(spell_idx)].magic_realm]);
             }
             else  /* (Turns_To_Cast >= 1) */
@@ -1212,7 +1199,6 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
                 {
                     Clear_Bitmap_Region(0, (7 + (itr1 * 22)), (3 + (Turns_To_Cast * 6)), (12 + (itr1 * 22)), spellbook_bitmap);
                 }
-
                 for(itr2 = 0; itr2 < Turns_To_Cast; itr2++)
                 {
                     if(itr2 >= 20)
@@ -1225,7 +1211,6 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
                     }
                 }
             }
-
             if(abs(spell_idx) != _players[HUMAN_PLAYER_IDX].casting_spell_idx)
             {
                 colors[0] = 184;
@@ -1241,17 +1226,11 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
                     colors[itr2] = 198;
                 }
             }
-
             Set_Font_Colors_15(1, &colors[0]);
-
             stu_strcpy(spell_name, spell_data_table[abs(spell_idx)].name);
-
             Text_Width = Get_String_Width(spell_name);
-
             Clear_Bitmap_Region(0, (itr1 * 22), (3 + Text_Width), (5 + (itr1 * 22)), spellbook_bitmap);
-
             Print_To_Bitmap(0, (itr1 * 22), spell_name, spellbook_bitmap);
-
             if(abs(spell_idx) != _players[HUMAN_PLAYER_IDX].casting_spell_idx)
             {
                 casting_cost = Casting_Cost(HUMAN_PLAYER_IDX, abs(spell_idx), 0);
@@ -1260,15 +1239,14 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
             {
                 casting_cost = _players[HUMAN_PLAYER_IDX].casting_cost_remaining;
             }
-
             if(casting_cost < 0)
             {
                 casting_cost = 0;
             }
-
             if(
-                (casting_cost != 0) ||
-                (spell_data_table[abs(spell_idx)].type != 11)  /* scc_Crafting_Spell */
+                (casting_cost != 0)
+                ||
+                (spell_data_table[abs(spell_idx)].type != scc_Crafting_Spell)
             )
             {
                 stu_itoa(casting_cost, temp_string, 10);
@@ -1277,23 +1255,16 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
             {
                 stu_strcpy(temp_string, cnst_QuestionMark5);
             }
-
             stu_strcat(temp_string, cnst_Space_MP_2);
-
             Text_Width = Get_String_Width(temp_string);
-
             Clear_Bitmap_Region((118 - Text_Width), (itr1 * 22), 121, (5 + (itr1 * 22)), spellbook_bitmap);
-
             Print_Right_To_Bitmap(121, (itr1 * 22), temp_string, spellbook_bitmap);
-
         }
         else
         {
             Clear_Bitmap_Region(0, (itr1 * 22), 121, (17 + (itr1 * 22)), spellbook_bitmap);
         }
-
     }
-
 }
 
 
@@ -1377,13 +1348,13 @@ void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
                 }
                 else  /* (caster_idx < CASTER_IDX_BASE) */
                 {
-                    if(casting_cost > SBK_BookManaLimit)
+                    if(casting_cost > g_spellbook_cast_mana_limit)
                     {
                         Icon_Count = 0;
                     }
                     else
                     {
-                        Icon_Count = (SBK_BookManaLimit / casting_cost);
+                        Icon_Count = (g_spellbook_cast_mana_limit / casting_cost);
                     }
 
                     if(battle_units[caster_idx].Item_Charges > 0)
@@ -1522,80 +1493,56 @@ void CmbBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
 
 
 // WZD o117p09
-// drake178: OVL_DrawSpellbook()
 void SmlBook_Draw(int16_t x, int16_t y)
 {
     SAMB_ptr spellbook_bitmap = 0;
     uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
-    int16_t itr = 0;  // _SI_
-
+    int16_t itr = 0;
     Mark_Block(_screen_seg);
-
     spellbook_bitmap = Allocate_Next_Block(_screen_seg, 1050);  // 1050 PR  16800 B
-
     // {Nature, Sorcery, Chaos, Life, Death, Arcane}
     for(itr = 0; itr < NUM_MAGIC_REALMS; itr++)
     {
         spellbook_symbols_bitm[itr] = Allocate_Next_Block(_screen_seg, 4);  // 4 PR  64 B
         Draw_Picture_To_Bitmap(_spellbook_small_symbols[itr], spellbook_symbols_bitm[itr]);
     }
-
     Cycle_Palette_Color(198, 41, 33, 29, 48, 43, 43, 3);
-
     FLIC_Draw(x, y, _spellbook_small_seg);
-
-    if(SBK_Dogears == 1)
+    if(g_spellbook_mode == 1)
     {
-
-        if(SBK_OpenPage != 0)
+        if(g_spellbook_left_page != 0)
         {
             FLIC_Draw((x + 13), (y + 4), _spellbook_small_left_corner_seg);
         }
-        
         if(
-            (SBK_OpenPage != m_spellbook_page_count)
+            (g_spellbook_left_page != m_spellbook_page_count)
             &&
-            ((m_spellbook_page_count - 2) > SBK_OpenPage)
+            ((m_spellbook_page_count - 2) > g_spellbook_left_page)
         )
         {
             FLIC_Draw((x + 258), (y + 4), _spellbook_small_right_corner_seg);
         }
     }
-
-    SmlBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], spellbook_bitmap);
-
+    SmlBook_Compose(m_spellbook_pages[g_spellbook_left_page], spellbook_bitmap);
     Draw_Picture((x + 16), (y + 21), spellbook_bitmap);
-
     colors[0] = 53;
-
     for(itr = 1; itr < 5; itr++)
     {
         colors[itr] = 46;
     }
-
     Set_Font_Colors_15(4, &colors[0]);
-
-    Print_Centered((x + 70), (y + 6), m_spellbook_pages[SBK_OpenPage].title);
-
+    Print_Centered((x + 70), (y + 6), m_spellbook_pages[g_spellbook_left_page].title);
     Draw_Picture_To_Bitmap(_spellbook_small_text, spellbook_bitmap);
-
-    SmlBook_Compose__WIP(m_spellbook_pages[(SBK_OpenPage + 1)], spellbook_bitmap);
-
+    SmlBook_Compose(m_spellbook_pages[(g_spellbook_left_page + 1)], spellbook_bitmap);
     Draw_Picture((x + 148), (y + 21), spellbook_bitmap);
-
     colors[0] = 53;
-
     for(itr = 1; itr < 5; itr++)
     {
         colors[itr] = 46;
     }
-
     Set_Font_Colors_15(4, &colors[0]);
-
-    Print_Centered((x + 208), (y + 6), m_spellbook_pages[(SBK_OpenPage + 1)].title);
-
+    Print_Centered((x + 208), (y + 6), m_spellbook_pages[(g_spellbook_left_page + 1)].title);
     Release_Block(_screen_seg);
-
 }
 
 
@@ -1620,27 +1567,27 @@ void CmbBook_Draw__WIP(int16_t x, int16_t y, int16_t caster_idx)
 
     FLIC_Draw(x, y, _spellbook_small_seg);
 
-    if(SBK_Dogears == 1)
+    if(g_spellbook_mode == 1)
     {
 
-        if(SBK_OpenPage != 0)
+        if(g_spellbook_left_page != 0)
         {
             FLIC_Draw((x + 13), (y + 4), _spellbook_small_left_corner_seg);
         }
         
         if(
-            (SBK_OpenPage != m_spellbook_page_count)
+            (g_spellbook_left_page != m_spellbook_page_count)
             &&
-            ((m_spellbook_page_count - 2) > SBK_OpenPage)
+            ((m_spellbook_page_count - 2) > g_spellbook_left_page)
         )
         {
             FLIC_Draw((x + 258), (y + 4), _spellbook_small_right_corner_seg);
         }
     }
 
-    // SmlBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], spellbook_bitmap);
-    // spellbook_bitmap  allocated in SmlBook_Draw(), passed to SmlBook_Compose__WIP()
-    CmbBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], spl_anim_compose_seg, caster_idx);
+    // SmlBook_Compose(m_spellbook_pages[g_spellbook_left_page], spellbook_bitmap);
+    // spellbook_bitmap  allocated in SmlBook_Draw(), passed to SmlBook_Compose()
+    CmbBook_Compose__WIP(m_spellbook_pages[g_spellbook_left_page], spl_anim_compose_seg, caster_idx);
 
     Draw_Picture((x + 16), (y + 21), spl_anim_compose_seg);
 
@@ -1653,12 +1600,12 @@ void CmbBook_Draw__WIP(int16_t x, int16_t y, int16_t caster_idx)
 
     Set_Font_Colors_15(4, &colors[0]);
 
-    Print_Centered((x + 70), (y + 6), m_spellbook_pages[SBK_OpenPage].title);
+    Print_Centered((x + 70), (y + 6), m_spellbook_pages[g_spellbook_left_page].title);
 
     Draw_Picture_To_Bitmap(_spellbook_small_text, spl_anim_compose_seg);
 
-    // SmlBook_Compose__WIP(m_spellbook_pages[(SBK_OpenPage + 1)], spellbook_bitmap);
-    CmbBook_Compose__WIP(m_spellbook_pages[(SBK_OpenPage + 1)], spl_anim_compose_seg, caster_idx);
+    // SmlBook_Compose(m_spellbook_pages[(g_spellbook_left_page + 1)], spellbook_bitmap);
+    CmbBook_Compose__WIP(m_spellbook_pages[(g_spellbook_left_page + 1)], spl_anim_compose_seg, caster_idx);
 
     Draw_Picture((x + 148), (y + 21), spl_anim_compose_seg);
 
@@ -1671,7 +1618,7 @@ void CmbBook_Draw__WIP(int16_t x, int16_t y, int16_t caster_idx)
 
     Set_Font_Colors_15(4, &colors[0]);
 
-    Print_Centered((x + 208), (y + 6), m_spellbook_pages[(SBK_OpenPage + 1)].title);
+    Print_Centered((x + 208), (y + 6), m_spellbook_pages[(g_spellbook_left_page + 1)].title);
 
     // DNE  Release_Block(_screen_seg);
 
@@ -1679,60 +1626,198 @@ void CmbBook_Draw__WIP(int16_t x, int16_t y, int16_t caster_idx)
 
 
 // WZD o117p11
-// drake178: SBK_PageFlip_Small()
 // BOOK.LBX  "PTURNSML"
-void SmlBook_PageTurn__WIP(int turn_type, int combat_flag, int player_idx)
+void SmlBook_PageTurn(int turn_type, int combat_flag, int player_idx)
 {
     int16_t Stage_Text_Widths[4] = { 0, 0, 0, 0};
-    int16_t Book_Image_Top = 0;
-    int16_t Book_Image_Left = 0;
+    int16_t ystart = 0;
+    int16_t xstart = 0;
     uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
-    int16_t Color_Loop_Var = 0;
+    int16_t itr_colors = 0;
     int16_t PageTurn_Stage = 0;
-    SAMB_ptr Base_Page_IMG = 0;
-    SAMB_ptr page_turn_bitmap = 0;  // _SI_
+    SAMB_ptr page_bitmap = 0;
+    SAMB_ptr page_turn_bitmap = 0;
     int16_t itr = 0;  // DNE in Dasm
-
-    Book_Image_Left = 16;
-    Book_Image_Top = 10;
-
+    int16_t page_num = 0;
+    xstart = 16;
+    ystart = 10;
     Stage_Text_Widths[3] = 85;
     Stage_Text_Widths[0] = 85;
     Stage_Text_Widths[2] = 55;
     Stage_Text_Widths[1] = 55;
-
     Deactivate_Auto_Function();
-
-    // TODO  Open_File_Animation__STUB(book_lbx_file, 0);
-
+    Open_File_Animation__HACK(book_lbx_file__ovr117, 0);
     if(combat_flag == ST_FALSE)
     {
         Allocate_Reduced_Map();
     }
-
     Mark_Block(_screen_seg);
-
-    Base_Page_IMG = Allocate_Next_Block(_screen_seg, 1040);
-
+    page_bitmap = Allocate_Next_Block(_screen_seg, 1040);
     page_turn_bitmap = Allocate_Next_Block(_screen_seg, 1400);
-
     for(itr = 0; itr < NUM_MAGIC_REALMS; itr++)
     {
         spellbook_symbols_bitm[itr] = Allocate_Next_Block(_screen_seg, 4);
         Draw_Picture_To_Bitmap(_spellbook_small_symbols[itr], spellbook_symbols_bitm[itr]);
     }
-
     Cycle_Palette_Color(198, 39, 31, 25, 50, 46, 47, 3);
-
     for(PageTurn_Stage = 0; PageTurn_Stage < 4; PageTurn_Stage++)
     {
-
+        Set_Page_Off();
+        Copy_Back_To_Off();
+        if(turn_type == 1)
+        {
+            page_num = g_spellbook_left_page;
+        }
+        else
+        {
+            page_num = g_spellbook_left_page - 2;
+        }
+        if(page_num != 0 && g_spellbook_mode == ST_TRUE)
+        {
+            FLIC_Draw(xstart + 13, ystart + 4, _spellbook_small_left_corner_seg);
+        }
+        if(combat_flag == ST_FALSE)
+        {
+            SmlBook_Compose(m_spellbook_pages[page_num], page_bitmap);
+        }
+        else
+        {
+            CmbBook_Compose__WIP(m_spellbook_pages[page_num], page_bitmap, player_idx);
+        }
+        Draw_Picture(xstart + 16, ystart + 21, page_bitmap);
+        colors[0] = 53;
+        for(itr_colors = 1; itr_colors < 5; itr_colors++)
+        {
+            colors[itr_colors] = 46;
+        }
+        Set_Font_Colors_15(4, colors);
+        Print_Centered(xstart + 70, ystart + 6, m_spellbook_pages[page_num].title);
+        if(turn_type == 1)
+        {
+            page_num = g_spellbook_left_page + 3;
+        }
+        else
+        {
+            page_num = g_spellbook_left_page + 1;
+        }
+        if(page_num < m_spellbook_page_count && g_spellbook_mode == ST_TRUE)
+        {
+            FLIC_Draw(xstart + 258, ystart + 4, _spellbook_small_right_corner_seg);
+        }
+        if(combat_flag == ST_FALSE)
+        {
+            SmlBook_Compose(m_spellbook_pages[page_num], page_bitmap);
+        }
+        else
+        {
+            CmbBook_Compose__WIP(m_spellbook_pages[page_num], page_bitmap, player_idx);
+        }
+        Draw_Picture(xstart + 148, ystart + 21, page_bitmap);
+        colors[0] = 53;
+        for(itr_colors = 1; itr_colors < 5; itr_colors++)
+        {
+            colors[itr_colors] = 46;
+        }
+        Set_Font_Colors_15(4, colors);
+        if(spell_data_table[m_spellbook_pages[page_num - 1].spell[0]].spell_book_category != spell_data_table[m_spellbook_pages[page_num].spell[0]].spell_book_category)
+        {
+            Print_Centered(xstart + 208, ystart + 6, m_spellbook_pages[page_num].title);
+        }
+        if(turn_type == 0)
+        {
+            Set_File_Animation_Frame(3 - PageTurn_Stage);
+        }
+        Draw_File_Animation__HACK();
+        if(PageTurn_Stage < 2)
+        {
+            if(turn_type == 1)
+            {
+                page_num = g_spellbook_left_page + 1;
+            }
+            else
+            {
+                page_num = g_spellbook_left_page;
+            }
+        }
+        else
+        {
+            if(turn_type == 1)
+            {
+                page_num = g_spellbook_left_page + 2;
+            }
+            else
+            {
+                page_num = g_spellbook_left_page - 1;
+            }
+        }
+        if(combat_flag == ST_FALSE)
+        {
+            SmlBook_Compose(m_spellbook_pages[page_num], page_bitmap);
+        }
+        else
+        {
+            CmbBook_Compose__WIP(m_spellbook_pages[page_num], page_bitmap, player_idx);
+        }
+        Create_Picture(122, 175, page_turn_bitmap);
+        Clipped_Copy_Bitmap(0, 48, page_turn_bitmap, page_bitmap);
+        colors[0] = 53;
+        for(itr_colors = 1; itr_colors < 5; itr_colors++)
+        {
+            colors[itr_colors] = 46;
+        }
+        Set_Font_Colors_15(4, colors);
+        if(abs(page_num - g_spellbook_left_page) == 2 || spell_data_table[m_spellbook_pages[page_num - 1].spell[0]].spell_book_category != spell_data_table[m_spellbook_pages[page_num].spell[0]].spell_book_category
+        )
+        {
+            Print_Centered_To_Bitmap(62, 30, m_spellbook_pages[page_num].title, page_turn_bitmap);
+        }
+        Scale_Bitmap(page_turn_bitmap, Stage_Text_Widths[PageTurn_Stage], 100);
+        if((turn_type == 1 && PageTurn_Stage == 0) || (turn_type == 0 && PageTurn_Stage == 3))
+        {
+            Shear_Bitmap_Y( 0,   0,   3,  -4, page_turn_bitmap);
+            Shear_Bitmap_Y( 4,  -5,   9, -10, page_turn_bitmap);
+            Shear_Bitmap_Y(10, -11,  21, -16, page_turn_bitmap);
+            Shear_Bitmap_Y(22, -16,  32, -19, page_turn_bitmap);
+            Shear_Bitmap_Y(33, -19,  40, -19, page_turn_bitmap);
+            Shear_Bitmap_Y(41, -18,  62, -13, page_turn_bitmap);
+            Shear_Bitmap_Y(63, -12, 101,   5, page_turn_bitmap);
+            Draw_Picture_Windowed(xstart + 148, ystart - 28, page_turn_bitmap);
+        }
+        if((turn_type == 1 && PageTurn_Stage == 1) || (turn_type == 0 && PageTurn_Stage == 2))
+        {
+            Shear_Bitmap_Y( 0,   0,  5,  -8, page_turn_bitmap);
+            Shear_Bitmap_Y( 6, -11, 16, -21, page_turn_bitmap);
+            Shear_Bitmap_Y(17, -22, 26, -27, page_turn_bitmap);
+            Shear_Bitmap_Y(27, -27, 38, -29, page_turn_bitmap);
+            Shear_Bitmap_Y(39, -29, 49, -27, page_turn_bitmap);
+            Shear_Bitmap_Y(50, -26, 61, -21, page_turn_bitmap);
+            Shear_Bitmap_Y(62, -20, 70, -12, page_turn_bitmap);
+            Draw_Picture_Windowed(xstart + 148, ystart - 30, page_turn_bitmap);
+        }
+        if((turn_type == 1 && PageTurn_Stage == 2) || (turn_type == 0 && PageTurn_Stage == 1))
+        {
+            Shear_Bitmap_Y( 0, -16,  9, -25, page_turn_bitmap);
+            Shear_Bitmap_Y(10, -25, 17, -29, page_turn_bitmap);
+            Shear_Bitmap_Y(18, -29, 29, -32, page_turn_bitmap);
+            Shear_Bitmap_Y(30, -33, 40, -30, page_turn_bitmap);
+            Shear_Bitmap_Y(41, -29, 52, -25, page_turn_bitmap);
+            Shear_Bitmap_Y(53, -24, 63, -14, page_turn_bitmap);
+            Shear_Bitmap_Y(64, -12, 70,   0, page_turn_bitmap);
+            Draw_Picture_Windowed(xstart + 71, ystart - 28, page_turn_bitmap);
+        }
+        if((turn_type == 1 && PageTurn_Stage == 3) || (turn_type == 0 && PageTurn_Stage == 0))
+        {
+            Shear_Bitmap_Y( 0,   0,  31, -16, page_turn_bitmap);
+            Shear_Bitmap_Y(32, -16,  47, -22, page_turn_bitmap);
+            Shear_Bitmap_Y(48, -22,  68, -27, page_turn_bitmap);
+            Shear_Bitmap_Y(69, -27,  82, -23, page_turn_bitmap);
+            Shear_Bitmap_Y(83, -23,  92, -18, page_turn_bitmap);
+            Shear_Bitmap_Y(93, -18, 101, -10, page_turn_bitmap);
+            Draw_Picture_Windowed(xstart + 35, ystart - 22, page_turn_bitmap);
+        }
+        PageFlip_FX();
     }
-
-
-
     Release_Block(_screen_seg);
-
     if(combat_flag != ST_FALSE)
     {
         Assign_Auto_Function(Combat_Spellbook_Screen_Draw, 2);
@@ -1741,8 +1826,6 @@ void SmlBook_PageTurn__WIP(int turn_type, int combat_flag, int player_idx)
     {
         Assign_Auto_Function(Spellbook_Screen_Draw, 2);
     }
-
-
 }
 
 
@@ -1856,7 +1939,7 @@ void Spellbook_Add_Page(int16_t group_spell_count, int16_t group_idx, char * tit
             {
                 if(abs(m_spellbook_spell_list[itr_spellbook_spell_list]) == _players[HUMAN_PLAYER_IDX].casting_spell_idx)
                 {
-                    SBK_OpenPage = page_spell_counter;
+                    g_spellbook_left_page = page_spell_counter;
                 }
             }
 
@@ -2053,7 +2136,7 @@ void BigBook_PageTurn(short int direction)
     _spellbook_big_left_corner_seg = LBX_Reload_Next(scroll_lbx_file__ovr118__1, 7, _screen_seg);
     _spellbook_big_right_corner_seg = LBX_Reload_Next(scroll_lbx_file__ovr118__1, 8, _screen_seg);
 
-    for (page_turn_stage = 0; page_turn_stage < 4; ++page_turn_stage)
+    for(page_turn_stage = 0; page_turn_stage < 4; ++page_turn_stage)
     {
         Set_Page_Off();
         Copy_Back_To_Off();
@@ -2061,18 +2144,18 @@ void BigBook_PageTurn(short int direction)
         /* Determine background page index (left side) */
         if(direction >= 1)
         {
-            page_index = SBK_OpenPage;
+            page_index = g_spellbook_left_page;
         }
         else
         {
-            page_index = SBK_OpenPage - 2;
+            page_index = g_spellbook_left_page - 2;
         }
 
         /* Draw static background (Left Page) */
         BigBook_Compose__WIP(page_index, pict_seg, 1);
         Draw_Picture_Windowed(25, -20, pict_seg);
 
-        if(page_index != 0 && SBK_Dogears > 1)
+        if(page_index != 0 && g_spellbook_mode > 1)
         {
             FLIC_Draw(15, 9, (void *)_spellbook_big_left_corner_seg);
         }
@@ -2080,11 +2163,11 @@ void BigBook_PageTurn(short int direction)
         /* Determine background page index (Right Side) */
         if(direction == 1)
         {
-            page_index = SBK_OpenPage + 3;
+            page_index = g_spellbook_left_page + 3;
         }
         else if(direction == 0)
         {
-            page_index = SBK_OpenPage;
+            page_index = g_spellbook_left_page;
         }
         else /* direction == 666 (Research) */
         {
@@ -2096,7 +2179,7 @@ void BigBook_PageTurn(short int direction)
         BigBook_Compose__WIP(page_index, pict_seg, 0);
         Draw_Picture_Windowed(173, -20, pict_seg);
 
-        if(m_spellbook_page_count - 2 > page_index && SBK_Dogears > 1)
+        if(m_spellbook_page_count - 2 > page_index && g_spellbook_mode > 1)
         {
             FLIC_Draw(289, 9, (void *)_spellbook_big_right_corner_seg);
         }
@@ -2109,7 +2192,7 @@ void BigBook_PageTurn(short int direction)
             {
                 if(direction == 1)
                 {
-                    page_index = SBK_OpenPage + 1;
+                    page_index = g_spellbook_left_page + 1;
                 }
                 left_page = 0;
             }
@@ -2117,7 +2200,7 @@ void BigBook_PageTurn(short int direction)
             {
                 if(direction == 1)
                 {
-                    page_index = SBK_OpenPage + 2;
+                    page_index = g_spellbook_left_page + 2;
                 }
                 else if(direction == 666)
                 {
@@ -2132,12 +2215,12 @@ void BigBook_PageTurn(short int direction)
             Set_File_Animation_Frame(3 - page_turn_stage);
             if(page_turn_stage < 2)
             {
-                page_index = SBK_OpenPage;
+                page_index = g_spellbook_left_page;
                 left_page = 1;
             }
             else
             {
-                page_index = SBK_OpenPage - 1;
+                page_index = g_spellbook_left_page - 1;
                 left_page = 0;
             }
         }
@@ -2233,26 +2316,26 @@ void BigBook_PageTurn(short int direction)
 //     _spellbook_big_left_corner_seg = LBX_Reload_Next(scroll_lbx_file__ovr118__1, 7, _screen_seg);
 //     _spellbook_big_right_corner_seg = LBX_Reload_Next(scroll_lbx_file__ovr118__1, 8, _screen_seg);
 //     Copy_Back_To_Off();
-//     if(SBK_Dogears > 1)
+//     if(g_spellbook_mode > 1)
 //     {
-//         if(SBK_OpenPage != 0)
+//         if(g_spellbook_left_page != 0)
 //         {
 //             FLIC_Draw(15, 9, _spellbook_big_left_corner_seg);
 //         }
 //         if(
-//             (SBK_OpenPage != m_spellbook_page_count)
+//             (g_spellbook_left_page != m_spellbook_page_count)
 //             &&
-//             ( (m_spellbook_page_count - 2) > SBK_OpenPage)
+//             ( (m_spellbook_page_count - 2) > g_spellbook_left_page)
 //         )
 //         {
 //             FLIC_Draw(289, 9, _spellbook_big_right_corner_seg);
 //         }
 //     }
-//     BigBook_Compose__WIP(SBK_OpenPage, IDK_seg, 1);
+//     BigBook_Compose__WIP(g_spellbook_left_page, IDK_seg, 1);
 //     Draw_Picture_Windowed(25, -20, IDK_seg);
-//     BigBook_Compose__WIP((SBK_OpenPage + 1), IDK_seg, 0);
+//     BigBook_Compose__WIP((g_spellbook_left_page + 1), IDK_seg, 0);
 //     Draw_Picture_Windowed(173, -20, IDK_seg);
-//     if(SBK_Dogears == 0)
+//     if(g_spellbook_mode == 0)
 //     {
 //         Set_Font_Style_Outline_Heavy(5, 9, 0, 0);
 //         Set_Outline_Color(1);
@@ -2281,32 +2364,32 @@ void BigBook_Draw(void)
     /* The BIGBOOK background is stored in VGA frame 3; copy it to the current buffer */
     Copy_Back_To_Off();
 
-    /* Draw navigation dog-ears if in apprentice book mode (SBK_Dogears > 1) */
-    if(SBK_Dogears > 1)
+    /* Draw navigation dog-ears if in apprentice book mode (g_spellbook_mode > 1) */
+    if(g_spellbook_mode > 1)
     {
         /* Left dog-ear (previous page) */
-        if(SBK_OpenPage != 0)
+        if(g_spellbook_left_page != 0)
         {
             FLIC_Draw(15, 9, _spellbook_big_left_corner_seg);
         }
 
         /* Right dog-ear (next page) */
-        if(SBK_OpenPage != m_spellbook_page_count && SBK_OpenPage < (m_spellbook_page_count - 2))
+        if(g_spellbook_left_page != m_spellbook_page_count && g_spellbook_left_page < (m_spellbook_page_count - 2))
         {
             FLIC_Draw(289, 9, _spellbook_big_right_corner_seg);
         }
     }
 
     /* Compose and draw the left page content */
-    BigBook_Compose__WIP(SBK_OpenPage, pict_seg, 1);
+    BigBook_Compose__WIP(g_spellbook_left_page, pict_seg, 1);
     Draw_Picture_Windowed(25, -20, pict_seg);
 
     /* Compose and draw the right page content */
-    BigBook_Compose__WIP(SBK_OpenPage + 1, pict_seg, 0);
+    BigBook_Compose__WIP(g_spellbook_left_page + 1, pict_seg, 0);
     Draw_Picture_Windowed(173, -20, pict_seg);
 
-    /* If choosing research (SBK_Dogears == 0), display the prompt text */
-    if(SBK_Dogears == 0)
+    /* If choosing research (g_spellbook_mode == 0), display the prompt text */
+    if(g_spellbook_mode == 0)
     {
         Set_Font_Style_Outline_Heavy(5, 9, 0, 0);
         Set_Outline_Color(1);
@@ -2587,17 +2670,17 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
                     if((spellbook_page % 2) == 0)
                     {
 
-                        SBK_OpenPage = spellbook_page;
+                        g_spellbook_left_page = spellbook_page;
                         Spell_on_Side = 0;
-                        SBK_Dogears = 0;
+                        g_spellbook_mode = 0;
 
                     }
                     else
                     {
 
                         Spell_on_Side = 1;
-                        SBK_Dogears = 1;
-                        SBK_OpenPage = (spellbook_page - 1);
+                        g_spellbook_mode = 1;
+                        g_spellbook_left_page = (spellbook_page - 1);
 
                     }
 
@@ -2635,17 +2718,17 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
                         if((spellbook_page % 2) == 0)
                         {
 
-                            SBK_OpenPage = spellbook_page;
+                            g_spellbook_left_page = spellbook_page;
                             Spell_on_Side = 0;
-                            SBK_Dogears = 0;
+                            g_spellbook_mode = 0;
 
                         }
                         else
                         {
 
                             Spell_on_Side = 1;
-                            SBK_Dogears = 1;
-                            SBK_OpenPage = (spellbook_page - 1);
+                            g_spellbook_mode = 1;
+                            g_spellbook_left_page = (spellbook_page - 1);
 
                         }
 
@@ -2671,7 +2754,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         }
 
-        SBK_LoadSpellDescs__WIP(SBK_OpenPage);
+        SBK_LoadSpellDescs__WIP(g_spellbook_left_page);
 
         Mark_Block(_screen_seg);
 
@@ -2815,10 +2898,10 @@ struct s_SPELL_DECODE var_C = { 0, 0, 0, 0, 0, 0 };
 
     Copy_Back_To_Off();
 
-    if(SBK_Dogears == 1)
+    if(g_spellbook_mode == 1)
     {
 
-        BigBook_Compose__WIP(SBK_OpenPage, IMG_SBK_PageText, ST_TRUE);
+        BigBook_Compose__WIP(g_spellbook_left_page, IMG_SBK_PageText, ST_TRUE);
 
         Draw_Picture_Windowed(25, -20, IMG_SBK_PageText);
 
@@ -2826,22 +2909,22 @@ struct s_SPELL_DECODE var_C = { 0, 0, 0, 0, 0, 0 };
     else
     {
 
-        BigBook_Compose__WIP((SBK_OpenPage + 1), IMG_SBK_PageText, ST_FALSE);
+        BigBook_Compose__WIP((g_spellbook_left_page + 1), IMG_SBK_PageText, ST_FALSE);
 
         Draw_Picture_Windowed(173, -20, IMG_SBK_PageText);
 
     }
 
-    if(SBK_Dogears == 0)
+    if(g_spellbook_mode == 0)
     {
         
-        BigBook_Compose__WIP(SBK_OpenPage, IMG_SBK_PageText, ST_TRUE);
+        BigBook_Compose__WIP(g_spellbook_left_page, IMG_SBK_PageText, ST_TRUE);
 
     }
     else
     {
 
-        BigBook_Compose__WIP((SBK_OpenPage + 1), IMG_SBK_PageText, ST_FALSE);
+        BigBook_Compose__WIP((g_spellbook_left_page + 1), IMG_SBK_PageText, ST_FALSE);
 
     }                          
 
@@ -2864,7 +2947,7 @@ struct s_SPELL_DECODE var_C = { 0, 0, 0, 0, 0, 0 };
 
     }
 
-    if(SBK_Dogears == 0)
+    if(g_spellbook_mode == 0)
     {
 
         Draw_Picture_Windowed(25, -20, IMG_SBK_PageText);
@@ -2936,7 +3019,7 @@ struct s_SPELL_DECODE var_C = { 0, 0, 0, 0, 0, 0 };
     hard-coded to 4 spells per page
     ...something like the active page and the other page...
 
-¿ why iter over SBK_OpenPage and page ?
+¿ why iter over g_spellbook_left_page and page ?
 ¿ code in both loops is exactly the same ?
 ¿ treats array of 16 descriptions as 4 pages of 4 ?
 
@@ -2953,7 +3036,7 @@ void SBK_LoadSpellDescs__WIP(int16_t page)
         stu_strcpy(SBK_Descriptions[itr], str_empty_string__ovr118);
     }
 
-    for(itr = SBK_OpenPage; (SBK_OpenPage + 1) >= itr; itr++)
+    for(itr = g_spellbook_left_page; (g_spellbook_left_page + 1) >= itr; itr++)
     {
 
         if(
@@ -2966,8 +3049,8 @@ void SBK_LoadSpellDescs__WIP(int16_t page)
             for(count = 0; count < NUM_SPELLS_PER_PAGE_BIG; count++)
             {
 
-                // TODO  String_Copy_Far(SBK_Descriptions[((itr - SBK_OpenPage) + count)], str_empty_string__ovr118);
-                stu_strcpy(SBK_Descriptions[(((itr - SBK_OpenPage) * 4) + count)], str_empty_string__ovr118);
+                // TODO  String_Copy_Far(SBK_Descriptions[((itr - g_spellbook_left_page) + count)], str_empty_string__ovr118);
+                stu_strcpy(SBK_Descriptions[(((itr - g_spellbook_left_page) * 4) + count)], str_empty_string__ovr118);
 
             }
 
@@ -2983,15 +3066,15 @@ void SBK_LoadSpellDescs__WIP(int16_t page)
 
                     LBX_Load_Data_Static(desc_lbx_file__ovr118, 0, (SAMB_ptr)buffer, abs(m_spellbook_pages[itr].spell[count]), 1, 110);
 
-                    // TODO  String_Copy_Far(SBK_Descriptions[((itr - SBK_OpenPage) + count)], buffer);
-                    stu_strcpy(SBK_Descriptions[(((itr - SBK_OpenPage) * 4) + count)], buffer);
+                    // TODO  String_Copy_Far(SBK_Descriptions[((itr - g_spellbook_left_page) + count)], buffer);
+                    stu_strcpy(SBK_Descriptions[(((itr - g_spellbook_left_page) * 4) + count)], buffer);
 
                 }
                 else
                 {
 
-                    // TODO  String_Copy_Far(SBK_Descriptions[((itr - SBK_OpenPage) + count)], str_empty_string__ovr118);
-                    stu_strcpy(SBK_Descriptions[(((itr - SBK_OpenPage) * 4) + count)], str_empty_string__ovr118);
+                    // TODO  String_Copy_Far(SBK_Descriptions[((itr - g_spellbook_left_page) + count)], str_empty_string__ovr118);
+                    stu_strcpy(SBK_Descriptions[(((itr - g_spellbook_left_page) * 4) + count)], str_empty_string__ovr118);
 
                 }
 
@@ -3065,11 +3148,11 @@ void Apprentice_Screen__WIP(void)
 
     Build_Spellbook(slt_Library, 4);  // spell_list_type, page_spell_count
 
-    SBK_OpenPage = SBK_Candidate_Page;
+    g_spellbook_left_page = SBK_Candidate_Page;
 
     // ; apprentice: 0 - choose research; 2 - apprentice book
     // ; new spell anim: 0 - spell on left; 1 - spell on right
-    SBK_Dogears = 2;
+    g_spellbook_mode = 2;
 
     // SCROLL.LBX, 006  "BIGBOOK"   ""
     _spellbook_big_seg = LBX_Reload(scroll_lbx_file__ovr118__2, 6, _screen_seg);
@@ -3093,7 +3176,7 @@ void Apprentice_Screen__WIP(void)
         SBK_Descriptions[itr] = (char *)Allocate_Next_Block(_screen_seg, 9);
     }
 
-    SBK_LoadSpellDescs__WIP(SBK_OpenPage);
+    SBK_LoadSpellDescs__WIP(g_spellbook_left_page);
 
     Assign_Auto_Function(BigBook_Draw, 2);
 
@@ -3118,18 +3201,18 @@ void Apprentice_Screen__WIP(void)
         {
 
             if(
-                (m_spellbook_pages[SBK_OpenPage].count > itr)
+                (m_spellbook_pages[g_spellbook_left_page].count > itr)
                 &&
-                (m_spellbook_pages[(SBK_OpenPage + itr)].spell[itr] > 0)
+                (m_spellbook_pages[(g_spellbook_left_page + itr)].spell[itr] > 0)
             )
             {
-                if(abs(m_spellbook_pages->spell[(SBK_OpenPage + itr)]) == spl_Spell_Of_Return)
+                if(abs(m_spellbook_pages->spell[(g_spellbook_left_page + itr)]) == spl_Spell_Of_Return)
                 {
                     _help_entries[(2 + itr)].help_idx = HLP_SPELL_OF_RETURN;
                 }
                 else
                 {
-                    _help_entries[(2 + itr)].help_idx = abs(m_spellbook_pages->spell[((SBK_OpenPage + 0) + itr)]);
+                    _help_entries[(2 + itr)].help_idx = abs(m_spellbook_pages->spell[((g_spellbook_left_page + 0) + itr)]);
                 }
             }
             else
@@ -3143,18 +3226,18 @@ void Apprentice_Screen__WIP(void)
         {
 
             if(
-                (m_spellbook_pages[(SBK_OpenPage + 1)].count > itr)
+                (m_spellbook_pages[(g_spellbook_left_page + 1)].count > itr)
                 &&
-                (m_spellbook_pages[((SBK_OpenPage + 1) + itr)].spell[itr] > 0)
+                (m_spellbook_pages[((g_spellbook_left_page + 1) + itr)].spell[itr] > 0)
             )
             {
-                if(abs(m_spellbook_pages->spell[((SBK_OpenPage + 1) + itr)]) == 214)  /* Spell_Of_Return */
+                if(abs(m_spellbook_pages->spell[((g_spellbook_left_page + 1) + itr)]) == 214)  /* Spell_Of_Return */
                 {
                     _help_entries[(6 + itr)].help_idx = HLP_SPELL_OF_RETURN;
                 }
                 else
                 {
-                    _help_entries[(6 + itr)].help_idx = abs(m_spellbook_pages->spell[((SBK_OpenPage + 1) + itr)]);
+                    _help_entries[(6 + itr)].help_idx = abs(m_spellbook_pages->spell[((g_spellbook_left_page + 1) + itr)]);
                 }
             }
             else
@@ -3172,14 +3255,14 @@ void Apprentice_Screen__WIP(void)
         if(input_field_idx == dogear_right_field)
         {
 
-            if((m_spellbook_page_count - 2) > SBK_OpenPage)
+            if((m_spellbook_page_count - 2) > g_spellbook_left_page)
             {
 
-                SBK_LoadSpellDescs__WIP((SBK_OpenPage + 2));
+                SBK_LoadSpellDescs__WIP((g_spellbook_left_page + 2));
 
                 BigBook_PageTurn(1);
 
-                SBK_OpenPage += 2;
+                g_spellbook_left_page += 2;
 
                 for(itr = 0; itr < 8; itr++)
                 {
@@ -3199,14 +3282,14 @@ void Apprentice_Screen__WIP(void)
         if(input_field_idx == dogear_left_field)
         {
 
-            if(SBK_OpenPage > 1)
+            if(g_spellbook_left_page > 1)
             {
 
-                SBK_LoadSpellDescs__WIP((SBK_OpenPage - 2));
+                SBK_LoadSpellDescs__WIP((g_spellbook_left_page - 2));
 
                 BigBook_PageTurn(0);
 
-                SBK_OpenPage -= 2;
+                g_spellbook_left_page -= 2;
 
                 for(itr = 0; itr < 8; itr++)
                 {
@@ -3235,7 +3318,7 @@ void Apprentice_Screen__WIP(void)
 
 
 
-    SBK_Candidate_Page = SBK_OpenPage;
+    SBK_Candidate_Page = g_spellbook_left_page;
 
     Deactivate_Help_List();
     Deactivate_Auto_Function();
@@ -3265,7 +3348,7 @@ void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag)
     int16_t itr_spell_book_descriptions_count = 0;
     int16_t itr = 0;  // _SI_
 
-    description_batch = (page - SBK_OpenPage);
+    description_batch = (page - g_spellbook_left_page);
 
     if(description_batch < 0)
     {
@@ -3354,13 +3437,13 @@ void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag)
 
             casting_cost = Casting_Cost(HUMAN_PLAYER_IDX, abs(m_spellbook_pages[page].spell[itr]), ST_FALSE);
 
-            if(SBK_BookManaLimit == 0)
+            if(g_spellbook_cast_mana_limit == 0)
             {
                 turns_left = 999;
             }
             else
             {
-                turns_left = (((casting_cost + SBK_BookManaLimit) - 1) / SBK_BookManaLimit);
+                turns_left = (((casting_cost + g_spellbook_cast_mana_limit) - 1) / g_spellbook_cast_mana_limit);
             }
 
             stu_strcpy(spell_description, cnst_Catsing_Cost);
@@ -3481,9 +3564,9 @@ void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag)
 
     Set_Font_Colors_15(5, &colors[0]);
 
-    if(abs((SBK_OpenPage - page)) != 2)
+    if(abs((g_spellbook_left_page - page)) != 2)
     {
-        if(page != SBK_OpenPage)
+        if(page != g_spellbook_left_page)
         {
             if(
                 spell_data_table[abs(m_spellbook_pages[page].spell[0])].spell_book_category
@@ -3566,7 +3649,7 @@ void Spell_Research_Select(void)
 
     Set_Mouse_List(1, mouse_list_default);
 
-    SBK_Dogears = 0;
+    g_spellbook_mode = 0;
 
     Reset_First_Block(_screen_seg);
 
@@ -3578,9 +3661,9 @@ void Spell_Research_Select(void)
 
     }
 
-    SBK_OpenPage = SBK_Candidate_Page;
+    g_spellbook_left_page = SBK_Candidate_Page;
 
-    SBK_LoadSpellDescs__WIP(SBK_OpenPage);
+    SBK_LoadSpellDescs__WIP(g_spellbook_left_page);
 
     Assign_Auto_Function(BigBook_Draw, 2);
 
@@ -3625,13 +3708,13 @@ void Spell_Research_Select(void)
         {
 
             if(
-                (m_spellbook_pages[(SBK_OpenPage + 0)].count > itr)
+                (m_spellbook_pages[(g_spellbook_left_page + 0)].count > itr)
                 &&
-                (m_spellbook_pages[(SBK_OpenPage + 0)].spell[itr] > 0)
+                (m_spellbook_pages[(g_spellbook_left_page + 0)].spell[itr] > 0)
             )
             {
 
-                if(abs(m_spellbook_pages[(SBK_OpenPage + 0)].spell[itr]) == spl_Spell_Of_Return)
+                if(abs(m_spellbook_pages[(g_spellbook_left_page + 0)].spell[itr]) == spl_Spell_Of_Return)
                 {
 
                     _help_entries[(2 + itr)].help_idx = HLP_SPELL_OF_RETURN;
@@ -3640,7 +3723,7 @@ void Spell_Research_Select(void)
                 else
                 {
 
-                    _help_entries[(2 + itr)].help_idx = abs(m_spellbook_pages[(SBK_OpenPage + 0)].spell[itr]);
+                    _help_entries[(2 + itr)].help_idx = abs(m_spellbook_pages[(g_spellbook_left_page + 0)].spell[itr]);
 
                 }
 
@@ -3658,13 +3741,13 @@ void Spell_Research_Select(void)
         {
 
             if(
-                (m_spellbook_pages[(SBK_OpenPage + 1)].count > itr)
+                (m_spellbook_pages[(g_spellbook_left_page + 1)].count > itr)
                 &&
-                (m_spellbook_pages[(SBK_OpenPage + 1)].spell[itr] > 0)
+                (m_spellbook_pages[(g_spellbook_left_page + 1)].spell[itr] > 0)
             )
             {
 
-                if(abs(m_spellbook_pages[(SBK_OpenPage + 1)].spell[itr]) == spl_Spell_Of_Return)
+                if(abs(m_spellbook_pages[(g_spellbook_left_page + 1)].spell[itr]) == spl_Spell_Of_Return)
                 {
 
                     _help_entries[(6 + itr)].help_idx = HLP_SPELL_OF_RETURN;
@@ -3673,7 +3756,7 @@ void Spell_Research_Select(void)
                 else
                 {
 
-                    _help_entries[(6 + itr)].help_idx = abs(m_spellbook_pages[(SBK_OpenPage + 1)].spell[itr]);
+                    _help_entries[(6 + itr)].help_idx = abs(m_spellbook_pages[(g_spellbook_left_page + 1)].spell[itr]);
 
                 }
 

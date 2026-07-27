@@ -753,8 +753,8 @@ void Next_Turn_Calc(void)
         // Players_Check_Spell_Research();
 /* CLAUDE */ PHASE(Players_Check_Spell_Research());
 
-        // OVL_DisableIncmBlink();
-/* CLAUDE */ PHASE(OVL_DisableIncmBlink());
+        // Main_Screen_Disable_Income_Warning();
+/* CLAUDE */ PHASE(Main_Screen_Disable_Income_Warning());
 
         if(
             (DBG_Alt_A_State == ST_FALSE)
@@ -917,8 +917,8 @@ void Next_Turn_Calc(void)
     }
 
 
-    // OVL_EnableIncmBlink();
-/* CLAUDE */ PHASE(OVL_EnableIncmBlink());
+    // Main_Screen_Enable_Income_Warning();
+/* CLAUDE */ PHASE(Main_Screen_Enable_Income_Warning());
 
 
     // Do_Autosave();

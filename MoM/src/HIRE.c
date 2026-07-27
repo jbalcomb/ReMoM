@@ -242,7 +242,7 @@ void Merchant_Popup(void)
     int16_t input_field_idx;  // _DI_
     int16_t leave_screen;  // _SI_
 
-    OVL_DisableIncmBlink();
+    Main_Screen_Disable_Income_Warning();
 
     Set_Button_Down_Offsets(1, 1);
 
@@ -467,7 +467,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     GAME_HeroHireType = hire_type;  // ; 0: random, 1: summon, 2: prisoner, 3: champion
 
-    OVL_DisableIncmBlink();
+    Main_Screen_Disable_Income_Warning();
 
     Allocate_Reduced_Map();
 
@@ -711,7 +711,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     Full_Draw_Main_Screen();
 
-    OVL_EnableIncmBlink();
+    Main_Screen_Enable_Income_Warning();
 
     Deactivate_Help_List();
 
@@ -788,7 +788,7 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
     window_x = 25;
     window_y = 17;
 
-    OVL_DisableIncmBlink();
+    Main_Screen_Disable_Income_Warning();
 
     Allocate_Reduced_Map();
 
@@ -896,7 +896,7 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
     Deactivate_Auto_Function();
     Release_Block(_screen_seg);
     // TODO  Near_Allocate_Undo(_screen_seg);
-    OVL_EnableIncmBlink();
+    Main_Screen_Enable_Income_Warning();
     Deactivate_Help_List();
 
     return return_value;
