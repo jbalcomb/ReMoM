@@ -19,6 +19,8 @@
 
 #include "Platform_Input_Metrics.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -84,7 +86,7 @@ int Input_Metrics_Init(const char * out_path, const char * backend, const char *
         return 0;  /* already recording */
     }
 
-    m_file = fopen((out_path != NULL) ? out_path : "remom_input_metrics.fwv", "w");
+    m_file = stu_fopen((out_path != NULL) ? out_path : "remom_input_metrics.fwv", "w");
     if(m_file == NULL)
     {
         return -1;  /* stay inactive if the path is not writable */
@@ -235,7 +237,7 @@ void Input_Metrics_Shutdown(void)
             fprintf(m_file, "#end rows=%llu\n", (unsigned long long)m_idx);
         }
         fflush(m_file);
-        fclose(m_file);
+        stu_fclose(m_file);
         m_file = NULL;
     }
 }
