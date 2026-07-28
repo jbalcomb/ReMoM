@@ -507,11 +507,17 @@ endif()
 
 set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "ReMoM-${REMOM_VERSION}-Source")
+# These are ERE regexes that CPack writes into CPackConfig.cmake and then re-parses,
+# so any backslash escape is consumed twice: "\\.LBX" -> "\.LBX" (stored) -> ".LBX"
+# (re-parsed) -- the escape is gone, and the leftover "\." trips CMP0010 ("Invalid
+# escape sequence").  Use "[.]" (a character class, no backslash) for a literal dot
+# so it survives both parses intact.  "$" needs no escape -- "\$" would collapse to a
+# literal dollar and anchor nothing.
 set(CPACK_SOURCE_IGNORE_FILES
     "/assets/"
-    "/\\.LBX/"
-    "\\.LBX\\$"
-    "/\\.git/"
+    "/[.]LBX/"
+    "[.]LBX$"
+    "/[.]git/"
     "/build/"
     "/out/"
 )
