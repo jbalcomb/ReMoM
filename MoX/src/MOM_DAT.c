@@ -1609,7 +1609,7 @@ int16_t reset_active_stack;
 
 // WZD dseg:9448 00 00                                           SBK_Candidate_Page dw 0                 ; DATA XREF: G_WLD_StaticAssetRfrsh+67w ...
 // WZD dseg:944A 00 00                                           g_spellbook_last_left_page dw 0                ; DATA XREF: G_WLD_StaticAssetRfrsh+5Bw ...
-// WZD dseg:944C 00 00                                           CMB_SpellBookPage dw 0                  ; DATA XREF: G_WLD_StaticAssetRfrsh+61w ...
+// WZD dseg:944C 00 00                                           g_combat_spellbook_left_page dw 0                  ; DATA XREF: G_WLD_StaticAssetRfrsh+61w ...
 // WZD dseg:944E 00 00                                           dw 0
 // WZD dseg:9450 00 00                                           dw 0
 // WZD dseg:9452 00 00                                           _spellbook_small_text dw 0              ; DATA XREF: Spellbook_Load_Small_Pictures+85w ...
@@ -3598,10 +3598,10 @@ SAMB_ptr xtramana_ok_button_seg;
 // WZD dseg:CA34
 /*
 
-CmbBook_Draw__WIP() vs. SmlBook_Draw()
+Combat_Spellbook_Draw() vs. SmlBook_Draw()
     // SmlBook_Compose(m_spellbook_pages[g_spellbook_left_page], spellbook_bitmap);
     // spellbook_bitmap  allocated in SmlBook_Draw(), passed to SmlBook_Compose()
-    CmbBook_Compose__WIP(m_spellbook_pages[g_spellbook_left_page], spl_anim_compose_seg, caster_idx);
+    Combat_Spellbook_Compose(m_spellbook_pages[g_spellbook_left_page], spl_anim_compose_seg, caster_idx);
 
 */
 SAMB_ptr spl_anim_compose_seg;

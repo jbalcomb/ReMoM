@@ -358,7 +358,7 @@ int16_t Combat_Screen_TST_004(int16_t combat_attacker_player_idx, int16_t combat
     _combat_attacker_player = combat_attacker_player_idx;
     _combat_defender_player = combat_defender_player_idx;
 
-    // CMB_Terrain_Init__WIP() |-> CMB_ComposeBackgrnd__WIP()
+    // CMB_Terrain_Init__WIP() |-> Combat_Compose_Background()
     /*
         BEGIN:  Combat Screen Compose Background
     */

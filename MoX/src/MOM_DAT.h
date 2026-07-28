@@ -1093,10 +1093,10 @@ struct s_SPELL_DATA
 // sizeof:  0Ch  12d
 struct s_HERO
 {
-    /* 00 */  int16_t  Level;          // ¿ experience (level) ?  Pick_Random_Hero() uses `>= 0` to mean 'player has hero'; negative means dead, -20 means dead forever/disappeared
-    /* 02 */  uint32_t abilities;      // HSA_
-    /* 06 */  int8_t   Casting_Skill;  //
-    /* 07 */  uint8_t  Spells[4];      //
+    /* 00 */  int16_t  Level;           // ¿ experience (level) ?  Pick_Random_Hero() uses `>= 0` to mean 'player has hero'; negative means dead, -20 means dead forever/disappeared
+    /* 02 */  uint32_t abilities;       // HSA_
+    /* 06 */  int8_t   Casting_Skill;   //
+    /* 07 */  int8_t  Spells[4];        /* 1-byte, signed; */
     /* 0B */  /* uint8_t  Unused_0Bh; */     /* ¿ padding byte to align-2 or Spells was [5] ? */
     /* 0C */
 };
@@ -3382,7 +3382,7 @@ extern int16_t reset_active_stack;
 
 // WZD dseg:9448 00 00                                           SBK_Candidate_Page dw 0                 ; DATA XREF: G_WLD_StaticAssetRfrsh+67w ...
 // WZD dseg:944A 00 00                                           g_spellbook_last_left_page dw 0                ; DATA XREF: G_WLD_StaticAssetRfrsh+5Bw ...
-// WZD dseg:944C 00 00                                           CMB_SpellBookPage dw 0                  ; DATA XREF: G_WLD_StaticAssetRfrsh+61w ...
+// WZD dseg:944C 00 00                                           g_combat_spellbook_left_page dw 0                  ; DATA XREF: G_WLD_StaticAssetRfrsh+61w ...
 // WZD dseg:944E 00 00                                           dw 0
 // WZD dseg:9450 00 00                                           dw 0
 // WZD dseg:9452 00 00                                           _spellbook_small_text dw 0              ; DATA XREF: Spellbook_Load_Small_Pictures+85w ...

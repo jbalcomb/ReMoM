@@ -1,7 +1,7 @@
 SBookScr-Spellbook_Screen.md
 
-SmlBook_PageTurn__WIP()  ==>  SmlBook_PageTurn()
-SmlBook_Compose__WIP()  ==>  SmlBook_Compose()
+SmlBook_PageTurn__WIP()     ==>  SmlBook_PageTurn()
+SmlBook_Compose__WIP()      ==>  SmlBook_Compose()
 
 SBK_Dogears  ==>  g_spellbook_mode
 SBK_OpenPage  ==>  g_spellbook_left_page

@@ -380,7 +380,7 @@ void Settings_Screen(void)
             // Spell Book Ordering
             if(input_field_idx == Option_Control_Indices[14])
             {
-                CMB_SpellBookPage = 0;
+                g_combat_spellbook_left_page = 0;
                 g_spellbook_last_left_page = 0;
                 SBK_Candidate_Page = 0;
             }

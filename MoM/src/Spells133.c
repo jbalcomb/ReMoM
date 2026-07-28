@@ -1963,7 +1963,7 @@ do {  \
 
         }
 
-        CMB_ComposeBackgrnd__WIP();
+        Combat_Compose_Background();
         Set_Page_Off();
         Combat_Screen_Draw();
         PageFlip_FX();
@@ -2077,7 +2077,7 @@ do {  \
 
         Restore_ScreenSeg();
 
-        CMB_ComposeBackgrnd__WIP();
+        Combat_Compose_Background();
 
     }
 

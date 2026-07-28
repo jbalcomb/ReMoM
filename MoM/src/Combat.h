@@ -11,8 +11,9 @@
         ovr105
         ovr110
         ovr111
-        ovr112
+        ovr112  ¿ CMBMAGIC ?
         ovr116
+        ovr117  ¿ CMBMAGIC ?
         ovr122
         ovr123
         ovr124
@@ -1705,7 +1706,7 @@ int16_t AITP_HolyWord(int16_t player_idx);
 */
 
 // WZD o112p01
-void CMB_ComposeBookBG__WIP(void);
+void Combat_Compose_Spellbook_Background(void);
 
 // WZD o112p02
 void Combat_Spellbook_Screen_Draw(void);
@@ -1754,7 +1755,7 @@ void Combat_Screen_Assign_Mouse_Images(void);
 void Combat_Spell_Target_Screen_Draw(void);
 
 // WZD o113p03
-int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx, int16_t * target_cgy);
+int16_t Combat_Spell_Target_Screen(int16_t spell_idx, int16_t * target_cgx, int16_t * target_cgy);
 
 // WZD o113p04
 void Ranged_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t Target_Damage_Sum, int16_t cgx, int16_t cgy);
@@ -2176,7 +2177,7 @@ void Combat_Cache_Write(void);
 void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp);
 
 // WZD ovr163p02
-void CMB_ComposeBackgrnd__WIP(void);
+void Combat_Compose_Background(void);
 
 // WZD ovr163p03
 void Wall_Rise_Load(int16_t wall_type);

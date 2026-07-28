@@ -657,8 +657,8 @@ void Combat_Spellbook_Mana_Adder_Draw(void)
 
     Copy_Back_To_Off();
 
-    // CmbBook_Draw__WIP(16, 10, (int16_t)GAME_MP_SpellVar_2);
-    CmbBook_Draw__WIP(16, 10, _mana_adder_caster_idx);
+    // Combat_Spellbook_Draw(16, 10, (int16_t)GAME_MP_SpellVar_2);
+    Combat_Spellbook_Draw(16, 10, _mana_adder_caster_idx);
 
     FLIC_Draw((x_start - 4), (y_start + 1), IMG_SBK_SliderBG);
 
@@ -743,7 +743,7 @@ void Combat_Spellbook_Mana_Adder_Draw(void)
 HERE:
     From Combat_Spellbook_Screen()
         spellbook_field_idx the passed in Selected_Spell@, the index on page of selected spell
-        CMB_SpellBookPage is the associated page number
+        g_combat_spellbook_left_page is the associated page number
 
 XREF:
 
@@ -883,7 +883,7 @@ int16_t Combat_Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_
 
     Release_Block(_screen_seg);
 
-    CMB_ComposeBackgrnd__WIP();
+    Combat_Compose_Background();
 
     return GAME_MP_SpellVar_1;
 

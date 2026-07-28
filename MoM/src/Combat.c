@@ -10,9 +10,10 @@
         ovr103
         ovr105
         ovr110
-        ovr112  Combat Spellbook ~ CMBTSPBK?
+        ovr112  Combat Spellbook ~ CMBTSPBK?  ¿ CMBMAGIC ?
         ovr114  ¿ MoO2  Module: CMBTAI ?
         ovr116
+        ovr117  ¿ CMBMAGIC ?
         ovr122
         ovr123
         ovr124
@@ -65,7 +66,7 @@
 #include "NEXTTURN.h"
 #include "RACETYPE.h"
 #include "SBookScr.h"
-#include "Spellbook.h"  /* spl_Doom_Bolt;  Combat_Spellbook_Build__WIP() */
+#include "Spellbook.h"  /* spl_Doom_Bolt;  Combat_Spellbook_Build() */
 #include "SPELLDEF.h"
 #include "Spells131.h"
 #include "Spells133.h"
@@ -2185,7 +2186,7 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
 
                         Update_Combat_Enchantments_Icon_And_Help();
 
-                        CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
+                        Combat_Compose_Background();  // ... |-> Copy_Off_To_Back();
 
                         Deactivate_Help_List();
 
@@ -2239,7 +2240,7 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
 
                             Update_Combat_Enchantments_Icon_And_Help();
 
-                            CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
+                            Combat_Compose_Background();  // ... |-> Copy_Off_To_Back();
 
                             Deactivate_Help_List();
 
@@ -2339,7 +2340,7 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
 
                 Update_Combat_Enchantments_Icon_And_Help();  // ¿ because you may just cast a 'Combat Enchantment'
 
-                CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
+                Combat_Compose_Background();  // ... |-> Copy_Off_To_Back();
 
                 Deactivate_Help_List();
 
@@ -2415,7 +2416,7 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
 
                 Update_Combat_Enchantments_Icon_And_Help();
 
-                CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
+                Combat_Compose_Background();  // ... |-> Copy_Off_To_Back();
 
                 Deactivate_Help_List();
 
@@ -2515,7 +2516,7 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
 
             Assign_Auto_Function(Combat_Screen_Draw, 1);
 
-            CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
+            Combat_Compose_Background();  // ... |-> Copy_Off_To_Back();
 
             Update_Combat_Enchantments_Icon_And_Help();
 
@@ -9098,7 +9099,7 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
         Combat_Cast_Spell_Error(2);  // "You are unable to throw spells at this time."
     }
 
-    CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
+    Combat_Compose_Background();  // ... |-> Copy_Off_To_Back();
 
 }
 
@@ -12381,8 +12382,8 @@ int16_t AITP_DispelMagic(int16_t player_idx)
 /*
 
 Combat_Cast_Spell()
-    Target = Combat_Spell_Target_Screen__WIP(spell_idx, &Target_X, &Target_Y);
-    Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
+    Target = Combat_Spell_Target_Screen(spell_idx, &target_cgx, &target_cgy);
+    Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, target_cgx, target_cgy, available_mana_pool, ST_TRUE, ST_NULL, ST_NULL);
 
 
 IDA Group Colors
@@ -13099,18 +13100,9 @@ int16_t AITP_HolyWord(int16_t player_idx)
 */
 
 // WZD o112p01
-// drake178: CMB_ComposeBookBG()
-/*
-; draws the current combat screen with the spellbook
-; open over it, and saves this into the third VGA frame
-; ($A800) to serve as a background image
-*/
-/*
-
-*/
-void CMB_ComposeBookBG__WIP(void)
+void Combat_Compose_Spellbook_Background(void)
 {
-    CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
+    Combat_Compose_Background();  // ... |-> Copy_Off_To_Back();
     Set_Page_Off();
     Combat_Screen_Draw();
     FLIC_Draw(16, 10, _spellbook_small_seg);
@@ -13119,24 +13111,18 @@ void CMB_ComposeBookBG__WIP(void)
 
 
 // WZD o112p02
-// drake178: CMB_RedrawSpellbook()
 /*
-; loads the third VGA frame into the current draw
-; frame, then uses CMB_DrawSpellbook to redraw and
-; fill out the actual book
-*/
-/*
-
 ~== Spellbook_Screen_Draw()
     |-> SmlBook_Draw(16, 10);
 */
 void Combat_Spellbook_Screen_Draw(void)
 {
     Copy_Back_To_Off();
-    CmbBook_Draw__WIP(16, 10, _combat_caster_idx);
+    Combat_Spellbook_Draw(16, 10, _combat_caster_idx);
 }
 
 
+// WZD o112p03
 /**
  * @brief Resolves a combat spell cast for a human player, AI player, or battle unit ability.
  *
@@ -13175,27 +13161,30 @@ void Combat_Spellbook_Screen_Draw(void)
  * @note The function preserves several legacy quirks documented inline, including
  * known cost, counter, and targeting inconsistencies.
  */
-// WZD o112p03
 int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t battle_unit_mana = 0;
-    int16_t Spell_Like_Ability = 0;  /* set to 1 if the human player uses a Spell Ability */
+    int16_t is_spell_like_ability = 0;  /* set to 1 if the human player uses a Spell Ability */
     int16_t cast_status = 0;
-    int16_t Opponent_Index = 0;
-    int16_t Base_Cost = 0;
-    int16_t Extra_Mana = 0;
+    int16_t counter_player_idx = 0;
+    int16_t base_mana_cost = 0;
+    int16_t extra_mana_cost = 0;
     int16_t player_idx = 0;
-    int16_t Target_Y = 0;
-    int16_t Target_X = 0;
+    int16_t target_cgy = 0;
+    int16_t counter_magic_idx__target_cgx = 0;  // AKA counter_magic_idx, target_cgx, counter_realm, cost_multiplier
+    int16_t counter_realm = 0;
+    int16_t cost_multiplier = 0;
     int16_t Target = 0;
-    int16_t Selected_Spell = 0;
-    int16_t Effective_Cost = 0;
-    int16_t Overland_Cast_Save = 0;
-    int16_t Can_Cast = 0;
+    int16_t selected_page_slot = 0;
+    int16_t effective_cost = 0;
+    int16_t overland_spell_idx_saved = 0;
+    int16_t has_castable_spell = 0;  // AKA saved_casting_cost_remaining
+    int16_t saved_casting_cost_remaining = 0;
     int16_t spell_idx = 0;
-    int16_t IDK_mana = 0;
+    int16_t available_mana_pool = 0;  // AKA total_mana_cost
+    int16_t total_mana_cost = 0;
     cast_status = ST_TRUE;
-    Spell_Like_Ability = ST_FALSE;
+    is_spell_like_ability = ST_FALSE;
     _combat_caster_idx = caster_idx;
     if(caster_idx >= CASTER_IDX_BASE)
     {
@@ -13217,7 +13206,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
     )
     {
         spell_idx = spl_NONE;
-        Spell_Like_Ability = ST_FALSE;
+        is_spell_like_ability = ST_FALSE;
         /*
             BEGIN:  Caster is Battle Unit
         */
@@ -13226,22 +13215,22 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
             if((battle_units[caster_idx].Attribs_2 & USA_DOOMBOLT) != 0)
             {
                 spell_idx = spl_Doom_Bolt;
-                Spell_Like_Ability = ST_TRUE;
+                is_spell_like_ability = ST_TRUE;
             }
             if((battle_units[caster_idx].Attribs_2 & USA_FIREBALL) != 0)
             {
                 spell_idx = spl_Fireball;
-                Spell_Like_Ability = ST_TRUE;
+                is_spell_like_ability = ST_TRUE;
             }
             if((battle_units[caster_idx].Attribs_2 & USA_WEB) != 0)
             {
                 spell_idx = spl_Web;
-                Spell_Like_Ability = ST_TRUE;
+                is_spell_like_ability = ST_TRUE;
             }
             if((battle_units[caster_idx].Attribs_2 & USA_HEALING) != 0)
             {
                 spell_idx = spl_Healing;
-                Spell_Like_Ability = ST_TRUE;
+                is_spell_like_ability = ST_TRUE;
             }
             if((battle_units[caster_idx].Attribs_2 & (USA_SUMMON_DEMON_1 | USA_SUMMON_DEMON_2)) != 0)
             {
@@ -13265,17 +13254,17 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
         // spell_idx could be Doom Bolt, Fireball, Web, or Healing
         if(spell_idx == spl_NONE)
         {
-            Can_Cast = Combat_Spellbook_Build__WIP(caster_idx);
-            if(Can_Cast == ST_FALSE)
+            has_castable_spell = Combat_Spellbook_Build(caster_idx);
+            if(has_castable_spell == ST_FALSE)
             {
                 return ST_FALSE;
             }
             do {
-                CMB_ComposeBookBG__WIP();  // ... |-> Copy_Off_To_Back();
-                // Selected_Spell@  index on page of selected spell
+                Combat_Compose_Spellbook_Background();  // ... |-> Copy_Off_To_Back();
+                // selected_page_slot@  index on page of selected spell
                 // ...gets passed to Combat_Spellbook_Mana_Adder_Screen()
-                // CMB_SpellBookPage is the associated page number
-                spell_idx = Combat_Spellbook_Screen(caster_idx, &Selected_Spell);
+                // g_combat_spellbook_left_page is the associated page number
+                spell_idx = Combat_Spellbook_Screen(caster_idx, &selected_page_slot);
                 // prep for going right back to the combat screen
                 if(
                     (spell_idx <= 0)
@@ -13284,7 +13273,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 )
                 {
                     _page_flip_effect = pfe_Dissolve;
-                    CMB_ComposeBookBG__WIP();  // ... |-> Copy_Off_To_Back();
+                    Combat_Compose_Spellbook_Background();  // ... |-> Copy_Off_To_Back();
                     // where's the rest of the screen update?
                 }
             } while(Do_Legal_Spell_Check__WIP(spell_idx) != ST_FALSE);
@@ -13293,10 +13282,10 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
             if(
                 (spell_data_table[spell_idx].type < scc_Infusable_Spell)
                 ||
-                (Spell_Like_Ability == ST_TRUE)  // ; conflicting condition - will always jump
+                (is_spell_like_ability == ST_TRUE)  // ; conflicting condition - will always jump
             )
             {
-                CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
+                Combat_Compose_Background();  // ... |-> Copy_Off_To_Back();
                 Set_Page_Off();
                 Combat_Screen_Draw();
                 PageFlip_FX();
@@ -13335,27 +13324,27 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
     if(spell_idx != spl_NONE)
     {
         /*
-            BEGIN:  ¿ Effective_Cost ?
+            BEGIN:  ¿ effective_cost ?
         */
         if(
             (spell_data_table[spell_idx].type < scc_Infusable_Spell)
             ||
-            (Spell_Like_Ability != ST_FALSE)
+            (is_spell_like_ability != ST_FALSE)
         )
         {
             if(caster_idx > CASTER_IDX_BASE)
             {
                 // ; BUG: causes counters to use the effective cost
-                IDK_mana = Casting_Cost(player_idx, spell_idx, 1);
+                available_mana_pool = Casting_Cost(player_idx, spell_idx, 1);
             }
             else
             {
-                // ; BUG: ignores Evil Omens
-                IDK_mana = spell_data_table[spell_idx].casting_cost;
+                /* OGBUG  ignores Evil Omens */
+                available_mana_pool = spell_data_table[spell_idx].casting_cost;
             }
-            Effective_Cost = IDK_mana;
+            effective_cost = available_mana_pool;
         }
-        else  /* (spell_data_table[spell_idx].type >= scc_Infusable_Spell) && (Spell_Like_Ability == ST_FALSE) */
+        else  /* (spell_data_table[spell_idx].type >= scc_Infusable_Spell) && (is_spell_like_ability == ST_FALSE) */
         {
             if(
                 (player_idx == HUMAN_PLAYER_IDX)
@@ -13363,8 +13352,8 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 (_auto_combat_flag == ST_FALSE)
             )
             {
-                Can_Cast = _players[HUMAN_PLAYER_IDX].casting_cost_remaining;
-                Overland_Cast_Save = _players[HUMAN_PLAYER_IDX].casting_spell_idx;
+                saved_casting_cost_remaining = _players[HUMAN_PLAYER_IDX].casting_cost_remaining;
+                overland_spell_idx_saved = _players[HUMAN_PLAYER_IDX].casting_spell_idx;
                 _players[HUMAN_PLAYER_IDX].casting_spell_idx = spell_idx;
                 if(caster_idx >= CASTER_IDX_BASE)
                 {
@@ -13372,21 +13361,21 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 }
                 else
                 {
-                    // ; BUG: ignores Evil Omens
+                    /* OGBUG  ignores Evil Omens */
                     _players[HUMAN_PLAYER_IDX].casting_cost_remaining = spell_data_table[spell_idx].casting_cost;
                 }
-                IDK_mana = Combat_Spellbook_Mana_Adder_Screen(spell_idx, Selected_Spell, caster_idx);
+                available_mana_pool = Combat_Spellbook_Mana_Adder_Screen(spell_idx, selected_page_slot, caster_idx);
                 if(caster_idx >= CASTER_IDX_BASE)
                 {
-                    Effective_Cost = (IDK_mana - ((IDK_mana * Casting_Cost_Reduction(player_idx, spell_idx)) / 100));
+                    effective_cost = (available_mana_pool - ((available_mana_pool * Casting_Cost_Reduction(player_idx, spell_idx)) / 100));
                 }
                 else
                 {
-                    Effective_Cost = IDK_mana;
+                    effective_cost = available_mana_pool;
                 }
-                _players[HUMAN_PLAYER_IDX].casting_cost_remaining = Can_Cast;
-                _players[HUMAN_PLAYER_IDX].casting_spell_idx = Overland_Cast_Save;
-                CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
+                _players[HUMAN_PLAYER_IDX].casting_cost_remaining = saved_casting_cost_remaining;
+                _players[HUMAN_PLAYER_IDX].casting_spell_idx = overland_spell_idx_saved;
+                Combat_Compose_Background();  // ... |-> Copy_Off_To_Back();
                 Set_Page_Off();
                 Combat_Screen_Draw();
                 PageFlip_FX();
@@ -13396,33 +13385,32 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 if(caster_idx >= CASTER_IDX_BASE)
                 {
                     //  ; BUG: ignores the base casting cost
-                    IDK_mana = _players[player_idx].Cmbt_Skill_Left;
+                    available_mana_pool = _players[player_idx].Cmbt_Skill_Left;
                     // ; BUG: ignores casting cost modifiers
-                    if(spell_data_table[spell_idx].casting_cost < IDK_mana)
+                    if(spell_data_table[spell_idx].casting_cost < available_mana_pool)
                     {
-                        IDK_mana = spell_data_table[spell_idx].casting_cost;
+                        available_mana_pool = spell_data_table[spell_idx].casting_cost;
                     }
-                    Extra_Mana = Combat_Casting_Cost_Multiplier(player_idx);
+                    extra_mana_cost = Combat_Casting_Cost_Multiplier(player_idx);
                     // ; BUG: ignores casting cost modifiers
-                    if(((_players[player_idx].mana_reserve * 10) / Extra_Mana) < spell_data_table[spell_idx].casting_cost)
+                    if(((_players[player_idx].mana_reserve * 10) / extra_mana_cost) < spell_data_table[spell_idx].casting_cost)
                     {
                         // ; BUG: ignores casting cost modifiers
-                        IDK_mana = (((_players[player_idx].mana_reserve * 10) / Extra_Mana) - spell_data_table[spell_idx].casting_cost);
+                        available_mana_pool = (((_players[player_idx].mana_reserve * 10) / extra_mana_cost) - spell_data_table[spell_idx].casting_cost);
                     }
                 }
                 else
                 {
-                    // ; BUG: ignores Evil Omens
-                    // ; BUG: infusable item charges will be automatically
-                    // ; countered if the user has no mana
-                    IDK_mana = (battle_unit_mana - spell_data_table[spell_idx].casting_cost);
-                    if(spell_data_table[spell_idx].casting_cost < IDK_mana)
+                    /* OGBUG  ignores Evil Omens */
+                    /* OGBUG  infusable item charges will be automatically countered if the user has no mana */
+                    available_mana_pool = (battle_unit_mana - spell_data_table[spell_idx].casting_cost);
+                    if(spell_data_table[spell_idx].casting_cost < available_mana_pool)
                     {
-                        IDK_mana = spell_data_table[spell_idx].casting_cost;
+                        available_mana_pool = spell_data_table[spell_idx].casting_cost;
                     }
                 }
-                Base_Cost = spell_data_table[spell_idx].casting_cost;
-                Extra_Mana = 0;
+                base_mana_cost = spell_data_table[spell_idx].casting_cost;
+                extra_mana_cost = 0;
                 // ; BUG: Banish has an effective gain of 1/15 mana, not 5
                 if(
                     (spell_idx == spl_Life_Drain)
@@ -13430,30 +13418,30 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                     (spell_idx == spl_Banish)
                 )
                 {
-                    Extra_Mana = ((Random(((IDK_mana / 5) + 1)) - 1) * 5);
+                    extra_mana_cost = ((Random(((available_mana_pool / 5) + 1)) - 1) * 5);
                 }
                 else if(spell_idx == spl_Counter_Magic)
                 {
-                    Extra_Mana = ((Random(((IDK_mana / 5) + 1)) - 1) * 5);
+                    extra_mana_cost = ((Random(((available_mana_pool / 5) + 1)) - 1) * 5);
                 }
                 else
                 {
-                    Extra_Mana = IDK_mana;
+                    extra_mana_cost = available_mana_pool;
                 }
-                IDK_mana = (Base_Cost + Extra_Mana);
+                total_mana_cost = (base_mana_cost + extra_mana_cost);
                 if(caster_idx > CASTER_IDX_BASE)
                 {
-                    // ; BUG: ignores Evil Omens (Ice Bolt...)
-                    Effective_Cost = (IDK_mana - ((IDK_mana * Casting_Cost_Reduction(player_idx, spell_idx)) / 100));
+                    /* OGBUG  ignores Evil Omens */
+                    effective_cost = (total_mana_cost - ((total_mana_cost * Casting_Cost_Reduction(player_idx, spell_idx)) / 100));
                 }
                 else
                 {
-                    Effective_Cost = IDK_mana;
+                    effective_cost = total_mana_cost;
                 }
             }  /* (player_idx != HUMAN_PLAYER_IDX) || (_auto_combat_flag != ST_FALSE) */
         }
         /*
-            END:  ¿ Effective_Cost ?
+            END:  ¿ effective_cost ?
         */
         /*
             BEGIN:  ¿ Counter Magic ?
@@ -13461,42 +13449,42 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
         if(
             (spell_idx != spl_Web)
             ||
-            (Spell_Like_Ability != ST_TRUE)
+            (is_spell_like_ability != ST_TRUE)
         )
         {
             if(player_idx == _combat_attacker_player)
             {
-                // Target_X = combat_enchantments[COUNTER_MAGIC_ATTKR];
-                Target_X = COUNTER_MAGIC_ATTKR;
-                Opponent_Index = _combat_defender_player;
+                // counter_magic_idx__target_cgx = combat_enchantments[COUNTER_MAGIC_ATTKR];
+                counter_magic_idx__target_cgx = COUNTER_MAGIC_ATTKR;
+                counter_player_idx = _combat_defender_player;
             }
             else
             {
-                // Target_X = combat_enchantments[COUNTER_MAGIC_DFNDR];
-                Target_X = COUNTER_MAGIC_DFNDR;
-                Opponent_Index = _combat_attacker_player;
+                // counter_magic_idx__target_cgx = combat_enchantments[COUNTER_MAGIC_DFNDR];
+                counter_magic_idx__target_cgx = COUNTER_MAGIC_DFNDR;
+                counter_player_idx = _combat_attacker_player;
             }
-            if(combat_enchantments[Target_X] > 0)
+            if(combat_enchantments[counter_magic_idx__target_cgx] > 0)
             {
-                if(Combat_Spell_Dispel_Attempt(combat_enchantments[Target_X], IDK_mana, player_idx, spell_data_table[spell_idx].magic_realm) != ST_FALSE)
+                if(Combat_Spell_Dispel_Attempt(combat_enchantments[counter_magic_idx__target_cgx], available_mana_pool, player_idx, spell_data_table[spell_idx].magic_realm) != ST_FALSE)
                 {
                     Set_Page_Off();
                     Combat_Screen_Draw();
                     PageFlip_FX();
                     Copy_On_To_Off_Page();
-                    Combat_Spell_Counter_Message(caster_idx, Opponent_Index, spell_idx, cnst_Counter_Magic);  // "Counter Magic"
+                    Combat_Spell_Counter_Message(caster_idx, counter_player_idx, spell_idx, cnst_Counter_Magic);  // "Counter Magic"
                     if(caster_idx >= CASTER_IDX_BASE)
                     {
                         // ; BUG: this variable is still in use and needed below!
                         // This code is the same as the 'pay the cost' for when it actually gets cast, below?
                         // This bug could be because it was a macro?
-                        Target_X = Combat_Casting_Cost_Multiplier((caster_idx - CASTER_IDX_BASE));
-                        _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= Effective_Cost;
-                        _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= (Target_X / 10);
+                        counter_magic_idx__target_cgx = Combat_Casting_Cost_Multiplier((caster_idx - CASTER_IDX_BASE));
+                        _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= effective_cost;
+                        _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= (counter_magic_idx__target_cgx / 10);
                     }
                     else
                     {
-                        if(Spell_Like_Ability != ST_TRUE)
+                        if(is_spell_like_ability != ST_TRUE)
                         {
                             // ; BUG: this may not be the hero's original owner
                             if(
@@ -13509,7 +13497,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                             }
                             else
                             {
-                                Effective_Cost -= battle_unit_mana;
+                                effective_cost -= battle_unit_mana;
                             }
                             if(battle_unit_mana < 0)
                             {
@@ -13540,28 +13528,28 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                     cast_status = 2;
                     spell_idx = ST_UNDEFINED;
                 }
-                combat_enchantments[Target_X] -= 5;
-                if(combat_enchantments[Target_X] < 0)
+                combat_enchantments[counter_magic_idx__target_cgx] -= 5;
+                if(combat_enchantments[counter_magic_idx__target_cgx] < 0)
                 {
-                    combat_enchantments[Target_X] = 0;
+                    combat_enchantments[counter_magic_idx__target_cgx] = 0;
                     Update_Combat_Enchantments_Icon_And_Help();
                 }
-            }  /* if(combat_enchantments[Target_X] > 0) */
+            }  /* if(combat_enchantments[counter_magic_idx__target_cgx] > 0) */
             if(battlefield->Central_Structure == CS_SorceryNode)
             {
-                Target_X = sbr_Sorcery;
+                counter_realm = sbr_Sorcery;
             }
             else if(battlefield->Central_Structure == CS_ChaosNode)
             {
-                Target_X = sbr_Chaos;
+                counter_realm = sbr_Chaos;
             }
             else if(battlefield->Central_Structure == CS_NatureNode)
             {
-                Target_X = sbr_Nature;
+                counter_realm = sbr_Nature;
             }
             else
             {
-                Target_X = ST_UNDEFINED;
+                counter_realm = ST_UNDEFINED;
             }
             if(
                 (player_idx < _num_players)
@@ -13569,16 +13557,16 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 (_players[player_idx].node_mastery > 0)
             )
             {
-                Target_X = ST_UNDEFINED;
+                counter_realm = ST_UNDEFINED;
             }
             if(
-                (Target_X > ST_UNDEFINED)
+                (counter_realm > ST_UNDEFINED)
                 &&
                 (spell_idx > ST_UNDEFINED)
                 &&
-                (spell_data_table[spell_idx].magic_realm != Target_X)
+                (spell_data_table[spell_idx].magic_realm != counter_realm)
                 &&
-                (Combat_Spell_Dispel_Attempt(50, IDK_mana, player_idx, spell_data_table[spell_idx].magic_realm) != ST_FALSE)
+                (Combat_Spell_Dispel_Attempt(50, available_mana_pool, player_idx, spell_data_table[spell_idx].magic_realm) != ST_FALSE)
             )            
             {
                 Set_Page_Off();
@@ -13588,13 +13576,13 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 Combat_Spell_Counter_Message(caster_idx, 5, spell_idx, str_empty_string__ovr112);
                 if(caster_idx >= CASTER_IDX_BASE)
                 {
-                    Target_X = Combat_Casting_Cost_Multiplier((caster_idx - CASTER_IDX_BASE));
-                    _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= Effective_Cost;
-                    _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= (Target_X / 10);
+                    cost_multiplier = Combat_Casting_Cost_Multiplier((caster_idx - CASTER_IDX_BASE));
+                    _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= effective_cost;
+                    _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= (cost_multiplier / 10);
                 }
                 else
                 {
-                    if(Spell_Like_Ability != ST_TRUE)
+                    if(is_spell_like_ability != ST_TRUE)
                     {
                         // ; BUG: this may not be the hero's original owner
                         if(
@@ -13607,7 +13595,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                         }
                         else
                         {
-                            Effective_Cost -= battle_unit_mana;
+                            effective_cost -= battle_unit_mana;
                         }
                         if(battle_unit_mana < 0)
                         {
@@ -13664,8 +13652,8 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
         )
         {
             Target = 99;
-            Target_X = 0;
-            Target_Y = 0;
+            counter_magic_idx__target_cgx = 0;
+            target_cgy = 0;
         }
         else
         {
@@ -13675,15 +13663,15 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 (_auto_combat_flag == ST_FALSE)
             )
             {
-                Target = Combat_Spell_Target_Screen__WIP(spell_idx, &Target_X, &Target_Y);
+                Target = Combat_Spell_Target_Screen(spell_idx, &counter_magic_idx__target_cgx, &target_cgy);
             }
             else
             {
-                Target = AITP_Combat_Spell(spell_idx, player_idx, &Target_X, &Target_Y);
+                Target = AITP_Combat_Spell(spell_idx, player_idx, &counter_magic_idx__target_cgx, &target_cgy);
                 if(Target != 99)
                 {
-                    Target_X = battle_units[Target].cgx;
-                    Target_Y = battle_units[Target].cgy;
+                    counter_magic_idx__target_cgx = battle_units[Target].cgx;
+                    target_cgy = battle_units[Target].cgy;
                 }
             }
         }
@@ -13692,18 +13680,18 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
             // ... |-> Tactical_Combat_Draw() |-> CMB_DrawMap__WIP() |-> Copy_Back_To_Off()  // 'combat background' from Combat_Screen_Compose_Background()
             // So, ... What's in back-page here?
             // Maybe, maybe not, we called the Combat_Spellbook_Mana_Adder_Screen()? 
-            // Maybe, maybe not, we called the Combat_Spell_Target_Screen__WIP()?
-            Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
+            // Maybe, maybe not, we called the Combat_Spell_Target_Screen()?
+            Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, counter_magic_idx__target_cgx, target_cgy, available_mana_pool, ST_TRUE, ST_NULL, ST_NULL);
             cast_status = 2;
             if(caster_idx >= CASTER_IDX_BASE)
             {
-                Target_X = Combat_Casting_Cost_Multiplier((caster_idx - CASTER_IDX_BASE));
-                _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= Effective_Cost;
-                _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= ((Effective_Cost * Target_X) / 10);
+                counter_magic_idx__target_cgx = Combat_Casting_Cost_Multiplier((caster_idx - CASTER_IDX_BASE));
+                _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= effective_cost;
+                _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= ((effective_cost * counter_magic_idx__target_cgx) / 10);
             }
             else  /* caster_idx < CASTER_IDX_BASE */
             {
-                if(Spell_Like_Ability != ST_TRUE)
+                if(is_spell_like_ability != ST_TRUE)
                 {
                     // ; BUG: this may not be the hero's original owner
                     if(
@@ -13716,7 +13704,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                     }
                     else
                     {
-                        Effective_Cost -= battle_unit_mana;
+                        effective_cost -= battle_unit_mana;
                     }
                     if(battle_unit_mana < 0)
                     {
@@ -13787,81 +13775,60 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
 {
     int16_t spellbook_pages[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t spell_cost = 0;
-    int16_t hotkey_B = 0;
-    int16_t hotkey_F = 0;
+    int16_t hotkey_b = 0;
+    int16_t hotkey_f = 0;
     int16_t spellbook_page_spell_index = 0;
     int16_t spell_idx = 0;
-    int16_t hotkey_esc_fld = 0;
+    int16_t hotkey_esc = 0;
     int16_t y_start = 0;
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
-    int16_t itr = 0;  // _SI_
-    int16_t x_start = 0;  // _DI_
-
+    int16_t itr = 0;
+    int16_t x_start = 0;
     Load_Palette_From_Animation(_spellbook_small_seg);
-
     Reset_Cycle_Palette_Color();
-
     Mark_Block(_screen_seg);
-
     spl_anim_compose_seg = Allocate_Next_Block(_screen_seg, 1090);
-
     // {Nature, Sorcery, Chaos, Life, Death, Arcane}
     for(itr = 0; itr < NUM_MAGIC_REALMS; itr++)
     {
         spellbook_symbols_bitm[itr] = Allocate_Next_Block(_screen_seg, 4);  // 4 PR  64 B
         Draw_Picture_To_Bitmap(_spellbook_small_symbols[itr], spellbook_symbols_bitm[itr]);
     }
-
     g_spellbook_mode = 1;
-
-    g_spellbook_left_page = CMB_SpellBookPage;
-
+    g_spellbook_left_page = g_combat_spellbook_left_page;
     Assign_Auto_Function(Combat_Spellbook_Screen_Draw, 2);
-
     LBX_Load_Data_Static(hlpentry_lbx_file__ovr112, 0, (SAMB_ptr)&_help_entries[0], 0, 15, 10);
-
     Set_Help_List(_help_entries, 15);
-
     Set_Outline_Color(ST_TRANSPARENT);
-
     Set_Font_Style_Shadow_Down(0, 3, 0, 0);
-
     Clear_Fields();
-
     x_start = 16;
     y_start = 12;
-
     for(itr = 0; itr < 6; itr++)
     {
         spellbook_pages[(itr + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr * 22) + 17), (x_start + 137), (y_start + (itr * 22) + 34), (int16_t)str_empty_string__ovr112[0], ST_UNDEFINED);
     }
-
     for(itr = 0; itr < 6; itr++)
     {
         spellbook_pages[(itr + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr * 22) + 17), (x_start + 268), (y_start + (itr * 22) + 34), (int16_t)str_empty_string__ovr112[0], ST_UNDEFINED);
     }
-
-    hotkey_esc_fld = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, ST_UNDEFINED, ST_UNDEFINED);
-    hotkey_F   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)str_hotkey_F__ovr112[0], ST_UNDEFINED);
-    hotkey_B   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)str_hotkey_B__ovr112[0], ST_UNDEFINED);
-
+    hotkey_esc = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, ST_UNDEFINED, ST_UNDEFINED);
+    hotkey_f   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)str_hotkey_F__ovr112[0], ST_UNDEFINED);
+    hotkey_b   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)str_hotkey_B__ovr112[0], ST_UNDEFINED);
     leave_screen = ST_FALSE;
-
     while(leave_screen == ST_FALSE)
     {
         input_field_idx = Get_Input();
-
         /*
             Hot-Key ESCAPE
         */
-        if(input_field_idx == hotkey_esc_fld)
+        if(input_field_idx == hotkey_esc)
         {
             Play_Left_Click__DUPE();
             leave_screen = ST_TRUE;
             spell_idx = 0;
         }
-
         /*
             Help Fields
         */
@@ -13887,11 +13854,10 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
                 _help_entries[(9 + itr)].help_idx = ST_UNDEFINED;
             }
         }
-
         /*
             Hot-Key Page Forward
         */
-        if(input_field_idx == hotkey_F)
+        if(input_field_idx == hotkey_f)
         {
             if((m_spellbook_page_count - 2) > g_spellbook_left_page)
             {
@@ -13909,11 +13875,10 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
                 }
             }
         }
-
         /*
             Hot-Key Page Backward
         */
-        if(input_field_idx == hotkey_B)
+        if(input_field_idx == hotkey_b)
         {
             if(g_spellbook_left_page > 1)
             {
@@ -13931,20 +13896,15 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
                 }
             }
         }
-
-        
         /*
             BEGIN:  Left-Click Spellbook Page Spell Fields
         */
         for(itr = 0; itr < 12; itr++)
         {
-
             if(spellbook_pages[itr] == input_field_idx)
             {
-
                 if(itr < 6)
                 {
-
                     if(m_spellbook_pages[g_spellbook_left_page].count > itr)
                     {
                         Play_Left_Click();
@@ -13969,7 +13929,6 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
                         spell_idx = ST_UNDEFINED;
                     }
                 }
-
                 if(caster_idx < (CASTER_IDX_BASE - 1))
                 {
                     spell_cost = spell_data_table[abs(spell_idx)].casting_cost;
@@ -13978,7 +13937,6 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
                 {
                     spell_cost = Casting_Cost(HUMAN_PLAYER_IDX, abs(spell_idx), 1);
                 }
-
                 if(
                     (spell_data_table[abs(spell_idx)].type == scc_Summoning)
                     &&
@@ -13991,7 +13949,6 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
                 {
                     spell_idx = ST_UNDEFINED;
                 }
-
                 if(
                     (
                         (spell_data_table[abs(spell_idx)].type == scc_City_Enchantment_Positive)
@@ -14008,32 +13965,28 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
                 {
                     spell_idx = ST_UNDEFINED;
                 }
-
                 // ; BUG: this may not be the unit's original owner
                 if(
                     (spell_cost > g_spellbook_cast_mana_limit)
                     &&
-                    (caster_idx <= CASTER_IDX_BASE)
-                    &&
-                    (_ITEMS[_players[battle_units[caster_idx].controller_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx != spell_idx)
+                    (
+                        (caster_idx > (CASTER_IDX_BASE - 1))
+                        ||
+                        (_ITEMS[_players[battle_units[caster_idx].controller_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx != spell_idx)
+                    )
                 )
                 {
                     spell_idx = ST_UNDEFINED;
                 }
-
                 if(spell_idx > ST_UNDEFINED)
                 {
                     leave_screen = ST_TRUE;
                 }
-
             }
-
         }
-
         /*
             END:  Left-Click Spellbook Page Spell Fields
         */
-
         if(leave_screen == ST_FALSE)
         {
             /* DEDU  ¿ Macro // Same as in preamble ? */
@@ -14048,35 +14001,23 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
             {
                 spellbook_pages[(itr + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr * 22) + 17), (x_start + 268), (y_start + (itr * 22) + 34), (int16_t)str_empty_string__ovr112[0], ST_UNDEFINED);
             }
-            hotkey_esc_fld = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, ST_UNDEFINED, ST_UNDEFINED);
-            hotkey_F   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)str_hotkey_F__ovr112[0], ST_UNDEFINED);
-            hotkey_B   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)str_hotkey_B__ovr112[0], ST_UNDEFINED);
-
+            hotkey_esc = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183,                     ST_UNDEFINED, ST_UNDEFINED);
+            hotkey_f   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)str_hotkey_F__ovr112[0], ST_UNDEFINED);
+            hotkey_b   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)str_hotkey_B__ovr112[0], ST_UNDEFINED);
             Set_Page_Off();
             Combat_Spellbook_Screen_Draw();
             PageFlip_FX();
         }
-
     }
-
-    CMB_SpellBookPage = g_spellbook_left_page;
-
+    g_combat_spellbook_left_page = g_spellbook_left_page;
     Deactivate_Auto_Function();
-
     Deactivate_Help_List();
-
     Near_Allocate_Undo();
-
     Release_Block(_screen_seg);
-
     Clear_Fields();
-
     *selected_spell = spellbook_page_spell_index;
-
-    CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
-
+    Combat_Compose_Background();  // ... |-> Copy_Off_To_Back();
     return spell_idx;
-
 }
 
 
@@ -15161,42 +15102,27 @@ void Combat_Screen_Assign_Mouse_Images(void)
 void Combat_Spell_Target_Screen_Draw(void)
 {
     SAMB_ptr Msg_Panel_IMG;
-
     Combat_Screen_Draw();
-
     Mark_Block(_screen_seg);
-
     // COMBATFX.LBX, 028  "MSGPANEL"
     Msg_Panel_IMG = LBX_Reload_Next(cmbtfx_lbx_file__ovr113, 28, _screen_seg);
-
     Release_Block(_screen_seg);
-
     FLIC_Draw(238, 164, Msg_Panel_IMG);
-
     Set_Outline_Color(240);
-
     Set_Alias_Color(227);
-
     Set_Font_Style_Shadow_Down(0, 0, 0, 0);
-
     Set_Font_Spacing_Width(1);
-
     Print_Paragraph(241, 168, 75, GUI_NearMsgString, 0);
-
     Combat_Screen_Assign_Mouse_Images(); 
-
 }
 
 
 // WZD o113p03
-// drake178: CMB_TargetSpell()
 /*
-
 Combat_Cast_Spell()
-    Target = CMB_TargetSpell__WIP(spell_idx, &Target_X, &Target_Y);
-
+    Target = Combat_Spell_Target_Screen(spell_idx, &target_cgx, &target_cgy);
 */
-int16_t Combat_Spell_Target_Screen__WIP(int16_t spell_idx, int16_t * target_cgx, int16_t * target_cgy)
+int16_t Combat_Spell_Target_Screen(int16_t spell_idx, int16_t * target_cgx, int16_t * target_cgy)
 {
     char spell_name[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t BU_Loop_Index = 0;
@@ -20588,7 +20514,7 @@ void Calc_Battlefield_Bonuses(int16_t combat_structure)
 
 
 Battle_Unit_Action()
-    |-> BU_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
+    |-> BU_Attack__WIP(battle_unit_idx, combat_grid_target, target_cgx, target_cgy);
 
 */
 void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy)
@@ -22310,7 +22236,7 @@ void Combat_Results_Scroll(void)
     int16_t City_Capture;
     int16_t Hotkey_R2_Index;
     int16_t Hotkey_R1_Index;
-    int16_t hotkey_esc_fld;
+    int16_t hotkey_esc;
     int16_t leave_screen;
     int16_t spare;
     int16_t IDK_popup_timer;  // _SI_
@@ -22411,14 +22337,14 @@ void Combat_Results_Scroll(void)
 
     Hotkey_R1_Index = Add_Hot_Key(cnst_HOTKEY_R);
     Hotkey_R2_Index = Add_Hot_Key(cnst_HOTKEY_R_2);
-    hotkey_esc_fld = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc1A, ST_UNDEFINED);
+    hotkey_esc = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc1A, ST_UNDEFINED);
 
     IDK_popup_timer = 0;
     while((IDK_popup_timer < 400) && (leave_screen == ST_FALSE))
     {
         input_field_idx = Get_Input();
 
-        if(input_field_idx == hotkey_esc_fld)
+        if(input_field_idx == hotkey_esc)
         {
             leave_screen = ST_TRUE;
         }
@@ -22459,7 +22385,7 @@ void Combat_Results_Scroll(void)
 
                     Clear_Fields();
 
-                    hotkey_esc_fld = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc1A, ST_UNDEFINED);
+                    hotkey_esc = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc1A, ST_UNDEFINED);
                 }
             }
         }
@@ -24535,7 +24461,7 @@ int16_t Raze_City_Prompt(char * message)
 {
     int16_t spare = 0;
     int16_t window_fld = 0;
-    int16_t hotkey_esc_fld = 0;
+    int16_t hotkey_esc = 0;
     int16_t raze_button_fld = 0;
     int16_t no_button_fld = 0;
     int16_t input_field_idx = 0;
@@ -24564,7 +24490,7 @@ int16_t Raze_City_Prompt(char * message)
     no_button_fld = Add_Button_Field((message_box_x + 101), (message_box_y + message_height + 15), "", confirmation_button_yes_seg, 'N', ST_UNDEFINED);
     raze_button_fld = Add_Button_Field((message_box_x + 18), (message_box_y + message_height + 15), "", confirmation_button_no_seg, 'R', ST_UNDEFINED);
     window_fld = Add_Hidden_Field(message_box_x, message_box_y, (message_box_x + 185), (message_box_y + 63), ST_NULL, ST_UNDEFINED);
-    hotkey_esc_fld = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, '\x1B', ST_UNDEFINED);
+    hotkey_esc = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, '\x1B', ST_UNDEFINED);
     Assign_Auto_Function(Raze_City_Prompt_Draw, 1);
     leave_screen = ST_FALSE;
     while(leave_screen == ST_FALSE)
@@ -28676,7 +28602,7 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
 
     Set_Random_Seed(random_seed);
 
-    CMB_ComposeBackgrnd__WIP();  // ... |-> Copy_Off_To_Back();
+    Combat_Compose_Background();  // ... |-> Copy_Off_To_Back();
 
 }
 
@@ -30500,21 +30426,7 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp)
 
 
 // WZD ovr163p02
-// drake178: CMB_ComposeBackgrnd()
-/*
-; composes the combat background (square images and
-; bottom UI base image) into the current draw frame,
-; advances all combat background animations, and saves
-; the screen into VGA frame 3 ($A800)
-*/
-/*
-
-CMB_Terrain_Init__WIP(wx, wy, wp);
-Load_Combat_Terrain_Pictures(cts, wp);
-Generate_Combat_Map(...)
-CMB_ComposeBackgrnd__WIP();
-*/
-void CMB_ComposeBackgrnd__WIP(void)
+void Combat_Compose_Background(void)
 {
     int16_t battlefield_terrain_type = 0;
     int16_t cgy = 0;
@@ -30539,20 +30451,6 @@ void CMB_ComposeBackgrnd__WIP(void)
             CALC_SCREEN_X;
             CALC_SCREEN_Y;
             battlefield_terrain_type = battlefield->terrain_type[((cgy * COMBAT_GRID_WIDTH) + cgx)];
-            assert(battlefield_terrain_type >= 0);
-            assert(battlefield_terrain_type < 48);
-            if((battlefield_terrain_type >= CTILE_Dirt1) && (battlefield_terrain_type <= CTILE_Dirt4))
-            {
-                // [x] STU_DEBUG_BREAK();  // congratulations - you've got dirt
-            }
-            if((battlefield_terrain_type >= CTILE_DownRightD1) && (battlefield_terrain_type <= CTILE_RightD2))
-            {
-                // [x] STU_DEBUG_BREAK();  // congratulations - you've got grass/plains
-            }
-            if((battlefield_terrain_type >= CTILE_DownRough) && (battlefield_terrain_type <= CTILE_SingleRough))
-            {
-                // [x] STU_DEBUG_BREAK();  // congratulations - you've got rough
-            }
             if(battlefield_terrain_type >= CTILE_LeftRightRiver1)  // River
             {
                 STU_DEBUG_BREAK();  // congratulations - you've got river
@@ -30560,9 +30458,7 @@ void CMB_ComposeBackgrnd__WIP(void)
             }
             if(battlefield_terrain_type < 48)
             {
-
                 Clipped_Draw(screen_x, screen_y, _combat_terrain_pict_segs[battlefield_terrain_type]);
-
             }
         }
     }
@@ -30584,7 +30480,7 @@ void CMB_ComposeBackgrnd__WIP(void)
         Combat_Grid_Screen_Coordinates(6, 11, 0, 0, &screen_x, &screen_y);
         screen_x -= 46;
         screen_y -= 13;
-        // FLIC_Draw(screen_x, screen_y, IMG_CMB_Volcano[8]);
+        FLIC_Draw(screen_x, screen_y, IMG_CMB_Volcano[8]);
     }
     if(CMB_MoveAnimDir == 0)
     {

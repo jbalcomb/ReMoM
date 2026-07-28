@@ -958,7 +958,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
 
     Near_Allocate_Undo();
 
-    CMB_ComposeBackgrnd__WIP();
+    Combat_Compose_Background();
 
 }
 
@@ -1694,7 +1694,7 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
     int16_t itr = 0;  // _DI_
     int16_t battle_unit_idx = 0;  // _SI_
 
-    CMB_ComposeBackgrnd__WIP();
+    Combat_Compose_Background();
     Set_Page_Off();
     Combat_Screen_Draw();
     PageFlip_FX();
@@ -1864,7 +1864,7 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
 
     Target_Count = 0;
 
-    CMB_ComposeBackgrnd__WIP();
+    Combat_Compose_Background();
     Set_Page_Off();
     Combat_Screen_Draw();
     PageFlip_FX();

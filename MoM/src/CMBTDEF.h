@@ -52,7 +52,7 @@ enum e_DAMAGE_TYPES
 // 23, /* draw_y_shift */
 // 1,  /* entity_type: battle unit figure */
 
-// CMB_ComposeBackgrnd__WIP()
+// Combat_Compose_Background()
 //     FLIC_Draw(0, 164, combat_background_bottom);
 
 
