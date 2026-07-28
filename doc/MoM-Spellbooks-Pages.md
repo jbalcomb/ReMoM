@@ -36,10 +36,10 @@ m_spellbook_page_count
 m_spellbook_pages[].count
 m_spellbook_pages[].spell[] == _players[].casting_spell_idx
 if((itr_spellbook_page_count % 2) != 1)
-    SBK_OpenPage = itr_spellbook_page_count;
+    g_spellbook_left_page = itr_spellbook_page_count;
 else
-    SBK_OpenPage = (itr_spellbook_page_count - 1);
+    g_spellbook_left_page = (itr_spellbook_page_count - 1);
 player_is_casting = ST_TRUE;
 if(player_is_casting == ST_FALSE)
-    SBK_OpenPage = SBK_SomePageSaveVar;
+    g_spellbook_left_page = SBK_SomePageSaveVar;
 

@@ -63,12 +63,12 @@ Spellbook_Add_Group_Pages(NUM_SPELLS_PER_PAGE_SML)
 Spellbook Page Title
 
     CmbBook_Draw__WIP()
-        Print_Centered((x + 70), (y + 6), m_spellbook_pages[SBK_OpenPage].title);
+        Print_Centered((x + 70), (y + 6), m_spellbook_pages[g_spellbook_left_page].title);
 
 Spellbook Page Entries
 
     CmbBook_Draw__WIP()
-        CmbBook_Compose__WIP(m_spellbook_pages[SBK_OpenPage], IMG_SBK_Anims, caster_idx);
+        CmbBook_Compose__WIP(m_spellbook_pages[g_spellbook_left_page], IMG_SBK_Anims, caster_idx);
         Draw_Picture((x + 16), (y + 21), IMG_SBK_Anims);
-        CmbBook_Compose__WIP(m_spellbook_pages[(SBK_OpenPage + 1)], IMG_SBK_Anims, caster_idx);
+        CmbBook_Compose__WIP(m_spellbook_pages[(g_spellbook_left_page + 1)], IMG_SBK_Anims, caster_idx);
         Draw_Picture((x + 148), (y + 21), IMG_SBK_Anims);

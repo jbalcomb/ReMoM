@@ -879,7 +879,7 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
 
     // DOMSDOS  Stop_All_Sounds__STUB();
 
-    // DOMSDOS  Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music();
     Play_Background_Music();
 
     Release_Block(_screen_seg);

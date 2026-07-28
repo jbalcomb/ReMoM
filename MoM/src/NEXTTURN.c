@@ -1270,8 +1270,10 @@ int16_t Casting_Cost(int16_t player_idx, int16_t spell_idx, int16_t combat_flag)
     // DEDUCE(JimBalcomb,20240112):  What's this about? I don't see where this 5x is covered in the manual.
     if(
         (
-            (spell_data_table[spell_idx].Eligibility == 0) ||
-            (spell_data_table[spell_idx].Eligibility == 2) ||
+            (spell_data_table[spell_idx].Eligibility == 0)
+            ||
+            (spell_data_table[spell_idx].Eligibility == 2)
+            ||
             (spell_data_table[spell_idx].Eligibility == 3)
         ) &&
         combat_flag == ST_FALSE
@@ -3687,6 +3689,13 @@ void Players_Check_Spell_Research(void)
     }
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
+#ifdef STU_DEBUG
+        if(STU_DBG_trigger_research == ST_TRUE)
+        {
+            _players[itr_players].research_cost_remaining = 0;
+            STU_DBG_trigger_research = ST_FALSE;
+        }
+#endif
         if(
             (_players[itr_players].research_cost_remaining == 0)
             &&

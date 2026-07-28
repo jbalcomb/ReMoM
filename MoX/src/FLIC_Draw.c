@@ -1908,9 +1908,9 @@ Overland Spell Animation
         // SPECFX.LBX, 055  "MASK2"     ""
         GAME_MP_SpellVar_2 = LBX_Reload_Next(specfx_lbx_file__ovr137, 55, _screen_seg);
     OVL_DrawGlobalAnim()
-        Draw_Picture_To_Bitmap(ge_anim_moodwiz_seg, IMG_SBK_PageText);
-        Clipped_Copy_Mask(0, 0, IMG_SBK_PageText, spl_anim_compose_seg);
-        Draw_Picture((start_x + 12), (start_y + 12), IMG_SBK_PageText);
+        Draw_Picture_To_Bitmap(ge_anim_moodwiz_seg, g_gui_scratch_bitmap);
+        Clipped_Copy_Mask(0, 0, g_gui_scratch_bitmap, spl_anim_compose_seg);
+        Draw_Picture((start_x + 12), (start_y + 12), g_gui_scratch_bitmap);
 
 */
 /*

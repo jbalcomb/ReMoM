@@ -331,7 +331,7 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
 
     Dissolve_Main_Screen();
 
-    // DOMSDOS  Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music();
     Play_Background_Music();
 
 }

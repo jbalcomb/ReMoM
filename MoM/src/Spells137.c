@@ -862,7 +862,7 @@ void Cast_Spell_City_Enchantment_Animation_2__WIP(int16_t city_idx, int16_t spel
 
     // DOMSDOS  Stop_All_Sounds__STUB();
 
-    // DOMSDOS  Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music();
     Play_Background_Music();
 
     Deactivate_Auto_Function();
@@ -931,7 +931,7 @@ void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx)
 
     spl_anim_compose_seg = Allocate_Next_Block(_screen_seg, 770);  // 770 PR, 12320 B
 
-    IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 770);  // 770 PR, 12320 B
+    g_gui_scratch_bitmap = Allocate_Next_Block(_screen_seg, 770);  // 770 PR, 12320 B
 
     if(
         (GAME_MP_SpellVar_1 == 20)
@@ -1043,7 +1043,7 @@ void OVL_DrawGlobalAnim(void)
 
         FLIC_Draw((start_x + 10), (start_y + 8), spell_animation_seg);
 
-        Print_Centered_Far((start_x + 62), (start_y + 153), spell_data_table[SBK_Spell_Index].name);
+        Print_Centered_Far((start_x + 62), (start_y + 153), spell_data_table[g_active_spell_idx].name);
 
     }
     else  /* (magic_set.spell_animations != ST_TRUE) */
@@ -1080,11 +1080,11 @@ void OVL_DrawGlobalAnim(void)
 
             Draw_Picture_To_Bitmap(GAME_MP_SpellVar_2, spl_anim_compose_seg);
 
-            Draw_Picture_To_Bitmap(IMG_SBK_SliderBG, IMG_SBK_PageText);
+            Draw_Picture_To_Bitmap(IMG_SBK_SliderBG, g_gui_scratch_bitmap);
 
-            Clipped_Copy_Mask(0, 0, IMG_SBK_PageText, spl_anim_compose_seg);
+            Clipped_Copy_Mask(0, 0, g_gui_scratch_bitmap, spl_anim_compose_seg);
 
-            Draw_Picture((start_x + 12), (start_y + 12), IMG_SBK_PageText);
+            Draw_Picture((start_x + 12), (start_y + 12), g_gui_scratch_bitmap);
 
             FLIC_Draw(start_x, start_y, diplomacy_mirror_seg);
 
@@ -1110,11 +1110,11 @@ void OVL_DrawGlobalAnim(void)
 
             Reset_Animation_Frame(ge_anim_moodwiz_seg);
 
-            Draw_Picture_To_Bitmap(ge_anim_moodwiz_seg, IMG_SBK_PageText);
+            Draw_Picture_To_Bitmap(ge_anim_moodwiz_seg, g_gui_scratch_bitmap);
 
-            Clipped_Copy_Mask(0, 0, IMG_SBK_PageText, spl_anim_compose_seg);
+            Clipped_Copy_Mask(0, 0, g_gui_scratch_bitmap, spl_anim_compose_seg);
 
-            Draw_Picture((start_x + 12), (start_y + 12), IMG_SBK_PageText);
+            Draw_Picture((start_x + 12), (start_y + 12), g_gui_scratch_bitmap);
 
             FLIC_Draw(start_x, start_y, diplomacy_mirror_seg);
 
@@ -1126,7 +1126,7 @@ void OVL_DrawGlobalAnim(void)
 
             FLIC_Draw((start_x + 10), (start_y + 8), spell_animation_seg);
 
-            Print_Centered_Far((start_x + 62), (start_y + 133), spell_data_table[SBK_Spell_Index].name);
+            Print_Centered_Far((start_x + 62), (start_y + 133), spell_data_table[g_active_spell_idx].name);
 
         }
 
@@ -1216,7 +1216,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
     _osc_player_idx = player_idx;
 
-    SBK_Spell_Index = spell_idx;
+    g_active_spell_idx = spell_idx;
 
     Reset_First_Block(_screen_seg);
 
@@ -1303,7 +1303,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
     Stop_All_Sounds__STUB();
 
-    // DOMSDOS  Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music();
     Play_Background_Music();
 
     Dissolve_Main_Screen();
@@ -1443,7 +1443,7 @@ static void Target_Wizard_Screen_Draw(void)
         )
         {
             
-            if(SBK_Spell_Index != spl_Spell_Blast)
+            if(g_active_spell_idx != spl_Spell_Blast)
             {
 
                 var_14 = ((_players[itr].Dipl.Visible_Rel[(1 + _human_player_idx)] + 100) / 20);
@@ -1488,7 +1488,7 @@ static void Target_Wizard_Screen_Draw(void)
 
         stu_strcpy(GUI_NearMsgString, aChooseTargetFo);  // "Choose target for a "
 
-        _fstrcpy(string, spell_data_table[SBK_Spell_Index].name);
+        _fstrcpy(string, spell_data_table[g_active_spell_idx].name);
 
         stu_strcat(GUI_NearMsgString, string);
 
@@ -1500,7 +1500,7 @@ static void Target_Wizard_Screen_Draw(void)
 
         stu_strcpy(GUI_NearMsgString, _players[_temp_sint_1].name);
 
-        switch(spell_data_table[SBK_Spell_Index].Param0)
+        switch(spell_data_table[g_active_spell_idx].Param0)
         {
             case 0:
             {
@@ -1603,7 +1603,7 @@ int16_t Target_Wizard_Screen(int16_t spell_idx)
     x_start = 50;
     y_start = 20;
 
-    SBK_Spell_Index = spell_idx;
+    g_active_spell_idx = spell_idx;
 
     _osc_need_target_flag = ST_TRUE;
 

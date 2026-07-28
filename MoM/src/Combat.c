@@ -4109,7 +4109,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
             // Battle_Outcome = Combat_Screen_TST_003();
             // Battle_Outcome = Combat_Screen_TST_004(combat_attacker_player_idx, defender_idx, troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &Item_Count, &Item_List[0]);
 
-            // DOMSDOS  Play_Background_Music__STUB();
+            // DOMSDOS  Play_Background_Music();
             Play_Background_Music();
 
         }
@@ -15072,7 +15072,7 @@ void Combat_Screen_Assign_Mouse_Images(void)
         }
     }
 
-    SBK_NewSpellAnim_Stg = ((SBK_NewSpellAnim_Stg + 1) % 5);
+    g_spellbook_anim_stage = ((g_spellbook_anim_stage + 1) % 5);
 
     _combat_mouse_grid[0].center_offset = 2;
     _combat_mouse_grid[0].x1 = SCREEN_XMIN;
@@ -15140,7 +15140,7 @@ int16_t Combat_Spell_Target_Screen(int16_t spell_idx, int16_t * target_cgx, int1
 
     Assign_Auto_Function(Combat_Spell_Target_Screen_Draw, 2);
 
-    SBK_NewSpellAnim_Stg = 0;
+    g_spellbook_anim_stage = 0;
 
     if(spell_idx == spl_NONE)
     {

@@ -1038,7 +1038,7 @@ struct s_SPELL_DATA
     /* 15 */  int8_t type;                  //  enum e_SPELL_CASTING_CATEGORY (SCC) used by   ;  ¿ ~ "Type of spell effect" ?
     /* 16 */  int8_t spell_book_category;  // 1-byte, signed;  "spell category" "categories: summoning spells, special spells, city spells, enchantments, unit spells, combat spells and research spells"
     /* 17 */  int8_t magic_realm;  // magic realm  ¿ sbr_ ?
-    /* 18 */  int8_t Eligibility;   /* ¿ overland, combat, ... ? */
+    /* 18 */  int8_t Eligibility;   /* ¿ enum e_SPELL_LIBRARY_STATUS ? ¿ overland, combat, ... ? */
     /* 19 */  /* 2-byte alignment padding */
     /* 1A */  int16_t casting_cost;
     /* 1C */  int16_t research_cost;
@@ -4750,7 +4750,7 @@ XREF:
     Spell_Target_Wizard_Screen()
 
 */
-extern int16_t SBK_Spell_Index;
+extern int16_t g_active_spell_idx;
 
 // WZD dseg:CA18
 extern int16_t _xtra_mana_pos;
@@ -4788,7 +4788,7 @@ extern SAMB_ptr xtramana_ok_button_seg;
 extern SAMB_ptr spl_anim_compose_seg;
 
 // WZD dseg:CA36
-extern SAMB_ptr IMG_SBK_PageText;
+extern SAMB_ptr g_gui_scratch_bitmap;
 
 // WZD dseg:CA36                                                 END: ovr136 - Uninitialized Data
 

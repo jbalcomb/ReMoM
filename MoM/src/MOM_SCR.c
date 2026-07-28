@@ -210,7 +210,7 @@ void Screen_Control(void)
                 {
                     if(magic_set.background_music == ST_TRUE)
                     {
-                        // DOMSDOS  Play_Background_Music__STUB();
+                        // DOMSDOS  Play_Background_Music();
                         Play_Background_Music();
                     }
                     else

@@ -3,8 +3,8 @@ SBookScr-Spellbook_Screen.md
 SmlBook_PageTurn__WIP()     ==>  SmlBook_PageTurn()
 SmlBook_Compose__WIP()      ==>  SmlBook_Compose()
 
-SBK_Dogears  ==>  g_spellbook_mode
-SBK_OpenPage  ==>  g_spellbook_left_page
+g_spellbook_mode  ==>  g_spellbook_mode
+g_spellbook_left_page  ==>  g_spellbook_left_page
 SBK_SomePageSaveVar  ==>  g_spellbook_last_left_page
 SBK_BookManaLimit  ==>  g_spellbook_cast_mana_limit
 

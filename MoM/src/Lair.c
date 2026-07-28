@@ -309,7 +309,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
 
         Set_Bit_Field(1, &_LAIRS[lair_idx].Misc_Flags);
 
-        // DOMSDOS  Play_Background_Music__STUB();
+        // DOMSDOS  Play_Background_Music();
         Play_Background_Music();
     }
 

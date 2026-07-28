@@ -25,7 +25,7 @@ AKA SBK_BookPages
 ¿ any reason this shouldn't just be named m_spellbook / m_spell_book ? ¿ or, m_spell_library ?
 
 
-## SBK_OpenPage
+## g_spellbook_left_page
 XREFS:  (117)
 
 
@@ -43,8 +43,8 @@ XREFS:  (117)
 jbalcomb@HMS-PinkThad3 MINGW64 /c/STU/devel/ReMoM/src (develop)
 $ grep -i title *
 Spellbook.C:        stu_strcpy(m_spellbook_pages[itr1].title, "");
-Spellbook.C:    Print_Centered((x + 70), (y + 6), m_spellbook_pages[SBK_OpenPage].title);
-Spellbook.C:    Print_Centered((x + 208), (y + 6), m_spellbook_pages[(SBK_OpenPage + 1)].title);
+Spellbook.C:    Print_Centered((x + 70), (y + 6), m_spellbook_pages[g_spellbook_left_page].title);
+Spellbook.C:    Print_Centered((x + 208), (y + 6), m_spellbook_pages[(g_spellbook_left_page + 1)].title);
 Spellbook.C:void Spellbook_Add_Page(int16_t Spell_Count, int16_t Grp_Index, char * title, int16_t Page_Size)
 Spellbook.C:    stu_strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
 Spellbook.C:                            stu_strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
@@ -95,32 +95,32 @@ XREF:
     NX_j_SBK_LoadSpellDescs()
 
 Apprentice_Screen__WIP()
-    BigBook_Load_Spell_Descriptions(SBK_OpenPage)
+    BigBook_Load_Spell_Descriptions(g_spellbook_left_page)
     ...
     if(input_field_idx == dogear_right_field)
-        BigBook_Load_Spell_Descriptions((SBK_OpenPage + 2))
+        BigBook_Load_Spell_Descriptions((g_spellbook_left_page + 2))
     if(input_field_idx == dogear_rleft_field)
-        BigBook_Load_Spell_Descriptions((SBK_OpenPage - 2))
+        BigBook_Load_Spell_Descriptions((g_spellbook_left_page - 2))
 
 
 empties all 16 strings
 
-¿ same code for iter over SBK_OpenPage and iter over page parameter ?
+¿ same code for iter over g_spellbook_left_page and iter over page parameter ?
 Yes.
 Why?
-...IDG...but, during the left page-turn, SBK_OpenPage is 2 and page is 0
+...IDG...but, during the left page-turn, g_spellbook_left_page is 2 and page is 0
 ...so, dupes the descriptions into 0,2 and 1,3?
 ...upon return to Apprentice_Screen(), copies {8,...,15} into {0,...7} i.e., 2 into 0 and 3 into 1
 
-for(itr = SBK_OpenPage; (SBK_OpenPage + 1) >= itr; itr++)
+for(itr = g_spellbook_left_page; (g_spellbook_left_page + 1) >= itr; itr++)
 for(itr = page; (page + 1) >= itr; itr++)
 if((itr < 0) || (itr >= m_spellbook_page_count))
-    stu_strcpy(SBK_Descriptions[((itr - SBK_OpenPage) + count)], str_empty_string__ovr118)
+    stu_strcpy(g_research_income_by_realm[((itr - g_spellbook_left_page) + count)], str_empty_string__ovr118)
 else
     LBX_Load_Data_Static(desc_lbx_file__ovr118, 0, (SAMB_ptr)buffer, abs(m_spellbook_pages[itr].spell[count]), 1, 110);
-    stu_strcpy(SBK_Descriptions[((itr - page) + count)], buffer);
+    stu_strcpy(g_research_income_by_realm[((itr - page) + count)], buffer);
 
-¿ math on SBK_Descriptions{} looks like it treats the 16 descriptions as 4 pages of 4 ?
+¿ math on g_research_income_by_realm{} looks like it treats the 16 descriptions as 4 pages of 4 ?
 
 ...Print Spell Description(s)...
 
@@ -130,19 +130,19 @@ Apprentice_Screen()
         if(input_field_idx == dogear_left_field)
         {
 
-            if(SBK_OpenPage > 1)
+            if(g_spellbook_left_page > 1)
             {
 
-                BigBook_Load_Spell_Descriptions((SBK_OpenPage - 2));
+                BigBook_Load_Spell_Descriptions((g_spellbook_left_page - 2));
 
                 BigBook_PageTurn(0);
 
-                SBK_OpenPage -= 2;
+                g_spellbook_left_page -= 2;
 
                 for(itr = 0; itr < 8; itr++)
                 {
-                    // TODO  String_Copy_Far(SBK_Descriptions[(0 + itr)], SBK_Descriptions[(8 + itr)]);
-                    stu_strcpy(SBK_Descriptions[(0 + itr)], SBK_Descriptions[(8 + itr)]);
+                    // TODO  String_Copy_Far(g_research_income_by_realm[(0 + itr)], g_research_income_by_realm[(8 + itr)]);
+                    stu_strcpy(g_research_income_by_realm[(0 + itr)], g_research_income_by_realm[(8 + itr)]);
                 }
 
                 Set_Page_Off();
@@ -158,7 +158,7 @@ Apprentice_Screen()
 
 
 
-### SBK_Descriptions
+### g_research_income_by_realm
 
 all/only big book?
 
@@ -171,37 +171,37 @@ all/only big book?
 /*
 ¿ 2 pages, 8 per page ?
 */
-char * SBK_Descriptions[16] = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB };
+char * g_research_income_by_realm[16] = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB };
 
 XREF:
-    GAME_LearnSpellAnim+31E      mov     [word ptr SBK_Descriptions@+bx], ax; 9 or 12 LBX_Alloc_Next paragraphs in the    
-    GAME_LearnSpellAnim+384      push    SBK_Descriptions@[bx-4+2]       ; src_sgmt                                       
-    GAME_LearnSpellAnim+388      push    SBK_Descriptions@[bx-4]         ; src_ofst                                       
-    GAME_LearnSpellAnim+5E5      push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
-    GAME_LearnSpellAnim+649      push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
-    BigBook_Load_Spell_Descriptions+1D   push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
-    BigBook_Load_Spell_Descriptions+BA   push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
-    BigBook_Load_Spell_Descriptions+F0   push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
-    BigBook_Load_Spell_Descriptions+19B  push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
-    BigBook_Load_Spell_Descriptions+1D3  push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
-    Apprentice_Screen__WIP+AD    mov     [word ptr SBK_Descriptions@+bx], ax; 9 or 12 LBX_Alloc_Next paragraphs in the    
-    Apprentice_Screen__WIP+312   push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
-    Apprentice_Screen__WIP+376   push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
-    BigBook_Compose__WIP+4F2 push    [word ptr SBK_Descriptions@+bx] ; src_ofst                                       
-    SBK_Research_Dialog__STUB+AE mov     [word ptr SBK_Descriptions@+bx], ax; 9 or 12 LBX_Alloc_Next paragraphs in the    
-    GAME_LearnSpellAnim+31A      mov     [word ptr (SBK_Descriptions@+2)+bx], dx; 9 or 12 LBX_Alloc_Next paragraphs in the
-    GAME_LearnSpellAnim+5E1      push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
-    GAME_LearnSpellAnim+645      push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
-    BigBook_Load_Spell_Descriptions+19   push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
-    BigBook_Load_Spell_Descriptions+B6   push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
-    BigBook_Load_Spell_Descriptions+EC   push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
-    BigBook_Load_Spell_Descriptions+197  push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
-    BigBook_Load_Spell_Descriptions+1CF  push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
-    Apprentice_Screen__WIP+A9    mov     [word ptr (SBK_Descriptions@+2)+bx], dx; 9 or 12 LBX_Alloc_Next paragraphs in the
-    Apprentice_Screen__WIP+30E   push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
-    Apprentice_Screen__WIP+372   push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
-    BigBook_Compose__WIP+4EE push    [word ptr (SBK_Descriptions@+2)+bx]; src_sgmt                                    
-    SBK_Research_Dialog__STUB+AA mov     [word ptr (SBK_Descriptions@+2)+bx], dx; 9 or 12 LBX_Alloc_Next paragraphs in the
+    GAME_LearnSpellAnim+31E      mov     [word ptr g_research_income_by_realm@+bx], ax; 9 or 12 LBX_Alloc_Next paragraphs in the    
+    GAME_LearnSpellAnim+384      push    g_research_income_by_realm@[bx-4+2]       ; src_sgmt                                       
+    GAME_LearnSpellAnim+388      push    g_research_income_by_realm@[bx-4]         ; src_ofst                                       
+    GAME_LearnSpellAnim+5E5      push    [word ptr g_research_income_by_realm@+bx] ; dst_ofst                                       
+    GAME_LearnSpellAnim+649      push    [word ptr g_research_income_by_realm@+bx] ; dst_ofst                                       
+    BigBook_Load_Spell_Descriptions+1D   push    [word ptr g_research_income_by_realm@+bx] ; dst_ofst                                       
+    BigBook_Load_Spell_Descriptions+BA   push    [word ptr g_research_income_by_realm@+bx] ; dst_ofst                                       
+    BigBook_Load_Spell_Descriptions+F0   push    [word ptr g_research_income_by_realm@+bx] ; dst_ofst                                       
+    BigBook_Load_Spell_Descriptions+19B  push    [word ptr g_research_income_by_realm@+bx] ; dst_ofst                                       
+    BigBook_Load_Spell_Descriptions+1D3  push    [word ptr g_research_income_by_realm@+bx] ; dst_ofst                                       
+    Apprentice_Screen__WIP+AD    mov     [word ptr g_research_income_by_realm@+bx], ax; 9 or 12 LBX_Alloc_Next paragraphs in the    
+    Apprentice_Screen__WIP+312   push    [word ptr g_research_income_by_realm@+bx] ; dst_ofst                                       
+    Apprentice_Screen__WIP+376   push    [word ptr g_research_income_by_realm@+bx] ; dst_ofst                                       
+    BigBook_Compose__WIP+4F2 push    [word ptr g_research_income_by_realm@+bx] ; src_ofst                                       
+    SBK_Research_Dialog__STUB+AE mov     [word ptr g_research_income_by_realm@+bx], ax; 9 or 12 LBX_Alloc_Next paragraphs in the    
+    GAME_LearnSpellAnim+31A      mov     [word ptr (g_research_income_by_realm@+2)+bx], dx; 9 or 12 LBX_Alloc_Next paragraphs in the
+    GAME_LearnSpellAnim+5E1      push    [word ptr (g_research_income_by_realm@+2)+bx]; dst_sgmt                                    
+    GAME_LearnSpellAnim+645      push    [word ptr (g_research_income_by_realm@+2)+bx]; dst_sgmt                                    
+    BigBook_Load_Spell_Descriptions+19   push    [word ptr (g_research_income_by_realm@+2)+bx]; dst_sgmt                                    
+    BigBook_Load_Spell_Descriptions+B6   push    [word ptr (g_research_income_by_realm@+2)+bx]; dst_sgmt                                    
+    BigBook_Load_Spell_Descriptions+EC   push    [word ptr (g_research_income_by_realm@+2)+bx]; dst_sgmt                                    
+    BigBook_Load_Spell_Descriptions+197  push    [word ptr (g_research_income_by_realm@+2)+bx]; dst_sgmt                                    
+    BigBook_Load_Spell_Descriptions+1CF  push    [word ptr (g_research_income_by_realm@+2)+bx]; dst_sgmt                                    
+    Apprentice_Screen__WIP+A9    mov     [word ptr (g_research_income_by_realm@+2)+bx], dx; 9 or 12 LBX_Alloc_Next paragraphs in the
+    Apprentice_Screen__WIP+30E   push    [word ptr (g_research_income_by_realm@+2)+bx]; dst_sgmt                                    
+    Apprentice_Screen__WIP+372   push    [word ptr (g_research_income_by_realm@+2)+bx]; dst_sgmt                                    
+    BigBook_Compose__WIP+4EE push    [word ptr (g_research_income_by_realm@+2)+bx]; src_sgmt                                    
+    SBK_Research_Dialog__STUB+AA mov     [word ptr (g_research_income_by_realm@+2)+bx], dx; 9 or 12 LBX_Alloc_Next paragraphs in the
 
 
 
@@ -271,7 +271,7 @@ AKA SBK_ApprenticeBook__WIP()
 
 Spellbook_Big_Draw(2, 4)  
     ...  
-    if(SBK_Dogears == 0) { ... }  
+    if(g_spellbook_mode == 0) { ... }  
 
 
 

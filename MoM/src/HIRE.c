@@ -180,7 +180,7 @@ void Merchant_Popup_Load(void)
 
     m_itemmake_item_icon_bitmap_seg = Allocate_Next_Block(_screen_seg, 1200);
 
-    IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 30);
+    g_gui_scratch_bitmap = Allocate_Next_Block(_screen_seg, 30);
 
 }
 
@@ -198,7 +198,7 @@ void Merchant_Popup_Draw(void)
 
     Cycle_Item_Enchantment_Animation();
 
-    Item_View_Prepare(GUI_InHeroNaming, m_itemmake_item_icon_bitmap_seg, IMG_SBK_PageText);
+    Item_View_Prepare(GUI_InHeroNaming, m_itemmake_item_icon_bitmap_seg, g_gui_scratch_bitmap);
 
     Copy_Back_To_Off();
 

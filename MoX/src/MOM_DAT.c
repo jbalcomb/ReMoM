@@ -3535,7 +3535,7 @@ Combat_Spellbook_Mana_Adder_Draw()
 int16_t _osc_anim_ctr;
 
 // WZD dseg:CA16
-int16_t SBK_Spell_Index;
+int16_t g_active_spell_idx;
 
 // WZD dseg:CA18
 int16_t _xtra_mana_pos;
@@ -3607,16 +3607,16 @@ Combat_Spellbook_Draw() vs. SmlBook_Draw()
 SAMB_ptr spl_anim_compose_seg;
 
 // WZD dseg:CA36
-// drake178: IMG_SBK_PageText
+// drake178: g_gui_scratch_bitmap
 /*
 
 OVL_LoadGlobalAnim()
-    IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 770);  // 770 PR, 12320 B
+    g_gui_scratch_bitmap = Allocate_Next_Block(_screen_seg, 770);  // 770 PR, 12320 B
 OVL_DrawGlobalAnim()
-    Draw_Picture_To_Bitmap(IMG_SBK_SliderBG, IMG_SBK_PageText);
+    Draw_Picture_To_Bitmap(IMG_SBK_SliderBG, g_gui_scratch_bitmap);
 
 Merchant_Popup_Load()
-    IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 30);  // 30 PR, 480 B
+    g_gui_scratch_bitmap = Allocate_Next_Block(_screen_seg, 30);  // 30 PR, 480 B
 Merchant_Popup_Draw()
         Item_View_Prepare()
             item_view_workarea_bitm
@@ -3624,7 +3624,7 @@ Merchant_Popup_Draw()
 Combat_Spellbook_Mana_Adder_Draw()
     arrow bar bitmap
 */
-SAMB_ptr IMG_SBK_PageText;
+SAMB_ptr g_gui_scratch_bitmap;
 
 // WZD dseg:CA36                                                 END: ovr136 - Uninitialized Data
 

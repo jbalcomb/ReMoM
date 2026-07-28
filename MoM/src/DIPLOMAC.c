@@ -759,7 +759,7 @@ void Diplomacy_Screen__WIP(void)
 
     Cache_Graphics_Overland();
 
-    // DOMSDOS  Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music();
     Play_Background_Music();
 
 }

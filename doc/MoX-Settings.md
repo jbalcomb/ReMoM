@@ -27,7 +27,7 @@ When 'Spell Book Ordering' is activated or deactivated, it clears the saved spel
 ...ordered by category or realm...
 CMB_SpellBookPage = 0;
 SBK_SomePageSaveVar = 0;
-SBK_Candidate_Page = 0;
+g_first_research_page = 0;
 
 
 

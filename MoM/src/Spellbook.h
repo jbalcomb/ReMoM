@@ -266,7 +266,6 @@ struct s_SPELL_BOOK_PAGE
 };
 #pragma pack(pop)
 
-// drake178: N/A
 // sizeof:  0Ch  12d
 #pragma pack(push)
 #pragma pack(2)
@@ -335,7 +334,7 @@ extern SAMB_ptr _spellbook_small_seg;
 extern struct s_SPELL_BOOK_PAGE * m_spellbook_pages;
 
 // WZD dseg:C8FC
-extern int16_t SBK_NewSpellAnim_Stg;
+extern int16_t g_spellbook_anim_stage;
 
 // WZD dseg:C8FE
 // drake178: IMG_SBK_BookRealms@ SPBK_ICONS
@@ -486,7 +485,7 @@ void Learn_Spell_Animation_Load(void);
 void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag);
 
 // WZD o118p07
-void SBK_DrawSpellDecode__STUB(void);
+void Learn_Spell_Animation_Decode_Draw(void);
 
 // WZD o118p08
 void BigBook_Load_Spell_Descriptions(int16_t page);

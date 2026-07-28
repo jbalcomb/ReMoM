@@ -37,7 +37,7 @@ Ground truth = IDA Pro 5.5 disassembly (ovr118 `.asm`). Gemini `.c` files are se
 | BigBook_Draw | Spellbook.c:1971 | ovr118/BigBook_Draw.asm | faithful |
 | BigBook_Compose | Spellbook.c:2635 | ovr118/BigBook_Compose__WIP.asm | faithful; R4, R5, R6 fixed |
 | BigBook_PageTurn | Spellbook.c:1810 | ovr118/BigBook_PageTurn.asm | faithful; R7, R8 fixed |
-| BigBook_Load_Spell_Descriptions (BigBook_Load_Spell_Descriptions) | Spellbook.c:2450 | ovr118/BigBook_Load_Spell_Descriptions.asm | faithful; R9 fixed |
+| BigBook_Load_Spell_Descriptions (SBK_LoadSpellDescs__WIP) | Spellbook.c:2450 | ovr118/SBK_LoadSpellDescs__WIP.asm | faithful; R9 fixed |
 
 Out of scope (separate ovr118 features, not the Apprentice/BigBook display): Learn_Spell_Animation (+ _Load/_Draw/Fill_Black_Draw) is the spell-learned fanfare; Spell_Research_Select is the research picker; Check_Research_Spell_Is_Known is a research helper; SBK_DrawSpellDecode is part of the spell-decode path.
 

@@ -2452,7 +2452,7 @@ void Increment_Background_Music(void)
 
         if(background_music_num != m_background_music_num)
         {
-            // DOMSDOS  Play_Background_Music__STUB();
+            // DOMSDOS  Play_Background_Music();
             Play_Background_Music();
         }
 
@@ -2543,7 +2543,7 @@ int16_t Get_Background_Music(void)
 ; enabled, selects and starts playing the currently
 ; appropriate background track based on player power
 */
-// void Play_Background_Music__STUB(void)
+// void Play_Background_Music(void)
 void Play_Background_Music(void)
 {
     SAMB_ptr sound_seg = NULL;
