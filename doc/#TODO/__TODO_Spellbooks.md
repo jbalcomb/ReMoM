@@ -37,31 +37,31 @@ __TODO_Spellbooks.md
 [ ] Spellbook_Group_Counts()
 [ ] Build_Spellbook()
 [ ] UU_IDK_turn_to_cast__STUB()
-[x] Combat_Spellbook_Build__WIP()
+[x] Combat_Spellbook_Build()
 [x] SmlBook_Compose()
-[x] CmbBook_Compose__WIP()
-[ ] SmlBook_Draw()
-[x] CmbBook_Draw__WIP()
+[x] CmbBook_Compose()
+[x] SmlBook_Draw()
+[x] CmbBook_Draw()
 [x] SmlBook_PageTurn()
 [ ] Spellbook_Add_Page()
 [ ] Spellbook_Add_Group_Pages()
 [ ] WIZARDS.EXE  ovr118
-[ ] BigBook_PageTurn()
-[ ] BigBook_Draw()
+[x] BigBook_PageTurn()
+[x] BigBook_Draw()
 [ ] Learn_Spell_Animation_Draw()
 [ ] Fill_Black_Draw()
 [ ] Learn_Spell_Animation_Load()
 [ ] Learn_Spell_Animation()
 [ ] SBK_DrawSpellDecode__STUB()
-[ ] SBK_LoadSpellDescs__WIP()
-[ ] Apprentice_Screen__WIP()
-[ ] BigBook_Compose__WIP()
+[x] BigBook_Load_Spell_Descriptions()
+[x] Apprentice_Screen()
+[x] BigBook_Compose()
 [ ] Spell_Research_Select()
 [ ] Check_Research_Spell_Is_Known()
 [ ] WIZARDS.EXE  ovr134
-[ ] Spell_Screen_Load()
-[ ] Spellbook_Screen_Draw()
-[ ] Spellbook_Screen()
+[x] Spell_Screen_Load()
+[x] Spellbook_Screen_Draw()
+[x] Spellbook_Screen()
 [ ] Cast_Spell_Overland_Do()
 [ ] sub_B9837()
 [ ] Full_Draw_Main_Screen()
@@ -143,7 +143,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag);
 void SBK_DrawSpellDecode__STUB(void);
 
 // WZD o118p08
-void SBK_LoadSpellDescs__WIP(int16_t page);
+void BigBook_Load_Spell_Descriptions(int16_t page);
 
 // WZD o118p09
 void Apprentice_Screen__WIP(void);

@@ -66,7 +66,7 @@ Apprentice_Screen__WIP()
             stu_strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
             ...
     ...
-    |-> SBK_LoadSpellDescs__WIP()
+    |-> BigBook_Load_Spell_Descriptions()
     |-> BigBook_PageTurn()
     |-> Spellbook_Big_Draw()
     ...
@@ -82,7 +82,7 @@ depends on Spellbook_Group_Counts()
 
 all/only big book?
 
-SBK_LoadSpellDescs__WIP(page)
+BigBook_Load_Spell_Descriptions(page)
 
 XREF:
     GAME_LearnSpellAnim+32E
@@ -95,12 +95,12 @@ XREF:
     NX_j_SBK_LoadSpellDescs()
 
 Apprentice_Screen__WIP()
-    SBK_LoadSpellDescs__WIP(SBK_OpenPage)
+    BigBook_Load_Spell_Descriptions(SBK_OpenPage)
     ...
     if(input_field_idx == dogear_right_field)
-        SBK_LoadSpellDescs__WIP((SBK_OpenPage + 2))
+        BigBook_Load_Spell_Descriptions((SBK_OpenPage + 2))
     if(input_field_idx == dogear_rleft_field)
-        SBK_LoadSpellDescs__WIP((SBK_OpenPage - 2))
+        BigBook_Load_Spell_Descriptions((SBK_OpenPage - 2))
 
 
 empties all 16 strings
@@ -133,7 +133,7 @@ Apprentice_Screen()
             if(SBK_OpenPage > 1)
             {
 
-                SBK_LoadSpellDescs__WIP((SBK_OpenPage - 2));
+                BigBook_Load_Spell_Descriptions((SBK_OpenPage - 2));
 
                 BigBook_PageTurn(0);
 
@@ -179,11 +179,11 @@ XREF:
     GAME_LearnSpellAnim+388      push    SBK_Descriptions@[bx-4]         ; src_ofst                                       
     GAME_LearnSpellAnim+5E5      push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
     GAME_LearnSpellAnim+649      push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
-    SBK_LoadSpellDescs__WIP+1D   push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
-    SBK_LoadSpellDescs__WIP+BA   push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
-    SBK_LoadSpellDescs__WIP+F0   push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
-    SBK_LoadSpellDescs__WIP+19B  push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
-    SBK_LoadSpellDescs__WIP+1D3  push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
+    BigBook_Load_Spell_Descriptions+1D   push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
+    BigBook_Load_Spell_Descriptions+BA   push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
+    BigBook_Load_Spell_Descriptions+F0   push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
+    BigBook_Load_Spell_Descriptions+19B  push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
+    BigBook_Load_Spell_Descriptions+1D3  push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
     Apprentice_Screen__WIP+AD    mov     [word ptr SBK_Descriptions@+bx], ax; 9 or 12 LBX_Alloc_Next paragraphs in the    
     Apprentice_Screen__WIP+312   push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
     Apprentice_Screen__WIP+376   push    [word ptr SBK_Descriptions@+bx] ; dst_ofst                                       
@@ -192,11 +192,11 @@ XREF:
     GAME_LearnSpellAnim+31A      mov     [word ptr (SBK_Descriptions@+2)+bx], dx; 9 or 12 LBX_Alloc_Next paragraphs in the
     GAME_LearnSpellAnim+5E1      push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
     GAME_LearnSpellAnim+645      push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
-    SBK_LoadSpellDescs__WIP+19   push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
-    SBK_LoadSpellDescs__WIP+B6   push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
-    SBK_LoadSpellDescs__WIP+EC   push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
-    SBK_LoadSpellDescs__WIP+197  push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
-    SBK_LoadSpellDescs__WIP+1CF  push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
+    BigBook_Load_Spell_Descriptions+19   push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
+    BigBook_Load_Spell_Descriptions+B6   push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
+    BigBook_Load_Spell_Descriptions+EC   push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
+    BigBook_Load_Spell_Descriptions+197  push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
+    BigBook_Load_Spell_Descriptions+1CF  push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
     Apprentice_Screen__WIP+A9    mov     [word ptr (SBK_Descriptions@+2)+bx], dx; 9 or 12 LBX_Alloc_Next paragraphs in the
     Apprentice_Screen__WIP+30E   push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    
     Apprentice_Screen__WIP+372   push    [word ptr (SBK_Descriptions@+2)+bx]; dst_sgmt                                    

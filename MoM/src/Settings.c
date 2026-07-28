@@ -382,7 +382,7 @@ void Settings_Screen(void)
             {
                 g_combat_spellbook_left_page = 0;
                 g_spellbook_last_left_page = 0;
-                SBK_Candidate_Page = 0;
+                g_first_research_page = 0;
             }
         }
 

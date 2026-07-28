@@ -48,7 +48,7 @@ Spellbook_Group_Counts()
 Spellbook_Add_Group_Pages()
 Spellbook_Add_Page()
 OVL_ComposeBookText()
-SBK_LoadSpellDescs__WIP()
+BigBook_Load_Spell_Descriptions()
 BigBook_PageTurn()
 Spellbook_Big_Draw()
 Spellbook_Big_Draw()
@@ -66,7 +66,7 @@ Apprentice_Screen__WIP()
             stu_strcpy(m_spellbook_pages[m_spellbook_page_count].title, title);
             ...
     ...
-    |-> SBK_LoadSpellDescs__WIP()
+    |-> BigBook_Load_Spell_Descriptions()
     |-> BigBook_PageTurn()
     |-> Spellbook_Big_Draw()
     ...

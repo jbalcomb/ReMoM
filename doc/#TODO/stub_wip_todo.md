@@ -341,7 +341,7 @@
 - [ ] Combat_Spellbook_Build__WIP
 - [ ] Build_Spellbook
 - [ ] SBK_DrawSpellDecode__STUB
-- [ ] SBK_LoadSpellDescs__WIP
+- [ ] BigBook_Load_Spell_Descriptions
 - [ ] SmlBook_Compose__WIP
 - [x] SmlBook_Draw — was SmlBook_Draw__WIP; suffix dropped in source, def Spellbook.c:1526 (verified 2026-07-21)
 - [x] SmlBook_PageTurn__WIP

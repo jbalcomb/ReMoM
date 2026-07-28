@@ -1081,7 +1081,7 @@ MoO2
     Players_Update_Magic_Power();  /* first set of _players[].Power_Base */
     g_spellbook_last_left_page = 0;
     g_combat_spellbook_left_page = 0;
-    SBK_Candidate_Page = 0;
+    g_first_research_page = 0;
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
         Player_Research_Spells(itr_players);

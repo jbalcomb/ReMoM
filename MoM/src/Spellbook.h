@@ -288,7 +288,7 @@ struct s_SPELL_DECODE
 // WZD dseg:9448                                                 BEGIN:  ovr118
 
 // WZD dseg:9448
-extern int16_t SBK_Candidate_Page;
+extern int16_t g_first_research_page;
 
 // WZD dseg:944A
 extern int16_t g_spellbook_last_left_page;
@@ -351,7 +351,7 @@ extern int16_t g_spellbook_cast_mana_limit;
 
 // WZD dseg:C90C
 // drake178: NearAlloc_First!
-// PRIVATE  extern SAMB_ptr SBK_Research_Incomes;
+// PRIVATE  extern SAMB_ptr g_research_income_by_realm;
 
 // WZD dseg:C90E
 extern int16_t WIZ_ManaPerTurn;
@@ -405,7 +405,7 @@ extern int16_t GUI_Multipurpose_Int;
 extern int16_t m_spell_list_count;  // DNE in Dasm;  uses GUI_Multipurpose_Int
 
 // WZD dseg:C928
-extern char * SBK_Descriptions[];
+extern char * g_spellbook_descriptions[];
 
 // WZD dseg:C968 00 00                                           wizlab_wizard_seg@ dw 0               ; DATA XREF: GAME_NewSpellAnim+1Cr ...
 // WZD dseg:C96A 00 00                                           wizlab_familiar_seg@ dw 0               ; DATA XREF: GAME_NewSpellAnim+3Ar ...
@@ -453,7 +453,7 @@ void SmlBook_Draw(int16_t x, int16_t y);
 void Combat_Spellbook_Draw(int16_t x, int16_t y, int16_t caster_idx);
 
 // WZD o117p11
-void SmlBook_PageTurn(int turn_type, int combat_flag, int player_idx);
+void SmlBook_PageTurn(int16_t turn_type, int16_t combat_flag, int16_t player_idx);
 
 // WZD o117p12
 void Spellbook_Add_Page(int16_t Spell_Count, int16_t Grp_Index, char * Title, int16_t Page_Size);
@@ -468,7 +468,7 @@ void Spellbook_Add_Group_Pages(int16_t Page_Size);
 */
 
 // WZD o118p01
-void BigBook_PageTurn(short int direction);
+void BigBook_PageTurn(int16_t direction);
 
 // WZD o118p02
 void BigBook_Draw(void);
@@ -489,13 +489,13 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag);
 void SBK_DrawSpellDecode__STUB(void);
 
 // WZD o118p08
-void SBK_LoadSpellDescs__WIP(int16_t page);
+void BigBook_Load_Spell_Descriptions(int16_t page);
 
 // WZD o118p09
-void Apprentice_Screen__WIP(void);
+void Apprentice_Screen(void);
 
 // WZD o118p10
-void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag);
+void BigBook_Compose(int16_t page, SAMB_ptr pict_seg, int16_t flag);
 
 // WZD o118p11
 void Spell_Research_Select(void);

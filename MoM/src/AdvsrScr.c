@@ -469,7 +469,7 @@ void Advisor_Screen(int16_t advisor_idx)
         } break;
         case 2:  /* Apprentice    (F3) */
         {
-            Apprentice_Screen__WIP();
+            Apprentice_Screen();
         } break;
         case 3:  /* history     (F4) */
         {
