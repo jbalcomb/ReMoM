@@ -5,6 +5,7 @@
  */
 
 #include "../../platform/include/Platform.h"
+#include "../include/Platform_Perf.h"  /* CLAUDE: live frame-time readout (FR9/FR11) */
 #include "../include/Platform_Capture.h"
 
 #include "sdl3_PFL.h"
@@ -129,6 +130,9 @@ void Platform_Video_Update(void)
     assert(SDL_RenderTexture(sdl3_renderer, sdl3_texture, NULL, NULL));
 
     assert(SDL_RenderPresent(sdl3_renderer));
+
+    /* CLAUDE: live frame-time readout -- see Platform_Perf.h. */
+    Perf_Live_Note_Present();
 
     /* CLAUDE */  DBG_Frame_Reset();
 

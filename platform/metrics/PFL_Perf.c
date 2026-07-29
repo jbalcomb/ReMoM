@@ -269,6 +269,147 @@ int Perf_Active(void)
 
 
 /* ========================================================================= */
+/*  Live readouts (FR9/FR10/FR11) -- always compiled, independent of zones   */
+/* ========================================================================= */
+
+/* Ring of recent inter-present intervals, for the on-screen percentile readout.  256 frames is
+ * ~14 s at the 18.2 fps design rate -- long enough to be stable, short enough to still be "live". */
+#define PERF_LIVE_RING       256u
+#define PERF_LIVE_UPDATE_MS  1000u
+
+static int      m_live_checked = 0;      /* env gate resolved once */
+static int      m_live_enabled = 0;
+static char     m_live_base_title[128] = "ReMoM";
+
+static uint64_t m_live_prev_ms = 0;
+static uint64_t m_live_window_start_ms = 0;
+static uint32_t m_live_window_frames = 0;
+static uint32_t m_live_window_worst_ms = 0;
+
+static uint32_t m_live_ring[PERF_LIVE_RING];
+static uint32_t m_live_ring_n = 0;       /* saturates at PERF_LIVE_RING */
+static uint32_t m_live_ring_pos = 0;
+
+/* Pre-formatted display lines for the on-screen readout (FR10).  Built once per second on the
+ * rollover below, NOT per frame -- see the contract in Platform_Perf.h. */
+static char m_live_line1[32] = "";
+static char m_live_line2[32] = "";
+static char m_live_line3[32] = "";
+static int  m_live_lines_ready = 0;
+
+int Perf_Live_Get_Display_Lines(const char ** line1, const char ** line2, const char ** line3)
+{
+    if(!m_live_lines_ready) { return 0; }
+    if(line1 != NULL) { *line1 = m_live_line1; }
+    if(line2 != NULL) { *line2 = m_live_line2; }
+    if(line3 != NULL) { *line3 = m_live_line3; }
+    return 1;
+}
+
+void Perf_Live_Set_Base_Title(const char * base_title)
+{
+    perf_copy_str(m_live_base_title, sizeof(m_live_base_title), base_title);
+}
+
+int Perf_Live_Get_Stats(double * fps, unsigned * p50_ms, unsigned * p95_ms, unsigned * p99_ms,
+                        unsigned * max_ms, unsigned * over_budget)
+{
+    uint64_t sorted[PERF_LIVE_RING];
+    uint32_t i;
+    uint32_t n = m_live_ring_n;
+    uint32_t ovr = 0;
+    uint64_t sum = 0;
+
+    if(n == 0) { return 0; }
+
+    for(i = 0; i < n; i++)
+    {
+        sorted[i] = (uint64_t)m_live_ring[i];
+        sum += sorted[i];
+        if(m_live_ring[i] > PLATFORM_MILLISECONDS_PER_FRAME) { ovr++; }
+    }
+    qsort(sorted, (size_t)n, sizeof(uint64_t), perf_cmp_u64);
+
+    if(fps != NULL)         { *fps = (sum > 0) ? (1000.0 * (double)n / (double)sum) : 0.0; }
+    if(p50_ms != NULL)      { *p50_ms = (unsigned)perf_percentile(sorted, n, 0.50); }
+    if(p95_ms != NULL)      { *p95_ms = (unsigned)perf_percentile(sorted, n, 0.95); }
+    if(p99_ms != NULL)      { *p99_ms = (unsigned)perf_percentile(sorted, n, 0.99); }
+    if(max_ms != NULL)      { *max_ms = (unsigned)sorted[n - 1]; }
+    if(over_budget != NULL) { *over_budget = ovr; }
+
+    return 1;
+}
+
+void Perf_Live_Note_Present(void)
+{
+    uint64_t now_ms;
+    uint32_t dt_ms;
+
+    if(!m_live_checked)
+    {
+        const char * v = getenv("REMOM_FPS_TITLE");
+        m_live_checked = 1;
+        /* On by default -- it is a title string, and immediate feedback is the whole point.
+         * REMOM_FPS_TITLE=0 turns it off for anyone who wants the plain title back. */
+        m_live_enabled = !(v != NULL && v[0] == '0' && v[1] == '\0');
+    }
+    if(!m_live_enabled) { return; }
+
+    now_ms = Platform_Get_Millies();
+
+    if(m_live_prev_ms == 0)
+    {
+        m_live_prev_ms = now_ms;
+        m_live_window_start_ms = now_ms;
+        return;
+    }
+
+    dt_ms = (uint32_t)(now_ms - m_live_prev_ms);
+    m_live_prev_ms = now_ms;
+
+    m_live_ring[m_live_ring_pos] = dt_ms;
+    m_live_ring_pos = (m_live_ring_pos + 1u) % PERF_LIVE_RING;
+    if(m_live_ring_n < PERF_LIVE_RING) { m_live_ring_n++; }
+
+    m_live_window_frames++;
+    if(dt_ms > m_live_window_worst_ms) { m_live_window_worst_ms = dt_ms; }
+
+    if((now_ms - m_live_window_start_ms) >= PERF_LIVE_UPDATE_MS)
+    {
+        char     title[192];
+        uint64_t elapsed = now_ms - m_live_window_start_ms;
+        double   fps = (elapsed > 0) ? (1000.0 * (double)m_live_window_frames / (double)elapsed) : 0.0;
+        unsigned p50 = 0, p95 = 0, p99 = 0, mx = 0, ovr = 0;
+
+        /* Rolling rate AND worst frame: the average alone hides the hitches this exists to expose. */
+        snprintf(title, sizeof(title), "%s - %.1f fps (worst %u ms)",
+                 m_live_base_title, fps, (unsigned)m_live_window_worst_ms);
+        Platform_Set_Window_Title(title);
+
+        /* FR11: the same window as a percentile line, so scrollback carries a timeline that can be
+         * diffed across runs.  Once a second, outside any timed zone. */
+        if(Perf_Live_Get_Stats(NULL, &p50, &p95, &p99, &mx, &ovr))
+        {
+            LOG_INFO(LOG_CAT_PFL, "[PERF-LIVE] %.1f fps  frame_ms p50=%u p95=%u p99=%u max=%u  over_budget=%u/%u (budget %d ms)",
+                     fps, p50, p95, p99, mx, ovr, (unsigned)m_live_ring_n, PLATFORM_MILLISECONDS_PER_FRAME);
+
+            /* FR10: build the on-screen lines here, on the same once-a-second tick, so the draw
+             * path never formats.  Kept short -- the Main Screen debug column is ~100 px wide at
+             * ~5 px/char, so ~20 characters. */
+            snprintf(m_live_line1, sizeof(m_live_line1), "FPS %.1f", fps);
+            snprintf(m_live_line2, sizeof(m_live_line2), "MS %u/%u/%u", p50, p95, p99);
+            snprintf(m_live_line3, sizeof(m_live_line3), "MAX %u  OVR %u", mx, ovr);
+            m_live_lines_ready = 1;
+        }
+
+        m_live_window_start_ms = now_ms;
+        m_live_window_frames = 0;
+        m_live_window_worst_ms = 0;
+    }
+}
+
+
+/* ========================================================================= */
 /*  Zone hooks -- hot path, timestamp arithmetic only                        */
 /* ========================================================================= */
 

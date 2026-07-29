@@ -113,6 +113,13 @@ uint64_t Platform_Get_Micros(void)
     return now - sdl3_micros_startup;
 }
 
+/* CLAUDE: runtime window title -- see Platform.h.  No-ops before the window exists. */
+void Platform_Set_Window_Title(const char * title)
+{
+    if(sdl3_window == NULL || title == NULL) { return; }
+    SDL_SetWindowTitle(sdl3_window, title);
+}
+
 void Platform_Sleep_Millies(uint64_t millies)
 {
     SDL_Delay((uint32_t)millies);

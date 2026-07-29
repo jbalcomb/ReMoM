@@ -1,5 +1,6 @@
 
 #include "Platform.h"
+#include "Platform_Perf.h"  /* CLAUDE: live frame-time readout base title */
 
 #include "sdl3_Audio.h"
 
@@ -71,6 +72,9 @@ void Startup_Platform(void)
 
     sdl3_window = SDL_CreateWindow(NULL, w, h, sdl3_window_flags);
     assert(sdl3_window != NULL);
+
+    /* CLAUDE: register the real title so the live readout appends to it, not to a default. */
+    Perf_Live_Set_Base_Title(sdl3_window_title);
     {
         int actual_w, actual_h;
         SDL_GetWindowSize(sdl3_window, &actual_w, &actual_h);

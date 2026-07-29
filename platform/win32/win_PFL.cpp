@@ -24,6 +24,7 @@
 #include "../../platform/include/Platform_Replay.h"
 #include "../../platform/include/Platform_Capture.h"
 #include "../../platform/include/Platform_Input_Metrics.h"  /* CLAUDE: Platform-Input Layer 1 metrics */
+#include "../../platform/include/Platform_Perf.h"           /* CLAUDE: live frame-time readout (FR9/FR11) */
 #include "win_PFL.h"
 
 /* REMOM_VERSION_STRING comes from the CMake-generated remom_version.h (built from
@@ -75,6 +76,13 @@ void Platform_Show_Error(const char * title, const char * message)
     MessageBoxA(NULL, message, title, MB_OK | MB_ICONERROR);
 }
 
+/* CLAUDE: runtime window title -- see Platform.h.  No-ops before the window exists. */
+void Platform_Set_Window_Title(const char * title)
+{
+    if(win_window == NULL || title == NULL) { return; }
+    SetWindowTextA(win_window, title);
+}
+
 
 
 /* ========================================================================= */
@@ -111,6 +119,9 @@ void Startup_Platform(void)
     Win_Init_Back_Buffer(&win_video_back_buffer, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT);
 
     Win_Init_Window();
+
+    /* CLAUDE: register the real title so the live readout appends to it, not to a default. */
+    Perf_Live_Set_Base_Title(win_window_title);
 
     /* Set Windows scheduler granularity to 1ms for better Sleep() precision */
     timeBeginPeriod(1);
@@ -277,6 +288,9 @@ void Platform_Video_Update(void)
     {
         Win_Blit_Back_Buffer(&win_video_back_buffer, win_device_context, win_window_width, win_window_height);
     }
+
+    /* CLAUDE: live frame-time readout -- one subtraction per present, one OS call per second. */
+    Perf_Live_Note_Present();
 }
 
 

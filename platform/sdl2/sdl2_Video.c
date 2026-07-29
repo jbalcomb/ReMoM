@@ -7,6 +7,7 @@
 #include "../../platform/include/Platform.h"
 #include "../include/Platform_Capture.h"
 #include "../include/Platform_Input_Metrics.h"  /* CLAUDE: Platform-Input Layer 1 metrics */
+#include "../include/Platform_Perf.h"           /* CLAUDE: live frame-time readout (FR9/FR11) */
 
 #include "sdl2_PFL.h"
 #include <SDL.h>
@@ -142,6 +143,9 @@ void Platform_Video_Update(void)
     {
         SDL_RenderPresent(sdl2_renderer);
     }
+
+    /* CLAUDE: live frame-time readout -- one subtraction per present, one OS call per second. */
+    Perf_Live_Note_Present();
 
     /* CLAUDE */  DBG_Frame_Reset();
 

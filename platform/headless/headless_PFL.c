@@ -162,6 +162,13 @@ void Platform_Pump_Events(void)
     /* No OS event queue to pump. */
 }
 
+/* CLAUDE: runtime window title -- see Platform.h.  No window here, so nothing to set.  Defined
+ * rather than omitted so the perf layer's live readout links identically against every backend. */
+void Platform_Set_Window_Title(const char * title)
+{
+    (void)title;
+}
+
 /* CLAUDE: Stubs for the Win32-only pump entry points referenced from MoX
  * Input.c / Video.c under #ifdef _STU_WIN.  These are needed when MoX is
  * built with _STU_WIN defined (because the windowed backend in this build is

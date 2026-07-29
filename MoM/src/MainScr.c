@@ -69,6 +69,7 @@
 #include <string.h>
 
 #include "../../platform/include/Platform.h"
+#include "../../platform/include/Platform_Perf.h"  /* CLAUDE: Perf_Live_Get_Display_Lines() -- FR10 on-screen readout */
 
 #include "MainScr.h"
 
@@ -7045,6 +7046,28 @@ void Main_Screen_Draw_Debug_Information(void)
         {
             Print(2, (22+(8*pos)), "CITY IDX");
             Print_Integer(46, (22+(8*pos)), entity_idx);
+            pos++;
+        }
+    }
+
+/* CLAUDE: live performance readout (PRD FR10, doc/#AI_Plans/SPEC-Perf-Debug-Screen-Readout.md).
+ * Continues the `pos` row sequence above, so it can never collide with the rows already drawn.
+ * The three lines are pre-formatted once per second by the perf layer -- this function runs EVERY
+ * frame, so formatting or computing percentiles here would inflate the very frame time it reports.
+ * Prints nothing until the first rollover has produced lines.  The (char *) casts are because
+ * Fonts.h's Print() predates const-correctness and takes char *. */
+    {
+        const char * perf_line1 = NULL;
+        const char * perf_line2 = NULL;
+        const char * perf_line3 = NULL;
+
+        if(Perf_Live_Get_Display_Lines(&perf_line1, &perf_line2, &perf_line3))
+        {
+            Print(2, (22+(8*pos)), (char *)perf_line1);
+            pos++;
+            Print(2, (22+(8*pos)), (char *)perf_line2);
+            pos++;
+            Print(2, (22+(8*pos)), (char *)perf_line3);
             pos++;
         }
     }

@@ -115,6 +115,15 @@ extern "C" {
 void Startup_Platform(void);
 
 /**
+ * Set the window title at runtime.  Titles are otherwise fixed at window creation; this exists so
+ * the live frame-time readout can show fps and worst-frame in the title bar (PRD FR9).
+ *
+ * Safe to call before the window exists and on the headless backend -- both no-op.  Cheap, but it
+ * is an OS call, so callers should rate-limit (the perf layer updates ~1 Hz).
+ */
+void Platform_Set_Window_Title(const char * title);
+
+/**
  * Show a modal error message to the user, then return.  On graphical backends
  * this is a simple message box (safe to call before Startup_Platform / with no
  * window); on the headless backend it writes to stderr.  Used for fail-soft

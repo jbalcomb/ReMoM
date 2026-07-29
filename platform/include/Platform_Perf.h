@@ -83,6 +83,61 @@ void Perf_Shutdown(void);
 
 
 /* ========================================================================= */
+/*  Live readouts (PRD FR9/FR10/FR11)                                        */
+/*                                                                           */
+/*  Independent of the zone machinery above: this is ALWAYS compiled (not    */
+/*  gated by PERF_INSTRUMENT) because a frame-rate readout is a shipping     */
+/*  feature, not instrumentation.  It costs one subtraction and a compare    */
+/*  per present, plus one OS call and one log line per second.               */
+/* ========================================================================= */
+
+/**
+ * Record the base window title, before any live suffix is appended.  Call once, after the window
+ * exists.  Without it the readout falls back to "ReMoM".
+ */
+void Perf_Live_Set_Base_Title(const char * base_title);
+
+/**
+ * Note one present.  Call once per displayed frame, from the backend's present path.
+ *
+ * Accumulates inter-present intervals and, about once a second, updates the window title with the
+ * rolling frame rate AND the worst frame in that window -- the worst-frame figure is the point,
+ * since an average alone smooths away exactly the hitches players report (PRD FR9).  It also emits
+ * the periodic percentile line for the log (FR11).
+ *
+ * Disable with REMOM_FPS_TITLE=0; on by default, since it is a title string.
+ */
+void Perf_Live_Note_Present(void);
+
+/**
+ * Read the current rolling statistics, for an on-screen readout (FR10).  All out-params optional.
+ * Percentiles are over a ring of recent frame intervals, so they cover the last few seconds rather
+ * than the whole session.  Returns non-zero if enough samples exist to be meaningful.
+ */
+int Perf_Live_Get_Stats(double * fps, unsigned * p50_ms, unsigned * p95_ms, unsigned * p99_ms,
+                        unsigned * max_ms, unsigned * over_budget);
+
+/**
+ * Fetch the three pre-formatted display lines for the on-screen readout (FR10):
+ *
+ *     FPS 17.8
+ *     MS 55/111/166
+ *     MAX 1280  OVR 121
+ *
+ * Returns non-zero once the lines exist.  Pointers are to static storage, valid until the next
+ * 1 Hz rollover; copy if you need to keep them.
+ *
+ * WHY THIS EXISTS instead of calling Perf_Live_Get_Stats() from the draw code:
+ * Main_Screen_Draw_Debug_Information() runs EVERY FRAME while DBG_debug_flag is set.  Formatting
+ * there would put snprintf on the hot path and inflate the very frame time being displayed, and
+ * Perf_Live_Get_Stats() sorts a 256-entry ring on every call -- cheap at 1 Hz, wasteful at 18 fps.
+ * These strings are built once per second on the rollover, so the per-frame cost of the readout is
+ * three Print() calls and nothing else.
+ */
+int Perf_Live_Get_Display_Lines(const char ** line1, const char ** line2, const char ** line3);
+
+
+/* ========================================================================= */
 /*  Zone hooks -- call these through the PERF_* macros, not directly         */
 /* ========================================================================= */
 
