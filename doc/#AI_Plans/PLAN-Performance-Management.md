@@ -89,7 +89,7 @@ Reading it: **logic** time accrues in the `MoM` subgraph (wrapped by zones, isol
 1. **No new subsystem — unify what exists.** One clock, one `.fwv` sink, one gate (`REMOM_PERF`, `REMOM_INPUT_METRICS` kept as alias), one reporter.
 2. **`PHASE` graduates to a build-gated zone primitive**; the hand-toggled two-`#define` scheme is deleted. See below.
 3. **Logic vs render reported separately**; HeMoM isolates logic, replay measures render.
-4. **Percentiles, never means**; every report is p50/p95/p99/max + count-over-budget.
+4. **Percentiles, never means**; every report is p50/p95/p99/max + count-over-budget. **Amended 2026-07-29:** that stands for *reporting* — but for *gating*, only `p50` survived measurement. `total` and `max` are outlier-dominated on a live desktop (`max` varied 0.12×..24.46× between identical runs) and produce false failures. See PRD FR14a.
 5. **Off and stripped in Release**; the hot path is one branch when off; zones vanish at compile time.
 6. **External profilers documented, not depended on**; optional Tracy behind its own flag.
 7. **Perf accounts in logical ticks, not present intervals.** `Release_Time` reports its `N` so a multi-tick hold reads as N on-budget frames; **over-budget = a single tick's *work* > 55 ms**, not "an interval was long." Fixes the `dt_ms` wait-vs-overrun conflation the first capture exposed (PRD FR5a). The present-per-tick refactor (Option B) is **deferred** — a measured decision, not part of this system.
@@ -148,6 +148,6 @@ Steps 1–4 are days and mostly wiring; 5–6 are the durable investment; 7 is d
 - **ms resolution for sub-frame zones.** A 55 ms frame is fine in ms, but a 2 ms zone rounds coarsely. Add `Platform_Get_Micros()` if zone timing needs it; keep frame rows in ms.
 - **Zone blind spots.** Manual zones miss unwrapped time; cover the "what did I forget" gap with a sampling profiler (VS/perf/Superluminal), not more zones.
 - **Reference-hardware dependence.** Absolute numbers vary by CPU/GPU/OS; thresholds are relative to a *named* baseline; cross-machine comparison is invalid.
-- **Determinism of Mode A.** Requires a fixed seed *and* a committed save whose turn progression is stable; verify the scenario reproduces the same stage times (±noise) before trusting the gate.
+- **Determinism of Mode A. RESOLVED 2026-07-29 — and the answer was "half".** Verified with five captures of the same scenario (`SAVE6.GAM` + `--seed1 12345` + `assets/perf_modea_lategame.hms`). **Work is exactly deterministic**: 66 zones, 1450 rows, 12 turns, zero instance-count mismatches, every run. **Stage times are not**: `p50` within 2.46× (1.55× once zones with < 12 samples are excluded), `max` within 0.12×..24.46×. So the gate keys on structure plus a loose `p50` ceiling; the risk was real and the mitigation is PRD FR14a.
 - **Fidelity friction on fixes.** Measurement is additive/neutral; the eventual fixes to `Release_Time`/`Get_Input` are marked, justified divergences (see the danger-zones addendum).
 - **Observer effect creeping back.** Any `LOG_`/format inside a zone re-introduces the very cost being measured; enforce "timestamp-only zone bodies" in review.

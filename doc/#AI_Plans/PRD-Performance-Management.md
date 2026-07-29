@@ -59,7 +59,30 @@ All reports are **frame time in milliseconds, as p50/p95/p99/max distributions**
 ### Deterministic perf tests + CI gate
 12. **Headless logic perf (Mode A).** A deterministic HeMoM scenario (fixed seed / committed late-game save, N turns) times logic zones with **no rendering**; emits per-stage ms. This is the backbone (logic is the sink).
 13. **Windowed render perf (Mode B).** A deterministic `.RMR` replay through a real backend with capture on; emits frame-time `.fwv`. Generalizes Layer 2 of the input plan.
-14. **Regression gate.** A CTest test asserts each mode's percentiles are **not measurably worse than a committed baseline** on named reference hardware (relative thresholds on p95/p99/max), non-zero exit on regression. Mode A runs anywhere (headless); Mode B runs where a display exists.
+14. **Regression gate.** A CTest test asserts each mode's results are **not measurably worse than a committed baseline** on named reference hardware, non-zero exit on regression. Mode A runs anywhere (headless); Mode B runs where a display exists.
+
+14a. **REVISED 2026-07-29 — the p95/p99/max gate this requirement originally specified is not achievable, and the reason is measured, not suspected.** FR14 first read *"relative thresholds on p95/p99/max"*. Five captures of the **same** scenario (`assets/perf_modea_lategame.hms`, `SAVE6.GAM`, `--seed1 12345`, SDL2 Release, one machine, back to back) were taken specifically to calibrate those thresholds. They show a hard split:
+
+    | property | result |
+    |---|---|
+    | **structure** — zone set, per-zone instance counts | **identical across all 5** (66 zones, zero mismatches, 1450 rows, 12 turns each) |
+    | `p50`, single run vs. 5-run median | worst **2.46×** |
+    | `p50`, excluding zones with < 12 samples | worst **1.55×** |
+    | `total_ms` | false failures to **32.35×** (`Diplomacy_Growth_For_Enchantments`, 1.31 → 42.35 ms) |
+    | `max_ms` | **0.12× .. 24.46×** |
+
+    The *work* is perfectly deterministic — same seed and save produce the same code path every time. Only the *wall-clock* is unstable, from two distinct causes:
+
+    - **Warmup.** 11 of the 12 hottest zones were uniformly faster on run 2 than run 1 (cold caches, CPU boost residency, background load). Discarding the first run is the standard remedy and was tried — it did **not** fix the worst case.
+    - **Statistics that cannot hold still.** The residual 2.46× was `Diplomacy_Growth()` at **n = 11** (once per turn). `p50` is a *rank*; over 11 samples one slow call moves it bodily. This is not measurement noise, it is asking for a median from too few points.
+
+    **What is actually gateable**, and what `tests/check_perf_baseline.c` implements:
+
+    - **Structure, exact, zero tolerance** — same zone set and per-zone instance counts. No timing component, so it never flakes, and it is the check with real teeth: it catches a changed code path, a stage that stopped running, a loop iterating a different number of times.
+    - **A 2.0× ceiling on `p50` only**, for zones ≥ 1 ms with ≥ 12 samples. `total` is a sum and `max` an extreme, so both are outlier-dominated; `p50` is a rank and survives a single stalled sample.
+    - **Median-of-N baselines** (`check_perf_baseline --merge`) to damp warmup.
+
+    The threshold reached 2.0× by *excluding statistics that cannot be stable*, not by being loosened until it passed. Getting below ~1.5× needs a fundamentally quieter measurement — a quiesced machine, or Callgrind instruction counts (§External tools) rather than wall-clock.
 15. **Baseline artifacts** are committed `.fwv`/summary files tagged with the reference machine and build; cross-machine comparison is explicitly invalid.
 
 ### External-tool interop
@@ -111,7 +134,7 @@ The in-house layer is the system of record; these are for **deep dives** once it
 - [ ] A zone added with the new macro appears in the report and requires **no** per-file `#define` edit to enable/disable across Debug/Release.
 - [ ] The window title shows a live frame-time/FPS with a worst-frame figure; the Debug screen shows the percentile set.
 - [ ] Mode A (HeMoM headless, fixed seed/save, N turns) emits per-stage logic ms deterministically (same numbers ±noise on re-run).
-- [ ] Mode B (windowed `.RMR` replay) emits a frame-time `.fwv`; a CTest test fails when p95/max exceed the committed baseline by the threshold.
+- [ ] Mode B (windowed `.RMR` replay) emits a frame-time `.fwv`; a CTest test fails on regression versus the committed baseline. **Per FR14a the assertion is structure (exact) + a 2.0× `p50` ceiling on zones ≥ 1 ms with ≥ 12 samples — NOT p95/max, which measurement showed vary 0.12×..24.46× between identical runs.**
 - [ ] The docs name a recommended profiler per platform and the exact HeMoM workload to attach it to.
 - [ ] `NEXTTURN.c`'s stage breakdown is preserved after migrating off the hand-toggled `PHASE`.
 

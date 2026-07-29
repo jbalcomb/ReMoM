@@ -1,4 +1,9 @@
-cmake_minimum_required(VERSION 3.15)
+# 3.25 is required for CMP0141 / CMAKE_MSVC_DEBUG_INFORMATION_FORMAT, which is how debug info is
+# requested per-config without hand-patching CMAKE_C_FLAGS_<CONFIG> (see the MSVC block below).
+# Raising the minimum also promotes every policy up to 3.25 to NEW -- notably CMP0091 (MSVC runtime
+# library selected via CMAKE_MSVC_RUNTIME_LIBRARY rather than baked into the default flags) and
+# CMP0092 (no implicit /W3, so the project's explicit /W4 no longer collides with it).
+cmake_minimum_required(VERSION 3.25)
 
 # --- Release version (single source of truth) ---
 # The full version string is supplied by the release pipeline from the git tag
@@ -180,7 +185,59 @@ endif()
 
 add_compile_definitions($<$<CONFIG:Debug>:STU_DEBUG>)
 
+# Performance instrumentation (doc/#AI_Plans/PRD-Performance-Management.md FR6).
+#
+# This is the ONE switch that decides whether PERF_ZONE / PERF_CALL compile to timing code or to
+# nothing.  It replaces the old hand-toggled two-#define PHASE scheme in MoM/src/NEXTTURN.c, which
+# was per-file, manual, and unrelated to the build type -- so a wrong-state commit could ship
+# timing code into Release invisibly.
+#
+# OFF by default and never enabled in a release preset: with it off the compiler strips every zone,
+# so there is no perf-zone code and no Perf_Zone_* call in a shipped binary.  Turning it ON only
+# compiles the hooks in; capture still requires the REMOM_PERF runtime gate, so an instrumented
+# build with the env unset pays one predictable branch per zone and does no I/O.
+#
+# Definition is global (not per-target) because zones live in MoM game logic, MoX, and platform/
+# alike, and all of them must agree -- a partially-defined PERF_INSTRUMENT would mean some
+# translation units call Perf_Zone_* and others silently do not.
+option(PERF_INSTRUMENT "Compile in PERF_ZONE/PERF_CALL performance zones (capture still needs REMOM_PERF=1 at runtime)" OFF)
+if(PERF_INSTRUMENT)
+    add_compile_definitions(PERF_INSTRUMENT)
+    message(STATUS "PERF_INSTRUMENT=ON -- perf zones compiled in; set REMOM_PERF=1 to capture")
+endif()
+
 if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+    # -------------------------------------------------------------------------
+    #  Debug information for EVERY config, including optimized ones.
+    #
+    #  Why: a Release crash reports raw addresses.  The 2026-07-28 SIGSEGV in the
+    #  AI turn produced frames like "#04 0x00007ff7d1eb865a" -- the system frames
+    #  resolved (ntdll exports symbols) but every ReMoM.exe frame was unreadable,
+    #  because no ReMoM.pdb existed.  STU_BRAK calls SymFromAddr() and will
+    #  symbolize app frames as soon as a PDB is next to the binary.
+    #
+    #  /Zi does NOT change code generation -- optimization stays /O2 /Ob2 and the
+    #  emitted instructions are identical; it only writes a symbol file alongside.
+    #
+    #  The /OPT: lines are the load-bearing part.  Passing /DEBUG to the linker
+    #  makes it default to /OPT:NOREF and /OPT:NOICF, which stops it discarding
+    #  unreferenced functions and folding identical COMDATs -- a bigger binary
+    #  with a different layout.  For a perf build, silently changing the binary
+    #  being measured is precisely the observer effect this system exists to
+    #  avoid, so /OPT:REF and /OPT:ICF are restored explicitly.  Debug is excluded
+    #  (it already links /debug, and folding there would hurt debugging).
+    #
+    #  TODO: turn this off for the shipping Release config at stable release --
+    #  keep the PDBs as build artifacts for symbolizing reports, just stop
+    #  emitting them from the config that ships.
+    # -------------------------------------------------------------------------
+    set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "ProgramDatabase")
+    add_link_options(
+        "$<$<NOT:$<CONFIG:Debug>>:/DEBUG>"
+        "$<$<NOT:$<CONFIG:Debug>>:/OPT:REF>"
+        "$<$<NOT:$<CONFIG:Debug>>:/OPT:ICF>"
+    )
+
     # add_compile_options(/wd4068)
     add_compile_options(
         "/W4"

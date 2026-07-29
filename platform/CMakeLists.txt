@@ -28,6 +28,7 @@ add_library(Platform_Headless STATIC
     headless/headless_Audio.c
     headless/headless_State.c
     replay/Replay.c
+    metrics/PFL_Perf.c
 )
 
 target_include_directories(Platform_Headless PUBLIC
@@ -114,6 +115,12 @@ list(APPEND PLATFORM_SOURCES capture/PFL_Capture.c)
 # Platform-Input Layer 1: input responsiveness/smoothness metrics (runtime-gated, off by default).
 # Backend-agnostic; the windowed backend feeds it ticks, cursor polls, and present timing.
 list(APPEND PLATFORM_SOURCES metrics/PFL_Input_Metrics.c)
+
+# Performance layer: the PERF_ZONE/PERF_CALL zone recorder and percentile reporter.  Also built
+# into Platform_Headless above, because the headless HeMoM runner is where logic timing (Mode A)
+# is measured.  The zone macros are compiled out unless the PERF_INSTRUMENT build option is ON;
+# this file is always compiled so the runtime gate and reporter link either way.
+list(APPEND PLATFORM_SOURCES metrics/PFL_Perf.c)
 
 add_library(Platform STATIC ${PLATFORM_SOURCES})
 

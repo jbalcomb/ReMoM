@@ -25,6 +25,17 @@ AC_ARG_WITH([sdl3],
     AS_HELP_STRING([--with-sdl3], [Use SDL3 instead of SDL2 for ReMoM (default: SDL2). HeMoM is always headless.]),
     [], [with_sdl3=no])
 
+# Performance instrumentation -- the Autotools twin of the PERF_INSTRUMENT CMake option
+# (doc/#AI_Plans/PRD-Performance-Management.md FR6).  Off by default: with it off the compiler
+# strips every PERF_ZONE/PERF_CALL, so a shipped binary contains no zone-timing code.  Turning it
+# on only compiles the hooks in; capture still requires REMOM_PERF=1 at runtime.
+AC_ARG_ENABLE([perf-instrument],
+    AS_HELP_STRING([--enable-perf-instrument], [Compile in PERF_ZONE/PERF_CALL performance zones (capture still needs REMOM_PERF=1 at runtime)]),
+    [], [enable_perf_instrument=no])
+
+AS_IF([test "x$enable_perf_instrument" = "xyes"],
+    [AC_DEFINE([PERF_INSTRUMENT], [1], [Compile in performance-measurement zones])])
+
 AM_CONDITIONAL([USE_SDL3], [test "x$with_sdl3" = "xyes"])
 
 # --------------------------------------------------------------------------

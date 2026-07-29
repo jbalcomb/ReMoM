@@ -28,6 +28,11 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 - One period per filename, reserved for the extension. Use underscores to separate stem components — `hemom_seed12345_stderr.log`, not `hemom.seed12345.stderr.log` or `hemom_seed12345.stderr.log`. Multiple dots confuse tools (shell glob behaviour, IDE syntax detection, archive extractors) and obscure which suffix is actually the extension.
 - Use real, recognized extensions (`.log`, `.txt`, `.csv`, `.json`). Do not use words like `raw`, `trace`, `out`, or `dump` as extensions — they aren't recognized by editors/tools and trigger "unknown file type" handling. If you need to distinguish kinds of output, encode that in the stem (`*_stderr.log`, `*_rng.log`), not the extension.
 
+## Shell and scripting (all agents)
+- **Commands given to the user are Bash (Git Bash on Windows).** Use `/c/STU/devel/ReMoM/...` paths, real Unix tools, and `./ReMoM.exe`. Never hand over `C:\...` paths, PowerShell/cmd forms, or a prose description where a command belongs. This holds regardless of what an agent harness reports as the "primary" shell.
+- **All scripting defaults to Python, invoked as `python3`.** Not bare `python`, not `py`, not a sed/awk one-liner, not PowerShell.
+- **If `python3` cannot be found, STOP** — halt and ask. Do not fall back to `python`, `py`, or a shell equivalent. On this project's Windows boxes `python` is Python **2.7** while `python3` is **3.x**, so a silent fallback runs the wrong interpreter and produces confidently wrong results (a Python 2 run of a Python 3 script reports zero matches rather than failing, which reads as a data problem and wastes the time it takes to chase one). The Python 2 tell in output: `print("a:", x)` renders as `('a:', x)` — if you see that, fix the interpreter, don't rewrite the script.
+
 ## Error Handling
 - Always log errors with contextual information
 
@@ -78,7 +83,7 @@ The same gate is also wired up as the VS Code task `check: safe-to-push` (`Tasks
 ## Vetting third-party dependencies (all agents)
 Before recommending, installing, or adding ANY external binary, library, package, or tool — including
 anything from winget/choco/vcpkg/`FetchContent`, and any DLL committed to the repo — follow
-`doc/#Devel/Dependency-Vetting.md`. Run `python tools/vet_dependency.py --repo OWNER/NAME
+`doc/#Devel/Dependency-Vetting.md`. Run `python3 tools/vet_dependency.py --repo OWNER/NAME
 [--upstream OWNER/NAME --author "Exact Name"] [--tier A|B|C]` for the checkable facts.
 
 Two rules that are easy to break:

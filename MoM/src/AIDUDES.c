@@ -9,6 +9,7 @@
 #include "../../STU/src/STU_LOG.h"
 #include "../../STU/src/AI_METRICS.h"
 #include "../../platform/include/Platform.h"  /* Platform_Get_Millies() */
+#include "../../platform/include/Platform_Perf.h"  /* PERF_CALL() zones -- compiled out unless PERF_INSTRUMENT */
 
 #include "../../MoX/src/EMS/EMS.h"
 #include "../../MoX/src/MOM_DAT.h"
@@ -171,11 +172,11 @@ void AI_Next_Turn(void)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-/* CLAUDE */ #ifdef STU_DEBUG
-/* CLAUDE */ #define PHASE(CALL) do { uint64_t _ps = Platform_Get_Millies(); CALL; { uint64_t _pe = Platform_Get_Millies(); LOG_INFO(LOG_CAT_AIDUDES, "[NEXTTURN] phase %-48s = %llu ms", #CALL, (unsigned long long)(_pe - _ps)); LOG_TRACE(LOG_CAT_AIMOVE, "[NEXTTURN] phase %-48s = %llu ms", #CALL, (unsigned long long)(_pe - _ps)); } } while(0)
-/* CLAUDE */ #else
-/* CLAUDE */ #define PHASE(CALL) CALL
-/* CLAUDE */ #endif
+/* CLAUDE: the hand-toggled two-#define PHASE macro that used to sit here has been replaced by the
+ * build-gated PERF_CALL zone (platform/include/Platform_Perf.h, PRD-Performance-Management FR6/FR7).
+ * The stage breakdown below is unchanged -- PERF_CALL stringizes the same call text as the zone
+ * name.  These sub-stages nest inside NEXTTURN.c's PERF_CALL(AI_Next_Turn()), so the report reads
+ * as a tree: the turn pipeline, then which part of the AI turn inside it. */
 
 
     /* Unit sanity/bounds check loop */
@@ -207,8 +208,8 @@ void AI_Next_Turn(void)
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: === BEGIN Turn %d ===", _turn);
 #endif
 
-    PHASE(EMMDATAH_Map());
-    PHASE(Allocate_AI_Data());
+    PERF_CALL(EMMDATAH_Map());
+    PERF_CALL(Allocate_AI_Data());
 
     /* Main AI Player processing loop (Skip Human Player 0) */
     for (player_idx = 1; player_idx < _num_players; player_idx++)
@@ -246,51 +247,51 @@ void AI_Next_Turn(void)
         LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: --- Player %d (%s) BEGIN ---", player_idx, _players[player_idx].name);
 #endif
 
-        PHASE(AI_Evaluate_Hostility(player_idx));
+        PERF_CALL(AI_Evaluate_Hostility(player_idx));
 
-        PHASE(AI_Evaluate_Magic_Power_Strategy(player_idx));
+        PERF_CALL(AI_Evaluate_Magic_Power_Strategy(player_idx));
 
         m_niu_ai_turn_eval_var = 0;  /* OON XREF */
 
-        PHASE(Player_Hostile_Opponents(player_idx));
+        PERF_CALL(Player_Hostile_Opponents(player_idx));
 
-        PHASE(AI_Player_Calculate_Target_Values(player_idx));
+        PERF_CALL(AI_Player_Calculate_Target_Values(player_idx));
 
-        PHASE(AI_Landmass_Values_And_Strengths(player_idx));  // uses the arrays just populated in AI_Player_Calculate_Target_Values()
+        PERF_CALL(AI_Landmass_Values_And_Strengths(player_idx));  // uses the arrays just populated in AI_Player_Calculate_Target_Values()
 
-        PHASE(AI_Choose_War_Landmass(player_idx));  /* populates _ai_landmass_war_targets[]; uses the arrays just populated in AI_Landmass_Values_And_Strengths() */
+        PERF_CALL(AI_Choose_War_Landmass(player_idx));  /* populates _ai_landmass_war_targets[]; uses the arrays just populated in AI_Landmass_Values_And_Strengths() */
 
         /* Handle Overland Casting Completion */
         if(_players[player_idx].casting_cost_remaining <= 0 && _players[player_idx].casting_spell_idx != spl_NONE)
         {
-            PHASE(Cast_Spell_Overland(player_idx));
+            PERF_CALL(Cast_Spell_Overland(player_idx));
             /* EOG_HACK */  magic_master_idx = Get_Winner();
-            PHASE(EMMDATAH_Map());
+            PERF_CALL(EMMDATAH_Map());
             _players[player_idx].casting_spell_idx = spl_NONE;
             if(g_ai_recompute_needed == ST_TRUE)
             {
-                PHASE(Allocate_AI_Data());
-                PHASE(Player_Hostile_Opponents(player_idx));
-                PHASE(AI_Player_Calculate_Target_Values(player_idx));
+                PERF_CALL(Allocate_AI_Data());
+                PERF_CALL(Player_Hostile_Opponents(player_idx));
+                PERF_CALL(AI_Player_Calculate_Target_Values(player_idx));
             }
             /* OGBUG  redundant - will be caught by the next block */
             if(_players[player_idx].casting_spell_idx == spl_NONE)
             {
-                PHASE(AI_Spell_Select(player_idx));
+                PERF_CALL(AI_Spell_Select(player_idx));
             }
         }
 
         /* Handle New Spell Selection if wasn't casting or finished casting */
         if(_players[player_idx].casting_spell_idx == spl_NONE)
         {
-            PHASE(AI_Spell_Select(player_idx));
+            PERF_CALL(AI_Spell_Select(player_idx));
         }
 
-        PHASE(EMMDATAH_Map());
-        PHASE(AI_Update_Magic_Power(player_idx));
-        PHASE(AI_Sanity_Check_Overland_Enchantments(player_idx));
-        PHASE(AI_Update_Gold_And_Mana_Reserves(player_idx));
-        PHASE(AI_Update_Gold_Income_And_Food_Income(player_idx));
+        PERF_CALL(EMMDATAH_Map());
+        PERF_CALL(AI_Update_Magic_Power(player_idx));
+        PERF_CALL(AI_Sanity_Check_Overland_Enchantments(player_idx));
+        PERF_CALL(AI_Update_Gold_And_Mana_Reserves(player_idx));
+        PERF_CALL(AI_Update_Gold_Income_And_Food_Income(player_idx));
 
         Some_AI_Turn_Var_2 = 0;
         Some_AI_Turn_Var_3 = 0;
@@ -304,20 +305,27 @@ void AI_Next_Turn(void)
             }
         }
 
-        PHASE(Player_All_Colony_Autobuild(player_idx));
-        PHASE(AI_Evaluation_Map(player_idx));
-        PHASE(AI_Evaluate_Continents(player_idx));
-        PHASE(AI_Set_Unit_Orders(player_idx));
+        PERF_CALL(Player_All_Colony_Autobuild(player_idx));
+        for(int itr = 0; itr < _units; itr++)
+        {
+            if(_UNITS[itr].wp == ST_UNDEFINED)
+            {
+                _UNITS[itr].Finished = ST_FALSE;
+            }
+        }
+        PERF_CALL(AI_Evaluation_Map(player_idx));
+        PERF_CALL(AI_Evaluate_Continents(player_idx));
+        PERF_CALL(AI_Set_Unit_Orders(player_idx));
         
-        PHASE(EMMDATAH_Map());
-        PHASE(AI_Kill_Excess_Settlers_And_Engineers(player_idx));
+        PERF_CALL(EMMDATAH_Map());
+        PERF_CALL(AI_Kill_Excess_Settlers_And_Engineers(player_idx));
 
 #ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: --- Player %d (%s) END ---", player_idx, _players[player_idx].name);
 #endif
     }
 
-    PHASE(EMMDATAH_Map());
+    PERF_CALL(EMMDATAH_Map());
 
     /* Reset Move_Failed flag for all non-human units */
     for (i = 0; i < _units; i++)
@@ -353,26 +361,26 @@ void AI_Next_Turn(void)
 #ifdef STU_DEBUG
             LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Moving units for Player %d (%s)", player_idx, _players[player_idx].name);
 #endif
-            PHASE(AI_Execute_Orders(player_idx));
+            PERF_CALL(AI_Execute_Orders(player_idx));
         }
     }
 
-    PHASE(EMMDATAH_Map());
+    PERF_CALL(EMMDATAH_Map());
 
     /* Neutral Player Turn Processing */
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: === Neutral Player Phase ===");
 #endif
-    PHASE(Player_All_Colony_Autobuild(NEUTRAL_PLAYER_IDX));
-    PHASE(NPC_Farmers());
+    PERF_CALL(Player_All_Colony_Autobuild(NEUTRAL_PLAYER_IDX));
+    PERF_CALL(NPC_Farmers());
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: NPC_Farmers done");
 #endif
-    PHASE(NPC_Destinations());
+    PERF_CALL(NPC_Destinations());
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: NPC_Destinations done");
 #endif
-    PHASE(AI_Execute_Orders(NEUTRAL_PLAYER_IDX));
+    PERF_CALL(AI_Execute_Orders(NEUTRAL_PLAYER_IDX));
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: NPC movement done");
 #endif
@@ -381,7 +389,7 @@ void AI_Next_Turn(void)
     /* EOG_HACK */  if(magic_master_idx != ST_UNDEFINED) { return; }
 
     /* Event Generation */
-    PHASE(Make_Raiders());
+    PERF_CALL(Make_Raiders());
     /* CLAUDE: GD point 616 -- _UNITS AFTER Make_Raiders (NPC raider unit generation).
      * Captured at the call site (mirrors OG's far-return into AI_Next_Turn) so the
      * function's many early-return paths are handled automatically.  Fire once. */
@@ -389,7 +397,7 @@ void AI_Next_Turn(void)
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Make_Raiders done");
 #endif
-    PHASE(Make_Monsters());
+    PERF_CALL(Make_Monsters());
     /* CLAUDE: GD point 617 -- _UNITS AFTER Make_Monsters (NPC monster unit generation).
      * Same call-site capture.  Pairs with 616 to see which NPC-generation pass creates
      * the divergent late unit records (e.g. _UNITS[48..50]).  Fire once. */
@@ -399,8 +407,8 @@ void AI_Next_Turn(void)
 #endif
 
     /* Cleanup and Stasis */
-    PHASE(NPC_Excess_Garrison());
-    PHASE(AI_Hopeless_Stasis());
+    PERF_CALL(NPC_Excess_Garrison());
+    PERF_CALL(AI_Hopeless_Stasis());
 
     AI_Log_Metrics();
     AI_Metrics_Emit_Turn_Summary(_turn, _difficulty, _num_players);

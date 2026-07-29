@@ -65,6 +65,7 @@ PLATFORM_CORE_SOURCES = \
     platform/sdl3/sdl3_Video.c \
     platform/capture/PFL_Capture.c \
     platform/metrics/PFL_Input_Metrics.c \
+    platform/metrics/PFL_Perf.c \
     platform/replay/Replay.c
 PLATFORM_BACKEND_DIR = platform/sdl3
 else
@@ -79,6 +80,7 @@ PLATFORM_CORE_SOURCES = \
     platform/sdl2/sdl2_Video.c \
     platform/capture/PFL_Capture.c \
     platform/metrics/PFL_Input_Metrics.c \
+    platform/metrics/PFL_Perf.c \
     platform/replay/Replay.c
 PLATFORM_BACKEND_DIR = platform/sdl2
 endif
@@ -120,6 +122,7 @@ libplatform_headless_a_SOURCES = \
     platform/headless/headless_EMM.c \
     platform/headless/headless_Audio.c \
     platform/headless/headless_State.c \
+    platform/metrics/PFL_Perf.c \
     platform/replay/Replay.c
 
 libplatform_headless_a_CFLAGS = $(AM_CFLAGS) \

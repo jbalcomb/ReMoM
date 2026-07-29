@@ -69,6 +69,7 @@
 #include "../MoM/src/Settings.h"
 
 #include "../platform/include/Platform.h"
+#include "../platform/include/Platform_Perf.h"  /* Perf_Init() -- performance capture gate */
 #include "../platform/include/Platform_Replay.h"
 #include "../platform/include/Platform_Capture.h"
 
@@ -266,6 +267,26 @@ int main(int argc, char * argv[])
        Catches abort()/failed assertions as well as CPU faults; see STU/src/STU_BRAK.h. */
     STU_BRAK_Install();
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
+    /* CLAUDE: performance capture.  Must come AFTER STU_Log_Startup() so the .fwv header can record
+       the severity/CALL_TRACE state the capture ran under -- numbers taken with tracing on measure
+       the logger, not the game.  No-ops unless REMOM_PERF (or the REMOM_INPUT_METRICS alias) is
+       set, and records nothing unless the build has PERF_INSTRUMENT.  Shutdown runs via atexit().
+       The backend string is the compile-time backend selection, matching PLATFORM_DEFINES. */
+    Perf_Init(
+#if defined(_STU_WIN)
+              "win32",
+#elif defined(USE_SDL3)
+              "SDL3",
+#else
+              "SDL2",
+#endif
+#ifdef STU_DEBUG
+              "Debug"
+#else
+              "Release"
+#endif
+              );
 
     /* Resolve the game-data search path (env -> exe-dir -> CWD) before any
        asset load, so the installed / portable player boots without a manual cd. */

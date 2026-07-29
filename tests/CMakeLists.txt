@@ -589,3 +589,40 @@ set_tests_properties(HeMoM_Preflight_Missing_Data PROPERTIES
     TIMEOUT 20
     LABELS "hemom;integration;preflight"
 )
+
+
+
+# =========================================================================
+#  Performance regression gate  (PRD/PLAN-Performance-Management.md)
+#
+#  Compares a .fwv zone capture against the committed reference baseline.
+#  Asserts what is actually reproducible on the reference host:
+#    - STRUCTURE: identical zone set and per-zone instance counts, exact.
+#      No timing component, so it never flakes; catches a changed code path.
+#    - CEILINGS: p50/total within 2.5x of baseline.  Deliberately loose --
+#      two back-to-back captures of the same scenario measured p50 varying
+#      0.46..1.66x and max 0.12..24.46x, so a tighter bound would flake.
+#      See the header comment in check_perf_baseline.c for the measurements.
+#
+#  This test compares the two COMMITTED captures, so it needs no display and
+#  no game run -- it guards the comparator and the reference data themselves.
+#  Gating a FRESH capture additionally needs a windowed run driven by
+#  assets/perf_modea_lategame.hms, which is display-dependent (Mode B); that
+#  step is not wired yet.
+# =========================================================================
+
+add_executable(check_perf_baseline check_perf_baseline.c)
+
+set(PERF_BASELINE_DIR "${PROJECT_SOURCE_DIR}/doc/PlatformLayer/perf-baselines")
+
+add_test(
+    NAME Perf_Baseline_Compare
+    COMMAND $<TARGET_FILE:check_perf_baseline>
+        "${PERF_BASELINE_DIR}/median5_2026-07-29_SDL2_release_lategame.fwv"
+        "${PERF_BASELINE_DIR}/repeat_2026-07-29_SDL2_release_lategame.fwv"
+        --ratio 2.0 --min-samples 12
+)
+set_tests_properties(Perf_Baseline_Compare PROPERTIES
+    TIMEOUT 30
+    LABELS "perf;regression"
+)

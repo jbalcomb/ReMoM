@@ -20,6 +20,35 @@ uint64_t Platform_Get_Millies(void)
     return (uint64_t)GetTickCount64() - win_ticks_startup;
 }
 
+/* High-resolution counter for perf instrumentation.  GetTickCount64() above quantizes to the
+ * ~15.6 ms system timer interval, which cannot resolve a sub-frame zone; QPC is sub-microsecond. */
+static uint64_t Win_Get_Ticks_Us(void)
+{
+    static LARGE_INTEGER freq = { 0 };
+    LARGE_INTEGER now;
+
+    if(freq.QuadPart == 0)
+    {
+        QueryPerformanceFrequency(&freq);
+        if(freq.QuadPart == 0) { return (uint64_t)GetTickCount64() * 1000u; }  /* no QPC: fall back, coarse but monotonic */
+    }
+    QueryPerformanceCounter(&now);
+    /* Split the division so a multi-hour session cannot overflow the numerator. */
+    return ((uint64_t)now.QuadPart / (uint64_t)freq.QuadPart) * 1000000u
+         + (((uint64_t)now.QuadPart % (uint64_t)freq.QuadPart) * 1000000u) / (uint64_t)freq.QuadPart;
+}
+
+uint64_t Platform_Get_Micros(void)
+{
+    static uint64_t win_micros_startup = 0;
+
+    if(win_micros_startup == 0)
+    {
+        win_micros_startup = Win_Get_Ticks_Us();
+    }
+    return Win_Get_Ticks_Us() - win_micros_startup;
+}
+
 void Platform_Sleep_Millies(uint64_t ms)
 {
     Sleep((DWORD)ms);

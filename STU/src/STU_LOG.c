@@ -721,6 +721,29 @@ void STU_Log_Shutdown(void)
     }
 }
 
+int STU_Log_Get_Severity_Threshold(void)
+{
+    return log_cfg.sev_threshold;
+}
+
+const char * STU_Log_Severity_Name(int sev)
+{
+    if((sev < 0) || (sev > LOG_SEV_FATAL))
+    {
+        return "?";
+    }
+    return log_sev_str[sev];
+}
+
+int STU_Log_Category_Enabled(int cat)
+{
+    if((cat < 0) || (cat >= LOG_N_CATEGORIES))
+    {
+        return 0;
+    }
+    return log_cfg.cat_enabled[cat];
+}
+
 void STU_Log_Pump(void)
 {
     STU_Log_Emit_Drop_Marker();

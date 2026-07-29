@@ -425,6 +425,21 @@ void Platform_Maybe_Move_Mouse(void);
 uint64_t Platform_Get_Millies(void);
 
 /**
+ * Return the number of MICROseconds since platform startup, from the highest-resolution monotonic
+ * counter the backend has (QueryPerformanceCounter / clock_gettime / SDL_GetPerformanceCounter).
+ *
+ * Why this exists alongside Platform_Get_Millies(): the headless and Win32 backends implement
+ * Platform_Get_Millies() with GetTickCount64(), whose resolution is the system timer interval
+ * (~15.6 ms by default).  That is adequate for pacing a 55 ms frame but useless for timing a
+ * sub-frame perf zone -- a 3 ms stage reads as 0 or 15 ms.  Perf instrumentation therefore
+ * timestamps in microseconds; frame pacing keeps using the millisecond clock unchanged.
+ *
+ * The epoch is the same startup instant as Platform_Get_Millies(), but the two are read from
+ * different counters -- do not mix them in one subtraction.
+ */
+uint64_t Platform_Get_Micros(void);
+
+/**
  * Sleep for the specified number of milliseconds.
  */
 void Platform_Sleep_Millies(uint64_t ms);

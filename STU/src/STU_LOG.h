@@ -95,6 +95,14 @@ void STU_Log_Set_Base_Dir(const char * dir);
 /* ini_path: path to an INI file with a [Logging] section, or NULL for built-in defaults. Missing file or missing section is non-fatal — defaults apply. */
 void STU_Log_Startup(const char * ini_path);
 void STU_Log_Shutdown(void);
+
+/* Read back the effective runtime filter.  Added for the performance layer, which records the log
+   level a capture was taken under: a perf number measured with TRACE / CALL_TRACE enabled is
+   dominated by the logger and is fiction, so the .fwv header has to say what was on.
+   STU_Log_Severity_Name() returns a static, never-NULL string ("TRACE".."FATAL", or "?"). */
+int          STU_Log_Get_Severity_Threshold(void);
+const char * STU_Log_Severity_Name(int sev);
+int          STU_Log_Category_Enabled(int cat);
 void STU_Log_Pump(void);
 void STU_Log_Flush_All(void);
 

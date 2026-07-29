@@ -89,6 +89,33 @@
             }
         },
         {
+            "name": "MSVC-perf",
+            "displayName": "VS2022 amd64 Release + perf zones",
+            "description": "Release build with PERF_INSTRUMENT=ON -- the build to take performance measurements with. Optimized (Debug numbers do not transfer) and zones compiled in. Capture still requires REMOM_PERF=1 at runtime. Never ship this preset: MSVC-release stays perf-free.",
+            "generator": "Visual Studio 17 2022",
+            "toolset": "host=x64",
+            "architecture": "x64",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "USE_WIN32": {
+                    "type": "BOOL",
+                    "value": "FALSE"
+                },
+                "USE_SDL3": {
+                    "type": "BOOL",
+                    "value": "FALSE"
+                },
+                "PERF_INSTRUMENT": {
+                    "type": "BOOL",
+                    "value": "TRUE"
+                }
+            }
+        },
+        {
             "name": "MSVC-win32-debug",
             "displayName": "VS2022 amd64 Debug (Win32 backend, silent)",
             "description": "Opt-in native Win32 backend (no SDL, no audio) -- self-contained, no DLLs.",
@@ -278,6 +305,17 @@
             ]
         },
         {
+            "name": "MSVC-perf",
+            "displayName": "VS2022 amd64 Release + perf zones",
+            "configurePreset": "MSVC-perf",
+            "configuration": "Release",
+            "targets": [
+                "ALL_BUILD",
+                "ReMoM",
+                "HeMoM"
+            ]
+        },
+        {
             "name": "MSVC-win32-debug",
             "displayName": "VS2022 amd64 Debug (Win32 backend, silent)",
             "configurePreset": "MSVC-win32-debug",
@@ -417,6 +455,12 @@
             "name": "MSVC-release",
             "displayName": "VS2022 amd64 Release",
             "configurePreset": "MSVC-release",
+            "configuration": "Release"
+        },
+        {
+            "name": "MSVC-perf",
+            "displayName": "VS2022 amd64 Release + perf zones",
+            "configurePreset": "MSVC-perf",
             "configuration": "Release"
         },
         {

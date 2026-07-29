@@ -93,6 +93,27 @@ uint64_t Platform_Get_Millies(void)
     return (uint64_t)SDL_GetTicks();
 }
 
+/* Microsecond clock for perf instrumentation -- see Platform.h.  SDL_GetTicks() is already
+ * QPC-backed on Windows, but it returns milliseconds, which cannot resolve a sub-frame zone. */
+uint64_t Platform_Get_Micros(void)
+{
+    static uint64_t sdl2_micros_startup = 0;
+    uint64_t freq = (uint64_t)SDL_GetPerformanceFrequency();
+    uint64_t now;
+
+    if(freq == 0) { return (uint64_t)SDL_GetTicks() * 1000u; }  /* no perf counter: fall back, coarse but monotonic */
+
+    now = (uint64_t)SDL_GetPerformanceCounter();
+    /* Split the division so a long session cannot overflow the numerator. */
+    now = (now / freq) * 1000000u + ((now % freq) * 1000000u) / freq;
+
+    if(sdl2_micros_startup == 0)
+    {
+        sdl2_micros_startup = now;
+    }
+    return now - sdl2_micros_startup;
+}
+
 void Platform_Sleep_Millies(uint64_t millies)
 {
     SDL_Delay((uint32_t)millies);

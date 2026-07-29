@@ -20,6 +20,7 @@
 #include "../../STU/src/STU_LOG.h"
 
 #include "../../platform/include/Platform.h"  /* Platform_Get_Millies() */
+#include "../../platform/include/Platform_Perf.h"  /* PERF_CALL() zones -- compiled out unless PERF_INSTRUMENT */
 
 #include "../../MoX/src/LOADSAVE.h"
 #include "../../MoX/src/MOM_DEF.h"
@@ -677,25 +678,25 @@ void Next_Turn_Calc(void)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-/* CLAUDE */ #ifdef STU_DEBUG
-/* CLAUDE */ #define PHASE(CALL) do { uint64_t _ps = Platform_Get_Millies(); CALL; { uint64_t _pe = Platform_Get_Millies(); LOG_INFO(LOG_CAT_NEXTTURN, "[NEXTTURN] phase %-48s = %llu ms", #CALL, (unsigned long long)(_pe - _ps)); LOG_TRACE(LOG_CAT_GENERAL, "[NEXTTURN] phase %-48s = %llu ms", #CALL, (unsigned long long)(_pe - _ps)); } } while(0)
-/* CLAUDE */ #else
-/* CLAUDE */ #define PHASE(CALL) CALL
-/* CLAUDE */ #endif
-
+/* CLAUDE: the hand-toggled two-#define PHASE macro that used to sit here has been replaced by the
+ * build-gated PERF_CALL zone (platform/include/Platform_Perf.h, PRD-Performance-Management FR6/FR7).
+ * The stage breakdown below is unchanged -- PERF_CALL stringizes the same call text as the zone
+ * name.  What changed: the switch is now the PERF_INSTRUMENT build option instead of commenting out
+ * one of two #defines by hand, and the zone body no longer calls LOG_INFO inside the timed region
+ * (which used to inflate the very stage times it reported). */
 
     Set_Random_Seed(RNG_AI_Turn_Seed);
 
     Set_Mouse_List(1, mouse_list_hourglass);
 
     // All_City_Calculations();
-/* CLAUDE */ PHASE(All_City_Calculations());
+/* CLAUDE */ PERF_CALL(All_City_Calculations());
 
     // AI_Kill_Lame_Units();  // ¿ BUGBUG  leaves dead/deleteable units lying around ?
-/* CLAUDE */ PHASE(AI_Kill_Lame_Units());
+/* CLAUDE */ PERF_CALL(AI_Kill_Lame_Units());
 
     // AI_Next_Turn();
-/* CLAUDE */ PHASE(AI_Next_Turn());
+/* CLAUDE */ PERF_CALL(AI_Next_Turn());
     /* CLAUDE: GD point 618 -- _UNITS AFTER AI_Next_Turn (captured at the call site,
      * BEFORE the following Next_Turn_Process_Purify(), mirroring OG's far-return into
      * Next_Turn_Calc).  Tells whether the divergent neutral units (_UNITS[48..50], owner
@@ -704,10 +705,10 @@ void Next_Turn_Calc(void)
     { static int gd618_done = 0; if(!gd618_done) { gd618_done = 1; gd_dump_units("618_AI_Next_Turn_Return_U"); } }
 
     // Next_Turn_Process_Purify();
-/* CLAUDE */ PHASE(Next_Turn_Process_Purify());
+/* CLAUDE */ PERF_CALL(Next_Turn_Process_Purify());
 
     // Initialize_Reports();
-/* CLAUDE */ PHASE(Initialize_Reports());
+/* CLAUDE */ PERF_CALL(Initialize_Reports());
 
     if(g_timestop_player_num != 0)
     {
@@ -737,24 +738,24 @@ void Next_Turn_Calc(void)
     {
 
         // Decrease_Peace_Duration();
-/* CLAUDE */ PHASE(Decrease_Peace_Duration());
+/* CLAUDE */ PERF_CALL(Decrease_Peace_Duration());
 
         // Update_Players_Gold_Reserve();
 /* CLAUDE */ LOG_INFO(LOG_CAT_NEXTTURN, "[GOLD] BEFORE Update_Players_Gold_Reserve: gold_reserve=%d", _players[0].gold_reserve);
-/* CLAUDE */ PHASE(Update_Players_Gold_Reserve());
+/* CLAUDE */ PERF_CALL(Update_Players_Gold_Reserve());
 /* CLAUDE */ LOG_INFO(LOG_CAT_NEXTTURN, "[GOLD] AFTER  Update_Players_Gold_Reserve: gold_reserve=%d", _players[0].gold_reserve);
 
         // Players_Update_Magic_Power();
-/* CLAUDE */ PHASE(Players_Update_Magic_Power());
+/* CLAUDE */ PERF_CALL(Players_Update_Magic_Power());
 
         // Players_Apply_Magic_Power();
-/* CLAUDE */ PHASE(Players_Apply_Magic_Power());
+/* CLAUDE */ PERF_CALL(Players_Apply_Magic_Power());
 
         // Players_Check_Spell_Research();
-/* CLAUDE */ PHASE(Players_Check_Spell_Research());
+/* CLAUDE */ PERF_CALL(Players_Check_Spell_Research());
 
         // Main_Screen_Disable_Income_Warning();
-/* CLAUDE */ PHASE(Main_Screen_Disable_Income_Warning());
+/* CLAUDE */ PERF_CALL(Main_Screen_Disable_Income_Warning());
 
         if(
             (DBG_Alt_A_State == ST_FALSE)
@@ -764,33 +765,33 @@ void Next_Turn_Calc(void)
         {
 
             // Determine_Event();
-/* CLAUDE */ PHASE(Determine_Event());
+/* CLAUDE */ PERF_CALL(Determine_Event());
 
         }
 
         // Event_Twiddle();
-        /* CLAUDE */ PHASE(Event_Twiddle());
+        /* CLAUDE */ PERF_CALL(Event_Twiddle());
         /* EOG_HACK */  if(magic_master_idx != ST_UNDEFINED) { return; }  /* OG-MoM: rebellion Respawned here; skip the post-endgame tail */
 
 /* CLAUDE */ LOG_INFO(LOG_CAT_NEXTTURN, "[GOLD] BEFORE Players_Apply_Upkeeps: gold_reserve=%d", _players[0].gold_reserve);
         // Players_Apply_Upkeeps__WIP();
-/* CLAUDE */ PHASE(Players_Apply_Upkeeps__WIP());
+/* CLAUDE */ PERF_CALL(Players_Apply_Upkeeps__WIP());
 /* CLAUDE */ LOG_INFO(LOG_CAT_NEXTTURN, "[GOLD] AFTER  Players_Apply_Upkeeps: gold_reserve=%d", _players[0].gold_reserve);
 
         EMMDATAH_Map();
 
         // All_Outpost_Population_Growth();
-/* CLAUDE */ PHASE(All_Outpost_Population_Growth());
+/* CLAUDE */ PERF_CALL(All_Outpost_Population_Growth());
     /* CLAUDE: GD point 621 -- _UNITS after All_Outpost_Population_Growth, before the
      * following Apply_City_Changes(), mirroring OG (which fires at the j_Apply_City_Changes
      * landmark to dodge the ovr119 overlay eviction on return).  Fire once. */
     { static int gd623_done = 0; if(!gd623_done) { gd623_done = 1; gd_dump_units("621_All_Outpost_Population_Growth_Return_U"); } }
 
         // Apply_City_Changes();
-/* CLAUDE */ PHASE(Apply_City_Changes());
+/* CLAUDE */ PERF_CALL(Apply_City_Changes());
 
         // Diplomacy_Growth_For_Enchantments();
-/* CLAUDE */ PHASE(Diplomacy_Growth_For_Enchantments());
+/* CLAUDE */ PERF_CALL(Diplomacy_Growth_For_Enchantments());
 
 
         /*
@@ -806,7 +807,7 @@ void Next_Turn_Calc(void)
 
 
         // Determine_Offer();
-/* CLAUDE */ PHASE(Determine_Offer());
+/* CLAUDE */ PERF_CALL(Determine_Offer());
     /* CLAUDE: GD point 627 -- _UNITS after Determine_Offer (before the following
      * Set_Mouse_List), mirroring OG's far-return into Next_Turn_Calc+0x11F.  Fire once. */
     { static int gd624_done = 0; if(!gd624_done) { gd624_done = 1; gd_dump_units("627_Determine_Offer_Return_U"); } }
@@ -816,7 +817,7 @@ void Next_Turn_Calc(void)
 
 
         // All_City_Nightshade_Count();
-/* CLAUDE */ PHASE(All_City_Nightshade_Count());
+/* CLAUDE */ PERF_CALL(All_City_Nightshade_Count());
 
 
         /*
@@ -824,30 +825,30 @@ void Next_Turn_Calc(void)
         */
 
         // Diplomacy_Growth();
-/* CLAUDE */ PHASE(Diplomacy_Growth());
+/* CLAUDE */ PERF_CALL(Diplomacy_Growth());
 
         // Determine_First_Contacts();
-/* CLAUDE */ PHASE(Determine_First_Contacts());
+/* CLAUDE */ PERF_CALL(Determine_First_Contacts());
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
-        PHASE(NPC_To_NPC_Treaty_Negotiations());
+        PERF_CALL(NPC_To_NPC_Treaty_Negotiations());
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
         // NPC_To_Human_Diplomacy();
-/* CLAUDE */ PHASE(NPC_To_Human_Diplomacy());
+/* CLAUDE */ PERF_CALL(NPC_To_Human_Diplomacy());
 
         // Resolve_Delayed_Diplomacy_Orders();
-/* CLAUDE */ PHASE(Resolve_Delayed_Diplomacy_Orders());
+/* CLAUDE */ PERF_CALL(Resolve_Delayed_Diplomacy_Orders());
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
         // End_Of_Turn_Diplomacy_Adjustments();
-/* CLAUDE */ PHASE(End_Of_Turn_Diplomacy_Adjustments());
+/* CLAUDE */ PERF_CALL(End_Of_Turn_Diplomacy_Adjustments());
 
         // Modifier_Diplomacy_Adjustments();
-/* CLAUDE */ PHASE(Modifier_Diplomacy_Adjustments());
+/* CLAUDE */ PERF_CALL(Modifier_Diplomacy_Adjustments());
 
         /*
             END:  NPC Diplomacy
@@ -855,53 +856,53 @@ void Next_Turn_Calc(void)
 
 
         // Cool_Off_Volcanoes();
-/* CLAUDE */ PHASE(Cool_Off_Volcanoes());
+/* CLAUDE */ PERF_CALL(Cool_Off_Volcanoes());
 
     }
 
 
     // All_Players_Apply_Spell_Casting();
-/* CLAUDE */ PHASE(All_Players_Apply_Spell_Casting());
+/* CLAUDE */ PERF_CALL(All_Players_Apply_Spell_Casting());
 
 
     // Delete_Dead_Units();  // ¿ here, because we may have killed units with a spell, just above ?
-/* CLAUDE */ PHASE(Delete_Dead_Units());  /* j_Delete_Dead_Units() */
+/* CLAUDE */ PERF_CALL(Delete_Dead_Units());  /* j_Delete_Dead_Units() */
     /* CLAUDE: GD 630 -- _UNITS after Next_Turn_Calc's Delete_Dead_Units (before
      * Set_Unit_Draw_Priority), matching OG's far-return into Next_Turn_Calc+0x1ED.  Fire once. */
     { static int gd625_done = 0; if(!gd625_done) { gd625_done = 1; gd_dump_units("630_Delete_Dead_Units_NextTurnCalc_U"); } }
 
 
     // Set_Unit_Draw_Priority();
-/* CLAUDE */ PHASE(Set_Unit_Draw_Priority());
+/* CLAUDE */ PERF_CALL(Set_Unit_Draw_Priority());
 
     // Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-/* CLAUDE */ PHASE(Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane));
+/* CLAUDE */ PERF_CALL(Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane));
 
 
     // All_City_Removed_Buildings();
-/* CLAUDE */ PHASE(All_City_Removed_Buildings());
+/* CLAUDE */ PERF_CALL(All_City_Removed_Buildings());
 
 
     // Do_All_Units_XP_Check();
-/* CLAUDE */ PHASE(Do_All_Units_XP_Check());
+/* CLAUDE */ PERF_CALL(Do_All_Units_XP_Check());
     /* CLAUDE: GD point 631 -- _UNITS after Do_All_Units_XP_Check (before the following
      * Heal_All_Units), mirroring OG's far-return into Next_Turn_Calc+0x210.  Fire once. */
     { static int gd631x_done = 0; if(!gd631x_done) { gd631x_done = 1; gd_dump_units("631_Do_All_Units_XP_Check_Return_U"); } }
 
 
     // Heal_All_Units();
-/* CLAUDE */ PHASE(Heal_All_Units());
+/* CLAUDE */ PERF_CALL(Heal_All_Units());
     /* CLAUDE: GD point 632 -- _UNITS after Heal_All_Units, before the following
      * Record_History(), mirroring OG's far-return into Next_Turn_Calc.  Fire once. */
     { static int gd622_done = 0; if(!gd622_done) { gd622_done = 1; gd_dump_units("632_Heal_All_Units_Return_U"); } }
 
 
     // Record_History();
-/* CLAUDE */ PHASE(Record_History());
+/* CLAUDE */ PERF_CALL(Record_History());
 
 
     // Increment_Background_Music();
-/* CLAUDE */ PHASE(Increment_Background_Music());
+/* CLAUDE */ PERF_CALL(Increment_Background_Music());
 
 
     _turn++;
@@ -918,15 +919,15 @@ void Next_Turn_Calc(void)
 
 
     // Main_Screen_Enable_Income_Warning();
-/* CLAUDE */ PHASE(Main_Screen_Enable_Income_Warning());
+/* CLAUDE */ PERF_CALL(Main_Screen_Enable_Income_Warning());
 
 
     // Do_Autosave();
-/* CLAUDE */ PHASE(Do_Autosave());
+/* CLAUDE */ PERF_CALL(Do_Autosave());
 
 
     // All_City_Calculations();
-/* CLAUDE */ PHASE(All_City_Calculations());
+/* CLAUDE */ PERF_CALL(All_City_Calculations());
     /* CLAUDE: GD point 633 -- _UNITS after the LATE (end-of-turn) All_City_Calculations,
      * before the following Get_Random_Seed(), mirroring the OG capture point (OG fires at
      * Get_Random_Seed to dodge the ovr119 overlay eviction on return).  Fire once. */
