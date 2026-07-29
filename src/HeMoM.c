@@ -54,7 +54,6 @@
 #include "../MoX/src/MOX2.h"  /* CLAUDE: Check_Command_Line_Parameters_() */
 #include "../MoX/src/MOX_SET.h"   /* magic_set.Save_Names[] */
 
-#include "../MoM/src/NEXTTURN.h"  /* CLAUDE: Next_Turn_Calc() for --perf-turns (Mode A) */
 #include "../MoM/src/SPLMASTR.h"  /* CLAUDE: m_magic_winner_idx -- reset on the --load path */
 #include "../MoM/src/NewGame.h"
 #include "../MoM/src/MAPGEN.h"
@@ -1029,8 +1028,6 @@ static void Print_Usage(const char *program_name)
     LOG_INFO(LOG_CAT_HEMOM, "  --replay FILE      Replay recorded input from .RMR file");
     LOG_INFO(LOG_CAT_HEMOM, "  --record FILE      Record input to .RMR file");
     LOG_INFO(LOG_CAT_HEMOM, "  --dump-save FILE   After Screen_Control returns, dump FILE.GAM to FILE.txt");
-    LOG_INFO(LOG_CAT_HEMOM, "  --perf-turns N     Mode A perf: run N turns of Next_Turn_Calc() directly (no UI, no pacing waits)");
-    LOG_INFO(LOG_CAT_HEMOM, "                     and exit.  Needs REMOM_PERF=1 and a PERF_INSTRUMENT build to record anything.");
     LOG_INFO(LOG_CAT_HEMOM, "  --combat D A,B,..  Load SAVECMBT.GAM, run strategic combat: attacker units A,B,.. vs the stack of defender unit D; dump results to %s", HEMOM_COMBAT_DUMP_FILE);
     LOG_INFO(LOG_CAT_HEMOM, "  --combat-tactical D A,B,..  Same, but run the tactical battle screen with forced auto-combat (one side must be the human player)");
     LOG_INFO(LOG_CAT_HEMOM, "  --help             Show this help");
@@ -1052,7 +1049,6 @@ int main(int argc, char *argv[])
     int16_t combat_troops[HEMOM_COMBAT_MAX_TROOPS] = { 0 };
     int16_t combat_troop_count = 0;
     int16_t combat_tactical = 0;
-    int hemom_perf_turns = 0;  /* CLAUDE: --perf-turns N (Mode A headless logic timing); 0 = off */
     int argi;
 
     STU_Log_Startup("ReMoM.ini");
@@ -1155,22 +1151,6 @@ int main(int argc, char *argv[])
             LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] CLI: --continue (SAVE9.GAM)");
             LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --continue (SAVE9.GAM)");
 #endif
-        }
-        /* CLAUDE: --perf-turns N -- Mode A headless logic perf; drives N turns of the pipeline
-           directly (no Screen_Control, no Release_Time) so the recorded time is all work. */
-        else if(stu_strcmp(argv[argi], "--perf-turns") == 0 && (argi + 1) < argc)
-        {
-            argi++;
-            hemom_perf_turns = atoi(argv[argi]);
-            if(hemom_perf_turns < 1)
-            {
-                LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --perf-turns needs a positive count, got \"%s\" -- ignoring", argv[argi]);
-                hemom_perf_turns = 0;
-            }
-            else
-            {
-                LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --perf-turns %d", hemom_perf_turns);
-            }
         }
         else if(stu_strcmp(argv[argi], "--replay") == 0 || stu_strcmp(argv[argi], "--record") == 0)
         {
@@ -1405,91 +1385,11 @@ int main(int argc, char *argv[])
 #endif
     }
 
-    /* CLAUDE: --perf-turns N -- Mode A, headless turn-pipeline performance measurement.
-       (doc/#AI_Plans/PLAN-Performance-Management.md step 5.)
-
-       Drives the turn pipeline DIRECTLY instead of through the Main Screen, for three reasons:
-
-         1. It does not work through the UI.  On a real late-game save, units are awaiting orders,
-            so the Main Screen swallows the Next Turn key and the turn never advances -- measured:
-            a scripted 'n' on SAVETEST.GAM (turn 615) left turn=615 after 10 minutes of polling.
-            Finishing hundreds of units by scripted clicks is not a measurement harness.
-
-         2. Screen_Control() paces itself with Release_Time(), which sleeps out the rest of each
-            55 ms tick.  Sleeping is exactly what Mode A must NOT measure: the question is how long
-            the WORK takes, and wall-clock through the screen loop is dominated by the deliberate
-            waits (PRD FR5a).  Calling Next_Turn_Calc() directly means every microsecond recorded
-            is work.
-
-         3. It removes the flakiness.  The scripted save-and-quit tail is documented as hanging
-            ~1-in-3 under Release headless (tests/CMakeLists.txt), which would make a perf gate
-            fail for reasons that have nothing to do with performance.
-
-       Next_Turn_Calc() is the right entry point rather than Next_Turn_Proc(): it is the pure logic
-       pipeline, it carries every PERF_CALL stage, it advances _turn itself (NEXTTURN.c), and it
-       excludes Next_Turn_Proc()'s rendering and Chancellor-screen UI.  This mirrors the existing
-       --combat fixture, which likewise calls Combat__WIP() directly rather than driving the UI. */
-    if(hemom_perf_turns > 0)
-    {
-        int perf_turn;
-
-        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] --perf-turns %d: driving Next_Turn_Calc() directly from turn %d (no Screen_Control, no Release_Time)",
-                 hemom_perf_turns, (int)_turn);
-
-        /* CLAUDE: KNOWN LIMITATION -- this direct-drive path does not currently complete a turn.
-           Next_Turn_Calc() reaches points that wait for player input (a battle result, a research
-           or event prompt).  Those waits are serviced by the artificial-human-player frame callback
-           that Platform_Event_Handler drives, and bypassing Screen_Control() leaves nothing to
-           answer them, so the run spins with "input mode = NONE".  Measured: 10 turns on SAVE9.GAM
-           (fresh, turn 0) did not finish a single turn in 4 minutes.
-
-           The WORKING Mode A path is the ordinary scripted one -- and it loses nothing, because the
-           zones measure the stages themselves, not the loop around them:
-               REMOM_PERF=1 HeMoM --continue --scenario test_ai_5turns.hms --seed1 12345
-           Release_Time()'s pacing waits sit OUTSIDE Next_Turn_Calc(), so each stage's recorded time
-           is still pure work.  (Caveat: a stage that itself encloses a prompt -- e.g.
-           Players_Check_Spell_Research() around the turn-1 research picker -- records the wait for
-           the scripted click, not work.  Exclude those, or read their self time.)
-
-           Keep or drop this flag once the input-wait points are enumerated; it is retained for now
-           because the diagnosis above is the useful part. */
-        LOG_WARN(LOG_CAT_HEMOM, "[HeMoM] --perf-turns is KNOWN NOT TO COMPLETE A TURN (input waits with no input source); use --scenario for Mode A instead");
-
-        if(!Perf_Active())
-        {
-            /* Loud, because the run otherwise looks successful and produces no numbers at all. */
-            LOG_WARN(LOG_CAT_HEMOM, "[HeMoM] --perf-turns with perf capture INACTIVE -- set REMOM_PERF=1 and use a PERF_INSTRUMENT build, or this run measures nothing");
-        }
-
-        /* CLAUDE: force strategic (auto-resolved) combat for the duration of the perf run.
-           On a late-game save the AI turn provokes battles that involve the human player, and
-           Combat.c:4100 routes those into the INTERACTIVE Combat_Screen__WIP unless this flag is
-           set -- which then blocks forever under Platform_Headless ("input mode = NONE").  That is
-           not a hypothetical: it is what the first full-pipeline run on SAVETEST.GAM did.
-
-           This is a scope decision, not a workaround.  Mode A measures the TURN PIPELINE; a
-           tactical battle is a separate player-driven screen whose cost belongs to combat
-           profiling, not to Next_Turn_Calc.  Auto-resolve keeps the strategic consequences of the
-           battle (who wins, what dies) in the measured turn while leaving the UI out of it. */
-        magic_set.strategic_combat_only = ST_TRUE;
-        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] --perf-turns: magic_set.strategic_combat_only=TRUE (auto-resolve; tactical combat is a separate screen, not turn-pipeline logic)");
-
-        for(perf_turn = 0; perf_turn < hemom_perf_turns; ++perf_turn)
-        {
-            PERF_ZONE("Next_Turn_Calc_TOTAL")
-            {
-                Next_Turn_Calc();
-            }
-            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] --perf-turns: completed %d/%d (turn now %d)", perf_turn + 1, hemom_perf_turns, (int)_turn);
-        }
-
-        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] --perf-turns complete — skipping Screen_Control()");
-    }
     /* Enter game loop — but skip it for --newgame without --scenario.
        Config_Apply_And_Create_New_Game() already wrote SAVE9.GAM, and HeMoM
        has no interactive UI, so entering Screen_Control() here would just
        spin forever waiting for input that can never arrive. */
-    else if(hemom_mode == 3)
+    if(hemom_mode == 3)
     {
         LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Combat run complete — skipping Screen_Control()");
     }

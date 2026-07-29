@@ -1,1 +1,1 @@
-[2026-07-16T13:05:56Z] [INFO ] [GENERAL                ] test_STU_LOG_strip.cpp:45 TestBody: side-effect probe 1
+[2026-07-16T13:05:56Z] [INFO ] [GENERAL                ] test_STU_LOG_strip.cpp:55 TestBody: kept info

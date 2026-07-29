@@ -42,6 +42,26 @@ All reports are **frame time in milliseconds, as p50/p95/p99/max distributions**
 5. **Logic vs render split.** Frame rows carry present/render time separately from a per-frame logic total, so the split in US2 is directly readable.
 5a. **Tick-aware frame accounting — intentional wait vs. overrun (the `dt_ms` trap).** A "frame" in MoM is a **55 ms logic tick**, and `Release_Time(N)` advances the clock by N ticks while holding the same image. The present-to-present interval (`dt_ms`, from the input metrics) **conflates** a legitimate `Release_Time(3)` hold (three idle on-budget ticks) with a single frame that overran — because `Release_Time` holds without presenting ([`Timer.c:76`](../../MoX/src/Timer.c#L76)), a multi-tick hold collapses into one long interval. *(Confirmed by the first real capture — 2026-07-28, SDL2 release: median frame exactly on budget (55 ms) but a fat tail, p95 = 111 ms / p99 = 166 ms / 47% of intervals > 55 ms, with **94% of frame time non-vsync work** — which this conflation inflates.)* The perf metric therefore accounts in **logical ticks, not present intervals**: `Release_Time` **reports its `N`** to the perf layer, a hold is recorded as N idle **on-budget** ticks, and **over-budget** means *a single tick's **work** exceeded 55 ms*, never *an interval was long*. This is the surgical fix (one marked hook call in `Release_Time`); it is **distinct from** actually re-presenting each tick (Option B — deferred, see Out of Scope). The clean logic number needs neither: Mode A headless has no `Release_Time` waits at all.
 
+5b. **IMPLEMENTED 2026-07-29 — with one correction to FR5a as written above.** The hook reports **`N` *and* the measured elapsed wait**, not `N` alone, and the perf layer subtracts the **measured** value.
+
+**Why `N` alone is not merely imprecise but inverted.** `Release_Time`'s wait is `while(Platform_Get_Millies() < tick_end)` ([`Timer.c`](../../MoX/src/Timer.c)). When logic has *already overrun* past `tick_end`, the loop body never executes and **nothing is waited** — yet `ticks` is still `N`. Subtracting a nominal `N × 55 ms` in that case credits a hold that never happened and relabels a genuine overrun as idle time. The one case FR5a exists to catch is precisely the case where `N` lies. The measured wait is ~0 there, which is the truth.
+
+So: `Perf_Note_Release_Time(ticks, waited_ms)` — `ticks` feeds the logical-tick totals, `waited_ms` is what gets subtracted from the present-to-present interval to yield the tick's work.
+
+**Measured result** (windowed SDL2 Release, two turns of ordinary play, 2026-07-29):
+
+| figure | value |
+|---|---|
+| `interval_over` (naive: intervals > 55 ms) | **30 %** |
+| `work_over` (tick-aware: a tick's *work* > 55 ms) | **1.5 %** |
+| `idle` | **298 / 776 ticks = 38 %** were intentional `Release_Time` holds |
+
+A ~20× difference, and it confirms the original "47 % over budget" was mostly pacing holds being counted as overruns. Nearly two-fifths of all logical ticks are intentional waits.
+
+**Reporting rule learned the hard way:** the first version of the log line put a *ring-windowed* count (`78/256`) next to a *lifetime* count (`7`), inviting a comparison of two different denominators and overstating the contrast. Both over-budget figures are now lifetime with explicit denominators; percentiles remain the recent (ring) view. Do not mix the two bases in one comparison.
+
+**Side finding:** with ticks and presents now counted separately they disagree — interval `p50 = 31 ms` against a 55 ms tick means **more presents than ticks**, which is [`ADDENDUM-Performance-Danger-Zones.md`](ADDENDUM-Performance-Danger-Zones.md) DZ-2 (multiple present sites per logical frame) showing up in measurement for the first time. Unchased: render is ~6 % of frame time.
+
 ### The zone primitive (graduated `PHASE`)
 6. **Build-gated zone macros**, e.g. `PERF_ZONE("name") { ... }` or `PERF_BEGIN(id)/PERF_END(id)`, that:
    - compile to **timestamp-into-preallocated-buffer** when `PERF_INSTRUMENT` is defined, and to **nothing** (a bare pass-through / empty) otherwise;

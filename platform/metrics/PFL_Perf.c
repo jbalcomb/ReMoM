@@ -306,6 +306,46 @@ int Perf_Live_Get_Display_Lines(const char ** line1, const char ** line2, const 
     return 1;
 }
 
+
+/* ---- Tick-aware accounting (FR5a) ------------------------------------------------------------
+ *
+ * Release_Time() holds the image for N ticks WITHOUT presenting, so one present-to-present interval
+ * can span an intentional multi-tick hold.  Charging that whole interval to "one frame" is what
+ * produced the misleading "47% over budget" in the first capture.  Here the interval is split:
+ *
+ *     interval  =  waited (intentional hold)  +  work (everything else)
+ *
+ * The hold is credited as N idle, on-budget ticks; the remainder is ONE tick whose work is what we
+ * actually judge against the 55 ms budget.  Subtraction uses the MEASURED wait, not N * 55 ms --
+ * see the contract in Platform_Perf.h for why that distinction is load-bearing. */
+
+static uint64_t m_pending_hold_ms = 0;     /* actual waited ms since the last present */
+static uint32_t m_pending_hold_ticks = 0;  /* nominal N since the last present */
+
+static uint32_t m_tick_total = 0;          /* logical ticks accounted (idle + work) */
+static uint32_t m_tick_idle = 0;           /* ticks inside intentional holds */
+static uint32_t m_tick_over = 0;           /* ticks whose WORK exceeded the budget */
+
+/* Lifetime present counters, kept so the naive and tick-aware over-budget figures can be reported
+ * on the SAME basis.  Reporting a ring-windowed count beside a lifetime count (as the first
+ * version of this line did) invites a comparison of two different denominators. */
+static uint32_t m_interval_total = 0;      /* presents seen */
+static uint32_t m_interval_over = 0;       /* presents whose raw interval exceeded the budget */
+
+void Perf_Note_Release_Time(int ticks, uint64_t waited_ms)
+{
+    if(ticks > 0) { m_pending_hold_ticks += (uint32_t)ticks; }
+    m_pending_hold_ms += waited_ms;
+}
+
+int Perf_Get_Tick_Accounting(unsigned * total_ticks, unsigned * idle_ticks, unsigned * over_ticks)
+{
+    if(total_ticks != NULL) { *total_ticks = (unsigned)m_tick_total; }
+    if(idle_ticks  != NULL) { *idle_ticks  = (unsigned)m_tick_idle; }
+    if(over_ticks  != NULL) { *over_ticks  = (unsigned)m_tick_over; }
+    return (m_tick_total > 0) ? 1 : 0;
+}
+
 void Perf_Live_Set_Base_Title(const char * base_title)
 {
     perf_copy_str(m_live_base_title, sizeof(m_live_base_title), base_title);
@@ -367,6 +407,29 @@ void Perf_Live_Note_Present(void)
     dt_ms = (uint32_t)(now_ms - m_live_prev_ms);
     m_live_prev_ms = now_ms;
 
+    /* FR5a: split this interval into intentional hold vs. real work BEFORE judging the budget, so
+     * "over budget" means a tick's work overran -- not merely that an interval was long. */
+    {
+        uint64_t hold_ms = m_pending_hold_ms;
+        uint32_t work_ms;
+
+        /* Clamp: the first interval after startup, or a hold straddling a present, can report more
+         * waiting than the interval itself.  Never let work go negative. */
+        if(hold_ms > (uint64_t)dt_ms) { hold_ms = (uint64_t)dt_ms; }
+        work_ms = (uint32_t)((uint64_t)dt_ms - hold_ms);
+
+        m_tick_idle  += m_pending_hold_ticks;
+        m_tick_total += m_pending_hold_ticks + 1u;   /* the idle holds, plus this presented work tick */
+        if(work_ms > PLATFORM_MILLISECONDS_PER_FRAME) { m_tick_over++; }
+
+        /* The naive figure, on the same lifetime basis, so the two are directly comparable. */
+        m_interval_total++;
+        if(dt_ms > PLATFORM_MILLISECONDS_PER_FRAME) { m_interval_over++; }
+
+        m_pending_hold_ms = 0;
+        m_pending_hold_ticks = 0;
+    }
+
     m_live_ring[m_live_ring_pos] = dt_ms;
     m_live_ring_pos = (m_live_ring_pos + 1u) % PERF_LIVE_RING;
     if(m_live_ring_n < PERF_LIVE_RING) { m_live_ring_n++; }
@@ -390,15 +453,34 @@ void Perf_Live_Note_Present(void)
          * diffed across runs.  Once a second, outside any timed zone. */
         if(Perf_Live_Get_Stats(NULL, &p50, &p95, &p99, &mx, &ovr))
         {
-            LOG_INFO(LOG_CAT_PFL, "[PERF-LIVE] %.1f fps  frame_ms p50=%u p95=%u p99=%u max=%u  over_budget=%u/%u (budget %d ms)",
-                     fps, p50, p95, p99, mx, ovr, (unsigned)m_live_ring_n, PLATFORM_MILLISECONDS_PER_FRAME);
+            /* Two over-budget figures, deliberately side by side and BOTH lifetime with explicit
+             * denominators, so they are directly comparable.  interval_over is the naive one --
+             * present-to-present intervals longer than a tick, which counts intentional
+             * Release_Time holds as if they were overruns.  work_over is the FR5a answer: ticks
+             * whose WORK overran, out of the ticks that did work.  The gap between the two rates
+             * IS the pacing holds, and idle/total says how much of the session they account for.
+             *
+             * Percentiles above are the recent (ring) view; these counts are lifetime.  That split
+             * is intentional -- do not mix a windowed count with a lifetime one in a comparison. */
+            {
+                unsigned work_ticks = (m_tick_total > m_tick_idle) ? (unsigned)(m_tick_total - m_tick_idle) : 0u;
+                LOG_INFO(LOG_CAT_PFL, "[PERF-LIVE] %.1f fps  frame_ms p50=%u p95=%u p99=%u max=%u (last %u)  interval_over=%u/%u  work_over=%u/%u  ticks=%u idle=%u  (budget %d ms)",
+                         fps, p50, p95, p99, mx, (unsigned)m_live_ring_n,
+                         (unsigned)m_interval_over, (unsigned)m_interval_total,
+                         (unsigned)m_tick_over, work_ticks,
+                         (unsigned)m_tick_total, (unsigned)m_tick_idle,
+                         PLATFORM_MILLISECONDS_PER_FRAME);
+            }
+            (void)ovr;  /* ring-windowed over-budget: superseded by the lifetime figures above */
 
             /* FR10: build the on-screen lines here, on the same once-a-second tick, so the draw
              * path never formats.  Kept short -- the Main Screen debug column is ~100 px wide at
              * ~5 px/char, so ~20 characters. */
             snprintf(m_live_line1, sizeof(m_live_line1), "FPS %.1f", fps);
             snprintf(m_live_line2, sizeof(m_live_line2), "MS %u/%u/%u", p50, p95, p99);
-            snprintf(m_live_line3, sizeof(m_live_line3), "MAX %u  OVR %u", mx, ovr);
+            /* OVR is the TICK-AWARE count (work overran), not the interval count -- showing the
+             * naive figure on screen is what made the first capture read 47% over budget. */
+            snprintf(m_live_line3, sizeof(m_live_line3), "MAX %u  OVR %u", mx, (unsigned)m_tick_over);
             m_live_lines_ready = 1;
         }
 

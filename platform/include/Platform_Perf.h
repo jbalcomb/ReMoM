@@ -98,6 +98,39 @@ void Perf_Shutdown(void);
 void Perf_Live_Set_Base_Title(const char * base_title);
 
 /**
+ * Tick-aware frame accounting: report an intentional pacing wait (PRD FR5a).
+ *
+ * THE PROBLEM.  A "frame" in MoM is a 55 ms logic tick, but Release_Time(N) advances the clock by N
+ * ticks while holding the same image -- it waits WITHOUT presenting.  So a legitimate 3-tick hold
+ * collapses into ONE present-to-present interval of ~165 ms, indistinguishable from a single frame
+ * that overran by 110 ms.  The first real capture (2026-07-28) read "47% of intervals over budget"
+ * largely because of this conflation.  Without this hook, "over budget" means "an interval was
+ * long", which is not the question anyone is asking.
+ *
+ * @param ticks      the N passed to Release_Time -- the NOMINAL tick advance.
+ * @param waited_ms  how long the wait loop ACTUALLY blocked.
+ *
+ * WHY BOTH, when the PRD says only "Release_Time reports its N".  Release_Time's loop is
+ * `while(Platform_Get_Millies() < tick_end)`.  When logic has already overrun past tick_end the
+ * body never runs and NOTHING is waited -- yet N is unchanged.  Subtracting a nominal N * 55 ms in
+ * that case would credit a hold that never happened and relabel a genuine overrun as idle time,
+ * exactly inverting the signal.  So the perf layer subtracts `waited_ms` (accurate, and naturally
+ * ~0 on an overrun) while counting `ticks` for the logical-tick totals.
+ *
+ * Cheap and always compiled: when the live layer is off this is a single store.
+ */
+void Perf_Note_Release_Time(int ticks, uint64_t waited_ms);
+
+/**
+ * Read tick-aware totals since startup.  All out-params optional.
+ *   total_ticks  -- logical 55 ms ticks accounted for (idle holds + presented work ticks)
+ *   idle_ticks   -- ticks spent inside intentional Release_Time holds
+ *   over_ticks   -- ticks whose WORK exceeded the 55 ms budget (the honest over-budget count)
+ * Returns non-zero once anything has been accounted.
+ */
+int Perf_Get_Tick_Accounting(unsigned * total_ticks, unsigned * idle_ticks, unsigned * over_ticks);
+
+/**
  * Note one present.  Call once per displayed frame, from the backend's present path.
  *
  * Accumulates inter-present intervals and, about once a second, updates the window title with the

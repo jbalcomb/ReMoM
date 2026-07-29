@@ -7,6 +7,7 @@
 #include "random.h"  /* g_random_call_count for CALL_TRACE */
 
 #include "../../platform/include/Platform.h"
+#include "../../platform/include/Platform_Perf.h"  /* CLAUDE: FR5a tick-aware accounting hook */
 #include "../../STU/src/STU_LOG.h"  /* CALL_TRACE */
 
 #include <stdbool.h>
@@ -82,11 +83,30 @@ void Release_Time(int ticks)
 
     tick_end = timer_ticks_mark_time + (ticks * PLATFORM_MILLISECONDS_PER_FRAME);  /* ~ IBM-PC - 55 ms per BIOS timer tick */
 
+/* CLAUDE */  { uint64_t perf_wait_begin_ms = Platform_Get_Millies();
+
     while(Platform_Get_Millies() < tick_end)
     {
         /* CLAUDE */  Platform_Pump_Events();  /* pumps events AND refreshes cursor (polls OS position, redraws only if moved) */
         Platform_Sleep_Millies(1);
     }
+
+    /* CLAUDE: FR5a tick-aware accounting (doc/#AI_Plans/PRD-Performance-Management.md).
+     *
+     * MEASUREMENT ONLY -- this reports, it does not change pacing.  The wait above is untouched:
+     * same condition, same loop body, same exit.  Two clock reads and one call are added around it.
+     *
+     * Why it has to be here: Release_Time holds the image for N ticks WITHOUT presenting, so from
+     * the outside a 3-tick hold is indistinguishable from one frame that overran by 110 ms.  Only
+     * this function knows the difference, so only this function can report it.
+     *
+     * Both figures are reported.  `ticks` is the nominal advance.  The measured elapsed time is
+     * what gets subtracted, because the loop above is `while(now < tick_end)` -- when logic has
+     * already overrun past tick_end the body never runs and nothing is waited, while `ticks` is
+     * unchanged.  Subtracting a nominal ticks * 55 ms there would invent a hold that never
+     * happened and relabel a real overrun as idle.  Measured elapsed is ~0 in that case, which is
+     * the truth. */
+/* CLAUDE */  Perf_Note_Release_Time(ticks, Platform_Get_Millies() - perf_wait_begin_ms); }
 
     timer_frame_count += ticks;
 
