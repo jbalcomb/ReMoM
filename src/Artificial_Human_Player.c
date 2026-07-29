@@ -1089,6 +1089,11 @@ void HeMoM_Player_Frame(void)
                 if(act->type == act_CLICK)
                 {
                     platform_frame_mouse_buttons |= ST_LEFT_BUTTON;
+                    /* CLAUDE: drive a synthetic button so polling input paths (Interpret_Mouse_Input
+                       -> Mouse_Button -> Platform_Get_Mouse_Button_State) see the injected click, not
+                       just the direct User_Mouse_Handler dispatch. platform_frame_mouse_buttons alone
+                       is recording-only and is reset each pump before the polling read. */
+                    Platform_Set_Synthetic_Mouse_Button(ST_LEFT_BUTTON);
                     LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms click (%d, %d)", t_now, act->x, act->y);
                     HeMoM_Log_Field_Hit(t_now, act->x, act->y);  /* CLAUDE: log the field BEFORE the handler consumes/clears it */
                     User_Mouse_Handler(ST_LEFT_BUTTON, wx, wy);
@@ -1100,6 +1105,7 @@ void HeMoM_Player_Frame(void)
                 else
                 {
                     platform_frame_mouse_buttons |= ST_RIGHT_BUTTON;
+                    Platform_Set_Synthetic_Mouse_Button(ST_RIGHT_BUTTON);  /* CLAUDE: see click branch */
                     LOG_INFO(LOG_CAT_ARTIFICIAL_HUMAN_PLAYER, "[HeMoM Player] t=%llu ms rclick (%d, %d)", t_now, act->x, act->y);
                     HeMoM_Log_Field_Hit(t_now, act->x, act->y);  /* CLAUDE: log the field BEFORE the handler consumes/clears it */
                     User_Mouse_Handler(ST_RIGHT_BUTTON, wx, wy);

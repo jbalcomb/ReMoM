@@ -10,6 +10,16 @@
 
 
 
+/* CLAUDE: synthetic (injected) mouse button for HMS/replay click playback — see Platform.h. */
+static int16_t sdl2_synthetic_mouse_button = 0;
+static int16_t sdl2_synthetic_mouse_button_hold = 0;
+
+void Platform_Set_Synthetic_Mouse_Button(int16_t buttons)
+{
+    sdl2_synthetic_mouse_button = buttons;
+    sdl2_synthetic_mouse_button_hold = (buttons != 0) ? PLATFORM_SYNTHETIC_MOUSE_HOLD : 0;
+}
+
 int16_t Platform_Get_Mouse_Button_State(void)
 {
     Uint32 sdl2_mouse_state = 0;
@@ -29,6 +39,22 @@ int16_t Platform_Get_Mouse_Button_State(void)
     if(sdl2_mouse_state & SDL_BUTTON(SDL_BUTTON_RIGHT))
     {
         l_mouse_button = ST_RIGHT_BUTTON;
+    }
+
+    /* CLAUDE: OR in the synthetic press, returning it BEFORE decrementing the hold so
+       this read still sees it; auto-release when the hold expires so the caller's
+       release spin-wait exits. */
+    if(sdl2_synthetic_mouse_button != 0)
+    {
+        l_mouse_button |= sdl2_synthetic_mouse_button;
+        if(sdl2_synthetic_mouse_button_hold > 0)
+        {
+            sdl2_synthetic_mouse_button_hold--;
+            if(sdl2_synthetic_mouse_button_hold == 0)
+            {
+                sdl2_synthetic_mouse_button = 0;
+            }
+        }
     }
 
     return l_mouse_button;

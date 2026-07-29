@@ -196,9 +196,35 @@ void Hw_Textinput_Stop(void)
 /*  Mouse (stubs)                                                            */
 /* ========================================================================= */
 
+/* CLAUDE: synthetic (injected) mouse button for HMS/replay click playback — see Platform.h.
+   Headless has no real mouse, so the synthetic press is the only button source. */
+static int16_t headless_synthetic_mouse_button = 0;
+static int16_t headless_synthetic_mouse_button_hold = 0;
+
+void Platform_Set_Synthetic_Mouse_Button(int16_t buttons)
+{
+    headless_synthetic_mouse_button = buttons;
+    headless_synthetic_mouse_button_hold = (buttons != 0) ? PLATFORM_SYNTHETIC_MOUSE_HOLD : 0;
+}
+
 int16_t Platform_Get_Mouse_Button_State(void)
 {
-    return 0;
+    int16_t l_mouse_button = 0;
+
+    if(headless_synthetic_mouse_button != 0)
+    {
+        l_mouse_button |= headless_synthetic_mouse_button;
+        if(headless_synthetic_mouse_button_hold > 0)
+        {
+            headless_synthetic_mouse_button_hold--;
+            if(headless_synthetic_mouse_button_hold == 0)
+            {
+                headless_synthetic_mouse_button = 0;
+            }
+        }
+    }
+
+    return l_mouse_button;
 }
 
 void Platform_Warp_Mouse(int16_t game_x, int16_t game_y)

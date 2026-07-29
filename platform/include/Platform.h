@@ -371,6 +371,22 @@ void EMS_Startup(void);
 int16_t Platform_Get_Mouse_Button_State(void);
 
 /**
+ * Synthetic (injected) mouse button for HMS/replay click playback.
+ *
+ * Interpret_Mouse_Input polls Platform_Get_Mouse_Button_State() (the real OS button),
+ * so a scripted click — which warps the cursor but presses no real button — is invisible
+ * to polling input paths (e.g. tactical combat). Set_Synthetic_Mouse_Button lets the
+ * injection drive a synthetic press that Platform_Get_Mouse_Button_State() OR-s in,
+ * mirroring how the cursor warp drives SDL_GetMouseState().
+ *
+ * The press is held for a few button reads (Interpret_Mouse_Input reads it several times to
+ * detect a click) then auto-released, so the release spin-wait `while(Mouse_Button()==X)`
+ * exits instead of hanging. Call with 0 to clear immediately.
+ */
+#define PLATFORM_SYNTHETIC_MOUSE_HOLD 4
+void Platform_Set_Synthetic_Mouse_Button(int16_t buttons);
+
+/**
  * Warp (move) the mouse cursor to a position given in game coordinates.
  * The platform handles scaling to window coordinates.
  * @param game_x  X in game coordinates (0..319).
