@@ -6987,6 +6987,8 @@ void AI_Evaluation_Map(int16_t player_idx)
     /* Iterate through all units and add their strength to the map */
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
+        /* HACK */ if(_UNITS[itr_units].wp == ST_UNDEFINED) { continue; }  /* TODO  make g_ai_evaluation_map[][] not SIGSEGV when wp is -1 */
+
         p_unit = &_UNITS[itr_units];
 
         unit_owner_idx = p_unit->owner_idx;  /* OGBUG  OOB AVRL  _UNITS[itr_units].owner_idx is ST_UNDEFINED */
