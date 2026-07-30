@@ -66,12 +66,18 @@ jobs:
           unzip -q SDL2_mixer.zip
           ls -d SDL2-2.32.2 SDL2_mixer-2.8.1   # fail early if the extracted names differ
 
-      - name: Configure (MSVC-release preset)
-        # CMAKE_INSTALL_BINDIR=. keeps the portable ZIP / NSIS layout flat
-        # (ReMoM at the package root); a plain local install uses bin/.
-        run: cmake --preset MSVC-release -DREMOM_VERSION=${{ steps.ver.outputs.version }} -DCMAKE_INSTALL_BINDIR=.
+      # One configure yields both exes. REMOM_DIAGNOSTIC=ON makes this tree's Debug config a
+      # SHIPPABLE step-debuggable build (STU_DEBUG, /Od, asserts, but the redistributable
+      # release CRT so it runs without Visual Studio), built as ReMoM_diagnostic.exe. The
+      # package step folds that Debug exe in alongside the Release player exe -- one
+      # installer/ZIP, both exes. CMAKE_INSTALL_BINDIR=. keeps the flat package layout.
+      - name: Configure (MSVC-release preset, + diagnostic exe)
+        run: cmake --preset MSVC-release -DREMOM_VERSION=${{ steps.ver.outputs.version }} -DCMAKE_INSTALL_BINDIR=. -DREMOM_DIAGNOSTIC=ON
 
-      - name: Build
+      - name: Build diagnostic exe (Debug config)
+        run: cmake --build out/build/MSVC-release --config Debug --target ReMoM
+
+      - name: Build (Release)
         run: cmake --build out/build/MSVC-release --config Release
 
       - name: Test (release gate)
@@ -80,7 +86,7 @@ jobs:
       - name: Install NSIS
         run: choco install nsis -y --no-progress
 
-      - name: Package (ZIP + NSIS installer)
+      - name: Package (ZIP + NSIS installer, incl. diagnostic exe)
         run: cmake --build out/build/MSVC-release --config Release --target package
 
       - name: Upload artifact

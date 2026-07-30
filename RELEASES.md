@@ -55,6 +55,40 @@ see [Future phase — Dev / Modder tooling](#future-phase--dev--modder-tooling).
 reverse-engineering reference material that a CPack source tarball would sweep in.
 Source lives on GitHub; a curated source distribution is out of scope for v0.x.)
 
+### Diagnostic build (Windows, testers)
+
+The Windows package (**both** the installer and the portable ZIP) ships a second
+executable next to `ReMoM.exe`: **`ReMoM_diagnostic.exe`** — a **step-debuggable
+diagnostic build** for walking through bugs on a tester's machine. No separate download;
+testers just run `ReMoM_diagnostic.exe` from their existing install. See
+[TESTING.md](TESTING.md).
+
+It is the **Debug** config (unoptimized `/Od`, `STU_DEBUG` on → verbose logging, asserts)
+but linked against the **redistributable release CRT (`/MD`)**, so it runs on a machine
+**without Visual Studio** — a normal `/MDd` Debug build can't, because Microsoft forbids
+redistributing the debug CRT (`ucrtbased` / `vcruntime140d` / `msvcp140d`) and it isn't
+present on end-user machines.
+
+How it's built and bundled (see `release.yml`):
+
+- **One configure of the `MSVC-release` preset with `-DREMOM_DIAGNOSTIC=ON`** yields both
+  exes from the same tree: `--config Release` → `ReMoM.exe` (player), `--config Debug` →
+  `ReMoM_diagnostic.exe` (the Debug config already carries `STU_DEBUG` + `/Od`;
+  `REMOM_DIAGNOSTIC` forces the release CRT so it ships, and renames the Debug exe).
+- The `package` step (CPack, Release) **folds the Debug exe + its PDB into the one package**
+  — a flat bundle, not a CPack component. Both exes share the package's SDL2 + release-CRT
+  DLLs. (`REMOM_DIAGNOSTIC` off = normal player-only package; the Release player exe is
+  identical either way.)
+- Both PDBs (`ReMoM.pdb` and `ReMoM_diagnostic.pdb`) ship next to their exes so STU_BRAK
+  crash traces symbolize on the tester's machine.
+
+Cost of this convenience: the diagnostic exe + its PDB add roughly **8 MB** to every
+Windows download. Acceptable for alpha; if it ever matters, the clean way to make it
+opt-in (a checkbox in the installer) is a CPack **component** — noted, not done.
+
+The **player** ZIP/installer also carries `ReMoM.pdb` next to `ReMoM.exe`, so even a crash
+on the normal release build produces a symbolized stack trace in the report.
+
 ### Windows installer behaviour
 
 The NSIS installer is a **per-user install and never prompts for UAC**:

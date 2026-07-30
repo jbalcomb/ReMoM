@@ -86,6 +86,18 @@ option(USE_SDL3 "Use SDL3 instead of SDL2 (default: SDL2)" OFF)
 
 option(USE_WIN32 "Use native Win32 backend instead of SDL (no SDL dependency)" OFF)
 
+# Diagnostic build: Debug diagnostics (STU_DEBUG, /Od step-debuggable, asserts, verbose
+# logging, the debug screens) with the REDISTRIBUTABLE release CRT, so testers can run it
+# on machines WITHOUT Visual Studio.  A normal /MDd Debug build links the debug CRT
+# (ucrtbased / vcruntime140d / msvcp140d), which Microsoft's license forbids redistributing
+# and which isn't present on end-user machines -- so a literal Debug exe can't ship.  Build
+# this with `--config Debug`; the option only swaps the CRT to /MD (CMP0091 is NEW here).
+option(REMOM_DIAGNOSTIC "Ship-able step-debuggable diagnostic build (release CRT + Debug diagnostics). Build with --config Debug." OFF)
+if(REMOM_DIAGNOSTIC AND MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL" CACHE STRING "" FORCE)
+    message(STATUS "REMOM_DIAGNOSTIC: release CRT (/MD) forced; build --config Debug for step-debuggable diagnostics that run without Visual Studio")
+endif()
+
 if(USE_WIN32)
     add_compile_definitions(NO_SOUND_LIBRARY)
 elseif(USE_SDL3)
@@ -350,9 +362,37 @@ set(CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
     WORLD_READ WORLD_EXECUTE
 )
 
+# With REMOM_DIAGNOSTIC, this one tree yields both exes: `--config Release` -> ReMoM.exe
+# (player), `--config Debug` -> ReMoM_diagnostic.exe (step-debuggable diagnostics: /Od +
+# STU_DEBUG + asserts, and the forced release CRT above so it ships).  The rename is
+# per-config (OUTPUT_NAME_DEBUG) so the Release exe stays ReMoM.exe; it also keeps the
+# Debug exe's embedded PDB reference as ReMoM_diagnostic.pdb so STU_BRAK resolves symbols.
+if(REMOM_DIAGNOSTIC)
+    set_target_properties(ReMoM PROPERTIES OUTPUT_NAME_DEBUG "ReMoM_diagnostic")
+endif()
+
 install(TARGETS ReMoM
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+# Ship ReMoM.pdb next to the exe so STU_BRAK symbolizes app frames in crash reports
+# from players'/testers' machines (the PDB is emitted for every config -- see the /Zi
+# block above; the 2026-07-28 AI-turn SIGSEGV was unreadable because no PDB shipped).
+# MSVC-only; OPTIONAL so a config/toolchain without a PDB doesn't fail the install.
+if(MSVC)
+    install(FILES "$<TARGET_PDB_FILE:ReMoM>" DESTINATION ${CMAKE_INSTALL_BINDIR} OPTIONAL)
+endif()
+
+# Bundle the step-debuggable diagnostic exe INTO this (player) package, so the one
+# installer/ZIP also carries ReMoM_diagnostic.exe for testers -- no separate download.
+# It is the Debug config of THIS tree (built alongside the Release config when
+# REMOM_DIAGNOSTIC=ON), so it lives at bin/Debug/ here.  OPTIONAL defers the existence
+# check to install time: the Debug config is built before `cpack` but does not exist at
+# configure time.  See RELEASES.md and TESTING.md.
+if(REMOM_DIAGNOSTIC AND MSVC)
+    install(PROGRAMS "${CMAKE_BINARY_DIR}/bin/Debug/ReMoM_diagnostic.exe" DESTINATION ${CMAKE_INSTALL_BINDIR} OPTIONAL)
+    install(FILES    "${CMAKE_BINARY_DIR}/bin/Debug/ReMoM_diagnostic.pdb" DESTINATION ${CMAKE_INSTALL_BINDIR} OPTIONAL)
+endif()
 
 # Two install shapes, distinguished by CMAKE_INSTALL_BINDIR:
 #   "flat" (BINDIR ".")  -> the portable ZIP / TGZ / NSIS layout: ReMoM and its
