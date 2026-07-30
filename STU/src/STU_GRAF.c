@@ -1057,11 +1057,22 @@ static void graf_add_autodetected_game_data(void)
     };
 
 #if defined(_WIN32)
+    /* Separate buffers: cands[] stores POINTERS, so each snprintf'd candidate needs its
+       own storage -- reusing one buffer would silently rewrite the earlier entry. */
     char b0[STU_GRAF_PATH_MAX];
+    char b1[STU_GRAF_PATH_MAX];
     const char * pf86 = getenv("ProgramFiles(x86)");
-    const char * cands[6];
+    const char * cands[8];
     int n = 0;
     cands[n++] = "C:\\GOG Games\\Master of Magic";
+    /* GOG Galaxy installs under its own Games tree, not the plain "C:\GOG Games" root. */
+    if(pf86 != NULL && pf86[0] != '\0')
+    {
+        snprintf(b1, sizeof(b1),
+                 "%s\\GOG Galaxy\\Games\\Master of Magic\\Master of Magic Official Release", pf86);
+        cands[n++] = b1;
+    }
+    cands[n++] = "C:\\Program Files (x86)\\GOG Galaxy\\Games\\Master of Magic\\Master of Magic Official Release";
     if(pf86 != NULL && pf86[0] != '\0')
     {
         snprintf(b0, sizeof(b0),

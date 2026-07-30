@@ -79,6 +79,7 @@ The same gate is also wired up as the VS Code task `check: safe-to-push` (`Tasks
 - dst stands for Destination
 - sgmt stands for Segment
 - ofst stands for Offset
+- OG-MoM stand for Original Master of Magic (1994)
 
 ## Vetting third-party dependencies (all agents)
 Before recommending, installing, or adding ANY external binary, library, package, or tool — including

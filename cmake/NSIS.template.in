@@ -19,11 +19,13 @@
   Var ADD_TO_PATH_CURRENT_USER
   Var INSTALL_DESKTOP
   Var IS_DEFAULT_INSTALLDIR
-  ; ReMoM: folder holding the player's own Master of Magic v1.31 .LBX data, and a
-  ; flag for whether it validated.  Deliberately separate from $INSTDIR -- we only
-  ; record the path, we never copy or modify the player's game data.
+  ; ReMoM: folder holding the user's own Master of Magic v1.31 .LBX data, a flag for
+  ; whether it validated, and whether it came from a PREVIOUS install (registry) rather
+  ; than from probing.  Deliberately separate from $INSTDIR: we COPY the data out of it
+  ; into $INSTDIR and never modify the original.
   Var OGMOM_DIR
   Var OGMOM_VALID
+  Var OGMOM_REMEMBERED
 ;--------------------------------
 ;Include Modern UI
 
@@ -560,9 +562,38 @@ FunctionEnd
 Function ReMoM_DetectGameDataDir
   StrCpy $OGMOM_DIR ""
   StrCpy $OGMOM_VALID 0
+  StrCpy $OGMOM_REMEMBERED 0
 
+  ; ReMoM: a PREVIOUS install's choice wins over probing.  It is the one folder we know
+  ; worked on this machine -- including the non-standard locations the probes below can
+  ; never guess -- so re-running the installer (an upgrade) must not re-ask for it.
+  ; Re-validated rather than trusted blindly: if the user moved or deleted their Master
+  ; of Magic folder since, we fall through to probing and the page reappears.
+  ; SHCTX is HKCU here (the per-user .onInit does SetShellVarContext current first), and
+  ; the uninstaller deletes this key -- so uninstalling is how you make it forget.
+  ReadRegStr $0 SHCTX "Software\@CPACK_PACKAGE_VENDOR@\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "OgMoMFilesDir"
+  StrCmp $0 "" remom_detect_probe 0
+    IfFileExists "$0\FONTS.LBX" 0 remom_detect_probe
+      StrCpy $OGMOM_DIR $0
+      StrCpy $OGMOM_VALID 1
+      StrCpy $OGMOM_REMEMBERED 1
+      Return
+
+  ; INVARIANT: this probe list must stay a PERFECT SUBSET of the engine's Windows list in
+  ; graf_add_autodetected_game_data() (STU/src/STU_GRAF.c), and in the same order -- the
+  ; installer must never point at a folder the engine itself would not find.  $PROGRAMFILES32
+  ; is NSIS's %ProgramFiles(x86)%, matching the engine's getenv("ProgramFiles(x86)") entries;
+  ; the engine additionally hardcodes the C:\Program Files (x86)\... literals as a fallback
+  ; for a missing env var, which is why it is a superset.  ADD PATHS TO BOTH.
+  remom_detect_probe:
   IfFileExists "C:\GOG Games\Master of Magic\FONTS.LBX" 0 +4
     StrCpy $OGMOM_DIR "C:\GOG Games\Master of Magic"
+    StrCpy $OGMOM_VALID 1
+    Return
+
+  ; GOG Galaxy installs under its own Games tree, not the plain "C:\GOG Games" root.
+  IfFileExists "$PROGRAMFILES32\GOG Galaxy\Games\Master of Magic\Master of Magic Official Release\FONTS.LBX" 0 +4
+    StrCpy $OGMOM_DIR "$PROGRAMFILES32\GOG Galaxy\Games\Master of Magic\Master of Magic Official Release"
     StrCpy $OGMOM_VALID 1
     Return
 
@@ -595,6 +626,18 @@ Function ReMoM_ValidateGameDataDir
   remom_datadone:
 FunctionEnd
 
+; Directory-page PRE handler.  Skip the page entirely when a previous install already
+; told us where the game data is and that folder still checks out -- an upgrade should
+; not re-ask a question it has a known-good answer to.  The page still appears on a
+; first install, and again if the remembered folder moved or lost its .LBX files
+; (ReMoM_DetectGameDataDir clears $OGMOM_REMEMBERED in that case), so it self-heals.
+Function ReMoM_SkipGameDataPageIfKnown
+  StrCmp $OGMOM_REMEMBERED "1" 0 remom_showpage
+  StrCmp $OGMOM_VALID "1" 0 remom_showpage
+    Abort   ; MUI: skip this page
+  remom_showpage:
+FunctionEnd
+
 ;--------------------------------
 ;Pages
   @CPACK_NSIS_INSTALLER_WELCOME_TITLE_CODE@
@@ -614,6 +657,7 @@ FunctionEnd
   !define MUI_DIRECTORYPAGE_TEXT_TOP "ReMoM is the engine only -- it needs the .LBX data files from an original Master of Magic v1.31 installation, which are not included.$\r$\n$\r$\nSelect the folder containing FONTS.LBX and Setup will copy the game data into ReMoM's own folder. Your original files are not modified or moved.$\r$\n$\r$\nIf you don't have it to hand, you can continue and set this up later."
   !define MUI_DIRECTORYPAGE_TEXT_DESTINATION "Master of Magic folder"
   !define MUI_DIRECTORYPAGE_VARIABLE $OGMOM_DIR
+  !define MUI_PAGE_CUSTOMFUNCTION_PRE ReMoM_SkipGameDataPageIfKnown
   !define MUI_PAGE_CUSTOMFUNCTION_LEAVE ReMoM_ValidateGameDataDir
   !insertmacro MUI_PAGE_DIRECTORY
 
@@ -754,6 +798,10 @@ Section "-Core installation"
     CopyFiles /SILENT "$OGMOM_DIR\*.LBX" "$INSTDIR"
     IfFileExists "$OGMOM_DIR\CONFIG.MOM" 0 +2
       CopyFiles /SILENT "$OGMOM_DIR\CONFIG.MOM" "$INSTDIR"
+    ; Remember the folder so the next upgrade doesn't re-ask (ReMoM_DetectGameDataDir
+    ; reads this back and ReMoM_SkipGameDataPageIfKnown then skips the page).  Only a
+    ; folder that actually validated is recorded.
+    WriteRegStr SHCTX "Software\@CPACK_PACKAGE_VENDOR@\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "OgMoMFilesDir" "$OGMOM_DIR"
   remom_skip_copy:
 
   ;Create uninstaller
