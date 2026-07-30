@@ -156,6 +156,38 @@ jobs:
       - name: Package binaries (ZIP + TGZ, engine-only)
         run: cmake --build out/build/clang-release --target package
 
+      # Optional support asset (not part of the normal downloads): a small zip with the
+      # graphics probe + a verbose Debug build of ReMoM, for testers chasing a "won't
+      # start" / "choppy" report.  See packaging/diagnostics-README.md and RELEASES.md.
+      - name: Build Linux diagnostics bundle (probe + verbose Debug build)
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: |
+          set -euo pipefail
+          # The Linux "diagnostic build" is just a Debug build: STU_DEBUG, /Od, asserts,
+          # verbose logging, symbols.  Unlike MSVC there is no debug-CRT restriction, so a
+          # Linux Debug binary ships freely.  Build only the ReMoM target (skip tests).
+          cmake --preset clang-debug -DREMOM_VERSION="${VERSION}"
+          cmake --build out/build/clang-debug --config Debug --target ReMoM
+
+          # Probe from the RELEASE build (representative timing); ReMoM from the Debug build.
+          PROBE="$(find out/build/clang-release/bin -type f -name remom_video_probe | head -1)"
+          DIAG="$(find out/build/clang-debug/bin   -type f -name ReMoM             | head -1)"
+          test -n "$PROBE" && test -n "$DIAG"
+
+          STAGE="ReMoM-${VERSION}-linux-diagnostics"
+          mkdir -p "$STAGE"
+          cp "$PROBE" "$STAGE/remom_video_probe"
+          cp "$DIAG"  "$STAGE/ReMoM_diagnostic"           # rename so it's obviously the diag build
+          cp packaging/diagnostics-README.md "$STAGE/README.md"
+          cp tools/collect_report.py         "$STAGE/collect_report.py"
+          cp PLAYING.md                      "$STAGE/PLAYING.md"
+          chmod +x "$STAGE/remom_video_probe" "$STAGE/ReMoM_diagnostic"
+          # No ReMoM.ini on purpose: without one, logs go to the per-user dir the README
+          # points at (~/.local/state/ReMoM/); a bundled ini would redirect them to CWD.
+          zip -r "${STAGE}.zip" "$STAGE"
+          ls -la "${STAGE}.zip"
+
       - name: Upload Linux binary artifact
         uses: actions/upload-artifact@v6
         with:
@@ -164,6 +196,7 @@ jobs:
             ReMoM-*.AppImage
             out/build/clang-release/ReMoM-*-Linux-*.zip
             out/build/clang-release/ReMoM-*-Linux-*.tar.gz
+            ReMoM-*-linux-diagnostics.zip
 
   # ── Linux .deb (native distro package; depends on the distro's SDL2) ───
   #

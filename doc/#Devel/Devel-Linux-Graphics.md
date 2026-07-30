@@ -137,7 +137,13 @@ The verdicts:
   the combination is simply unavailable, not dangerous.
 
 Build it with the normal Linux preset (`cmake --build --preset clang-debug --target
-remom_video_probe`). It is a dev/QA diagnostic and ships in no release.
+remom_video_probe`) for local use.
+
+**End-users don't build it** — every release publishes it in the optional
+**`ReMoM-<ver>-linux-diagnostics.zip`** asset (alongside a verbose `ReMoM_diagnostic` build
+and a README), so a reporter just downloads the zip and runs `./remom_video_probe`. See
+[RELEASES.md → Diagnostic tools (Linux, testers)](../../RELEASES.md#diagnostic-tools-linux-testers)
+and `packaging/diagnostics-README.md` (the guide shipped inside the zip).
 
 ---
 

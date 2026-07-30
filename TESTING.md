@@ -4,6 +4,13 @@ Thanks for helping test ReMoM. This guide is for the **diagnostic build** — a 
 version that produces detailed logs and readable crash reports so we can track down bugs
 on your machine.
 
+> **Linux tester?** The diagnostic build isn't bundled into your download. Instead, grab
+> the separate **`ReMoM-<ver>-linux-diagnostics.zip`** from the release's Assets — it has a
+> verbose `ReMoM_diagnostic` build plus `remom_video_probe` (the graphics tester) and its
+> own README. The rest of this page is Windows-specific; the Linux zip's README covers the
+> Linux equivalents (logs live in `~/.local/state/ReMoM/`, run `./remom_video_probe` for
+> graphics problems).
+
 ## What it is (and where it already is)
 
 The normal Windows download — the installer **and** the portable ZIP — ships **two**

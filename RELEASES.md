@@ -55,6 +55,9 @@ see [Future phase — Dev / Modder tooling](#future-phase--dev--modder-tooling).
 reverse-engineering reference material that a CPack source tarball would sweep in.
 Source lives on GitHub; a curated source distribution is out of scope for v0.x.)
 
+Linux also publishes an optional **`ReMoM-<ver>-linux-diagnostics.zip`** support asset (not
+one of the play-it downloads) — see [Diagnostic tools (Linux, testers)](#diagnostic-tools-linux-testers).
+
 ### Diagnostic build (Windows, testers)
 
 The Windows package (**both** the installer and the portable ZIP) ships a second
@@ -88,6 +91,35 @@ opt-in (a checkbox in the installer) is a CPack **component** — noted, not don
 
 The **player** ZIP/installer also carries `ReMoM.pdb` next to `ReMoM.exe`, so even a crash
 on the normal release build produces a symbolized stack trace in the report.
+
+### Diagnostic tools (Linux, testers)
+
+Linux takes a different shape from Windows: instead of bundling a second exe into every
+download, the release publishes a **separate optional asset**,
+**`ReMoM-<ver>-linux-diagnostics.zip`**, that a tester grabs only when chasing a "won't
+start" or "choppy framerate" report. Keeping it out of the main downloads matters more on
+Linux — the AppImage is a single-entry-point file that can't cleanly carry a second binary,
+and the `.deb` is deliberately lintian-clean and engine-only.
+
+The zip contains:
+
+- **`remom_video_probe`** (Release build) — the graphics-stack probe: driver matrix +
+  `--timing` (refresh rate / vsync jitter). See [Devel-Linux-Graphics.md](doc/#Devel/Devel-Linux-Graphics.md).
+- **`ReMoM_diagnostic`** — the Linux diagnostic build. On Linux this is simply a **Debug**
+  build (`STU_DEBUG`, `/Od`, asserts, verbose logging, symbols); unlike MSVC there is no
+  debug-CRT redistribution restriction, so a Debug binary ships freely — no `REMOM_DIAGNOSTIC`
+  trick needed.
+- `README.md` (from `packaging/diagnostics-README.md`), `collect_report.py`, `PLAYING.md`.
+
+Built in the `linux` job of `release.yml`: the probe comes from the existing `clang-release`
+build; a `clang-debug` configure builds just the `ReMoM` Debug target; both are staged with
+the docs and zipped. The zip is uploaded into the `ReMoM-linux-x86_64` artifact, so it flows
+to the draft release alongside the AppImage and archives. **No `ReMoM.ini` is bundled** — an
+end-user without one gets logs in the per-user dir (`~/.local/state/ReMoM/`) the README points
+at; a bundled ini would redirect them to the CWD.
+
+Testers on the `.deb` or AppImage already have a working ReMoM; this zip is purely the
+troubleshooting toolkit, downloaded on demand.
 
 ### Windows installer behaviour
 
