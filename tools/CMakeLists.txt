@@ -104,3 +104,16 @@ target_link_libraries(Extract_FONTS_LBX PRIVATE
 )
 
 set_target_properties(Extract_FONTS_LBX PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+
+# --- remom_video_probe: fork-per-attempt SDL2 graphics-stack probe (Linux) ---
+#  Diagnoses "crash on startup in SDL_CreateRenderer" reports (GLX-over-XWayland and
+#  friends) by testing every video x render driver combo in its own child process, so a
+#  fatal Xlib exit can't take the probe down.  See doc/#Devel/Devel-Linux-Graphics.md.
+#  Needs fork() (UNIX) and links SDL2 directly, so it is gated on both being present --
+#  it is a diagnostic, never part of a release, and irrelevant to the Win32 backend.
+if(UNIX AND NOT APPLE AND TARGET SDL2::SDL2)
+    add_executable(remom_video_probe remom_video_probe.c)
+    target_link_libraries(remom_video_probe PRIVATE SDL2::SDL2 m)  # m: sqrt() in the timing stats
+    set_target_properties(remom_video_probe PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()

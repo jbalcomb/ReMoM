@@ -20,6 +20,12 @@ HeMoM
 ReMoM
 HeMoM.exe
 ReMoM.exe
+# Pre-rename player-binary name: the in-tree autotools build used to emit ReMoMber,
+# and after the ReMoMber->ReMoM rename this line stopped ignoring it -- which let a
+# stale ReMoMber binary get staged. Keep guarding the old name so leftovers can't
+# sneak back in.
+ReMoMber
+ReMoMber.exe
 
 # Visual Studio Code (VS Code) (VSC)
 .vscode/*
