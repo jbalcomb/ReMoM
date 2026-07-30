@@ -60,11 +60,21 @@ one of the play-it downloads) — see [Diagnostic tools (Linux, testers)](#diagn
 
 ### Diagnostic build (Windows, testers)
 
-The Windows package (**both** the installer and the portable ZIP) ships a second
-executable next to `ReMoM.exe`: **`ReMoM_diagnostic.exe`** — a **step-debuggable
-diagnostic build** for walking through bugs on a tester's machine. No separate download;
-testers just run `ReMoM_diagnostic.exe` from their existing install. See
-[TESTING.md](TESTING.md).
+The Windows package (**both** the installer and the portable ZIP) ships two extra
+executables next to `ReMoM.exe`. No separate download; testers just run them from their
+existing install. See [TESTING.md](TESTING.md).
+
+- **`ReMoM_diagnostic.exe`** — a **step-debuggable diagnostic build** for walking through
+  bugs on a tester's machine.
+- **`remom_video_probe.exe`** — the graphics-stack probe: driver matrix + `--timing`
+  (refresh rate / vsync jitter), plus the GPU adapter list, the Remote-Desktop check, and
+  the real OS build. This is the first thing to run against a "won't start" or "choppy"
+  report. See [Devel-Graphics.md](doc/#Devel/Devel-Graphics.md).
+
+The probe rides along in the main package rather than in a separate diagnostics zip (the
+shape Linux uses) because the Windows package **already** carries `ReMoM_diagnostic.exe`
+and `SDL2.dll`, which are exactly what the probe needs — so it adds ~100 KB and no new CI
+plumbing. A `windows-diagnostics.zip` would duplicate the SDL2 runtime to save nothing.
 
 It is the **Debug** config (unoptimized `/Od`, `STU_DEBUG` on → verbose logging, asserts)
 but linked against the **redistributable release CRT (`/MD`)**, so it runs on a machine
@@ -104,7 +114,7 @@ and the `.deb` is deliberately lintian-clean and engine-only.
 The zip contains:
 
 - **`remom_video_probe`** (Release build) — the graphics-stack probe: driver matrix +
-  `--timing` (refresh rate / vsync jitter). See [Devel-Linux-Graphics.md](doc/#Devel/Devel-Linux-Graphics.md).
+  `--timing` (refresh rate / vsync jitter). See [Devel-Graphics.md](doc/#Devel/Devel-Graphics.md).
 - **`ReMoM_diagnostic`** — the Linux diagnostic build. On Linux this is simply a **Debug**
   build (`STU_DEBUG`, `/Od`, asserts, verbose logging, symbols); unlike MSVC there is no
   debug-CRT redistribution restriction, so a Debug binary ships freely — no `REMOM_DIAGNOSTIC`

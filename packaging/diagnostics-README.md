@@ -42,6 +42,10 @@ No data files needed. Run it and paste us the output.
   combination in a separate process, so even the one that crashes can't stop the test — you
   get a full table of what works. If it shows `software` as OK, you can run the game with
   `SDL_RENDER_DRIVER=software ./ReMoM_diagnostic`.
+  Each row also prints `[actual: X]` — the driver that really got used. If that differs
+  from the one on the left, the requested one wasn't available and SDL quietly picked
+  another, so that row tells you nothing about the driver you asked for. Paste the whole
+  table either way; don't try to interpret it yourself.
 - **`choppy` / stuttering:** run `./remom_video_probe --timing`. It reports your monitor's
   refresh rate and how steadily frames land. If you have a gaming monitor, try turning
   **off** its VRR / G-Sync / FreeSync and any low-latency/strobing mode, then re-run.

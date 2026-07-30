@@ -1,9 +1,15 @@
-# Linux Graphics — startup crashes and choppy framerate, and how to diagnose them
+# Graphics — startup crashes and choppy framerate, and how to diagnose them
 
-Two families of Linux display report live here: a **hard crash in `SDL_CreateRenderer`** at
-startup (GLX-over-XWayland and friends), and a **choppy / stuttering framerate** (usually a
-gaming monitor's variable-refresh path). Both are diagnosed with the same tool,
-`tools/remom_video_probe`, and the same startup log block.
+Two families of display report live here: a **hard crash in `SDL_CreateRenderer`** at
+startup, and a **choppy / stuttering framerate** (usually a gaming monitor's
+variable-refresh path). Both are diagnosed with the same tool, `tools/remom_video_probe`,
+and the same startup log block.
+
+Both symptoms occur on Linux and on Windows, from the *same* line of ReMoM code, but the
+failing layer differs — GLX-over-XWayland on Linux, a faulting D3D/OpenGL driver DLL on
+Windows. Most of this document works through the Linux case in detail because that is
+where the reports came from; [Windows](#windows) covers what differs there. The probe
+handles both.
 
 ReMoM is a 320×200 palettized blit. It does **not** ask for OpenGL — the window is
 created with `SDL_WINDOW_RESIZABLE` only ([sdl2_Init.c](../../platform/sdl2/sdl2_Init.c),
@@ -103,10 +109,10 @@ To make it permanent, add `export SDL_RENDER_DRIVER=software` to `~/.bashrc` /
 
 ## The probe tool
 
-`tools/remom_video_probe.c` (target **`remom_video_probe`**, Linux + SDL2 only) tests
-**every video × render driver combination**, each in its **own forked child**, so a fatal
-Xlib exit or segfault only takes that child down — the probe survives and prints a full
-table. This is the thing to hand a reporter:
+`tools/remom_video_probe.c` (target **`remom_video_probe`**, SDL2, Linux + Windows) tests
+**every video × render driver combination**, each in its **own child process**, so a fatal
+Xlib exit, a segfault, or a Windows access violation only takes that child down — the probe
+survives and prints a full table. This is the thing to hand a reporter:
 
 ```
 remom_video_probe            # enumerate, then probe the whole matrix
@@ -132,18 +138,32 @@ XWayland works and native Wayland is the broken one):
 The verdicts:
 
 - **OK** — window + renderer created and a frame presented.
-- **CRASH** — the combination faults fatally (fatal Xlib exit, or a signal). Do not use it.
+- **CRASH** — the combination faults fatally (fatal Xlib exit, a signal, or on Windows an
+  unhandled exception, whose code is printed). Do not use it.
 - **fail:\*** — SDL declined cleanly (`SDL_Init` / window / renderer returned an error);
   the combination is simply unavailable, not dangerous.
+- **`[actual: X]`** — the driver SDL *really* used. `SDL_HINT_RENDER_DRIVER` is a
+  preference, not a demand: with index `-1` SDL tries the hinted driver and then falls
+  through the rest of its list. When `actual` differs from the requested column, that
+  driver was **unavailable** and the row says nothing about it. (This is why every
+  `video dummy` row reads `[actual: software]`.)
 
-Build it with the normal Linux preset (`cmake --build --preset clang-debug --target
-remom_video_probe`) for local use.
+Build it with the normal preset for your platform — `cmake --build --preset clang-debug
+--target remom_video_probe` on Linux, `cmake --build --preset MSVC-debug` on Windows.
 
-**End-users don't build it** — every release publishes it in the optional
-**`ReMoM-<ver>-linux-diagnostics.zip`** asset (alongside a verbose `ReMoM_diagnostic` build
-and a README), so a reporter just downloads the zip and runs `./remom_video_probe`. See
-[RELEASES.md → Diagnostic tools (Linux, testers)](../../RELEASES.md#diagnostic-tools-linux-testers)
-and `packaging/diagnostics-README.md` (the guide shipped inside the zip).
+**End-users don't build it.** How it reaches them differs per platform, because the two
+packages are shaped differently:
+
+- **Linux** — published in the optional **`ReMoM-<ver>-linux-diagnostics.zip`** asset,
+  alongside a verbose `ReMoM_diagnostic` build and a README. The Linux diagnostic build is
+  *not* in the main package, so it needs its own download.
+- **Windows** — shipped **inside the normal ZIP / NSIS package**, next to `ReMoM.exe`,
+  `ReMoM_diagnostic.exe` and `SDL2.dll`. The Windows package already carries the diagnostic
+  exe and the SDL2 runtime, so folding in a ~100 KB probe costs nothing and spares testers
+  a second download. There is no `windows-diagnostics.zip`.
+
+See [RELEASES.md → Diagnostic tools (Linux, testers)](../../RELEASES.md#diagnostic-tools-linux-testers)
+and `packaging/diagnostics-README.md` (the guide shipped inside the Linux zip).
 
 ---
 
@@ -236,6 +256,67 @@ already shows the refresh rate without running the probe.
 > `SDL_RenderSetVSync`, so presents don't wait on refresh), or presenting at a steady
 > rate. Deferred until the `--timing` data from a real bad monitor says which. For now the
 > reliable user-side answer is disabling the monitor's VRR/gaming modes for ReMoM.
+
+---
+
+## Windows
+
+Same ReMoM line, same two symptoms, different failing layer. What changes:
+
+**The matrix has a different shape.** SDL2 on Windows enumerates only `windows` and
+`dummy` for video, so the video axis is degenerate and the **render** axis *is* the table.
+The candidates are `direct3d11, direct3d12, direct3d, opengl, opengles2, software` — index
+`-1` picks `direct3d11` on a normal box. This is why `[actual: X]` matters more here than
+on Linux: with only one real video driver, an unlabelled `OK` on a fallback row would be
+actively misleading.
+
+**Isolation is spawn, not fork.** Windows has no `fork()`, so the probe re-runs *itself*
+with an internal `--child VD RD` and reads the child's exit code. A faulting child exits
+with its **exception code**, which the probe prints (`CRASH (exit/exception 0xC0000005)`).
+The code is diagnostic in itself: `0xC0000005` is an access violation (a driver bug),
+`0xC0000135` is a missing DLL (a broken/partial driver install), `0xC0000409` is a
+stack-cookie fast-fail.
+
+**The child must suppress every modal dialog**, which the Linux path never has to think
+about. A faulting child would otherwise pop Windows Error Reporting and **block the probe
+forever** waiting for a click nobody is watching for — a hang, not a failure. See
+`probe_Harden_Child()`: `SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | …)`,
+`_set_abort_behavior`, and the debug-CRT `_CrtSetReportMode` calls.
+
+**Windows-only facts the probe reports**, because they decide the outcome and none of them
+is an environment variable:
+
+- **Graphics adapters via DXGI** — name, vendor/device ID, VRAM, and a `[SOFTWARE/WARP]`
+  flag. SDL2 exposes none of this, and it is the single most useful line in a Windows
+  "won't start" report: it names the GPU whose driver is faulting. A machine whose *only*
+  adapter is `Microsoft Basic Render Driver` has no usable 3D at all.
+- **Remote Desktop session** (`GetSystemMetrics(SM_REMOTESESSION)`) — an RDP session has no
+  real GPU, so D3D paths fail or drop to software and the frame rate is at the mercy of the
+  network. Both read as "ReMoM is broken" in a report that never mentions RDP.
+- **The real OS build**, via `RtlGetVersion`. `GetVersionEx` lies to unmanifested processes
+  (it caps at 6.2 / Windows 8).
+
+**`--timing` raises the timer resolution.** Windows' default sleep granularity is ~15.6 ms,
+so the paced rows would otherwise report jitter that is an artifact of `SDL_Delay`, not of
+the display — precisely the false positive `--timing` exists to rule out. The paced cases
+wrap the measurement in `timeBeginPeriod(1)` / `timeEndPeriod(1)` and the output says so.
+
+A healthy box looks like this (note every requested driver was granted, and the `dummy`
+rows fall back as expected):
+
+```
+  video windows:
+    render direct3d11 : [actual: direct3d11] OK
+    render direct3d12 : [actual: direct3d12] OK
+    render direct3d   : [actual: direct3d] OK
+    render opengl     : [actual: opengl] OK
+    render opengles2  : [actual: opengles2] OK
+    render software   : [actual: software] OK
+
+  video dummy:
+    render direct3d11 : [actual: software] OK
+    ...
+```
 
 ---
 

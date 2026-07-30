@@ -150,7 +150,7 @@ static void sdl2_Log_Graphics_Environment(void)
        "choppy framerate" reports.  ReMoM presents through a vsync'd renderer, so a
        high-refresh or VRR (G-Sync/FreeSync) panel paces frames differently than a plain
        60 Hz one.  tools/remom_video_probe --timing measures the resulting jitter.  See
-       doc/#Devel/Devel-Linux-Graphics.md. */
+       doc/#Devel/Devel-Graphics.md. */
     n = SDL_GetNumVideoDisplays();
     for(i = 0; i < n; i++)
     {
@@ -177,7 +177,7 @@ static SDL_Renderer * sdl2_Create_Renderer_With_Fallback(SDL_Window * window)
     LOG_INFO(LOG_CAT_SDL2_INIT, "graphics: creating renderer (driver index -1, vsync)...");
     LOG_INFO(LOG_CAT_SDL2_INIT, "graphics: if this is the LAST line in the log, renderer creation crashed "
                                 "hard (likely GLX over XWayland) -- retry with SDL_RENDER_DRIVER=software.  "
-                                "See doc/#Devel/Devel-Linux-Graphics.md");
+                                "See doc/#Devel/Devel-Graphics.md");
     STU_Log_Flush_All();  /* survive a fatal Xlib exit inside the call below */
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);

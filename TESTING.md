@@ -13,17 +13,45 @@ on your machine.
 
 ## What it is (and where it already is)
 
-The normal Windows download — the installer **and** the portable ZIP — ships **two**
+The normal Windows download — the installer **and** the portable ZIP — ships **three**
 programs side by side:
 
 - **`ReMoM.exe`** — the normal game.
 - **`ReMoM_diagnostic.exe`** — the **diagnostic build** for bug hunting.
+- **`remom_video_probe.exe`** — the **graphics tester**, for "won't start" and "choppy".
 
-You don't download anything extra. If you already installed ReMoM, you already have the
-diagnostic build. It plays exactly the same game (same graphics, same SDL2 backend), but
-it writes **verbose logs**, trips **assertions** that pinpoint problems, and ships a
-symbol file so crashes produce a **readable stack trace**. It's unoptimized, so it's a
-little slower and bigger — that's expected; don't judge performance by it.
+You don't download anything extra. If you already installed ReMoM, you already have all
+three. The diagnostic build plays exactly the same game (same graphics, same SDL2
+backend), but it writes **verbose logs**, trips **assertions** that pinpoint problems, and
+ships a symbol file so crashes produce a **readable stack trace**. It's unoptimized, so
+it's a little slower and bigger — that's expected; don't judge performance by it.
+
+### If ReMoM won't start at all, or the picture is choppy
+
+Run **`remom_video_probe.exe`** *first* — a crash before any window appears usually can't
+write a useful log, and this is the tool that finds it anyway. Open a Command Prompt in
+your ReMoM folder and run:
+
+```
+remom_video_probe.exe                  ..tests every graphics driver, one at a time
+remom_video_probe.exe --timing         ..for "choppy": refresh rate + frame pacing
+```
+
+It opens a few small windows briefly, then prints a table. **Copy the whole output into
+your report.** It is safe to run even if ReMoM itself crashes — each test runs in its own
+separate process, so a driver that crashes takes down only that one test and the table
+still finishes.
+
+If a row says `CRASH`, that graphics driver is broken on your machine. You can force
+ReMoM onto a working one by setting an environment variable before launching — e.g. from
+a Command Prompt in the ReMoM folder:
+
+```
+set SDL_RENDER_DRIVER=software
+ReMoM.exe
+```
+
+Tell us if that fixes it; that's the single most useful fact in the report.
 
 ## Running it
 

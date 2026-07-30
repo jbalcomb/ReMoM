@@ -106,14 +106,35 @@ target_link_libraries(Extract_FONTS_LBX PRIVATE
 set_target_properties(Extract_FONTS_LBX PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 
-# --- remom_video_probe: fork-per-attempt SDL2 graphics-stack probe (Linux) ---
-#  Diagnoses "crash on startup in SDL_CreateRenderer" reports (GLX-over-XWayland and
-#  friends) by testing every video x render driver combo in its own child process, so a
-#  fatal Xlib exit can't take the probe down.  See doc/#Devel/Devel-Linux-Graphics.md.
-#  Needs fork() (UNIX) and links SDL2 directly, so it is gated on both being present --
-#  it is a diagnostic, never part of a release, and irrelevant to the Win32 backend.
-if(UNIX AND NOT APPLE AND TARGET SDL2::SDL2)
+# --- remom_video_probe: process-per-attempt SDL2 graphics-stack probe ---
+#  Diagnoses "crash on startup in SDL_CreateRenderer" reports (GLX-over-XWayland on Linux,
+#  a faulting D3D/OpenGL ICD on Windows) by testing every video x render driver combo in
+#  its own child process, so a fatal exit can't take the probe down.  Also measures
+#  present-cadence jitter for "choppy framerate" reports (--timing).
+#  See doc/#Devel/Devel-Graphics.md.
+#
+#  Isolation is fork() on UNIX and spawn-self on Windows, so the only hard requirement is
+#  SDL2 itself.  Skipped under SDL3 (USE_SDL3=ON): the probe is deliberately written
+#  against the SDL2 API that ReMoM's shipping backend uses.
+if(TARGET SDL2::SDL2)
     add_executable(remom_video_probe remom_video_probe.c)
-    target_link_libraries(remom_video_probe PRIVATE SDL2::SDL2 m)  # m: sqrt() in the timing stats
+    target_link_libraries(remom_video_probe PRIVATE SDL2::SDL2)
+    if(UNIX)
+        target_link_libraries(remom_video_probe PRIVATE m)  # m: sqrt() in the timing stats
+    endif()
+    if(WIN32)
+        # dxgi/dxguid: adapter enumeration (which GPU is faulting -- SDL2 exposes none of it).
+        # winmm: timeBeginPeriod, so the paced --timing rows measure the display rather than
+        # Windows' default ~15.6 ms sleep granularity.
+        target_link_libraries(remom_video_probe PRIVATE dxgi dxguid winmm)
+    endif()
     set_target_properties(remom_video_probe PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+    # Windows ships the probe INSIDE the normal package: the ZIP/NSIS already carries
+    # ReMoM_diagnostic.exe and SDL2.dll (see the root CMakeLists), so folding in a ~100 KB
+    # probe costs nothing and spares Windows testers a separate download.  Linux keeps its
+    # own diagnostics zip instead, because its diagnostic build is NOT in the main package.
+    if(MSVC)
+        install(TARGETS remom_video_probe RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    endif()
 endif()

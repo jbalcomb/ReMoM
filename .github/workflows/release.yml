@@ -71,6 +71,11 @@ jobs:
       # release CRT so it runs without Visual Studio), built as ReMoM_diagnostic.exe. The
       # package step folds that Debug exe in alongside the Release player exe -- one
       # installer/ZIP, both exes. CMAKE_INSTALL_BINDIR=. keeps the flat package layout.
+      #
+      # remom_video_probe.exe (the graphics-stack probe) also lands in the package, from a
+      # plain install(TARGETS) in tools/CMakeLists.txt -- no step of its own. Windows can do
+      # that because the package already carries SDL2.dll; Linux instead builds a separate
+      # ReMoM-<ver>-linux-diagnostics.zip below. See doc/#Devel/Devel-Graphics.md.
       - name: Configure (MSVC-release preset, + diagnostic exe)
         run: cmake --preset MSVC-release -DREMOM_VERSION=${{ steps.ver.outputs.version }} -DCMAKE_INSTALL_BINDIR=. -DREMOM_DIAGNOSTIC=ON
 
@@ -86,7 +91,7 @@ jobs:
       - name: Install NSIS
         run: choco install nsis -y --no-progress
 
-      - name: Package (ZIP + NSIS installer, incl. diagnostic exe)
+      - name: Package (ZIP + NSIS installer, incl. diagnostic exe + video probe)
         run: cmake --build out/build/MSVC-release --config Release --target package
 
       - name: Upload artifact
