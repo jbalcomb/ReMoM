@@ -517,6 +517,17 @@ endif()
 # without the VC++ redistributable can still launch ReMoM.
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 include(InstallRequiredSystemLibraries)
+
+# Record the installed payload so the NEXT install can delete files this version no longer
+# ships (orphan cleanup -- see cmake/write_install_manifest.cmake and the manifest sweep in
+# cmake/NSIS.template.in).  MUST be the LAST install() rule in the project:
+# CMAKE_INSTALL_MANIFEST_FILES only holds what has been installed up to this point, and
+# InstallRequiredSystemLibraries above contributes the MSVC runtime DLLs.  Windows-only --
+# the .deb has dpkg to retire its own files.
+if(WIN32)
+    install(SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/cmake/write_install_manifest.cmake")
+endif()
+
 set(CPACK_PACKAGE_NAME "ReMoM")
 set(CPACK_PACKAGE_VERSION "${REMOM_VERSION}")
 set(CPACK_PACKAGE_FILE_NAME "ReMoM-${REMOM_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")

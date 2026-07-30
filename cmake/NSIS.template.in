@@ -26,6 +26,11 @@
   Var OGMOM_DIR
   Var OGMOM_VALID
   Var OGMOM_REMEMBERED
+  ; ReMoM: set when a previous ReMoM is already installed, so Setup can present itself
+  ; as an UPDATER (say so on the welcome page, and stop asking questions it already has
+  ; answers to) instead of pretending every run is a first-time install.
+  Var IS_UPGRADE
+  Var PREV_VERSION
 ;--------------------------------
 ;Include Modern UI
 
@@ -638,14 +643,79 @@ Function ReMoM_SkipGameDataPageIfKnown
   remom_showpage:
 FunctionEnd
 
+; ReMoM: is ReMoM already installed?  DisplayVersion in the per-user uninstall key is
+; written by every install (ConditionalAddToRegistry), so its presence means "upgrade"
+; and its value is the version being replaced.  Also adopts the previous install
+; location, so an upgrade lands where the user actually put it -- unless /D overrode
+; the directory on the command line ($IS_DEFAULT_INSTALLDIR is 0 then).
+Function ReMoM_DetectPreviousInstall
+  StrCpy $IS_UPGRADE 0
+  StrCpy $PREV_VERSION ""
+
+  ReadRegStr $0 SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "DisplayVersion"
+  StrCmp $0 "" remom_prev_done 0
+    StrCpy $PREV_VERSION $0
+    StrCpy $IS_UPGRADE 1
+    StrCmp $IS_DEFAULT_INSTALLDIR "1" 0 remom_prev_done
+      ReadRegStr $1 SHCTX "Software\@CPACK_PACKAGE_VENDOR@\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" ""
+      StrCmp $1 "" remom_prev_done 0
+        StrCpy $INSTDIR $1
+  remom_prev_done:
+FunctionEnd
+
+; Welcome-page PRE: on an upgrade, say so.  This is MUI 1.x, whose welcome page is an
+; InstallOptions dialog (ioSpecial.ini): Field 2 is the big title, Field 3 the body.
+; Rewriting them here is the difference between "Welcome to the ReMoM Setup Wizard" and
+; a page that visibly knows it is updating an existing copy.
+Function ReMoM_WelcomePagePre
+  StrCmp $IS_UPGRADE "1" 0 remom_welcome_fresh
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 2" "Text" "Update ReMoM"
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "Setup will update the ReMoM already installed on this computer.$\r$\n$\r$\nInstalled version:  $PREV_VERSION$\r$\nThis version:  @CPACK_PACKAGE_VERSION@$\r$\n$\r$\nYour Master of Magic game data, your saved games and your settings are all kept. Setup remembers where everything lives, so there is nothing to set up again.$\r$\n$\r$\nClick Next to continue."
+  remom_welcome_fresh:
+FunctionEnd
+
+; Install-directory page PRE: an upgrade already knows where it is installed (adopted in
+; ReMoM_DetectPreviousInstall), so asking again is the single loudest "this installer has
+; no idea it has been run before" signal.  Fresh installs still get the page.
+Function ReMoM_SkipDirPageIfUpgrade
+  StrCmp $IS_UPGRADE "1" 0 remom_showdirpage
+    Abort   ; MUI: skip this page
+  remom_showdirpage:
+FunctionEnd
+
+; Strip trailing CR/LF from a string (the documented NSIS TrimNewlines idiom).  Used to
+; read the install manifest a line at a time -- FileRead keeps the line terminator.
+Function ReMoM_TrimNewlines
+  Exch $R0
+  Push $R1
+  Push $R2
+  StrCpy $R1 0
+  remom_trim_loop:
+    IntOp $R1 $R1 - 1
+    StrCpy $R2 $R0 1 $R1
+    StrCmp $R2 "$\r" remom_trim_loop
+    StrCmp $R2 "$\n" remom_trim_loop
+    IntOp $R1 $R1 + 1
+    IntCmp $R1 0 remom_trim_done
+    StrCpy $R0 $R0 $R1
+  remom_trim_done:
+  Pop $R2
+  Pop $R1
+  Exch $R0
+FunctionEnd
+
 ;--------------------------------
 ;Pages
   @CPACK_NSIS_INSTALLER_WELCOME_TITLE_CODE@
   @CPACK_NSIS_INSTALLER_WELCOME_TITLE_3LINES_CODE@
+  ; ReMoM: rewrite the welcome text as an update notice when upgrading.
+  !define MUI_PAGE_CUSTOMFUNCTION_PRE ReMoM_WelcomePagePre
   !insertmacro MUI_PAGE_WELCOME
 
   @CPACK_NSIS_LICENSE_PAGE@
   Page custom InstallOptionsPage
+  ; ReMoM: an upgrade installs over the location it already knows -- don't re-ask.
+  !define MUI_PAGE_CUSTOMFUNCTION_PRE ReMoM_SkipDirPageIfUpgrade
   !insertmacro MUI_PAGE_DIRECTORY
 
   ; ReMoM: second directory page -- where the player's Master of Magic v1.31 data
@@ -773,6 +843,45 @@ Section "-Core installation"
   ;Use the entire tree produced by the INSTALL target.  Keep the
   ;list of directories here in sync with the RMDir commands below.
   SetOutPath "$INSTDIR"
+
+  ; ReMoM: ORPHAN SWEEP.  An in-place upgrade only overwrites what it installs, so any
+  ; file we retire (renamed or dropped) would otherwise sit in the install folder forever.
+  ;
+  ; Delete everything the PREVIOUS version installed, per the manifest it left behind
+  ; (remom_installed_files.txt, written by cmake/write_install_manifest.cmake).  Files
+  ; still in the payload are re-installed a moment later by @CPACK_NSIS_FULL_INSTALL@
+  ; below; retired files simply stay gone.  The manifest lists ONLY what we installed --
+  ; never the user's copied game data, their logs/ or COMBAT.TMP -- which is why this is
+  ; manifest-driven and not a wildcard sweep of $INSTDIR.
+  Push $R0
+  Push $R1
+  IfFileExists "$INSTDIR\remom_installed_files.txt" 0 remom_no_manifest
+    ClearErrors
+    FileOpen $R0 "$INSTDIR\remom_installed_files.txt" r
+    IfErrors remom_no_manifest
+    remom_manifest_loop:
+      ClearErrors
+      FileRead $R0 $R1
+      IfErrors remom_manifest_eof
+      Push $R1
+      Call ReMoM_TrimNewlines
+      Pop $R1
+      StrCmp $R1 "" remom_manifest_loop
+      Delete "$INSTDIR\$R1"
+      Goto remom_manifest_loop
+    remom_manifest_eof:
+    FileClose $R0
+    Delete "$INSTDIR\remom_installed_files.txt"
+  remom_no_manifest:
+  Pop $R1
+  Pop $R0
+
+  ; Installs made BEFORE the manifest existed have nothing for the sweep above to read,
+  ; so known pre-manifest orphans still need naming explicitly.  This list should not
+  ; need to grow: anything retired from here on is covered by the manifest.
+  Delete "$INSTDIR\ReMoMber.exe"      ; renamed to ReMoM.exe
+  Delete "$INSTDIR\ReMoMber.pdb"      ; ditto
+
   @CPACK_NSIS_EXTRA_PREINSTALL_COMMANDS@
   @CPACK_NSIS_FULL_INSTALL@
 
@@ -979,6 +1088,9 @@ Section "Uninstall"
   ; expanded, which splices generated code into the middle of the comment.)
   Delete "$INSTDIR\*.LBX"
   Delete "$INSTDIR\CONFIG.MOM"
+  ; The install manifest is written by an install(SCRIPT), not by the INSTALL target, so
+  ; it is likewise absent from CPack's generated delete list.
+  Delete "$INSTDIR\remom_installed_files.txt"
 
 !ifdef CPACK_NSIS_ADD_REMOVE
   ;Remove the add/remove program
@@ -1118,6 +1230,11 @@ inst:
   ; $INSTDIR keeps the InstallDir default here (or a /D command-line override).
   StrCpy $SV_ALLUSERS "JustMe"
   SetShellVarContext current
+
+  ; ReMoM: is this an update?  Must run AFTER SetShellVarContext (the registry reads use
+  ; SHCTX) and AFTER $IS_DEFAULT_INSTALLDIR is computed above (it decides whether the
+  ; previous install location may override $INSTDIR).
+  Call ReMoM_DetectPreviousInstall
 
   ; ReMoM: pre-populate the game-data page with an autodetected MoM install.
   Call ReMoM_DetectGameDataDir
