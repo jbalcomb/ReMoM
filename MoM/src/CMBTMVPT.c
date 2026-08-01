@@ -84,7 +84,7 @@ int16_t * m_movement_path_grid_cell_index;
  * move_cost, new_cost_to_reach, current_origin, and a_cost_was_updated.
  */
 #define RELAX_ADJACENT_CELLS(OFFSET_ARRAY, START_IDX, END_IDX, EXTRA_COST) \
-    for (itr_adjacent = (START_IDX); itr_adjacent < (END_IDX); itr_adjacent++) { \
+    for(itr_adjacent = (START_IDX); itr_adjacent < (END_IDX); itr_adjacent++) { \
         adjacent_idx = ctr + OFFSET_ARRAY[itr_adjacent]; \
         if(adjacent_idx >= 0 && adjacent_idx < COMBAT_GRID_CELL_COUNT) { \
             adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx]; \
@@ -167,7 +167,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
         max_y = COMBAT_GRID_CELL_HEIGHT - 2; /* 20 */
         ctr = 0; /* 1D Array Index Counter */
 
-        for (itr_y = 0; itr_y < max_y; itr_y++)
+        for(itr_y = 0; itr_y < max_y; itr_y++)
         {
 
             /* -- PHASE 1: Left Edge (X = 0) -- */
@@ -180,7 +180,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
             ctr++;
 
             /* -- PHASE 2: Middle Squares (X = 1 to 19) -- */
-            for (itr_x = 0; itr_x < max_x; itr_x++) {
+            for(itr_x = 0; itr_x < max_x; itr_x++) {
                 move_cost = _cmbt_movepath_cost_map[ctr];
                 if(move_cost != INF) {
                     current_origin = _cmbt_path_data[ctr];
@@ -229,7 +229,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
 
     /* --- [Skeleton step 5]  5. REVERSE AND CONVERT TO 2D --- */
     /* Reverse the path and convert the 1D indices back into 2D (X,Y) coordinates */
-    for (itr = 0; itr < movement_path_grid_cell_count; itr++) {
+    for(itr = 0; itr < movement_path_grid_cell_count; itr++) {
         /* Calculate the backwards index: (Count - 1) - Current Iteration */
         reversed_idx = (movement_path_grid_cell_count - 1) - itr;
         /* Grab the 1D square index from our hijacked buffer */
@@ -243,11 +243,10 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
 
 
 // WZD ovr155p02
-/* GEMINI */
 void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t moves2)
 {
-    int16_t move_cost = 0;  /* 1-byte, unsigned */
-    int16_t new_cost_to_reach = 0;
+    uint8_t move_cost = 0;  /* 1-byte, unsigned */
+    uint8_t new_cost_to_reach = 0;
     int16_t get_to_cost = 0;
     int16_t max_y = 0;
     int16_t adjacent_path_cost = 0;
@@ -259,12 +258,9 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
     int16_t itr = 0;
     int16_t itr2_y = 0;
     int16_t itr2_x = 0;
-    int16_t ctr = 0;  // _CX_
-    int16_t itr_adjacent = 0;  // _DI_
-    int16_t adjacent_idx = 0;  // _SI_
-    int16_t existing_path_cost = 0;  // DNE in Dasm
-    int16_t new_next_cell_index = 0;  // DNE in Dasm
-    /* CLAUDE */ int16_t DBG_convergence_itr = 0;  /* assert: pathfinder convergence guard */
+    int16_t ctr = 0;
+    int16_t itr_adjacent = 0;
+    int16_t adjacent_idx = 0;
 
     movement_path_grid_cell_count = 0;
 
@@ -273,18 +269,17 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
 
     /* --- THE RELAXATION SWEEP --- */
     a_cost_was_updated = ST_TRUE;
-    while(a_cost_was_updated == ST_TRUE) {
-        /* CLAUDE */ DBG_convergence_itr++;
-        /* CLAUDE */ assert(DBG_convergence_itr < ((COMBAT_GRID_CELL_WIDTH * COMBAT_GRID_CELL_HEIGHT) - 1) && "Combat_Move_Path_Find: pathfinder failed to converge (uint8 cost overflow?)");
+    while(a_cost_was_updated == ST_TRUE)
+    {
         a_cost_was_updated = ST_FALSE;
         
-        max_y = COMBAT_GRID_CELL_HEIGHT - 2; /* 20 */
-        max_x = COMBAT_GRID_CELL_WIDTH - 2;  /* 19 */
+        max_x = COMBAT_GRID_WIDTH - 2;  /* 19 */
+        max_y = COMBAT_GRID_HEIGHT - 2; /* 20 */
         
         ctr = 0; /* Current 1D grid index */
 
         /* Loop through the rows */
-        for (itr_y = 0; itr_y < max_y; itr_y++) {
+        for(itr_y = 0; itr_y < max_y; itr_y++) {
             
             /* -- PHASE 1: Left Edge (X = 0) -- */
             move_cost = _cmbt_movepath_cost_map[ctr];
@@ -295,7 +290,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
             ctr++;
 
             /* -- PHASE 2: Middle Squares (X = 1 to 19) -- */
-            for (itr_x = 0; itr_x < max_x; itr_x++) {
+            for(itr_x = 0; itr_x < max_x; itr_x++) {
                 move_cost = _cmbt_movepath_cost_map[ctr];
                 if(move_cost != INF) {
                     current_origin = _cmbt_path_data[ctr];
@@ -316,15 +311,18 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
 
     /* --- BUILD THE HIGHLIGHT OVERLAY --- */
     /* Iterate over the entire 21x22 grid one last time */
-    for (itr2_y = 0; itr2_y < COMBAT_GRID_CELL_HEIGHT; itr2_y++) {
-        for (itr2_x = 0; itr2_x < COMBAT_GRID_CELL_WIDTH; itr2_x++) {
-            ctr = (itr2_y * COMBAT_GRID_CELL_WIDTH) + itr2_x;
+    for(itr2_y = 0; itr2_y < COMBAT_GRID_HEIGHT; itr2_y++)
+    {
+        for(itr2_x = 0; itr2_x < COMBAT_GRID_WIDTH; itr2_x++)
+        {
+            ctr = (itr2_y * COMBAT_GRID_WIDTH) + itr2_x;
             
             /* Default this square to "Unreachable" */
             _cmbt_path_data[ctr] = ST_FALSE;
 
             /* If the flood fill ever reached this square... */
-            if(_cmbt_mvpth_c[ctr] != INF) {
+            if(_cmbt_mvpth_c[ctr] != INF)
+            {
                 
                 move_cost = _cmbt_movepath_cost_map[ctr];
                 
@@ -335,11 +333,13 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
                 /* If our remaining movement points are strictly GREATER than the cost 
                    to get there, we can step into it! */
                 // ...player-friendly mechanic...
-                if(moves2 > get_to_cost) {
+                if(moves2 > get_to_cost)
+                {
                     /* Mark the square as "Reachable" (Draw the blue highlight here) */
                     _cmbt_path_data[ctr] = ST_TRUE;
                 }
             }
         }
     }
+
 }
