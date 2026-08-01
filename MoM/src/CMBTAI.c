@@ -18,6 +18,7 @@
 #include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/Timer.h"
 
+#include "CMBMAGIC.h"
 #include "CMBTDEF.h"
 #include "CMBTMVPT.h"
 #include "Combat.h"

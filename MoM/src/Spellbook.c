@@ -23,6 +23,7 @@
 #include "../../MoX/src/paragrph.h"
 
 #include "CITYCALC.h"
+#include "CMBMAGIC.h"
 #include "Combat.h"
 #include "../../MoX/src/Help.h"
 #include "MainScr.h"   /* Allocate_Reduced_Map(); Play_Background_Music(); */

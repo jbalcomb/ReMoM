@@ -28,6 +28,7 @@ MoO2
 #include "../../MoX/src/Timer.h"
 #include "../../MoX/src/random.h"
 
+#include "CMBMAGIC.h"
 #include "Combat.h"
 #include "CONQUEST.h"
 #include "MagicScr.h"

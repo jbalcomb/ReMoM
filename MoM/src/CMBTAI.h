@@ -22,6 +22,17 @@ extern "C" {
 
 
 
+// WZD dseg:C8AE                                                 BEGIN:  ovr114 - CMBTAI
+// WZD dseg:C8B0
+extern int16_t _ai_immobile_counter;
+// WZD dseg:C8B2
+extern int16_t _ai_stay_in_city;
+// WZD dseg:C8B4
+extern int16_t _ai_battlefield_city_walls;
+// WZD dseg:C8B4                                                 END:  ovr114 - CMBTAI
+
+
+
 /*
     WIZARDS.EXE  ovr114
 */
