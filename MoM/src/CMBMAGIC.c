@@ -65,6 +65,7 @@
 #include <stdlib.h>
 #include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(), stricmp() */
 
+#include "CMBMAGIC.h"
 #include "CMBTAI.h"
 #include "CMBTDEF.h"
 #include "CMBTMVPT.h"

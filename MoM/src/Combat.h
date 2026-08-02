@@ -271,12 +271,12 @@ what I want is all of this...
                 current_origin = _cmbt_path_data[ctr];
                 for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++)
                 {
-                    adjacent_idx = CMB_AdjctOfs_NoWest[itr_adjacent];
+                    adjacent_idx = adjacent_offsets[1][itr_adjacent];
                     NEW_PATH_COST()
                 }
                 for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++)
                 {
-                    adjacent_idx = CMB_AdjctOfs_NoWest[itr_adjacent];
+                    adjacent_idx = adjacent_offsets[1][itr_adjacent];
                     NEW_PATH_COST()
                 }
             }
@@ -1313,10 +1313,10 @@ extern SAMB_ptr IMG_GUI_Chasm;
 extern SAMB_ptr magic_vortex_seg;
 
 // WZD dseg:D13E
-extern SAMB_ptr _cmbt_mvpth_y;
+extern int16_t * _cmbt_mvpth_y;
 
 // WZD dseg:D140
-extern SAMB_ptr _cmbt_mvpth_x;
+extern int16_t * _cmbt_mvpth_x;
 
 // WZD dseg:D142
 extern int16_t CMB_Path_Length;

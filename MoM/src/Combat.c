@@ -1270,9 +1270,9 @@ SAMB_ptr magic_vortex_seg;
 // WZD dseg:D13C                                                                                         ; 6 frame animation
 
 // WZD dseg:D13E
-uint8_t * _cmbt_mvpth_y;
+int16_t * _cmbt_mvpth_y;
 // WZD dseg:D140
-uint8_t * _cmbt_mvpth_x;
+int16_t * _cmbt_mvpth_x;
 // WZD dseg:D142
 int16_t movement_path_grid_cell_count;
 
@@ -8988,8 +8988,8 @@ void CMB_SetNearAllocs__WIP(void)
     _cmbt_movepath_cost_map = (uint8_t *)Near_Allocate_First(504);
     _cmbt_mvpth_c = (uint8_t *)Near_Allocate_Next(504);
     _cmbt_path_data = (int16_t *)Near_Allocate_Next(1008);  // 504 2-byte values
-    _cmbt_mvpth_x = Near_Allocate_Next(60);
-    _cmbt_mvpth_y = Near_Allocate_Next(60);
+    _cmbt_mvpth_x = (int16_t *)Near_Allocate_Next(60);
+    _cmbt_mvpth_y = (int16_t *)Near_Allocate_Next(60);
     _combat_mouse_grid = (struct s_mouse_list *)Near_Allocate_Next(12);
     for(itr = 0; itr < COMBAT_GRID_HEIGHT; itr++)
     {
@@ -28787,8 +28787,8 @@ void CMB_BaseAllocs__WIP(void)
     _cmbt_movepath_cost_map = (uint8_t *)Near_Allocate_First(504);
     _cmbt_mvpth_c = Near_Allocate_Next(504);
     _cmbt_path_data = (int16_t *)Near_Allocate_Next(1008);
-    _cmbt_mvpth_x = Near_Allocate_Next(504);
-    _cmbt_mvpth_y = Near_Allocate_Next(504);
+    _cmbt_mvpth_x = (int16_t *)Near_Allocate_Next(504);
+    _cmbt_mvpth_y = (int16_t *)Near_Allocate_Next(504);
 
 }
 

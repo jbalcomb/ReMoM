@@ -35,9 +35,6 @@ First-Column: No NW, W, SW
 Last-Column:  No NE, E, SE
 */
 //                                    NE     SW     SE     NW  North  South   West   East
-int16_t CMB_AdjacentOffsets[8] = {   -20,    20,    22,   -22,   -(COMBAT_GRID_WIDTH),    (COMBAT_GRID_WIDTH),    -1,     1 };
-int16_t CMB_AdjctOfs_NoWest[8] = {   -20, -1000,    22, -1000,   -(COMBAT_GRID_WIDTH),    (COMBAT_GRID_WIDTH), -1000,     1 };
-int16_t CMB_AdjctOfs_NoEast[8] = { -1000,    20, -1000,   -22,   -(COMBAT_GRID_WIDTH),    (COMBAT_GRID_WIDTH),    -1, -1000 };
 int16_t adjacent_offsets[3][8] =
 {
     /*                      NE                       SW                       SE                        NW                     N                    S      W      E */
@@ -77,7 +74,6 @@ int16_t * m_movement_path_grid_cell_index;
     _cmbt_mvpth_c[((source_cgy * COMBAT_GRID_WIDTH) + source_cgx)] = (uint8_t)0; \
 }
 
-/* GEMINI */
 /* * MACRO: RELAX_ADJACENT_CELLS
  * Inlines the Bellman-Ford edge relaxation math. 
  * Relies on standard local variables: itr_adjacent, ctr, adjacent_idx, adjacent_path_cost, 
@@ -102,27 +98,12 @@ int16_t * m_movement_path_grid_cell_index;
     }
 
 // WZD ovr155p01
-/* GEMINI */
-/*
-    Structure map — see doc/PathFinding/MoM-MovePath-Compare.md ("Combat_Move_Path_Find — combat grid").
-
-    Combat solver (live). Like Find_Shortest_Path (MAPGEN.c) — and unlike the overland Move_Path_Find, which
-    splits the work with its caller Make_Move_Path — this runs all five shared-skeleton steps in one body.
-    NOTE: the local "1..5" section numbers below are NOT the skeleton step numbers; the mapping is:
-        local 1 (bail)              = [Skeleton step 2]
-        local 2 (PREP init)         = [Skeleton step 1]
-        local 3 (relaxation sweep)  = [Skeleton step 3]
-        local 4 (trace)             = [Skeleton step 4]
-        local 5 (reverse + convert) = [Skeleton step 5]
-    Combat-specific: single-direction raster (left-edge / middle / right-edge phases per row), and diagonal
-    moves cost +1 vs orthogonal +0 (the RELAX_ADJACENT_CELLS EXTRA_COST argument).
-*/
 void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t destination_cgx, int16_t destination_cgy)
 {
-    int16_t move_cost = 0;              /* current tile entry cost */  /* 1-byte, unsigned */
-    int16_t new_cost_to_reach = 0;      /* candidate new cost */
+    uint8_t move_cost = 0;              /* current tile entry cost */  /* 1-byte, unsigned */
+    uint8_t new_cost_to_reach = 0;      /* candidate new cost */
     int16_t max_y = 0;
-    int16_t adjacent_path_cost = 0;     /* 1-byte, unsigned */
+    uint8_t adjacent_path_cost = 0;     /* 1-byte, unsigned */
     int16_t max_x = 0;
     int16_t itr_x = 0;
     int16_t itr_y = 0;
@@ -132,24 +113,14 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
     int16_t ctr = 0;                    /* current tile 1-D index */
     int16_t itr_adjacent = 0;
     int16_t adjacent_idx = 0;
-    int16_t existing_path_cost = 0;     // DNE in Dasm
-    int16_t new_next_cell_index = 0;    // DNE in Dasm
-    int16_t next_index = 0;             // DNE in Dasm
-    int16_t reversed_idx = 0;           // DNE in Dasm
-    int16_t map_idx = 0;                // DNE in Dasm
     int16_t path_cgx = 0;               // DNE in Dasm
     int16_t path_cgy = 0;               // DNE in Dasm
-    int16_t dst_idx = 0;                // DNE in Dasm
-    int16_t src_idx = 0;                // DNE in Dasm
-    /* CLAUDE */ int16_t DBG_convergence_itr = 0;  /* assert: pathfinder convergence guard */
-
-    dst_idx = (destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx;
-    src_idx = (source_cgy * COMBAT_GRID_WIDTH) + source_cgx;
 
     movement_path_grid_cell_count = 0;
 
     /* [Skeleton step 2]  1. Bail out early if the destination is an illegal/impassable square */
-    if(_cmbt_movepath_cost_map[dst_idx] == INF)
+    // _cmbt_movepath_cost_map[]
+    if(_cmbt_movepath_cost_map[((destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx)] == INF)
     {
         return; 
     }
@@ -159,12 +130,11 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
 
     /* --- [Skeleton step 3]  3. THE BELLMAN-FORD RELAXATION SWEEP (single-direction raster, to fixed point) --- */
     a_cost_was_updated = ST_TRUE;
-    while(a_cost_was_updated == ST_TRUE) {
-        /* CLAUDE */ DBG_convergence_itr++;
-        /* CLAUDE */ assert(DBG_convergence_itr < 462 && "Combat_Move_Path_Find: pathfinder failed to converge (uint8 cost overflow?)");
+    while(a_cost_was_updated == ST_TRUE)
+    {
         a_cost_was_updated = ST_FALSE;
-        max_x = COMBAT_GRID_CELL_WIDTH - 2;  /* 19 */
-        max_y = COMBAT_GRID_CELL_HEIGHT - 2; /* 20 */
+        max_x = COMBAT_GRID_WIDTH - 2;
+        max_y = COMBAT_GRID_HEIGHT - 2;
         ctr = 0; /* 1D Array Index Counter */
 
         for(itr_y = 0; itr_y < max_y; itr_y++)
@@ -172,30 +142,34 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
 
             /* -- PHASE 1: Left Edge (X = 0) -- */
             move_cost = _cmbt_movepath_cost_map[ctr];
-            if(move_cost != INF) {
+            if(move_cost != INF)
+            {
                 current_origin = _cmbt_path_data[ctr];
-                RELAX_ADJACENT_CELLS(CMB_AdjctOfs_NoWest, 0, 4, 1); /* Diagonals (+1 Cost) */
-                RELAX_ADJACENT_CELLS(CMB_AdjctOfs_NoWest, 4, 8, 0); /* Orthogonals */
+                RELAX_ADJACENT_CELLS(adjacent_offsets[1], 0, 4, 1); /* Diagonals (+1 Cost) */
+                RELAX_ADJACENT_CELLS(adjacent_offsets[1], 4, 8, 0); /* Orthogonals */
             }
             ctr++;
 
             /* -- PHASE 2: Middle Squares (X = 1 to 19) -- */
-            for(itr_x = 0; itr_x < max_x; itr_x++) {
+            for(itr_x = 0; itr_x < max_x; itr_x++)
+            {
                 move_cost = _cmbt_movepath_cost_map[ctr];
-                if(move_cost != INF) {
+                if(move_cost != INF)
+                {
                     current_origin = _cmbt_path_data[ctr];
-                    RELAX_ADJACENT_CELLS(CMB_AdjacentOffsets, 0, 4, 1);
-                    RELAX_ADJACENT_CELLS(CMB_AdjacentOffsets, 4, 8, 0);
+                    RELAX_ADJACENT_CELLS(adjacent_offsets[0], 0, 4, 1);
+                    RELAX_ADJACENT_CELLS(adjacent_offsets[0], 4, 8, 0);
                 }
                 ctr++;
             }
 
             /* -- PHASE 3: Right Edge (X = 20) -- */
             move_cost = _cmbt_movepath_cost_map[ctr];
-            if(move_cost != INF) {
+            if(move_cost != INF)
+            {
                 current_origin = _cmbt_path_data[ctr];
-                RELAX_ADJACENT_CELLS(CMB_AdjctOfs_NoEast, 0, 4, 1);
-                RELAX_ADJACENT_CELLS(CMB_AdjctOfs_NoEast, 4, 8, 0);
+                RELAX_ADJACENT_CELLS(adjacent_offsets[2], 0, 4, 1);
+                RELAX_ADJACENT_CELLS(adjacent_offsets[2], 4, 8, 0);
             }
             ctr++;
         }
@@ -213,32 +187,23 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
     ctr = (destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx;
 
     /* The Trace Loop */
-    while(_cmbt_path_data[ctr] != ctr) {
+    while(_cmbt_path_data[ctr] != ctr)
+    {
         m_movement_path_grid_cell_index[movement_path_grid_cell_count] = ctr;
         ctr = _cmbt_path_data[ctr];
         movement_path_grid_cell_count++;
     }
 
+    /* --- [Skeleton step 5]  5. REVERSE AND CONVERT TO 2D --- */
+    /* Reverse the path and convert the 1D indices back into 2D (X,Y) coordinates */
     for(itr = 0; itr < movement_path_grid_cell_count; itr++)
     {
         path_cgx = (m_movement_path_grid_cell_index[((movement_path_grid_cell_count - 1) - itr)] % COMBAT_GRID_WIDTH);
-        _cmbt_mvpth_x[itr] = (uint8_t)path_cgx;
+        _cmbt_mvpth_x[itr] = path_cgx;
         path_cgy = (m_movement_path_grid_cell_index[((movement_path_grid_cell_count - 1) - itr)] / COMBAT_GRID_WIDTH);
-        _cmbt_mvpth_y[itr] = (uint8_t)path_cgy;
+        _cmbt_mvpth_y[itr] = path_cgy;
     }
 
-    /* --- [Skeleton step 5]  5. REVERSE AND CONVERT TO 2D --- */
-    /* Reverse the path and convert the 1D indices back into 2D (X,Y) coordinates */
-    for(itr = 0; itr < movement_path_grid_cell_count; itr++) {
-        /* Calculate the backwards index: (Count - 1) - Current Iteration */
-        reversed_idx = (movement_path_grid_cell_count - 1) - itr;
-        /* Grab the 1D square index from our hijacked buffer */
-        map_idx = m_movement_path_grid_cell_index[reversed_idx];
-        path_cgx = map_idx % COMBAT_GRID_WIDTH;  // NOTE: in assembly, these could have been one idiv operation for the division and the modulo, which could be considered proof that this was C code, not Assembly
-        path_cgy = map_idx / COMBAT_GRID_WIDTH;
-        _cmbt_mvpth_x[itr] = (uint8_t)path_cgx;
-        _cmbt_mvpth_y[itr] = (uint8_t)path_cgy;
-    }
 }
 
 
@@ -285,7 +250,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
             move_cost = _cmbt_movepath_cost_map[ctr];
             if(move_cost != INF) {
                 current_origin = _cmbt_path_data[ctr];
-                RELAX_ADJACENT_CELLS(CMB_AdjctOfs_NoWest, 0, 8, 0);
+                RELAX_ADJACENT_CELLS(adjacent_offsets[1], 0, 8, 0);
             }
             ctr++;
 
@@ -294,7 +259,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
                 move_cost = _cmbt_movepath_cost_map[ctr];
                 if(move_cost != INF) {
                     current_origin = _cmbt_path_data[ctr];
-                    RELAX_ADJACENT_CELLS(CMB_AdjacentOffsets, 0, 8, 0);
+                    RELAX_ADJACENT_CELLS(adjacent_offsets[0], 0, 8, 0);
                 }
                 ctr++;
             }
@@ -303,7 +268,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
             move_cost = _cmbt_movepath_cost_map[ctr];
             if(move_cost != INF) {
                 current_origin = _cmbt_path_data[ctr];
-                RELAX_ADJACENT_CELLS(CMB_AdjctOfs_NoEast, 0, 8, 0);
+                RELAX_ADJACENT_CELLS(adjacent_offsets[2], 0, 8, 0);
             }
             ctr++;
         }
