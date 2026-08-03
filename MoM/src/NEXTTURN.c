@@ -1526,73 +1526,43 @@ int16_t Pick_Random_Hero(int16_t player_idx, int16_t zero_cost, int16_t hero_typ
 
 
 // WZD o121p08
-/*
-; calculates and returns the unit's movement allowance
-; in half movement point units, accounting for all
-; non-combat factors
-*/
-/*
-    Calculate Movement Points for Unit
-        Unit Type Table :: Movement Points
-        Hero Unit Items - ¿ ... ?
-        Chaos Channels - Demon Wings
-        Unit Enchantment - Endurance
-        Wind Mastery
-*/
 int16_t Unit_Moves2(int16_t unit_idx)
 {
-    uint32_t enchantments;  // Unit & Item
-    int16_t * hero_items;
-    int16_t wind_mastery;
-    int16_t item_moves2;
-    int16_t endurance;
-    int16_t moves2;  // _DI_
-    int16_t itr_hero_items;  // _SI_
-    int16_t itr_players;  // _SI_
-
+    uint32_t enchantments = 0;  // Unit & Item
+    int16_t * hero_items = NULL;
+    int16_t wind_mastery = 0;
+    int16_t item_moves2 = 0;
+    int16_t endurance = 0;
+    int16_t moves2 = 0;
+    int16_t itr_hero_items = 0;
+    int16_t itr_players = 0;
     item_moves2 = 0;
-
     endurance = ST_FALSE;
-
     enchantments = 0;
-
     /*
         BEGIN: Hero Items
     */
     if(_UNITS[unit_idx].Hero_Slot > -1)
     {
-
         hero_items = &(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]);
-
         for(itr_hero_items = 0; itr_hero_items < NUM_HERO_ITEMS; itr_hero_items++)
         {
-            
             if(hero_items[itr_hero_items] > -1)
             {
-
                 if(ITEM_POWER(hero_items[itr_hero_items], ip_Endurance))
                 {
                     endurance = ST_TRUE;
                 }
-
-                // TODO  enchantments |= _ITEMS[itr_hero_items].Powers;
-                enchantments |= GET_4B_OFS((uint8_t*)&_ITEMS[hero_items[itr_hero_items]], 0x2E);
-
+                enchantments |= _ITEMS[hero_items[itr_hero_items]].Powers;
                 item_moves2 += _ITEMS[hero_items[itr_hero_items]].moves2;
-
             }
-
         }
-
     }
     /*
         END: Hero Items
     */
-
     moves2 = _unit_type_table[_UNITS[unit_idx].type].Move_Halves;
-
     enchantments |= _UNITS[unit_idx].enchantments;
-
     if(moves2 < 6)
     {
         if((enchantments & UE_FLIGHT) != 0)
@@ -1600,7 +1570,6 @@ int16_t Unit_Moves2(int16_t unit_idx)
             moves2 = 6;
         }
     }
-
     if((_UNITS[unit_idx].mutations & CC_FLIGHT) != 0)
     {
         if(moves2 < 4)
@@ -1608,26 +1577,22 @@ int16_t Unit_Moves2(int16_t unit_idx)
             moves2 = 4;
         }
     }
-
-    if((enchantments & UE_ENDURANCE) != 0)
-    {
-        endurance = ST_TRUE;
-    }
-
-    if(endurance == ST_TRUE)
+    if(
+        ((enchantments & UE_ENDURANCE) != 0)
+        ||
+        (endurance == ST_TRUE)
+    )
     {
         moves2 += 2;
     }
-
     moves2 += item_moves2;
-
     /*
         BEGIN: Wind Mastery
     */
     if(_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
     {
         wind_mastery = 0;
-        for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
+        for(itr_players = 0; itr_players < _num_players; itr_players++)
         {
             if(_players[itr_players].Globals[WIND_MASTERY] > 0)
             {
@@ -1653,7 +1618,6 @@ int16_t Unit_Moves2(int16_t unit_idx)
     /*
         END: Wind Mastery
     */
-
     return moves2;
 }
 

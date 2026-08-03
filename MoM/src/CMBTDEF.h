@@ -71,10 +71,22 @@ Generate_Combat_Map()
 #define MAX_CGY_CITY 13
 #define CGX_GATE      8
 #define CGY_GATE     12
-/*  Combat_Grid_Cell_Has_City_Wall() checks 7,6, in addition to 6,11  */
-/*  Target_Unit_Value() checks 7,6, in addition to 6,11  */
+/* Combat_Grid_Cell_Has_City_Wall() and Target_Unit_Value() check 7,6, in addition to 6,11  */
+/* the structure clearing is 2x2: cgx 6..7, cgy 11..12 */
+/*  city walls are the 12 perimeter cells of the 4x4 city area;
+    the inner 2x2 is inside the walls and can never be a wall segment  */
+#define MIN_CGX_CITY_INNER  (MIN_CGX_CITY + 1)   /*  6 */
+#define MAX_CGX_CITY_INNER  (MAX_CGX_CITY - 1)   /*  7 */
+#define MIN_CGY_CITY_INNER  (MIN_CGY_CITY + 1)   /* 11 */
+#define MAX_CGY_CITY_INNER  (MAX_CGY_CITY - 1)   /* 12 */
+
 #define CGX_LAIR  6
 #define CGY_LAIR 11
+/*  g_combat_grid_action_map[cgy][cgx] cell values  —  1-byte, signed  */
+#define COMBAT_CELL_NO_ACTION   -2   /* nothing the active unit can do here */
+#define COMBAT_CELL_REACHABLE   -1   /* empty, and reachable this turn */
+#define COMBAT_CELL_CITY_WALL   99   /* wall segment; only set for a wall-crusher attacker */
+/*  0 .. (MAX_BATTLE_UNIT_COUNT - 1)  =  index of the battle unit standing here  */
 
 /*
 Deploy_Battle_Units()

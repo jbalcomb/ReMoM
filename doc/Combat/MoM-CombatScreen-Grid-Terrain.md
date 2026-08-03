@@ -112,7 +112,7 @@ battlefield->Tile_TerrGroup ==> terrain_group
 ¿ combat grid cell scanned ?
 
 
-scanned_battle_unit_idx = CMB_TargetRows[Tile_Y][Tile_X];
+scanned_battle_unit_idx = g_combat_grid_action_mapaction_map[Tile_Y][Tile_X];
 
 
 

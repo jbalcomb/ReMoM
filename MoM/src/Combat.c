@@ -863,7 +863,7 @@ struct s_mouse_list * _combat_mouse_grid;
 // };
 
 // WZD dseg:C524
-// drake178: CMB_TargetRows
+// drake178: g_combat_grid_action_map
 // MoO2  Module: MOX  _combat_grid  ..._combat_mouse_grid
 /*
 ; array of 22 pointers to LBX_NearAlloc_Next
@@ -873,7 +873,7 @@ indexed by sizeof(2)
 uses Near_Allocate_Next(), so points to 1-byte values
 mov     bx, [bp+YPos]
 shl     bx, 1
-mov     bx, [CMB_TargetRows@+bx]
+mov     bx, [g_combat_grid_action_map@+bx]
 add     bx, _SI_XPos
 mov     al, [bx]
 cbw
@@ -882,7 +882,7 @@ uses AL and CBW, so 1-byte, signed values
 allocated in CMB_SetNearAllocs__WIP()
 */
 /*
-e.g., CMB_TargetRows[cgy][cgx]
+e.g., g_combat_grid_action_map[cgy][cgx]
 1-byte, signed
 
 'Right-Click Combat Grid' uses it to get battle_unit_idx
@@ -890,7 +890,7 @@ e.g., CMB_TargetRows[cgy][cgx]
 populated in Assign_Combat_Grids()
 {-2, -1, battle_unit_idx, 99}
 */
-int8_t * CMB_TargetRows[COMBAT_GRID_HEIGHT];
+int8_t * g_combat_grid_action_map[COMBAT_GRID_HEIGHT];
 
 // WZD dseg:C550
 /*
@@ -952,7 +952,7 @@ int16_t _combat_total_unit_count;
 // WZD dseg:C58A
 /*
     scanned battle unit, as shown in the combat unit display
-    set in Assign_Mouse_Image(), from CMB_TargetRows[grid_y][grid_x]
+    set in Assign_Mouse_Image(), from g_combat_grid_action_map[grid_y][grid_x]
 
     currently active battle unit index
     (active as in selected, not scanned)
@@ -1002,7 +1002,6 @@ int16_t m_unknown_variable__ovr090;
 // WZD dseg:C7AA                                                 ¿ BEGIN:  ovr103 ?
 
 // WZD dseg:C7AA
-// drake178: struct CMOVE_ICONS IMG_CMB_MoveIcons;
 SAMB_ptr combat_movemode_icon_segs[3];
 
 // WZD dseg:C7B0
@@ -1016,7 +1015,7 @@ int16_t CMB_HeavenlyLight;
 // WZD dseg:C7B5
 int16_t CMB_CloudofShadow;
 // WZD dseg:C7B6
-int16_t CMB_CentralStructure;
+int16_t g_center_square_structure;
 
 // WZD dseg:C7B7 00                                              db    0
 
@@ -2091,7 +2090,7 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
 
                 RightClick_Y = Get_Combat_Grid_Cell_Y(((int16_t)grid_sx + 4), ((int16_t)grid_sy + 4));
 
-                battle_unit_idx = CMB_TargetRows[RightClick_Y][RightClick_X];
+                battle_unit_idx = g_combat_grid_action_map[RightClick_Y][RightClick_X];
 
                 // ; BUG: this needs to be range checked, it can be 99!
                 if(
@@ -2999,47 +2998,38 @@ void CMB_PrepareTurn__WIP(void)
 
 
 // WZD s91p03
-/*
-    sets _cmbt_movepath_cost_map[] from battlefield->MoveCost_Ground[], MoveCost_Teleport[], MoveCost_Ground2[], MoveCost_Sailing[]
-
-'Magic Vortex' directly accesses battlefield->MoveCost_Teleport[]
-*/
 void Set_Movement_Cost_Map(int16_t battle_unit_idx)
 {
-    int16_t movement_type = 0;
-    int16_t instant_movement_type = 0;
+    int16_t battle_unit_movement_mode = 0;
+    int16_t instant_movement_mode = 0;
     int16_t itr_y = 0;
     int16_t itr_x = 0;
-
-    movement_type = Battle_Unit_Movement_Icon(battle_unit_idx);
-
-    instant_movement_type = BU_GetInstaMoveType__WIP(battle_unit_idx);
-
-    if(instant_movement_type > 0)
+    battle_unit_movement_mode = Battle_Unit_Movement_Mode(battle_unit_idx);
+    instant_movement_mode = Battle_Unit_Instant_Movement_Mode(battle_unit_idx);
+    if(instant_movement_mode > 0)
     {
-        movement_type = instant_movement_type;
+        battle_unit_movement_mode = instant_movement_mode;
     }
-
-    switch(movement_type)
+    switch(battle_unit_movement_mode)
     {
-        case 0:
-        case 1:
+        case bumm_Ground0:
+        case bumm_Ground1:
         {
             memcpy(_cmbt_movepath_cost_map, &battlefield->MoveCost_Ground[0], COMBAT_GRID_CELL_COUNT);
         } break;
-        case 2:
+        case bumm_Flight:
         {
             memcpy(_cmbt_movepath_cost_map, &battlefield->MoveCost_Teleport[0], COMBAT_GRID_CELL_COUNT);
         } break;
-        case 3:
+        case bumm_Ground3:
         {
-            memcpy(_cmbt_movepath_cost_map, &battlefield->MoveCost_Ground2[0], COMBAT_GRID_CELL_COUNT);
+            memcpy(_cmbt_movepath_cost_map, &battlefield->MoveCost_Ground2[0], COMBAT_GRID_CELL_COUNT);  /* OGBUG  unreachable */
         } break;
-        case 4:
+        case bumm_Sailing:
         {
             memcpy(_cmbt_movepath_cost_map, &battlefield->MoveCost_Sailing[0], COMBAT_GRID_CELL_COUNT);
         } break;
-        case 5:
+        case bumm_Swimming:
         {
             for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
             {
@@ -3056,13 +3046,12 @@ void Set_Movement_Cost_Map(int16_t battle_unit_idx)
                 }
             }
         } break;
-        case 6:
-        case 7:
+        case bumm_Teleport:
+        case bumm_Tunnel:
         {
             memcpy(_cmbt_movepath_cost_map, &battlefield->MoveCost_Teleport[0], COMBAT_GRID_CELL_COUNT);
         } break;
     }
-
 }
 
 
@@ -3082,8 +3071,8 @@ void Set_Movement_Cost_Map(int16_t battle_unit_idx)
 void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t target_cgy)
 {
     SAMB_ptr move_sound_seg = 0;
-    int16_t has_teleport = 0;
-    int16_t teleport_type = 0;
+    int16_t has_instant_movement_mode = 0;
+    int16_t instant_movement_mode = 0;
     int16_t Last_Facing_Y = 0;
     int16_t Last_Facing_X = 0;
     int16_t Origin_Y = 0;
@@ -3092,7 +3081,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
     int16_t Facing_Diff_Y = 0;
     int16_t Facing_Diff_X = 0;
     int16_t Move_Step_Index = 0;
-    int16_t itr;  // _DI_
+    int16_t itr = 0;
     uint32_t move_sound_seg_size = 0;  // DNE in Dasm
 
     battle_unit_owner_idx = battle_units[battle_unit_idx].controller_idx;
@@ -3122,7 +3111,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
     // ; BUG: outposts and cities don't have anything on that
     // ; square either
     // same as in Assign_Combat_Grids()
-    if(battlefield->Central_Structure != CS_None)
+    if(battlefield->center_square_structure != CS_None)
     {
 
         _cmbt_movepath_cost_map[COMBAT_STRUCTURE_IDX] = INF;
@@ -3142,20 +3131,20 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
     }
 
 
-    has_teleport = ST_FALSE;
+    has_instant_movement_mode = ST_FALSE;
 
-    teleport_type = BU_GetInstaMoveType__WIP(battle_unit_idx);
+    instant_movement_mode = Battle_Unit_Instant_Movement_Mode(battle_unit_idx);
 
     if(
-        (teleport_type == 6)
+        (instant_movement_mode == 6)
         ||
-        (teleport_type == 7)
+        (instant_movement_mode == 7)
     )
     {
 
         movement_path_grid_cell_count = 0;
 
-        has_teleport = ST_TRUE;
+        has_instant_movement_mode = ST_TRUE;
 
     }
     else
@@ -3180,16 +3169,16 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
 
     move_sound_seg = Get_Battle_Unit_Move_Sound_Buffer(battle_unit_idx, &move_sound_seg_size);
 
-    if(has_teleport != ST_FALSE)
+    if(has_instant_movement_mode != ST_FALSE)
     {
 
-        if(teleport_type == 6)
+        if(instant_movement_mode == 6)
         {
 
             BU_Teleport(battle_unit_idx, target_cgx, target_cgy);
 
         }
-        else  /* Teleport_Type == 7 */
+        else  /* instant_movement_mode == 7 */
         {
 
             BU_TunnelTo(battle_unit_idx, target_cgx, target_cgy);
@@ -3298,9 +3287,9 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
     Facing_Diff_X = (Last_Facing_X - Origin_X);
     Facing_Diff_Y = (Last_Facing_Y - Origin_Y);
 
-    if(has_teleport != ST_FALSE)
+    if(has_instant_movement_mode != ST_FALSE)
     {
-        // TODO  Can_Teleport
+        // TODO  has_instant_movement_mode
     }
     else
     {
@@ -3380,7 +3369,7 @@ void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy)
     battle_unit_idx = _battle_unit_idx;
 
     /* Get target unit/object index from combat grid */
-    combat_grid_target = CMB_TargetRows[cgy][cgx];
+    combat_grid_target = g_combat_grid_action_map[cgy][cgx];
 
     if(combat_grid_target != 99)
     {
@@ -3491,17 +3480,10 @@ loc_MoveCheck:
 
 
 // WZD s91p07
-/*
-populates CMB_TargetRows[] and _cmbt_movepath_cost_map[]
-uses _cmbt_path_data[]
-CMB_TargetRows[]
-_cmbt_movepath_cost_map[]
-...just sets occupied cells to *impassible* (INF/0xFF/255)?
-*/
 void Assign_Combat_Grids(void)
 {
-    int16_t Can_Teleport = 0;
-    int16_t Teleport_Type = 0;
+    int16_t has_instant_movement_mode = 0;
+    int16_t instant_movement_mode = 0;
     int16_t moves2 = 0;
     int16_t uu_max_moves2 = 0;
     int16_t uu_count_of_reachable_cells = 0;
@@ -3512,9 +3494,7 @@ void Assign_Combat_Grids(void)
     int16_t itr_x = 0;
     int16_t itr_y = 0;
     int16_t useable_moves2 = 0;
-    
     Set_Movement_Cost_Map(_active_battle_unit);
-
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
         if(battle_units[itr].status == bus_Active)
@@ -3522,73 +3502,45 @@ void Assign_Combat_Grids(void)
             _cmbt_movepath_cost_map[((battle_units[itr].cgy * COMBAT_GRID_WIDTH) + battle_units[itr].cgx)] = INF;
         }
     }
-
     for(itr= 0; itr < _vortex_count; itr++)
     {
         _cmbt_movepath_cost_map[((_vortexes[itr].cgy * COMBAT_GRID_WIDTH) + _vortexes[itr].cgx)] = INF;
     }
-
-    // OGBUG: cities don't have anything on that square either
-    if(battlefield->Central_Structure!= CS_None)
+    /* OGBUG  cities don't have anything on that square either */
+    if(battlefield->center_square_structure != CS_None)
     {
         _cmbt_movepath_cost_map[COMBAT_STRUCTURE_IDX] = INF;
     }
-
-    // same in Move_Battle_Unit()
+    /* same as in Move_Battle_Unit() */
     if((battlefield->walled == ST_TRUE) || (battlefield->city_enchantments[FLYING_FORTRESS] > 0))
     {
         Update_Move_Map_City_Area_Restrictions(_active_battle_unit);
     }
-
 /*
     NOTE: nothing else touches _cmbt_movepath_cost_map[]
 */
-
-    Can_Teleport = ST_FALSE;
-
-    Teleport_Type = BU_GetInstaMoveType__WIP(_active_battle_unit);
-
+    has_instant_movement_mode = ST_FALSE;
+    instant_movement_mode = Battle_Unit_Instant_Movement_Mode(_active_battle_unit);
     if(
-        (Teleport_Type == 6)
+        (instant_movement_mode == 6)
         ||
-        (Teleport_Type == 7)
+        (instant_movement_mode == 7)
     )
     {
-
-        Can_Teleport = ST_TRUE;
-
+        has_instant_movement_mode = ST_TRUE;
     }
-
-
     moves2 = battle_units[_active_battle_unit].movement_points;
-
     uu_max_moves2 = Unit_Moves2(battle_units[_active_battle_unit].unit_idx);
-
     uu_cgx = battle_units[_active_battle_unit].cgx;
-
     uu_cgy = battle_units[_active_battle_unit].cgy;
-
-
-    /*
-        default all combat grid targets to invalid action targets
-        ¿ where does this get checked ?
-    */
     for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
     {
-
         for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++ )
         {
-
-            CMB_TargetRows[itr_y][itr_x] = -2;  /* not valid as targets for an active unit’s actions */
-
+            g_combat_grid_action_map[itr_y][itr_x] = COMBAT_CELL_NO_ACTION;
         }
-
     }
-
-
-    /*
-        tested for in Battle_Unit_Action()
-    */
+    /* tested for in Battle_Unit_Action() */
     if(
         (battlefield->walled == ST_TRUE)
         &&
@@ -3603,92 +3555,55 @@ void Assign_Combat_Grids(void)
             {
                 if(Combat_Grid_Cell_Has_City_Wall(itr_x, itr_y) == ST_TRUE)
                 {
-                    CMB_TargetRows[itr_y][itr_x] = 99;
+                    g_combat_grid_action_map[itr_y][itr_x] = COMBAT_CELL_CITY_WALL;
                 }
             }
         }
     }
-
-
     /*
         BEGIN:  assign Battle Unit Indices
     */
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-
         if(
             (battle_units[itr].status == bus_Active)
             &&
             (battle_units[itr].Image_Effect != 5)  // ~ Invisible
         )
         {
-
-            CMB_TargetRows[battle_units[itr].cgy][battle_units[itr].cgx] = (int8_t)itr;  // batle_unit_idx
-
+            g_combat_grid_action_map[battle_units[itr].cgy][battle_units[itr].cgx] = (int8_t)itr;
         }
-
     }
     /*
         END:  assign Battle Unit Indices
     */
-
-
     useable_moves2 = 0;
-
-    if(Can_Teleport == ST_FALSE)
+    if(has_instant_movement_mode == ST_FALSE)
     {
-
         useable_moves2 = battle_units[_active_battle_unit].movement_points;
-
     }
     else
     {
-
         if(battle_units[_active_battle_unit].movement_points > 0)
         {
-
             useable_moves2 = 20;
-
         }
-
     }
-
-
-    /*
-
-    */
     uu_count_of_reachable_cells = 0;
-
-    // sets _cmbt_path_data[] to {F,T} - reachable
-    // ¿ MoO2 Set_Legal_Moves_() ?
     Combat_Move_Path_Valid(battle_units[_active_battle_unit].cgx, battle_units[_active_battle_unit].cgy, useable_moves2);
-
-
-
     for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
     {
-
         cgy_offset = (itr_y * COMBAT_GRID_WIDTH);
-
         for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++)
         {
-
             if(_cmbt_path_data[cgy_offset + itr_x] == ST_TRUE)  /* combat grid cell is *reachable* */
             {
-
-                CMB_TargetRows[itr_y][itr_x] = -1;
-
+                g_combat_grid_action_map[itr_y][itr_x] = COMBAT_CELL_REACHABLE;
                 uu_count_of_reachable_cells++;
-
             }
-
         }
-
     }
-
-
-    CMB_TargetRows[battle_units[_active_battle_unit].cgy][battle_units[_active_battle_unit].cgx] = (int8_t)_active_battle_unit;
-
+    g_combat_grid_action_map[battle_units[_active_battle_unit].cgy][battle_units[_active_battle_unit].cgx] = (int8_t)_active_battle_unit;
 }
 
 
@@ -3820,37 +3735,20 @@ void Add_City_Damage_From_Battle_Units_Within(void)
 
 
 // WZD s91p10
-// drake178: BU_GetInstaMoveType()
-/*
-; returns the type of any instant movement ability
-; that the unit has (6 for Teleporting, 7 for Merging),
-; or 0 if neither
-*/
-/*
-    returns 6 for teleporting, 7 for merging, or 0 if neither
-*/
-int16_t BU_GetInstaMoveType__WIP(int16_t battle_unit_idx)
+int16_t Battle_Unit_Instant_Movement_Mode(int16_t battle_unit_idx)
 {
-
     if((battle_units[battle_unit_idx].Move_Flags & MV_TELEPORT) != 0)
     {
-
-        return 6;
-
+        return bumm_Teleport;
     }
     else if((battle_units[battle_unit_idx].Move_Flags & MV_MERGING) != 0)
     {
-
-        return 7;
-
+        return bumm_Tunnel;
     }
     else
     {
-
-        return 0;
-
+        return bumm_Ground0;
     }
-
 }
 
 
@@ -5401,13 +5299,13 @@ void Assign_Mouse_Images(void)
 
         cgy = Get_Combat_Grid_Cell_Y(screen_x, screen_y);
 
-        if(CMB_TargetRows[cgy][cgx] == -2)
+        if(g_combat_grid_action_map[cgy][cgx] == -2)
         {
 
             _combat_mouse_grid->image_num = crsr_RedCross;  /* Page 92  (PDF Page 97) "Squares that are not valid as targets for an active unit’s actions show a red "X" when the mouse cursor moves over them." */
 
         }
-        else if(CMB_TargetRows[cgy][cgx] == -1)
+        else if(g_combat_grid_action_map[cgy][cgx] == -1)
         {
 
             frame_scanned_flag = ST_TRUE;
@@ -5419,7 +5317,7 @@ void Assign_Mouse_Images(void)
             _combat_mouse_grid->image_num = crsr_WingedBoot;
 
         }
-        else if(CMB_TargetRows[cgy][cgx] == 99)
+        else if(g_combat_grid_action_map[cgy][cgx] == 99)
         {
 
             frame_scanned_flag = ST_TRUE;
@@ -5430,7 +5328,7 @@ void Assign_Mouse_Images(void)
 
             frame_anim_cycle = ((frame_anim_cycle + 1) % 3);
 
-            scanned_battle_unit_idx = CMB_TargetRows[cgy][cgx];
+            scanned_battle_unit_idx = g_combat_grid_action_map[cgy][cgx];
 
             range_x = abs((cgx - battle_units[_active_battle_unit].cgx));
 
@@ -5488,7 +5386,7 @@ void Assign_Mouse_Images(void)
 
             frame_anim_cycle = ((frame_anim_cycle + 1) % 3);
 
-            scanned_battle_unit_idx = CMB_TargetRows[cgy][cgx];
+            scanned_battle_unit_idx = g_combat_grid_action_map[cgy][cgx];
 
             _scanned_battle_unit = scanned_battle_unit_idx;  // ; the combat unit display is based on this
 
@@ -5725,68 +5623,35 @@ void Add_Combat_Enchantment_Fields(void)
 
 
 // WZD o98p13
-// drake178: BU_GetCmbtMoveType()
-/*
-; returns the combat movement type of a battle unit:
-;   1 - ground
-;   2 - flight
-;   4 - sailing
-;   5 - swimming
-;
-; INCONSISTENT: forester and mountaineer will both
-; shortcut the sailing check and default to ground
-*/
-/*
-
-looks like some sort of macro based switch
-with 4 macro blocks resolving to nothing?
-
-used by Set_Movement_Cost_Map() to set _cmbt_movepath_cost_map[] from battlefield->MoveCost_Ground[], MoveCost_Teleport[], MoveCost_Ground2[], MoveCost_Sailing[]
-
-*/
-int16_t Battle_Unit_Movement_Icon(int16_t battle_unit_idx)
+/* OGBUG  INCONSISTENT: forester and mountaineer will both shortcut the sailing check and default to ground */
+int16_t Battle_Unit_Movement_Mode(int16_t battle_unit_idx)
 {
-    int16_t icon_idx = 0;  // DNE in Dasm
-
+    int16_t mode_idx = 0;
     if((battle_units[battle_unit_idx].Move_Flags & MV_FLYING) != 0)
     {
-
-        icon_idx = 2;
-
+        mode_idx = bumm_Flight;
     }
     else if((battle_units[battle_unit_idx].Move_Flags & MV_SWIMMING) != 0)
     {
-
-        icon_idx = 5;
-
+        mode_idx = bumm_Swimming;
     }
     else if((battle_units[battle_unit_idx].Move_Flags & MV_FORESTER) != 0)
     {
-
-        icon_idx = 1;
-
+        mode_idx = bumm_Ground1;
     }
     else if((battle_units[battle_unit_idx].Move_Flags & MV_MOUNTAINEER) != 0)
     {
-
-        icon_idx = 1;
-
+        mode_idx = bumm_Ground1;
     }
     else if((battle_units[battle_unit_idx].Move_Flags & MV_SAILING) != 0)
     {
-
-        icon_idx = 4;
-
+        mode_idx = bumm_Sailing;
     }
     else
     {
-
-        icon_idx = 1;
-
+        mode_idx = bumm_Ground1;
     }
-
-
-    return icon_idx;
+    return mode_idx;
 }
 
 
@@ -7133,7 +6998,7 @@ void Draw_Spell_Information_Window(void)
 void Draw_Active_Unit_Stats_And_Icons(void)
 {
     uint8_t colors[4] = { 0, 0, 0, 0};
-    int16_t move_type = 0;
+    int16_t battle_unit_movement_mode = 0;
     int16_t icon_idx = 0;  // _SI_
     int16_t attack_strength = 0;  // _DI_
 
@@ -7189,20 +7054,20 @@ void Draw_Active_Unit_Stats_And_Icons(void)
     }
 
 
-    move_type = Battle_Unit_Movement_Icon(_active_battle_unit);
+    battle_unit_movement_mode = Battle_Unit_Movement_Mode(_active_battle_unit);
 
     icon_idx = 0;
 
-    if(move_type == 2)  /* Move_Flags & MV_FLYING */
+    if(battle_unit_movement_mode == bumm_Flight)
     {
 
         icon_idx = 1;
 
     }
     else if(
-        (move_type == 4)  /* Move_Flags & MV_SAILING */
+        (battle_unit_movement_mode == bumm_Sailing)
         ||
-        (move_type == 5)  /* Move_Flags & MV_SWIMMING */
+        (battle_unit_movement_mode == bumm_Swimming)
     )
     {
 
@@ -7411,7 +7276,7 @@ void Combat_Information_Window(void)
     int16_t itr = 0;  // _SI_
     int16_t IDK_screen_offset = 0;  // _DI_
 
-    CMB_CentralStructure = battlefield->Central_Structure;
+    g_center_square_structure = battlefield->center_square_structure;
 
     CMB_CloudofShadow = battlefield->city_enchantments[CLOUD_OF_SHADOW];
     CMB_HeavenlyLight = battlefield->city_enchantments[HEAVENLY_LIGHT];
@@ -7949,7 +7814,7 @@ void Combat_Info_Effects_Base(void)
 
     idx = 0;
 
-    if(CMB_CentralStructure == CS_SorceryNode)
+    if(g_center_square_structure == CS_SorceryNode)
     {
 
         _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[12];
@@ -7961,7 +7826,7 @@ void Combat_Info_Effects_Base(void)
         idx++;
 
     }
-    else if(CMB_CentralStructure == CS_ChaosNode)
+    else if(g_center_square_structure == CS_ChaosNode)
     {
 
         _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[5];
@@ -7973,7 +7838,7 @@ void Combat_Info_Effects_Base(void)
         idx++;
 
     }
-    else if(CMB_CentralStructure == CS_NatureNode)
+    else if(g_center_square_structure == CS_NatureNode)
     {
 
         _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[10];
@@ -8184,11 +8049,11 @@ int16_t Combat_Info_Effects_Count(void)
 
 
     if(
-        (battlefield->Central_Structure == CS_SorceryNode)
+        (battlefield->center_square_structure == CS_SorceryNode)
         ||
-        (battlefield->Central_Structure == CS_ChaosNode)
+        (battlefield->center_square_structure == CS_ChaosNode)
         ||
-        (battlefield->Central_Structure == CS_NatureNode)
+        (battlefield->center_square_structure == CS_NatureNode)
     )
     {
 
@@ -8720,7 +8585,7 @@ void Combat_Cast_Spell_Error(int16_t type)
  *
  * This routine attempts to send the specified unit to a random unoccupied combat square, modeling
  * the erratic behavior caused by confusion. It performs up to 600 random square probes within the
- * combat grid and selects the first location whose entry in CMB_TargetRows indicates that no unit
+ * combat grid and selects the first location whose entry in g_combat_grid_action_map indicates that no unit
  * currently occupies the square. If such a square is found, the unit is moved there through
  * Move_Battle_Unit__WIP().
  *
@@ -8731,7 +8596,7 @@ void Combat_Cast_Spell_Error(int16_t type)
  *
  * @note The function does not guarantee movement; if no unoccupied square is found during the
  *       random search, the unit simply loses the rest of its turn in place.
- * @note Occupancy is determined from CMB_TargetRows, where a value of -1 marks an empty square.
+ * @note Occupancy is determined from g_combat_grid_action_map, where a value of -1 marks an empty square.
  */
 void Move_Confused(int16_t battle_unit_idx)
 {
@@ -8750,7 +8615,7 @@ void Move_Confused(int16_t battle_unit_idx)
         random_x = (Random(COMBAT_GRID_WIDTH) - 1);
         random_y = (Random(COMBAT_GRID_HEIGHT) - 1);
 
-        if(CMB_TargetRows[random_y][random_x] == -1)  /* unoccupied */
+        if(g_combat_grid_action_map[random_y][random_x] == -1)  /* unoccupied */
         {
             target_x = random_x;
             target_y = random_y;
@@ -8993,7 +8858,7 @@ void CMB_SetNearAllocs__WIP(void)
     _combat_mouse_grid = (struct s_mouse_list *)Near_Allocate_Next(12);
     for(itr = 0; itr < COMBAT_GRID_HEIGHT; itr++)
     {
-        CMB_TargetRows[itr] = (int8_t *)Near_Allocate_Next(COMBAT_GRID_WIDTH);
+        g_combat_grid_action_map[itr] = (int8_t *)Near_Allocate_Next(COMBAT_GRID_WIDTH);
     } 
     GUI_String_1 = (char *)Near_Allocate_Next(20);
 }
@@ -10010,7 +9875,7 @@ void Draw_Combat_Unit_Display(void)
     int16_t y2 = 0;
     int16_t x2 = 0;
     int16_t level_icon_count = 0;
-    int16_t Move_Type = 0;
+    int16_t battle_unit_movement_mode = 0;
     SAMB_ptr level_icon_seg = 0;
     int16_t unit_idx = 0;
     int16_t unit_type = 0;
@@ -10121,11 +9986,11 @@ void Draw_Combat_Unit_Display(void)
         }
 
 
-        Move_Type = Battle_Unit_Movement_Icon(_scanned_battle_unit);
+        battle_unit_movement_mode = Battle_Unit_Movement_Mode(_scanned_battle_unit);
 
         Attr_Display_Var = 11;
 
-        if(Move_Type == 2)
+        if(battle_unit_movement_mode == bumm_Flight)
         {
 
             Attr_Display_Var = 12;
@@ -10133,9 +9998,9 @@ void Draw_Combat_Unit_Display(void)
         }
 
         if(
-            (Move_Type == 4)
+            (battle_unit_movement_mode == bumm_Sailing)
             ||
-            (Move_Type == 5)
+            (battle_unit_movement_mode == bumm_Swimming)
         )
         {
 
@@ -11992,9 +11857,9 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 }
                 *target_wy = 8 + Random(3);
                 Unit_Resist++;
-                /* Check tile validity via CMB_TargetRows lookup */
+                /* Check tile validity via g_combat_grid_action_map lookup */
                 /* BUG: Can potentially loop indefinitely or return invalid coords if it hits 200 tries */
-                if(CMB_TargetRows[*target_wy][*target_wx] < 0)
+                if(g_combat_grid_action_map[*target_wy][*target_wx] < 0)
                 {
                     break;
                 }
@@ -13097,7 +12962,7 @@ void Combat_Screen_Assign_Mouse_Images(void)
 
         cgy = Get_Combat_Grid_Cell_Y(screen_x, screen_y);
 
-        if(CMB_TargetRows[cgy][cgx] == -2)
+        if(g_combat_grid_action_map[cgy][cgx] == -2)
         {
             if(_combat_spell_target_type < cstt_EnemyUnit)
             {
@@ -13108,7 +12973,7 @@ void Combat_Screen_Assign_Mouse_Images(void)
                 _combat_mouse_grid[0].image_num =  crsr_RedCross;
             }
         }
-        else if(CMB_TargetRows[cgy][cgx] == -1)
+        else if(g_combat_grid_action_map[cgy][cgx] == -1)
         {
             if(_combat_spell_target_type < cstt_EnemyUnit)
             {
@@ -13129,7 +12994,7 @@ void Combat_Screen_Assign_Mouse_Images(void)
 
             // ; BUG: this can be 99 for tiles with walls when a Wall
             // ; Crusher unit is selected while filling out the maps
-            Cursor_Unit = CMB_TargetRows[cgy][cgx];
+            Cursor_Unit = g_combat_grid_action_map[cgy][cgx];
             _scanned_battle_unit = Cursor_Unit;
 
             if(battle_units[Cursor_Unit].controller_idx == HUMAN_PLAYER_IDX)
@@ -13512,7 +13377,7 @@ Nowhere. It doesn't use a target, never even gets to that code.
                 STU_DEBUG_BREAK();
             }
 
-            target_idx = CMB_TargetRows[*target_cgy][*target_cgx];
+            target_idx = g_combat_grid_action_map[*target_cgy][*target_cgx];
             
             if(target_idx < 0)
             {
@@ -14605,7 +14470,7 @@ void Deploy_Battle_Units(int16_t player_idx)
             }
 
             if(
-                (battlefield->Central_Structure != CS_City)
+                (battlefield->center_square_structure != CS_City)
                 &&
                 (ctr == 9)
             )
@@ -14646,7 +14511,7 @@ void Deploy_Battle_Units(int16_t player_idx)
             }
 
             if(
-                (battlefield->Central_Structure != CS_City)
+                (battlefield->center_square_structure != CS_City)
                 &&
                 (ctr == 9)
             )
@@ -14744,7 +14609,7 @@ void BU_SummonDemon__SEGRAX(int16_t caster_idx)
             cgx = (7 + Random(3));
         }
         cgy = (8 + Random(3));
-    } while(CMB_TargetRows[cgy][cgx] >= 0);
+    } while(g_combat_grid_action_map[cgy][cgx] >= 0);
 
     UNIT_SummonToBattle__SEGRAX(battle_units[caster_idx].controller_idx, (_units - 1), cgx, cgy);
 
@@ -19177,7 +19042,7 @@ int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_
     }
 
     /* Node effects: attacking spirits in a Sorcery Node */
-    if(battlefield->Central_Structure >= CS_SorceryNode && ship_value > 0)
+    if(battlefield->center_square_structure >= CS_SorceryNode && ship_value > 0)
     {
         /* Check if attacker is under index 40 and belongs to the defender player */
         if(attacker_idx < 40 && attacker->controller_idx == _combat_defender_player)
@@ -19231,7 +19096,11 @@ CurrentTargetCheck:
             }
 
             /* Hardcoded wall segment checks for specific coordinates */
-            if((target->cgx == 6 || target->cgx == 7) && (target->cgy == 11 || target->cgy == 12))
+            if(
+                (target->cgx == MIN_CGX_CITY_INNER || target->cgx == MAX_CGX_CITY_INNER)
+                &&
+                (target->cgy == MIN_CGY_CITY_INNER || target->cgy == MAX_CGY_CITY_INNER)
+            )
             {
                 ship_value = -20;
             }
@@ -21014,10 +20883,6 @@ int16_t Total_Ranged_Attack_Strength(int16_t player_idx)
 
 
 // WZD o124p02
-/*
-    updates _cmbt_movepath_cost_map[][], given city walls and/or flying fortress, mostly based on the battle units special abilities
-*/
-/* GEMINI */
 /**
  * @brief Applies city-wall and Flying Fortress movement restrictions to the shared combat move-cost map for one battle unit.
  *
@@ -21049,9 +20914,7 @@ void Update_Move_Map_City_Area_Restrictions(int16_t battle_unit_idx)
     struct s_BATTLE_UNIT * bu_ptr = NULL;
     int16_t i = 0;
     int16_t j = 0;
-
     bu_ptr = &battle_units[battle_unit_idx];
-
     /* Check specific wall corner logic */
     if(battlefield->walled == ST_TRUE)
     {
@@ -21076,31 +20939,34 @@ void Update_Move_Map_City_Area_Restrictions(int16_t battle_unit_idx)
             _cmbt_movepath_cost_map[((MAX_CGY_CITY * COMBAT_GRID_WIDTH) + MAX_CGX_CITY)] = INF;
         }
     }
-
     /* Central Structure block [6,11] */
-    // OGBUG: open fields don't have anything there either
-    if(battlefield->Central_Structure != CS_City)
+    /* OGBUG  open fields don't have anything there either */
+    if(battlefield->center_square_structure != CS_City)
     {
         _cmbt_movepath_cost_map[((CGY_LAIR * COMBAT_GRID_WIDTH) + CGX_LAIR)] = INF;
     }
-
     /* Check for units that ignore wall movement restrictions */
-    if(bu_ptr->Move_Flags & (MV_FLYING | MV_TELEPORT | MV_MERGING))
+    if(bu_ptr->Move_Flags & MV_FLYING)
     {
         goto Check_FlyingFortress_Bug;
     }
-
+    if(bu_ptr->Move_Flags & MV_TELEPORT)
+    {
+        goto Check_FlyingFortress_Bug;
+    }
+    if(bu_ptr->Move_Flags & MV_MERGING)
+    {
+        goto Check_FlyingFortress_Bug;
+    }
     if(bu_ptr->Abilities & UA_NONCORPOREAL)
     {
         goto Check_FlyingFortress_Bug;
     }
-
     /* Basic wall/fortress check */
     if(battlefield->walled != ST_TRUE && battlefield->city_enchantments[FLYING_FORTRESS] == 0)
     {
         goto Check_FlyingFortress_Bug;
     }
-
     /* Check if unit is currently inside city boundaries */
     // defender or attacker?
     if(Battle_Unit_Is_Within_City(battle_unit_idx))
@@ -21138,12 +21004,10 @@ void Update_Move_Map_City_Area_Restrictions(int16_t battle_unit_idx)
                             _cmbt_movepath_cost_map[(((MAX_CGY_CITY + 1) * COMBAT_GRID_WIDTH) + (MIN_CGX_CITY - 1))] = INF;
                         }
                     }
-
                     if(j == 0)  /* north */
                     {
                         _cmbt_movepath_cost_map[((MIN_CGY_CITY - 1) * COMBAT_GRID_WIDTH) + (MIN_CGX_CITY + i)] = INF;
                     }
-
                     if(i == 3)  /* east */
                     {
                         _cmbt_movepath_cost_map[(((MIN_CGY_CITY + j) * COMBAT_GRID_WIDTH) + (MAX_CGX_CITY + 1))] = INF;
@@ -21156,7 +21020,6 @@ void Update_Move_Map_City_Area_Restrictions(int16_t battle_unit_idx)
                             _cmbt_movepath_cost_map[(((MAX_CGY_CITY + 1) * COMBAT_GRID_WIDTH) + (MAX_CGX_CITY + 1))] = INF;
                         }
                     }
-
                     if(j == 3)  /* south */
                     {
                         _cmbt_movepath_cost_map[(((MAX_CGY_CITY + 1) * COMBAT_GRID_WIDTH) + (MIN_CGX_CITY + i))] = INF;
@@ -21190,10 +21053,9 @@ void Update_Move_Map_City_Area_Restrictions(int16_t battle_unit_idx)
             }
         }
     }
-
 Check_FlyingFortress_Bug:
-    // OGBUG: will always jump, ignoring Flying Fortress
-    if((battle_units[battle_unit_idx].Abilities & 0) == 0)
+    /* OGBUG  will always jump, ignoring Flying Fortress */
+    if((bu_ptr->Abilities & 0) == 0)
     {
         return;
     }
@@ -21201,11 +21063,11 @@ Check_FlyingFortress_Bug:
     {
         return;
     }
-    if((battle_units[battle_unit_idx].Move_Flags & MV_FLYING) != 0)
+    if((bu_ptr->Move_Flags & MV_FLYING) != 0)
     {
         return;
     }
-    if((battle_units[battle_unit_idx].Move_Flags & MV_TELEPORT) != 0)
+    if((bu_ptr->Move_Flags & MV_TELEPORT) != 0)
     {
         return;
     }
@@ -21213,15 +21075,13 @@ Check_FlyingFortress_Bug:
     {
         return;
     }
-    for(j = 0; j < COMBAT_GRID_CITY_AREA_WIDTH; j++)
+    for(i = 0; i < COMBAT_GRID_CITY_AREA_WIDTH; i++)
     {
-        for(i = 0; i < COMBAT_GRID_CITY_AREA_HEIGHT; i++)
+        for(j = 0; j < COMBAT_GRID_CITY_AREA_HEIGHT; j++)
         {
             _cmbt_movepath_cost_map[(MIN_CGY_CITY + j) * COMBAT_GRID_WIDTH + (MIN_CGX_CITY + i)] = INF;
         }
     }
-
-    return;
 }
 
 
@@ -21870,9 +21730,9 @@ int16_t Battle_Unit_Is_Within_City(int16_t battle_unit_idx)
     if(
         (battle_units[battle_unit_idx].cgx >= MIN_CGX_CITY)
         &&
-        (battle_units[battle_unit_idx].cgx <= MAX_CGX_CITY)
-        &&
         (battle_units[battle_unit_idx].cgy >= MIN_CGY_CITY)
+        &&
+        (battle_units[battle_unit_idx].cgx <= MAX_CGX_CITY)
         &&
         (battle_units[battle_unit_idx].cgy <= MAX_CGY_CITY)
     )
@@ -21890,9 +21750,7 @@ int16_t Battle_Unit_Is_Within_City(int16_t battle_unit_idx)
 int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgx, int16_t cgy)
 {
     int16_t has_wall = 0;
-
     has_wall = ST_FALSE;
-
     if(
         (battlefield->walled == ST_TRUE)  /* is/was, any wall at all */
         &&
@@ -21910,26 +21768,20 @@ int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgx, int16_t cgy)
         &&
         (
             !(
-                ((cgx == CGX_LAIR) || (cgx == 7))
+                ((cgx == MIN_CGX_CITY_INNER) || (cgx == MAX_CGX_CITY_INNER))
                 &&
-                ((cgy == CGY_LAIR) || (cgy == 12))
+                ((cgy == MIN_CGY_CITY_INNER) || (cgy == MAX_CGY_CITY_INNER))
             )
         )
     )
     {
-
         // map cgx,cgy to walls[][] array
         if(battlefield->walls[(cgy - MIN_CGY_CITY)][(cgx - MIN_CGX_CITY)] == ST_TRUE)
         {
-
             has_wall = ST_TRUE;
-
         }
-
     }
-
     return has_wall;
-
 }
 
 
@@ -24383,7 +24235,7 @@ void Combat_Screen_Map_Draw__WIP(void)
                 }
 
                 if(
-                    (battlefield->Central_Structure == CS_SorceryNode)
+                    (battlefield->center_square_structure == CS_SorceryNode)
                     &&
                     (cgx == CGX_LAIR)
                     &&
@@ -24400,7 +24252,7 @@ void Combat_Screen_Map_Draw__WIP(void)
                     screen_y += 15;
                 }
                 if(
-                    (battlefield->Central_Structure == CS_ChaosNode)
+                    (battlefield->center_square_structure == CS_ChaosNode)
                     &&
                     (cgx == CGX_LAIR)
                     &&
@@ -24496,7 +24348,7 @@ void Combat_Screen_Map_Draw__WIP(void)
 
 
                 if(
-                    (battlefield->Central_Structure == CS_Outpost)
+                    (battlefield->center_square_structure == CS_Outpost)
                     &&
                     (cgx == CGX_LAIR)
                     &&
@@ -24509,9 +24361,9 @@ void Combat_Screen_Map_Draw__WIP(void)
                 // ; BUG: will fail to show Flying Fortress graphics on outposts
                 if(
                     (
-                        (battlefield->Central_Structure == CS_City)
+                        (battlefield->center_square_structure == CS_City)
                         ||
-                        (battlefield->Central_Structure == CS_Fortress)
+                        (battlefield->center_square_structure == CS_Fortress)
                     )
                     &&
                     (cgx == MAX_CGX_CITY)
@@ -24801,14 +24653,14 @@ void CMB_SpawnStructures__WIP(void)
     SAMB_ptr structure_pict_seg = 0;  // _SI_
     int16_t itr = 0;
 
-    if(battlefield->Central_Structure == CS_None)
+    if(battlefield->center_square_structure == CS_None)
     {
         return;
     }
 
     Combat_Grid_Screen_Coordinates(6, 11, 0, 0, &screen_x, &screen_y);
 
-    switch(battlefield->Central_Structure)
+    switch(battlefield->center_square_structure)
     {
 
         // DNE  case CS_None:
@@ -24886,7 +24738,7 @@ void CMB_SpawnStructures__WIP(void)
     if(structure_pict_seg != ST_NULL)
     {
 
-        if(battlefield->Central_Structure == CS_NatureNode)
+        if(battlefield->center_square_structure == CS_NatureNode)
         {
 
             Combat_Grid_Entity_Create__WIP(screen_x, screen_y, (int64_t)structure_pict_seg, 16, 15, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -24902,9 +24754,9 @@ void CMB_SpawnStructures__WIP(void)
     }
 	
     if(
-        (battlefield->Central_Structure == CS_City)
+        (battlefield->center_square_structure == CS_City)
         ||
-        (battlefield->Central_Structure == CS_Fortress)
+        (battlefield->center_square_structure == CS_Fortress)
     )
     {
 
@@ -26833,18 +26685,18 @@ void Generate_Combat_Map(
 
         case clt_OpenField:
         {
-            battlefield->Central_Structure = CS_None;
+            battlefield->center_square_structure = CS_None;
         } break;
 
         case clt_Outpost:
         {
             // OGBUG: disregards Wall of Stone
-            battlefield->Central_Structure = CS_Outpost;
+            battlefield->center_square_structure = CS_Outpost;
         } break;
 
         case clt_City:
         {
-            battlefield->Central_Structure = CS_City;
+            battlefield->center_square_structure = CS_City;
             if(city_population >= 12)
             {
                 house_ctr = 0;
@@ -26933,7 +26785,7 @@ void Generate_Combat_Map(
         /* GEMINI */
         case clt_Fortress:
         {
-            battlefield->Central_Structure = CS_Fortress;
+            battlefield->center_square_structure = CS_Fortress;
             if(city_population >= 11)  /* 12 - 1, for fortress cell */
             {
                 house_ctr = 0;
@@ -27018,57 +26870,57 @@ void Generate_Combat_Map(
 
         case clt_Tower:
         {
-            battlefield->Central_Structure = CS_Tower;
+            battlefield->center_square_structure = CS_Tower;
         } break;
 
         case clt_ChaosNode:
         {
-            battlefield->Central_Structure = CS_ChaosNode;
+            battlefield->center_square_structure = CS_ChaosNode;
         } break;
 
         case clt_NatureNode:
         {
-            battlefield->Central_Structure = CS_NatureNode;
+            battlefield->center_square_structure = CS_NatureNode;
         } break;
 
         case clt_SorceryNode:
         {
-            battlefield->Central_Structure = CS_SorceryNode;
+            battlefield->center_square_structure = CS_SorceryNode;
         } break;
 
         case clt_Cave:
         {
-            battlefield->Central_Structure = CS_Cave;
+            battlefield->center_square_structure = CS_Cave;
         } break;
 
         case clt_Dungeon:
         {
-            battlefield->Central_Structure = CS_Dungeon;
+            battlefield->center_square_structure = CS_Dungeon;
         } break;
 
         case clt_AncientTemple:
         {
-            battlefield->Central_Structure = CS_Temple;
+            battlefield->center_square_structure = CS_Temple;
         } break;
 
         case clt_Keep:
         {
-            battlefield->Central_Structure = CS_Fort;
+            battlefield->center_square_structure = CS_Fort;
         } break;
 
         case clt_MonsterLair:
         {
-            battlefield->Central_Structure = CS_Cave;
+            battlefield->center_square_structure = CS_Cave;
         } break;
 
         case clt_Ruins:
         {
-            battlefield->Central_Structure = CS_Dungeon;
+            battlefield->center_square_structure = CS_Dungeon;
         } break;
 
         case clt_FallenTemple:
         {
-            battlefield->Central_Structure = CS_Ruins;
+            battlefield->center_square_structure = CS_Ruins;
         } break;
 
     }
@@ -28053,9 +27905,9 @@ void Set_Movement_Cost_Maps(int16_t location_type, int16_t city_walls)
 
     // not None, but not City ... So, Lair, Node, Tower
     if(
-        (battlefield->Central_Structure != CS_None)
+        (battlefield->center_square_structure != CS_None)
         &&
-        (battlefield->Central_Structure != CS_City)
+        (battlefield->center_square_structure != CS_City)
     )
     {
 
@@ -28635,7 +28487,7 @@ void Combat_Compose_Background(void)
     {
         CMB_CurseAnimStage = 0;
     }
-    if(battlefield->Central_Structure == CS_ChaosNode)
+    if(battlefield->center_square_structure == CS_ChaosNode)
     {
         Combat_Grid_Screen_Coordinates(6, 11, 0, 0, &screen_x, &screen_y);
         screen_x -= 46;

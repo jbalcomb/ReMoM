@@ -1795,7 +1795,7 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
                     cgx = (Random(3) + 7);
                 }
                 cgy = (8 + Random(3));
-            } while(CMB_TargetRows[cgy][cgx] >= 0);
+            } while(g_combat_grid_action_map[cgy][cgx] >= 0);
         }
 
         battle_unit_idx = Target_BU_List[Picked_Target];
@@ -1937,7 +1937,7 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
             }
             cgy = (8 + Random(3));
         }
-        while(CMB_TargetRows[cgy][cgx] >= 0);
+        while(g_combat_grid_action_map[cgy][cgx] >= 0);
     }
 
 // Severity Code Description Project File Line Suppression State Details

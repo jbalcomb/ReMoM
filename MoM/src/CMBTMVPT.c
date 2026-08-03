@@ -103,7 +103,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
     uint8_t move_cost = 0;              /* current tile entry cost */  /* 1-byte, unsigned */
     uint8_t new_cost_to_reach = 0;      /* candidate new cost */
     int16_t max_y = 0;
-    uint8_t adjacent_path_cost = 0;     /* 1-byte, unsigned */
+    int16_t adjacent_path_cost = 0;
     int16_t max_x = 0;
     int16_t itr_x = 0;
     int16_t itr_y = 0;
@@ -119,7 +119,6 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
     movement_path_grid_cell_count = 0;
 
     /* [Skeleton step 2]  1. Bail out early if the destination is an illegal/impassable square */
-    // _cmbt_movepath_cost_map[]
     if(_cmbt_movepath_cost_map[((destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx)] == INF)
     {
         return; 
@@ -208,6 +207,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
 
 
 // WZD ovr155p02
+// ¿ MoO2 Set_Legal_Moves_() ?
 void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t moves2)
 {
     uint8_t move_cost = 0;  /* 1-byte, unsigned */

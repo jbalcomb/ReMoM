@@ -35,7 +35,7 @@ CMB_FillTargetMaps__WIP() ==> Assign_Combat_Grids()
 
     for(itr = 0; itr < _combat_total_unit_count; itr++)
         if((battle_units[itr].Status == bus_Active) && (battle_units[itr].Image_Effect != 5))
-            CMB_TargetRows[battle_units[itr].cgy][battle_units[itr].cgx] = itr;  // batle_unit_idx
+            g_combat_grid_action_mapaction_map[battle_units[itr].cgy][battle_units[itr].cgx] = itr;  // batle_unit_idx
 
 
 CMB_SetMoveMaps()
@@ -46,9 +46,9 @@ CMB_SetMoveMaps()
 Q: Who gets the memcpy() of the movement cost map?
 A: _cmbt_movepath_cost_map[], in BU_GetMoveMap__WIP()
 
-...same indexing for CMB_TargetRows[] and _cmbt_path_data[]...
+...same indexing for g_combat_grid_action_mapaction_map[] and _cmbt_path_data[]...
 ..._cmbt_path_data[((cgy * 21) + cgx)]
-...CMB_TargetRows[cgy][cgx]
+...g_combat_grid_action_mapaction_map[cgy][cgx]
 
 
 Assign_Combat_Grids()
@@ -111,10 +111,10 @@ if(input_field_idx == combat_grid_field)
 ...
 everything that matters here takes place under BU_CombatAction__WIP()
 no idea why drake178 named those "TargetFrame"
-    combat_grid_datum = CMB_TargetRows[y][x];
-they are used to index CMB_TargetRows[], which is the array populated with *what* is in/on the target combat grid cell
+    combat_grid_datum = g_combat_grid_action_mapaction_map[y][x];
+they are used to index g_combat_grid_action_mapaction_map[], which is the array populated with *what* is in/on the target combat grid cell
 
-There's a function that checks if a combat grid cell has a city wall. Sets 99 in CMB_TargetRows[].
+There's a function that checks if a combat grid cell has a city wall. Sets 99 in g_combat_grid_action_mapaction_map[].
 
 treats 99 (City Wall) as impassible
 >= 0 means battle_unit_idx
@@ -143,7 +143,7 @@ CMB_SetNearAllocs__WIP()
     CMB_Path_Xs = Near_Allocate_Next(60);
     CMB_Path_Ys = Near_Allocate_Next(60);
     for(itr = 0; itr < 22; itr++)
-        CMB_TargetRows[itr] = (int8_t *)Near_Allocate_Next(21);
+        g_combat_grid_action_mapaction_map[itr] = (int8_t *)Near_Allocate_Next(21);
 
 
 
@@ -304,7 +304,7 @@ Assign_Combat_Grids()
         _cmbt_movepath_cost_map[((11 * 21) + 6)] = -1;
 
 ...after BU_GetMoveMap__WIP(), is populated with movement costs
-...also updates CMB_TargetRows[]
+...also updates g_combat_grid_action_mapaction_map[]
 ...uses _cmbt_path_data[]
 
 

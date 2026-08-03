@@ -13,6 +13,7 @@ add_executable(MOM_tests
     test_Clear_Gibs.cpp
     test_Ranged_Mouse_Image.cpp
     test_Update_Move_Map_City_Area_Restrictions.cpp
+    test_Combat_Structure_Index.cpp
     test_NEWG_ClearLandmasses__WIP.cpp
     test_NEWG_SetBaseLands__WIP.cpp
     test_NEWG_TileIsleExtend__WIP.cpp

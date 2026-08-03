@@ -140,7 +140,7 @@ combat_grid_field = Add_Grid_Field(0, 0, 1, 1, 319, 164, &Grid_X, &Grid_Y, ST_UN
             if(-(combat_grid_field) == input_field_idx)
                 RightClick_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
                 RightClick_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
-                battle_unit_idx = CMB_TargetRows[RightClick_Y][RightClick_X];
+                battle_unit_idx = g_combat_grid_action_mapaction_map[RightClick_Y][RightClick_X];
 
 
 Why the +4?

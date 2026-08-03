@@ -10,11 +10,11 @@ CMB_PrepareTurn__WIP()
     CMB_CursorBattleUnit = ST_UNDEFINED;
 Assign_Mouse_Image()
     CMB_CursorBattleUnit = ST_UNDEFINED;
-    scanned_battle_unit_idx = CMB_TargetRows[cgy][cgx];
+    scanned_battle_unit_idx = g_combat_grid_action_mapaction_map[cgy][cgx];
     CMB_CursorBattleUnit = scanned_battle_unit_idx;  // ; the combat unit display is based on this
 ...
-CMB_TargetRows[cgy][cgx]
-int8_t * CMB_TargetRows[22];  // 22 pointers to LBX_NearAlloc_Next()'s of 21 bytes each
+g_combat_grid_action_mapaction_map[cgy][cgx]
+int8_t * g_combat_grid_action_mapaction_map[22];  // 22 pointers to LBX_NearAlloc_Next()'s of 21 bytes each
 allocated in CMB_SetNearAllocs__WIP()
 ...
 Where populated?
@@ -25,25 +25,25 @@ scanned field
 ¿ selected unit vs. highlighted unit ?
 ...
 XREF:  (19)
-    Tactical_Combat__WIP+9BB    mov     bx, [CMB_TargetRows@+bx]
-    BU_CombatAction+10          mov     bx, [CMB_TargetRows@+bx]
-    Assign_Combat_Grids+177 mov     bx, [CMB_TargetRows@+bx]
-    Assign_Combat_Grids+1EA mov     bx, [CMB_TargetRows@+bx]
-    Assign_Combat_Grids+248 mov     ax, [CMB_TargetRows@+bx]
-    Assign_Combat_Grids+308 mov     bx, [CMB_TargetRows@+bx]
-    Assign_Combat_Grids+338 mov     ax, [CMB_TargetRows@+bx]
-    Assign_Mouse_Image+CC       mov     bx, [CMB_TargetRows@+bx]
-    Assign_Mouse_Image+130      mov     bx, [CMB_TargetRows@+bx]
-    Assign_Mouse_Image+207      mov     bx, [CMB_TargetRows@+bx]
-    BU_MoveConfused+35          mov     bx, [CMB_TargetRows@+bx]
-    CMB_SetNearAllocs__WIP+64   mov     [CMB_TargetRows@+bx], ax
-    AITP_CombatSpell+FBF        mov     ax, [CMB_TargetRows@+bx]
-    CMB_SetTargetCursor+69      mov     bx, [CMB_TargetRows@+bx]
-    CMB_SetTargetCursor+D9      mov     bx, [CMB_TargetRows@+bx]
-    CMB_TargetSpell+292         mov     ax, [CMB_TargetRows@+bx]
-    BU_SummonDemon+139          mov     bx, [CMB_TargetRows@+bx]
-    CMB_RaiseDead+1BC           mov     bx, [CMB_TargetRows@+bx]
-    CMB_AnimateDead+1BC         mov     bx, [CMB_TargetRows@+bx]
+    Tactical_Combat__WIP+9BB    mov     bx, [g_combat_grid_action_mapaction_map@+bx]
+    BU_CombatAction+10          mov     bx, [g_combat_grid_action_mapaction_map@+bx]
+    Assign_Combat_Grids+177 mov     bx, [g_combat_grid_action_mapaction_map@+bx]
+    Assign_Combat_Grids+1EA mov     bx, [g_combat_grid_action_mapaction_map@+bx]
+    Assign_Combat_Grids+248 mov     ax, [g_combat_grid_action_mapaction_map@+bx]
+    Assign_Combat_Grids+308 mov     bx, [g_combat_grid_action_mapaction_map@+bx]
+    Assign_Combat_Grids+338 mov     ax, [g_combat_grid_action_mapaction_map@+bx]
+    Assign_Mouse_Image+CC       mov     bx, [g_combat_grid_action_mapaction_map@+bx]
+    Assign_Mouse_Image+130      mov     bx, [g_combat_grid_action_mapaction_map@+bx]
+    Assign_Mouse_Image+207      mov     bx, [g_combat_grid_action_mapaction_map@+bx]
+    BU_MoveConfused+35          mov     bx, [g_combat_grid_action_mapaction_map@+bx]
+    CMB_SetNearAllocs__WIP+64   mov     [g_combat_grid_action_mapaction_map@+bx], ax
+    AITP_CombatSpell+FBF        mov     ax, [g_combat_grid_action_mapaction_map@+bx]
+    CMB_SetTargetCursor+69      mov     bx, [g_combat_grid_action_mapaction_map@+bx]
+    CMB_SetTargetCursor+D9      mov     bx, [g_combat_grid_action_mapaction_map@+bx]
+    CMB_TargetSpell+292         mov     ax, [g_combat_grid_action_mapaction_map@+bx]
+    BU_SummonDemon+139          mov     bx, [g_combat_grid_action_mapaction_map@+bx]
+    CMB_RaiseDead+1BC           mov     bx, [g_combat_grid_action_mapaction_map@+bx]
+    CMB_AnimateDead+1BC         mov     bx, [g_combat_grid_action_mapaction_map@+bx]
 ...
 Tactical_Combat__WIP()
     |-> Assign_Combat_Grids()

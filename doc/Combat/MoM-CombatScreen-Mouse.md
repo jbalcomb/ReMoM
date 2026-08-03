@@ -4,11 +4,11 @@ MoM-Combat-Tactical-Mouse.md
 
 Per the manual, "Squares that are not valid as targets for an active unit's actions show a red "X" when the mouse cursor moves over them."
 
-That is exactly and only what you get from Assign_Mouse_Image(), with `if(CMB_TargetRows[cgy][cgx] == -2)`.
+That is exactly and only what you get from Assign_Mouse_Image(), with `if(g_combat_grid_action_mapaction_map[cgy][cgx] == -2)`.
 
-And, all of CMB_TargetRows[] is defaulted to -2 in Assign_Combat_Grids().
+And, all of g_combat_grid_action_mapaction_map[] is defaulted to -2 in Assign_Combat_Grids().
 
-CMB_TargetRows
+g_combat_grid_action_mapaction_map
 
 
 
@@ -26,25 +26,25 @@ Assign_Combat_Grids()
 
     for(itr_y = 0; itr_y < 22; itr_y++)
         for(itr_x = 0; itr_x < 21; itr_x++ )
-            CMB_TargetRows[itr_y][itr_x] = -2;
+            g_combat_grid_action_mapaction_map[itr_y][itr_x] = -2;
 
     if((battlefield->Walled_City == ST_TRUE) && (battle_units[_active_battle_unit].controller_idx == _combat_attacker_player) && ((battle_units[_active_battle_unit].Abilities & UA_WALLCRUSHER) != 0))
         for(itr_y = 0; itr_y < 22; itr_y++)
             for(itr_x = 0; itr_x < 21; itr_x++ )
                 if(Combat_Grid_Cell_Has_City_Wall(itr_x, itr_y) == ST_TRUE)
-                    CMB_TargetRows[itr_y][itr_x] = 99;
+                    g_combat_grid_action_mapaction_map[itr_y][itr_x] = 99;
 
     for(itr = 0; itr < _combat_total_unit_count; itr++)
         if((battle_units[itr].Status == bus_Active) && (battle_units[itr].Image_Effect != 5))
-            CMB_TargetRows[battle_units[itr].cgy][battle_units[itr].cgx] = itr;  // batle_unit_idx
+            g_combat_grid_action_mapaction_map[battle_units[itr].cgy][battle_units[itr].cgx] = itr;  // batle_unit_idx
     Combat_Move_Path_Valid(battle_units[_active_battle_unit].cgx, battle_units[_active_battle_unit].cgy, useable_moves2);
     for(itr_y = 0; itr_y < 22; itr_y++)
         Row_Origin_Offset = (itr_y * 21);
         for(itr_x = 0; itr_x < 21; itr_x++)
             if(_cmbt_path_data[Row_Origin_Offset + itr_x] == 1)
-                CMB_TargetRows[itr_y][itr_x] = -1;
+                g_combat_grid_action_mapaction_map[itr_y][itr_x] = -1;
                 UU_TotalMoveArea++;
-    CMB_TargetRows[battle_units[_active_battle_unit].cgy][battle_units[_active_battle_unit].cgx] = _active_battle_unit;
+    g_combat_grid_action_mapaction_map[battle_units[_active_battle_unit].cgy][battle_units[_active_battle_unit].cgx] = _active_battle_unit;
 
 
 

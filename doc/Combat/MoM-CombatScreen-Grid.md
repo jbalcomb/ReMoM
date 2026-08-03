@@ -12,7 +12,7 @@ Past-Me does not show enough love for Future-Me.
 
 Combat Grid Coordinates
 ...indexing data structures...
-CMB_TargetRows[]
+g_combat_grid_action_mapaction_map[]
 _cmbt_movepath_cost_map[]
 CMB_Vortex_Array[]
 
@@ -34,7 +34,7 @@ CMB_GetPath__WIP()
 
 
 
-¿ CMB_TargetRows[] ?
+¿ g_combat_grid_action_mapaction_map[] ?
 // DELETE  #define DEBUG_UNIT_IDX          825
 // DELETE  #define DEBUG_FIGURE_SET_IDX    7  // DBG_figure_set_idx: 7
 // DELETE  #define DEBUG_UNIT_TYPE         ut_HMenPikemen  // ut_HMenPikemen  = 112,  /* FIGURES8.LBX, 056    HMPIKE*/
@@ -45,7 +45,7 @@ grid_x, grid_y
 Get_Combat_Grid_Cell_X()
 Get_Combat_Grid_Cell_Y()
 
-Q: Where does CMB_TargetRows[] get populated?
+Q: Where does g_combat_grid_action_mapaction_map[] get populated?
 A: ¿ Assign_Combat_Grids() ?
 
 
@@ -54,28 +54,28 @@ A: ¿ Assign_Combat_Grids() ?
         if(-(MapGrid_Control_Index) == input_field_idx)
             RightClick_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
             RightClick_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
-            battle_unit_idx = CMB_TargetRows[RightClick_Y][RightClick_X];
+            battle_unit_idx = g_combat_grid_action_mapaction_map[RightClick_Y][RightClick_X];
 
 
-Q: What does CMB_TargetRows[] get used for?
+Q: What does g_combat_grid_action_mapaction_map[] get used for?
 A: 
 
-CMB_TargetRows[]
+g_combat_grid_action_mapaction_map[]
 {-2, -1, battle_unit_idx, 99}
 
 Tactical_Combat__WIP()
-    battle_unit_idx = CMB_TargetRows[RightClick_Y][RightClick_X];
+    battle_unit_idx = g_combat_grid_action_mapaction_map[RightClick_Y][RightClick_X];
 Battle_Unit_Action__WIP
-    combat_grid_target = CMB_TargetRows[cgy][cgx];
+    combat_grid_target = g_combat_grid_action_mapaction_map[cgy][cgx];
 Assign_Combat_Grids()
-    populates CMB_TargetRows[] and _cmbt_movepath_cost_map[]
+    populates g_combat_grid_action_mapaction_map[] and _cmbt_movepath_cost_map[]
     uses _cmbt_path_data[]
     /*
         default all combat grid targets to invalid action targets
     */
     for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
         for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++ )
-            CMB_TargetRows[itr_y][itr_x] = -2;  /* not valid as targets for an active unit’s actions */
+            g_combat_grid_action_mapaction_map[itr_y][itr_x] = -2;  /* not valid as targets for an active unit’s actions */
     if(
         (battlefield->Walled_City == ST_TRUE)
         &&
@@ -86,7 +86,7 @@ Assign_Combat_Grids()
         for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
             for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++ )
                 if(Combat_Grid_Cell_Has_City_Wall(itr_x, itr_y) == ST_TRUE)
-                    CMB_TargetRows[itr_y][itr_x] = 99;
+                    g_combat_grid_action_mapaction_map[itr_y][itr_x] = 99;
     /*
         BEGIN:  assign Battle Unit Indices
     */
@@ -96,14 +96,14 @@ Assign_Combat_Grids()
             &&
             (battle_units[itr].Image_Effect != 5)
         )
-            CMB_TargetRows[battle_units[itr].cgy][battle_units[itr].cgx] = itr;  // batle_unit_idx
+            g_combat_grid_action_mapaction_map[battle_units[itr].cgy][battle_units[itr].cgx] = itr;  // batle_unit_idx
     for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
         cgy_offset = (itr_y * COMBAT_GRID_WIDTH);
         for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++)
             if(_cmbt_path_data[cgy_offset + itr_x] == ST_TRUE)  /* combat grid cell is *reachable* */
-                CMB_TargetRows[itr_y][itr_x] = -1;
+                g_combat_grid_action_mapaction_map[itr_y][itr_x] = -1;
                 uu_count_of_reachable_cells++;
-    CMB_TargetRows[battle_units[_active_battle_unit].cgy][battle_units[_active_battle_unit].cgx] = _active_battle_unit;
+    g_combat_grid_action_mapaction_map[battle_units[_active_battle_unit].cgy][battle_units[_active_battle_unit].cgx] = _active_battle_unit;
 
 
 
@@ -155,7 +155,7 @@ Tactical_Combat__WIP()
 
 
 
-CMB_TargetRows[][]
+g_combat_grid_action_mapaction_map[][]
 ...indexing...
 ...22 pointers, to 21 bytes each
 m x n matrix
@@ -163,10 +163,10 @@ y index is m
 x index is n
 ...has to be in half-rows and half-columns...
 
-at sx,sy {  0,  0}, cgc,cgr should be { 0, 0}  CMB_TargetRows[ 0][ 0]
-at sx,sy { 15,  0}, cgc,cgr should be { 0, 0}  CMB_TargetRows[ 0][ 0]
-at sx,sy {  0, 32}, cgc,cgr should be { 0, 1}  CMB_TargetRows[ 1][ 0]
-at sx,sy {  0,164}, cgc,cgr should be { 1,21}  CMB_TargetRows[21][ 1]
+at sx,sy {  0,  0}, cgc,cgr should be { 0, 0}  g_combat_grid_action_mapaction_map[ 0][ 0]
+at sx,sy { 15,  0}, cgc,cgr should be { 0, 0}  g_combat_grid_action_mapaction_map[ 0][ 0]
+at sx,sy {  0, 32}, cgc,cgr should be { 0, 1}  g_combat_grid_action_mapaction_map[ 1][ 0]
+at sx,sy {  0,164}, cgc,cgr should be { 1,21}  g_combat_grid_action_mapaction_map[21][ 1]
 
 first row is unavailable
 first col is unavailable
@@ -279,7 +279,7 @@ CMB_CreateEntity__WIP()
         {
             RightClick_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
             RightClick_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
-            battle_unit_idx = *CMB_TargetRows[((RightClick_Y * 2) + RightClick_X)];
+            battle_unit_idx = *g_combat_grid_action_mapaction_map[((RightClick_Y * 2) + RightClick_X)];
             // ...
             // ...
             // ...
@@ -444,7 +444,7 @@ change grid y, based on screen x
 
 
 
-CMB_TargetRows
+g_combat_grid_action_mapaction_map
 is 22 pointers to 21 values
 the combat map window is 168 in height
 168 / 16 = 10.5

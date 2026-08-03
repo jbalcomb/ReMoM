@@ -31,7 +31,7 @@ melee attack strength
 
 ## _scanned_battle_unit
 
-set in Assign_Mouse_Image(), from CMB_TargetRows[grid_y][grid_x]
+set in Assign_Mouse_Image(), from g_combat_grid_action_mapaction_map[grid_y][grid_x]
 
     Tactical_Combat__WIP+1DC           mov     [_scanned_battle_unit], e_ST_UNDEFINED             
     CMB_PrepareTurn__WIP+1B            mov     [_scanned_battle_unit], e_ST_UNDEFINED             
@@ -86,12 +86,12 @@ Assign_Mouse_Image()
 
     _scanned_battle_unit = ST_UNDEFINED
     ...
-    _SI_scanned_battle_unit_idx = CMB_TargetRows[grid_y][grid_x]
+    _SI_scanned_battle_unit_idx = g_combat_grid_action_mapaction_map[grid_y][grid_x]
     _scanned_battle_unit = _SI_scanned_battle_unit_idx
 
 
 
-## CMB_TargetRows[]
+## g_combat_grid_action_mapaction_map[]
 What is stored in here?
 ...at the least, battle_unit_idx for each battle unit
 code checks for -2, -1, 99, 

@@ -589,15 +589,15 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                     Update_Combat_Enchantments_Icon_And_Help();
                 }
             }  /* if(combat_enchantments[counter_magic_idx__target_cgx] > 0) */
-            if(battlefield->Central_Structure == CS_SorceryNode)
+            if(battlefield->center_square_structure == CS_SorceryNode)
             {
                 counter_realm = sbr_Sorcery;
             }
-            else if(battlefield->Central_Structure == CS_ChaosNode)
+            else if(battlefield->center_square_structure == CS_ChaosNode)
             {
                 counter_realm = sbr_Chaos;
             }
-            else if(battlefield->Central_Structure == CS_NatureNode)
+            else if(battlefield->center_square_structure == CS_NatureNode)
             {
                 counter_realm = sbr_Nature;
             }

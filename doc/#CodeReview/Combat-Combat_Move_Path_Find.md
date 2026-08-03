@@ -33,13 +33,13 @@ Auto_Move_Unit()
 
 # 1:1 Fidelity Review
 
-**Status: REVIEWED — one open divergence (2026-08-01).** Control flow, loop bounds, statement order and frame layout all match the disassembly. One local width does not: `adjacent_path_cost` is `uint8_t` where the asm frame has a word. See Open findings.
+**Status: DONE-DONE (2026-08-03).** `Combat_Move_Path_Find` is 1:1 with the disassembly — control flow, loop bounds, statement order, local widths and frame layout all match.
 
 `CMBTMVPT.c`, `CMBTAI.c` and `Combat.c` all compile clean, no warnings.
 
 Line numbers are a snapshot taken while `CMBTMVPT.c` was under active restructuring — re-verify before relying on any specific citation.
 
-Scope = `Combat_Move_Path_Find` ([CMBTMVPT.c:101-207](../../MoM/src/CMBTMVPT.c#L101-L207)), plus the two shared macros it expands: `PREP` ([67-75](../../MoM/src/CMBTMVPT.c#L67-L75)) and `RELAX_ADJACENT_CELLS` ([82-98](../../MoM/src/CMBTMVPT.c#L82-L98)). Its sibling `Combat_Move_Path_Valid` is reviewed in [Combat-Combat_Move_Path_Valid.md](Combat-Combat_Move_Path_Valid.md).
+Scope = `Combat_Move_Path_Find` ([CMBTMVPT.c:101-206](../../MoM/src/CMBTMVPT.c#L101-L206)), plus the two shared macros it expands: `PREP` ([67-75](../../MoM/src/CMBTMVPT.c#L67-L75)) and `RELAX_ADJACENT_CELLS` ([82-98](../../MoM/src/CMBTMVPT.c#L82-L98)). Its sibling `Combat_Move_Path_Valid` is reviewed in [Combat-Combat_Move_Path_Valid.md](Combat-Combat_Move_Path_Valid.md).
 
 Ground truth = `ovr155/Combat_Move_Path_Find.asm`. `asm:N` refers to line N of that listing. Data-segment layout comes from `dseg/_misc.asm`.
 
@@ -48,20 +48,20 @@ Ground truth = `ovr155/Combat_Move_Path_Find.asm`. `asm:N` refers to line N of t
 | Concern | Production | ASM (ground truth) | Result |
 | --- | --- | --- | --- |
 | Signature | [CMBTMVPT.c:101](../../MoM/src/CMBTMVPT.c#L101) | asm:2, 13-16 | 4 word params faithful; return type — see Observation |
-| Local set | [103-117](../../MoM/src/CMBTMVPT.c#L103-L117) | asm:3-12, 17-19 | 13 mapped slots + `path_cgx`/`path_cgy` — see Open findings |
+| Local set | [103-117](../../MoM/src/CMBTMVPT.c#L103-L117) | asm:3-12, 17-19 | 13 mapped slots + `path_cgx`/`path_cgy` |
 | Local declaration order | [103-115](../../MoM/src/CMBTMVPT.c#L103-L115) | asm:3-12 | faithful — matches frame layout `-12h` -> `-2` exactly |
-| Local widths | [103-106](../../MoM/src/CMBTMVPT.c#L103-L106) | asm:3-6 | `move_cost` / `new_cost_to_reach` faithful; **`adjacent_path_cost` open** |
+| Local widths | [103-106](../../MoM/src/CMBTMVPT.c#L103-L106) | asm:3-6 | faithful — byte, byte, word, word |
 | Early bail | [119-126](../../MoM/src/CMBTMVPT.c#L119-L126) | asm:27-37 | faithful — count reset first, index inline in the condition |
 | `PREP` init | [129](../../MoM/src/CMBTMVPT.c#L129) | asm:39-69 | faithful |
 | Sweep loop shape | [132-133](../../MoM/src/CMBTMVPT.c#L132-L133) | asm:70-71, 442-445 | faithful — test-at-bottom `while` |
-| Sweep bounds | [136-137](../../MoM/src/CMBTMVPT.c#L136-L137) | asm:74-75 | faithful — 19 then 20, in that order |
-| Three-phase raster | [140-176](../../MoM/src/CMBTMVPT.c#L140-L176) | asm:79-441 | faithful |
-| Offset-table selection | [148-149](../../MoM/src/CMBTMVPT.c#L148-L149), [160-161](../../MoM/src/CMBTMVPT.c#L160-L161), [171-172](../../MoM/src/CMBTMVPT.c#L171-L172) | asm:100/150, 219/269, 341/391 | faithful — see Offset tables |
+| Sweep bounds | [135-136](../../MoM/src/CMBTMVPT.c#L135-L136) | asm:74-75 | faithful — 19 then 20, in that order |
+| Three-phase raster | [139-175](../../MoM/src/CMBTMVPT.c#L139-L175) | asm:79-441 | faithful |
+| Offset-table selection | [147-148](../../MoM/src/CMBTMVPT.c#L147-L148), [159-160](../../MoM/src/CMBTMVPT.c#L159-L160), [170-171](../../MoM/src/CMBTMVPT.c#L170-L171) | asm:100/150, 219/269, 341/391 | faithful — see Offset tables |
 | Diagonal / orthogonal split | same lines | asm:142-144, 261-263, 383-385 | faithful — `0..4` +1, `4..8` +0 |
-| Buffer hijack | [182-184](../../MoM/src/CMBTMVPT.c#L182-L184) | asm:447-449 | faithful |
-| Trace loop | [188-195](../../MoM/src/CMBTMVPT.c#L188-L195) | asm:450-475 | faithful |
-| Convert loop | [199-205](../../MoM/src/CMBTMVPT.c#L199-L205) | asm:478-513 | faithful — single loop, double lookup, double `idiv` |
-| Path array element type | [202](../../MoM/src/CMBTMVPT.c#L202), [204](../../MoM/src/CMBTMVPT.c#L204) | asm:489-493, 504-508 | faithful — `int16_t`, word stores |
+| Buffer hijack | [181-183](../../MoM/src/CMBTMVPT.c#L181-L183) | asm:447-449 | faithful |
+| Trace loop | [187-194](../../MoM/src/CMBTMVPT.c#L187-L194) | asm:450-475 | faithful |
+| Convert loop | [198-204](../../MoM/src/CMBTMVPT.c#L198-L204) | asm:478-513 | faithful — single loop, double lookup, double `idiv` |
+| Path array element type | [201](../../MoM/src/CMBTMVPT.c#L201), [203](../../MoM/src/CMBTMVPT.c#L203) | asm:489-493, 504-508 | faithful — `int16_t`, word stores |
 
 ## Frame map
 
@@ -72,7 +72,7 @@ The asm frame carries 10 stack locals plus 3 register locals, and `sub sp, 12h` 
 | `bp-12h` (byte) | `move_cost` | `move_cost` (`uint8_t`) |
 | `bp-11h` (byte) | `potential_path_cost` | `new_cost_to_reach` (`uint8_t`) |
 | `bp-10h` | `max_i` | `max_y` |
-| `bp-0Eh` (**word**) | `adjacent_path_cost` | `adjacent_path_cost` (`uint8_t` — open) |
+| `bp-0Eh` (word) | `adjacent_path_cost` | `adjacent_path_cost` (`int16_t`) |
 | `bp-0Ch` | `max_j` | `max_x` |
 | `bp-0Ah` | `itr_j` | `itr_x` |
 | `bp-8` | `itr_i` | `itr_y` |
@@ -101,44 +101,6 @@ Row selection matches the asm at all three phases: left edge takes row 1 (asm:10
 
 **Caveat:** contiguity and identical values prove the *layout* is the same, not that the OG C declared a 2-D array. Three separately-declared `int16_t X[8]` globals in one translation unit also land contiguously in declaration order, and IDA labels each referenced address either way. The 2-D reading is a defensible deduction, not a provable one.
 
-## Open findings
-
-### `adjacent_path_cost` is `uint8_t`; the asm slot is a word
-
-[CMBTMVPT.c:106](../../MoM/src/CMBTMVPT.c#L106):
-
-```c
-    uint8_t adjacent_path_cost = 0;     /* 1-byte, unsigned */
-```
-
-The asm declares it a word, and the load is an explicit zero-extension into a 16-bit destination:
-
-```
-asm:6    adjacent_path_cost= word ptr -0Eh
-...
-asm:108  mov     al, [bx]
-asm:109  mov     ah, 0                              ; zero-extend byte -> word
-asm:110  mov     [bp+adjacent_path_cost], ax        ; WORD store
-asm:111  cmp     [bp+adjacent_path_cost], 255       ; WORD compare
-```
-
-The `mov ah, 0` exists precisely because the destination is 16 bits. Frame arithmetic confirms it independently: `max_i` sits at `-10h` and `max_j` at `-0Ch`, so the slot between them spans two bytes.
-
-`move_cost` (`-12h`) and `potential_path_cost` (`-11h`) are the byte slots in this frame; `adjacent_path_cost` is not one of them. `Combat_Move_Path_Valid` has it correctly as `int16_t` at [217](../../MoM/src/CMBTMVPT.c#L217), so the two functions currently disagree and this one is the outlier.
-
-Behaviour is unaffected — the value is always a zero-extended `_cmbt_mvpth_c` byte and the `!= INF` test gives the same answer at either width. Fix: `int16_t adjacent_path_cost = 0;`.
-
-### `path_cgx` / `path_cgy` have no frame slot
-
-[CMBTMVPT.c:116-117](../../MoM/src/CMBTMVPT.c#L116-L117), used in the convert loop at [202](../../MoM/src/CMBTMVPT.c#L202) / [204](../../MoM/src/CMBTMVPT.c#L204). In the asm the `idiv` results are consumed straight out of `dx` and `ax` into the array (asm:488-493, asm:503-508) with no intermediate. Removing them means inlining the two expressions:
-
-```c
-        _cmbt_mvpth_x[itr] = (m_movement_path_grid_cell_index[((movement_path_grid_cell_count - 1) - itr)] % COMBAT_GRID_WIDTH);
-        _cmbt_mvpth_y[itr] = (m_movement_path_grid_cell_index[((movement_path_grid_cell_count - 1) - itr)] / COMBAT_GRID_WIDTH);
-```
-
-Both are already labelled `// DNE in Dasm`. Lower stakes than the width divergence above — they hold a value rather than change one — but the frame is provably full, so they are phantom on the same argument.
-
 ## Observation — the asm sets a return value on the bail path
 
 ```
@@ -161,19 +123,19 @@ No caller reads a result — all five call sites use it as a statement and read 
 - **Two adjacency blocks per phase**, `0..4` then `4..8`, with the explicit reset between them — `cmp di, 4` / `mov di, 4` at asm:142-144, asm:261-263, asm:383-385. Production's paired `RELAX_ADJACENT_CELLS(..., 0, 4, 1)` / `(..., 4, 8, 0)` reproduces both the split and the start index.
 - **Diagonal surcharge is `inc al` in the `0..4` block only** — present at asm:115, asm:234, asm:356; absent from the `4..8` blocks at asm:165, asm:284, asm:406. That is exactly the `EXTRA_COST` 1/0 argument. Contrast `Combat_Move_Path_Valid`, which has a single `0..8` loop and no surcharge anywhere.
 - **Byte-width accumulation** — `potential_path_cost` is a byte slot (asm:4) fed by `add al` + `inc al` (asm:114-115), so the sum wraps modulo 256 before the unsigned byte `cmp` / `jbe` at asm:119-121. Production's `uint8_t new_cost_to_reach` ([104](../../MoM/src/CMBTMVPT.c#L104)) truncates on assignment at [88](../../MoM/src/CMBTMVPT.c#L88) before the compare at [89](../../MoM/src/CMBTMVPT.c#L89), reproducing that.
-- **`ctr++` still runs on the `move_cost == INF` skip path** in all three phases — asm:86 -> asm:194, asm:205 -> asm:313, asm:327 -> asm:435. Production [151](../../MoM/src/CMBTMVPT.c#L151), [163](../../MoM/src/CMBTMVPT.c#L163), [174](../../MoM/src/CMBTMVPT.c#L174).
+- **`ctr++` still runs on the `move_cost == INF` skip path** in all three phases — asm:86 -> asm:194, asm:205 -> asm:313, asm:327 -> asm:435. Production [150](../../MoM/src/CMBTMVPT.c#L150), [162](../../MoM/src/CMBTMVPT.c#L162), [173](../../MoM/src/CMBTMVPT.c#L173).
 - **Bounds check** `adjacent_idx >= 0 && adjacent_idx < COMBAT_GRID_CELL_COUNT` — `or si,si` / `jl` then `cmp` / `jge` at asm:102-105 and its five repeats. The listing spells the bound `e_COMBAT_GRID_CELL_COUNT` at asm:104, 154, 223, 395 and the literal `462` at asm:273, 345 — same value.
 - **Update-block write order** — `_cmbt_path_data[ctr]` first (asm:122-126), then `_cmbt_mvpth_c[ctr]` (asm:127-130).
 - **The redundant re-read** of `_cmbt_path_data[ctr]` before comparing against `current_origin` (asm:131-136) is preserved in the macro rather than reusing `adjacent_idx`. Correct — the OG re-loads.
-- **Buffer hijack then count reset, in that order** — asm:447-448 aims the path-index pointer at `_cmbt_movepath_cost_map`, asm:449 zeroes the count. Production [182](../../MoM/src/CMBTMVPT.c#L182) / [184](../../MoM/src/CMBTMVPT.c#L184).
-- **Trace loop** — test-at-bottom `while (_cmbt_path_data[ctr] != ctr)` (asm:469-475), body order `store ctr` -> `ctr = _cmbt_path_data[ctr]` -> `count++` (asm:458-468). Production [190-195](../../MoM/src/CMBTMVPT.c#L190-L195).
-- **One convert loop, with the index expression recomputed for X and again for Y** — asm:479-488 computes `(count-1)-itr`, scales, loads and runs `idiv`; asm:494-503 recomputes that entire sequence and runs a **second** `idiv`. No common-subexpression elimination, no cached index. Production [199-205](../../MoM/src/CMBTMVPT.c#L199-L205) matches, X stored before Y. (Two `idiv`s rather than one is itself evidence the source was C: hand-written assembler would have taken the quotient and remainder off a single `idiv`, since they come back in `ax` and `dx` together.)
+- **Buffer hijack then count reset, in that order** — asm:447-448 aims the path-index pointer at `_cmbt_movepath_cost_map`, asm:449 zeroes the count. Production [181](../../MoM/src/CMBTMVPT.c#L181) / [183](../../MoM/src/CMBTMVPT.c#L183).
+- **Trace loop** — test-at-bottom `while (_cmbt_path_data[ctr] != ctr)` (asm:469-475), body order `store ctr` -> `ctr = _cmbt_path_data[ctr]` -> `count++` (asm:458-468). Production [189-194](../../MoM/src/CMBTMVPT.c#L189-L194).
+- **One convert loop, with the index expression recomputed for X and again for Y** — asm:479-488 computes `(count-1)-itr`, scales, loads and runs `idiv`; asm:494-503 recomputes that entire sequence and runs a **second** `idiv`. No common-subexpression elimination, no cached index. Production [198-204](../../MoM/src/CMBTMVPT.c#L198-L204) matches, X stored before Y. (Two `idiv`s rather than one is itself evidence the source was C: hand-written assembler would have taken the quotient and remainder off a single `idiv`, since they come back in `ax` and `dx` together.)
 - **`_cmbt_mvpth_x` / `_cmbt_mvpth_y` are word arrays** — asm:489-493 and asm:504-508 scale the index by 2 and write 16 bits. Contrast `_cmbt_mvpth_c` in the same listing, a byte array with no `shl` (asm:58). Production declares them `int16_t *` ([Combat.h:1316](../../MoM/src/Combat.h#L1316), [1319](../../MoM/src/Combat.h#L1319); [Combat.c:1273](../../MoM/src/Combat.c#L1273), [1275](../../MoM/src/Combat.c#L1275)) and stores whole values. The 60-byte allocation at [Combat.c:8991-8992](../../MoM/src/Combat.c#L8991-L8992) is therefore 30 path steps — a snug fit above the ~22-step maximum a shortest path can take on a 21x22 grid.
 
 ## OG-faithful behaviors (not bugs — do not "fix")
 
-- **The path-index buffer aliases the cost map.** The path-index pointer is aimed at `_cmbt_movepath_cost_map` (asm:447-448) and then written with word-sized path indices, overwriting the terrain costs the sweep just consumed. Deliberate memory reuse in a 640K program; production reproduces it at [182](../../MoM/src/CMBTMVPT.c#L182).
-- **No movement-point cap.** The solver paths to the destination regardless of what the unit can afford; the caller gates on `CMB_TargetRows` and absorbs any overshoot by clamping at [Combat.c:3323](../../MoM/src/Combat.c#L3323). Combined with `Combat_Move_Path_Valid` charging nothing for diagonals while this function charges `+1`, the reachable set the player is shown is wider than what this solver will actually price. Both halves verified in bytes; original behavior.
+- **The path-index buffer aliases the cost map.** The path-index pointer is aimed at `_cmbt_movepath_cost_map` (asm:447-448) and then written with word-sized path indices, overwriting the terrain costs the sweep just consumed. Deliberate memory reuse in a 640K program; production reproduces it at [181](../../MoM/src/CMBTMVPT.c#L181).
+- **No movement-point cap.** The solver paths to the destination regardless of what the unit can afford; the caller gates on `g_combat_grid_action_mapaction_map` and absorbs any overshoot by clamping at [Combat.c:3323](../../MoM/src/Combat.c#L3323). Combined with `Combat_Move_Path_Valid` charging nothing for diagonals while this function charges `+1`, the reachable set the player is shown is wider than what this solver will actually price. Both halves verified in bytes; original behavior.
 - **`_cmbt_mvpth_c` is `uint8_t` with `INF` = 255 as its sentinel**, so a legitimate accumulated cost of 255 is indistinguishable from unreachable (asm:111, asm:161 and repeats compare against 255 / `e_INF`).
 
 ## Build state

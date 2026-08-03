@@ -198,11 +198,8 @@ extern SAMB_ptr DBG_figure_pict_base_seg;
 #define COMBAT_GRID_YMIN     0  // in Cells
 #define COMBAT_GRID_YMAX    22  // in Cells
 
-// path finding iters over {(21-2),(22-2)}
-// if(battlefield->Central_Structure!= CS_None)
-//     _cmbt_movepath_cost_map[0xED] = -1;  // EDh  237d  237 / 21 = 11.28571  11 * 21 = 231  237 - 231 = 6  ~ cgx = 6, cgy = 11
-#define COMBAT_STRUCTURE_CGX 11
-#define COMBAT_STRUCTURE_CGY  6
+#define COMBAT_STRUCTURE_CGX  6
+#define COMBAT_STRUCTURE_CGY 11
 #define COMBAT_STRUCTURE_IDX ((COMBAT_STRUCTURE_CGY * COMBAT_GRID_WIDTH)   + COMBAT_STRUCTURE_CGX)
 #define COMBAT_GRID_CITY_AREA_WIDTH     4
 #define COMBAT_GRID_CITY_AREA_HEIGHT    4
@@ -210,13 +207,13 @@ extern SAMB_ptr DBG_figure_pict_base_seg;
 
 CMB_DrawMap__WIP()
     if
-        (battlefield->Central_Structure == CS_SorceryNode)
-        (battlefield->Central_Structure == CS_ChaosNode)
-        (battlefield->Central_Structure == CS_Outpost)
+        (battlefield->center_square_structure == CS_SorceryNode)
+        (battlefield->center_square_structure == CS_ChaosNode)
+        (battlefield->center_square_structure == CS_Outpost)
         && (cgx == 6) && (cgy == 11)
     if
-        (battlefield->Central_Structure == CS_City)
-        (battlefield->Central_Structure == CS_Fortress)
+        (battlefield->center_square_structure == CS_City)
+        (battlefield->center_square_structure == CS_Fortress)
         && (cgx == 8) && (cgy == 13)
 
 */
@@ -812,6 +809,22 @@ enum e_BATTLE_UNIT_STATUS
     bus_Gone        = 6   /* ¿ ? ¿ ~== _UNITS[].wp == 9 ? ¿ excluded from 'Raise Dead' */
 };
 
+/*
+(battle_units[battle_unit_idx].Move_Flags & MV_FLYING)
+etc.
+*/
+enum e_BATTLE_UNIT_MOVEMENT_MODE
+{
+    bumm_Ground0    = 0,
+    bumm_Ground1    = 1,
+    bumm_Flight     = 2,
+    bumm_Ground3    = 3,
+    bumm_Sailing    = 4,
+    bumm_Swimming   = 5,
+    bumm_Teleport          = 6,
+    bumm_Tunnel          = 7
+};
+
 enum e_BATTLE_UNIT_ACTION
 {
     bua_Ready           =   0,
@@ -959,7 +972,7 @@ struct s_BATTLEFIELD
     /* 0x1194 */  int16_t Rock_DrawYs[100];
     /* 0x125C */  int16_t Rock_IMG_Segs[100];
     /* 0x1324 */  int8_t muds[COMBAT_GRID_CELL_COUNT];  /* {F,T} combat map square is 'mud' */
-    /* 0x14F2 */  int16_t Central_Structure;   // enum Central_Structures
+    /* 0x14F2 */  int16_t center_square_structure;   // enum Central_Structures
     /* 0x14F4 */  int16_t house_cnt;
     /* 0x14F6 */  int16_t house_cgxs[16];    // [4][4]
     /* 0x1516 */  int16_t house_cgys[16];    // [4][4]
@@ -1178,7 +1191,7 @@ extern int16_t _combat_structure;
 extern struct s_mouse_list * _combat_mouse_grid;
 
 // WZD dseg:C524
-extern int8_t * CMB_TargetRows[COMBAT_GRID_HEIGHT];
+extern int8_t * g_combat_grid_action_map[COMBAT_GRID_HEIGHT];
 
 // WZD dseg:C582
 extern int16_t _active_battle_unit;
@@ -1417,7 +1430,7 @@ int16_t Target_Is_Visible(int16_t battle_unit_idx);
 void Add_City_Damage_From_Battle_Units_Within(void);
 
 // WZD s91p10
-int16_t BU_GetInstaMoveType__WIP(int16_t battle_unit_idx);
+int16_t Battle_Unit_Instant_Movement_Mode(int16_t battle_unit_idx);
 
 
 
@@ -1494,7 +1507,7 @@ int16_t Ranged_Mouse_Image(int16_t src_battle_unit_idx, int16_t dst_battle_unit_
 void Add_Combat_Enchantment_Fields(void);
 
 // WZD o98p13
-int16_t Battle_Unit_Movement_Icon(int16_t battle_unit_idx);
+int16_t Battle_Unit_Movement_Mode(int16_t battle_unit_idx);
 
 // WZD o98p14
 // static void UNIT_SummonToBattle__SEGRAX(int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy);

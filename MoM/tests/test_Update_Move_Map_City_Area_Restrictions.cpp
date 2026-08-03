@@ -48,7 +48,7 @@ protected:
         battle_units = &test_battle_units[0];
         _cmbt_movepath_cost_map = &test_move_cost_map[0];
 
-        test_battlefield.Central_Structure = CS_None;
+        test_battlefield.center_square_structure = CS_None;
         test_battlefield.walled = ST_TRUE;
     }
 
@@ -80,7 +80,7 @@ TEST_F(Update_Move_Map_City_Area_Restrictions_test, OutsideUnit_BlocksWallCellsB
 
 TEST_F(Update_Move_Map_City_Area_Restrictions_test, InsideUnit_BlocksPerimeterButKeepsGateExitOpen)
 {
-    test_battlefield.Central_Structure = CS_City;
+    test_battlefield.center_square_structure = CS_City;
 
     test_battle_units[0].cgx = (MIN_CGX_CITY + 1);
     test_battle_units[0].cgy = (MIN_CGY_CITY + 1);

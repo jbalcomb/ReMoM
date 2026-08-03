@@ -540,15 +540,15 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
     if(type == 5)
     {
         stu_strcpy(GUI_NearMsgString, cnst_CounterMsg3); /* "The power of " */
-        if(battlefield->Central_Structure == CS_SorceryNode)
+        if(battlefield->center_square_structure == CS_SorceryNode)
         {
             stu_strcat(GUI_NearMsgString, cnst_Rlm1_Sorcery_2); /* "Sorcery" */
         }
-        else if(battlefield->Central_Structure == CS_ChaosNode)
+        else if(battlefield->center_square_structure == CS_ChaosNode)
         {
             stu_strcat(GUI_NearMsgString, cnst_Rlm2_Chaos_2); /* "Chaos" */
         }
-        else if(battlefield->Central_Structure == CS_NatureNode)
+        else if(battlefield->center_square_structure == CS_NatureNode)
         {
             stu_strcat(GUI_NearMsgString, cnst_Rlm0_Nature_2); /* "Nature" */
         }

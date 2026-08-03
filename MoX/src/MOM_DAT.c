@@ -1272,7 +1272,7 @@ combat type?
 
 STRUCTURES INFLUENCING COMBAT
 ...
-vs. battlefield->Central_Structure?
+vs. battlefield->center_square_structure?
     enum Central_Structures
 
 ¿ vs. _combat_structure ?

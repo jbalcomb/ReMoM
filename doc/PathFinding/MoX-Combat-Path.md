@@ -178,7 +178,7 @@ CMB_GetPath__WIP()
 
 Elsewhere, ...
 
-CMB_TargetRows[]
+g_combat_grid_action_mapaction_map[]
 value is used to choose the mouse image
 indexing uses Get_Combat_Grid_Cell_X(), Get_Combat_Grid_Cell_Y(), with (Pointer_X() + 4), (Pointer_Y() + 4)
 'Right-Click Combat Grid' uses it to get battle_unit_idx

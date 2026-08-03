@@ -17,11 +17,11 @@ Assign_Combat_Grids()
 
 # 1:1 Fidelity Review
 
-**Status: DONE-DONE (2026-08-01).** `Combat_Move_Path_Valid` is 1:1 with the disassembly — control flow, loop bounds, statement order, local widths, and frame layout all match. `CMBTMVPT.c` compiles clean, no warnings.
+**Status: DONE-DONE (2026-08-03).** `Combat_Move_Path_Valid` is 1:1 with the disassembly — control flow, loop bounds, statement order, local widths, and frame layout all match. `CMBTMVPT.c` compiles clean, no warnings.
 
 Line numbers are a snapshot taken while `CMBTMVPT.c` was under active restructuring — re-verify before relying on any specific citation.
 
-Scope = `Combat_Move_Path_Valid` ([CMBTMVPT.c:211-310](../../MoM/src/CMBTMVPT.c#L211-L310)), plus the two shared macros it expands: `PREP` ([67-75](../../MoM/src/CMBTMVPT.c#L67-L75)) and `RELAX_ADJACENT_CELLS` ([82-98](../../MoM/src/CMBTMVPT.c#L82-L98)). `Combat_Move_Path_Find` is cited only where the comparison is load-bearing; it has its own review at [Combat-Combat_Move_Path_Find.md](Combat-Combat_Move_Path_Find.md).
+Scope = `Combat_Move_Path_Valid` ([CMBTMVPT.c:212-310](../../MoM/src/CMBTMVPT.c#L212-L310)), plus the two shared macros it expands: `PREP` ([67-75](../../MoM/src/CMBTMVPT.c#L67-L75)) and `RELAX_ADJACENT_CELLS` ([82-98](../../MoM/src/CMBTMVPT.c#L82-L98)). `Combat_Move_Path_Find` is cited only where the comparison is load-bearing; it has its own review at [Combat-Combat_Move_Path_Find.md](Combat-Combat_Move_Path_Find.md).
 
 Ground truth = `ovr155/Combat_Move_Path_Valid.asm`. `asm:N` refers to line N of that listing. Where a comparison against `Combat_Move_Path_Find` matters, the bytes came from `ovr155/Combat_Move_Path_Find.asm`; data-segment layout comes from `dseg/_misc.asm`.
 
@@ -29,7 +29,7 @@ Ground truth = `ovr155/Combat_Move_Path_Valid.asm`. `asm:N` refers to line N of 
 
 | Concern | Production | ASM (ground truth) | Result |
 | --- | --- | --- | --- |
-| Signature / frame | [CMBTMVPT.c:211](../../MoM/src/CMBTMVPT.c#L211) | asm:2, 16-18 | faithful — 3 word params, no return |
+| Signature / frame | [CMBTMVPT.c:212](../../MoM/src/CMBTMVPT.c#L212) | asm:2, 16-18 | faithful — 3 word params, no return |
 | Local set | [213-228](../../MoM/src/CMBTMVPT.c#L213-L228) | asm:3-15, 19-21 | faithful — 16 locals, one per frame slot, no extras |
 | Local declaration order | [213-228](../../MoM/src/CMBTMVPT.c#L213-L228) | asm:3-15 | faithful — matches frame layout `-18h` -> `-2` exactly |
 | Local widths | [213-217](../../MoM/src/CMBTMVPT.c#L213-L217) | asm:3-7 | faithful — byte, byte, word, word, word |
