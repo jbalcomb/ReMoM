@@ -124,7 +124,7 @@ struct s_MISSILE
     /* 04 */ int16_t Tgt_Scr_X;
     /* 06 */ int16_t Tgt_Scr_Y;
     /* 08 */ int16_t Type;  //  ; enum Missiles
-    /* 0A */ int16_t Travel_Percent;
+    /* 0A */ int16_t travel_percent;
     /* 0C */ int16_t Proj_Direction;  //  ; enum Proj_Dirs
     /* 0E */
 };
@@ -1856,7 +1856,7 @@ int16_t Battle_Unit_Attack_Magic_Realm(int16_t attack_type, int16_t battle_unit_
 void Calc_Battlefield_Bonuses(int16_t combat_structure);
 
 // WZD o122p11
-void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy);
+void Battle_Unit_Attack(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy);
 
 // WZD o122p12
 int16_t Range_To_Battle_Unit(int16_t BU_1, int16_t BU_2);

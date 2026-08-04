@@ -111,7 +111,7 @@
 - [ ] AITP_WarpCreature — impl (Combat.c:12196), needs done-done review; AI Combat Spell layer
 - [ ] AITP_WarpWood — impl (Combat.c:12144), needs done-done review; AI Combat Spell layer
 - [ ] Battle_Unit_Action — renamed from Battle_Unit_Action__WIP; impl (Combat.c:3418), needs done-done review (name verified 2026-07-21)
-- [ ] Battle_Unit_Attack__WIP
+- [x] Battle_Unit_Attack — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Attack.md; renamed from Battle_Unit_Attack__WIP, Combat.c:17247; 9 findings raised and fixed across the function and 3 subfunctions, incl. Wall Crusher never writing the destroyed wall and 9 of 13 projectile types rendering as a lightning bolt with no sound; Melee_Animation, Set_Gibs, Clear_Gibs and Reload_Melee_Sound compared and faithful; builds clean 2026-08-04)
 - [ ] BU_Apply_Battlefield_Effects__WIP
 - [x] BU_ApplyDamage  AKA BU_ApplyDamage__WIP__SEGRAX
 - [x] Battle_Unit_Attack_Target — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Attack_Target.md; renamed from BU_AttackTarget__WIP, Combat.c:16013; 4 findings fixed incl. a missing ~120-line ranged-Haste block and an out-of-bounds write into the caller's array; Check_Attack_Ranged and Apply_Fear_Attack compared and faithful; builds clean 2026-08-04)

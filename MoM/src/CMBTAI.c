@@ -422,7 +422,7 @@ that will never jump as written, likely intended to find a specific target
             /* Shooting loop */
             while(1)
             {
-                Battle_Unit_Attack__WIP(battle_unit_idx, bu_ptr->target_battle_unit_idx, 0, 0);
+                Battle_Unit_Attack(battle_unit_idx, bu_ptr->target_battle_unit_idx, 0, 0);
 
                 bu_ptr = &battle_units[battle_unit_idx];
                 target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
@@ -457,7 +457,7 @@ that will never jump as written, likely intended to find a specific target
                 }
                 else
                 {
-                    Battle_Unit_Attack__WIP(battle_unit_idx, bu_ptr->target_battle_unit_idx, 0, 0);
+                    Battle_Unit_Attack(battle_unit_idx, bu_ptr->target_battle_unit_idx, 0, 0);
                 }
 
                 bu_ptr = &battle_units[battle_unit_idx];
@@ -536,7 +536,7 @@ that will never jump as written, likely intended to find a specific target
 
                         if(bu_ptr->ranged_type != rat_NONE)
                         {
-                            Battle_Unit_Attack__WIP(battle_unit_idx, bu_ptr->target_battle_unit_idx, 0, 0);
+                            Battle_Unit_Attack(battle_unit_idx, bu_ptr->target_battle_unit_idx, 0, 0);
                         }
                         else
                         {
@@ -2004,7 +2004,7 @@ BUG: this has just been done in the parent function
                 else
                 {
 
-                    Battle_Unit_Attack__WIP(battle_unit_idx, target_battle_unit_idx, 0, 0);
+                    Battle_Unit_Attack(battle_unit_idx, target_battle_unit_idx, 0, 0);
 
                 }
 

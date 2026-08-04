@@ -23,11 +23,11 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr110\Battle_Unit_Heal.as
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr113\Apply_Battle_Unit_Damage_From_Spell.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr113\BU_ApplyDamage__WIP__SEGRAX.asm
 
-OON XREF:  Battle_Unit_Attack__WIP() |-> Battle_Unit_Attack_Target() |-> BU_ProcessAttack__WIP()
+OON XREF:  Battle_Unit_Attack() |-> Battle_Unit_Attack_Target() |-> BU_ProcessAttack__WIP()
 
 Combat_Screen__WIP()
     |-> Battle_Unit_Action()
-        |-> Battle_Unit_Attack__WIP()
+        |-> Battle_Unit_Attack()
             |-> Battle_Unit_Attack_Target()
                 |-> Battle_Unit_Process_Attack
                     |-> Battle_Unit_Attack_Immunities()

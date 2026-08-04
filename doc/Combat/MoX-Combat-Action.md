@@ -1,7 +1,7 @@
 
 
 
-BU_Attack__WIP() ==> Battle_Unit_Attack__WIP()
+BU_Attack__WIP() ==> Battle_Unit_Attack()
 BU_MeleeFlightCheck__WIP() ==> Check_Attack_Melee()
 BU_RangedValidate__WIP() ==> Check_Attack_Ranged()
 
@@ -11,7 +11,7 @@ Tactical_Combat__WIP()
         j_Battle_Unit_Action__WIP()
             Battle_Unit_Action__WIP()
                 |-> j_Battle_Unit_Attack__WIP()
-                    |-> Battle_Unit_Attack__WIP()
+                    |-> Battle_Unit_Attack()
 
 
 
@@ -34,7 +34,7 @@ void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 ## Battle_Unit_Action__WIP()
 
 ...
-Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy)
+Battle_Unit_Attack(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy)
 ...
 cgx, cgy is the target's cgx, cgy
 ...

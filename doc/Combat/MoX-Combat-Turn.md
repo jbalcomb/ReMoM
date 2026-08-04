@@ -114,7 +114,7 @@ Combat Variations: Flying, Water, Walls, and More
 
 Move_Battle_Unit__WIP() ==> Battle_Unit_Move__WIP()
 BU_CombatAction__WIP() ==> Battle_Unit_Action__WIP()
-... ==> Battle_Unit_Attack__WIP()
+... ==> Battle_Unit_Attack()
 CMB_WinLoseFlee__WIP() ==> Check_For_Winner()
 BU_GetHalfMoves__WIP() == Battle_Unit_Moves2()
 

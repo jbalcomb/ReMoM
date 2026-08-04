@@ -7,7 +7,7 @@ g_combat_grid_action_map
 
 Combat_Screen__WIP()
     |-> Battle_Unit_Action()
-        |-> Battle_Unit_Attack__WIP
+        |-> Battle_Unit_Attack
         |-> Move_Battle_Unit
 
 Check_Attack_Melee
@@ -16,8 +16,12 @@ BU_MeleeWallCheck
 Combat_Move_Path_Valid
 Assign_Combat_Grids
 
-Move_Battle_Unit__WIP
+Move_Battle_Unit()
     |-> Combat_Move_Path_Find
+
+Assign_Mouse_Images()
+    |-> BU_MeleeWallCheck()
+
 
 
 Combat.c

@@ -20,8 +20,8 @@ OON XREF:  Battle_Unit_Attack() |-> Battle_Unit_Attack_Target() |-> Battle_Unit_
 
 Combat_Screen__WIP()
     |-> Battle_Unit_Action()
+        |-> BU_MeleeWallCheck()                                 sibling of Battle_Unit_Attack, not a callee
         |-> Battle_Unit_Attack()
-            |-> BU_MeleeWallCheck()
             |-> Battle_Unit_Attack_Target()
                 |-> Check_Attack_Ranged()
                 |-> Battle_Unit_Process_Attack()            done-done
@@ -50,7 +50,7 @@ Anchors are function **start** lines.
 
 **Already reviewed elsewhere:** `Battle_Unit_Process_Attack` in [Combat-Battle_Unit_Process_Attack.md](Combat-Battle_Unit_Process_Attack.md) and `Check_Wall_Of_Fire_Attack` in [Combat-Move_Battle_Unit.md](Combat-Move_Battle_Unit.md); both DONE-DONE.
 
-`BU_MeleeWallCheck` is reached from `Battle_Unit_Attack`, not from this function, and belongs to that review.
+`BU_MeleeWallCheck` is not reached from this function. It is also **not** reached from `Battle_Unit_Attack`, as an earlier version of this note claimed — `ovr122/Battle_Unit_Attack.asm` contains no call to it. Its callers are `ovr091/Battle_Unit_Action.asm` and `ovr098/Assign_Mouse_Images.asm`, matching production at [Combat.c:3342](../../MoM/src/Combat.c#L3342) and [Combat.c:5328](../../MoM/src/Combat.c#L5328). It belongs to a `Battle_Unit_Action` review.
 
 `asm:N` refers to the listing named in the row above.
 

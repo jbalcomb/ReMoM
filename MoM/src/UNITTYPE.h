@@ -221,6 +221,8 @@ enum e_UNIT_TYPE
 in Battle_Unit_Process_Attack()
 attake type 0 is Melee
 
+Ranged_Animation() thinks Bow and Sling are 26 and 27
+
 */
 enum e_RANGED_ATTACK_TYPE
 {

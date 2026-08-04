@@ -15,7 +15,7 @@ Combat Calculations - Defender
 ...per effect, USA, HSA, Spell, etc.
 
 e.g., the Luck/Prayer BUGBUG -1 To-Hit for Attacker ~== Invisibility
-void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy)
+void Battle_Unit_Attack(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy)
     Battle_Unit_Attack_Target(attacker_battle_unit_idx, defender_battle_unit_idx, &defender_damage_array[0], &attacker_damage_array[0], ranged_attack_flag, 1);
         BEGIN: Melee
         BEGIN: Attacker First-Strike
@@ -104,7 +104,7 @@ Tactical_Combat__WIP()
         j_Battle_Unit_Action__WIP()
             Battle_Unit_Action__WIP()
                 |-> j_Battle_Unit_Attack__WIP()
-                    |-> Battle_Unit_Attack__WIP()
+                    |-> Battle_Unit_Attack()
                         |-> Battle_Unit_Attack_Target()
                             |-> BU_ProcessAttack__WIP()
 
@@ -217,7 +217,7 @@ Load_Battle_Unit() sets battle_unit->Suppression to 0
 BU_ProcessAttack__WIP()
     if(Counter == ST_TRUE)
         To_Hit -= (battle_units[attacker_battle_unit_idx].Suppression / 2);
-Battle_Unit_Attack__WIP()
+Battle_Unit_Attack()
     battle_units[defender_battle_unit_idx].Suppression += 1;
 
 
@@ -231,7 +231,7 @@ SpFx
     if(SpFx != 0)
         BU_WallofFire__NOOP(attacker_battle_unit_idx);
     ...
-    Battle_Unit_Attack__WIP()
+    Battle_Unit_Attack()
         if(defender_battle_unit_idx != 99)
             ...ranged or non-ranged...
             Battle_Unit_Attack_Target(attacker_battle_unit_idx, defender_battle_unit_idx, &defender_damage_array[0], &attacker_damage_array[0], ranged_attack_flag, 1);
@@ -474,14 +474,14 @@ Poison Attack
 
 
 
-## Battle_Unit_Attack__WIP()
+## Battle_Unit_Attack()
 
 
 
 
-Battle_Unit_Attack__WIP()
+Battle_Unit_Attack()
 XREF:
-    j_Battle_Unit_Attack__WIP jmp     Battle_Unit_Attack__WIP
+    j_Battle_Unit_Attack__WIP jmp     Battle_Unit_Attack
 j_Battle_Unit_Attack__WIP()
 XREF:
     Battle_Unit_Action__WIP+111  call    j_Battle_Unit_Attack__WIP

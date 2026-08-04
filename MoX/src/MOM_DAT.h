@@ -1910,7 +1910,7 @@ struct s_BATTLE_UNIT
 {
     /* 0x00 */  int8_t   melee;  /* ~ "melee attack strength" */
     /* 0x01 */  int8_t   ranged;  /* ~ "ranged attack strength" */
-    /* 0x02 */  int8_t   ranged_type;  /* ~ "ranged attack type" */
+    /* 0x02 */  int8_t   ranged_type;   /* 1-byte, signed */  /* ~ "ranged attack type" */
     /* 0x03 */  int8_t   ammo;
     /* 0x04 */  int8_t   tohit;
     /* 0x05 */  int8_t   defense;
