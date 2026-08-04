@@ -48,7 +48,7 @@ What's done will the value it returns?
 
 XREF:
     BU_ProcessAttack__WIP()
-    BU_CauseFear__NOOP()
+    Apply_Fear_Attack()
     j_Combat_Resistance_Check()
         CMB_PrepareTurn__WIP()
         Cast_Spell_On_Battle_Unit()

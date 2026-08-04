@@ -11,7 +11,7 @@ battle_units[].Image_Effect  ==>  battle_units[].figure_effect
 battle_units[].Always_Animate ==> battle_units[].animate_idle
 battle_units[].Move_Bob      ==>  battle_units[].animate_move_as_idle
 battle_units[].Moving        ==>  battle_units[].
-battle_units[].Cur_Figures   ==>  battle_units[].figure_cnt
+battle_units[].figure_cnt   ==>  battle_units[].figure_cnt
 battle_units[].Max_Figures   ==>  battle_units[].figure_max
 
 IMG_CMB_FX_Figure     ==>  battle_unit_scratch_seg
@@ -75,15 +75,15 @@ Move_Battle_Unit()
 
 | Function | Production | ASM (ground truth) |
 | --- | --- | --- |
-| `Move_Battle_Unit` | [Combat.c:3067-3226](../../MoM/src/Combat.c#L3067-L3226) | `ovr091/Move_Battle_Unit.asm` |
-| `Get_Battle_Unit_Move_Sound_Buffer` | [Combat.c:6098-6114](../../MoM/src/Combat.c#L6098-L6114) | `ovr098/Get_Battle_Unit_Move_Sound_Buffer.asm` |
-| `Check_Wall_Of_Fire_Attack` | [Combat.c:21339-21365](../../MoM/src/Combat.c#L21339-L21365) | `ovr124/Check_Wall_Of_Fire_Attack.asm` |
-| `Battle_Unit_Teleport` | [Spells133.c:959-1045](../../MoM/src/Spells133.c#L959-L1045) | `ovr133/BU_Teleport.asm` |
-| `Battle_Unit_Tunnel` | [Spells133.c:1049-1141](../../MoM/src/Spells133.c#L1049-L1141) | `ovr133/BU_TunnelTo.asm` |
-| `Battle_Unit_Compose_Bitmap` | [Combat.c:8077-8158](../../MoM/src/Combat.c#L8077-L8158) | `ovr103/BU_CreateImage__SEGRAX.asm` |
-| `Battle_Unit_Set_Animation_Flags` | [Combat.c:9411-9432](../../MoM/src/Combat.c#L9411-L9432) | `ovr105/BU_SetBaseAnims__WIP.asm` |
-| `Battle_Unit_Is_Airborne` | [Combat.c:5938-5955](../../MoM/src/Combat.c#L5938-L5955) | `ovr098/BU_CheckFlight__WIP.asm` |
-| `Battle_Unit_Set_Invisibility_Effect` | [Combat.c:9286-9355](../../MoM/src/Combat.c#L9286-L9355) | `ovr105/BU_SetVisibility__WIP.asm` |
+| `Move_Battle_Unit` | [Combat.c:3061](../../MoM/src/Combat.c#L3061) | `ovr091/Move_Battle_Unit.asm` |
+| `Get_Battle_Unit_Move_Sound_Buffer` | [Combat.c:6070](../../MoM/src/Combat.c#L6070) | `ovr098/Get_Battle_Unit_Move_Sound_Buffer.asm` |
+| `Check_Wall_Of_Fire_Attack` | [Combat.c:20249](../../MoM/src/Combat.c#L20249) | `ovr124/Check_Wall_Of_Fire_Attack.asm` |
+| `Battle_Unit_Teleport` | [Spells133.c:957](../../MoM/src/Spells133.c#L957) | `ovr133/BU_Teleport.asm` |
+| `Battle_Unit_Tunnel` | [Spells133.c:1047](../../MoM/src/Spells133.c#L1047) | `ovr133/BU_TunnelTo.asm` |
+| `Battle_Unit_Compose_Bitmap` | [Combat.c:8049](../../MoM/src/Combat.c#L8049) | `ovr103/BU_CreateImage__SEGRAX.asm` |
+| `Battle_Unit_Set_Animation_Flags` | [Combat.c:9383](../../MoM/src/Combat.c#L9383) | `ovr105/BU_SetBaseAnims__WIP.asm` |
+| `Battle_Unit_Is_Airborne` | [Combat.c:5910](../../MoM/src/Combat.c#L5910) | `ovr098/BU_CheckFlight__WIP.asm` |
+| `Battle_Unit_Set_Invisibility_Effect` | [Combat.c:9258](../../MoM/src/Combat.c#L9258) | `ovr105/BU_SetVisibility__WIP.asm` |
 
 **Deliberately out of scope:** `Apply_Battle_Unit_Damage_From_Spell` and `BU_ApplyDamage`, called from `Check_Wall_Of_Fire_Attack` — held for the attack-functions review.
 
@@ -296,13 +296,9 @@ Faithful.
 
 ## Build state
 
-**Not verified — build could not be run.** `cmake` is not on the PATH in the agent shell (`cmake: command not found`, 2026-08-03), so `cmake --build --preset MSVC-debug` has not been run since the rename pass or the `spell_data_table[spl_Hydra]` fix. The review conclusions are byte-level comparisons and do not depend on a build, but the renames touched many call sites and warrant one:
+**Clean.** `cmake --build --preset MSVC-debug` run by the user on 2026-08-04, covering the rename pass and the `spell_data_table[spl_Hydra]` fix. `cmake` was not on the PATH in the agent shell during the review, so this is the user's result, not an agent tool call.
 
-```
-cd /c/STU/devel/ReMoM && cmake --build --preset MSVC-debug 2>&1 | tail -200
-```
-
-Production anchors in this document were re-read against `Combat.c` and `Spells133.c` on 2026-08-03 and are current as of that pass.
+Production anchors in this document were re-read against `Combat.c` and `Spells133.c` on 2026-08-03 and are current as of that pass. `Combat.c` has shifted substantially since, through the `Battle_Unit_Process_Attack` and `Battle_Unit_Attack_Target` reviews — treat the `Combat.c#L…` anchors here as approximate and the `asm:N` references as stable.
 
 ## Related references
 

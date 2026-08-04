@@ -210,7 +210,7 @@ CMB_SpawnFigure__WIP( battle_units[itr].position_cgc2, battle_units[itr].positio
 _combat_total_unit_count is 8
 itr is 0
 Max_Figures is 8
-Cur_Figures is 4
+figure_cnt is 4
 unit_idx is 665
 ...
 itr is 0

@@ -19,7 +19,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
     Battle_Unit_Attack_Target(attacker_battle_unit_idx, defender_battle_unit_idx, &defender_damage_array[0], &attacker_damage_array[0], ranged_attack_flag, 1);
         BEGIN: Melee
         BEGIN: Attacker First-Strike
-        BU_ProcessAttack__WIP(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].Cur_Figures - Feared_Figures), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, SpFx);
+        BU_ProcessAttack__WIP(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].figure_cnt - Feared_Figures), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, SpFx);
             Battle_Unit_Attack_Immunities()
             Battle_Unit_Attack_Magic_Realm()
             attack_tohit = (battle_units[attacker_battle_unit_idx].melee_tohit - battle_units[defender_battle_unit_idx].toblock);
@@ -126,7 +126,7 @@ Destroy_Ship_()
 BU_ApplyDamage()
 
 
-    if(battle_units[battle_unit_idx].Cur_Figures <= 0)
+    if(battle_units[battle_unit_idx].figure_cnt <= 0)
         if(BU_IsCombatSummon__WIP(battle_unit_idx) == ST_TRUE)
             _UNITS[battle_units[battle_unit_idx].unit_idx].wp = 9;
 BU_IsCombatSummon__WIP()
@@ -256,11 +256,11 @@ NOTE: both `Feared_Figures` and `Figs` get used as `figure_count` for BU_Process
     // ~Thrown
     // attack type 0
     // srat_Thrown, srat_FireBreath, srat_Lightning, srat_StoneGaze, srat_MultiGaze, srat_DeathGaze
-    BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].Cur_Figures, defender_battle_unit_idx, 1, &Damage_Array[0], 0, SpFx);
+    BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].figure_cnt, defender_battle_unit_idx, 1, &Damage_Array[0], 0, SpFx);
 
     // Haste AND {srat_Thrown, srat_FireBreath, srat_Lightning} NOT {srat_StoneGaze, srat_MultiGaze, srat_DeathGaze}
     // attack type 0
-    BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].Cur_Figures, defender_battle_unit_idx, 1, &Damage_Array[0], 0, SpFx);
+    BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].figure_cnt, defender_battle_unit_idx, 1, &Damage_Array[0], 0, SpFx);
 
     ...
 

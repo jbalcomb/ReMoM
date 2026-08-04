@@ -60,19 +60,19 @@ Anchors are function **start** lines. `Combat.c` has shifted repeatedly through 
 
 | Function | Production | ASM (ground truth) | Result |
 | --- | --- | --- | --- |
-| `Battle_Unit_Process_Attack` | [Combat.c:16429](../../MoM/src/Combat.c#L16429) | `ovr122/BU_ProcessAttack__WIP.asm` (1236 lines) | faithful (R1-R9 fixed) |
-| `Battle_Unit_Attack_Immunities` | [Combat.c:15987](../../MoM/src/Combat.c#L15987) (`static`) | `ovr122/Battle_Unit_Attack_Immunities.asm` | faithful |
-| `Battle_Unit_Attack_Magic_Realm` | [Combat.c:17055](../../MoM/src/Combat.c#L17055) | `ovr122/Battle_Unit_Attack_Magic_Realm.asm` + `_misc.asm` | faithful (R11 fixed) |
-| `Battle_Unit_Has_Ranged_Attack` | [Combat.c:17977](../../MoM/src/Combat.c#L17977) | `ovr122/Battle_Unit_Has_Ranged_Attack.asm` | faithful (R10 fixed) |
-| `Range_To_Battle_Unit` | [Combat.c:17749](../../MoM/src/Combat.c#L17749) | `ovr122/Range_To_Battle_Unit.asm` | faithful |
-| `Combat_Resistance_Check` | [Combat.c:15888](../../MoM/src/Combat.c#L15888) | `ovr122/Combat_Resistance_Check.asm` | faithful |
-| `Combat_Effective_Resistance` | [Combat.c:15908](../../MoM/src/Combat.c#L15908) | `ovr122/Combat_Effective_Resistance.asm` | faithful (R12-R15 fixed) |
-| `Battle_Unit_Defense_Special` | [Combat.c:16889](../../MoM/src/Combat.c#L16889) | `ovr122/Battle_Unit_Defense_Special.asm` | faithful (R16, R17 fixed) |
-| `Combat_Roll_Damage_Dealt` | [Combat.c:15847](../../MoM/src/Combat.c#L15847) | `ovr122/CMB_AttackRoll__SEGRAX.asm` | faithful |
-| `Combat_Roll_Damage_Blocked` | [Combat.c:15868](../../MoM/src/Combat.c#L15868) | `ovr122/CMB_DefenseRoll__SEGRAX.asm` | faithful |
-| `Battle_Unit_Heal` | [Combat.c:10671](../../MoM/src/Combat.c#L10671) | `ovr110/Battle_Unit_Heal.asm` | faithful (R18, R19 fixed) |
-| `Compute_Battle_Unit_Damage_From_Spell` | [Combat.c:13459](../../MoM/src/Combat.c#L13459) | `ovr113/Apply_Battle_Unit_Damage_From_Spell.asm` | faithful (R21-R24 fixed) |
-| `Battle_Unit_Commit_Damage` | [Combat.c:13622](../../MoM/src/Combat.c#L13622) | `ovr113/BU_ApplyDamage__WIP__SEGRAX.asm` | faithful (R20 fixed) |
+| `Battle_Unit_Process_Attack` | [Combat.c:16259](../../MoM/src/Combat.c#L16259) | `ovr122/BU_ProcessAttack__WIP.asm` (1236 lines) | faithful (R1-R9 fixed) |
+| `Battle_Unit_Attack_Immunities` | [Combat.c:15945](../../MoM/src/Combat.c#L15945) (`static`) | `ovr122/Battle_Unit_Attack_Immunities.asm` | faithful |
+| `Battle_Unit_Attack_Magic_Realm` | [Combat.c:16885](../../MoM/src/Combat.c#L16885) | `ovr122/Battle_Unit_Attack_Magic_Realm.asm` + `_misc.asm` | faithful (R11 fixed) |
+| `Battle_Unit_Has_Ranged_Attack` | [Combat.c:17807](../../MoM/src/Combat.c#L17807) | `ovr122/Battle_Unit_Has_Ranged_Attack.asm` | faithful (R10 fixed) |
+| `Range_To_Battle_Unit` | [Combat.c:17579](../../MoM/src/Combat.c#L17579) | `ovr122/Range_To_Battle_Unit.asm` | faithful |
+| `Combat_Resistance_Check` | [Combat.c:15846](../../MoM/src/Combat.c#L15846) | `ovr122/Combat_Resistance_Check.asm` | faithful |
+| `Combat_Effective_Resistance` | [Combat.c:15866](../../MoM/src/Combat.c#L15866) | `ovr122/Combat_Effective_Resistance.asm` | faithful (R12-R15 fixed) |
+| `Battle_Unit_Defense_Special` | [Combat.c:16719](../../MoM/src/Combat.c#L16719) | `ovr122/Battle_Unit_Defense_Special.asm` | faithful (R16, R17 fixed) |
+| `Combat_Roll_Damage_Dealt` | [Combat.c:15805](../../MoM/src/Combat.c#L15805) | `ovr122/CMB_AttackRoll__SEGRAX.asm` | faithful |
+| `Combat_Roll_Damage_Blocked` | [Combat.c:15826](../../MoM/src/Combat.c#L15826) | `ovr122/CMB_DefenseRoll__SEGRAX.asm` | faithful |
+| `Battle_Unit_Heal` | [Combat.c:10667](../../MoM/src/Combat.c#L10667) | `ovr110/Battle_Unit_Heal.asm` | faithful (R18, R19 fixed) |
+| `Compute_Battle_Unit_Damage_From_Spell` | [Combat.c:13455](../../MoM/src/Combat.c#L13455) | `ovr113/Apply_Battle_Unit_Damage_From_Spell.asm` | faithful (R21-R24 fixed) |
+| `Battle_Unit_Commit_Damage` | [Combat.c:13620](../../MoM/src/Combat.c#L13620) | `ovr113/BU_ApplyDamage__WIP__SEGRAX.asm` | faithful (R20 fixed) |
 
 **Deferred to the BU-init pass:** `BU_Init_Battle_Unit` and `BU_Apply_Battlefield_Effects__WIP`, both `ovr116`, both reached from `Battle_Unit_Heal`. `BU_Init_Battle_Unit`'s handling of `movement_points` is what makes the save/restore at [10733-10736](../../MoM/src/Combat.c#L10733-L10736) necessary, so it is worth taking early in that pass.
 
@@ -159,7 +159,7 @@ The same test clears `Move_Battle_Unit` — see [Combat-Move_Battle_Unit.md](Com
 - **Counter suppression** — `Suppression / 2` via the signed `cwd`/`sub`/`sar` idiom (asm:344-356).
 - **Flying-melee bail** — defender flying, `attack_mode == am_Melee`, attacker not flying, `Counter != ST_TRUE`, `ranged_type < srat_Thrown` (asm:358-383).
 - **Immolation** — `Attribs_2 & Ab_Immolation` (asm:399); `USA_IMMOLATION` is `0x0008` ([MOM_DEF.h:689](../../MoX/src/MOM_DEF.h#L689)) and `Ab_Immolation` the same bit ([MOM_DAT.h:424](../../MoX/src/MOM_DAT.h#L424)). `Compute_Battle_Unit_Damage_From_Spell(spl_Fireball, defender, &new_damage_array[0], 4)` by push order (asm:401-408).
-- **Stoning Gaze and Death Gaze** — both loop to `Cur_Figures`, both pass `-abs(Spec_Att_Attrib)`, both take `> 0`; Stoning adds `hits` to index 2 (asm:463), Death to index 0 (asm:529). Test order is StoneGaze-then-MultiGaze, then MultiGaze-then-DeathGaze (asm:411-414, asm:477-480).
+- **Stoning Gaze and Death Gaze** — both loop to `figure_cnt`, both pass `-abs(Spec_Att_Attrib)`, both take `> 0`; Stoning adds `hits` to index 2 (asm:463), Death to index 0 (asm:529). Test order is StoneGaze-then-MultiGaze, then MultiGaze-then-DeathGaze (asm:411-414, asm:477-480).
 - **Black Sleep forces Doom damage** (asm:543-552).
 - **`Battle_Unit_Defense_Special(defender, attack_type, immunities, attributes, magic_realm)`** by push order (asm:558-565).
 - **City-wall defence bonus** — defender inside, attacker outside, battlefield walled, then `+3` on a wall cell or `+1` otherwise (asm:571-605). `Combat_Grid_Cell_Has_City_Wall(cgx, cgy)` by push order (asm:590-597).
@@ -297,9 +297,9 @@ The tail correctly re-reads `battle_units[].front_figure_damage` from the **fiel
 
 Faithful.
 
-Both guards are function-level returns — `total_damage <= 0` (asm:31-33) and `status != bus_Active` (asm:40-42), each jumping to `@@Done` at asm:347, which is the epilogue. The 200 clamp uses `<= 200` on the sum (asm:60-68). `figures_lost = total / hits` capped at `Cur_Figures` (asm:108-138), subtracted (asm:140-154), and `front_figure_damage = total % hits` via the `push dx` / `pop ax` remainder (asm:155-174).
+Both guards are function-level returns — `total_damage <= 0` (asm:31-33) and `status != bus_Active` (asm:40-42), each jumping to `@@Done` at asm:347, which is the epilogue. The 200 clamp uses `<= 200` on the sum (asm:60-68). `figures_lost = total / hits` capped at `figure_cnt` (asm:108-138), subtracted (asm:140-154), and `front_figure_damage = total % hits` via the `push dx` / `pop ax` remainder (asm:155-174).
 
-The death block (asm:176-346) zeroes `Cur_Figures`, sets `_combat_winner` from `Eliminated_Opponent()`, marks summoned units `wp = 9`, then selects the death **kind** from whichever damage type dominates — `bus_Gone` for irreversible, `bus_Drained` for undeath (or `bus_Gone` when `wp == 9`), `bus_Dead` for regular — and calls `Update_Sees_Illusions()`.
+The death block (asm:176-346) zeroes `figure_cnt`, sets `_combat_winner` from `Eliminated_Opponent()`, marks summoned units `wp = 9`, then selects the death **kind** from whichever damage type dominates — `bus_Gone` for irreversible, `bus_Drained` for undeath (or `bus_Gone` when `wp == 9`), `bus_Dead` for regular — and calls `Update_Sees_Illusions()`.
 
 `damage[3]` is `uint8_t` ([MOM_DAT.h:1967](../../MoX/src/MOM_DAT.h#L1967)), so production's comparisons are unsigned and match the listing's `jb`/`jbe` throughout, despite the 200 clamp exceeding `int8_t` range.
 
@@ -309,7 +309,7 @@ Cosmetic only: the summoned-creature test uses `== ST_TRUE` where asm:198 is `or
 
 ## Build state
 
-**Not verified — build could not be run.** `cmake` is not on the PATH in the agent shell (`cmake: command not found`, 2026-08-04). This review drove a full rename pass and twenty-four finding fixes across `Combat.c` **without a single compile**. That is the one gap in this DONE-DONE: everything here is byte-level comparison against the listings, which does not depend on a build, but nothing confirms the tree still compiles or links.
+**Clean.** `cmake --build --preset MSVC-debug` run by the user on 2026-08-04, after the full rename pass and all twenty-four finding fixes. `cmake` was not on the PATH in the agent shell during the review, so this is the user's result, not an agent tool call.
 
 ```
 cd /c/STU/devel/ReMoM && cmake --build --preset MSVC-debug 2>&1 | tail -200
@@ -317,7 +317,11 @@ cd /c/STU/devel/ReMoM && cmake --build --preset MSVC-debug 2>&1 | tail -200
 
 **Balance note.** R5 changed the to-hit arithmetic: melee now rolls at `tohit + melee_tohit - toblock` and ranged at `tohit + ranged_tohit`, where the base `tohit` from the unit-type record was previously discarded. R12 and R13 restored two `+30` resistance bonuses that did nothing before. R11 stopped five Nature-realm attack types resolving as Death. R18 and R19 turned healing from damage-doubling into healing, and removed a hang. Combat outcomes will differ measurably from any pre-review baseline; that is the original behaviour, not a regression.
 
-**Rename reach.** `Battle_Unit_Commit_Damage` has ~20 call sites across `Combat.c`, `Spells129.c`, `Spells131.c` and `Spells133.c`; the two roll helpers are also quoted by their old names in `doc/Combat/MoX-Combat-Attack.md` (lines 27, 29, 80), and `CMBTAI.c:938` and `:958` name `BU_ApplyDamage` in prose. Those are not code and will not be caught by a compile.
+**Rename reach — settled.** `Battle_Unit_Commit_Damage`'s ~20 call sites across `Combat.c`, `Spells129.c`, `Spells131.c` and `Spells133.c` are all renamed, as are the two prose references in `CMBTAI.c:938` and `:958` that a compile would not have caught. The header prototypes carry `resolve_for_real`; [Combat.h:1847](../../MoM/src/Combat.h#L1847) still spells its array parameter `damage_array[]` against the definition's `damage_types[]`, which is advisory and cosmetic.
+
+`doc/Combat/MoX-Combat-Attack.md` still quotes `CMB_AttackRoll__SEGRAX`, `CMB_DefenseRoll__SEGRAX` and `BU_ApplyDamage` in its pseudo-code (lines 27, 29, 30, 31, 80). That file documents the **disassembly**, not production, so keeping the listing names there is defensible — noted rather than flagged.
+
+**Anchors.** Scope-table anchors were re-read against `Combat.c` on 2026-08-04 and are function start lines. `Combat.c` shifts under every review pass, so the inline `Combat.c#L…` references in the body sections below are approximate; the `asm:N` references are stable.
 
 Production anchors in this document were re-read against `Combat.c` on 2026-08-04 and are current as of that pass.
 

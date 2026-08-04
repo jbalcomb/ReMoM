@@ -41,7 +41,7 @@ cgx, cgy is the target's cgx, cgy
 Battle_Unit_Attack_Target(attacker_battle_unit_idx, defender_battle_unit_idx, &defender_damage_array[0], &attacker_damage_array[0], ranged_attack_flag, 1);
 void Battle_Unit_Attack_Target(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t defender_damage_types[], int16_t attacker_damage_types[], int16_t ranged_attack_flag, int16_t SpFx)
 ...
-BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].Cur_Figures, defender_battle_unit_idx, am_Ranged, &damage_types[0], 0, SpFx);
+BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].figure_cnt, defender_battle_unit_idx, am_Ranged, &damage_types[0], 0, SpFx);
 void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_count, int16_t defender_battle_unit_idx, int16_t attack_mode, int16_t damage_types[], int16_t Counter, int16_t SpFx)
 
 

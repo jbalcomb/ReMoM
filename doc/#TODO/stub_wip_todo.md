@@ -114,7 +114,7 @@
 - [ ] Battle_Unit_Attack__WIP
 - [ ] BU_Apply_Battlefield_Effects__WIP
 - [x] BU_ApplyDamage  AKA BU_ApplyDamage__WIP__SEGRAX
-- [ ] Battle_Unit_Attack_Target
+- [x] Battle_Unit_Attack_Target — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Attack_Target.md; renamed from BU_AttackTarget__WIP, Combat.c:16013; 4 findings fixed incl. a missing ~120-line ranged-Haste block and an out-of-bounds write into the caller's array; Check_Attack_Ranged and Apply_Fear_Attack compared and faithful; builds clean 2026-08-04)
 - [x] BU_CheckFlight__WIP — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Is_Airborne, Combat.c:5938; 1:1 with ovr098/BU_CheckFlight__WIP.asm)
 - [ ] BU_GetCombatEffect__WIP
 - [ ] BU_GetInstaMoveType__WIP
@@ -122,7 +122,7 @@
 - [x] BU_IsVisible__STUB
 - [ ] BU_MeleeWallCheck — renamed from BU_MeleeWallCheck__WIP; impl (Combat.c:16682), needs done-done review (name verified 2026-07-21)
 - [ ] BU_MoveConfused__WIP
-- [x] BU_ProcessAttack__WIP — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Process_Attack.md; renamed Battle_Unit_Process_Attack, Combat.c:16429; 24 findings raised and fixed across the function and 12 subfunctions, incl. an infinite loop and a damage-doubling heal; NOT COMPILED — cmake unavailable to the agent)
+- [x] BU_ProcessAttack__WIP — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Process_Attack.md; renamed Battle_Unit_Process_Attack, Combat.c:16429; 24 findings raised and fixed across the function and 12 subfunctions, incl. an infinite loop and a damage-doubling heal; builds clean 2026-08-04)
 - [x] BU_SetBaseAnims__WIP — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Set_Animation_Flags, Combat.c:9411; Param0 -> unit_type union arm fixed; D2 dead-argument divergence recorded)
 - [ ] BU_SetCityMovement__WIP
 - [x] BU_SetVisibility — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Set_Invisibility_Effect, Combat.c:9286; 1:1 with ovr105/BU_SetVisibility__WIP.asm)

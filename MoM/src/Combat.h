@@ -1841,10 +1841,10 @@ int16_t Combat_Effective_Resistance(struct s_BATTLE_UNIT battle_unit, int16_t ma
 // static int16_t Battle_Unit_Attack_Immunities(int16_t battle_unit_idx, int16_t attack_mode);
 
 // WZD o122p06
-void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t Target_Damage_Array[], int16_t Counter_Damage_Array[], int16_t ranged_attack_flag, int16_t SpFx);
+void Battle_Unit_Attack_Target(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t defender_damage_types[], int16_t attacker_damage_types[], int16_t ranged_attack_flag, int16_t resolve_for_real);
 
 // WZD o122p07
-void Battle_Unit_Process_Attack(int16_t attacker_battle_unit_idx, int16_t figure_count, int16_t defender_battle_unit_idx, int16_t attack_mode, int16_t damage_array[], int16_t Counter, int16_t SpFx);
+void Battle_Unit_Process_Attack(int16_t attacker_battle_unit_idx, int16_t figure_count, int16_t defender_battle_unit_idx, int16_t attack_mode, int16_t damage_types[], int16_t is_counter_attack, int16_t resolve_for_real);
 
 // WZD o122p08
 int16_t Battle_Unit_Defense_Special(int16_t battle_unit_idx, int16_t attack_type, int16_t attack_immunities, int16_t attack_attributes, int16_t magic_realm);
@@ -1868,7 +1868,7 @@ int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_
 int16_t Battle_Unit_Has_Ranged_Attack(int16_t battle_unit_idx);
 
 // WZD o122p15
-int16_t BU_CauseFear__NOOP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx);
+int16_t Apply_Fear_Attack(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx);
 
 
 

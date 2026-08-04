@@ -82,7 +82,7 @@ Otherwise, ...
         enchantments = 0
         BU_CombatHits = BU_GetHitsPerFigure()
         TopFig_Dmg -= BU_CombatHits
-        _UNITS[].Damage = ((Max_Figures - Cur_Figures) * (hits - BU_CombatHits)) + TopFig_Dmg
+        _UNITS[].Damage = ((Max_Figures - figure_cnt) * (hits - BU_CombatHits)) + TopFig_Dmg
         HMoves = 0
 
 

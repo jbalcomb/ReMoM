@@ -562,7 +562,7 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
     else
     {
         stu_strcpy(GUI_NearMsgString, _players[type].name);
-        string_length = stu_strlen(_players[type].name);
+        string_length = (int16_t)stu_strlen(_players[type].name);
         if(_players[type].name[string_length - 1] == 's')
         {
             stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
@@ -585,7 +585,7 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
         {
             stu_strcpy(buffer, _players[battle_units[caster_idx].controller_idx].Heroes[Hero_Slot].name);
             stu_strcat(GUI_NearMsgString, buffer);
-            string_length = stu_strlen(buffer);
+            string_length = (int16_t)stu_strlen(buffer);
             if(buffer[string_length - 1] == 's')
             {
                 stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
@@ -600,7 +600,7 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
             stu_strcat(GUI_NearMsgString, cnst_CounterMsg7); /* "the " */
             ut_name = *_unit_type_table[_UNITS[battle_units[caster_idx].unit_idx].type].name;
             stu_strcat(GUI_NearMsgString, ut_name);
-            string_length = stu_strlen(ut_name);
+            string_length = (int16_t)stu_strlen(ut_name);
             if(ut_name[string_length - 1] == 's')
             {
                 stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
@@ -614,7 +614,7 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
     else
     {
         stu_strcat(GUI_NearMsgString, _players[caster_idx - CASTER_IDX_BASE].name);
-        string_length = stu_strlen(_players[caster_idx - CASTER_IDX_BASE].name);
+        string_length = (int16_t)stu_strlen(_players[caster_idx - CASTER_IDX_BASE].name);
         if(_players[caster_idx - CASTER_IDX_BASE].name[string_length - 1] == 's')
         {
             stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */

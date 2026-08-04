@@ -1298,7 +1298,7 @@ int16_t * _cmbt_path_data;
 // };
 // union combat_path_state combat_path_state_share;
 // /* ... later in the code ... */
-// shared_buffer.reachable_grid[cx] = e_ST_TRUE;
+// shared_buffer.reachable_grid[cx] = ST_TRUE;
 // union Combat_Routing_Data {
 //     unsigned short came_from_grid[462]; /* The pred(v) tree for Path_Find */
 //     unsigned short reachable_mask[462]; /* The boolean overlay for Path_Valid */
@@ -3175,10 +3175,6 @@ void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t targe
             battle_units[battle_unit_idx].move_anim_ctr = 0;
             battle_units[battle_unit_idx].cgx = _cmbt_mvpth_x[Move_Step_Index];
             battle_units[battle_unit_idx].cgy = _cmbt_mvpth_y[Move_Step_Index];
-            assert(battle_units[battle_unit_idx].cgx >= COMBAT_GRID_XMIN);
-            assert(battle_units[battle_unit_idx].cgx <= COMBAT_GRID_XMAX);
-            assert(battle_units[battle_unit_idx].cgy >= COMBAT_GRID_YMIN);
-            assert(battle_units[battle_unit_idx].cgy <= COMBAT_GRID_YMAX);
         }
     }
     battle_units[battle_unit_idx].move_anim_ctr = 0;
@@ -13203,7 +13199,7 @@ Nowhere. It doesn't use a target, never even gets to that code.
 
 
 // WZD o113p04
-void Ranged_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t defender_damage_total, int16_t cgx, int16_t cgy)
+void Ranged_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t Target_Damage_Sum, int16_t cgx, int16_t cgy)
 {
     int16_t Travel_Distance = 0;
     int16_t range = 0;
@@ -13322,7 +13318,7 @@ void Ranged_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_
             RP_CMB_ProjectileFrame2 = 4;
             if(defender_battle_unit_idx != 99)
             {
-                Set_Gibs(defender_battle_unit_idx, defender_damage_total);
+                Set_Gibs(defender_battle_unit_idx, Target_Damage_Sum);
             }
         }
         else
@@ -13716,88 +13712,48 @@ void Battle_Unit_Commit_Damage(int16_t battle_unit_idx, int16_t damage_types[])
 
 
 // WZD o113p08
-// drake178: BU_RangedValidate()
-/*
-; returns 0 if the target can be attacked at range, 1
-; if this is prevented by Invisibility, or 2 if by Wall
-; of Darkness
-;
-; BUG: the Wall of Darkness check ignores natural
-; Illusions Immunity, disallowing the attack
-*/
-/*
-
-returns {0,1,2}
-0: allow ranged attack
-1: disallow ranged attack, due to 'Invisibility'
-2: disallow ranged attack, due to 'Wall of Darkness'
-
-compliment to Check_Attack_Melee()
-
-*/
 int16_t Check_Attack_Ranged(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx)
 {
     int16_t result = 0;
-    uint32_t defender_enchantments;
-    uint32_t attacker_enchantments;
-
-    defender_enchantments = (battle_units[defender_battle_unit_idx].enchantments | battle_units[defender_battle_unit_idx].item_enchantments);
-
-    attacker_enchantments = (battle_units[attacker_battle_unit_idx].enchantments | battle_units[attacker_battle_unit_idx].item_enchantments);
-
+    uint32_t defender_enchantments = 0;
+    uint32_t attacker_enchantments = 0;
+    defender_enchantments = (battle_units[defender_battle_unit_idx].enchantments | battle_units[defender_battle_unit_idx].item_enchantments | _UNITS[battle_units[defender_battle_unit_idx].unit_idx].enchantments);
+    attacker_enchantments = (battle_units[attacker_battle_unit_idx].enchantments | battle_units[attacker_battle_unit_idx].item_enchantments | _UNITS[battle_units[attacker_battle_unit_idx].unit_idx].enchantments);
     result = 0;
-
     if(
         ((attacker_enchantments & UE_TRUE_SIGHT) != 0)
         ||
         ((battle_units[attacker_battle_unit_idx].Attribs_1 & USA_IMMUNITY_ILLUSION) != 0)
     )
     {
-
         result = 0;
-
     }
     else
     {
-
          if(
             ((defender_enchantments & UE_INVISIBILITY) != 0)
             ||
             ((battle_units[defender_battle_unit_idx].Abilities & UA_INVISIBILITY) != 0)
         )
         {
-
             result = 1;
-
         }
-
     }
-
     if(battlefield->wall_of_darkness == 1)
     {
-
-        // ; BUG: ignores natural Illusions Immunity
+        /* OGBUG  ignores innate Illusions Immunity */
         if((attacker_enchantments & UE_TRUE_SIGHT) == 0)
         {
-
             if(Battle_Unit_Is_Within_City(defender_battle_unit_idx) == ST_TRUE)
             {
-                
                 if(Battle_Unit_Is_Within_City(attacker_battle_unit_idx) == ST_FALSE)
                 {
-
                     result = 2;
-
                 }
-
             }
-
         }
-
     }
-
     return result;
-
 }
 
 
@@ -16044,170 +16000,89 @@ static int16_t Battle_Unit_Attack_Immunities(int16_t battle_unit_idx, int16_t at
 
 
 // WZD o122p06
-// drake178: BU_AttackTarget()
-/*
-; processes an attack made by the chosen unit against
-; the specified target, returning the damage done to
-; both units in the passed array pointers
-;
-; BUG: applies Cause Fear to the wrong unit on attacks
-; BUG: ranged magical attacks are often not doubled by
-;  Haste as intended
-; BUG: First Strike figures slain by Doom Gaze will
-;  sometimes still perform their melee attacks
-*/
-/*
-
-OON XREF: Battle_Unit_Attack__WIP()
-
-SpFx {F,T}
-as compiled, hard-coded to ST_TRUE
-
-*/
-void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t defender_damage_types[], int16_t attacker_damage_types[], int16_t ranged_attack_flag, int16_t SpFx)
+void Battle_Unit_Attack_Target(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t defender_damage_types[], int16_t attacker_damage_types[], int16_t ranged_attack_flag, int16_t resolve_for_real)
 {
-    int16_t Can_Attack_Again = 0;
-    int16_t Source_Unit_Damage = 0;
-    int16_t Feared_Figures = 0;
+    int16_t has_haste_and_shot = 0;
+    int16_t attacker_damage_taken = 0;
+    int16_t feared_figure_count = 0;
     int16_t ranged_attack_check = 0;
-    int16_t Figs = 0;
-    int16_t Target_Damage_Sum = 0;
+    int16_t counter_attack_figures = 0;
+    int16_t defender_damage_total = 0;
     int16_t damage_types[NUM_DAMAGE_TYPES] = { 0, 0, 0 };
-    int16_t itr_damage_types = 0;  // _SI_
-
-
-    Feared_Figures = 0;
-
-
+    int16_t itr_damage_types = 0;
+    feared_figure_count = 0;
     for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
     {
         defender_damage_types[itr_damage_types] = 0;
         attacker_damage_types[itr_damage_types] = 0;
     }
-
-
-    Source_Unit_Damage = 0;
-
-
+    attacker_damage_taken = 0;
     // {0: allow, 1: disallow, 2: disallow}
     ranged_attack_check = Check_Attack_Ranged(attacker_battle_unit_idx, defender_battle_unit_idx);
-
-
     if(ranged_attack_flag != ST_TRUE)
     {
-
-        // ; if the unit has a short range attack, process it and,
-        // ; if it is hasted and the attack is not a gaze, repeat
-        // ; it once more
-
+        // ; if the unit has a short range attack, process it and, if it is hasted and the attack is not a gaze, repeat it once more
         if(battle_units[attacker_battle_unit_idx].ranged_type >= srat_Thrown)
         {
-
-            Battle_Unit_Process_Attack(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].figure_cnt, defender_battle_unit_idx, am_ThrownOrBreath, &damage_types[0], 0, SpFx);
-
+            Battle_Unit_Process_Attack(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].figure_cnt, defender_battle_unit_idx, am_ThrownOrBreath, &damage_types[0], 0, resolve_for_real);
             for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
             {
-
                 defender_damage_types[itr_damage_types] += damage_types[itr_damage_types];
-
             }
-
             if(
                 ((battle_units[attacker_battle_unit_idx].Combat_Effects & bue_Haste) != 0)
                 &&
                 (battle_units[attacker_battle_unit_idx].ranged_type < srat_StoneGaze)
             )
             {
-
-                Battle_Unit_Process_Attack(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].figure_cnt, defender_battle_unit_idx, am_ThrownOrBreath, &damage_types[0], 0, SpFx);
-
+                Battle_Unit_Process_Attack(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].figure_cnt, defender_battle_unit_idx, am_ThrownOrBreath, &damage_types[0], 0, resolve_for_real);
                 for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
                 {
-
                     defender_damage_types[itr_damage_types] += damage_types[itr_damage_types];
-
                 }
-
             }
-
         }
-
         // AFTER
         // if(battle_units[attacker_battle_unit_idx].ranged_type >= srat_Thrown)
-
         if(
-            ((battle_units[defender_battle_unit_idx].Combat_Effects & bue_Black_Sleep) != 0)
+            ((battle_units[defender_battle_unit_idx].Combat_Effects & bue_Black_Sleep) == 0)
             &&
             (battle_units[defender_battle_unit_idx].ranged_type >= srat_StoneGaze)
         )
         {
-
-            Target_Damage_Sum = 0;
-
+            defender_damage_total = 0;
             for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
             {
-
-                Target_Damage_Sum += defender_damage_types[itr_damage_types];
-
+                defender_damage_total += defender_damage_types[itr_damage_types];
             }
-
-            Target_Damage_Sum += battle_units[defender_battle_unit_idx].front_figure_damage;
-
-            if(Target_Damage_Sum > 0)
+            defender_damage_total += battle_units[defender_battle_unit_idx].front_figure_damage;
+            if(defender_damage_total > 0)
             {
-
-                Figs = (battle_units[defender_battle_unit_idx].figure_cnt - (Target_Damage_Sum / battle_units[defender_battle_unit_idx].hits));
-
+                counter_attack_figures = (battle_units[defender_battle_unit_idx].figure_cnt - (defender_damage_total / battle_units[defender_battle_unit_idx].hits));
             }
             else
             {
-
-                Figs = battle_units[defender_battle_unit_idx].figure_cnt;
-
+                counter_attack_figures = battle_units[defender_battle_unit_idx].figure_cnt;
             }
-
-            Battle_Unit_Process_Attack(defender_battle_unit_idx, Figs, attacker_battle_unit_idx, am_ThrownOrBreath, &damage_types[0], 1, SpFx);
-
+            Battle_Unit_Process_Attack(defender_battle_unit_idx, counter_attack_figures, attacker_battle_unit_idx, am_ThrownOrBreath, &damage_types[0], 1, resolve_for_real);
+            // ; transfer the damage to the counter attack damage return array, and sum it into a local variable too
             for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
             {
-
-                defender_damage_types[itr_damage_types] += damage_types[itr_damage_types];
-
+                attacker_damage_types[itr_damage_types] += damage_types[itr_damage_types];
+                attacker_damage_taken += damage_types[itr_damage_types];
             }
-
-            // ; transfer the damage to the counter attack damage
-            // ; return array, and sum it into a local variable too
-
-            attacker_damage_types[itr_damage_types] += damage_types[itr_damage_types];
-
-            Source_Unit_Damage += damage_types[itr_damage_types];
-
         }
-
-
         // Wall of Fire, First Strike, Cause Fear
-            
-        if(SpFx != 0)
+        if(resolve_for_real != ST_FALSE)
         {
-
             Check_Wall_Of_Fire_Attack(attacker_battle_unit_idx);
-
         }
-
         if(battle_units[attacker_battle_unit_idx].status == bus_Active)
         {
-
-            // ; if the attacking unit has First Strike, and the
-            // ; defender can't negate it, process an attack before
-            // ; the defender could retaliate
-            // ; BUG: Cause Fear is applied to the wrong unit
-            // ; BUG: the attacker's damage taken is not calculated
-            // ;  properly, and can yield extra attacks on their part
-
+            // ; if the attacking unit has First Strike, and the defender can't negate it, process an attack before the defender could retaliate
             /*
                 BEGIN: Melee
             */
-
             /*
                 BEGIN: Attacker First-Strike
             */
@@ -16217,110 +16092,70 @@ void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_bat
                 ((battle_units[defender_battle_unit_idx].Abilities & UA_NEGATEFIRSTSTRIKE) == 0)
             )
             {
-
-                if(SpFx == 1)
+                if(resolve_for_real == ST_TRUE)
                 {
-
-                    // ; BUG: wrong parameter order, this fear will backfire
-                    Feared_Figures = BU_CauseFear__NOOP(attacker_battle_unit_idx, defender_battle_unit_idx);
-
+                    /* First-Strike: apply Attacker's Fear Effect to Defender's Figures */
+                    /* OGBUG  this feared_figure_count should be applied to the defender */
+                    feared_figure_count = Apply_Fear_Attack(attacker_battle_unit_idx, defender_battle_unit_idx);
                 }
-
                 for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
                 {
-
-                    // ; BUG: not all gaze attacks and associated effects
-                    // ; deal figure-based damage
-                    Feared_Figures += (attacker_damage_types[itr_damage_types] / battle_units[attacker_battle_unit_idx].hits);
-
+                    /* OGBUG  not all gaze attacks and associated effects deal figure-based damage */
+                    feared_figure_count += (attacker_damage_types[itr_damage_types] / battle_units[attacker_battle_unit_idx].hits);
                 }
-
-                Battle_Unit_Process_Attack(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].figure_cnt - Feared_Figures), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, SpFx);
-
+                Battle_Unit_Process_Attack(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].figure_cnt - feared_figure_count), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, resolve_for_real);
                 for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
                 {
-
                     defender_damage_types[itr_damage_types] += damage_types[itr_damage_types];
-
                 }
-
             }
             /*
                 END: Attacker First-Strike
             */
-
             /*
                 BEGIN: Defender Counter-Attack
             */
             if((battle_units[defender_battle_unit_idx].Combat_Effects & bue_Black_Sleep) == 0)
             {
-
                 // ; sum up the damage taken by the target unit so far
-                
-                Target_Damage_Sum = 0;
-
+                defender_damage_total = 0;
                 for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
                 {
-
-                    Target_Damage_Sum += defender_damage_types[itr_damage_types];
-
+                    defender_damage_total += defender_damage_types[itr_damage_types];
                 }
-
-                Target_Damage_Sum += battle_units[defender_battle_unit_idx].front_figure_damage;
-
-                if(Target_Damage_Sum > 0)
+                defender_damage_total += battle_units[defender_battle_unit_idx].front_figure_damage;
+                if(defender_damage_total > 0)
                 {
-
-                    Figs = (battle_units[defender_battle_unit_idx].figure_cnt - (Target_Damage_Sum / battle_units[defender_battle_unit_idx].hits));
-
+                    counter_attack_figures = (battle_units[defender_battle_unit_idx].figure_cnt - (defender_damage_total / battle_units[defender_battle_unit_idx].hits));
                 }
                 else
                 {
-
-                    Figs = battle_units[defender_battle_unit_idx].figure_cnt;
-
+                    counter_attack_figures = battle_units[defender_battle_unit_idx].figure_cnt;
                 }
-
-                if(SpFx == 1)
+                if(resolve_for_real == ST_TRUE)
                 {
-
-                    Figs -= BU_CauseFear__NOOP(attacker_battle_unit_idx, defender_battle_unit_idx);
-
+                    counter_attack_figures -= Apply_Fear_Attack(attacker_battle_unit_idx, defender_battle_unit_idx);
                 }
-
-                if(Figs > 0)
+                if(counter_attack_figures > 0)
                 {
-
-                    Battle_Unit_Process_Attack(defender_battle_unit_idx, Figs, attacker_battle_unit_idx, am_Melee, &damage_types[0], 1, SpFx);
-
+                    Battle_Unit_Process_Attack(defender_battle_unit_idx, counter_attack_figures, attacker_battle_unit_idx, am_Melee, &damage_types[0], 1, resolve_for_real);
                     for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
                     {
-
                         attacker_damage_types[itr_damage_types] += damage_types[itr_damage_types];
-
                     }
-
                     if((battle_units[defender_battle_unit_idx].Combat_Effects & bue_Haste) != 0)
                     {
-
-                        Battle_Unit_Process_Attack(defender_battle_unit_idx, Figs, attacker_battle_unit_idx, am_Melee, &damage_types[0], 1, SpFx);
-
+                        Battle_Unit_Process_Attack(defender_battle_unit_idx, counter_attack_figures, attacker_battle_unit_idx, am_Melee, &damage_types[0], 1, resolve_for_real);
                         for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
                         {
-
                             attacker_damage_types[itr_damage_types] += damage_types[itr_damage_types];
-
                         }
-
                     }
-
                 }
-
             }
             /*
                 END: Defender Counter-Attack
             */
-
             /*
                 BEGIN: Attacker Non-First-Strike
             */
@@ -16330,105 +16165,98 @@ void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_bat
                 ((battle_units[defender_battle_unit_idx].Abilities & UA_NEGATEFIRSTSTRIKE) != 0)
             )
             {
-
-                if(SpFx == 1)
+                if(resolve_for_real == ST_TRUE)
                 {
-
-                    // ; BUG: wrong parameter order, this fear will backfire
-                    // BUGBUG
-                    Feared_Figures = BU_CauseFear__NOOP(attacker_battle_unit_idx, defender_battle_unit_idx);
-
+                    /* OGBUG  this feared_figure_count should be applied to the defender */
+                    feared_figure_count = Apply_Fear_Attack(attacker_battle_unit_idx, defender_battle_unit_idx);
                 }
-
-                Source_Unit_Damage += battle_units[attacker_battle_unit_idx].front_figure_damage;
-
-                Feared_Figures += (Source_Unit_Damage / battle_units[attacker_battle_unit_idx].hits);
-
-                Battle_Unit_Process_Attack(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].figure_cnt - Feared_Figures), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, SpFx);
-
+                attacker_damage_taken += battle_units[attacker_battle_unit_idx].front_figure_damage;
+                feared_figure_count += (attacker_damage_taken / battle_units[attacker_battle_unit_idx].hits);
+                Battle_Unit_Process_Attack(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].figure_cnt - feared_figure_count), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, resolve_for_real);
                 for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
                 {
-
                     defender_damage_types[itr_damage_types] += damage_types[itr_damage_types];
-
                 }
-
                 if((battle_units[attacker_battle_unit_idx].Combat_Effects & bue_Haste) != 0)
                 {
-
-                    Battle_Unit_Process_Attack(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].figure_cnt - Feared_Figures), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, SpFx);
-
+                    Battle_Unit_Process_Attack(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].figure_cnt - feared_figure_count), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, resolve_for_real);
                     for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
                     {
-
                         defender_damage_types[itr_damage_types] += damage_types[itr_damage_types];
-
                     }
-
                 }
-
                 /*
                     END: Melee
                 */
-
             }
             /*
                 END: Attacker Non-First-Strike
             */
-
         }
         // else goto @@Done
-
     }
     else  /* (ranged_attack_flag == ST_TRUE) */
     {
-
-
         if(
             (battle_units[attacker_battle_unit_idx].ranged <= 0)
             ||
             (ranged_attack_check != 0)
         )
         {
-
-            // ; subtract 5 from each type of damage in the target
-            // ; damage array
+            // ; subtract 5 from each type of damage in the target damage array
             // ; BUG...?
-
             for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
             {
-
                 defender_damage_types[itr_damage_types] += -5;
-
             }
-
         }
         else
         {
-
-            Battle_Unit_Process_Attack(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].figure_cnt, defender_battle_unit_idx, am_Ranged, &damage_types[0], 0, SpFx);
-
+            Battle_Unit_Process_Attack(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].figure_cnt, defender_battle_unit_idx, am_Ranged, &damage_types[0], 0, resolve_for_real);
             for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
             {
-
                 defender_damage_types[itr_damage_types] += damage_types[itr_damage_types];
-
             }
-
+            if(battle_units[attacker_battle_unit_idx].Combat_Effects & bue_Haste)
+            {
+                has_haste_and_shot = ST_FALSE;
+                if(
+                    (battle_units[itr_damage_types].ranged_type / 10 == rag_Magic)  /* OGBUG  should use attacker_battle_unit_idx, not itr_damage_types */
+                    ||
+                    ((battle_units[attacker_battle_unit_idx].Attribs_1 & (USA_CASTER_20 | USA_CASTER_40)) != 0)
+                )
+                {
+                    if(battle_units[attacker_battle_unit_idx].mana > 6)
+                    {
+                        battle_units[attacker_battle_unit_idx].mana -= 3;
+                        has_haste_and_shot = ST_TRUE;
+                    }
+                }
+                else
+                {
+                    if(battle_units[attacker_battle_unit_idx].ammo > 1)
+                    {
+                        has_haste_and_shot = ST_TRUE;
+                        battle_units[attacker_battle_unit_idx].ammo--;
+                    }
+                }
+                if(has_haste_and_shot == ST_TRUE)
+                {
+                    Battle_Unit_Process_Attack(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].figure_cnt, defender_battle_unit_idx, am_Ranged, &damage_types[0], 0, resolve_for_real);
+                    for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
+                    {
+                        defender_damage_types[itr_damage_types] += damage_types[itr_damage_types];
+                    }
+                }
+            }
         }
-
     }
-
 }
 
 
 // WZD o122p07
 /* OGBUG  the Power Drain item power is ignored here */
-/*
-Counter: {F,T}
-SpFx:  {F,T}  as compiled, hard-coded to ST_TRUE
-*/
-void Battle_Unit_Process_Attack(int16_t attacker_battle_unit_idx, int16_t figure_count, int16_t defender_battle_unit_idx, int16_t attack_mode, int16_t damage_types[], int16_t Counter, int16_t SpFx)
+void Battle_Unit_Process_Attack(int16_t attacker_battle_unit_idx, int16_t figure_count, int16_t defender_battle_unit_idx, int16_t attack_mode, int16_t damage_types[], int16_t is_counter_attack, int16_t resolve_for_real)
 {
     int16_t resistance_modifier = 0;
     uint32_t defender_enchantments = 0;
@@ -16536,7 +16364,7 @@ void Battle_Unit_Process_Attack(int16_t attacker_battle_unit_idx, int16_t figure
     {
         attack_tohit -= 1;
     }
-    if(Counter == ST_TRUE)
+    if(is_counter_attack == ST_TRUE)
     {
         attack_tohit -= (battle_units[attacker_battle_unit_idx].Suppression / 2);
     }
@@ -16547,7 +16375,7 @@ void Battle_Unit_Process_Attack(int16_t attacker_battle_unit_idx, int16_t figure
         &&
         ((battle_units[attacker_battle_unit_idx].Move_Flags & MV_FLYING) == 0)
         &&
-        (Counter != ST_TRUE)
+        (is_counter_attack != ST_TRUE)
         &&
         (battle_units[attacker_battle_unit_idx].ranged_type < srat_Thrown)
     )
@@ -16647,7 +16475,7 @@ void Battle_Unit_Process_Attack(int16_t attacker_battle_unit_idx, int16_t figure
         if((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
         {
             // process the Dispel Evil touch attack if applicable
-            // INCONSISTENT: Spell Lock does not protect from this, even though it does from the spell versions
+            /* OGBUG  Spell Lock does not protect from this, even though it does from the spell versions */
             if(
                 ((attack_attributes & Att_DsplEvil) != 0)
                 &&
@@ -16713,7 +16541,7 @@ void Battle_Unit_Process_Attack(int16_t attacker_battle_unit_idx, int16_t figure
                 }
                 healing = Combat_Resistance_Check(battle_units[defender_battle_unit_idx], resistance_modifier, sbr_Death);
                 new_damage_array[1] += healing;
-                if(SpFx != 0)
+                if(resolve_for_real != ST_FALSE)
                 {
                     Battle_Unit_Heal(attacker_battle_unit_idx, healing, 1);
                 }
@@ -17502,7 +17330,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
         battle_units[attacker_battle_unit_idx].target_cgy = battle_units[defender_battle_unit_idx].cgy;
 
 
-        BU_AttackTarget__WIP(attacker_battle_unit_idx, defender_battle_unit_idx, &defender_damage_array[0], &attacker_damage_array[0], ranged_attack_flag, 1);
+        Battle_Unit_Attack_Target(attacker_battle_unit_idx, defender_battle_unit_idx, &defender_damage_array[0], &attacker_damage_array[0], ranged_attack_flag, 1);
 
 
         battle_units[defender_battle_unit_idx].Suppression += 1;
@@ -17993,22 +17821,35 @@ int16_t Battle_Unit_Has_Ranged_Attack(int16_t battle_unit_idx)
 
 
 // WZD o122p15
-// drake178: BU_CauseFear()
-/*
-; processes the Cause Fear effect if applicable,
-; returning the amount of attacking figures that have
-; failed their resistance checks
-*/
-/*
-
-
-
-*/
-int16_t BU_CauseFear__NOOP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx)
+int16_t Apply_Fear_Attack(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx)
 {
-
-    return 0;
-
+    int16_t feared_figure_count = 0;
+    int16_t itr_figures = 0;
+    feared_figure_count = 0;
+    /* Attacker has Fear */
+    if(
+        (battle_units[attacker_battle_unit_idx].Attribs_2 & USA_CAUSEFEAR)
+        ||
+        (battle_units[attacker_battle_unit_idx].enchantments & UE_CLOAK_OF_FEAR)
+        ||
+        (battle_units[attacker_battle_unit_idx].item_enchantments & UE_CLOAK_OF_FEAR)
+        ||
+        (_UNITS[battle_units[attacker_battle_unit_idx].unit_idx].enchantments & UE_CLOAK_OF_FEAR)
+    )
+    {
+        /* Defender is not immune to Death/Fear */
+        if((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_DEATH) == 0)
+        {
+            for(itr_figures = 0; itr_figures < battle_units[defender_battle_unit_idx].figure_cnt; itr_figures++)
+            {
+                if(Combat_Resistance_Check(battle_units[defender_battle_unit_idx], 0, sbr_Death) > 0)
+                {
+                    feared_figure_count++;
+                }
+            }
+        }
+    }
+    return feared_figure_count;
 }
 
 
@@ -25529,9 +25370,9 @@ void Generate_Combat_Map(
                     random_cay = Random(4) - 1;
                     i = (MIN_CGX_CITY + random_cax);
                     j = (MIN_CGY_CITY + random_cay);
-                    reject_house_location = 0; /* e_ST_FALSE */
+                    reject_house_location = 0; /* ST_FALSE */
 
-                    if(city_walls == 1) /* e_ST_TRUE */
+                    if(city_walls == 1) /* ST_TRUE */
                     {
                         if((random_cax == 0 && random_cay == 0) || (random_cax == 0 && random_cay == 3) || (random_cax == 3 && random_cay == 0) || (random_cax == 3 && random_cay == 3))
                         {
