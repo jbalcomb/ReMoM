@@ -218,7 +218,7 @@ enum e_UNIT_TYPE
 2-Byte, Signed
 "Special"   {100, 101, 102, 103, 104, 105}
 
-in BU_ProcessAttack__WIP()
+in Battle_Unit_Process_Attack()
 attake type 0 is Melee
 
 */

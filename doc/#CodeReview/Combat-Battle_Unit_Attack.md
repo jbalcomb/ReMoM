@@ -2,7 +2,7 @@ Combat-Battle_Unit_Attack.md
 
 Battle_Unit_Attack__WIP()  ==>  Battle_Unit_Attack()
 
-OON XREF:  Battle_Unit_Attack__WIP() |-> BU_AttackTarget__WIP() |-> BU_ProcessAttack__WIP()
+OON XREF:  Battle_Unit_Attack__WIP() |-> Battle_Unit_Attack_Target() |-> BU_ProcessAttack__WIP()
 
 Combat_Screen__WIP()
     |-> Battle_Unit_Action()

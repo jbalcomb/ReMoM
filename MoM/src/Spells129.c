@@ -289,7 +289,7 @@ void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_
 
     Load_Battle_Unit(unit_idx, bu_ptr);
 
-    Apply_Battle_Unit_Damage_From_Spell(spell_idx, 0, &damage_types[0], attack_strength_override);
+    Compute_Battle_Unit_Damage_From_Spell(spell_idx, 0, &damage_types[0], attack_strength_override);
 
     enchantments = (battle_units[0].enchantments | battle_units[0].item_enchantments | _UNITS[unit_idx].enchantments);
 
@@ -422,7 +422,7 @@ void Apply_Black_Wind(int16_t wx, int16_t wy, int16_t wp, int16_t spell_idx)
 
             }
 
-            BU_ApplyDamage(0, &damage_types[0]);
+            Battle_Unit_Commit_Damage(0, &damage_types[0]);
 
             _UNITS[unit_idx].Damage += damage_types[0];
 

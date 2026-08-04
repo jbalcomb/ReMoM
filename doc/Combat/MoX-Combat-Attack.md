@@ -16,7 +16,7 @@ Combat Calculations - Defender
 
 e.g., the Luck/Prayer BUGBUG -1 To-Hit for Attacker ~== Invisibility
 void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy)
-    BU_AttackTarget__WIP(attacker_battle_unit_idx, defender_battle_unit_idx, &defender_damage_array[0], &attacker_damage_array[0], ranged_attack_flag, 1);
+    Battle_Unit_Attack_Target(attacker_battle_unit_idx, defender_battle_unit_idx, &defender_damage_array[0], &attacker_damage_array[0], ranged_attack_flag, 1);
         BEGIN: Melee
         BEGIN: Attacker First-Strike
         BU_ProcessAttack__WIP(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].Cur_Figures - Feared_Figures), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, SpFx);
@@ -105,7 +105,7 @@ Tactical_Combat__WIP()
             Battle_Unit_Action__WIP()
                 |-> j_Battle_Unit_Attack__WIP()
                     |-> Battle_Unit_Attack__WIP()
-                        |-> BU_AttackTarget__WIP()
+                        |-> Battle_Unit_Attack_Target()
                             |-> BU_ProcessAttack__WIP()
 
 
@@ -223,9 +223,9 @@ Battle_Unit_Attack__WIP()
 
 
 
-## BU_AttackTarget__WIP()
+## Battle_Unit_Attack_Target()
 
-void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t Target_Damage_Array[], int16_t Counter_Damage_Array[], int16_t ranged_attack_flag, int16_t SpFx);
+void Battle_Unit_Attack_Target(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t Target_Damage_Array[], int16_t Counter_Damage_Array[], int16_t ranged_attack_flag, int16_t SpFx);
 
 SpFx
     if(SpFx != 0)
@@ -234,7 +234,7 @@ SpFx
     Battle_Unit_Attack__WIP()
         if(defender_battle_unit_idx != 99)
             ...ranged or non-ranged...
-            BU_AttackTarget__WIP(attacker_battle_unit_idx, defender_battle_unit_idx, &defender_damage_array[0], &attacker_damage_array[0], ranged_attack_flag, 1);
+            Battle_Unit_Attack_Target(attacker_battle_unit_idx, defender_battle_unit_idx, &defender_damage_array[0], &attacker_damage_array[0], ranged_attack_flag, 1);
 
 
 Target_Damage_Sum

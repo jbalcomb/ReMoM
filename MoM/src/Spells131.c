@@ -1001,7 +1001,7 @@ void Apply_Cracks_Call(int16_t cgx, int16_t cgy)
 
                 damage_types[2] = 200;
 
-                BU_ApplyDamage(battle_unit_idx, &damage_types[0]);
+                Battle_Unit_Commit_Damage(battle_unit_idx, &damage_types[0]);
 
             }
 
@@ -1279,9 +1279,9 @@ void Apply_Flame_Strike(int16_t player_idx)
             )
             {
 
-                Apply_Battle_Unit_Damage_From_Spell(spl_Flame_Strike, battle_unit_idx, &damage_types[0], 0);
+                Compute_Battle_Unit_Damage_From_Spell(spl_Flame_Strike, battle_unit_idx, &damage_types[0], 0);
 
-                BU_ApplyDamage(battle_unit_idx, &damage_types[0]);    
+                Battle_Unit_Commit_Damage(battle_unit_idx, &damage_types[0]);    
 
             }
 
@@ -1359,7 +1359,7 @@ void Apply_Holy_Word(int16_t player_idx)
 
                         damage_types[2] = battle_units[battle_unit_idx].hits;
 
-                        BU_ApplyDamage(battle_unit_idx, &damage_types[0]);    
+                        Battle_Unit_Commit_Damage(battle_unit_idx, &damage_types[0]);    
 
                     }
 
@@ -1430,7 +1430,7 @@ void Apply_Death_Spell(int16_t player_idx)
 
                         damage_types[0] = battle_units[battle_unit_idx].hits;
 
-                        BU_ApplyDamage(battle_unit_idx, &damage_types[0]);    
+                        Battle_Unit_Commit_Damage(battle_unit_idx, &damage_types[0]);    
 
                     }
 

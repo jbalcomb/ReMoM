@@ -1745,10 +1745,10 @@ void Ranged_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_
 void Melee_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy);
 
 // WZD o113p06
-void Apply_Battle_Unit_Damage_From_Spell(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t damage_types[], int16_t attack_override_flag);
+void Compute_Battle_Unit_Damage_From_Spell(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t damage_types[], int16_t attack_override_flag);
 
 // WZD o113p07
-void BU_ApplyDamage(int16_t battle_unit_idx, int16_t damage_types[]);
+void Battle_Unit_Commit_Damage(int16_t battle_unit_idx, int16_t damage_types[]);
 
 // WZD o113p08
 int16_t Check_Attack_Ranged(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx);
@@ -1817,7 +1817,7 @@ void BU_Init_Hero_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit);
 void BU_Apply_Battlefield_Effects__WIP(struct s_BATTLE_UNIT * battle_unit);
 
 // WZD o116p12
-// sub_9A43E()
+// NX_Unit_Has_Spell_As_Enchantment_Or_Item_Power()
 
 
 
@@ -1826,10 +1826,10 @@ void BU_Apply_Battlefield_Effects__WIP(struct s_BATTLE_UNIT * battle_unit);
 */
 
 // WZD o122p01
-int16_t CMB_AttackRoll__SEGRAX(uint16_t attack_strength, uint16_t to_hit);
+int16_t Combat_Roll_Damage_Dealt(int16_t attack_strength, int16_t to_hit);
 
 // WZD o122p02
-uint16_t CMB_DefenseRoll__SEGRAX(uint16_t defense, uint16_t to_block);
+int16_t Combat_Roll_Damage_Blocked(int16_t defense, int16_t to_block);
 
 // WZD o122p03
 int16_t Combat_Resistance_Check(struct s_BATTLE_UNIT battle_unit, int16_t resistance_modifier, int16_t magic_realm);
@@ -1838,13 +1838,13 @@ int16_t Combat_Resistance_Check(struct s_BATTLE_UNIT battle_unit, int16_t resist
 int16_t Combat_Effective_Resistance(struct s_BATTLE_UNIT battle_unit, int16_t magic_realm);
 
 // WZD o122p05
-// BU_GetATKImmFlags()
+// static int16_t Battle_Unit_Attack_Immunities(int16_t battle_unit_idx, int16_t attack_mode);
 
 // WZD o122p06
 void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t Target_Damage_Array[], int16_t Counter_Damage_Array[], int16_t ranged_attack_flag, int16_t SpFx);
 
 // WZD o122p07
-void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_count, int16_t defender_battle_unit_idx, int16_t attack_mode, int16_t damage_array[], int16_t Counter, int16_t SpFx);
+void Battle_Unit_Process_Attack(int16_t attacker_battle_unit_idx, int16_t figure_count, int16_t defender_battle_unit_idx, int16_t attack_mode, int16_t damage_array[], int16_t Counter, int16_t SpFx);
 
 // WZD o122p08
 int16_t Battle_Unit_Defense_Special(int16_t battle_unit_idx, int16_t attack_type, int16_t attack_immunities, int16_t attack_attributes, int16_t magic_realm);
@@ -1857,9 +1857,6 @@ void Calc_Battlefield_Bonuses(int16_t combat_structure);
 
 // WZD o122p11
 void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy);
-
-// WZD o122p12
-int16_t Range_To_Battle_Unit(int16_t BU_1, int16_t BU_2);
 
 // WZD o122p12
 int16_t Range_To_Battle_Unit(int16_t BU_1, int16_t BU_2);

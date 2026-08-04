@@ -935,7 +935,7 @@ void Auto_Do_Combat_Turn(int16_t player_idx)
                 AI_BU_ProcessAction(itr_battle_units, rally_x, rally_y);  /* in a city with a wall, so behave defensively */
             }
 
-            // OGBUG: this is not set anywhere - BU_ApplyDamage does not set it at the right time either
+            // OGBUG: this is not set anywhere - Battle_Unit_Commit_Damage does not set it at the right time either
             if(_combat_winner != ST_UNDEFINED) { break; }
         }
     }
@@ -955,7 +955,7 @@ void Auto_Do_Combat_Turn(int16_t player_idx)
                 AI_BU_AssignAction(itr_battle_units, bua_Ready);
                 AI_BU_ProcessAction(itr_battle_units, rally_x, rally_y);
                 
-                // OGBUG: this is not set anywhere - BU_ApplyDamage does not set it at the right time either
+                // OGBUG: this is not set anywhere - Battle_Unit_Commit_Damage does not set it at the right time either
                 if(_combat_winner != ST_UNDEFINED) { break; }
             }
         }

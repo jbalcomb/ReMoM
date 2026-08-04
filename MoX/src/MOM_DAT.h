@@ -1078,9 +1078,9 @@ struct s_SPELL_DATA
             /* 20 */  int16_t oe_idx;           // scc_Global_Enchantment (9):  index into _players[].Globals[] (holds player_num == player_idx + 1)
         };
         struct {
-            /* 20 */  uint8_t  strength;        // scc_Direct_Damage_* (4, 22):  base damage / attack strength   Apply_Battle_Unit_Damage_From_Spell()
-            /* 21 */  uint8_t  immunities;      //                               immunity flags                  Apply_Battle_Unit_Damage_From_Spell()
-            /* 22 */  uint16_t attributes;      //                               ATK_FLAGS attributes            Apply_Battle_Unit_Damage_From_Spell()
+            /* 20 */  uint8_t  strength;        // scc_Direct_Damage_* (4, 22):  base damage / attack strength   Compute_Battle_Unit_Damage_From_Spell()
+            /* 21 */  uint8_t  immunities;      //                               immunity flags                  Compute_Battle_Unit_Damage_From_Spell()
+            /* 22 */  uint16_t attributes;      //                               ATK_FLAGS attributes            Compute_Battle_Unit_Damage_From_Spell()
         };
     };
     /* 24 */

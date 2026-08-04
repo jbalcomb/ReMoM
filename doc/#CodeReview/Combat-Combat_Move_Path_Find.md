@@ -101,7 +101,7 @@ Row selection matches the asm at all three phases: left edge takes row 1 (asm:10
 
 **Caveat:** contiguity and identical values prove the *layout* is the same, not that the OG C declared a 2-D array. Three separately-declared `int16_t X[8]` globals in one translation unit also land contiguously in declaration order, and IDA labels each referenced address either way. The 2-D reading is a defensible deduction, not a provable one.
 
-## Observation — the asm sets a return value on the bail path
+## Not a divergence — the `xor ax, ax` on the bail path is a compiler artifact
 
 ```
 asm:34   cmp     [byte ptr bx], e_INF
@@ -110,9 +110,23 @@ asm:36   xor     ax, ax
 asm:37   jmp     @@Done
 ```
 
-`ax` is zeroed only on the early-bail path; the normal exit at asm:434-441 falls into the shared epilogue without setting it. That is the signature of an `int`-returning function with `return 0;` on one branch and no return statement at the end. Production declares `void` ([101](../../MoM/src/CMBTMVPT.c#L101)).
+An earlier pass recorded this as evidence that the OG C returned `int`. It isn't. Three checks, all negative:
 
-No caller reads a result — all five call sites use it as a statement and read `movement_path_grid_cell_count` afterwards instead ([Combat.c:3164](../../MoM/src/Combat.c#L3164), [CMBTAI.c:715](../../MoM/src/CMBTAI.c#L715), [1533](../../MoM/src/CMBTAI.c#L1533), [1567](../../MoM/src/CMBTAI.c#L1567), [1744](../../MoM/src/CMBTAI.c#L1744)). Recorded rather than raised as a finding: the return type is a judgement about what the OG C declared, and the bytes are consistent with either an `int` function nobody uses or a `void` function where `ax` happens to be cleared.
+**Nothing else sets `ax` on an exit path.** asm:36 is the only `xor ax, ax` in the listing. Every other `mov ax, …` — roughly fifty of them — is intermediate work: loop counters, `ctr` reads, array element loads, coordinate fetches.
+
+**`@@Done` loads no result.** asm:514-519 is `pop itr_adjacent` / `pop adjacent_idx` / `mov sp, bp` / `pop bp` / `retf`, with no store to `ax` before it. On the normal exit `ax` still holds `[bp+itr]` from the loop test at asm:511 — garbage. A function that genuinely returned `int` would load a value on every path, not one of two.
+
+**No caller reads it.** All five call sites discard `ax` and consult the global instead:
+
+| call site | next instruction |
+| --- | --- |
+| `ovr091/Move_Battle_Unit.asm:143` | `cmp [movement_path_grid_cell_count], 0` |
+| `ovr114/Do_Auto_Unit_Turn.asm:129` | `cmp [bp+target_battle_unit_idx], e_ST_UNDEFINED` |
+| `ovr114/Do_Auto_Unit_Turn.asm:178` | `cmp [movement_path_grid_cell_count], 0` |
+| `ovr114/Auto_Move_Unit.asm:153` | `cmp [movement_path_grid_cell_count], 0` |
+| `ovr114/AI_GetCombatRallyPt.asm:178` | `xor _SI_itr, _SI_itr` |
+
+Production's `void` at [101](../../MoM/src/CMBTMVPT.c#L101) is correct. The same test clears `Move_Battle_Unit` and `Battle_Unit_Process_Attack` — see [Combat-Move_Battle_Unit.md](Combat-Move_Battle_Unit.md) and [Combat-Battle_Unit_Process_Attack.md](Combat-Battle_Unit_Process_Attack.md).
 
 ## Faithful — verified against the asm, leave alone
 

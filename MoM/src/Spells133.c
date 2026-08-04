@@ -283,7 +283,7 @@ void Apply_Wrack(int16_t player_idx)
 
                     damage_types[0] = Damage_Per_Unit_Array[Damaged_Unit_Array[itr2]];
 
-                    BU_ApplyDamage(Damaged_Unit_Array[itr2], &damage_types[0]);
+                    Battle_Unit_Commit_Damage(Damaged_Unit_Array[itr2], &damage_types[0]);
 
                 }
 
@@ -389,11 +389,11 @@ void Apply_Call_Lightning(int16_t player_idx)
 
             Mark_Time();
 
-            Apply_Battle_Unit_Damage_From_Spell(spl_Wall_Of_Stone, itr, &damage_types[0], 0);
+            Compute_Battle_Unit_Damage_From_Spell(spl_Wall_Of_Stone, itr, &damage_types[0], 0);
 
             Animate_Lightning_Bolt(battle_units[itr].cgx, battle_units[itr].cgy, ST_UNDEFINED);
 
-            BU_ApplyDamage(itr, &damage_types[0]);
+            Battle_Unit_Commit_Damage(itr, &damage_types[0]);
 
             Release_Time((Random(10) + 3));
 
@@ -531,12 +531,11 @@ void Wall_Rise(int16_t spell_idx, int16_t caster_idx)
 // WZD o133p06
 void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spell_idx, char * title)
 {
-    int16_t di = 0;
-    struct s_BATTLE_UNIT * bu_ptr = NULL;
+    int16_t string_length = 0;
     char * ut_name = NULL;
     int16_t Display_Counter = 0;
     int16_t Hero_Slot = 0;
-    char Temp_String[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char buffer[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     if(type == 5)
     {
         stu_strcpy(GUI_NearMsgString, cnst_CounterMsg3); /* "The power of " */
@@ -563,8 +562,8 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
     else
     {
         stu_strcpy(GUI_NearMsgString, _players[type].name);
-        di = (int16_t)strlen(_players[type].name);
-        if(_players[type].name[di - 1] == 's')
+        string_length = stu_strlen(_players[type].name);
+        if(_players[type].name[string_length - 1] == 's')
         {
             stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
         }
@@ -581,14 +580,13 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
     }
     else if(caster_idx < CASTER_IDX_BASE)
     {
-        bu_ptr = &battle_units[caster_idx];
-        Hero_Slot = _UNITS[battle_units[battle_unit_idx].unit_idx].Hero_Slot;
+        Hero_Slot = _UNITS[battle_units[caster_idx].unit_idx].Hero_Slot;
         if(Hero_Slot > -1)
         {
-            stu_strcpy(Temp_String, _players[battle_units[battle_unit_idx].controller_idx].Heroes[Hero_Slot].name);
-            stu_strcat(GUI_NearMsgString, Temp_String);
-            di = (int16_t)strlen(Temp_String);
-            if(Temp_String[di - 1] == 's')
+            stu_strcpy(buffer, _players[battle_units[caster_idx].controller_idx].Heroes[Hero_Slot].name);
+            stu_strcat(GUI_NearMsgString, buffer);
+            string_length = stu_strlen(buffer);
+            if(buffer[string_length - 1] == 's')
             {
                 stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
             }
@@ -600,10 +598,10 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
         else
         {
             stu_strcat(GUI_NearMsgString, cnst_CounterMsg7); /* "the " */
-            ut_name = *_unit_type_table[_UNITS[battle_units[battle_unit_idx].unit_idx].type].name;
+            ut_name = *_unit_type_table[_UNITS[battle_units[caster_idx].unit_idx].type].name;
             stu_strcat(GUI_NearMsgString, ut_name);
-            di = (int16_t)strlen(ut_name);
-            if(ut_name[di - 1] == 's')
+            string_length = stu_strlen(ut_name);
+            if(ut_name[string_length - 1] == 's')
             {
                 stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
             }
@@ -616,8 +614,8 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
     else
     {
         stu_strcat(GUI_NearMsgString, _players[caster_idx - CASTER_IDX_BASE].name);
-        di = (int16_t)strlen(_players[caster_idx - CASTER_IDX_BASE].name);
-        if(_players[caster_idx - CASTER_IDX_BASE].name[di - 1] == 's')
+        string_length = stu_strlen(_players[caster_idx - CASTER_IDX_BASE].name);
+        if(_players[caster_idx - CASTER_IDX_BASE].name[string_length - 1] == 's')
         {
             stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
         }
@@ -626,8 +624,8 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
             stu_strcat(GUI_NearMsgString, cnst_Possessive); /* "'s " */
         }
     }
-    stu_strcpy(Temp_String, spell_data_table[spell_idx].name);
-    stu_strcat(GUI_NearMsgString, Temp_String);
+    stu_strcpy(buffer, spell_data_table[spell_idx].name);
+    stu_strcat(GUI_NearMsgString, buffer);
     stu_strcat(GUI_NearMsgString, cnst_CounterMsg6); /* " spell to fizzle." */
     if(_auto_combat_flag == ST_FALSE)
     {
@@ -1785,7 +1783,7 @@ void Vortex_Move_And_Attack(int vortex_idx, int next_cgx, int next_cgy)
             damage_types[1] = 0;
             damage_types[2] = 0;
 
-            BU_ApplyDamage(battle_unit_idx, &damage_types[0]);
+            Battle_Unit_Commit_Damage(battle_unit_idx, &damage_types[0]);
 
         }
 
@@ -1803,9 +1801,9 @@ void Vortex_Move_And_Attack(int vortex_idx, int next_cgx, int next_cgy)
         )
         {
 
-            Apply_Battle_Unit_Damage_From_Spell(spl_Lightning_Bolt, battle_unit_idx, &damage_types[0], 0);
+            Compute_Battle_Unit_Damage_From_Spell(spl_Lightning_Bolt, battle_unit_idx, &damage_types[0], 0);
 
-            BU_ApplyDamage(battle_unit_idx, &damage_types[0]);
+            Battle_Unit_Commit_Damage(battle_unit_idx, &damage_types[0]);
 
         }
 
@@ -2121,21 +2119,21 @@ void Apply_Call_Chaos__WIP(int16_t player_idx, int16_t effects[])
                 case 4:
                 {
 
-                    Apply_Battle_Unit_Damage_From_Spell(spl_Fire_Bolt, battle_unit_idx, &damage_types[0], 15);
+                    Compute_Battle_Unit_Damage_From_Spell(spl_Fire_Bolt, battle_unit_idx, &damage_types[0], 15);
 
                 } break;
 
                 case 5:
                 {
 
-                    Apply_Battle_Unit_Damage_From_Spell(spl_Warp_Lightning, battle_unit_idx, &damage_types[0], 0);
+                    Compute_Battle_Unit_Damage_From_Spell(spl_Warp_Lightning, battle_unit_idx, &damage_types[0], 0);
 
                 } break;
 
                 case 6:
                 {
 
-                    Apply_Battle_Unit_Damage_From_Spell(spl_Doom_Bolt, battle_unit_idx, &damage_types[0], 0);
+                    Compute_Battle_Unit_Damage_From_Spell(spl_Doom_Bolt, battle_unit_idx, &damage_types[0], 0);
 
                 } break;
 

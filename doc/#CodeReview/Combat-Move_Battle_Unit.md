@@ -118,7 +118,7 @@ Production ([3159](../../MoM/src/Combat.c#L3159), [3163](../../MoM/src/Combat.c#
 
 **Debug asserts.** The four `assert()` calls at [3184-3187](../../MoM/src/Combat.c#L3184-L3187) have no counterpart.
 
-**Void vs. int return.** The early bail sets a return value (`xor ax, ax`, `Move_Battle_Unit.asm:147`) where production is `void` — the same pattern recorded for `Combat_Move_Path_Find`.
+**Not a divergence — the `xor ax, ax` at `Move_Battle_Unit.asm:147` is a compiler artifact.** `@@Done` (asm:521) drops straight into `pop`/`pop`/`mov sp, bp`/`pop bp`/`retf` with no load of `ax`, so the normal exit returns nothing at all; every other `mov ax, …` in the listing is intermediate array-index or field-load work, not a return value. Neither caller reads the result — `Battle_Unit_Action.asm:249-251` discards it, and `Move_Confused.asm:57-60` overwrites `ax` on the next instruction. Production's `void` is correct.
 
 ## D2 — a dead argument the reconstruction cannot express
 
