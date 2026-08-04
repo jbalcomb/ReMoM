@@ -110,7 +110,7 @@
 - [ ] AITP_RecallHero — impl (Combat.c:14876), needs done-done review; AI Combat Spell layer
 - [ ] AITP_WarpCreature — impl (Combat.c:12196), needs done-done review; AI Combat Spell layer
 - [ ] AITP_WarpWood — impl (Combat.c:12144), needs done-done review; AI Combat Spell layer
-- [ ] Battle_Unit_Action — renamed from Battle_Unit_Action__WIP; impl (Combat.c:3418), needs done-done review (name verified 2026-07-21)
+- [x] Battle_Unit_Action — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Action.md; renamed from Battle_Unit_Action__WIP, Combat.c:3259; 3 findings raised and fixed across 2 subfunctions, incl. Battle_Unit_Has_Flight dropping _UNITS[].enchantments so overland Flight never registered; Battle_Unit_Is_Within_City compared and faithful; builds clean 2026-08-04)
 - [x] Battle_Unit_Attack — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Attack.md; renamed from Battle_Unit_Attack__WIP, Combat.c:17247; 9 findings raised and fixed across the function and 3 subfunctions, incl. Wall Crusher never writing the destroyed wall and 9 of 13 projectile types rendering as a lightning bolt with no sound; Melee_Animation, Set_Gibs, Clear_Gibs and Reload_Melee_Sound compared and faithful; builds clean 2026-08-04)
 - [ ] BU_Apply_Battlefield_Effects__WIP
 - [x] BU_ApplyDamage  AKA BU_ApplyDamage__WIP__SEGRAX
@@ -120,7 +120,7 @@
 - [ ] BU_GetInstaMoveType__WIP
 - [ ] BU_HasSpellAbility__WIP
 - [x] BU_IsVisible__STUB
-- [ ] BU_MeleeWallCheck — renamed from BU_MeleeWallCheck__WIP; impl (Combat.c:16682), needs done-done review (name verified 2026-07-21)
+- [x] BU_MeleeWallCheck — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Action.md; renamed Check_Attack_Melee_City_Wall, Combat.c:14086; R3 split three Move_Flags tests back apart per asm:23/32/41; Flying Fortress OGBUG confirmed legit, teleport/merging OGBUG disproved; builds clean 2026-08-04)
 - [ ] BU_MoveConfused__WIP
 - [x] BU_ProcessAttack__WIP — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Process_Attack.md; renamed Battle_Unit_Process_Attack, Combat.c:16429; 24 findings raised and fixed across the function and 12 subfunctions, incl. an infinite loop and a damage-doubling heal; builds clean 2026-08-04)
 - [x] BU_SetBaseAnims__WIP — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Set_Animation_Flags, Combat.c:9411; Param0 -> unit_type union arm fixed; D2 dead-argument divergence recorded)

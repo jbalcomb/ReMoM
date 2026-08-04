@@ -1760,7 +1760,7 @@ void Deploy_Battle_Units(int16_t player_idx);
 void BU_SummonDemon__SEGRAX(int16_t caster_idx);
 
 // WZD o113p11
-int16_t BU_MeleeWallCheck(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);
+int16_t Check_Attack_Melee_City_Wall(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);
 
 // WZD o113p12
 void Apply_Mana_Leak(void);

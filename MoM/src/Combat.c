@@ -3256,7 +3256,6 @@ void Switch_Active_Battle_Unit(int16_t battle_unit_idx)
 
 
 // WZD s91p06
-/* GEMINI */
 void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy)
 {
     int16_t battle_unit_idx = 0;
@@ -3267,31 +3266,25 @@ void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy)
     int16_t delta_y = 0;
     int16_t ranged_group = 0;
     int16_t Unused_Local = 0;
-
     battle_unit_idx = _battle_unit_idx;
-
     /* Get target unit/object index from combat grid */
     combat_grid_target = g_combat_grid_action_map[cgy][cgx];
-
     if(combat_grid_target != 99)
     {
         if(combat_grid_target < 0)
         {
             goto loc_MoveCheck;
         }
-
         /* If target is a unit, check if it's an active enemy */
         if(battle_units[combat_grid_target].controller_idx == battle_units[battle_unit_idx].controller_idx)
         {
             goto loc_MoveCheck;
         }
-
         if(battle_units[combat_grid_target].status != bus_Active)
         {
             goto loc_MoveCheck;
         }
     }
-
     /* Target is either a wall (99) or an active enemy unit */
     if(combat_grid_target == 99)
     {
@@ -3303,18 +3296,14 @@ void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy)
         target_cgx = battle_units[combat_grid_target].cgx;
         target_cgy = battle_units[combat_grid_target].cgy;
     }
-
     /* Calculate Manhattan distance components */
     delta_x = abs(target_cgx - battle_units[battle_unit_idx].cgx);
     delta_y = abs(target_cgy - battle_units[battle_unit_idx].cgy);
-
     Unused_Local = -2;
-
     if(battle_units[battle_unit_idx].movement_points <= 0)
     {
         return;
     }
-
     if(combat_grid_target == 99)
     {
         /* Wall/Object attack logic */
@@ -3339,7 +3328,7 @@ void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy)
             if(delta_x <= 1 && delta_y <= 1)
             {
                 /* Adjacent melee check (includes flight/wall physics) */
-                if(BU_MeleeWallCheck(battle_unit_idx, combat_grid_target) == ST_TRUE)
+                if(Check_Attack_Melee_City_Wall(battle_unit_idx, combat_grid_target) == ST_TRUE)
                 {
                     Battle_Unit_Attack(battle_unit_idx, combat_grid_target, target_cgx, target_cgy);
                 }
@@ -3364,9 +3353,7 @@ void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy)
             }
         }
     }
-
     return;
-
 loc_MoveCheck:
     /* Move logic for empty tiles */
     if(combat_grid_target == -1)
@@ -3376,7 +3363,6 @@ loc_MoveCheck:
             Move_Battle_Unit(battle_unit_idx, cgx, cgy);
         }
     }
-
     return;
 }
 
@@ -5325,7 +5311,7 @@ void Assign_Mouse_Images(void)
                         )
                         {
 
-                            if(BU_MeleeWallCheck(_active_battle_unit, scanned_battle_unit_idx) == ST_TRUE)
+                            if(Check_Attack_Melee_City_Wall(_active_battle_unit, scanned_battle_unit_idx) == ST_TRUE)
                             {
 
                                 _combat_mouse_grid->image_num = crsr_Melee;
@@ -5928,125 +5914,72 @@ int16_t Battle_Unit_Is_Airborne(int16_t battle_unit_idx)
 
 
 // WZD o98p18
-// drake178: BU_IsFlying()
-/*
-; returns 1 if the target unit can fly in battle, or 0
-; if not
-;
-; BUG: considers the Wind Walking spell a form of
-; flight, but ignores Demon Wings unless it sets the
-; flight movement flag in the BU record
-*/
-/*
-
-has UE_WIND_WALKING, UE_FLIGHT, MV_FLYING
-not bue_Web, bue_Black_Sleep
-
-*/
 int16_t Battle_Unit_Has_Flight(int16_t battle_unit_idx)
 {
     uint32_t enchantments = 0;
     int16_t has_flight = 0;  // DNE in Dasm
-
     has_flight = ST_FALSE;
-
-    enchantments = (battle_units[battle_unit_idx].enchantments | battle_units[battle_unit_idx].item_enchantments);
-
+    enchantments = (battle_units[battle_unit_idx].enchantments | battle_units[battle_unit_idx].item_enchantments | _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments);
     if((enchantments & UE_WIND_WALKING) != 0)
     {
-
         has_flight = ST_TRUE;
-        
     }
-
     if((enchantments & UE_FLIGHT) != 0)
     {
-
         has_flight = ST_TRUE;
-        
     }
-
     if((_unit_type_table[_UNITS[battle_units[battle_unit_idx].unit_idx].type].Move_Flags & MV_FLYING) != 0)
     {
-
         has_flight = ST_TRUE;
-        
     }
-
     if((battle_units[battle_unit_idx].Move_Flags & MV_FLYING) != 0)
     {
-
         has_flight = ST_TRUE;
-
     }
-
     if((battle_units[battle_unit_idx].Combat_Effects & bue_Web) != 0)
     {
-
         has_flight = ST_FALSE;
-
     }
-
     if((battle_units[battle_unit_idx].Combat_Effects & bue_Black_Sleep) != 0)
     {
-
         has_flight = ST_FALSE;
-
     }
-
     return has_flight;
-
 }
 
 
 // WZD o98p19
-// drake178: BU_MeleeFlightCheck()
 /*
-; returns 1 if the specified unit can initiate melee
-; against the target, or 0 if it can't
-;
-; BUG: considers Wind Walking a form of flight
-; BUG: ignores Demon Wings unless it sets the flight
-;  movement flag (which it does, but still)
-*/
-/*
-
 ¿ compliment to Check_Attack_Ranged() ?
-
 */
 int16_t Check_Attack_Melee(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx)
 {
     int16_t result = 0;
     int16_t defender_has_flight = 0;
     int16_t attacker_has_flight = 0;
-
     result = ST_FALSE;
-
     attacker_has_flight = Battle_Unit_Has_Flight(attacker_battle_unit_idx);
-
     defender_has_flight = Battle_Unit_Has_Flight(defender_battle_unit_idx);
-
-    if(
-        (attacker_has_flight == ST_TRUE)
-        ||
-        (defender_has_flight != ST_TRUE)
-        ||
-        (battle_units[attacker_battle_unit_idx].ranged_type > rat_NONE)
-    )
+    if(attacker_has_flight == ST_TRUE)
     {
-
         result = ST_TRUE;
-
+    }
+    else if(defender_has_flight == ST_TRUE)
+    {
+        if(battle_units[attacker_battle_unit_idx].ranged_type > rat_NONE)
+        {
+            result = ST_TRUE;
+        }
+        else
+        {
+            result = ST_FALSE;
+        }
     }
     else
     {
-
-        result = ST_FALSE;
-
+        result = ST_TRUE;
     }
-
     return result;
-
 }
 
 
@@ -14150,60 +14083,49 @@ void BU_SummonDemon__SEGRAX(int16_t caster_idx)
 
 
 // WZD o113p11
-/*
-called in Assign_Mouse_Images() - if ST_TRUE, sets crsr_Melee
-called in Battle_Unit_Action()  - if ST_TRUE, calls Battle_Unit_Attack()
-same logic block?
-    Check_Attack_Melee()
-    delta_x <= 1, delta_y <= 1
-    BU_MeleeWallCheck()
-
-OGBUG? teleporting and merging units can attack through walls
-OGBUG: Flying Fortress should be considered here, but it isn't
-*/
-int16_t BU_MeleeWallCheck(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx)
+int16_t Check_Attack_Melee_City_Wall(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx)
 {
-
     if(battlefield->walled != 1)
     {
         return ST_TRUE;
     }
-
     /* OGBUG: Teleporting and merging units can attack through walls according to the code below */
-    if(battle_units[src_battle_unit_idx].Move_Flags & (MV_FLYING | MV_TELEPORT | MV_MERGING))
+    if((battle_units[src_battle_unit_idx].Move_Flags & MV_FLYING) != 0)
     {
         return ST_TRUE;
     }
-
-    if(battle_units[src_battle_unit_idx].Abilities & UA_NONCORPOREAL)
+    if((battle_units[src_battle_unit_idx].Move_Flags & MV_TELEPORT) != 0)
     {
         return ST_TRUE;
     }
-
+    if((battle_units[src_battle_unit_idx].Move_Flags & MV_MERGING) != 0)
+    {
+        return ST_TRUE;
+    }
+    if((battle_units[src_battle_unit_idx].Abilities & UA_NONCORPOREAL) != 0)
+    {
+        return ST_TRUE;
+    }
     /* If the target is not inside the city, walls do not apply */
     if(Battle_Unit_Is_Within_City(dst_battle_unit_idx) != 1)
     {
         return ST_TRUE;
     }
-
     /* If the attacker is already inside the city, walls do not apply */
     if(Battle_Unit_Is_Within_City(src_battle_unit_idx) != 0)
     {
         return ST_TRUE;
     }
-
     /* Check for the city gate at (8, 12) */
     if(battle_units[dst_battle_unit_idx].cgx == CGX_GATE && battle_units[dst_battle_unit_idx].cgy == CGY_GATE)
     {
         return ST_TRUE;
     }
-
     /* Check if the specific cell occupied by the target contains a city wall section */
     if(Combat_Grid_Cell_Has_City_Wall(battle_units[dst_battle_unit_idx].cgx, battle_units[dst_battle_unit_idx].cgy) != 1)
     {
         return ST_TRUE;
     }
-
     /* Cannot attack through the wall */
     return ST_FALSE;
 }
