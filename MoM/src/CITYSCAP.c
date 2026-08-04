@@ -679,7 +679,7 @@ void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart)
     // BUGBUG  Reset_Animation_Frame(cityscape_roads_horizontal_mask_seg, 0);
     Reset_Animation_Frame(cityscape_roads_horizontal_mask_seg);
 
-    Draw_Picture_To_Bitmap(cityscape_roads_horizontal_mask_seg, GfxBuf_2400B);
+    Draw_Picture_To_Bitmap(cityscape_roads_horizontal_mask_seg, scratch_bitmap_seg);
 
     Cityscape_Roads_2__WIP(cityscape_pict_seg);
 
@@ -1414,32 +1414,32 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
                 {
                     src_pict_seg = cityscape_rubble_seg[bldg_data_table[cr_bldg_idx].shape];  // shape: {2x2, 2x3, 3x2, 3x3}
                     Set_Animation_Frame(src_pict_seg, cityscape_bldg_anim_ctr);
-                    FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-                    Draw_Picture_To_Bitmap(src_pict_seg, GfxBuf_2400B);
+                    FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
+                    Draw_Picture_To_Bitmap(src_pict_seg, scratch_bitmap_seg);
                 }
                 else
                 {
                     Set_Animation_Frame(bldg_picts_seg[cr_bldg_idx], cityscape_bldg_anim_ctr);
-                    Draw_Picture_To_Bitmap(bldg_picts_seg[cr_bldg_idx], GfxBuf_2400B);
+                    Draw_Picture_To_Bitmap(bldg_picts_seg[cr_bldg_idx], scratch_bitmap_seg);
                     if(cr_bldg_idx == new_bldg_idx)
                     {
-                        Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
+                        Vanish_Bitmap(scratch_bitmap_seg, cityscape_build_anim_ctr);
                     }
-                    FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+                    FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
                 }
 
-                Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
+                Draw_Picture(col_sx, (row_sy - 32), scratch_bitmap_seg);
 
                 if((cr_bldg_idx >= bt_Shrine) && (cr_bldg_idx <= bt_Parthenon) && (_CITIES[city_idx].enchantments[EVIL_PRESENCE] != ST_FALSE))
                 {
                     Set_Animation_Frame(cityscape_evilpresence_seg, cityscape_bldg_anim_ctr);
-                    Draw_Picture_To_Bitmap(cityscape_evilpresence_seg, GfxBuf_2400B);
+                    Draw_Picture_To_Bitmap(cityscape_evilpresence_seg, scratch_bitmap_seg);
                     if(cr_bldg_idx == new_bldg_idx)
                     {
-                        Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
+                        Vanish_Bitmap(scratch_bitmap_seg, cityscape_build_anim_ctr);
                     }
-                    FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-                    Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
+                    FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
+                    Draw_Picture(col_sx, (row_sy - 32), scratch_bitmap_seg);
                 }
             }
             /*
@@ -1453,13 +1453,13 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
             if((cr_bldg_idx == bt_Dark_Rituals) && (bldg_idx != bt_Dark_Rituals))
             {
                 Set_Animation_Frame(cityscape_darkrituals_seg, cityscape_bldg_anim_ctr);
-                Draw_Picture_To_Bitmap(cityscape_darkrituals_seg, GfxBuf_2400B);
+                Draw_Picture_To_Bitmap(cityscape_darkrituals_seg, scratch_bitmap_seg);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
+                    Vanish_Bitmap(scratch_bitmap_seg, cityscape_build_anim_ctr);
                 }
-                FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-                Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
+                FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
+                Draw_Picture(col_sx, (row_sy - 32), scratch_bitmap_seg);
                 Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Dark_Rituals, bp_2x3);
             }
             /*
@@ -1472,13 +1472,13 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
             if((cr_bldg_idx == bt_Summoning_Circle) && (bldg_idx != bt_Summoning_Circle))
             {
                 Set_Animation_Frame(cityscape_summon_circle_seg, cityscape_bldg_anim_ctr);
-                Draw_Picture_To_Bitmap(cityscape_summon_circle_seg, GfxBuf_2400B);
+                Draw_Picture_To_Bitmap(cityscape_summon_circle_seg, scratch_bitmap_seg);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
+                    Vanish_Bitmap(scratch_bitmap_seg, cityscape_build_anim_ctr);
                 }
-                FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-                Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
+                FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
+                Draw_Picture(col_sx, (row_sy - 32), scratch_bitmap_seg);
                 Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Summoning_Circle, bp_2x3);
             }
             /*
@@ -1491,13 +1491,13 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
             if((cr_bldg_idx == bt_Earth_Gate) && (bldg_idx != bt_Earth_Gate))
             {
                 Set_Animation_Frame(cityscape_earthgate_seg, cityscape_bldg_anim_ctr);
-                Draw_Picture_To_Bitmap(cityscape_earthgate_seg, GfxBuf_2400B);
+                Draw_Picture_To_Bitmap(cityscape_earthgate_seg, scratch_bitmap_seg);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
+                    Vanish_Bitmap(scratch_bitmap_seg, cityscape_build_anim_ctr);
                 }
-                FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-                Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
+                FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
+                Draw_Picture(col_sx, (row_sy - 32), scratch_bitmap_seg);
                 Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Earth_Gate, bp_2x2);
             }
             /*
@@ -1510,14 +1510,14 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
             if((cr_bldg_idx == bt_Stream_Of_Life) && (bldg_idx != bt_Stream_Of_Life))
             {
                 Set_Animation_Frame(cityscape_streamoflife_seg, cityscape_bldg_anim_ctr);
-                Draw_Picture_To_Bitmap(cityscape_streamoflife_seg, GfxBuf_2400B);
+                Draw_Picture_To_Bitmap(cityscape_streamoflife_seg, scratch_bitmap_seg);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
+                    Vanish_Bitmap(scratch_bitmap_seg, cityscape_build_anim_ctr);
                 }
-                FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-                FLIC_Set_LoopFrame_1(GfxBuf_2400B);  // NOTE: definitely duplicated
-                Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
+                FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
+                FLIC_Set_LoopFrame_1(scratch_bitmap_seg);  // NOTE: definitely duplicated
+                Draw_Picture(col_sx, (row_sy - 32), scratch_bitmap_seg);
                 Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Stream_Of_Life, bp_2x2);
             }
             /*
@@ -1530,13 +1530,13 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
             if((cr_bldg_idx == bt_Astral_Gate) && (bldg_idx != bt_Astral_Gate))
             {
                 Set_Animation_Frame(cityscape_astralgate_seg, cityscape_bldg_anim_ctr);
-                Draw_Picture_To_Bitmap(cityscape_astralgate_seg, GfxBuf_2400B);
+                Draw_Picture_To_Bitmap(cityscape_astralgate_seg, scratch_bitmap_seg);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
+                    Vanish_Bitmap(scratch_bitmap_seg, cityscape_build_anim_ctr);
                 }
-                FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-                Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
+                FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
+                Draw_Picture(col_sx, (row_sy - 32), scratch_bitmap_seg);
                 Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Astral_Gate, bp_2x2);
             }
             /*
@@ -1549,13 +1549,13 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
             if((cr_bldg_idx == bt_Fortress) && (bldg_idx != bt_Fortress))
             {
                 Set_Animation_Frame(cityscape_fortress_seg, cityscape_bldg_anim_ctr);
-                Draw_Picture_To_Bitmap(cityscape_fortress_seg, GfxBuf_2400B);
+                Draw_Picture_To_Bitmap(cityscape_fortress_seg, scratch_bitmap_seg);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
+                    Vanish_Bitmap(scratch_bitmap_seg, cityscape_build_anim_ctr);
                 }
-                FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-                Draw_Picture(col_sx, (row_sy - 47), GfxBuf_2400B);
+                FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
+                Draw_Picture(col_sx, (row_sy - 47), scratch_bitmap_seg);
                 Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Fortress, bp_Fortress);
             }
             /*
@@ -1568,13 +1568,13 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
             if((cr_bldg_idx == bt_Altar_Of_Battle) && (bldg_idx != bt_Altar_Of_Battle))
             {
                 Set_Animation_Frame(cityscape_altarofbattle_seg, cityscape_bldg_anim_ctr);
-                Draw_Picture_To_Bitmap(cityscape_altarofbattle_seg, GfxBuf_2400B);
+                Draw_Picture_To_Bitmap(cityscape_altarofbattle_seg, scratch_bitmap_seg);
                 if(cr_bldg_idx == new_bldg_idx)
                 {
-                    Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
+                    Vanish_Bitmap(scratch_bitmap_seg, cityscape_build_anim_ctr);
                 }
-                FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-                Draw_Picture(col_sx, (row_sy - 32), GfxBuf_2400B);
+                FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
+                Draw_Picture(col_sx, (row_sy - 32), scratch_bitmap_seg);
                 Cityscape_Add_Bldg_To_Fields_Array(col_sx, row_sy, bt_Altar_Of_Battle, bp_2x3);
             }
             /*
@@ -1594,13 +1594,13 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
     if(_CITIES[city_idx].bldg_status[bt_CityWalls] == bs_Built)
     {
         Set_Animation_Frame(cityscape_city_walls_seg, 0);
-        Draw_Picture_To_Bitmap(cityscape_city_walls_seg, GfxBuf_2400B);
+        Draw_Picture_To_Bitmap(cityscape_city_walls_seg, scratch_bitmap_seg);
         if(cr_bldg_idx == new_bldg_idx)
         {
-            Vanish_Bitmap(GfxBuf_2400B, cityscape_build_anim_ctr);
+            Vanish_Bitmap(scratch_bitmap_seg, cityscape_build_anim_ctr);
         }
-        FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-        Draw_Picture(x_start, (y_start + 82), GfxBuf_2400B);
+        FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
+        Draw_Picture(x_start, (y_start + 82), scratch_bitmap_seg);
 
         cityscape_bldg_fields[cityscape_bldg_count].field_bldg_idx = bt_CityWalls;
         cityscape_bldg_fields[cityscape_bldg_count].field_x1 = x_start;

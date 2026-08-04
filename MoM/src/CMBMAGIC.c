@@ -1919,8 +1919,8 @@ int16_t AITP_RecallHero(int16_t player_idx)
         if(_UNITS[bu_ptr->unit_idx].Hero_Slot <= ST_UNDEFINED) continue;
 
         unit_danger = Effective_Battle_Unit_Strength(battle_unit_idx);
-        max_hp = (bu_ptr->Max_Figures * bu_ptr->hits);
-        current_hp = ((bu_ptr->Cur_Figures * bu_ptr->hits) - bu_ptr->front_figure_damage);
+        max_hp = (bu_ptr->figure_max * bu_ptr->hits);
+        current_hp = ((bu_ptr->figure_cnt * bu_ptr->hits) - bu_ptr->front_figure_damage);
         if(current_hp != 0)
         {
             /* Dasm: `imul Max_HP` followed by `cwd` - the product is truncated to 16 bits before the divide */

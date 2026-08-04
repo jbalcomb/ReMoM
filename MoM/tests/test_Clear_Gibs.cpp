@@ -95,12 +95,12 @@ protected:
 
         test_battle_units[0].cgx = 4;
         test_battle_units[0].cgy = 5;
-        test_battle_units[0].Cur_Figures = 6;
+        test_battle_units[0].figure_cnt = 6;
         test_battle_units[0].hits = 4;
 
         test_battle_units[1].cgx = 10;
         test_battle_units[1].cgy = 11;
-        test_battle_units[1].Cur_Figures = 7;
+        test_battle_units[1].figure_cnt = 7;
         test_battle_units[1].hits = 5;
     }
 

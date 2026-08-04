@@ -187,8 +187,8 @@ void Make_Combat_Grid_Battle_Unit_Entities(void)
     */
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-        fig_cnt = battle_units[itr].Cur_Figures;
-        fig_max = battle_units[itr].Max_Figures;
+        fig_cnt = battle_units[itr].figure_cnt;
+        fig_max = battle_units[itr].figure_max;
         for(cur_fig = 0; cur_fig < fig_cnt; cur_fig++)
         {
             Create_Battle_Unit_Entity(
@@ -226,7 +226,7 @@ void Compose_Battle_Unit_Pictures(void)
     int16_t figure_set_idx = 0;
     int16_t frame_num = 0;
 
-    temp_GfxBuf_2400B = GfxBuf_2400B;
+    temp_GfxBuf_2400B = scratch_bitmap_seg;
 
     for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
     {
@@ -245,12 +245,12 @@ void Compose_Battle_Unit_Pictures(void)
         FIGUREX_POINTER
 
         Set_Animation_Frame(figure_pict_set_seg[figure_set_idx], frame_num);
-        GfxBuf_2400B = battle_unit_picts_seg[battle_units[battle_unit_idx].bufpi];
-        Draw_Picture_To_Bitmap(figure_pict_set_seg[figure_set_idx], GfxBuf_2400B);
+        scratch_bitmap_seg = battle_unit_picts_seg[battle_units[battle_unit_idx].bufpi];
+        Draw_Picture_To_Bitmap(figure_pict_set_seg[figure_set_idx], scratch_bitmap_seg);
 
     }
 
-    GfxBuf_2400B = temp_GfxBuf_2400B;
+    scratch_bitmap_seg = temp_GfxBuf_2400B;
 
 }
 

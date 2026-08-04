@@ -246,7 +246,7 @@ void Apply_Wrack(int16_t player_idx)
         )
         {
 
-            for(itr2 = 0; battle_units[itr1].Cur_Figures > itr2; itr2++)
+            for(itr2 = 0; battle_units[itr1].figure_cnt > itr2; itr2++)
             {
                 
                 if(Combat_Resistance_Check(battle_units[itr1], 1, sbr_Death) > 0)
@@ -582,10 +582,10 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
     else if(caster_idx < CASTER_IDX_BASE)
     {
         bu_ptr = &battle_units[caster_idx];
-        Hero_Slot = _UNITS[bu_ptr->unit_idx].Hero_Slot;
+        Hero_Slot = _UNITS[battle_units[battle_unit_idx].unit_idx].Hero_Slot;
         if(Hero_Slot > -1)
         {
-            stu_strcpy(Temp_String, _players[bu_ptr->controller_idx].Heroes[Hero_Slot].name);
+            stu_strcpy(Temp_String, _players[battle_units[battle_unit_idx].controller_idx].Heroes[Hero_Slot].name);
             stu_strcat(GUI_NearMsgString, Temp_String);
             di = (int16_t)strlen(Temp_String);
             if(Temp_String[di - 1] == 's')
@@ -600,7 +600,7 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
         else
         {
             stu_strcat(GUI_NearMsgString, cnst_CounterMsg7); /* "the " */
-            ut_name = *_unit_type_table[_UNITS[bu_ptr->unit_idx].type].name;
+            ut_name = *_unit_type_table[_UNITS[battle_units[battle_unit_idx].unit_idx].type].name;
             stu_strcat(GUI_NearMsgString, ut_name);
             di = (int16_t)strlen(ut_name);
             if(ut_name[di - 1] == 's')
@@ -636,7 +636,7 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
     else
     {
         Play_Standard_Click();
-        for (Display_Counter = 0; Display_Counter < 30; Display_Counter++)
+        for(Display_Counter = 0; Display_Counter < 30; Display_Counter++)
         {
             Mark_Time();
             Set_Page_Off();
@@ -956,236 +956,185 @@ void Combat_Spell_Animation_Generic__WIP(int16_t cgx, int16_t cgy, int16_t anim_
 }
 
 // WZD o133p11
-/* GEMINI */
-void BU_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
+void Battle_Unit_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 {
-    int16_t Frame_Speed = 0;
-    SAMB_ptr Sound_Data_Seg = 0;
-    int16_t Origin_Y = 0;
-    int16_t Origin_X = 0;
-    int16_t Target_Draw_Y = 0;
-    int16_t Target_Draw_X = 0;
-    int16_t Origin_Draw_Y = 0;
-    int16_t Origin_Draw_X = 0;
-
+    int16_t fade_step_per_frame = 0;
+    SAMB_ptr sound_seg = NULL;
+    int16_t origin_cgy = 0;
+    int16_t origin_cgx = 0;
+    int16_t dst_screen_y = 0;
+    int16_t dst_screen_x = 0;
+    int16_t src_screen_y = 0;
+    int16_t src_screen_x = 0;
     int16_t i = 0;
-    struct s_BATTLE_UNIT * bu_ptr = {0};
-    uint32_t Sound_Data_Seg_size = 0;
-
+    uint32_t sound_seg_size = 0;
     /* Get screen coordinates for the unit's current (origin) position */
-    bu_ptr = &battle_units[battle_unit_idx];
-    Combat_Grid_Screen_Coordinates(bu_ptr->cgx, bu_ptr->cgy, 4, 4, &Origin_Draw_X, &Origin_Draw_Y);
-
+    Combat_Grid_Screen_Coordinates(battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, 4, 4, &src_screen_x, &src_screen_y);
     /* Get screen coordinates for the teleport destination (target) */
-    Combat_Grid_Screen_Coordinates(cgx, cgy, 4, 4, &Target_Draw_X, &Target_Draw_Y);
-
+    Combat_Grid_Screen_Coordinates(cgx, cgy, 4, 4, &dst_screen_x, &dst_screen_y);
     /* Adjust drawing offsets to center the unit sprite */
-    Origin_Draw_X -= 13;
-    Target_Draw_X -= 13;
-    Origin_Draw_Y -= 27;
-    Target_Draw_Y -= 27;
-
+    src_screen_x -= 13;
+    dst_screen_x -= 13;
+    src_screen_y -= 27;
+    dst_screen_y -= 27;
     /* Set animation speed based on user settings */
-    if(magic_set.movement_animations != 0)
+    if(magic_set.movement_animations != ST_FALSE)
     {
-        Frame_Speed = 20;
+        fade_step_per_frame = 20;
     }
     else
     {
-        Frame_Speed = 50;
+        fade_step_per_frame = 50;
     }
-
     /* Store original coordinates for math later */
-    Origin_X = bu_ptr->cgx;
-    Origin_Y = bu_ptr->cgy;
-
+    origin_cgx = battle_units[battle_unit_idx].cgx;
+    origin_cgy = battle_units[battle_unit_idx].cgy;
     Mark_Block(World_Data);
-
     /* Handle teleport sound effect */
-    if(magic_set.sound_effects == 1)
+    if(magic_set.sound_effects == ST_TRUE)
     {
-        Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
-        Sound_Data_Seg = LBX_Reload_Next(soundfx_lbx_file__ovr133__1of2, SFX_Teleport, World_Data);
-        Sound_Data_Seg_size = lbxload_entry_length;
-        Play_Sound(Sound_Data_Seg, Sound_Data_Seg_size);
+        Play_Sound(sound_silent_seg, sound_silent_seg_size);
+        // SOUNDFX.LBX, 011  "TELEPOR2"  "Teleport"
+        sound_seg = LBX_Reload_Next(soundfx_lbx_file__ovr133__1of2, SFX_Teleport, World_Data);
+        sound_seg_size = lbxload_entry_length;
+        Play_Sound(sound_seg, sound_seg_size);
     }
-
     /* Prepare for animation: capture unit image and hide the actual unit */
-    BU_CreateImage__SEGRAX(battle_unit_idx);
-    bu_ptr->status = bus_Dead;
-
+    Battle_Unit_Compose_Bitmap(battle_unit_idx);
+    battle_units[battle_unit_idx].status = bus_Dead;
     Release_Block(World_Data);
-
     /* Teleport Animation Loop */
     /* i starts at 150 and decrements; used for cross-fade timing */
-    for (i = 150; i > 0; i -= Frame_Speed)
+    for(i = 150; i > 0; i -= fade_step_per_frame)
     {
         Mark_Time();
         Set_Page_Off();
         Combat_Screen_Draw();
-
         /* Phase 1: Fade out from Origin (i from 150 down to 50) */
         if(i > 50)
         {
-            Create_Picture(45, 42, GfxBuf_2400B);
-            Copy_Bitmap_To_Bitmap(IMG_CMB_FX_Figure, GfxBuf_2400B);
+            Create_Picture(45, 42, scratch_bitmap_seg);
+            Copy_Bitmap_To_Bitmap(scratch_bitmap_seg, battle_unit_scratch_seg);
             /* Vanish_Bitmap(bitmap, visibility_percent) */
-            Vanish_Bitmap(GfxBuf_2400B, i - 50);
-            FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-            Draw_Picture_Windowed(Origin_Draw_X, Origin_Draw_Y, GfxBuf_2400B);
+            Vanish_Bitmap(scratch_bitmap_seg, i - 50);
+            FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
+            Draw_Picture_Windowed(src_screen_x, src_screen_y, scratch_bitmap_seg);
         }
-
         /* Phase 2: Fade in at Target (i from 100 down to 0) */
         if(i <= 100)
         {
-            Create_Picture(45, 42, GfxBuf_2400B);
-            Copy_Bitmap_To_Bitmap(IMG_CMB_FX_Figure, GfxBuf_2400B);
-            Vanish_Bitmap(GfxBuf_2400B, 100 - i);
-            FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-            Draw_Picture_Windowed(Target_Draw_X, Target_Draw_Y, GfxBuf_2400B);
+            Create_Picture(45, 42, scratch_bitmap_seg);
+            Copy_Bitmap_To_Bitmap(scratch_bitmap_seg, battle_unit_scratch_seg);
+            Vanish_Bitmap(scratch_bitmap_seg, 100 - i);
+            FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
+            Draw_Picture_Windowed(dst_screen_x, dst_screen_y, scratch_bitmap_seg);
         }
-
         PageFlip_FX();
         Release_Time(2);
     }
-
     /* Finalize unit state and position */
-    bu_ptr->status = bus_Active;
-    bu_ptr->cgx = cgx;
-    bu_ptr->cgy = cgy;
-
+    battle_units[battle_unit_idx].status = bus_Active;
+    battle_units[battle_unit_idx].cgx = cgx;
+    battle_units[battle_unit_idx].cgy = cgy;
     /* Adjust smooth-scrolling/target offsets so the unit doesn't "jump" visually after move */
-    bu_ptr->target_cgx -= (Origin_X - cgx);
-    bu_ptr->target_cgy -= (Origin_Y - cgy);
-
+    battle_units[battle_unit_idx].target_cgx -= (origin_cgx - cgx);
+    battle_units[battle_unit_idx].target_cgy -= (origin_cgy - cgy);
     Set_Page_Off();
     Combat_Screen_Draw();
     PageFlip_FX();
-
 }
 
 
 // WZD o133p12
-/* GEMINI */
-void BU_TunnelTo(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
+void Battle_Unit_Tunnel(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 {
-    SAMB_ptr Sound_Data_Seg = 0;
-    int16_t Origin_Y = 0;
-    int16_t Origin_X = 0;
-    int16_t Target_Draw_Y = 0;
-    int16_t Target_Draw_X = 0;
-    int16_t Origin_Draw_Y = 0;
-    int16_t Origin_Draw_X = 0;
-
+    SAMB_ptr sound_seg = 0;
+    int16_t origin_cgy = 0;
+    int16_t origin_cgx = 0;
+    int16_t dst_screen_y = 0;
+    int16_t dst_screen_x = 0;
+    int16_t src_screen_y = 0;
+    int16_t src_screen_x = 0;
     int16_t i = 0;
-    struct s_BATTLE_UNIT * ptr_unit = {0};
-    int16_t temp_y = 0;
-    uint32_t Sound_Data_Seg_size = 0;
-
+    uint32_t sound_seg_size = 0;
     /* Calculate screen coordinates for the origin and target */
-    ptr_unit = &battle_units[battle_unit_idx]; /* battle_units is a far pointer to array of s_BATTLE_UNIT (size 0x6E) */
-    
-    Combat_Grid_Screen_Coordinates(ptr_unit->cgx, ptr_unit->cgy, 4, 4, &Origin_Draw_X, &Origin_Draw_Y);
-    Combat_Grid_Screen_Coordinates(cgx, cgy, 4, 4, &Target_Draw_X, &Target_Draw_Y);
-
+    Combat_Grid_Screen_Coordinates(battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, 4, 4, &src_screen_x, &src_screen_y);
+    Combat_Grid_Screen_Coordinates(cgx, cgy, 4, 4, &dst_screen_x, &dst_screen_y);
     /* Adjust drawing offsets (centering the figure) */
-    Origin_Draw_X -= 13;
-    Target_Draw_X -= 13;
-    Origin_Draw_Y -= 27;
-    Target_Draw_Y -= 27;
-
-    Origin_X = ptr_unit->cgx;
-    Origin_Y = ptr_unit->cgy;
-
-    Mark_Block(World_Data); /* World_Data: global block handle */
-
-    if(magic_set.sound_effects == 1)
+    src_screen_x -= 13;
+    dst_screen_x -= 13;
+    src_screen_y -= 27;
+    dst_screen_y -= 27;
+    origin_cgx = battle_units[battle_unit_idx].cgx;
+    origin_cgy = battle_units[battle_unit_idx].cgy;
+    Mark_Block(World_Data);
+    if(magic_set.sound_effects == ST_TRUE)
     {
         /* Play sound effects for tunneling */
-        Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size); /* SND_CMB_Silence@ is a global sound buffer */
-        Sound_Data_Seg = LBX_Reload_Next(soundfx_lbx_file__ovr133__1of2, SFX_Tunneling, World_Data);
-        Sound_Data_Seg_size = lbxload_entry_length;
-        Play_Sound(Sound_Data_Seg, Sound_Data_Seg_size);
+        Play_Sound(sound_silent_seg, sound_silent_seg_size);
+        // SOUNDFX.LBX, 012  "TUNNEL V"  "Tunneling"
+        sound_seg = LBX_Reload_Next(soundfx_lbx_file__ovr133__1of2, SFX_Tunneling, World_Data);
+        sound_seg_size = lbxload_entry_length;
+        Play_Sound(sound_seg, sound_seg_size);
     }
-
     /* Create the bitmap image of the unit for the animation */
-    BU_CreateImage__SEGRAX(battle_unit_idx);
+    Battle_Unit_Compose_Bitmap(battle_unit_idx);
     Release_Block(World_Data);
-
     /* Set unit to dead/hidden status during the animation so the screen redraw doesn't show it at the grid pos */
-    ptr_unit->status = bus_Dead;
-
+    battle_units[battle_unit_idx].status = bus_Dead;
     /* Animation Part 1: Submerging at the origin */
-    for (i = 4; i > 0; )
+    for(i = 4; i > 0; )
     {
         Mark_Time();
         Set_Page_Off();
         Combat_Screen_Draw();
-
         /* Prepare the figure bitmap with a "vanish" effect */
-        Create_Picture(45, 42, GfxBuf_2400B);
-        Copy_Bitmap_To_Bitmap(IMG_CMB_FX_Figure, GfxBuf_2400B);
-        Vanish_Bitmap(GfxBuf_2400B, i * 20); /* percent = 80, 60, 40, 20 */
-
+        Create_Picture(45, 42, scratch_bitmap_seg);
+        Copy_Bitmap_To_Bitmap(scratch_bitmap_seg, battle_unit_scratch_seg);
+        Vanish_Bitmap(scratch_bitmap_seg, i * 20); /* percent = 80, 60, 40, 20 */
         /* Set a window to clip the unit as it "sinks" into the ground */
-        Set_Window(0, 0, 319, Origin_Draw_Y + 30);
-        FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-        
+        Set_Window(0, 0, 319, src_screen_y + 30);
+        FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
         /* Draw the unit sinking (Y position increases) */
-        temp_y = Origin_Draw_Y + ((5 - i) * 5);
-        Draw_Picture_Windowed(Origin_Draw_X, temp_y, GfxBuf_2400B);
-        
+        Draw_Picture_Windowed(src_screen_x, (src_screen_y + ((5 - i) * 5)), scratch_bitmap_seg);
         Reset_Window();
         PageFlip_FX();
         Release_Time(2);
-        
         i--;
     }
-
     /* Final static frame at origin before jump */
     Set_Page_Off();
     Combat_Screen_Draw();
     PageFlip_FX();
-
     /* Animation Part 2: Emerging at the target destination */
-    for (i = 0; i < 5; )
+    for(i = 0; i < 5; )
     {
         Mark_Time();
         Set_Page_Off();
         Combat_Screen_Draw();
-
-        Create_Picture(45, 42, GfxBuf_2400B);
-        Copy_Bitmap_To_Bitmap(IMG_CMB_FX_Figure, GfxBuf_2400B);
-        Vanish_Bitmap(GfxBuf_2400B, i * 20); /* percent = 0, 20, 40, 60, 80 */
-
+        Create_Picture(45, 42, scratch_bitmap_seg);
+        Copy_Bitmap_To_Bitmap(scratch_bitmap_seg, battle_unit_scratch_seg);
+        Vanish_Bitmap(scratch_bitmap_seg, i * 20); /* percent = 0, 20, 40, 60, 80 */
         /* Set a window to clip the unit as it "rises" from the ground */
-        Set_Window(0, 0, 319, Target_Draw_Y + 30);
-        FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-
+        Set_Window(0, 0, 319, dst_screen_y + 30);
+        FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
         /* Draw the unit rising (Y position decreases) */
-        temp_y = (Target_Draw_Y + 20) - (i * 5);
-        Draw_Picture_Windowed(Target_Draw_X, temp_y, GfxBuf_2400B);
-
+        Draw_Picture_Windowed(dst_screen_x, ((dst_screen_y + 20) - (i * 5)), scratch_bitmap_seg);
         Reset_Window();
         PageFlip_FX();
         Release_Time(2);
-
         i++;
     }
-
     /* Finalize unit position and state */
-    ptr_unit->status = bus_Active;
-    ptr_unit->cgx = cgx;
-    ptr_unit->cgy = cgy;
-
+    battle_units[battle_unit_idx].status = bus_Active;
+    battle_units[battle_unit_idx].cgx = cgx;
+    battle_units[battle_unit_idx].cgy = cgy;
     /* Update move target/destination relative to the jump distance */
-    ptr_unit->target_cgx -= (Origin_X - cgx);
-    ptr_unit->target_cgy -= (Origin_Y - cgy);
-
+    battle_units[battle_unit_idx].target_cgx -= (origin_cgx - cgx);
+    battle_units[battle_unit_idx].target_cgy -= (origin_cgy - cgy);
     Set_Page_Off();
     Combat_Screen_Draw();
     PageFlip_FX();
-
 }
 
 
@@ -1229,7 +1178,7 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
 
     if(magic_set.sound_effects == ST_TRUE)
     {
-        Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
+        Play_Sound(sound_silent_seg, sound_silent_seg_size);
         SND_SpellCast = LBX_Reload_Next(soundfx_lbx_file__ovr133__2of2, SFX_CombatSummon, World_Data);
         SND_SpellCast_size = lbxload_entry_length;
     }
@@ -1249,7 +1198,7 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
 
     battle_unit->target_cgy = 12;
 
-    BU_CreateImage__SEGRAX(battle_unit_idx);
+    Battle_Unit_Compose_Bitmap(battle_unit_idx);
 
     battle_unit->status = bus_Dead;
 
@@ -1277,9 +1226,9 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
 
         Combat_Cast_Spell_Message(player_idx, spell_idx);
 
-        Create_Picture(45, 42, GfxBuf_2400B);
+        Create_Picture(45, 42, scratch_bitmap_seg);
 
-        Copy_Bitmap_To_Bitmap(GfxBuf_2400B, IMG_CMB_FX_Figure);
+        Copy_Bitmap_To_Bitmap(scratch_bitmap_seg, battle_unit_scratch_seg);
 
         if(
             (anim_ctr > 6)
@@ -1288,13 +1237,13 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
         )
         {
 
-            Vanish_Bitmap(GfxBuf_2400B, ((anim_ctr - 6) * 14));
+            Vanish_Bitmap(scratch_bitmap_seg, ((anim_ctr - 6) * 14));
 
             Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, (screen_y + 30));
 
-            FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+            FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
 
-            Draw_Picture_Windowed(screen_x, ((screen_y + 21) - ((anim_ctr - 6) * 3)), GfxBuf_2400B);
+            Draw_Picture_Windowed(screen_x, ((screen_y + 21) - ((anim_ctr - 6) * 3)), scratch_bitmap_seg);
 
             Reset_Window();
 
@@ -1653,7 +1602,7 @@ void Vortex_Combat_Round(void)
 
     if(magic_set.sound_effects == ST_TRUE)
     {
-        Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
+        Play_Sound(sound_silent_seg, sound_silent_seg_size);
 
         Mark_Block(World_Data);
 

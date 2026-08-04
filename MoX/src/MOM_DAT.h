@@ -1924,9 +1924,9 @@ struct s_BATTLE_UNIT
                 int8_t   reqd_bldg_1;
                 int8_t   hero_portrait_idx;
     };
-    /* 0x0D */  /* int8_t Cur_Figures; */                         // reqd_bldg_2 & hero_type
+    /* 0x0D */  /* int8_t figure_cnt; */                         // reqd_bldg_2 & hero_type
     union {
-                int8_t   Cur_Figures;   /* DEDU  range of values ? */
+                int8_t   figure_cnt;   /* DEDU  range of values ? */
                 int8_t   reqd_bldg_2;
                 int8_t   hero_type;
     };
@@ -1940,7 +1940,7 @@ struct s_BATTLE_UNIT
     /* 0x10 */  int8_t   hits;                  /* Hit-Points ¿ Per Figure ? */
     /* 0x11 */  int8_t   scout_range;
     /* 0x12 */  int8_t   carry_capacity;
-    /* 0x13 */  int8_t   Max_Figures;
+    /* 0x13 */  int8_t   figure_max;
     /* 0x14 */  int8_t   Construction;
     /* 0x15 */  int8_t   Spec_Att_Attrib;                   // -abs() is resistance_modifier
     /* 0x16 */  uint16_t Move_Flags;                        // ; enum MOVEFLAGS
@@ -1986,10 +1986,10 @@ struct s_BATTLE_UNIT
     /* 0x57 */  int8_t   pad2B_57h;             // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
     /* 0x58 */  int16_t  gibs;
     /* 0x5A */  int16_t  Unknown_5A;
-    /* 0x5C */  int16_t  Always_Animate;
+    /* 0x5C */  int16_t  animate_idle;
     /* 0x5E */  int16_t  Melee_Anim;            /* {0,1,2}; not just {F,T}; set in CMB_MeleeAnim() */
-    /* 0x60 */  int16_t  Image_Effect;          /* {1:'Black Sleep', 2:  , 3: 'Warp Creature', ...}  passed to Combat_Figure_Effect__WIP() for BU figure bitmap composition */
-    /* 0x62 */  int16_t  Move_Bob;
+    /* 0x60 */  int16_t  figure_effect;          /* enum e_BATTLE_UNIT_FIGURE_EFFECT;  passed to Combat_Figure_Effect__WIP() for BU figure bitmap composition */
+    /* 0x62 */  int16_t  animate_move_as_idle;  /* IIF flight animation ... if((battle_units[battle_unit_idx].Attribs_1 & USA_FLYING) != 0) */
     /* 0x64 */  int8_t   Gold_Melee;
     /* 0x65 */  int8_t   Gold_Ranged;
     /* 0x66 */  int8_t   Gold_Defense;
@@ -2021,12 +2021,12 @@ struct s_CMBT_DATA
     /* 0x0A */  int8_t upkeep;
     /* 0x0B */  int8_t race;                                // ; enum Race_Code
     /* 0x0C */  int8_t Unused_0Ch;
-    /* 0x0D */  int8_t Cur_Figures;
+    /* 0x0D */  int8_t figure_cnt;
     /* 0x0E */  int16_t bufpi;
     /* 0x10 */  int8_t hits;
     /* 0x11 */  int8_t scout_range;
     /* 0x12 */  int8_t carry_capacity;
-    /* 0x13 */  int8_t Max_Figures;
+    /* 0x13 */  int8_t figure_max;
     /* 0x14 */  int8_t Construction;
     /* 0x15 */  int8_t Spec_Att_Attrib;
     /* 0x16 */  int8_t Move_Flags;                          // ; enum MOVEFLAGS
@@ -3942,8 +3942,7 @@ extern SAMB_ptr movement_mode_icons[10];  // {0,...,9} 10 icons
 // dseg:998A END:  Main Screen Pictures
 
 // WZD dseg:998C
-// GUI_SmallWork_IMG@ dw 0
-extern SAMB_ptr GfxBuf_2400B;
+extern SAMB_ptr scratch_bitmap_seg;
 
 // MOX_DAT  // WZD dseg:998E
 // MOX_DAT  extern SAMB_ptr _screen_seg;

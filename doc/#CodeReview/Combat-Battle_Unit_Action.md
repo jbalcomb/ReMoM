@@ -8,6 +8,7 @@ g_combat_grid_action_map
 Combat_Screen__WIP()
     |-> Battle_Unit_Action()
         |-> Battle_Unit_Attack__WIP
+        |-> Move_Battle_Unit
 
 Check_Attack_Melee
 BU_MeleeWallCheck

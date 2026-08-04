@@ -1774,7 +1774,7 @@ int16_t Effective_Unit_Strength(int16_t unit_idx)
     }
     effective_strength = 0;
     Load_Battle_Unit(unit_idx, global_battle_unit);
-    temp = ((global_battle_unit->Cur_Figures * global_battle_unit->hits) - global_battle_unit->front_figure_damage);
+    temp = ((global_battle_unit->figure_cnt * global_battle_unit->hits) - global_battle_unit->front_figure_damage);
     effective_strength += Get_Effective_Hits(temp, global_battle_unit->defense);
     if(
         ((global_battle_unit->ranged_type / 10) <= rag_Magic)
@@ -1782,17 +1782,17 @@ int16_t Effective_Unit_Strength(int16_t unit_idx)
         (global_battle_unit->ranged_type != rat_UNDEF)
     )
     {
-        effective_strength += (Get_Effective_Ranged_Strength(global_battle_unit->ranged, global_battle_unit->Cur_Figures, (global_battle_unit->attack_attributes | global_battle_unit->ranged_attack_attributes)) * 2);
+        effective_strength += (Get_Effective_Ranged_Strength(global_battle_unit->ranged, global_battle_unit->figure_cnt, (global_battle_unit->attack_attributes | global_battle_unit->ranged_attack_attributes)) * 2);
     }
     if(global_battle_unit->ranged_type >= srat_Thrown)
     {
         temp = global_battle_unit->ranged;
-        effective_strength += Get_Effective_Melee_Strength(global_battle_unit->melee, temp, global_battle_unit->Cur_Figures, (global_battle_unit->attack_attributes | global_battle_unit->melee_attack_attributes), global_battle_unit->ranged_type);
+        effective_strength += Get_Effective_Melee_Strength(global_battle_unit->melee, temp, global_battle_unit->figure_cnt, (global_battle_unit->attack_attributes | global_battle_unit->melee_attack_attributes), global_battle_unit->ranged_type);
     }
     else
     {
         temp = 0;
-        effective_strength += Get_Effective_Melee_Strength(global_battle_unit->melee, temp, global_battle_unit->Cur_Figures, (global_battle_unit->attack_attributes | global_battle_unit->melee_attack_attributes), ST_UNDEFINED);
+        effective_strength += Get_Effective_Melee_Strength(global_battle_unit->melee, temp, global_battle_unit->figure_cnt, (global_battle_unit->attack_attributes | global_battle_unit->melee_attack_attributes), ST_UNDEFINED);
     }
     return effective_strength;
 }

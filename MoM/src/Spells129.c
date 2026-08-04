@@ -311,16 +311,16 @@ void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_
 
     damage_total += battle_units[0].front_figure_damage;
 
-    battle_units[0].Cur_Figures -= (damage_total / battle_units[0].hits);
+    battle_units[0].figure_cnt -= (damage_total / battle_units[0].hits);
 
     battle_units[0].front_figure_damage = (damage_total % battle_units[0].hits);
 
-    if(battle_units[0].Cur_Figures > 0)
+    if(battle_units[0].figure_cnt > 0)
     {
 
         SETMIN(battle_units[0].front_figure_damage, 0);
 
-        _UNITS[unit_idx].Damage = (((battle_units[0].Max_Figures - battle_units[0].Cur_Figures) * battle_units[0].hits) + battle_units[0].front_figure_damage);
+        _UNITS[unit_idx].Damage = (((battle_units[0].figure_max - battle_units[0].figure_cnt) * battle_units[0].hits) + battle_units[0].front_figure_damage);
 
     }
     else  /* DEAD / DIED */
@@ -408,7 +408,7 @@ void Apply_Black_Wind(int16_t wx, int16_t wy, int16_t wp, int16_t spell_idx)
 
             Load_Battle_Unit(unit_idx, &battle_units[0]);
 
-            for(itr = 0; battle_units[0].Cur_Figures > itr; itr++)
+            for(itr = 0; battle_units[0].figure_cnt > itr; itr++)
             {
 
                 resist_fails = Combat_Resistance_Check(battle_units[0], save_mod, spell_data_table[spell_idx].magic_realm);

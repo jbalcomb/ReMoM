@@ -1442,14 +1442,14 @@ void Notify1_Draw(void)
 
     if(notify_pict1 != ST_NULL)
     {
-        Draw_Picture_To_Bitmap(notify_pict1, GfxBuf_2400B);
-        Draw_Picture((message_box_x + max_para_width + notify_pict1_x + xadd + 16), (message_box_y + notify_pict1_y), GfxBuf_2400B);
+        Draw_Picture_To_Bitmap(notify_pict1, scratch_bitmap_seg);
+        Draw_Picture((message_box_x + max_para_width + notify_pict1_x + xadd + 16), (message_box_y + notify_pict1_y), scratch_bitmap_seg);
     }
 
     if(notify_pict2 != ST_NULL)
     {
-        Draw_Picture_To_Bitmap(notify_pict2, GfxBuf_2400B);
-        Draw_Picture((message_box_x + max_para_width + notify_pict2_x + xadd + 16), (message_box_y + notify_pict2_y), GfxBuf_2400B);
+        Draw_Picture_To_Bitmap(notify_pict2, scratch_bitmap_seg);
+        Draw_Picture((message_box_x + max_para_width + notify_pict2_x + xadd + 16), (message_box_y + notify_pict2_y), scratch_bitmap_seg);
     }
 
     if(notify_type == 3)
@@ -1700,14 +1700,14 @@ void Notify2_Draw(void)
 
     if(notify_pict1 != ST_NULL)
     {
-        Draw_Picture_To_Bitmap(notify_pict1, GfxBuf_2400B);
-        Draw_Picture((text_x2 + notify_pict1_x + 7), (message_box_y + notify_pict1_y), GfxBuf_2400B);
+        Draw_Picture_To_Bitmap(notify_pict1, scratch_bitmap_seg);
+        Draw_Picture((text_x2 + notify_pict1_x + 7), (message_box_y + notify_pict1_y), scratch_bitmap_seg);
     }
 
     if(notify_pict2 != ST_NULL)
     {
-        Draw_Picture_To_Bitmap(notify_pict2, GfxBuf_2400B);
-        Draw_Picture((notify_pict2_x + text_x2 + 7), (message_box_y + notify_pict2_y), GfxBuf_2400B);
+        Draw_Picture_To_Bitmap(notify_pict2, scratch_bitmap_seg);
+        Draw_Picture((notify_pict2_x + text_x2 + 7), (message_box_y + notify_pict2_y), scratch_bitmap_seg);
     }
     /*
         END:  'Pict Box'

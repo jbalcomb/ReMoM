@@ -115,7 +115,7 @@
 - [ ] BU_Apply_Battlefield_Effects__WIP
 - [x] BU_ApplyDamage  AKA BU_ApplyDamage__WIP__SEGRAX
 - [ ] BU_AttackTarget__WIP
-- [ ] BU_CheckFlight__WIP
+- [x] BU_CheckFlight__WIP — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Is_Airborne, Combat.c:5938; 1:1 with ovr098/BU_CheckFlight__WIP.asm)
 - [ ] BU_GetCombatEffect__WIP
 - [ ] BU_GetInstaMoveType__WIP
 - [ ] BU_HasSpellAbility__WIP
@@ -123,9 +123,9 @@
 - [ ] BU_MeleeWallCheck — renamed from BU_MeleeWallCheck__WIP; impl (Combat.c:16682), needs done-done review (name verified 2026-07-21)
 - [ ] BU_MoveConfused__WIP
 - [ ] BU_ProcessAttack__WIP
-- [ ] BU_SetBaseAnims__WIP
+- [x] BU_SetBaseAnims__WIP — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Set_Animation_Flags, Combat.c:9411; Param0 -> unit_type union arm fixed; D2 dead-argument divergence recorded)
 - [ ] BU_SetCityMovement__WIP
-- [ ] BU_SetVisibility — renamed from BU_SetVisibility__WIP; impl (Combat.c:9696), needs done-done review (name verified 2026-07-21)
+- [x] BU_SetVisibility — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Set_Invisibility_Effect, Combat.c:9286; 1:1 with ovr105/BU_SetVisibility__WIP.asm)
 - [x] BU_SortSlowestFirst__WIP
 - [x] Check_For_Winner — was Check_For_Winner__WIP; suffix dropped in source, def Combat.c:9134 (verified 2026-07-21)
 - [ ] CMB_BaseAllocs__WIP
@@ -156,7 +156,7 @@
 - [ ] Do_Legal_Spell_Check__WIP
 - [ ] End_Of_Combat__WIP
 - [ ] Generate_Combat_Map — renamed from Generate_Combat_Map__WIP; impl (Combat.c:28636), needs done-done review (name verified 2026-07-21)
-- [ ] Move_Battle_Unit__WIP
+- [x] Move_Battle_Unit__WIP — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; suffix already dropped in source, Combat.c:3067; instant-move flat-2 deduction and move_anim_ctr increment fixed; D1 pacing/sound-size divergences recorded)
 - [ ] STK_CaptureCity__WIP
 - [ ] STK_ComposeFleeLost__STUB
 - [ ] Strategic_Combat__WIP

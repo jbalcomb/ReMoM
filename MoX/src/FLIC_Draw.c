@@ -423,43 +423,21 @@ void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte
 
 
 // WZD s30p01
-// drake178: ¿UU_LBX_Image_Copy() or LBX_Image_Copy() ?
 // MoO2  Module: bitmap  Copy_Bitmap_To_Bitmap()
 // ¿ 1oom  gfxaux.c  gfx_aux_draw_frame_to() ?
-/*
-; copies an LBX composed or decoded image to an
-; arbitrary far memory segment address (including the
-; header)
-*/
-/*
-
-*/
 void Copy_Bitmap_To_Bitmap(SAMB_ptr target_bitmap, SAMB_ptr source_bitmap)
 {
     int16_t width = 0;
     int16_t height = 0;
     int16_t length = 0;
-
-    // DOMSDOS  width = GET_2B_OFS(source_bitmap, FLIC_HDR_POS_WIDTH);
     width = GET_2B_OFS(source_bitmap, FLIC_HDR_POS_WIDTH);
-
-    // height = GET_2B_OFS(source_bitmap, FLIC_HDR_POS_HEIGHT);
     height = GET_2B_OFS(source_bitmap, FLIC_HDR_POS_HEIGHT);
-
     length = (SZ_FLIC_HDR + (width * height));
-
     memcpy(target_bitmap, source_bitmap, length);
-
 }
 
 
 // WZD s30p02
-// AKA  FLIC_Prepare()
-/*
-creates a decoded image header into the specified
-segment, and zeroes out the bytes required to hold it
-ST_FLIC.H
-*/
 /*
     ¿ Create_Picture() vs. Create_Blank_Picture() ?
     same header values, just default transparent vs. specified color
@@ -478,15 +456,6 @@ void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg)
     // FLIC_SET_FRAME_COUNT(pict_seg, 0);
     // FLIC_SET_LOOP_FRAME(pict_seg,0);
 
-    SET_2B_OFS(pict_seg, 0, 0xBBBB);  // DNE in Dasm
-    SET_2B_OFS(pict_seg, 2, 0xBBBB);  // DNE in Dasm
-    SET_2B_OFS(pict_seg, 4, 0xBBBB);  // DNE in Dasm
-    SET_2B_OFS(pict_seg, 6, 0xBBBB);  // DNE in Dasm
-    SET_2B_OFS(pict_seg, 8, 0xBBBB);  // DNE in Dasm
-    SET_2B_OFS(pict_seg, 10, 0xBBBB);  // DNE in Dasm
-    SET_2B_OFS(pict_seg, 12, 0xBBBB);  // DNE in Dasm
-    SET_2B_OFS(pict_seg, 14, 0xBBBB);  // DNE in Dasm
-
     SET_2B_OFS(pict_seg, 0, width);
     SET_2B_OFS(pict_seg, 2, height);
     SET_2B_OFS(pict_seg, 4, 0xDE0A);  /* e_FLIC_Decoded */
@@ -495,13 +464,12 @@ void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg)
 
     length = width * height;
 
-    // rep stosb
     dst_sgmt = pict_seg;
     dst_ofst = SZ_FLIC_HDR;
     counter = length;
     while(counter > 0)
     {
-        *(dst_sgmt + dst_ofst) = ST_TRANSPARENT;  /* Color-Map Index 0 */
+        *(dst_sgmt + dst_ofst) = ST_TRANSPARENT;
         dst_ofst++;
         counter--;
     }
@@ -1767,9 +1735,9 @@ So, ...
 Draw_Item_With_Name()
     |-> Draw_Item_Icon_With_Enchantment_Outline(item_idx, m_item_icon_workarea)
 Draw_Item_Icon_With_Enchantment_Outline(int16_t item_idx, SAMB_ptr item_icon_pict_seg)
-    |-> Draw_Picture_To_Bitmap(item_icons_seg[_ITEMS[item_idx].icon_idx], GfxBuf_2400B);
+    |-> Draw_Picture_To_Bitmap(item_icons_seg[_ITEMS[item_idx].icon_idx], scratch_bitmap_seg);
     |-> Create_Picture(19, 19, item_icon_pict_seg);
-    |-> Clipped_Copy_Bitmap(2, 2, item_icon_pict_seg, GfxBuf_2400B);
+    |-> Clipped_Copy_Bitmap(2, 2, item_icon_pict_seg, scratch_bitmap_seg);
 
 */
 /*
@@ -3964,8 +3932,8 @@ uint8_t m_dither_threshold_matrix[] = {42,68,35,1,70,25,79,59,63,65,6,46,82,28,6
 /*
 XREF:
     Cast_Plane_Shift()
-    BU_Teleport()
-    BU_TunnelTo()
+    Battle_Unit_Teleport()
+    Battle_Unit_Tunnel()
     BU_CombatSummon__SEGRAX()
     Spell_Target_Global_Enchantment_Disjunct__WIP()
     Spell_Of_Mastery_Lose_Draw()

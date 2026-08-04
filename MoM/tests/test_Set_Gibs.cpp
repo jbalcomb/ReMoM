@@ -29,7 +29,7 @@ protected:
         battle_units = &test_battle_units[0];
 
         test_battle_units[0].hits = 4;
-        test_battle_units[0].Cur_Figures = 8;
+        test_battle_units[0].figure_cnt = 8;
     }
 
     void TearDown() override
@@ -49,7 +49,7 @@ TEST_F(Set_Gibs_test, PositiveDamage_SetsMinimumOneGibWhenFormulaRoundsToZero)
 
 TEST_F(Set_Gibs_test, LargeDamage_ClampsGibsToFiveAndFigureLossToCurrentFigures)
 {
-    test_battle_units[0].Cur_Figures = 2;
+    test_battle_units[0].figure_cnt = 2;
 
     Set_Gibs(/*battle_unit_idx=*/0, /*Damage=*/50);
 
@@ -59,7 +59,7 @@ TEST_F(Set_Gibs_test, LargeDamage_ClampsGibsToFiveAndFigureLossToCurrentFigures)
 
 TEST_F(Set_Gibs_test, ZeroCurrentFigures_UsesDefaultGibValueAndNoFigureLoss)
 {
-    test_battle_units[0].Cur_Figures = 0;
+    test_battle_units[0].figure_cnt = 0;
 
     Set_Gibs(/*battle_unit_idx=*/0, /*Damage=*/10);
 

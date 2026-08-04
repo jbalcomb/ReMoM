@@ -265,11 +265,11 @@ background picture is 19x19
 icon bitmap is 17x17
 
 Draw_Picture_To_Bitmap()
-    item_icons_seg ==> GfxBuf_2400B
+    item_icons_seg ==> scratch_bitmap_seg
 Create_Picture()
     item_icon_pict_seg
 Clipped_Copy_Bitmap()
-    GfxBuf_2400B ==> item_icon_pict_seg
+    scratch_bitmap_seg ==> item_icon_pict_seg
 Outline_Bitmap_Pixels()
     item_icon_pict_seg
 Bitmap_Aura_Pixels()
@@ -294,11 +294,11 @@ void Draw_Item_Icon_With_Enchantment_Outline(int16_t item_idx, SAMB_ptr item_ico
     int16_t magic_realm = 0;
     struct s_ITEM * item_ptr = NULL;
 
-    Draw_Picture_To_Bitmap(item_icons_seg[_ITEMS[item_idx].icon_idx], GfxBuf_2400B);
+    Draw_Picture_To_Bitmap(item_icons_seg[_ITEMS[item_idx].icon_idx], scratch_bitmap_seg);
 
     Create_Picture(19, 19, item_icon_bitm);
 
-    Clipped_Copy_Bitmap(2, 2, item_icon_bitm, GfxBuf_2400B);
+    Clipped_Copy_Bitmap(2, 2, item_icon_bitm, scratch_bitmap_seg);
 
     item_ptr = &_ITEMS[item_idx];
 

@@ -2238,29 +2238,21 @@ SAMB_ptr movement_mode_icons[10];  // {0,...,9} 10 icons
 
 
 // WZD dseg:998C
-// drake178: GUI_SmallWork_IMG@
+// TODO  confirm scratch_bitmap_seg is only used for 'bitmaps'
 /*
-96h paragraphs used for building GUI notification images
-(although the pointer variable is also used for building combat figure images, after which it is reassigned)
-*/
-// TODO  confirm GfxBuf_2400B is only used for 'bitmaps'
-/*
-
 used for battle unit figure, in Combat_Figure_Compose_USEFULL()
-
 used for ..., in Cityscape_Draw_Buildings()
-
 used for ..., in Draw_Item_Icon_With_Enchantment_Outline()
-
 used for notify_pict1, in Notify1_Draw()
 used for notify_pict1, in Notify2_Draw()
-
 is destination bitmap in calls to Draw_Picture_To_Bitmap()
 drawn by Draw_Picture()  (meaningfully, not by FLIC_Draw())
     ¿ meaning it is assumed to be non-/post-RLE decoding ?
-
 */
-SAMB_ptr GfxBuf_2400B;
+/*
+48 x 48 pixel scratch buffer
+*/
+SAMB_ptr scratch_bitmap_seg;
 
 // MOX_DAT  // WZD dseg:998E
 // MOX_DAT  SAMB_ptr _screen_seg;

@@ -2656,10 +2656,10 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_or_type, in
     if(CalledFromFlag != uvt_Prod)
     {
         unit_type = _UNITS[unit_or_type].type;
-        unit_figure_count = global_battle_unit->Cur_Figures;
+        unit_figure_count = global_battle_unit->figure_cnt;
         unit_owner_idx = _UNITS[unit_or_type].owner_idx;
         unit_owner_banner_idx = _players[unit_owner_idx].banner_id;
-        // 'Hydra' manual override of figure count, because 'Cur_Figures' is actually 'Heads'
+        // 'Hydra' manual override of figure count, because 'figure_cnt' is actually 'Heads'
         if(spell_data_table[SPL_HYDRA].unit_type == unit_type)
         {
             unit_figure_count = 1;

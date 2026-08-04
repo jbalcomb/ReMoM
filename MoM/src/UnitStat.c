@@ -1160,11 +1160,11 @@ if(_CITIES[_city_idx].construction > 298)
         if(CalledFromFlag != uvt_Prod)
         {
             product_idx = unit_type_idx;
-            // 'Hydra' manual override of figure count, because 'Cur_Figures' is actually 'Heads'
+            // 'Hydra' manual override of figure count, because 'figure_cnt' is actually 'Heads'
             if(spell_data_table[SPL_HYDRA].Param0 == product_idx)
             {
                 Print((UV_x_start_offset + UV_x_start + 121), (UV_y_start + 27), "Heads");
-                Print_Integer_Right((UV_x_start_offset + UV_x_start + 153), (UV_y_start + 27), global_battle_unit->Cur_Figures);
+                Print_Integer_Right((UV_x_start_offset + UV_x_start + 153), (UV_y_start + 27), global_battle_unit->figure_cnt);
             }
         }
 

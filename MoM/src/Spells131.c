@@ -1347,7 +1347,7 @@ void Apply_Holy_Word(int16_t player_idx)
 
                 }
 
-                figure_count = battle_units[battle_unit_idx].Cur_Figures;
+                figure_count = battle_units[battle_unit_idx].figure_cnt;
 
                 for(itr = 0; itr < figure_count; itr++)
                 {
@@ -1418,7 +1418,7 @@ void Apply_Death_Spell(int16_t player_idx)
             )
             {
 
-                figure_count = battle_units[battle_unit_idx].Cur_Figures;
+                figure_count = battle_units[battle_unit_idx].figure_cnt;
 
                 for(itr = 0; itr < figure_count; itr++)
                 {
@@ -1800,14 +1800,14 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
 
         battle_unit_idx = Target_BU_List[Picked_Target];
 
-        if(battle_units[battle_unit_idx].Max_Figures > 1)
+        if(battle_units[battle_unit_idx].figure_max > 1)
         {
-            battle_units[battle_unit_idx].Cur_Figures = (battle_units[battle_unit_idx].Max_Figures / 2);
+            battle_units[battle_unit_idx].figure_cnt = (battle_units[battle_unit_idx].figure_max / 2);
             battle_units[battle_unit_idx].front_figure_damage = 0;
         }
         else
         {
-            battle_units[battle_unit_idx].Cur_Figures = battle_units[battle_unit_idx].Max_Figures;
+            battle_units[battle_unit_idx].figure_cnt = battle_units[battle_unit_idx].figure_max;
             battle_units[battle_unit_idx].front_figure_damage = (battle_units[battle_unit_idx].hits / 2);
         }
         battle_units[battle_unit_idx].Combat_Effects = 0;
@@ -1946,7 +1946,7 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
         battle_unit_idx = Target_BU_List[Picked_Target];
 
     battle_units[battle_unit_idx].controller_idx = (int8_t)player_idx;  // ; BUG: fails to set the overland owner of the unit
-    battle_units[battle_unit_idx].Cur_Figures = battle_units[battle_unit_idx].Max_Figures;
+    battle_units[battle_unit_idx].figure_cnt = battle_units[battle_unit_idx].figure_max;
     battle_units[battle_unit_idx].front_figure_damage = 0;
     battle_units[battle_unit_idx].Combat_Effects = 0;
     battle_units[battle_unit_idx].enchantments = 0;

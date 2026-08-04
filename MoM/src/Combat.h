@@ -847,6 +847,15 @@ enum e_BATTLE_UNIT_ACTION
     BUA_No_Spells       = 333
 };
 
+enum e_BATTLE_UNIT_FIGURE_EFFECT
+{
+    bufe_NONE               = 0,
+    bufe_Black_Sleep        = 1,  /* greyscale */
+    bufe_2                  = 2,  /* reverse-greyscale, shade 104 */
+    bufe_Warp_Creature      = 3,  /* reverse-greyscale, shade 40 */
+    bufe_Invisible_Revealed = 4,  /* flat silhouette */
+    bufe_Invisible_Hidden   = 5   /* sprite transparent */
+};
 
 /*
 
@@ -1165,8 +1174,8 @@ extern int16_t g_ai_combat_defender_realm_flags;
 extern int16_t g_ai_combat_attacker_realm_flags;
 
 // WZD dseg:C41A
-extern SAMB_ptr SND_CMB_Silence;
-extern uint32_t SND_CMB_Silence_size;  // DNE in Dasm
+extern SAMB_ptr sound_silent_seg;
+extern uint32_t sound_silent_seg_size;  // DNE in Dasm
 
 // WZD dseg:C432
 extern int16_t _auto_combat_flag;
@@ -1206,7 +1215,7 @@ extern int16_t _combat_attacker_player;
 extern int16_t _combat_total_unit_count;
 
 // WZD dseg:C7B2
-extern SAMB_ptr IMG_CMB_FX_Figure;
+extern SAMB_ptr battle_unit_scratch_seg;
 
 // WZD dseg:C8A8
 // WZD dseg:C8AA
@@ -1412,7 +1421,7 @@ void CMB_PrepareTurn__WIP(void);
 void Set_Movement_Cost_Map(int16_t battle_unit_idx);
 
 // WZD s91p04
-void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t target_cgy);
+void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t target_cgy);
 
 // WZD s91p05
 void Switch_Active_Battle_Unit(int16_t battle_unit_idx);
@@ -1519,7 +1528,7 @@ void BU_UnitLoadToBattle__SEGRAX(int16_t battle_unit_idx, int16_t player_idx, in
 int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[]);
 
 // WZD o98p17
-int16_t BU_CheckFlight__WIP(int16_t battle_unit_idx);
+int16_t Battle_Unit_Is_Airborne(int16_t battle_unit_idx);
 
 // WZD o98p18
 int16_t Battle_Unit_Has_Flight(int16_t battle_unit_idx);
@@ -1588,7 +1597,7 @@ int16_t Combat_Info_Effects_Count(void);
 void Combat_Node_Type(void);
 
 // WZD s103p07
-void BU_CreateImage__SEGRAX(int battle_unit_idx);
+void Battle_Unit_Compose_Bitmap(int battle_unit_idx);
 
 // WZD s103p08
 void Next_Battle_Unit(int16_t player_idx);
@@ -1639,13 +1648,13 @@ void Combat_Unit_Enchantment_Outline_Draw(int16_t enchantment_magic_realm);
 void Update_Sees_Illusions(void);
 
 // WZD o105p08
- void BU_SetVisibility(int16_t battle_unit_idx);
+ void Battle_Unit_Set_Invisibility_Effect(int16_t battle_unit_idx);
 
 // WZD o105p09
 int16_t BU_GetCombatEffect__WIP(int16_t battle_unit_idx);
 
 // WZD o105p10
-void BU_SetBaseAnims__WIP(int16_t battle_unit_idx);
+void Battle_Unit_Set_Animation_Flags(int16_t battle_unit_idx);
 
 // WZD o105p11
 int16_t Battle_Unit_Melee_Attack_Icon(int16_t battle_unit_idx);

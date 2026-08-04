@@ -179,7 +179,7 @@ CMB_SpawnFigure__WIP()
     no battle_unit_idx, passed in cgx, cgy, target_cgx, target_cgy
 
 [x] Combat_Figure_Compose_USEFULL()
-[x] BU_CreateImage__SEGRAX()
+[x] Battle_Unit_Compose_Bitmap()
 [x] CMB_SpawnFigure__WIP()
 
 figure_set_idx passed to USELESS_Combat_Figure_Load_Compose()

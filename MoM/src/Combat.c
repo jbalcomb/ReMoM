@@ -152,11 +152,11 @@ struct s_COMBAT_ENCHANTMENT_ICON_DATA combat_enchantment_icon_data[NUM_COMBAT_EN
 // WZD dseg:50E8                                                 BEGIN:  ovr090 - Intialized Data  (Tactical Combat)
 
 // WZD dseg:50E8
-char cnst_SOUNDFX_File2[] = "SOUNDFX";
+char soundfx_lbx_file__ovr090[] = "SOUNDFX";
 // WZD dseg:50EF
 char str_empty_string__ovr090[] = "";
 // WZD dseg:50F0
-char cnst_MUSIC_File7[] = "MUSIC";
+char music_lbx_file__ovr090[] = "MUSIC";
 // WZD dseg:50F6
 char str_hotkey_ESC__ovr090[] = "\x1B";
 // WZD dseg:50F8
@@ -513,12 +513,6 @@ int16_t CMB_CNodeAnimStage = 0;
 // WZD dseg:7080
 int16_t frame_anim_cycle = 0;
 // WZD dseg:7082
-/*
-
-XREF:
-Move_Battle_Unit+172 mov     [RP_CMB_Movement_Var], 0        ; cleared before movement, never used for anything
-Auto_Move_Unit+1C4   mov     [RP_CMB_Movement_Var], 0        ; cleared before movement, never used for anything
-*/
 int16_t uu_combat_movement_variable;
 // WZD dseg:7082                                                                                         ; cleared before movement, never used for anything
 // WZD dseg:7084
@@ -536,13 +530,13 @@ int16_t CMB_Chasm_Anim = 0;
 // WZD dseg:7090
 int16_t CMB_CurseAnimStage = 0;
 // WZD dseg:7092
-int16_t CMB_MoveAnimDir = 0;
+int16_t combat_walk_anim_dir = 0;
 // WZD dseg:7092                                                                                         ; controls the stepping direction of GUI_MoveAnimFrame
 // WZD dseg:7094
-int16_t CMB_MoveAnimFrame = 0;
+int16_t combat_walk_anim_frame = 0;
 // WZD dseg:7094                                                                                         ; two-way, steps 0 to 2 then back
 // WZD dseg:7096
-int16_t CMB_BaseAnimFrame = 0;
+int16_t combat_idle_anim_frame = 0;
 // WZD dseg:7096                                                                                         ; steps 0 to 2
 // WZD dseg:7098
 int16_t CMB_UnitATKAnimFrame = 1;
@@ -676,8 +670,8 @@ City buildings and citizens are especially likely to be lost
 int16_t _combat_city_damage;
 
 // WZD dseg:C41A
-SAMB_ptr SND_CMB_Silence;
-uint32_t SND_CMB_Silence_size;  // DNE in Dasm
+SAMB_ptr sound_silent_seg;
+uint32_t sound_silent_seg_size;  // DNE in Dasm
 
 // WZD dseg:C41C
 SAMB_ptr SND_CMB_Music;
@@ -1008,7 +1002,7 @@ SAMB_ptr combat_movemode_icon_segs[3];
 SAMB_ptr unit_hit_bar_seg;
 
 // WZD dseg:C7B2
-SAMB_ptr IMG_CMB_FX_Figure;
+SAMB_ptr battle_unit_scratch_seg;
 
 // WZD dseg:C7B4
 int16_t CMB_HeavenlyLight;
@@ -1557,19 +1551,19 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     _combat_total_battle_effect_count = Combat_Info_Effects_Count();
     Calc_Battlefield_Bonuses(_combat_structure);
     Combat_Cache_Write();
-    SND_CMB_Silence = LBX_Reload(cnst_SOUNDFX_File2, SFX_Silence, World_Data);
-    SND_CMB_Silence_size = lbxload_entry_length;
-    // ; when populating the BU table, set to the index of the
-    // ; AI player (the other participant being always human)
+    // SOUNDFX.LBX, 106  "SILENT V"  "sILENCE"
+    sound_silent_seg = LBX_Reload(soundfx_lbx_file__ovr090, SFX_Silence, World_Data);
+    sound_silent_seg_size = lbxload_entry_length;
+    // ; when populating the BU table, set to the index of the AI player (the other participant being always human)
     if(CMB_AI_Player != NEUTRAL_PLAYER_IDX)
     {
-        SND_CMB_Music = LBX_Reload_Next(cnst_MUSIC_File7, ((MUSIC_Merlin_Cmbt1 - 1) + ((_players[CMB_AI_Player].wizard_id * 2) + Random(2))), World_Data);
+        SND_CMB_Music = LBX_Reload_Next(music_lbx_file__ovr090, ((MUSIC_Merlin_Cmbt1 - 1) + ((_players[CMB_AI_Player].wizard_id * 2) + Random(2))), World_Data);
         SND_CMB_Music_size = lbxload_entry_length;
     }
     else
     {
         itr = (MUSIC_Combat_1 - 1) + Random(2);
-        SND_CMB_Music = LBX_Reload_Next(cnst_MUSIC_File7, itr, World_Data);
+        SND_CMB_Music = LBX_Reload_Next(music_lbx_file__ovr090, itr, World_Data);
         SND_CMB_Music_size = lbxload_entry_length;
     }
     if(magic_set.background_music == ST_TRUE)
@@ -2063,7 +2057,7 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
                 Battle_Unit_Action(_active_battle_unit, frame_scanned_cgx, frame_scanned_cgy);
                 for(itr = 0; itr < _combat_total_unit_count; itr++)
                 {
-                    BU_SetVisibility(itr);
+                    Battle_Unit_Set_Invisibility_Effect(itr);
                 }
                 Assign_Combat_Grids();
                 m_unknown_variable__ovr090 = ST_TRUE;
@@ -3056,19 +3050,15 @@ void Set_Movement_Cost_Map(int16_t battle_unit_idx)
 
 
 // WZD s91p04
-// drake178: BU_Move()
 /*
-; plays the animation for, and moves the specified unit to the passed coordinates on the combat map
 ; BUG: prevents moving into the central structure square in regular city battles
 ; BUG: teleporting units can't use roads
 */
 /*
-
 ~ Combat.c   Auto_Move_Unit()
 ~ MainScr.c  Move_Units_Draw()
-
 */
-void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t target_cgy)
+void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t target_cgy)
 {
     SAMB_ptr move_sound_seg = 0;
     int16_t has_instant_movement_mode = 0;
@@ -3083,147 +3073,88 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
     int16_t Move_Step_Index = 0;
     int16_t itr = 0;
     uint32_t move_sound_seg_size = 0;  // DNE in Dasm
-
     battle_unit_owner_idx = battle_units[battle_unit_idx].controller_idx;
-
     Set_Movement_Cost_Map(battle_unit_idx);
-
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-
         if(battle_units[itr].status == bus_Active)
         {
-
             _cmbt_movepath_cost_map[((battle_units[itr].cgy * COMBAT_GRID_WIDTH) + battle_units[itr].cgx)] = INF;  /* ¿ occupied ? */
-
         }
-
     }
-
     for(itr = 0; itr < _vortex_count; itr++)
     {
-
         _cmbt_movepath_cost_map[((_vortexes[itr].cgy * COMBAT_GRID_WIDTH) + _vortexes[itr].cgx)] = INF;  /* ¿ occupied ? */
-
     }
-
-
-    // ; BUG: outposts and cities don't have anything on that
-    // ; square either
-    // same as in Assign_Combat_Grids()
+    /* OGBUG  outposts and cities don't have anything on that square either; same as in Assign_Combat_Grids() */
     if(battlefield->center_square_structure != CS_None)
     {
-
         _cmbt_movepath_cost_map[COMBAT_STRUCTURE_IDX] = INF;
-
     }
-
-
     if(
         (battlefield->walled == ST_TRUE)
         ||
         (battlefield->city_enchantments[FLYING_FORTRESS] > 0)
     )
     {
-
         Update_Move_Map_City_Area_Restrictions(battle_unit_idx);
-        
     }
-
-
     has_instant_movement_mode = ST_FALSE;
-
     instant_movement_mode = Battle_Unit_Instant_Movement_Mode(battle_unit_idx);
-
     if(
-        (instant_movement_mode == 6)
+        (instant_movement_mode == bumm_Teleport)
         ||
-        (instant_movement_mode == 7)
+        (instant_movement_mode == bumm_Tunnel)
     )
     {
-
         movement_path_grid_cell_count = 0;
-
         has_instant_movement_mode = ST_TRUE;
-
     }
     else
     {
-
         Combat_Move_Path_Find(battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, target_cgx, target_cgy);
-
         if(movement_path_grid_cell_count == 0)
         {
             return;
         }
-
     }
-
     Origin_X = battle_units[battle_unit_idx].cgx;
-
     Origin_Y = battle_units[battle_unit_idx].cgy;
-
     uu_combat_movement_variable = 0;  // ; cleared before movement, never used for anything
-
     battle_units[battle_unit_idx].Moving = ST_TRUE;
-
     move_sound_seg = Get_Battle_Unit_Move_Sound_Buffer(battle_unit_idx, &move_sound_seg_size);
-
     if(has_instant_movement_mode != ST_FALSE)
     {
-
-        if(instant_movement_mode == 6)
+        if(instant_movement_mode == bumm_Teleport)
         {
-
-            BU_Teleport(battle_unit_idx, target_cgx, target_cgy);
-
+            Battle_Unit_Teleport(battle_unit_idx, target_cgx, target_cgy);
         }
-        else  /* instant_movement_mode == 7 */
+        else  /* instant_movement_mode == bumm_Tunnel */
         {
-
-            BU_TunnelTo(battle_unit_idx, target_cgx, target_cgy);
-
+            Battle_Unit_Tunnel(battle_unit_idx, target_cgx, target_cgy);
         }
-
     }
     else
     {
-
         battle_units[battle_unit_idx].target_cgx = target_cgx;
-
         battle_units[battle_unit_idx].target_cgy = target_cgy;
-
         for(Move_Step_Index = 0; Move_Step_Index < movement_path_grid_cell_count; Move_Step_Index++)
         {
-
             battle_units[battle_unit_idx].target_cgx = _cmbt_mvpth_x[Move_Step_Index];
-
             battle_units[battle_unit_idx].target_cgy = _cmbt_mvpth_y[Move_Step_Index];
-
             if(magic_set.sound_effects == ST_TRUE)
             {
                 Play_Sound(move_sound_seg, move_sound_seg_size);
             }
-
-// CLAUDE  The simplest fix: revert to the original 8-step loop and add Mark_Time() / Release_Time() pacing — the same pattern Fade_Out() and Fade_In() already use in MOX_T4.c:271-278.
-// CLAUDE  Each step gets ~55ms via Release_Time(1), so 8 steps = ~440ms per square. The original DOS game at ~70Hz VGA retrace would have been 8 frames × ~14ms ≈ 114ms, so 1 tick is a bit slow. You could use Release_Time(1) and tune later, or we could define a smaller constant. For now, 1 tick per step is a good starting point — it'll look smooth and deliberate.
-// CLAUDE  Here's what the changes look like for both loops:
-// CLAUDE  Human movement (line ~3362):
-//                 // for(itr = 0; itr < MOVE_ANIM_CNT; itr++)
-//                 for(itr = 0; itr < (MOVE_ANIM_CNT * 10); itr++)
-//                 {
-//                     // battle_units[battle_unit_idx].move_anim_ctr += 1;
-//                     /* CLAUDE bugfix: was * itr, which sent move_anim_ctr to 632 and drew units off-screen */
-//                     battle_units[battle_unit_idx].move_anim_ctr = ((itr + (10 - 1)) / 10);
             if(magic_set.movement_animations == ST_TRUE)
             {
                 for(itr = 0; itr < MOVE_ANIM_CNT; itr++)
                 {
-                    Mark_Time();
-                    battle_units[battle_unit_idx].move_anim_ctr = itr;
+                    /* HACK  pacing */  Mark_Time();
+                    battle_units[battle_unit_idx].move_anim_ctr += 1;
                     Combat_Screen_Draw();
                     PageFlip_FX();
-                    Release_Time(1);
+                    /* HACK  pacing */  Release_Time(1);
                 }
             }
             else
@@ -3232,85 +3163,60 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
                 Combat_Screen_Draw();
                 PageFlip_FX();
             }
-
             if(magic_set.sound_effects == ST_TRUE)
             {
-                Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
+                Play_Sound(sound_silent_seg, sound_silent_seg_size);
             }
-
             Check_Wall_Of_Fire_Attack(battle_unit_idx);
-
             if(battle_units[battle_unit_idx].status != bus_Active)
             {
                 break;
             }
-
             battle_units[battle_unit_idx].move_anim_ctr = 0;
-
             battle_units[battle_unit_idx].cgx = _cmbt_mvpth_x[Move_Step_Index];
-
             battle_units[battle_unit_idx].cgy = _cmbt_mvpth_y[Move_Step_Index];
-
             assert(battle_units[battle_unit_idx].cgx >= COMBAT_GRID_XMIN);
             assert(battle_units[battle_unit_idx].cgx <= COMBAT_GRID_XMAX);
             assert(battle_units[battle_unit_idx].cgy >= COMBAT_GRID_YMIN);
             assert(battle_units[battle_unit_idx].cgy <= COMBAT_GRID_YMAX);
-
         }
-
     }
-
-
     battle_units[battle_unit_idx].move_anim_ctr = 0;
-
     battle_units[battle_unit_idx].Moving = ST_FALSE;
-
     if(movement_path_grid_cell_count > 1)
     {
-
         Origin_X = _cmbt_mvpth_x[(movement_path_grid_cell_count - 2)];
         Origin_Y = _cmbt_mvpth_y[(movement_path_grid_cell_count - 2)];
-
         Last_Facing_X = _cmbt_mvpth_x[(movement_path_grid_cell_count - 1)];
         Last_Facing_Y = _cmbt_mvpth_y[(movement_path_grid_cell_count - 1)];
-
     }
     else
     {
-
         Last_Facing_X = target_cgx;
         Last_Facing_Y = target_cgy;
-
     }
-
-
     Facing_Diff_X = (Last_Facing_X - Origin_X);
     Facing_Diff_Y = (Last_Facing_Y - Origin_Y);
-
     if(has_instant_movement_mode != ST_FALSE)
     {
-        // TODO  has_instant_movement_mode
+        if (battle_units[battle_unit_idx].movement_points > 2)
+        {
+            battle_units[battle_unit_idx].movement_points -= 2;
+        }
+        else
+        {
+            battle_units[battle_unit_idx].movement_points = 0;
+        }
     }
     else
     {
-
         battle_units[battle_unit_idx].cgx = battle_units[battle_unit_idx].target_cgx;
-        battle_units[battle_unit_idx].cgy = battle_units[battle_unit_idx].target_cgy;  // ; already done during movement?
-
-        assert(battle_units[battle_unit_idx].cgx >= COMBAT_GRID_XMIN);
-        assert(battle_units[battle_unit_idx].cgx <= COMBAT_GRID_XMAX);
-        assert(battle_units[battle_unit_idx].cgy >= COMBAT_GRID_YMIN);
-        assert(battle_units[battle_unit_idx].cgy <= COMBAT_GRID_YMAX);
-
+        battle_units[battle_unit_idx].cgy = battle_units[battle_unit_idx].target_cgy;
         battle_units[battle_unit_idx].target_cgx = (Last_Facing_X + Facing_Diff_X);
         battle_units[battle_unit_idx].target_cgy = (Last_Facing_Y + Facing_Diff_Y);
-
         battle_units[battle_unit_idx].movement_points -= _cmbt_mvpth_c[((battle_units[battle_unit_idx].cgy * COMBAT_GRID_WIDTH) + battle_units[battle_unit_idx].cgx)];
-
     }
-
     SETMIN(battle_units[battle_unit_idx].movement_points, 0);
-
 }
 
 
@@ -3471,7 +3377,7 @@ loc_MoveCheck:
     {
         if(battle_units[battle_unit_idx].movement_points > 0)
         {
-            Move_Battle_Unit__WIP(battle_unit_idx, cgx, cgy);
+            Move_Battle_Unit(battle_unit_idx, cgx, cgy);
         }
     }
 
@@ -3568,7 +3474,7 @@ void Assign_Combat_Grids(void)
         if(
             (battle_units[itr].status == bus_Active)
             &&
-            (battle_units[itr].Image_Effect != 5)  // ~ Invisible
+            (battle_units[itr].figure_effect != 5)  // ~ Invisible
         )
         {
             g_combat_grid_action_map[battle_units[itr].cgy][battle_units[itr].cgx] = (int8_t)itr;
@@ -5943,10 +5849,10 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
         battle_units[itr].action = bua_Ready;
         battle_units[itr].gibs = 0;
         battle_units[itr].Unknown_5A = 0;
-        battle_units[itr].Always_Animate = 0;
+        battle_units[itr].animate_idle = 0;
         battle_units[itr].Melee_Anim = 0;
-        battle_units[itr].Image_Effect = 0;
-        battle_units[itr].Move_Bob = 0;
+        battle_units[itr].figure_effect = 0;
+        battle_units[itr].animate_move_as_idle = 0;
 
         if(_combat_environ == 1)  /* City-Siege */
         {
@@ -6023,37 +5929,23 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 
 
 // WZD o98p17
-// drake178: BU_CheckFlight()
-/*
-; returns 1 if the unit has the flying movement type,
-; unless it is under a Web or Black Sleep effect; or 0
-*/
-/*
-
-*/
-int16_t BU_CheckFlight__WIP(int16_t battle_unit_idx)
+int16_t Battle_Unit_Is_Airborne(int16_t battle_unit_idx)
 {
-    int16_t result = 0;  // _CX_
-
+    int16_t result = 0;
     result = ST_FALSE;
-
     if((battle_units[battle_unit_idx].Move_Flags & MV_FLYING) != 0)
     {
         result = ST_TRUE;
     }
-
     if((battle_units[battle_unit_idx].Combat_Effects & bue_Web) != 0)
     {
         result = ST_FALSE;
     }
-
     if((battle_units[battle_unit_idx].Combat_Effects & bue_Black_Sleep) != 0)
     {
         result = ST_FALSE;
     }
-
     return result;
-
 }
 
 
@@ -6203,7 +6095,7 @@ SAMB_ptr Get_Battle_Unit_Move_Sound_Buffer(int16_t battle_unit_idx, /* HACK */ u
 
     if(magic_set.sound_effects == ST_TRUE)
     {
-        Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
+        Play_Sound(sound_silent_seg, sound_silent_seg_size);
     }
 
     Mark_Block(World_Data);
@@ -6701,14 +6593,14 @@ void Draw_Active_Unit_Window(void)
     if(_active_battle_unit == ST_UNDEFINED)
     {
         Set_Animation_Frame(magic_vortex_seg, 1);
-        Draw_Picture_To_Bitmap(magic_vortex_seg, GfxBuf_2400B);
+        Draw_Picture_To_Bitmap(magic_vortex_seg, scratch_bitmap_seg);
         Set_Animation_Frame(magic_vortex_seg, CMB_VortexAnimStage);
         start_x = 82;
         start_y = 170;
-        Get_Bitmap_Actual_Size(GfxBuf_2400B, &bitm_x, &bitm_y, &bitm_w, &bitm_h);
+        Get_Bitmap_Actual_Size(scratch_bitmap_seg, &bitm_x, &bitm_y, &bitm_w, &bitm_h);
         start_x += (((32 - bitm_w) / 2) - bitm_x);
         start_y += (((25 - bitm_h) / 2) - bitm_y);
-        Draw_Picture_Windowed(start_x, start_y, GfxBuf_2400B);
+        Draw_Picture_Windowed(start_x, start_y, scratch_bitmap_seg);
         colors[0] = 227;
         colors[1] = 243;
         Set_Font_Colors_15(0, &colors[0]);
@@ -6723,15 +6615,15 @@ void Draw_Active_Unit_Window(void)
     else
     {
 
-        // composes figure picture into GfxBuf_2400B
+        // composes figure picture into scratch_bitmap_seg
         USELESS_Combat_Figure_Load_Compose(battle_units[_active_battle_unit].bufpi, 2, battle_units[_active_battle_unit].controller_idx, battle_units[_active_battle_unit].outline_magic_realm, 0);
 
-        Combat_Figure_Effect__WIP(battle_units[_active_battle_unit].Image_Effect);
+        Combat_Figure_Effect__WIP(battle_units[_active_battle_unit].figure_effect);
 
         if((_unit_type_table[_UNITS[battle_units[_active_battle_unit].unit_idx].type].Abilities & UA_INVISIBILITY) != 0)
         {
 
-            Outline_Bitmap_Pixels(GfxBuf_2400B, 1);
+            Outline_Bitmap_Pixels(scratch_bitmap_seg, 1);
 
         }
 
@@ -6742,16 +6634,16 @@ void Draw_Active_Unit_Window(void)
         start_x = 84;
         start_y = 173;
 
-        Get_Bitmap_Actual_Size(GfxBuf_2400B, &bitm_x, &bitm_y, &bitm_w, &bitm_h);
+        Get_Bitmap_Actual_Size(scratch_bitmap_seg, &bitm_x, &bitm_y, &bitm_w, &bitm_h);
 
         start_x += (((32 - bitm_w) / 2) - bitm_x);
 
         start_y += (((25 - bitm_h) / 2) - bitm_y);
 
-        FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+        FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
 
-        // draws the composed figure picture, USELESS_Combat_Figure_Load_Compose() put in GfxBuf_2400B
-        Draw_Picture(start_x, start_y, GfxBuf_2400B);
+        // draws the composed figure picture, USELESS_Combat_Figure_Load_Compose() put in scratch_bitmap_seg
+        Draw_Picture(start_x, start_y, scratch_bitmap_seg);
 
 
         Draw_Active_Unit_Stats_And_Icons();
@@ -7127,9 +7019,9 @@ void Combat_Grid_Entities__WIP(void)
             continue;
         }
 
-        unit_figure_count = battle_units[itr].Cur_Figures;
+        unit_figure_count = battle_units[itr].figure_cnt;
 
-        unit_figure_maximum = battle_units[itr].Max_Figures;
+        unit_figure_maximum = battle_units[itr].figure_max;
 
         if(_UNITS[battle_units[itr].unit_idx].type == spell_data_table[SPL_HYDRA].unit_type)
         {
@@ -7138,15 +7030,15 @@ void Combat_Grid_Entities__WIP(void)
         }
 
 
-        battle_units[itr].Image_Effect = 0;  // set in BU_GetCombatEffect__WIP()
+        battle_units[itr].figure_effect = 0;  // set in BU_GetCombatEffect__WIP()
 
         Combat_Unit_Enchantment_Outline_Set(itr);  // sets battle_units[].outline_magic_realm
 
-        BU_SetBaseAnims__WIP(itr);  // sets Always_Animate and Move_Bob
+        Battle_Unit_Set_Animation_Flags(itr);  // sets animate_idle and animate_move_as_idle
 
-        Curse_Anim = BU_GetCombatEffect__WIP(itr);  // sets Image_Effect  {1, 3}
+        Curse_Anim = BU_GetCombatEffect__WIP(itr);  // sets figure_effect  {1, 3}
 
-        BU_SetVisibility(itr);  // sets Image_Effect to 4 or 5
+        Battle_Unit_Set_Invisibility_Effect(itr);  // sets figure_effect to 4 or 5
 
 
         for(itr_figures = 0; itr_figures < unit_figure_count; itr_figures++)
@@ -7203,9 +7095,9 @@ void Draw_Active_Unit_Damage_Bar(int16_t battle_unit_idx, int16_t x, int16_t y)
     int16_t max_hits = 0;
     int16_t bar_length = 0;  // _DI_
 
-    max_hits = (battle_units[battle_unit_idx].hits * battle_units[battle_unit_idx].Max_Figures);
+    max_hits = (battle_units[battle_unit_idx].hits * battle_units[battle_unit_idx].figure_max);
 
-    damage_hits = ((battle_units[battle_unit_idx].Max_Figures - battle_units[battle_unit_idx].Cur_Figures) * battle_units[battle_unit_idx].hits);
+    damage_hits = ((battle_units[battle_unit_idx].figure_max - battle_units[battle_unit_idx].figure_cnt) * battle_units[battle_unit_idx].hits);
 
     if(battle_units[battle_unit_idx].front_figure_damage > 0)
     {
@@ -8170,23 +8062,13 @@ void Combat_Node_Type(void)
 }
 
 
-// segrax
 // WZD s103p07
-// drake178: BU_CreateImage()
 /*
-; allocates a 2k buffer in World_Data@, into which it
-; composes an image of the battle unit, saving the
-; pointer to IMG_CMB_FX_Figure@ - this is drawn
-; separately from the combat entity sprites
-*/
-/*
-    does a complete composes of a new battle unit picture into GfxBuf_2400B
-    does not change any game-data
-
 ~ USELESS_Combat_Figure_Load_Compose()
-
+¿ vs. Combat_Figure_Compose_USEFULL() ?
+¿ vs. CMB_CreateEntities__WIP() ?
 */
-void BU_CreateImage__SEGRAX(int battle_unit_idx)
+void Battle_Unit_Compose_Bitmap(int battle_unit_idx)
 {
     int16_t cur_fig = 0;
     int16_t offset = 0;
@@ -8198,98 +8080,75 @@ void BU_CreateImage__SEGRAX(int battle_unit_idx)
     int16_t cgx = 0;
     int16_t frame_num = 0;
     int16_t bufpi = 0;
-    int16_t IMG_Effect = 0;
+    int16_t figure_effect = 0;
     int16_t enchantment_magic_realm = 0;
     int16_t player_idx = 0;
     int16_t fig_y = 0;
     int16_t fig_x = 0;
     int16_t fig_max = 0;
     int16_t fig_cnt = 0;
-// _SI_battle_unit_idx = itr2
-    int16_t figure_set_idx = 0;  // _DI_
-
-    // struct s_BATTLE_UNIT * battle_unit = &battle_units[battle_unit_idx];
-
-    IMG_CMB_FX_Figure = Allocate_Next_Block(World_Data, 124);  // 124 PR, 1984 B
-
+    int16_t figure_set_idx = 0;
+    battle_unit_scratch_seg = Allocate_Next_Block(World_Data, 124);  /* an inactive unit still leaves an allocated block for the caller to release */
     if(battle_units[battle_unit_idx].status != bus_Active)
     {
         return;
     }
-
-
-    Create_Picture(47, 42, IMG_CMB_FX_Figure);
-
-    
+    Create_Picture(47, 42, battle_unit_scratch_seg);
     // ~ CMB_CreateEntities__WIP()
-    fig_cnt = battle_units[battle_unit_idx].Cur_Figures;
-    fig_max = battle_units[battle_unit_idx].Max_Figures;
-    if(_UNITS[battle_units[battle_unit_idx].unit_idx].type == spell_data_table[ut_Hydra].unit_type)
+    fig_cnt = battle_units[battle_unit_idx].figure_cnt;
+    fig_max = battle_units[battle_unit_idx].figure_max;
+    if(_UNITS[battle_units[battle_unit_idx].unit_idx].type == spell_data_table[spl_Hydra].unit_type)
     {
         fig_cnt = 1;
         fig_max = 1;
     }
-    Combat_Unit_Enchantment_Outline_Set(battle_unit_idx);  // battle_units[].sets outline_magic_realm
-    BU_SetBaseAnims__WIP(battle_unit_idx);  // sets battle_units[].Always_Animate and .Move_Bob
-    BU_SetVisibility(battle_unit_idx);  // sets battle_units[].Image_Effect
-
-
+    Combat_Unit_Enchantment_Outline_Set(battle_unit_idx);
+    Battle_Unit_Set_Animation_Flags(battle_unit_idx);
+    Battle_Unit_Set_Invisibility_Effect(battle_unit_idx);
     // ~ Combat_Figure_Compose_USEFULL()
     bufpi = battle_units[battle_unit_idx].bufpi;
-
     player_idx = battle_units[battle_unit_idx].controller_idx;
-
     enchantment_magic_realm = battle_units[battle_unit_idx].outline_magic_realm;
-
-    IMG_Effect = battle_units[battle_unit_idx].Image_Effect;
-
-    if(battle_units[battle_unit_idx].Always_Animate == ST_TRUE)
+    figure_effect = battle_units[battle_unit_idx].figure_effect;
+    if(battle_units[battle_unit_idx].animate_idle == ST_TRUE)
     {
-        frame_num = CMB_BaseAnimFrame;
+        frame_num = combat_idle_anim_frame;
     }
     else if(battle_units[battle_unit_idx].Moving == ST_TRUE)
     {
-        if(battle_units[battle_unit_idx].Move_Bob == ST_TRUE)
+        if(battle_units[battle_unit_idx].animate_move_as_idle == ST_TRUE)
         {
-            frame_num = CMB_BaseAnimFrame;
+            frame_num = combat_idle_anim_frame;
         } 
         else
         {
-            frame_num = CMB_MoveAnimFrame;
+            frame_num = combat_walk_anim_frame;
         }
     }
     else
     {
         frame_num = 1;
     }
-
     cgx = battle_units[battle_unit_idx].cgx;
     cgy = battle_units[battle_unit_idx].cgy;
     target_cgx = battle_units[battle_unit_idx].target_cgx;
     target_cgy = battle_units[battle_unit_idx].target_cgy;
     BATTLE_UNIT_FACING_DRECTION
-
     FIGUREX_MAP
     FIGUREX_OFFSET
     FIGUREX_POINTER
-
     figure_set_idx = 7;  // look left/west?
-
     Set_Animation_Frame(figure_pict_set_seg[figure_set_idx], frame_num);
-    Draw_Picture_To_Bitmap(figure_pict_set_seg[figure_set_idx], GfxBuf_2400B);
-
+    Draw_Picture_To_Bitmap(figure_pict_set_seg[figure_set_idx], scratch_bitmap_seg);
     Combat_Figure_Banner_Color(player_idx);
     Combat_Unit_Enchantment_Outline_Draw(enchantment_magic_realm);
-    Combat_Figure_Effect__WIP(IMG_Effect);
-
-
+    Combat_Figure_Effect__WIP(figure_effect);
     // ~ CMB_DrawEntities__WIP()
     for(cur_fig = 0; cur_fig < fig_cnt; cur_fig++)
     {
         Battle_Unit_Figure_Position(fig_max, cur_fig, &fig_x, &fig_y);
-        Clipped_Copy_Bitmap(fig_x, fig_y - 4, IMG_CMB_FX_Figure, GfxBuf_2400B);
+        Clipped_Copy_Bitmap(fig_x, fig_y - 4, battle_unit_scratch_seg, scratch_bitmap_seg);
     }
-
 }
 
 
@@ -8587,7 +8446,7 @@ void Combat_Cast_Spell_Error(int16_t type)
  * the erratic behavior caused by confusion. It performs up to 600 random square probes within the
  * combat grid and selects the first location whose entry in g_combat_grid_action_map indicates that no unit
  * currently occupies the square. If such a square is found, the unit is moved there through
- * Move_Battle_Unit__WIP().
+ * Move_Battle_Unit().
  *
  * Regardless of whether a valid destination is found, the unit's turn is then ended by forcing its
  * action to bua_Finished and clearing its remaining movement points.
@@ -8626,7 +8485,7 @@ void Move_Confused(int16_t battle_unit_idx)
 
     if(target_found == ST_TRUE)
     {
-        Move_Battle_Unit__WIP(battle_unit_idx, target_x, target_y);
+        Move_Battle_Unit(battle_unit_idx, target_x, target_y);
     }
 
     battle_units[battle_unit_idx].action = bua_Finished;
@@ -9045,7 +8904,7 @@ void Combat_Figure_Banner_Color(int16_t player_idx)
     {
         // Draw_Map_Towers()
         // Replace_Color(map_square_scratchpad_seg, 224 + itr_color_remap, *(COL_Banners + (_players[tower_owner_idx].banner_id * 5)));
-        Replace_Color(GfxBuf_2400B, (214 + itr_banner_colors), COL_Banners[((unit_owner_banner_idx * 5) + itr_banner_colors)]);
+        Replace_Color(scratch_bitmap_seg, (214 + itr_banner_colors), COL_Banners[((unit_owner_banner_idx * 5) + itr_banner_colors)]);
     }
 
 }
@@ -9070,7 +8929,7 @@ void Combat_Figure_Active_Red_Outline(int16_t battle_unit_idx)
     if(_scanned_battle_unit == battle_unit_idx)
     {
 
-        Replace_Color(GfxBuf_2400B, 1, 198);
+        Replace_Color(scratch_bitmap_seg, 1, 198);
 
     }
 
@@ -9095,7 +8954,7 @@ void Combat_Figure_Active_Red_Outline(int16_t battle_unit_idx)
 void Combat_Figure_Effect__WIP(int16_t effect)
 {
 
-    FLIC_Set_LoopFrame_1(GfxBuf_2400B);
+    FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
 
     switch(effect)
     {
@@ -9103,45 +8962,45 @@ void Combat_Figure_Effect__WIP(int16_t effect)
         case 1:  // Black Sleep
         {
 
-            Transparent_Color_Range(GfxBuf_2400B, 232, 232);
+            Transparent_Color_Range(scratch_bitmap_seg, 232, 232);
 
-            Gray_Scale_Bitmap(GfxBuf_2400B, 1);
+            Gray_Scale_Bitmap(scratch_bitmap_seg, 1);
 
         } break;
 
         case 2:
         {
 
-            Transparent_Color_Range(GfxBuf_2400B, 232, 232);
+            Transparent_Color_Range(scratch_bitmap_seg, 232, 232);
 
-            /* TODO */  LBX_IMG_RevGrayscale__STUB(GfxBuf_2400B, 104);
+            /* TODO */  LBX_IMG_RevGrayscale__STUB(scratch_bitmap_seg, 104);
 
         } break;
 
         case 3:  // Warp Creature
         {
 
-            Transparent_Color_Range(GfxBuf_2400B, 232, 232);
+            Transparent_Color_Range(scratch_bitmap_seg, 232, 232);
 
-            /* TODO */  LBX_IMG_RevGrayscale__STUB(GfxBuf_2400B, 40);
+            /* TODO */  LBX_IMG_RevGrayscale__STUB(scratch_bitmap_seg, 40);
 
         } break;
 
         case 4:  // Invisibility - visible
         {
 
-            Transparent_Color_Range(GfxBuf_2400B, 232, 232);
+            Transparent_Color_Range(scratch_bitmap_seg, 232, 232);
 
-            Replace_Color_All(GfxBuf_2400B, 233);
+            Replace_Color_All(scratch_bitmap_seg, 233);
 
         } break;
 
         case 5:  // Invisibility - invisible
         {
 
-            Transparent_Color_Range(GfxBuf_2400B,   1, 228);
+            Transparent_Color_Range(scratch_bitmap_seg,   1, 228);
 
-            Transparent_Color_Range(GfxBuf_2400B, 232, 232);
+            Transparent_Color_Range(scratch_bitmap_seg, 232, 232);
 
         } break;
 
@@ -9336,7 +9195,7 @@ void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx)
 
 Combat_Unit_Enchantment_Outline_Set() + Combat_Unit_Enchantment_Outline_Draw() is the same as Draw_Unit_Enchantment_Outline() from 'Main Screen'
 
-here    GfxBuf_2400B
+here    scratch_bitmap_seg
 there   UnitDraw_WorkArea
 
 */
@@ -9346,9 +9205,9 @@ void Combat_Unit_Enchantment_Outline_Draw(int16_t enchantment_magic_realm)
     if(enchantment_magic_realm != ST_UNDEFINED)
     {
 
-        Outline_Bitmap_Pixels_No_Glass(GfxBuf_2400B, 255);
+        Outline_Bitmap_Pixels_No_Glass(scratch_bitmap_seg, 255);
 
-        Bitmap_Aura_Pixels(GfxBuf_2400B, 255, &enchantment_outline_colors[enchantment_magic_realm][unit_enchantment_animation_count][0]);
+        Bitmap_Aura_Pixels(scratch_bitmap_seg, 255, &enchantment_outline_colors[enchantment_magic_realm][unit_enchantment_animation_count][0]);
 
     }
 
@@ -9418,170 +9277,68 @@ void Update_Sees_Illusions(void)
 
 
 // WZD o105p08
-// drake178: BU_SetVisibility()
-/*
-; checks the unit's visibility state and modifies the
-; BU image effect field accordingly if necessary
-*/
-/*
-
-sets battle_units[].Image_Effect
-
-*/
-static void BU_SetVisibility_OLD(int16_t battle_unit_idx)
-{
-    int16_t Visible = 0;
-    int16_t Tile_Distance = 0;
-    int16_t owner_idx = 0;
-    uint32_t enchantments = 0;
-    int16_t itr = 0;  // _DI_
-
-    owner_idx = battle_units[battle_unit_idx].controller_idx;
-
-    enchantments = (battle_units[battle_unit_idx].enchantments | _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments);
-
-    Visible = ST_TRUE;
-
-    if(
-        ((enchantments & UE_INVISIBILITY) != 0)
-        ||
-        ((battle_units[battle_unit_idx].Abilities & UA_INVISIBILITY) != 0)
-    )
-    {
-
-        Visible = ST_FALSE;
-
-        if(
-            (owner_idx == _combat_defender_player)
-            &&
-            (_attacker_sees_illusions == ST_TRUE)
-        )
-        {
-
-            Visible = ST_TRUE;
-
-            battle_units[battle_unit_idx].Image_Effect = 4;
-
-        }
-
-        if(owner_idx == combat_human_player)
-        {
-
-            Visible = ST_TRUE;
-
-            battle_units[battle_unit_idx].Image_Effect = 4;
-
-        }
-
-        if(Visible == ST_FALSE)
-        {
-
-            battle_units[battle_unit_idx].Image_Effect = 5;
-
-            for(itr = 0; itr < _combat_total_unit_count; itr++)
-            {
-
-                if(
-                    (battle_units[itr].status == bus_Active)
-                    &&
-                    (battle_units[itr].controller_idx != owner_idx)
-                )
-                {
-
-                    Tile_Distance = Range_To_Battle_Unit(battle_unit_idx, itr);
-
-                    if(Tile_Distance < 2)
-                    {
-
-                        Visible = ST_TRUE;
-
-                        battle_units[battle_unit_idx].Image_Effect = 4;
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
-
-}
-/* GEMINI */
-void BU_SetVisibility(int16_t battle_unit_idx)
+void Battle_Unit_Set_Invisibility_Effect(int16_t battle_unit_idx)
 {
     uint32_t enchantments = 0;
     int16_t owner_idx = 0;
-    int16_t distance = 0;
+    int16_t range = 0;
     int16_t is_visible = 0;
     int16_t i = 0;
-
     /* owner_idx = battle_units[battle_unit_idx].controller_idx; */
     owner_idx = battle_units[battle_unit_idx].controller_idx;
-
     /* Combine enchantments from battle unit instance and base unit definition */
     enchantments = battle_units[battle_unit_idx].enchantments;
     enchantments |= _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
-
-    is_visible = 1; /* e_ST_TRUE */
-
+    is_visible = ST_TRUE;
     /* Check for Invisibility (Enchantment or Innate Ability) */
-    if((enchantments & UE_INVISIBILITY) || (battle_units[battle_unit_idx].Abilities & UA_INVISIBILITY))
+    if(
+        (enchantments & UE_INVISIBILITY)
+        ||
+        (battle_units[battle_unit_idx].Abilities & UA_INVISIBILITY)
+    )
     {
-        /* loc_860AB: */
-        is_visible = 0; /* e_ST_FALSE */
-
+        is_visible = ST_FALSE;
         /* True Seeing check: Defender units vs Attacker True Seeing */
         if(owner_idx == _combat_defender_player)
         {
-            if(_attacker_sees_illusions == 1 /* e_ST_TRUE */)
+            if(_attacker_sees_illusions == ST_TRUE)
             {
-                is_visible = 1; /* e_ST_TRUE */
-                battle_units[battle_unit_idx].Image_Effect = 4;
+                is_visible = ST_TRUE;
+                battle_units[battle_unit_idx].figure_effect = 4;
             }
         }
-
         /* True Seeing check: Attacker units vs Defender True Seeing */
-        /* loc_860D8: */
         if(owner_idx == _combat_attacker_player)
         {
-            if(_defender_sees_illusions == 1 /* e_ST_TRUE */)
+            if(_defender_sees_illusions == ST_TRUE)
             {
-                is_visible = 1; /* e_ST_TRUE */
-                battle_units[battle_unit_idx].Image_Effect = 4;
+                is_visible = ST_TRUE;
+                battle_units[battle_unit_idx].figure_effect = 4;
             }
         }
-
         /* Human player always sees their own invisible units */
-        /* loc_86100: */
         if(owner_idx == combat_human_player)
         {
-            is_visible = 1; /* e_ST_TRUE */
-            battle_units[battle_unit_idx].Image_Effect = 4;
+            is_visible = ST_TRUE;
+            battle_units[battle_unit_idx].figure_effect = 4;
         }
-
         /* If still not visible, set 'Hidden' effect and check for proximity detection */
-        /* loc_86121: */
-        if(is_visible == 0 /* e_ST_FALSE */)
+        if(is_visible == ST_FALSE)
         {
-            battle_units[battle_unit_idx].Image_Effect = 5;
-
+            battle_units[battle_unit_idx].figure_effect = 5;
             for(i = 0; i < _combat_total_unit_count; i++)
             {
-                /* loc_8613E: */
-                if(battle_units[i].status == 1 /* bus_Active */)
+                if(battle_units[i].status == bus_Active)
                 {
                     /* Only check proximity for enemy units */
                     if(battle_units[i].controller_idx != owner_idx)
                     {
-                        distance = Range_To_Battle_Unit(battle_unit_idx, i);
-
-                        /* If an enemy is adjacent (distance 0 or 1), the unit is revealed */
-                        if(distance < 2)
+                        range = Range_To_Battle_Unit(battle_unit_idx, i);
+                        /* If an enemy is adjacent (range 0 or 1), the unit is revealed */
+                        if(range < 2)
                         {
-                            is_visible = 1; /* e_ST_TRUE */
-                            battle_units[battle_unit_idx].Image_Effect = 4;
+                            is_visible = ST_TRUE;
+                            battle_units[battle_unit_idx].figure_effect = 4;
                             /* Note: Assembly does not break early; continues checking all units */
                         }
                     }
@@ -9612,7 +9369,7 @@ int16_t BU_GetCombatEffect__WIP(int16_t battle_unit_idx)
     if((battle_units[battle_unit_idx].Combat_Effects & bue_Black_Sleep) != 0)
     {
 
-        battle_units[battle_unit_idx].Image_Effect = 1;
+        battle_units[battle_unit_idx].figure_effect = 1;
 
     }
 
@@ -9625,7 +9382,7 @@ int16_t BU_GetCombatEffect__WIP(int16_t battle_unit_idx)
     )
     {
 
-        battle_units[battle_unit_idx].Image_Effect = 3;
+        battle_units[battle_unit_idx].figure_effect = 3;
 
     }
 
@@ -9645,49 +9402,27 @@ int16_t BU_GetCombatEffect__WIP(int16_t battle_unit_idx)
 
 
 // WZD o105p10
-// drake178: BU_SetBaseAnims()
-/*
-; sets the BU fields controlling whether the unit is
-; animated when moving and when not
-*/
-/*
-    sets battle_units[].Always_Animate and .Move_Bob
-
-*/
-void BU_SetBaseAnims__WIP(int16_t battle_unit_idx)
+void Battle_Unit_Set_Animation_Flags(int16_t battle_unit_idx)
 {
-    int16_t Flight_Bob = 0;
-    int16_t animate = 0;  // _DI_
-
-    Flight_Bob = ST_FALSE;
-
+    int16_t battle_unit_is_flying_unit_type = 0;
+    int16_t animate = 0;
+    battle_unit_is_flying_unit_type = ST_FALSE;
     animate = ST_FALSE;
-
     if((battle_units[battle_unit_idx].Attribs_1 & USA_FLYING) != 0)
     {
-
-        Flight_Bob = ST_TRUE;
-
-        // TODO  is that 0 really there?  animate = BU_CheckFlight__WIP(battle_unit_idx, 0);  // ST_TRUE if flying and not web or black sleep
-        animate = BU_CheckFlight__WIP(battle_unit_idx);
-
+        battle_unit_is_flying_unit_type = ST_TRUE;
+        animate = Battle_Unit_Is_Airborne(battle_unit_idx);  /* OGBUG  calls Battle_Unit_Is_Airborne(battle_unit_idx, 0) */
     }
-
     if(
-        (_UNITS[battle_units[battle_unit_idx].unit_idx].type == spell_data_table[spl_Great_Wyrm].Param0)
+        (_UNITS[battle_units[battle_unit_idx].unit_idx].type == spell_data_table[spl_Great_Wyrm].unit_type)
         ||
-        (_UNITS[battle_units[battle_unit_idx].unit_idx].type == spell_data_table[spl_Fire_Elemental].Param0)
+        (_UNITS[battle_units[battle_unit_idx].unit_idx].type == spell_data_table[spl_Fire_Elemental].unit_type)
     )
     {
-
         animate = ST_TRUE;
-
     }
-
-    battle_units[battle_unit_idx].Always_Animate = animate;
-
-    battle_units[battle_unit_idx].Move_Bob = Flight_Bob;
-
+    battle_units[battle_unit_idx].animate_idle = animate;
+    battle_units[battle_unit_idx].animate_move_as_idle = battle_unit_is_flying_unit_type;
 }
 
 
@@ -10327,13 +10062,13 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
             if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
             {
                 // Unit's Current Total Hit Points
-                HP = ((battle_units[itr_battle_units].Cur_Figures * battle_units[itr_battle_units].hits) - battle_units[itr_battle_units].front_figure_damage);
+                HP = ((battle_units[itr_battle_units].figure_cnt * battle_units[itr_battle_units].hits) - battle_units[itr_battle_units].front_figure_damage);
 
                 IDK_health_attacker += Get_Effective_Hits(HP, battle_units[itr_battle_units].defense);
 
                 if(Battle_Unit_Has_Ranged_Attack(itr_battle_units) == ST_TRUE)
                 {
-                    IDK_ranged_threat_attacker += Get_Effective_Ranged_Strength(battle_units[itr_battle_units].ranged, battle_units[itr_battle_units].Cur_Figures, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].ranged_attack_attributes));
+                    IDK_ranged_threat_attacker += Get_Effective_Ranged_Strength(battle_units[itr_battle_units].ranged, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].ranged_attack_attributes));
                 }
 
                 // {100, 101, 102, 103, 104, 105} srat_Thrown, srat_FireBreath, srat_Lightning, srat_StoneGaze, srat_MultiGaze, srat_DeathGaze
@@ -10348,20 +10083,20 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
                     special_ranged_attack_strength = battle_units[itr_battle_units].ranged;
                 }
 
-                IDK_melee_threat_attacker += Get_Effective_Melee_Strength(battle_units[itr_battle_units].melee, special_ranged_attack_strength, battle_units[itr_battle_units].Cur_Figures, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].melee_attack_attributes), battle_units[itr_battle_units].ranged_type);
+                IDK_melee_threat_attacker += Get_Effective_Melee_Strength(battle_units[itr_battle_units].melee, special_ranged_attack_strength, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].melee_attack_attributes), battle_units[itr_battle_units].ranged_type);
 
-                IDK_damage_attacker += ((battle_units[itr_battle_units].hits * battle_units[itr_battle_units].Cur_Figures) - battle_units[itr_battle_units].front_figure_damage);
+                IDK_damage_attacker += ((battle_units[itr_battle_units].hits * battle_units[itr_battle_units].figure_cnt) - battle_units[itr_battle_units].front_figure_damage);
             }
             else  /* battle_units[itr_battle_units].controller_idx == _combat_defender_player */
             {
                 // Unit's Current Total Hit Points
-                HP = ((battle_units[itr_battle_units].Cur_Figures * battle_units[itr_battle_units].hits) - battle_units[itr_battle_units].front_figure_damage);
+                HP = ((battle_units[itr_battle_units].figure_cnt * battle_units[itr_battle_units].hits) - battle_units[itr_battle_units].front_figure_damage);
 
                 IDK_health_defender += Get_Effective_Hits(HP, battle_units[itr_battle_units].defense);
 
                 if(Battle_Unit_Has_Ranged_Attack(itr_battle_units) == ST_TRUE)
                 {
-                    IDK_ranged_threat_defender += Get_Effective_Ranged_Strength(battle_units[itr_battle_units].ranged, battle_units[itr_battle_units].Cur_Figures, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].ranged_attack_attributes));
+                    IDK_ranged_threat_defender += Get_Effective_Ranged_Strength(battle_units[itr_battle_units].ranged, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].ranged_attack_attributes));
                 }
 
                 if(battle_units[itr_battle_units].ranged_type < srat_Thrown)
@@ -10373,9 +10108,9 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
                     special_ranged_attack_strength = battle_units[itr_battle_units].ranged;
                 }
 
-                IDK_melee_threat_defender += Get_Effective_Melee_Strength(battle_units[itr_battle_units].melee, special_ranged_attack_strength, battle_units[itr_battle_units].Cur_Figures, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].melee_attack_attributes), battle_units[itr_battle_units].ranged_type);
+                IDK_melee_threat_defender += Get_Effective_Melee_Strength(battle_units[itr_battle_units].melee, special_ranged_attack_strength, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].melee_attack_attributes), battle_units[itr_battle_units].ranged_type);
 
-                IDK_damage_defender += ((battle_units[itr_battle_units].hits * battle_units[itr_battle_units].Cur_Figures) - battle_units[itr_battle_units].front_figure_damage);
+                IDK_damage_defender += ((battle_units[itr_battle_units].hits * battle_units[itr_battle_units].figure_cnt) - battle_units[itr_battle_units].front_figure_damage);
             }  /* if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player) */
         }
     }
@@ -11023,10 +10758,10 @@ void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t Healing, int16_t TempHits
         while(Top_Figure_Damage < 0)
         {
 
-            if(battle_units[battle_unit_idx].Max_Figures > battle_units[battle_unit_idx].Cur_Figures)
+            if(battle_units[battle_unit_idx].figure_max > battle_units[battle_unit_idx].figure_cnt)
             {
 
-                battle_units[battle_unit_idx].Cur_Figures += 1;
+                battle_units[battle_unit_idx].figure_cnt += 1;
 
                 Top_Figure_Damage += battle_units[battle_unit_idx].hits;
 
@@ -11056,10 +10791,10 @@ void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t Healing, int16_t TempHits
 
     Top_Figure_Damage = abs(Top_Figure_Damage);
 
-    if(battle_units[battle_unit_idx].Max_Figures <= Top_Figure_Damage)
+    if(battle_units[battle_unit_idx].figure_max <= Top_Figure_Damage)
     {
 
-        battle_units[battle_unit_idx].Extra_Hits += (Top_Figure_Damage / battle_units[battle_unit_idx].Max_Figures);
+        battle_units[battle_unit_idx].Extra_Hits += (Top_Figure_Damage / battle_units[battle_unit_idx].figure_max);
 
     }
 
@@ -11085,10 +10820,10 @@ void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t Healing, int16_t TempHits
 ;     (hp*6) - (hp*13.5) - (hp*24) - (hp*37.5)...
 
 Strategic_Combat()
-    |-> HP = ((battle_units[itr_battle_units].hits / battle_units[itr_battle_units].Cur_Figures) - battle_units[itr_battle_units].TopFig_Dmg);
+    |-> HP = ((battle_units[itr_battle_units].hits / battle_units[itr_battle_units].figure_cnt) - battle_units[itr_battle_units].TopFig_Dmg);
     |-> IDK_health_attacker += Get_Effective_Hits(HP, battle_units[itr_battle_units].defense);
 
-HP = ((battle_units[].hits / battle_units[].Cur_Figures) - battle_units[].TopFig_Dmg);
+HP = ((battle_units[].hits / battle_units[].figure_cnt) - battle_units[].TopFig_Dmg);
 
 battle_units[].defense = ¿ unit_type_table[_UNITS[].type].defense ?
 
@@ -11147,10 +10882,10 @@ int16_t Get_Effective_Hits(int16_t hits, int16_t defense)
 ;   eldritch w:    total*5/4
 
 Strategic_Combat()
-    |-> IDK_ranged_threat_defender += Get_Effective_Ranged_Strength(battle_units[itr_battle_units].ranged, battle_units[itr_battle_units].Cur_Figures, (battle_units[itr_battle_units].Attack_Flags | battle_units[itr_battle_units].Ranged_ATK_Flags));
+    |-> IDK_ranged_threat_defender += Get_Effective_Ranged_Strength(battle_units[itr_battle_units].ranged, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].Attack_Flags | battle_units[itr_battle_units].Ranged_ATK_Flags));
 
 battle_units[].ranged
-battle_units[].Cur_Figures
+battle_units[].figure_cnt
 (battle_units[].Attack_Flags | battle_units[].Ranged_ATK_Flags)
 
 */
@@ -11268,18 +11003,18 @@ int16_t Get_Effective_Ranged_Strength(int16_t ranged, int16_t figures, int16_t a
 ;   multi-gaze:    +900
 
 Strategic_Combat()
-    |-> IDK_melee_threat_attacker += Get_Effective_Melee_Strength(battle_units[itr_battle_units].melee, special_ranged_attack_strength, battle_units[itr_battle_units].Cur_Figures, (battle_units[itr_battle_units].Attack_Flags | battle_units[itr_battle_units].Melee_ATK_Flags), battle_units[itr_battle_units].ranged_type);
+    |-> IDK_melee_threat_attacker += Get_Effective_Melee_Strength(battle_units[itr_battle_units].melee, special_ranged_attack_strength, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].Attack_Flags | battle_units[itr_battle_units].Melee_ATK_Flags), battle_units[itr_battle_units].ranged_type);
 
 battle_units[itr_battle_units].melee
 special_ranged_attack_strength
-battle_units[itr_battle_units].Cur_Figures
+battle_units[itr_battle_units].figure_cnt
 (battle_units[itr_battle_units].Attack_Flags | battle_units[itr_battle_units].Melee_ATK_Flags)
 battle_units[itr_battle_units].ranged_type
 
 ¿ Calc, Mods, Effects, etc. ?
     battle_units[].melee = ¿ unit_type_table[_UNITS[].type].melee ?
     thrown = ¿ unit_type_table[_UNITS[].type].ranged ?
-    battle_units[].Cur_Figures
+    battle_units[].figure_cnt
     (battle_units[].Attack_Flags | battle_units[].Melee_ATK_Flags)
     battle_units[].ranged_type
 
@@ -11539,7 +11274,7 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 {
                     /* MoM AI heuristic: Prioritize damaged/weakened units */
                     /* Value += (100 - current_total_hp) + current_figure_damage */
-                    Target_Value += (100 - (bu_ptr->Cur_Figures * bu_ptr->hits)) + bu_ptr->front_figure_damage;
+                    Target_Value += (100 - (bu_ptr->figure_cnt * bu_ptr->hits)) + bu_ptr->front_figure_damage;
                 }
                 if(Target_Value > highest_value)
                 {
@@ -11619,7 +11354,7 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                     /* Don't berserk Heroes */
                     if(_UNITS[bu_ptr->unit_idx].Hero_Slot != ST_UNDEFINED) continue;
                 }
-                Target_Value = (bu_ptr->Cur_Figures * 10) + bu_ptr->melee;
+                Target_Value = (bu_ptr->figure_cnt * 10) + bu_ptr->melee;
                 if(Target_Value > highest_value)
                 {
                     highest_value = Target_Value;
@@ -11640,7 +11375,7 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 enchantments |= bu_ptr->item_enchantments;
                 if(enchantments & spell_data_table[spell_idx].enchantments) continue;
                 if(spell_idx == spl_Heroism && _UNITS[bu_ptr->unit_idx].Level > 2) continue;
-                Target_Value = (bu_ptr->Cur_Figures * 10) + bu_ptr->melee;
+                Target_Value = (bu_ptr->figure_cnt * 10) + bu_ptr->melee;
                 if(Target_Value > highest_value)
                 {
                     highest_value = Target_Value;
@@ -11934,7 +11669,7 @@ int16_t AITP_Healing(int16_t player_idx)
         if(bu_ptr->status != bus_Active) continue;
         if(bu_ptr->race == rt_Death) continue;  /* Death creatures cannot be healed */
 
-        target_value = (((bu_ptr->Max_Figures - bu_ptr->Cur_Figures) * bu_ptr->hits) + bu_ptr->front_figure_damage);
+        target_value = (((bu_ptr->figure_max - bu_ptr->figure_cnt) * bu_ptr->hits) + bu_ptr->front_figure_damage);
         if(target_value > 2)
         {
             target_value = (target_value * (bu_ptr->melee + bu_ptr->ranged));
@@ -11989,7 +11724,7 @@ int16_t AITP_WarpWood(int16_t player_idx)
 
         if((bu_ptr->ranged_type / 10) == rag_Missile)
         {
-            target_value = ((bu_ptr->ranged * bu_ptr->ammo) * bu_ptr->Cur_Figures);
+            target_value = ((bu_ptr->ranged * bu_ptr->ammo) * bu_ptr->figure_cnt);
         }
         else
         {
@@ -12049,7 +11784,7 @@ int16_t AITP_WarpCreature(int16_t player_idx)
         if(unit_resist >= 10) continue;
 
         /* attack value scaled by the failure chance of the resistance roll */
-        target_value = (((((bu_ptr->melee + bu_ptr->ranged) * bu_ptr->Cur_Figures) * (10 - unit_resist)) + 9) / 10);
+        target_value = (((((bu_ptr->melee + bu_ptr->ranged) * bu_ptr->figure_cnt) * (10 - unit_resist)) + 9) / 10);
 
         if(target_value > highest_value)
         {
@@ -12596,7 +12331,7 @@ case scc_Disjunction_Spell:  // 20
                     )
                     {
 
-                        figure_count = battle_units[target_idx].Cur_Figures;
+                        figure_count = battle_units[target_idx].figure_cnt;
 
                         for(itr = 0; itr < figure_count; itr++)
                         {
@@ -13586,7 +13321,7 @@ void Ranged_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_
 
     if(magic_set.sound_effects == ST_TRUE)
     {
-        Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
+        Play_Sound(sound_silent_seg, sound_silent_seg_size);
         Mark_Block(World_Data);
     }
 
@@ -13636,11 +13371,11 @@ void Ranged_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_
     }
     if(defender_battle_unit_idx != 99)
     {
-        Make_Missiles(battle_units[attacker_battle_unit_idx].Cur_Figures, battle_units[defender_battle_unit_idx].Cur_Figures, battle_units[attacker_battle_unit_idx].cgx, battle_units[attacker_battle_unit_idx].cgy, battle_units[defender_battle_unit_idx].cgx, battle_units[defender_battle_unit_idx].cgy, missile_type);
+        Make_Missiles(battle_units[attacker_battle_unit_idx].figure_cnt, battle_units[defender_battle_unit_idx].figure_cnt, battle_units[attacker_battle_unit_idx].cgx, battle_units[attacker_battle_unit_idx].cgy, battle_units[defender_battle_unit_idx].cgx, battle_units[defender_battle_unit_idx].cgy, missile_type);
     }
     else
     {
-        Make_Missiles(battle_units[attacker_battle_unit_idx].Cur_Figures, 1, battle_units[attacker_battle_unit_idx].cgx, battle_units[attacker_battle_unit_idx].cgy, cgx, cgy, missile_type);
+        Make_Missiles(battle_units[attacker_battle_unit_idx].figure_cnt, 1, battle_units[attacker_battle_unit_idx].cgx, battle_units[attacker_battle_unit_idx].cgy, cgx, cgy, missile_type);
     }
     CMB_ProjectileFrame = 0;
     RP_CMB_ProjectileFrame2 = 0;
@@ -13759,7 +13494,7 @@ void Melee_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_u
 
     if(magic_set.sound_effects == ST_TRUE)
     {
-        Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
+        Play_Sound(sound_silent_seg, sound_silent_seg_size);
         Mark_Block(World_Data);
         sound_data = Reload_Melee_Sound(attacker_battle_unit_idx, &sound_buffer_size);
         Play_Sound(sound_data, sound_buffer_size);
@@ -13921,7 +13656,7 @@ void Apply_Battle_Unit_Damage_From_Spell(uint16_t spell_idx, uint16_t battle_uni
     if(attack_attributes & Att_AREAFLAG)
     {
 
-        attack_count = battleunit->Cur_Figures;
+        attack_count = battleunit->figure_cnt;
 
         attack_attributes |= Att_DMGLIMIT;
 
@@ -14135,12 +13870,12 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t damage_types[])
 
         Figures_Lost = (damage_total / battle_units[battle_unit_idx].hits);
 
-        if(battle_units[battle_unit_idx].Cur_Figures < Figures_Lost)
+        if(battle_units[battle_unit_idx].figure_cnt < Figures_Lost)
         {
-            Figures_Lost = battle_units[battle_unit_idx].Cur_Figures;
+            Figures_Lost = battle_units[battle_unit_idx].figure_cnt;
         }
 
-        battle_units[battle_unit_idx].Cur_Figures -= Figures_Lost;
+        battle_units[battle_unit_idx].figure_cnt -= Figures_Lost;
 
         battle_units[battle_unit_idx].front_figure_damage = (damage_total % battle_units[battle_unit_idx].hits);
 
@@ -14150,9 +13885,9 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t damage_types[])
         He's dead, Jim.
     */
    // @@HesDeadJim  Pure-Red in IDA
-    if(battle_units[battle_unit_idx].Cur_Figures <= 0)
+    if(battle_units[battle_unit_idx].figure_cnt <= 0)
     {
-        battle_units[battle_unit_idx].Cur_Figures = 0;
+        battle_units[battle_unit_idx].figure_cnt = 0;
 
         _combat_winner = Eliminated_Opponent();
 
@@ -14905,7 +14640,7 @@ void Combat_Cast_Spell_Message(int16_t caster_idx, int16_t spell_idx)
         {
             stu_strcpy(GUI_NearMsgString, cnst_CombatCast_2);  // "The "
             stu_strcat(GUI_NearMsgString, *_unit_type_table[_UNITS[battle_units[caster_idx].unit_idx].type].name);
-            if(battle_units[caster_idx].Max_Figures > 1)
+            if(battle_units[caster_idx].figure_max > 1)
             {
                 stu_strcat(GUI_NearMsgString, cnst_CombatCast_3);  // " have cast "
             }
@@ -15739,7 +15474,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
 
     battle_unit->front_figure_damage = (_UNITS[unit_idx].Damage % battle_unit->hits);
 
-    battle_unit->Cur_Figures = (battle_unit->Max_Figures - (_UNITS[unit_idx].Damage / battle_unit->hits));
+    battle_unit->figure_cnt = (battle_unit->figure_max - (_UNITS[unit_idx].Damage / battle_unit->hits));
 
     battle_unit->Atk_FigLoss = 0;
     battle_unit->Confusion_State = 0;
@@ -15753,9 +15488,9 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     battle_unit->move_anim_ctr = 0;
     battle_unit->Moving = ST_FALSE;
     battle_unit->action = bua_Ready;
-    battle_unit->Always_Animate = ST_FALSE;
-    battle_unit->Image_Effect = 0;
-    battle_unit->Move_Bob = 0;
+    battle_unit->animate_idle = ST_FALSE;
+    battle_unit->figure_effect = 0;
+    battle_unit->animate_move_as_idle = 0;
 
     // ¿ BUG:  only gets item charges for 1/first item ?
     // Macro:  Unit Is Hero Unit
@@ -16937,7 +16672,7 @@ void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_bat
         if(battle_units[attacker_battle_unit_idx].ranged_type >= srat_Thrown)
         {
 
-            BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].Cur_Figures, defender_battle_unit_idx, am_ThrownOrBreath, &damage_types[0], 0, SpFx);
+            BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].figure_cnt, defender_battle_unit_idx, am_ThrownOrBreath, &damage_types[0], 0, SpFx);
 
             for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
             {
@@ -16953,7 +16688,7 @@ void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_bat
             )
             {
 
-                BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].Cur_Figures, defender_battle_unit_idx, am_ThrownOrBreath, &damage_types[0], 0, SpFx);
+                BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].figure_cnt, defender_battle_unit_idx, am_ThrownOrBreath, &damage_types[0], 0, SpFx);
 
                 for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
                 {
@@ -16990,13 +16725,13 @@ void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_bat
             if(Target_Damage_Sum > 0)
             {
 
-                Figs = (battle_units[defender_battle_unit_idx].Cur_Figures - (Target_Damage_Sum / battle_units[defender_battle_unit_idx].hits));
+                Figs = (battle_units[defender_battle_unit_idx].figure_cnt - (Target_Damage_Sum / battle_units[defender_battle_unit_idx].hits));
 
             }
             else
             {
 
-                Figs = battle_units[defender_battle_unit_idx].Cur_Figures;
+                Figs = battle_units[defender_battle_unit_idx].figure_cnt;
 
             }
 
@@ -17069,7 +16804,7 @@ void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_bat
 
                 }
 
-                BU_ProcessAttack__WIP(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].Cur_Figures - Feared_Figures), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, SpFx);
+                BU_ProcessAttack__WIP(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].figure_cnt - Feared_Figures), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, SpFx);
 
                 for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
                 {
@@ -17105,13 +16840,13 @@ void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_bat
                 if(Target_Damage_Sum > 0)
                 {
 
-                    Figs = (battle_units[defender_battle_unit_idx].Cur_Figures - (Target_Damage_Sum / battle_units[defender_battle_unit_idx].hits));
+                    Figs = (battle_units[defender_battle_unit_idx].figure_cnt - (Target_Damage_Sum / battle_units[defender_battle_unit_idx].hits));
 
                 }
                 else
                 {
 
-                    Figs = battle_units[defender_battle_unit_idx].Cur_Figures;
+                    Figs = battle_units[defender_battle_unit_idx].figure_cnt;
 
                 }
 
@@ -17178,7 +16913,7 @@ void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_bat
 
                 Feared_Figures += (Source_Unit_Damage / battle_units[attacker_battle_unit_idx].hits);
 
-                BU_ProcessAttack__WIP(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].Cur_Figures - Feared_Figures), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, SpFx);
+                BU_ProcessAttack__WIP(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].figure_cnt - Feared_Figures), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, SpFx);
 
                 for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
                 {
@@ -17190,7 +16925,7 @@ void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_bat
                 if((battle_units[attacker_battle_unit_idx].Combat_Effects & bue_Haste) != 0)
                 {
 
-                    BU_ProcessAttack__WIP(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].Cur_Figures - Feared_Figures), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, SpFx);
+                    BU_ProcessAttack__WIP(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].figure_cnt - Feared_Figures), defender_battle_unit_idx, am_Melee, &damage_types[0], 0, SpFx);
 
                     for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
                     {
@@ -17240,7 +16975,7 @@ void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_bat
         else
         {
 
-            BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].Cur_Figures, defender_battle_unit_idx, am_Ranged, &damage_types[0], 0, SpFx);
+            BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].figure_cnt, defender_battle_unit_idx, am_Ranged, &damage_types[0], 0, SpFx);
 
             for(itr_damage_types = 0; itr_damage_types < NUM_DAMAGE_TYPES; itr_damage_types++)
             {
@@ -17495,7 +17230,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
         )
         {
 
-            for(itr = 0; battle_units[defender_battle_unit_idx].Cur_Figures > itr; itr++)
+            for(itr = 0; battle_units[defender_battle_unit_idx].figure_cnt > itr; itr++)
             {
 
                 if(Combat_Resistance_Check(battle_units[defender_battle_unit_idx], -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib)), sbr_Nature) > 0)
@@ -17521,7 +17256,7 @@ void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_coun
         )
         {
 
-            for(itr = 0; battle_units[defender_battle_unit_idx].Cur_Figures > itr; itr++)
+            for(itr = 0; battle_units[defender_battle_unit_idx].figure_cnt > itr; itr++)
             {
 
                 if(Combat_Resistance_Check(battle_units[defender_battle_unit_idx], -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib)), sbr_Death) > 0)
@@ -19371,7 +19106,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                     battle_units[itr_battle_units].status = bus_Active;
                 }
 
-                battle_units[itr_battle_units].Cur_Figures = battle_units[itr_battle_units].Max_Figures;
+                battle_units[itr_battle_units].figure_cnt = battle_units[itr_battle_units].figure_max;
 
                 battle_units[itr_battle_units].front_figure_damage = 0;
             }
@@ -19437,7 +19172,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             (Surviving_Unit_Count < MAX_STACK)
         )
         {
-            battle_units[itr_battle_units].Cur_Figures = battle_units[itr_battle_units].Max_Figures;
+            battle_units[itr_battle_units].figure_cnt = battle_units[itr_battle_units].figure_max;
             battle_units[itr_battle_units].front_figure_damage = 0;
             _UNITS[battle_units[itr_battle_units].unit_idx].wx = (int8_t)_combat_wx;
             _UNITS[battle_units[itr_battle_units].unit_idx].wy = (int8_t)_combat_wy;
@@ -19477,8 +19212,8 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             _UNITS[battle_units[itr_battle_units].unit_idx].wx = (int8_t)_combat_wx;
             _UNITS[battle_units[itr_battle_units].unit_idx].wy = (int8_t)_combat_wy;
             _UNITS[battle_units[itr_battle_units].unit_idx].wp = (int8_t)_combat_wp;
-            battle_units[itr_battle_units].Cur_Figures = _unit_type_table[ut_Zombies].Figures;
-            battle_units[itr_battle_units].Max_Figures = _unit_type_table[ut_Zombies].Figures;
+            battle_units[itr_battle_units].figure_cnt = _unit_type_table[ut_Zombies].Figures;
+            battle_units[itr_battle_units].figure_max = _unit_type_table[ut_Zombies].Figures;
             battle_units[itr_battle_units].front_figure_damage = 0;
             battle_units[itr_battle_units].status = bus_Active;
 
@@ -19928,7 +19663,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             BU_CombatHits -= battle_units[itr_battle_units].hits;
             battle_units[itr_battle_units].front_figure_damage -= BU_CombatHits;
             SETMIN(battle_units[itr_battle_units].front_figure_damage, 0);
-            _UNITS[battle_units[itr_battle_units].unit_idx].Damage = (((battle_units[itr_battle_units].Max_Figures - battle_units[itr_battle_units].Cur_Figures) * (battle_units[itr_battle_units].hits - BU_CombatHits)) + battle_units[itr_battle_units].front_figure_damage);
+            _UNITS[battle_units[itr_battle_units].unit_idx].Damage = (((battle_units[itr_battle_units].figure_max - battle_units[itr_battle_units].figure_cnt) * (battle_units[itr_battle_units].hits - BU_CombatHits)) + battle_units[itr_battle_units].front_figure_damage);
             _UNITS[battle_units[itr_battle_units].unit_idx].moves2 = 0;
         }
 
@@ -21568,7 +21303,7 @@ void Combat_Load_Spell_Sound_Effect(int16_t spell_idx)
 
     if(magic_set.sound_effects == ST_TRUE)
     {
-        Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
+        Play_Sound(sound_silent_seg, sound_silent_seg_size);
 
         Mark_Block(World_Data);
 
@@ -21595,22 +21330,9 @@ void Combat_Load_Spell_Sound_Effect(int16_t spell_idx)
 
 
 // WZD o124p10
-// drake178: BU_WallofFire()
-/*
-; check whether the unit's target coordinates are
-; through a Wall of Fire from the outside, and if so,
-; process and apply a base strength Fireball effect
-; targeted at it
-*/
-/*
-
-
-
-*/
 void Check_Wall_Of_Fire_Attack(int16_t battle_unit_idx)
 {
-    int16_t damage_array[3] = { 0, 0, 0};
-
+    int16_t damage_array[3] = { 0, 0, 0 };
     if(
         (battlefield->wall_of_fire > ST_FALSE)
         &&
@@ -21631,13 +21353,9 @@ void Check_Wall_Of_Fire_Attack(int16_t battle_unit_idx)
         (battle_units[battle_unit_idx].target_cgy <= MAX_CGY_CITY)
     )
     {
-
         Apply_Battle_Unit_Damage_From_Spell(spl_Fireball, battle_unit_idx, &damage_array[0], 0);
-
         BU_ApplyDamage(battle_unit_idx, &damage_array[0]);
-
     }
-
 }
 
 
@@ -21667,13 +21385,13 @@ void Set_Gibs(int16_t battle_unit_idx, int16_t Damage)
 
     figure_loss = 0;
 
-    if(battle_units[battle_unit_idx].Cur_Figures == 0)
+    if(battle_units[battle_unit_idx].figure_cnt == 0)
     {
         gibs = 3;
     }
     else
     {
-        gibs = ((Damage + (battle_units[battle_unit_idx].Cur_Figures / 2)) / (battle_units[battle_unit_idx].Cur_Figures * 2));
+        gibs = ((Damage + (battle_units[battle_unit_idx].figure_cnt / 2)) / (battle_units[battle_unit_idx].figure_cnt * 2));
     }
 
     SETMAX(gibs, 5);
@@ -21691,9 +21409,9 @@ void Set_Gibs(int16_t battle_unit_idx, int16_t Damage)
     {
         // This formula basically gives "damage per 2 HP per figure" — so a 1-figure unit taking 10 damage bleeds more than an 8-figure unit taking 10 damage.
         figure_loss = (((Damage + battle_units[battle_unit_idx].hits) - 1) / battle_units[battle_unit_idx].hits);
-        if(battle_units[battle_unit_idx].Cur_Figures < figure_loss)
+        if(battle_units[battle_unit_idx].figure_cnt < figure_loss)
         {
-            figure_loss = battle_units[battle_unit_idx].Cur_Figures;
+            figure_loss = battle_units[battle_unit_idx].figure_cnt;
         }
     }
 
@@ -22741,11 +22459,11 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                 if(!Battle_Unit_Has_Ranged_Attack(battle_unit_idx)) continue;
                 if(bu_ptr->controller_idx == player_idx)
                 {
-                    counter += (bu_ptr->ranged * bu_ptr->Cur_Figures);
+                    counter += (bu_ptr->ranged * bu_ptr->figure_cnt);
                 }
                 else
                 {
-                    local_var += (bu_ptr->ranged * bu_ptr->Cur_Figures);
+                    local_var += (bu_ptr->ranged * bu_ptr->figure_cnt);
                 }
             }
             if((counter * 2) > (local_var * 3))
@@ -23293,9 +23011,9 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                 bu_ptr = &battle_units[battle_unit_idx];
                 if(bu_ptr->status != bus_Active) continue;
                 if(bu_ptr->controller_idx == player_idx) continue;
-                if(bu_ptr->Cur_Figures > counter)
+                if(bu_ptr->figure_cnt > counter)
                 {
-                    counter = bu_ptr->Cur_Figures;
+                    counter = bu_ptr->figure_cnt;
                 }
             }
             spell_value += group_5[threat_idx];
@@ -23490,7 +23208,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                 bu_ptr = &battle_units[battle_unit_idx];
                 if(bu_ptr->status != bus_Active) continue;
                 if(bu_ptr->controller_idx != player_idx) continue;
-                if((bu_ptr->Cur_Figures > bu_ptr->Max_Figures) || (bu_ptr->front_figure_damage > 0))
+                if((bu_ptr->figure_cnt > bu_ptr->figure_max) || (bu_ptr->front_figure_damage > 0))
                 {
                     counter++;
                 }
@@ -23514,7 +23232,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                 if(bu_ptr->controller_idx == player_idx) continue;
                 if((Combat_Effective_Resistance(*bu_ptr, sbr_Life) - 2) >= 10) continue;
                 if(bu_ptr->race < rt_Arcane) continue;
-                counter += bu_ptr->Cur_Figures;
+                counter += bu_ptr->figure_cnt;
             }
             if(counter > 0)
             {
@@ -23593,7 +23311,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                 if(bu_ptr->controller_idx == player_idx) continue;
                 if((bu_ptr->mana > 0) || ((bu_ptr->ranged_type / 10) == rag_Magic))
                 {
-                    counter += bu_ptr->Cur_Figures;
+                    counter += bu_ptr->figure_cnt;
                 }
             }
             if(counter > 0)
@@ -23653,7 +23371,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                 if(bu_ptr->controller_idx == player_idx) continue;
                 if((Combat_Effective_Resistance(*bu_ptr, sbr_Death) + 1) >= 10) continue;
                 if(bu_ptr->Attribs_1 & USA_IMMUNITY_DEATH) continue;
-                counter += bu_ptr->Cur_Figures;
+                counter += bu_ptr->figure_cnt;
             }
             if(counter > 0)
             {
@@ -23675,7 +23393,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                 if(bu_ptr->controller_idx == player_idx) continue;
                 if((Combat_Effective_Resistance(*bu_ptr, sbr_Death) - 2) >= 10) continue;
                 if(bu_ptr->Attribs_1 & USA_IMMUNITY_DEATH) continue;
-                counter += bu_ptr->Cur_Figures;
+                counter += bu_ptr->figure_cnt;
             }
             if(counter > 0)
             {
@@ -23775,7 +23493,7 @@ int16_t Effective_Battle_Unit_Strength(int16_t battle_unit_idx)
 
         short_range_strength = battle_units[battle_unit_idx].ranged;
 
-        efective_strength = Get_Effective_Melee_Strength(battle_units[battle_unit_idx].melee, short_range_strength, battle_units[battle_unit_idx].Cur_Figures, (battle_units[battle_unit_idx].attack_attributes | battle_units[battle_unit_idx].melee_attack_attributes), battle_units[battle_unit_idx].ranged_type);
+        efective_strength = Get_Effective_Melee_Strength(battle_units[battle_unit_idx].melee, short_range_strength, battle_units[battle_unit_idx].figure_cnt, (battle_units[battle_unit_idx].attack_attributes | battle_units[battle_unit_idx].melee_attack_attributes), battle_units[battle_unit_idx].ranged_type);
 
     }
     else
@@ -23783,16 +23501,16 @@ int16_t Effective_Battle_Unit_Strength(int16_t battle_unit_idx)
 
         short_range_strength = 0;
 
-        efective_strength = Get_Effective_Melee_Strength(battle_units[battle_unit_idx].melee, short_range_strength, battle_units[battle_unit_idx].Cur_Figures, (battle_units[battle_unit_idx].attack_attributes | battle_units[battle_unit_idx].melee_attack_attributes), ST_UNDEFINED);
+        efective_strength = Get_Effective_Melee_Strength(battle_units[battle_unit_idx].melee, short_range_strength, battle_units[battle_unit_idx].figure_cnt, (battle_units[battle_unit_idx].attack_attributes | battle_units[battle_unit_idx].melee_attack_attributes), ST_UNDEFINED);
 
     }
 
-    efective_strength += Get_Effective_Hits(((battle_units[battle_unit_idx].hits * battle_units[battle_unit_idx].Cur_Figures) - battle_units[battle_unit_idx].front_figure_damage), battle_units[battle_unit_idx].defense);
+    efective_strength += Get_Effective_Hits(((battle_units[battle_unit_idx].hits * battle_units[battle_unit_idx].figure_cnt) - battle_units[battle_unit_idx].front_figure_damage), battle_units[battle_unit_idx].defense);
           
     if(Battle_Unit_Has_Ranged_Attack(battle_unit_idx) != ST_FALSE)
     {
 
-        efective_strength += Get_Effective_Ranged_Strength(battle_units[battle_unit_idx].ranged, battle_units[battle_unit_idx].Cur_Figures, (battle_units[battle_unit_idx].attack_attributes | battle_units[battle_unit_idx].ranged_attack_attributes));
+        efective_strength += Get_Effective_Ranged_Strength(battle_units[battle_unit_idx].ranged, battle_units[battle_unit_idx].figure_cnt, (battle_units[battle_unit_idx].attack_attributes | battle_units[battle_unit_idx].ranged_attack_attributes));
 
     }
 
@@ -23902,16 +23620,16 @@ void AI_UnitThreatRealms(int16_t player_idx, int16_t * realm_array)
         enchantments |= bu_ptr->item_enchantments;
         enchantments |= _UNITS[bu_ptr->unit_idx].enchantments;
 
-        total_strength += (bu_ptr->melee * bu_ptr->Cur_Figures);
-        total_strength += (bu_ptr->ranged * bu_ptr->Cur_Figures);
+        total_strength += (bu_ptr->melee * bu_ptr->figure_cnt);
+        total_strength += (bu_ptr->ranged * bu_ptr->figure_cnt);
 
         if((bu_ptr->ranged_type == srat_FireBreath) || (bu_ptr->ranged_type == srat_Lightning))
         {
-            realm_array[sbr_Chaos] += (bu_ptr->ranged * bu_ptr->Cur_Figures);
+            realm_array[sbr_Chaos] += (bu_ptr->ranged * bu_ptr->figure_cnt);
         }
         if(bu_ptr->ranged_type == srat_StoneGaze)
         {
-            realm_array[sbr_Nature] += (bu_ptr->ranged * bu_ptr->Cur_Figures);
+            realm_array[sbr_Nature] += (bu_ptr->ranged * bu_ptr->figure_cnt);
         }
         if((bu_ptr->Attribs_2 & USA_FIREBALL) || (bu_ptr->Attribs_2 & USA_DOOMBOLT))
         {
@@ -23925,33 +23643,33 @@ void AI_UnitThreatRealms(int16_t player_idx, int16_t * realm_array)
         }
         if((bu_ptr->attack_attributes & Att_LifeSteal) || (bu_ptr->melee_attack_attributes & Att_LifeSteal) || (bu_ptr->ranged_attack_attributes & Att_LifeSteal))
         {
-            total_strength += ((bu_ptr->Spec_Att_Attrib + 3) * bu_ptr->Cur_Figures);
-            realm_array[sbr_Death] += ((bu_ptr->Spec_Att_Attrib + 3) * bu_ptr->Cur_Figures);
+            total_strength += ((bu_ptr->Spec_Att_Attrib + 3) * bu_ptr->figure_cnt);
+            realm_array[sbr_Death] += ((bu_ptr->Spec_Att_Attrib + 3) * bu_ptr->figure_cnt);
         }
         if((bu_ptr->attack_attributes & Att_Destruct) || (bu_ptr->melee_attack_attributes & Att_Destruct) || (bu_ptr->ranged_attack_attributes & Att_Destruct))
         {
-            total_strength += (bu_ptr->Cur_Figures * 5);
-            realm_array[sbr_Chaos] += (bu_ptr->Cur_Figures * 5);
+            total_strength += (bu_ptr->figure_cnt * 5);
+            realm_array[sbr_Chaos] += (bu_ptr->figure_cnt * 5);
         }
         if((bu_ptr->attack_attributes & Att_StnTouch) || (bu_ptr->melee_attack_attributes & Att_StnTouch) || (bu_ptr->ranged_attack_attributes & Att_StnTouch))
         {
-            total_strength += (bu_ptr->Cur_Figures * 5);
-            realm_array[sbr_Nature] += (bu_ptr->Cur_Figures * 5);
+            total_strength += (bu_ptr->figure_cnt * 5);
+            realm_array[sbr_Nature] += (bu_ptr->figure_cnt * 5);
         }
         if((bu_ptr->Attribs_2 & USA_CAUSEFEAR) || (enchantments & UE_CLOAK_OF_FEAR))
         {
-            total_strength += bu_ptr->Cur_Figures;
-            realm_array[sbr_Death] += bu_ptr->Cur_Figures;
+            total_strength += bu_ptr->figure_cnt;
+            realm_array[sbr_Death] += bu_ptr->figure_cnt;
         }
         if((bu_ptr->attack_attributes & Att_DthTouch) || (bu_ptr->melee_attack_attributes & Att_DthTouch) || (bu_ptr->ranged_attack_attributes & Att_DthTouch))
         {
-            total_strength += (bu_ptr->Cur_Figures * 5);
-            realm_array[sbr_Death] += (bu_ptr->Cur_Figures * 5);
+            total_strength += (bu_ptr->figure_cnt * 5);
+            realm_array[sbr_Death] += (bu_ptr->figure_cnt * 5);
         }
         if((bu_ptr->attack_attributes & Att_DsplEvil) || (bu_ptr->melee_attack_attributes & Att_DsplEvil) || (bu_ptr->ranged_attack_attributes & Att_DsplEvil))
         {
-            total_strength += (bu_ptr->Cur_Figures * 5);
-            realm_array[sbr_Life] += (bu_ptr->Cur_Figures * 5);
+            total_strength += (bu_ptr->figure_cnt * 5);
+            realm_array[sbr_Life] += (bu_ptr->figure_cnt * 5);
         }
     }
 
@@ -24468,17 +24186,17 @@ void Combat_Screen_Map_Draw__WIP(void)
         CMB_CurseAnimStage = 0;
     }
 
-    if(CMB_MoveAnimDir == 0)
+    if(combat_walk_anim_dir == 0)
     {
 
-        CMB_MoveAnimFrame++;
+        combat_walk_anim_frame++;
 
-        if(CMB_MoveAnimFrame == 3)
+        if(combat_walk_anim_frame == 3)
         {
 
-            CMB_MoveAnimDir = 1;
+            combat_walk_anim_dir = 1;
 
-            CMB_MoveAnimFrame = 1;
+            combat_walk_anim_frame = 1;
 
         }
 
@@ -24486,20 +24204,20 @@ void Combat_Screen_Map_Draw__WIP(void)
     else
     {
 
-        CMB_MoveAnimFrame--;
+        combat_walk_anim_frame--;
 
-        if(CMB_MoveAnimFrame == -1)
+        if(combat_walk_anim_frame == -1)
         {
 
-            CMB_MoveAnimDir = 0;
+            combat_walk_anim_dir = 0;
 
-            CMB_MoveAnimFrame = 1;
+            combat_walk_anim_frame = 1;
 
         }
 
     }
 
-    CMB_BaseAnimFrame = ((CMB_BaseAnimFrame + 1) % 3);
+    combat_idle_anim_frame = ((combat_idle_anim_frame + 1) % 3);
 
     if(CMB_UnitATKAnimFrame == 1)
     {
@@ -25636,7 +25354,7 @@ void USELESS_Combat_Figure_Load_Compose(int16_t bufpi, int16_t figure_set_idx, i
     FIGUREX_MAP
     FIGUREX_POINTER
     Set_Animation_Frame(figure_pict_set_seg[figure_set_idx], frame_num);
-    Draw_Picture_To_Bitmap(figure_pict_set_seg[figure_set_idx], GfxBuf_2400B);
+    Draw_Picture_To_Bitmap(figure_pict_set_seg[figure_set_idx], scratch_bitmap_seg);
     Combat_Figure_Banner_Color(player_idx);
     Combat_Unit_Enchantment_Outline_Draw(enchantment_magic_realm);
 }
@@ -25714,7 +25432,7 @@ void Spawn_Missile_Entities(void)
 // drake178: CMB_GetFigDrawPos()
 /*
 XREF:
-    BU_CreateImage__SEGRAX()
+    Battle_Unit_Compose_Bitmap()
     CMB_SetProjectiles()
 
 !!!!! ALL DIFFERENT !!!!!
@@ -26112,7 +25830,7 @@ void EMM_TILEX_Init__HACK(void)
 void Combat_Figure_Compose_USEFULL(void)
 {
     SAMB_ptr temp_GfxBuf_2400B = 0;
-    int16_t IMG_Effect = 0;
+    int16_t figure_effect = 0;
     int16_t frame_num = 0;
     int16_t outline_magic_realm = 0;
     int16_t player_idx = 0;
@@ -26127,7 +25845,7 @@ void Combat_Figure_Compose_USEFULL(void)
     int16_t battle_unit_idx = 0;  // _SI_
     int16_t figure_set_idx = 0;  // _DI_
 
-    temp_GfxBuf_2400B = GfxBuf_2400B;
+    temp_GfxBuf_2400B = scratch_bitmap_seg;
 
     for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
     {
@@ -26143,27 +25861,27 @@ void Combat_Figure_Compose_USEFULL(void)
         
         outline_magic_realm = battle_units[battle_unit_idx].outline_magic_realm;
         
-        IMG_Effect = battle_units[battle_unit_idx].Image_Effect;
+        figure_effect = battle_units[battle_unit_idx].figure_effect;
         
         /*
             BEGIN:  frame_num
         */
         {
-            if(battle_units[battle_unit_idx].Always_Animate == ST_TRUE)
+            if(battle_units[battle_unit_idx].animate_idle == ST_TRUE)
             {
-                frame_num = CMB_BaseAnimFrame;
+                frame_num = combat_idle_anim_frame;
             }
             else
             {
                 if(battle_units[battle_unit_idx].Moving == ST_TRUE)
                 {
-                    if(battle_units[battle_unit_idx].Move_Bob == ST_TRUE)
+                    if(battle_units[battle_unit_idx].animate_move_as_idle == ST_TRUE)
                     {
-                        frame_num = CMB_BaseAnimFrame;
+                        frame_num = combat_idle_anim_frame;
                     }
                     else
                     {
-                        frame_num = CMB_MoveAnimFrame;
+                        frame_num = combat_walk_anim_frame;
                     }
                 }
                 else
@@ -26198,16 +25916,16 @@ void Combat_Figure_Compose_USEFULL(void)
         FIGUREX_POINTER
 
         Set_Animation_Frame(figure_pict_set_seg[figure_set_idx], frame_num);
-        GfxBuf_2400B = battle_unit_picts_seg[battle_units[battle_unit_idx].bufpi];
-        Draw_Picture_To_Bitmap(figure_pict_set_seg[figure_set_idx], GfxBuf_2400B);
+        scratch_bitmap_seg = battle_unit_picts_seg[battle_units[battle_unit_idx].bufpi];
+        Draw_Picture_To_Bitmap(figure_pict_set_seg[figure_set_idx], scratch_bitmap_seg);
 
         Combat_Figure_Banner_Color(player_idx);
         Combat_Unit_Enchantment_Outline_Draw(outline_magic_realm);
-        Combat_Figure_Effect__WIP(IMG_Effect);
+        Combat_Figure_Effect__WIP(figure_effect);
         Combat_Figure_Active_Red_Outline(battle_unit_idx);
     }
 
-    GfxBuf_2400B = temp_GfxBuf_2400B;
+    scratch_bitmap_seg = temp_GfxBuf_2400B;
 
 }
 
@@ -28494,25 +28212,25 @@ void Combat_Compose_Background(void)
         screen_y -= 13;
         FLIC_Draw(screen_x, screen_y, IMG_CMB_Volcano[8]);
     }
-    if(CMB_MoveAnimDir == 0)
+    if(combat_walk_anim_dir == 0)
     {
-        CMB_MoveAnimFrame += 1;
-        if(CMB_MoveAnimFrame == 3)
+        combat_walk_anim_frame += 1;
+        if(combat_walk_anim_frame == 3)
         {
-            CMB_MoveAnimDir = 1;
-            CMB_MoveAnimFrame = 1;
+            combat_walk_anim_dir = 1;
+            combat_walk_anim_frame = 1;
         }
     }
     else
     {
-        CMB_MoveAnimFrame -= 1;
-        if(CMB_MoveAnimFrame == -1)
+        combat_walk_anim_frame -= 1;
+        if(combat_walk_anim_frame == -1)
         {
-            CMB_MoveAnimDir = 0;
-            CMB_MoveAnimFrame = 1;
+            combat_walk_anim_dir = 0;
+            combat_walk_anim_frame = 1;
         }
     }
-    CMB_BaseAnimFrame = ((CMB_BaseAnimFrame + 1) % 3);
+    combat_idle_anim_frame = ((combat_idle_anim_frame + 1) % 3);
     if(CMB_UnitATKAnimFrame == 1)
     {
         CMB_UnitATKAnimFrame = 3;
@@ -29071,8 +28789,8 @@ void DBG_Compare_Battle_Units(const char * label)
             if(live->defense != snap->defense) { LOG_DEBUG(LOG_CAT_COMBAT, "  defense:         live=%d  snap=%d", live->defense, snap->defense); }
             if(live->resist != snap->resist) { LOG_DEBUG(LOG_CAT_COMBAT, "  resist:          live=%d  snap=%d", live->resist, snap->resist); }
             if(live->hits != snap->hits) { LOG_DEBUG(LOG_CAT_COMBAT, "  hits:            live=%d  snap=%d", live->hits, snap->hits); }
-            if(live->Cur_Figures != snap->Cur_Figures) { LOG_DEBUG(LOG_CAT_COMBAT, "  Cur_Figures:     live=%d  snap=%d", live->Cur_Figures, snap->Cur_Figures); }
-            if(live->Max_Figures != snap->Max_Figures) { LOG_DEBUG(LOG_CAT_COMBAT, "  Max_Figures:     live=%d  snap=%d", live->Max_Figures, snap->Max_Figures); }
+            if(live->figure_cnt != snap->figure_cnt) { LOG_DEBUG(LOG_CAT_COMBAT, "  figure_cnt:     live=%d  snap=%d", live->figure_cnt, snap->figure_cnt); }
+            if(live->figure_max != snap->figure_max) { LOG_DEBUG(LOG_CAT_COMBAT, "  figure_max:     live=%d  snap=%d", live->figure_max, snap->figure_max); }
             if(live->front_figure_damage != snap->front_figure_damage) { LOG_DEBUG(LOG_CAT_COMBAT, "  front_fig_dmg:   live=%d  snap=%d", live->front_figure_damage, snap->front_figure_damage); }
             if(live->cgx != snap->cgx) { LOG_DEBUG(LOG_CAT_COMBAT, "  cgx:             live=%d  snap=%d", live->cgx, snap->cgx); }
             if(live->cgy != snap->cgy) { LOG_DEBUG(LOG_CAT_COMBAT, "  cgy:             live=%d  snap=%d", live->cgy, snap->cgy); }

@@ -63,7 +63,7 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     // lair_confirm_pict: 41 x 43 = 1763
     // ¿ MoO2  Module: MOX  data (0 bytes) _global_bitmap_seg  Address: 02:0018B2D0 ?
     // 150 PR  2400 B  ~ 48 x 48 = 2304 B w/ 6 headers ... 50 x 48 = 2400
-    GfxBuf_2400B = malloc(150 * 16);
+    scratch_bitmap_seg = malloc(150 * 16);
 
 // World_Data
 // ¿ everything from a SAVE_GAM ? also, COMBAT.TMP ? 

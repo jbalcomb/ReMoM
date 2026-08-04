@@ -23,7 +23,7 @@
 #include "CMBTMVPT.h"
 #include "Combat.h"
 #include "Spellbook.h"  /* spl_Doom_Bolt */
-#include "Spells133.h"  /* BU_Teleport, BU_Tunnel */
+#include "Spells133.h"  /* Battle_Unit_Teleport, BU_Tunnel */
 #include "UNITTYPE.h"   /* rag_Missile */
 
 #include "CMBTAI.h"
@@ -1379,8 +1379,8 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
                 /* Ranged comparison logic */
                 if(target_value >= highest_value - 3 && target_value <= highest_value + 3 && target_idx > ST_UNDEFINED)
                 {
-                    total_health = (target_bu_ptr->Cur_Figures * target_bu_ptr->hits) - target_bu_ptr->front_figure_damage;
-                    target_health = (battle_units[target_idx].Cur_Figures * battle_units[target_idx].hits) - battle_units[target_idx].front_figure_damage;
+                    total_health = (target_bu_ptr->figure_cnt * target_bu_ptr->hits) - target_bu_ptr->front_figure_damage;
+                    target_health = (battle_units[target_idx].figure_cnt * battle_units[target_idx].hits) - battle_units[target_idx].front_figure_damage;
                     
                     if(total_health < target_health)
                     {
@@ -1407,8 +1407,8 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
                 }
                 else if(target_value == highest_value && target_idx > -1)
                 {
-                    total_health = (target_bu_ptr->Cur_Figures * target_bu_ptr->hits) - target_bu_ptr->front_figure_damage;
-                    target_health = (battle_units[target_idx].Cur_Figures * battle_units[target_idx].hits) - battle_units[target_idx].front_figure_damage;
+                    total_health = (target_bu_ptr->figure_cnt * target_bu_ptr->hits) - target_bu_ptr->front_figure_damage;
+                    target_health = (battle_units[target_idx].figure_cnt * battle_units[target_idx].hits) - battle_units[target_idx].front_figure_damage;
                     
                     if(total_health > target_health) /* Target current unit if it's healthier? Or original logic swap? */
                     {
@@ -1995,7 +1995,7 @@ BUG: this has just been done in the parent function
             if(Attack_Step == ST_TRUE)
             {
 
-                if(battle_units[battle_unit_idx].Cur_Figures <= 0)
+                if(battle_units[battle_unit_idx].figure_cnt <= 0)
                 {
 
                     battle_units[battle_unit_idx].movement_points = -2;
@@ -2046,11 +2046,11 @@ BUG: this has just been done in the parent function
 
                             if((battle_units[battle_unit_idx].Move_Flags & MV_TELEPORT) != 0)
                             {
-                                BU_Teleport(battle_unit_idx, _cmbt_mvpth_x[itr_grid], _cmbt_mvpth_y[itr_grid]);
+                                Battle_Unit_Teleport(battle_unit_idx, _cmbt_mvpth_x[itr_grid], _cmbt_mvpth_y[itr_grid]);
                             }
                             else
                             {
-                                BU_TunnelTo(battle_unit_idx, _cmbt_mvpth_x[itr_grid], _cmbt_mvpth_y[itr_grid]);
+                                Battle_Unit_Tunnel(battle_unit_idx, _cmbt_mvpth_x[itr_grid], _cmbt_mvpth_y[itr_grid]);
                             }
 
                         }
@@ -2060,7 +2060,7 @@ BUG: this has just been done in the parent function
                             if(magic_set.sound_effects == ST_TRUE)
                             {
 
-                                Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
+                                Play_Sound(sound_silent_seg, sound_silent_seg_size);
 
                                 Mark_Block(World_Data);
 
@@ -2117,7 +2117,7 @@ BUG: this has just been done in the parent function
                             if(magic_set.sound_effects == ST_TRUE)
                             {
 
-                                Play_Sound(SND_CMB_Silence, SND_CMB_Silence_size);
+                                Play_Sound(sound_silent_seg, sound_silent_seg_size);
 
                             }
 
