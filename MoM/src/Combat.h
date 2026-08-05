@@ -5,13 +5,13 @@
         ovr090
         ovr091
         ovr096
-        ovr098
+        ovr098  ¿ MoO2  COMBINIT ?
         ovr099  ¿ MoO2  Module: CMBTDRW1 ?
         ovr103
         ovr105
         ovr110
-        ovr111  ¿ AITP ?
-        ovr112  ¿ CMBMAGIC ?
+        ovr111  ¿ AITP.* ?
+        ovr112  ¿ LBX CMBMAGIC ?
         ovr116
         ovr122
         ovr123
@@ -1138,10 +1138,10 @@ struct s_MAGIC_VORTEX
 extern int16_t frame_anim_cycle;
 
 // WZD dseg:708A
-extern int16_t CMB_ChasmAnimStage;
+extern int16_t cmbt_cell_effect_frame;
 
 // WZD dseg:708E
-extern int16_t CMB_Chasm_Anim;
+extern int16_t cmbt_cell_effect_active;
 
 // WZD dseg:7116
 extern int16_t ai_human_hostility;
@@ -1329,7 +1329,7 @@ extern SAMB_ptr IMG_CMB_Fortress;
 extern SAMB_ptr _combat_house_picts_segs[15];
 
 // WZD dseg:D13A
-extern SAMB_ptr IMG_GUI_Chasm;
+extern SAMB_ptr cmbt_cell_effect_seg;
 
 // WZD dseg:D13C
 extern SAMB_ptr magic_vortex_seg;
@@ -1359,8 +1359,8 @@ extern uint8_t * _cmbt_movepath_cost_map;
 
 // WZD dseg:D14A
 // WZD dseg:D14C
-extern int16_t CMB_Chasm_Anim_Y;
-extern int16_t CMB_Chasm_Anim_X;
+extern int16_t cmbt_cell_effect_cgy;
+extern int16_t cmbt_cell_effect_cgx;
 
 // WZD dseg:D14E
 extern struct s_MAGIC_VORTEX * _vortexes;
@@ -1519,10 +1519,10 @@ void Add_Combat_Enchantment_Fields(void);
 int16_t Battle_Unit_Movement_Mode(int16_t battle_unit_idx);
 
 // WZD o98p14
-// static void UNIT_SummonToBattle__SEGRAX(int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy);
+// static void Prepare_Battle_Unit_Summons(int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy);
 
 // WZD o98p15
-void BU_UnitLoadToBattle__SEGRAX(int16_t battle_unit_idx, int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy);
+void Prepare_Battle_Unit(int16_t battle_unit_idx, int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy);
 
 // WZD o98p16
 int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[]);
@@ -1757,7 +1757,7 @@ int16_t Check_Attack_Ranged(int16_t attacker_battle_unit_idx, int16_t defender_b
 void Deploy_Battle_Units(int16_t player_idx);
 
 // WZD o113p10
-void BU_SummonDemon__SEGRAX(int16_t caster_idx);
+void Summon_Demon(int16_t caster_idx);
 
 // WZD o113p11
 int16_t Check_Attack_Melee_City_Wall(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);

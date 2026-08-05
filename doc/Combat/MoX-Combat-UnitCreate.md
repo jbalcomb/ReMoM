@@ -11,7 +11,7 @@ CMB_DrawEntities__WIP()
 
 CMB_Units_Init__WIP()
 UU_BU_LoadFigureGFX()
-BU_UnitLoadToBattle__SEGRAX()
+Prepare_Battle_Unit()
 Combat_Figure_Load()
 USELESS_Combat_Figure_Load_Compose()
 
@@ -49,18 +49,18 @@ loads the eight figure lbx entries in to the EMS_PFBA
 XREF:
     j_Combat_Figure_Load()
         UU_BU_LoadFigureGFX+2A         call    j_Combat_Figure_Load
-        BU_UnitLoadToBattle__SEGRAX+47 call    j_Combat_Figure_Load
+        Prepare_Battle_Unit+47 call    j_Combat_Figure_Load
         CMB_Units_Init__WIP+C8         call    j_Combat_Figure_Load
         CMB_Units_Init__WIP+27E        call    j_Combat_Figure_Load
         CMB_RaiseDead+39E              call    j_Combat_Figure_Load
         CMB_AnimateDead+362            call    j_Combat_Figure_Load
 
-## BU_UnitLoadToBattle__SEGRAX()
+## Prepare_Battle_Unit()
 
 
 
-UNIT_SummonToBattle__SEGRAX()
-    BU_UnitLoadToBattle__SEGRAX()
+Prepare_Battle_Unit_Summons()
+    Prepare_Battle_Unit()
     Load_Battle_Unit()
     Battle_Unit_Slot_Open()
     Combat_Figure_Load()
@@ -75,7 +75,7 @@ XREF:
     j_BU_CreateImage__SEGRAX()
         BU_Teleport()
         BU_TunnelTo()
-        BU_CombatSummon__SEGRAX()
+        Battle_Unit_Summon_Animation()
 
 
 
@@ -173,10 +173,10 @@ CMB_CreateEntities__WIP()
 
 
 
-BU_SummonDemon__SEGRAX()
+Summon_Demon()
     Create_Unit
-    UNIT_SummonToBattle__SEGRAX()
-    BU_CombatSummon__SEGRAX()
+    Prepare_Battle_Unit_Summons()
+    Battle_Unit_Summon_Animation()
 
 
 
@@ -187,11 +187,11 @@ Cast_Spell_On_Battle_Unit()
         case scc_Summoning:
             Figure_Count = Create_Unitl_data_table[spell_idx].unit_type, player_idx, 0, 0, 9, 2000);
             if(Figure_Count == 1)
-                UNIT_SummonToBattle__SEGRAX(player_idx, (_units - 1), target_cgx, target_cgy);
-                BU_CombatSummon__SEGRAX((_combat_total_unit_count - 1), target_cgx, target_cgy, spell_idx, caster_idx);
+                Prepare_Battle_Unit_Summons(player_idx, (_units - 1), target_cgx, target_cgy);
+                Battle_Unit_Summon_Animation((_combat_total_unit_count - 1), target_cgx, target_cgy, spell_idx, caster_idx);
 
 
-BU_CombatSummon__SEGRAX()
+Battle_Unit_Summon_Animation()
     struct s_BATTLE_UNIT* battle_unit = &battle_units[battle_unit_idx];
     CMB_Chasm_Anim_X = battle_unit->cgx;
     CMB_Chasm_Anim_Y = battle_unit->cgy;

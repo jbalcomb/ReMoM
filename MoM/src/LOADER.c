@@ -934,7 +934,7 @@ void Reload_Combat_Graphics_Cache(void)
 
     CMB_Damage_GFX = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 119, g_graphics_cache_seg);
 
-    IMG_GUI_Chasm = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 120, g_graphics_cache_seg);
+    cmbt_cell_effect_seg = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 120, g_graphics_cache_seg);
 
     for(itr1 = 0; itr1 < 15; itr1++)
     {
@@ -977,7 +977,7 @@ void Reload_Combat_Graphics_Cache(void)
 
     IMG_CMB_Cloud = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 113, g_graphics_cache_seg);
 
-    IMG_GUI_Chasm = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 120, g_graphics_cache_seg);
+    cmbt_cell_effect_seg = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 120, g_graphics_cache_seg);
 
     for(itr1 = 0; itr1 < 4; itr1++)
     {

@@ -568,7 +568,7 @@ that will never jump as written, likely intended to find a specific target
 
         case BUA_SummonDemon:
         {
-            BU_SummonDemon__SEGRAX(battle_unit_idx);
+            Summon_Demon(battle_unit_idx);
             bu_ptr->movement_points = 0;
         }
         break;
@@ -1267,7 +1267,7 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
         // OGBUG: this may not be the hero's original owner
         item_spell_idx = _ITEMS[_players[bu_ptr->controller_idx].Heroes[hero_slot_idx].Items[0]].embed_spell_idx;
         
-        if(item_spell_idx > 0 && bu_ptr->Item_Charges > 0)
+        if(item_spell_idx > 0 && bu_ptr->item_charges > 0)
         {
             spell_idx = item_spell_idx;
             target_idx = AITP_Combat_Spell(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);

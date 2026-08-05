@@ -764,7 +764,7 @@ int16_t Combat_Spellbook_Build(int16_t caster_idx)
                     }
                 }
             }
-            if(battle_units[caster_idx].Item_Charges > 0)
+            if(battle_units[caster_idx].item_charges > 0)
             {
                 unit_type = _UNITS[battle_units[caster_idx].unit_idx].Hero_Slot;
                 /* OGBUG  this may not be the hero's original owner; should use unit owner, not current battle_unit controller */
@@ -795,7 +795,7 @@ int16_t Combat_Spellbook_Build(int16_t caster_idx)
     spellbook_has_castable_spell = ST_FALSE;
     if(caster_idx <= (CASTER_IDX_BASE - 1))
     {
-        if(battle_units[caster_idx].Item_Charges > 0)
+        if(battle_units[caster_idx].item_charges > 0)
         {
             /* OGBUG  just because it is in an item, the spell may not necessarily be castable (e.g. Earth Elemental on a water square) */
             spellbook_has_castable_spell = ST_TRUE;
@@ -1107,11 +1107,11 @@ void Combat_Spellbook_Compose(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr
                     {
                         Icon_Count = (g_spellbook_cast_mana_limit / casting_cost);
                     }
-                    if(battle_units[caster_idx].Item_Charges > 0)
+                    if(battle_units[caster_idx].item_charges > 0)
                     {
                         if(_ITEMS[_players[HUMAN_PLAYER_IDX].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
                         {
-                            Icon_Count = battle_units[caster_idx].Item_Charges;
+                            Icon_Count = battle_units[caster_idx].item_charges;
                             casting_cost = 22222;
                         }
                     }

@@ -5,12 +5,13 @@
         ovr090
         ovr091
         ovr096
-        ovr098
+        ovr098  ¿ MoO2  COMBINIT ?
         ovr099  ¿ MoO2  Module: CMBTDRW1 ?  (would have been CMBTDRW or CMBTDRAW?)
         ovr103
         ovr105
         ovr110
-        ovr112  Combat Spellbook ~ CMBTSPBK?  ¿ CMBMAGIC ?
+        ovr111  ¿ AITP.* ?
+        ovr112  ¿ LBX CMBMAGIC ?
         ovr114  ¿ MoO2  Module: CMBTAI ?
         ovr116
         ovr122
@@ -523,10 +524,10 @@ int16_t projectile_anim_frame = 0;
 // WZD dseg:7088
 int16_t CMB_VortexAnimStage = 0;
 // WZD dseg:708A
-int16_t CMB_ChasmAnimStage = 0;
+int16_t cmbt_cell_effect_frame = 0;
 // WZD dseg:708C 00 00                                           IMG_CMB_OrigChasm@ dw 0                 ; originally unused, reused for Demon/Fire summoning
 // WZD dseg:708E
-int16_t CMB_Chasm_Anim = 0;
+int16_t cmbt_cell_effect_active = 0;
 // WZD dseg:7090
 int16_t CMB_CurseAnimStage = 0;
 // WZD dseg:7092
@@ -1253,7 +1254,7 @@ SAMB_ptr IMG_CMB_Fortress;
 SAMB_ptr _combat_house_picts_segs[15];
 
 // WZD dseg:D13A
-SAMB_ptr IMG_GUI_Chasm;
+SAMB_ptr cmbt_cell_effect_seg;
 // WZD dseg:D13A                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 // WZD dseg:D13A                                                                                         ; 8 frame animation
 // WZD dseg:D13C                                                 ovr099, ovr153
@@ -1357,11 +1358,11 @@ uint8_t * _cmbt_movepath_cost_map;
 /*
 cgx,cgy
 
-set in BU_CombatSummon__SEGRAX()
+set in Battle_Unit_Summon_Animation()
     ...where used?
 */
-int16_t CMB_Chasm_Anim_Y;
-int16_t CMB_Chasm_Anim_X;
+int16_t cmbt_cell_effect_cgy;
+int16_t cmbt_cell_effect_cgx;
 
 /*
 Magic Vortex
@@ -1709,7 +1710,7 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
                 ||
                 (BU_HasSpellAbility__WIP(_active_battle_unit) == ST_TRUE)
                 ||
-                (battle_units[_active_battle_unit].Item_Charges > 0)
+                (battle_units[_active_battle_unit].item_charges > 0)
                 ||
                 (CMB_WizCastAvailable == ST_TRUE)
             )
@@ -2228,7 +2229,7 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
                         ||
                         (BU_HasSpellAbility__WIP(_active_battle_unit) == ST_TRUE)
                         ||
-                        (battle_units[_active_battle_unit].Item_Charges > 0)
+                        (battle_units[_active_battle_unit].item_charges > 0)
                     )
                 )
                 {
@@ -5544,42 +5545,26 @@ int16_t Battle_Unit_Movement_Mode(int16_t battle_unit_idx)
 
 
 // WZD o98p14
-/*
-; BUG: does not apply battlefield effects to the unit
-; WARNING: will freeze up the game if all figure slots are occupied (already 18 units on the battlefield)
-*/
-/*
-
-Cast_Spell_On_Battle_Unit()
-    UNIT_SummonToBattle__SEGRAX(player_idx, (_units - 1), target_cgx, target_cgy);
-BU_SummonDemon__SEGRAX()
-    BU_SummonDemon__SEGRAX(caster_idx);
-
-BU_UnitLoadToBattle__SEGRAX()
-    ~ CMB_Units_Init__WIP()  AKA Prepare_All_Battle_Units()
-    OON XREF:  UNIT_SummonToBattle__SEGRAX()
-    ...which is only used for scc_Summoning and USA 'Summon Demon'
-*/
-static void UNIT_SummonToBattle__SEGRAX(int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy)
+static void Prepare_Battle_Unit_Summons(int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy)
 {
     int16_t itr = 0;
     if(_combat_total_unit_count < MAX_BATTLE_UNIT_SLOT_COUNT)
     {
-        BU_UnitLoadToBattle__SEGRAX(_combat_total_unit_count, player_idx, unit_idx, cgx, cgy);
+        Prepare_Battle_Unit(_combat_total_unit_count, player_idx, unit_idx, cgx, cgy);
         _combat_total_unit_count++;
     } 
     else
     {
-        STU_DEBUG_BREAK();
         for(itr = 0; itr < _combat_total_unit_count; itr++)
         {
-            if(battle_units[itr].status > bus_Active)
+            if(
+                (battle_units[itr].status > bus_Active)
+                &&
+                (_UNITS[battle_units[itr].unit_idx].wp == 9)
+            )
             {
-                if(_UNITS[battle_units[itr].unit_idx].wp == 9)
-                {
-                    BU_UnitLoadToBattle__SEGRAX(itr, player_idx, unit_idx, cgx, cgy);
-                    return;
-                }
+                Prepare_Battle_Unit(itr, player_idx, unit_idx, cgx, cgy);
+                return;
             }
         }
     }
@@ -5587,46 +5572,29 @@ static void UNIT_SummonToBattle__SEGRAX(int16_t player_idx, int16_t unit_idx, in
 
 
 // WZD o98p15
-/*
-; BUG: does not apply battlefield effects to the unit
-; WARNING: will freeze up the game if all figure slots are occupied (already 18 units on the battlefield)
-*/
-/*
-~ CMB_Units_Init__WIP()  AKA Prepare_All_Battle_Units()
-OON XREF:  UNIT_SummonToBattle__SEGRAX()
-...which is only used for scc_Summoning and USA 'Summon Demon'
-*/
-void BU_UnitLoadToBattle__SEGRAX(int16_t battle_unit_idx, int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy)
+void Prepare_Battle_Unit(int16_t battle_unit_idx, int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy)
 {
-    int16_t bufpi;
-    struct s_BATTLE_UNIT* battle_unit = &battle_units[battle_unit_idx];
-
-    Load_Battle_Unit(unit_idx, battle_unit);
-
-    bufpi = Battle_Unit_Pict_Open();  // returns bufpi {0,...17}
+    int16_t bufpi = 0;
+    Load_Battle_Unit(unit_idx, &battle_units[battle_unit_idx]);
+    bufpi = Battle_Unit_Pict_Open();
+    /* OGBUG  should handle invalid bufpi */
     assert(bufpi >= 0);
     assert(bufpi < MAX_BATTLE_UNIT_COUNT);
-
     Combat_Figure_Load(_UNITS[unit_idx].type, bufpi);
-
-    battle_unit->bufpi = bufpi;
-    battle_unit->controller_idx = (int8_t)player_idx;
-
+    battle_units[battle_unit_idx].bufpi = bufpi;
+    battle_units[battle_unit_idx].controller_idx = (int8_t)player_idx;
     // ~ Deploy_Battle_Units()
-    battle_unit->cgx = cgx;
-    battle_unit->cgy = cgy;
-    battle_unit->target_cgx = cgx;
-    battle_unit->target_cgy = cgy;
-
-    // all exactly as just done in Load_Battle_Unit()
-    battle_unit->move_anim_ctr = 0;
-    battle_unit->outline_magic_realm = 0;
-    battle_unit->Atk_FigLoss = 0;
-    battle_unit->Moving = 0;
-    battle_unit->action = bua_Ready;
-
-    // ¿ BUGBUG  should call BU_Apply_Battlefield_Effects__WIP() ?
-
+    battle_units[battle_unit_idx].cgx = cgx;
+    battle_units[battle_unit_idx].cgy = cgy;
+    battle_units[battle_unit_idx].target_cgx = cgx;
+    battle_units[battle_unit_idx].target_cgy = cgy;
+    /* all exactly as just done in Load_Battle_Unit() */
+    battle_units[battle_unit_idx].move_anim_ctr = 0;
+    battle_units[battle_unit_idx].outline_magic_realm = 0;
+    battle_units[battle_unit_idx].Atk_FigLoss = 0;
+    battle_units[battle_unit_idx].Moving = 0;
+    battle_units[battle_unit_idx].action = bua_Ready;
+    /* ¿ OGBUG  should call BU_Apply_Battlefield_Effects__WIP() ? */
 }
 
 // WZD o98p16
@@ -5647,6 +5615,7 @@ void BU_UnitLoadToBattle__SEGRAX(int16_t battle_unit_idx, int16_t player_idx, in
 checks spl_Spell_Of_Return
 sets _players[].Cmbt_Skill_Left
 
+~ Prepare_All_Battle_Units
 */
 int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 {
@@ -6445,11 +6414,11 @@ void Combat_Screen_Draw(void)
     }
 
     // ¿ Cracks Calls, Summon, ... ?
-    CMB_ChasmAnimStage++;
-    // if(CMB_ChasmAnimStage > 7)
-    if(CMB_ChasmAnimStage > (7 * 7))
+    cmbt_cell_effect_frame++;
+    // if(cmbt_cell_effect_frame > 7)
+    if(cmbt_cell_effect_frame > (7 * 7))
     {
-        CMB_ChasmAnimStage = 0;
+        cmbt_cell_effect_frame = 0;
     }
 
     frame_anim_cycle++;
@@ -6648,7 +6617,7 @@ void Tactical_Combat_Draw_Buttons(void)
                 ||
                 (BU_HasSpellAbility__WIP(_active_battle_unit) == ST_TRUE)
                 ||
-                (battle_units[_active_battle_unit].Item_Charges > 0)
+                (battle_units[_active_battle_unit].item_charges > 0)
                 ||
                 (CMB_WizCastAvailable == ST_TRUE)
             )
@@ -11951,12 +11920,8 @@ case scc_Disjunction_Spell:  // 20
             did_create_unit = Create_Unit(spell_data_table[spell_idx].unit_type, player_idx, 0, 0, 9, 2000);
             if(did_create_unit == ST_TRUE)
             {
-                UNIT_SummonToBattle__SEGRAX(player_idx, (_units - 1), target_cgx, target_cgy);
-                BU_CombatSummon__SEGRAX((_combat_total_unit_count - 1), target_cgx, target_cgy, spell_idx, caster_idx);
-            }
-            else
-            {
-                STU_DEBUG_BREAK();
+                Prepare_Battle_Unit_Summons(player_idx, (_units - 1), target_cgx, target_cgy);
+                Battle_Unit_Summon_Animation((_combat_total_unit_count - 1), target_cgx, target_cgy, spell_idx, caster_idx);
             }
         } break;
 
@@ -14022,31 +13987,20 @@ void Deploy_Battle_Units(int16_t player_idx)
 }
 
 
-// segrax
 // WZD o113p10
-// drake178: BU_SummonDemon()
 /*
-; processes summoning a demon by the specified unit,
-; from decrementing its available summon counter to
-; creating the unit and playing the summon animation
-;
-; BUG: will enter an infinite loop if all 9 tiles that
-; the unit's side can summon to are occupied
+; BUG: will enter an infinite loop if all 9 tiles that the unit's side can summon to are occupied
 */
 /*
     ~=== Demon Lord's Summon Demon
     2 USA bits are used as the count of summonable demons
 */
-void BU_SummonDemon__SEGRAX(int16_t caster_idx)
+void Summon_Demon(int16_t caster_idx)
 {
     int16_t cgy = 0;
     int16_t caster_attribs_1 = 0;
-    int16_t cgx = 0;  // _DI_
-
-    // TODO SEGRAX  struct s_BATTLE_UNIT* battleunit1 = &battle_units[battle_unit_idx];
-
+    int16_t cgx = 0;
     caster_attribs_1 = battle_units[caster_idx].Attribs_1 & (USA_SUMMON_DEMON_1 | USA_SUMMON_DEMON_2);
-
     if(caster_attribs_1 == USA_SUMMON_DEMON_1)
     {
         battle_units[caster_idx].Attribs_1 ^= USA_SUMMON_DEMON_1;
@@ -14060,9 +14014,13 @@ void BU_SummonDemon__SEGRAX(int16_t caster_idx)
     {
         battle_units[caster_idx].Attribs_1 ^= USA_SUMMON_DEMON_1;
     }
-
+    /*
+        Create_Unit(unit_type, owner_idx, wx, wy, wp, R_Param)
+            wx, wy  =    0  no world position; the demon exists only on the battlefield
+            wp      =    9  the "in combat" marker; Prepare_Battle_Unit_Summons tests _UNITS[].wp == 9 to find a recyclable slot once all 36 battle unit slots are full
+            R_Param = 2000  bypasses both unit-count caps in Create_Unit() -- >950 for non-human owners, and >980 for anyone
+    */
     Create_Unit(ut_Demon, battle_units[caster_idx].controller_idx, 0, 0, 9, 2000);
-
     do {
         if(battle_units[caster_idx].controller_idx == _combat_attacker_player)
         {
@@ -14074,11 +14032,8 @@ void BU_SummonDemon__SEGRAX(int16_t caster_idx)
         }
         cgy = (8 + Random(3));
     } while(g_combat_grid_action_map[cgy][cgx] >= 0);
-
-    UNIT_SummonToBattle__SEGRAX(battle_units[caster_idx].controller_idx, (_units - 1), cgx, cgy);
-
-    BU_CombatSummon__SEGRAX((_combat_total_unit_count - 1), cgx, cgy, 0, caster_idx);
-
+    Prepare_Battle_Unit_Summons(battle_units[caster_idx].controller_idx, (_units - 1), cgx, cgy);
+    Battle_Unit_Summon_Animation((_combat_total_unit_count - 1), cgx, cgy, spl_NONE, caster_idx);
 }
 
 
@@ -14415,48 +14370,26 @@ void Combat_Cast_Spell_Message(int16_t caster_idx, int16_t spell_idx)
 }
 
 
-// segrax
-// AKA  CMB_FindEmptyFigSlot__SEGRAX()
 // WZD o113p15
-// drake178: CMB_FindEmptyFigSlot()
-// AKA  Battle_Unit_Slot_Open()
-/*
-; loops through the battle unit table to find the first
-; figure index that does not belong to a unit that is
-; currently active on the field
-; returns the figure slot index or garbage
-*/
-/*
-    returns bufpi {0,...17}
-    an unused entry in the battle unit pictures array
-
-Cast_Raise_Dead()
-    battle_units[battle_unit_idx].bufpi = Combat_Figure_Load(_UNITS[battle_units[battle_unit_idx].unit_idx].type, Battle_Unit_Pict_Open());
-*/
 int16_t Battle_Unit_Pict_Open(void)
 {
     int16_t battle_unit_slots[MAX_BATTLE_UNIT_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t battle_unit_slot_idx = 0;  // _CX_
-
+    int16_t battle_unit_slot_idx = 0;
     for(battle_unit_slot_idx = 0; battle_unit_slot_idx < MAX_BATTLE_UNIT_COUNT; battle_unit_slot_idx++)
     {
         battle_unit_slots[battle_unit_slot_idx] = ST_FALSE;
     }
-
     for(battle_unit_slot_idx = 0; battle_unit_slot_idx < _combat_total_unit_count; battle_unit_slot_idx++)
     {
-        struct s_BATTLE_UNIT * battle_unit = &battle_units[battle_unit_slot_idx];
-
         if(
-            (battle_unit->bufpi > ST_UNDEFINED)
-            && 
-            (battle_unit->status == bus_Active)
+            (battle_units[battle_unit_slot_idx].bufpi > ST_UNDEFINED)
+            &&
+            (battle_units[battle_unit_slot_idx].status == bus_Active)
         )
         {
-            battle_unit_slots[battle_unit->bufpi] = ST_TRUE;
+            battle_unit_slots[battle_units[battle_unit_slot_idx].bufpi] = ST_TRUE;
         }
     }
-
     for(battle_unit_slot_idx = 0; battle_unit_slot_idx < MAX_BATTLE_UNIT_COUNT; battle_unit_slot_idx++)
     {
         if(battle_unit_slots[battle_unit_slot_idx] == ST_FALSE)
@@ -14464,9 +14397,8 @@ int16_t Battle_Unit_Pict_Open(void)
             return battle_unit_slot_idx;
         }
     }
-
-    // BUGBUG  function is missing return value if no empty slot is found  SEE: Hero_Slot_Open()
-    return ST_UNDEFINED;  // DNE in Dasm
+    /* OGBUG  function is missing return value if no empty slot is found  SEE: Hero_Slot_Open() */
+    /* HACK */  return ST_UNDEFINED;  // DNE in Dasm
 }
 
 
@@ -14999,7 +14931,7 @@ int16_t Battle_Unit_Hit_Points(struct s_BATTLE_UNIT * battle_unit)
 // MoO2  Module: COMBINIT  Load_Combat_Ship_()
 void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
 {
-    int16_t Item_Charges = 0;
+    int16_t item_charges = 0;
     int16_t itr = 0;
     memcpy(battle_unit, &_unit_type_table[_UNITS[unit_idx].type].Melee, sizeof(struct s_UNIT_TYPE));
     battle_unit->Combat_Effects = 0;
@@ -15033,7 +14965,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     battle_unit->enchantments = 0;
     battle_unit->Suppression = 0;
     battle_unit->mana_max = 0;
-    battle_unit->Item_Charges = 0;
+    battle_unit->item_charges = 0;
     battle_unit->target_battle_unit_idx = ST_UNDEFINED;
     battle_unit->Poison_Strength = 0;
     battle_unit->upkeep = (int8_t)Unit_Gold_Upkeep(unit_idx);
@@ -15064,26 +14996,19 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     battle_unit->figure_effect = 0;
     battle_unit->animate_move_as_idle = 0;
     // ¿ BUG:  only gets item charges for 1/first item ?
-    // Macro:  Unit Is Hero Unit
-    // if(HEROSLOT() > ST_UNDEFINED)
-    // if(YAYHERO())
     if(_UNITS[unit_idx].Hero_Slot > ST_UNDEFINED)
     {
-        // Macro:  Hero Slot (Index)  _players[].Heroes[]
-        // if(_players[_UNITS[unit_idx].owner_idx].Heroes[HEROSLOT()].Items[0] > ST_UNDEFINED)
         if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0] > ST_UNDEFINED)
         {
-            // Macro:  Hero Item (Index)  _ITEMS[]
-            // Item_Charges = _ITEMS[_players[UNITOWNER()].Heroes[HEROSLOT()].Items[0]].embed_spell_cnt;
-            Item_Charges = _ITEMS[_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]].embed_spell_cnt;
+            item_charges = _ITEMS[_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]].embed_spell_cnt;
         }
         else
         {
-            Item_Charges = 0;
+            item_charges = 0;
         }
-        if(Item_Charges > 0)
+        if(item_charges > 0)
         {
-            battle_unit->Item_Charges = (int8_t)Item_Charges;
+            battle_unit->item_charges = (int8_t)item_charges;
         }
     }
 }
@@ -22788,16 +22713,16 @@ void Combat_Screen_Map_Draw__WIP(void)
                 }
 
                 if(
-                    (CMB_Chasm_Anim == ST_TRUE)
+                    (cmbt_cell_effect_active == ST_TRUE)
                     &&
-                    (CMB_Chasm_Anim_X == cgx)
+                    (cmbt_cell_effect_cgx == cgx)
                     &&
-                    (CMB_Chasm_Anim_Y == cgy)
+                    (cmbt_cell_effect_cgy == cgy)
                 )
                 {
-                    // Set_Animation_Frame(IMG_GUI_Chasm, CMB_ChasmAnimStage);
-                    Set_Animation_Frame(IMG_GUI_Chasm, (CMB_ChasmAnimStage / 6));
-                    Clipped_Draw(screen_x, (screen_y - 18), IMG_GUI_Chasm);
+                    // Set_Animation_Frame(cmbt_cell_effect_seg, cmbt_cell_effect_frame);
+                    Set_Animation_Frame(cmbt_cell_effect_seg, (cmbt_cell_effect_frame / 6));
+                    Clipped_Draw(screen_x, (screen_y - 18), cmbt_cell_effect_seg);
                 }
 
             }
@@ -27199,39 +27124,24 @@ int16_t Combat_Figure_Load(int16_t unit_type, int16_t bufpi)
     int16_t itr = 0;  // _DI_
     int64_t DBG_memory_address_1 = 0;
     int64_t DBG_memory_address_2 = 0;
-
     FIGUREX_MAP
     FIGUREX_OFFSET
     FIGUREX_POINTER
-
     stu_itoa(((unit_type / 15) + 1), buffer, 10);
-
     stu_strcpy(file_name, figure_lbx_file__ovr163);
-
     if(((unit_type / 15) + 1) < 10)
     {
-
         stu_strcat(file_name, str_figure_plural_s__ovr163);
-
     }
-
     stu_strcat(file_name, buffer);
-
     stu_strcat(file_name, str_empty_string__ovr163);
-
     entry_num = ((unit_type % 15) * 8);
-
     for(itr = 0; itr < 8; itr++)  /* 8 directions/faces per unit figure picture set */
     {
-
         figure_pict_set_seg[itr] = LBX_Reload_Next(file_name, (entry_num + itr), (EMS_PFBA + offset));
-
     }
-
     // WTF?  USELESS_Combat_Figure_Load_Compose(bufpi, 0, 0, 0, 0);
-
     return bufpi;
-
 }
 
 

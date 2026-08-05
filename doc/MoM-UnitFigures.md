@@ -23,7 +23,7 @@ Combat_Figure_Load() loads the eight figure lbx entries in to the EMS_PFBA.
         Combat_Figure_Load()
             j_Combat_Figure_Load()
                 UU_BU_LoadFigureGFX+2A         call    j_Combat_Figure_Load
-                BU_UnitLoadToBattle__SEGRAX+47 call    j_Combat_Figure_Load
+                Prepare_Battle_Unit+47 call    j_Combat_Figure_Load
                 CMB_Units_Init__WIP+C8         call    j_Combat_Figure_Load
                 CMB_Units_Init__WIP+27E        call    j_Combat_Figure_Load
                 CMB_RaiseDead+39E              call    j_Combat_Figure_Load

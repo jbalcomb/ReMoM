@@ -1970,7 +1970,7 @@ struct s_BATTLE_UNIT
     /* 0x3E */  int8_t   Suppression;
     /* 0x3F */  int8_t   mana_max;
     /* 0x40 */  int8_t   mana;
-    /* 0x41 */  int8_t   Item_Charges;
+    /* 0x41 */  int8_t   item_charges;
     /* 0x42 */  int8_t   Poison_Strength;
     /* 0x43 */  int8_t   target_battle_unit_idx;    /* 1-byte, signed */
     /* 0x44 */  int16_t  cgx;                   /* combat grid x coordinate */

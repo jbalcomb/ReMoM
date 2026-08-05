@@ -290,7 +290,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
             {
                 if(_units < MAX_UNIT_COUNT)
                 {
-                    BU_SummonDemon__SEGRAX(caster_idx);
+                    Summon_Demon(caster_idx);
                     battle_units[caster_idx].movement_points = 0;
                     return ST_TRUE;
                 }
@@ -351,7 +351,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
         /* AI / Auto Combat Control path */
         AI_SetCombatRealms();
         if(caster_idx < CASTER_IDX_BASE &&
-            battle_units[caster_idx].Item_Charges > 0 &&
+            battle_units[caster_idx].item_charges > 0 &&
             battle_units[caster_idx].action == BUA_UseItem)
         {
             spell_idx = _ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx;
@@ -542,12 +542,12 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                         {
                             // ; BUG: this may not be the hero's original owner
                             if(
-                                (battle_units[caster_idx].Item_Charges > 0)
+                                (battle_units[caster_idx].item_charges > 0)
                                 &&
                                 (_ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
                             )
                             {
-                                battle_units[caster_idx].Item_Charges -= 1;
+                                battle_units[caster_idx].item_charges -= 1;
                             }
                             else
                             {
@@ -640,12 +640,12 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                     {
                         // ; BUG: this may not be the hero's original owner
                         if(
-                            (battle_units[caster_idx].Item_Charges > 0)
+                            (battle_units[caster_idx].item_charges > 0)
                             &&
                             (_ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
                         )
                         {
-                            battle_units[caster_idx].Item_Charges -= 1;
+                            battle_units[caster_idx].item_charges -= 1;
                         }
                         else
                         {
@@ -749,12 +749,12 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 {
                     // ; BUG: this may not be the hero's original owner
                     if(
-                        (battle_units[caster_idx].Item_Charges > 0)
+                        (battle_units[caster_idx].item_charges > 0)
                         &&
                         (_ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
                     )
                     {
-                        battle_units[caster_idx].Item_Charges -= 1;
+                        battle_units[caster_idx].item_charges -= 1;
                     }
                     else
                     {

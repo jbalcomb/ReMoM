@@ -39,7 +39,7 @@ BU_CreateImage__SEGRAX()
     for(itr_figures = 0; itr_figures < cur_fig; itr_figures++)
         Battle_Unit_Figure_Position(max_fig, itr_figures, &fig_x, &fig_y);
         Clipped_Copy_Bitmap(fig_x, fig_y - 4, IMG_CMB_FX_Figure, GfxBuf_2400B);
-BU_CombatSummon__SEGRAX()
+Battle_Unit_Summon_Animation()
     Create_Picture(45, 42, GfxBuf_2400B);
     Copy_Bitmap_To_Bitmap(GfxBuf_2400B, IMG_CMB_FX_Figure);
 
@@ -47,18 +47,18 @@ BU_CombatSummon__SEGRAX()
 
 ## Copy_Bitmap_To_Bitmap()
 
-¿ BU_Teleport(), BU_TunnelTo(), BU_CombatSummon__SEGRAX() are just mimicing compose battle unit picture ?
+¿ BU_Teleport(), BU_TunnelTo(), Battle_Unit_Summon_Animation() are just mimicing compose battle unit picture ?
 
 XREF:
     Cast_PlaneShift()
     BU_Teleport()
     BU_TunnelTo()
-    BU_CombatSummon__SEGRAX()
+    Battle_Unit_Summon_Animation()
 
 
 ## spell_animation_seg
 
-BU_CombatSummon__SEGRAX()
+Battle_Unit_Summon_Animation()
     BU_CreateImage__SEGRAX(battle_unit_idx)
         IMG_CMB_FX_Figure = Allocate_Next_Block()
         Create_Picture()  IMG_CMB_FX_Figure
@@ -67,7 +67,7 @@ BU_CombatSummon__SEGRAX()
 
 
 
-BU_CombatSummon__SEGRAX()
+Battle_Unit_Summon_Animation()
 Spell_Animation_Load_Graphics__WIP
 
     IMG_GUI_Chasm = spell_animation_seg;  // ; appended reserved EMM header in GFX_Swap_Seg ; 8 frame animation
@@ -125,7 +125,7 @@ Down r TILE_BoltFromAbove:loc_B7372           push    [spell_animation_seg]     
 Down r TILE_CombatSpellAnim:loc_B7416         push    [spell_animation_seg]           ; pict_seg     
 Down r TILE_CombatSpellAnim+5B                push    [spell_animation_seg]           ; picture      
 Down r TILE_CombatSpellAnim+80                push    [spell_animation_seg]           ; picture      
-Down r BU_CombatSummon__SEGRAX+7F             mov     ax, [spell_animation_seg]                      
+Down r Battle_Unit_Summon_Animation+7F             mov     ax, [spell_animation_seg]                      
 Down r TILE_LightningBolt+8F                  push    [spell_animation_seg]           ; pict_seg     
 Down r TILE_LightningBolt+9A                  push    [spell_animation_seg]           ; picture      
 Down w Spell_Animation_Load_Graphics__WIP+4D  mov     [spell_animation_seg], ax                      

@@ -404,7 +404,7 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 // ^ bit 32 ((_ITEMS[(_item_idx_)].Powers & (1 << (31))) != 0)
 // ((_ITEMS[(_item_idx_)].Powers & (1 << (_item_power_))) != 0)
 
-// Item_Charges = _ITEMS[_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]].embed_spell_cnt;
+// item_charges = _ITEMS[_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]].embed_spell_cnt;
 
 // #define UNIT_ENCHANTMENT(_unit_idx_,_item_power_)  ( ((_ITEMS[(_item_idx_)].Powers & (1 << (_item_power_))) != 0) )
 

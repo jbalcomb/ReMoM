@@ -24,7 +24,7 @@
 
     Assign_Combat_Grids();
 
-BU_UnitLoadToBattle__SEGRAX()
+Prepare_Battle_Unit()
 */
 
 #include "CMBTTSTU.h"

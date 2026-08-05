@@ -1826,7 +1826,7 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
         battle_units[battle_unit_idx].status = bus_Active;
         BU_Init_Battle_Unit(&battle_units[battle_unit_idx]);
         BU_Apply_Battlefield_Effects__WIP(&battle_units[battle_unit_idx]);
-        BU_CombatSummon__SEGRAX(battle_unit_idx, cgx, cgy, spl_Raise_Dead, caster_idx);
+        Battle_Unit_Summon_Animation(battle_unit_idx, cgx, cgy, spl_Raise_Dead, caster_idx);
     }
 
     Set_Page_Off();
@@ -1964,6 +1964,6 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
     battle_units[battle_unit_idx].status = bus_Active;
     BU_Init_Battle_Unit(&battle_units[battle_unit_idx]);
     BU_Apply_Battlefield_Effects__WIP(&battle_units[battle_unit_idx]);
-    BU_CombatSummon__SEGRAX(battle_unit_idx, cgx, cgy, spl_Animate_Dead, caster_idx);
+    Battle_Unit_Summon_Animation(battle_unit_idx, cgx, cgy, spl_Animate_Dead, caster_idx);
 
 }

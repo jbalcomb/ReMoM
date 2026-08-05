@@ -57,7 +57,7 @@ void Battle_Unit_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy);
 void Battle_Unit_Tunnel(int16_t battle_unit_idx, int16_t cgx, int16_t cgy);
 
 // WZD o133p13
-void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx);
+void Battle_Unit_Summon_Animation(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx);
 
 // WZD o133p14
 void Animate_Lightning_Bolt(int16_t cgx, int16_t cgy, int16_t caster_idx);

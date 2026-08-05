@@ -35,10 +35,10 @@ CMB_SpellcastMessage()
 Combat_Cast_Spell()
     USA_SUMMON_DEMON_1 or USA_SUMMON_DEMON_2
     ...
-        BU_SummonDemon__SEGRAX()
+        Summon_Demon()
 AI_BU_ProcessAction__WIP()
     case BUA_SummonDemon:
-        BU_SummonDemon__SEGRAX(battle_unit_idx);
+        Summon_Demon(battle_unit_idx);
 
 
 
@@ -106,8 +106,8 @@ Tactical_Combat__WIP()
         Combat_Spell_Target_Screen__WIP()
         Cast_Spell_On_Battle_Unit()
             Create_Unit
-            UNIT_SummonToBattle__SEGRAX()
-            BU_CombatSummon__SEGRAX()
+            Prepare_Battle_Unit_Summons()
+            Battle_Unit_Summon_Animation()
                 BU_CreateImage__SEGRAX()
 
 Combat Spell Target Type  4  cstt_   AKA CTT_Tile_NoUnitA
@@ -121,11 +121,11 @@ Cast_Spell_On_Battle_Unit()
     switch(spell_data_table[spell_idx].type)
         case scc_Summoning:
             Figure_Count = Create_Unitl_data_table[spell_idx].unit_type, player_idx, 0, 0, 9, 2000);
-            UNIT_SummonToBattle__SEGRAX(player_idx, (_units - 1), target_cgx, target_cgy);
-            BU_CombatSummon__SEGRAX((_combat_total_unit_count - 1), target_cgx, target_cgy, spell_idx, caster_idx);
+            Prepare_Battle_Unit_Summons(player_idx, (_units - 1), target_cgx, target_cgy);
+            Battle_Unit_Summon_Animation((_combat_total_unit_count - 1), target_cgx, target_cgy, spell_idx, caster_idx);
 ...
-UNIT_SummonToBattle__SEGRAX()
-    BU_UnitLoadToBattle__SEGRAX()
+Prepare_Battle_Unit_Summons()
+    Prepare_Battle_Unit()
         Load_Battle_Unit()
         Battle_Unit_Slot_Open()
         Combat_Figure_Load()

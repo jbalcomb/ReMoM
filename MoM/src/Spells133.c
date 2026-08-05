@@ -680,20 +680,20 @@ void Animate_Cracks_Call(int16_t cgx, int16_t cgy, int16_t caster_idx)
         Play_Sound(SND_SpellCast, SND_SpellCast_size);
     }
 
-    CMB_Chasm_Anim_X = cgx;
+    cmbt_cell_effect_cgx = cgx;
 
-    CMB_Chasm_Anim_Y = cgy;
+    cmbt_cell_effect_cgy = cgy;
 
-    IMG_GUI_Chasm = spell_animation_seg;
+    cmbt_cell_effect_seg = spell_animation_seg;
 
-    CMB_Chasm_Anim = ST_TRUE;
+    cmbt_cell_effect_active = ST_TRUE;
 
     frame_count = FLIC_Get_FrameCount(spell_animation_seg);
 
     for(frame = 0; (frame_count * 7) > frame; frame++)
     {
 
-        CMB_ChasmAnimStage = (frame / 6);
+        cmbt_cell_effect_frame = (frame / 6);
 
         Set_Page_Off();
 
@@ -705,7 +705,7 @@ void Animate_Cracks_Call(int16_t cgx, int16_t cgy, int16_t caster_idx)
 
     }
 
-    CMB_Chasm_Anim = ST_FALSE;
+    cmbt_cell_effect_active = ST_FALSE;
 
 }
 
@@ -1136,47 +1136,30 @@ void Battle_Unit_Tunnel(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 }
 
 
-// segrax
 // WZD ovr133p13
-// drake178: BU_CombatSummon()
-/*
-*/
-/*
-*/
-void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx)
+void Battle_Unit_Summon_Animation(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx)
 {
     int16_t uu_screen_x = 0;
     int16_t uu_screen_y = 0;
     int16_t screen_x = 0;
     int16_t screen_y = 0;
     int16_t anim_ctr = 0;
-    
-    struct s_BATTLE_UNIT* battle_unit = &battle_units[battle_unit_idx];
-
-    CMB_Chasm_Anim_X = battle_unit->cgx;
-    CMB_Chasm_Anim_Y = battle_unit->cgy;
-
+    cmbt_cell_effect_cgx = battle_units[battle_unit_idx].cgx;
+    cmbt_cell_effect_cgy = battle_units[battle_unit_idx].cgy;
     Combat_Grid_Screen_Coordinates(cgx, cgy, 4, 4, &screen_x, &screen_y);
-
     uu_screen_x = screen_x - 14;
     uu_screen_y = screen_y - 25;
-
     screen_x -= 13;
     screen_y -= 27;
-
     Mark_Block(_screen_seg);
-
     Spell_Animation_Load_Graphics(spl_Fire_Elemental);
-
-    IMG_GUI_Chasm = spell_animation_seg;
-
-    CMB_Chasm_Anim = 1;
-
+    cmbt_cell_effect_seg = spell_animation_seg;
+    cmbt_cell_effect_active = 1;
     Mark_Block(World_Data);
-
     if(magic_set.sound_effects == ST_TRUE)
     {
         Play_Sound(sound_silent_seg, sound_silent_seg_size);
+        // SOUNDFX.LBX, 107  "SUMMON2 "  "Combat Summoning"
         SND_SpellCast = LBX_Reload_Next(soundfx_lbx_file__ovr133__2of2, SFX_CombatSummon, World_Data);
         SND_SpellCast_size = lbxload_entry_length;
     }
@@ -1184,87 +1167,55 @@ void BU_CombatSummon__SEGRAX(int16_t battle_unit_idx, int16_t cgx, int16_t cgy, 
     {
         SND_SpellCast = (SAMB_ptr)ST_UNDEFINED;
     }
-
-    if(battle_unit->controller_idx == _combat_attacker_player)
+    if(battle_units[battle_unit_idx].controller_idx == _combat_attacker_player)
     {
-        battle_unit->target_cgx = 8;
+        battle_units[battle_unit_idx].target_cgx = 8;
     }
     else
     {
-        battle_unit->target_cgx = 14;
+        battle_units[battle_unit_idx].target_cgx = 14;
     }
-
-    battle_unit->target_cgy = 12;
-
+    battle_units[battle_unit_idx].target_cgy = 12;
     Battle_Unit_Compose_Bitmap(battle_unit_idx);
-
-    battle_unit->status = bus_Dead;
-
+    battle_units[battle_unit_idx].status = bus_Dead;
     if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
     {
         Play_Sound(SND_SpellCast, SND_SpellCast_size);
     }
-
-    
     for(anim_ctr = 0; anim_ctr < 16; anim_ctr++)
     {
-
-        CMB_ChasmAnimStage = anim_ctr;
-
+        cmbt_cell_effect_frame = anim_ctr;
         Mark_Time();
-
         if(anim_ctr == 14)
         {
-            battle_unit->status = bus_Active;
+            battle_units[battle_unit_idx].status = bus_Active;
         }
-
         Set_Page_Off();
-
         Combat_Screen_Draw();
-
         Combat_Cast_Spell_Message(player_idx, spell_idx);
-
         Create_Picture(45, 42, scratch_bitmap_seg);
-
         Copy_Bitmap_To_Bitmap(scratch_bitmap_seg, battle_unit_scratch_seg);
-
         if(
             (anim_ctr > 6)
             &&
             (anim_ctr < 14)
         )
         {
-
             Vanish_Bitmap(scratch_bitmap_seg, ((anim_ctr - 6) * 14));
-
             Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, (screen_y + 30));
-
             FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
-
             Draw_Picture_Windowed(screen_x, ((screen_y + 21) - ((anim_ctr - 6) * 3)), scratch_bitmap_seg);
-
             Reset_Window();
-
         }
-
         PageFlip_FX();
-
         Release_Time(2);
-
     }
-
     Set_Page_Off();
-
     Combat_Screen_Draw();
-
     PageFlip_FX();
-
-    CMB_Chasm_Anim = 0;
-
+    cmbt_cell_effect_active = 0;
     Release_Block(_screen_seg);
-
     Release_Block(World_Data);
-
 }
 
 

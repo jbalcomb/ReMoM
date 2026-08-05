@@ -3934,7 +3934,7 @@ XREF:
     Cast_Plane_Shift()
     Battle_Unit_Teleport()
     Battle_Unit_Tunnel()
-    BU_CombatSummon__SEGRAX()
+    Battle_Unit_Summon_Animation()
     Spell_Target_Global_Enchantment_Disjunct__WIP()
     Spell_Of_Mastery_Lose_Draw()
     Cityscape_Draw_Buildings()
