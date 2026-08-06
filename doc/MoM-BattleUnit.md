@@ -30,13 +30,13 @@ Load_Battle_Unit()
     sets the strategic_unit->unit_idx
     ¿ the rest expect/get/use it from there ?
 
-BU_Apply_Level()
+Battle_Unit_Level_Stats()
     does not assume the BU is up-to-date - checks UNITS[] and strategic_unit
 
 ¿ if/why gets passed unit_idx ?
     Load_Battle_Unit()
-    BU_Apply_Level()
-        BU_Apply_Level() is only called from BU_Init_Battle_Unit()
+    Battle_Unit_Level_Stats()
+        Battle_Unit_Level_Stats() is only called from BU_Init_Battle_Unit()
         but, BU_Init_Battle_Unit() doesn't get passed the unit_idx
             it gets it from Load_Battle_Unit()
 
@@ -73,12 +73,12 @@ Main_Screen()
         USW_FullDisplay()
             Load_Battle_Unit(unit_idx, BattleUnit)
                 BU_Init_Battle_Unit(BattleUnit)
-                    BU_Apply_Level(BattleUnit)
+                    Battle_Unit_Level_Stats(BattleUnit)
                     BU_Init_Hero_Unit(BattleUnit)
                     BU_Apply_Items(BattleUnit)
-                        BU_Apply_Item_Enchantments()
-                        BU_Apply_Item_Attack_Specials()
-                    BU_Apply_Specials(BattleUnit, Enchants, Unit_Mutations)
+                        Item_Powers_To_Unit_Enchantments()
+                        Item_Powers_To_Attack_Attributes()
+                    Apply_Enchantment_And_Mutation_Effects(BattleUnit, Enchants, Unit_Mutations)
                     UNIT_GetHalfMoves_WIP()
                     UNIT_GetHitsPerFig()
 
@@ -86,12 +86,12 @@ Combat()
     Strategic_Combat()
         Load_Battle_Unit()
             BU_Init_Battle_Unit(BattleUnit)
-                BU_Apply_Level(BattleUnit)
+                Battle_Unit_Level_Stats(BattleUnit)
                 BU_Init_Hero_Unit(BattleUnit)
                 BU_Apply_Items(BattleUnit)
-                    BU_Apply_Item_Enchantments()
-                    BU_Apply_Item_Attack_Specials()
-                BU_Apply_Specials(BattleUnit, Enchants, Unit_Mutations)
+                    Item_Powers_To_Unit_Enchantments()
+                    Item_Powers_To_Attack_Attributes()
+                Apply_Enchantment_And_Mutation_Effects(BattleUnit, Enchants, Unit_Mutations)
     ...
 
 
@@ -106,14 +106,14 @@ e.g., Prod_Init_Battle_Unit  ~== MoO2  Load_Display_Combat_Ship()?
 MoO2  Module: COMBINIT  Init_Special_Devices_()
 ¿ MoO2 Leader mods ?
 
-BU_Apply_Level()
+Battle_Unit_Level_Stats()
 BU_Init_Hero_Unit()
 BU_Apply_Items()
 
 
 
 BU_Apply_Items(BattleUnit)
-BU_Apply_Item_Enchantments()
+Item_Powers_To_Unit_Enchantments()
 
 ¿¿¿ 
 _players.Heroes.Items
@@ -164,27 +164,27 @@ so, not just a part of loading a 'Battle Unit'  ... Indeed. It's part of creatin
 
 
 BU_Apply_Items(BattleUnit)
-    BU_Apply_Item_Enchantments()
-    BU_Apply_Item_Attack_Specials()
-BU_Apply_Specials()
+    Item_Powers_To_Unit_Enchantments()
+    Item_Powers_To_Attack_Attributes()
+Apply_Enchantment_And_Mutation_Effects()
 
 
 ### BU_Apply_Items()
 
 
-### BU_Apply_Item_Enchantments()
+### Item_Powers_To_Unit_Enchantments()
 
-BU_Apply_Item_Enchantments(item_idx, strategic_unit)
+Item_Powers_To_Unit_Enchantments(item_idx, strategic_unit)
 ...applies an item to a combat unit...
 
-### BU_Apply_Item_Attack_Specials()
+### Item_Powers_To_Attack_Attributes()
 
 
-### BU_Apply_Specials()
+### Apply_Enchantment_And_Mutation_Effects()
     does a bunch of different stuff
     applies 'battle unit enchantments' (unit enchants & item enchantments)
     applies 'unit mutations'
-    applies special attack abilities, as were set in BU_Apply_Item_Attack_Specials()
+    applies special attack abilities, as were set in Item_Powers_To_Attack_Attributes()
 unit mutations comes straight through
 unit enchantments comes straight through, just with item enchantments added
 

@@ -9,19 +9,19 @@
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/Fonts.h"
-#include "../../MoX/src/MOX_DAT.h"  /* _screen_seg */
 #include "../../MoX/src/LBX_Load.h"
+#include "../../MoX/src/MOX_DAT.h"  /* _screen_seg */
+#include "../../MoX/src/MOX_T4.h"
+#include "../../MoX/src/paragrph.h"
+#include "../../MoX/src/Timer.h"
 
 #include "CITYCALC.h"
 #include "Combat.h"
-#include "HIRE.h"
+#include "COMBINIT.h"
 #include "Items.h"
 #include "ItemScrn.h"
 #include "ItemView.h"
 #include "LOADER.h"
-#include "../../MoX/src/MOX_T4.h"
-#include "../../MoX/src/Timer.h"
-#include "../../MoX/src/paragrph.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "MOM_SCR.h"
@@ -33,10 +33,12 @@
 #include "UNITTYPE.h"   // WTFMATE
 #include "UnitView.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../ext/stu_compat.h"
+#include "HIRE.h"
 
 
 

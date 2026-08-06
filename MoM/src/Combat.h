@@ -3,7 +3,7 @@
 
     WIZARDS.EXE
         ovr090
-        ovr091
+        ovr091  ¿ MoO2  COMBINIT ?
         ovr096
         ovr098  ¿ MoO2  COMBINIT ?
         ovr099  ¿ MoO2  Module: CMBTDRW1 ?
@@ -12,7 +12,7 @@
         ovr110
         ovr111  ¿ AITP.* ?
         ovr112  ¿ LBX CMBMAGIC ?
-        ovr116
+        ovr116  MoO2  COMBINIT
         ovr122
         ovr123
         ovr124
@@ -79,6 +79,55 @@ else
 #define MANA_LEAK_DFNDR 27
 #define BLUR_ATTKR 28
 #define BLUR_DFNDR 29
+
+// CLAUDE  /*
+// CLAUDE  spell_data_table[spell_idx].cmbt_ench_idx  (AKA spell_data_table[spell_idx].Param0)
+// CLAUDE  MoO2 and manual say "side"
+// CLAUDE  CC says "it's reasonable to defer it to whenever ovr111/ovr112 get reviewed, since those are the files that force the flat view."
+// CLAUDE  ...
+// CLAUDE  "the flat view"
+// CLAUDE      e.g.,
+// CLAUDE          AITP_Combat_Spell()
+// CLAUDE              if(combat_enchantments[*(int *)&spell_data_table[spell_idx].Param0 + Unit_Resist] > 0)
+// CLAUDE  
+// CLAUDE  */
+// CLAUDE  
+// CLAUDE  /* WIZARDS.inc:  struc s_COMBAT_ENCHANTMENT_STATUS  (sizeof=0x2) */
+// CLAUDE  struct s_COMBAT_ENCHANTMENT_STATUS
+// CLAUDE  {
+// CLAUDE      /* 00 */  int8_t Attkr;
+// CLAUDE      /* 01 */  int8_t Dfndr;
+// CLAUDE  };
+// CLAUDE  
+// CLAUDE  /* WIZARDS.inc:  struc s_COMBAT_ENCHANTMENTS  (sizeof=0x1E) */
+// CLAUDE  struct s_COMBAT_ENCHANTMENTS
+// CLAUDE  {
+// CLAUDE      /* 00 */  struct s_COMBAT_ENCHANTMENT_STATUS True_Light;
+// CLAUDE      /* 02 */  struct s_COMBAT_ENCHANTMENT_STATUS Darkness;
+// CLAUDE      /* 04 */  struct s_COMBAT_ENCHANTMENT_STATUS Warp_Reality;
+// CLAUDE      /* 06 */  struct s_COMBAT_ENCHANTMENT_STATUS Black_Prayer;
+// CLAUDE      /* 08 */  struct s_COMBAT_ENCHANTMENT_STATUS Wrack;
+// CLAUDE      /* 0A */  struct s_COMBAT_ENCHANTMENT_STATUS Metal_Fires;
+// CLAUDE      /* 0C */  struct s_COMBAT_ENCHANTMENT_STATUS Prayer;
+// CLAUDE      /* 0E */  struct s_COMBAT_ENCHANTMENT_STATUS High_Prayer;
+// CLAUDE      /* 10 */  struct s_COMBAT_ENCHANTMENT_STATUS Terror;
+// CLAUDE      /* 12 */  struct s_COMBAT_ENCHANTMENT_STATUS Call_Lightning;
+// CLAUDE      /* 14 */  struct s_COMBAT_ENCHANTMENT_STATUS Counter_Magic;
+// CLAUDE      /* 16 */  struct s_COMBAT_ENCHANTMENT_STATUS Mass_Invisibility;
+// CLAUDE      /* 18 */  struct s_COMBAT_ENCHANTMENT_STATUS Entangle;
+// CLAUDE      /* 1A */  struct s_COMBAT_ENCHANTMENT_STATUS Mana_Leak;
+// CLAUDE      /* 1C */  struct s_COMBAT_ENCHANTMENT_STATUS Blur;
+// CLAUDE  };
+// CLAUDE  
+// CLAUDE  #define NUM_COMBAT_ENCHANTMENT_SLOTS 30  /* 15 enchantments x { Attkr, Dfndr } */
+// CLAUDE  
+// CLAUDE  union u_COMBAT_ENCHANTMENTS
+// CLAUDE  {
+// CLAUDE      struct s_COMBAT_ENCHANTMENTS by_name;       /* effect code:  ->by_name.Terror.Attkr */
+// CLAUDE      int8_t slot[NUM_COMBAT_ENCHANTMENT_SLOTS];  /* spell/AI code: ->slot[TERROR_ATTKR]  */
+// CLAUDE  };
+
+
 
 // _ai_battlefield_city_walls
 #define BATTLEFIELD_CITY_WALL_STONE     0x1 /* 0b00000001 */
@@ -859,7 +908,7 @@ enum e_BATTLE_UNIT_FIGURE_EFFECT
 
 /*
 
-CMB_PrepareTurn__WIP() uses `test .. jz`
+Begin_Combat_Turn() uses `test .. jz`
 
 */
 enum e_BATTLE_UNIT_EFFECT
@@ -1134,6 +1183,152 @@ struct s_MAGIC_VORTEX
 
 
 
+
+
+
+// sizeof: 6Eh  110d
+// drake178: struct s_BU_REC
+#pragma pack(push)
+#pragma pack(2)
+struct s_BATTLE_UNIT
+{
+    /* 0x00 */  int8_t   melee;  /* ~ "melee attack strength" */
+    /* 0x01 */  int8_t   ranged;  /* ~ "ranged attack strength" */
+    /* 0x02 */  int8_t   ranged_type;   /* 1-byte, signed */  /* ~ "ranged attack type" */
+    /* 0x03 */  int8_t   ammo;
+    /* 0x04 */  int8_t   tohit;
+    /* 0x05 */  int8_t   defense;
+    /* 0x06 */  int8_t   resist;
+    /* 0x07 */  int8_t   movement_points;   /* ¿ moves2 ? */
+    /* 0x08 */  int16_t  cost;
+    /* 0x0A */  int8_t   upkeep;
+    /* 0x0B */  int8_t   race;              /* 1-byte, signed;  enum e_RACE_TYPE;  -16 == Magic/Spellbook Realm */
+    /* 0x0C */  /* int8_t Unused_0Ch; */                          // reqd_bldg_1 & hero_portrait
+    union {
+                int8_t   reqd_bldg_1;
+                int8_t   hero_portrait_idx;
+    };
+    /* 0x0D */  /* int8_t figure_cnt; */                         // reqd_bldg_2 & hero_type
+    union {
+                int8_t   figure_cnt;   /* DEDU  range of values ? */
+                int8_t   reqd_bldg_2;
+                int8_t   hero_type;
+    };
+    /* 0x0E */
+    union {
+        int64_t seg_or_idx;
+        int16_t bufpi;  /* used to index picture cache */
+        SAMB_ptr pict_seg;
+    };
+
+    /* 0x10 */  int8_t   hits;                  /* Hit-Points ¿ Per Figure ? */
+    /* 0x11 */  int8_t   scout_range;
+    /* 0x12 */  int8_t   carry_capacity;
+    /* 0x13 */  int8_t   figure_max;
+    /* 0x14 */  int8_t   Construction;
+    /* 0x15 */  int8_t   Spec_Att_Attrib;                   // -abs() is resistance_modifier
+    /* 0x16 */  uint16_t Move_Flags;                        // ; enum MOVEFLAGS
+    /* 0x17 */  // int8_t Unused_17h;                       // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
+    /* 0x18 */  int16_t  Attribs_1;                         // any reason these arent a uint32?  ; enum ATTRIB_1
+    /* 0x1A */  int8_t   Attribs_2;                         // any reason these arent a uint32?  ¿ ?
+    /* 0x1B */  int8_t   Unused_1Bh;                        // any reason these arent a uint32?  ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
+    /* 0x1C */  uint16_t Abilities;                         // ; enum ABL_FLAGS  ~ 'Unit Abilities'
+    /* 0x1E */  uint16_t attack_attributes;     /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
+    /* 0x20 */  int16_t  Sound;
+    /* 0x22 */  int16_t  Combat_Effects;        /* ¿ ~ combat unit enchantment ? enum e_BATTLE_UNIT_EFFECT */
+    /* 0x24 */  int8_t   melee_tohit;
+    /* 0x25 */  int8_t   ranged_tohit;
+    /* 0x26 */  int8_t   toblock;
+    /* 0x27 */  int8_t   Weapon_Plus1;          /* ~ Magic Weapon ... `if(!= 0)` */
+    /* 0x28 */  uint16_t melee_attack_attributes;       /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
+    /* 0x2A */  uint16_t ranged_attack_attributes;      /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
+    /* 0x2C */  uint32_t item_enchantments;     // Item Powers, as Unit Enchantments  enum e_UNIT_ENCHANTMENTS ... macro UE_...
+    /* 0x30 */  int16_t  unit_idx;
+    /* 0x32 */  int8_t   Extra_Hits;
+    /* 0x33 */  int8_t   Web_HP;
+    /* 0x34 */  int8_t   status;                /* enum e_BATTLE_UNIT_STATUS */
+    /* 0x35 */  int8_t   controller_idx;        // Player Number of the Controlling Wizard  (was owner_idx, but conflicts with _UNITS[unit_idx].owner_idx)
+    /* 0x36 */  uint8_t  damage[3];             // Regular_Dmg, Undeath_Dmg, Irreversible_Dmg
+    /* 0x39 */  int8_t   front_figure_damage;
+    /* 0x3A */  uint32_t enchantments;          // Unit Enchantments
+    /* 0x3E */  int8_t   Suppression;
+    /* 0x3F */  uint8_t  mana_max;
+    /* 0x40 */  int8_t   mana;
+    /* 0x41 */  int8_t   item_charges;
+    /* 0x42 */  int8_t   Poison_Strength;
+    /* 0x43 */  int8_t   target_battle_unit_idx;    /* 1-byte, signed */
+    /* 0x44 */  int16_t  cgx;                   /* combat grid x coordinate */
+    /* 0x46 */  int16_t  cgy;                   /* combat grid y coordinate */
+    /* 0x48 */  int16_t  target_cgx;            /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */
+    /* 0x4A */  int16_t  target_cgy;            /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */
+    /* 0x4C */  int16_t  move_anim_ctr;         /* ¿ ~ MoO2 ship_frame ?  movement animation counter/increment  {0,1,2,3,4,5,6,7} */
+    /* 0x4E */  int16_t  Atk_FigLoss;
+    /* 0x50 */  int16_t  outline_magic_realm;   /* enchantment_magic_realm ... enum e_MAGIC_REALM{} ... index into enchantment_outline_colors[], used for unit outline color */
+    /* 0x52 */  int16_t  Moving;                // set to ST_FALSE in Switch_Active_Battle_Unit()
+    /* 0x54 */  int16_t  action;                /* enum e_BATTLE_UNIT_ACTION */
+    /* 0x56 */  int8_t   Confusion_State;       /* {0: , 1: , 2: }  ~== stand around and do nothing while looking foolish and confused, move randomly, attack allies, attack enemies for combat winner, 2 means it currently belong to the other player/opponent */
+    /* 0x57 */  int8_t   pad2B_57h;             // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
+    /* 0x58 */  int16_t  gibs;
+    /* 0x5A */  int16_t  Unknown_5A;
+    /* 0x5C */  int16_t  animate_idle;
+    /* 0x5E */  int16_t  Melee_Anim;            /* {0,1,2}; not just {F,T}; set in CMB_MeleeAnim() */
+    /* 0x60 */  int16_t  figure_effect;          /* enum e_BATTLE_UNIT_FIGURE_EFFECT;  passed to Combat_Figure_Effect__WIP() for BU figure bitmap composition */
+    /* 0x62 */  int16_t  animate_move_as_idle;  /* IIF flight animation ... if((battle_units[battle_unit_idx].Attribs_1 & USA_FLYING) != 0) */
+    /* 0x64 */  int8_t   Gold_Melee;
+    /* 0x65 */  int8_t   Gold_Ranged;
+    /* 0x66 */  int8_t   Gold_Defense;
+    /* 0x67 */  int8_t   Gold_Resist;
+    /* 0x68 */  int8_t   Gold_Hits;
+    /* 0x69 */  int8_t   Grey_Melee;
+    /* 0x6A */  int8_t   Grey_Ranged;
+    /* 0x6B */  int8_t   Grey_Defense;
+    /* 0x6C */  int8_t   Grey_Resist;
+    /* 0x6D */  int8_t   Grey_Hits;
+    /* 0x6E */
+};
+#pragma pack(pop)
+
+
+#pragma pack(push)
+#pragma pack(2)
+struct s_CMBT_DATA
+{
+    /* 0x00 */  int8_t melee;
+    /* 0x01 */  int8_t ranged;
+    /* 0x02 */  int8_t ranged_type;
+    /* 0x03 */  int8_t ammo;
+    /* 0x04 */  int8_t tohit;
+    /* 0x05 */  int8_t defense;
+    /* 0x06 */  int8_t resist;
+    /* 0x07 */  int8_t movement_points;
+    /* 0x08 */  int8_t cost;
+    /* 0x0A */  int8_t upkeep;
+    /* 0x0B */  int8_t race;                                // ; enum Race_Code
+    /* 0x0C */  int8_t Unused_0Ch;
+    /* 0x0D */  int8_t figure_cnt;
+    /* 0x0E */  int16_t bufpi;
+    /* 0x10 */  int8_t hits;
+    /* 0x11 */  int8_t scout_range;
+    /* 0x12 */  int8_t carry_capacity;
+    /* 0x13 */  int8_t figure_max;
+    /* 0x14 */  int8_t Construction;
+    /* 0x15 */  int8_t Spec_Att_Attrib;
+    /* 0x16 */  int8_t Move_Flags;                          // ; enum MOVEFLAGS
+    /* 0x17 */  int8_t Unused_17h;  // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
+    /* 0x18 */  int16_t Attribs_1;                          // ; enum ATTRIB_1
+    /* 0x1A */  int8_t Attribs_2;
+    /* 0x1B */  int8_t Unused_1Bh;  // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
+    /* 0x1C */  int16_t Abilities;                          // ; enum ABL_FLAGS
+    /* 0x1E */  int16_t Attack_Flags;                       // ; enum ATK_FLAGS
+    /* 0x20 */  int16_t Sound;
+
+};
+#pragma pack(pop)
+
+
+
+
+
 // WZD dseg:7080
 extern int16_t frame_anim_cycle;
 
@@ -1214,8 +1409,19 @@ extern int16_t _combat_attacker_player;
 // WZD dseg:C588
 extern int16_t _combat_total_unit_count;
 
+
+
+// WZD dseg:C7AA                                                 ¿ BEGIN:  ovr103 ?
+
 // WZD dseg:C7B2
 extern SAMB_ptr battle_unit_scratch_seg;
+
+// WZD dseg:C7C2
+extern int16_t _combat_node_type;
+
+// WZD dseg:C7E6                                                 ¿ END:  ovr103 ?
+
+
 
 // WZD dseg:C8A8
 // WZD dseg:C8AA
@@ -1402,7 +1608,6 @@ extern "C" {
 */
 
 // WZD s90p01
-// drake178: CMB_TacticalCombat()
 int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_defender_player_idx, int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[]);
 
 
@@ -1412,10 +1617,10 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
 */
 
 // WZD s91p01
-// drake178: UU_BU_LoadFigureGFX()
+void UU_BU_LoadFigureGFX(int16_t battle_unit_idx);
 
 // WZD s91p02
-void CMB_PrepareTurn__WIP(void);
+void Begin_Combat_Turn(void);
 
 // WZD s91p03
 void Set_Movement_Cost_Map(int16_t battle_unit_idx);
@@ -1477,7 +1682,6 @@ void Update_Defender_Hostility(int attacker_player_idx, int defender_player_idx)
 */
 
 // WZD o98p01
-// drake178: CMB_CE_Refresh()
 void Update_Combat_Enchantments_Icon_And_Help(void);
 
 // WZD o98p02
@@ -1493,11 +1697,9 @@ void Auto_Cast_Spell_And_Do_Combat_Turn(int16_t player_idx);
 void Combat_Next_Turn(void);
 
 // WZD o98p06
-// drake178: WIZ_FleeCombat()
 void Retreat_From_Combat(int16_t player_idx);
 
 // WZD o98p07
-// drake178: TILE_HasCityOfPlayer()
 int16_t Player_City_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx);
 
 // WZD o98p08
@@ -1776,48 +1978,6 @@ int16_t Battle_Unit_Pict_Open(void);
 
 // WZD o113p16
 int16_t Eliminated_Opponent(void);
-
-
-
-/*
-    WIZARDS.EXE  ovr116
-*/
-
-// WZD o116p01
-uint32_t BU_Apply_Item_Powers(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit);
-
-// WZD o116p02
-void BU_Apply_Item_Enchantments(int16_t item_idx, struct s_BATTLE_UNIT * battle_unit);
-
-// WZD o116p03
-void BU_Apply_Item_Attack_Specials(uint16_t * attack_flags, int16_t item_idx);
-
-// WZD o116p04
-int16_t Unit_Hit_Points(int16_t unit_idx);
-
-// WZD o116p05
-int16_t Battle_Unit_Hit_Points(struct s_BATTLE_UNIT * battle_unit);
-
-// WZD o116p06
-void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * BattleUnit);
-
-// WZD o116p07
-void BU_Init_Battle_Unit(struct s_BATTLE_UNIT * BattleUnit);
-
-// WZD o116p08
-void BU_Apply_Specials(struct s_BATTLE_UNIT * battle_unit, uint32_t battle_unit_enchantments, uint8_t unit_mutations);
-
-// WZD o116p09
-void BU_Apply_Level(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit);
-
-// WZD o116p10
-void BU_Init_Hero_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit);
-
-// WZD o116p11
-void BU_Apply_Battlefield_Effects__WIP(struct s_BATTLE_UNIT * battle_unit);
-
-// WZD o116p12
-// NX_Unit_Has_Spell_As_Enchantment_Or_Item_Power()
 
 
 

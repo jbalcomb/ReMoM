@@ -125,7 +125,7 @@ TEST_F(MyClassTestFixture, MOM_Create_Unit)
     EXPECT_EQ(_UNITS[0].wy, 1);                     // _UNITS[_units].wy = wy;
     EXPECT_EQ(_UNITS[0].wp, 0);                     // _UNITS[_units].wp = wp;
     EXPECT_EQ(_UNITS[0].owner_idx, 0);              // _UNITS[_units].owner_idx = owner_idx;
-    // _UNITS[_units].moves2_max = _unit_type_table[unit_type].Move_Halves;
+    // _UNITS[_units].moves2_max = _unit_type_table[unit_type].moves2_base;
     EXPECT_EQ(_UNITS[0].type, ut_LizSettlers);      // _UNITS[_units].type = unit_type;
     EXPECT_EQ(_UNITS[0].Hero_Slot, ST_UNDEFINED);             // _UNITS[_units].Hero_Slot = -1;
     EXPECT_EQ(_UNITS[0].in_tower, ST_FALSE);        // _UNITS[_units].in_tower = ST_FALSE;
@@ -149,7 +149,7 @@ TEST_F(MyClassTestFixture, MOM_Create_Unit)
     EXPECT_EQ(_UNITS[1].wy, 2);                         // _UNITS[_units].wy = wy;
     EXPECT_EQ(_UNITS[1].wp, 1);                         // _UNITS[_units].wp = wp;
     EXPECT_EQ(_UNITS[1].owner_idx, 1);                  // _UNITS[_units].owner_idx = owner_idx;
-    // _UNITS[_units].moves2_max = _unit_type_table[unit_type].Move_Halves;
+    // _UNITS[_units].moves2_max = _unit_type_table[unit_type].moves2_base;
     EXPECT_EQ(_UNITS[1].type, ut_LizHalberdiers);       // _UNITS[_units].type = unit_type;
     EXPECT_EQ(_UNITS[1].Hero_Slot, ST_UNDEFINED);       // _UNITS[_units].Hero_Slot = ST_UNDEFINED;
     EXPECT_EQ(_UNITS[1].in_tower, ST_FALSE);            // _UNITS[_units].in_tower = ST_FALSE;

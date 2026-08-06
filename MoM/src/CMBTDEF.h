@@ -349,8 +349,8 @@ Cast_Spell_On_Battle_Unit()
                 {
                     Moves_Left = battle_units[target_idx].movement_points;
                 }
-                BU_Init_Battle_Unit(&battle_units[target_idx]);
-                BU_Apply_Battlefield_Effects__WIP(&battle_units[target_idx]);
+                Battle_Unit_Regular_Stats(&battle_units[target_idx]);
+                Battle_Unit_Special_Stats(&battle_units[target_idx]);
                 if(Not_Moved_Yet == ST_TRUE)
                 {
                     battle_units[target_idx].movement_points = Battle_Unit_Moves2(target_idx);

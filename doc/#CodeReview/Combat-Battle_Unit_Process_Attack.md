@@ -74,7 +74,7 @@ Anchors are function **start** lines. `Combat.c` has shifted repeatedly through 
 | `Compute_Battle_Unit_Damage_From_Spell` | [Combat.c:13455](../../MoM/src/Combat.c#L13455) | `ovr113/Apply_Battle_Unit_Damage_From_Spell.asm` | faithful (R21-R24 fixed) |
 | `Battle_Unit_Commit_Damage` | [Combat.c:13620](../../MoM/src/Combat.c#L13620) | `ovr113/BU_ApplyDamage__WIP__SEGRAX.asm` | faithful (R20 fixed) |
 
-**Deferred to the BU-init pass:** `BU_Init_Battle_Unit` and `BU_Apply_Battlefield_Effects__WIP`, both `ovr116`, both reached from `Battle_Unit_Heal`. `BU_Init_Battle_Unit`'s handling of `movement_points` is what makes the save/restore at [10733-10736](../../MoM/src/Combat.c#L10733-L10736) necessary, so it is worth taking early in that pass.
+**Deferred to the BU-init pass:** `Battle_Unit_Regular_Stats` and `Battle_Unit_Special_Stats`, both `ovr116`, both reached from `Battle_Unit_Heal`. `Battle_Unit_Regular_Stats`'s handling of `movement_points` is what makes the save/restore at [10733-10736](../../MoM/src/Combat.c#L10733-L10736) necessary, so it is worth taking early in that pass.
 
 **Already reviewed elsewhere:** `Battle_Unit_Is_Within_City` and `Combat_Grid_Cell_Has_City_Wall` in [Combat-Assign_Combat_Grids.md](Combat-Assign_Combat_Grids.md); DONE-DONE.
 
@@ -183,7 +183,7 @@ The same test clears `Move_Battle_Unit` — see [Combat-Move_Battle_Unit.md](Com
 - **`Battle_Unit_Attack_Immunities`' weapon-immunity composite** compares a *group* (`ranged_type / 10`) against `srat_Thrown` (100) and can never be true — flagged in the source.
 - **`Battle_Unit_Heal` lets Life Steal ignore Irreversible Damage.** The `damage_amount_healable` clamp only runs when `overheal_flag == 0`, so a Life Steal heal is not bounded by the reversible pool and can restore figures that `damage[2]` should keep dead.
 
-**Not a bug, but inert:** the `ip_Power_Drain` item power maps to `Att_PwrDrain` and reaches `attack_attributes`, but nothing consumes it. Across the whole disassembly `Att_PwrDrain` appears exactly twice — the `or ax, Att_PwrDrain` in `ovr116/BU_Apply_Item_Attack_Specials.asm:129` and the `USW_AttackFlag` display row in `dseg/_misc.asm:1267`. No code reads it.
+**Not a bug, but inert:** the `ip_Power_Drain` item power maps to `Att_PwrDrain` and reaches `attack_attributes`, but nothing consumes it. Across the whole disassembly `Att_PwrDrain` appears exactly twice — the `or ax, Att_PwrDrain` in `ovr116/Item_Powers_To_Attack_Attributes.asm:129` and the `USW_AttackFlag` display row in `dseg/_misc.asm:1267`. No code reads it.
 
 ---
 
@@ -277,9 +277,9 @@ The Righteousness test reads the raw `_UNITS[]` and `battle_units[]` enchantment
 
 # Battle_Unit_Heal
 
-Faithful. `damage_amount_healable = damage[1] + damage[0]` — the reversible pool, excluding `damage[2]` (asm:18-35); the `overheal_flag == 0` clamp (asm:37-43); the three-element copy, `damages[0] -= healing_amount` with spillover into `damages[1]` and both floored (asm:45-78); the write-back, which **stores** rather than accumulates (asm:87-96); the byte-wise `front_figure_damage -= healing_amount` (asm:101-115); the figure-restore loop, whose test carries **both** the `healing_balance < 0` and `figure_max > figure_cnt` conditions (asm:155-172); the `> 0` write-back; the `overheal_flag == 0` surplus discard (asm:184-189); `abs`; the `figure_max <= healing_balance` Extra_Hits block (asm:195-232); and the `movement_points_saved` save/restore bracketing `BU_Init_Battle_Unit` and `BU_Apply_Battlefield_Effects__WIP` (asm:234-268).
+Faithful. `damage_amount_healable = damage[1] + damage[0]` — the reversible pool, excluding `damage[2]` (asm:18-35); the `overheal_flag == 0` clamp (asm:37-43); the three-element copy, `damages[0] -= healing_amount` with spillover into `damages[1]` and both floored (asm:45-78); the write-back, which **stores** rather than accumulates (asm:87-96); the byte-wise `front_figure_damage -= healing_amount` (asm:101-115); the figure-restore loop, whose test carries **both** the `healing_balance < 0` and `figure_max > figure_cnt` conditions (asm:155-172); the `> 0` write-back; the `overheal_flag == 0` surplus discard (asm:184-189); `abs`; the `figure_max <= healing_balance` Extra_Hits block (asm:195-232); and the `movement_points_saved` save/restore bracketing `Battle_Unit_Regular_Stats` and `Battle_Unit_Special_Stats` (asm:234-268).
 
-The save/restore is necessary because `BU_Init_Battle_Unit` rebuilds `movement_points` — see the note at [Combat.c:2679](../../MoM/src/Combat.c#L2679). The same idiom appears three more times in `Combat.c` under the name `temp_movement_points`.
+The save/restore is necessary because `Battle_Unit_Regular_Stats` rebuilds `movement_points` — see the note at [Combat.c:2679](../../MoM/src/Combat.c#L2679). The same idiom appears three more times in `Combat.c` under the name `temp_movement_points`.
 
 # Compute_Battle_Unit_Damage_From_Spell
 

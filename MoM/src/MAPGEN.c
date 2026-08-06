@@ -6903,14 +6903,14 @@ void Create_Unit_NewGame(int16_t unit_type, int16_t player_idx, int16_t wx, int1
     _UNITS[_units].wy = (int8_t)wy;
     _UNITS[_units].wp = (int8_t)wp;
     _UNITS[_units].owner_idx = (int8_t)player_idx;
-    _UNITS[_units].moves2_max = _unit_type_table[unit_type].Move_Halves;
+    _UNITS[_units].moves2_max = _unit_type_table[unit_type].moves2_base;
     _UNITS[_units].type = (uint8_t)unit_type;
     _UNITS[_units].Hero_Slot = ST_UNDEFINED;
     // DNE  _UNITS[_units].in_tower = ST_FALSE;
     // _UNITS[_units].Finished = ST_TRUE;
     _UNITS[_units].Finished = ST_FALSE;
     // _UNITS[_units].moves2 = 0;
-    _UNITS[_units].moves2 = _unit_type_table[unit_type].Move_Halves;
+    _UNITS[_units].moves2 = _unit_type_table[unit_type].moves2_base;
     _UNITS[_units].Sight_Range = _unit_type_table[unit_type].Sight;
     _UNITS[_units].dst_wx = 0;
     _UNITS[_units].dst_wy = 0;

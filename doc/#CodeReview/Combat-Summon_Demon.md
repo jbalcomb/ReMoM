@@ -75,15 +75,15 @@ Cast_Spell_On_Battle_Unit()
 Cast_Animate_Dead()
     |-> Battle_Unit_Pict_Open()
     |-> Combat_Figure_Load()
-    |-> BU_Init_Battle_Unit()
-    |-> BU_Apply_Battlefield_Effects__WIP()
+    |-> Battle_Unit_Regular_Stats()
+    |-> Battle_Unit_Special_Stats()
     |-> Battle_Unit_Summon_Animation()
 
 Cast_Raise_Dead()
     |-> Battle_Unit_Pict_Open()
     |-> Combat_Figure_Load()
-    |-> BU_Init_Battle_Unit()
-    |-> BU_Apply_Battlefield_Effects__WIP()
+    |-> Battle_Unit_Regular_Stats()
+    |-> Battle_Unit_Special_Stats()
     |-> Battle_Unit_Summon_Animation()
 
 ---
@@ -191,7 +191,7 @@ The remaining stores — `controller_idx`, `cgx`, `cgy`, `target_cgx`, `target_c
 
 ## OGBUGs — faithful, do not fix
 
-- **Battlefield effects are never applied to the summoned unit — but the "bug" is unproven.** The behaviour is real: nothing in this function's 121 lines calls `BU_Apply_Battlefield_Effects__WIP`, so a demon arrives without Prayer, Black Prayer, Terror or a node aura.
+- **Battlefield effects are never applied to the summoned unit — but the "bug" is unproven.** The behaviour is real: nothing in this function's 121 lines calls `Battle_Unit_Special_Stats`, so a demon arrives without Prayer, Black Prayer, Terror or a node aura.
 
   What the listings do **not** show is that this is an oversight. The other path that creates a new battle unit behaves identically — `ovr111/Cast_Spell_On_Battle_Unit.asm` runs `Create_Unit` (1773) → `Prepare_Battle_Unit_Summons` (1784) → `Battle_Unit_Summon_Animation` (1793) with no effects call anywhere in that block; its last one is back at 1663. Two independent new-unit paths agreeing is consistency, not omission.
 

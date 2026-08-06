@@ -112,7 +112,7 @@
 - [ ] AITP_WarpWood — impl (Combat.c:12144), needs done-done review; AI Combat Spell layer
 - [x] Battle_Unit_Action — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Action.md; renamed from Battle_Unit_Action__WIP, Combat.c:3259; 3 findings raised and fixed across 2 subfunctions, incl. Battle_Unit_Has_Flight dropping _UNITS[].enchantments so overland Flight never registered; Battle_Unit_Is_Within_City compared and faithful; builds clean 2026-08-04)
 - [x] Battle_Unit_Attack — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Attack.md; renamed from Battle_Unit_Attack__WIP, Combat.c:17247; 9 findings raised and fixed across the function and 3 subfunctions, incl. Wall Crusher never writing the destroyed wall and 9 of 13 projectile types rendering as a lightning bolt with no sound; Melee_Animation, Set_Gibs, Clear_Gibs and Reload_Melee_Sound compared and faithful; builds clean 2026-08-04)
-- [ ] BU_Apply_Battlefield_Effects__WIP
+- [x] Battle_Unit_Special_Stats — done-done 2026-08-05 (walkthrough doc doc/#CodeReview/Combat-Init_Prepare_Etc.md; renamed from BU_Apply_Battlefield_Effects__WIP and moved to COMBINIT.c:1189; was ~92% unwritten, all thirty effect blocks written and checked against 1137 asm lines; 2 findings raised and fixed (Shatter store order had repaired an OGBUG; an else-if where the original has two ifs); node-aura realm pairing fixed via e_COMBAT_NODE_TYPE)
 - [x] BU_ApplyDamage  AKA BU_ApplyDamage__WIP__SEGRAX
 - [x] Battle_Unit_Attack_Target — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Attack_Target.md; renamed from BU_AttackTarget__WIP, Combat.c:16013; 4 findings fixed incl. a missing ~120-line ranged-Haste block and an out-of-bounds write into the caller's array; Check_Attack_Ranged and Apply_Fear_Attack compared and faithful; builds clean 2026-08-04)
 - [x] BU_CheckFlight__WIP — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Is_Airborne, Combat.c:5938; 1:1 with ovr098/BU_CheckFlight__WIP.asm)
@@ -133,7 +133,7 @@
 - [ ] CMB_ComposeBackgrnd__WIP
 - [ ] CMB_ComposeBookBG__WIP
 - [ ] CMB_LoadResources__WIP
-- [ ] CMB_PrepareTurn__WIP
+- [x] Begin_Combat_Turn — done-done 2026-08-05 (walkthrough doc doc/#CodeReview/Combat-Init_Prepare_Etc.md; renamed from CMB_PrepareTurn__WIP, Combat.c:2635; 1 finding fixed: the Web block was hoisted out of its guard and dropped action = bua_Finished; Add_City_Damage_From_Battle_Units_Within compared and faithful)
 - [ ] Combat_Next_Turn — renamed from CMB_ProgressTurnFlow__WIP (Combat.c:4528); body substantive, needs done-done review
 - [ ] CMB_SetNearAllocs__WIP
 - [ ] CMB_SpawnDarkWall__WIP
@@ -143,7 +143,7 @@
 - [ ] CMB_SpawnStructures__WIP
 - [ ] CMB_Terrain_Init__WIP
 - [ ] CMB_TileGen__WIP
-- [ ] CMB_Units_Init__WIP
+- [x] CMB_Units_Init__WIP — done-done 2026-08-05 (walkthrough doc doc/#CodeReview/Combat-Init_Prepare_Etc.md; Combat.c:5436; 1 finding fixed: the defender us_Ready reset was inverted and read HUMAN_PLAYER_IDX instead of _human_player_idx; the four MOO_MONSTER_PLAYER_IDX fallbacks restored, closing D1)
 - [ ] Combat__WIP
 - [x] Combat_Cast_Spell — done-done 2026-07-07 (walkthrough doc in doc/#CodeReview/; renamed from Combat_Cast_Spell__WIP; R1 payment-index + R2 AI-branch/spellbook-gating fixed; Dispel_Attempt/Counter_Message arg orders verified vs asm; whole tree builds clean)
 - [ ] Combat_Figure_Effect__WIP

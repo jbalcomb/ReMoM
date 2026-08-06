@@ -38,6 +38,7 @@ USW_Attributes_1
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_TYPE.h"
 
+#include "Combat.h"                 /* struct s_BATTLE_UNIT */
 #include "MainScr.h"
 #include "Terrain.h"
 #include "UNITTYPE.h"
@@ -2506,11 +2507,8 @@ void Prod_Load_Battle_Unit(int16_t unit_type, struct s_BATTLE_UNIT * battle_unit
 {
     //MoO2  Module: struct  Copy_Structure_()
     memcpy(battle_unit, &_unit_type_table[unit_type].Melee, sizeof(struct s_UNIT_TYPE));
-
     battle_unit->front_figure_damage = 0;
-
     battle_unit->Weapon_Plus1 = 0;
-
     battle_unit->Gold_Melee = 0;
     battle_unit->Gold_Ranged = 0;
     battle_unit->Gold_Defense = 0;
@@ -2520,10 +2518,8 @@ void Prod_Load_Battle_Unit(int16_t unit_type, struct s_BATTLE_UNIT * battle_unit
     battle_unit->Grey_Ranged = 0;
     battle_unit->Grey_Defense = 0;
     battle_unit->Grey_Resist = 0;
-
     // in Load_Battle_Unit(), tests s_BATTLE_UNIT.attack_attributes & Att_Poison
     battle_unit->Poison_Strength = _unit_type_table[unit_type].Spec_Att_Attr;
-
 }
 
 

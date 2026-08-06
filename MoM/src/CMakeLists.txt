@@ -17,6 +17,7 @@ set(LIBMOM_SOURCES
     CMBTAI.c
     CMBTMVPT.c
     Combat.c
+    COMBINIT.c
     CONQUEST.c
     CREDITS.c
     DIPLOMAC.c

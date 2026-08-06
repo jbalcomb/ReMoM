@@ -22,6 +22,7 @@
 #include "CITYCALC.h"
 #include "CMBTDEF.h"
 #include "Combat.h"
+#include "COMBINIT.h"
 #include "OverSpel.h"
 #include "SBookScr.h"
 #include "Spells133.h"
@@ -1824,8 +1825,8 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
         battle_units[battle_unit_idx].action = bua_Ready;
         battle_units[battle_unit_idx].bufpi = Combat_Figure_Load(_UNITS[battle_units[battle_unit_idx].unit_idx].type, Battle_Unit_Pict_Open());
         battle_units[battle_unit_idx].status = bus_Active;
-        BU_Init_Battle_Unit(&battle_units[battle_unit_idx]);
-        BU_Apply_Battlefield_Effects__WIP(&battle_units[battle_unit_idx]);
+        Battle_Unit_Regular_Stats(&battle_units[battle_unit_idx]);
+        Battle_Unit_Special_Stats(&battle_units[battle_unit_idx]);
         Battle_Unit_Summon_Animation(battle_unit_idx, cgx, cgy, spl_Raise_Dead, caster_idx);
     }
 
@@ -1962,8 +1963,8 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
     // ¿ BUGBUG  doesn't set target_cgx,cgy, like 'Raise Dead' ?
     battle_units[battle_unit_idx].bufpi = Combat_Figure_Load(_UNITS[battle_units[battle_unit_idx].unit_idx].type, Battle_Unit_Pict_Open());
     battle_units[battle_unit_idx].status = bus_Active;
-    BU_Init_Battle_Unit(&battle_units[battle_unit_idx]);
-    BU_Apply_Battlefield_Effects__WIP(&battle_units[battle_unit_idx]);
+    Battle_Unit_Regular_Stats(&battle_units[battle_unit_idx]);
+    Battle_Unit_Special_Stats(&battle_units[battle_unit_idx]);
     Battle_Unit_Summon_Animation(battle_unit_idx, cgx, cgy, spl_Animate_Dead, caster_idx);
 
 }

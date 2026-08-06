@@ -204,6 +204,7 @@ libmom_a_SOURCES = \
     MoM/src/CMBMAGIC.c \
     MoM/src/CMBTMVPT.c \
     MoM/src/Combat.c \
+    MoM/src/COMBINIT.c \
     MoM/src/CONQUEST.c \
     MoM/src/CREDITS.c \
     MoM/src/DIPLOMAC.c \

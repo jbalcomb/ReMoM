@@ -316,7 +316,7 @@ Race_Chaos  = 12h
 Race_Life  = 13h
 Race_Death  = 14h
 */
-/* Name, Melee, Ranged, Ranged_Type, Ammo, To_Hit, Defense, Resist, Move_Halves, Cost, Upkeep, Race, Bldng1_or_Portrait, Bldng2_or_HeroType, pict_seg, Hits, Sight, Transport, Figures, Construction, Spec_Att_Attr, Move_Flags, Attribs_1, Attribs_2, Abilities, Attack_Flags, Sound */
+/* Name, Melee, Ranged, Ranged_Type, Ammo, To_Hit, Defense, Resist, moves2_base, Cost, Upkeep, Race, Bldng1_or_Portrait, Bldng2_or_HeroType, pict_seg, Hits, Sight, Transport, Figures, Construction, Spec_Att_Attr, Move_Flags, Attribs_1, Attribs_2, Abilities, Attack_Flags, Sound */
 struct s_UNIT_TYPE _unit_type_table[NUM_UNIT_TYPES] =
 {
     /* BEGIN: Hero Unit Type */

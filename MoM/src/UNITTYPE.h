@@ -280,7 +280,7 @@ struct s_UNIT_TYPE
     /* 06 */  int8_t   To_Hit;
     /* 07 */  int8_t   Defense;
     /* 08 */  int8_t   Resist;
-    /* 09 */  int8_t   Move_Halves;
+    /* 09 */  int8_t   moves2_base;
     /* 0A */  int16_t  cost;                    /* Unit Cost */
     /* 0C */  int8_t   Upkeep;
     /* 0D */  int8_t   race_type;    /* enum e_RACE_TYPE */

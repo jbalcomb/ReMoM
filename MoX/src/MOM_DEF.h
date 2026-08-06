@@ -387,31 +387,6 @@ Generate_Terrain_Specials() goes as far out as wx=63,wy=45,p=1,offset = 5163; 24
 #define STATFIG_HEIGHT      16  // in Pixels
 
 /*
-hanging out in MoX_DEF.H
-
-
-#define HUMAN_PLAYER_IDX 0
-#define NEUTRAL_PLAYER_IDX 5
-
-// World (Grid) Dimensions, in Map Sqaures
-#define WORLD_WIDTH 60
-#define WORLD_HEIGHT 40
-#define MOVEMENT_MAP_WIDTH 12
-#define MOVEMENT_MAP_HEIGHT 10
-#define REDUCED_MAP_WIDTH 58
-#define REDUCED_MAP_HEIGTH 30
-
-#define PLAYER_COUNT_MAX 6
-#define CITY_COUNT_MAX 100
-#define UNIT_COUNT_MAX 1009
-#define TOWER_COUNT_MAX 6
-#define FORTRESS_COUNT_MAX 6
-
-#define MINIMAP_MARK_COLOR 15
-
-*/
-
-/*
     Worlds / Planes
 */
 #define ARCANUS_PLANE  0

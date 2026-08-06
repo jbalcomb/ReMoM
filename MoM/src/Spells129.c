@@ -24,9 +24,10 @@
 #include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/Video.h"
 
-#include "CMBTDEF.h"
 #include "CITYCALC.h"
 #include "City_ovr55.h"
+#include "CMBTDEF.h"
+#include "COMBINIT.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "NEXTTURN.h"

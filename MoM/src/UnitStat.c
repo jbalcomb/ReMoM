@@ -24,6 +24,7 @@
 
 #include "CITYCALC.h"
 #include "Combat.h"
+#include "COMBINIT.h"
 #include "LOADER.h"
 #include "Terrain.h"
 #include "UNITSTK.h"

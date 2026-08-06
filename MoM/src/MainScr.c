@@ -35,6 +35,7 @@
 #include "../../MoX/src/Timer.h"
 #include "../../MoX/src/special.h"
 
+#include "COMBINIT.h"
 #include "Outpost.h"
 #include "TerrType.h"
 #include "Terrain.h"

@@ -253,7 +253,7 @@ Faithful.
 - **Web short-circuit** — `Web_HP > 0` returns `0` (asm:23-27). Here `xor ax, ax` **is** a real return value: the normal exit does `mov ax, _SI_moves2` (asm:292) and the function is `int16_t`. Production [Battle_Unit_Moves2](../../MoM/src/Combat.c#L20372).
 - **Hero item scan** — three slots (`cmp itr, 3`, asm:153), each `> -1`, testing `_ITEMS[].enchantments & IP_Endurance` in the **low** word with the high word masked to zero (asm:126-134) and accumulating `_ITEMS[].moves2` (asm:138-149). `ip_Endurance` is index 13 in `e_ITEM_POWER` ([MOM_DEF.h:1004-1017](../../MoX/src/MOM_DEF.h#L1004-L1017)), so `1 << 13` = `0x2000` — a low-word bit, matching the listing. Production [Battle_Unit_Moves2](../../MoM/src/Combat.c#L20372).
 - **The hero-item loop does not OR item enchantments into the accumulator**, unlike `Unit_Moves2`. Confirmed absent from asm:110-154, and it costs nothing — see the analysis below.
-- **Base moves** — `_unit_type_table[].Move_Halves` plus `item_moves2` (asm:156-174). Production [Battle_Unit_Moves2](../../MoM/src/Combat.c#L20372).
+- **Base moves** — `_unit_type_table[].moves2_base` plus `item_moves2` (asm:156-174). Production [Battle_Unit_Moves2](../../MoM/src/Combat.c#L20372). The listing names the field `Move_Halves` (`WIZARDS.inc:672`); production renamed it `moves2_base` ([UNITTYPE.h:283](../../MoM/src/UNITTYPE.h#L283)) — same field, `s_UNIT_TYPE` offset `0x09`.
 - **Wind Mastery** — gated on `_unit_type_table[].Transport > 0` (asm:190); `+1` when the controller matches a wizard with the global set, `-1` otherwise (asm:195-216); `> 0` scales `moves2 * 3 / 2` and `< 0` scales `moves2 / 2`, both with the signed halving idiom (asm:221-237). Production [Battle_Unit_Moves2](../../MoM/src/Combat.c#L20372).
 - **Flight floors** — `moves2 < 6` with `UE_FLIGHT` raises to `6`; `moves2 < 4` with `CC_FLIGHT` in `_UNITS[].mutations` raises to `4` (asm:238-263). Production [Battle_Unit_Moves2](../../MoM/src/Combat.c#L20372). `UE_FLIGHT` is `0x00020000` ([MOM_DEF.h:938](../../MoX/src/MOM_DEF.h#L938)), a high-word bit — matching the listing's `and ax, UE_FLIGHT` with `and dx, 0`.
 - **Haste doubles last**, after every other modifier (asm:280-290). Production [Battle_Unit_Moves2](../../MoM/src/Combat.c#L20372).
@@ -305,13 +305,13 @@ Every `TODO` / `HACK` / `DNE` / `DEDU` / `BUGBUG` marker inside the eight review
 The two functions reach the same result by different routes, because they hold different data:
 
 - `Unit_Moves2` has only a `_UNITS[]` entry — no battle-unit record — so it must read `_ITEMS[].Powers` directly.
-- `Battle_Unit_Moves2` has the battle-unit record, so it reads the pre-folded `battle_units[].item_enchantments`. `BU_Apply_Item_Powers` ([Combat.c:14634](../../MoM/src/Combat.c#L14634)) fills that field by walking the *same* three hero slots ([14651-14655](../../MoM/src/Combat.c#L14651-L14655)) and mapping `ip_Endurance` → `UE_ENDURANCE` ([14765-14767](../../MoM/src/Combat.c#L14765-L14767)) and `ip_Flight` → `UE_FLIGHT` ([14773-14775](../../MoM/src/Combat.c#L14773-L14775)).
+- `Battle_Unit_Moves2` has the battle-unit record, so it reads the pre-folded `battle_units[].item_enchantments`. `Battle_Unit_Item_Stats` ([Combat.c:14634](../../MoM/src/Combat.c#L14634)) fills that field by walking the *same* three hero slots ([14651-14655](../../MoM/src/Combat.c#L14651-L14655)) and mapping `ip_Endurance` → `UE_ENDURANCE` ([14765-14767](../../MoM/src/Combat.c#L14765-L14767)) and `ip_Flight` → `UE_FLIGHT` ([14773-14775](../../MoM/src/Combat.c#L14773-L14775)).
 
 `Battle_Unit_Moves2` consumes exactly those two bits from the union and both are mapped, so nothing is dropped. **Not an OGBUG.** ORing `_ITEMS[].Powers` in the loop would set the same bits a second time.
 
 This is also what R7 was really about: until the `item_enchantments` term was restored to the union at [20385](../../MoM/src/Combat.c#L20385), item Flight and item Endurance genuinely never reached the function. The defect was in the union, not in the loop.
 
-**Unverified:** that `BU_Apply_Item_Powers` always runs before `Battle_Unit_Moves2` is called. It is reached from `BU_Init_Battle_Unit`, deferred to a general BU-init pass, so the ordering has not been traced. If that ordering does not hold, the conclusion above needs revisiting.
+**Unverified:** that `Battle_Unit_Item_Stats` always runs before `Battle_Unit_Moves2` is called. It is reached from `Battle_Unit_Regular_Stats`, deferred to a general BU-init pass, so the ordering has not been traced. If that ordering does not hold, the conclusion above needs revisiting.
 
 ## Build state
 

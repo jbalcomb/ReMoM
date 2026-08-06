@@ -20,24 +20,25 @@
     else
         Switch_Active_Battle_Unit((_combat_total_unit_count - Defending_Unit_Count));
 
-    CMB_PrepareTurn__WIP();
+    Begin_Combat_Turn();
 
     Assign_Combat_Grids();
 
 Prepare_Battle_Unit()
 */
 
-#include "CMBTTSTU.h"
-
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/EMS/EMS.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Graphics.h"
 #include "../../MoX/src/MOX_TYPE.h"
+#include "../../MoX/src/Video.h"
 
 #include "CMBTDEF.h"
 #include "Combat.h"
-#include "../../MoX/src/Video.h"
+#include "COMBINIT.h"
+
+#include "CMBTTSTU.h"
 
 
 

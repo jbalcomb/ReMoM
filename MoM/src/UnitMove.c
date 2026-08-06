@@ -35,6 +35,7 @@ Elsewhere, ...
 #include "UnitMove.h"
 
 #include "Combat.h"
+#include "COMBINIT.h"
 #include "Terrain.h"
 #include "MovePath.h"
 
@@ -150,7 +151,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
             item_enchantments = 0;
             if(_UNITS[unit_idx].Hero_Slot != -1)
             {
-                item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
+                item_enchantments = Battle_Unit_Item_Stats(unit_idx, global_battle_unit);
                 item_enchantments = global_battle_unit->item_enchantments;
             }
 
@@ -514,7 +515,7 @@ int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
 
 // Meh.    if(_UNITS[unit_idx].Hero_Slot != -1)
 // Meh.    {
-// Meh.        niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
+// Meh.        niu_item_enchantments = Battle_Unit_Item_Stats(unit_idx, global_battle_unit);
 // Meh.
 // Meh.        if(
 // Meh.            ((global_battle_unit->item_enchantments & UE_WIND_WALKING) != 0)
@@ -536,7 +537,7 @@ int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
 // Meh?    if(
 // Meh?        (_UNITS[unit_idx].Hero_Slot == ST_UNDEFINED)
 // Meh?        ||
-// Meh?        ((niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit) & UE_WATER_WALKING) == 0)
+// Meh?        ((niu_item_enchantments = Battle_Unit_Item_Stats(unit_idx, global_battle_unit) & UE_WATER_WALKING) == 0)
 // Meh?    )
 // Meh?    {
 // Meh?        return ST_FALSE;
@@ -549,7 +550,7 @@ int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
     if(
         (_UNITS[unit_idx].Hero_Slot == ST_UNDEFINED)
         ||
-        ((BU_Apply_Item_Powers(unit_idx, global_battle_unit) & UE_WATER_WALKING) == 0)
+        ((Battle_Unit_Item_Stats(unit_idx, global_battle_unit) & UE_WATER_WALKING) == 0)
         )
     {
         return ST_FALSE;
@@ -570,7 +571,7 @@ int16_t Unit_Has_AirTravel_Item(int16_t unit_idx)
 
     if(_UNITS[unit_idx].Hero_Slot != -1)
     {
-        niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
+        niu_item_enchantments = Battle_Unit_Item_Stats(unit_idx, global_battle_unit);
 
         if(
             ( (global_battle_unit->item_enchantments & UE_WIND_WALKING) != 0) ||
@@ -591,7 +592,7 @@ int16_t Unit_Has_Invisibility(int16_t unit_idx)
 
     if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED)
     {
-        UU_battle_unit_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
+        UU_battle_unit_item_enchantments = Battle_Unit_Item_Stats(unit_idx, global_battle_unit);
         if((global_battle_unit->item_enchantments & UE_INVISIBILITY) != 0)
         {
             return ST_TRUE;
@@ -647,7 +648,7 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
     if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED)
     {
 
-        niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
+        niu_item_enchantments = Battle_Unit_Item_Stats(unit_idx, global_battle_unit);
 
         if(
             ( (global_battle_unit->item_enchantments & UE_PLANAR_TRAVEL) != 0)
@@ -703,7 +704,7 @@ int16_t Unit_Has_NonCorporeal(int16_t unit_idx)
     }
     if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED)
     {
-        niu_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
+        niu_item_enchantments = Battle_Unit_Item_Stats(unit_idx, global_battle_unit);
         if((global_battle_unit->item_enchantments & UE_WRAITH_FORM) != 0)
         {
             return ST_TRUE;

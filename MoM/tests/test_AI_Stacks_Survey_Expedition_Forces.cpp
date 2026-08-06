@@ -126,7 +126,7 @@ protected:
         _UNITS[unit_idx].type = unit_type;
         _UNITS[unit_idx].enchantments = 0;
         _UNITS[unit_idx].mutations = 0;
-        _UNITS[unit_idx].Hero_Slot = -1;  /* not a hero; otherwise calloc's 0 triggers BU_Init_Hero_Unit() and an AV */
+        _UNITS[unit_idx].Hero_Slot = -1;  /* not a hero; otherwise calloc's 0 triggers Battle_Unit_Hero_Skill_Stats() and an AV */
         _units++;
 
         return unit_idx;

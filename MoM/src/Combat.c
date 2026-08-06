@@ -3,7 +3,7 @@
 
     WIZARDS.EXE
         ovr090
-        ovr091
+        ovr091  ¿ MoO2  COMBINIT ?
         ovr096
         ovr098  ¿ MoO2  COMBINIT ?
         ovr099  ¿ MoO2  Module: CMBTDRW1 ?  (would have been CMBTDRW or CMBTDRAW?)
@@ -13,7 +13,7 @@
         ovr111  ¿ AITP.* ?
         ovr112  ¿ LBX CMBMAGIC ?
         ovr114  ¿ MoO2  Module: CMBTAI ?
-        ovr116
+        ovr116  MoO2  COMBINIT
         ovr122
         ovr123
         ovr124
@@ -707,7 +707,7 @@ m_cp_took_turn is a turn-order flag that controls whether the AI's defending tur
 
 Here's how it works:
 
-Default: ST_FALSE — initialized to false in Combat_Screen__WIP() and reset in CMB_PrepareTurn__WIP().
+Default: ST_FALSE — initialized to false in Combat_Screen__WIP() and reset in Begin_Combat_Turn().
 
 At the start of Combat_Next_Turn() (Combat.c:4803): if m_cp_took_turn == ST_FALSE, the computer player gets its AI turn via Auto_Cast_Spell_And_Do_Combat_Turn(combat_computer_player). If it's ST_TRUE, this call is skipped — because the AI already went.
 
@@ -715,7 +715,7 @@ Later in the same function (Combat.c:4813-4816): if the defender is the computer
 
 Effect on the next call: When Combat_Next_Turn() is called again next turn, the ST_TRUE value causes the AI's turn at the top to be skipped — preventing the defending AI from getting a double turn (once as defender at the end of the previous cycle, and again as the computer player at the start of the next).
 
-In short: it's a flag that prevents the AI defender from acting twice in a row across the turn boundary. As your existing comment notes, it's only checked at the top of this function, so setting it to ST_TRUE at line 4816 is specifically meant to carry over to the next invocation. It gets cleared back to ST_FALSE when auto-combat is cancelled or when a new combat turn begins via CMB_PrepareTurn__WIP().
+In short: it's a flag that prevents the AI defender from acting twice in a row across the turn boundary. As your existing comment notes, it's only checked at the top of this function, so setting it to ST_TRUE at line 4816 is specifically meant to carry over to the next invocation. It gets cleared back to ST_FALSE when auto-combat is cancelled or when a new combat turn begins via Begin_Combat_Turn().
 */
 int16_t m_cp_took_turn;
 
@@ -777,7 +777,7 @@ int16_t combat_human_player;
 {F,T} cast spell enabled
 Combat_Cast_Spell_Error(1);  // "You may only cast once per turn."
 */
-int16_t CMB_WizCastAvailable;
+int16_t m_wizard_cast_available;
 
 // WZD dseg:C43A
 int16_t CMB_DEFR_First_CE;
@@ -1046,60 +1046,6 @@ int16_t _combat_info_wnd_start_y;
 int16_t _combat_info_wnd_start_x;
 
 // WZD dseg:C7E6                                                 ¿ END:  ovr103 ?
-
-
-
-// WZD dseg:C896                                                 ¿ BEGIN:  ovr112 ?
-
-/*
-NIU_Who_Has_More_Leadership()  ...in ovr098
-CMB_LoadResources__WIP()
-Strategic_Combat_Allocate()
-BU_Apply_Battlefield_Effects__WIP()
-Init_Battlefield_Effects()
-
-CMB_PrepareTurn__WIP()
-CMB_LoadResources__WIP()
-Strategic_Combat_Allocate()
-BU_Apply_Battlefield_Effects__WIP()
-Init_Battlefield_Effects()
-
-CMB_LoadResources__WIP()
-Strategic_Combat_Allocate()
-BU_Apply_Battlefield_Effects__WIP()
-Init_Battlefield_Effects()
-UNIT_ConvSpellATK()
-UNIT_ConvSpellATK()
-
-
-Holy Bonus, Leadership, Prayer Master
-"...only the best applies..."
-"...only the highest bonus applies..."
-"...Prayer Master or Resistance to All..."
-    attack strength (swords), defense (shields) and resistance (crosses) of all friendly units in combat by bonus level of holy bonus
-
-¿ indexed by PLAYER_NUM() ?
-
-*/
-// WZD dseg:C896
-// WZD dseg:C89A
-// WZD dseg:C89E
-int16_t * _battlefield_leadership;
-int16_t * _battlefield_resistall;
-int16_t * _battlefield_holybonus;
-
-// WZD dseg:C8A2
-int16_t * CMB_IDK_4PR;
-// WZD dseg:C8A6
-int16_t _combat_spell_target_type;
-// WZD dseg:C8A8
-int16_t * CMB_NearDispel_UCs;
-// WZD dseg:C8AA
-int16_t * CMB_NearDispel_UEs;
-// WZD dseg:C8AC
-uint16_t _combat_caster_idx;
-
-// WZD dseg:C8AC                                                 ¿ END:  ovr112 ?
 
 
 
@@ -1548,7 +1494,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     Combat_Node_Type();
     _human_out_of_moves = ST_FALSE;
     _combat_turn = 0;
-    CMB_WizCastAvailable = ST_TRUE;
+    m_wizard_cast_available = ST_TRUE;
     _combat_total_battle_effect_count = Combat_Info_Effects_Count();
     Calc_Battlefield_Bonuses(_combat_structure);
     Combat_Cache_Write();
@@ -1599,7 +1545,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     m_turn_is_local = ST_TRUE;
     _auto_combat_flag = ST_FALSE;
     /* CLAUDE */ if(g_cmbt_force_auto_combat == ST_TRUE) { _auto_combat_flag = ST_TRUE; }  /* test-support: see g_cmbt_force_auto_combat definition */
-    CMB_PrepareTurn__WIP();
+    Begin_Combat_Turn();
     _human_handle_immobile = ST_FALSE;
     // ; NONE of the above functions change the focus unit
     if(_combat_attacker_player == _human_player_idx)
@@ -1620,7 +1566,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     {
         Auto_Cast_Spell_And_Do_Combat_Turn(_combat_defender_player);
         // ; BUG: the defending AI gets an extra turn?
-        CMB_PrepareTurn__WIP();
+        Begin_Combat_Turn();
         m_cp_took_turn = ST_TRUE;
     }
     winner = Check_For_Winner();
@@ -1648,9 +1594,7 @@ int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_de
     m_unknown_variable__ovr090 = ST_TRUE;
     while(leave_screen == ST_FALSE)
     {
-#ifdef STU_DEBUG
-LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Combat Screen Loop");
-#endif
+        LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Combat Screen Loop");
         Assign_Auto_Function(Combat_Screen_Draw, 1);
         Mark_Time();
         Clear_Fields();
@@ -1658,9 +1602,7 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Combat Screen Loop");
             BEGIN: Auto Combat
         */
         {
-#ifdef STU_DEBUG
-LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
-#endif
+            LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
             if(_auto_combat_flag == ST_TRUE)
             {
                 auto_combat_cancel_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr090[0], ST_UNDEFINED);
@@ -1682,14 +1624,10 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
                 }
                 /* CLAUDE */ { int16_t dbg_i; DBG_atk_active=0; DBG_atk_dead=0; DBG_atk_gone=0; DBG_def_active=0; DBG_def_dead=0; DBG_def_gone=0; for(dbg_i=0; dbg_i<_combat_total_unit_count; dbg_i++) { if(battle_units[dbg_i].controller_idx==_combat_attacker_player) { if(battle_units[dbg_i].status==bus_Active) DBG_atk_active++; else if(battle_units[dbg_i].status==bus_Dead) DBG_atk_dead++; else if(battle_units[dbg_i].status==bus_Gone) DBG_atk_gone++; } else if(battle_units[dbg_i].controller_idx==_combat_defender_player) { if(battle_units[dbg_i].status==bus_Active) DBG_def_active++; else if(battle_units[dbg_i].status==bus_Dead) DBG_def_dead++; else if(battle_units[dbg_i].status==bus_Gone) DBG_def_gone++; } } }
                 winner = Check_For_Winner();
-#ifdef STU_DEBUG
                 /* CLAUDE */ LOG_DEBUG(LOG_CAT_COMBAT, "[CombatLoop] atk: active=%d dead=%d gone=%d | def: active=%d dead=%d gone=%d | winner=%d _combat_winner=%d", DBG_atk_active, DBG_atk_dead, DBG_atk_gone, DBG_def_active, DBG_def_dead, DBG_def_gone, winner, _combat_winner);
-#endif
                 if(winner != ST_UNDEFINED)
                 {
-#ifdef STU_DEBUG
                     LOG_DEBUG(LOG_CAT_COMBAT, "AUTOCOMBATWINNER");
-#endif
                     leave_screen = ST_UNDEFINED;
                     input_field_idx = ST_UNDEFINED;
                 }
@@ -1712,7 +1650,7 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
                 ||
                 (battle_units[_active_battle_unit].item_charges > 0)
                 ||
-                (CMB_WizCastAvailable == ST_TRUE)
+                (m_wizard_cast_available == ST_TRUE)
             )
         )
         {
@@ -2240,7 +2178,7 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
                 else
                 {
 
-                    if(CMB_WizCastAvailable == ST_TRUE)
+                    if(m_wizard_cast_available == ST_TRUE)
                     {
 
                         cast_status = Combat_Cast_Spell((CASTER_IDX_BASE + _human_player_idx), _combat_wx, _combat_wy, _combat_wp);
@@ -2257,7 +2195,7 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
                             } break;
                             case 2:
                             {
-                                CMB_WizCastAvailable = ST_FALSE;
+                                m_wizard_cast_available = ST_FALSE;
                                 _human_handle_immobile = ST_FALSE;
                             } break;
                             default:
@@ -2660,128 +2598,94 @@ LOG_DEBUG(LOG_CAT_COMBAT, "BEGIN:  Auto Combat Loop");
 
 // WZD s91p01
 // drake178: UU_BU_LoadFigureGFX()
+/*
+; Unused in MoM
+;
+; this is a deprecated figure loading function that
+; would load the graphics into a slot corresponding to
+; the BU index, which will not work any more because
+; there are twice as many BU slots as image slots
+; (although it could still be used at the beginning of
+; the battle)
+*/
+void UU_BU_LoadFigureGFX(int16_t battle_unit_idx)
+{
+    int16_t unit_type = 0;
+    int16_t bufpi = 0;
+    unit_type = _UNITS[battle_units[battle_unit_idx].unit_idx].type;
+    bufpi = Combat_Figure_Load(unit_type, battle_unit_idx);
+    battle_units[battle_unit_idx].bufpi = bufpi;
+}
+
 
 // WZD s91p02
-// drake178: CMB_PrepareTurn()
-/*
-; applies turn-based combat effects, recalculates unit
-; statistics, and resets movement allowances
-;
-; contains a BUG regarding nearly every turn-based
-; effect either by itself or inherited from one of the
-; called functions
-*/
 /*
 
-    increments _combat_turn  [MoO2: incremented at wend of Tactical_Combat_()]
+    increments _combat_turn  [MoO2: incremented at end of Tactical_Combat_()]
 
-    calls BU_Init_Battle_Unit() on all battle units
+    calls Battle_Unit_Regular_Stats() on all battle units
     then, manually sets movement_points via Battle_Unit_Moves2()
-    PS. BU_Init_Battle_Unit() does battle_unit->movement_points = Unit_Moves2(unit_idx);
+    PS. Battle_Unit_Regular_Stats() does battle_unit->movement_points = Unit_Moves2(unit_idx);
 
     MoO2
     End_Of_Turn_Bookeeping_()
         Recharge_Shields_();  Repair_All_Combat_Ships_();  check retreat;  reset weapons;
 
 */
-void CMB_PrepareTurn__WIP(void)
+void Begin_Combat_Turn(void)
 {
     int16_t saved_active_battle_unit = 0;
     int16_t resist_fails = 0;
-    int16_t itr = 0;  // _SI_
-
+    int16_t itr = 0;
     _human_handle_immobile = ST_TRUE;
-
     _ai_immobile_counter++;
-
     _combat_turn++;
-
-    CMB_WizCastAvailable = ST_TRUE;
-
+    m_wizard_cast_available = ST_TRUE;
     _scanned_battle_unit = ST_UNDEFINED;
-
     m_cp_took_turn = ST_FALSE;
-
-
     /*
         BEGIN:  apply spell effects per-turn/on-going
     */
-
     Apply_Mana_Leak();
-
-
     if(combat_enchantments[CALL_LIGHTNING_ATTKR] != 0)
     {
-        
         Apply_Call_Lightning(_combat_attacker_player);
-
     }
-
     if(combat_enchantments[CALL_LIGHTNING_DFNDR] != 0)
     {
-
         Apply_Call_Lightning(_combat_defender_player);
-
     }
-
-
     if(combat_enchantments[WRACK_ATTKR] != 0)
     {
-        
         Apply_Wrack(_combat_attacker_player);
-
     }
-
     if(combat_enchantments[WRACK_DFNDR] != 0)
     {
-
         Apply_Wrack(_combat_defender_player);
-
     }
-
-
     /*
         BEGIN: Magic Vortex
     */
-
     saved_active_battle_unit = _active_battle_unit;
-
     Vortex_Combat_Round();
-
     _active_battle_unit = saved_active_battle_unit;
-
     /*
         END: Magic Vortex
     */
-
-
     Calc_Battlefield_Bonuses(_combat_structure);
-
-
     Add_City_Damage_From_Battle_Units_Within();
-
-
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-
         battle_units[itr].Suppression = 0;
-
         if(battle_units[itr].status != bus_Active)
         {
             continue;
         }
-
-
-        // ¿ Why not Load_Battle_Unit() |-> BU_Init_Battle_Unit() ?
-        BU_Init_Battle_Unit(&battle_units[itr]);
-
-        BU_Apply_Battlefield_Effects__WIP(&battle_units[itr]);
-
-        battle_units[itr].movement_points = (int8_t)Battle_Unit_Moves2(itr);  // ¿ manually fix-up the value set in BU_Init_Battle_Unit() ?
-
+        // ¿ Why not Load_Battle_Unit() |-> Battle_Unit_Regular_Stats() ?
+        Battle_Unit_Regular_Stats(&battle_units[itr]);
+        Battle_Unit_Special_Stats(&battle_units[itr]);
+        battle_units[itr].movement_points = (int8_t)Battle_Unit_Moves2(itr);  // ¿ manually fix-up the value set in Battle_Unit_Regular_Stats() ?
         battle_units[itr].action = bus_Active;
-
-
         if(
             (
                 (combat_enchantments[TERROR_ATTKR] != 0)
@@ -2796,22 +2700,14 @@ void CMB_PrepareTurn__WIP(void)
             )
         )
         {
-                        
             // ¿ ; BUG: this is already applied to the unit itself ?
             resist_fails = Combat_Resistance_Check(battle_units[itr], (_battlefield_resistall[battle_units[itr].controller_idx] + 1), spell_data_table[spl_Terror].magic_realm);
-
             if(resist_fails > 0)
             {
-
                 battle_units[itr].action = bua_Finished;
-
                 battle_units[itr].movement_points = 0;
-
             }
-
         }
-
-
         if(
             (
                 (combat_enchantments[ENTANGLE_ATTKR] != 0)
@@ -2826,140 +2722,88 @@ void CMB_PrepareTurn__WIP(void)
             )
         )
         {
-
             if(battle_units[itr].movement_points > 0)
             {
-
                 battle_units[itr].movement_points -= 2;
-
             }
-
             if(battle_units[itr].movement_points < 1)
             {
-
                 battle_units[itr].movement_points = 0;
-
             }
-
         }
-
         if(battle_units[itr].Web_HP > 0)
         {
-
             if((battle_units[itr].ranged_type / 10) == rag_Missile)
             {
-
                 if(battle_units[itr].melee > battle_units[itr].ranged)
                 {
-
                     resist_fails = battle_units[itr].melee;
-
                 }
                 else
                 {
-
                     resist_fails = battle_units[itr].ranged;
-
                 }
-
             }
             else if(battle_units[itr].ranged_type > srat_Thrown)
             {
-
                 resist_fails = (battle_units[itr].melee + battle_units[itr].ranged);
-
             }
             else
             {
-
                 resist_fails = battle_units[itr].melee;
-
             }
-
+            battle_units[itr].Web_HP -= resist_fails;
+            if(battle_units[itr].Web_HP > 0)
+            {
+                battle_units[itr].action = bua_Finished;
+                battle_units[itr].movement_points = 0;
+            }
+            else
+            {
+                battle_units[itr].Web_HP = 0;
+            }
         }
-
-        battle_units[itr].Web_HP -= resist_fails; 
-
-        if(battle_units[itr].Web_HP > 0)
-        {
-
-            battle_units[itr].movement_points = 0;
-
-        }
-        else
-        {
-
-            battle_units[itr].Web_HP = 0;
-
-        }
-
-
         if((battle_units[itr].Combat_Effects & bue_Black_Sleep) != 0)
         {
-
             battle_units[itr].action = bua_Finished;
-
             battle_units[itr].movement_points = 0;
-
         }
-
-
         /*
             BEGIN:  Confusion
 
                 "Every turn the confused unit randomly does one of the following: stand around and do nothing while looking foolish and confused, move randomly, attack allies, or attack enemies."
         */
         // ; BUG: resets the state without ever returning control of the unit to its previous owner!
-        // ¿ NOBUG  pretty sure this is covered by having called BU_Init_Battle_Unit() to (re-)initialize the battle unit ?
+        // ¿ NOBUG  pretty sure this is covered by having called Battle_Unit_Regular_Stats() to (re-)initialize the battle unit ?
         battle_units[itr].Confusion_State = 0;
-
         if((battle_units[itr].Combat_Effects & bue_Confusion) != 0)
         {
-
             resist_fails = Random(4);
-
             if(resist_fails == 1)
             {
-
                 battle_units[itr].action = bua_Finished;
-
                 battle_units[itr].movement_points = 0;
-
             }
-
             if(resist_fails == 2)
             {
-
                 battle_units[itr].Confusion_State = 1;
-
             }
-
             if(resist_fails == 3)
             {
-
                 battle_units[itr].Confusion_State = 2;
-
                 if(battle_units[itr].controller_idx == _combat_attacker_player)
                 {
-
                     battle_units[itr].controller_idx = (int8_t)_combat_defender_player;
-
                 }
                 else
                 {
-
                     battle_units[itr].controller_idx = (int8_t)_combat_attacker_player;
-
                 }
-
             }
-
         }
         /*
             END:  Confusion
         */
-
-
         /*
             BEGIN:  Regeneration
         */
@@ -2973,22 +2817,16 @@ void CMB_PrepareTurn__WIP(void)
             ((battle_units[itr].Abilities & UA_REGENERATION) != 0)
         )
         {
-
             // ¿ ; conflicting condition - will never jump ?
             if(battle_units[itr].status == bus_Active)
             {
-
                 Battle_Unit_Heal(itr, 1, 0);
-
             }
-
         }
         /*
             END:  Regeneration
         */
-
     }
-
 }
 
 
@@ -3587,24 +3425,15 @@ Done:
 
 
 // WZD s91p09
-// drake178: CMB_UnitCityDamage()
-/*
-*/
-/*
-
-*/
 void Add_City_Damage_From_Battle_Units_Within(void)
 {
-    int16_t battle_unit_idx = 0;  // _SI_
-
+    int16_t battle_unit_idx = 0;
     if(_combat_environ != cnv_Enemy_City)
     {
         return;
     }
-
     for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
     {
-
         if(
             (battle_units[battle_unit_idx].status == bus_Active)
             &&
@@ -3613,13 +3442,9 @@ void Add_City_Damage_From_Battle_Units_Within(void)
             (Battle_Unit_Is_Within_City(battle_unit_idx) == ST_TRUE)
         )
         {
-
             _combat_city_damage += 1;
-
         }
-
     }
-
 }
 
 
@@ -4283,7 +4108,7 @@ void Combat_Next_Turn(void)
     }
     if(Check_For_Winner() == ST_UNDEFINED)
     {
-        CMB_PrepareTurn__WIP();
+        Begin_Combat_Turn();
         if(_combat_defender_player == combat_computer_player)
         {
             Auto_Cast_Spell_And_Do_Combat_Turn(_combat_defender_player);
@@ -5594,20 +5419,11 @@ void Prepare_Battle_Unit(int16_t battle_unit_idx, int16_t player_idx, int16_t un
     battle_units[battle_unit_idx].Atk_FigLoss = 0;
     battle_units[battle_unit_idx].Moving = 0;
     battle_units[battle_unit_idx].action = bua_Ready;
-    /* ¿ OGBUG  should call BU_Apply_Battlefield_Effects__WIP() ? */
+    /* ¿ OGBUG  should call Battle_Unit_Special_Stats() ? */
 }
 
 // WZD o98p16
-// drake178: CMB_Units_Init()
 // MoO2  Module: COMBINIT  Deploy_Ships_()
-/*
-; creates battle unit structures for the passed stack
-; as the attacking force, and the action target's units
-; on the action square as the defending army; maps and
-; populates the EMM FIGUREX handle, and positions the
-; armies on their starting locations
-; returns the defender's unit count
-*/
 /*
     Load_Battle_Unit(); Combat_Figure_Load(); Deploy_Battle_Units();
     inits battle units, load figure picts, sets position & orientation
@@ -5619,60 +5435,35 @@ sets _players[].Cmbt_Skill_Left
 */
 int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 {
-    int16_t itr = 0;  // _SI_
-    int16_t count = 0;  // _DI_
-
+    int16_t itr = 0;
+    int16_t count = 0;
     for(itr = 0; itr < MAX_BATTLE_UNIT_SLOT_COUNT; itr++)
     {
-
         battle_units[itr].status = bus_Gone;
-
         battle_units[itr].bufpi = ST_UNDEFINED;
-
     }
-
     _combat_total_unit_count = 0;
-
     for(itr = 0; itr < troop_count; itr++)
     {
-
         Load_Battle_Unit(troops[itr], &battle_units[_combat_total_unit_count]);
-
         if(_UNITS[battle_units[_combat_total_unit_count].unit_idx].type == spell_data_table[spl_Floating_Island].unit_type)
         {
-
             ATKR_FloatingIsland = 1;
-
             battle_units[_combat_total_unit_count].status = bus_Uninvolved;
-
         }
-
         battle_units[_combat_total_unit_count].bufpi = Combat_Figure_Load(_UNITS[troops[itr]].type, itr);
-
         battle_units[_combat_total_unit_count].controller_idx = (int8_t)_combat_attacker_player;
-
         if(battle_units[_combat_total_unit_count].controller_idx != _human_player_idx)
         {
-
             _UNITS[battle_units[_combat_total_unit_count].unit_idx].Status = us_Ready;  // ; 'MoM Demo': NO ORDERS
-
             _UNITS[battle_units[_combat_total_unit_count].unit_idx].Rd_Constr_Left = ST_UNDEFINED;
-
         }
-
         _combat_total_unit_count++;
-
     }
-
-
     if(_combat_attacker_player != _human_player_idx)
     {
-
         CMB_AI_Player = _combat_attacker_player;
-
     }
-
-
     for(itr = 0; itr < _units; itr++)
     {
 
@@ -5686,63 +5477,38 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
             (_UNITS[itr].owner_idx == _combat_defender_player)
         )
         {
-
-            if(_UNITS[itr].owner_idx == HUMAN_PLAYER_IDX)
+            if(_UNITS[itr].owner_idx != _human_player_idx)
             {
-
                 _UNITS[itr].Status = us_Ready;
-
             }
-
             Load_Battle_Unit(itr, &battle_units[_combat_total_unit_count]);
-
             if(_UNITS[battle_units[_combat_total_unit_count].unit_idx].type == spell_data_table[spl_Floating_Island].unit_type)
             {
-
                 DEFR_FloatingIsland = ST_TRUE;
-
                 battle_units[_combat_total_unit_count].status = bus_Uninvolved;
-
             }
-
             battle_units[_combat_total_unit_count].bufpi = Combat_Figure_Load(_UNITS[itr].type, _combat_total_unit_count);
-
             battle_units[_combat_total_unit_count].controller_idx = (int8_t)_combat_defender_player; // Why? Load_Battle_Unit() sets controller_idx = _UNITS[].owner_idx
-
             count++;
-
             _combat_total_unit_count++;
-
         }
-
     }
-
     if(_combat_defender_player == ST_UNDEFINED)
     {
-        STU_DEBUG_BREAK();
-        // BUGBUG  _combat_defender_player = MOO_MONSTER_PLAYER_IDX;  // ; THIS WILL CORRUPT MEMORY IF IT IS POSSIBLE AT ALL!
+        _combat_defender_player = MOO_MONSTER_PLAYER_IDX;
     }
-
     if(_combat_attacker_player == ST_UNDEFINED)
     {
-        STU_DEBUG_BREAK();
-        // BUGBUG  _combat_attacker_player = MOO_MONSTER_PLAYER_IDX;  // ; THIS WILL CORRUPT MEMORY IF IT IS POSSIBLE AT ALL!
+        _combat_attacker_player = MOO_MONSTER_PLAYER_IDX;
     }
-
     if(_combat_defender_player != _human_player_idx)
     {
-        
         CMB_AI_Player = _combat_defender_player;
-
     }
-
     if(CMB_AI_Player == ST_UNDEFINED)
     {
-        STU_DEBUG_BREAK();
-        // BUGBUG  CMB_AI_Player = MOO_MONSTER_PLAYER_IDX;  // ; THIS WILL CORRUPT MEMORY IF IT IS POSSIBLE AT ALL!
+        CMB_AI_Player = MOO_MONSTER_PLAYER_IDX;
     }
-
-
     /*
         IDGI.
             attacker / defender
@@ -5750,27 +5516,18 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
     */
     if(_combat_attacker_player == _human_player_idx)
     {
-
         combat_human_player = _combat_attacker_player;
-
         combat_computer_player = _combat_defender_player;
-
     }
     else
     {
-
         combat_human_player = _combat_defender_player;
-
         combat_computer_player = _combat_attacker_player;
-
     }
-
-
     // reset all BU coordinates and action/AI fields
     // BUG: transport units with Wraith Form are excluded from defending cities
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-
         battle_units[itr].cgx = 0;
         battle_units[itr].cgy = 0;
         battle_units[itr].target_cgx = 0;
@@ -5786,10 +5543,8 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
         battle_units[itr].Melee_Anim = 0;
         battle_units[itr].figure_effect = 0;
         battle_units[itr].animate_move_as_idle = 0;
-
         if(_combat_environ == 1)  /* City-Siege */
         {
-
             // ; BUG: excludes ships with Wraith Form (the comparison value should also include swimming)
             if(
                 (_unit_type_table[_UNITS[battle_units[itr].unit_idx].type].Transport > 0)
@@ -5799,65 +5554,36 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
                 ((battle_units[itr].Move_Flags & MV_FLYING) == 0)
             )
             {
-
                 battle_units[itr].status = bus_Uninvolved;
-
             }
-
         }
-
     }
-
-
-    Deploy_Battle_Units(_combat_attacker_player);  // sets cgx,cgy and target_cgx,cgy
-
-    Deploy_Battle_Units(_combat_defender_player);  // sets cgx,cgy and target_cgx,cgy
-
-
+    Deploy_Battle_Units(_combat_attacker_player);
+    Deploy_Battle_Units(_combat_defender_player);
     if(_players[_combat_attacker_player].casting_spell_idx == spl_Spell_Of_Return)
     {
-
-        // ; THIS WILL CORRUPT MEMORY IF IT IS POSSIBLE AT ALL!
         _players[_combat_attacker_player].Cmbt_Skill_Left = 0;
-
     }
     else
     {
-
         _players[_combat_attacker_player].Cmbt_Skill_Left = _players[_combat_attacker_player].Nominal_Skill;
-
     }
-
-
-    // ; THIS WILL CORRUPT MEMORY IF IT IS POSSIBLE AT ALL!
     if(_combat_defender_player != MOO_MONSTER_PLAYER_IDX)
     {
-
         if(_players[_combat_defender_player].casting_spell_idx == spl_Spell_Of_Return)
         {
-
             _players[_combat_defender_player].Cmbt_Skill_Left = 0;
-
         }
         else
         {
-
             _players[_combat_defender_player].Cmbt_Skill_Left = _players[_combat_defender_player].Nominal_Skill;
-
         }
-
     }
-    else
+    else  /* (_combat_defender_player == MOO_MONSTER_PLAYER_IDX) */
     {
-        STU_DEBUG_BREAK();
-        // Severity	Code	Description	Project	File	Line	Suppression State	Details
-        // Warning	C6386	Buffer overrun while writing to '_players'.sdl2_ReMoM	C : \STU\devel\ReMoM\src\Combat.C	6228
-        // _players[_combat_defender_player].Cmbt_Skill_Left = 0;
-
+        _players[_combat_defender_player].Cmbt_Skill_Left = 0;  /* OGBUG  OOB */
     }
-    
     return count;
-
 }
 
 
@@ -6619,7 +6345,7 @@ void Tactical_Combat_Draw_Buttons(void)
                 ||
                 (battle_units[_active_battle_unit].item_charges > 0)
                 ||
-                (CMB_WizCastAvailable == ST_TRUE)
+                (m_wizard_cast_available == ST_TRUE)
             )
         )
         {
@@ -8619,7 +8345,7 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
     int16_t selection_list_idx = 0;
     int16_t cast_status = 0;  // _SI_
 
-    if(CMB_WizCastAvailable != ST_TRUE)
+    if(m_wizard_cast_available != ST_TRUE)
     {
         cast_status = Combat_Cast_Spell(caster_id, _combat_wx, _combat_wy, _combat_wp);
     }
@@ -8636,7 +8362,7 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
             cast_status = Combat_Cast_Spell((20 + _human_player_idx), _combat_wx, _combat_wy, _combat_wp);
             if(cast_status == 2)
             {
-                CMB_WizCastAvailable = ST_FALSE;
+                m_wizard_cast_available = ST_FALSE;
             }
         }
         else if(selection_list_idx == 1)  /* Battle Unit */
@@ -9880,7 +9606,7 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
 
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
-        BU_Apply_Battlefield_Effects__WIP(&battle_units[itr_battle_units]);
+        Battle_Unit_Special_Stats(&battle_units[itr_battle_units]);
     }
 
 
@@ -10629,8 +10355,8 @@ void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t healing_amount, int16_t o
         battle_units[battle_unit_idx].Extra_Hits += (healing_balance / battle_units[battle_unit_idx].figure_max);
     }
     movement_points_saved = battle_units[battle_unit_idx].movement_points;
-    BU_Init_Battle_Unit(&battle_units[battle_unit_idx]);
-    BU_Apply_Battlefield_Effects__WIP(&battle_units[battle_unit_idx]);
+    Battle_Unit_Regular_Stats(&battle_units[battle_unit_idx]);
+    Battle_Unit_Special_Stats(&battle_units[battle_unit_idx]);
     battle_units[battle_unit_idx].movement_points = (int8_t)movement_points_saved;
 }
 
@@ -11805,8 +11531,8 @@ void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t ca
                 Not_Moved_Yet = ST_TRUE;  \
             else  \
                 Moves_Left = battle_units[itr].movement_points;  \
-            BU_Init_Battle_Unit(&battle_units[itr]);  \
-            BU_Apply_Battlefield_Effects__WIP(&battle_units[itr]);  \
+            Battle_Unit_Regular_Stats(&battle_units[itr]);  \
+            Battle_Unit_Special_Stats(&battle_units[itr]);  \
             if(Not_Moved_Yet == ST_TRUE)  \
                 battle_units[itr].movement_points = (int8_t)Battle_Unit_Moves2(itr);  \
             else  \
@@ -14463,1250 +14189,6 @@ int16_t Eliminated_Opponent(void)
     if(defender_count == 0) { return _combat_attacker_player; }
     return ST_UNDEFINED;
 }
-
-
-
-/*
-    WIZARDS.EXE  ovr116
-*/
-
-// WZD o116p01
-/*
-returns battle_unit->item_enchantments  <-| BU_Apply_Item_Enchantments()
-
-short-circuits if unit is not a hero unit, returns 0 as in no enchantments
-
-¿ ~ Apply Item Powers ?
-    |-> BU_Apply_Item_Enchantments()
-so, ...
-    handles everything except item enchantments?
-but, not ip_Flaming or ip_Giant_Strength ?!?
-also, ...
-    |-> BU_Apply_Item_Attack_Specials()
-
-*/
-uint32_t BU_Apply_Item_Powers(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
-{
-    int16_t hero_slot_idx = 0;
-    int16_t unit_owner_idx = 0;
-    uint32_t battle_unit_item_enchantments = 0;
-    int16_t item_idx = 0;
-    int16_t itr_items = 0;
-    battle_unit->item_enchantments = 0;
-    battle_unit->melee_attack_attributes = 0;
-    battle_unit->ranged_attack_attributes = 0;
-    unit_owner_idx = _UNITS[unit_idx].owner_idx;
-    hero_slot_idx = _UNITS[unit_idx].Hero_Slot;
-    if(hero_slot_idx == ST_UNDEFINED)
-    {
-        return 0;
-    }
-    battle_unit_item_enchantments = 0;
-    for(itr_items = 0; itr_items < NUM_HERO_ITEMS; itr_items++)
-    {
-        if(_players[unit_owner_idx].Heroes[hero_slot_idx].Items[itr_items] != ST_UNDEFINED)
-        {
-            item_idx = _players[unit_owner_idx].Heroes[hero_slot_idx].Items[itr_items];
-            BU_Apply_Item_Enchantments(item_idx, battle_unit);
-            if(_ITEMS[item_idx].type == it_Shield)
-            {
-                battle_unit->Abilities = (battle_unit->Abilities | UA_LARGESHIELD);
-            }
-            if(battle_unit->mana_max > 0)
-            {
-                battle_unit->mana_max += _ITEMS[item_idx].spell_skill;
-            }
-            battle_unit->defense          += _ITEMS[item_idx].defense;
-            battle_unit->Gold_Defense     += _ITEMS[item_idx].defense;
-            battle_unit->movement_points  += _ITEMS[item_idx].moves2;
-            battle_unit->resist           += _ITEMS[item_idx].resistance;
-            battle_unit->Gold_Resist      += _ITEMS[item_idx].resistance;
-            // if it_Sword, it_Mace, it_Axe, it_Misc ...
-            if(
-                (_ITEMS[item_idx].type <= it_Axe)
-                ||
-                (_ITEMS[item_idx].type == it_Misc)
-            )
-            {
-                battle_unit->melee         += _ITEMS[item_idx].attack;
-                battle_unit->Gold_Melee    += _ITEMS[item_idx].attack;
-                battle_unit->melee_tohit  += _ITEMS[item_idx].tohit;
-                if(ITEM_POWER(item_idx,ip_Flaming))
-                {
-                    battle_unit->melee += 3;
-                    battle_unit->Gold_Melee += 3;
-                }
-                if(ITEM_POWER(item_idx,ip_Giant_Strength))
-                {
-                    battle_unit->melee += 1;
-                    battle_unit->Gold_Melee += 1;
-                }
-                // ip_Vampiric,   ip_Lightning, ip_Destruction, ip_Chaos,    ip_Death,     ip_Power_Drain, ip_Holy_Avenger, ip_Phantasmal, ip_Stoning
-                // Att_LifeSteal, Att_ArmorPrc, Att_Destruct,   Att_DoomDmg, Att_DthTouch, Att_PwrDrain,   Att_DsplEvil,    Att_Illusion,  Att_StnTouch
-                BU_Apply_Item_Attack_Specials(&battle_unit->melee_attack_attributes, item_idx);
-
-            }
-            if(
-                ((_ITEMS[item_idx].type == it_Bow)   && ((battle_unit->ranged_type / 10) == rag_Missile))
-                ||
-                ((_ITEMS[item_idx].type == it_Staff) && ((battle_unit->ranged_type / 10) == rag_Magic))
-                ||
-                ((_ITEMS[item_idx].type == it_Wand)  && ((battle_unit->ranged_type / 10) == rag_Magic))
-                ||
-                ((_ITEMS[item_idx].type == it_Axe)   && (battle_unit->ranged_type == srat_Thrown))
-                ||
-                (_ITEMS[item_idx].type == it_Misc)
-            )
-            {
-                battle_unit->ranged         += _ITEMS[item_idx].attack;
-                battle_unit->Gold_Ranged    += _ITEMS[item_idx].attack;
-                battle_unit->ranged_tohit  += _ITEMS[item_idx].tohit;
-                if(ITEM_POWER(item_idx,ip_Flaming))
-                {
-                    battle_unit->ranged += 3;
-                    battle_unit->Gold_Ranged += 3;
-                }
-                if(ITEM_POWER(item_idx,ip_Giant_Strength) && (_ITEMS[item_idx].type == it_Axe) && (battle_unit->ranged_type == srat_Thrown))
-                {
-                    battle_unit->ranged += 1;
-                    battle_unit->Gold_Ranged += 1;
-                }
-                BU_Apply_Item_Attack_Specials(&battle_unit->ranged_attack_attributes, item_idx);
-            }
-        }
-    }
-    battle_unit_item_enchantments |= battle_unit->item_enchantments;
-    return battle_unit_item_enchantments;
-}
-
-
-// WZD o116p02
-/*
-    ¿ "Spell-Specific Artifact Enchantments" ?
-*/
-void BU_Apply_Item_Enchantments(int16_t item_idx, struct s_BATTLE_UNIT * battle_unit)
-{
-    uint32_t item_enchantments = 0;
-    item_enchantments = 0;
-    if(ITEM_POWER(item_idx,ip_Cloak_Of_Fear))
-    {
-        item_enchantments |= UE_CLOAK_OF_FEAR;
-    }
-    if(ITEM_POWER(item_idx,ip_Wraith_Form))
-    {
-        item_enchantments |= UE_WRAITH_FORM;
-    }
-    if(ITEM_POWER(item_idx,ip_Regeneration))
-    {
-        item_enchantments |= UE_REGENERATION;
-    }
-    if(ITEM_POWER(item_idx,ip_Pathfinding))
-    {
-        item_enchantments |= UE_PATH_FINDING;
-    }
-    if(ITEM_POWER(item_idx,ip_Water_Walking))
-    {
-        item_enchantments |= UE_WATER_WALKING;
-    }
-    if(ITEM_POWER(item_idx,ip_Resist_Elements))
-    {
-        item_enchantments |= UE_RESIST_ELEMENTS;
-    }
-    if(ITEM_POWER(item_idx,ip_Elemental_Armour))
-    {
-        item_enchantments |= UE_ELEMENTAL_ARMOR;
-    }
-    if(ITEM_POWER(item_idx,ip_Endurance))
-    {
-        item_enchantments |= UE_ENDURANCE;
-    }
-    if(ITEM_POWER(item_idx,ip_Invisibility))
-    {
-        item_enchantments |= UE_INVISIBILITY;
-    }
-    if(ITEM_POWER(item_idx,ip_Flight))
-    {
-        item_enchantments |= UE_FLIGHT;
-    }
-    if(ITEM_POWER(item_idx,ip_Resist_Magic))
-    {
-        item_enchantments |= UE_RESIST_MAGIC;
-    }
-    if(ITEM_POWER(item_idx,ip_Guardian_Wind))
-    {
-        item_enchantments |= UE_GUARDIAN_WIND;
-    }
-    if(ITEM_POWER(item_idx,ip_Magic_Immunity))
-    {
-        item_enchantments |= UE_MAGIC_IMMUNITY;
-    }
-    if(ITEM_POWER(item_idx,ip_True_Sight))
-    {
-        item_enchantments |= UE_TRUE_SIGHT;
-    }
-    if(ITEM_POWER(item_idx,ip_Bless))
-    {
-        item_enchantments |= UE_BLESS;
-    }
-    if(ITEM_POWER(item_idx,ip_Lion_Heart))
-    {
-        item_enchantments |= UE_LION_HEART;
-    }
-    if(ITEM_POWER(item_idx,ip_Planar_Travel))
-    {
-        item_enchantments |= UE_PLANAR_TRAVEL;
-    }
-    if(ITEM_POWER(item_idx,ip_Righteousness))
-    {
-        item_enchantments |= UE_RIGHTEOUSNESS;
-    }
-    if(ITEM_POWER(item_idx,ip_Invulnerability))
-    {
-        item_enchantments |= UE_INVULNERABILITY;
-    }
-    if(ITEM_POWER(item_idx,ip_Holy_Avenger))
-    {
-        item_enchantments |= UE_BLESS;
-    }
-    battle_unit->item_enchantments |= item_enchantments;
-}
-
-
-// WZD o116p03
-void BU_Apply_Item_Attack_Specials(uint16_t * attack_flags, int16_t item_idx)
-{
-    if(ITEM_POWER(item_idx,ip_Vampiric))
-    {
-        *attack_flags |= Att_LifeSteal;
-    }
-    if(ITEM_POWER(item_idx,ip_Lightning))
-    {
-        *attack_flags |= Att_ArmorPrc;
-    }
-    if(ITEM_POWER(item_idx,ip_Destruction))
-    {
-        *attack_flags |= Att_Destruct;
-    }
-    if(ITEM_POWER(item_idx,ip_Chaos))
-    {
-        *attack_flags |= Att_DoomDmg;
-    }
-    if(ITEM_POWER(item_idx,ip_Death))
-    {
-        *attack_flags |= Att_DthTouch;
-    }
-    if(ITEM_POWER(item_idx,ip_Power_Drain))
-    {
-        *attack_flags |= Att_PwrDrain;
-    }
-    if(ITEM_POWER(item_idx,ip_Holy_Avenger))
-    {
-        *attack_flags |= Att_DsplEvil;
-    }
-    if(ITEM_POWER(item_idx,ip_Phantasmal))
-    {
-        *attack_flags |= Att_Illusion;
-    }
-    if(ITEM_POWER(item_idx,ip_Stoning))
-    {
-        *attack_flags |= Att_StnTouch;
-    }
-}
-
-
-// WZD o116p04
-int16_t Unit_Hit_Points(int16_t unit_idx)
-{
-    int8_t unit_level = 0;
-    int16_t Charm_of_Life_Bonus = 0;
-    int16_t hit_points = 0;
-    unit_level = _UNITS[unit_idx].Level;
-    if(
-        ((_UNITS[unit_idx].enchantments & UE_HEROISM) != 0)
-        &&
-        (unit_level < 3)
-    )
-    {
-        unit_level = 3;
-    }
-    hit_points = _unit_type_table[_UNITS[unit_idx].type].Hits;
-    if((_UNITS[unit_idx].enchantments & UE_BLACK_CHANNELS) != 0)
-    {
-        hit_points += 1;
-    }
-    if((_UNITS[unit_idx].enchantments & UE_LION_HEART) != 0)
-    {
-        hit_points += 3;
-    }
-    /*
-        BEGIN: Unit is Hero-Unit
-    */
-    if(_UNITS[unit_idx].Hero_Slot > ST_UNDEFINED)
-    {
-        if(unit_level > 0)
-        {
-            hit_points += 1;
-        }
-        if(_UNITS[unit_idx].owner_idx == ST_UNDEFINED)
-        {
-            if(HERO_CONSTITUTION((Random(_num_players + 1) - 1), _UNITS[unit_idx].type))
-            {
-                hit_points += unit_level + 1;
-            }
-        }
-        else
-        {
-            if(HERO_CONSTITUTION(_UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type))
-            {
-                hit_points += unit_level + 1;
-            }
-        }
-        if(_UNITS[unit_idx].owner_idx == ST_UNDEFINED)
-        {
-            if(HERO_CONSTITUTION2((Random(_num_players + 1) - 1), _UNITS[unit_idx].type))
-            {
-                hit_points += (((unit_level + 1) * 3) / 2);
-            }
-        }
-        else
-        {
-            if(HERO_CONSTITUTION2(_UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type))
-            {
-                hit_points += (((unit_level + 1) * 3) / 2);
-            }
-        }
-        if(unit_level > 1)
-        {
-            hit_points += 1;
-        }
-        if(unit_level > 3)
-        {
-            hit_points += 1;
-        }
-    }
-    /*
-        END: Unit is Hero-Unit
-    */
-    if(unit_level > 2)
-    {
-        hit_points += 1;
-    }
-    if(unit_level > 4)
-    {
-        hit_points += 1;
-    }
-    if(unit_level > 5)
-    {
-        hit_points += 1;
-    }
-    if(unit_level > 6)
-    {
-        hit_points += 1;
-    }
-    if(unit_level > 7)
-    {
-        hit_points += 1;
-    }
-    if(_UNITS[unit_idx].owner_idx == ST_UNDEFINED)
-    {
-        if(_players[(Random(_num_players + 1) - 1)].Globals[CHARM_OF_LIFE] > 0)
-        {
-            Charm_of_Life_Bonus = hit_points / 4;
-            if(Charm_of_Life_Bonus < 1)
-            {
-                Charm_of_Life_Bonus = 1;
-            }
-            hit_points += Charm_of_Life_Bonus;
-        }
-    }
-    else
-    {
-        if(_players[_UNITS[unit_idx].owner_idx].Globals[CHARM_OF_LIFE] > 0)
-        {
-            Charm_of_Life_Bonus = hit_points / 4;
-            if(Charm_of_Life_Bonus < 1)
-            {
-                Charm_of_Life_Bonus = 1;
-            }
-            hit_points += Charm_of_Life_Bonus;
-        }
-    }
-    return hit_points;
-}
-
-// WZD o116p05
-int16_t Battle_Unit_Hit_Points(struct s_BATTLE_UNIT * battle_unit)
-{
-    int16_t Charm_of_Life_Hits = 0;
-    int16_t unit_level = 0;
-    uint32_t battle_unit_enchantments = 0;
-    int16_t unit_idx = 0;
-    int16_t hit_points = 0;
-    unit_idx = battle_unit->unit_idx;
-    unit_level = _UNITS[unit_idx].Level;
-    battle_unit_enchantments = _UNITS[unit_idx].enchantments | battle_unit->enchantments | battle_unit->item_enchantments;
-    if(
-        ((battle_unit_enchantments & UE_HEROISM) != 0)
-        &&
-        (unit_level < 3)
-    )
-    {
-        unit_level = 3;
-    }
-    if(
-        (_players[battle_unit->controller_idx].Globals[CRUSADE] > 0)
-        &&
-        ((_unit_type_table[unit_idx].Abilities & UA_FANTASTIC) == 0)
-    )
-    {
-        unit_level++;
-    }
-    hit_points = _unit_type_table[_UNITS[unit_idx].type].Hits;
-    if((battle_unit_enchantments & UE_BLACK_CHANNELS) != 0)
-    {
-        hit_points += 1;
-        battle_unit->Gold_Hits += 1;
-    }
-    if((battle_unit_enchantments & UE_LION_HEART) != 0)
-    {
-        hit_points += 3;
-        battle_unit->Gold_Hits += 3;
-    }
-    if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED)
-    {
-        if(unit_level > 0)
-        {
-            hit_points += 1;
-        }
-        if(HERO_CONSTITUTION(_UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type))
-        {
-            hit_points += (unit_level + 1);
-        }
-        if(HERO_CONSTITUTION2(_UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type))
-        {
-            hit_points += (((unit_level + 1) * 3) / 2);
-        }
-        if(unit_level > 1)
-        {
-            hit_points += 1;
-        }
-        if(unit_level > 3)
-        {
-            hit_points += 1;
-        }
-    }  /* if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED) */
-    if(unit_level > 2)
-    {
-        hit_points += 1;
-    }
-    if(unit_level > 4)
-    {
-        hit_points += 1;
-    }
-    if(unit_level > 5)
-    {
-        hit_points += 1;
-    }
-    if(unit_level > 6)
-    {
-        hit_points += 1;
-    }
-    if(unit_level > 7)
-    {
-        hit_points += 1;
-    }
-    if(_players[battle_unit->controller_idx].Globals[CHARM_OF_LIFE] > 0)
-    {
-        Charm_of_Life_Hits = (hit_points / 4);
-        SETMIN(Charm_of_Life_Hits, 1);
-        hit_points += Charm_of_Life_Hits;
-    }
-    hit_points += battle_unit->Extra_Hits;
-    battle_unit->Gold_Hits += battle_unit->Extra_Hits;
-    return hit_points;
-}
-
-
-// WZD o116p06
-// MoO2  Module: COMBINIT  Load_Combat_Ship_()
-void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
-{
-    int16_t item_charges = 0;
-    int16_t itr = 0;
-    memcpy(battle_unit, &_unit_type_table[_UNITS[unit_idx].type].Melee, sizeof(struct s_UNIT_TYPE));
-    battle_unit->Combat_Effects = 0;
-    battle_unit->melee_tohit = 0;
-    battle_unit->ranged_tohit = 0;
-    battle_unit->tohit = 0;  // set in BU_Init_Battle_Unit()
-    battle_unit->toblock = 0;
-    battle_unit->Weapon_Plus1 = 0;
-    battle_unit->melee_attack_attributes = 0;
-    battle_unit->ranged_attack_attributes = 0;
-    battle_unit->item_enchantments = 0;
-    battle_unit->Extra_Hits = 0;
-    battle_unit->unit_idx = unit_idx;
-    battle_unit->Web_HP = 0;
-    battle_unit->Gold_Melee = 0;
-    battle_unit->Gold_Ranged = 0;
-    battle_unit->Gold_Defense = 0;
-    battle_unit->Gold_Resist = 0;
-    battle_unit->Gold_Hits = 0;
-    battle_unit->Grey_Melee = 0;
-    battle_unit->Grey_Ranged = 0;
-    battle_unit->Grey_Defense = 0;
-    battle_unit->Grey_Resist = 0;
-    battle_unit->bufpi = ST_UNDEFINED;
-    battle_unit->status = bus_Active;
-    battle_unit->controller_idx = _UNITS[unit_idx].owner_idx;
-    for(itr = 0; itr < 3; itr++)
-    {
-        battle_unit->damage[itr] = 0;
-    }
-    battle_unit->enchantments = 0;
-    battle_unit->Suppression = 0;
-    battle_unit->mana_max = 0;
-    battle_unit->item_charges = 0;
-    battle_unit->target_battle_unit_idx = ST_UNDEFINED;
-    battle_unit->Poison_Strength = 0;
-    battle_unit->upkeep = (int8_t)Unit_Gold_Upkeep(unit_idx);
-    if((battle_unit->attack_attributes & 0x04 /* Att_Poison */) != 0)
-    {
-        battle_unit->Poison_Strength = battle_unit->Spec_Att_Attrib;
-        if(battle_unit->ranged_type != srat_MultiGaze)
-        {
-            battle_unit->Spec_Att_Attrib = 0;
-        }
-    }
-    BU_Init_Battle_Unit(battle_unit);
-    battle_unit->mana = battle_unit->mana_max;
-    battle_unit->damage[0] = _UNITS[unit_idx].Damage;
-    battle_unit->front_figure_damage = (_UNITS[unit_idx].Damage % battle_unit->hits);
-    battle_unit->figure_cnt = (battle_unit->figure_max - (_UNITS[unit_idx].Damage / battle_unit->hits));
-    battle_unit->Atk_FigLoss = 0;
-    battle_unit->Confusion_State = 0;
-    battle_unit->gibs = 0;
-    battle_unit->Unknown_5A = 0;  // NOTE: Per the Dasm, duplicate `battle_unit->Unknown_5A = 0;`
-    battle_unit->Unknown_5A = 0;
-    battle_unit->Melee_Anim = 0;
-    battle_unit->outline_magic_realm = 0;
-    battle_unit->move_anim_ctr = 0;
-    battle_unit->Moving = ST_FALSE;
-    battle_unit->action = bua_Ready;
-    battle_unit->animate_idle = ST_FALSE;
-    battle_unit->figure_effect = 0;
-    battle_unit->animate_move_as_idle = 0;
-    // ¿ BUG:  only gets item charges for 1/first item ?
-    if(_UNITS[unit_idx].Hero_Slot > ST_UNDEFINED)
-    {
-        if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0] > ST_UNDEFINED)
-        {
-            item_charges = _ITEMS[_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]].embed_spell_cnt;
-        }
-        else
-        {
-            item_charges = 0;
-        }
-        if(item_charges > 0)
-        {
-            battle_unit->item_charges = (int8_t)item_charges;
-        }
-    }
-}
-
-// WZD o116p07
-// ¿ MoO2  Module: COMBINIT  Load_Combat_Ship_() ?
-void BU_Init_Battle_Unit(struct s_BATTLE_UNIT * battle_unit)
-{
-    int16_t weapon_quality = 0;
-    int8_t var_8 = 0;
-    int8_t unit_mutations = 0;
-    uint32_t battle_unit_enchantments = 0;
-    int16_t chaos_surge = 0;
-    int16_t unit_idx = 0;
-    int16_t itr_players = 0;
-    unit_idx = battle_unit->unit_idx;
-    unit_mutations = _UNITS[unit_idx].mutations;
-    battle_unit->tohit = _unit_type_table[_UNITS[battle_unit->unit_idx].type].To_Hit;
-    battle_unit->melee_tohit = 0;
-    battle_unit->ranged_tohit = 0;
-    battle_unit->toblock = 0;
-    battle_unit->Gold_Melee = 0;
-    battle_unit->Gold_Ranged = 0;
-    battle_unit->Gold_Defense = 0;
-    battle_unit->Gold_Resist = 0;
-    battle_unit->Gold_Hits = 0;
-    battle_unit->Grey_Melee = 0;
-    battle_unit->Grey_Ranged = 0;
-    battle_unit->Grey_Defense = 0;
-    battle_unit->Grey_Resist = 0;
-    battle_unit->resist = _unit_type_table[_UNITS[battle_unit->unit_idx].type].Resist;
-    battle_unit->defense = _unit_type_table[_UNITS[battle_unit->unit_idx].type].Defense;
-    battle_unit->melee = _unit_type_table[_UNITS[battle_unit->unit_idx].type].Melee;
-    battle_unit->ranged = _unit_type_table[_UNITS[battle_unit->unit_idx].type].Ranged;
-    if(BU_CASTER_40())
-    {
-        battle_unit->mana_max = 40;
-    }
-    if(BU_CASTER_20())
-    {
-        battle_unit->mana_max = 20;
-    }
-    BU_Apply_Level(unit_idx, battle_unit);
-    if(BU_LUCKY())
-    {
-        battle_unit->tohit += 1;
-        battle_unit->toblock += 1;
-        battle_unit->resist += 1;
-        battle_unit->Gold_Resist += 1;
-    }
-    /*
-        Unit is a Hero Unit
-    */
-    if(_UNITS[unit_idx].Hero_Slot > ST_UNDEFINED)
-    {
-        if(battle_unit->Weapon_Plus1 == 0)
-        {
-            battle_unit->Weapon_Plus1 = 1;
-        }
-        BU_Init_Hero_Unit(unit_idx, battle_unit);
-        BU_Apply_Item_Powers(unit_idx, battle_unit);
-    }
-    battle_unit_enchantments = battle_unit->item_enchantments | _UNITS[unit_idx].enchantments;
-    weapon_quality = (_UNITS[unit_idx].mutations & 0x03);  // ; mask first 3 bits
-    if(weapon_quality > 0)
-    {
-        if(battle_unit->melee > 0)
-        {
-            battle_unit->melee += (weapon_quality - 1);
-            battle_unit->Gold_Melee += (weapon_quality - 1);
-            battle_unit->melee_tohit += 1;
-        }
-        if(
-            ((battle_unit->ranged_type / 10) == rag_Missile)
-            ||
-            ((battle_unit->ranged_type / 10) == rag_Boulder)
-            ||
-            (battle_unit->ranged_type == srat_Thrown)
-        )
-        {
-            battle_unit->ranged += (weapon_quality - 1);
-            battle_unit->Gold_Ranged += (weapon_quality - 1);
-            battle_unit->ranged_tohit += 1;
-        }
-            battle_unit->defense += (weapon_quality - 1);
-            battle_unit->Gold_Defense += (weapon_quality - 1);
-            battle_unit->Weapon_Plus1 = (weapon_quality + 1);
-    }
-    // drake178:  BUG: only checks the human player's overland enchantments in each iteration of the player loop
-    chaos_surge = ST_FALSE;
-    for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
-    {
-        if(_players[HUMAN_PLAYER_IDX].Globals[CHAOS_SURGE] > 0)
-        {
-            chaos_surge = ST_TRUE;
-        }
-    }
-    if(chaos_surge == ST_TRUE)
-    {
-        if(battle_unit->race == rt_Chaos)
-        {
-            if(battle_unit->ranged > 0)
-            {
-                battle_unit->ranged += 2;
-                battle_unit->Gold_Ranged += 2;
-            }
-            if(battle_unit->melee > 0)
-            {
-                battle_unit->melee += 2;
-                battle_unit->Gold_Melee += 2;
-            }
-        }
-    }
-    if(_players[_UNITS[unit_idx].owner_idx].Globals[HOLY_ARMS] > 0)
-    {
-        if(
-            ((battle_unit->Abilities & UA_FANTASTIC) != 0)
-        )
-        {
-            if((unit_mutations & UM_UNDEAD) != 0)
-            {
-                if((battle_unit_enchantments & UE_HOLY_WEAPON) != 0)
-                {
-                    battle_unit->enchantments |= UE_HOLY_WEAPON;
-                    battle_unit->melee_tohit += 1;
-
-                    if(
-                        (battle_unit->ranged_type == srat_Thrown)
-                        ||
-                        ((battle_unit->ranged_type / 10) == rag_Boulder)
-                        ||
-                        ((battle_unit->ranged_type / 10) == rag_Missile)
-                    )
-                    {
-                        battle_unit->ranged_tohit += 1;
-                    }
-
-                    if(battle_unit->Weapon_Plus1 == 0)
-                    {
-                        battle_unit->Weapon_Plus1 = 1;
-                    }
-                }
-            }
-        }
-    }
-    if(
-        ((battle_unit->Abilities & UA_FANTASTIC) != 0)
-        ||
-        (battle_unit->race > rt_Troll)
-    )
-    {
-        if(battle_unit->Weapon_Plus1 == 0)
-        {
-            battle_unit->Weapon_Plus1 = 1;
-        }
-    }
-    if((battle_unit->Abilities & UA_NONCORPOREAL) != 0)
-    {
-        battle_unit->Move_Flags |= MV_SWIMMING;
-    }
-    BU_Apply_Specials(battle_unit, battle_unit_enchantments, unit_mutations);
-    battle_unit->movement_points = (int8_t)Unit_Moves2(unit_idx);
-    battle_unit_enchantments = battle_unit->item_enchantments | _UNITS[unit_idx].enchantments;
-    // ¿ maybe, but, also, why is this even here ?
-    // drake178:  ; BUG: value not in halves, but if it was, it would cause a display bug below
-    //              this entire check is completely redundant, as the above function already incorporates it,
-    //              while any overland movement calculations will IGNORE this value,
-    //              causing a discrepancy between the displayed and the actual movement allowance of the unit
-    //              it could also only ever trigger if an opposing Wind Mastery has reduced the moves of a ship with Flight
-    if(battle_unit->movement_points < 3)
-    {
-        if((battle_unit_enchantments & UE_FLIGHT) != 0)
-        {
-            // drake178:  ; BUG: could override Wind Mastery malus overland, but
-            battle_unit->movement_points = 6;
-        }
-    }
-    battle_unit->hits = (int8_t)Unit_Hit_Points(unit_idx);
-}
-
-
-// WZD o116p08
-void BU_Apply_Specials(struct s_BATTLE_UNIT * battle_unit, uint32_t battle_unit_enchantments, uint8_t unit_mutations)
-{
-    if((battle_unit_enchantments & UE_WATER_WALKING) != 0)
-    {
-        battle_unit->Move_Flags |= MV_SWIMMING;
-    }
-    if((battle_unit_enchantments & UE_TRUE_SIGHT) != 0)
-    {
-        battle_unit->Attribs_1 |= USA_IMMUNITY_ILLUSION;
-    }
-    if((battle_unit_enchantments & UE_INVULNERABILITY) != 0)
-    {
-        battle_unit->Attribs_1 |= USA_IMMUNITY_WEAPON;
-    }
-    if((battle_unit_enchantments & UE_FLIGHT) != 0)
-    {
-        battle_unit->Move_Flags |= MV_FLYING;
-    }
-    if((battle_unit_enchantments & UE_WRAITH_FORM) != 0)
-    {
-        battle_unit->Abilities |= UA_NONCORPOREAL;
-        battle_unit->Attribs_1 |= USA_IMMUNITY_WEAPON;
-        battle_unit->Move_Flags |= MV_SWIMMING;
-    }
-    if((unit_mutations & UM_UNDEAD) != 0)
-    {
-        battle_unit->race = rt_Death;
-        battle_unit->Abilities |= UA_FANTASTIC;
-    }
-    if((battle_unit_enchantments & UE_BLACK_CHANNELS) != 0)
-    {
-        if(battle_unit->melee > 0)        
-        {
-            battle_unit->melee += 2;
-            battle_unit->Gold_Melee += 2;
-        }
-        if(battle_unit->ranged != ST_UNDEFINED)
-        {
-            battle_unit->ranged += 1;
-            battle_unit->Gold_Ranged += 1;
-        }
-        battle_unit->defense += 1;
-        battle_unit->Gold_Defense += 1;
-        battle_unit->resist += 1;
-        battle_unit->Gold_Resist += 1;
-        battle_unit->race = rt_Death;
-        battle_unit->Abilities |= UA_FANTASTIC;
-        battle_unit->Attribs_1 |= (USA_IMMUNITY_ILLUSION | USA_IMMUNITY_COLD | USA_IMMUNITY_POISON);
-    }
-    if((battle_unit_enchantments & UE_IRON_SKIN) != 0)
-    {
-        battle_unit->defense += 5;
-        battle_unit->Gold_Defense += 5;
-    }
-    else if((battle_unit_enchantments & UE_IRON_SKIN) != 0)
-    {
-        battle_unit->defense += 1;
-        battle_unit->Gold_Defense += 1;
-    }
-    if((battle_unit_enchantments & UE_GUARDIAN_WIND) != 0)
-    {
-        battle_unit->Attribs_1 |= USA_IMMUNITY_MISSILES;
-    }
-    if((battle_unit_enchantments & UE_MAGIC_IMMUNITY) != 0)
-    {
-        battle_unit->Attribs_1 |= USA_IMMUNITY_MAGIC;
-    }
-    if((battle_unit_enchantments & UE_FLAME_BLADE) != 0)
-    {
-        if(battle_unit->melee > 0)
-        {
-            battle_unit->melee += 2;
-            battle_unit->Gold_Melee += 2;
-        }
-        if(
-            (battle_unit->ranged_type == srat_Thrown)
-            ||
-            ((battle_unit->ranged_type / 10) == rag_Missile)
-        )
-        {
-            battle_unit->ranged += 2;
-            battle_unit->Gold_Ranged += 2;
-        }
-    }
-    if((battle_unit_enchantments & UE_GIANT_STRENGTH) != 0)
-    {
-        if(battle_unit->melee > 0)
-        {
-            battle_unit->melee += 1;
-            battle_unit->Gold_Melee += 1;
-        }
-        if(battle_unit->ranged_type == srat_Thrown)
-        {
-            battle_unit->ranged += 1;
-            battle_unit->Gold_Ranged += 1;
-        }
-    }
-    if((battle_unit_enchantments & UE_IMMOLATION) != 0)
-    {
-        battle_unit->Attribs_2 |= USA_IMMOLATION;
-    }
-    if((battle_unit_enchantments & UE_ELDRITCH_WEAPON) != 0)
-    {
-        battle_unit->melee_attack_attributes |= Att_EldrWeap;
-        if(
-            ((battle_unit->ranged_type / 10) == rag_Missile)
-            ||
-            (battle_unit->ranged_type == srat_Thrown)
-        )
-        {
-            battle_unit->ranged_attack_attributes |= Att_EldrWeap;
-        }
-        if(battle_unit->Weapon_Plus1 == 0)
-        {
-            battle_unit->Weapon_Plus1 = 1;
-        }
-    }
-    if((unit_mutations & CC_ARMOR) != 0)
-    {
-        battle_unit->defense += 3;
-        battle_unit->Gold_Defense += 3;
-        battle_unit->race = rt_Chaos;
-    }
-    if((unit_mutations & CC_FLIGHT) != 0)
-    {
-        battle_unit->Move_Flags |= MV_FLYING;
-        battle_unit->race = rt_Chaos;
-    }
-    if((unit_mutations & CC_BREATH) != 0)
-    {
-        battle_unit->ranged = 2;
-        battle_unit->ranged_type = srat_FireBreath;
-        battle_unit->race = rt_Chaos;
-    }
-    if((battle_unit_enchantments & UE_LION_HEART) != 0)
-    {
-        if(battle_unit->melee > 0)
-        {
-            battle_unit->melee += 3;
-            battle_unit->Gold_Melee += 3;
-        }
-        if(
-            ((battle_unit->ranged_type / 10) == rag_Missile)
-            ||
-            ((battle_unit->ranged_type / 10) == rag_Boulder)
-            ||
-            (battle_unit->ranged_type == srat_Thrown)
-        )
-        {
-            battle_unit->ranged += 3;
-            battle_unit->Gold_Ranged += 3;
-        }
-        battle_unit->resist += 3;
-        battle_unit->Gold_Resist += 3;
-    }
-    if((battle_unit_enchantments & UE_HOLY_ARMOR) != 0)
-    {
-        battle_unit->defense += 2;
-        battle_unit->Gold_Defense += 2;
-    }
-    // drake178:  ; BUG: undead are also supposed to gain Cold, Poison, and Illusions Immunities (native Death units have all of these anyway)
-    if(battle_unit->race == rt_Death)
-    {
-        battle_unit->Attribs_1 |= USA_IMMUNITY_DEATH;
-    }
-    if((battle_unit_enchantments & UE_BERSERK) != 0)
-    {
-        battle_unit->Gold_Melee = battle_unit->melee;
-        battle_unit->melee *= 2;
-        battle_unit->Grey_Defense = battle_unit->defense;
-        battle_unit->defense = -20;
-    }
-}
-
-
-// WZD o116p09
-void BU_Apply_Level(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
-{
-    int16_t unit_level = 0;
-    unit_level = _UNITS[unit_idx].Level;
-    if(
-        ((_UNITS[unit_idx].enchantments & UE_HEROISM) != 0)
-        ||
-        ((battle_unit->enchantments & UE_HEROISM) != 0)
-    )
-    {
-        if(unit_level < 3)
-        {
-            unit_level = 3;
-        }
-    }
-    if(_UNITS[unit_idx].Hero_Slot > ST_UNDEFINED)
-    {
-        if(unit_level > 0)
-        {
-            battle_unit->resist++;
-            if(battle_unit->ranged > 0)
-            {
-                battle_unit->ranged++;
-            }
-            if(battle_unit->melee > 0)
-            {
-                battle_unit->melee++;
-            }
-            battle_unit->defense++;
-        }
-        if(unit_level > 1)
-        {
-            battle_unit->tohit++;
-            battle_unit->resist++;
-            if(battle_unit->ranged > 0)
-            {
-                battle_unit->ranged++;
-            }
-            if(battle_unit->melee > 0)
-            {
-                battle_unit->melee++;
-            }
-        }
-        if(unit_level > 2)
-        {
-            battle_unit->resist++;
-            if(battle_unit->ranged > 0)
-            {
-                battle_unit->ranged++;
-            }
-            if(battle_unit->melee > 0)
-            {
-                battle_unit->melee++;
-            }
-            battle_unit->defense++;
-        }
-        if(unit_level > 3)
-        {
-            battle_unit->resist++;
-            if(battle_unit->ranged > 0)
-            {
-                battle_unit->ranged++;
-            }
-            if(battle_unit->melee > 0)
-            {
-                battle_unit->melee++;
-            }
-        }
-        if(unit_level > 4)
-        {
-            battle_unit->tohit++;
-            battle_unit->resist++;
-            if(battle_unit->ranged > 0)
-            {
-                battle_unit->ranged++;
-            }
-            if(battle_unit->melee > 0)
-            {
-                battle_unit->melee++;
-            }
-            battle_unit->defense++;
-        }
-        if(unit_level > 5)
-        {
-            battle_unit->resist++;
-            if(battle_unit->ranged > 0)
-            {
-                battle_unit->ranged++;
-            }
-            if(battle_unit->melee > 0)
-            {
-                battle_unit->melee++;
-            }
-        }
-        if(unit_level > 6)
-        {
-            battle_unit->resist++;
-            if(battle_unit->ranged > 0)
-            {
-                battle_unit->ranged++;
-            }
-            if(battle_unit->melee > 0)
-            {
-                battle_unit->melee++;
-            }
-            battle_unit->defense++;
-        }
-        if(unit_level > 7)
-        {
-            battle_unit->tohit++;
-            battle_unit->resist++;
-            if(battle_unit->ranged > 0)
-            {
-                battle_unit->ranged++;
-            }
-            if(battle_unit->melee > 0)
-            {
-                battle_unit->melee++;
-            }
-        }
-    }
-    else
-    {
-        if(unit_level > 0)
-        {
-            battle_unit->resist++;
-            if(battle_unit->ranged > 0)
-            {
-                battle_unit->ranged++;
-            }
-            if(battle_unit->melee > 0)
-            {
-                battle_unit->melee++;
-            }
-        }
-        if(unit_level > 1)
-        {
-            battle_unit->resist++;
-            battle_unit->defense++;
-        }
-        if(unit_level > 2)
-        {
-            battle_unit->tohit++;
-            battle_unit->resist++;
-            if(battle_unit->ranged > 0)
-            {
-                battle_unit->ranged++;
-            }
-            if(battle_unit->melee > 0)
-            {
-                battle_unit->melee++;
-            }
-        }
-        if(unit_level > 3)
-        {
-            battle_unit->tohit++;
-            battle_unit->resist++;
-            battle_unit->defense++;
-        }
-        if(unit_level > 4)
-        {
-            battle_unit->tohit++;
-            battle_unit->resist++;
-            if(battle_unit->ranged > 0)
-            {
-                battle_unit->ranged++;
-            }
-            if(battle_unit->melee > 0)
-            {
-                battle_unit->melee++;
-            }
-        }
-    }
-}
-
-
-// WZD o116p10
-/*
-    ¿ overwrites much of what was just done ?
-
-    upkeep
-
-*/
-void BU_Init_Hero_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
-{
-    int16_t hero_owner_idx = 0;
-    int16_t hero_type = 0;
-    hero_owner_idx = UNITOWNER();
-    /* HACK */  if(hero_owner_idx == ST_UNDEFINED) { hero_owner_idx = (Random((_num_players + 1)) - 1); }
-    // Meh.  Should be Random() for hero_type, actually
-    hero_type = UNITTYPE();  /* BUGBUG  from back in AI_Stacks_Survey_Expedition_Forces_Stack(), cause AVRL here */
-    if(
-        (HERO_NOBLE(hero_owner_idx, hero_type))
-        ||
-        (_players[hero_owner_idx].famous > ST_FALSE)
-    )
-    {
-        battle_unit->upkeep = 0;
-    }
-    if(HERO_AGILITY(hero_owner_idx, hero_type))
-    {
-        battle_unit->defense = (battle_unit->defense + (_UNITS[unit_idx].Level + 1));
-    }
-    if(HERO_AGILITY2(hero_owner_idx,hero_type))
-    {
-        battle_unit->defense = (battle_unit->defense + (((_UNITS[unit_idx].Level + 1) * 3) / 2));
-    }
-    if(HERO_BLADEMASTER(hero_owner_idx,hero_type))
-    {
-        battle_unit->tohit = (battle_unit->tohit + ((_UNITS[unit_idx].Level + 1) / 2));
-    }
-    if(HERO_BLADEMASTER2(hero_owner_idx,hero_type))
-    {
-        battle_unit->tohit = (battle_unit->tohit + (((_UNITS[unit_idx].Level + 1) * 3) / 4));
-    }
-    if(HERO_MIGHT(hero_owner_idx,hero_type))
-    {
-        battle_unit->melee = (battle_unit->melee + (_UNITS[unit_idx].Level + 1));
-    }
-    if(HERO_MIGHT2(hero_owner_idx,hero_type))
-    {
-        battle_unit->melee = (battle_unit->melee + (((_UNITS[unit_idx].Level + 1) * 3) / 2));
-    }
-    if(
-        (HERO_ARCANE_POWER(hero_owner_idx,hero_type))
-        &&
-        ((battle_unit->ranged_type / 10) == rag_Magic)
-    )
-    {
-        battle_unit->ranged = (battle_unit->ranged + (_UNITS[unit_idx].Level + 1));
-    }
-    if(
-        (HERO_ARCANE_POWER2(hero_owner_idx,hero_type))
-        &&
-        ((battle_unit->ranged_type / 10) == rag_Magic)
-    )
-    {
-        battle_unit->ranged = (battle_unit->ranged + (((_UNITS[unit_idx].Level + 1) * 3) / 2));
-    }
-    if(_HEROES2[hero_owner_idx]->heroes[hero_type].Casting_Skill > 0)
-    {
-        battle_unit->mana_max = ((((_HEROES2[hero_owner_idx]->heroes[hero_type].Casting_Skill + 1) * (_UNITS[unit_idx].Level + 1)) * 5) / 2);
-    }
-    else
-    {
-        battle_unit->mana_max = 0;
-    }
-    if(HERO_LUCKY(hero_owner_idx,hero_type))
-    {
-        battle_unit->tohit += 1;
-        battle_unit->toblock += 1;
-        battle_unit->resist += 1;
-        battle_unit->Gold_Resist += 1;
-    }
-}
-
-
-// WZD o116p11
-/*
-    Magic Node Combat Effect
-
-
-
-Page 98  (PDF Page 103)
-STRUCTURES INFLUENCING COMBAT
-Magic Nodes
-Magic nodes can affect combat in one of two ways.
-They may increase (by one) the attack strengths (swords and ranged weapons), defenses (shields) and resistance (crosses) of all creatures from the same magic realm as the node
-  (i.e., a nature node would exert this positive effect on all creatures of nature such as sprites and basilisks)
-  when these creatures are fighting in any area controlled by the node.
-
-*/
-void BU_Apply_Battlefield_Effects__WIP(struct s_BATTLE_UNIT * battle_unit)
-{
-    int16_t Node_Aura_Applies = 0;
-    int16_t item_idx = 0;
-    int16_t Mutation_Flags = 0;
-    uint32_t enchantments = 0;
-    int16_t unit_idx = 0;
-
-    unit_idx = battle_unit->unit_idx;
-
-    Node_Aura_Applies = ST_FALSE;
-
-    if(
-        (
-            (_combat_node_type == cnt_Sorcery)
-            &&
-            (battle_unit->race == rt_Sorcery)
-        )
-        ||
-        (
-            (_combat_node_type == cnt_Chaos)
-            &&
-            (battle_unit->race == rt_Chaos)
-        )
-        ||
-        (
-            (_combat_node_type == cnt_Nature)
-            &&
-            (battle_unit->race == rt_Nature)
-        )
-    )
-    {
-        Node_Aura_Applies = ST_TRUE;
-    }
-
-    if(Node_Aura_Applies == ST_TRUE)
-    {
-        battle_unit->melee += 2;
-        battle_unit->Gold_Melee += 2;
-
-        if(battle_unit->ranged > 0)
-        {
-            battle_unit->ranged += 2;
-            battle_unit->Gold_Ranged += 2;
-        }
-
-        battle_unit->resist += 2;
-        battle_unit->Gold_Resist += 2;
-
-        battle_unit->defense += 2;
-        battle_unit->Gold_Defense += 2;
-    }
-
-
-
-    // ...
-    // ...
-    // ...
-
-
-
-    battle_unit[0].hits = (int8_t)Battle_Unit_Hit_Points(&battle_unit[0]);
-
-}
-
-
-// WZD o116p12
-// NX_Unit_Has_Spell_As_Enchantment_Or_Item_Power()
 
 
 
@@ -20254,7 +18736,7 @@ int16_t Battle_Unit_Moves2(int16_t battle_unit_idx)
     /*
         END: Hero Items
     */
-    moves2 = _unit_type_table[_UNITS[battle_units[battle_unit_idx].unit_idx].type].Move_Halves;
+    moves2 = _unit_type_table[_UNITS[battle_units[battle_unit_idx].unit_idx].type].moves2_base;
     moves2 += item_moves2;
     /*
         BEGIN: Wind Mastery

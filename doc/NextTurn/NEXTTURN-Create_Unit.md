@@ -50,7 +50,7 @@ The function returns `ST_TRUE` on success (unit created, `_units` incremented) a
 | `_CITIES[R_Param]` (city block only) | Read (`bldg_status[]`, `enchantments[ALTAR_OF_BATTLE]`, `wx/wy/wp`, `owner_idx`). Mutated for settlers (`population`, `Pop_10s`), or destroyed via `Destroy_City`. |
 | `_FORTRESSES[0.._num_players)` | Read (position) inside the settler safety loop — if the doomed city's position matches any fortress, restore population and return FALSE. |
 | `_players[owner_idx]` | Read (`alchemy`, `Globals[CHAOS_SURGE]`). |
-| `_unit_type_table[unit_type]` | Read (`Move_Halves`, `Sight`, `Abilities`). |
+| `_unit_type_table[unit_type]` | Read (`moves2_base`, `Sight`, `Abilities`). |
 | `TBL_Experience[9]` | Read for level-neg XP lookup. Layout: `{0, 20, 60, 120, 200, 300, 450, 600, 1000}` per IDA label naming (`Hero_or_Recruit`, `Myrmidon_or_Regular`, `Captain_or_Veteran`, `Cmdr_or_Elite`, ...). |
 | `MAX_UNIT_COUNT = 1000` | Hard unit count cap ([MOX_DEF.h:713](../../MoX/src/MOX_DEF.h#L713)). |
 | `HUMAN_PLAYER_IDX = 0`, `NEUTRAL_PLAYER_IDX = 5` | Player index constants. |
@@ -176,7 +176,7 @@ Return-FALSE path: `xor ax, ax; jmp @@Done` (asm:26-30, chained via `@@JmpJmpDon
 
 Stores 20 fields at `_UNITS[_units]`. Maps 1:1 onto asm:47-195. Each OG store re-computes `_UNITS[_units]` base + `_units * 32` (`s_UNIT` is 32 bytes = `shl ax, 5`) — verbose but consistent. Production hoists via C's implicit indexing.
 
-Fields stored: `wx`, `wy`, `wp`, `owner_idx`, `moves2_max` (from `_unit_type_table[unit_type].Move_Halves`), `type`, `Hero_Slot = ST_UNDEFINED`, `in_tower = ST_FALSE`, `Finished = ST_TRUE`, `moves2 = 0`, `Sight_Range` (from `_unit_type_table[unit_type].Sight`), `dst_wx = 0`, `dst_wy = 0`, `Status = us_Ready` (== 0), `Level = 0`, `XP = 0`, `Damage = 0`, `Draw_Priority = 0`, `enchantments = 0`, `mutations = 0`, `Move_Failed = ST_FALSE`, `Rd_Constr_Left = ST_UNDEFINED`.
+Fields stored: `wx`, `wy`, `wp`, `owner_idx`, `moves2_max` (from `_unit_type_table[unit_type].moves2_base`), `type`, `Hero_Slot = ST_UNDEFINED`, `in_tower = ST_FALSE`, `Finished = ST_TRUE`, `moves2 = 0`, `Sight_Range` (from `_unit_type_table[unit_type].Sight`), `dst_wx = 0`, `dst_wy = 0`, `Status = us_Ready` (== 0), `Level = 0`, `XP = 0`, `Damage = 0`, `Draw_Priority = 0`, `enchantments = 0`, `mutations = 0`, `Move_Failed = ST_FALSE`, `Rd_Constr_Left = ST_UNDEFINED`.
 
 **Enchantments dword store** (asm:171-177) — OG does two word stores: `[bx+enchantments+2] = 0`, then `[bx+enchantments] = 0`. Production single `= 0` assignment. Same result if `enchantments` is declared as a 32-bit type.
 

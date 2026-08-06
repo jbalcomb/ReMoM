@@ -41,6 +41,7 @@
 #include "CITYCALC.h"
 #include "City_ovr55.h"
 #include "Combat.h"
+#include "COMBINIT.h"
 #include "EVENTS.h"
 #include "Explore.h"
 #include "HIRE.h"
@@ -1056,7 +1057,7 @@ int16_t Create_Unit(int16_t unit_type, int16_t owner_idx, int16_t wx, int16_t wy
     _UNITS[_units].wy = (int8_t)wy;
     _UNITS[_units].wp = (int8_t)wp;
     _UNITS[_units].owner_idx = (int8_t)owner_idx;
-    _UNITS[_units].moves2_max = _unit_type_table[unit_type].Move_Halves;
+    _UNITS[_units].moves2_max = _unit_type_table[unit_type].moves2_base;
     _UNITS[_units].type = (uint8_t)unit_type;
     _UNITS[_units].Hero_Slot = ST_UNDEFINED;
     _UNITS[_units].in_tower = ST_FALSE;
@@ -1561,7 +1562,7 @@ int16_t Unit_Moves2(int16_t unit_idx)
     /*
         END: Hero Items
     */
-    moves2 = _unit_type_table[_UNITS[unit_idx].type].Move_Halves;
+    moves2 = _unit_type_table[_UNITS[unit_idx].type].moves2_base;
     enchantments |= _UNITS[unit_idx].enchantments;
     if(moves2 < 6)
     {

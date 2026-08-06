@@ -84,13 +84,13 @@ BU_Init_Battle_Unit()
     battle_unit->tohit = _unit_type_table[_UNITS[battle_unit->unit_idx].type].To_Hit;
     battle_unit->melee_tohit = 0;
     battle_unit->ranged_tohit = 0;
-    BU_Apply_Level(unit_idx, battle_unit);
+    Battle_Unit_Level_Stats(unit_idx, battle_unit);
     if(_UNITS[unit_idx].Hero_Slot > -1)
         if(battle_unit->Weapon_Plus1 == 0)
             battle_unit->Weapon_Plus1 = 1;
         BU_Init_Hero_Unit(unit_idx, battle_unit);
-        BU_Apply_Item_Powers()
-    BU_Apply_Specials(battle_unit, battle_unit_enchantments, unit_mutations);
+        Battle_Unit_Item_Stats()
+    Apply_Enchantment_And_Mutation_Effects(battle_unit, battle_unit_enchantments, unit_mutations);
 
 
 

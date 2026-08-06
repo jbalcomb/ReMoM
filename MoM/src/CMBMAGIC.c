@@ -100,18 +100,18 @@ char message_lbx_file__ovr112[] = "message";
 NIU_Who_Has_More_Leadership()  ...in ovr098
 CMB_LoadResources__WIP()
 Strategic_Combat_Allocate()
-BU_Apply_Battlefield_Effects__WIP()
+Battle_Unit_Special_Stats()
 Init_Battlefield_Effects()
 
-CMB_PrepareTurn__WIP()
+Begin_Combat_Turn()
 CMB_LoadResources__WIP()
 Strategic_Combat_Allocate()
-BU_Apply_Battlefield_Effects__WIP()
+Battle_Unit_Special_Stats()
 Init_Battlefield_Effects()
 
 CMB_LoadResources__WIP()
 Strategic_Combat_Allocate()
-BU_Apply_Battlefield_Effects__WIP()
+Battle_Unit_Special_Stats()
 Init_Battlefield_Effects()
 UNIT_ConvSpellATK()
 UNIT_ConvSpellATK()
@@ -811,17 +811,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
 
 
 // WZD o112p04
-// drake178: CMB_ShowSpellbook()
 /*
-; displays the combat spellbook, allowing a spell to
-; be selected for casting by the specified entity
-; (player or unit)
-; returns the index of the selected spell, and sets the
-; passed pointer's value to the clicked control's index
-; which indicates its current screen slot
-*/
-/*
-
 ¿ ~== Spellbook_Screen() ?
 ¿ ~== SmlBook_Draw() ?
 */

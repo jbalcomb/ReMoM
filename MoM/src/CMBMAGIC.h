@@ -16,6 +16,28 @@
 
 
 
+// WZD dseg:C896                                                 ¿ BEGIN:  ovr112 ?
+
+// WZD dseg:C896
+extern int16_t * _battlefield_leadership;
+extern int16_t * _battlefield_resistall;
+extern int16_t * _battlefield_holybonus;
+
+// WZD dseg:C8A2
+extern int16_t * CMB_IDK_4PR;
+// WZD dseg:C8A6
+extern int16_t _combat_spell_target_type;
+// WZD dseg:C8A8
+// int16_t * CMB_NearDispel_UCs;
+// WZD dseg:C8AA
+// int16_t * CMB_NearDispel_UEs;
+// WZD dseg:C8AC
+// uint16_t _combat_caster_idx;
+
+// WZD dseg:C8AC                                                 ¿ END:  ovr112 ?
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -5,15 +5,12 @@
         ovr102
 */
 
-#include "LVLMAKE.h"
-
-#include "Combat.h"
-#include "LOADER.h"
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/Graphics.h"
+#include "../../MoX/src/Help.h"
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _screen_seg */
@@ -22,18 +19,22 @@
 #include "../../MoX/src/MOX_T4.h"
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/SOUND.h"
-
-#include "../../MoX/src/Help.h"
 #include "../../MoX/src/Timer.h"
+
+#include "Combat.h"
+#include "COMBINIT.h"
+#include "LOADER.h"
 #include "MainScr.h"
 #include "SBookScr.h"
 #include "UnitStat.h"
 #include "UnitView.h"
 
+#include "../../ext/stu_compat.h"
+
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../ext/stu_compat.h"
+#include "LVLMAKE.h"
 
 
 
