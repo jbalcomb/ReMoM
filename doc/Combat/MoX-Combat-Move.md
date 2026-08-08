@@ -54,15 +54,15 @@ A: _cmbt_movepath_cost_map[], in BU_GetMoveMap__WIP()
 Assign_Combat_Grids()
 Combat_Move_Path_Valid()
 
-CMB_Units_Init__WIP()
+Prepare_All_Battle_Units()
 Deploy_Battle_Units()
 
 Tactical_Combat__WIP()
-|-> CMB_Units_Init__WIP()
+|-> Prepare_All_Battle_Units()
 |-> Deploy_Battle_Units()
 
 Tactical_Combat__WIP()
-    |-> CMB_Units_Init__WIP()
+    |-> Prepare_All_Battle_Units()
         |-> Deploy_Battle_Units()
 
 starting_cgx[ 0] = 14;
@@ -125,18 +125,18 @@ treats 99 (City Wall) as impassible
 
 
 Tactical_Combat__WIP()
-    |-> CMB_BaseAllocs__WIP()
-    |-> CMB_LoadResources__WIP()
-        |-> CMB_SetNearAllocs__WIP()
+    |-> Allocate_Combat_Base_Blocks()
+    |-> Combat_Screen_Load_Resources()
+        |-> Item_Powers_To_Attack_Attributes()
 
-CMB_BaseAllocs__WIP()
+Allocate_Combat_Base_Blocks()
     _cmbt_movepath_cost_map = Near_Allocate_First(504);
     CMB_Path_Costs = Near_Allocate_Next(504);
     _cmbt_path_data = Near_Allocate_Next(1008);
     CMB_Path_Xs = Near_Allocate_Next(504);
     CMB_Path_Ys = Near_Allocate_Next(504);
 
-CMB_SetNearAllocs__WIP()
+Item_Powers_To_Attack_Attributes()
     _cmbt_movepath_cost_map = Near_Allocate_First(504);
     CMB_Path_Costs = Near_Allocate_Next(504);
     _cmbt_path_data = Near_Allocate_Next(1008);
@@ -290,8 +290,8 @@ void Move_Path_Find(int16_t arg_wx, int16_t arg_wy, struct s_MOVE_PATH * arg_mov
 504 byte array of ...
 -1 means impassible  (same as in Overland's ¿...?)
 
-allocated in CMB_BaseAllocs__WIP()
-immediately reallocated in CMB_SetNearAllocs__WIP()
+allocated in Allocate_Combat_Base_Blocks()
+immediately reallocated in Item_Powers_To_Attack_Attributes()
 
 Assign_Combat_Grids()
     BU_GetMoveMap__WIP(_active_battle_unit);
@@ -362,8 +362,8 @@ CMB_GetPath__WIP()
 
 
 XREF:  (50)
-CMB_BaseAllocs__WIP+81       mov     [_cmbt_movepath_cost_map], ax
-CMB_SetNearAllocs__WIP+E     mov     [_cmbt_movepath_cost_map], ax
+Allocate_Combat_Base_Blocks+81       mov     [_cmbt_movepath_cost_map], ax
+Item_Powers_To_Attack_Attributes+E     mov     [_cmbt_movepath_cost_map], ax
 
 BU_GetMoveMap__WIP+48        push    [_cmbt_movepath_cost_map]
 BU_GetMoveMap__WIP+DA        add     ax, [_cmbt_movepath_cost_map]

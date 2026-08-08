@@ -5,6 +5,7 @@
 extern "C" {
 #endif
 #include "../../MoX/src/MOM_DAT.h"
+#include "../src/Combat.h"
 
 void Set_Gibs(int16_t battle_unit_idx, int16_t Damage);
 extern int16_t m_gibs_frames[20];

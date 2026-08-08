@@ -1,12 +1,57 @@
 
+The Combat Grid
+diamond shaped
+grid of cells
+the screen origin and the grid origin - cell 0,0 anchors at screen (158, −80)
 
 
 
-Blerg. Why are notes so much garbage?
-Past-Me does not show enough love for Future-Me.
+CLAUDE
+Can you explain the formula used in Get_Combat_Grid_Cell_X()?
+---
+It's the algebraic inverse of the grid→screen transform at Combat.c:23521-23522:
+
+*screen_x = (((cgx - cgy) * 16) + 158);
+*screen_y = (((cgx + cgy) *  8) -  80);
+Rearranging those two:
+
+screen_x - 158 = 16·(cgx - cgy)      →   (screen_x - 158)/2 = 8·(cgx - cgy)
+screen_y + 80  =  8·(cgx + cgy)
+Call those two terms u and v. Then:
+
+u + v = 8(cgx-cgy) + 8(cgx+cgy) = 16·cgx     →  cgx = (u + v)/16     ← Get_Combat_Grid_Cell_X
+v - u = 8(cgx+cgy) - 8(cgx-cgy) = 16·cgy     →  cgy = (v - u)/16     ← Get_Combat_Grid_Cell_Y
+So the three constants each do one job:
+
+                    role
+- 158 / + 80        translate the screen origin to the grid origin (cell 0,0 anchors at screen (158, −80), off the top of the display)
+/ 2 on the x term   normalizes the 2:1 isometric aspect — one grid step is 16 px across but only 8 px down, so halving x puts both axes in the same unit
+/ 16                16 normalized units per cell; the truncation is what turns a pixel into a cell index
+Once x is halved, u and v are just the diamond's two diagonal axes, and (u+v)/(v−u) is a plain 45° rotation back onto the grid axes.
+
+One real property of the arithmetic
+Both /2 and /16 are idiv — they truncate toward zero, not floor. For /16 that never matters on a 320×200 screen: u+v and v−u both stay non-negative across the whole display (v = screen_y + 80 ≥ 80, u bottoms out at −79 at screen_x = 0).
+The /2 is different. screen_x − 158 is negative for the entire left half of the map, and truncation there rounds up where the right half rounds down. So odd pixel columns left of x=158 resolve a half-unit differently than their mirror on the right. It's a one-pixel seam at cell boundaries, symmetric about the map's centre line — worth knowing if you ever chase a click that lands one cell off near an edge.
+---
 
 
 
+### Combat_Grid_Screen_Coordinates()
+```c
+void Combat_Grid_Screen_Coordinates(int16_t cgx, int16_t cgy, int16_t cgx_subcell_offset, int16_t cgy_subcell_offset, int16_t * screen_x, int16_t * screen_y)
+{
+    int16_t sy = 0;
+    int16_t sx = 0;
+    sx = (((cgx - cgy) * 16) + 158);
+    sy = (((cgx + cgy) *  8) -  80);
+    sx += ((cgx_subcell_offset - cgy_subcell_offset) * 2);
+    sy += (cgx_subcell_offset + cgy_subcell_offset);
+    *screen_x = sx;
+    *screen_y = sy;
+}
+```
+Combat_Battlefield_Instant()
+    Combat_Grid_Screen_Coordinates(battle_units[itr1].cgx, battle_units[itr1].cgy, 4, 4, &screen_x, &screen_y);
 
 
 
@@ -128,7 +173,7 @@ Tactical_Combat__WIP()
     |-> CMB_ComposeBackgrnd__WIP()
     // ...
     CMB_DrawFullScreen__WIP()
-        CMB_CreateEntities__WIP()
+        Combat_Grid_Entities()
         CMB_DrawMap__WIP()
             Combat_Figure_Compose_USEFULL()
             CMB_DrawEntities__WIP()
@@ -183,11 +228,11 @@ in the screenshot,
 
 
 
-CMB_SpawnFigure__WIP()
+Combat_Screen_Map_Draw_Entities()
     sets draw type to 1
 
-CMB_CreateEntity__WIP() is what sets draw_x and draw_x_shift, based on what is passed in from CMB_SpawnFigure__WIP()
-CMB_SpawnFigure__WIP() uses Combat_Grid_Screen_Coordinates()
+CMB_CreateEntity__WIP() is what sets draw_x and draw_x_shift, based on what is passed in from Combat_Screen_Map_Draw_Entities()
+Combat_Screen_Map_Draw_Entities() uses Combat_Grid_Screen_Coordinates()
     battle_units[itr].position_cgc2, battle_units[itr].position_cgc1
 
 
@@ -197,10 +242,10 @@ CMB_SpawnFigure__WIP() uses Combat_Grid_Screen_Coordinates()
 
 combat_grid_entities[combat_grid_entity_count].outline_magic_realm = outline_magic_realm;
     <- CMB_CreateEntity__WIP(..., outline_magic_realm, ...)
-        <- CMB_SpawnFigure__WIP(..., battle_units[itr].outline_magic_realm, ...)
+        <- Combat_Screen_Map_Draw_Entities(..., battle_units[itr].outline_magic_realm, ...)
 
 
-CMB_SpawnFigure__WIP() hard-codes combat_grid_entities[].draw_x_shift,draw_y_shift to 13,23
+Combat_Screen_Map_Draw_Entities() hard-codes combat_grid_entities[].draw_x_shift,draw_y_shift to 13,23
 
 
 
@@ -243,10 +288,10 @@ Deploy_Battle_Units()
         battle_units[Melee_Units[itr]].position_cgc2 = Starting_Xs[ctr];
         battle_units[Melee_Units[itr]].position_cgc1 = Starting_Ys[ctr];
 
-CMB_CreateEntities__WIP()
-    CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].Target_X, battle_units[itr].Target_Y, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+Combat_Grid_Entities()
+    Combat_Screen_Map_Draw_Entities(battle_units[itr].bufpi, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].Target_X, battle_units[itr].Target_Y, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
 
-CMB_SpawnFigure__WIP()
+Combat_Screen_Map_Draw_Entities()
     Combat_Grid_Screen_Coordinates(PosX, PosY, 0, 0, &Tile_Left, &Tile_Top);
     Combat_Grid_Screen_Coordinates(TarX, TarY, 0, 0, &Target_Left, &Target_Top);
     Left = (((((Target_Left - Tile_Left) * MStage) / 8) + Tile_Left) + fig_x);

@@ -449,7 +449,7 @@ void Player_Colony_Autobuild_CP(int16_t player_idx, int16_t city_idx)
  *
  * 1. Build candidate list via @c Calculate_Product_Array().
  * 2. Estimate whether local military production is needed using a random
- *    threshold against current stack size on the city tile.
+ *    threshold against current stack size on the city square.
  * 3. Assign initial weights:
  *    - Units: squared cost-based weight.
  *    - Buildings: category base AI weight.

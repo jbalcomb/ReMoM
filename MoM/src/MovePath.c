@@ -50,13 +50,13 @@ int16_t wy;
 
 int8_t    a_cost_was_updated = ST_TRUE; /* relaxation "changed" flag */  // WZD ovr147:0000  Code-Segment Variable
 int16_t   origin_row = 0;               // WZD ovr147:0002  Code-Segment Variable
-/* origin_row is the linear (1-D) array index of the first cell of the source tile's row — the anchor offset where each pathfinding sweep begins. */
+/* origin_row is the linear (1-D) array index of the first cell of the source square's row — the anchor offset where each pathfinding sweep begins. */
 int16_t   itr;                  /* array-init / generic loop var */
 int8_t  * movepath_cost;
 uint8_t * movepath_reach_cost;
 int16_t * movepath_reach_from;
-int16_t   ofst_movepath_cost;   /* current tile 1-D index */
-int8_t    move_cost;            /* current tile entry cost */
+int16_t   ofst_movepath_cost;   /* current square 1-D index */
+int8_t    move_cost;            /* current square entry cost */
 int8_t    itr_row;    // _CL_
 int8_t    incr_flag;  // _CH_
 int8_t    tmp_move_cost;

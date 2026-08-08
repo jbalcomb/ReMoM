@@ -59,7 +59,7 @@ char cityname_lbx_file__ovr143[] = "CITYNAME";
 // MoO2  DNE, but "...generate..." // "...set..."
 /*
 ; turns the square into a volcano, adjusting the flow of
-; adjacent tiles accordingly
+; adjacent squares accordingly
 ;
 ; BUG: does not update movement costs (fixed in the TERRSTAT patch)
 ; BUG: fails to create minerals
@@ -161,7 +161,7 @@ static void Set_Terrain_Type_Desert(int16_t wx, int16_t wy, int16_t wp)
 // WZD o143p06
 // drake178: TILE_MakeMountain()
 /*
-; turns the square into a mountain, adjusting the flow of adjacent tiles accordingly
+; turns the square into a mountain, adjusting the flow of adjacent squares accordingly
 ; BUG: does not update movement costs (fixed in the TERRSTAT patch)
 */
 void Set_Terrain_Type_Mountain(int16_t wx, int16_t wy, int16_t wp)
@@ -635,7 +635,7 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
 // drake178: OVL_GetRoadPath()
 /*
 ; calculates a road building path between the selected
-; tiles, treating roads as 1 MP, everything else as 2
+; squares, treating roads as 1 MP, everything else as 2
 ; returns the path length along with the coordinates,
 ; or 0 if a valid path can not be found
 */

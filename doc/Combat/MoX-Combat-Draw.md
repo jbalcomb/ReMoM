@@ -25,7 +25,7 @@ CMB_DrawEntities__WIP() |-> Draw_Picture_Windowed()
 
 size of allocation?
 FIGUREX_OFFSET uses 56 PR
-CMB_LoadResources__WIP() uses 55
+Combat_Screen_Load_Resources() uses 55
 BU_CreateImage__SEGRAX() uses 124
 ¿ figure_pointer_seg = Allocate_First_Block((EMS_PFBA + offset), 33) ?
 
@@ -72,7 +72,7 @@ temp_GfxBuf_2400B = GfxBuf_2400B;
 
 ## battle_unit_picts_seg[]
 
-CMB_LoadResources__WIP()
+Combat_Screen_Load_Resources()
     battle_unit_picts_seg[itr] = Allocate_Next_Block(_screen_seg, 55)
 
 
@@ -116,7 +116,7 @@ CMB_ComposeBackgrnd__WIP()
     FLIC_Draw(0, 164, combat_background_bottom);
     Copy_Off_To_Back();
 ...
-the last thing CMB_Terrain_Init__WIP() does is call CMB_ComposeBackgrnd__WIP()
+the last thing Build_Battlefield() does is call CMB_ComposeBackgrnd__WIP()
 
 CMB_ComposeBackgrnd__WIP()
     j_CMB_ComposeBackgrnd__WIP jmp     
@@ -137,16 +137,16 @@ CMB_ComposeBackgrnd__WIP()
         CMB_CallChaos:loc_B85C1              
         CMB_CallChaos+460                    
         CMB_SpellSlider__STUB+2FB            
-        CMB_Terrain_Init__WIP+5CD            
+        Build_Battlefield+5CD            
 
-CMB_Terrain_Init__WIP()
+Build_Battlefield()
     j_CMB_Terrain_Init__WIP()
         NX_IDK_CombatInit_Tactical()
         Tactical_Combat__WIP()
 
 Load_Combat_Terrain_Pictures()
 loads set of 48 terrain pictures, 5 trees, 5 rocks
-CMB_Terrain_Init__WIP()
+Build_Battlefield()
     |-> Load_Combat_Terrain_Pictures(cts, wp);
 
 
@@ -154,7 +154,7 @@ CMB_Terrain_Init__WIP()
 ## CMB_ComposeBackgrnd__WIP()
     Set_Page_Off()
     Reset_Window()
-    EMM_TILEX_Init__HACK()
+    Claim_EMS_Page_For_Figure_Set()
     ...
     Clipped_Draw(screen_x, screen_y, _combat_terrain_pict_segs[combat_terrain_type])
     ...
@@ -194,7 +194,7 @@ Tactical_Combat__WIP()
 
 
 Tactical_Combat_Draw()
-    CMB_CreateEntities__WIP()
+    Combat_Grid_Entities()
     CMB_DrawMap__WIP()
         CMB_DrawEntities__WIP()
 

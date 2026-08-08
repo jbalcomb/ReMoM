@@ -12,7 +12,7 @@ extern "C" {
 
 
 
-int16_t Prepare_All_Battle_Units(int16_t attacker_troop_count, int16_t attacker_troops[]);
+int16_t TST_Prepare_All_Battle_Units(int16_t attacker_troop_count, int16_t attacker_troops[]);
 
 
 

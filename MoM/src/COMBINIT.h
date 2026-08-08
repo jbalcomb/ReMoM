@@ -42,10 +42,10 @@ int16_t Unit_Hit_Points(int16_t unit_idx);
 int16_t Battle_Unit_Hit_Points(struct s_BATTLE_UNIT * battle_unit);
 
 // WZD o116p06
-void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * BattleUnit);
+void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit);
 
 // WZD o116p07
-void Battle_Unit_Regular_Stats(struct s_BATTLE_UNIT * BattleUnit);
+void Battle_Unit_Regular_Stats(struct s_BATTLE_UNIT * battle_unit);
 
 // WZD o116p08
 void Apply_Enchantment_And_Mutation_Effects(struct s_BATTLE_UNIT * battle_unit, uint32_t battle_unit_enchantments, uint8_t unit_mutations);

@@ -42,9 +42,9 @@ for(itr = 0; itr < MOVE_ANIM_CNT; itr++)
 
 ### Step 3: Draw with Interpolation
 
-`Combat_Screen_Draw()` iterates every battle unit and calls `CMB_SpawnFigure__WIP()` for each figure in the unit.  The `move_anim_ctr` value is passed as the `MoveStage` parameter.
+`Combat_Screen_Draw()` iterates every battle unit and calls `Combat_Screen_Map_Draw_Entities()` for each figure in the unit.  The `move_anim_ctr` value is passed as the `MoveStage` parameter.
 
-Inside `CMB_SpawnFigure__WIP()`, the pixel position is linearly interpolated:
+Inside `Combat_Screen_Map_Draw_Entities()`, the pixel position is linearly interpolated:
 
 ```c
 draw_x = (((((target_screen_x - position_screen_x) * MoveStage) / MOVE_ANIM_CNT) + position_screen_x) + fig_x);
@@ -85,7 +85,7 @@ battle_units[idx].move_anim_ctr   (0..7, set by the movement loop)
 Combat_Screen_Draw()
         |
         v
-CMB_SpawnFigure__WIP(..., move_anim_ctr as MoveStage, ...)
+Combat_Screen_Map_Draw_Entities(..., move_anim_ctr as MoveStage, ...)
         |
         v
 draw_x = (((target_screen_x - position_screen_x) * MoveStage) / MOVE_ANIM_CNT) + position_screen_x + fig_x
@@ -233,7 +233,7 @@ The `Mark_Time` / `Release_Time` approach wins because:
 |---|---|
 | MoM/src/Combat.c ~3362 | Human player movement animation loop (BU_Move / s91p04) |
 | MoM/src/Combat.c ~18603 | AI movement animation loop (Auto_Move_Unit / o114p09) |
-| MoM/src/Combat.c ~27268 | Draw interpolation in CMB_SpawnFigure__WIP() |
+| MoM/src/Combat.c ~27268 | Draw interpolation in Combat_Screen_Map_Draw_Entities() |
 | MoM/src/CMBTDEF.h | MOVE_ANIM_CNT, MOVE_ANIM_MAX defines |
 | MoX/src/MOX_T4.c ~267 | Fade_Out() -- reference for Mark_Time/Release_Time pattern |
 | MoX/src/sdl2_Timer.c | Mark_Time(), Release_Time() implementations |
@@ -244,5 +244,5 @@ The `Mark_Time` / `Release_Time` approach wins because:
 ## Future Considerations
 
 - **Timing constant tuning** -- 55 ms per frame (440 ms per square) may feel sluggish.  A dedicated combat animation timing constant could be defined separately from the BIOS timer tick period.  The original was closer to ~14 ms per frame (~112 ms per square).
-- **Sub-frame interpolation** -- If smoother animation is desired at high refresh rates, the draw code could interpolate between integer `move_anim_ctr` values using a fractional time parameter.  This would require changes to `CMB_SpawnFigure__WIP()` and is a larger scope change.
+- **Sub-frame interpolation** -- If smoother animation is desired at high refresh rates, the draw code could interpolate between integer `move_anim_ctr` values using a fractional time parameter.  This would require changes to `Combat_Screen_Map_Draw_Entities()` and is a larger scope change.
 - **AI move_anim_speed** -- The AI loop steps by `move_anim_speed` (typically 2), so it completes in 4 visible frames (220 ms at 55ms/frame).  This preserves the original behavior where AI units visibly move faster than human units.

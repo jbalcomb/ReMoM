@@ -260,12 +260,12 @@ EZ_Resolve()
 
 
 Tactical_Combat__WIP()
-    |-> CMB_Units_Init__WIP()
+    |-> Prepare_All_Battle_Units()
         |-> Deploy_Battle_Units()
             |-> Undeployable_Battle_Units_On_Water()
 
 
-## CMB_Units_Init__WIP()
+## Prepare_All_Battle_Units()
 OON XREF:  Tactical_Combat__WIP()
 
     Load_Battle_Unit(); Combat_Figure_Load(); Deploy_Battle_Units();

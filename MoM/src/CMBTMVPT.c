@@ -100,7 +100,7 @@ int16_t * m_movement_path_grid_cell_index;
 // WZD ovr155p01
 void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t destination_cgx, int16_t destination_cgy)
 {
-    uint8_t move_cost = 0;              /* current tile entry cost */  /* 1-byte, unsigned */
+    uint8_t move_cost = 0;              /* current square entry cost */  /* 1-byte, unsigned */
     uint8_t new_cost_to_reach = 0;      /* candidate new cost */
     int16_t max_y = 0;
     int16_t adjacent_path_cost = 0;
@@ -110,7 +110,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
     int16_t current_origin = 0;
     int16_t a_cost_was_updated = 0;     /* relaxation "changed" flag */
     int16_t itr = 0;
-    int16_t ctr = 0;                    /* current tile 1-D index */
+    int16_t ctr = 0;                    /* current square 1-D index */
     int16_t itr_adjacent = 0;
     int16_t adjacent_idx = 0;
     int16_t path_cgx = 0;               // DNE in Dasm

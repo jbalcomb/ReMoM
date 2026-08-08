@@ -10,7 +10,7 @@ Defender is {HP,CP|NP}
 Human attacks Computer
     Combat_Screen__WIP()
     m_cp_took_turn = ST_FALSE;
-    if(_combat_defender_player == combat_computer_player)
+    if(_combat_defender_player == _combat_remote_player)
         AI_CMB_PlayTurn__WIP(_combat_defender_player);
         CMB_PrepareTurn__WIP();
         m_cp_took_turn = ST_TRUE;
@@ -20,7 +20,7 @@ Human attacks Computer
 Computer attacks Human
     Combat_Screen__WIP()
     m_cp_took_turn = ST_FALSE;
-    NOT if(_combat_defender_player == combat_computer_player)
+    NOT if(_combat_defender_player == _combat_remote_player)
     _human_out_of_moves = ST_FALSE;
     NOT if(_combat_attacker_player == _human_player_idx)
         Switch_Active_Battle_Unit((_combat_total_unit_count - defender_unit_count));  /* first defender battle_unit_idx */
@@ -35,7 +35,7 @@ called twice in 'Auto Combat'
 OR
 once right before screen redraw in screen-loop
 
-    if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
+    if(battle_units[_active_battle_unit].controller_idx != _combat_local_player)
         _human_out_of_moves = ST_TRUE;
         _human_handle_immobile = ST_FALSE;
 
@@ -156,7 +156,7 @@ battle_units[itr].action = bua_Finished;
 ...
 no movement points triggers setting all_done_none_available
 all_done_none_available triggers setting _human_out_of_moves
-does not hit `if(battle_units[_active_battle_unit].controller_idx != combat_human_player)`
+does not hit `if(battle_units[_active_battle_unit].controller_idx != _combat_local_player)`
 hits Next_Battle_Unit() again
 Hrrrmm..._active_battle_unit didn't get its movement_points used up
 ...actually did though in Move_Battle_Unit__WIP()
@@ -205,7 +205,7 @@ so, it's getting called when it shouldn't?
         Switch_Active_Battle_Unit();
         ...
         m_cp_took_turn = ST_FALSE;
-        if(_combat_defender_player == combat_computer_player)
+        if(_combat_defender_player == _combat_remote_player)
             AI_CMB_PlayTurn__WIP(_combat_defender_player);
             CMB_PrepareTurn__WIP();
             m_cp_took_turn = ST_TRUE;
@@ -234,7 +234,7 @@ so, it's getting called when it shouldn't?
 ## _human_out_of_moves
 
 set to ST_TRUE in Tactical_Combat__WIP()
-    if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
+    if(battle_units[_active_battle_unit].controller_idx != _combat_local_player)
 set to ST_TRUE in Next_Battle_Unit()
     all_done_none_available = Next_Battle_Unit_Nearest_Available(player_idx);
     if(all_done_none_available == ST_TRUE)
@@ -379,16 +379,16 @@ Tactical_Combat__WIP()
     Player_Fled = ST_FALSE;
     if(OVL_Action_Type == 1)  /* Stack vs. City */
         String_Copy_Far(CMB_CityName, _CITIES[OVL_Action_Structure].name);
-    CMB_BaseAllocs__WIP();
-    CMB_LoadResources__WIP();
+    Allocate_Combat_Base_Blocks();
+    Combat_Screen_Load_Resources();
     _combat_wx = wx;
     _combat_wy = wy;
     _combat_wp = wp;
     _combat_attacker_player = combat_attacker_player_idx;
     _combat_defender_player = combat_defender_player_idx;
     Cache_Graphics_Combat();
-    CMB_Terrain_Init__WIP(wx, wy, wp);
-    Defending_Unit_Count = CMB_Units_Init__WIP(troop_count, troops);
+    Build_Battlefield(wx, wy, wp);
+    Defending_Unit_Count = Prepare_All_Battle_Units(troop_count, troops);
     CMB_ATKR_First_CE = 0;
     CMB_DEFR_First_CE = 0;
     CMB_combat_structure = Combat_Structure(wx, wy, wp, 0);
@@ -422,7 +422,7 @@ Tactical_Combat__WIP()
     CMB_TargetFrame = 0;
     CRP_CMB_NeverChecked1 = 1;
     m_cp_took_turn = ST_FALSE;
-    if(_combat_defender_player == combat_computer_player)
+    if(_combat_defender_player == _combat_remote_player)
         AI_CMB_PlayTurn__WIP(_combat_defender_player);
         CMB_PrepareTurn__WIP();
         m_cp_took_turn = ST_TRUE;

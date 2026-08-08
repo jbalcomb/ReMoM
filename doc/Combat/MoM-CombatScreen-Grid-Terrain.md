@@ -7,7 +7,7 @@ Load_Combat_Terrain_Pictures()
         _combat_terrain_pict_segs[itr] = LBX_Reload_Next(combat_terrain_set_lbx_filename, itr, EMS_PFBA);
 CMB_ComposeBackgrnd__WIP()
     Clipped_Draw(screen_x, screen_y, _combat_terrain_pict_segs[combat_terrain_type]);
-Combat_Screen_Map_Draw__WIP()
+Combat_Screen_Map_Draw()
     battlefield_terrain_type = battlefield->terrain_type[((cgy * COMBAT_GRID_WIDTH) + cgx)];
 
 
@@ -85,7 +85,7 @@ CMB_GetTileX()  ==> Get_Combat_Grid_Cell_X()
 CMB_GetTileY()  ==> Get_Combat_Grid_Cell_Y()
 
 CMB_TerrPatchGen() ==> CMB_TerrPatchGen__WIP() ==> Patch_Terrain_Group()
-CMB_Terrain_Init() ==> CMB_Terrain_Init__WIP() ==> 
+CMB_Terrain_Init() ==> Build_Battlefield() ==> 
 
 IMG_CMB_TerrTiles  ==> _combat_terrain_pict_segs
 IMG_CMB_Trees  ==> 
@@ -131,9 +131,9 @@ Tactical_Combat_Draw()
         ONLY handles drawing *special* terrain types  (battlefield_terrain >= 48)
 
 Tactical_Combat__WIP()
-    |-> CMB_Terrain_Init__WIP(wx, wy, wp);
+    |-> Build_Battlefield(wx, wy, wp);
 
-CMB_Terrain_Init__WIP()
+Build_Battlefield()
     ...
     |-> Load_Combat_Terrain_Pictures(Terrain_Type, wp);
     |-> Generate_Combat_Map__WIP(Location_Type, City_House_Type, &Road_Matrix[0], Enchanted_Roads, Terrain_Type, &River_Matrix[0], Flying_Fortress, ATKR_FloatingIsland, DEFR_FloatingIsland, City_Walls, City_Population, Magic_Walls);
@@ -200,16 +200,16 @@ COMBAT_GRID_CELL_COUNT == 462
 So, ...MoveCost_Ground[]?
 
 
-CMB_Terrain_Init__WIP()
+Build_Battlefield()
     ...
     |-> Load_Combat_Terrain_Pictures(Terrain_Type, wp);
     ...
     |-> Generate_Combat_Map__WIP()
         |-> CMB_TileGen__WIP()
-...reduces terrain to a single value in CMB_Terrain_Init__WIP()
+...reduces terrain to a single value in Build_Battlefield()
 ...passes that to Generate_Combat_Map__WIP()
 
-`CMB_Terrain_Init__WIP()` passes a single terrain value to `Generate_Combat_Map__WIP()`
+`Build_Battlefield()` passes a single terrain value to `Generate_Combat_Map__WIP()`
 ¿ "combat terrain [set|core|base|...]" ?
 
 combat terrain set
@@ -339,10 +339,10 @@ combat_terrain_type = battlefield->Tile_Terrain[((cgy * 21) + cgx)];
 Tactical_Combat__WIP()
     |-> CMB_ComposeBackgrnd__WIP()
 
-CMB_Terrain_Init__WIP()
+Build_Battlefield()
     |-> CMB_ComposeBackgrnd__WIP()
 
-CMB_ComposeBackgrnd__WIP() gets called by CMB_Terrain_Init__WIP() and, whenever there's a change/interaction, it gets called by Tactical_Combat__WIP().
+CMB_ComposeBackgrnd__WIP() gets called by Build_Battlefield() and, whenever there's a change/interaction, it gets called by Tactical_Combat__WIP().
 CMB_DrawMap__WIP() only gets called by CMB_DrawFullScreen__WIP(), when it is time to actually (re-)draw the screen.
 
 

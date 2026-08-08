@@ -56,14 +56,14 @@ Used in Auto-Combat, but also used elsewhere
 PoI's?
 'Human Player' clicks 'Auto'
     _human_out_of_moves = ST_FALSE;
-    AI_CMB_PlayTurn__WIP(combat_human_player);
+    AI_CMB_PlayTurn__WIP(_combat_local_player);
     winner = Check_For_Winner();
     if(winner != ST_UNDEFINED)
         leave_screen = ST_UNDEFINED;
 
 
 ## AI_CMB_PlayTurn__WIP()
-    if(player_idx != combat_human_player)
+    if(player_idx != _combat_local_player)
         // SPELLY  G_CMB_CastSpell((player_idx + 20), _combat_wx, _combat_wy, _combat_wp);
     winner = Check_For_Winner();  // ¿ because spell cast may resulted in a win/loss ?
     if(winner == ST_UNDEFINED)

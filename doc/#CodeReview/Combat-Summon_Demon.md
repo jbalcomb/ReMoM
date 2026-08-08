@@ -52,7 +52,7 @@ AI_BU_ProcessAction()
             |-> Release_Block()
             |-> Release_Block()
 
-~ CMB_Units_Init__WIP()  AKA Prepare_All_Battle_Units()
+~ Prepare_All_Battle_Units()  AKA Prepare_All_Battle_Units()
 OON XREF:  Prepare_Battle_Unit_Summons() |-> Prepare_Battle_Unit
 ...which is only used for scc_Summoning and USA 'Summon Demon'
 OON XREF:  Combat_Cast_Spell() |-> Summon_Demon()

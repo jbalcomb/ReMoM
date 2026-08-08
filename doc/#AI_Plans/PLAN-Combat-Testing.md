@@ -52,7 +52,7 @@ Synthesize `s_BATTLE_UNIT` fixtures directly, call `Set_Random_Seed()`, test the
 New mode: load a crafted save, call `Set_Random_Seed()` *immediately before* combat entry (so overland history cannot shift the rolls), set `_combat_wx/wy/wp` and the troop list, call `Combat__WIP()` directly.
 
 - **Strategic:** both sides AI → `Strategic_Combat__WIP` runs as-is, headless today.
-- **Tactical AI-vs-AI:** force the tactical path with `_auto_combat_flag = ST_TRUE`. Unproven piece: the tactical alloc/draw path (`CMB_BaseAllocs__WIP`, `CMB_LoadResources__WIP`, `Cache_Graphics_Combat`, `PageFlip_FX`) under `Platform_Headless` — this is the tracer bullet.
+- **Tactical AI-vs-AI:** force the tactical path with `_auto_combat_flag = ST_TRUE`. Unproven piece: the tactical alloc/draw path (`Allocate_Combat_Base_Blocks`, `Combat_Screen_Load_Resources`, `Cache_Graphics_Combat`, `PageFlip_FX`) under `Platform_Headless` — this is the tracer bullet.
 
 After `End_Of_Combat__WIP`, write the `Combat_Dump` and assert. Scenario matrix: open-field stack fight, city assault with walls, lair, flee/retreat, turn-50 timeout — several seeds each.
 

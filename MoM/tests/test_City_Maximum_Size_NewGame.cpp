@@ -55,7 +55,7 @@ protected:
     {
         Pool_Init();  // Allocate_Space() is static-pool-backed; reset the arena each test.
 
-        // Allocate _world_maps: 2 planes * 2400 tiles * 2 bytes = 9600 bytes = 600 paragraphs
+        // Allocate _world_maps: 2 planes * 2400 squares * 2 bytes = 9600 bytes = 600 paragraphs
         _world_maps = (uint8_t *)Allocate_Space(602);
 
         // CLAUDE  Wire the int16_t (word-strided) view that City_Maximum_Size_NewGame reads via

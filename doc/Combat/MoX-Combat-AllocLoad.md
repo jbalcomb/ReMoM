@@ -37,7 +37,7 @@ ALLOC.C
     global_battle_unit = (struct s_BATTLE_UNIT *)Allocate_Space(8);  // 8 PR, 128 B
 
 
-void CMB_BaseAllocs__WIP(void)
+void Allocate_Combat_Base_Blocks(void)
     // MoO2  _combat_data = Allocate_First_Block()
     battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, 348);  // 348 PR, 5568 B
     combat_grid_entities = (struct s_COMBAT_ENTITY *)Allocate_Next_Block(_screen_seg, 482);  // 482 PR, 7712 B
@@ -49,7 +49,7 @@ void CMB_BaseAllocs__WIP(void)
     _cmbt_path_data = (int16_t *)Near_Allocate_Next(1008);
     CMB_Path_Xs = Near_Allocate_Next(504);
     CMB_Path_Ys = Near_Allocate_Next(504);
-void CMB_LoadResources__WIP(void)
+void Combat_Screen_Load_Resources(void)
     battle_units = (struct s_BATTLE_UNIT *)Allocate_Next_Block(_screen_seg, 249);
     CMB_IDK_4PR = (int16_t *)Allocate_Next_Block(_screen_seg, 4);  // header + sub-header + 2 PR ... or header + 3 sub-headers?
     CMB_HolyBonusArray  = (int16_t *)Allocate_Next_Block(_screen_seg, 6);

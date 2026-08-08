@@ -9,7 +9,7 @@ CMB_DrawEntities__WIP()
 
 
 
-CMB_Units_Init__WIP()
+Prepare_All_Battle_Units()
 UU_BU_LoadFigureGFX()
 Prepare_Battle_Unit()
 Combat_Figure_Load()
@@ -30,7 +30,7 @@ struct s_BATTLE_UNIT
 struct s_BATTLE_UNIT * battle_units;                            // alloc in IDK_Combat_Allocate() and CMB_LoadResources()
 also used to index battle_unit_picts_seg[]
 ...base/final unit pictures
-CMB_LoadResources__WIP()
+Combat_Screen_Load_Resources()
     battle_units = (struct s_BATTLE_UNIT *)Allocate_Next_Block(_screen_seg, 249);
 Strategic_Combat_Allocate()
     battle_units = (struct s_BATTLE_UNIT *)Allocate_First_Block(_screen_seg, 249);
@@ -50,8 +50,8 @@ XREF:
     j_Combat_Figure_Load()
         UU_BU_LoadFigureGFX+2A         call    j_Combat_Figure_Load
         Prepare_Battle_Unit+47 call    j_Combat_Figure_Load
-        CMB_Units_Init__WIP+C8         call    j_Combat_Figure_Load
-        CMB_Units_Init__WIP+27E        call    j_Combat_Figure_Load
+        Prepare_All_Battle_Units+C8         call    j_Combat_Figure_Load
+        Prepare_All_Battle_Units+27E        call    j_Combat_Figure_Load
         CMB_RaiseDead+39E              call    j_Combat_Figure_Load
         CMB_AnimateDead+362            call    j_Combat_Figure_Load
 
@@ -82,7 +82,7 @@ XREF:
 
 
 
-CMB_CreateEntities__WIP()
+Combat_Grid_Entities()
 XREF:
     Tactical_Combat_Draw()
     NX_j_CMB_CreateEntities__WIP()
@@ -95,8 +95,8 @@ OON XREF Tactical_Combat_Draw()
 
 
 
-CMB_CreateEntities__WIP()
-    CMB_SpawnFigure__WIP()
+Combat_Grid_Entities()
+    Combat_Screen_Map_Draw_Entities()
         CMB_CreateEntity__WIP()
 
 combat_grid_entities[combat_grid_entity_count]
@@ -109,13 +109,13 @@ draw type can be:
 ;   4 - simple single frame from EMM TILEX
 
 
-CMB_SpawnFigure__WIP()
+Combat_Screen_Map_Draw_Entities()
     CMB_CreateEntity__WIP(draw_x, draw_y, seg_or_idx, 13, 23, UU, 1, controller_idx, figure_set_idx, outline_magic_realm, BldAmt, UU, Blood_Frame);
 
-CMB_CreateEntities__WIP()
+Combat_Grid_Entities()
     for(itr = 0; itr < _combat_total_unit_count; itr++)
         for(itr_figures = 0; itr_figures < unit_figure_count; itr_figures++)
-            CMB_SpawnFigure__WIP(
+            Combat_Screen_Map_Draw_Entities(
                 battle_units[itr].bufpi, 
                 battle_units[itr].cgx, 
                 battle_units[itr].cgy, 
@@ -131,7 +131,7 @@ CMB_CreateEntities__WIP()
                 battle_units[itr].Atk_FigLoss, 0
             );
 
-void CMB_SpawnFigure__WIP(
+void Combat_Screen_Map_Draw_Entities(
     int64_t seg_or_idx, 
     int16_t cgx, 
     int16_t position_cgc1, 
@@ -149,7 +149,7 @@ void CMB_SpawnFigure__WIP(
 )
 
 
-CMB_CreateEntities__WIP()
+Combat_Grid_Entities()
     ...changes to battle units
         Combat_Unit_Enchantment_Outline_Set(itr);  // sets battle_units[].outline_magic_realm
         BU_SetBaseAnims__WIP(itr);  // sets Always_Animate and Move_Bob
@@ -209,24 +209,24 @@ BATTLE_UNIT_FACING_DRECTION
 
 
 Eh?
-CMB_SpawnFigure__WIP()
+Combat_Screen_Map_Draw_Entities()
 
 
-CMB_CreateEntities__WIP()
+Combat_Grid_Entities()
     CMB_EntitiesReset();
-    // TODO  CMB_SpawnTrees();
-    // TODO  CMB_SpawnRocks();
+    // TODO  Spawn_Tree_Entities();
+    // TODO  Spawn_Rock_Entities();
     CMB_UpdateTrueSight();
     for(itr = 0; itr < _combat_total_unit_count; itr++)
         battle_units[itr].Image_Effect = 0;
         Combat_Unit_Enchantment_Outline_Set(itr);
         BU_SetBaseAnims__WIP(itr);
-        Curse_Anim = BU_GetCombatEffect__WIP(itr);
+        Curse_Anim = Battle_Unit_Curse_Effects(itr);
         BU_SetVisibility__WIP(itr);
         for(itr_figures = 0; itr_figures < unit_figure_count; itr_figures++)
-            CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+            Combat_Screen_Map_Draw_Entities(battle_units[itr].bufpi, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
         if(Curse_Anim != ST_UNDEFINED)
-            // TODO  CMB_SpawnUnitCurse(battle_units[itr].cgx, battle_units[itr].position_cgc1, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, Curse_Anim);
+            // TODO  Spawn_Curse_Entity(battle_units[itr].cgx, battle_units[itr].position_cgc1, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, Curse_Anim);
         Spawn_Missile_Entities();
         CMB_SpawnVortices();
         CMB_SpawnStructures();
@@ -238,7 +238,7 @@ CMB_CreateEntities__WIP()
 
 
 
-CMB_CreateEntities__WIP()
+Combat_Grid_Entities()
     for(itr = 0; itr < _combat_total_unit_count; itr++)
 
 

@@ -4464,7 +4464,7 @@ static void Diplomacy_Exchange_Spell__WIP(void)
 */
 static void Cancel_Players_City_Enchantments(int16_t player1, int16_t player2)
 {
-    uint8_t * enchantments = 0;
+    int8_t * enchantments = 0;
     int16_t city_idx = 0;  // _SI_
     int16_t ench_idx = 0;  // _CX_
 

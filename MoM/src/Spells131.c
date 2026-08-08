@@ -394,7 +394,7 @@ scc_Dispels        = 18,   / * COMBAT:  Dispel Magic, Dispel Magic True * /
 
 battle_units[battle_unit_idx].controller_idx == player_idx
 0-14
-battle_units[battle_unit_idx].Combat_Effects
+battle_units[battle_unit_idx].combat_effects
 
 (battle_units[battle_unit_idx].controller_idx != player_idx)
 'Spell Lock'
@@ -529,7 +529,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
 
                     Test_Flag = (1 << Flag_Loop_Var);
 
-                    if((battle_units[battle_unit_idx].Combat_Effects & Test_Flag) > 0)
+                    if((battle_units[battle_unit_idx].combat_effects & Test_Flag) > 0)
                     {
 
                         if(
@@ -564,7 +564,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                                 // SPECFX.LBX, 051  "DISPELL1"  ""
                                 dispell1_notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr131__2of2, 51, _screen_seg);
 
-                                battle_units[battle_unit_idx].Combat_Effects ^= Test_Flag;
+                                battle_units[battle_unit_idx].combat_effects ^= Test_Flag;
 
                                 if(*notify_count < 5)
                                 {
@@ -824,7 +824,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                 // ; attempt to remove Haste if present
                 // ; BUG: not protected by Spell Lock
 
-                if(battle_units[battle_unit_idx].Combat_Effects == bue_Haste)
+                if(battle_units[battle_unit_idx].combat_effects == bue_Haste)
                 {
 
                     threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[spl_Haste].casting_cost, battle_units[battle_unit_idx].controller_idx, spell_data_table[spl_Haste].magic_realm));
@@ -839,7 +839,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                         // SPECFX.LBX, 051  "DISPELL1"  ""
                         dispell1_notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr131__2of2, 51, _screen_seg);
 
-                        battle_units[battle_unit_idx].Combat_Effects ^= bue_Haste;  // turn off the enchantment
+                        battle_units[battle_unit_idx].combat_effects ^= bue_Haste;  // turn off the enchantment
 
                         if(*notify_count < 5)
                         {
@@ -883,7 +883,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                 // ; BUG: fails to clear the confusion state
 
                 if(
-                    (battle_units[battle_unit_idx].Combat_Effects == bue_Confusion)
+                    (battle_units[battle_unit_idx].combat_effects == bue_Confusion)
                     &&
                     (battle_units[battle_unit_idx].Confusion_State == 2)
                 )
@@ -915,7 +915,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                         dispell1_notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr131__2of2, 51, _screen_seg);
 
                         // ; BUG: should also clear the confusion state
-                        battle_units[battle_unit_idx].Combat_Effects ^= bue_Confusion;  // turn off the enchantment
+                        battle_units[battle_unit_idx].combat_effects ^= bue_Confusion;  // turn off the enchantment
 
                         if(*notify_count < 5)
                         {
@@ -1702,14 +1702,11 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
     Copy_On_To_Off_Page();
     Copy_Off_To_Back();
 
-    // ; create a list of target BU indexes, and another of
-    // ; the pointers to their names
-    // ; BUG: considers non-involved, recalled, and fleeing
-    // ;  units as valid targets
+    // ; create a list of target BU indexes, and another of the pointers to their names
+    // ; BUG: considers non-involved, recalled, and fleeing  units as valid targets
     // ; BUG: the arrays are only 8 elements long, need 9+
     // ; BUG? considers the Chosen as an invalid target
-    // ; BUG: writes to the name pointers instead of assigning
-    // ;  to them
+    // ; BUG: writes to the name pointers instead of assigning  to them
     Target_Count = 0;
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
@@ -1783,8 +1780,7 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
     {
         if(player_idx != HUMAN_PLAYER_IDX)
         {
-            // ; BUG: will enter an infinite loop if all 9 tiles in
-            // ; the selected area are occupied or invalid
+            // ; BUG: will enter an infinite loop if all 9 squares in the selected area are occupied or invalid
             do
             {
                 if(player_idx == _combat_attacker_player)
@@ -1801,17 +1797,18 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
 
         battle_unit_idx = Target_BU_List[Picked_Target];
 
+        // ~ Prepare_Battle_Unit()
         if(battle_units[battle_unit_idx].figure_max > 1)
         {
-            battle_units[battle_unit_idx].figure_cnt = (battle_units[battle_unit_idx].figure_max / 2);
             battle_units[battle_unit_idx].front_figure_damage = 0;
+            battle_units[battle_unit_idx].figure_cnt = (battle_units[battle_unit_idx].figure_max / 2);
         }
         else
         {
             battle_units[battle_unit_idx].figure_cnt = battle_units[battle_unit_idx].figure_max;
             battle_units[battle_unit_idx].front_figure_damage = (battle_units[battle_unit_idx].hits / 2);
         }
-        battle_units[battle_unit_idx].Combat_Effects = 0;
+        battle_units[battle_unit_idx].combat_effects = 0;
         battle_units[battle_unit_idx].enchantments = 0;
         _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = 0;
         battle_units[battle_unit_idx].cgx = cgx;
@@ -1821,7 +1818,7 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
         battle_units[battle_unit_idx].move_anim_ctr = 0;
         battle_units[battle_unit_idx].outline_magic_realm = 0;
         battle_units[battle_unit_idx].Atk_FigLoss = 0;
-        battle_units[battle_unit_idx].Moving = 0;
+        battle_units[battle_unit_idx].mid_move = ST_FALSE;
         battle_units[battle_unit_idx].action = bua_Ready;
         battle_units[battle_unit_idx].bufpi = Combat_Figure_Load(_UNITS[battle_units[battle_unit_idx].unit_idx].type, Battle_Unit_Pict_Open());
         battle_units[battle_unit_idx].status = bus_Active;
@@ -1946,15 +1943,16 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
     if(Picked_Target > ST_UNDEFINED)
         battle_unit_idx = Target_BU_List[Picked_Target];
 
+    // ~ Prepare_Battle_Unit()
     battle_units[battle_unit_idx].controller_idx = (int8_t)player_idx;  // ; BUG: fails to set the overland owner of the unit
     battle_units[battle_unit_idx].figure_cnt = battle_units[battle_unit_idx].figure_max;
     battle_units[battle_unit_idx].front_figure_damage = 0;
-    battle_units[battle_unit_idx].Combat_Effects = 0;
+    battle_units[battle_unit_idx].combat_effects = 0;
     battle_units[battle_unit_idx].enchantments = 0;
     battle_units[battle_unit_idx].move_anim_ctr = 0;
     battle_units[battle_unit_idx].outline_magic_realm = 0;
     battle_units[battle_unit_idx].Atk_FigLoss = 0;
-    battle_units[battle_unit_idx].Moving = 0;
+    battle_units[battle_unit_idx].mid_move = ST_FALSE;
     battle_units[battle_unit_idx].action = bua_Ready;
     _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = 0;
     _UNITS[battle_units[battle_unit_idx].unit_idx].mutations |= UM_UNDEAD;

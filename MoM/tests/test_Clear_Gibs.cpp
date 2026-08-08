@@ -4,6 +4,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include "../src/Combat.h"
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_SET.h"
 

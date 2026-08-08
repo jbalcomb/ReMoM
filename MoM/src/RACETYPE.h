@@ -38,7 +38,12 @@ enum e_RACE_TYPE
     rt_Death      = 20  /* SPELLSCR.LBX, 064  "SUMMPURP"    "" */
 };
 
-
+enum e_RACE_HOUSE_TYPE
+{
+    rht_Standard  = 0,
+    rht_Tree      = 1,
+    rht_Mound     = 2
+};
 
 // sizeof=0x18  24
 struct s_RACE_TYPE
@@ -48,7 +53,7 @@ struct s_RACE_TYPE
     /* 04 */ int16_t cant_build[7];  // enum BLD_TYPE
     /* 12 */ int16_t outpost_growth_rate;  // base 10
     /* 14 */ int16_t Growth_Mod;
-    /* 16 */ int16_t house_type;  /* {0: standard, 1: tree house, 2: mound} */
+    /* 16 */ int16_t house_type;  /* enum e_RACE_OUSE_TYPE */
     /* 18 */
 };
 

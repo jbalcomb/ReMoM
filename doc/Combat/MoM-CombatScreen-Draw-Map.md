@@ -16,7 +16,7 @@ Draw Battlefield
 
 
 CMB_DrawFullScreen__WIP()
-    |-> CMB_CreateEntities__WIP();
+    |-> Combat_Grid_Entities();
     |-> CMB_DrawMap__WIP();
     draw combat enchantments
     draw player name, city name, or lair type
@@ -37,15 +37,15 @@ CMB_DrawFullScreen__WIP()
 ## pict_or_idx
     CMB_CreateEntity__WIP()
         NX_j_CMB_CreateEntity__WIP()
-        CMB_SpawnTrees()
-        CMB_SpawnRocks()
+        Spawn_Tree_Entities()
+        Spawn_Rock_Entities()
         CMB_SpawnStructures()
         CMB_SpawnStoneWall()
         CMB_SpawnDarkWall()
         CMB_SpawnFireWall()
         CMB_SpawnVortices()
-        CMB_SpawnFigure__WIP() passes battle_units[itr].bufpi
-        CMB_SpawnUnitCurse()
+        Combat_Screen_Map_Draw_Entities() passes battle_units[itr].bufpi
+        Spawn_Curse_Entity()
         Spawn_Missile_Entities()
 
 Trees, Rocks, Structures, StoneWall, DarkWall, FireWall, Vortices, UnitCurse, Projectiles
@@ -76,7 +76,7 @@ Trees, Rocks, Structures, StoneWall, DarkWall, FireWall, Vortices, UnitCurse, Pr
 ; has multiple BUGs related to outposts, roads across
 ; the Y-axis, rivers, and walls
 */
-void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
+void Build_Battlefield(int16_t wx, int16_t wy, int16_t wp)
 
 
 iters cities
@@ -115,12 +115,12 @@ use CMB_EntitySprites[IDK_combat_entity_idx].pict_seg
 ...draw battle unit figure...
 
 Deploy_Battle_Units()
-CMB_CreateEntities__WIP()
-CMB_SpawnFigure__WIP()
+Combat_Grid_Entities()
+Combat_Screen_Map_Draw_Entities()
 CMB_CreateEntity__WIP()
 CMB_DrawEntities__WIP()
 
-...`Deploy_Battle_Units() |-> CMB_CreateEntities__WIP() |-> CMB_SpawnFigure__WIP() |-> CMB_CreateEntity__WIP() |-> CMB_DrawEntities__WIP()`...
+...`Deploy_Battle_Units() |-> Combat_Grid_Entities() |-> Combat_Screen_Map_Draw_Entities() |-> CMB_CreateEntity__WIP() |-> CMB_DrawEntities__WIP()`...
 ...
 ...
 ...
@@ -144,10 +144,10 @@ Combat_Figure_Compose_USEFULL()
 
 
 
-CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+Combat_Screen_Map_Draw_Entities(battle_units[itr].bufpi, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
 
 
-void CMB_SpawnFigure__WIP(  int64_t seg_or_idx, 
+void Combat_Screen_Map_Draw_Entities(  int64_t seg_or_idx, 
                             int16_t position_cgc2, int16_t position_cgc1, 
                             int16_t target_cgc2,   int16_t target_cgc1, 
                             int16_t MoveStage,
@@ -195,7 +195,7 @@ Deploy_Battle_Units()
     battle_units[Melee_Units[itr]].position_cgc2 = starting_cgc2[ctr];
     battle_units[Melee_Units[itr]].position_cgc1 = starting_cgc1[ctr];
 
-CMB_SpawnFigure__WIP( battle_units[itr].position_cgc2, battle_units[itr].position_cgc1 )
+Combat_Screen_Map_Draw_Entities( battle_units[itr].position_cgc2, battle_units[itr].position_cgc1 )
     Combat_Grid_Screen_Coordinates(position_cgc2, position_cgc1, 0, 0, &position_screen_x, &position_screen_y);
     draw_x = (((((target_screen_x - position_screen_x) * MoveStage) / 8) + position_screen_x) + fig_x);
     |-> CMB_CreateEntity__WIP( draw_x )
@@ -341,10 +341,10 @@ none
 
 Deploy_Battle_Units() uses _combat_total_unit_count...
 
-...set in CMB_Units_Init__WIP()
+...set in Prepare_All_Battle_Units()
 ...uses troop_count
 Tactical_Combat__WIP()
-    Defending_Unit_Count = CMB_Units_Init__WIP(troop_count, troops);
+    Defending_Unit_Count = Prepare_All_Battle_Units(troop_count, troops);
 ...passed in int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_defender_player_idx, int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[])
 ...passed in int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t troop_count, int16_t troops[])
 ...passed in combat_result = Combat__WIP(player_idx, defender_idx, troop_count, &troops[0]);

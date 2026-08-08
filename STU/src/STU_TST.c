@@ -88,7 +88,7 @@ void TST_Delete_Stack(int16_t target_unit_idx, int16_t target_wx, int16_t target
        bug -- a stale index landing on a different unit).  Re-select via the game's own post-turn path
        (NEXTTURN.c:469 does exactly this): WIZ_NextIdleStack picks a valid idle stack, updates _unit,
        rebuilds _unit_stack[] fresh through Select_Unit_Stack -> Build_Unit_Stack, and sets the map
-       focus.  Rebuilding for the deleted tile instead would leave an empty (unselected) stack. */
+       focus.  Rebuilding for the deleted square instead would leave an empty (unselected) stack. */
     WIZ_NextIdleStack(HUMAN_PLAYER_IDX, &_map_x, &_map_y, &_map_plane);
 }
 

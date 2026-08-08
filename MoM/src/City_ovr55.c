@@ -732,7 +732,7 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
     int16_t city_count = 0;
     int16_t summon_city_idx = 0;
     int16_t fortress_city_idx = 0;
-    uint8_t * city_enchantments = 0;
+    int8_t * city_enchantments = 0;
     int16_t city_owner_idx = 0;
     int16_t itr = 0;  // _DI_
 
@@ -1041,9 +1041,9 @@ void Print_City_Enchantment_List(int16_t start_x, int16_t start_y, int16_t * cit
 */
 void Turn_Off_City_Enchantment(int16_t city_idx, int16_t ench_idx)
 {
-    uint8_t * echantments = 0;
+    int8_t * echantments = 0;
 
-    echantments = _CITIES[city_idx].enchantments;
+    echantments = &_CITIES[city_idx].enchantments[0];
 
     echantments[ench_idx] = 0;
 
@@ -1930,7 +1930,7 @@ void City_Screen_Draw_Production_Coins(int16_t city_idx)
 // drake178: ¿ ?
 void Build_City_Enchantment_List(int16_t city_idx, int16_t city_enchantment_list[], int16_t city_enchantment_owner_list[], int16_t * city_enchantment_list_count)
 {
-    uint8_t * city_enchantments = 0;
+    int8_t * city_enchantments = 0;
     int16_t city_owner_idx = 0;
     int16_t itr1_city_enchantment_count = 0;
     int16_t itr_city_enchantments = 0;  // _SI_
@@ -1939,7 +1939,7 @@ void Build_City_Enchantment_List(int16_t city_idx, int16_t city_enchantment_list
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
-    city_enchantments = (uint8_t *)&_CITIES[city_idx].enchantments;
+    city_enchantments = &_CITIES[city_idx].enchantments[0];
 
     city_enchantment_count = 0;
 

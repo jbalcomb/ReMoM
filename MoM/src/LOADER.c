@@ -872,12 +872,6 @@ void Load_Unit_StatFigs(void)
 
 
 // WZD o52p23
-// drake178: GFX_Swap_AppendCmbt()
-/*
-; appends combat graphics to GFX_Swap_Seg
-; these are all in reserved EMM handles, so only
-; headers will be created in the allocation
-*/
 /*
 
 ¿ all LBX_Reload_Next() ?
@@ -887,12 +881,10 @@ void Load_Unit_StatFigs(void)
 */
 void Reload_Combat_Graphics_Cache(void)
 {
-    int16_t itr1 = 0;  // _SI_
-    int16_t itr2 = 0;  // _DI_
+    int16_t itr1 = 0;
+    int16_t itr2 = 0;
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Reload_Combat_Graphics_Cache()", __FILE__, __LINE__);
-#endif
 
     // CMBMAGIC.LBX, 000  "LIGHTNIN"  ""
     // CMBMAGIC.LBX, 008  "ARROW"     ""
@@ -911,151 +903,226 @@ void Reload_Combat_Graphics_Cache(void)
     // CMBMAGIC.LBX, 112  "CLOUD"     ""
     for(itr1 = 0; itr1 < 15; itr1++)
     {
-
         for(itr2 = 0; itr2 < 8; itr2++)
         {
-
-            // CMB_RangedAtx_GFX[((itr1 * 8) + itr2)].Up = LBX_Reload_Next(cmbmagic_lbx_file__ovr052, ((itr1 * 8) + itr2), GFX_Swap_Seg);
             CMB_RangedAtx_GFX[itr1][itr2] = LBX_Reload_Next(cmbmagic_lbx_file__ovr052, ((itr1 * 8) + itr2), g_graphics_cache_seg);
-
         }
-
     }
 
     // CMBMAGIC.LBX, 120  "VORTEX2"   ""
     magic_vortex_seg = LBX_Reload_Next(cmbmagic_lbx_file__ovr052, 120, g_graphics_cache_seg);
 
+    // CMBTCITY.LBX, 024    "BLOOD"     ""
+    // CMBTCITY.LBX, 025    "BLOOD"     ""
+    // CMBTCITY.LBX, 026    "BLOOD"     ""
+    // CMBTCITY.LBX, 027    "BLOOD"     ""
+    // CMBTCITY.LBX, 028    "BLOOD"     ""
     for(itr1 = 0; itr1 < 5; itr1++)
     {
-
-        IMG_CMB_Blood[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (24 + itr1), g_graphics_cache_seg);
-
+        cmbtcity_blood_segs[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (24 + itr1), g_graphics_cache_seg);
     }
 
+    // CMBTCITY.LBX, 119    "DAMAGE"    ""
     CMB_Damage_GFX = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 119, g_graphics_cache_seg);
 
+    // CMBTCITY.LBX, 120    "CHASM"     ""
     cmbt_cell_effect_seg = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 120, g_graphics_cache_seg);
 
+    // CMBTCITY.LBX, 002    "CITYBASE"  ""
+    // CMBTCITY.LBX, 003    "CITYBASE"  ""
+    // CMBTCITY.LBX, 004    "CITYBASE"  ""
+    // CMBTCITY.LBX, 005    "CITYBASE"  ""
+    // CMBTCITY.LBX, 006    "CITYBASE"  ""
+    // CMBTCITY.LBX, 007    "CITYBASE"  ""
+    // CMBTCITY.LBX, 008    "CITYBASE"  ""
+    // CMBTCITY.LBX, 009    "CITYBASE"  ""
+    // CMBTCITY.LBX, 010    "CITYBASE"  ""
+    // CMBTCITY.LBX, 011    "CITYBASE"  ""
+    // CMBTCITY.LBX, 012    "CITYBASE"  ""
+    // CMBTCITY.LBX, 013    "CITYBASE"  ""
+    // CMBTCITY.LBX, 014    "CITYBASE"  ""
+    // CMBTCITY.LBX, 015    "CITYBASE"  ""
+    // CMBTCITY.LBX, 016    "CITYBASE"  ""
     for(itr1 = 0; itr1 < 15; itr1++)
     {
-
         _combat_house_picts_segs[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (2 + itr1), g_graphics_cache_seg);
-
     }
 
+    // CMBTCITY.LBX, 017    "CITYBASE"  ""
+    // CMBTCITY.LBX, 018    "CITYBASE"  ""
+    // CMBTCITY.LBX, 019    "CITYBASE"  ""
+    // CMBTCITY.LBX, 020    "CITYBASE"  ""
+    // CMBTCITY.LBX, 021    "CITYBASE"  ""
+    // CMBTCITY.LBX, 022    "CITYBASE"  ""
+    // CMBTCITY.LBX, 023    "CITYBASE"  ""
     IMG_CMB_Fortress = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 17, g_graphics_cache_seg);
+    IMG_CMB_Outpost  = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 18, g_graphics_cache_seg);
+    IMG_CMB_Cave     = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 19, g_graphics_cache_seg);
+    IMG_CMB_Tower    = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 20, g_graphics_cache_seg);
+    IMG_CMB_Dungeon  = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 21, g_graphics_cache_seg);
+    IMG_CMB_Fort     = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 22, g_graphics_cache_seg);
+    IMG_CMB_Temple   = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 23, g_graphics_cache_seg);
 
-    IMG_CMB_Outpost = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 18, g_graphics_cache_seg);
-
-    IMG_CMB_Cave = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 19, g_graphics_cache_seg);
-
-    IMG_CMB_Tower = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 20, g_graphics_cache_seg);
-
-    IMG_CMB_Dungeon = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 21, g_graphics_cache_seg);
-
-    IMG_CMB_Fort = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 22, g_graphics_cache_seg);
-
-    IMG_CMB_Temple = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 23, g_graphics_cache_seg);
-
+    // CMBTCITY, 000    "CITYBASE"  ""
     IMG_CMB_RoadGrid = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 0, g_graphics_cache_seg);
 
+    // CMBTCITY, 001    "CITYBASE"  ""
     IMG_CMB_DirtTile = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 1, g_graphics_cache_seg);
 
+    // CMBTCITY.LBX, 121   "CITYBASE"  ""
     IMG_CMB_Ruins = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 121, g_graphics_cache_seg);
 
-    IMG_CMB_NatNode = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 65, g_graphics_cache_seg);
-
-    IMG_CMB_SorcNode = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 66, g_graphics_cache_seg);
-
+    // CMBTCITY.LBX, 065    "GREENODE"  ""
+    // CMBTCITY.LBX, 066    "CITYNODE"  ""
+    // CMBTCITY.LBX, 067    "CITYNODE"  ""
+    // CMBTCITY.LBX, 068    "CITYNODE"  ""
+    IMG_CMB_NatNode   = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 65, g_graphics_cache_seg);
+    IMG_CMB_SorcNode  = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 66, g_graphics_cache_seg);
     frame_scanned_seg = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 67, g_graphics_cache_seg);
+    frame_active_seg  = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 68, g_graphics_cache_seg);
 
-    frame_active_seg = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 68, g_graphics_cache_seg);
+    // CMBTCITY.LBX, 118    "WATER1"    ""
+    cmbtcity_mud_seg = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 118, g_graphics_cache_seg);
 
-    IMG_CMB_Mud = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 118, g_graphics_cache_seg);
+    // CMBTCITY.LBX, 117    "FLOTISLE"  ""
+    cmbtcity_flotisle_seg = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 117, g_graphics_cache_seg);
 
-    IMG_CMB_FlotIsle = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 117, g_graphics_cache_seg);
+    /* ¿ OGBUG: should load {113, 114, 115, 116} ? */
+    // CMBTCITY.LBX, 113    "CMBCLOUD"  ""
+    cmbtcity_cmbcloud_segs[0] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 113, g_graphics_cache_seg);
 
-    IMG_CMB_Cloud = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 113, g_graphics_cache_seg);
-
+    // CMBTCITY.LBX, 120    "CHASM"     ""
     cmbt_cell_effect_seg = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 120, g_graphics_cache_seg);
 
+    // CMBTCITY.LBX, 109    "WATER1"    ""
+    // CMBTCITY.LBX, 110    "WATER1"    ""
+    // CMBTCITY.LBX, 111    "WATER1"    ""
+    // CMBTCITY.LBX, 112    "WATER1"    ""
     for(itr1 = 0; itr1 < 4; itr1++)
     {
-
-        IMG_CMB_OceanTile[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (109 + itr1), g_graphics_cache_seg);
-
+        cmbtcity_ocean_segs[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (109 + itr1), g_graphics_cache_seg);
     }
 
+    // CMBTCITY.LBX, 069    "ROADGRID"  ""
+    // CMBTCITY.LBX, 070    "ROADGRID"  ""
+    // CMBTCITY.LBX, 071    "ROADGRID"  ""
+    // CMBTCITY.LBX, 072    "ROADGRID"  ""
+    // CMBTCITY.LBX, 073    "ROADGRID"  ""
+    // CMBTCITY.LBX, 074    "ROADGRID"  ""
+    // CMBTCITY.LBX, 075    "ROADGRID"  ""
+    // CMBTCITY.LBX, 076    "ROADGRID"  ""
+    // CMBTCITY.LBX, 077    "ROADGRID"  ""
+    // CMBTCITY.LBX, 078    "ROADGRID"  ""
+    // CMBTCITY.LBX, 079    "ROADGRID"  ""
+    // CMBTCITY.LBX, 080    "ROADGRID"  ""
+    // CMBTCITY.LBX, 081    "ROADGRID"  ""
+    // CMBTCITY.LBX, 082    "ROADGRID"  ""
+    // CMBTCITY.LBX, 083    "ROADGRID"  ""
+    // CMBTCITY.LBX, 084    "ROADGRID"  ""
+    // CMBTCITY.LBX, 085    "ROADGRID"  ""
+    // CMBTCITY.LBX, 086    "ROADGRID"  ""
+    // CMBTCITY.LBX, 087    "ROADGRID"  ""
+    // CMBTCITY.LBX, 088    "ROADGRID"  ""
+    // CMBTCITY.LBX, 089    "ROADGRID"  ""
+    // CMBTCITY.LBX, 090    "ROADGRID"  ""
+    // CMBTCITY.LBX, 091    "ROADGRID"  ""
+    // CMBTCITY.LBX, 092    "ROADGRID"  ""
+    // CMBTCITY.LBX, 093    "ROADGRID"  ""
+    // CMBTCITY.LBX, 094    "ROADGRID"  ""
+    // CMBTCITY.LBX, 095    "ROADGRID"  ""
+    // CMBTCITY.LBX, 096    "ROADGRID"  ""
     for(itr1 = 0; itr1 < 28; itr1++)
     {
-
-        IMG_CMB_RoadTiles[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (69 + itr1), g_graphics_cache_seg);
-
+        cmbtcity_roadgrid_segs[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (69 + itr1), g_graphics_cache_seg);
     }
 
+    // CMBTCITY.LBX, 097    ""          ""
+    // CMBTCITY.LBX, 098    ""          ""
+    // CMBTCITY.LBX, 099    ""          ""
+    // CMBTCITY.LBX, 100    ""          ""
+    // CMBTCITY.LBX, 101    ""          ""
+    // CMBTCITY.LBX, 102    ""          ""
+    // CMBTCITY.LBX, 103    "WATER1"    ""
+    // CMBTCITY.LBX, 104    "WATER1"    ""
+    // CMBTCITY.LBX, 105    "WATER1"    ""
+    // CMBTCITY.LBX, 106    "WATER1"    ""
+    // CMBTCITY.LBX, 107    "WATER1"    ""
+    // CMBTCITY.LBX, 108    "WATER1"    ""
     for(itr1 = 0; itr1 < 12; itr1++)
     {
-        IMG_CMB_RiverTile[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (97 + itr1), g_graphics_cache_seg);
-
+        cmbtcity_river_segs[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (97 + itr1), g_graphics_cache_seg);
     }
 
+    // CHRIVER.LBX, 000     ""          ""
+    // CHRIVER.LBX, 001     ""          ""
+    // CHRIVER.LBX, 002     ""          ""
+    // CHRIVER.LBX, 003     ""          ""
+    // CHRIVER.LBX, 004     ""          ""
+    // CHRIVER.LBX, 005     ""          ""
+    // CHRIVER.LBX, 006     ""          ""
+    // CHRIVER.LBX, 007     ""          ""
+    // CHRIVER.LBX, 008     ""          ""
+    // CHRIVER.LBX, 009     ""          ""
+    // CHRIVER.LBX, 010     ""          ""
+    // CHRIVER.LBX, 011     ""          ""
     for(itr1 = 0; itr1 < 12; itr1++)
     {
-
-        IMG_CMB_RivrNULLs[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (0 + itr1), g_graphics_cache_seg);
-
+        chriver_river_segs[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (0 + itr1), g_graphics_cache_seg);
     }
 
+    // CHRIVER.LBX, 012     "CHAOSWAT"  ""
+    // CHRIVER.LBX, 013     "CHAOSWAT"  ""
+    // CHRIVER.LBX, 014     "CHAOSWAT"  ""
+    // CHRIVER.LBX, 015     "CHAOSWAT"  ""
     for(itr1 = 0; itr1 < 4; itr1++)
     {
-
-        IMG_CMB_ChaosOcn[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (12 + itr1), g_graphics_cache_seg);
-
+        chriver_chaoswat_segs[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (12 + itr1), g_graphics_cache_seg);
     }
 
+    // CHRIVER.LBX, 024     "VOLCA01"   ""
+    // CHRIVER.LBX, 025     "VOLCA02"   ""
+    // CHRIVER.LBX, 026     "VOLCA03"   ""
+    // CHRIVER.LBX, 027     "VOLCA04"   ""
+    // CHRIVER.LBX, 028     "VOLCA05"   ""
+    // CHRIVER.LBX, 029     "VOLCA06"   ""
+    // CHRIVER.LBX, 030     "VOLCA07"   ""
+    // CHRIVER.LBX, 031     "VOLCA08"   ""
+    // CHRIVER.LBX, 032     "VOLCA09"   ""
     for(itr1 = 0; itr1 < 9; itr1++)
     {
-
-        IMG_CMB_Volcano[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (24 + itr1), g_graphics_cache_seg);
-
+        chriver_volca_segs[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (24 + itr1), g_graphics_cache_seg);
     }
 
     for(itr1 = 0; itr1 < 14; itr1++)
     {
-
         IMG_CMB_FireWall[itr1] = LBX_Reload_Next(citywall_lbx_file__ovr052, (36 + itr1), g_graphics_cache_seg);
-
     }
 
     for(itr1 = 0; itr1 < 14; itr1++)
     {
-
         IMG_CMB_DarkWall[itr1] = LBX_Reload_Next(citywall_lbx_file__ovr052, (50 + itr1), g_graphics_cache_seg);
-
     }
 
     for(itr1 = 0; itr1 < 3; itr1++)
     {
         for(itr2 = 0; itr2 < 12; itr2++)
         {
-
             IMG_CMB_StoneWalls[itr1][itr2] = LBX_Reload_Next(citywall_lbx_file__ovr052, ((itr1 * 12) + itr2), g_graphics_cache_seg);
-
         }
-
     }
-
+    // CHRIVER.LBX, 016  "CURSES"    ""
+    // CHRIVER.LBX, 017  "CURSES"    ""
+    // CHRIVER.LBX, 018  "CURSES"    ""
+    // CHRIVER.LBX, 019  "CURSES"    ""
+    // CHRIVER.LBX, 020  "CURSES"    ""
+    // CHRIVER.LBX, 021  "CURSES"    ""
+    // CHRIVER.LBX, 022  "CURSES"    ""
+    // CHRIVER.LBX, 023  "WEB"       ""
     for(itr1 = 0; itr1 < 8; itr1++)
     {
-
-        IMG_CMB_Curses[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (16 + itr1), g_graphics_cache_seg);
-
+        combat_curse_entity_seg[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (16 + itr1), g_graphics_cache_seg);
     }
-
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Reload_Combat_Graphics_Cache()", __FILE__, __LINE__);
-#endif
-
 }
 
 
@@ -1764,19 +1831,9 @@ void Cache_Graphics_Diplomacy(void)
 // WZD o52p34
 void Cache_Graphics_Combat(void)
 {
-
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Combat()", __FILE__, __LINE__);
-#endif
-
     Graphics_Cache_Reset();
-
     Reload_Combat_Graphics_Cache();
-
     Spellbook_Load_Small_Pictures();
-
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Cache_Graphics_Combat()", __FILE__, __LINE__);
-#endif
-
 }

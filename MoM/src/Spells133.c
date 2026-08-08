@@ -117,10 +117,10 @@ void Apply_Warp_Creature(int16_t battle_unit_idx)
             case 1:
             {
 
-                if((battle_units[battle_unit_idx].Combat_Effects & bue_Warped_Attack) == 0)
+                if((battle_units[battle_unit_idx].combat_effects & bue_Warped_Attack) == 0)
                 {
 
-                    battle_units[battle_unit_idx].Combat_Effects |= bue_Warped_Attack;
+                    battle_units[battle_unit_idx].combat_effects |= bue_Warped_Attack;
 
                 }
                 else
@@ -135,10 +135,10 @@ void Apply_Warp_Creature(int16_t battle_unit_idx)
             case 2:
             {
 
-                if((battle_units[battle_unit_idx].Combat_Effects & bue_Warped_Defense) == 0)
+                if((battle_units[battle_unit_idx].combat_effects & bue_Warped_Defense) == 0)
                 {
 
-                    battle_units[battle_unit_idx].Combat_Effects |= bue_Warped_Defense;
+                    battle_units[battle_unit_idx].combat_effects |= bue_Warped_Defense;
 
                 }
                 else
@@ -153,10 +153,10 @@ void Apply_Warp_Creature(int16_t battle_unit_idx)
             case 3:
             {
 
-                if((battle_units[battle_unit_idx].Combat_Effects & bue_Warped_Resist) == 0)
+                if((battle_units[battle_unit_idx].combat_effects & bue_Warped_Resist) == 0)
                 {
 
-                    battle_units[battle_unit_idx].Combat_Effects |= bue_Warped_Resist;
+                    battle_units[battle_unit_idx].combat_effects |= bue_Warped_Resist;
 
                 }
                 else
@@ -663,50 +663,28 @@ int16_t Combat_Spell_Dispel_Attempt(int16_t dispel_strength, int16_t spell_cast,
 
 
 // WZD o133p08
-/*
-; plays the Cracks Call animation using the chasm
-; functionality built into GUI_DrawCombatScreen
-*/
-/*
-
-*/
 void Animate_Cracks_Call(int16_t cgx, int16_t cgy, int16_t caster_idx)
 {
-    int16_t frame = 0;  // _SI_
+    int16_t frame = 0;
     int16_t frame_count = 0;  // DNE in Dasm
-
     if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
     {
         Play_Sound(SND_SpellCast, SND_SpellCast_size);
     }
-
     cmbt_cell_effect_cgx = cgx;
-
     cmbt_cell_effect_cgy = cgy;
-
     cmbt_cell_effect_seg = spell_animation_seg;
-
     cmbt_cell_effect_active = ST_TRUE;
-
     frame_count = FLIC_Get_FrameCount(spell_animation_seg);
-
-    for(frame = 0; (frame_count * 7) > frame; frame++)
+    for(frame = 0; (frame_count * CELL_EFFECT_ANIM_HOLD) > frame; frame++)  /* HACK  to slow down the cycle */
     {
-
-        cmbt_cell_effect_frame = (frame / 6);
-
+        cmbt_cell_effect_frame = frame;
         Set_Page_Off();
-
-        Combat_Screen_Draw();  // incrs frame, 0-7; sets frame
-
+        Combat_Screen_Draw();
         Combat_Cast_Spell_Message(caster_idx, spl_Cracks_Call);
-
         PageFlip_FX();
-
     }
-
     cmbt_cell_effect_active = ST_FALSE;
-
 }
 
 

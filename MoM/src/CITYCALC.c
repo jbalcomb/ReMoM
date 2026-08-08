@@ -241,15 +241,10 @@ void Players_Update_Magic_Power(void)
 // WZD o120p03
 int16_t Unit_Gold_Upkeep(int16_t unit_idx)
 {
-    int16_t unit_gold_upkeep;
-    int16_t unit_owner_idx;
-
+    int16_t unit_gold_upkeep = 0;
+    int16_t unit_owner_idx = 0;
     unit_owner_idx = _UNITS[unit_idx].owner_idx;
-
-    /* HACK */  if(unit_owner_idx == ST_UNDEFINED) { return 0; }
-
     unit_gold_upkeep = 0;
-
     if( (_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_FANTASTIC) == 0)
     {
         if(_UNITS[unit_idx].type > ut_Chosen)
@@ -258,10 +253,9 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
         }
         else
         {
-            
-            // Yay Hero, Nay Noble, Nay Toren The Chosen
+            // Yay Hero, Nay Noble, Nay 'Toren The Chosen'
             if(
-                (!HERO_NOBLE(unit_owner_idx, _UNITS[unit_idx].type))  /* BUGBUG  from back in AI_Stacks_Survey_Expedition_Forces_Stack(), uses unit_type instead of unit_idx, causes AVRL here */
+                (!HERO_NOBLE(unit_owner_idx, _UNITS[unit_idx].type))
                 &&
                 (_UNITS[unit_idx].type != ut_Chosen)
             )
@@ -270,12 +264,10 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
             }
         }
     }
-
     if((_UNITS[unit_idx].mutations & UM_UNDEAD) != 0)
     {
         unit_gold_upkeep = 0;
     }
-
     if(_UNITS[unit_idx].owner_idx != HUMAN_PLAYER_IDX)
     {
         if(_difficulty == god_Impossible)
@@ -287,9 +279,9 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
             unit_gold_upkeep = ((unit_gold_upkeep * 3) / 4);  /* -25% */
         }
     }
-
     return unit_gold_upkeep;
 }
+
 
 // WZD o120p04
 /*
@@ -638,7 +630,7 @@ int16_t Unit_Mana_Upkeep(int16_t unit_idx)
 int16_t Player_City_Enchantments_Upkeep(int16_t city_idx, int16_t player_idx)
 {
     int16_t mana_upkeep;
-    uint8_t * city_enchantments;
+    int8_t * city_enchantments;
     int16_t itr_city_enchantments;
 
     mana_upkeep = 0;
@@ -1230,20 +1222,14 @@ int16_t City_Gold_Mainanence(int16_t city_idx)
 
 
 // WZD o120p23
-// drake178: UNIT_GetLevel()
 // MoO2  Module: ERICNET  Calc_Ship_Level_()
-/*
-
-*/
+// ~ Unit_Base_Level()?
 int16_t Calc_Unit_Level(int16_t unit_idx)
 {
-    int16_t itr;
-    int16_t level;
-
+    int16_t itr = 0;
+    int16_t level = 0;
     level = _UNITS[unit_idx].Level;
-
-    // TODO  WTF?  if(_UNITS[unit_idx].type < spell_data_table[])
-    if(_UNITS[unit_idx].type < FST_FANT)  /* First Fantastic Unit (Magic Spirit) */
+    if(_UNITS[unit_idx].type < spell_data_table[spl_Magic_Spirit].unit_type)  /* First Fantastic Unit (Magic Spirit) */
     {
         for(itr = 0; itr < 4; itr++)
         {
@@ -1252,7 +1238,6 @@ int16_t Calc_Unit_Level(int16_t unit_idx)
                 level = itr;
             }
         }
-
         if(_UNITS[unit_idx].Hero_Slot > -1)
         {
             for(itr = 4; itr < 9; itr++)
@@ -1262,14 +1247,12 @@ int16_t Calc_Unit_Level(int16_t unit_idx)
                     level = itr;
                 }
             }
-
-            SETMAX(_UNITS[unit_idx].XP, TBL_Experience[UNIT_LEVEL_MAX]);
+            SETMAX(_UNITS[unit_idx].XP, TBL_Experience[HL_DEMIGOD]);
         }
         else
         {
-            SETMAX(_UNITS[unit_idx].XP, TBL_Experience[UNIT_LEVEL_MAX]);
+            SETMAX(_UNITS[unit_idx].XP, TBL_Experience[UL_ELITE]);
         }
-
         // ¿ cancel 'Heroism' 'Unit Enchantment' if the Unit has naturally attained the 'Elite Experience Level' ?
         if(
             (level >= UL_ELITE)
@@ -1277,9 +1260,8 @@ int16_t Calc_Unit_Level(int16_t unit_idx)
             ((_UNITS[unit_idx].enchantments & UE_HEROISM) != 0)
         )
         {
-            _UNITS[unit_idx].enchantments = (_UNITS[unit_idx].enchantments | UE_HEROISM);
+            _UNITS[unit_idx].enchantments = (_UNITS[unit_idx].enchantments ^ UE_HEROISM);
         }
-
         // apply 'Heroism' 'Unit Enchantment'
         if(
             ((_UNITS[unit_idx].enchantments & UE_HEROISM) != 0)
@@ -1289,12 +1271,10 @@ int16_t Calc_Unit_Level(int16_t unit_idx)
         {
             level = UL_ELITE;
         }
-
         if(_players[_UNITS[unit_idx].owner_idx].warlord > 0)
         {
             level += 1;
         }
-
         if(
             (_players[_UNITS[unit_idx].owner_idx].Globals[CRUSADE] > 0)
             &&
@@ -1304,31 +1284,18 @@ int16_t Calc_Unit_Level(int16_t unit_idx)
         {
             level += 1;
         }
-
     }
-
     SETMAX(level, UNIT_LEVEL_MAX);
-
     return level;
 }
 
 
 // WZD o120p24
-// drake178: UNIT_GetBaseLevel()
 int16_t Unit_Base_Level(int16_t unit_idx)
 {
-    int16_t level;  // _DI_
-    int16_t itr;  // _DX_
-
+    int16_t level = 0;
+    int16_t itr = 0;
     level = _UNITS[unit_idx].Level;
-
-    // *(spell_data_table + 0x1C64)
-    // WZD dseg:912C
-    // byte spell_data_table[215][36]
-    // 1C64h  7268d
-    // 201 * 36 = 7236
-    // 7268 - 7236 = 32d  20h
-    // ¿ s_SPELL_DATA.Param0 ?  ; unit type, base damage, UE flag, or CE index
     if(_UNITS[unit_idx].type < spell_data_table[spl_Magic_Spirit].unit_type)
     {
         for(itr = 0; itr < 4; itr++)
@@ -1338,7 +1305,6 @@ int16_t Unit_Base_Level(int16_t unit_idx)
                 level = itr;
             }
         }
-
         if(_UNITS[unit_idx].Hero_Slot <= -1)
         {
             if(_UNITS[unit_idx].XP >= TBL_Experience[UL_ELITE])
@@ -1360,14 +1326,11 @@ int16_t Unit_Base_Level(int16_t unit_idx)
                 _UNITS[unit_idx].XP = TBL_Experience[HL_DEMIGOD];
             }
         }
-
     }
-
     if(level > UNIT_LEVEL_MAX)
     {
         level = UNIT_LEVEL_MAX;
     }
-
     return level;
 }
 
@@ -1402,11 +1365,11 @@ void Evict_Unit_With_Message(int16_t unit_idx)
 
 // WZD o120p26
 /**
- * @brief Resolves stack overflow on a tile by evicting the weakest unit.
+ * @brief Resolves stack overflow on a square by evicting the weakest unit.
  *
  * @details
  * This helper enforces the maximum stack size after unit placement/movement by
- * inspecting all units on the acting unit's tile. If the tile contains more than
+ * inspecting all units on the acting unit's square. If the square contains more than
  * @c MAX_STACK units, the function computes a simple "weakness" score for each
  * unit and removes one candidate.
  *
@@ -1421,10 +1384,10 @@ void Evict_Unit_With_Message(int16_t unit_idx)
  *    Ties are resolved in favor of the later-iterated unit due to
  *    @c <= comparison in the selection check.
  * 5. Remove the selected unit:
- *    - Non-neutral owner: push off tile with logging via @c Evict_Unit_With_Message().
+ *    - Non-neutral owner: push off square with logging via @c Evict_Unit_With_Message().
  *    - Neutral owner: dismiss immediately via @c Kill_Unit(..., kt_Dismissed).
  *
- * @param unit_idx Index of the reference unit whose current tile is checked for
+ * @param unit_idx Index of the reference unit whose current square is checked for
  *                 stack overflow.
  *
  * @return This function returns no value.
@@ -1686,7 +1649,7 @@ int16_t City_Food_Terrain(int16_t city_idx)
  *       @c City_Area_Square_Is_Shared(), but reads it directly via
  *       @c Test_Bit_Field().
  * @note Only squares returned by @c Get_Useable_City_Area() are considered, so
- *       corrupted catchment tiles do not contribute.
+ *       corrupted catchment squares do not contribute.
  * @note The return value is consumed directly by city food and maximum-size
  *       calculations as an additive bonus.
  *
@@ -1729,7 +1692,7 @@ int16_t City_Food_WildGame(int16_t city_idx)
 
 // WZD o142p08
 /**
- * @brief Collects usable city catchment tiles, excluding corrupted squares.
+ * @brief Collects usable city catchment squares, excluding corrupted squares.
  *
  * @details
  * Builds the coordinate list for the city's standard work area centered at
@@ -1739,7 +1702,7 @@ int16_t City_Food_WildGame(int16_t city_idx)
  * Vertical bounds are clamped by skipping rows outside the world height.
  * Horizontal coordinates wrap around world edges. Each candidate square is
  * checked against map-square flags for MSF_CORRUPTION; only non-corrupted
- * tiles are emitted into the output arrays.
+ * squares are emitted into the output arrays.
  *
  * @param city_wx City center world X coordinate.
  * @param city_wy City center world Y coordinate.
@@ -1747,7 +1710,7 @@ int16_t City_Food_WildGame(int16_t city_idx)
  * @param wx_array Output array for accepted square X coordinates.
  * @param wy_array Output array for accepted square Y coordinates.
  *
- * @return Number of usable catchment tiles written to the output arrays.
+ * @return Number of usable catchment squares written to the output arrays.
  *
  * @note Maximum output is bounded by CITY_AREA_SIZE for the catchment shape.
  * @note X coordinates wrap at both world edges (square_x < 0 -> +WORLD_WIDTH;
@@ -3212,7 +3175,7 @@ OGBUG  difficulty-based outpost growth modifiers are applied to both AI and huma
  * 3. Add enchantment growth bonuses:
  *    - @c GAIAS_BLESSING: +20
  *    - @c STREAM_OF_LIFE: +10
- * 4. Scan usable city-area tiles and add terrain-special bonus:
+ * 4. Scan usable city-area squares and add terrain-special bonus:
  *    - @c TS_IRON or @c TS_SILVER: +5 each
  *    - Any other non-zero special: +10
  * 5. Build shrink chance starting at 5, then add:
@@ -3900,7 +3863,7 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
     /* Base gold bonus from the target square itself */
     *gold_bonus = Square_Gold_Bonus(wx, wy, wp);
 
-    /* Iterate over the 5x5 city catchment area (21 tiles) */
+    /* Iterate over the 5x5 city catchment area (21 squares) */
     for(itr_wy = (wy - 2); (itr_wy < (wy + 3)); itr_wy++)
     {
         if(

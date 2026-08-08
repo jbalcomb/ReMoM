@@ -1,7 +1,7 @@
 /*
-    CMB_BaseAllocs__WIP();
-    CMB_LoadResources__WIP();
-        |-> CMB_SetNearAllocs__WIP();
+    Allocate_Combat_Base_Blocks();
+    Combat_Screen_Load_Resources();
+        |-> Allocate_Combat_Near_Buffers();
 
     _combat_wx = wx;
     _combat_wy = wy;
@@ -11,10 +11,10 @@
 
     Cache_Graphics_Combat();
 
-    CMB_Terrain_Init__WIP(wx, wy, wp);
+    Build_Battlefield(wx, wy, wp);
 
 
-    Defending_Unit_Count = CMB_Units_Init__WIP(troop_count, troops);
+    Defending_Unit_Count = Prepare_All_Battle_Units(troop_count, troops);
     if(_combat_attacker_player == _human_player_idx)
         Switch_Active_Battle_Unit(0);
     else
@@ -60,13 +60,13 @@ Depends on:
     _combat_wp
     _combat_defender_player
 
-~ CMB_Units_Init__WIP()
+~ Prepare_All_Battle_Units()
 
 start from attacker unit stack
 find defender units
 
 */
-int16_t Prepare_All_Battle_Units(int16_t attacker_troop_count, int16_t attacker_troops[])
+int16_t TST_Prepare_All_Battle_Units(int16_t attacker_troop_count, int16_t attacker_troops[])
 {
     int16_t itr = 0;
     int16_t defender_troop_count = 0;
@@ -105,7 +105,7 @@ int16_t Prepare_All_Battle_Units(int16_t attacker_troop_count, int16_t attacker_
 }
 
 /*
-~ CMB_CreateEntity__WIP()
+~ Combat_Grid_Entity_Create()
 */
 void Create_Entity(int16_t draw_x, int16_t draw_y, int64_t pict, int16_t draw_x_shift, int16_t draw_y_shift, int16_t frame_num, int16_t entity_type, int16_t owner_idx)
 {
@@ -128,7 +128,7 @@ void Create_Entity(int16_t draw_x, int16_t draw_y, int64_t pict, int16_t draw_x_
 
     Screen_To_Combat_Grid_Cell_X_And_Offset(draw_x, draw_y, &cgx, &cgx_ofst);
     Screen_To_Combat_Grid_Cell_Y_And_Offset(draw_x, draw_y, &cgy, &cgy_ofst);
-    entt->draw_order_value = ((cgy * 8000) + (cgx * 320) + (cgy_ofst * 16) + cgx_ofst);
+    entt->draw_order_value = (((int32_t)cgy * 8000) + ((int32_t)cgx * 320) + ((int32_t)cgy_ofst * 16) + cgx_ofst);
     Set_Entity_Draw_Order();
 
     combat_grid_entity_count++;
@@ -137,8 +137,8 @@ void Create_Entity(int16_t draw_x, int16_t draw_y, int64_t pict, int16_t draw_x_
 
 /*
     battle unit specific wrapper for Create_Entity()
-~ CMB_SpawnFigure__WIP()
-CMB_SpawnFigure__WIP(battle_units[itr].bufpi, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].gibs, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+~ Spawn_Figure_Entity()
+Spawn_Figure_Entity(battle_units[itr].bufpi, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].gibs, battle_units[itr].mid_move, battle_units[itr].Atk_FigLoss, 0);
 */
 void Create_Battle_Unit_Entity(int64_t bufpi, int16_t cgx, int16_t cgy, int16_t target_cgx, int16_t target_cgy, int16_t MoveStage, int16_t current_figure, int16_t figure_count, int16_t controller_idx)
 {
@@ -174,7 +174,7 @@ void Create_Battle_Unit_Entity(int64_t bufpi, int16_t cgx, int16_t cgy, int16_t 
 
 /*
     create combat grid entity, per battle unit figure
-~ CMB_CreateEntities__WIP()
+~ Combat_Grid_Entities()
 */
 void Make_Combat_Grid_Battle_Unit_Entities(void)
 {
@@ -271,14 +271,14 @@ void Draw_Combat_Grid_Battle_Unit_Entities(void)
     Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, 163);
     // END:  CMB_DrawMap__WIP()
 
-    // BEGIN:  CMB_DrawEntities__WIP()
+    // BEGIN:  Combat_Screen_Map_Draw_Entities()
     for(itr = 0; itr < combat_grid_entity_count; itr++)
     {
         combat_grid_entity_idx = combat_grid_entities_draw_order[itr];
         entt = &combat_grid_entities[combat_grid_entity_idx];
         Draw_Picture_Windowed((entt->draw_x - entt->draw_x_shift), (entt->draw_y - entt->draw_y_shift), battle_unit_picts_seg[entt->index]);
     }
-    // END:  CMB_DrawEntities__WIP()
+    // END:  Combat_Screen_Map_Draw_Entities()
 
     // BEGIN:  CMB_DrawMap__WIP()
     Reset_Window();

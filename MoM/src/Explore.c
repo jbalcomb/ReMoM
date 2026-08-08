@@ -629,7 +629,7 @@ void Contact_Other_Player(int16_t unit_idx, int16_t wp)
  * Related functions:
  * - `Check_Square_Scouted()` requires a square to be explored before it can be
  *   considered currently scouted.
- * - `Set_Square_Scouted_Flags()` uses this function to avoid scouting tiles that
+ * - `Set_Square_Scouted_Flags()` uses this function to avoid scouting squares that
  *   have not yet been discovered.
  *
  * @param wx World-space X coordinate of the square to test.

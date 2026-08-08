@@ -22,7 +22,7 @@ CRP_CMB_NeverChecked1
 ## m_cp_took_turn
 In Combat_Screen__WIP(), ...
     m_cp_took_turn = ST_FALSE;
-    if(_combat_defender_player == combat_computer_player)
+    if(_combat_defender_player == _combat_remote_player)
         AI_CMB_PlayTurn__WIP(_combat_defender_player);
         CMB_PrepareTurn__WIP();
         m_cp_took_turn = ST_TRUE;
@@ -35,7 +35,7 @@ In Combat_Screen__WIP(), ...
 
 initialized to false in Combat_Screen__WIP()
 ...promptly set to false in CMB_PrepareTurn__WIP() and set to true right after
-controls if Combat_Next_Turn() calls AI_CMB_PlayTurn__WIP(combat_computer_player);
+controls if Combat_Next_Turn() calls AI_CMB_PlayTurn__WIP(_combat_remote_player);
 ...then same logic of 'if computer is defender' to call AI_CMB_PlayTurn__WIP(_combat_defender_player) and set m_cp_took_turn to true
 
 
@@ -78,7 +78,7 @@ if _human_out_of_moves isn't true, then _human_handle_immobile shouldn't matter?
 
 
     Combat_Screen__WIP()
-        if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
+        if(battle_units[_active_battle_unit].controller_idx != _combat_local_player)
             _human_out_of_moves = ST_TRUE;  // human turn is over
             _human_handle_immobile = ST_FALSE;  // don't draw target frames or all immobilized message
 
@@ -194,7 +194,7 @@ XREF:
 
 Is there something here with the current/human player?
 Does it matter that it is the 'Human Player'?
-combat_human_player = _human_player_idx = HUMAN_PLAYER_IDX = 0
+_combat_local_player = _human_player_idx = HUMAN_PLAYER_IDX = 0
 
 What's the relationship with _human_handle_immobile?
 
@@ -207,7 +207,7 @@ Where is the first place it gets used?  (starts from Combat_Screen__WIP())
     Next_Battle_Unit+23          mov     [_human_out_of_moves], e_ST_TRUE                                                  
 ...
     Combat_Screen__WIP()
-        if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
+        if(battle_units[_active_battle_unit].controller_idx != _combat_local_player)
             _human_out_of_moves = ST_TRUE;
             _human_handle_immobile = ST_FALSE;
     ...but, I have a debug-break in there and it has never been hit
@@ -224,7 +224,7 @@ Where is the first place it gets used?  (starts from Combat_Screen__WIP())
     Combat_Screen__WIP:loc_761A1 mov     [_human_out_of_moves], e_ST_FALSE; BUG: second time clearing this without using it
         ...just initializing it to FALSE  (right before setting _active_battle_unit)
     Combat_Screen__WIP+5EB       mov     [_human_out_of_moves], e_ST_FALSE
-        ...in 'Cancel Auto Combat', before calling AI_CMB_PlayTurn__WIP(combat_human_player)
+        ...in 'Cancel Auto Combat', before calling AI_CMB_PlayTurn__WIP(_combat_local_player)
     Combat_Screen__WIP+117A      mov     [_human_out_of_moves], e_ST_FALSE
         ...in the block for Non-Auto Combat
         ...subsequent usage?
@@ -432,7 +432,7 @@ j_Next_Battle_Unit
 
 sets _active_battle_unit, via Next_Battle_Unit_Nearest_Available(player_idx)
 but, ...
-    if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
+    if(battle_units[_active_battle_unit].controller_idx != _combat_local_player)
         for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
             if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
                 _active_battle_unit = itr_battle_units;

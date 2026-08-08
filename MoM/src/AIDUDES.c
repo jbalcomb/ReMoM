@@ -2081,7 +2081,7 @@ void CONTXXX_Map(void)
 
 // WZD o145p17
 /**
- * @brief Rebuilds the per-plane linked lists of land tiles for every landmass.
+ * @brief Rebuilds the per-plane linked lists of land squares for every landmass.
  *
  * This routine maps the temporary CONTXXX working area, clears the head and
  * next-index arrays for both planes, and then scans every world square. Each
@@ -2199,7 +2199,7 @@ void Build_Land_Linked_List(void)
  * approach areas: consumers want a pool of plausible coastal land squares, not
  * one exact water boundary pixel.
  *
- * The resulting arrays are therefore not just a cache of "tiles that passed a
+ * The resulting arrays are therefore not just a cache of "squares that passed a
  * predicate." They are the AI's reusable per-continent entry/exit candidates:
  * later code walks the list, computes coarse coastal centroids, and chooses a
  * reachable square near that edge instead of rescanning the entire world map.

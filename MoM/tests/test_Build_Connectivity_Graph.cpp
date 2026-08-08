@@ -21,7 +21,7 @@ extern "C" {
 
     Slices one plane's 60x40 movement-cost map into a 12x8 grid of 5x5 sections and writes, per
     section, a connectivity bitflag byte: low nibble = N/E/S/W neighbour reachable (1/2/4/8),
-    high nibble (0x10/0x20/0x40/0x80) mirrors those as "edge passable". Impassable tile =
+    high nibble (0x10/0x20/0x40/0x80) mirrors those as "edge passable". Impassable square =
     (char)-1 (0xFF). No Random() -> fully deterministic.
 
     OOB padding: the OG reconstruction reads one row before/after the map (row -1 at the top
@@ -44,7 +44,7 @@ namespace
         memcpy(result_out, result_map, 96);
     }
 
-    /* Run the worker over a uniform map (every tile == fill). */
+    /* Run the worker over a uniform map (every square == fill). */
     void Run_Uniform(int8_t fill, uint8_t result_out[96])
     {
         int8_t * buffer = static_cast<int8_t *>(malloc(BUF));

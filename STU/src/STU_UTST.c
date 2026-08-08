@@ -32,7 +32,7 @@ void Set_Terrain(int16_t wx, int16_t wy, int16_t wp, int16_t terrain_type)
  * terrain_type into _world_maps via Set_Terrain().
  *
  * @param wp World plane index to modify.
- * @param terrain_type Terrain type value assigned to all tiles.
+ * @param terrain_type Terrain type value assigned to all squares.
  */
 void Set_Terrain_All(int16_t wp, int16_t terrain_type)
 {

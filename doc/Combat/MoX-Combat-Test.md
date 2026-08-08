@@ -47,7 +47,7 @@ Combat_Screen_TST_004(); Combat_Screen_TST_004_Draw;
 
 CMB_ComposeBackgrnd__WIP()  ==>  Combat_Screen_Compose_Background()
 
-CMB_Terrain_Init__WIP()
+Build_Battlefield()
 Load_Combat_Terrain_Pictures()
 Generate_Combat_Map__WIP()
 
@@ -79,7 +79,7 @@ Screen()
 ## CMB_ComposeBackgrnd__WIP()
     Set_Page_Off();
     Reset_Window();
-    EMM_TILEX_Init__HACK();
+    Claim_EMS_Page_For_Figure_Set();
         Clipped_Draw(screen_x, screen_y, _combat_terrain_pict_segs[combat_terrain_type]);
     FLIC_Draw(0, 164, combat_background_bottom);
     Copy_Off_To_Back();
@@ -94,17 +94,17 @@ Load_WZD_Resources()
     |-> Load_Combat_Background_Bottom(void)
             combat_background_bottom = LBX_Load(backgrnd_lbx_file, 3);
 
-CMB_BaseAllocs__WIP()
-CMB_LoadResources__WIP()
-    |-> CMB_SetNearAllocs__WIP()
+Allocate_Combat_Base_Blocks()
+Combat_Screen_Load_Resources()
+    |-> Item_Powers_To_Attack_Attributes()
 
     Cache_Graphics_Combat();
 
 
-    CMB_Terrain_Init__WIP(wx, wy, wp);
+    Build_Battlefield(wx, wy, wp);
 
 
-    Defending_Unit_Count = CMB_Units_Init__WIP(troop_count, troops);
+    Defending_Unit_Count = Prepare_All_Battle_Units(troop_count, troops);
 
 
 OVL_Action_Type

@@ -486,7 +486,7 @@ void Surveyor_Window_Display(void)
         // ;   2 - square has an intact lair
         // ;   3 - square has a tower of wizardry
         // ;   4 - square has a node
-        // ;   5 - there's already a city within 3 tiles
+        // ;   5 - there's already a city within 3 squares
         var_4 = Map_Square_Survey(l_mx, l_my, _map_plane);
 
         if(var_4 == 5)

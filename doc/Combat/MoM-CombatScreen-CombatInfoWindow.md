@@ -153,11 +153,11 @@ if(CMB_PerSideInfo > 0)
         PerSide_Draw_Top = (15 + ((_combat_info_item_count / 2) * 19));
     else
         PerSide_Draw_Top = 11;
-    if(CMB_AI_Player < NEUTRAL_PLAYER_IDX)
-        stu_strcpy(GUI_String_1, _players[CMB_AI_Player].name);
+    if(_combat_ai_player < NEUTRAL_PLAYER_IDX)
+        stu_strcpy(GUI_String_1, _players[_combat_ai_player].name);
         stu_strcat(GUI_String_1, cnst_SpaceSpells);
         Print_Centered((_combat_info_wnd_start_x + 54), (_combat_info_wnd_start_y + PerSide_Draw_Top), GUI_String_1);
-    stu_strcpy(GUI_String_1, _players[combat_human_player].name);
+    stu_strcpy(GUI_String_1, _players[_combat_local_player].name);
     stu_strcat(GUI_String_1, cnst_SpaceSpells);
     Print_Centered((_combat_info_wnd_start_x + 170), (_combat_info_wnd_start_y + PerSide_Draw_Top), GUI_String_1);
 

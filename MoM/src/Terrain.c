@@ -86,7 +86,7 @@ int16_t Square_Is_Node(int16_t wx, int16_t wy, int16_t wp)
  *       fractional food using doubled arithmetic.
  * @note Several terrain classes use threshold ranges instead of only symbolic
  *       enum equality checks, preserving original binary logic.
- * @note (OGBUG) Swamp tiles return 0, despite manual expectations of 1/2 food.
+ * @note (OGBUG) Swamp squares return 0, despite manual expectations of 1/2 food.
  * @note (OGBUG) Nature Node returns 5 base food here, while the referenced MGC
  *       NewGame behavior notes 4.
  * @note The historical comment questioning @c food_units *= 2 is retained as-is;
@@ -939,7 +939,7 @@ int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp)
 // drake178: TILE_IsVisibleForest()
 // AKA Square_Is_Explored_Forest()
 /*
-INCONSISTENT: unlike all other square type check functions, this only returns 1 for tiles visible to the human player (explored)
+INCONSISTENT: unlike all other square type check functions, this only returns 1 for squares visible to the human player (explored)
 */
 int16_t Square_Is_Forest(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -1153,10 +1153,10 @@ int16_t Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp)
  * IDs used by city production/building requirement checks.
  *
  * Classification rules:
- * - Ocean-like tiles map to @c btp_BREQ_Water.
- * - Forest tiles and Nature Node map to @c btp_BREQ_Forest.
- * - Grassland tiles and BugGrass map to @c btp_BREQ_Grass.
- * - Hills-range tiles map to @c btp_BREQ_Hill.
+ * - Ocean-like squares map to @c btp_BREQ_Water.
+ * - Forest squares and Nature Node map to @c btp_BREQ_Forest.
+ * - Grassland squares and BugGrass map to @c btp_BREQ_Grass.
+ * - Hills-range squares map to @c btp_BREQ_Hill.
  * - Any non-matching terrain returns its raw terrain type value unchanged.
  *
  * @param wx World-map X coordinate of the square.

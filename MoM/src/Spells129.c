@@ -554,7 +554,7 @@ int16_t Cast_Call_The_Void(int16_t player_idx)
 ; Void spell cast on the target city
 ; returns the number of buildings destroyed
 ;
-; BUG: can corrupt the corner tiles outside the
+; BUG: can corrupt the corner squares outside the
 ;  catchment area
 ; inherits BUGs from UNIT_ConvSpellATK
 */

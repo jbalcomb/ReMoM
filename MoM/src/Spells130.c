@@ -1754,7 +1754,7 @@ int16_t Cast_Enchant_Road(int16_t player_idx)
 // WZD o130p14
 int16_t Cast_Spell_Ward(int16_t player_idx)
 {
-    uint8_t * ptr_enchantments = 0;
+    int8_t * city_enchantments = 0;
     int8_t ward_pos[NUM_MAGIC_TYPES] = { 0, 0, 0, 0, 0 };  // 1-byte, signed
     /* HACK */  char * ward_list[(NUM_MAGIC_TYPES + 1)] = { 0, 0, 0, 0, 0, 0 };
     char * strings[NUM_MAGIC_TYPES] = { 0, 0, 0, 0, 0 };
@@ -1932,9 +1932,9 @@ int16_t Cast_Spell_Ward(int16_t player_idx)
 
         }
 
-        ptr_enchantments = &_CITIES[city_idx].enchantments[0];
+        city_enchantments = &_CITIES[city_idx].enchantments[0];
 
-        ptr_enchantments[magic_type_ench_idx] = (player_idx + 1);
+        city_enchantments[magic_type_ench_idx] = (player_idx + 1);
 
         if(
             (player_idx == HUMAN_PLAYER_IDX)
@@ -1999,7 +1999,7 @@ void Cast_Holy_Arms(int16_t player_idx)
 ; negative city enchantments and all corruption from
 ; within a 2-square radius of the city
 ;
-; BUG: will cleanse the corner tiles that are outside
+; BUG: will cleanse the corner squares that are outside
 ; the catchment area
 */
 /*

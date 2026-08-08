@@ -143,10 +143,10 @@ ITEM_MAX_POWERS
 #define LST_HERO                   34
 #define FST_NORM                   35  // Normal Unit
 #define LST_NORM                  153
-#define FST_FANT                  154  // Fantastic Unit
+/* First Fantastic Unit (Magic Spirit) */
+/* ut_Magic_Spirit  = 154, / * BEGIN:  Fantastic / Summoned Units * / */
+#define FST_FANT                  154  // Fantastic Unit  
 #define LST_FANT                  192
-
-#define UNIT_LEVEL_MAX              8
 
 #define LAST_ACTIVE_ITEM_IDX      132
 #define RANDOM_ITEM_IDX           136
@@ -431,6 +431,8 @@ Generate_Terrain_Specials() goes as far out as wx=63,wy=45,p=1,offset = 5163; 24
     Normal Unit Level
     Hero Unit Level
 */
+
+#define UNIT_LEVEL_MAX  8
 
 #define UL_RECRUIT      0
 #define UL_REGULAR      1

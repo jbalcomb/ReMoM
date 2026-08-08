@@ -87,16 +87,6 @@ char * cnst_Quit_Report6 = " blocks";           // dseg:3CF5
 
 
 // WZD s05p02
-// drake178: ¿ ?
-/*
-shuts down the mouse, sound, and EMM systems, returns
-the VGA to text mode, and quits the game with the
-passed message - using a direct DOS interrupt rather
-than the standard library exit functions
-*/
-/*
-
-*/
 // TODO  void (*Exit_With_Message)(char* string);
 void Exit_With_Message(char * string)
 {

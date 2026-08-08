@@ -10,6 +10,7 @@
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/Graphics.h"
+#include "../../MoX/src/Help.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _screen_seg */
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOX_T4.h"
@@ -18,7 +19,7 @@
 #include "../../MoX/src/Timer.h"
 
 #include "Combat.h"
-#include "../../MoX/src/Help.h"
+#include "COMBINIT.h"   /* Load_Battle_Unit */
 #include "LOADER.h"
 #include "UNITTYPE.h"
 #include "UnitMove.h"

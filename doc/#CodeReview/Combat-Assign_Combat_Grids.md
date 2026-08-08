@@ -9,7 +9,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr091\Assign_Combat_Grids
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr091\Set_Movement_Cost_Map.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr154\Get_Combat_Grid_Cell_X.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr154\Get_Combat_Grid_Cell_Y.asm
-C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr163\CMB_BaseAllocs__WIP.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr163\Allocate_Combat_Base_Blocks.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr124\Combat_Grid_Cell_Has_City_Wall.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr124\BU_SetCityMovement.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr124\Battle_Unit_Is_Within_City.asm

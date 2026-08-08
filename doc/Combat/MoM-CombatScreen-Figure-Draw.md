@@ -15,7 +15,7 @@ Assign_Mouse_Image()
 ...
 g_combat_grid_action_mapaction_map[cgy][cgx]
 int8_t * g_combat_grid_action_mapaction_map[22];  // 22 pointers to LBX_NearAlloc_Next()'s of 21 bytes each
-allocated in CMB_SetNearAllocs__WIP()
+allocated in Item_Powers_To_Attack_Attributes()
 ...
 Where populated?
 ...
@@ -36,7 +36,7 @@ XREF:  (19)
     Assign_Mouse_Image+130      mov     bx, [g_combat_grid_action_mapaction_map@+bx]
     Assign_Mouse_Image+207      mov     bx, [g_combat_grid_action_mapaction_map@+bx]
     BU_MoveConfused+35          mov     bx, [g_combat_grid_action_mapaction_map@+bx]
-    CMB_SetNearAllocs__WIP+64   mov     [g_combat_grid_action_mapaction_map@+bx], ax
+    Item_Powers_To_Attack_Attributes+64   mov     [g_combat_grid_action_mapaction_map@+bx], ax
     AITP_CombatSpell+FBF        mov     ax, [g_combat_grid_action_mapaction_map@+bx]
     CMB_SetTargetCursor+69      mov     bx, [g_combat_grid_action_mapaction_map@+bx]
     CMB_SetTargetCursor+D9      mov     bx, [g_combat_grid_action_mapaction_map@+bx]
@@ -79,7 +79,7 @@ Tactical_Combat__WIP()
 ...trigger in CMB_DrawEntities__WIP()...
     combat_grid_entity_idx = combat_grid_entities_draw_order[itr_combat_entity_draw_order];
     if(combat_grid_entity_idx == DBG_combat_grid_entity_idx)
-    (DBG_combat_grid_entity_idx is set in CMB_SpawnFigure__WIP(), based on ...)
+    (DBG_combat_grid_entity_idx is set in Combat_Screen_Map_Draw_Entities(), based on ...)
 ¿ unit vs. figure ?
 
 Then, ...
@@ -102,7 +102,7 @@ Combat_Figure_Compose_USEFULL()
 
 Combat_Figure_Load()
 ...capture address of figure picture...
-...needs to be matched to what ends up being the figure_set_idx value, calculated in CMB_SpawnFigure__WIP()
+...needs to be matched to what ends up being the figure_set_idx value, calculated in Combat_Screen_Map_Draw_Entities()
     ...unit_type, bufpi
 
 Where to capture test data for unit_type?
@@ -168,8 +168,8 @@ CMB_CreateEntity__WIP()
     sets values in combat_grid_entities[], based on combat_grid_entity_count
     so, ...
     could set DBG_combat_grid_entity_idx here
-    or, in CMB_SpawnFigure__WIP(), which has all the values that get passed to CMB_CreateEntity__WIP()
-CMB_SpawnFigure__WIP()
+    or, in Combat_Screen_Map_Draw_Entities(), which has all the values that get passed to CMB_CreateEntity__WIP()
+Combat_Screen_Map_Draw_Entities()
     ...SrcBld is hard-coded to 0
     ...draw_x_shift, draw_y_shift, and entity_type are hard-coded to 13, 23, 1
     ...calculated values...position_screen_x, position_screen_y, target_screen_x, target_screen_y, fig_x, fig_y, figure_set_idx, draw_x, draw_y, Blood_Frame, BldAmt
@@ -177,14 +177,14 @@ CMB_SpawnFigure__WIP()
 
 
 
-CMB_Units_Init__WIP()
+Prepare_All_Battle_Units()
     if(troops[itr] == DEBUG_UNIT_IDX)
     {
         DBG_battle_unit_idx = itr;
     }
 
 
-CMB_CreateEntities__WIP()
+Combat_Grid_Entities()
     // if(battle_units[itr].unit_idx == DEBUG_UNIT_IDX)
     if(itr == DBG_battle_unit_idx)
     {
@@ -223,20 +223,20 @@ Where and how do I capture DBG_combat_grid_entity_idx?
 CMB_CreateEntity__WIP()?
 ¿ unique identifiers ?
 ¿ draw_x, draw_y ?
-...by way of CMB_SpawnFigure__WIP()...
+...by way of Combat_Screen_Map_Draw_Entities()...
 ¿ unique identifiers ?
 ¿ position_cgc2, position_cgc1 ?
 ...iterates over unit_figure_count...
-CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t position_cgc2, int16_t position_cgc1, int16_t target_cgc2, int16_t target_cgc1, int16_t MoveStage, int16_t current_figure, int16_t figure_count, int16_t controller_idx, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld)
+Combat_Screen_Map_Draw_Entities(int64_t seg_or_idx, int16_t position_cgc2, int16_t position_cgc1, int16_t target_cgc2, int16_t target_cgc1, int16_t MoveStage, int16_t current_figure, int16_t figure_count, int16_t controller_idx, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld)
 
 
-CMB_SpawnFigure__WIP(
+Combat_Screen_Map_Draw_Entities(
     battle_units[itr].bufpi, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, 
     battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, 
     battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0
 )
 
-CMB_SpawnFigure__WIP(
+Combat_Screen_Map_Draw_Entities(
     seg_or_idx, position_cgc2, position_cgc1, target_cgc2, target_cgc1, 
     MoveStage, current_figure, figure_count, controller_idx, outline_magic_realm, 
     BldAmt, UU, LostFigs, SrcBld
@@ -325,7 +325,7 @@ USELESS_Combat_Figure_Load_Compose()
 ¿ order in which these take place ?
 
 Tactical_Combat__WIP()
-    CMB_Units_Init__WIP()
+    Prepare_All_Battle_Units()
         Combat_Figure_Load()
             FIGUREX_MAP  AKA EMM_FIGUREX_Init__HACK()
 
@@ -336,13 +336,13 @@ Tactical_Combat__WIP()
                 FIGUREX_MAP  AKA EMM_FIGUREX_Init__HACK()
 
 Tactical_Combat__WIP()
-    CMB_Units_Init__WIP()
+    Prepare_All_Battle_Units()
         Combat_Figure_Load()
             USELESS_Combat_Figure_Load_Compose()
 
 ```
 Tactical_Combat__WIP()
-    CMB_Units_Init__WIP()
+    Prepare_All_Battle_Units()
         Combat_Figure_Load()
             FIGUREX_MAP  AKA EMM_FIGUREX_Init__HACK()
             USELESS_Combat_Figure_Load_Compose()
@@ -421,9 +421,9 @@ alternates offset based on eve/odd cache index
 
 
 Requirements:
-    ~== Tactical_Combat__WIP() |-> CMB_Units_Init__WIP() |-> Combat_Figure_Load()
+    ~== Tactical_Combat__WIP() |-> Prepare_All_Battle_Units() |-> Combat_Figure_Load()
 
-Defending_Unit_Count = CMB_Units_Init__WIP(troop_count, troops);
+Defending_Unit_Count = Prepare_All_Battle_Units(troop_count, troops);
 
 
 
@@ -433,15 +433,15 @@ Defending_Unit_Count = CMB_Units_Init__WIP(troop_count, troops);
     Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_BLACK);
     Toggle_Pages();
     PageFlipEffect = 0;
-    CMB_BaseAllocs__WIP();
-    CMB_LoadResources__WIP();
+    Allocate_Combat_Base_Blocks();
+    Combat_Screen_Load_Resources();
         Mark_Block(_screen_seg);
         for(itr = 0; itr < 18; itr++)
         {
             battle_unit_picts_seg[itr] = LBX_Reload_Next(compix_lbx_file__ovr103, (55 + itr), _screen_seg);
         }
         Release_Block(_screen_seg);
-    Defending_Unit_Count = CMB_Units_Init__WIP(troop_count, troops);
+    Defending_Unit_Count = Prepare_All_Battle_Units(troop_count, troops);
 
 
 ptr_figure_pointer_seg is 8 pointers to loaded LBX entries
@@ -518,10 +518,10 @@ AKA pict_seg_or_idx
 CMB_CreateEntity__WIP( seg_or_idx )
     combat_grid_entities[combat_grid_entity_count].seg_or_idx = seg_or_idx;
 
-CMB_SpawnFigure__WIP( seg_or_idx )
+Combat_Screen_Map_Draw_Entities( seg_or_idx )
 
-CMB_CreateEntities__WIP()
-    CMB_SpawnFigure__WIP( battle_units[itr].bufpi )
+Combat_Grid_Entities()
+    Combat_Screen_Map_Draw_Entities( battle_units[itr].bufpi )
 
 
 
@@ -560,7 +560,7 @@ battle_unit_picts_seg[]
 index into battle_units[] is same index into battle_unit_picts_seg[]
 
 
-capture DBG_battle_unit_idx in CMB_Units_Init__WIP()
+capture DBG_battle_unit_idx in Prepare_All_Battle_Units()
 
 
 
@@ -660,11 +660,11 @@ Tactical_Combat__WIP()
 
 
 
-CMB_SpawnFigure__WIP()
+Combat_Screen_Map_Draw_Entities()
     sets draw type to 1
 
-CMB_CreateEntity__WIP() is what sets draw_x and draw_x_shift, based on what is passed in from CMB_SpawnFigure__WIP()
-CMB_SpawnFigure__WIP() uses Combat_Grid_Screen_Coordinates()
+CMB_CreateEntity__WIP() is what sets draw_x and draw_x_shift, based on what is passed in from Combat_Screen_Map_Draw_Entities()
+Combat_Screen_Map_Draw_Entities() uses Combat_Grid_Screen_Coordinates()
     battle_units[itr].position_cgc2, battle_units[itr].position_cgc1
 
 
@@ -674,8 +674,8 @@ CMB_SpawnFigure__WIP() uses Combat_Grid_Screen_Coordinates()
 
 combat_grid_entities[combat_grid_entity_count].outline_magic_realm = outline_magic_realm;
     <- CMB_CreateEntity__WIP(..., outline_magic_realm, ...)
-        <- CMB_SpawnFigure__WIP(..., battle_units[itr].outline_magic_realm, ...)
+        <- Combat_Screen_Map_Draw_Entities(..., battle_units[itr].outline_magic_realm, ...)
 
 
-CMB_SpawnFigure__WIP() hard-codes combat_grid_entities[].draw_x_shift,draw_y_shift to 13,23
+Combat_Screen_Map_Draw_Entities() hard-codes combat_grid_entities[].draw_x_shift,draw_y_shift to 13,23
 

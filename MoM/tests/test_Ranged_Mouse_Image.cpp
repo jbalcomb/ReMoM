@@ -6,6 +6,7 @@ extern "C" {
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/Mouse.h"
+#include "../src/Combat.h"
 int16_t Ranged_Mouse_Image(int16_t attacker_idx, int16_t defender_idx);
 #ifdef __cplusplus
 }

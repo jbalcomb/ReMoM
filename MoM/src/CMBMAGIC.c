@@ -98,18 +98,18 @@ char message_lbx_file__ovr112[] = "message";
 
 /*
 NIU_Who_Has_More_Leadership()  ...in ovr098
-CMB_LoadResources__WIP()
+Combat_Screen_Load_Resources()
 Strategic_Combat_Allocate()
 Battle_Unit_Special_Stats()
 Init_Battlefield_Effects()
 
 Begin_Combat_Turn()
-CMB_LoadResources__WIP()
+Combat_Screen_Load_Resources()
 Strategic_Combat_Allocate()
 Battle_Unit_Special_Stats()
 Init_Battlefield_Effects()
 
-CMB_LoadResources__WIP()
+Combat_Screen_Load_Resources()
 Strategic_Combat_Allocate()
 Battle_Unit_Special_Stats()
 Init_Battlefield_Effects()
@@ -134,7 +134,7 @@ int16_t * _battlefield_resistall;
 int16_t * _battlefield_holybonus;
 
 // WZD dseg:C8A2
-int16_t * CMB_IDK_4PR;
+// NIU  int16_t * CMB_IDK_4PR;
 // WZD dseg:C8A6
 int16_t _combat_spell_target_type;
 // WZD dseg:C8A8

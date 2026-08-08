@@ -36,25 +36,11 @@
 */
 
 // WZD o116p01
-/*
-returns battle_unit->item_enchantments  <-| Item_Powers_To_Unit_Enchantments()
-
-short-circuits if unit is not a hero unit, returns 0 as in no enchantments
-
-¿ ~ Apply Item Powers ?
-    |-> Item_Powers_To_Unit_Enchantments()
-so, ...
-    handles everything except item enchantments?
-but, not ip_Flaming or ip_Giant_Strength ?!?
-also, ...
-    |-> Item_Powers_To_Attack_Attributes()
-
-*/
 uint32_t Battle_Unit_Item_Stats(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
 {
-    int16_t hero_slot_idx = 0;
-    int16_t unit_owner_idx = 0;
     uint32_t battle_unit_item_enchantments = 0;
+    int16_t unit_owner_idx = 0;
+    int16_t hero_slot_idx = 0;
     int16_t item_idx = 0;
     int16_t itr_items = 0;
     battle_unit->item_enchantments = 0;
@@ -62,10 +48,7 @@ uint32_t Battle_Unit_Item_Stats(int16_t unit_idx, struct s_BATTLE_UNIT * battle_
     battle_unit->ranged_attack_attributes = 0;
     unit_owner_idx = _UNITS[unit_idx].owner_idx;
     hero_slot_idx = _UNITS[unit_idx].Hero_Slot;
-    if(hero_slot_idx == ST_UNDEFINED)
-    {
-        return 0;
-    }
+    if(hero_slot_idx == ST_UNDEFINED) { return 0; }
     battle_unit_item_enchantments = 0;
     for(itr_items = 0; itr_items < NUM_HERO_ITEMS; itr_items++)
     {
@@ -283,7 +266,7 @@ void Item_Powers_To_Attack_Attributes(uint16_t * attack_flags, int16_t item_idx)
 int16_t Unit_Hit_Points(int16_t unit_idx)
 {
     int16_t unit_level = 0;
-    int16_t Charm_of_Life_Bonus = 0;
+    int16_t charm_of_life_bonus = 0;
     int16_t hit_points = 0;
     unit_level = _UNITS[unit_idx].Level;
     if(
@@ -354,12 +337,12 @@ int16_t Unit_Hit_Points(int16_t unit_idx)
     }
     if(_players[_UNITS[unit_idx].owner_idx].Globals[CHARM_OF_LIFE] > 0)
     {
-        Charm_of_Life_Bonus = hit_points / 4;
-        if(Charm_of_Life_Bonus < 1)
+        charm_of_life_bonus = hit_points / 4;
+        if(charm_of_life_bonus < 1)
         {
-            Charm_of_Life_Bonus = 1;
+            charm_of_life_bonus = 1;
         }
-        hit_points += Charm_of_Life_Bonus;
+        hit_points += charm_of_life_bonus;
     }
     return hit_points;
 }
@@ -367,7 +350,7 @@ int16_t Unit_Hit_Points(int16_t unit_idx)
 // WZD o116p05
 int16_t Battle_Unit_Hit_Points(struct s_BATTLE_UNIT * battle_unit)
 {
-    int16_t Charm_of_Life_Hits = 0;
+    int16_t charm_of_life_bonus = 0;
     int16_t unit_level = 0;
     uint32_t battle_unit_enchantments = 0;
     int16_t unit_idx = 0;
@@ -447,9 +430,9 @@ int16_t Battle_Unit_Hit_Points(struct s_BATTLE_UNIT * battle_unit)
     }
     if(_players[_UNITS[unit_idx].owner_idx].Globals[CHARM_OF_LIFE] > 0)
     {
-        Charm_of_Life_Hits = (hit_points / 4);
-        SETMIN(Charm_of_Life_Hits, 1);
-        hit_points += Charm_of_Life_Hits;
+        charm_of_life_bonus = (hit_points / 4);
+        SETMIN(charm_of_life_bonus, 1);
+        hit_points += charm_of_life_bonus;
     }
     hit_points += battle_unit->Extra_Hits;
     battle_unit->Gold_Hits += battle_unit->Extra_Hits;
@@ -464,7 +447,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     int16_t item_charges = 0;
     int16_t itr = 0;
     memcpy(battle_unit, &_unit_type_table[_UNITS[unit_idx].type].Melee, sizeof(struct s_UNIT_TYPE));
-    battle_unit->Combat_Effects = 0;
+    battle_unit->combat_effects = 0;
     battle_unit->melee_tohit = 0;
     battle_unit->ranged_tohit = 0;
     battle_unit->tohit = 0;  // set in Battle_Unit_Regular_Stats()
@@ -499,7 +482,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     battle_unit->target_battle_unit_idx = ST_UNDEFINED;
     battle_unit->Poison_Strength = 0;
     battle_unit->upkeep = (int8_t)Unit_Gold_Upkeep(unit_idx);
-    if((battle_unit->attack_attributes & 0x04 /* Att_Poison */) != 0)
+    if((battle_unit->attack_attributes & Att_Poison) != 0)
     {
         battle_unit->Poison_Strength = battle_unit->Spec_Att_Attrib;
         if(battle_unit->ranged_type != srat_MultiGaze)
@@ -520,7 +503,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     battle_unit->Melee_Anim = 0;
     battle_unit->outline_magic_realm = 0;
     battle_unit->move_anim_ctr = 0;
-    battle_unit->Moving = ST_FALSE;
+    battle_unit->mid_move = ST_FALSE;
     battle_unit->action = bua_Ready;
     battle_unit->animate_idle = ST_FALSE;
     battle_unit->figure_effect = 0;
@@ -530,7 +513,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     {
         if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0] > ST_UNDEFINED)
         {
-            item_charges = _ITEMS[_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]].embed_spell_cnt;
+            item_charges = (int8_t)_ITEMS[_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]].embed_spell_cnt;
         }
         else
         {
@@ -549,15 +532,10 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     Bonus_For_Regular_Mods_()
     Bonus_For_Special_Mods_()
 */
-/*
-OGBUG  only applies Chaos Surge if cast by the human player
-OGBUG  does not reset weapon quality
-OGBUG  gives generic units non-normal weapons
-*/
 void Battle_Unit_Regular_Stats(struct s_BATTLE_UNIT * battle_unit)
 {
     int16_t weapon_quality = 0;
-    int8_t var_8 = 0;
+    int8_t niu_variable = 0;
     int8_t unit_mutations = 0;
     uint32_t battle_unit_enchantments = 0;
     int16_t chaos_surge = 0;
@@ -565,6 +543,7 @@ void Battle_Unit_Regular_Stats(struct s_BATTLE_UNIT * battle_unit)
     int16_t itr_players = 0;
     unit_idx = battle_unit->unit_idx;
     unit_mutations = _UNITS[unit_idx].mutations;
+    /* OGBUG: this reset block is missing battle_unit->Weapon_Plus1 = 0; */
     battle_unit->tohit = _unit_type_table[_UNITS[battle_unit->unit_idx].type].To_Hit;
     battle_unit->melee_tohit = 0;
     battle_unit->ranged_tohit = 0;
@@ -578,10 +557,10 @@ void Battle_Unit_Regular_Stats(struct s_BATTLE_UNIT * battle_unit)
     battle_unit->Grey_Ranged = 0;
     battle_unit->Grey_Defense = 0;
     battle_unit->Grey_Resist = 0;
-    battle_unit->resist = _unit_type_table[_UNITS[battle_unit->unit_idx].type].Resist;
-    battle_unit->defense = _unit_type_table[_UNITS[battle_unit->unit_idx].type].Defense;
-    battle_unit->melee = _unit_type_table[_UNITS[battle_unit->unit_idx].type].Melee;
-    battle_unit->ranged = _unit_type_table[_UNITS[battle_unit->unit_idx].type].Ranged;
+    battle_unit->resist = _unit_type_table[_UNITS[unit_idx].type].Resist;
+    battle_unit->defense = _unit_type_table[_UNITS[unit_idx].type].Defense;
+    battle_unit->melee = _unit_type_table[_UNITS[unit_idx].type].Melee;
+    battle_unit->ranged = _unit_type_table[_UNITS[unit_idx].type].Ranged;
     if(BU_CASTER_40())
     {
         battle_unit->mana_max = 40;
@@ -611,7 +590,7 @@ void Battle_Unit_Regular_Stats(struct s_BATTLE_UNIT * battle_unit)
         Battle_Unit_Item_Stats(unit_idx, battle_unit);
     }
     battle_unit_enchantments = battle_unit->item_enchantments | _UNITS[unit_idx].enchantments;
-    weapon_quality = (_UNITS[unit_idx].mutations & 0x03);  // ; mask first 3 bits
+    weapon_quality = (_UNITS[unit_idx].mutations & 0x03);
     if(weapon_quality > 0)
     {
         if(battle_unit->melee > 0)
@@ -690,7 +669,8 @@ void Battle_Unit_Regular_Stats(struct s_BATTLE_UNIT * battle_unit)
             battle_unit->Weapon_Plus1 = 1;
         }
     }
-    /* OGBUG: makes generic units ignore weapon immunity */
+    /* OGBUG: "makes generic units ignore weapon immunity" AKA "gives generic units non-normal weapons" */
+    /* 'Chaos Channels' and 'Black Channels' change the race of a Normal/Non-Fantastic Unit Type */
     if(
         ((battle_unit->Abilities & UA_FANTASTIC) != 0)
         ||
@@ -906,9 +886,9 @@ void Apply_Enchantment_And_Mutation_Effects(struct s_BATTLE_UNIT * battle_unit, 
 
 // WZD o116p09
 /*
-ignores Crusade, Warlord, and experience points in
-general when considering Heroism, which is either
-what should happen overland too, or not here either
+OGBUG: ignores Crusade, Warlord, and experience points in general when considering Heroism, which is either what should happen overland too, or not here either
+~ CITYCALC.c Calc_Unit_Level()
+~ MoO2  Module: ERICNET  Calc_Ship_Level_()
 */
 void Battle_Unit_Level_Stats(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
 {
@@ -1084,12 +1064,6 @@ void Battle_Unit_Level_Stats(int16_t unit_idx, struct s_BATTLE_UNIT * battle_uni
 
 
 // WZD o116p10
-/*
-    ¿ overwrites much of what was just done ?
-
-    upkeep
-
-*/
 void Battle_Unit_Hero_Skill_Stats(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
 {
     int16_t hero_owner_idx = 0;
@@ -1251,7 +1225,7 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
             {
                 if(_ITEMS[item_idx].Powers & IP_HASTE)
                 {
-                    battle_unit->Combat_Effects |= bue_Haste;
+                    battle_unit->combat_effects |= bue_Haste;
                 }
             }
         }
@@ -1397,19 +1371,19 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
         battle_unit->defense--;
         battle_unit->Grey_Defense++;
     }
-    if(battle_unit->Combat_Effects & bue_Mind_Twist)
+    if(battle_unit->combat_effects & bue_Mind_Twist)
     {
         battle_unit->tohit--;
         battle_unit->resist--;
         battle_unit->Gold_Resist++;
     }
-    if(battle_unit->Combat_Effects & bue_Vertigo)
+    if(battle_unit->combat_effects & bue_Vertigo)
     {
         battle_unit->tohit -= 2;
         battle_unit->defense--;
         battle_unit->Grey_Defense++;
     }
-    if(battle_unit->Combat_Effects & bue_Weakness)
+    if(battle_unit->combat_effects & bue_Weakness)
     {
         battle_unit->melee -= 2;
         battle_unit->Grey_Melee += 2;
@@ -1419,7 +1393,7 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
             battle_unit->Grey_Ranged += 2;
         }
     }
-    if(battle_unit->Combat_Effects & bue_Mind_Storm)
+    if(battle_unit->combat_effects & bue_Mind_Storm)
     {
         battle_unit->melee -= 5;
         battle_unit->ranged -= 5;
@@ -1432,22 +1406,22 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
     }
     enchantments = (_UNITS[battle_unit->unit_idx].enchantments ^ battle_unit->enchantments) & battle_unit->enchantments;
     Apply_Enchantment_And_Mutation_Effects(battle_unit, enchantments, Mutation_Flags);
-    if(battle_unit->Combat_Effects & bue_Warped_Attack)
+    if(battle_unit->combat_effects & bue_Warped_Attack)
     {
         battle_unit->Grey_Melee += (battle_unit->melee + 1) / 2;
         battle_unit->melee -= (battle_unit->melee + 1) / 2;
     }
-    if(battle_unit->Combat_Effects & bue_Warped_Defense)
+    if(battle_unit->combat_effects & bue_Warped_Defense)
     {
         battle_unit->Grey_Defense += (battle_unit->defense + 1) / 2;
         battle_unit->defense -= (battle_unit->defense + 1) / 2;
     }
-    if(battle_unit->Combat_Effects & bue_Warped_Resist)
+    if(battle_unit->combat_effects & bue_Warped_Resist)
     {
         battle_unit->Grey_Resist += battle_unit->resist;
         battle_unit->resist = 0;
     }
-    if(battle_unit->Combat_Effects & bue_Shatter)
+    if(battle_unit->combat_effects & bue_Shatter)
     {
         if(battle_unit->melee > 1)
         {
@@ -1472,7 +1446,7 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
     {
         battle_unit->defense = 0;
     }
-    if((battle_unit->Combat_Effects & bue_Web) && (battle_unit->Move_Flags & MV_FLYING))
+    if((battle_unit->combat_effects & bue_Web) && (battle_unit->Move_Flags & MV_FLYING))
     {
         battle_unit->Move_Flags ^= MV_FLYING;
     }

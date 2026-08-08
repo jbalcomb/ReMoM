@@ -24,10 +24,10 @@ extern "C" {
     Pure function: its three working arrays (shortest_path_*) are static file-scope, so no
     global setup is needed.
 
-    - movepath_cost_map: uint8_t cost grid (Wdt*Hgt). INF (0xFF) = impassable; a passable tile's
-      value is the cost to enter it. With every passable tile = 1, accumulated cost equals the
+    - movepath_cost_map: uint8_t cost grid (Wdt*Hgt). INF (0xFF) = impassable; a passable square's
+      value is the cost to enter it. With every passable square = 1, accumulated cost equals the
       hop count, so the returned length is the 8-connectivity (Chebyshev) shortest distance.
-    - Returns the hop count (0 if no path, or if the source/target tile is impassable).
+    - Returns the hop count (0 if no path, or if the source/target square is impassable).
     - mvpth_x/mvpth_y hold the path in forward order; entry [len-1] is the target.
 */
 
@@ -52,19 +52,19 @@ namespace
         int first_dx = std::abs(static_cast<int>(xs[0]) - srcx);
         int first_dy = std::abs(static_cast<int>(ys[0]) - srcy);
         EXPECT_LE(std::max(first_dx, first_dy), 1) << "first hop is not adjacent to the source";
-        EXPECT_GT(first_dx + first_dy, 0) << "first hop is the source tile itself";
+        EXPECT_GT(first_dx + first_dy, 0) << "first hop is the source square itself";
 
         for(int i = 0; i < len; i++)
         {
             ASSERT_LT(static_cast<int>(xs[i]), wdt);
             ASSERT_LT(static_cast<int>(ys[i]), hgt);
-            EXPECT_NE(static_cast<int>(map[(ys[i] * wdt) + xs[i]]), static_cast<int>(INF)) << "path tile " << i << " is impassable";
+            EXPECT_NE(static_cast<int>(map[(ys[i] * wdt) + xs[i]]), static_cast<int>(INF)) << "path square " << i << " is impassable";
             if(i > 0)
             {
                 int dx = std::abs(static_cast<int>(xs[i]) - static_cast<int>(xs[i - 1]));
                 int dy = std::abs(static_cast<int>(ys[i]) - static_cast<int>(ys[i - 1]));
                 EXPECT_LE(std::max(dx, dy), 1) << "step " << i << " is not an 8-neighbour move";
-                EXPECT_GT(dx + dy, 0) << "step " << i << " repeats the previous tile";
+                EXPECT_GT(dx + dy, 0) << "step " << i << " repeats the previous square";
             }
         }
     }
@@ -114,7 +114,7 @@ TEST(Find_Shortest_Path_test, DiagonalAdjacent_ReturnsLengthOne)
 
 TEST(Find_Shortest_Path_test, SingleRowCorridor_ForcesExactUniquePath)
 {
-    /* Only row 2 is passable; every other tile is a wall, so the (0,2)->(4,2) path is forced
+    /* Only row 2 is passable; every other square is a wall, so the (0,2)->(4,2) path is forced
        straight along the corridor -- the unique route, so every hop is asserted exactly. */
     uint8_t map[WDT * HGT];
     std::memset(map, WALL, sizeof(map));

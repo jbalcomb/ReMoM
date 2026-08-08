@@ -307,7 +307,7 @@ mov     [bp+error_term], ax
 /*
 ; plots a "line" between two square coordinates using
 ; Bresenham's line-drawing algorithm, putting the X and
-; Y coordinates of the resulting array of tiles into
+; Y coordinates of the resulting array of squares into
 ; two separate return (byte) arrays
 ; returns the length of the array (square distance)
 */

@@ -840,7 +840,7 @@ void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_i
  * When a stage point is available, the function scans all player-owned ocean
  * units on the plane and sends ready, individually mobile ocean-capable units
  * there by assigning `us_GOTO` with the stage coordinates. It skips units that
- * are not on ocean tiles, are already busy, are melders, or are transports.
+ * are not on ocean squares, are already busy, are melders, or are transports.
  * Ocean-capable movement is recognized through air travel, water travel, or
  * non-corporeal status.
  *
@@ -3716,7 +3716,6 @@ void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_co
     int16_t unit_idx = 0;
     int16_t itr2 = 0;
     int16_t itr = 0;
-    int16_t ogbug_value = 0;  // DNE in Dasm
 
     /* Phase 1: Filter units in the stack for candidates to push out */
     military_unit_count = 0;
@@ -3742,14 +3741,8 @@ void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_co
         military_unit_indices[military_unit_count] = unit_idx;
 
         /* Calculate unit strength value. */
-        // OGBUG  should pass unit_idx or use Effective_Unit_Type_Strength()
-        /* military_unit_values[military_unit_count] = Effective_Unit_Strength(unit_type) / 10; */
-        /* HACK  OGBUG would have result in bogus data, so we try to replicate that */
-        ogbug_value = ((Random(256) << 8) | Random(256));
-#ifdef STU_DEBUG
-    LOG_TRACE(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: AI_Stacks_Survey_Expedition_Forces_Stack(): ogbug_value: %d", __FILE__, __LINE__, ogbug_value);
-#endif
-        military_unit_values[military_unit_count] = ogbug_value;
+        /* OGBUG: should pass unit_idx or use Effective_Unit_Type_Strength() */
+        military_unit_values[military_unit_count] = (Effective_Unit_Strength(unit_type) / 10);
 
         military_unit_count++;
     }
@@ -5527,7 +5520,7 @@ void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t w
         landmass_node_index = _ai_landmass_land_squares_heads[wp][landmass_idx];
         while(landmass_node_index != ST_UNDEFINED)
         {
-// ...jitter (0-4) ... mostly affects ties: two tiles at exact taxicab distance ... and which one wins depends on the rolls
+// ...jitter (0-4) ... mostly affects ties: two squares at exact taxicab distance ... and which one wins depends on the rolls
 // ...isn't strictly the closest, occupieable square — it's probabilistically near-closest, with some randomization to break tie clusters.
             delta_distance = (
                 Delta_XY_With_Wrap(_ai_landmass_land_squares_wx_array[wp][landmass_node_index], _ai_landmass_land_squares_wy_array[wp][landmass_node_index], territory_centroid_wx, territory_centroid_wy, WORLD_WIDTH)
@@ -5996,7 +5989,7 @@ in-outs wx,wy
  * @brief Finds an adjacent unoccupied land square around the given square.
  *
  * Builds a 3x3 availability map centered on the source square, first marking
- * which neighboring tiles are land, then clearing any entries occupied by a
+ * which neighboring squares are land, then clearing any entries occupied by a
  * unit, an intact lair, or a city on the same plane. The center square is always
  * treated as unavailable.
  *

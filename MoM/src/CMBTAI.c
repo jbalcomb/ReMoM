@@ -917,7 +917,7 @@ void Auto_Do_Combat_Turn(int16_t player_idx)
         if(bu_ptr->controller_idx == player_idx && 
             bu_ptr->status == bus_Active && 
             bu_ptr->movement_points > 0 && 
-            !(bu_ptr->Combat_Effects & bue_Black_Sleep))
+            !(bu_ptr->combat_effects & bue_Black_Sleep))
         {
             Switch_Active_Battle_Unit(itr_battle_units);
             Assign_Combat_Grids();
@@ -948,7 +948,7 @@ void Auto_Do_Combat_Turn(int16_t player_idx)
         if(bu_ptr->controller_idx == player_idx && bu_ptr->status == bus_Active &&  bu_ptr->movement_points > 0)
         {
             /* Check if the unit is a hero */
-            if(_UNITS[bu_ptr->unit_idx].Hero_Slot > -1 && !(bu_ptr->Combat_Effects & bue_Black_Sleep))
+            if(_UNITS[bu_ptr->unit_idx].Hero_Slot > -1 && !(bu_ptr->combat_effects & bue_Black_Sleep))
             {
                 Switch_Active_Battle_Unit(itr_battle_units);
                 Assign_Combat_Grids();
@@ -1477,7 +1477,7 @@ void Do_Auto_Unit_Turn(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
     Set_Movement_Cost_Map(battle_unit_idx);
 
     /*
-        mark all tiles with units other than the target as
+        mark all squares with units other than the target as
         impassable
     */
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
@@ -1555,7 +1555,7 @@ void Do_Auto_Unit_Turn(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
     {
 
         // check if there is a path available to any of the
-        // city proper tiles and if so, find the shortest
+        // city proper squares and if so, find the shortest
         path_count = 999;
         for(city_area_cgx = 5; city_area_cgx < 9; city_area_cgx++)
         {
@@ -1686,7 +1686,7 @@ int16_t Auto_Move_Unit(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
     {
 
         /*
-            mark all tiles with units other than the target as
+            mark all squares with units other than the target as
             impassable
 
             BUG: this has just been done in the parent function
@@ -1728,7 +1728,7 @@ int16_t Auto_Move_Unit(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
     }
 
 /*
-mark all tiles with Magic Vortices on them as
+mark all squares with Magic Vortices on them as
 impassable
 
 BUG: this has just been done in the parent function
@@ -1771,7 +1771,7 @@ BUG: this has just been done in the parent function
 
     uu_combat_movement_variable = 0;
 
-    battle_units[battle_unit_idx].Moving = ST_TRUE;
+    battle_units[battle_unit_idx].mid_move = ST_TRUE;
 
     RP_Origin_X_2 = battle_units[battle_unit_idx].cgx;
     RP_Origin_Y_2 = battle_units[battle_unit_idx].cgy;
@@ -2148,7 +2148,7 @@ BUG: this has just been done in the parent function
 
     battle_units[battle_unit_idx].move_anim_ctr = 0;
 
-    battle_units[battle_unit_idx].Moving = ST_FALSE;
+    battle_units[battle_unit_idx].mid_move = ST_FALSE;
 
     if(itr_grid > 1)
     {

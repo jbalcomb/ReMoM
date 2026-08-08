@@ -393,7 +393,7 @@ int16_t Army_Do_Settle(int16_t troop_count, int16_t troops[])
  * This routine skips processing when the unit is already marked finished for
  * the turn. Otherwise, it rebuilds the reduced-map artifacts used by movement,
  * snapshots the current global map-view coordinates, and forwards movement to
- * Stack_Move_To() using the unit's owner, destination tile, and plane.
+ * Stack_Move_To() using the unit's owner, destination square, and plane.
  *
  * The movement result from Stack_Move_To() is returned unchanged.
  *
@@ -474,7 +474,7 @@ int16_t AI_Unit_Army_Do_Move(int16_t unit_idx)
 
 // WZD o100p09
 /**
- * @brief Relocates a unit from an invalid/full tile to a nearby legal square, or removes it.
+ * @brief Relocates a unit from an invalid/full square to a nearby legal square, or removes it.
  *
  * @details
  * This routine attempts to "push off" a unit by searching a local 3x3 neighborhood

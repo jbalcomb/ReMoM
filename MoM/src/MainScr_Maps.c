@@ -1398,7 +1398,7 @@ void Set_Map_Square_Explored_Flags_XYP(int16_t wx, int16_t wy, int16_t wp)
 ; corresponding to the original square's bottom right one
 ;
 ; conceptually flawed, it should simply check whether
-; there is any exploration on all 4 tiles, rather than
+; there is any exploration on all 4 squares, rather than
 ; comparing them against the corner only masks
 */
 /*
@@ -1505,9 +1505,9 @@ void Set_Square_Explored_Flags_Bottom_Right_Corner(int16_t wx, int16_t wy, int16
 ; implemented correctly, would deal with each and every
 ; one of these cases, and then some
 ;
-; performs exploration matching of neighboring tiles
+; performs exploration matching of neighboring squares
 ; in a 5-by-5 rectangle around the selected square in an
-; attempt to remove fog of war from between tiles that
+; attempt to remove fog of war from between squares that
 ; are already explored
 ;
 ; BUG: the array contains many elements that are only

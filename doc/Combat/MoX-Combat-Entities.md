@@ -39,7 +39,7 @@ So, ...
 
 
 Tactical_Combat_Draw()
-    CMB_CreateEntities__WIP()
+    Combat_Grid_Entities()
     CMB_DrawMap__WIP()
         Combat_Figure_Compose_USEFULL();
         CMB_DrawEntities__WIP()
@@ -47,16 +47,16 @@ Tactical_Combat_Draw()
                 battle_unit_picts_seg[]
 
 Tactical_Combat__WIP()
-CMB_LoadResources__WIP()
+Combat_Screen_Load_Resources()
     battle_unit_picts_seg[itr] = Allocate_Next_Block(_screen_seg, 55)
 
 
 
 Tactical_Combat_Draw()
-    CMB_CreateEntities__WIP();
+    Combat_Grid_Entities();
         CMB_EntitiesReset();
         ...
-        CMB_SpawnFigure__WIP(
+        Combat_Screen_Map_Draw_Entities(
             battle_units[itr].bufpi,
             battle_units[itr].cgx,
             battle_units[itr].cgy,
@@ -77,7 +77,7 @@ Tactical_Combat_Draw()
 ...
 What's with the 13 and 23?
 
-CMB_SpawnFigure__WIP() uses itr_figures to calc fix_x,fig_y and then uses those in the calc for draw_x,draw_y
+Combat_Screen_Map_Draw_Entities() uses itr_figures to calc fix_x,fig_y and then uses those in the calc for draw_x,draw_y
     combat_grid_entities[combat_grid_entity_count].draw_x = draw_x;
     combat_grid_entities[combat_grid_entity_count].draw_y = draw_y;
 
@@ -117,7 +117,7 @@ struct s_COMBAT_ENTITY * combat_grid_entities;
 int16_t combat_grid_entity_count;
 
 // WZD o99p06
-void CMB_CreateEntities__WIP(void)
+void Combat_Grid_Entities(void)
 
 // WZD ovr153p14
 void CMB_EntitiesReset(void)

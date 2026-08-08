@@ -15,6 +15,7 @@ extern "C" {
 #include "../../MoX/src/MOX_DEF.h"
 #include "../src/AIDUDES.h"
 #include "../src/AIMOVE.h"
+#include "../src/Combat.h"
 #include "../src/UNITTYPE.h"
 #ifdef __cplusplus
 }

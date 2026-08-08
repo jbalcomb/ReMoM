@@ -756,7 +756,7 @@ int16_t Unit_Has_NonCorporeal(int16_t unit_idx)
     The overland solver SPLITS the shared 5-step skeleton across two functions, where Find_Shortest_Path
     (MAPGEN.c) does all five in a single body:
         [Skeleton 1 + 3]  init parallel arrays + relaxation sweep  -> delegated to Move_Path_Find() (MovePath.c)
-        [Skeleton 2]      bail if the destination tile is impassable
+        [Skeleton 2]      bail if the destination square is impassable
         [Skeleton 4]      back-trace dst -> Reach_From[] self-link
         [Skeleton 5]      reverse + 1-D index -> (x, y)
     The inline [Skeleton step N] labels below mark steps 2/4/5; steps 1/3 run inside the Move_Path_Find() call.
@@ -832,7 +832,7 @@ Calc_Move_Path:
         // sets movepath_cost_map->moves2[] from movement_mode_cost_maps[wp].UU_MvMd, walking, forester, mountaineer, swimming, sailing
         Update_MovePathMap(&movepath_cost_map->moves2[0], boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
 
-        /* [Skeleton step 2]  Bail if the destination tile is impassable (MoM-MovePath-Compare.md, "The shared skeleton"); returns path_length 0 via Done_Return_Zero. */
+        /* [Skeleton step 2]  Bail if the destination square is impassable (MoM-MovePath-Compare.md, "The shared skeleton"); returns path_length 0 via Done_Return_Zero. */
         if(movepath_cost_map->moves2[((dst_wy * WORLD_WIDTH) + dst_wx)] == (int8_t)INF)  /* CLAUDE  (int8_t)INF == -1; impassable byte 0xFF on this signed moves2 map */
         {
             goto Done_Return_Zero;

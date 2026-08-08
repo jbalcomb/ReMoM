@@ -218,7 +218,7 @@ Faithful.
 - **Per-missile advance** — `travel_percent += travel_percent_step` clamped at `100` with a `jle` test, over `m_missile_count` entries (asm:414-442). Production [Ranged_Animation](../../MoM/src/Combat.c#L13202).
 - **Teardown** — `m_missile_count = 0`, `Clear_Gibs` only for a unit target, `Release_Block(World_Data)` only when sound effects are on (asm:450-461). Production [Ranged_Animation](../../MoM/src/Combat.c#L13202).
 
-`projectile_anim_frame` and its shadow `niu_projectile_anim_frame_2` are advanced as a pair throughout, in both the `% 3` path and the `= 4` path (asm:372-373, 387-388, 399-410). Only the first is ever consumed — `ovr153/Combat_Screen_Map_Draw_Entities__WIP.asm:323` reads it, and the shadow's only read is its own self-increment. Both stores are faithful; keep them.
+`projectile_anim_frame` and its shadow `niu_projectile_anim_frame_2` are advanced as a pair throughout, in both the `% 3` path and the `= 4` path (asm:372-373, 387-388, 399-410). Only the first is ever consumed — `ovr153/Combat_Screen_Map_Draw_Entities.asm:323` reads it, and the shadow's only read is its own self-increment. Both stores are faithful; keep them.
 
 # Melee_Animation
 

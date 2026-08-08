@@ -695,7 +695,7 @@ void Change_City_Name_Popup_Draw(void)
 ;   2 - square has an intact lair
 ;   3 - square has a tower of wizardry
 ;   4 - square has a node
-;   5 - there's already a city within 3 tiles
+;   5 - there's already a city within 3 squares
 */
 int16_t Map_Square_Survey(int16_t wx, int16_t wy, int16_t wp)
 {

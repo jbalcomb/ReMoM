@@ -417,7 +417,7 @@ ctr is 370
 adjacent_path_cost is 4
 
 
-CMB_Terrain_Init__WIP() |-> Generate_Combat_Map__WIP() |-> Set_Movement_Cost_Maps()
+Build_Battlefield() |-> Generate_Combat_Map__WIP() |-> Set_Movement_Cost_Maps()
 
 
 

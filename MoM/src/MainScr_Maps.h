@@ -129,7 +129,7 @@ extern "C" {
 ; Minimap_IMG_Seg allocation, according to the passed
 ; parameters:
 ;   Top/Left - main display pixel coordinates
-;   H/VTiles - horizontal/vertical window size in tiles
+;   H/VTiles - horizontal/vertical window size in squares
 ;   XPos/YPos/Plane - top left map coordinates
 ;   MapX@/MapY@ - return values to set
 ; resets the draw window after finishing

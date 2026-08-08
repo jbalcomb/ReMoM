@@ -193,7 +193,7 @@ void Resolve_Wizard_Conquest(int16_t loser_Idx, int16_t winner_idx, int16_t city
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t resign = 0;
     int16_t city_count = 0;
-    uint8_t * city_enchantments;
+    int8_t * city_enchantments;
     uint8_t * overland_enchantments;
     int16_t troop_count = 0;
     int16_t itr_cench = 0;

@@ -18,7 +18,7 @@ Tier 2 is Calc_Battlefield_Bonuses (ovr122, 450), which produces the three _batt
 */
 
 CMB_PrepareTurn__WIP()               ==>  Begin_Combat_Turn()
-CMB_Units_Init__WIP()                ==>  Deploy_Battle_Units()
+Prepare_All_Battle_Units()                ==>  Deploy_Battle_Units()
 BU_Init_Battle_Unit()                ==>  Battle_Unit_Regular_Stats()
 BU_Apply_Battlefield_Effects__WIP()  ==>  Battle_Unit_Special_Stats()
 BU_Apply_Level()                     ==>  Battle_Unit_Level_Stats()
@@ -36,7 +36,7 @@ CMB_AIGoesFirst       ==>  ???
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr091\CMB_PrepareTurn__WIP.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr091\Add_City_Damage_From_Battle_Units_Within.asm
 
-C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr098\CMB_Units_Init__WIP.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr098\Prepare_All_Battle_Units.asm
 
 ...all of WIZARDS.EXE ovr116 ~== MoO2 Module: COMBINIT...
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\BU_Apply_Item_Powers.asm
@@ -52,7 +52,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\BU_Init_Hero_Unit.a
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\BU_Apply_Battlefield_Effects__WIP.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\NX_Unit_Has_Spell_As_Enchantment_Or_Item_Power.asm
 
-~ CMB_Units_Init__WIP()  AKA Prepare_All_Battle_Units()
+~ Prepare_All_Battle_Units()  AKA Prepare_All_Battle_Units()
 OON XREF:  Prepare_Battle_Unit_Summons() |-> Prepare_Battle_Unit
 ...which is only used for scc_Summoning and USA 'Summon Demon'
 OON XREF:  Combat_Cast_Spell() |-> Summon_Demon()
@@ -73,7 +73,7 @@ CMB_PrepareTurn__WIP()
     |-> j_BU_Apply_Battlefield_Effects__WIP()
     |-> j_Battle_Unit_Moves2() / j_Combat_Resistance_Check() / j_Battle_Unit_Heal() / Random()
 
-CMB_Units_Init__WIP()
+Prepare_All_Battle_Units()
     |-> j_Load_Battle_Unit()
         |-> Load_Battle_Unit()
             |-> j_Unit_Gold_Upkeep()
@@ -146,7 +146,7 @@ int16_t Battle_Unit_Movement_Mode(int16_t battle_unit_idx);
 void Prepare_Battle_Unit(int16_t battle_unit_idx, int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy);
 
 // WZD o98p16
-int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[]);
+int16_t Prepare_All_Battle_Units(int16_t troop_count, int16_t troops[]);
 
 // WZD o98p17
 int16_t Battle_Unit_Is_Airborne(int16_t battle_unit_idx);
@@ -174,7 +174,7 @@ Load_Battle_Unit() calls Battle_Unit_Regular_Stats(), but not Battle_Unit_Specia
 
 // WZD o98p16
 // MoO2  Module: COMBINIT  Deploy_Ships_()
-int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
+int16_t Prepare_All_Battle_Units(int16_t troop_count, int16_t troops[])
 
     if(_combat_defender_player == ST_UNDEFINED)
     {
@@ -186,11 +186,11 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
     }
     if(_combat_defender_player != _human_player_idx)
     {
-        CMB_AI_Player = _combat_defender_player;
+        _combat_ai_player = _combat_defender_player;
     }
-    if(CMB_AI_Player == ST_UNDEFINED)
+    if(_combat_ai_player == ST_UNDEFINED)
     {
-        CMB_AI_Player = MOO_MONSTER_PLAYER_IDX;
+        _combat_ai_player = MOO_MONSTER_PLAYER_IDX;
     }
     /*
         IDGI.
@@ -199,28 +199,28 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
     */
     if(_combat_attacker_player == _human_player_idx)
     {
-        combat_human_player = _combat_attacker_player;
-        combat_computer_player = _combat_defender_player;
+        _combat_local_player = _combat_attacker_player;
+        _combat_remote_player = _combat_defender_player;
     }
     else
     {
-        combat_human_player = _combat_defender_player;
-        combat_computer_player = _combat_attacker_player;
+        _combat_local_player = _combat_defender_player;
+        _combat_remote_player = _combat_attacker_player;
     }
 
-It's the tail of CMB_Units_Init__WIP that converts "who attacked whom" into the three globals the rest of combat actually reads. Three separate jobs.
+It's the tail of Prepare_All_Battle_Units that converts "who attacked whom" into the three globals the rest of combat actually reads. Three separate jobs.
 
 The constants matter: HUMAN_PLAYER_IDX 0, NEUTRAL_PLAYER_IDX 5, MOO_MONSTER_PLAYER_IDX 6 (MOX_DEF.h:611-613).
 
 1. Sentinel normalisation (5571-5578). _combat_attacker_player and _combat_defender_player are set by the caller from Combat_Screen__WIP's parameters (1536-1537). If either arrived as ST_UNDEFINED, this pins it to the monster pseudo-player so every downstream _players[...] index has some value. It's a floor, not a computation.
 
-2. Naming the opponent for the UI (5579-5586). CMB_AI_Player is "the side that isn't the human". It's set in two places — 5540 for the attacker, 5581 for the defender — and because the defender assignment comes second it wins when both sides are AI. Nothing about combat resolution reads it; it drives presentation only: which wizard's combat theme plays (1561, via _players[CMB_AI_Player].wizard_id), the banner colours (5991, 6032, 6119) and the opponent's name on the combat bar (6004, 6045, 7144).
+2. Naming the opponent for the UI (5579-5586). _combat_ai_player is "the side that isn't the human". It's set in two places — 5540 for the attacker, 5581 for the defender — and because the defender assignment comes second it wins when both sides are AI. Nothing about combat resolution reads it; it drives presentation only: which wizard's combat theme plays (1561, via _players[_combat_ai_player].wizard_id), the banner colours (5991, 6032, 6119) and the opponent's name on the combat bar (6004, 6045, 7144).
 
-3. Re-labelling the two sides by seat (5587-5602) — and this is what the IDGI is about. Attacker/defender is the wrong axis for the turn loop, which cares about which seat the interactive UI drives. So the pair gets flipped into combat_human_player / combat_computer_player, and those are what the loop uses: whose turn auto-plays (4182, 4189), whether the active unit accepts input (2509, 5066, 6176, 7905), win attribution (2032), retreat checks (8542).
+3. Re-labelling the two sides by seat (5587-5602) — and this is what the IDGI is about. Attacker/defender is the wrong axis for the turn loop, which cares about which seat the interactive UI drives. So the pair gets flipped into _combat_local_player / _combat_remote_player, and those are what the loop uses: whose turn auto-plays (4182, 4189), whether the active unit accepts input (2509, 5066, 6176, 7905), win attribution (2032), retreat checks (8542).
 
-The names are the confusing part. The mapping is unconditional — if the attacker isn't the human, the defender gets labelled "human" whether or not a human is anywhere in the fight. In AI-vs-AI combat combat_human_player names an AI wizard. That's deliberate, and 4195 proves it: under _auto_combat_flag the game calls Auto_Cast_Spell_And_Do_Combat_Turn(combat_human_player) — machine-playing the "human" seat. So read them as seat A / seat B, named after the common case, not as a "is a person at the keyboard" flag. _human_player_idx (the variable at MOM_DAT.c:2957, always HUMAN_PLAYER_IDX) is the one that really means "the human".
+The names are the confusing part. The mapping is unconditional — if the attacker isn't the human, the defender gets labelled "human" whether or not a human is anywhere in the fight. In AI-vs-AI combat _combat_local_player names an AI wizard. That's deliberate, and 4195 proves it: under _auto_combat_flag the game calls Auto_Cast_Spell_And_Do_Combat_Turn(_combat_local_player) — machine-playing the "human" seat. So read them as seat A / seat B, named after the common case, not as a "is a person at the keyboard" flag. _human_player_idx (the variable at MOM_DAT.c:2957, always HUMAN_PLAYER_IDX) is the one that really means "the human".
 
-One thing that falls out of reading these together — the two sentinels don't agree. The fallbacks write 6, but every reader guards with 5: 1559 CMB_AI_Player != NEUTRAL_PLAYER_IDX, and likewise 5960, 6001, 6042, and < NEUTRAL_PLAYER_IDX at 7141. A CMB_AI_Player of 6 sails through every one of those and then indexes _players[6] — same one-past-the-end read as the Cmbt_Skill_Left write we just looked at, but on wizard_id, banner_id and name.
+One thing that falls out of reading these together — the two sentinels don't agree. The fallbacks write 6, but every reader guards with 5: 1559 _combat_ai_player != NEUTRAL_PLAYER_IDX, and likewise 5960, 6001, 6042, and < NEUTRAL_PLAYER_IDX at 7141. A _combat_ai_player of 6 sails through every one of those and then indexes _players[6] — same one-past-the-end read as the Cmbt_Skill_Left write we just looked at, but on wizard_id, banner_id and name.
 
 I have not checked whether the NEUTRAL_PLAYER_IDX guards are themselves faithful — those readers are in ovr090/ovr092 territory, outside this review. So I'm reporting the mismatch as it stands in production, not asserting it's an OGBUG.
 
@@ -247,7 +247,7 @@ Since this review began, `ovr116` has been split out of `Combat.c` into its own 
 | --- | --- | --- | --- |
 | `Begin_Combat_Turn` | [Combat.c:2635](../../MoM/src/Combat.c#L2635) | [ovr091/CMB_PrepareTurn__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr091/CMB_PrepareTurn__WIP.asm) (555) | faithful (R4 fixed) |
 | `Add_City_Damage_From_Battle_Units_Within` | [Combat.c:3428](../../MoM/src/Combat.c#L3428) | [ovr091/Add_City_Damage_From_Battle_Units_Within.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr091/Add_City_Damage_From_Battle_Units_Within.asm) (46) | faithful |
-| `CMB_Units_Init__WIP` | [Combat.c:5436](../../MoM/src/Combat.c#L5436) | [ovr098/CMB_Units_Init__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/CMB_Units_Init__WIP.asm) (527) | faithful (R3 fixed) |
+| `Prepare_All_Battle_Units` | [Combat.c:5436](../../MoM/src/Combat.c#L5436) | [ovr098/Prepare_All_Battle_Units.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/Prepare_All_Battle_Units.asm) (527) | faithful (R3 fixed) |
 | `Battle_Unit_Item_Stats` | [COMBINIT.c:62](../../MoM/src/COMBINIT.c#L62) | [ovr116/BU_Apply_Item_Powers.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Apply_Item_Powers.asm) (467) | faithful |
 | `Item_Powers_To_Unit_Enchantments` | [COMBINIT.c:161](../../MoM/src/COMBINIT.c#L161) | [ovr116/BU_Apply_Item_Enchantments.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Apply_Item_Enchantments.asm) (469) | faithful |
 | `Item_Powers_To_Attack_Attributes` | [COMBINIT.c:250](../../MoM/src/COMBINIT.c#L250) | [ovr116/BU_Apply_Item_Attack_Specials.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Apply_Item_Attack_Specials.asm) (194) | faithful |
@@ -302,7 +302,7 @@ None open. The thirteen raised during this review are all fixed; the roster belo
 | --- | --- | --- |
 | R1 | [`Battle_Unit_Regular_Stats`](../../MoM/src/COMBINIT.c#L566) | Holy Arms' `\|\|` was reconstructed as nested `&&` with two tests inverted, so the normal units it exists to bless got nothing |
 | R2 | [`Battle_Unit_Regular_Stats`](../../MoM/src/COMBINIT.c#L566) | Chaos Surge's loop bound was the constant `NUM_PLAYERS`, not the live `_num_players` |
-| R3 | [`CMB_Units_Init__WIP`](../../MoM/src/Combat.c#L5436) | the defender-side `us_Ready` reset was inverted and read `HUMAN_PLAYER_IDX` instead of `_human_player_idx` |
+| R3 | [`Prepare_All_Battle_Units`](../../MoM/src/Combat.c#L5436) | the defender-side `us_Ready` reset was inverted and read `HUMAN_PLAYER_IDX` instead of `_human_player_idx` |
 | R4 | [`Begin_Combat_Turn`](../../MoM/src/Combat.c#L2635) | the Web block was hoisted out of its guard and dropped `action = bua_Finished` |
 | R5 | [`Battle_Unit_Hit_Points`](../../MoM/src/COMBINIT.c#L377) | `_unit_type_table` was indexed by *unit* index instead of unit *type* — an out-of-bounds read on almost every unit |
 | R6 | [`Unit_Hit_Points`](../../MoM/src/COMBINIT.c#L292), [`Battle_Unit_Hero_Skill_Stats`](../../MoM/src/COMBINIT.c#L1102) | four phantom `Random()` guards with no asm counterpart, injecting RNG into a stat calculation that runs once per unit per turn |
@@ -314,7 +314,7 @@ None open. The thirteen raised during this review are all fixed; the roster belo
 | R12 | [`Apply_Enchantment_And_Mutation_Effects`](../../MoM/src/COMBINIT.c#L734) | Berserk's melee doubling lost its `melee > 0` guard |
 | R13 | [`Apply_Enchantment_And_Mutation_Effects`](../../MoM/src/COMBINIT.c#L734) | Berserk wrote `Gold_Melee =` where the original adds, discarding every earlier melee credit |
 
-`D1` — the four `MOO_MONSTER_PLAYER_IDX` fallbacks in [`CMB_Units_Init__WIP`](../../MoM/src/Combat.c#L5436) — was closed the same way, by restoring them.
+`D1` — the four `MOO_MONSTER_PLAYER_IDX` fallbacks in [`Prepare_All_Battle_Units`](../../MoM/src/Combat.c#L5436) — was closed the same way, by restoring them.
 
 # Divergences
 
@@ -375,24 +375,24 @@ Early-returns unless `_combat_environ == cnv_Enemy_City` (asm:7, `cnv_Enemy_City
 
 `void` is the right return type. asm:9 is `xor ax, ax` on the early-exit path, but nothing else in the 46 lines writes `AX` for return purposes — asm:32's `call j_Battle_Unit_Is_Within_City` loads it and asm:34 consumes it immediately in a `cmp` — and the one caller, `Begin_Combat_Turn` asm:53-55, discards it. Compiler artifact.
 
-# CMB_Units_Init__WIP
+# Prepare_All_Battle_Units
 
 Faithful apart from R3 and D1.
 
 ## Faithful — verified, leave alone
 
-- **The clear loop runs to a literal 36** (asm:28), setting `status = bus_Gone` and `bufpi = ST_UNDEFINED` — not to `_combat_total_unit_count`, which is only zeroed afterwards at asm:30. Production [CMB_Units_Init__WIP](../../MoM/src/Combat.c#L5436); `MAX_BATTLE_UNIT_SLOT_COUNT` is 36 ([MOM_DEF.h:67](../../MoX/src/MOM_DEF.h#L67)).
-- **`Combat_Figure_Load`'s second argument differs between the two loops** — `itr` for the attacker (asm:71) but `_combat_total_unit_count` for the defender (asm:247). They coincide only while the attacker loop is running. Production [CMB_Units_Init__WIP](../../MoM/src/Combat.c#L5436) and [CMB_Units_Init__WIP](../../MoM/src/Combat.c#L5436) keep the asymmetry.
-- **The Floating Island flags are set with different literals** — `mov [ATKR_FloatingIsland], 1` (asm:63) but `mov [DEFR_FloatingIsland], e_ST_TRUE` (asm:239). Production [CMB_Units_Init__WIP](../../MoM/src/Combat.c#L5436) and [CMB_Units_Init__WIP](../../MoM/src/Combat.c#L5436) preserve the `1` / `ST_TRUE` split rather than normalising it.
-- **`controller_idx` is overwritten after `Load_Battle_Unit` already set it.** `Load_Battle_Unit` asm:84-86 stores `_UNITS[unit_idx].owner_idx`; this function then stores the side index over it (asm:100-101, asm:272-273). Redundant for most units, load-bearing for any whose owner differs from the side they are fighting on. Production [CMB_Units_Init__WIP](../../MoM/src/Combat.c#L5436) and [CMB_Units_Init__WIP](../../MoM/src/Combat.c#L5436), the latter with the question already noted in-source.
-- **The reset loop's field order is exact** (asm:322-406): `cgx`, `cgy`, `target_cgx`, `target_cgy`, `move_anim_ctr`, `outline_magic_realm`, `Atk_FigLoss`, `Moving`, `action`, `gibs`, `Unknown_5A`, `Always_Animate`, `Melee_Anim`, `Image_Effect`, `Move_Bob`. Production [CMB_Units_Init__WIP](../../MoM/src/Combat.c#L5436) matches, with `Always_Animate` → `animate_idle`, `Image_Effect` → `figure_effect`, `Move_Bob` → `animate_move_as_idle`.
-- **`count` is incremented only in the defender loop** (asm:274) and is the return value (asm:521). Production [CMB_Units_Init__WIP](../../MoM/src/Combat.c#L5436), [CMB_Units_Init__WIP](../../MoM/src/Combat.c#L5436).
-- **`_combat_wx` appears as `_combat_wx__som_started_anim_ctr`** in the listing (asm:159) — one storage location IDA has labelled for two uses. Production's `_combat_wx` at [CMB_Units_Init__WIP](../../MoM/src/Combat.c#L5436) is right.
+- **The clear loop runs to a literal 36** (asm:28), setting `status = bus_Gone` and `bufpi = ST_UNDEFINED` — not to `_combat_total_unit_count`, which is only zeroed afterwards at asm:30. Production [Prepare_All_Battle_Units](../../MoM/src/Combat.c#L5436); `MAX_BATTLE_UNIT_SLOT_COUNT` is 36 ([MOM_DEF.h:67](../../MoX/src/MOM_DEF.h#L67)).
+- **`Combat_Figure_Load`'s second argument differs between the two loops** — `itr` for the attacker (asm:71) but `_combat_total_unit_count` for the defender (asm:247). They coincide only while the attacker loop is running. Production [Prepare_All_Battle_Units](../../MoM/src/Combat.c#L5436) and [Prepare_All_Battle_Units](../../MoM/src/Combat.c#L5436) keep the asymmetry.
+- **The Floating Island flags are set with different literals** — `mov [ATKR_FloatingIsland], 1` (asm:63) but `mov [DEFR_FloatingIsland], e_ST_TRUE` (asm:239). Production [Prepare_All_Battle_Units](../../MoM/src/Combat.c#L5436) and [Prepare_All_Battle_Units](../../MoM/src/Combat.c#L5436) preserve the `1` / `ST_TRUE` split rather than normalising it.
+- **`controller_idx` is overwritten after `Load_Battle_Unit` already set it.** `Load_Battle_Unit` asm:84-86 stores `_UNITS[unit_idx].owner_idx`; this function then stores the side index over it (asm:100-101, asm:272-273). Redundant for most units, load-bearing for any whose owner differs from the side they are fighting on. Production [Prepare_All_Battle_Units](../../MoM/src/Combat.c#L5436) and [Prepare_All_Battle_Units](../../MoM/src/Combat.c#L5436), the latter with the question already noted in-source.
+- **The reset loop's field order is exact** (asm:322-406): `cgx`, `cgy`, `target_cgx`, `target_cgy`, `move_anim_ctr`, `outline_magic_realm`, `Atk_FigLoss`, `Moving`, `action`, `gibs`, `Unknown_5A`, `Always_Animate`, `Melee_Anim`, `Image_Effect`, `Move_Bob`. Production [Prepare_All_Battle_Units](../../MoM/src/Combat.c#L5436) matches, with `Always_Animate` → `animate_idle`, `Image_Effect` → `figure_effect`, `Move_Bob` → `animate_move_as_idle`.
+- **`count` is incremented only in the defender loop** (asm:274) and is the return value (asm:521). Production [Prepare_All_Battle_Units](../../MoM/src/Combat.c#L5436), [Prepare_All_Battle_Units](../../MoM/src/Combat.c#L5436).
+- **`_combat_wx` appears as `_combat_wx__som_started_anim_ctr`** in the listing (asm:159) — one storage location IDA has labelled for two uses. Production's `_combat_wx` at [Prepare_All_Battle_Units](../../MoM/src/Combat.c#L5436) is right.
 - **`spell_data_table[spl_Floating_Island].unit_type` is `Params0_1` in the listings** (asm:61, asm:237), IDA's generic name for the word at offset `0x20`. Production names it `unit_type` ([MOM_DAT.h:1071](../../MoX/src/MOM_DAT.h#L1071)).
 
 ## OGBUGs — faithful, do not fix
 
-- **Transports with Wraith Form are not excluded from city defence.** The city-siege filter (asm:407-445) requires `Transport > 0` **and** `MV_SAILING` **and** not `MV_FLYING`; a Wraith Form transport carries `MV_SWIMMING` rather than `MV_SAILING`, so it slips through and defends the city as a combat unit. Annotated at [CMB_Units_Init__WIP](../../MoM/src/Combat.c#L5436) and [CMB_Units_Init__WIP](../../MoM/src/Combat.c#L5436).
+- **Transports with Wraith Form are not excluded from city defence.** The city-siege filter (asm:407-445) requires `Transport > 0` **and** `MV_SAILING` **and** not `MV_FLYING`; a Wraith Form transport carries `MV_SWIMMING` rather than `MV_SAILING`, so it slips through and defends the city as a combat unit. Annotated at [Prepare_All_Battle_Units](../../MoM/src/Combat.c#L5436) and [Prepare_All_Battle_Units](../../MoM/src/Combat.c#L5436).
 
 # Load_Battle_Unit
 
@@ -620,11 +620,11 @@ Currently unreferenced, hence the `NIU_` prefix. Within `ovr116` it is the one f
 
 # What else belongs in this review
 
-Nothing further in `ovr116` — the bundle is complete. The overlay's twelve functions plus `Begin_Combat_Turn`, `Add_City_Damage_From_Battle_Units_Within` and `CMB_Units_Init__WIP` are all compared above.
+Nothing further in `ovr116` — the bundle is complete. The overlay's twelve functions plus `Begin_Combat_Turn`, `Add_City_Damage_From_Battle_Units_Within` and `Prepare_All_Battle_Units` are all compared above.
 
 **Tier 2 — the globals `Battle_Unit_Special_Stats` reads.** `Calc_Battlefield_Bonuses` (`ovr122`, 450 lines) produces `_battlefield_leadership`, `_battlefield_holybonus` and `_battlefield_resistall`, and `Begin_Combat_Turn` calls it at asm:50-51 immediately before the per-unit loop. All three are read every turn by the first five effect blocks, and nothing has verified how they are filled. `_battlefield_resistall` is also the second argument to the Terror `Combat_Resistance_Check` (asm:156-159), so it reaches two functions reviewed here. This is the highest-value follow-on.
 
-**Tier 3 — the rest of `CMB_Units_Init__WIP`'s callees.** `Deploy_Battle_Units` (`ovr113`, 375) and `Combat_Figure_Load` (`ovr163`, 142). Deployment is squarely "init/prep", but both are self-contained and neither feeds a finding above.
+**Tier 3 — the rest of `Prepare_All_Battle_Units`'s callees.** `Deploy_Battle_Units` (`ovr113`, 375) and `Combat_Figure_Load` (`ovr163`, 142). Deployment is squarely "init/prep", but both are self-contained and neither feeds a finding above.
 
 **Not this bundle.** `Unit_Moves2` (`ovr121`, 244) and `Battle_Unit_Moves2` (`ovr124`, 300) are movement, reachable from a dozen places, and belong with the movement functions. `Prod_Init_Battle_Unit` (`ovr089`, 73) and `Prod_Load_Battle_Unit` ([UnitView.c:2505](../../MoM/src/UnitView.c#L2505)) are the production-screen analogues of `Battle_Unit_Regular_Stats` and `Load_Battle_Unit` — worth a short comparison pass someday, but not on any path reviewed here.
 

@@ -134,7 +134,7 @@ else
 #define BATTLEFIELD_CITY_WALL_FIRE      0x2 /* 0b00000010 */
 #define BATTLEFIELD_CITY_WALL_DARKNESS  0x4 /* 0b00000100 */
 
-enum e_Missiles
+enum e_COMBAT_ENTITY_MISSILE_TYPE
 {
     msl_Lightning   =  0,
     msl_Arrow       =  1,
@@ -153,28 +153,28 @@ enum e_Missiles
     msl_Cloud       = 14
 };
 
-enum e_msl__dir
+enum e_COMBAT_ENTITY_MISSILE_DIRECTION
 {
-    Proj_Up         = 0,
-    Proj_UpRight    = 1,
-    Proj_Right      = 2,
-    Proj_DnRight    = 3,
-    Proj_Down       = 4,
-    Proj_DnLeft     = 5,
-    Proj_Left       = 6,
-    Proj_UpLeft     = 7
+    cemd_Up         = 0,
+    cemd_UpRight    = 1,
+    cemd_Right      = 2,
+    cemd_DownRight  = 3,
+    cemd_Down       = 4,
+    cemd_DownLeft   = 5,
+    cemd_Left       = 6,
+    cemd_UpLeft     = 7
 };
 
 // sizeof:   Eh  14d
 struct s_MISSILE
 {
-    /* 00 */ int16_t Src_Scr_X;
-    /* 02 */ int16_t Src_Scr_Y;
-    /* 04 */ int16_t Tgt_Scr_X;
-    /* 06 */ int16_t Tgt_Scr_Y;
-    /* 08 */ int16_t Type;  //  ; enum Missiles
+    /* 00 */ int16_t src_screen_x;
+    /* 02 */ int16_t src_screen_y;
+    /* 04 */ int16_t dst_screen_x;
+    /* 06 */ int16_t dst_screen_y;
+    /* 08 */ int16_t type;              /* enum e_COMBAT_ENTITY_MISSILE_TYPE */
     /* 0A */ int16_t travel_percent;
-    /* 0C */ int16_t Proj_Direction;  //  ; enum Proj_Dirs
+    /* 0C */ int16_t direction;         /* enum e_COMBAT_ENTITY_MISSILE_DIRECTION */
     /* 0E */
 };
 
@@ -222,11 +222,11 @@ extern SAMB_ptr DBG_figure_pict_base_seg;
 #define COMBAT_GRID_X1(_x_,_y_)     ( Get_Combat_Grid_Cell_X( ( (_x_) + 4), ((_y_) + 4) ) )
 #define COMBAT_GRID_Y1(_x_,_y_)     ( Get_Combat_Grid_Cell_Y( ( (_x_) + 4), ((_y_) + 4) ) )
 
-#define CALC_BASE_CGC2  IDK_base_cgc2 = (itr_y / 2)
-#define CALC_BASE_CGC1  IDK_base_cgc1 = (((itr_y + 1) / 2) + 9)
+#define CALC_ROW_START_CGX  row_start_cgx = (itr_y / 2)
+#define CALC_ROW_START_CGY  row_start_cgy = (((itr_y + 1) / 2) + 9)
 
-#define CALC_CGX       cgx = (IDK_base_cgc2 + itr_x)
-#define CALC_CGY       cgy = (IDK_base_cgc1 - itr_x)
+#define CALC_CGX       cgx = (row_start_cgx + itr_x)
+#define CALC_CGY       cgy = (row_start_cgy - itr_x)
 
 #define CALC_SCREEN_X   screen_x = ((itr_x * 32) - ((itr_y & 0x1) * 16))
 #define CALC_SCREEN_Y   screen_y = ((itr_y * 8) - 8)
@@ -478,13 +478,13 @@ NEW_PATH_COST_ALL()
 
 Combat Battle Unit Figure Picture Cache
 
-EMM_FIGUREX_Init__HACK()
+Claim_EMS_Page_For_Figure_Set()
 USELESS_Combat_Figure_Load_Compose()
 Combat_Figure_Compose_USEFULL()
 Combat_Figure_Load()
 
 
-EMM_FIGUREX_Init__HACK()
+Claim_EMS_Page_For_Figure_Set()
     logical_page = ((bufpi * 3) / 2);
     if((bufpi & 0x1) == 0)
     {
@@ -507,12 +507,12 @@ USELESS_Combat_Figure_Load_Compose()
         offset = (512 * SZ_PARAGRAPH_B);  // 512 PR, 8192 B; 512 / 56 = 9.14 ... ¿ 2 sets of 9 figure pictures ?
     }
     offset += (bufpi * (56 * SZ_PARAGRAPH_B));
-    EMM_FIGUREX_Init__HACK(bufpi);
+    Claim_EMS_Page_For_Figure_Set(bufpi);
     figure_pointer_seg = Allocate_First_Block((EMS_PFBA + offset), 33);
     ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
 
 Combat_Figure_Compose_USEFULL()
-        EMM_FIGUREX_Init__HACK(bufpi);
+        Claim_EMS_Page_For_Figure_Set(bufpi);
         if((bufpi & 1) == 0)
         {
             offset = 0;
@@ -526,7 +526,7 @@ Combat_Figure_Compose_USEFULL()
         ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
 
 Combat_Figure_Load()
-    EMM_FIGUREX_Init__HACK(bufpi);
+    Claim_EMS_Page_For_Figure_Set(bufpi);
     if((bufpi & 0x1) == 0)
     {
         offset = 0;
@@ -541,7 +541,7 @@ Combat_Figure_Load()
 
 Pieces & Parts
 
-    1)  EMM_FIGUREX_Init__HACK(bufpi);
+    1)  Claim_EMS_Page_For_Figure_Set(bufpi);
 
     2)  if((bufpi & 0x1) == 0)
         {
@@ -556,7 +556,7 @@ Pieces & Parts
     3)  figure_pointer_seg = Allocate_First_Block((EMS_PFBA + offset), 33);
         ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
 
-EMM_FIGUREX_Init__HACK()
+Claim_EMS_Page_For_Figure_Set()
     2
 USELESS_Combat_Figure_Load_Compose()
     2, 1, 3
@@ -580,14 +580,13 @@ bufpi
     offset
 
 */
-#define FIGUREX_MAP         EMM_FIGUREX_Init__HACK(bufpi);
-#define FIGUREX_OFFSET      {                   \
-    offset = (bufpi & 0x1) ? 512 : 0;           \
-    offset += (bufpi * (56 * SZ_PARAGRAPH_B));  \
+#define FIGUREX_MAP         Claim_EMS_Page_For_Figure_Set(bufpi);
+#define FIGUREX_OFFSET      {                                               \
+    offset = (bufpi & 0x1) ? (512 * SZ_PARAGRAPH_B) : (0 * SZ_PARAGRAPH_B); \
+    offset += (bufpi * (56 * SZ_PARAGRAPH_B));                              \
 }
-#define FIGUREX_POINTER     {                                                   \
-    /* figure_pict_set_seg = SA_MK_FP0(Allocate_First_Block((EMS_PFBA + offset), 33)); */   \
-    figure_pict_set_seg = (SAMB_ptr *)Allocate_First_Block((EMS_PFBA + offset), 33);        \
+#define FIGUREX_POINTER     {                                                       \
+    figure_pict_set_seg = (SAMB_ptr *)Allocate_First_Block((EMS_PFBA + offset), 5); \
 }
 
 /*
@@ -681,7 +680,7 @@ enum e_COMBAT_LOCATION_TYPE
     clt_OpenField       =  0, 
     clt_Outpost         =  1, 
     clt_City            =  2, 
-    clt_Fortress        =  3, 
+    clt_Fortress        =  3,   /* Fortress City */
     clt_Tower           =  4, 
     clt_ChaosNode       =  5, 
     clt_NatureNode      =  6, 
@@ -841,6 +840,15 @@ enum CTILE_GFX
 /*
     END: Combat Terrain
 */
+
+enum E_COMBAT_ENTITY_TYPE
+{
+    cet_NONE               = 0,
+    cet_Battle_Unit_Figure = 1,
+    cet_Curse              = 2,
+    cet_Missiles           = 3,
+    cet_Tree_Or_Rock       = 4
+};
 
 
 /*
@@ -1011,38 +1019,37 @@ struct s_CTY_ENCH
 /*
     MoO2 "board"
 */
-// sizeof: 0x1598
+// sizeof: 0x1598  5528d
 struct s_BATTLEFIELD
 {
-    /* 0x0000 */  int8_t terrain_type[COMBAT_GRID_CELL_COUNT];  // 21 x 22
-    /* 0x039C */  int8_t terrain_group[COMBAT_GRID_CELL_COUNT];  /* 1-byte, unsigned */
-    /* 0x056A */  int8_t roads[COMBAT_GRID_CELL_COUNT];
-    /* 0x0738 */  int8_t MoveCost_Ground[COMBAT_GRID_CELL_COUNT];
-    /* 0x0906 */  int8_t MoveCost_Teleport[COMBAT_GRID_CELL_COUNT];
-    /* 0x0AD4 */  int8_t MoveCost_Ground2[COMBAT_GRID_CELL_COUNT];
-    /* 0x0CA2 */  int8_t MoveCost_Sailing[COMBAT_GRID_CELL_COUNT];
-    /* 0x0E70 */  int16_t Tree_Count;
-    /* 0x0E72 */  int16_t Tree_DrawXs[100];
-    /* 0x0F3A */  int16_t Tree_DrawYs[100];
-    /* 0x1002 */  int16_t Tree_Indices[100];
-    /* 0x10CA */  int16_t Rock_Count;
-    /* 0x10CC */  int16_t Rock_DrawXs[100];
-    /* 0x1194 */  int16_t Rock_DrawYs[100];
-    /* 0x125C */  int16_t Rock_IMG_Segs[100];
-    /* 0x1324 */  int8_t muds[COMBAT_GRID_CELL_COUNT];  /* {F,T} combat map square is 'mud' */
-    /* 0x14F2 */  int16_t center_square_structure;   // enum Central_Structures
-    /* 0x14F4 */  int16_t house_cnt;
-    /* 0x14F6 */  int16_t house_cgxs[16];    // [4][4]
-    /* 0x1516 */  int16_t house_cgys[16];    // [4][4]
-    /* 0x1536 */  SAMB_ptr house_pict_segs[16];  // [4][4]  ¿ assigned pict seg from [3][15] house types ?
-    /* 0x1556 */  int16_t walled;  // {F,T} city has stone wall;  ... used to set _ai_battlefield_city_walls |= 0x1;, so must be specifcally 'City Walls'/'Wall of Stone'
-    /* 0x1558 */  int16_t walls[4][4];   /* [4][4] as {4,4,4,4}; state/status {0:none,1:good,2:bad}  spl_Wall_Of_Stone sets 1, spl_Disrupt sets 2 */
-    /* 0x1578 */  int16_t wall_of_fire;  // {F,T}
-    /* 0x157A */  int16_t wall_of_darkness;  // {F,T}
-    /* 0x157C */  int16_t wp;
-    /* 0x157E */  // struct s_CTY_ENCH city_enchantments[26];  // int16_t city_enchantments CTY_ENCH
-                  int8_t city_enchantments[26];
-    /* 0x1597 */  int8_t Nightshades;  // ~ enchantment, but count, rather than player num bitfield
+    /* 0x0000 */  int16_t  terrain_type[COMBAT_GRID_CELL_COUNT];    /* 21 x 22 */
+    /* 0x039C */  int8_t   terrain_group[COMBAT_GRID_CELL_COUNT];   /* 1-byte, unsigned */
+    /* 0x056A */  int8_t   roads[COMBAT_GRID_CELL_COUNT];
+    /* 0x0738 */  int8_t   MoveCost_Ground[COMBAT_GRID_CELL_COUNT];
+    /* 0x0906 */  int8_t   MoveCost_Teleport[COMBAT_GRID_CELL_COUNT];
+    /* 0x0AD4 */  int8_t   MoveCost_Ground2[COMBAT_GRID_CELL_COUNT];
+    /* 0x0CA2 */  int8_t   MoveCost_Sailing[COMBAT_GRID_CELL_COUNT];
+    /* 0x0E70 */  int16_t  Tree_Count;
+    /* 0x0E72 */  int16_t  Tree_DrawXs[100];
+    /* 0x0F3A */  int16_t  Tree_DrawYs[100];
+    /* 0x1002 */  int16_t  Tree_Indices[100];
+    /* 0x10CA */  int16_t  Rock_Count;
+    /* 0x10CC */  int16_t  Rock_DrawXs[100];
+    /* 0x1194 */  int16_t  Rock_DrawYs[100];
+    /* 0x125C */  int16_t  Rock_IMG_Segs[100];
+    /* 0x1324 */  int8_t   muds[COMBAT_GRID_CELL_COUNT];    /* {F,T} combat map square is 'mud' */
+    /* 0x14F2 */  int16_t  center_square_structure; // enum Central_Structures
+    /* 0x14F4 */  int16_t  house_cnt;
+    /* 0x14F6 */  int16_t  house_cgxs[16];      // [4][4]
+    /* 0x1516 */  int16_t  house_cgys[16];      // [4][4]
+    /* 0x1536 */  SAMB_ptr house_pict_segs[16]; // [4][4]  ¿ assigned pict seg from [3][15] house types ?
+    /* 0x1556 */  int16_t  walled;              // {F,T} city has stone wall;  ... used to set _ai_battlefield_city_walls |= 0x1;, so must be specifcally 'City Walls'/'Wall of Stone'
+    /* 0x1558 */  int16_t  walls[4][4];         /* [4][4] as {4,4,4,4}; state/status {0:none,1:good,2:bad}  spl_Wall_Of_Stone sets 1, spl_Disrupt sets 2 */
+    /* 0x1578 */  int16_t  wall_of_fire;        // {F,T}
+    /* 0x157A */  int16_t  wall_of_darkness;    // {F,T}
+    /* 0x157C */  int16_t  wp;
+    /* 0x157E */  int8_t   city_enchantments[NUM_CITY_ENCHANTMENTS];  /* 1-byte, signed */
+    /* 0x1597 */  int8_t   Nightshades;  // ~ enchantment, but count, rather than player num bitfield
     /* 0x1598 */
 };
 
@@ -1051,8 +1058,8 @@ struct s_BATTLEFIELD
 // sizeof 40, due to union / pointer size ... in-mem, union looks to be 12 bytes
 struct s_COMBAT_ENTITY
 {
-    /* 0x00 */ int16_t draw_x;  /* only used by CMB_DrawEntities__WIP();  e.g., battle unit figure screen x;  screen x for Draw_Picture_Windowed() */
-    /* 0x02 */ int16_t draw_y;  /* only used by CMB_DrawEntities__WIP();  e.g., battle unit figure screen y;  screen y for Draw_Picture_Windowed() */
+    /* 0x00 */ int16_t draw_x;  /* only used by Combat_Screen_Map_Draw_Entities();  e.g., battle unit figure screen x;  screen x for Draw_Picture_Windowed() */
+    /* 0x02 */ int16_t draw_y;  /* only used by Combat_Screen_Map_Draw_Entities();  e.g., battle unit figure screen y;  screen y for Draw_Picture_Windowed() */
     /* 0x04 */ // int16_t IMG_Seg_or_Id;
     union {
         int64_t seg_or_idx;
@@ -1060,15 +1067,15 @@ struct s_COMBAT_ENTITY
         SAMB_ptr pict_seg;
     };
     /* 0x06 */ int16_t frame_num;
-    /* 0x08 */ int16_t draw_y_shift;  /* only used by CMB_DrawEntities__WIP(), only subtracted, never added;  curiously hard-coded value, per entity type;  screen y offset for Draw_Picture_Windowed() */
-    /* 0x0A */ int16_t draw_x_shift;  /* only used by CMB_DrawEntities__WIP(), only subtracted, never added;  curiously hard-coded value, per entity type;  screen x offset for Draw_Picture_Windowed() */
-    /* 0x0C */ int16_t entity_type;  /* ¿ entity type ?  1 is battle unit figure */
+    /* 0x08 */ int16_t draw_y_shift;  /* only used by Combat_Screen_Map_Draw_Entities(), only subtracted, never added;  curiously hard-coded value, per entity type;  screen y offset for Draw_Picture_Windowed() */
+    /* 0x0A */ int16_t draw_x_shift;  /* only used by Combat_Screen_Map_Draw_Entities(), only subtracted, never added;  curiously hard-coded value, per entity type;  screen x offset for Draw_Picture_Windowed() */
+    /* 0x0C */ int16_t entity_type;  /* enum E_COMBAT_ENTITY_TYPE  ¿ entity type ?  1 is battle unit figure */
     /* 0x0E */ int16_t owner_idx;  /* battle_unit[].controller_idx */
     /* 0x10 */ int16_t niu_figure_set_idx;
     /* 0x12 */ int16_t outline_magic_realm;  /* unit enchantment outline magic realm */
     /* 0x14 */ int16_t Unused_14h;
     /* 0x16 */ int16_t Blood_Frame;
-    /* 0x18 */ int16_t Blood_Amt;
+    /* 0x18 */ int16_t gibs;
     /* 0x1A */ uint32_t draw_order_value;
     /* 0x1E */
 };
@@ -1187,14 +1194,13 @@ struct s_MAGIC_VORTEX
 
 
 // sizeof: 6Eh  110d
-// drake178: struct s_BU_REC
 #pragma pack(push)
 #pragma pack(2)
 struct s_BATTLE_UNIT
 {
-    /* 0x00 */  int8_t   melee;  /* ~ "melee attack strength" */
-    /* 0x01 */  int8_t   ranged;  /* ~ "ranged attack strength" */
-    /* 0x02 */  int8_t   ranged_type;   /* 1-byte, signed */  /* ~ "ranged attack type" */
+    /* 0x00 */  int8_t   melee;             /* ~ "melee attack strength" */
+    /* 0x01 */  int8_t   ranged;            /* ~ "ranged attack strength" */
+    /* 0x02 */  int8_t   ranged_type;       /* 1-byte, signed */  /* ~ "ranged attack type" */
     /* 0x03 */  int8_t   ammo;
     /* 0x04 */  int8_t   tohit;
     /* 0x05 */  int8_t   defense;
@@ -1220,28 +1226,27 @@ struct s_BATTLE_UNIT
         int16_t bufpi;  /* used to index picture cache */
         SAMB_ptr pict_seg;
     };
-
     /* 0x10 */  int8_t   hits;                  /* Hit-Points ¿ Per Figure ? */
     /* 0x11 */  int8_t   scout_range;
     /* 0x12 */  int8_t   carry_capacity;
     /* 0x13 */  int8_t   figure_max;
     /* 0x14 */  int8_t   Construction;
-    /* 0x15 */  int8_t   Spec_Att_Attrib;                   // -abs() is resistance_modifier
-    /* 0x16 */  uint16_t Move_Flags;                        // ; enum MOVEFLAGS
-    /* 0x17 */  // int8_t Unused_17h;                       // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
-    /* 0x18 */  int16_t  Attribs_1;                         // any reason these arent a uint32?  ; enum ATTRIB_1
-    /* 0x1A */  int8_t   Attribs_2;                         // any reason these arent a uint32?  ¿ ?
-    /* 0x1B */  int8_t   Unused_1Bh;                        // any reason these arent a uint32?  ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
-    /* 0x1C */  uint16_t Abilities;                         // ; enum ABL_FLAGS  ~ 'Unit Abilities'
+    /* 0x15 */  int8_t   Spec_Att_Attrib;       // -abs() is resistance_modifier
+    /* 0x16 */  uint16_t Move_Flags;            // ; enum MOVEFLAGS
+    /* 0x17 */  /* 2-byte alignment padding */
+    /* 0x18 */  int16_t  Attribs_1;             // any reason these arent a uint32?  ; enum ATTRIB_1
+    /* 0x1A */  int8_t   Attribs_2;             // any reason these arent a uint32?  ¿ ?
+    /* 0x1B */  int8_t   Unused_1Bh;            // any reason these arent a uint32?  ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
+    /* 0x1C */  uint16_t Abilities;             // ; enum ABL_FLAGS  ~ 'Unit Abilities'
     /* 0x1E */  uint16_t attack_attributes;     /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
     /* 0x20 */  int16_t  Sound;
-    /* 0x22 */  int16_t  Combat_Effects;        /* ¿ ~ combat unit enchantment ? enum e_BATTLE_UNIT_EFFECT */
+    /* 0x22 */  int16_t  combat_effects;        /* enum e_BATTLE_UNIT_EFFECT */
     /* 0x24 */  int8_t   melee_tohit;
     /* 0x25 */  int8_t   ranged_tohit;
     /* 0x26 */  int8_t   toblock;
     /* 0x27 */  int8_t   Weapon_Plus1;          /* ~ Magic Weapon ... `if(!= 0)` */
-    /* 0x28 */  uint16_t melee_attack_attributes;       /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
-    /* 0x2A */  uint16_t ranged_attack_attributes;      /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
+    /* 0x28 */  uint16_t melee_attack_attributes;   /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
+    /* 0x2A */  uint16_t ranged_attack_attributes;  /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
     /* 0x2C */  uint32_t item_enchantments;     // Item Powers, as Unit Enchantments  enum e_UNIT_ENCHANTMENTS ... macro UE_...
     /* 0x30 */  int16_t  unit_idx;
     /* 0x32 */  int8_t   Extra_Hits;
@@ -1253,7 +1258,7 @@ struct s_BATTLE_UNIT
     /* 0x3A */  uint32_t enchantments;          // Unit Enchantments
     /* 0x3E */  int8_t   Suppression;
     /* 0x3F */  uint8_t  mana_max;
-    /* 0x40 */  int8_t   mana;
+    /* 0x40 */  uint8_t  mana;                  /* 1-byte, unsigned */
     /* 0x41 */  int8_t   item_charges;
     /* 0x42 */  int8_t   Poison_Strength;
     /* 0x43 */  int8_t   target_battle_unit_idx;    /* 1-byte, signed */
@@ -1264,15 +1269,15 @@ struct s_BATTLE_UNIT
     /* 0x4C */  int16_t  move_anim_ctr;         /* ¿ ~ MoO2 ship_frame ?  movement animation counter/increment  {0,1,2,3,4,5,6,7} */
     /* 0x4E */  int16_t  Atk_FigLoss;
     /* 0x50 */  int16_t  outline_magic_realm;   /* enchantment_magic_realm ... enum e_MAGIC_REALM{} ... index into enchantment_outline_colors[], used for unit outline color */
-    /* 0x52 */  int16_t  Moving;                // set to ST_FALSE in Switch_Active_Battle_Unit()
+    /* 0x52 */  int16_t  mid_move;              /* {F,T} unit is mid-move; selects walk vs idle animation frame; set to ST_FALSE in Switch_Active_Battle_Unit() */
     /* 0x54 */  int16_t  action;                /* enum e_BATTLE_UNIT_ACTION */
     /* 0x56 */  int8_t   Confusion_State;       /* {0: , 1: , 2: }  ~== stand around and do nothing while looking foolish and confused, move randomly, attack allies, attack enemies for combat winner, 2 means it currently belong to the other player/opponent */
-    /* 0x57 */  int8_t   pad2B_57h;             // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
+    /* 0x57 */  /* 2-byte alignment padding */
     /* 0x58 */  int16_t  gibs;
     /* 0x5A */  int16_t  Unknown_5A;
     /* 0x5C */  int16_t  animate_idle;
     /* 0x5E */  int16_t  Melee_Anim;            /* {0,1,2}; not just {F,T}; set in CMB_MeleeAnim() */
-    /* 0x60 */  int16_t  figure_effect;          /* enum e_BATTLE_UNIT_FIGURE_EFFECT;  passed to Combat_Figure_Effect__WIP() for BU figure bitmap composition */
+    /* 0x60 */  int16_t  figure_effect;         /* enum e_BATTLE_UNIT_FIGURE_EFFECT;  passed to Combat_Figure_Effect__WIP() for BU figure bitmap composition */
     /* 0x62 */  int16_t  animate_move_as_idle;  /* IIF flight animation ... if((battle_units[battle_unit_idx].Attribs_1 & USA_FLYING) != 0) */
     /* 0x64 */  int8_t   Gold_Melee;
     /* 0x65 */  int8_t   Gold_Ranged;
@@ -1375,7 +1380,7 @@ extern uint32_t sound_silent_seg_size;  // DNE in Dasm
 // WZD dseg:C432
 extern int16_t _auto_combat_flag;
 
-/* CLAUDE: test-support -- forces _auto_combat_flag back on after Combat_Screen__WIP()'s entry reset; see Combat.c. */
+/* CLAUDE: test-support -- forces _auto_combat_flag back on after Combat_Screen()'s entry reset; see Combat.c. */
 extern int16_t g_cmbt_force_auto_combat;
 
 // WZD dseg:C47C
@@ -1462,34 +1467,34 @@ extern SAMB_ptr EmmHndl_TILEXXX;
 extern SAMB_ptr EmmHndl_FIGUREX;
 
 // WZD dseg:CFBE
-extern SAMB_ptr IMG_CMB_Blood[5];
+extern SAMB_ptr cmbtcity_blood_segs[5];
 
 // WZD dseg:CFCA
-extern SAMB_ptr IMG_CMB_Curses[8];
+extern SAMB_ptr combat_curse_entity_seg[8];
 
 // WZD dseg:CFEE
-extern SAMB_ptr IMG_CMB_RiverTile[12];
+extern SAMB_ptr cmbtcity_river_segs[12];
 
 // WZD dseg:D006
-extern SAMB_ptr IMG_CMB_RivrNULLs[12];
+extern SAMB_ptr chriver_river_segs[12];
 
 // WZD dseg:D01E
-extern SAMB_ptr IMG_CMB_RoadTiles[28];
+extern SAMB_ptr cmbtcity_roadgrid_segs[28];
 
 // WZD dseg:D056
-extern SAMB_ptr IMG_CMB_OceanTile[4];
+extern SAMB_ptr cmbtcity_ocean_segs[4];
 
 // WZD dseg:D05E
-extern SAMB_ptr IMG_CMB_ChaosOcn[4];
+extern SAMB_ptr chriver_chaoswat_segs[4];
 
 // WZD dseg:D066
-extern SAMB_ptr IMG_CMB_Cloud;
+extern SAMB_ptr cmbtcity_cmbcloud_segs[4];
 
 // WZD dseg:D06E
-extern SAMB_ptr IMG_CMB_FlotIsle;
+extern SAMB_ptr cmbtcity_flotisle_seg;
 
 // WZD dseg:D070
-extern SAMB_ptr IMG_CMB_Mud;
+extern SAMB_ptr cmbtcity_mud_seg;
 
 // WZD dseg:D072
 extern SAMB_ptr IMG_CMB_SorcNode;
@@ -1498,8 +1503,8 @@ extern SAMB_ptr IMG_CMB_SorcNode;
 extern SAMB_ptr IMG_CMB_NatNode;
 
 // WZD dseg:D076
-// NEWCODE  extern SAMB_ptr IMG_CMB_Volcano[8];
-extern SAMB_ptr IMG_CMB_Volcano[9];
+// NEWCODE  extern SAMB_ptr chriver_volca_segs[8];
+extern SAMB_ptr chriver_volca_segs[9];
 
 // WZD dseg:D088
 extern SAMB_ptr IMG_CMB_DarkWall[14];
@@ -1608,7 +1613,7 @@ extern "C" {
 */
 
 // WZD s90p01
-int16_t Combat_Screen__WIP(int16_t combat_attacker_player_idx, int16_t combat_defender_player_idx, int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[]);
+int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defender_player_idx, int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[]);
 
 
 
@@ -1685,7 +1690,7 @@ void Update_Defender_Hostility(int attacker_player_idx, int defender_player_idx)
 void Update_Combat_Enchantments_Icon_And_Help(void);
 
 // WZD o98p02
-int16_t BU_HasSpellAbility__WIP(int16_t battle_unit_idx);
+int16_t Battle_Unit_Has_Spell_Ability(int16_t battle_unit_idx);
 
 // WZD o98p03
 // NIU  int16_t NIU_Who_Has_More_Leadership(void);
@@ -1727,7 +1732,7 @@ int16_t Battle_Unit_Movement_Mode(int16_t battle_unit_idx);
 void Prepare_Battle_Unit(int16_t battle_unit_idx, int16_t player_idx, int16_t unit_idx, int16_t cgx, int16_t cgy);
 
 // WZD o98p16
-int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[]);
+int16_t Prepare_All_Battle_Units(int16_t troop_count, int16_t troops[]);
 
 // WZD o98p17
 int16_t Battle_Unit_Is_Airborne(int16_t battle_unit_idx);
@@ -1769,7 +1774,7 @@ void Draw_Spell_Information_Window(void);
 void Draw_Active_Unit_Stats_And_Icons(void);
 
 // WZD o99p06
-void Combat_Grid_Entities__WIP(void);
+void Combat_Grid_Entities(void);
 
 // WZD o99p07
 void Draw_Active_Unit_Damage_Bar(int16_t battle_unit_idx, int16_t x, int16_t y);
@@ -1814,10 +1819,10 @@ void Combat_Cast_Spell_Error(int16_t type);
 void Move_Confused(int16_t battle_unit_idx);
 
 // WZD s103p12
-void CMB_LoadResources__WIP(void);
+void Combat_Screen_Load_Resources(void);
 
 // WZD s103p13
-void CMB_SetNearAllocs__WIP(void);
+void Allocate_Combat_Near_Buffers(void);
 
 // WZD s103p14
 void Combat_Cast_Spell_With_Caster(int16_t caster_id);
@@ -1853,7 +1858,7 @@ void Update_Sees_Illusions(void);
  void Battle_Unit_Set_Invisibility_Effect(int16_t battle_unit_idx);
 
 // WZD o105p09
-int16_t BU_GetCombatEffect__WIP(int16_t battle_unit_idx);
+int16_t Battle_Unit_Curse_Effects(int16_t battle_unit_idx);
 
 // WZD o105p10
 void Battle_Unit_Set_Animation_Flags(int16_t battle_unit_idx);
@@ -2161,40 +2166,40 @@ void AI_CombatSpellList(int16_t caster_id, int16_t * spell_list, int16_t range_m
 void NX_IDK_CombatInit_Tactical(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD ovr153p02
-void Combat_Screen_Map_Draw__WIP(void);
+void Combat_Screen_Map_Draw(void);
 
 // WZD ovr153p03
-void Combat_Screen_Map_Draw_Entities__WIP(void);
+void Combat_Screen_Map_Draw_Entities(void);
 
 // WZD ovr153p04
-// drake178: NX_IDK_CMB_BloodFrames()
+void NIU_Gibs_Frames(void);
 
 // WZD ovr153p05
-// drake178: CMB_SpawnTrees()
+void Spawn_Tree_Entities(void);
 
 // WZD ovr153p06
-// drake178: CMB_SpawnRocks()
+void Spawn_Rock_Entities(void);
 
 // WZD ovr153p07
-void CMB_SpawnStructures__WIP(void);
+void Spawn_Structure_Entities(void);
 
 // WZD ovr153p08
-void CMB_SpawnStoneWall__WIP(int16_t flag);
+void Spawn_Stone_Wall_Entities(int16_t flag);
 
 // WZD ovr153p09
-void CMB_SpawnDarkWall__WIP(int16_t flag);
+void Spawn_Dark_Wall_Entities(int16_t flag);
 
 // WZD ovr153p10
-void CMB_SpawnFireWall__WIP(int16_t flag);
+void Spawn_Fire_Wall_Entities(int16_t flag);
 
 // WZD ovr153p11
-void Combat_Grid_Entity_Create_Vortexes(void);
+void Spawn_Vortex_Entities(void);
 
 // WZD ovr153p12
-void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_t TarX, int16_t TarY, int16_t MStage, int16_t FigId, int16_t MaxFigs, int16_t owner_idx, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld);
+void Spawn_Figure_Entity(int64_t bufpi, int16_t cgx, int16_t cgy, int16_t target_cgx, int16_t target_cgy, int16_t move_anim_ctr, int16_t current_figure, int16_t figure_count, int16_t controller_idx, int16_t outline_magic_realm, int16_t gibs, int16_t frame_num, int16_t figures_lost, int16_t gibs_bank);
 
 // WZD ovr153p13
-// drake178: CMB_SpawnUnitCurse()
+void Spawn_Curse_Entity(int16_t cgx, int16_t cgy, int16_t target_cgx, int16_t target_cgy, int16_t move_anim_ctr, int16_t combat_curse_entity_idx);
 
 // WZD ovr153p14
 void Clear_Combat_Grid_Entities(void);
@@ -2209,25 +2214,25 @@ void Spawn_Missile_Entities(void);
 void Battle_Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t * figure_x, int16_t * figure_y);
 
 // WZD ovr153p18
-void Combat_Grid_Entity_Create__WIP(int16_t draw_x, int16_t draw_y, int64_t seg_or_idx, int16_t draw_x_shift, int16_t draw_y_shift, int16_t Frame, int16_t entity_type, int16_t controller_idx, int16_t niu_figure_set_idx, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU_14h, int16_t BldFrm);
+void Combat_Grid_Entity_Create(int16_t draw_x, int16_t draw_y, int64_t seg_or_idx, int16_t draw_x_shift, int16_t draw_y_shift, int16_t Frame, int16_t entity_type, int16_t controller_idx, int16_t niu_figure_set_idx, int16_t outline_magic_realm, int16_t gibs, int16_t UU_14h, int16_t BldFrm);
 
 // WZD ovr153p19
 void Set_Entity_Draw_Order(void);
 
 // WZD ovr153p20
-void EMM_FIGUREX_Init__HACK(int16_t figure_index);
+void Claim_EMS_Page_For_Figure_Set(int16_t figure_index);
 
 // WZD ovr153p21
-void EMM_TILEX_Init__HACK(void);
+void Map_Tile_EMS_Page_As_Sandbox(void);
 
 // WZD ovr153p22
-// drake178: UU_NullSub_153_1()
+void o153p22_empty_function(void);
 
 // WZD ovr153p23
 void Combat_Figure_Compose_USEFULL(void);
 
 // WZD ovr153p24
-// drake178: RP_NullSub_153_2()
+void o153p24_empty_function(void);
 
 
 
@@ -2236,7 +2241,7 @@ void Combat_Figure_Compose_USEFULL(void);
 */
 
 // WZD ovr154p01
-void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp);
+void Build_Battlefield(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD ovr154p02
 void Generate_Combat_Map(
@@ -2282,7 +2287,7 @@ void Set_Movement_Cost_Maps(int16_t location_type, int16_t city_walls);
 void Patch_Terrain_Group(int16_t ctg, int16_t count, int16_t max, int16_t min);
 
 // WZD ovr154p12
-void Combat_Grid_Screen_Coordinates(int16_t cgx, int16_t cgy, int16_t something_x, int16_t something_y, int16_t * screen_x, int16_t * screen_y);
+void Combat_Grid_Screen_Coordinates(int16_t cgx, int16_t cgy, int16_t cgx_subcell_offset, int16_t cgy_subcell_offset, int16_t * screen_x, int16_t * screen_y);
 
 // WZD ovr154p13
 void Apply_Earth_To_Mud(int16_t cgx, int16_t cgy);
@@ -2321,7 +2326,7 @@ void Combat_Compose_Background(void);
 void Wall_Rise_Load(int16_t wall_type);
 
 // WZD ovr163p04
-void CMB_BaseAllocs__WIP(void);
+void Allocate_Combat_Base_Blocks(void);
 
 // WZD ovr163p05
 void Make_Missiles(int16_t missile_count, int16_t Targets, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t type);

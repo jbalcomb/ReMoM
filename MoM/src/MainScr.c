@@ -277,8 +277,8 @@ int16_t _active_stack_path_length;
 // MoM_Data  // WZD dseg:C068 
 // MoM_Data  /*
 // MoM_Data  ; set to 0 after display-sorting the active stack
-// MoM_Data  ; set to 1 if road-building, but the unit is not on any of the plotted line tiles (before returning)
-// MoM_Data  ; set to 1 if road-building, and tiles left to do
+// MoM_Data  ; set to 1 if road-building, but the unit is not on any of the plotted line squares (before returning)
+// MoM_Data  ; set to 1 if road-building, and squares left to do
 // MoM_Data  ; set to 1 if moving with path left to go
 // MoM_Data  */
 // MoM_Data  int16_t _active_stack_has_path;
@@ -3740,36 +3740,17 @@ void Draw_Unit_Enchantment_Outline(int16_t unit_idx)
 }
 
 
-
-
 // WZD o063p04
-/*
-
-XREF:
-    j_Cycle_Unit_Enchantment_Animation()
-        City_Screen_Draw_Garrison_Window()
-        Enemy_City_Screen_Draw()
-        Main_Screen_Draw_Unit_Window()
-        Main_Screen_Draw_Next_Turn_Button()
-        ArmyList_Screen_Draw()
-        Draw_Unit_List_Window_Pup()
-        Unit_Figure_Draw()
-        CMB_CreateEntities()
-
-*/
 void Cycle_Unit_Enchantment_Animation(void)
 {
     unit_enchantment_animation_flag += 1;
-
     if(unit_enchantment_animation_flag > 1)
     {
         unit_enchantment_animation_flag = 0;
     }
-
     if(unit_enchantment_animation_flag < 1)
     {
         unit_enchantment_animation_count += 1;
-
         if(unit_enchantment_animation_count > 7)
         {
             unit_enchantment_animation_count = 0;
@@ -5591,12 +5572,12 @@ Move_Units()
  * - Computes effective scouting range from unit sight and specific movement abilities.
  * - Selects highest draw-priority unit as the animated stack representative.
  * - Temporarily moves stack world coordinates to final destination for downstream state usage.
- * - Optionally applies road construction updates on traversed tiles.
+ * - Optionally applies road construction updates on traversed squares.
  * - For each move-path step:
  *   - computes per-axis sprite shift and stage count,
  *   - handles wrap-around edge movement,
  *   - redraws map section/window and animated unit frame,
- *   - updates explored tiles and reduced map image for human player movement.
+ *   - updates explored squares and reduced map image for human player movement.
  * - Resets map/window draw state before returning.
  *
  * Important globals/couplings:
@@ -5960,7 +5941,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
                 if(player_idx == _human_player_idx)
                 {
                     // ; the same call with the same parameters is repeated below, except it more appropriately also updates the minimap after the call
-                    // ; explores map tiles in the specified radius, usually referred to as the scouting range
+                    // ; explores map squares in the specified radius, usually referred to as the scouting range
                     Set_Map_Square_Explored_Flags_XYP_Range(unit_x, unit_y, map_p, scout_range);
                 }
 
@@ -6060,7 +6041,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
     allows pathed to, but disallows pathed through
 
 ; processes overland obstacles on the passed movement
-; map array, marking tiles as impassable if they can't
+; map array, marking squares as impassable if they can't
 ; be pathed through
 ;
 ; enemy armies are passable if visible relations are

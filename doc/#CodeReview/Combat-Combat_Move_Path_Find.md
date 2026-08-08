@@ -164,7 +164,7 @@ No `stub_wip_todo.md` box to check — `Combat_Move_Path_Find` is not a `__WIP`/
 
 - [Combat-Combat_Move_Path_Valid.md](Combat-Combat_Move_Path_Valid.md) — the sibling solver, DONE-DONE. Shares `PREP`, `RELAX_ADJACENT_CELLS` and `adjacent_offsets`; its frame map documents the three extra slots that function has.
 - [CMBTMVPT.c](../../MoM/src/CMBTMVPT.c) — `PREP` [67-75](../../MoM/src/CMBTMVPT.c#L67-L75) and `RELAX_ADJACENT_CELLS` [82-98](../../MoM/src/CMBTMVPT.c#L82-L98) are shared by both functions, so a local-width change in either one changes the macro's operand types there.
-- [Combat.c](../../MoM/src/Combat.c) — `Move_Battle_Unit__WIP` (caller, and the main consumer of `_cmbt_mvpth_x`/`_y`), `Assign_Combat_Grids`, `CMB_SetNearAllocs__WIP`.
+- [Combat.c](../../MoM/src/Combat.c) — `Move_Battle_Unit__WIP` (caller, and the main consumer of `_cmbt_mvpth_x`/`_y`), `Assign_Combat_Grids`, `Item_Powers_To_Attack_Attributes`.
 - [CMBTAI.c](../../MoM/src/CMBTAI.c) — four AI call sites, all reading `movement_path_grid_cell_count` after the call rather than a return value.
 - [doc/PathFinding/MoM-MovePath-Compare.md](../PathFinding/MoM-MovePath-Compare.md) — shared five-step skeleton across the three solvers.
 - C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr155\Combat_Move_Path_Valid.asm

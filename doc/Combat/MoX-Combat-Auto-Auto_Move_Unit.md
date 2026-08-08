@@ -116,8 +116,8 @@ Movement Animation
 
 Combat_Screen_Draw()
     Combat_Grid_Entities__WIP()
-    Combat_Screen_Map_Draw__WIP()
-        Combat_Screen_Map_Draw_Entities__WIP()
+    Combat_Screen_Map_Draw()
+        Combat_Screen_Map_Draw_Entities()
 
 
 

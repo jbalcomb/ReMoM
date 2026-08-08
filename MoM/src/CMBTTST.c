@@ -331,13 +331,13 @@ int16_t Combat_Screen_TST_004(int16_t combat_attacker_player_idx, int16_t combat
     Toggle_Pages();
     _page_flip_effect = pfe_None;
 
-    // CMB_BaseAllocs__WIP()
+    // Allocate_Combat_Base_Blocks()
 
     battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, 348);  // 348 PR, 5568 B
 
     combat_grid_entities = (struct s_COMBAT_ENTITY *)Allocate_Next_Block(_screen_seg, 482);  // 482 PR, 7712 B
 
-    // CMB_LoadResources__WIP()
+    // Combat_Screen_Load_Resources()
 
     battle_units = (struct s_BATTLE_UNIT *)Allocate_Next_Block(_screen_seg, 249);
 
@@ -358,7 +358,7 @@ int16_t Combat_Screen_TST_004(int16_t combat_attacker_player_idx, int16_t combat
     _combat_attacker_player = combat_attacker_player_idx;
     _combat_defender_player = combat_defender_player_idx;
 
-    // CMB_Terrain_Init__WIP() |-> Combat_Compose_Background()
+    // Build_Battlefield() |-> Combat_Compose_Background()
     /*
         BEGIN:  Combat Screen Compose Background
     */
@@ -371,7 +371,7 @@ int16_t Combat_Screen_TST_004(int16_t combat_attacker_player_idx, int16_t combat
         END:  Combat Screen Compose Background
     */
     
-    defender_unit_count = Prepare_All_Battle_Units(troop_count, troops);
+    defender_unit_count = TST_Prepare_All_Battle_Units(troop_count, troops);
 
 //     if(_combat_attacker_player == _human_player_idx)
 //         Switch_Active_Battle_Unit(0);  /* first attacker battle_unit_idx */

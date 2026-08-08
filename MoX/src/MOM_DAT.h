@@ -1049,7 +1049,7 @@ struct s_SPELL_DATA
           scc_* category                    arm                          the bytes mean
           --------------------------------  ---------------------------  -----------------------------------------------------------------
           scc_Unit_Enchantment (1)          enchantments (u32)           UE_ bitmask, OR'd into _UNITS[].enchantments
-          combat enchantment / debuff       enchantments (u32)           effect bitmask, tested against s_BATTLE_UNIT.Combat_Effects
+          combat enchantment / debuff       enchantments (u32)           effect bitmask, tested against s_BATTLE_UNIT.combat_effects
           scc_Direct_Damage_* (4, 22)       strength/immunities/attrs    base damage + immunity flags + ATK_FLAGS attributes
           scc_Summoning (0)                 unit_type (i16)              ut_ unit type to create           (Create_Unit / Summon_Animation)
           scc_City_Enchantment_* (2, 3)     ce_idx (i16)                 index into _CITIES[].enchantments
@@ -1762,7 +1762,7 @@ struct s_CITY
     /* 43 */ // struct s_CITY_ENCHANTMENTS enchantments;
              // uint8_t enchantments[26];  /* ¿ 0 for NONE, (player_idx + 1) for which wizard has which spell on this city ? */
     /* 5C */ // int8_t Nightshade;  as seens in Player_City_Enchantments_Upkeep() for city_enchantment_upkeep_table
-             uint8_t enchantments[NUM_CITY_ENCHANTMENTS];
+             int8_t enchantments[NUM_CITY_ENCHANTMENTS];    /* 1-byte, signed */
     /* 5D */ int8_t production_units;
     /* 5E */ int16_t Prod_Accu;
     /* 60 */ uint8_t gold_units;  // AKA Income
@@ -2928,11 +2928,11 @@ extern SAMB_ptr item_icons_seg[116];
 
 
 // WZD dseg:9226
-// MoO2  Module: Mox  _global_combat_data_
+// MoO2  Module: MOX  _global_combat_data
 extern struct s_BATTLE_UNIT * global_battle_unit;                // alloc in Allocate_Data_Space()
 
 // WZD dseg:922A
-// MoO  Module: Mox  _combat_data_
+// MoO2  Module: MOX  _combat_data
 // WZD dseg:922A 00 00 00 00                                     _combat_data_ dd 0                      ; DATA XREF: USW_Build_Effect_List+AB7r ...
 extern struct s_BATTLE_UNIT * battle_units;
 /* CLAUDE */ extern struct s_BATTLE_UNIT DBG_battle_units[MAX_BATTLE_UNIT_SLOT_COUNT];
@@ -2951,12 +2951,9 @@ combat_enchantments[combat_enchantment_index] = Mana;
 */
 extern int8_t * combat_enchantments;
 
-
-
 // WZD dseg:9232
-extern struct s_HEROES * _HEROES2[NUM_PLAYERS];                  // alloc in Allocate_Data_Space()
-
-
+// extern struct s_HEROES * _HEROES2[NUM_PLAYERS];
+extern struct s_HEROES ** const _HEROES2;
 
 // WZD dseg:924A
 // ¿ MoO2  Module: MOX  _ai_retreat_flag ?
@@ -4631,7 +4628,7 @@ extern SAMB_ptr g_gui_scratch_bitmap;
 extern int16_t map_draw_full;
 // WZD dseg:CB5C
 // AKA OVL_NewMapDrawing
-// BROKEN extern int16_t draw_map_full;  //; determines whether non-animated terrain tiles will be redrawn or not
+// BROKEN extern int16_t draw_map_full;  //; determines whether non-animated terrain squares will be redrawn or not
 
 
 

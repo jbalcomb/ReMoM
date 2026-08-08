@@ -74,7 +74,7 @@ TEST_F(Generate_Towers_test, TowersAreWithinMapBounds)
 
 TEST_F(Generate_Towers_test, TowersSetsGrasslandsOnBothPlanes)
 {
-    // Arrange - set some land tiles
+    // Arrange - set some land squares
     for (int y = 0; y < WORLD_HEIGHT; y++)
     {
         for (int x = 0; x < WORLD_WIDTH; x++)

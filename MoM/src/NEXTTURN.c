@@ -4216,7 +4216,7 @@ void Diplomacy_Growth_For_Enchantments(void)
  * - Tracks hero-level changes for human-controlled units so the UI can react
  *   when a hero levels up.
  * - Scans each player's heroes and their stacks to apply Armsmaster-related
- *   XP bonuses when a hero is stationed with other units on the same tile.
+ *   XP bonuses when a hero is stationed with other units on the same square.
  *
  * @return This function returns no value.
  *
@@ -4385,12 +4385,12 @@ void Do_All_Units_XP_Check(void)
 
 // WZD o140p26
 /**
- * @brief Randomly converts existing volcano tiles back into mountains.
+ * @brief Randomly converts existing volcano squares back into mountains.
  *
  * @details
- * Scans every map square on every plane, identifies tiles whose terrain type
- * is currently @c tt_Volcano, and gives each such tile an independent 3%
- * chance to cool off during this turn. When the roll succeeds, the tile is
+ * Scans every map square on every plane, identifies squares whose terrain type
+ * is currently @c tt_Volcano, and gives each such square an independent 3%
+ * chance to cool off during this turn. When the roll succeeds, the square is
  * converted to a mountain via @c Set_Terrain_Type_Mountain().
  *
  * After the full-world pass completes, the function refreshes volcano-related
@@ -4400,7 +4400,7 @@ void Do_All_Units_XP_Check(void)
  *
  * @note Terrain classification is derived from
  *       @c p_world_map[plane][y][x] % NUM_TERRAIN_TYPES.
- * @note The cooling check is stochastic and performed once per volcano tile
+ * @note The cooling check is stochastic and performed once per volcano square
  *       per end-of-turn invocation.
  * @note This function affects both Arcanus and Myrror by iterating
  *       @c NUM_PLANES.

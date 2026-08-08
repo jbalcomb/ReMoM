@@ -53,7 +53,7 @@ When does happen?
 ...
 if defender is computer-player...
 ...during init section of tactical combat screen
-    if(_combat_defender_player == combat_computer_player)
+    if(_combat_defender_player == _combat_remote_player)
     {
         Auto_Cast_Spell_And_Do_Combat_Turn(_combat_defender_player);
         // ; BUG: the defending AI gets an extra turn?
@@ -126,7 +126,7 @@ Do_Auto_Ship_Turn()
 
 
 
-if(_combat_defender_player == combat_computer_player)
+if(_combat_defender_player == _combat_remote_player)
     Auto_Cast_Spell_And_Do_Combat_Turn(_combat_defender_player)
         |-> Auto_Do_Combat_Turn__WIP(_combat_defender_player)
 

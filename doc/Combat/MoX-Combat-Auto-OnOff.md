@@ -23,7 +23,7 @@ set to on for 'Left-Click Auto Button'
 ...
     TOGGLE(_auto_combat_flag);
     _human_out_of_moves = ST_FALSE;
-    AI_CMB_PlayTurn__WIP(combat_human_player);
+    AI_CMB_PlayTurn__WIP(_combat_local_player);
     Combat_Winner = Check_For_Winner();
 ...loop around screen-loop
     Combat_Next_Turn();
@@ -80,7 +80,7 @@ Combat_Next_Turn()
             _human_out_of_moves = ST_FALSE;
             Clear_Fields();
             input_field_idx = 0;
-            AI_CMB_PlayTurn__WIP(combat_human_player);
+            AI_CMB_PlayTurn__WIP(_combat_local_player);
             Combat_Winner = Check_For_Winner();
             if(Combat_Winner == ST_UNDEFINED)
                 leave_screen = ST_UNDEFINED;
@@ -93,7 +93,7 @@ Combat_Next_Turn()
 
 
 ## AI_CMB_PlayTurn__WIP()
-    if(player_idx == combat_human_player)
+    if(player_idx == _combat_local_player)
         // SPELLY  G_CMB_CastSpell((player_idx + 20), _combat_wx, _combat_wy, _combat_wp);
     Combat_Winner = Check_For_Winner();  // ¿ because spell cast may resulted in a win/loss ?
     if(Combat_Winner == ST_UNDEFINED)

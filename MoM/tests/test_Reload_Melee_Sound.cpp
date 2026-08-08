@@ -6,6 +6,7 @@ extern "C" {
 #endif
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_TYPE.h"
+#include "../src/Combat.h"
 #include "../src/UNITTYPE.h"
 
 SAMB_ptr Reload_Melee_Sound(int16_t battle_unit_idx, uint32_t * sound_seg_size);

@@ -1786,7 +1786,7 @@ void Army_Do_Meld(int16_t troop_count, int16_t troops[])
 
 // WZD o61p15
 /*
-; progress the purification counters of all purifying units, cleansing any tiles where the treshold has been reached
+; progress the purification counters of all purifying units, cleansing any squares where the treshold has been reached
 ; WARNING: the Target_X field may not be the best place to hold this information?
 */
 void Next_Turn_Process_Purify(void)

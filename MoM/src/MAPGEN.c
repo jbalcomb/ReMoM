@@ -279,7 +279,7 @@ and their order of execution
  * OG -- Generate_Towers reads p_world_map, so this tells us whether the map
  * going INTO the tower/lair phase already differs, or whether Generate_Towers
  * reads an identical map+seed and still draws differently.  One [GD] line per
- * (plane,row): "[GD] <point> _world_maps[<plane>].y<NN> = csv int16 tiles". */
+ * (plane,row): "[GD] <point> _world_maps[<plane>].y<NN> = csv int16 squares". */
 void gd_dump_world_map(const char* point)
 {
     int plane, y, x, q;
@@ -298,7 +298,7 @@ void gd_dump_world_map(const char* point)
     }
 }
 
-/* CLAUDE: capture _landmasses (uint8 landmass-id per tile) for OG byte-compare. */
+/* CLAUDE: capture _landmasses (uint8 landmass-id per square) for OG byte-compare. */
 void gd_dump_landmasses(const char* point)
 {
     int plane, y, x, q;
@@ -317,7 +317,7 @@ void gd_dump_landmasses(const char* point)
     }
 }
 
-/* CLAUDE: capture _map_square_terrain_specials (uint8 terrain-special id per tile) for OG byte-compare. */
+/* CLAUDE: capture _map_square_terrain_specials (uint8 terrain-special id per square) for OG byte-compare. */
 void gd_dump_terrain_specials(const char* point)
 {
     int plane, y, x, q;
@@ -892,7 +892,7 @@ void Extend_Islands(int16_t wp)
 
 // MGC o51p04
 /**
- * @brief Places all towers of wizardry and ensures tower tiles are land on both planes.
+ * @brief Places all towers of wizardry and ensures tower squares are land on both planes.
  *
  * @details
  * Repeatedly samples candidate map squares and accepts a location only when all
@@ -906,7 +906,7 @@ void Extend_Islands(int16_t wp)
  *
  * Once a valid location is found, the function writes tower coordinates and
  * owner state into `_TOWERS`, calls `Build_Landmass()` for Arcanus and Myrror
- * at that coordinate, and sets both plane tiles to `tt_Grasslands1`.
+ * at that coordinate, and sets both plane squares to `tt_Grasslands1`.
  *
  * @return void
  *
@@ -1005,7 +1005,7 @@ void Generate_Towers(void)
         Build_Landmass(ARCANUS_PLANE, wx, wy);
         Build_Landmass(MYRROR_PLANE, wx, wy);
 
-        /* Set the specific tower tile to Grasslands on both planes */
+        /* Set the specific tower square to Grasslands on both planes */
         p_world_map[ARCANUS_PLANE][wy][wx] = tt_Grasslands1;
         p_world_map[MYRROR_PLANE][wy][wx] = tt_Grasslands1;
 
@@ -1322,7 +1322,7 @@ Loop_Location_1:
                             }
                         }
                     }
-                    /* OGBUG  wx/wy/wp here are leftover from the last fortress placed in the location loop, NOT this city's own square (_FORTRESSES[itr]); so for every city except the last-placed one, the High Elf forest requirement is tested against the wrong tile. Faithful to the asm (loc_44375 pushes [bp+wx]/[bp+wy]/[bp+wp]). */
+                    /* OGBUG  wx/wy/wp here are leftover from the last fortress placed in the location loop, NOT this city's own square (_FORTRESSES[itr]); so for every city except the last-placed one, the High Elf forest requirement is tested against the wrong square. Faithful to the asm (loc_44375 pushes [bp+wx]/[bp+wy]/[bp+wp]). */
                     if(
                         (_CITIES[_cities].race == rt_High_Elf)
                         &&
@@ -2031,13 +2031,13 @@ sets tt_Tundra1, tt_Desert1, tt_Swamp1
  * @details
  * Performs three procedural conversion phases on already-initialized land terrain:
  * - Polar tundra pass: scans rows near the north/south edges and probabilistically
- *   converts `tt_Grasslands1` and `tt_Forest1` tiles to `tt_Tundra1`, with stronger
+ *   converts `tt_Grasslands1` and `tt_Forest1` squares to `tt_Tundra1`, with stronger
  *   conversion chance closer to the map edge.
  * - Desert patch pass: attempts up to 8 interior-origin patches. If an origin square is
  *   forest, it is converted to desert and short random walks expand nearby non-ocean
- *   tiles into `tt_Desert1`.
+ *   squares into `tt_Desert1`.
  * - Swamp patch pass: attempts up to 8 interior-origin patches. If an origin square is
- *   forest, local random walks convert encountered forest tiles to `tt_Swamp1`.
+ *   forest, local random walks convert encountered forest squares to `tt_Swamp1`.
  *
  * Coordinates are wrapped at map boundaries, so neighborhood walks continue across
  * edges. All changes are applied in-place through p_world_map.
@@ -2048,7 +2048,7 @@ sets tt_Tundra1, tt_Desert1, tt_Swamp1
  *
  * @note Uses multiple random draws (`Random`) and is intentionally non-deterministic
  *       unless the global RNG state is fixed by the caller.
- * @warning Mutates terrain tiles directly on the selected plane.
+ * @warning Mutates terrain squares directly on the selected plane.
  */
 void Generate_Climate_Terrain_Types(int16_t wp)
 {
@@ -2280,7 +2280,7 @@ adds Tundra to the top and bottom two rows
  * Sets every square on the top and bottom map rows to tundra. It then performs
  * two independent randomized passes (north inner row and south inner row):
  * for each X position, there is a 25% chance to paint a short horizontal tundra
- * strip of length 0-3 tiles, clamped at the right edge of the map.
+ * strip of length 0-3 squares, clamped at the right edge of the map.
  *
  * @param wp World plane index to update.
  *
@@ -3874,11 +3874,11 @@ sanity check the values, see if you can prove that the data for Hills got mangle
  *
  * @details
  * Loads TERRTYPE lookup data and runs multiple full-map smoothing passes on both
- * planes, converting base terrain classes into edge/corner-aware subtype tiles.
+ * planes, converting base terrain classes into edge/corner-aware subtype squares.
  *
  * Processing order is fixed and stateful:
  * 1) Ocean pass: computes neighborhood masks against adjacent land classes and
- *    remaps ocean/shore presentation tiles.
+ *    remaps ocean/shore presentation squares.
  * 2) Mountain pass: computes class-local adjacency masks to select mountain
  *    subtype variants.
  * 3) Tundra pass: computes tundra adjacency masks and applies tundra subtype
@@ -4586,7 +4586,7 @@ void Simtex_Autotiling(void)
  * @param void This function accepts no parameters.
  *
  * @return void
- * No explicit return value. Mutates world-map terrain tiles in place.
+ * No explicit return value. Mutates world-map terrain squares in place.
  *
  * @note Processes both planes (`wp` in `[0, NUM_PLANES)`) and all world squares.
  * @note Preserves OG behavior where a TERRTYPE record is loaded but not used by
@@ -4738,7 +4738,7 @@ void Shuffle_Terrains(void)
  * @param wp World plane index to modify.
  *
  * @return int16_t
- * @retval ST_TRUE  River path generation succeeded and placeholder river tiles were written.
+ * @retval ST_TRUE  River path generation succeeded and placeholder river squares were written.
  * @retval ST_FALSE River path generation failed due to invalid start square, blocked routing,
  *                  excessive retries, invalid outflow, or insufficient path length.
  *
@@ -4851,7 +4851,7 @@ int16_t Generate_River(int16_t wp)
 
         same_dir = direction;
 
-        /* Calculate next tile coordinates based on direction */
+        /* Calculate next square coordinates based on direction */
         next_wx = wx_array[(length - 1)] + dir_chg_tbl_wx[direction];
         next_wy = wy_array[(length - 1)] + dir_chg_tbl_wy[direction];
 
@@ -4864,9 +4864,9 @@ int16_t Generate_River(int16_t wp)
             return ST_FALSE;
         }
 
-        /* Ensure next tile is clear of terrain specials */
+        /* Ensure next square is clear of terrain specials */
         if(_map_square_terrain_specials[((wp * WORLD_SIZE) + (next_wy * WORLD_WIDTH) + next_wx)] != 0) { continue; }
-        /* Check for invalid terrain on next tile */
+        /* Check for invalid terrain on next square */
         if(Square_Is_Mountain_NewGame(next_wx, next_wy, wp) == ST_TRUE) { continue; }
         if(Square_Is_Hills_NewGame(   next_wx, next_wy, wp) == ST_TRUE) { continue; }
         if(Square_Is_Node_NewGame(    next_wx, next_wy, wp) == ST_TRUE) { continue; }
@@ -4932,7 +4932,7 @@ int16_t Generate_River(int16_t wp)
         return ST_FALSE;
     }
 
-    /* Write river tiles to world map */
+    /* Write river squares to world map */
     for(itr = 0; itr < length; itr++)
     {
         p_world_map[wp][wy_array[itr]][wx_array[itr]] = tt_River_Placeholder;
@@ -4946,7 +4946,7 @@ int16_t Generate_River(int16_t wp)
 
 // MGC o51p23
 /**
- * @brief Finalizes river tiles and applies river/shore/lake post-processing for one plane.
+ * @brief Finalizes river squares and applies river/shore/lake post-processing for one plane.
  *
  * @param wp World plane index to process.
  *
@@ -4966,9 +4966,9 @@ int16_t Generate_River(int16_t wp)
  *    - single inflow -> directional `_1LakeRiv_*`;
  *    - multi-inflow -> keeps one inflow, converts selected neighbors to
  *      `tte_Grasslands`, and rewinds `wx/wy` to revisit local topology.
- * 7) Applies multiple shore-group conversion rules that map eligible shore tiles
+ * 7) Applies multiple shore-group conversion rules that map eligible shore squares
  *    to river-outlet shore variants based on `river_mask`; unsupported
- *    combinations may be reduced by converting adjacent river tiles to
+ *    combinations may be reduced by converting adjacent river squares to
  *    `tte_Grasslands` and rewinding iteration.
  *
  * This routine is the river/lake/shore topology cleanup pass after river paths
@@ -4991,7 +4991,7 @@ void River_Autotile(int16_t wp)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    /* CLAUDE  All tile writes below use p_world_map[wp][wy][wx] (int16_t (*)[40][60], word-strided), matching the asm's `shl ax,1` / `mov [word ptr es:bx], ...` writes. The Gemini source wrote 52 of these as `_world_maps[wp*WORLD_SIZE + ...]` -- but _world_maps is uint8_t* (byte heap), so that byte-indexes a word map (half offset) and truncates values > 255 (e.g. _1Desert == 0x134; MSVC C4305). Converted all 52 to p_world_map. */
+    /* CLAUDE  All square writes below use p_world_map[wp][wy][wx] (int16_t (*)[40][60], word-strided), matching the asm's `shl ax,1` / `mov [word ptr es:bx], ...` writes. The Gemini source wrote 52 of these as `_world_maps[wp*WORLD_SIZE + ...]` -- but _world_maps is uint8_t* (byte heap), so that byte-indexes a word map (half offset) and truncates values > 255 (e.g. _1Desert == 0x134; MSVC C4305). Converted all 52 to p_world_map. */
 
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
     {
@@ -5027,7 +5027,7 @@ void River_Autotile(int16_t wp)
 
             if(terrain_type == _1Lake)  /* @@ Block_1 */
             {
-                // NOTE(drake178): if the square has no river flowing into it, turn it into a desert ($134); if it has one, use the corresponding single lake square; but if it has more than one, convert surrounding tiles to grasslands until only one river inflow remains, and backtrack the loop variables to compensate since previous river tiles may need adjusting
+                // NOTE(drake178): if the square has no river flowing into it, turn it into a desert ($134); if it has one, use the corresponding single lake square; but if it has more than one, convert surrounding squares to grasslands until only one river inflow remains, and backtrack the loop variables to compensate since previous river squares may need adjusting
                 switch (river_mask)
                 {
                 case 0:
@@ -5989,7 +5989,7 @@ attempt:
  * short range. The path returned by `Path_Wrap()` is rejected if any traversed square is
  * ocean or shore terrain. Accepted paths set `MSF_ROAD`, and on Myrror also set `MSF_EROAD`.
  *
- * After pair processing, each city square is marked with road flags so city locations are always road-connected tiles.
+ * After pair processing, each city square is marked with road flags so city locations are always road-connected squares.
  *
  * @param wp World plane index (`ARCANUS_PLANE` or `MYRROR_PLANE`) to process.
  *
@@ -6713,7 +6713,7 @@ void Set_Square_Explored_Bits(int16_t wp, int16_t wx, int16_t wy, int16_t bits)
 SEEALSO:  CITYCALC.c  Make_Road()
 */
 /**
- * @brief Builds per-tile movement-cost maps for a world plane.
+ * @brief Builds per-square movement-cost maps for a world plane.
  *
  * @details
  * Recomputes `movement_mode_cost_maps[wp]` from terrain data for every square
@@ -7176,7 +7176,7 @@ Returns 1 (TRUE) if in ranges:
 - (200, 233)    - Lakes / Rivers
 - (451, 468)    - Desert Rivers
 - (472, 601)    - Anim Ocean / Other Rivers
-...a "river outlet" is a shore-classified tile that is a river tile rather than coastline.
+...a "river outlet" is a shore-classified square that is a river square rather than coastline.
 */
 int16_t Square_Is_River_Mouth_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -7194,7 +7194,7 @@ int16_t Square_Is_River_Mouth_NewGame(int16_t wx, int16_t wy, int16_t wp)
 /* 
 Checks if the normalized terrain type matches specific shore or river ranges.
 Returns 1 (TRUE) if in ranges:
-- (1, 162)      - Land/Shore tiles before Grasslands
+- (1, 162)      - Land/Shore squares before Grasslands
 - (200, 233)    - Lakes / Rivers
 - (451, 468)    - Desert Rivers
 - (472, 601)    - Anim Ocean / Other Rivers
@@ -7551,7 +7551,7 @@ int16_t City_Maximum_Size_NewGame(int16_t wx, int16_t wy, int16_t wp)
  *
  * @return Number of usable city-area squares stored in the output arrays.
  *
- * @note The current implementation does not filter out corrupted tiles; related checks
+ * @note The current implementation does not filter out corrupted squares; related checks
  *       are present as disabled legacy (`DNE`) comments.
  * @warning Caller must provide arrays large enough to hold all emitted squares
  *          (typically `CITY_AREA_SIZE`).
@@ -7661,10 +7661,10 @@ void o51p54_empty_function(void)
 ;
 ; a brute force shortest path algorithm that fills the
 ; passed arrays with the result, returning the length
-; of the path in tiles, or 0 if none found
+; of the path in squares, or 0 if none found
 ;
 ; WARNING: uses global arrays limited to a maximum map
-; size of 225 tiles and path length of 100, with no
+; size of 225 squares and path length of 100, with no
 ; wrapping possible on either axis
 */
 /*
@@ -7675,7 +7675,7 @@ void o51p54_empty_function(void)
     labels below mark each section:
 
         [Prelude]        rebuild 9 edge/corner adjacency-offset tables from Wdt (recomputed every call)
-        [Skeleton 2]     bail if target / source tile is impassable
+        [Skeleton 2]     bail if target / source square is impassable
         [Skeleton 1]     init parallel arrays: predecessor (shortest_path_came_from) = self, cost (Costs) = INF, source = 0
         [Skeleton 3]     relaxation sweep to fixed point — single fixed-direction raster (while a_cost_was_updated)
         [Skeleton 4]     back-trace target -> predecessor self-link; success iff self-link == source
@@ -7694,8 +7694,8 @@ int16_t Find_Shortest_Path(int16_t src_x, int16_t src_y, int16_t dst_x, int16_t 
     int16_t Mid_Tile_Adjacents[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t path_length = 0;            /* path length (hop count) */
     uint8_t new_cost_to_reach = 0;      /* candidate new cost */
-    int16_t grid_cell_count = 0;        /* total tile count */
-    int16_t move_cost = 0;              /* current tile entry cost */
+    int16_t grid_cell_count = 0;        /* total square count */
+    int16_t move_cost = 0;              /* current square entry cost */
     int16_t Inner_Col_Height = 0;
     int16_t Adjacent_Tile_Cost = 0;
     int16_t Inner_Row_Length = 0;
@@ -7706,7 +7706,7 @@ int16_t Find_Shortest_Path(int16_t src_x, int16_t src_y, int16_t dst_x, int16_t 
     int16_t a_cost_was_updated = 0;     /* relaxation "changed" flag */  /* Early Exit: Bellman-Ford can terminate early if a full pass occurs without changing any distances. This saves significant CPU cycles. */
     int16_t itr = 0;
     int16_t cx = 0;
-    int16_t ctr = 0;  /* current tile 1-D index */
+    int16_t ctr = 0;  /* current square 1-D index */
 
     /* [Prelude]  Rebuild the 9 edge/corner adjacency-offset tables from Wdt — recomputed every call (MoM-MovePath-Compare.md, "Find_Shortest_Path"). */
     /* Initializing Adjacency lists offsets based on Wdt */
@@ -7761,14 +7761,14 @@ int16_t Find_Shortest_Path(int16_t src_x, int16_t src_y, int16_t dst_x, int16_t 
 
     path_length = 0;
 
-    /* [Skeleton step 2]  Bail if the target or source tile is impassable (MoM-MovePath-Compare.md, "The shared skeleton"). */
-    /* Verify target tile is passable */
+    /* [Skeleton step 2]  Bail if the target or source square is impassable (MoM-MovePath-Compare.md, "The shared skeleton"). */
+    /* Verify target square is passable */
     if(movepath_cost_map[dst_y * Wdt + dst_x] == INF)
     {
         return 0;
     }
 
-    /* Verify source tile is passable */
+    /* Verify source square is passable */
     if(movepath_cost_map[src_y * Wdt + src_x] == INF)
     {
         return 0;
@@ -7790,7 +7790,7 @@ int16_t Find_Shortest_Path(int16_t src_x, int16_t src_y, int16_t dst_x, int16_t 
     shortest_path_cost_to_reach[src_y * Wdt + src_x] = 0;
 
     /* [Skeleton step 3]  Relaxation sweep to fixed point — single fixed-direction raster (MoM-MovePath-Compare.md, "The shared skeleton" / "Find_Shortest_Path").
-       Per pass the raster walks: top-left corner, top row, top-right corner, then each middle row (left column, inner tiles, right column), bottom-left corner, bottom row, bottom-right corner. */
+       Per pass the raster walks: top-left corner, top row, top-right corner, then each middle row (left column, inner squares, right column), bottom-left corner, bottom row, bottom-right corner. */
     a_cost_was_updated = ST_TRUE;
     while(a_cost_was_updated == ST_TRUE)
     {
@@ -8019,7 +8019,7 @@ int16_t Find_Shortest_Path(int16_t src_x, int16_t src_y, int16_t dst_x, int16_t 
         return 0;
     }
 
-    /* [Skeleton step 5]  Reverse the collected indices and convert each 1-D tile index back to (x, y) (MoM-MovePath-Compare.md, "The shared skeleton"). */
+    /* [Skeleton step 5]  Reverse the collected indices and convert each 1-D square index back to (x, y) (MoM-MovePath-Compare.md, "The shared skeleton"). */
     for(itr = 0; itr < path_length; itr++) {
         mvpth_x[itr] = (unsigned char)(shortest_path_backtrace[path_length - 1 - itr] % Wdt);
         mvpth_y[itr] = (unsigned char)(shortest_path_backtrace[path_length - 1 - itr] / Wdt);
@@ -8056,7 +8056,7 @@ int16_t Find_Shortest_Path(int16_t src_x, int16_t src_y, int16_t dst_x, int16_t 
 12x8 of 5x5 = 60x40
 */
 /**
- * @brief Builds a coarse section-to-section connectivity map from a tile movement map.
+ * @brief Builds a coarse section-to-section connectivity map from a square movement map.
  *
  * @details
  * Partitions the 60x40 world into a 12x8 grid of 5x5 sections, then computes
@@ -8073,13 +8073,13 @@ int16_t Find_Shortest_Path(int16_t src_x, int16_t src_y, int16_t dst_x, int16_t 
  * 1) Fast boundary-adjacency probes along the relevant section edge.
  * 2) Validation pathing with `Find_Shortest_Path(...)` over temporary local
  *    windows (`TopBottom_Section_Map` and `LeftRight_Section_Map`) to ensure an
- *    actual traversable route exists between opposite edge tiles.
+ *    actual traversable route exists between opposite edge squares.
  *
  * Horizontal wrap is preserved when building left/right windows for sections at
  * the world edges. After the primary pass, reciprocal neighbor bits are filled
  * into adjacent section cells.
  *
- * @param move_map Per-tile movement-cost map (world-sized, 60x40). Tiles with
+ * @param move_map Per-square movement-cost map (world-sized, 60x40). Tiles with
  *                 value `-1` are treated as impassable.
  * @param result_map Output section graph buffer (12x8 = 96 bytes), one flags
  *                   byte per section.

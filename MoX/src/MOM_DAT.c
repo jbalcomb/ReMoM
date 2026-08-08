@@ -1178,6 +1178,14 @@ struct s_BATTLE_UNIT * global_battle_unit;                       // alloc in All
 // WZD dseg:922A 00 00 00 00                                     _combat_data_ dd 0                      ; DATA XREF: USW_Build_Effect_List+AB7r ...
 /*
 ~ a 'battle unit' is a combat data *record*
+
+Kilgore's equivalent is struct battle_item_s
+the whole combat state lives in struct battle_s
+game_battle.h:17-63 — struct battle_item_s
+game_battle.h:103-146 — struct battle_s, with the flat array struct battle_item_s item[BATTLE_ITEM_MAX]
+
+1oom's struct battle_s battle_s ~== MoO2's struct s_COMBAT_DATA combat_data
+
 */
 struct s_BATTLE_UNIT * battle_units;                            // alloc in IDK_Combat_Allocate() and CMB_LoadResources()
 /* CLAUDE */ struct s_BATTLE_UNIT DBG_battle_units[MAX_BATTLE_UNIT_SLOT_COUNT];  // DNE in Dasm, but used for debugging purposes in Combat()  (was MAX_BATTLE_UNIT_COUNT=18, too small when summoned units push count past 18)
@@ -1211,9 +1219,15 @@ _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
 
 e.g.,
     _HEROES2[HUMAN_PLAYER_IDX]->heroes[unit_type].Spells[itr1]
-*/
-struct s_HEROES * _HEROES2[NUM_PLAYERS];
 
+Need to guard against _HEROES2[-1], due to a bug in AI_Stacks_Survey_Expedition_Forces_Stack().
+*/
+// // struct s_HEROES * _HEROES2[NUM_PLAYERS];
+// static struct s_HEROES * heroes2_storage[NUM_PLAYERS + 1];   /* [0] is the guard */
+// struct s_HEROES ** const _HEROES2 = &heroes2_storage[1];
+static struct s_HEROES   heroes2_guard_record;                 /* zeroed by static init */
+static struct s_HEROES * heroes2_storage[NUM_PLAYERS + 1] = { &heroes2_guard_record };
+struct s_HEROES ** const _HEROES2 = &heroes2_storage[1];
 
 // WZD dseg:924A
 // MoO2  Module: MOX  data (0 bytes) _ai_retreat_flag  Address: 02:001918C8
@@ -2724,7 +2738,7 @@ uint16_t grand_vizier;
  * EMBARK-SQUARE TABLES — set once at game load, never modified during gameplay.
  *
  * For each (plane, landmass), enumerates the land squares the AI treats as the
- * continent's coastal edge for transport planning. These are not water tiles;
+ * continent's coastal edge for transport planning. These are not water squares;
  * they are the candidate land-side embark/disembark squares later movement
  * code can average into a coastal centroid and then search for a concrete
  * reachable departure/arrival square.
@@ -3174,8 +3188,8 @@ int16_t m_resource_id;
 /*
 ; set to 0 after display-sorting the active stack
 ; set to 1 if road-building, but the unit is not on any
-;   of the plotted line tiles (before returning)
-; set to 1 if road-building, and tiles left to do
+;   of the plotted line squares (before returning)
+; set to 1 if road-building, and squares left to do
 ; set to 1 if moving with path left to go
 */
 int16_t _active_stack_has_path;
@@ -3627,7 +3641,7 @@ SAMB_ptr g_gui_scratch_bitmap;
 // NOTE(JimBalcomb,20250224): just messed this up differently, should actually just/only be in MainScr_Maps
 // ovr150 MainScr_Maps  // WZD dseg:CB5C
 // ovr150 MainScr_Maps  // AKA OVL_NewMapDrawing
-// ovr150 MainScr_Maps  int16_t draw_map_full;  //; determines whether non-animated terrain tiles will be redrawn or not
+// ovr150 MainScr_Maps  int16_t draw_map_full;  //; determines whether non-animated terrain squares will be redrawn or not
 //                                          ovr150
 // WZD dseg : CB56 00 00                                           OVL_MapDrawY_Save dw 0; DATA XREF : OVL_MapStateSave + Cw ...
 // WZD dseg:CB58 00 00                                           OVL_MapDrawX_Save dw 0; DATA XREF : OVL_MapStateSave + 6w ...

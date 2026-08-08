@@ -20,7 +20,7 @@ Calc_Battlefield_Bonuses()
 
 CMB_PrepareTurn__WIP()
 CMB_CE_Refresh__WIP()
-CMB_LoadResources__WIP()
+Combat_Screen_Load_Resources()
 Strategic_Combat_Allocate()
 AITP_Combat_Spell()
 Cast_Spell_On_Battle_Unit()
@@ -35,7 +35,7 @@ Combat_Structure()
 Cast_Disenchant()
 Cast_Dispel_Magic()
 AI_EvaluateCmbtSpell()
-CMB_LoadResources__WIP()
+Combat_Screen_Load_Resources()
 Strategic_Combat_Allocate()
 AITP_Combat_Spell()
 Do_Legal_Spell_Check__WIP()
@@ -53,8 +53,8 @@ CMB_PrepareTurn__WIP:loc_773C7              les     bx, [combat_enchantments]
 CMB_PrepareTurn__WIP:loc_773EA              les     bx, [combat_enchantments]           
 CMB_CE_Refresh__WIP:loc_7EB1E               les     bx, [combat_enchantments]           
 CMB_CE_Refresh__WIP:loc_7EB39               les     bx, [combat_enchantments]           
-CMB_LoadResources__WIP+11C                  mov     [word ptr combat_enchantments], ax  
-CMB_LoadResources__WIP:loc_8500A            les     bx, [combat_enchantments]           
+Combat_Screen_Load_Resources+11C                  mov     [word ptr combat_enchantments], ax  
+Combat_Screen_Load_Resources:loc_8500A            les     bx, [combat_enchantments]           
 Strategic_Combat_Allocate+3B                mov     [word ptr combat_enchantments], ax  
 Strategic_Combat_Allocate:loc_888F2         les     bx, [combat_enchantments]           
 AITP_Combat_Spell+DED                  add     bx, [word ptr combat_enchantments]  
@@ -115,7 +115,7 @@ AI_EvaluateCmbtSpell+147                    les     bx, [combat_enchantments]
 AI_EvaluateCmbtSpell+152                    les     bx, [combat_enchantments]           
 AI_EvaluateCmbtSpell+15D                    les     bx, [combat_enchantments]           
 AI_EvaluateCmbtSpell:loc_C3211              les     bx, [combat_enchantments]           
-CMB_LoadResources__WIP+118                  mov     [word ptr combat_enchantments+2], dx
+Combat_Screen_Load_Resources+118                  mov     [word ptr combat_enchantments+2], dx
 Strategic_Combat_Allocate+37                mov     [word ptr combat_enchantments+2], dx
 AITP_Combat_Spell+DE9                  mov     es, [word ptr combat_enchantments+2]
 Do_Legal_Spell_Check__WIP+523               mov     es, [word ptr combat_enchantments+2]

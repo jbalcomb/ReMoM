@@ -20,6 +20,10 @@ battlefield->terrain_group[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = CTG_Gras
 #define MOVE_ANIM_MAX    7
 #define MOVE_ANIM_CNT    8
 
+#define CELL_EFFECT_ANIM_HOLD 7
+#define CELL_EFFECT_ANIM_FRAME_COUNT    7
+
+#define VORTEX_ANIM_FRAME_COUNT    5
 
 
 #define MAX_ENTITIES        256
@@ -47,7 +51,7 @@ enum e_DAMAGE_TYPES
 // Combat_Screen_Assign_Mouse_Images() does screen_y <= 168 + 4 (pointer_offset)
 // ... Vortex Move Screen does screen_y <= 168 + 4 (pointer_offset)
 
-// hard-coded in CMB_SpawnFigure__WIP() in call to CMB_CreateEntity__WIP()
+// hard-coded in Spawn_Figure_Entity() in call to Combat_Grid_Entity_Create()
 // 13, /* draw_x_shift */
 // 23, /* draw_y_shift */
 // 1,  /* entity_type: battle unit figure */
@@ -175,12 +179,12 @@ Cast_Spell_On_Battle_Unit()
 
 
 /*
-CMB_SpawnFigure__WIP()
+Spawn_Figure_Entity()
     no battle_unit_idx, passed in cgx, cgy, target_cgx, target_cgy
 
 [x] Combat_Figure_Compose_USEFULL()
 [x] Battle_Unit_Compose_Bitmap()
-[x] CMB_SpawnFigure__WIP()
+[x] Spawn_Figure_Entity()
 
 figure_set_idx passed to USELESS_Combat_Figure_Load_Compose()
 
@@ -240,11 +244,11 @@ figure_set_idx passed to USELESS_Combat_Figure_Load_Compose()
 
 
 /*
-    CMB_SpawnFigure__WIP()
+    Spawn_Figure_Entity()
     Battle_Unit_Figure_Position()
     Unit_Figure_Position()
 !!!!! ALL DIFFERENT !!!!!
-this is as-seen in CMB_SpawnFigure__WIP()
+this is as-seen in Spawn_Figure_Entity()
 */
 #define BATTLE_UNIT_FIGURE_POSITION {                       \
     switch(figure_count)                                    \

@@ -116,7 +116,7 @@
 - [x] BU_ApplyDamage  AKA BU_ApplyDamage__WIP__SEGRAX
 - [x] Battle_Unit_Attack_Target — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Attack_Target.md; renamed from BU_AttackTarget__WIP, Combat.c:16013; 4 findings fixed incl. a missing ~120-line ranged-Haste block and an out-of-bounds write into the caller's array; Check_Attack_Ranged and Apply_Fear_Attack compared and faithful; builds clean 2026-08-04)
 - [x] BU_CheckFlight__WIP — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Is_Airborne, Combat.c:5938; 1:1 with ovr098/BU_CheckFlight__WIP.asm)
-- [ ] BU_GetCombatEffect__WIP
+- [ ] Battle_Unit_Curse_Effects
 - [ ] BU_GetInstaMoveType__WIP
 - [ ] BU_HasSpellAbility__WIP
 - [x] BU_IsVisible__STUB
@@ -128,30 +128,30 @@
 - [x] BU_SetVisibility — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Set_Invisibility_Effect, Combat.c:9286; 1:1 with ovr105/BU_SetVisibility__WIP.asm)
 - [x] BU_SortSlowestFirst__WIP
 - [x] Check_For_Winner — was Check_For_Winner__WIP; suffix dropped in source, def Combat.c:9134 (verified 2026-07-21)
-- [ ] CMB_BaseAllocs__WIP
+- [x] Allocate_Combat_Base_Blocks — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:23980, faithful against ovr163/CMB_BaseAllocs__WIP.asm
 - [ ] CMB_CE_Refresh__WIP — NOT FOUND: no definition in source; appears only in comments (verified 2026-07-21)
 - [ ] CMB_ComposeBackgrnd__WIP
 - [ ] CMB_ComposeBookBG__WIP
-- [ ] CMB_LoadResources__WIP
+- [x] Combat_Screen_Load_Resources — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:7297, faithful against ovr103/CMB_LoadResources__WIP.asm
 - [x] Begin_Combat_Turn — done-done 2026-08-05 (walkthrough doc doc/#CodeReview/Combat-Init_Prepare_Etc.md; renamed from CMB_PrepareTurn__WIP, Combat.c:2635; 1 finding fixed: the Web block was hoisted out of its guard and dropped action = bua_Finished; Add_City_Damage_From_Battle_Units_Within compared and faithful)
 - [ ] Combat_Next_Turn — renamed from CMB_ProgressTurnFlow__WIP (Combat.c:4528); body substantive, needs done-done review
-- [ ] CMB_SetNearAllocs__WIP
-- [ ] CMB_SpawnDarkWall__WIP
-- [ ] CMB_SpawnFigure__WIP
-- [ ] CMB_SpawnFireWall__WIP
-- [ ] CMB_SpawnStoneWall__WIP
-- [ ] CMB_SpawnStructures__WIP
-- [ ] CMB_Terrain_Init__WIP
+- [x] Item_Powers_To_Attack_Attributes — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); COMBINIT.c:224, faithful against ovr116/BU_Apply_Item_Attack_Specials.asm
+- [x] Spawn_Dark_Wall_Entities — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from CMB_SpawnDarkWall__WIP, Combat.c:20216, faithful against ovr153/CMB_SpawnDarkWall.asm
+- [x] Spawn_Figure_Entity — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from CMB_SpawnFigure__WIP, Combat.c:20538, faithful against ovr153/CMB_SpawnFigure__WIP.asm
+- [x] Spawn_Fire_Wall_Entities — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from CMB_SpawnFireWall__WIP, Combat.c:20357, faithful against ovr153/CMB_SpawnFireWall.asm
+- [x] Spawn_Stone_Wall_Entities — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from CMB_SpawnStoneWall__WIP, Combat.c:20097, faithful against ovr153/CMB_SpawnStoneWall.asm
+- [x] Spawn_Structure_Entities — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from CMB_SpawnStructures__WIP, Combat.c:20038, faithful against ovr153/CMB_SpawnStructures.asm
+- [x] Build_Battlefield — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:21787, faithful against ovr154/CMB_Terrain_Init__WIP.asm
 - [ ] CMB_TileGen__WIP
-- [x] CMB_Units_Init__WIP — done-done 2026-08-05 (walkthrough doc doc/#CodeReview/Combat-Init_Prepare_Etc.md; Combat.c:5436; 1 finding fixed: the defender us_Ready reset was inverted and read HUMAN_PLAYER_IDX instead of _human_player_idx; the four MOO_MONSTER_PLAYER_IDX fallbacks restored, closing D1)
+- [x] Prepare_All_Battle_Units — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); renamed from CMB_Units_Init__WIP, Combat.c:5041, faithful against ovr098/CMB_Units_Init__WIP.asm; 2 OGBUGs preserved
 - [ ] Combat__WIP
 - [x] Combat_Cast_Spell — done-done 2026-07-07 (walkthrough doc in doc/#CodeReview/; renamed from Combat_Cast_Spell__WIP; R1 payment-index + R2 AI-branch/spellbook-gating fixed; Dispel_Attempt/Counter_Message arg orders verified vs asm; whole tree builds clean)
-- [ ] Combat_Figure_Effect__WIP
-- [ ] Combat_Grid_Entities__WIP
-- [ ] Combat_Grid_Entity_Create__WIP
-- [ ] Combat_Screen__WIP
-- [ ] Combat_Screen_Map_Draw__WIP
-- [ ] Combat_Screen_Map_Draw_Entities__WIP
+- [x] Combat_Figure_Effect__WIP — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); Combat.c:7574, faithful against ovr105/Combat_Figure_Effect__WIP.asm
+- [x] Combat_Grid_Entities — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from Combat_Grid_Entities__WIP, Combat.c:5899, faithful against ovr099/Combat_Grid_Entities__WIP.asm
+- [x] Combat_Grid_Entity_Create — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); Combat.c:20942, faithful against ovr153/Combat_Grid_Entity_Create__WIP.asm
+- [x] Combat_Screen__WIP — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); renamed Combat_Screen, Combat.c:1405, faithful against ovr090/Combat_Screen__WIP.asm
+- [x] Combat_Screen_Map_Draw — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); Combat.c:19602, faithful against ovr153/Combat_Screen_Map_Draw__WIP.asm
+- [x] Combat_Screen_Map_Draw_Entities — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); Combat.c:19908, faithful against ovr153/Combat_Screen_Map_Draw_Entities__WIP.asm
 - [ ] Combat_Spell_Target_Screen__WIP
 - [ ] Do_Legal_Spell_Check__WIP
 - [ ] End_Of_Combat__WIP

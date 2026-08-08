@@ -30,7 +30,7 @@ protected:
         
         memset(_NODES, 0, sizeof(_NODES));
         
-        // Set some land tiles
+        // Set some land squares
         for (int y = 2; y < 37; y++)
         {
             for (int x = 3; x < 57; x++)

@@ -2078,7 +2078,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
     {
         for(itr = 0; ((itr < 15) && (specials_index < 39)); itr++)
         {
-            if((global_battle_unit->Combat_Effects & USW_Combat_FX[itr].CEff_Flags) != 0)
+            if((global_battle_unit->combat_effects & USW_Combat_FX[itr].CEff_Flags) != 0)
             {
                 stu_strcpy(specials_list->names[specials_index], *USW_Combat_FX[itr].name);
                 specials_list->flags[specials_index] = -1;
@@ -2675,7 +2675,7 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_or_type, in
         Set_Animation_Frame(unit_figure_seg, 2);
         Draw_Picture_To_Bitmap(unit_figure_seg, UnitDraw_WorkArea);
 
-        // HERE: same as in Combat_Figure_Banner_Color()
+        // HERE: ~ Combat_Figure_Banner_Color()
         for(itr_banner_colors = 0; itr_banner_colors < 5; itr_banner_colors++)
         {
             // Draw_Map_Towers()
@@ -2700,8 +2700,8 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_or_type, in
         }
 
         FLIC_Set_LoopFrame_1(UnitDraw_WorkArea);
-        Unit_Figure_Position(unit_figure_count, itr_figure_count, &fig_y, &fig_x);
-        Draw_Picture((x_start + fig_y), (y_start + fig_x), UnitDraw_WorkArea);
+        Unit_Figure_Position(unit_figure_count, itr_figure_count, &fig_x, &fig_y);
+        Draw_Picture((x_start + fig_x), (y_start + fig_y), UnitDraw_WorkArea);
 
     }
 
@@ -2711,9 +2711,8 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_or_type, in
 
 // WZD o89p06
 /*
-
-~ CMB_SpawnFigure__WIP()
-
+~ Spawn_Figure_Entity()
+~ Battle_Unit_Figure_Position()
 */
 void Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t * figure_x, int16_t * figure_y)
 {

@@ -337,7 +337,7 @@ Battle_Unit_Is_Within_City() just checks the coordinates of the battle unit, not
 
 battlefield->walled != ST_FALSE
 ...
-    CMB_Terrain_Init__WIP()
+    Build_Battlefield()
         City_Walls
         Generate_Combat_Map__WIP(..., City_Walls, ...)
             battlefield->walled = city_walls;

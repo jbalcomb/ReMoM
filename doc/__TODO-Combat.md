@@ -26,8 +26,8 @@ Legend: **[done]** reconstructed/reviewed · **[impl]** substantive, not yet don
 | Subsystem | Representative functions | Status |
 |---|---|---|
 | Entry & turn flow | `Combat__WIP`, `Combat_Screen__WIP`, `Combat_Next_Turn` (impl), `CMB_PrepareTurn__WIP`, `Check_For_Winner` (done), `End_Of_Combat__WIP` | mostly **WIP** |
-| Setup / alloc / resources | `CMB_BaseAllocs__WIP`, `CMB_LoadResources__WIP`, `CMB_SetNearAllocs__WIP`, `CMB_Units_Init__WIP` | **WIP** |
-| Map / terrain / spawn | `Generate_Combat_Map__WIP`, `CMB_TileGen__WIP`, `CMB_Terrain_Init__WIP`, `CMB_SpawnStructures/Figure/DarkWall/FireWall/StoneWall__WIP` | **WIP** |
+| Setup / alloc / resources | `Allocate_Combat_Base_Blocks`, `Combat_Screen_Load_Resources`, `Item_Powers_To_Attack_Attributes`, `CMB_Units_Init__WIP` | **WIP** |
+| Map / terrain / spawn | `Generate_Combat_Map__WIP`, `CMB_TileGen__WIP`, `Build_Battlefield`, `CMB_SpawnStructures/Figure/DarkWall/FireWall/StoneWall__WIP` | **WIP** |
 | Drawing / rendering | `CMB_ComposeBackgrnd__WIP`, `CMB_ComposeBookBG__WIP`, `Combat_Screen_Map_Draw(_Entities)__WIP`, `Combat_Grid_Entities/Entity_Create__WIP`, `Combat_Figure_Effect__WIP`, `CMB_CE_Refresh__WIP` | **WIP** |
 | Unit action / attack / move | `Battle_Unit_Action/Attack__WIP`, `BU_AttackTarget/ProcessAttack__WIP`, `BU_Apply_Battlefield_Effects__WIP`, `BU_CheckFlight/GetCombatEffect/HasSpellAbility/MeleeWallCheck/MoveConfused/SetBaseAnims/SetCityMovement/SetVisibility__WIP`, `Move_Battle_Unit__WIP`; done: `BU_ApplyDamage`, `BU_IsVisible`, `BU_SortSlowestFirst` | mostly **WIP** |
 | Spellcasting (shared/human) | `Combat_Cast_Spell` (**done**), `AITP_Combat_Spell` (**done**), `Combat_Spell_Dispel_Attempt`/`Combat_Spell_Counter_Message` (impl), `Combat_Spell_Target_Screen__WIP`, `Do_Legal_Spell_Check__WIP` | **done** for the cast core; targeting screen **WIP** |
