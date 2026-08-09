@@ -211,7 +211,7 @@ void Make_Combat_Grid_Battle_Unit_Entities(void)
 }
 
 /*
-~ Combat_Figure_Compose_USEFULL()
+~ Combat_Screen_Map_Compose_Figures()
 */
 void Compose_Battle_Unit_Pictures(void)
 {

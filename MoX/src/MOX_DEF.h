@@ -686,29 +686,7 @@ enum enum_BANNER_COLOR_ID
 //     {  13,  13,  12,  12,  11 }
 // };
 
-// Newgame_Screen_5_Draw_Spells()
-#define SORCERY_BLUE                172
-#define NATURE_GREEN                216
-#define CHAOS_RED                   201
-#define LIFE_WHITE                   13
-#define DEATH_PURPLE                114
 
-#define BANNER_COLOR_BLUE                172  // AKA  SORCERY_BLUE
-#define BANNER_COLOR_GREEN               216  // AKA  NATURE_GREEN
-#define BANNER_COLOR_PURPLE              124
-#define BANNER_COLOR_RED                 201  // AKA  CHAOS_RED
-#define BANNER_COLOR_YELLOW              211
-#define BANNER_COLOR_BROWN                50
-#define BANNER_COLOR_BLUE_171            171
-#define BANNER_COLOR_BLUE_172            172
-#define BANNER_COLOR_PURPLE_123          123
-#define BANNER_COLOR_PURPLE_124          124
-#define BANNER_COLOR_PURPLE_205          205
-#define BANNER_COLOR_YELLOW_209          209
-#define BANNER_COLOR_YELLOW_210          210
-#define BANNER_COLOR_YELLOW_211          211
-#define BANNER_COLOR_YELLOW_212          212
-#define BANNER_COLOR_YELLOW_213          213
 
 
 
@@ -793,9 +771,30 @@ enum enum_BANNER_COLOR_ID
 
 /*
     SimTex Colors
+
+
+
+Combat_Figure_Effect(int16_t figure_effect)
+    switch(figure_effect)
+        case bufe_Black_Sleep:
+            Transparent_Color_Range(scratch_bitmap_seg, ST_REMAP_COLOR, ST_REMAP_COLOR);
+            Gray_Scale_Bitmap(scratch_bitmap_seg, ST_BLACK);
+        case bufe_2:  / * Blue, for Guise spell? * /
+            Transparent_Color_Range(scratch_bitmap_seg, ST_REMAP_COLOR, ST_REMAP_COLOR);
+            Inverse_Gray_Scale_Bitmap(scratch_bitmap_seg, 104);
+        case bufe_Warp_Creature:
+            Transparent_Color_Range(scratch_bitmap_seg, ST_REMAP_COLOR, ST_REMAP_COLOR);
+            Inverse_Gray_Scale_Bitmap(scratch_bitmap_seg, 40);
+        case bufe_Invisible_Revealed:
+            Transparent_Color_Range(scratch_bitmap_seg, ST_REMAP_COLOR, ST_REMAP_COLOR);
+            Replace_Color_All(scratch_bitmap_seg, 233);
+        case bufe_Invisible_Hidden:
+            Transparent_Color_Range(scratch_bitmap_seg,   1, 228);
+            Transparent_Color_Range(scratch_bitmap_seg, ST_REMAP_COLOR, ST_REMAP_COLOR);
+
 */
 
-#define MINIMAP_MARK_COLOR  15
+#define MINIMAP_MARK_COLOR      15
 #define REDUCED_MAP_BOX_COLOR   13
 
 // Unit_Window_Draw_Unit_Attributes()
@@ -820,6 +819,7 @@ enum enum_BANNER_COLOR_ID
 
 
 
+#define ST_REMAP_COLOR     232
 #define ST_TRANSPARENT       0  /*  */
 #define ST_BLACK             1  /*  */
 
@@ -841,6 +841,30 @@ enum enum_BANNER_COLOR_ID
 // main palette  EMPERATO
 #define ROAD_BUILD_BLUE     108  /* {108, 109, 110, 111} */
 #define ROAD_BUILD_RED      200  /* {200, 201, 202, 203} */
+
+// Newgame_Screen_5_Draw_Spells()
+#define SORCERY_BLUE                172
+#define NATURE_GREEN                216
+#define CHAOS_RED                   201
+#define LIFE_WHITE                   13
+#define DEATH_PURPLE                114
+
+#define BANNER_COLOR_BLUE                172  // AKA  SORCERY_BLUE
+#define BANNER_COLOR_GREEN               216  // AKA  NATURE_GREEN
+#define BANNER_COLOR_PURPLE              124
+#define BANNER_COLOR_RED                 201  // AKA  CHAOS_RED
+#define BANNER_COLOR_YELLOW              211
+#define BANNER_COLOR_BROWN                50
+#define BANNER_COLOR_BLUE_171            171
+#define BANNER_COLOR_BLUE_172            172
+#define BANNER_COLOR_PURPLE_123          123
+#define BANNER_COLOR_PURPLE_124          124
+#define BANNER_COLOR_PURPLE_205          205
+#define BANNER_COLOR_YELLOW_209          209
+#define BANNER_COLOR_YELLOW_210          210
+#define BANNER_COLOR_YELLOW_211          211
+#define BANNER_COLOR_YELLOW_212          212
+#define BANNER_COLOR_YELLOW_213          213
 
 // ¿ which palette ?
 // Production Screen / Build Table

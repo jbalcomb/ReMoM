@@ -2,6 +2,7 @@ Combat-Combat_Screen_Map_Draw.md
 
 SEEALSO:  Combat-Combat_Screen_Map_Draw.md
 SEEALSO:  Combat-Combat_Figure_Compose.md
+SEEALSO:  Combat-Generate_Combat_Map.md
 SEEALSO:  Combat-End_Of_Combat.md
 SEEALSO:  C:\STU\devel\ReMoM\doc\Combat\MoM-CombatScreen-Grid.md
 
@@ -44,7 +45,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr153\CMB_SpawnFigure__WI
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr153\CMB_SpawnUnitCurse.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr153\Clear_Combat_Grid_Entities.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr153\CMB_SpawnProjectiles.asm
-C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr105\Battle_Unit_Set_Animation_Flags.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr105\BU_SetBaseAnims__WIP.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr105\BU_GetCombatEffect__WIP.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr103\BU_CreateImage__SEGRAX.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr153\Combat_Figure_Compose_USEFULL.asm
@@ -87,7 +88,7 @@ Combat_Screen()
                 |-> Spawn_Fire_Wall_Entities()
             |-> Cycle_Unit_Enchantment_Animation()
         |-> Combat_Screen_Map_Draw()
-            |-> Combat_Figure_Compose_USEFULL()
+            |-> Combat_Screen_Map_Compose_Figures()
             |-> Combat_Screen_Map_Draw_Entities()
 
 
@@ -105,39 +106,6 @@ Spawn_Fire_Wall_Entities()
         else
             if(battlefield->walls[0][(itr - 9)] == 1)  /* flat: itr-9 */
             if(battlefield->walls[0][(itr - 9)] == 2)  /* flat: itr-9 */
-
-
-
-## Unit Figure Composition
-Combat.c    WZD ovr153p23   Combat_Figure_Compose_USEFULL()
-vs.
-Combat.c    WZD ovr153p15   USELESS_Combat_Figure_Load_Compose()
-vs.
-Combat.c    WZD o99p06      Combat_Grid_Entities()
-vs.
-Combat.c    WZD s103p07     Battle_Unit_Compose_Bitmap()
-vs.
-UnitView.C  WZD o89p05      Draw_Unit_Figure()
-
-The four
-USELESS_Combat_Figure_Load_Compose — faithful. It's the cut-down twin of Combat_Figure_Compose_USEFULL: same figure-page setup and bitmap compose, but stops after the banner colour and outline — no Combat_Figure_Effect__WIP, no Combat_Figure_Active_Red_Outline.
-It also settles the ¿ three different macros for a (real) reason ? question in Combat.h:575-582. The reason is ordering: Combat_Figure_Load and Combat_Figure_Compose_USEFULL both do MAP-then-OFFSET, but this one does OFFSET-then-MAP (asm:18-33). Production preserves each function's own order. Don't normalise them.
-
-
-
-## Unit Figure Position
-!!!!! ALL DIFFERENT !!!!!
-Combat.c    Combat_Grid_Entities()  (in-line)
-vs.
-UnitView.C  Unit_Figure_Position()
-vs.
-Combat.c    Battle_Unit_Figure_Position()
-
-Unit_Figure_Position — faithful, all 36 pairs. This is the third figure-position table, and the "ALL DIFFERENT" comment is now confirmed for all three:
-                                    case 4, fig 1   case 6, fig 1
-BATTLE_UNIT_FIGURE_POSITION macro   −7, 8           4, 7
-Battle_Unit_Figure_Position          8, 8           10, 8
-Unit_Figure_Position                −9, 8           4, 7
 
 ---
 
@@ -157,39 +125,39 @@ The Production column carries the current name and line; the ASM column keeps th
 
 | Function (production) | Production | ASM (ground truth) | Lines |
 | --- | --- | --- | --- |
-| `Spawn_Stone_Wall_Entities` | [Combat.c:20097](../../MoM/src/Combat.c#L20097) | `ovr153/CMB_SpawnStoneWall.asm` | 775 |
-| `Combat_Screen_Map_Draw` | [Combat.c:19602](../../MoM/src/Combat.c#L19602) | `ovr153/Combat_Screen_Map_Draw__WIP.asm` | 695 |
-| `Spawn_Dark_Wall_Entities` | [Combat.c:20216](../../MoM/src/Combat.c#L20216) | `ovr153/CMB_SpawnDarkWall.asm` | 617 |
-| `Spawn_Fire_Wall_Entities` | [Combat.c:20357](../../MoM/src/Combat.c#L20357) | `ovr153/CMB_SpawnFireWall.asm` | 617 |
-| `Combat_Screen_Map_Draw_Entities` | [Combat.c:19908](../../MoM/src/Combat.c#L19908) | `ovr153/Combat_Screen_Map_Draw_Entities__WIP.asm` | 467 |
-| `Spawn_Figure_Entity` | [Combat.c:20538](../../MoM/src/Combat.c#L20538) | `ovr153/CMB_SpawnFigure__WIP.asm` | 423 |
-| `Combat_Unit_Enchantment_Outline_Set` | [Combat.c:7636](../../MoM/src/Combat.c#L7636) | `ovr105/Combat_Unit_Enchantment_Outline_Set.asm` | 366 |
-| `Combat_Figure_Compose_USEFULL` | [Combat.c:21043](../../MoM/src/Combat.c#L21043) | `ovr153/Combat_Figure_Compose_USEFULL.asm` | 284 |
-| `Spawn_Structure_Entities` | [Combat.c:20038](../../MoM/src/Combat.c#L20038) | `ovr153/CMB_SpawnStructures.asm` | 282 |
+| `Spawn_Stone_Wall_Entities` | [Combat.c:20060](../../MoM/src/Combat.c#L20060) | `ovr153/CMB_SpawnStoneWall.asm` | 775 |
+| `Combat_Screen_Map_Draw` | [Combat.c:19565](../../MoM/src/Combat.c#L19565) | `ovr153/Combat_Screen_Map_Draw__WIP.asm` | 695 |
+| `Spawn_Dark_Wall_Entities` | [Combat.c:20179](../../MoM/src/Combat.c#L20179) | `ovr153/CMB_SpawnDarkWall.asm` | 617 |
+| `Spawn_Fire_Wall_Entities` | [Combat.c:20320](../../MoM/src/Combat.c#L20320) | `ovr153/CMB_SpawnFireWall.asm` | 617 |
+| `Combat_Screen_Map_Draw_Entities` | [Combat.c:19871](../../MoM/src/Combat.c#L19871) | `ovr153/Combat_Screen_Map_Draw_Entities__WIP.asm` | 467 |
+| `Spawn_Figure_Entity` | [Combat.c:20501](../../MoM/src/Combat.c#L20501) | `ovr153/CMB_SpawnFigure__WIP.asm` | 423 |
+| `Combat_Unit_Enchantment_Outline_Set` | [Combat.c:7599](../../MoM/src/Combat.c#L7599) | `ovr105/Combat_Unit_Enchantment_Outline_Set.asm` | 366 |
+| `Combat_Screen_Map_Compose_Figures` | [Combat.c:21006](../../MoM/src/Combat.c#L21006) | `ovr153/Combat_Figure_Compose_USEFULL.asm` | 284 |
+| `Spawn_Structure_Entities` | [Combat.c:20001](../../MoM/src/Combat.c#L20001) | `ovr153/CMB_SpawnStructures.asm` | 282 |
 | `Unit_Figure_Position` | [UnitView.c:2717](../../MoM/src/UnitView.c#L2717) | `ovr089/Unit_Figure_Position.asm` | 242 |
-| `Battle_Unit_Figure_Position` | [Combat.c:20746](../../MoM/src/Combat.c#L20746) | `ovr153/Battle_Unit_Figure_Position.asm` | 236 |
+| `Battle_Unit_Figure_Position` | [Combat.c:20709](../../MoM/src/Combat.c#L20709) | `ovr153/Battle_Unit_Figure_Position.asm` | 236 |
 | `Combat_Grid_Entities` | [Combat.c:5899](../../MoM/src/Combat.c#L5899) | `ovr099/Combat_Grid_Entities__WIP.asm` | 216 |
-| `Spawn_Missile_Entities` | [Combat.c:20689](../../MoM/src/Combat.c#L20689) | `ovr153/CMB_SpawnProjectiles.asm` | 204 |
-| `Combat_Grid_Entity_Create` | [Combat.c:20942](../../MoM/src/Combat.c#L20942) | `ovr153/Combat_Grid_Entity_Create__WIP.asm` | 195 |
+| `Spawn_Missile_Entities` | [Combat.c:20652](../../MoM/src/Combat.c#L20652) | `ovr153/CMB_SpawnProjectiles.asm` | 204 |
+| `Combat_Grid_Entity_Create` | [Combat.c:20905](../../MoM/src/Combat.c#L20905) | `ovr153/Combat_Grid_Entity_Create__WIP.asm` | 195 |
 | `Draw_Unit_Figure` | [UnitView.c:2640](../../MoM/src/UnitView.c#L2640) | `ovr089/Unit_Figure_Draw.asm` | 181 |
 | `Battle_Unit_Set_Invisibility_Effect` | — | `ovr105/BU_SetVisibility__WIP.asm` | 156 |
-| `Battle_Unit_Curse_Effects` | [Combat.c:7942](../../MoM/src/Combat.c#L7942) | `ovr105/BU_GetCombatEffect__WIP.asm` | 144 |
-| `Spawn_Vortex_Entities` | [Combat.c:20497](../../MoM/src/Combat.c#L20497) | `ovr153/Combat_Grid_Entity_Create_Vortexes.asm` | 137 |
-| `Spawn_Curse_Entity` | [Combat.c:20628](../../MoM/src/Combat.c#L20628) | `ovr153/CMB_SpawnUnitCurse.asm` | 92 |
-| `Combat_Figure_Effect__WIP` | [Combat.c:7574](../../MoM/src/Combat.c#L7574) | `ovr105/Combat_Figure_Effect__WIP.asm` | 90 |
-| `Battle_Unit_Set_Animation_Flags` | [Combat.c:7974](../../MoM/src/Combat.c#L7974) | `ovr105/BU_SetBaseAnims__WIP.asm` | 82 |
-| `USELESS_Combat_Figure_Load_Compose` | [Combat.c:20674](../../MoM/src/Combat.c#L20674) | `ovr153/USELESS_Combat_Figure_Load_Compose.asm` | 77 |
-| `Set_Entity_Draw_Order` | [Combat.c:20975](../../MoM/src/Combat.c#L20975) | `ovr153/Set_Entity_Draw_Order.asm` | 71 |
-| `Update_Sees_Illusions` | [Combat.c:7834](../../MoM/src/Combat.c#L7834) | `ovr105/Update_Sees_Illusions.asm` | 67 |
-| `Spawn_Tree_Entities` | [Combat.c:19989](../../MoM/src/Combat.c#L19989) | `ovr153/CMB_SpawnTrees.asm` | 58 |
-| `Spawn_Rock_Entities` | [Combat.c:20013](../../MoM/src/Combat.c#L20013) | `ovr153/CMB_SpawnRocks.asm` | 58 |
-| `Combat_Figure_Banner_Color` | [Combat.c:7533](../../MoM/src/Combat.c#L7533) | `ovr105/Combat_Figure_Banner_Color.asm` | 45 |
+| `Battle_Unit_Curse_Effects` | [Combat.c:7905](../../MoM/src/Combat.c#L7905) | `ovr105/BU_GetCombatEffect__WIP.asm` | 144 |
+| `Spawn_Vortex_Entities` | [Combat.c:20460](../../MoM/src/Combat.c#L20460) | `ovr153/Combat_Grid_Entity_Create_Vortexes.asm` | 137 |
+| `Spawn_Curse_Entity` | [Combat.c:20591](../../MoM/src/Combat.c#L20591) | `ovr153/CMB_SpawnUnitCurse.asm` | 92 |
+| `Combat_Figure_Effect` | [Combat.c:7561](../../MoM/src/Combat.c#L7561) | `ovr105/Combat_Figure_Effect__WIP.asm` | 90 |
+| `Battle_Unit_Set_Animation_Flags` | [Combat.c:7937](../../MoM/src/Combat.c#L7937) | `ovr105/BU_SetBaseAnims__WIP.asm` | 82 |
+| `Combat_Figure_Compose` | [Combat.c:20637](../../MoM/src/Combat.c#L20637) | `ovr153/USELESS_Combat_Figure_Load_Compose.asm` | 77 |
+| `Set_Entity_Draw_Order` | [Combat.c:20938](../../MoM/src/Combat.c#L20938) | `ovr153/Set_Entity_Draw_Order.asm` | 71 |
+| `Update_Sees_Illusions` | [Combat.c:7797](../../MoM/src/Combat.c#L7797) | `ovr105/Update_Sees_Illusions.asm` | 67 |
+| `Spawn_Tree_Entities` | [Combat.c:19952](../../MoM/src/Combat.c#L19952) | `ovr153/CMB_SpawnTrees.asm` | 58 |
+| `Spawn_Rock_Entities` | [Combat.c:19976](../../MoM/src/Combat.c#L19976) | `ovr153/CMB_SpawnRocks.asm` | 58 |
+| `Combat_Figure_Banner_Color` | [Combat.c:7534](../../MoM/src/Combat.c#L7534) | `ovr105/Combat_Figure_Banner_Color.asm` | 45 |
 | `Battle_Unit_Is_Airborne` | [Combat.c:5196](../../MoM/src/Combat.c#L5196) | `ovr098/BU_CheckFlight__WIP.asm` | 43 |
-| `Combat_Unit_Enchantment_Outline_Draw` | [Combat.c:7796](../../MoM/src/Combat.c#L7796) | `ovr105/Combat_Unit_Enchantment_Outline_Draw.asm` | 36 |
-| `NIU_Gibs_Frames` | [Combat.c:19979](../../MoM/src/Combat.c#L19979) | `ovr153/NX_IDK_CMB_BloodFrames.asm` | 25 |
-| `Combat_Figure_Active_Red_Outline` | [Combat.c:7550](../../MoM/src/Combat.c#L7550) | `ovr105/Combat_Figure_Active_Red_Outline.asm` | 23 |
+| `Combat_Unit_Enchantment_Outline_Draw` | [Combat.c:7759](../../MoM/src/Combat.c#L7759) | `ovr105/Combat_Unit_Enchantment_Outline_Draw.asm` | 36 |
+| `NIU_Gibs_Frames` | [Combat.c:19942](../../MoM/src/Combat.c#L19942) | `ovr153/NX_IDK_CMB_BloodFrames.asm` | 25 |
+| `Combat_Figure_Active_Red_Outline` | [Combat.c:7551](../../MoM/src/Combat.c#L7551) | `ovr105/Combat_Figure_Active_Red_Outline.asm` | 23 |
 | `Cycle_Unit_Enchantment_Animation` | [MainScr.c:3744](../../MoM/src/MainScr.c#L3744) | `ovr063/Cycle_Unit_Enchantment_Animation.asm` | 23 |
-| `Clear_Combat_Grid_Entities` | [Combat.c:20659](../../MoM/src/Combat.c#L20659) | `ovr153/Clear_Combat_Grid_Entities.asm` | 19 |
+| `Clear_Combat_Grid_Entities` | [Combat.c:20622](../../MoM/src/Combat.c#L20622) | `ovr153/Clear_Combat_Grid_Entities.asm` | 19 |
 
 `Battle_Unit_Set_Invisibility_Effect` was already DONE-DONE via [Combat-Move_Battle_Unit.md](Combat-Move_Battle_Unit.md) and was not re-reviewed.
 
@@ -277,8 +245,8 @@ The `¿ three different macros for a (real) reason ?` note at [Combat.h:575-582]
 | function | order |
 | --- | --- |
 | `Combat_Figure_Load` | MAP, then OFFSET |
-| `Combat_Figure_Compose_USEFULL` | MAP, then OFFSET |
-| `USELESS_Combat_Figure_Load_Compose` | **OFFSET, then MAP** |
+| `Combat_Screen_Map_Compose_Figures` | MAP, then OFFSET |
+| `Combat_Figure_Compose` | **OFFSET, then MAP** |
 
 Production preserves each function's own order. Do not normalise them.
 

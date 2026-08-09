@@ -432,10 +432,10 @@ NEW_PATH_COST_ALL()
             existing_path_cost = _cmbt_mvpth_c[ctr];                            \
             if(existing_path_cost > potential_path_cost)                        \
             {                                                                   \
-                _cmbt_path_data[ctr] = adjacent_idx;                           \
+                _cmbt_path_data[ctr] = adjacent_idx;                            \
                 _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;              \
-                new_next_cell_index = _cmbt_path_data[ctr];                    \
-                if(new_next_cell_index != current_origin)                  \
+                new_next_cell_index = _cmbt_path_data[ctr];                     \
+                if(new_next_cell_index != current_origin)                       \
                 {                                                               \
                     unstable = ST_TRUE;                                         \
                 }                                                               \
@@ -445,10 +445,10 @@ NEW_PATH_COST_ALL()
 }
 
 #define NEW_PATH_COST_ALL(_value_) {                            \
-    move_cost = _cmbt_movepath_cost_map[ctr];                         \
+    move_cost = _cmbt_movepath_cost_map[ctr];                   \
     if(!IS_INF(move_cost))                                      \
     {                                                           \
-        current_origin = _cmbt_path_data[ctr];            \
+        current_origin = _cmbt_path_data[ctr];                  \
         for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++) \
         {                                                       \
             NEW_PATH_COST_ANY(itr_adjacent)                     \
@@ -479,8 +479,8 @@ NEW_PATH_COST_ALL()
 Combat Battle Unit Figure Picture Cache
 
 Claim_EMS_Page_For_Figure_Set()
-USELESS_Combat_Figure_Load_Compose()
-Combat_Figure_Compose_USEFULL()
+Combat_Figure_Compose()
+Combat_Screen_Map_Compose_Figures()
 Combat_Figure_Load()
 
 
@@ -497,7 +497,7 @@ Claim_EMS_Page_For_Figure_Set()
     offset += (bufpi * (56 * SZ_PARAGRAPH_B));  // 28 * 30 = 840 / 16 = 52.5 PR per figure picture
     EMS_PFBA = (EmmHndl_FIGUREX + (logical_page * SZ_EMM_LOGICAL_PAGE));
 
-USELESS_Combat_Figure_Load_Compose()
+Combat_Figure_Compose()
     if((bufpi & 0x1) == 0)
     {
         offset = 0;
@@ -511,7 +511,7 @@ USELESS_Combat_Figure_Load_Compose()
     figure_pointer_seg = Allocate_First_Block((EMS_PFBA + offset), 33);
     ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
 
-Combat_Figure_Compose_USEFULL()
+Combat_Screen_Map_Compose_Figures()
         Claim_EMS_Page_For_Figure_Set(bufpi);
         if((bufpi & 1) == 0)
         {
@@ -558,9 +558,9 @@ Pieces & Parts
 
 Claim_EMS_Page_For_Figure_Set()
     2
-USELESS_Combat_Figure_Load_Compose()
+Combat_Figure_Compose()
     2, 1, 3
-Combat_Figure_Compose_USEFULL()
+Combat_Screen_Map_Compose_Figures()
     1, 2, 3
 Combat_Figure_Load()
     1, 2, 3
@@ -904,20 +904,26 @@ enum e_BATTLE_UNIT_ACTION
     BUA_No_Spells       = 333
 };
 
+/*
+applies a special effect to the battle unit figure bitmap is loaded into the GUI_SmallWork_IMG@ allocation
+1: greyscale (Black Sleep)
+2: bluescale (unused?)
+3: redscale (Warp Creature)
+4: clear (Invisibility, spotted)
+5: strip (Invisibility, undetected)
+*/
 enum e_BATTLE_UNIT_FIGURE_EFFECT
 {
     bufe_NONE               = 0,
     bufe_Black_Sleep        = 1,  /* greyscale */
-    bufe_2                  = 2,  /* reverse-greyscale, shade 104 */
-    bufe_Warp_Creature      = 3,  /* reverse-greyscale, shade 40 */
+    bufe_2                  = 2,  /* reverse-greyscale, tint 104 */
+    bufe_Warp_Creature      = 3,  /* reverse-greyscale, tint  40 */
     bufe_Invisible_Revealed = 4,  /* flat silhouette */
     bufe_Invisible_Hidden   = 5   /* sprite transparent */
 };
 
 /*
-
 Begin_Combat_Turn() uses `test .. jz`
-
 */
 enum e_BATTLE_UNIT_EFFECT
 {
@@ -1277,7 +1283,7 @@ struct s_BATTLE_UNIT
     /* 0x5A */  int16_t  Unknown_5A;
     /* 0x5C */  int16_t  animate_idle;
     /* 0x5E */  int16_t  Melee_Anim;            /* {0,1,2}; not just {F,T}; set in CMB_MeleeAnim() */
-    /* 0x60 */  int16_t  figure_effect;         /* enum e_BATTLE_UNIT_FIGURE_EFFECT;  passed to Combat_Figure_Effect__WIP() for BU figure bitmap composition */
+    /* 0x60 */  int16_t  figure_effect;         /* enum e_BATTLE_UNIT_FIGURE_EFFECT;  passed to Combat_Figure_Effect() for BU figure bitmap composition */
     /* 0x62 */  int16_t  animate_move_as_idle;  /* IIF flight animation ... if((battle_units[battle_unit_idx].Attribs_1 & USA_FLYING) != 0) */
     /* 0x64 */  int8_t   Gold_Melee;
     /* 0x65 */  int8_t   Gold_Ranged;
@@ -1622,7 +1628,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
 */
 
 // WZD s91p01
-void UU_BU_LoadFigureGFX(int16_t battle_unit_idx);
+void NIU_Battle_Unit_Load_Figure_Pictures(int16_t battle_unit_idx);
 
 // WZD s91p02
 void Begin_Combat_Turn(void);
@@ -1843,7 +1849,7 @@ void Combat_Figure_Banner_Color(int16_t player_idx);
 void Combat_Figure_Active_Red_Outline(int16_t battle_unit_idx);
 
 // WZD o105p04
-void Combat_Figure_Effect__WIP(int16_t effect);
+void Combat_Figure_Effect(int16_t effect);
 
 // WZD o105p05
 void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx);
@@ -2205,7 +2211,7 @@ void Spawn_Curse_Entity(int16_t cgx, int16_t cgy, int16_t target_cgx, int16_t ta
 void Clear_Combat_Grid_Entities(void);
 
 // WZD ovr153p15
-void USELESS_Combat_Figure_Load_Compose(int16_t figure_index, int16_t figure_set_idx, int16_t player_idx, int16_t enchantment_magic_realm, int16_t Frame);
+void Combat_Figure_Compose(int16_t bufpi, int16_t figure_set_idx, int16_t player_idx, int16_t enchantment_magic_realm, int16_t frame_num);
 
 // WZD ovr153p16
 void Spawn_Missile_Entities(void);
@@ -2229,7 +2235,7 @@ void Map_Tile_EMS_Page_As_Sandbox(void);
 void o153p22_empty_function(void);
 
 // WZD ovr153p23
-void Combat_Figure_Compose_USEFULL(void);
+void Combat_Screen_Map_Compose_Figures(void);
 
 // WZD ovr153p24
 void o153p24_empty_function(void);
@@ -2332,7 +2338,7 @@ void Allocate_Combat_Base_Blocks(void);
 void Make_Missiles(int16_t missile_count, int16_t Targets, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t type);
 
 // WZD ovr163p06
-int16_t Combat_Figure_Load(int16_t unit_type, int16_t figure_index);
+int16_t Combat_Figure_Load(int16_t unit_type, int16_t bufpi);
 
 
 

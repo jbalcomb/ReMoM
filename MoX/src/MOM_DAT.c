@@ -2256,7 +2256,7 @@ SAMB_ptr movement_mode_icons[10];  // {0,...,9} 10 icons
 // WZD dseg:998C
 // TODO  confirm scratch_bitmap_seg is only used for 'bitmaps'
 /*
-used for battle unit figure, in Combat_Figure_Compose_USEFULL()
+used for battle unit figure, in Combat_Screen_Map_Compose_Figures()
 used for ..., in Cityscape_Draw_Buildings()
 used for ..., in Draw_Item_Icon_With_Enchantment_Outline()
 used for notify_pict1, in Notify1_Draw()

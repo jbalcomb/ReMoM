@@ -18,9 +18,9 @@ void EMM_FIGUREX_Init__HACK(int16_t bufpi)
 ...we treat EMS_PFBA as a pointer to whatever is loaded in to the EMS/EMM/"Buffer Space"
 Up   r Draw_Picture_To_Bitmap+12E                       mov     ax, [EMS_PFBA]                  ; contains the segment address of the EMS page frame
 Up   r BU_CreateImage__SEGRAX+249                       mov     ax, [EMS_PFBA]                  ; contains the segment address of the EMS page frame
-Up   r USELESS_Combat_Figure_Load_Compose+2C            mov     ax, [EMS_PFBA]                  ; contains the segment address of the EMS page frame
+Up   r Combat_Figure_Compose+2C            mov     ax, [EMS_PFBA]                  ; contains the segment address of the EMS page frame
      r EMM_FIGUREX_Init__HACK+46                        mov     ax, [EMS_PFBA]                  ; contains the segment address of the EMS page frame
-Down r Combat_Figure_Compose_USEFULL+1E8                mov     ax, [EMS_PFBA]                  ; contains the segment address of the EMS page frame
+Down r Combat_Screen_Map_Compose_Figures+1E8                mov     ax, [EMS_PFBA]                  ; contains the segment address of the EMS page frame
 Down r Combat_Figure_Load+32                            mov     ax, [EMS_PFBA]                  ; contains the segment address of the EMS page frame
 
 

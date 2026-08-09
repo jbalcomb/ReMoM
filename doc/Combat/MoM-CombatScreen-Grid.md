@@ -175,7 +175,7 @@ Tactical_Combat__WIP()
     CMB_DrawFullScreen__WIP()
         Combat_Grid_Entities()
         CMB_DrawMap__WIP()
-            Combat_Figure_Compose_USEFULL()
+            Combat_Screen_Map_Compose_Figures()
             CMB_DrawEntities__WIP()
                 ...
                 Draw_Picture_Windowed(battle_unit_picts_seg[])

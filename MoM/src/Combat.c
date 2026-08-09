@@ -2251,7 +2251,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
 */
 
 // WZD s91p01
-void UU_BU_LoadFigureGFX(int16_t battle_unit_idx)
+void NIU_Battle_Unit_Load_Figure_Pictures(int16_t battle_unit_idx)
 {
     int16_t unit_type = 0;
     int16_t bufpi = 0;
@@ -5614,9 +5614,9 @@ void Draw_Active_Unit_Window(void)
     int16_t bitm_w = 0;
     int16_t bitm_y = 0;
     int16_t bitm_x = 0;
-    int16_t Hero_Slot = 0;
-    int16_t start_y = 0;
+    int16_t hero_slot = 0;
     int16_t start_x = 0;
+    int16_t start_y = 0;
     if(_active_battle_unit == ST_UNDEFINED)
     {
         Set_Animation_Frame(magic_vortex_seg, 1);
@@ -5642,8 +5642,8 @@ void Draw_Active_Unit_Window(void)
     else
     {
         // composes figure picture into scratch_bitmap_seg
-        USELESS_Combat_Figure_Load_Compose(battle_units[_active_battle_unit].bufpi, 2, battle_units[_active_battle_unit].controller_idx, battle_units[_active_battle_unit].outline_magic_realm, 0);
-        Combat_Figure_Effect__WIP(battle_units[_active_battle_unit].figure_effect);
+        Combat_Figure_Compose(battle_units[_active_battle_unit].bufpi, 2, battle_units[_active_battle_unit].controller_idx, battle_units[_active_battle_unit].outline_magic_realm, 0);
+        Combat_Figure_Effect(battle_units[_active_battle_unit].figure_effect);
         if((_unit_type_table[_UNITS[battle_units[_active_battle_unit].unit_idx].type].Abilities & UA_INVISIBILITY) != 0)
         {
             Outline_Bitmap_Pixels(scratch_bitmap_seg, 1);
@@ -5656,7 +5656,7 @@ void Draw_Active_Unit_Window(void)
         start_x += (((32 - bitm_w) / 2) - bitm_x);
         start_y += (((25 - bitm_h) / 2) - bitm_y);
         FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
-        // draws the composed figure picture, USELESS_Combat_Figure_Load_Compose() put in scratch_bitmap_seg
+        // draws the composed figure picture, Combat_Figure_Compose() put in scratch_bitmap_seg
         Draw_Picture(start_x, start_y, scratch_bitmap_seg);
         Draw_Active_Unit_Stats_And_Icons();
         colors[0] = 227;
@@ -5666,10 +5666,10 @@ void Draw_Active_Unit_Window(void)
         Set_Font_Style_Shadow_Down(0, 15, 0, 0);
         Set_Font_Spacing_Width(1);
         unit_owner_idx = _UNITS[unit_idx].owner_idx;
-        Hero_Slot = _UNITS[unit_idx].Hero_Slot;
-        if(Hero_Slot != ST_UNDEFINED)
+        hero_slot = _UNITS[unit_idx].Hero_Slot;
+        if(hero_slot != ST_UNDEFINED)
         {
-            stu_strcpy(GUI_String_1, _players[unit_owner_idx].Heroes[Hero_Slot].name);
+            stu_strcpy(GUI_String_1, _players[unit_owner_idx].Heroes[hero_slot].name);
         }
         else
         {
@@ -6829,8 +6829,8 @@ void Combat_Node_Type(void)
 
 // WZD s103p07
 /*
-~ USELESS_Combat_Figure_Load_Compose()
-¿ vs. Combat_Figure_Compose_USEFULL() ?
+~ Combat_Figure_Compose()
+¿ vs. Combat_Screen_Map_Compose_Figures() ?
 ¿ vs. Combat_Grid_Entities() ?
 */
 void Battle_Unit_Compose_Bitmap(int battle_unit_idx)
@@ -6870,7 +6870,7 @@ void Battle_Unit_Compose_Bitmap(int battle_unit_idx)
     Combat_Unit_Enchantment_Outline_Set(battle_unit_idx);
     Battle_Unit_Set_Animation_Flags(battle_unit_idx);
     Battle_Unit_Set_Invisibility_Effect(battle_unit_idx);
-    // ~ Combat_Figure_Compose_USEFULL()
+    // ~ Combat_Screen_Map_Compose_Figures()
     bufpi = battle_units[battle_unit_idx].bufpi;
     player_idx = battle_units[battle_unit_idx].controller_idx;
     enchantment_magic_realm = battle_units[battle_unit_idx].outline_magic_realm;
@@ -6902,12 +6902,13 @@ void Battle_Unit_Compose_Bitmap(int battle_unit_idx)
     FIGUREX_MAP
     FIGUREX_OFFSET
     FIGUREX_POINTER
+    /* OGBUG: figure_set_idx set by BATTLE_UNIT_FACING_DRECTION is deprecated */
     figure_set_idx = 7;  // look left/west?
     Set_Animation_Frame(figure_pict_set_seg[figure_set_idx], frame_num);
     Draw_Picture_To_Bitmap(figure_pict_set_seg[figure_set_idx], scratch_bitmap_seg);
     Combat_Figure_Banner_Color(player_idx);
     Combat_Unit_Enchantment_Outline_Draw(enchantment_magic_realm);
-    Combat_Figure_Effect__WIP(figure_effect);
+    Combat_Figure_Effect(figure_effect);
     // ~ Combat_Screen_Map_Draw_Entities()
     for(cur_fig = 0; cur_fig < fig_cnt; cur_fig++)
     {
@@ -7557,75 +7558,37 @@ void Combat_Figure_Active_Red_Outline(int16_t battle_unit_idx)
 
 
 // WZD o105p04
-// drake178: LBX_IMG_FX()
-/*
-; applies a special effect to whatever image is loaded
-; into the GUI_SmallWork_IMG@ allocation, typically a
-; battle unit figure:
-;   1 - greyscale (Black Sleep)
-;   2 - bluescale (unused?)
-;   3 - redscale (Warp Creature)
-;   4 - clear (Invisibility, spotted)
-;   5 - strip (Invisibility, undetected)
-*/
-/*
-
-*/
-void Combat_Figure_Effect__WIP(int16_t effect)
+void Combat_Figure_Effect(int16_t figure_effect)
 {
-
     FLIC_Set_LoopFrame_1(scratch_bitmap_seg);
-
-    switch(effect)
+    switch(figure_effect)
     {
-
         case bufe_Black_Sleep:
         {
-
-            Transparent_Color_Range(scratch_bitmap_seg, 232, 232);
-
-            Gray_Scale_Bitmap(scratch_bitmap_seg, 1);
-
+            Transparent_Color_Range(scratch_bitmap_seg, ST_REMAP_COLOR, ST_REMAP_COLOR);
+            Gray_Scale_Bitmap(scratch_bitmap_seg, ST_BLACK);
         } break;
-
-        case 2:
+        case bufe_2:  /* Blue, for Guise spell? */
         {
-
-            Transparent_Color_Range(scratch_bitmap_seg, 232, 232);
-
-            /* TODO */  LBX_IMG_RevGrayscale__STUB(scratch_bitmap_seg, 104);
-
+            Transparent_Color_Range(scratch_bitmap_seg, ST_REMAP_COLOR, ST_REMAP_COLOR);
+            Inverse_Gray_Scale_Bitmap(scratch_bitmap_seg, 104);
         } break;
-
-        case 3:  // Warp Creature
+        case bufe_Warp_Creature:
         {
-
-            Transparent_Color_Range(scratch_bitmap_seg, 232, 232);
-
-            /* TODO */  LBX_IMG_RevGrayscale__STUB(scratch_bitmap_seg, 40);
-
+            Transparent_Color_Range(scratch_bitmap_seg, ST_REMAP_COLOR, ST_REMAP_COLOR);
+            Inverse_Gray_Scale_Bitmap(scratch_bitmap_seg, 40);
         } break;
-
-        case 4:  // Invisibility - visible
+        case bufe_Invisible_Revealed:
         {
-
-            Transparent_Color_Range(scratch_bitmap_seg, 232, 232);
-
+            Transparent_Color_Range(scratch_bitmap_seg, ST_REMAP_COLOR, ST_REMAP_COLOR);
             Replace_Color_All(scratch_bitmap_seg, 233);
-
         } break;
-
-        case 5:  // Invisibility - invisible
+        case bufe_Invisible_Hidden:
         {
-
             Transparent_Color_Range(scratch_bitmap_seg,   1, 228);
-
-            Transparent_Color_Range(scratch_bitmap_seg, 232, 232);
-
+            Transparent_Color_Range(scratch_bitmap_seg, ST_REMAP_COLOR, ST_REMAP_COLOR);
         } break;
-
     }
-
 }
 
 
@@ -19614,7 +19577,7 @@ void Combat_Screen_Map_Draw(void)
     int16_t itr_y = 0;
     int16_t battlefield_terrain_type = 0;
     Copy_Back_To_Off();  // 'combat background' from Combat_Screen_Compose_Background()
-    Combat_Figure_Compose_USEFULL();
+    Combat_Screen_Map_Compose_Figures();
     Set_Page_Off();
     Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, COMBAT_MAP_YMAX);
     for(itr_y = 0; itr_y < 22; itr_y++)
@@ -20671,7 +20634,7 @@ void Clear_Combat_Grid_Entities(void)
 /*
 ¿ ~ UnitView.C Draw_Unit_Figure() ?
 */
-void USELESS_Combat_Figure_Load_Compose(int16_t bufpi, int16_t figure_set_idx, int16_t player_idx, int16_t enchantment_magic_realm, int16_t frame_num)
+void Combat_Figure_Compose(int16_t bufpi, int16_t figure_set_idx, int16_t player_idx, int16_t enchantment_magic_realm, int16_t frame_num)
 {
     SAMB_ptr * figure_pict_set_seg = 0;
     int16_t offset = 0;
@@ -21040,7 +21003,7 @@ void o153p22_empty_function(void)
 
 
 // WZD ovr153p23
-void Combat_Figure_Compose_USEFULL(void)
+void Combat_Screen_Map_Compose_Figures(void)
 {
     SAMB_ptr temp_GfxBuf_2400B = 0;
     int16_t figure_effect = 0;
@@ -21121,7 +21084,7 @@ void Combat_Figure_Compose_USEFULL(void)
         Draw_Picture_To_Bitmap(figure_pict_set_seg[figure_set_idx], scratch_bitmap_seg);
         Combat_Figure_Banner_Color(player_idx);
         Combat_Unit_Enchantment_Outline_Draw(outline_magic_realm);
-        Combat_Figure_Effect__WIP(figure_effect);
+        Combat_Figure_Effect(figure_effect);
         Combat_Figure_Active_Red_Outline(battle_unit_idx);
     }
     scratch_bitmap_seg = temp_GfxBuf_2400B;
@@ -21616,7 +21579,6 @@ void Generate_Combat_Map(
 
         } break;
 
-        /* GEMINI */
         case clt_Fortress:
         {
             battlefield->center_square_structure = CS_Fortress;
@@ -23485,7 +23447,7 @@ void Make_Missiles(int16_t missile_count, int16_t Targets, int16_t src_wx, int16
 // WZD ovr163p06
 /*
 ~ UnitView.C  Load_Unit_Figure()
-~ USELESS_Combat_Figure_Load_Compose()
+~ Combat_Figure_Compose()
 */
 int16_t Combat_Figure_Load(int16_t unit_type, int16_t bufpi)
 {
@@ -23511,7 +23473,7 @@ int16_t Combat_Figure_Load(int16_t unit_type, int16_t bufpi)
     {
         figure_pict_set_seg[itr] = LBX_Reload_Next(file_name, (entry_num + itr), (EMS_PFBA + offset));
     }
-    USELESS_Combat_Figure_Load_Compose(bufpi, 0, 0, 0, 0);
+    Combat_Figure_Compose(bufpi, 0, 0, 0, 0);  /* OGBUG:  nothing uses the results of this call */
     return bufpi;
 }
 

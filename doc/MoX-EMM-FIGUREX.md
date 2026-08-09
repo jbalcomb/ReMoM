@@ -25,8 +25,8 @@ EMM_FIGUREX_Init__HACK()
 ## EMM_FIGUREX_Init__HACK()
 
 XREF:
-    USELESS_Combat_Figure_Load_Compose()
-    Combat_Figure_Compose_USEFULL()
+    Combat_Figure_Compose()
+    Combat_Screen_Map_Compose_Figures()
     j_EMM_FIGUREX_Init__HACK()
         BU_CreateImage__SEGRAX()
         Combat_Figure_Load()

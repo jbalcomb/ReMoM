@@ -89,8 +89,7 @@ byte_ptr remap_color_palettes;
 char font_name[16];                             // set in Load_Font_File
 
 // WZD  dseg:E7FA
-// Intensity_Scale_Tbl@ dw 0               ; 60h LBX_Alloc_Space paragraphs (should be only 10h)
-SAMB_ptr Intensity_Scale_Tbl;
+SAMB_ptr palette_intensity_remap_table;
 
 // WZD dseg:E7FC
 SAMB_ptr palette_data;
@@ -243,7 +242,7 @@ void Load_Font_File(char * font_file)
 
     // TODO  file_animation_header = (struct s_FLIC_HDR *)Allocate_Space(2);
 
-    Intensity_Scale_Tbl = Allocate_Space(96);  // 96 PR, 1536 B
+    palette_intensity_remap_table = Allocate_Space(96);  // 96 PR, 1536 B  ...  allocation is 6× oversized, typo?
 
     // TODO  VGA_TextDraw_Init();
 

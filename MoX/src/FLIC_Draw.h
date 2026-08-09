@@ -225,8 +225,7 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
 // UU_LBX_IMG_CReplaceRect
 
 // WZD s30p09
-// MoO2  Module: replace  Replace_Color_All()
-void Replace_Color_All(SAMB_ptr picture, uint8_t replacement_color);
+void Replace_Color_All(SAMB_ptr pict_seg, int16_t replacement_color);
 
 // WZD s30p10
 void Load_Palette_From_Animation(SAMB_ptr picture);
@@ -435,10 +434,10 @@ void Vanish_Bitmap(SAMB_ptr bitmap, int16_t percent);
 void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start);
 
 // WZD s33p17
-void LBX_IMG_RevGrayscale__STUB(byte_ptr bitmap, int16_t color_index);
+void Inverse_Gray_Scale_Bitmap(byte_ptr bitmap, int16_t color_index);
 
 // WZD s33p18
-// UU_DUP_RevGrayscale()
+// DUPE_Inverse_Gray_Scale_Bitmap()
 
 // WZD s33p19
 int16_t Vanish_Bitmap_Dither_Seed(int16_t n);

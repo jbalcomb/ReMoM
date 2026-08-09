@@ -907,28 +907,32 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
 }
 
 
+// WZD s30p07
+// UU_LBX_IMG_ColorShift
+
+
+// WZD s30p08
+// UU_LBX_IMG_CReplaceRect
+
 
 // WZD s30p09
 // MoO2  Module: replace  Replace_Color_All()
 /*
     replaces all colors with replacement color, excluding transparent
 */
-void Replace_Color_All(SAMB_ptr pict_seg, uint8_t replacement_color)
+void Replace_Color_All(SAMB_ptr pict_seg, int16_t replacement_color)
 {
-    int16_t width;
-    int16_t height;
-    int16_t pict_size;
-    uint8_t * src_ptr;
-    uint8_t * dst_ptr;
-    uint8_t pixel;
-
+    int16_t pict_size = 0;
+    int16_t width = 0;
+    int16_t height = 0;
+    uint8_t * src_ptr = NULL;
+    uint8_t * dst_ptr = NULL;
+    uint8_t pixel = 0;
     width = FLIC_GET_WIDTH(pict_seg);
     height = FLIC_GET_HEIGHT(pict_seg);
     pict_size = width * height;
-
     src_ptr = (uint8_t *)(pict_seg + SZ_FLIC_HDR);
     dst_ptr = (uint8_t *)(pict_seg + SZ_FLIC_HDR);
-
     while(pict_size--)
     {
         pixel = *src_ptr++;
@@ -936,11 +940,10 @@ void Replace_Color_All(SAMB_ptr pict_seg, uint8_t replacement_color)
         if(pixel != ST_TRANSPARENT)
         {
             dst_ptr--;
-            *dst_ptr++ = replacement_color;
+            pixel = (uint8_t)replacement_color;
+            *dst_ptr++ = pixel;
         }
-
     }
-
 }
 
 
@@ -1209,12 +1212,10 @@ void Draw_Picture_To_Bitmap(SAMB_ptr source_picture, SAMB_ptr destination_bitmap
     animation_header.current_frame++;
     if(animation_header.current_frame >= animation_header.frame_count)
     {
-        // DOMSDOS  farpokew(picture, FLIC_HDR_POS_CURRENT_FRAME, animation_header.loop_frame);
         FLIC_SET_CURRENT_FRAME(source_picture, animation_header.loop_frame);
     }
     else
     {
-        // DOMSDOS  farpokew(picture, FLIC_HDR_POS_CURRENT_FRAME, animation_header.current_frame);
         FLIC_SET_CURRENT_FRAME(source_picture, animation_header.current_frame);
     }
 
@@ -1233,7 +1234,6 @@ void Draw_Picture_To_Bitmap(SAMB_ptr source_picture, SAMB_ptr destination_bitmap
     // DOMSDOS      Add_Picture_To_Bitmap_EMM
     // DOMSDOS  }
     
-    // DOMSDOS  full_store_flag = farpeekb(source_picture, sizeof(struct s_FLIC_HDR));
     full_store_flag = GET_1B_OFS(source_picture, sizeof(struct s_FLIC_HDR));
 
     if(full_store_flag != ST_FALSE)
@@ -1266,33 +1266,26 @@ void Draw_Picture_To_Bitmap(SAMB_ptr source_picture, SAMB_ptr destination_bitmap
 
 
 // WZD s30p14
-// AKA  FLIC_Set_CurrentFrame()
-// 
 // MoO2  Module: animate  Set_Animation_Frame()
 // looks like MoO2  Module: file_ani  Set_File_Animation_Frame()
 void Set_Animation_Frame(SAMB_ptr picture, int16_t frame_num)
 {
-    int16_t loop_length;
-    int16_t loop_frame;
-    int16_t frame_count;
-
+    int16_t loop_length = 0;
+    int16_t loop_frame = 0;
+    int16_t frame_count = 0;
     frame_num = (frame_num & 0x7fff);
     frame_count = FLIC_GET_FRAME_COUNT(picture);
     loop_frame = FLIC_GET_LOOP_FRAME(picture);
     loop_length = frame_count - loop_frame;
-
     if( !(frame_num < frame_count) )
     {
         frame_num = loop_frame + ((frame_num - frame_count) % loop_length);
     }
-
     FLIC_SET_CURRENT_FRAME(picture, frame_num);
-
 }
 
 
 // WZD s30p15
-// AKA  FLIC_Reset_CurrentFrame()
 // MoO2  Module: animate  Reset_Animation_Frame()
 void Reset_Animation_Frame(SAMB_ptr picture)
 {
@@ -1998,70 +1991,36 @@ void Clipped_Copy_Mask(int16_t x, int16_t y, SAMB_ptr target_bitmap, SAMB_ptr ma
 
 
 // WZD s30p28
-// drake178: LBX_IMG_StripColors()
 // ¿ MoO2  Module: bitmap  Mask_Out_Colors() ?
 // ¿ Replace_Color_Range() ?
-/*
-; replaces any colors between the specified two
-; (inclusive) with the overlay color (index #00) in an
-; LBX image
-*/
-/*
-
-*/
 void Transparent_Color_Range(SAMB_ptr bitmap, int16_t color_start, int16_t color_end)
 {
     int16_t height = 0;
     int16_t width = 0;
     int16_t bitmap_size = 0;
-    byte_ptr src_sgmt;  // _DS_
-    byte_ptr dst_sgmt;  // _ES_
-    uint16_t src_ofst;  // _SI_
-    uint16_t dst_ofst;  // _DI_
-    uint8_t pixel;
-
-    // TODO  width = GET_2B_OFS(bitmap, FLIC_HDR_POS_WIDTH);
-    // TODO  height = GET_2B_OFS(bitmap, FLIC_HDR_POS_HEIGHT);
+    byte_ptr src_sgmt = NULL;
+    byte_ptr dst_sgmt = NULL;
+    uint16_t src_ofst = 0;
+    uint16_t dst_ofst = 0;
+    uint8_t pixel = 0;
     width = GET_2B_OFS(bitmap, FLIC_HDR_POS_WIDTH);
     height = GET_2B_OFS(bitmap, FLIC_HDR_POS_HEIGHT);
-
     bitmap_size = (height * width);
-
-// push    ds
-// push    es
-// push    si
-// push    di
-// mov     si, 16
-// mov     di, 16
-// mov     cx, [bp+bitmap_size]
-// mov     bx, [bp+color_start]
-// mov     dx, [bp+color_end]
-// mov     ax, [bp+bitmap]
-// mov     es, ax
-// mov     ds, ax
-
     src_ofst = SZ_FLIC_HDR;
     dst_ofst = SZ_FLIC_HDR;
     dst_sgmt = (uint8_t *)(bitmap);
     src_sgmt = (uint8_t *)(bitmap);
-
     while(bitmap_size--)
     {
-
-        pixel = *(src_sgmt + src_ofst++);  // `LODSB`  ; AX = DS:SI++
-
-        if(pixel >= color_start && pixel <= color_end)
+        pixel = *(src_sgmt + src_ofst++);
+        if(pixel >= (uint8_t)color_start && pixel <= (uint8_t)color_end)
         {
             pixel = ST_TRANSPARENT;
-            *(dst_sgmt + dst_ofst) = pixel;  // `STOSB`  ; ES:DI++ = AX
+            *(dst_sgmt + dst_ofst) = pixel;
             dst_ofst -= 1;
         }
-
         dst_ofst += 1;
-
     }
-
-
 }
 
 
@@ -2506,13 +2465,10 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
     int16_t itr_height;
     uint16_t src_ofst;
     int16_t itr_pict_size;
-    
     width = FLIC_GET_WIDTH(pict_seg);
     height = FLIC_GET_HEIGHT(pict_seg);
     pict_size = width * height;
-
     src_sgmt = (uint8_t *)(pict_seg + 16);
-
     /*
         Height-Wise / Horizontal Axis (horz)
     */
@@ -2524,7 +2480,6 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
     while(itr_pict_size--)
     {
         pixel = *(src_sgmt + src_ofst++);  // `LODSB`  ; AX = DS:SI++
-
         if(pixel == ST_TRANSPARENT || pixel == outline_color)  /* outside pixel */
         {
             if(inside_state != ST_FALSE)  /* inside pixel & inside state */
@@ -2543,7 +2498,6 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
             outside_state = ST_FALSE;
             inside_state = ST_TRUE;
         }
-
         // @@Increment_Horz
         itr_height++;
         if(height < itr_height)
@@ -2553,8 +2507,6 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
             inside_state = ST_FALSE;
         }
     }
-
-
     /*
         Width-Wise / Vertical Axis (vert)
     */
@@ -2586,7 +2538,6 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
             outside_state = ST_FALSE;
             inside_state = ST_TRUE;
         }
-
         // @@Increment_Vert
         src_ofst--;
         src_ofst += height;
@@ -2598,7 +2549,6 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
             inside_state = ST_FALSE;
         }
     }
-
 }
 
 
@@ -2760,7 +2710,6 @@ void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t aura_color, uint8_t * color_l
 // EXACT  MoO2  Module: bitmap  Get_Bitmap_Actual_Size()
 /*
 sets x, y, w, h based on the first and last non-transparent pixel
-
     No RLE, therefore "Bitmap", per MoO2
 */
 void Get_Bitmap_Actual_Size(SAMB_ptr bitmap_addr, int16_t * x1, int16_t * y1, int16_t * width, int16_t * height)
@@ -2775,8 +2724,6 @@ void Get_Bitmap_Actual_Size(SAMB_ptr bitmap_addr, int16_t * x1, int16_t * y1, in
     int16_t flic_width;
     int16_t flic_height;
 
-    // flic_width  = GET_2B_OFS(pict_seg, s_FLIC_HDR.Width);
-    // flic_height = GET_2B_OFS(pict_seg, s_FLIC_HDR.Height);
     flic_width  = FLIC_GET_WIDTH(bitmap_addr);
     flic_height = FLIC_GET_HEIGHT(bitmap_addr);
 
@@ -3965,40 +3912,27 @@ void Vanish_Bitmap(SAMB_ptr bitmap, int16_t percent)
 
 
 // WZD s33p16
-// MoO2: Gray_Scale_Bitmap()
-/*
-e.g.,
-Draw_Unit_StatFig()
-|-> Gray_Scale_Bitmap(UnitDraw_WorkArea, 1)
-*/
-void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start)
+// MoO2  Module: bitmap  Gray_Scale_Bitmap()
+void Gray_Scale_Bitmap(SAMB_ptr bitmap, int16_t color_index)
 {
-    uint8_t * src_sgmt;
-    uint16_t src_ofst;
-    uint8_t * dst_sgmt;
-    uint16_t dst_ofst;
-    int16_t itr;
-    uint8_t red;
-    uint8_t green;
-    uint8_t blue;
-    int16_t value;
-    int16_t width;
-    int16_t height;
-    int16_t pict_size;
-    uint8_t data;
-    uint8_t intensity_value;
-
-    // DS:SI  src  current_palette[0]
-    // ES:DI  dst  Intensity_Scale_Tbl@[0]
+    uint8_t * src_sgmt = NULL;
+    uint16_t src_ofst = 0;
+    uint8_t * dst_sgmt = NULL;
+    uint16_t dst_ofst = 0;
+    int16_t itr = 0;
+    uint8_t red = 0;
+    uint8_t green = 0;
+    uint8_t blue = 0;
+    int16_t value = 0;
+    int16_t width = 0;
+    int16_t height = 0;
+    int16_t pict_size = 0;
+    uint8_t data = 0;
+    uint8_t intensity_value = 0;
     src_sgmt = current_palette;
     src_ofst = 0;
-    dst_sgmt = (uint8_t *)Intensity_Scale_Tbl;
+    dst_sgmt = (uint8_t *)palette_intensity_remap_table;
     dst_ofst = 0;
-
-
-    // map 256 values to 16 values
-    // value = (150% red, 150% green, 100% blue)
-    // value >> 4
     itr = 256;
     while(itr--)
     {
@@ -4011,30 +3945,23 @@ void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start)
         value += green / 2;
         blue = *(src_sgmt + src_ofst++);
         value += blue;
-        // DNE  value += blue / 2;
-        // value >>= 4
-        // value /= 16
-        value = value >> 4;  // ¿ reduce 2^8 to 2^4 ? map 256 to 16
-        value += color_start;  // ~== where to start block in color-map?
+        value = value >> 4;
+        value += color_index;
         *(dst_sgmt + dst_ofst++) = (uint8_t)value;
     }
-
-    src_sgmt = (uint8_t *)Intensity_Scale_Tbl;
-    dst_sgmt = (uint8_t *)pict_seg;
-
-    width = FLIC_GET_WIDTH(pict_seg);
-    height = FLIC_GET_HEIGHT(pict_seg);
+    src_sgmt = (uint8_t *)palette_intensity_remap_table;
+    dst_sgmt = (uint8_t *)bitmap;
+    width = FLIC_GET_WIDTH(bitmap);
+    height = FLIC_GET_HEIGHT(bitmap);
     pict_size = width * height;
-
+    if(pict_size == 0) { return; }
     src_ofst = SZ_FLIC_HDR;
     dst_ofst = SZ_FLIC_HDR;
-
     while(pict_size--)
     {
-        data = *(dst_sgmt + src_ofst);  // get color-map index from picture
+        data = *(dst_sgmt + src_ofst);
         if(data != ST_TRANSPARENT)
         {
-            // *(dst_sgmt + dst_ofst++) = *(src_sgmt + data);  // replace picture's color-map index from intensity table, indexed using color-map index from picture
             intensity_value = *(src_sgmt + data);
             *(dst_sgmt + dst_ofst++) = intensity_value;
             src_ofst++;
@@ -4045,33 +3972,138 @@ void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start)
             dst_ofst++;
         }
     }
-
 }
 
 // WZD s33p17
-// drake178: LBX_IMG_RevGrayscale()
+// MoO2  Module: bitmap  Gray_Scale_Bitmap() ... inverse_flag = ST_TRUE
 /*
-; similar to LBX_IMG_Grayscale, this calculates the
-; intensities of each DAC color and condenses them to a
-; nibble before replacing the original non-overlay
-; colors of the image with them, except this negates
-; them before adding the provided color index, creating
-; an inverse scale, but also taking the last color of
-; the scale as the parameter instead of the first one
+vs. Gray_Scale_Bitmap()
+...divides the luminance value by 32, instead of 16, creating a shorter, more compressed intensity range
 */
-/*
-
-*/
-void LBX_IMG_RevGrayscale__STUB(byte_ptr bitmap, int16_t color_index)
+void Inverse_Gray_Scale_Bitmap(byte_ptr bitmap, int16_t color_index)
 {
-
-
-
+    uint8_t * src_sgmt = NULL;
+    uint16_t src_ofst = 0;
+    uint8_t * dst_sgmt = NULL;
+    uint16_t dst_ofst = 0;
+    int16_t itr = 0;
+    uint8_t red = 0;
+    uint8_t green = 0;
+    uint8_t blue = 0;
+    int16_t value = 0;
+    int16_t width = 0;
+    int16_t height = 0;
+    int16_t pict_size = 0;
+    uint8_t data = 0;
+    uint8_t intensity_value = 0;
+    src_sgmt = current_palette;
+    src_ofst = 0;
+    dst_sgmt = (uint8_t *)palette_intensity_remap_table;
+    dst_ofst = 0;
+    itr = 256;
+    while(itr--)
+    {
+        value = 0;
+        red = *(src_sgmt + src_ofst++);
+        value += red;
+        value += red / 2;
+        green = *(src_sgmt + src_ofst++);
+        value += green;
+        value += green / 2;
+        blue = *(src_sgmt + src_ofst++);
+        value += blue;
+        value = value >> 5;
+        *(dst_sgmt + dst_ofst++) = (uint8_t)(color_index - value);
+    }
+    src_sgmt = (uint8_t *)palette_intensity_remap_table;
+    dst_sgmt = (uint8_t *)bitmap;
+    width = FLIC_GET_WIDTH(bitmap);
+    height = FLIC_GET_HEIGHT(bitmap);
+    pict_size = width * height;
+    if(pict_size == 0) { return; }
+    src_ofst = SZ_FLIC_HDR;
+    dst_ofst = SZ_FLIC_HDR;
+    while(pict_size--)
+    {
+        data = *(dst_sgmt + src_ofst);
+        if(data != ST_TRANSPARENT)
+        {
+            intensity_value = *(src_sgmt + data);
+            *(dst_sgmt + dst_ofst++) = intensity_value;
+            src_ofst++;
+        }
+        else
+        {
+            dst_ofst++;
+            src_ofst++;
+        }
+    }
 }
 
 
 // WZD s33p18
-// UU_DUP_RevGrayscale()
+/*
+byte identical to Inverse_Gray_Scale_Bitmap()
+*/
+void DUPE_Inverse_Gray_Scale_Bitmap(byte_ptr bitmap, int16_t color_index)
+{
+    uint8_t * src_sgmt = NULL;
+    uint16_t src_ofst = 0;
+    uint8_t * dst_sgmt = NULL;
+    uint16_t dst_ofst = 0;
+    int16_t itr = 0;
+    uint8_t red = 0;
+    uint8_t green = 0;
+    uint8_t blue = 0;
+    int16_t value = 0;
+    int16_t width = 0;
+    int16_t height = 0;
+    int16_t pict_size = 0;
+    uint8_t data = 0;
+    uint8_t intensity_value = 0;
+    src_sgmt = current_palette;
+    src_ofst = 0;
+    dst_sgmt = (uint8_t *)palette_intensity_remap_table;
+    dst_ofst = 0;
+    itr = 256;
+    while(itr--)
+    {
+        value = 0;
+        red = *(src_sgmt + src_ofst++);
+        value += red;
+        value += red / 2;
+        green = *(src_sgmt + src_ofst++);
+        value += green;
+        value += green / 2;
+        blue = *(src_sgmt + src_ofst++);
+        value += blue;
+        value = value >> 5;
+        *(dst_sgmt + dst_ofst++) = (uint8_t)(color_index - value);
+    }
+    src_sgmt = (uint8_t *)palette_intensity_remap_table;
+    dst_sgmt = (uint8_t *)bitmap;
+    width = FLIC_GET_WIDTH(bitmap);
+    height = FLIC_GET_HEIGHT(bitmap);
+    pict_size = width * height;
+    if(pict_size == 0) { return; }
+    src_ofst = SZ_FLIC_HDR;
+    dst_ofst = SZ_FLIC_HDR;
+    while(pict_size--)
+    {
+        data = *(dst_sgmt + src_ofst);
+        if(data != ST_TRANSPARENT)
+        {
+            intensity_value = *(src_sgmt + data);
+            *(dst_sgmt + dst_ofst++) = intensity_value;
+            src_ofst++;
+        }
+        else
+        {
+            dst_ofst++;
+            src_ofst++;
+        }
+    }
+}
 
 
 // WZD s33p19

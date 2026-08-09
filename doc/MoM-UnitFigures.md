@@ -16,13 +16,13 @@ Combat_Figure_Load() loads the eight figure lbx entries in to the EMS_PFBA.
 
 
 ## EMM_FIGUREX_Init__HACK()
-    USELESS_Combat_Figure_Load_Compose()
-    Combat_Figure_Compose_USEFULL()
+    Combat_Figure_Compose()
+    Combat_Screen_Map_Compose_Figures()
     j_EMM_FIGUREX_Init__HACK()
         BU_CreateImage__SEGRAX()
         Combat_Figure_Load()
             j_Combat_Figure_Load()
-                UU_BU_LoadFigureGFX+2A         call    j_Combat_Figure_Load
+                NIU_Battle_Unit_Load_Figure_Pictures+2A         call    j_Combat_Figure_Load
                 Prepare_Battle_Unit+47 call    j_Combat_Figure_Load
                 CMB_Units_Init__WIP+C8         call    j_Combat_Figure_Load
                 CMB_Units_Init__WIP+27E        call    j_Combat_Figure_Load

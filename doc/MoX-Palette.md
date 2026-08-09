@@ -21,7 +21,7 @@ Load_Font_File()
     // TODO  UU_DAC_Save_Seg = Allocate_Space(48);  // in MoO1, also unused, maybe debug code
     remap_color_palettes = (uint8_t *)Allocate_Space(384);  // 384 PR, 6144 B  (24 * 256  ~'remap color tables')
     // TODO  file_animation_header = (struct s_FLIC_HDR *)Allocate_Space(2);
-    Intensity_Scale_Tbl = Allocate_Space(96);  // 96 PR, 1536 B
+    palette_intensity_remap_table = Allocate_Space(96);  // 96 PR, 1536 B
 
 Load_Palette()
     font_colors

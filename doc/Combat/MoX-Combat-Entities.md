@@ -41,7 +41,7 @@ So, ...
 Tactical_Combat_Draw()
     Combat_Grid_Entities()
     CMB_DrawMap__WIP()
-        Combat_Figure_Compose_USEFULL();
+        Combat_Screen_Map_Compose_Figures();
         CMB_DrawEntities__WIP()
             Draw_Picture_Windowed()
                 battle_unit_picts_seg[]
@@ -144,7 +144,7 @@ for(itr = 0; itr < 256; itr++)
 
 
 // WZD ovr153p15
-void USELESS_Combat_Figure_Load_Compose(int16_t bufpi, int16_t figure_set_idx, int16_t player_idx, int16_t enchantment_magic_realm, int16_t frame_num)
+void Combat_Figure_Compose(int16_t bufpi, int16_t figure_set_idx, int16_t player_idx, int16_t enchantment_magic_realm, int16_t frame_num)
     FLIC_Set_CurrentFrame(ptr_figure_pointer_seg[figure_set_idx], frame_num);
     Draw_Picture_To_Bitmap(ptr_figure_pointer_seg[figure_set_idx], GfxBuf_2400B);
 
@@ -238,7 +238,7 @@ add     sp, 8
 */
 /*
 
-~ USELESS_Combat_Figure_Load_Compose()
+~ Combat_Figure_Compose()
 
 */
 void BU_CreateImage__SEGRAX(int battle_unit_idx)

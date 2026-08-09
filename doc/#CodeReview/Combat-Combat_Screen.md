@@ -113,7 +113,7 @@ Combat_Screen()
                 |-> Unit_Moves2()
                 |-> Unit_Hit_Points()
         |-> Combat_Figure_Load()
-            |-> USELESS_Combat_Figure_Load_Compose()                Combat-Combat_Figure_Compose.md
+            |-> Combat_Figure_Compose()                Combat-Combat_Figure_Compose.md
         |-> Deploy_Battle_Units()
             |-> Undeployable_Battle_Units_On_Water()
     |-> Combat_Structure()
@@ -171,13 +171,13 @@ The Production column carries the current name and line; the ASM column keeps th
 | Function (production) | Production | ASM (ground truth) | Result |
 | --- | --- | --- | --- |
 | `Combat_Screen` | [Combat.c:1405](../../MoM/src/Combat.c#L1405) | [ovr090/Combat_Screen__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr090/Combat_Screen__WIP.asm) (1724) | faithful |
-| `Allocate_Combat_Base_Blocks` | [Combat.c:23980](../../MoM/src/Combat.c#L23980) | [ovr163/CMB_BaseAllocs__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr163/CMB_BaseAllocs__WIP.asm) (76) | faithful |
-| `Combat_Screen_Load_Resources` | [Combat.c:7297](../../MoM/src/Combat.c#L7297) | [ovr103/CMB_LoadResources__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr103/CMB_LoadResources__WIP.asm) (386) | faithful |
+| `Allocate_Combat_Base_Blocks` | [Combat.c:23323](../../MoM/src/Combat.c#L23323) | [ovr163/CMB_BaseAllocs__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr163/CMB_BaseAllocs__WIP.asm) (76) | faithful |
+| `Combat_Screen_Load_Resources` | [Combat.c:7225](../../MoM/src/Combat.c#L7225) | [ovr103/CMB_LoadResources__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr103/CMB_LoadResources__WIP.asm) (386) | faithful |
 | `Allocate_Combat_Near_Buffers` | [Combat.c:876](../../MoM/src/Combat.c#L876) | [ovr103/CMB_SetNearAllocs__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr103/CMB_SetNearAllocs__WIP.asm) (59) | faithful |
-| `Cache_Graphics_Combat` | [LOADER.c:1765](../../MoM/src/LOADER.c#L1765) | [ovr052/Cache_Graphics_Combat.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr052/Cache_Graphics_Combat.asm) (13) | faithful |
-| `Build_Battlefield` | [Combat.c:21787](../../MoM/src/Combat.c#L21787) | [ovr154/CMB_Terrain_Init__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/CMB_Terrain_Init__WIP.asm) (627) | faithful |
+| `Cache_Graphics_Combat` | [LOADER.c:1832](../../MoM/src/LOADER.c#L1832) | [ovr052/Cache_Graphics_Combat.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr052/Cache_Graphics_Combat.asm) (13) | faithful |
+| `Build_Battlefield` | [Combat.c:21131](../../MoM/src/Combat.c#L21131) | [ovr154/CMB_Terrain_Init__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/CMB_Terrain_Init__WIP.asm) (627) | faithful |
 | `Prepare_All_Battle_Units` | [Combat.c:5041](../../MoM/src/Combat.c#L5041) | [ovr098/CMB_Units_Init__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/CMB_Units_Init__WIP.asm) (527) | faithful |
-| `BU_HasSpellAbility__WIP` | [Combat.c:3661](../../MoM/src/Combat.c#L3661) | [ovr098/BU_HasSpellAbility__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/BU_HasSpellAbility__WIP.asm) (73) | faithful |
+| `Battle_Unit_Has_Spell_Ability` | [Combat.c:3661](../../MoM/src/Combat.c#L3661) | [ovr098/BU_HasSpellAbility__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/BU_HasSpellAbility__WIP.asm) (73) | faithful |
 | `NIU_Who_Has_More_Leadership` | [Combat.c:3692](../../MoM/src/Combat.c#L3692) | [ovr098/NIU_Who_Has_More_Leadership.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/NIU_Who_Has_More_Leadership.asm) (27) | faithful |
 | `Load_Battle_Unit` | [COMBINIT.c:445](../../MoM/src/COMBINIT.c#L445) | [ovr116/Load_Battle_Unit.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/Load_Battle_Unit.asm) (286) | faithful |
 | `Unit_Gold_Upkeep` | [CITYCALC.c:242](../../MoM/src/CITYCALC.c#L242) | [ovr120/Unit_Gold_Upkeep.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr120/Unit_Gold_Upkeep.asm) (140) | faithful |
@@ -190,9 +190,9 @@ The Production column carries the current name and line; the ASM column keeps th
 | `Apply_Enchantment_And_Mutation_Effects` | [COMBINIT.c:705](../../MoM/src/COMBINIT.c#L705) | [ovr116/BU_Apply_Specials.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Apply_Specials.asm) (509) | faithful |
 | `Unit_Moves2` | [NEXTTURN.c:1530](../../MoM/src/NEXTTURN.c#L1530) | [ovr121/Unit_Moves2.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr121/Unit_Moves2.asm) (244) | faithful |
 | `Unit_Hit_Points` | [COMBINIT.c:266](../../MoM/src/COMBINIT.c#L266) | [ovr116/Unit_Hit_Points.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/Unit_Hit_Points.asm) (216) | faithful |
-| `Get_Combat_Grid_Cell_X` | [Combat.c:23498](../../MoM/src/Combat.c#L23498) | [ovr154/Get_Combat_Grid_Cell_X.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/Get_Combat_Grid_Cell_X.asm) (25) | faithful |
-| `Get_Combat_Grid_Cell_Y` | [Combat.c:23507](../../MoM/src/Combat.c#L23507) | [ovr154/Get_Combat_Grid_Cell_Y.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/Get_Combat_Grid_Cell_Y.asm) (28) | faithful |
-| `Deploy_Battle_Units` | [Combat.c:12455](../../MoM/src/Combat.c#L12455) | [ovr113/Deploy_Battle_Units.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr113/Deploy_Battle_Units.asm) (375) | faithful |
+| `Get_Combat_Grid_Cell_X` | [Combat.c:22841](../../MoM/src/Combat.c#L22841) | [ovr154/Get_Combat_Grid_Cell_X.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/Get_Combat_Grid_Cell_X.asm) (25) | faithful |
+| `Get_Combat_Grid_Cell_Y` | [Combat.c:22850](../../MoM/src/Combat.c#L22850) | [ovr154/Get_Combat_Grid_Cell_Y.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/Get_Combat_Grid_Cell_Y.asm) (28) | faithful |
+| `Deploy_Battle_Units` | [Combat.c:12277](../../MoM/src/Combat.c#L12277) | [ovr113/Deploy_Battle_Units.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr113/Deploy_Battle_Units.asm) (375) | faithful |
 
 **Two header lines need correcting.**
 
@@ -620,7 +620,7 @@ Faithful. Production [Combat.c:24110](../../MoM/src/Combat.c#L24110).
 - **`(unit_type / 15) + 1` is computed three separate times** in the asm (asm:51-55, 66-70, 95-98) rather than cached, and production writes it out three times too.
 - **`entry_num = (unit_type % 15) * 8`** — the same `idiv` taking the remainder from `dx`, then `shl dx, 3` (asm:95-101).
 - **The load loop is 8 wide** and stores word-sized segments (asm:102-123).
-- **`USELESS_Combat_Figure_Load_Compose(bufpi, 0, 0, 0, 0)`** is present and the push order confirms `bufpi` is the first argument (asm:124-133).
+- **`Combat_Figure_Compose(bufpi, 0, 0, 0, 0)`** is present and the push order confirms `bufpi` is the first argument (asm:124-133).
 - Frame order matches: `file_name` (20 bytes at `bp-24h`), `buffer` (6 at `bp-10h`), the figure pointer, `offset`, `entry_num`.
 
 **Deviation D6 — the figure block is over-allocated.** `FIGUREX_POINTER` ([Combat.h:588-590](../../MoM/src/Combat.h#L588-L590)) asks `Allocate_First_Block` for **33** paragraphs; asm:33-38 asks for **2**. The host needs more than 2 because `SAMB_ptr` is wider than a real-mode segment word, but 33 does not follow from anything written down, and the comment beside it does not explain the number. Settle the figure before this bundle closes.

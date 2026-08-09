@@ -184,7 +184,7 @@ extern uint8_t * palette_flags;
 
 // WZD dseg:E7FA
 // 96 paragraphs = 96 * 16 = 1,536 bytes  (1536 / 256 = 6)
-extern SAMB_ptr Intensity_Scale_Tbl;  // alloc in Load_Font_File()  used in Gray_Scale_Bitmap()
+extern SAMB_ptr palette_intensity_remap_table;  // alloc in Load_Font_File()  used in Gray_Scale_Bitmap()
 // ¿ MoO2 ~ remap_gray_scale_palette ?
 
 // WZD dseg:E820

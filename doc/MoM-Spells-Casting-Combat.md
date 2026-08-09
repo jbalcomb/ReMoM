@@ -142,7 +142,7 @@ Prepare_Battle_Unit_Summons()
 
 BU_CreateImage__SEGRAX()
 
-~ USELESS_Combat_Figure_Load_Compose()
+~ Combat_Figure_Compose()
     FIGUREX_OFFSET
     FIGUREX_MAP
     FIGUREX_POINTER

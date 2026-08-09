@@ -21,7 +21,7 @@ Internally calls:
 - **`Load_Font_File(FONTS.LBX)`** — [Init.c:60](../MoM/src/Init.c#L60)
   - **FONTS.LBX [0]** — font glyph / style data → `font_style_data`, cast to `font_header` ([Fonts.c:201](../MoX/src/Fonts.c#L201))
   - **FONTS.LBX [1]** — border / outline data → `border_style_data`
-  - Allocates: `palette_block`, `current_palette`, `palette_flags`, `remap_color_palettes`, `Intensity_Scale_Tbl`
+  - Allocates: `palette_block`, `current_palette`, `palette_flags`, `remap_color_palettes`, `palette_intensity_remap_table`
 - `Init_Mouse_Keyboard()`
 - `Randomize()`
 

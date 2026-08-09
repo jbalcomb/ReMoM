@@ -85,15 +85,15 @@ Tactical_Combat__WIP()
 Then, ...
     What should this be?     pict_seg = battle_unit_picts_seg[combat_grid_entities[combat_grid_entity_idx].index];
     ...
-    same address as was used in Combat_Figure_Compose_USEFULL()
+    same address as was used in Combat_Screen_Map_Compose_Figures()
         GfxBuf_2400B = battle_unit_picts_seg[battle_units[itr].bufpi];
     ...
-    in Combat_Figure_Compose_USEFULL()
+    in Combat_Screen_Map_Compose_Figures()
         Draw_Picture_To_Bitmap(ptr_figure_pointer_seg[figure_set_idx], GfxBuf_2400B);
         ptr_figure_pointer_seg[figure_set_idx] should have the same address as was used at LBX_Entry_Reload()
 
 
-Combat_Figure_Compose_USEFULL()
+Combat_Screen_Map_Compose_Figures()
     if(battle_units[itr].unit_idx == DEBUG_UNIT_IDX)
     {
         DBG_pict_seg = (int64_t)GfxBuf_2400B;
@@ -114,7 +114,7 @@ Combat_Figure_Load()
 CMB_DrawEntities__WIP()
     DBG_pict_seg__2 = ptr_figure_pointer_seg[itr]
 
-Combat_Figure_Compose_USEFULL()
+Combat_Screen_Map_Compose_Figures()
     DBG_bitm_seg__1 = (int64_t)battle_unit_picts_seg[battle_units[itr].bufpi];
 CMB_DrawEntities__WIP()
     DBG_bitm_seg__2 = (int64_t)battle_unit_picts_seg[combat_grid_entities[combat_grid_entity_idx].index];
@@ -243,7 +243,7 @@ Combat_Screen_Map_Draw_Entities(
 )
 
 
-Combat_Figure_Compose_USEFULL()
+Combat_Screen_Map_Compose_Figures()
     iters over _combat_total_unit_count
         ...if(battle_units[itr].unit_idx == DEBUG_UNIT_IDX)
     ...
@@ -276,12 +276,12 @@ Draw
             CMB_DrawEntities__WIP()
 
 
-WTF USELESS_Combat_Figure_Load_Compose()
-vs. Combat_Figure_Compose_USEFULL()
+WTF Combat_Figure_Compose()
+vs. Combat_Screen_Map_Compose_Figures()
 
 Combat_Figure_Load()
     ptr_figure_pointer_seg[itr] = LBX_Reload_Next(file_name, (entry_num + itr), (EMM_PageFrame + offset));
-    |-> USELESS_Combat_Figure_Load_Compose()
+    |-> Combat_Figure_Compose()
 
 
 
@@ -319,8 +319,8 @@ EMM_PageFrame
 
 EMM_FIGUREX_Init__HACK()  AKA FIGUREX_MAP
 Combat_Figure_Load()
-Combat_Figure_Compose_USEFULL()
-USELESS_Combat_Figure_Load_Compose()
+Combat_Screen_Map_Compose_Figures()
+Combat_Figure_Compose()
 
 ¿ order in which these take place ?
 
@@ -332,27 +332,27 @@ Tactical_Combat__WIP()
 Tactical_Combat__WIP()
     CMB_DrawFullScreen__WIP()
         CMB_DrawMap__WIP()
-            Combat_Figure_Compose_USEFULL()
+            Combat_Screen_Map_Compose_Figures()
                 FIGUREX_MAP  AKA EMM_FIGUREX_Init__HACK()
 
 Tactical_Combat__WIP()
     Prepare_All_Battle_Units()
         Combat_Figure_Load()
-            USELESS_Combat_Figure_Load_Compose()
+            Combat_Figure_Compose()
 
 ```
 Tactical_Combat__WIP()
     Prepare_All_Battle_Units()
         Combat_Figure_Load()
             FIGUREX_MAP  AKA EMM_FIGUREX_Init__HACK()
-            USELESS_Combat_Figure_Load_Compose()
+            Combat_Figure_Compose()
                 FIGUREX_MAP  AKA EMM_FIGUREX_Init__HACK()
     // ...
     // ...
     // ...
     CMB_DrawFullScreen__WIP()
         CMB_DrawMap__WIP()
-            Combat_Figure_Compose_USEFULL()
+            Combat_Screen_Map_Compose_Figures()
                 FIGUREX_MAP  AKA EMM_FIGUREX_Init__HACK()
 ```
 
@@ -466,9 +466,9 @@ So, ...
 
 4 places for FIGUREX (EMM_PageFrame, EmmHndl_FIGUREX, logical_page, offset)
 EMM_FIGUREX_Init__HACK()
-Combat_Figure_Compose_USEFULL()  ...but, also, right beforehand, calls EMM_FIGUREX_Init__HACK()
+Combat_Screen_Map_Compose_Figures()  ...but, also, right beforehand, calls EMM_FIGUREX_Init__HACK()
 Combat_Figure_Load()        ...but, also, right beforehand, calls EMM_FIGUREX_Init__HACK()
-USELESS_Combat_Figure_Load_Compose       ...calls EMM_FIGUREX_Init__HACK() after offset calc, before using EMM_PageFrame
+Combat_Figure_Compose       ...calls EMM_FIGUREX_Init__HACK() after offset calc, before using EMM_PageFrame
 EMM_FIGUREX_Init__HACK() sets EMM_PageFrame, the other three use it for the call to Allocate_First_Block()
 
 
@@ -500,7 +500,7 @@ break in Combat_Figure_Load()
 get pointer addresses for ptr_figure_pointer_seg[itr]
 compare bytes for pictures ...versus DBG_figure_pict_seg[itr]
 later, ...
-Combat_Figure_Compose_USEFULL()
+Combat_Screen_Map_Compose_Figures()
 battle_unit_picts_seg[]
 ¿ itr should be 0 ?
 ¿ battle_units[itr].bufpi should be 0 ?
@@ -592,8 +592,8 @@ EMM_FIGUREX_Init__HACK()
 
 
 
-does USELESS_Combat_Figure_Load_Compose() actually accomplish anything?
-...only called by Combat_Figure_Load()  ... |-> USELESS_Combat_Figure_Load_Compose(bufpi, 0, 0, 0, 0);
+does Combat_Figure_Compose() actually accomplish anything?
+...only called by Combat_Figure_Load()  ... |-> Combat_Figure_Compose(bufpi, 0, 0, 0, 0);
 
 
 
@@ -613,7 +613,7 @@ Tactical_Combat__WIP()
 Combat_Figure_Load()
     ptr_figure_pointer_seg[itr] = LBX_Reload_Next(file_name, (entry_num + itr), (EMM_PageFrame + offset));
 
-Combat_Figure_Compose_USEFULL()
+Combat_Screen_Map_Compose_Figures()
     bufpi = battle_units[itr].bufpi;
     EMM_FIGUREX_Init__HACK(bufpi);
     ...
@@ -633,14 +633,14 @@ CMB_DrawEntities__WIP()
 
 
 
-Combat_Figure_Compose_USEFULL()
+Combat_Screen_Map_Compose_Figures()
 
-Combat_Figure_Compose_USEFULL()
+Combat_Screen_Map_Compose_Figures()
     GfxBuf_2400B = battle_unit_picts_seg[battle_units[itr].bufpi];
     Draw_Picture_To_Bitmap(ptr_figure_pointer_seg[figure_set_idx], GfxBuf_2400B);
     Combat_Figure_Banner_Color(player_idx);
     Combat_Unit_Enchantment_Outline_Draw(UE_Rlm);
-    Combat_Figure_Effect__WIP(IMG_Effect);
+    Combat_Figure_Effect(IMG_Effect);
     Combat_Figure_Active_Red_Outline(itr);
 
 
@@ -650,7 +650,7 @@ Tactical_Combat__WIP()
     // ...
     CMB_DrawFullScreen__WIP()
         CMB_DrawMap__WIP()
-            Combat_Figure_Compose_USEFULL()
+            Combat_Screen_Map_Compose_Figures()
             CMB_DrawEntities__WIP()
                 ...
                 Draw_Picture_Windowed(battle_unit_picts_seg[])

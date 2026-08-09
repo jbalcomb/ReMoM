@@ -16,7 +16,7 @@ calls Gray_Scale_Bitmap() with color_start = 1
 
 
 
-Intensity_Scale_Tbl@ is allocated in Load_Font_File()
+palette_intensity_remap_table@ is allocated in Load_Font_File()
 which only happens once
 it is 96 PR 1536 B
 there is no start-up data - nothing gets loaded / put into it
@@ -31,7 +31,7 @@ which should indicate the start of an array of 16 colors in the palette that are
 
 
 // DS:SI  src  p_Palette[0]
-// ES:DI  dst  Intensity_Scale_Tbl@[0]
+// ES:DI  dst  palette_intensity_remap_table@[0]
 
 loops through all 256 colors in the current shadow palette
     ...LODSB, LODSB, LODSB...loads 768 bytes
@@ -53,6 +53,6 @@ e.g.,
 Then, ...
 
 loops through 'pict_size' bytes...
-// DS:SI  src  Intensity_Scale_Tbl@[16]
+// DS:SI  src  palette_intensity_remap_table@[16]
 // ES:DI  dst  pict_seg[sizeof(header)]
 

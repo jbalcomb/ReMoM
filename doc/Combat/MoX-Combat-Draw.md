@@ -61,13 +61,13 @@ Remap_Draw_Ship_Status_
     Replace_Color(_combat_bitmap, 1, 0);
     Replace_Color(_combat_bitmap, 2, 0);
     Draw(si, di, _combat_bitmap)
-## Combat_Figure_Compose_USEFULL()
+## Combat_Screen_Map_Compose_Figures()
 temp_GfxBuf_2400B = GfxBuf_2400B;
     GfxBuf_2400B = battle_unit_picts_seg[battle_units[battle_unit_idx].bufpi];
     Draw_Picture_To_Bitmap(ptr_figure_pointer_seg[figure_set_idx], GfxBuf_2400B);
     Combat_Figure_Banner_Color(player_idx);
     Combat_Unit_Enchantment_Outline_Draw(outline_magic_realm);
-    Combat_Figure_Effect__WIP(IMG_Effect);
+    Combat_Figure_Effect(IMG_Effect);
     Combat_Figure_Active_Red_Outline(battle_unit_idx);
 
 ## battle_unit_picts_seg[]
@@ -203,7 +203,7 @@ Tactical_Combat_Draw()
 
 ## CMB_DrawMap__WIP()
     Copy_Back_To_Off()
-    Combat_Figure_Compose_USEFULL()
+    Combat_Screen_Map_Compose_Figures()
     Set_Page_Off()
     Set_Window()
 

@@ -137,7 +137,7 @@ Deploy_Battle_Units()
     ...
     battle_units[itr].target_cgc1 = battle_units[itr].position_cgc1;
 
-Combat_Figure_Compose_USEFULL()
+Combat_Screen_Map_Compose_Figures()
     position_cgc2 = battle_units[itr].position_cgc2;
 
 

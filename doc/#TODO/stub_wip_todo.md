@@ -146,7 +146,7 @@
 - [x] Prepare_All_Battle_Units — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); renamed from CMB_Units_Init__WIP, Combat.c:5041, faithful against ovr098/CMB_Units_Init__WIP.asm; 2 OGBUGs preserved
 - [ ] Combat__WIP
 - [x] Combat_Cast_Spell — done-done 2026-07-07 (walkthrough doc in doc/#CodeReview/; renamed from Combat_Cast_Spell__WIP; R1 payment-index + R2 AI-branch/spellbook-gating fixed; Dispel_Attempt/Counter_Message arg orders verified vs asm; whole tree builds clean)
-- [x] Combat_Figure_Effect__WIP — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); Combat.c:7574, faithful against ovr105/Combat_Figure_Effect__WIP.asm
+- [x] Combat_Figure_Effect — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from Combat_Figure_Effect__WIP, Combat.c:7561, faithful against ovr105/Combat_Figure_Effect__WIP.asm
 - [x] Combat_Grid_Entities — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from Combat_Grid_Entities__WIP, Combat.c:5899, faithful against ovr099/Combat_Grid_Entities__WIP.asm
 - [x] Combat_Grid_Entity_Create — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); Combat.c:20942, faithful against ovr153/Combat_Grid_Entity_Create__WIP.asm
 - [x] Combat_Screen__WIP — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); renamed Combat_Screen, Combat.c:1405, faithful against ovr090/Combat_Screen__WIP.asm
@@ -227,8 +227,8 @@
 - [ ] UU_LBX_IMG_GetIntensity()     // WZD s33p10
 - [ ] Vanish_Bitmap__WIP()          // WZD s33p15
 - [ ] Gray_Scale_Bitmap()           // WZD s33p16 // MoO2  Module: bitmap  Gray_Scale_Bitmap()
-- [ ] LBX_IMG_RevGrayscale__STUB()  // WZD s33p17
-- [ ] UU_DUP_RevGrayscale()         // WZD s33p18
+- [x] Inverse_Gray_Scale_Bitmap — done-done 2026-08-08; renamed from LBX_IMG_RevGrayscale__STUB, FLIC_Draw.c:3983, faithful against seg033/LBX_IMG_RevGrayscale.asm  // WZD s33p17
+- [x] DUPE_Inverse_Gray_Scale_Bitmap — done-done 2026-08-08; FLIC_Draw.c:4048, byte-identical copy, faithful against seg033/UU_DUP_RevGrayscale.asm  // WZD s33p18
 - [ ] RNG_GFX_Random__WIP()         // WZD s33p19
 
 ## Fonts

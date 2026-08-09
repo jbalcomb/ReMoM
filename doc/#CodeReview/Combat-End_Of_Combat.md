@@ -2,6 +2,7 @@ Combat-End_Of_Combat.md
 
 SEEALSO:  Combat-Combat_Screen_Map_Draw.md
 SEEALSO:  Combat-Combat_Figure_Compose.md
+SEEALSO:  Combat-Generate_Combat_Map.md
 SEEALSO:  Combat-End_Of_Combat.md
 SEEALSO:  C:\STU\devel\ReMoM\doc\Combat\MoM-CombatScreen-Grid.md
 

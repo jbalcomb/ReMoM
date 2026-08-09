@@ -10,10 +10,10 @@ CMB_DrawEntities__WIP()
 
 
 Prepare_All_Battle_Units()
-UU_BU_LoadFigureGFX()
+NIU_Battle_Unit_Load_Figure_Pictures()
 Prepare_Battle_Unit()
 Combat_Figure_Load()
-USELESS_Combat_Figure_Load_Compose()
+Combat_Figure_Compose()
 
 
 struct s_BATTLE_UNIT
@@ -44,11 +44,11 @@ So, ... somehow, 36 battle units but 18 pictures
 
 loads the eight figure lbx entries in to the EMS_PFBA
 
-¿ why call USELESS_Combat_Figure_Load_Compose() ?
+¿ why call Combat_Figure_Compose() ?
 
 XREF:
     j_Combat_Figure_Load()
-        UU_BU_LoadFigureGFX+2A         call    j_Combat_Figure_Load
+        NIU_Battle_Unit_Load_Figure_Pictures+2A         call    j_Combat_Figure_Load
         Prepare_Battle_Unit+47 call    j_Combat_Figure_Load
         Prepare_All_Battle_Units+C8         call    j_Combat_Figure_Load
         Prepare_All_Battle_Units+27E        call    j_Combat_Figure_Load
@@ -156,7 +156,7 @@ Combat_Grid_Entities()
         BU_SetVisibility__WIP()
             battle_units[battle_unit_idx].Image_Effect = 4;
             battle_units[battle_unit_idx].Image_Effect = 5;
-            /* passed to Combat_Figure_Effect__WIP() for BU figure bitmap composition */
+            /* passed to Combat_Figure_Effect() for BU figure bitmap composition */
                 case 4:
                     Transparent_Color_Range(GfxBuf_2400B, 232, 232);
                     Replace_Color_All(GfxBuf_2400B, 233);
@@ -245,7 +245,7 @@ Combat_Grid_Entities()
 
 
 
-Combat_Figure_Effect__WIP()
+Combat_Figure_Effect()
 
 
 

@@ -182,11 +182,11 @@ Cast_Spell_On_Battle_Unit()
 Spawn_Figure_Entity()
     no battle_unit_idx, passed in cgx, cgy, target_cgx, target_cgy
 
-[x] Combat_Figure_Compose_USEFULL()
+[x] Combat_Screen_Map_Compose_Figures()
 [x] Battle_Unit_Compose_Bitmap()
 [x] Spawn_Figure_Entity()
 
-figure_set_idx passed to USELESS_Combat_Figure_Load_Compose()
+figure_set_idx passed to Combat_Figure_Compose()
 
 */
 

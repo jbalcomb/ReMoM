@@ -30,7 +30,7 @@ void Load_Font_File(char * font_file)
     // Replacement_Colors = Allocate_Space(384);  // 384 paragraphs = 384 * 16 = 6,144 bytes  (24 * 256  ~'remap color tables')
     remap_color_palettes = Allocate_Space(384);
     // TODO  gsa_VGAFILEH_Header = Allocate_Space(2);
-    Intensity_Scale_Tbl = Allocate_Space(96);  // 96 paragraphs = 96 * 16 = 1,536 bytes  
+    palette_intensity_remap_table = Allocate_Space(96);  // 96 paragraphs = 96 * 16 = 1,536 bytes  
 
 void Load_Palette(int entry, int start_color, int end_color)
    int color_start;
