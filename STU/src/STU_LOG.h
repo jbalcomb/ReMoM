@@ -77,7 +77,8 @@ enum log_category
     LOG_CAT_FONTS        = 44,
     LOG_CAT_MOX2         = 45,
     LOG_CAT_CALL_TRACE   = 46,
-    LOG_CAT_STU_GRAF     = 47
+    LOG_CAT_STU_GRAF     = 47,
+    LOG_CAT_OGBUG        = 48
 };
 
 /* CALL_TRACE rng-call ordinal -- read by the [FN-ENTER]/[FN-EXIT] log lines.

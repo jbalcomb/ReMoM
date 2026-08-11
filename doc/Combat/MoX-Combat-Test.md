@@ -53,7 +53,7 @@ Generate_Combat_Map__WIP()
 
 // WZD ovr154p02
 // drake178: CMB_GenerateMap()
-    CMB_TileGen__WIP()
+    Set_Terrain_Tile_Types()
     Set_Movement_Cost_Maps()
 
 

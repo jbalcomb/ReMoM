@@ -9,13 +9,13 @@ I tried, gave up, later, borrowed from 1oom, much later used the gemini-3-pro AI
 
 
 Generate_Combat_Map()
-CMB_TileGen__WIP(cts);
-CMB_TreeGen(cts, location_type);
-CMB_RockGen(cts, location_type);
-[] CMB_RiverGen(rivers_array);
-[] CMB_RoadGen(location_type, roads_array);
+Set_Terrain_Tile_Types(cts);
+Scatter_Tree_Scenery(cts, location_type);
+Scatter_Rock_Scenery(cts, location_type);
+[] Carve_River_Terrain(rivers_array);
+[] Build_Road_Network(location_type, roads_array);
 [] CMB_RemoveRough(location_type);
-[] CMB_MergeDirt();
+[] Merge_Dirt_Patches();
 
                         // ; decides whether the AI will raze the selected city or not
                         // ; returns 1 if yes, 0 if no

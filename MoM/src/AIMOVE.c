@@ -6400,22 +6400,42 @@ HERE:
 
 
     /* Phase 3: */
-// ; cancel the orders of all non-engineer units moving to a square with no enemy presence
+    // cancel the orders of all non-engineer units moving to a square with no enemy presence
 /* OGBUG  should check unit wp */
 /* OGBUG  settlers and transports (non-military) are not excluded ? */
 /* DEDU  ¿ clearning orders for destination without a site or enemy stack means the orders are considered invalid because they don't have a target for an attack ? */
 /* OGBUG  wp leftover from previously loop */
+    if(wp < 0 || wp > 1)
+    {
+        LOG_DEBUG(LOG_CAT_OGBUG, "wp: %d", wp);
+        // STU_DEBUG_BREAK();
+    }
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-        if(
-            (_UNITS[itr_units].owner_idx == player_idx)
-            &&
-            (_unit_type_table[_UNITS[itr_units].type].Construction == 0)
-            &&
-            (g_ai_evaluation_map[wp][((_UNITS[itr_units].dst_wy * WORLD_WIDTH) + _UNITS[itr_units].dst_wx)] == 0)
-        )
+        if(_UNITS[itr_units].owner_idx < 0 || _UNITS[itr_units].owner_idx > 5)
         {
-            _UNITS[itr_units].Status = us_Ready;  // 'MoM Demo': NO ORDERS
+            LOG_DEBUG(LOG_CAT_OGBUG, "_UNITS[%d].owner_idx: %d", itr_units, _UNITS[itr_units].owner_idx);
+            // STU_DEBUG_BREAK();
+        }
+        if(_UNITS[itr_units].owner_idx == player_idx)
+        {
+            if(_UNITS[itr_units].type < 0 || _UNITS[itr_units].type > 197)
+            {
+                LOG_DEBUG(LOG_CAT_OGBUG, "_UNITS[%d].owner_idx: %d", itr_units, _UNITS[itr_units].owner_idx);
+                STU_DEBUG_BREAK();
+            }
+            if(_unit_type_table[_UNITS[itr_units].type].Construction == 0)
+            {
+                if(_UNITS[itr_units].dst_wx < 0 || _UNITS[itr_units].dst_wx > 59 || _UNITS[itr_units].dst_wy < 0 || _UNITS[itr_units].dst_wy > 39)
+                {
+                    LOG_DEBUG(LOG_CAT_OGBUG, "_UNITS[%d].dst_wx: %d, dst_wy: %d", itr_units, _UNITS[itr_units].dst_wx, _UNITS[itr_units].dst_wy);
+                    STU_DEBUG_BREAK();
+                }
+                if(g_ai_evaluation_map[wp][((_UNITS[itr_units].dst_wy * WORLD_WIDTH) + _UNITS[itr_units].dst_wx)] == 0)
+                {
+                    _UNITS[itr_units].Status = us_Ready;  // 'MoM Demo': NO ORDERS
+                }
+            }
         }
     }
 

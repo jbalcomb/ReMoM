@@ -141,7 +141,9 @@ static const char * const log_cat_str[] = {
     "EXIT                   ",
     "FONTS                  ",
     "MOX2                   ",
-    "CALL_TRACE             "
+    "CALL_TRACE             ",
+    "STU_GRAF               ",
+    "OGBUG                  "
 };
 
 static const char * const log_cat_ini_key[] = {
@@ -191,7 +193,9 @@ static const char * const log_cat_ini_key[] = {
     "EXIT",
     "FONTS",
     "MOX2",
-    "CALL_TRACE"
+    "CALL_TRACE",
+    "STU_GRAF",
+    "OGBUG"
 };
 
 static void STU_Log_Config_Set_Defaults(void)

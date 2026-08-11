@@ -447,7 +447,7 @@ sdl2_Play_Background_Music__WIP
 
 
 
-TODO  review CMB_TileGen__WIP() and friends
+TODO  review Set_Terrain_Tile_Types() and friends
 CMB_Units_Init__WIP()
 
 

@@ -475,7 +475,7 @@ Tile_TerrGroup[]
 
 Generate_Combat_Map__WIP()
 sets Tile_TerrGroup[]
-CMB_TileGen__WIP
+Set_Terrain_Tile_Types
 sets Tile_Terrain[], using Tile_TerrGroup[]
 
 Generate_Combat_Map__WIP()
@@ -484,7 +484,7 @@ if yay water, sets all of Tile_TerrGroup[] to CTG_DeepWater
 
 
 
-## CMB_TileGen__WIP()
+## Set_Terrain_Tile_Types()
 
 iters over 21 rows and 20 columns
 sets 9 values based on Tile_TerrGroup

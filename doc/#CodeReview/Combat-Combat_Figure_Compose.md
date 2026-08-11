@@ -158,13 +158,13 @@ The Production column carries the current name and line; the ASM column keeps th
 
 | Function (production) | Production | ASM (ground truth) | Lines |
 | --- | --- | --- | --- |
-| `Draw_Active_Unit_Window` | [Combat.c:5607](../../MoM/src/Combat.c#L5607) | `ovr099/Draw_Active_Unit_Window.asm` | 347 |
-| `Battle_Unit_Compose_Bitmap` | [Combat.c:6836](../../MoM/src/Combat.c#L6836) | `ovr103/BU_CreateImage__SEGRAX.asm` | 325 |
-| `Combat_Screen_Map_Compose_Figures` | [Combat.c:21006](../../MoM/src/Combat.c#L21006) | `ovr153/Combat_Figure_Compose_USEFULL.asm` | 284 |
-| `Combat_Figure_Load` | [Combat.c:23452](../../MoM/src/Combat.c#L23452) | `ovr163/Combat_Figure_Load.asm` | 142 |
-| `Claim_EMS_Page_For_Figure_Set` | [Combat.c:20970](../../MoM/src/Combat.c#L20970) | `ovr153/EMM_FIGUREX_Init__HACK.asm` | 77 |
-| `Combat_Figure_Compose` | [Combat.c:20637](../../MoM/src/Combat.c#L20637) | `ovr153/USELESS_Combat_Figure_Load_Compose.asm` | 77 |
-| `NIU_Battle_Unit_Load_Figure_Pictures` | [Combat.c:2254](../../MoM/src/Combat.c#L2254) | `ovr091/UU_BU_LoadFigureGFX.asm` | 46 |
+| `Draw_Active_Unit_Window` | [Combat.c:5610](../../MoM/src/Combat.c#L5610) | `ovr099/Draw_Active_Unit_Window.asm` | 347 |
+| `Battle_Unit_Compose_Bitmap` | [Combat.c:6839](../../MoM/src/Combat.c#L6839) | `ovr103/BU_CreateImage__SEGRAX.asm` | 325 |
+| `Combat_Screen_Map_Compose_Figures` | [Combat.c:21007](../../MoM/src/Combat.c#L21007) | `ovr153/Combat_Figure_Compose_USEFULL.asm` | 284 |
+| `Combat_Figure_Load` | [Combat.c:23942](../../MoM/src/Combat.c#L23942) | `ovr163/Combat_Figure_Load.asm` | 142 |
+| `Claim_EMS_Page_For_Figure_Set` | [Combat.c:20971](../../MoM/src/Combat.c#L20971) | `ovr153/EMM_FIGUREX_Init__HACK.asm` | 77 |
+| `Combat_Figure_Compose` | [Combat.c:20639](../../MoM/src/Combat.c#L20639) | `ovr153/USELESS_Combat_Figure_Load_Compose.asm` | 77 |
+| `NIU_Battle_Unit_Load_Figure_Pictures` | [Combat.c:2257](../../MoM/src/Combat.c#L2257) | `ovr091/UU_BU_LoadFigureGFX.asm` | 46 |
 
 Everything not listed under Findings matched: declaration order in all seven frames, every field width and signedness (`cbw` versus `mov ah,0`), every argument order, every literal, and both branch tables.
 

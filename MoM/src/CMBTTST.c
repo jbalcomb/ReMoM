@@ -333,8 +333,9 @@ int16_t Combat_Screen_TST_004(int16_t combat_attacker_player_idx, int16_t combat
 
     // Allocate_Combat_Base_Blocks()
 
-    battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, 348);  // 348 PR, 5568 B
-
+    // battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, 348);  // 348 PR, 5568 B
+    battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, ((sizeof(struct s_BATTLEFIELD) + 15) / 16));
+    
     combat_grid_entities = (struct s_COMBAT_ENTITY *)Allocate_Next_Block(_screen_seg, 482);  // 482 PR, 7712 B
 
     // Combat_Screen_Load_Resources()

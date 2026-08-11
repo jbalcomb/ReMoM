@@ -16,48 +16,45 @@
 #
 # Padding fields (pad2B_*) are uninitialized memory and deliberately NOT asserted.
 
-# --- Outcome summary ---
-# Attackers wiped 0/4; defenders 1/4 survive (unit 517); AI summoned a Fire
-# Elemental mid-combat (unit count 842 -> 843).
+# --- Outcome: attackers WIN 1/4; defenders wiped 0/4; AI summons a Fire Elemental ---
 game.turn = 615
 game.cities = 58
 game.units = 843
 
-# --- ATTACKER: 4 Human Halberdiers (type 112), all killed (owner_idx = -1) ---
-# Dead units retain XP and their final staging position (11,19); no damage field
-# change because a dead unit's figure damage is not tracked post-mortem.
+# Surviving attacker: one Halberdier holds the captured square (10,19), 4 figure-
+# damage, XP 120 -> 129.
+unit[534].owner_idx = 0
+unit[534].type = 112
+unit[534].damage = 4
+unit[534].xp = 129
+unit[534].wx = 10
+unit[534].wy = 19
+
+# Dead attacker Halberdiers (owner_idx = -1, type 112), left on the captured square.
 unit[110].owner_idx = -1
 unit[110].type = 112
 unit[110].xp = 120
-unit[110].damage = 0
-unit[110].wx = 11
+unit[110].wx = 10
 unit[110].wy = 19
 unit[418].owner_idx = -1
+unit[418].type = 112
 unit[418].xp = 120
-unit[418].wx = 11
-unit[418].wy = 19
-unit[534].owner_idx = -1
-unit[534].xp = 119
-unit[534].wx = 11
-unit[534].wy = 19
 unit[669].owner_idx = -1
+unit[669].type = 112
 unit[669].xp = 87
-unit[669].wx = 11
-unit[669].wy = 19
 
-# --- DEFENDER: 4 Stag Beetles (type 119), 3 killed + 1 survivor ---
+# Dead defender Stag Beetles (owner_idx = -1, type 119) -- all four wiped at (10,19).
 unit[498].owner_idx = -1
-unit[535].owner_idx = -1
-unit[779].owner_idx = -1
-# Survivor: unit 517 lives at (10,19) with 10 figure-damage and +2 XP (88 -> 90).
-unit[517].owner_idx = 2
+unit[498].type = 119
+unit[498].wx = 10
+unit[498].wy = 19
+unit[517].owner_idx = -1
 unit[517].type = 119
-unit[517].damage = 10
-unit[517].xp = 90
-unit[517].wx = 10
-unit[517].wy = 19
+unit[535].owner_idx = -1
+unit[535].type = 119
+unit[779].owner_idx = -1
+unit[779].type = 119
 
-# --- AI combat summon: Fire Elemental (type 158) created in slot 842 ---
-# owner_idx = -1 because the summon is dismissed when combat ends; the unit-count
-# bump to 843 is the durable evidence the summon happened.
+# AI combat summon: Fire Elemental (type 158) created in slot 842 (dismissed at
+# combat end -> owner_idx -1; the unit-count bump to 843 is the durable evidence).
 unit[842].type = 158

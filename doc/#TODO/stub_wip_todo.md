@@ -142,7 +142,7 @@
 - [x] Spawn_Stone_Wall_Entities — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from CMB_SpawnStoneWall__WIP, Combat.c:20097, faithful against ovr153/CMB_SpawnStoneWall.asm
 - [x] Spawn_Structure_Entities — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from CMB_SpawnStructures__WIP, Combat.c:20038, faithful against ovr153/CMB_SpawnStructures.asm
 - [x] Build_Battlefield — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:21787, faithful against ovr154/CMB_Terrain_Init__WIP.asm
-- [ ] CMB_TileGen__WIP
+- [x] Set_Terrain_Tile_Types — done-done 2026-08-08 (doc/#CodeReview/Combat-Generate_Combat_Map.md); renamed from CMB_TileGen__WIP, Combat.c:22678, faithful against ovr154/CMB_TileGen__WIP.asm
 - [x] Prepare_All_Battle_Units — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); renamed from CMB_Units_Init__WIP, Combat.c:5041, faithful against ovr098/CMB_Units_Init__WIP.asm; 2 OGBUGs preserved
 - [ ] Combat__WIP
 - [x] Combat_Cast_Spell — done-done 2026-07-07 (walkthrough doc in doc/#CodeReview/; renamed from Combat_Cast_Spell__WIP; R1 payment-index + R2 AI-branch/spellbook-gating fixed; Dispel_Attempt/Counter_Message arg orders verified vs asm; whole tree builds clean)
@@ -155,7 +155,7 @@
 - [ ] Combat_Spell_Target_Screen__WIP
 - [ ] Do_Legal_Spell_Check__WIP
 - [ ] End_Of_Combat__WIP
-- [ ] Generate_Combat_Map — renamed from Generate_Combat_Map__WIP; impl (Combat.c:28636), needs done-done review (name verified 2026-07-21)
+- [x] Generate_Combat_Map — done-done 2026-08-08 (doc/#CodeReview/Combat-Generate_Combat_Map.md); renamed from Generate_Combat_Map__WIP, Combat.c:21438, faithful against ovr154/Generate_Combat_Map.asm; all eight subfunctions implemented, renamed and walked
 - [x] Move_Battle_Unit__WIP — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; suffix already dropped in source, Combat.c:3067; instant-move flat-2 deduction and move_anim_ctr increment fixed; D1 pacing/sound-size divergences recorded)
 - [ ] STK_CaptureCity__WIP
 - [ ] STK_ComposeFleeLost__STUB

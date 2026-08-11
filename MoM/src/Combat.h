@@ -32,6 +32,8 @@
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_TYPE.h"
 
+#include <stdint.h> /* _Static_assert */
+
 
 
 /*
@@ -88,7 +90,7 @@ else
 // CLAUDE  "the flat view"
 // CLAUDE      e.g.,
 // CLAUDE          AITP_Combat_Spell()
-// CLAUDE              if(combat_enchantments[*(int *)&spell_data_table[spell_idx].Param0 + Unit_Resist] > 0)
+// CLAUDE              if(combat_enchantments[*(int16_t *)&spell_data_table[spell_idx].Param0 + Unit_Resist] > 0)
 // CLAUDE  
 // CLAUDE  */
 // CLAUDE  
@@ -658,10 +660,17 @@ e_COMBAT_STRUCTURE
 vs.
 e_COMBAT_LOCATION_TYPE
 vs.
-Central_Structures
+enum e_CENTRAL_STRUCTURES
 
 Generate_Combat_Map()
 ...switches on 
+
+location type                           central structure
+clt_Cave (8) and clt_MonsterLair (12)   CS_Cave
+clt_Dungeon (9) and clt_Ruins (13)      CS_Dungeon
+clt_AncientTemple (10)                  CS_Temple
+clt_Keep (11)                           CS_Fort
+clt_FallenTemple (14)                   CS_Ruins
 
 */
 enum e_COMBAT_STRUCTURE
@@ -695,7 +704,7 @@ enum e_COMBAT_LOCATION_TYPE
 };
 
 
-enum Central_Structures
+enum e_CENTRAL_STRUCTURES
 {
     CS_None         =  0, 
     CS_Outpost      =  1, 
@@ -730,7 +739,7 @@ convert overland map terrain into combat map terrain
 enum e_COMBAT_TERRAIN_SET
 {
     cts_Water      = 0, 
-    cts_Plains     = 1, 
+    cts_Plains     = 1, /* only one that gets Carve_River_Terrain() */
     cts_Hills      = 2, 
     cts_Desert     = 3, 
     cts_Mountains  = 4, 
@@ -738,14 +747,14 @@ enum e_COMBAT_TERRAIN_SET
     cts_Forest     = 6
 };
 
-enum Combat_TileGroup
+enum e_COMBAT_TERRAIN_GROUP
 {
-    CTG_Grass       = 0, 
-    CTG_Rough       = 1,  /* Rough (Dirt) */
-    CTG_Dirt        = 2, 
-    CTG_River       = 3, 
-    CTG_DeepWater   = 4, 
-    CTG_IDK         = 5  // not used in Set_Movement_Cost_Maps()
+    ctg_Grass      = 0, 
+    CTG_Rough      = 1,  /* Rough (Dirt) */
+    ctg_Dirt       = 2, 
+    ctg_River      = 3, 
+    ctg_Ocean      = 4, 
+    ctg_NIU_5      = 5  // not used in Set_Movement_Cost_Maps()
 };
 
 enum e_BATTLEFIELD_TERRAIN_TYPE
@@ -797,7 +806,7 @@ enum CTILE_GFX
     CTILE_RightD1  = 30,
     CTILE_RightD2  = 31,
 
-    CTILE_DownRough  = 32,  /* starting index for when middle is CTG_Dirt */
+    CTILE_DownRough  = 32,  /* starting index for when middle is ctg_Dirt */
     CTILE_UpDownRough  = 33,
     CTILE_RightRough  = 34,
     CTILE_LeftRightRough  = 35,
@@ -1022,10 +1031,10 @@ struct s_CTY_ENCH
     /* 0x19 */
 };
 
-/*
-    MoO2 "board"
-*/
-// sizeof: 0x1598  5528d
+
+// sizeof: 0x1598  5528d  348 paragraphs = 5568 bytes
+#pragma pack(push)
+#pragma pack(2)
 struct s_BATTLEFIELD
 {
     /* 0x0000 */  int16_t  terrain_type[COMBAT_GRID_CELL_COUNT];    /* 21 x 22 */
@@ -1035,14 +1044,14 @@ struct s_BATTLEFIELD
     /* 0x0906 */  int8_t   MoveCost_Teleport[COMBAT_GRID_CELL_COUNT];
     /* 0x0AD4 */  int8_t   MoveCost_Ground2[COMBAT_GRID_CELL_COUNT];
     /* 0x0CA2 */  int8_t   MoveCost_Sailing[COMBAT_GRID_CELL_COUNT];
-    /* 0x0E70 */  int16_t  Tree_Count;
+    /* 0x0E70 */  int16_t  tree_count;
     /* 0x0E72 */  int16_t  Tree_DrawXs[100];
     /* 0x0F3A */  int16_t  Tree_DrawYs[100];
     /* 0x1002 */  int16_t  Tree_Indices[100];
-    /* 0x10CA */  int16_t  Rock_Count;
-    /* 0x10CC */  int16_t  Rock_DrawXs[100];
-    /* 0x1194 */  int16_t  Rock_DrawYs[100];
-    /* 0x125C */  int16_t  Rock_IMG_Segs[100];
+    /* 0x10CA */  int16_t  rock_count;
+    /* 0x10CC */  int16_t  rock_sx_array[100];
+    /* 0x1194 */  int16_t  rock_sy_array[100];
+    /* 0x125C */  SAMB_ptr rock_pict_segs[100];
     /* 0x1324 */  int8_t   muds[COMBAT_GRID_CELL_COUNT];    /* {F,T} combat map square is 'mud' */
     /* 0x14F2 */  int16_t  center_square_structure; // enum Central_Structures
     /* 0x14F4 */  int16_t  house_cnt;
@@ -1058,6 +1067,7 @@ struct s_BATTLEFIELD
     /* 0x1597 */  int8_t   Nightshades;  // ~ enchantment, but count, rather than player num bitfield
     /* 0x1598 */
 };
+#pragma pack(pop)
 
 
 // ; (sizeof=0x1E)
@@ -1680,7 +1690,7 @@ int16_t Lair_Combat_Do(int16_t lair_idx, int16_t player_idx);
 
 // WZD s96p05
 // drake178: WIZ_SetHostile()
-void Update_Defender_Hostility(int attacker_player_idx, int defender_player_idx);
+void Update_Defender_Hostility(int16_t attacker_player_idx, int16_t defender_player_idx);
 
 // WZD s96p06
 // UU_IDK_Main_Screen_Draw()
@@ -1810,7 +1820,7 @@ int16_t Combat_Info_Effects_Count(void);
 void Combat_Node_Type(void);
 
 // WZD s103p07
-void Battle_Unit_Compose_Bitmap(int battle_unit_idx);
+void Battle_Unit_Compose_Bitmap(int16_t battle_unit_idx);
 
 // WZD s103p08
 void Next_Battle_Unit(int16_t player_idx);
@@ -2266,31 +2276,31 @@ void Generate_Combat_Map(
 );
 
 // WZD ovr154p03
-// drake178: CMB_TreeGen()
+void Scatter_Tree_Scenery(int16_t TerrType, int16_t combat_location_type);
 
 // WZD ovr154p04
-// drake178: CMB_RockGen()
+void Scatter_Rock_Scenery(int16_t TerrType, int16_t combat_location_type);
 
 // WZD ovr154p05
-// drake178: CMB_RoadGen()
+void Build_Road_Network(int16_t location_type, int16_t * roads_array);
 
 // WZD ovr154p06
-// drake178: CMB_RiverGen()
+void Carve_River_Terrain(int16_t * RiverMatrix);
 
 // WZD ovr154p07
-// drake178: CMB_MergeDirt()
+void Merge_Dirt_Patches(void);
 
 // WZD ovr154p08
-// drake178: CMB_RemoveRough()
+void Remove_Rough_Terrain(int16_t combat_location_type);
 
 // WZD ovr154p09
-void CMB_TileGen__WIP(int16_t ctt);
+void Set_Terrain_Tile_Types(void);
 
 // WZD ovr154p10
 void Set_Movement_Cost_Maps(int16_t location_type, int16_t city_walls);
 
 // WZD ovr154p11
-void Patch_Terrain_Group(int16_t ctg, int16_t count, int16_t max, int16_t min);
+void Scatter_Terrain_Patches(int16_t ctg, int16_t patch_count, int16_t length_span, int16_t length_base);
 
 // WZD ovr154p12
 void Combat_Grid_Screen_Coordinates(int16_t cgx, int16_t cgy, int16_t cgx_subcell_offset, int16_t cgy_subcell_offset, int16_t * screen_x, int16_t * screen_y);

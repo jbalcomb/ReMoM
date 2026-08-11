@@ -12,12 +12,12 @@ Combat_Screen_Map_Draw()
 
 
 
-## CMB_TileGen__WIP()
+## Set_Terrain_Tile_Types()
 
 Generate_Combat_Map__WIP()
-    |-> CMB_TileGen__WIP()
+    |-> Set_Terrain_Tile_Types()
 
-CMB_TileGen__WIP(cts);
+Set_Terrain_Tile_Types(cts);
 ...ctt...cts...combat terrain type/set
 
     if(cts != cts_Water)
@@ -31,7 +31,7 @@ CMB_TileGen__WIP(cts);
 
 So, ...
     ¿ Generate_Combat_Map__WIP() populates battlefield->terrain_group[] ?
-    ¿ CMB_TileGen__WIP uses battlefield->terrain_group[] to populate battlefield->terrain_type[] ?
+    ¿ Set_Terrain_Tile_Types uses battlefield->terrain_group[] to populate battlefield->terrain_type[] ?
 
 
 
@@ -162,10 +162,10 @@ Generate_Combat_Map__WIP(Location_Type, City_House_Type, &Road_Matrix[0], Enchan
             for(itr_cgx = 0; itr_cgx < COMBAT_GRID_WIDTH; itr_cgx++)
                 battlefield->Tile_TerrGroup[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = CTG_Grass;
 
-    |-> CMB_TileGen__WIP()
+    |-> Set_Terrain_Tile_Types()
 
 
-CMB_TileGen__WIP()
+Set_Terrain_Tile_Types()
     for(itr_cgy = 0; itr_cgy < COMBAT_GRID_HEIGHT; itr_cgy++)
         for(itr_cgx = 0; itr_cgx < COMBAT_GRID_WIDTH; itr_cgx++)
             TerrGroup_UpLeft     = battlefield->Tile_TerrGroup[((((itr_cgy - 1) * COMBAT_GRID_WIDTH) + itr_cgx) - 1)];
@@ -205,7 +205,7 @@ Build_Battlefield()
     |-> Load_Combat_Terrain_Pictures(Terrain_Type, wp);
     ...
     |-> Generate_Combat_Map__WIP()
-        |-> CMB_TileGen__WIP()
+        |-> Set_Terrain_Tile_Types()
 ...reduces terrain to a single value in Build_Battlefield()
 ...passes that to Generate_Combat_Map__WIP()
 

@@ -170,15 +170,15 @@ The Production column carries the current name and line; the ASM column keeps th
 
 | Function (production) | Production | ASM (ground truth) | Result |
 | --- | --- | --- | --- |
-| `Combat_Screen` | [Combat.c:1405](../../MoM/src/Combat.c#L1405) | [ovr090/Combat_Screen__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr090/Combat_Screen__WIP.asm) (1724) | faithful |
-| `Allocate_Combat_Base_Blocks` | [Combat.c:23323](../../MoM/src/Combat.c#L23323) | [ovr163/CMB_BaseAllocs__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr163/CMB_BaseAllocs__WIP.asm) (76) | faithful |
-| `Combat_Screen_Load_Resources` | [Combat.c:7225](../../MoM/src/Combat.c#L7225) | [ovr103/CMB_LoadResources__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr103/CMB_LoadResources__WIP.asm) (386) | faithful |
-| `Allocate_Combat_Near_Buffers` | [Combat.c:876](../../MoM/src/Combat.c#L876) | [ovr103/CMB_SetNearAllocs__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr103/CMB_SetNearAllocs__WIP.asm) (59) | faithful |
+| `Combat_Screen` | [Combat.c:1408](../../MoM/src/Combat.c#L1408) | [ovr090/Combat_Screen__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr090/Combat_Screen__WIP.asm) (1724) | faithful |
+| `Allocate_Combat_Base_Blocks` | [Combat.c:23807](../../MoM/src/Combat.c#L23807) | [ovr163/CMB_BaseAllocs__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr163/CMB_BaseAllocs__WIP.asm) (76) | faithful |
+| `Combat_Screen_Load_Resources` | [Combat.c:7228](../../MoM/src/Combat.c#L7228) | [ovr103/CMB_LoadResources__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr103/CMB_LoadResources__WIP.asm) (386) | faithful |
+| `Allocate_Combat_Near_Buffers` | [Combat.c:7356](../../MoM/src/Combat.c#L7356) | [ovr103/CMB_SetNearAllocs__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr103/CMB_SetNearAllocs__WIP.asm) (59) | faithful |
 | `Cache_Graphics_Combat` | [LOADER.c:1832](../../MoM/src/LOADER.c#L1832) | [ovr052/Cache_Graphics_Combat.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr052/Cache_Graphics_Combat.asm) (13) | faithful |
-| `Build_Battlefield` | [Combat.c:21131](../../MoM/src/Combat.c#L21131) | [ovr154/CMB_Terrain_Init__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/CMB_Terrain_Init__WIP.asm) (627) | faithful |
-| `Prepare_All_Battle_Units` | [Combat.c:5041](../../MoM/src/Combat.c#L5041) | [ovr098/CMB_Units_Init__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/CMB_Units_Init__WIP.asm) (527) | faithful |
-| `Battle_Unit_Has_Spell_Ability` | [Combat.c:3661](../../MoM/src/Combat.c#L3661) | [ovr098/BU_HasSpellAbility__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/BU_HasSpellAbility__WIP.asm) (73) | faithful |
-| `NIU_Who_Has_More_Leadership` | [Combat.c:3692](../../MoM/src/Combat.c#L3692) | [ovr098/NIU_Who_Has_More_Leadership.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/NIU_Who_Has_More_Leadership.asm) (27) | faithful |
+| `Build_Battlefield` | [Combat.c:21132](../../MoM/src/Combat.c#L21132) | [ovr154/CMB_Terrain_Init__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/CMB_Terrain_Init__WIP.asm) (627) | faithful |
+| `Prepare_All_Battle_Units` | [Combat.c:5044](../../MoM/src/Combat.c#L5044) | [ovr098/CMB_Units_Init__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/CMB_Units_Init__WIP.asm) (527) | faithful |
+| `Battle_Unit_Has_Spell_Ability` | [Combat.c:3664](../../MoM/src/Combat.c#L3664) | [ovr098/BU_HasSpellAbility__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/BU_HasSpellAbility__WIP.asm) (73) | faithful |
+| `NIU_Who_Has_More_Leadership` | [Combat.c:3695](../../MoM/src/Combat.c#L3695) | [ovr098/NIU_Who_Has_More_Leadership.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/NIU_Who_Has_More_Leadership.asm) (27) | faithful |
 | `Load_Battle_Unit` | [COMBINIT.c:445](../../MoM/src/COMBINIT.c#L445) | [ovr116/Load_Battle_Unit.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/Load_Battle_Unit.asm) (286) | faithful |
 | `Unit_Gold_Upkeep` | [CITYCALC.c:242](../../MoM/src/CITYCALC.c#L242) | [ovr120/Unit_Gold_Upkeep.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr120/Unit_Gold_Upkeep.asm) (140) | faithful |
 | `Battle_Unit_Regular_Stats` | [COMBINIT.c:535](../../MoM/src/COMBINIT.c#L535) | [ovr116/BU_Init_Battle_Unit.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Init_Battle_Unit.asm) (478) | faithful |
@@ -190,9 +190,9 @@ The Production column carries the current name and line; the ASM column keeps th
 | `Apply_Enchantment_And_Mutation_Effects` | [COMBINIT.c:705](../../MoM/src/COMBINIT.c#L705) | [ovr116/BU_Apply_Specials.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Apply_Specials.asm) (509) | faithful |
 | `Unit_Moves2` | [NEXTTURN.c:1530](../../MoM/src/NEXTTURN.c#L1530) | [ovr121/Unit_Moves2.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr121/Unit_Moves2.asm) (244) | faithful |
 | `Unit_Hit_Points` | [COMBINIT.c:266](../../MoM/src/COMBINIT.c#L266) | [ovr116/Unit_Hit_Points.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/Unit_Hit_Points.asm) (216) | faithful |
-| `Get_Combat_Grid_Cell_X` | [Combat.c:22841](../../MoM/src/Combat.c#L22841) | [ovr154/Get_Combat_Grid_Cell_X.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/Get_Combat_Grid_Cell_X.asm) (25) | faithful |
-| `Get_Combat_Grid_Cell_Y` | [Combat.c:22850](../../MoM/src/Combat.c#L22850) | [ovr154/Get_Combat_Grid_Cell_Y.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/Get_Combat_Grid_Cell_Y.asm) (28) | faithful |
-| `Deploy_Battle_Units` | [Combat.c:12277](../../MoM/src/Combat.c#L12277) | [ovr113/Deploy_Battle_Units.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr113/Deploy_Battle_Units.asm) (375) | faithful |
+| `Get_Combat_Grid_Cell_X` | [Combat.c:23326](../../MoM/src/Combat.c#L23326) | [ovr154/Get_Combat_Grid_Cell_X.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/Get_Combat_Grid_Cell_X.asm) (25) | faithful |
+| `Get_Combat_Grid_Cell_Y` | [Combat.c:23335](../../MoM/src/Combat.c#L23335) | [ovr154/Get_Combat_Grid_Cell_Y.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/Get_Combat_Grid_Cell_Y.asm) (28) | faithful |
+| `Deploy_Battle_Units` | [Combat.c:12280](../../MoM/src/Combat.c#L12280) | [ovr113/Deploy_Battle_Units.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr113/Deploy_Battle_Units.asm) (375) | faithful |
 
 **Two header lines need correcting.**
 
@@ -385,7 +385,7 @@ Faithful. Production [Combat.c:7297](../../MoM/src/Combat.c#L7297).
 
 # Allocate_Combat_Near_Buffers
 
-Faithful. Production [Combat.c:876](../../MoM/src/Combat.c#L876).
+Faithful. Production [Combat.c:7356](../../MoM/src/Combat.c#L7356).
 
 Seven allocations then a 22-iteration loop then one more: 504, 504, 1008, 60, 60, 12, `22 ×` 21, 20. The loop literals settle the grid constants outright — asm:49 is `cmp _SI_itr, 22` and asm:40 is `mov ax, 21`, matching `COMBAT_GRID_HEIGHT` 22 and `COMBAT_GRID_WIDTH` 21 ([Combat.h:238-239](../../MoM/src/Combat.h#L238-L239)). Only the first call is `Near_Allocate_First`; all others are `Near_Allocate_Next`.
 
@@ -404,7 +404,7 @@ Faithful. Production [Combat.c:21787](../../MoM/src/Combat.c#L21787).
 - **The fortress scan runs only for populated cities** and sets `Location_Type = 3` plus a flag at `bp-18h` that is written and never read (asm:139-140). It has a real frame slot, so it is faithful-and-unused rather than phantom.
 - **The tower test checks `wx` and `wy` but not `wp`** (asm:254-273) — unlike the city, node and lair tests, which all check all three. Faithful; towers exist on both planes at the same coordinates.
 - **The road scan writes a 3×3 neighbourhood with a bounds check per cell** (asm:403-453), indexing the flat 9-element array by `(dy+1)*3 + (dx+1)`. The original bases at `&Road_Matrix[1]` with `(dy+1)*3 + dx` — same nine slots, same order.
-- **The river array is never written.** Zeroed at asm:387-398 and passed to `Generate_Combat_Map`, with no scan anywhere that fills it. Its consumer, `CMB_RiverGen`, is also unwritten.
+- **The river array is never written.** Zeroed at asm:387-398 and passed to `Generate_Combat_Map`, with no scan anywhere that fills it. Its consumer, `Carve_River_Terrain`, is also unwritten.
 - **`CMB_StoneWallType` is set to 0 by Mountains and Desert only** (asm:500, asm:511), then unconditionally to 1 when `wp == 1` (asm:558-560) — so the plane check overrides both, and an Arcanus battle on any other terrain inherits whatever the previous battle left. It is `dw 0` in `dseg` and written nowhere else.
 - **The Nature-node terrain override is vestigial but not dead** (asm:554-556). `Square_Is_Forest` already accepts `tt_NatureNode` ([Terrain.c:944](../../MoM/src/Terrain.c#L944)), so `cts` is `cts_Forest` before the override runs. It executes on every Nature node battle and changes nothing. Faithful — keep it.
 - **The RNG is saved and restored around map generation** (asm:562-564, asm:616-620), so terrain generation is deterministic from position and consumes nothing from the live sequence. The seed depends on the *product* `wx * wy`, so all coordinate pairs with the same product generate identical trees, rocks and houses, and the two planes differ by only `wx * wy` — making row 0 and column 0 identical across planes.
