@@ -53,7 +53,7 @@
 #define LOG_FILE_NEW         "remom_log_new.txt"
 #define LOG_FILE_CURRENT     "remom_log_current.txt"
 #define LOG_FILE_PREVIOUS    "remom_log_previous.txt"
-#define LOG_N_CATEGORIES     47
+#define LOG_N_CATEGORIES     50   /* categories 0..LOG_CAT_COMBAT_TEST(49); was 47, which under-sized cat_enabled[] past STU_GRAF/OGBUG */
 
 /* CALL_TRACE rng-call ordinal.  Definition lives here in libSTU so the
    stu_compat.h CALL_TRACE wrappers (part of libSTU via stu_compat.c) link
@@ -195,7 +195,8 @@ static const char * const log_cat_ini_key[] = {
     "MOX2",
     "CALL_TRACE",
     "STU_GRAF",
-    "OGBUG"
+    "OGBUG",
+    "COMBAT_TEST"
 };
 
 static void STU_Log_Config_Set_Defaults(void)
@@ -206,6 +207,8 @@ static void STU_Log_Config_Set_Defaults(void)
     {
         log_cfg.cat_enabled[i] = 1;
     }
+    /* Test-only category: off unless a test explicitly enables it (ini: COMBAT_TEST = true). */
+    log_cfg.cat_enabled[LOG_CAT_COMBAT_TEST] = 0;
 }
 
 static int STU_Log_CI_Eq(const char * a, const char * b)

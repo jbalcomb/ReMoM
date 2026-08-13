@@ -7,6 +7,7 @@
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_LOG.h"   /* LOG_CAT_COMBAT_TEST move-legality logging */
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _players, _screen_seg */
@@ -2139,9 +2140,19 @@ BUG: this has just been done in the parent function
 
             }
 
+        }  /* end of the if( in-cone || == dst ) */
+        else
+        {
+            /*
+                asm loc_948EA -> jmp loc_94C51:
+                a path cell outside the movement box that is not the destination ends the move loop.
+                Falling through to the next path cell let a quadrant-locked melee unit skip its out-of-box steps,
+                reach the destination cell (== the target unit),
+                and fire Attack_Step from its start square -> range>1 attack.
+            */
+            break;
         }
-
-    }
+    }  /* END: for(itr_grid = First_Step_Index; itr_grid < movement_path_grid_cell_count; itr_grid++) */
     /*
         END: Move-Path Movement Animation
     */
@@ -2224,6 +2235,20 @@ BUG: this has just been done in the parent function
         movement_points = _cmbt_mvpth_c[((battle_units[battle_unit_idx].cgy * COMBAT_GRID_WIDTH) + battle_units[battle_unit_idx].cgx)];
         battle_units[battle_unit_idx].movement_points -= movement_points;
 
+    }
+
+    /* CLAUDE: test-only combat-legality logging (LOG_CAT_COMBAT_TEST, off by default).
+       Emits the full move path so a checker can verify every step is grid-adjacent
+       (a non-adjacent step is the "streak across the map") and correlate the move to
+       its target.  Auto_Move_Unit is the one frame that holds mover + destination + target. */
+    if(STU_Log_Category_Enabled(LOG_CAT_COMBAT_TEST))
+    {
+        int16_t cmbt_test_k;
+        LOG_INFO(LOG_CAT_COMBAT_TEST, "MOVE turn=%d unit=%d target=%d dst=(%d,%d) final=(%d,%d) mp=%d pathlen=%d", (int)_combat_turn, (int)battle_unit_idx, (int)target_battle_unit_idx, (int)dst_cgx, (int)dst_cgy, (int)battle_units[battle_unit_idx].cgx, (int)battle_units[battle_unit_idx].cgy, (int)battle_units[battle_unit_idx].movement_points, (int)movement_path_grid_cell_count);
+        for(cmbt_test_k = 0; cmbt_test_k < movement_path_grid_cell_count; cmbt_test_k++)
+        {
+            LOG_INFO(LOG_CAT_COMBAT_TEST, "MOVE_STEP unit=%d seq=%d cell=(%d,%d)", (int)battle_unit_idx, (int)cmbt_test_k, (int)_cmbt_mvpth_x[cmbt_test_k], (int)_cmbt_mvpth_y[cmbt_test_k]);
+        }
     }
 
     return ST_TRUE;

@@ -5778,6 +5778,13 @@ void Combat_Grid_Entities(void)
         Battle_Unit_Set_Animation_Flags(itr);
         combat_curse_entity_idx = Battle_Unit_Curse_Effects(itr);
         Battle_Unit_Set_Invisibility_Effect(itr);
+        if(STU_Log_Category_Enabled(LOG_CAT_COMBAT_TEST))
+        {
+            if(battle_units[itr].mid_move == ST_TRUE)
+            {
+                LOG_INFO(LOG_CAT_COMBAT_TEST, "DRAW turn=%d unit=%d src=(%d,%d) dst=(%d,%d) ctr=%d cnt=%d mid=%d", (int)_combat_turn, (int)itr, (int)battle_units[itr].cgx, (int)battle_units[itr].cgy, (int)battle_units[itr].target_cgx, (int)battle_units[itr].target_cgy, (int)battle_units[itr].move_anim_ctr, (int)MOVE_ANIM_CNT, (int)battle_units[itr].mid_move);
+            }
+        }
         for(itr_figures = 0; itr_figures < unit_figure_count; itr_figures++)
         {
             Spawn_Figure_Entity(battle_units[itr].bufpi, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].move_anim_ctr, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].gibs, battle_units[itr].mid_move, battle_units[itr].Atk_FigLoss, 0);
@@ -14028,6 +14035,13 @@ void Battle_Unit_Attack(int16_t attacker_battle_unit_idx, int16_t defender_battl
         }
         battle_units[attacker_battle_unit_idx].target_cgx = battle_units[defender_battle_unit_idx].cgx;
         battle_units[attacker_battle_unit_idx].target_cgy = battle_units[defender_battle_unit_idx].cgy;
+        /* CLAUDE: test-only combat-legality logging (LOG_CAT_COMBAT_TEST, off by default).
+           A melee attack (mode=melee) with range>1 is an illegal attack -- a unit striking
+           a non-adjacent target. */
+        if(STU_Log_Category_Enabled(LOG_CAT_COMBAT_TEST))
+        {
+            LOG_INFO(LOG_CAT_COMBAT_TEST, "ATTACK turn=%d attacker=%d defender=%d attacker_cell=(%d,%d) defender_cell=(%d,%d) range=%d has_ranged=%d action=%d mode=%s", (int)_combat_turn, (int)attacker_battle_unit_idx, (int)defender_battle_unit_idx, (int)battle_units[attacker_battle_unit_idx].cgx, (int)battle_units[attacker_battle_unit_idx].cgy, (int)battle_units[defender_battle_unit_idx].cgx, (int)battle_units[defender_battle_unit_idx].cgy, (int)range_to_target, (int)(Battle_Unit_Has_Ranged_Attack(attacker_battle_unit_idx) != ST_FALSE), (int)battle_units[attacker_battle_unit_idx].action, (ranged_attack_flag == ST_TRUE) ? "ranged" : "melee");
+        }
         Battle_Unit_Attack_Target(attacker_battle_unit_idx, defender_battle_unit_idx, &defender_damage_array[0], &attacker_damage_array[0], ranged_attack_flag, 1);
         battle_units[defender_battle_unit_idx].Suppression += 1;
         attacker_damage_total = 0;
