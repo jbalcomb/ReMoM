@@ -32,11 +32,11 @@ computer player handles go-to + combat differently, elsewhere?
 stopping short is just for handling go-to
  - it uses the combat flag to decide to stop short, but unsets it because stopping short means it doesn't enter combat
 
-OVL_Action_Structure is Lair Index or City Index
+_combat_environ_idx is Lair Index or City Index
 attackee_idx = Obstacle_Value is Player Index for Lair/City or Unit Index
 OVL_Action_Type is 0 for Unit, 1 for City, 5 for Lair
 So, ...
-    no good reason for storing the attackee_idx and OVL_Action_Structure differently?
+    no good reason for storing the attackee_idx and _combat_environ_idx differently?
 per the code structure they belong to different parts of the code?
 
 
@@ -186,7 +186,7 @@ cmp     [OVL_Action_Type], 5            ; sets in STK_EvaluatePath()
 
 ; Moved at a Lair
 push    [bp+player_idx]                 ; Player_Index
-push    [OVL_Action_Structure]          ; Zone_Index
+push    [_combat_environ_idx]          ; Zone_Index
 call    j_EZ_Resolve                    ; resolves movement onto the square of an lair,
                                         ; from the entry dialog to the treasure rewards
                                         ; returns 1 if the encounter was cleared, 0 if not,
@@ -232,15 +232,15 @@ some relationship between CRP_OVL_Obstacle_Var1 and OVL_MapVar3
 
 
 ### OVL_Action_Type
-### OVL_Action_Structure
+### _combat_environ_idx
 
 dseg:9284 00 00                                           OVL_Action_Type dw 0                    ; DATA XREF: CMB_TacticalCombat:loc_75EC4r ...
 dseg:9284                                                                                         ; sets in Eval_Move_Path__WIP() (AKA STK_EvaluatePath)
 dseg:9284                                                                                         ; set to 0 when pathing onto an enemy stack
 dseg:9284                                                                                         ; set to 1 when pathing onto an enemy city
 dseg:9284                                                                                         ; set to 5 when pathing onto a lair
-dseg:9286                                                 ; int OVL_Action_Structure
-dseg:9286 00 00                                           OVL_Action_Structure dw 0               ; DATA XREF: EZ_Resolve+92r ...
+dseg:9286                                                 ; int _combat_environ_idx
+dseg:9286 00 00                                           _combat_environ_idx dw 0               ; DATA XREF: EZ_Resolve+92r ...
 dseg:9286                                                                                         ; index of the City or Lair being pathed into
 
 

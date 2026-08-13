@@ -97,10 +97,10 @@ unit damage
 
 
 CMB_DrawSummaryText()
-CMB_ScrollMsg_Type
+combat_results_scroll_message
 
 
-### CMB_ScrollMsg_Type
+### combat_results_scroll_message
 
 {1,...,12}
 Tactical_Combat()
@@ -152,17 +152,17 @@ WZD dseg:5FBD   " has fallen to raiders"
 
 
 XREF:  (11)
-    End_Of_Combat__WIP()          mov  [CMB_ScrollMsg_Type], ax
-    Combat_Results_Scroll()       cmp  [CMB_ScrollMsg_Type], 4
-    Combat_Results_Scroll()       cmp  [CMB_ScrollMsg_Type], 1
-    Combat_Results_Scroll()       cmp  [CMB_ScrollMsg_Type], 5
-    Combat_Results_Scroll()       cmp  [CMB_ScrollMsg_Type], 6
-    Combat_Results_Scroll()       cmp  [CMB_ScrollMsg_Type], 1
-    Combat_Results_Scroll()       cmp  [CMB_ScrollMsg_Type], 5
-    Combat_Results_Scroll()       cmp  [CMB_ScrollMsg_Type], 6
-    Combat_Results_Scroll_Text()  mov  bx, [CMB_ScrollMsg_Type]
-    STK_CaptureCity()             mov  [CMB_ScrollMsg_Type], 1
-    STK_CaptureCity()             mov  [CMB_ScrollMsg_Type], 12
+    End_Of_Combat__WIP()          mov  [combat_results_scroll_message], ax
+    Combat_Results_Scroll()       cmp  [combat_results_scroll_message], 4
+    Combat_Results_Scroll()       cmp  [combat_results_scroll_message], 1
+    Combat_Results_Scroll()       cmp  [combat_results_scroll_message], 5
+    Combat_Results_Scroll()       cmp  [combat_results_scroll_message], 6
+    Combat_Results_Scroll()       cmp  [combat_results_scroll_message], 1
+    Combat_Results_Scroll()       cmp  [combat_results_scroll_message], 5
+    Combat_Results_Scroll()       cmp  [combat_results_scroll_message], 6
+    Combat_Results_Scroll_Text()  mov  bx, [combat_results_scroll_message]
+    STK_CaptureCity()             mov  [combat_results_scroll_message], 1
+    STK_CaptureCity()             mov  [combat_results_scroll_message], 12
 
 
 

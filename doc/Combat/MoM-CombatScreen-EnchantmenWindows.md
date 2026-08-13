@@ -48,9 +48,9 @@ Where does combat_enchantments[] get populated?
                 YNM combat_enchantments[DARKNESS_ATTKR] = 3;
                 YNM combat_enchantments[DARKNESS_ATTKR] = 3;
     Combat_Structure()
-        if(_CITIES[OVL_Action_Structure].enchantments[HEAVENLY_LIGHT] > 0)
+        if(_CITIES[_combat_environ_idx].enchantments[HEAVENLY_LIGHT] > 0)
             combat_enchantments[TRUE_LIGHT_DFNDR] = 2;
-        if(_CITIES[OVL_Action_Structure].enchantments[CLOUD_OF_SHADOW] > 0)
+        if(_CITIES[_combat_environ_idx].enchantments[CLOUD_OF_SHADOW] > 0)
             combat_enchantments[DARKNESS_DFNDR] = 2;
 
 Eternal Night

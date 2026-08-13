@@ -200,7 +200,7 @@ calls Combat()
 with the troops array
 combat_attacker_player is player_idx
 combat_defender_player is hard-coded to NEUTRAL_PLAYER
-does not used OVL_Action_Structure
+does not used _combat_environ_idx
 ...which means it's doing something Combat() must have been doing already?
 ...in Move_Units(), for stack/city combat, it passes the existing parameters directly
 
@@ -240,16 +240,16 @@ Eval_Move_Path() sets {0,1,5}
 
 
 
-### OVL_Action_Structure
+### _combat_environ_idx
 
-WZD dseg:9286 00 00                                           OVL_Action_Structure dw 0
+WZD dseg:9286 00 00                                           _combat_environ_idx dw 0
 
-when OVL_Action_Type is 1, OVL_Action_Structure contains the City Index
-when OVL_Action_Type is 5, OVL_Action_Structure contains the Lair Index
+when OVL_Action_Type is 1, _combat_environ_idx contains the City Index
+when OVL_Action_Type is 5, _combat_environ_idx contains the Lair Index
 
-in the data segment, OVL_Action_Structure is followed by 14 *unused* bytes, so it may have been a ((common) paragraph sized) structure
+in the data segment, _combat_environ_idx is followed by 14 *unused* bytes, so it may have been a ((common) paragraph sized) structure
 
-in Lair_Combat(), the code uses OVL_Action_Structure instead of the passed in lair_idx
+in Lair_Combat(), the code uses _combat_environ_idx instead of the passed in lair_idx
 and this is only for setting _combat_wx, _combat_wy, and _combat_wp
 Macro? API Boundary?
 Why aren't they in the structure?

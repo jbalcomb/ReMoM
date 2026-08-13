@@ -832,7 +832,7 @@ static void HeMoM_Replay_Log_Field_Hit(void *log, int mouse_x, int mouse_y)
 /*  results as `key = value` text for the CTest assertion step.              */
 /*                                                                           */
 /*  Both combatants must be computer players: the dispatcher then routes to  */
-/*  Strategic_Combat__WIP() (auto-resolve), which runs headlessly.  A human  */
+/*  Strategic_Combat() (auto-resolve), which runs headlessly.  A human  */
 /*  combatant would route to the tactical battle screen, which this tracer   */
 /*  does not support yet.                                                    */
 /* ========================================================================= */

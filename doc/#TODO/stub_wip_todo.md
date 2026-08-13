@@ -83,7 +83,7 @@
 - [ ] City_Screen_Draw__WIP
 
 ## Combat
-- [x] Find_Undead_Creator_Type — was CMB_GetUndeadCreator; done-done 2026-07-23 (Combat.c:22225; faithful 1:1, builds clean; B1 cross-player hero-slot index preserved — see doc/#CodeReview/SPLMASTR-Undead_Animation.md)
+- [x] Find_Undead_Creator_Type — was CMB_GetUndeadCreator; done-done 2026-07-23 (Combat.c:15644; faithful 1:1, builds clean; B1 cross-player hero-slot index preserved — see doc/#CodeReview/SPLMASTR-Undead_Animation.md)
 - [ ] AI_BU_AssignAction — renamed from AI_BU_AssignAction__WIP; impl (CMBTAI.c:968), needs done-done review (name verified 2026-07-21)
 - [x] AI_BU_GetAttackValue__STUB
 - [ ] AI_BU_ProcessAction — renamed from AI_BU_ProcessAction__WIP; impl (CMBTAI.c:268), needs done-done review (name verified 2026-07-21)
@@ -154,12 +154,12 @@
 - [x] Combat_Screen_Map_Draw_Entities — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); Combat.c:19908, faithful against ovr153/Combat_Screen_Map_Draw_Entities__WIP.asm
 - [ ] Combat_Spell_Target_Screen__WIP
 - [ ] Do_Legal_Spell_Check__WIP
-- [ ] End_Of_Combat__WIP
+- [x] End_Of_Combat — done-done 2026-08-10 (doc/#CodeReview/Combat-End_Of_Combat.md); renamed from End_Of_Combat__WIP, Combat.c:14752, faithful against ovr123/End_Of_Combat__WIP.asm; review covers the whole ovr123 overlay plus the ovr098 retreat chain (Retreat_From_Combat, Process_Retreating_Units, Build_Flee_Loss_Message) and ovr124/Raze_Check — 11 functions, 6,028 asm lines, 44 findings
 - [x] Generate_Combat_Map — done-done 2026-08-08 (doc/#CodeReview/Combat-Generate_Combat_Map.md); renamed from Generate_Combat_Map__WIP, Combat.c:21438, faithful against ovr154/Generate_Combat_Map.asm; all eight subfunctions implemented, renamed and walked
 - [x] Move_Battle_Unit__WIP — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; suffix already dropped in source, Combat.c:3067; instant-move flat-2 deduction and move_anim_ctr increment fixed; D1 pacing/sound-size divergences recorded)
 - [ ] STK_CaptureCity__WIP
-- [ ] STK_ComposeFleeLost__STUB
-- [ ] Strategic_Combat__WIP
+- [x] Build_Flee_Loss_Message — done-done 2026-08-10 (doc/#CodeReview/Combat-End_Of_Combat.md); renamed from STK_ComposeFleeLost__STUB, Combat.c:5195, faithful against ovr098/STK_ComposeFleeLost__STUB.asm
+- [x] Strategic_Combat — done-done 2026-08-11 (doc/#CodeReview/Combat-Strategic_Combat.md); renamed from Strategic_Combat__WIP, Combat.c:8214, faithful against ovr110/Strategic_Combat__STUB.asm; 8 findings and 5 deviations applied, all locals named, frame order preserved, builds clean; Strategic_Combat_Allocate (Combat.c:8196) walked with it
 - [ ] UU15_AITP_Disintegrate — MISSING (comment-only, Combat.c:12245); likely not needed (Disintegrate targeted inline in AITP_Combat_Spell's resistance-kill case); verify no caller, then strike
 - [ ] WIZ_GetLastRangedStr__WIP
 

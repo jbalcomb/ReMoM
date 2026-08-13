@@ -22,6 +22,6 @@ Scatter_Rock_Scenery(cts, location_type);
                         // ; INCONSISTENT: Lawful wizards disproportionately
                         // ;  adjust based on whether hidden relation is 0 or not
                         // ; BUG? surviving units are checked without owners
-                        // TODO  GAME_RazeCity = Raze_Check(player_idx, OVL_Action_Structure);
+                        // TODO  GAME_RazeCity = Raze_Check(player_idx, _combat_environ_idx);
                         GAME_RazeCity = ST_FALSE;
 

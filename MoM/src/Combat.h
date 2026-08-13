@@ -9,7 +9,7 @@
         ovr099  ¿ MoO2  Module: CMBTDRW1 ?
         ovr103
         ovr105
-        ovr110
+        ovr110  ¿ Strategic Combat ?
         ovr111  ¿ AITP.* ?
         ovr112  ¿ LBX CMBMAGIC ?
         ovr116  MoO2  COMBINIT
@@ -31,103 +31,6 @@
 
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_TYPE.h"
-
-#include <stdint.h> /* _Static_assert */
-
-
-
-/*
-
-if(combat_enchantments[CALL_LIGHTNING_DFNDR] != 0)
-
-
-like with Update_Combat_Enchantments_Icon_And_Help()
-// even/odd - attacker/defender
-if((itr % 2) == 0)
-    _combat_enchantments_attacker[attacker_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
-    _combat_enchantments_attacker[attacker_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
-else
-    _combat_enchantments_defender[defender_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
-    _combat_enchantments_defender[defender_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
-
-*/
-#define TRUE_LIGHT_ATTKR 0
-#define TRUE_LIGHT_DFNDR 1
-#define DARKNESS_ATTKR 2
-#define DARKNESS_DFNDR 3
-#define WARP_REALITY_ATTKR 4
-#define WARP_REALITY_DFNDR 5
-#define BLACK_PRAYER_ATTKR 6
-#define BLACK_PRAYER_DFNDR 7
-#define WRACK_ATTKR 8
-#define WRACK_DFNDR 9
-#define METAL_FIRES_ATTKR 10
-#define METAL_FIRES_DFNDR 11
-#define PRAYER_ATTKR 12
-#define PRAYER_DFNDR 13
-#define HIGH_PRAYER_ATTKR 14
-#define HIGH_PRAYER_DFNDR 15
-#define TERROR_ATTKR 16
-#define TERROR_DFNDR 17
-#define CALL_LIGHTNING_ATTKR 18
-#define CALL_LIGHTNING_DFNDR 19
-#define COUNTER_MAGIC_ATTKR 20
-#define COUNTER_MAGIC_DFNDR 21
-#define MASS_INVISIBILITY_ATTKR 22
-#define MASS_INVISIBILITY_DFNDR 23
-#define ENTANGLE_ATTKR 24
-#define ENTANGLE_DFNDR 25
-#define MANA_LEAK_ATTKR 26
-#define MANA_LEAK_DFNDR 27
-#define BLUR_ATTKR 28
-#define BLUR_DFNDR 29
-
-// CLAUDE  /*
-// CLAUDE  spell_data_table[spell_idx].cmbt_ench_idx  (AKA spell_data_table[spell_idx].Param0)
-// CLAUDE  MoO2 and manual say "side"
-// CLAUDE  CC says "it's reasonable to defer it to whenever ovr111/ovr112 get reviewed, since those are the files that force the flat view."
-// CLAUDE  ...
-// CLAUDE  "the flat view"
-// CLAUDE      e.g.,
-// CLAUDE          AITP_Combat_Spell()
-// CLAUDE              if(combat_enchantments[*(int16_t *)&spell_data_table[spell_idx].Param0 + Unit_Resist] > 0)
-// CLAUDE  
-// CLAUDE  */
-// CLAUDE  
-// CLAUDE  /* WIZARDS.inc:  struc s_COMBAT_ENCHANTMENT_STATUS  (sizeof=0x2) */
-// CLAUDE  struct s_COMBAT_ENCHANTMENT_STATUS
-// CLAUDE  {
-// CLAUDE      /* 00 */  int8_t Attkr;
-// CLAUDE      /* 01 */  int8_t Dfndr;
-// CLAUDE  };
-// CLAUDE  
-// CLAUDE  /* WIZARDS.inc:  struc s_COMBAT_ENCHANTMENTS  (sizeof=0x1E) */
-// CLAUDE  struct s_COMBAT_ENCHANTMENTS
-// CLAUDE  {
-// CLAUDE      /* 00 */  struct s_COMBAT_ENCHANTMENT_STATUS True_Light;
-// CLAUDE      /* 02 */  struct s_COMBAT_ENCHANTMENT_STATUS Darkness;
-// CLAUDE      /* 04 */  struct s_COMBAT_ENCHANTMENT_STATUS Warp_Reality;
-// CLAUDE      /* 06 */  struct s_COMBAT_ENCHANTMENT_STATUS Black_Prayer;
-// CLAUDE      /* 08 */  struct s_COMBAT_ENCHANTMENT_STATUS Wrack;
-// CLAUDE      /* 0A */  struct s_COMBAT_ENCHANTMENT_STATUS Metal_Fires;
-// CLAUDE      /* 0C */  struct s_COMBAT_ENCHANTMENT_STATUS Prayer;
-// CLAUDE      /* 0E */  struct s_COMBAT_ENCHANTMENT_STATUS High_Prayer;
-// CLAUDE      /* 10 */  struct s_COMBAT_ENCHANTMENT_STATUS Terror;
-// CLAUDE      /* 12 */  struct s_COMBAT_ENCHANTMENT_STATUS Call_Lightning;
-// CLAUDE      /* 14 */  struct s_COMBAT_ENCHANTMENT_STATUS Counter_Magic;
-// CLAUDE      /* 16 */  struct s_COMBAT_ENCHANTMENT_STATUS Mass_Invisibility;
-// CLAUDE      /* 18 */  struct s_COMBAT_ENCHANTMENT_STATUS Entangle;
-// CLAUDE      /* 1A */  struct s_COMBAT_ENCHANTMENT_STATUS Mana_Leak;
-// CLAUDE      /* 1C */  struct s_COMBAT_ENCHANTMENT_STATUS Blur;
-// CLAUDE  };
-// CLAUDE  
-// CLAUDE  #define NUM_COMBAT_ENCHANTMENT_SLOTS 30  /* 15 enchantments x { Attkr, Dfndr } */
-// CLAUDE  
-// CLAUDE  union u_COMBAT_ENCHANTMENTS
-// CLAUDE  {
-// CLAUDE      struct s_COMBAT_ENCHANTMENTS by_name;       /* effect code:  ->by_name.Terror.Attkr */
-// CLAUDE      int8_t slot[NUM_COMBAT_ENCHANTMENT_SLOTS];  /* spell/AI code: ->slot[TERROR_ATTKR]  */
-// CLAUDE  };
 
 
 
@@ -638,6 +541,28 @@ battle_units[].Attribs_1
 
 
 
+/*
+combat_results_scroll_message
+~== Combat_Screen()  end_of_combat_message_type ... passed to End_Of_Combat()
+~== Strategic_Combat()  end_of_combat_message_type ... passed to End_Of_Combat()
+*/
+enum e_COMBAT_SCROLL_MESSAGE_TYPE
+{
+    csmt_Victory           =  1,  // Victory, Tactical      CMBWIN  MESSAGE.LBX 5
+    csmt_Defeat            =  2,  // Defeat, Tactical       CMBLOSE MESSAGE.LBX 6
+    csmt_PlayerFled        =  3,  // Fled, Tactical         CMBLOSE MESSAGE.LBX 7 + GUI_NearMsgString paragraph
+    csmt_TurnLimit         =  4,  // Draw                   CMBLOSE MESSAGE.LBX 8
+    csmt_EnemyFled         =  5,  // Enemy Fled             CMBWIN  MESSAGE.LBX 9
+    csmt_VictoryStrategic  =  6,  // Victory, Strategic     CMBWIN  MESSAGE.LBX 5
+    csmt_DefeatStrategic   =  7,  // Defeat, Strategic      CMBLOSE MESSAGE.LBX 6
+    csmt_NIU_08            =  8,  // DNE / NIU
+    csmt_NIU_09            =  9,  // DNE / NIU
+    csmt_NIU_10            = 10,  // DNE / NIU
+    csmt_NIU_11            = 11,  // DNE / NIU
+    csmt_CityLost          = 12   // City Lost              CMBLOSE "[city name] has been conquered"
+};
+
+
 enum e_COMBAT_ATTACK_MODE
 {
     am_Melee            = 0,
@@ -868,7 +793,7 @@ enum e_BATTLE_UNIT_STATUS
 {
     bus_Active      = 0,  /* ~== Alive; checked for 'attackable' target */
     bus_Recalled    = 1,  /* ¿ ? */
-    bus_Flee     = 2,  /* ¿ ? */
+    bus_Fleeing     = 2,  /* the progressive tense is meaningful, this is a transitory state */
     bus_Uninvolved  = 3,  /* ~ "can not engage" used for 'Floating Island', Transports, etc.; included in 'Flee'; EoC, set to bus_Active; */
     bus_Dead        = 4,  /* ¿ ? */
     bus_Drained     = 5,  /* ¿ ? */
@@ -954,22 +879,52 @@ enum e_BATTLE_UNIT_EFFECT
     bue_NoEffect          = 0x8000
 };
 
+/*
 
-enum e_CMB_ScrollMsg_Type
-{
-    cmbmsg_AttVictory  =  1,  // ; combat victory
-    cmbmsg_AttDefeat   =  2,  // ; combat defeat
-    cmbmsg_AttFled     =  3,  // ; combat fled
-    cmbmsg_Draw        =  4,  // ; combat draw
-    cmbmsg_DefFled     =  5,  // ; combat enemy fled
-    cmbmsg_DefVictory  =  6,  // ; combat victory
-    cmbmsg_DefDefeat   =  7,  // ; combat defeat
-    cmbmsg_IDK_08      =  8,  // ; 8-11 - ??? (no extra text)
-    cmbmsg_IDK_09      =  9,
-    cmbmsg_IDK_10      = 10,
-    cmbmsg_IDK_11      = 11,
-    cmbmsg_CityLost    = 12   // ; city lost
-};
+if(combat_enchantments[CALL_LIGHTNING_DFNDR] != 0)
+
+
+like with Update_Combat_Enchantments_Icon_And_Help()
+// even/odd - attacker/defender
+if((itr % 2) == 0)
+    _combat_enchantments_attacker[attacker_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
+    _combat_enchantments_attacker[attacker_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
+else
+    _combat_enchantments_defender[defender_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
+    _combat_enchantments_defender[defender_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
+
+*/
+
+#define TRUE_LIGHT_ATTKR 0
+#define TRUE_LIGHT_DFNDR 1
+#define DARKNESS_ATTKR 2
+#define DARKNESS_DFNDR 3
+#define WARP_REALITY_ATTKR 4
+#define WARP_REALITY_DFNDR 5
+#define BLACK_PRAYER_ATTKR 6
+#define BLACK_PRAYER_DFNDR 7
+#define WRACK_ATTKR 8
+#define WRACK_DFNDR 9
+#define METAL_FIRES_ATTKR 10
+#define METAL_FIRES_DFNDR 11
+#define PRAYER_ATTKR 12
+#define PRAYER_DFNDR 13
+#define HIGH_PRAYER_ATTKR 14
+#define HIGH_PRAYER_DFNDR 15
+#define TERROR_ATTKR 16
+#define TERROR_DFNDR 17
+#define CALL_LIGHTNING_ATTKR 18
+#define CALL_LIGHTNING_DFNDR 19
+#define COUNTER_MAGIC_ATTKR 20
+#define COUNTER_MAGIC_DFNDR 21
+#define MASS_INVISIBILITY_ATTKR 22
+#define MASS_INVISIBILITY_DFNDR 23
+#define ENTANGLE_ATTKR 24
+#define ENTANGLE_DFNDR 25
+#define MANA_LEAK_ATTKR 26
+#define MANA_LEAK_DFNDR 27
+#define BLUR_ATTKR 28
+#define BLUR_DFNDR 29
 
 struct s_COMBAT_ENCHANTMENT_STATUS
 {
@@ -998,6 +953,53 @@ struct s_COMBAT_ENCHANTMENTS
     /* 1C */  struct s_COMBAT_ENCHANTMENT_STATUS Blur;
     /* 1E */
 };
+
+// CLAUDE  /*
+// CLAUDE  spell_data_table[spell_idx].cmbt_ench_idx  (AKA spell_data_table[spell_idx].Param0)
+// CLAUDE  MoO2 and manual say "side"
+// CLAUDE  CC says "it's reasonable to defer it to whenever ovr111/ovr112 get reviewed, since those are the files that force the flat view."
+// CLAUDE  ...
+// CLAUDE  "the flat view"
+// CLAUDE      e.g.,
+// CLAUDE          AITP_Combat_Spell()
+// CLAUDE              if(combat_enchantments[*(int16_t *)&spell_data_table[spell_idx].Param0 + Unit_Resist] > 0)
+// CLAUDE  
+// CLAUDE  */
+// CLAUDE  
+// CLAUDE  /* WIZARDS.inc:  struc s_COMBAT_ENCHANTMENT_STATUS  (sizeof=0x2) */
+// CLAUDE  struct s_COMBAT_ENCHANTMENT_STATUS
+// CLAUDE  {
+// CLAUDE      /* 00 */  int8_t Attkr;
+// CLAUDE      /* 01 */  int8_t Dfndr;
+// CLAUDE  };
+// CLAUDE  
+// CLAUDE  /* WIZARDS.inc:  struc s_COMBAT_ENCHANTMENTS  (sizeof=0x1E) */
+// CLAUDE  struct s_COMBAT_ENCHANTMENTS
+// CLAUDE  {
+// CLAUDE      /* 00 */  struct s_COMBAT_ENCHANTMENT_STATUS True_Light;
+// CLAUDE      /* 02 */  struct s_COMBAT_ENCHANTMENT_STATUS Darkness;
+// CLAUDE      /* 04 */  struct s_COMBAT_ENCHANTMENT_STATUS Warp_Reality;
+// CLAUDE      /* 06 */  struct s_COMBAT_ENCHANTMENT_STATUS Black_Prayer;
+// CLAUDE      /* 08 */  struct s_COMBAT_ENCHANTMENT_STATUS Wrack;
+// CLAUDE      /* 0A */  struct s_COMBAT_ENCHANTMENT_STATUS Metal_Fires;
+// CLAUDE      /* 0C */  struct s_COMBAT_ENCHANTMENT_STATUS Prayer;
+// CLAUDE      /* 0E */  struct s_COMBAT_ENCHANTMENT_STATUS High_Prayer;
+// CLAUDE      /* 10 */  struct s_COMBAT_ENCHANTMENT_STATUS Terror;
+// CLAUDE      /* 12 */  struct s_COMBAT_ENCHANTMENT_STATUS Call_Lightning;
+// CLAUDE      /* 14 */  struct s_COMBAT_ENCHANTMENT_STATUS Counter_Magic;
+// CLAUDE      /* 16 */  struct s_COMBAT_ENCHANTMENT_STATUS Mass_Invisibility;
+// CLAUDE      /* 18 */  struct s_COMBAT_ENCHANTMENT_STATUS Entangle;
+// CLAUDE      /* 1A */  struct s_COMBAT_ENCHANTMENT_STATUS Mana_Leak;
+// CLAUDE      /* 1C */  struct s_COMBAT_ENCHANTMENT_STATUS Blur;
+// CLAUDE  };
+// CLAUDE  
+// CLAUDE  #define NUM_COMBAT_ENCHANTMENT_SLOTS 30  /* 15 enchantments x { Attkr, Dfndr } */
+// CLAUDE  
+// CLAUDE  union u_COMBAT_ENCHANTMENTS
+// CLAUDE  {
+// CLAUDE      struct s_COMBAT_ENCHANTMENTS by_name;       /* effect code:  ->by_name.Terror.Attkr */
+// CLAUDE      int8_t slot[NUM_COMBAT_ENCHANTMENT_SLOTS];  /* spell/AI code: ->slot[TERROR_ATTKR]  */
+// CLAUDE  };
 
 
 //  sizeof: 19h  25d
@@ -1053,7 +1055,7 @@ struct s_BATTLEFIELD
     /* 0x1194 */  int16_t  rock_sy_array[100];
     /* 0x125C */  SAMB_ptr rock_pict_segs[100];
     /* 0x1324 */  int8_t   muds[COMBAT_GRID_CELL_COUNT];    /* {F,T} combat map square is 'mud' */
-    /* 0x14F2 */  int16_t  center_square_structure; // enum Central_Structures
+    /* 0x14F2 */  int16_t  center_square_structure; // enum e_CENTRAL_STRUCTURES
     /* 0x14F4 */  int16_t  house_cnt;
     /* 0x14F6 */  int16_t  house_cgxs[16];      // [4][4]
     /* 0x1516 */  int16_t  house_cgys[16];      // [4][4]
@@ -1474,7 +1476,7 @@ extern int16_t * CMB_LostBuildings;
 extern int16_t CMB_Population_Lost;
 
 // WZD dseg:C97E
-extern int16_t CMB_ScrollMsg_Type;
+extern int16_t combat_results_scroll_message;
 
 // WZD dseg:CF9A
 extern SAMB_ptr EmmHndl_TILEXXX;
@@ -1766,7 +1768,7 @@ SAMB_ptr Get_Battle_Unit_Move_Sound_Buffer(int16_t battle_unit_idx, /* HACK */ u
 void Turn_Off_Auto_Combat(void);
 
 // WZD o98p22
-void STK_ComposeFleeLost__STUB(int16_t troop_count, int16_t troop_list[]);
+void Build_Flee_Loss_Message(int16_t troop_count, int16_t troop_list[]);
 
 
 
@@ -1898,7 +1900,7 @@ void Draw_Combat_Unit_Display(void);
 void Strategic_Combat_Allocate(void);
 
 // WZD o110p02
-int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[]);
+int16_t Strategic_Combat(int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[]);
 
 // WZD o110p03
 void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t Healing, int16_t TempHits);
@@ -2059,7 +2061,7 @@ int16_t Apply_Fear_Attack(int16_t attacker_battle_unit_idx, int16_t defender_bat
 */
 
 // WZD o123p01
-void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_list[], int16_t MsgType);
+void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[], int16_t MsgType);
 
 // WZD o123p02
 int16_t Find_Undead_Creator_Type(int16_t player_idx);

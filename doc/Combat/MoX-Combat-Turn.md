@@ -280,10 +280,10 @@ set to ST_TRUE in Check_For_Winner() if AI decides to Flee
 checked after existing screen-loop in Tactical_Combat__WIP()
 used to set Battle_Result for End_Of_Combat__WIP()
 ...in End_Of_Combat__WIP(..., MsgType)
-        CMB_ScrollMsg_Type = MsgType  (only usage)
+        combat_results_scroll_message = MsgType  (only usage)
     ...in Combat_Results_Scroll() and Combat_Results_Scroll_Text()
-        CMB_ScrollMsg_Type
-        switch(CMB_ScrollMsg_Type)
+        combat_results_scroll_message
+        switch(combat_results_scroll_message)
             LBX_Load_Data_Static(message_lbx_file__ovr123)
             "Your opponent has fled"
 
@@ -378,7 +378,7 @@ Tactical_Combat__WIP()
     _computer_player_did_flee = ST_FALSE;  // ; set to 1 if the AI decides to flee
     Player_Fled = ST_FALSE;
     if(OVL_Action_Type == 1)  /* Stack vs. City */
-        String_Copy_Far(CMB_CityName, _CITIES[OVL_Action_Structure].name);
+        String_Copy_Far(CMB_CityName, _CITIES[_combat_environ_idx].name);
     Allocate_Combat_Base_Blocks();
     Combat_Screen_Load_Resources();
     _combat_wx = wx;

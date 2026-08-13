@@ -24,7 +24,7 @@ extern int16_t * _battlefield_resistall;
 extern int16_t * _battlefield_holybonus;
 
 // WZD dseg:C8A2
-// NIU  extern int16_t * CMB_IDK_4PR;
+extern int16_t * _niu_battlefield_effect;
 // WZD dseg:C8A6
 extern int16_t _combat_spell_target_type;
 // WZD dseg:C8A8

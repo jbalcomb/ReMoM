@@ -822,7 +822,6 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
 // WZD o55p07
 // ~ MoO2  Module: CMBTFIRE  Apply_Damage_To_Planet_()
 /*
-
 city_idx
     index into _CITIES[]
 population_lost
@@ -831,75 +830,38 @@ bldg_chance
     chance of building being destroyed
 bldg_list[]
     array of bldg_status, of each NUM_BUILDINGS
-
-    called from End_Of_Combat()
-        |-> CTY_ApplyDamage(OVL_Action_Structure, IDK_population_lost, Destruction_Chance, &Buildings_Lost[0]);
-
-Aplly_Call_The_Void()
-    CTY_ApplyDamage(city_idx, population_lost, 50, &bldg_status[0]);
-
-XREF:
-    j_City_Apply_Damage()
-        End_Of_Combat__WIP()
-        Apply_Call_The_Void()
-        CTY_Earthquake()
-        Call_Forth_The_Force_Of_Nature()
-        Cast_RaiseVolcano()
-        CTY_ChaosRift()
-        WIZ_MeteorStorm()
-
 */
 void Apply_Damage_To_City(int16_t city_idx, int16_t population_lost, int16_t bldg_chance, int16_t bldg_list[])
 {
     int16_t bldg_roll = 0;
     int16_t bldg_ctr = 0;
     int16_t itr_buildings = 0;
-    
     if(bldg_chance > 0)
     {
-
         bldg_ctr = 0;
-
         for(itr_buildings = 1; itr_buildings < NUM_BUILDINGS; itr_buildings++)
         {
-
             if(_CITIES[city_idx].bldg_status[itr_buildings] > bs_Built)
             {
-
                 bldg_roll = Random(100);
-                
                 if(bldg_roll > bldg_chance)
                 {
-
                     if(City_Remove_Building(itr_buildings, city_idx) == ST_TRUE)
                     {
-
                         bldg_list[bldg_ctr] = itr_buildings;
-
                         bldg_ctr++;
-
                     }
-
                 }
-
             }
-
         }
-
     }
-
     if(population_lost > 0)
     {
-
         _CITIES[city_idx].population -= population_lost;
     }
-
     _CITIES[city_idx].size = ((_CITIES[city_idx].population + 3) / 4);
-
     SETMAX(_CITIES[city_idx].size, 5);
-
     City_Check_Production(city_idx);
-
     if
     (
         (_CITIES[city_idx].population < 1)
@@ -907,13 +869,9 @@ void Apply_Damage_To_City(int16_t city_idx, int16_t population_lost, int16_t bld
         (_CITIES[city_idx].size < 1)
     )
     {
-
         _CITIES[city_idx].size = 0;
-
         Destroy_City(city_idx);
-
     }
-
 }
 
 

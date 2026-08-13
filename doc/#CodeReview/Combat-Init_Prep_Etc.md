@@ -164,7 +164,7 @@ SAMB_ptr Get_Battle_Unit_Move_Sound_Buffer(int16_t battle_unit_idx, /* HACK */ u
 void Turn_Off_Auto_Combat(void);
 
 // WZD o98p22
-void STK_ComposeFleeLost__STUB(int16_t troop_count, int16_t troop_list[]);
+void Build_Flee_Loss_Message(int16_t troop_count, int16_t troop_list[]);
 
 
 Load_Battle_Unit() calls Battle_Unit_Regular_Stats(), but not Battle_Unit_Special_Stats().

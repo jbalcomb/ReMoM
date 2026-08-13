@@ -9,7 +9,7 @@
         ovr099  ¿ MoO2  Module: CMBTDRW1 ?  (would have been CMBTDRW or CMBTDRAW?)
         ovr103
         ovr105
-        ovr110
+        ovr110  ¿ Strategic Combat ?
         ovr111  ¿ AITP.* ?
         ovr112  ¿ LBX CMBMAGIC ?
         ovr114  ¿ MoO2  Module: CMBTAI ?
@@ -201,11 +201,11 @@ char cnst_TreatyAtk_Msg2[] = ".  Do you still wish to attack?";
 // WZD dseg:56CC
 char str_empty_string__ovr098[] = "";
 // WZD dseg:56CD
-char cnst_FleeLoss_Msg[] = "While fleeing you lost:";
+char str_WhileFleeingYouLost[] = "While fleeing you lost:";
 // WZD dseg:56E4
-char cnst_Space_6[] = " ";
+char str_SPACE__ovr098[] = " ";
 // WZD dseg:56E6
-char cnst_Dot8[] = ".";
+char str_PERIOD__ovr098[] = ".";
 
 // WZD dseg:56E6                                                 END:  ovr098 - Initialized Data
 
@@ -1065,7 +1065,10 @@ int16_t * CMB_LostBuildings;
 // WZD dseg:C97C
 int16_t CMB_Population_Lost;
 // WZD dseg:C97E
-int16_t CMB_ScrollMsg_Type;
+/*
+enum e_COMBAT_SCROLL_MESSAGE_TYPE
+*/
+int16_t combat_results_scroll_message;
 
 // WZD dseg:C97E                                                 ¿ END: ovr123 - Uninitialized Data ?    
 
@@ -1408,7 +1411,7 @@ int16_t attacker_on_floating_island;
 int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defender_player_idx, int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[])
 {
     int16_t did_win = 0;
-    int16_t end_of_combat_message_type = 0;
+    int16_t end_of_combat_message_type = 0;  /* enum e_COMBAT_SCROLL_MESSAGE */
     int16_t defender_unit_count = 0;
     int16_t human_player_did_flee = 0;
     int16_t winner_player_idx = 0;
@@ -1698,7 +1701,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
             BEGIN:  ¿ what is going on here ?
                 seems like this would be where the battle unit that just moved would have its turn ended
                 does bua_Finished get set anywhere else?
-                what's status > bus_Active?  ...bus_Recalled, bus_Flee, bus_Uninvolved, bus_Dead, bus_Drained, bus_Gone
+                what's status > bus_Active?  ...bus_Recalled, bus_Fleeing, bus_Uninvolved, bus_Dead, bus_Drained, bus_Gone
         */
         if(
             (
@@ -1819,7 +1822,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
                             (battle_units[itr].status == bus_Uninvolved)
                         )
                         {
-                            battle_units[itr].status = bus_Flee;
+                            battle_units[itr].status = bus_Fleeing;
                         }
                     }
                 }
@@ -2192,23 +2195,23 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
     Copy_Off_To_Page4();
     if(_computer_player_did_flee == ST_TRUE)
     {
-        end_of_combat_message_type = 5;
+        end_of_combat_message_type = csmt_EnemyFled;
     }
     else if(winner_player_idx == _human_player_idx)
     {
-        end_of_combat_message_type = 1;
+        end_of_combat_message_type = csmt_Victory;
     }
     else if(human_player_did_flee == ST_TRUE)
     {
-        end_of_combat_message_type = 3;
+        end_of_combat_message_type = csmt_PlayerFled;
     }
     else if(_combat_turn > 50)
     {
-        end_of_combat_message_type = 4;
+        end_of_combat_message_type = csmt_TurnLimit;
     }
     else
     {
-        end_of_combat_message_type = 2;
+        end_of_combat_message_type = csmt_Defeat;
     }
     Copy_Page4_To_Off();
     Copy_Off_To_Back();
@@ -2225,7 +2228,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
     Mark_Time();
     Release_Time(1);
     Play_Background_Music();
-    End_Of_Combat__WIP(winner_player_idx, item_count, item_list, end_of_combat_message_type);
+    End_Of_Combat(winner_player_idx, item_count, item_list, end_of_combat_message_type);
     // if(winner_player_idx == _combat_attacker_player)
     // {
     //     return ST_TRUE;
@@ -2234,7 +2237,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
     // {
     //     return ST_FALSE;
     // }
-    // ~ Strategic_Combat__WIP()
+    // ~ Strategic_Combat()
     if(winner_player_idx == _combat_attacker_player)
     {
         did_win = ST_TRUE;
@@ -3294,7 +3297,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
         else
         {
 
-            Battle_Outcome = Strategic_Combat__WIP(troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &Item_Count, &Item_List[0]);
+            Battle_Outcome = Strategic_Combat(troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &Item_Count, &Item_List[0]);
 
             Item_Count = 0;
 
@@ -3764,228 +3767,176 @@ void Combat_Next_Turn(void)
 /*
     OON XREF:  End_Of_Combat()
     sets Battle Unit to *dead* for *unsummoned* Units (_UNITS[].wp == 9)
-
 */
 void Retreat_From_Combat(int16_t player_idx)
 {
-    int16_t Fleeing_Units_Lost[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Wind_Walker = 0;
-    int16_t Transport_Capacity = 0;
-    int16_t Fleeing_Death_Count = 0;
-    int16_t unit_idx =0 ;
-    int16_t Checked_X = 0;  // also, boat_riders
-    int16_t boat_riders = 0;  // in Dasm, `Checked_X`
-    int16_t Diameter = 0;
-    int16_t Min_Y = 0;
-    int16_t Min_X = 0;
-    int16_t Checked_Y = 0;
-    int16_t Defender_Fleeing_Count = 0;
-    int16_t Attacker_Fleeing_Count = 0;
-    int16_t itr_battle_units = 0;  // _SI_
-    int16_t fleeing_player_idx = 0;  // _DI_
-
-    Fleeing_Death_Count = 0;
-
-    if(player_idx != _combat_attacker_player)
-    {
-        fleeing_player_idx = _combat_attacker_player;
-    }
-    else
+    int16_t lost_unit_types[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /* passed to Build_Flee_Loss_Message() */
+    int16_t has_wind_walker = 0;
+    int16_t transport_capacity = 0;
+    int16_t lost_unit_count = 0;  /* passed to Build_Flee_Loss_Message() */
+    int16_t unit_idx = 0;
+    int16_t checked_wx = 0;
+    int16_t boat_riders = 0;  // DNE in Dasm, reuses checked_wx
+    int16_t scan_span = 0;
+    int16_t min_wy = 0;
+    int16_t min_wx = 0;
+    int16_t checked_wy = 0;
+    int16_t defender_fleeing_count = 0;
+    int16_t attacker_fleeing_count = 0;
+    int16_t itr_battle_units = 0;
+    int16_t fleeing_player_idx = 0;
+    lost_unit_count = 0;
+    if(player_idx == _combat_attacker_player)
     {
         fleeing_player_idx = _combat_defender_player;
     }
-
+    else
+    {
+        fleeing_player_idx = _combat_attacker_player;
+    }
     /*
         BEGIN:  Fleeing Battle Unit Counts
     */
-    Attacker_Fleeing_Count = 0;
-    Defender_Fleeing_Count = 0;
-
+    attacker_fleeing_count = 0;
+    defender_fleeing_count = 0;
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
         if(_UNITS[battle_units[itr_battle_units].unit_idx].wp == 9)
         {
             battle_units[itr_battle_units].status = bus_Dead;
         }
-
-        if(battle_units[itr_battle_units].status == bus_Flee)
+        if(battle_units[itr_battle_units].status == bus_Fleeing)
         {
             if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
             {
-                Attacker_Fleeing_Count++;
+                attacker_fleeing_count++;
             }
-            else if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
+            else if(battle_units[itr_battle_units].controller_idx == _combat_defender_player)
             {
-                Defender_Fleeing_Count++;
+                defender_fleeing_count++;
             }
         }
-
     }
     /*
         END:  Fleeing Battle Unit Counts
     */
-
-
     /*
         BEGIN:  
     */
-
     if(
-        (Attacker_Fleeing_Count != 0)
+        (attacker_fleeing_count != 0)
         ||
-        (Defender_Fleeing_Count != 0)
+        (defender_fleeing_count != 0)
     )
     {
-// mark all non-involved units as fleeing
-// INCONSISTENT: these units have already been marked
-// as dead in the parent function, so there will never be any
-        if(battle_units[itr_battle_units].status == bus_Uninvolved)
+        // mark all uninvolved units as fleeing
+        /* OGBUG: End_Of_Combat() already marked uninvolved units as dead */
+        for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
         {
-            battle_units[itr_battle_units].status = bus_Flee;
+            if(battle_units[itr_battle_units].status == bus_Uninvolved)
+            {
+                battle_units[itr_battle_units].status = bus_Fleeing;
+            }
         }
-    }
-
-    /*
-        END:  
-    */
-
-
-    /*
-        BEGIN:  
-    */
-    for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
-    {
-        if(battle_units[itr_battle_units].status == bus_Flee)
-        {
-            unit_idx = battle_units[itr_battle_units].unit_idx;
-            _UNITS[unit_idx].wx = (int8_t)OVL_Action_OriginX;
-            _UNITS[unit_idx].wy = (int8_t)OVL_Action_OriginY;
-            battle_units[itr_battle_units].status = bus_Active;
-
-        }
-
-    }
-    /*
-        END:  
-    */
-
-
-    /*
-        BEGIN:  
-    */
-// process fleeing chance - 0% if the unit is under the
-// effect of Confusion, Black Sleep, or Web, 100% chance
-// if its a human hero on Intro or Easy, 75% if it's a
-// hero otherwise, and 50% if it's any other unit
-// (success means the unit is marked as active instead)
-// clear all road building progress for fleeing units
-    if(fleeing_player_idx == _combat_attacker_player)
-    {
-        if(battle_units[itr_battle_units].status == bus_Flee)
-        {
-            if(_UNITS[battle_units[itr_battle_units].unit_idx].Rd_Constr_Left > ST_UNDEFINED)
-            {
-                _UNITS[battle_units[itr_battle_units].unit_idx].Status = us_Ready;
-                _UNITS[battle_units[itr_battle_units].unit_idx].Rd_Constr_Left = ST_UNDEFINED;
-            }
-
-            if(
-                (_difficulty <= god_Easy)
-                &&
-                (fleeing_player_idx == HUMAN_PLAYER_IDX)
-            )
-            {
-                battle_units[itr_battle_units].status = bus_Active;
-            }
-            else
-            {
-                if(_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot == ST_UNDEFINED)
-                {
-                    if(Random(2) == 1)
-                    {
-                        battle_units[itr_battle_units].status = bus_Active;
-                    }
-                }
-                else
-                {
-                    if(Random(4) != 1)
-                    {
-                        battle_units[itr_battle_units].status = bus_Active;
-                    }
-                }
-            }
-
-            if(
-                ((battle_units[itr_battle_units].combat_effects & bue_Black_Sleep) != 0)
-                ||
-                ((battle_units[itr_battle_units].combat_effects & bue_Confusion) != 0)
-                ||
-                (
-                    ((battle_units[itr_battle_units].combat_effects & bue_Web) != 0)
-                    &&
-                    (battle_units[itr_battle_units].Web_HP > 0)
-                )
-            )
-            {
-                battle_units[itr_battle_units].status = bus_Flee;
-            }
-
-        }
-
-
         /*
-            BEGIN:  Ocean Combat
+            BEGIN:  
         */
-        if(Square_Is_Sailable(_combat_wx, _combat_wy, _combat_wp) == ST_TRUE)
+        for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
         {
+            if(battle_units[itr_battle_units].status == bus_Fleeing)
+            {
+                unit_idx = battle_units[itr_battle_units].unit_idx;
+                _UNITS[unit_idx].wx = (int8_t)OVL_Action_OriginX;
+                _UNITS[unit_idx].wy = (int8_t)OVL_Action_OriginY;
+                battle_units[itr_battle_units].status = bus_Active;
 
-    // calculate the transport capacity of the player's surviving units
-            Transport_Capacity = 0;
-
+            }
+        }
+        /*
+            END:  
+        */
+        /*
+            BEGIN:  Flee Chance
+        */
+        if(fleeing_player_idx == _combat_attacker_player)
+        {
             for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
             {
-                if(
-                    (battle_units[itr_battle_units].status == bus_Active)
-                    &&
-                    (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
-                    &&
-                    (battle_units[itr_battle_units].carry_capacity > 0)
-                )
+                if(battle_units[itr_battle_units].status == bus_Fleeing)
                 {
-                    Transport_Capacity += battle_units[itr_battle_units].carry_capacity;
+                    if(_UNITS[battle_units[itr_battle_units].unit_idx].Rd_Constr_Left > ST_UNDEFINED)
+                    {
+                        _UNITS[battle_units[itr_battle_units].unit_idx].Status = us_Ready;
+                        _UNITS[battle_units[itr_battle_units].unit_idx].Rd_Constr_Left = ST_UNDEFINED;
+                    }
+                    if(
+                        (_difficulty <= god_Easy)
+                        &&
+                        (fleeing_player_idx == _human_player_idx)
+                    )
+                    {
+                        battle_units[itr_battle_units].status = bus_Active;
+                    }
+                    else
+                    {
+                        if(_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot == ST_UNDEFINED)
+                        {
+                            if(Random(2) == 1)
+                            {
+                                battle_units[itr_battle_units].status = bus_Active;
+                            }
+                        }
+                        else
+                        {
+                            if(Random(4) != 1)
+                            {
+                                battle_units[itr_battle_units].status = bus_Active;
+                            }
+                        }
+                    }
+                    if(
+                        ((battle_units[itr_battle_units].combat_effects & bue_Black_Sleep) != 0)
+                        ||
+                        ((battle_units[itr_battle_units].combat_effects & bue_Confusion) != 0)
+                        ||
+                        (
+                            ((battle_units[itr_battle_units].combat_effects & bue_Web) != 0)
+                            &&
+                            (battle_units[itr_battle_units].Web_HP > 0)
+                        )
+                    )
+                    {
+                        battle_units[itr_battle_units].status = bus_Fleeing;
+                    }
                 }
             }
-
-
-            if(Transport_Capacity == 0)
+            /*
+                END:  Flee Chance
+            */
+            /*
+                BEGIN:  Ocean Combat
+            */
+            if(Square_Is_Sailable(_combat_wx, _combat_wy, _combat_wp) == ST_TRUE)
             {
-
-    // check if there's a wind walker among the surviving units
-                Wind_Walker = ST_FALSE;
-
+                // calculate the transport capacity of the player's surviving units
+                transport_capacity = 0;
                 for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
                 {
-
                     if(
                         (battle_units[itr_battle_units].status == bus_Active)
                         &&
                         (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
+                        &&
+                        (battle_units[itr_battle_units].carry_capacity > 0)
                     )
                     {
-                        unit_idx = battle_units[itr_battle_units].unit_idx;
-
-                        if(Unit_Has_WindWalking(unit_idx) == ST_TRUE)
-                        {
-                            Wind_Walker = ST_TRUE;
-                        }
+                        transport_capacity += battle_units[itr_battle_units].carry_capacity;
                     }
                 }
-
-                if(Wind_Walker != ST_TRUE)
+                if(transport_capacity == 0)
                 {
-    // mark all active units of the losing player as fleeing
-    // if they don't have seafaring capability
-    // BUG: ignores Non-Corporeal units
+                    // check if there's a wind walker among the surviving units
+                    has_wind_walker = ST_FALSE;
                     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
                     {
                         if(
@@ -3995,307 +3946,269 @@ void Retreat_From_Combat(int16_t player_idx)
                         )
                         {
                             unit_idx = battle_units[itr_battle_units].unit_idx;
-
-                            if(
-                                (Unit_Has_AirTravel(unit_idx) == ST_TRUE)
-                                ||
-                                (Unit_Has_WaterTravel(unit_idx) == ST_TRUE)  /* BUG:  ¿ should be Unit_Has_Swimming() ? SEE BELOW */
-                                ||
-                                (Unit_Has_AirTravel_Item(unit_idx) == ST_TRUE)
-                                ||
-                                (Unit_Has_WaterTravel_Item(unit_idx) == ST_TRUE)
-                            )
+                            if(Unit_Has_WindWalking(unit_idx) == ST_TRUE)
                             {
-                                battle_units[itr_battle_units].status = bus_Active;  // BUG:  ¿ this check for filtered status is due to macro usage ?
-                            }
-                            else
-                            {
-                                battle_units[itr_battle_units].status = bus_Flee;
+                                has_wind_walker = ST_TRUE;
                             }
                         }
                     }
-                }
-
-            }
-            else  /* if(Transport_Capacity == 0) */
-            {
-    // check if there's a wind walker among the surviving units
-                Wind_Walker = ST_FALSE;
-
-                for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
-                {
-
-                    if(
-                        (battle_units[itr_battle_units].status == bus_Active)
-                        &&
-                        (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
-                    )
+                    if(has_wind_walker != ST_TRUE)
                     {
-                        unit_idx = battle_units[itr_battle_units].unit_idx;
-
-                        if(Unit_Has_WindWalking(unit_idx) == ST_TRUE)
-                        {
-                            Wind_Walker = ST_TRUE;
-                        }
-                    }
-                }
-
-            }
-
-    // process transport capacity, marking any active unit
-    // that doesn't fit as fleeing again
-    // BUG: the checks don't cover all seafaring ability
-
-            if(Wind_Walker != ST_TRUE)
-            {
-                boat_riders = 0;
-
-                for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
-                {
-
-                    if(
-                        (battle_units[itr_battle_units].status == bus_Active)
-                        &&
-                        (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
-                        &&
-                        (battle_units[itr_battle_units].carry_capacity < 1)
-                    )
-                    {
-                        if(_UNITS[battle_units[itr_battle_units].unit_idx].type > ut_Chosen)
+                        // mark all active units of the losing player as fleeing if they don't have seafaring capability
+                        /* OGBUG: ignores Non-Corporeal units */
+                        for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
                         {
                             if(
-                                (Unit_Has_AirTravel_Item(battle_units[itr_battle_units].unit_idx) != ST_TRUE)
+                                (battle_units[itr_battle_units].status == bus_Active)
                                 &&
-                                (Unit_Has_WaterTravel_Item(battle_units[itr_battle_units].unit_idx) != ST_TRUE)
-                                &&
-                                (Unit_Has_Swimming(battle_units[itr_battle_units].unit_idx) != ST_TRUE)  /* BUG:  ¿ should be Unit_Has_WaterTravel() ? SEE ABOVE */
-                                &&
-                                (Unit_Has_WindWalking(battle_units[itr_battle_units].unit_idx) != ST_TRUE)  /* BUG:  only got here because there were no WindWalkers */
-                                &&
-                                (Unit_Has_AirTravel(battle_units[itr_battle_units].unit_idx) != ST_TRUE)
+                                (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
                             )
                             {
-                                boat_riders++;
-
-                                if(boat_riders > Transport_Capacity)
+                                unit_idx = battle_units[itr_battle_units].unit_idx;
+                                if(
+                                    (Unit_Has_AirTravel(unit_idx) == ST_TRUE)
+                                    ||
+                                    (Unit_Has_WaterTravel(unit_idx) == ST_TRUE)  /* OGBUG:  ¿ should be Unit_Has_Swimming() ? SEE BELOW */
+                                    ||
+                                    (Unit_Has_AirTravel_Item(unit_idx) == ST_TRUE)
+                                    ||
+                                    (Unit_Has_WaterTravel_Item(unit_idx) == ST_TRUE)
+                                )
                                 {
-                                    battle_units[itr_battle_units].status = bus_Flee;
+                                    battle_units[itr_battle_units].status = bus_Active;  /* OGBUG:  ¿ this check for filtered status is due to macro usage ? */
+                                }
+                                else
+                                {
+                                    battle_units[itr_battle_units].status = bus_Fleeing;
+                                }
+                            }
+                        }
+                    }
+                }
+                else  /* if(transport_capacity == 0) */
+                {
+                    // check if there's a wind walker among the surviving units
+                    has_wind_walker = ST_FALSE;
+                    for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
+                    {
+                        if(
+                            (battle_units[itr_battle_units].status == bus_Active)
+                            &&
+                            (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
+                        )
+                        {
+                            unit_idx = battle_units[itr_battle_units].unit_idx;
+                            if(Unit_Has_WindWalking(unit_idx) == ST_TRUE)
+                            {
+                                has_wind_walker = ST_TRUE;
+                            }
+                        }
+                    }
+                    // process transport capacity, marking any active unit that doesn't fit as fleeing again
+                    if(has_wind_walker != ST_TRUE)
+                    {
+                        boat_riders = 0;
+                        for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
+                        {
+                            if(
+                                (battle_units[itr_battle_units].status == bus_Active)
+                                &&
+                                (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
+                                &&
+                                (battle_units[itr_battle_units].carry_capacity < 1)
+                            )
+                            {
+                                if(_UNITS[battle_units[itr_battle_units].unit_idx].type > ut_Chosen)
+                                {
+                                    if(
+                                        (Unit_Has_AirTravel_Item(battle_units[itr_battle_units].unit_idx) != ST_TRUE)
+                                        &&
+                                        (Unit_Has_WaterTravel_Item(battle_units[itr_battle_units].unit_idx) != ST_TRUE)
+                                        &&
+                                        (Unit_Has_Swimming(battle_units[itr_battle_units].unit_idx) != ST_TRUE)  /* OGBUG:  ¿ should be Unit_Has_WaterTravel() ? SEE ABOVE */
+                                        &&
+                                        (Unit_Has_WindWalking(battle_units[itr_battle_units].unit_idx) != ST_TRUE)  /* OGBUG:  only got here because there were no WindWalkers */
+                                        &&
+                                        (Unit_Has_AirTravel(battle_units[itr_battle_units].unit_idx) != ST_TRUE)
+                                    )
+                                    {
+                                        boat_riders++;
+                                        if(boat_riders > transport_capacity)
+                                        {
+                                            battle_units[itr_battle_units].status = bus_Fleeing;
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-
-        }
-
-        /*
-            END:  Ocean Combat
-        */
-
-
-    // add all fleeing units of the losing player to the list of lost units
-        for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
-        {
-            if(
-                (battle_units[itr_battle_units].status == bus_Active)
-                &&
-                (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
-            )
+            /*
+                END:  Ocean Combat
+            */
+            // add all fleeing units of the losing player to the list of lost units
+            for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
             {
-                Fleeing_Units_Lost[Fleeing_Death_Count] = _UNITS[battle_units[itr_battle_units].unit_idx].type;
-
-                Fleeing_Death_Count++;
-            }
-        }
-
-        STK_ComposeFleeLost__STUB(Fleeing_Death_Count, Fleeing_Units_Lost);
-
-    }
-    else  /* if(fleeing_player_idx == _combat_attacker_player) */
-    {
-// process fleeing chance - 0% if the unit is under the
-// effect of Confusion, Black Sleep, or Web, 100% chance
-// if its a human hero on Intro or Easy, 75% if it's a
-// hero otherwise, and 50% if it's any other unit
-// (failure means the unit is marked as dead instead)
-// clear all road building progress for fleeing units,
-// and store a list of the lost units
-// BUG? has an extra block for non-human units that
-// set cancels road building and marks the unit ready overland
-
-        for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
-        {
-
-            if(battle_units[itr_battle_units].status == bus_Flee)
-            {
-
-                if(fleeing_player_idx != _human_player_idx)
-                {
-                    _UNITS[battle_units[itr_battle_units].unit_idx].Status = us_Ready;
-                    _UNITS[battle_units[itr_battle_units].unit_idx].Rd_Constr_Left = ST_UNDEFINED;
-                }
-
-                if(_UNITS[battle_units[itr_battle_units].unit_idx].Rd_Constr_Left > ST_UNDEFINED)
-                {
-                    _UNITS[battle_units[itr_battle_units].unit_idx].Status = us_Ready;
-                    _UNITS[battle_units[itr_battle_units].unit_idx].Rd_Constr_Left = ST_UNDEFINED;
-                }
-
                 if(
-                    (_difficulty > god_Easy)
-                    ||
-                    (fleeing_player_idx != HUMAN_PLAYER_IDX)
+                    (battle_units[itr_battle_units].status == bus_Fleeing)
+                    &&
+                    (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
                 )
                 {
-                    if(_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot == ST_UNDEFINED)
+                    lost_unit_types[lost_unit_count] = _UNITS[battle_units[itr_battle_units].unit_idx].type;
+
+                    lost_unit_count++;
+                }
+            }
+            Build_Flee_Loss_Message(lost_unit_count, lost_unit_types);
+        }
+        else  /* if(fleeing_player_idx == _combat_attacker_player) */
+        {
+            for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
+            {
+                if(battle_units[itr_battle_units].status == bus_Fleeing)
+                {
+                    /* OGBUG: mixed conditions on status and road build cancel */
+                    if(fleeing_player_idx != _human_player_idx)  /* ~== NOT Current Player; Attacker || Defender; But, HERE, _combat_defender_player; */
                     {
-                        if(Random(2) == 1)
+                        _UNITS[battle_units[itr_battle_units].unit_idx].Status = us_Ready;
+                        _UNITS[battle_units[itr_battle_units].unit_idx].Rd_Constr_Left = ST_UNDEFINED;
+                    }
+                    /* OGBUG:  dead code */
+                    if(_UNITS[battle_units[itr_battle_units].unit_idx].Rd_Constr_Left > ST_UNDEFINED)
+                    {
+                        _UNITS[battle_units[itr_battle_units].unit_idx].Status = us_Ready;
+                        _UNITS[battle_units[itr_battle_units].unit_idx].Rd_Constr_Left = ST_UNDEFINED;
+                    }
+                    if(
+                        (_difficulty > god_Easy)
+                        ||
+                        (fleeing_player_idx != _human_player_idx)
+                    )
+                    {
+                        if(_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot == ST_UNDEFINED)
                         {
-                            battle_units[itr_battle_units].status = bus_Dead;
+                            if(Random(2) == 1)
+                            {
+                                battle_units[itr_battle_units].status = bus_Dead;
+                            }
                         }
+                        else
+                        {
+                            if(Random(4) == 1)
+                            {
+                                battle_units[itr_battle_units].status = bus_Dead;
+                            }
+                        }
+                    }
+                    if(
+                        ((battle_units[itr_battle_units].combat_effects & bue_Black_Sleep) != 0)
+                        ||
+                        ((battle_units[itr_battle_units].combat_effects & bue_Confusion) != 0)
+                        ||
+                        (
+                            ((battle_units[itr_battle_units].combat_effects & bue_Web) != 0)
+                            &&
+                            (battle_units[itr_battle_units].Web_HP > 0)
+                        )
+                    )
+                    {
+                        battle_units[itr_battle_units].status = bus_Dead;
+                    }
+                    if(battle_units[itr_battle_units].status == bus_Dead)
+                    {
+                        lost_unit_types[lost_unit_count] = _UNITS[battle_units[itr_battle_units].unit_idx].type;
+                        lost_unit_count++;
+                    }
+                }
+            }
+            /*
+                BEGIN:  
+            */
+            /* OGBUG: this clamp should not exist and is bad - changes subsequent range from {-1,0,1} to {0,1,2} */
+            min_wy = (_combat_wy - 1);
+            if(min_wy < 0)
+            {
+                min_wy = 0;
+            }
+            min_wx = (_combat_wx - 1);
+            if(min_wx < 0)
+            {
+                min_wx += WORLD_WIDTH;
+            }
+            // attempt to flee as many units as possible to the adjacent squares
+            /* OGBUG: range checking allows 2-move flight if the origin X or Y is 0 */
+            scan_span = 3;
+            checked_wy = min_wy;
+            while(((min_wy + scan_span) > checked_wy) && (checked_wy < WORLD_HEIGHT))
+            {
+                itr_battle_units = min_wx;
+                while((min_wx + scan_span) > itr_battle_units)
+                {
+                    if(itr_battle_units < WORLD_WIDTH)
+                    {
+                        checked_wx = itr_battle_units;
                     }
                     else
                     {
-                        if(Random(4) == 1)
+                        checked_wx = (itr_battle_units - WORLD_WIDTH);
+                    }
+
+                    if(
+                        (checked_wx != _combat_wx)
+                        ||
+                        (checked_wy != _combat_wy)
+                    )
+                    {
+                        if(
+                            (Square_Has_Lair(checked_wx, checked_wy, _combat_wp) == ST_UNDEFINED)
+                            &&
+                            (Player_City_At_Square(checked_wx, checked_wy, _combat_wp, fleeing_player_idx) == ST_UNDEFINED)
+                        )
                         {
-                            battle_units[itr_battle_units].status = bus_Dead;
+                            Process_Retreating_Units(checked_wx, checked_wy, _combat_wp, fleeing_player_idx);
                         }
                     }
+                    itr_battle_units++;
                 }
-
+                checked_wy++;
+            }
+            /*
+                END:  
+            */
+            // mark all fleeing units of the losing player as dead, and add them to the list of lost units
+            for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
+            {
                 if(
-                    ((battle_units[itr_battle_units].combat_effects & bue_Black_Sleep) != 0)
-                    ||
-                    ((battle_units[itr_battle_units].combat_effects & bue_Confusion) != 0)
-                    ||
-                    (
-                        ((battle_units[itr_battle_units].combat_effects & bue_Web) != 0)
-                        &&
-                        (battle_units[itr_battle_units].Web_HP > 0)
-                    )
+                    (battle_units[itr_battle_units].status == bus_Fleeing)
+                    &&
+                    (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
                 )
                 {
                     battle_units[itr_battle_units].status = bus_Dead;
+                    lost_unit_types[lost_unit_count] = _UNITS[battle_units[itr_battle_units].unit_idx].type;
+                    lost_unit_count++;
                 }
-
-                if(battle_units[itr_battle_units].status == bus_Dead)
-                {
-                    Fleeing_Units_Lost[Fleeing_Death_Count] = _UNITS[battle_units[itr_battle_units].unit_idx].type;
-
-                    Fleeing_Death_Count++;
-                }
-
             }
-
-        }
-
-
-        /*
-            BEGIN:  
-        */
-
-        // drake178:  ; BUG: this range check must be performed on the square to be tested - here, it moves the entire area
-        Min_Y = (_combat_wy - 1);
-
-        SETMIN(Min_Y, 0);
-
-        Min_X = (_combat_wx - 1);
-
-        if(Min_X < 0)
-        {
-            Min_X += WORLD_WIDTH;
-        }
-
-// attempt to flee as many units as possible to the adjacent squares
-// BUG: the square range checking allows 2-move flight if the origin X or Y is 0
-// BUG: inherits a number of square eligibility errors
-        Diameter = 3;
-        Checked_Y = Min_Y;
-        while(((Min_Y + Diameter) > Checked_Y) && (Checked_Y < WORLD_HEIGHT))
-        {
-            itr_battle_units = Min_X;
-            while((Min_X + Diameter) > itr_battle_units)
-            {
-                if(itr_battle_units < WORLD_WIDTH)
-                {
-                    Checked_X = itr_battle_units;
-                }
-                else
-                {
-                    Checked_X = (itr_battle_units - WORLD_WIDTH);
-                }
-
-                if(
-                    (Checked_X != _combat_wx)
-                    &&
-                    (Checked_Y != _combat_wy)
-                )
-                {
-                    if(
-                        (Square_Has_Lair(Checked_X, Checked_Y, _combat_wp) == ST_UNDEFINED)
-                        &&
-                        (Player_City_At_Square(Checked_X, Checked_Y, _combat_wp, fleeing_player_idx) == ST_UNDEFINED)
-                    )
-                    {
-                        Process_Retreating_Units(Checked_X, Checked_Y, _combat_wp, fleeing_player_idx);
-                    }
-                }
-
-                itr_battle_units++;
-            }
-
-            Checked_Y++;
-        }
-
+            Build_Flee_Loss_Message(lost_unit_count, lost_unit_types);
+        }  /* else ... if(fleeing_player_idx == _combat_attacker_player) */
         /*
             END:  
         */
-
-// mark all fleeing units of the losing player as dead,
-// and add them to the list of lost units
-        for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
-        {
-            if(
-                (battle_units[itr_battle_units].status == bus_Flee)
-                &&
-                (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
-            )
-            {
-                battle_units[itr_battle_units].status = bus_Dead;
-
-                Fleeing_Units_Lost[Fleeing_Death_Count] = _UNITS[battle_units[itr_battle_units].unit_idx].type;
-
-                Fleeing_Death_Count++;
-            }
-        }
-
-        STK_ComposeFleeLost__STUB(Fleeing_Death_Count, Fleeing_Units_Lost);
-
-    }  /* else ... if(fleeing_player_idx == _combat_attacker_player) */
+    }
     /*
         END:  
     */
-
-
-    // WTF, Mate?
-    // @@JmpDone__Return_ZERO:
-    // xor     ax, ax
-    // jmp     @@Done
-    // NOTE: jumps straight to here from way up at ```if((Attacker_Fleeing_Count != 0) || (Defender_Fleeing_Count != 0))```
-
 }
 
 
 // WZD o98p07
-// drake178: TILE_HasCityOfPlayer()
 int16_t Player_City_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx)
 {
-    int16_t city_idx;  // _SI_
-    int16_t itr_cities;  // _CX_
-
+    int16_t city_idx = 0;
+    int16_t itr_cities = 0;
     city_idx = ST_UNDEFINED;
-
     for(itr_cities = 0; ((itr_cities < _cities) && (city_idx == ST_UNDEFINED)); itr_cities++)
     {
         if(
@@ -4308,35 +4221,26 @@ int16_t Player_City_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player
             city_idx = itr_cities;
         }
     }
-
     return city_idx;
 }
 
 
 // WZD o98p08
-/*
-    combat / battle unit
-    calls Unit_Try_To_Move()
-    returns F,T - successfully fleed
-    OON XREF: WIZ_FleeCombat()
-¿ MoO2  Module: COMBFIND  Process_Retreating_Ships_() ?
-*/
+// ¿ MoO2  Module: COMBFIND  Process_Retreating_Ships_() ?
 int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx)
 {
     int16_t troop_list[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Landlubber_Count = 0;
-    int16_t Transport_Capacity = 0;
-    int16_t Wind_Walker = 0;
-    int16_t Move_Possible = 0;
+    int16_t boat_rider_count = 0;
+    int16_t transport_capacity = 0;
+    int16_t has_wind_walker = 0;
+    int16_t retreat_possible = 0;
     int16_t troop_count = 0;
-    int16_t itr_towers = 0;  // _SI_
-    int16_t itr_battle_units = 0;  // _SI_
-    int16_t itr_troops = 0;  // _SI_
-    int16_t unit_idx = 0;  // _DI_
+    int16_t itr_towers = 0;
+    int16_t itr_battle_units = 0;
+    int16_t itr_troops = 0;
+    int16_t unit_idx = 0;
     int16_t return_value = 0;  // DNE in Dasm
-
     Army_At_Square_2(wx, wy, wp, &troop_count, &troop_list[0]);
-
     if(
         (troop_count <= 0)
         ||
@@ -4347,10 +4251,8 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
         )
     )
     {
-
-        Wind_Walker = ST_FALSE;
-
-        for(itr_towers = 0; ((itr_towers < NUM_TOWERS) && (Wind_Walker == ST_FALSE)); itr_towers++)
+        has_wind_walker = ST_FALSE;
+        for(itr_towers = 0; ((itr_towers < NUM_TOWERS) && (has_wind_walker == ST_FALSE)); itr_towers++)
         {
             if(
                 (_TOWERS[itr_towers].wx == wx)
@@ -4361,40 +4263,36 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
                 goto Return_FALSE;
             }
         }
-
-        Move_Possible = ST_FALSE;
-
+        retreat_possible = ST_FALSE;
         // Ocean Combat
         if(Square_Is_Sailable(wx, wy, wp) == ST_TRUE)
         {
-            Wind_Walker = ST_FALSE;
-
+            has_wind_walker = ST_FALSE;
             // check for Wind Walker on source square
-            for(itr_battle_units = 0; ((itr_battle_units < _combat_total_unit_count) && (Wind_Walker == ST_FALSE)); itr_battle_units++)
+            for(itr_battle_units = 0; ((itr_battle_units < _combat_total_unit_count) && (has_wind_walker == ST_FALSE)); itr_battle_units++)
             {
                 if(
-                    (battle_units[itr_battle_units].status == bus_Flee)
+                    (battle_units[itr_battle_units].status == bus_Fleeing)
                     &&
                     (battle_units[itr_battle_units].controller_idx == player_idx)
                 )
                 {
                     unit_idx = battle_units[itr_battle_units].unit_idx;
-
                     if(unit_idx != ST_UNDEFINED)
                     {
                         if(Unit_Has_WindWalking(unit_idx) == ST_TRUE)
                         {
-                            Move_Possible = ST_TRUE;
-                            Wind_Walker = ST_TRUE;
+                            retreat_possible = ST_TRUE;
+                            has_wind_walker = ST_TRUE;
                         }
                     }
                 }
             }
-
             // check for Wind Walker on destination square
-            if(Wind_Walker == ST_FALSE)
+            if(has_wind_walker == ST_FALSE)
             {
-                for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                has_wind_walker = ST_FALSE;
+                for(itr_troops = 0; ((itr_troops < troop_count) && (has_wind_walker == ST_FALSE)); itr_troops++)
                 {
                     unit_idx = troop_list[itr_troops];
 
@@ -4402,45 +4300,42 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
                     {
                         if(Unit_Has_WindWalking(unit_idx) == ST_TRUE)
                         {
-                            Move_Possible = ST_TRUE;
-                            Wind_Walker = ST_TRUE;
+                            retreat_possible = ST_TRUE;
+                            has_wind_walker = ST_TRUE;
                         }
                     }
                 }
             }
-
-            if(Move_Possible == ST_FALSE)
+            if(retreat_possible == ST_FALSE)
             {
-                Transport_Capacity = 0;
-
-                if(
-                    (battle_units[itr_battle_units].status == bus_Flee)
-                    &&
-                    (battle_units[itr_battle_units].controller_idx == player_idx)
-                )
-                {
-                    unit_idx = battle_units[itr_battle_units].unit_idx;
-
-                    if(_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
-                    {
-                        Transport_Capacity += _unit_type_table[_UNITS[unit_idx].type].Transport;
-                    }
-                }
-
-                Wind_Walker = ST_FALSE;
-
-                Landlubber_Count = 0;
-
-                for(itr_battle_units = 0; ((itr_battle_units < _combat_total_unit_count) && (Wind_Walker == ST_FALSE)); itr_battle_units++)
+                transport_capacity = 0;
+                for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
                 {
                     if(
-                        (battle_units[itr_battle_units].status == bus_Flee)
+                        (battle_units[itr_battle_units].status == bus_Fleeing)
                         &&
                         (battle_units[itr_battle_units].controller_idx == player_idx)
                     )
                     {
                         unit_idx = battle_units[itr_battle_units].unit_idx;
 
+                        if(_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
+                        {
+                            transport_capacity += _unit_type_table[_UNITS[unit_idx].type].Transport;
+                        }
+                    }
+                }
+                has_wind_walker = ST_FALSE;
+                boat_rider_count = 0;
+                for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
+                {
+                    if(
+                        (battle_units[itr_battle_units].status == bus_Fleeing)
+                        &&
+                        (battle_units[itr_battle_units].controller_idx == player_idx)
+                    )
+                    {
+                        unit_idx = battle_units[itr_battle_units].unit_idx;
                         if(
                             (Unit_Has_AirTravel(unit_idx) == ST_TRUE)
                             ||
@@ -4451,7 +4346,6 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
                             (Unit_Has_WaterTravel_Item(unit_idx) == ST_TRUE)
                         )
                         {
-
                             if(Unit_Try_To_Move(wx, wy, wp, unit_idx, troop_count) == ST_TRUE)
                             {
                                 troop_count++;
@@ -4461,9 +4355,8 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
                         }
                         else
                         {
-                            Landlubber_Count++;
-
-                            if(Landlubber_Count < Transport_Capacity)
+                            boat_rider_count++;
+                            if(boat_rider_count <= transport_capacity)
                             {
                                 if(Unit_Try_To_Move(wx, wy, wp, unit_idx, troop_count) == ST_TRUE)
                                 {
@@ -4475,45 +4368,37 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
                         }
                     }
                 }
-            }  /* if(Move_Possible == ST_FALSE) */
-
+            }  /* if(retreat_possible == ST_FALSE) */
         }
         else  /* if(Square_Is_Sailable(wx, wy, wp) == ST_TRUE) */
         {
-// abort if any of the fleeing units has sailing movement
-// BUG: flying and Non-Corporeal ships can move on land
-
+            // abort if any of the fleeing units has sailing movement
+            /* OGBUG: flying and Non-Corporeal ships can move on land */
             for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
             {
                 if(
-                    (battle_units[itr_battle_units].status == bus_Flee)
+                    (battle_units[itr_battle_units].status == bus_Fleeing)
                     &&
                     (battle_units[itr_battle_units].controller_idx == player_idx)
                 )
                 {
                     unit_idx = battle_units[itr_battle_units].unit_idx;
-
                     if(Unit_Has_Sailing(unit_idx) == ST_TRUE)
                     {
                         goto Return_FALSE;
                     }
                 }
             }
-
-            Move_Possible = ST_TRUE;
+            retreat_possible = ST_TRUE;
         }
-
-
-        if(Move_Possible == ST_TRUE)
+        if(retreat_possible == ST_TRUE)
         {
-// move as many fleeing units over to the square as possible,
-// marking them as active if successful
-// BUG: there is no guarantee that the wind walker is actually moved over
-
+            // move as many fleeing units over to the square as possible, marking them as active if successful
+            /* OGBUG: wind walker might not have moved */
             for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
             {
                 if(
-                    (battle_units[itr_battle_units].status == bus_Flee)
+                    (battle_units[itr_battle_units].status == bus_Fleeing)
                     &&
                     (battle_units[itr_battle_units].controller_idx == player_idx)
                 )
@@ -4529,22 +4414,16 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
                 }
             }
         }
-
         goto Return_TRUE;
     }
-
-
 Return_FALSE:
     return_value = ST_FALSE;
     goto Done;
-
 Return_TRUE:
     return_value = ST_TRUE;
     goto Done;
-
 Done:
     return return_value;
-
 }
 
 
@@ -5313,34 +5192,71 @@ void Turn_Off_Auto_Combat(void)
 
 
 // WZD o98p22
-/*
-; composes the "While fleeing, you lost ..." string
-; into the GUI_NearMsgString global based on the passed list of units
-; INCONSISTENT in its use of plurals with the rest of the game
-*/
-void STK_ComposeFleeLost__STUB(int16_t troop_count, int16_t troop_list[])
+void Build_Flee_Loss_Message(int16_t troop_count, int16_t troop_list[])
 {
-    int16_t Unit_Types = 0;
-    int16_t Type_Counts = 0;
-    int16_t rest_of_the_array = 0;
-    int16_t Last_Char_Pointer = 0;
-    int16_t Conv_String = 0;
-    int16_t Record_Count = 0;
-    int16_t Added_Count = 0;
-    int16_t Record_Loopvar = 0;
-    int16_t itr = 0;  // _DI_
-
-    if(troop_count <= 0)
+    int16_t unit_type_tally[MAX_STACK][2] = { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } };
+    int16_t last_char_idx = 0;
+    char buffer[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t tally_count = 0;
+    int16_t type_matched = 0;
+    int16_t phrases_emitted = 0;  // DNE in Dasm, reuses type_matched
+    int16_t itr_tally = 0;
+    int16_t itr = 0;
+    if(troop_count > 0)
     {
-        stu_strcpy(GUI_NearMsgString, "");
-        return;
+        for(itr = 0; itr < MAX_STACK; itr++)
+        {
+            unit_type_tally[itr][1] = 0;
+        }
+        tally_count = 0;
+        for(itr = 0; itr < troop_count; itr++)
+        {
+            type_matched = 0;
+            for(itr_tally = 0; itr_tally < tally_count; itr_tally++)
+            {
+                if(unit_type_tally[itr_tally][0] == troop_list[itr])
+                {
+                    unit_type_tally[itr_tally][1]++;
+                    type_matched = 1;
+                }
+            }
+            if(type_matched == 0)
+            {
+                unit_type_tally[tally_count][0] = troop_list[itr];
+                unit_type_tally[tally_count][1]++;
+                tally_count++;
+            }
+        }
+        stu_strcpy(GUI_NearMsgString, str_WhileFleeingYouLost);  // "While fleeing you lost:"
+        phrases_emitted = 0;
+        for(itr = 0; itr < tally_count; itr++)
+        {
+            Add_Comma_Or_And(&phrases_emitted, tally_count, GUI_NearMsgString);
+            stu_itoa(unit_type_tally[itr][1], buffer, 10);
+            stu_strcat(GUI_NearMsgString, buffer);
+            stu_strcat(GUI_NearMsgString, str_SPACE__ovr098);
+            stu_strcat(GUI_NearMsgString, *_unit_type_table[unit_type_tally[itr][0]].name);
+            /* try to make plural names be singular */
+            /* OGBUG: inconsistent in its use of plurals with the rest of the game, and broken - "Spearmen", "Swordsmen", "Bowmen", "Hammerhands", "Cavalry", etc. */
+            if(unit_type_tally[itr][1] == 1)
+            {
+                /* don't drops 's' from s-ending singular names - Huntress, Priestess, etc. */
+                if(unit_type_tally[itr][0] != ut_Huntress && unit_type_tally[itr][0] != ut_Priestess)
+                {
+                    last_char_idx = ((int16_t)stu_strlen(GUI_NearMsgString) - 1);
+                    if(GUI_NearMsgString[last_char_idx] == 's')
+                    {
+                        GUI_NearMsgString[last_char_idx] = ST_NULL;
+                    }
+                }
+            }
+        }
+        stu_strcat(GUI_NearMsgString, str_PERIOD__ovr098);
     }
-
-
-
-    stu_strcpy(GUI_NearMsgString, "");
-    return;
-
+    else
+    {
+        strcpy(GUI_NearMsgString, str_empty_string__ovr098);
+    }
 }
 
 
@@ -7221,15 +7137,12 @@ void Move_Confused(int16_t battle_unit_idx)
 
 // WZD s103p12
 /*
-¿ ~== Strategic_Combat_Allocate() ?
-Strategic_Combat_Allocate() does Allocate_First_Block() for battle_units.
-...has  NIU  CMB_IDK_4PR = (int16_t *)Allocate_Next_Block(_screen_seg, 4);  // header + sub-header + 2 PR ... or header + 3 sub-headers?
+~== Strategic_Combat_Allocate()
 */
 void Combat_Screen_Load_Resources(void)
 {
     int16_t itr = 0;
-    // 249 * 16 = 3984 / 110 = 36.2182 ... 36? 2 * max stack = 18 so, ...?
-    battle_units = (struct s_BATTLE_UNIT *)Allocate_Next_Block(_screen_seg, 249);
+    battle_units = (struct s_BATTLE_UNIT *)Allocate_Next_Block(_screen_seg, ((((4 * MAX_STACK) * sizeof(struct s_BATTLE_UNIT)) / 16) + 1));
     _battlefield_holybonus  = (int16_t *)Allocate_Next_Block(_screen_seg, 6);
     _battlefield_resistall  = (int16_t *)Allocate_Next_Block(_screen_seg, 6);
     _battlefield_leadership = (int16_t *)Allocate_Next_Block(_screen_seg, 6);
@@ -7442,7 +7355,7 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
  * the AI-controlled side to concede through Retreat_Check() when that behavior is permitted.
  *
  * If an AI side chooses to flee, all of that side's units are switched to bua_Flee and any active
- * units are marked bus_Flee before the opposing human-controlled side is returned as the winner.
+ * units are marked bus_Fleeing before the opposing human-controlled side is returned as the winner.
  * If none of the ending conditions are met, the battle is still in progress.
  *
  * @return The attacker or defender player index when one side has won the battle.
@@ -7516,7 +7429,7 @@ int16_t Check_For_Winner(void)
                         
                         if(battle_units[itr].status == bus_Active)
                         {
-                            battle_units[itr].status = bus_Flee;
+                            battle_units[itr].status = bus_Fleeing;
                         }
                     }
                 }
@@ -8275,125 +8188,99 @@ void Draw_Combat_Unit_Display(void)
 */
 
 // WZD o110p01
+// MoO2  Module: COMBAT  Strategic_Combat_()
 /*
-
+MoO2  Strategic_Combat()  _qcombat_data = Allocate_First_Block()
+TODO  struct s_COMBAT_ENCHANTMENTS
 */
 void Strategic_Combat_Allocate(void)
 {
     int16_t itr = 0;
-
-    /* TODO  figure out if battlefield is really not allocated anywhere for Strategic Combat. If so, is there a better hack? Bonus, how did it not crash before? */
-    /* HACK */  // battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, 348); // 348 PR, 5568 B
-    /* HACK */  battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, ((sizeof(struct s_BATTLEFIELD) + 15) / 16));
-    // MoO2  Strategic_Combat()  _qcombat_data = Allocate_First_Block()
-    // 249 * 16 = 3984 / 110 = 36.2182 ... 36? 2 * max stack = 18 so, ... 36 units, but 16 pictures?
-    // battle_units = (struct s_BATTLE_UNIT *)Allocate_First_Block(_screen_seg, 249);
-    /* HACK */  battle_units = (struct s_BATTLE_UNIT *)Allocate_Next_Block(_screen_seg, 249);
-
-    // 3 * 16 = 48 ... 1PR header, 15 2-byte values
-    // combat_enchantments = (struct s_COMBAT_ENCHANTMENTS *)Allocate_Next_Block(_screen_seg, 3);
+    /* HACK */  battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, ((sizeof(struct s_BATTLEFIELD) / 16) + 1));
+    /* HACK */  battle_units = (struct s_BATTLE_UNIT *)Allocate_Next_Block(_screen_seg, ((((4 * MAX_STACK) * sizeof(struct s_BATTLE_UNIT)) / 16) + 1));
     combat_enchantments = (int8_t *)Allocate_Next_Block(_screen_seg, 3);
-
     for(itr = 0; itr < 30; itr++)
     {
-        // *((char *)&combat_enchantments[itr]) = ST_FALSE;
         combat_enchantments[itr] = ST_FALSE;
     }
-
-    // NIU  CMB_IDK_4PR = (int16_t *)Allocate_Next_Block(_screen_seg, 4);  // header + sub-header + 2 PR ... or header + 3 sub-headers?
-    // FWIW, the 4,3,3,3 here could suggest this was a set of 4, maybe even 1 array; elsewhere it seems normal/common for the first in a set to have an extra paragraph, maybe for the SAMB header
-    _battlefield_holybonus  = (int16_t *)Allocate_Next_Block(_screen_seg, 3);  // sub-header + 2 PR  32 B
-    _battlefield_resistall  = (int16_t *)Allocate_Next_Block(_screen_seg, 3);  // sub-header + 2 PR  32 B
-    _battlefield_leadership = (int16_t *)Allocate_Next_Block(_screen_seg, 3);  // sub-header + 2 PR  32 B
-
+    _niu_battlefield_effect = (int16_t *)Allocate_Next_Block(_screen_seg, 4);
+    _battlefield_holybonus  = (int16_t *)Allocate_Next_Block(_screen_seg, 3);
+    _battlefield_resistall  = (int16_t *)Allocate_Next_Block(_screen_seg, 3);
+    _battlefield_leadership = (int16_t *)Allocate_Next_Block(_screen_seg, 3);
 }
 
 
 // WZD o110p02
-/*
-    "WIP", cause ¿ ?
-
-*/
-int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[])
+int16_t Strategic_Combat(int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[])
 {
-    int16_t Weights[36] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t var_66 = 0;
-    int16_t var_64 = 0;
-    int16_t var_62 = 0;
-    int16_t var_60 = 0;
-    int16_t var_5E = 0;
-    int16_t var_5C = 0;
+    int16_t target_weights[(4 * MAX_STACK)] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t defender_spell_attack = 0;
+    int16_t attacker_spell_attack = 0;
+    int16_t defender_spell_healing = 0;
+    int16_t attacker_spell_healing = 0;
+    int16_t defender_spell_ranged_pct = 0;
+    int16_t attacker_spell_ranged_pct = 0;
     int16_t defender_third_nominal_skill = 0;
     int16_t attacker_third_nominal_skill = 0;
-    int16_t var_56 = 0;
-    int16_t var_54 = 0;
-    int16_t var_52 = 0;
-    int16_t var_50 = 0;
-    int16_t var_4E = 0;
-    int16_t var_4C = 0;
+    int16_t defender_healing_magic = 0;
+    int16_t attacker_healing_magic = 0;
+    int16_t defender_ranged_magic = 0;
+    int16_t attacker_ranged_magic = 0;
+    int16_t defender_attack_magic = 0;
+    int16_t attacker_attack_magic = 0;
     int16_t defender_mana_multiplied = 0;
     int16_t attacker_mana_multiplied = 0;
-    int16_t HP = 0;
-    int16_t special_ranged_attack_strength = 0;  // DNE in Dasm  (re-uses HP)
-    int16_t var_44 = 0;
-    int16_t var_42 = 0;
-    int16_t var_40 = 0;
-    int16_t IDK_damage_defender = 0;
-    int16_t IDK_damage_attacker = 0;
-    int32_t var_3A = 0;
-    int32_t var_36 = 0;
-    int32_t IDK_health_defender__2 = 0;
-    int32_t IDK_ranged_threat_defender = 0;
-    int32_t IDK_melee_threat_defender = 0;
-    int32_t IDK_health_attacker__2 = 0;
-    int32_t IDK_ranged_threat_attacker = 0;
-    int32_t IDK_melee_threat_attacker = 0;
-    int32_t IDK_health_defender = 0;
-    int32_t IDK_health_attacker = 0;
+    int16_t unit_current_hits = 0;
+    int16_t special_ranged_attack_strength = 0;
+    int16_t winner_health_pct = 0;
+    int16_t winner_hits_floor = 0;
+    int16_t winner_hits_countdown = 0;
+    int16_t defender_raw_hits = 0;
+    int16_t attacker_raw_hits = 0;
+    int32_t damage_to_attacker = 0;
+    int32_t damage_to_defender = 0;
+    int32_t defender_hits_start = 0;
+    int32_t defender_ranged_strength = 0;
+    int32_t defender_melee_strength = 0;
+    int32_t attacker_hits_start = 0;
+    int32_t attacker_ranged_strength = 0;
+    int32_t attacker_melee_strength = 0;
+    int32_t defender_hits_left = 0;
+    int32_t attacker_hits_left = 0;
     int16_t combat_structure = 0;
-    int16_t damage_types[3] = { 0, 0, 0 };
-    int16_t battle_unit_idx = 0;  // ¿ MsgType__BU_Index ?
-    int16_t MsgType = 0;  // ¿ MsgType__BU_Index ?
+    int16_t damage_types[NUM_DAMAGE_TYPES] = { 0, 0, 0 };
+    int16_t battle_unit_idx = 0;
+    int16_t repeat_target_idx = 0;
+    int16_t end_of_combat_message_type = 0;
     int16_t unit_idx = 0;
     int16_t _combat_defender_count = 0;
     int16_t winner_player_idx = 0;
-    int16_t itr = 0;  // _SI_
-    int16_t _combat_attacker_count = 0;  // DNE in Dasm
-    int16_t itr_units = 0;  // _SI_
-    int16_t itr_battle_units = 0;  // _SI_
-    int16_t itr_combat_turns = 0;  // _SI_
-    int16_t spell_ranks = 0;  // _DI_
-    int16_t did_win = 0;  // DNE in Dasm
-
-
-    var_5C = 0;
-    var_64 = 0;
-    var_60 = 0;
-    var_5E = 0;
-    var_66 = 0;
-    var_62 = 0;
-
+    int16_t itr = 0;
+    int16_t _combat_attacker_count = 0;
+    int16_t itr_units = 0;
+    int16_t itr_battle_units = 0;
+    int16_t itr_combat_turns = 0;
+    int16_t spell_ranks = 0;
+    int16_t did_win = 0;
+    attacker_spell_ranged_pct = 0;
+    attacker_spell_attack = 0;
+    attacker_spell_healing = 0;
+    defender_spell_ranged_pct = 0;
+    defender_spell_attack = 0;
+    defender_spell_healing = 0;
     Set_Page_Off();
     Allocate_Reduced_Map();
     Main_Screen_Draw();
     Copy_Off_To_Back();
-
     _combat_wx = wx;
     _combat_wy = wy;
     _combat_wp = wp;
-
     _combat_defender_count = 0;
-    _combat_attacker_count = troop_count;  // DNE in Dasm
-
+    /* HACK */  _combat_attacker_count = troop_count;  /* OGBUG:  _combat_attacker_count is uninitialized */
     _combat_total_unit_count = 0;
-
     Strategic_Combat_Allocate();
-
-
     combat_structure = Combat_Structure(wx, wy, wp, ST_TRUE);
-
-
-    for(itr_units = (_units - 1); itr_units > 0; itr_units--)
+    for(itr_units = (_units - 1); itr_units >= 0; itr_units--)
     {
         if(
             (_UNITS[itr_units].wx == wx)
@@ -8406,61 +8293,48 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
         )
         {
             _combat_defender_count++;
-
             _combat_defender_player = _UNITS[itr_units].owner_idx;
-
             Load_Battle_Unit(itr_units, &battle_units[_combat_total_unit_count]);
-
             if(battle_units[_combat_total_unit_count].controller_idx == ST_UNDEFINED)
             {
                 battle_units[_combat_total_unit_count].controller_idx = MOO_MONSTER_PLAYER_IDX;
             }
-
             _combat_total_unit_count++;
         }
     }
-
-
     for(itr = 0; itr < troop_count; itr++)
     {
         unit_idx = troops[itr];
-        _combat_attacker_player = _UNITS[troops[0]].owner_idx;
+        _combat_attacker_player = _UNITS[unit_idx].owner_idx;
         Load_Battle_Unit(unit_idx, &battle_units[_combat_total_unit_count]);
         _combat_total_unit_count++;
     }
-
-
     Calc_Battlefield_Bonuses(combat_structure);
-
-
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
         Battle_Unit_Special_Stats(&battle_units[itr_battle_units]);
     }
-
-
     /*
         "Ocean Combat"
         "Only flying, sailing and swimming units may actually engage in combat over such squares."
     */
-    _combat_attacker_count -= Undeployable_Battle_Units_On_Water(_combat_attacker_player);
-    _combat_defender_count -= Undeployable_Battle_Units_On_Water(_combat_defender_player);
-
-
-    IDK_health_attacker__2 = 0;
-    IDK_health_defender__2 = 0;
-    IDK_health_attacker = 0;
-    IDK_health_defender = 0;
-    IDK_melee_threat_attacker = 0;
-    IDK_melee_threat_defender = 0;
-    IDK_ranged_threat_attacker = 0;
-    IDK_ranged_threat_defender = 0;
-    IDK_damage_attacker = 0;
-    IDK_damage_defender = 0;
-
-
+    if(combat_structure == cs_OceanTerrainType)
+    {
+        _combat_attacker_count -= Undeployable_Battle_Units_On_Water(_combat_attacker_player);  /* OGBUG:  _combat_attacker_count is uninitialized */
+        _combat_defender_count -= Undeployable_Battle_Units_On_Water(_combat_defender_player);
+    }
+    attacker_hits_start = 0;
+    defender_hits_start = 0;
+    attacker_hits_left = 0;
+    defender_hits_left = 0;
+    attacker_melee_strength = 0;
+    defender_melee_strength = 0;
+    attacker_ranged_strength = 0;
+    defender_ranged_strength = 0;
+    attacker_raw_hits = 0;
+    defender_raw_hits = 0;
     /*
-        BEGIN:  ¿ WTF ?
+        BEGIN:  Not a real player  (ST_UNDEFINED, MOO_MONSTER_PLAYER_IDX, etc.)
     */
     if((_combat_attacker_player < HUMAN_PLAYER_IDX) || (_combat_attacker_player > NEUTRAL_PLAYER_IDX))
     {
@@ -8468,94 +8342,77 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
         {
             if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
             {
-                battle_units[itr_battle_units].status = 6;  /* Unit_Gone */
+                battle_units[itr_battle_units].status = bus_Gone;
             }
         }
     }
-
     if((_combat_defender_player < HUMAN_PLAYER_IDX) || (_combat_defender_player > NEUTRAL_PLAYER_IDX))
     {
         for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
         {
             if(battle_units[itr_battle_units].controller_idx == _combat_defender_player)
             {
-                battle_units[itr_battle_units].status = 6;  /* Unit_Gone */
+                battle_units[itr_battle_units].status = bus_Gone;
             }
         }
     }
     /*
-        END:  ¿ WTF ?
+        END:  Not a real player  (ST_UNDEFINED, MOO_MONSTER_PLAYER_IDX, etc.)
     */
-
-
    for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
    {
         if(battle_units[itr_battle_units].status == bus_Active)
         {
-            Weights[itr_battle_units] = (30 - battle_units[itr_battle_units].defense);
+            target_weights[itr_battle_units] = (30 - battle_units[itr_battle_units].defense);
 
             if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
             {
                 // Unit's Current Total Hit Points
-                HP = ((battle_units[itr_battle_units].figure_cnt * battle_units[itr_battle_units].hits) - battle_units[itr_battle_units].front_figure_damage);
-
-                IDK_health_attacker += Get_Effective_Hits(HP, battle_units[itr_battle_units].defense);
-
-                if(Battle_Unit_Has_Ranged_Attack(itr_battle_units) == ST_TRUE)
+                unit_current_hits = ((battle_units[itr_battle_units].hits * battle_units[itr_battle_units].figure_cnt) - battle_units[itr_battle_units].front_figure_damage);
+                attacker_hits_left += Get_Effective_Hits(unit_current_hits, battle_units[itr_battle_units].defense);
+                if(Battle_Unit_Has_Ranged_Attack(itr_battle_units) != ST_FALSE)
                 {
-                    IDK_ranged_threat_attacker += Get_Effective_Ranged_Strength(battle_units[itr_battle_units].ranged, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].ranged_attack_attributes));
+                    attacker_ranged_strength += Get_Effective_Ranged_Strength(battle_units[itr_battle_units].ranged, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].ranged_attack_attributes));
                 }
-
                 // {100, 101, 102, 103, 104, 105} srat_Thrown, srat_FireBreath, srat_Lightning, srat_StoneGaze, srat_MultiGaze, srat_DeathGaze
                 // special ranged attack strength
                 // Thrown, Breath, Gaze
-                if(battle_units[itr_battle_units].ranged_type < srat_Thrown)
-                {
-                    special_ranged_attack_strength = 0;
-                }
-                else
+                if(battle_units[itr_battle_units].ranged_type >= srat_Thrown)
                 {
                     special_ranged_attack_strength = battle_units[itr_battle_units].ranged;
                 }
-
-                IDK_melee_threat_attacker += Get_Effective_Melee_Strength(battle_units[itr_battle_units].melee, special_ranged_attack_strength, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].melee_attack_attributes), battle_units[itr_battle_units].ranged_type);
-
-                IDK_damage_attacker += ((battle_units[itr_battle_units].hits * battle_units[itr_battle_units].figure_cnt) - battle_units[itr_battle_units].front_figure_damage);
+                else
+                {
+                    special_ranged_attack_strength = 0;
+                }
+                attacker_melee_strength += Get_Effective_Melee_Strength(battle_units[itr_battle_units].melee, special_ranged_attack_strength, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].melee_attack_attributes), battle_units[itr_battle_units].ranged_type);
+                attacker_raw_hits += ((battle_units[itr_battle_units].hits * battle_units[itr_battle_units].figure_cnt) - battle_units[itr_battle_units].front_figure_damage);
             }
             else  /* battle_units[itr_battle_units].controller_idx == _combat_defender_player */
             {
                 // Unit's Current Total Hit Points
-                HP = ((battle_units[itr_battle_units].figure_cnt * battle_units[itr_battle_units].hits) - battle_units[itr_battle_units].front_figure_damage);
-
-                IDK_health_defender += Get_Effective_Hits(HP, battle_units[itr_battle_units].defense);
-
-                if(Battle_Unit_Has_Ranged_Attack(itr_battle_units) == ST_TRUE)
+                unit_current_hits = ((battle_units[itr_battle_units].hits * battle_units[itr_battle_units].figure_cnt) - battle_units[itr_battle_units].front_figure_damage);
+                defender_hits_left += Get_Effective_Hits(unit_current_hits, battle_units[itr_battle_units].defense);
+                if(Battle_Unit_Has_Ranged_Attack(itr_battle_units) != ST_FALSE)
                 {
-                    IDK_ranged_threat_defender += Get_Effective_Ranged_Strength(battle_units[itr_battle_units].ranged, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].ranged_attack_attributes));
+                    defender_ranged_strength += Get_Effective_Ranged_Strength(battle_units[itr_battle_units].ranged, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].ranged_attack_attributes));
                 }
-
-                if(battle_units[itr_battle_units].ranged_type < srat_Thrown)
-                {
-                    special_ranged_attack_strength = 0;
-                }
-                else
+                if(battle_units[itr_battle_units].ranged_type >= srat_Thrown)
                 {
                     special_ranged_attack_strength = battle_units[itr_battle_units].ranged;
                 }
-
-                IDK_melee_threat_defender += Get_Effective_Melee_Strength(battle_units[itr_battle_units].melee, special_ranged_attack_strength, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].melee_attack_attributes), battle_units[itr_battle_units].ranged_type);
-
-                IDK_damage_defender += ((battle_units[itr_battle_units].hits * battle_units[itr_battle_units].figure_cnt) - battle_units[itr_battle_units].front_figure_damage);
+                else
+                {
+                    special_ranged_attack_strength = 0;
+                }
+                defender_melee_strength += Get_Effective_Melee_Strength(battle_units[itr_battle_units].melee, special_ranged_attack_strength, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].attack_attributes | battle_units[itr_battle_units].melee_attack_attributes), battle_units[itr_battle_units].ranged_type);
+                defender_raw_hits += ((battle_units[itr_battle_units].hits * battle_units[itr_battle_units].figure_cnt) - battle_units[itr_battle_units].front_figure_damage);
             }  /* if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player) */
         }
     }
-
-
-
     /*
         BEGIN:  Mods - Mana / Spell-Ranks
     */
-
     if(_combat_attacker_player >= _num_players)  /* Neural Player or Monster */
     {
         attacker_mana_multiplied = 0;
@@ -8563,27 +8420,21 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
     else
     {
         attacker_mana_multiplied = ((10 * _players[_combat_attacker_player].mana_reserve) / Combat_Casting_Cost_Multiplier(_combat_attacker_player));
-
         if(_players[_combat_attacker_player].Nominal_Skill < attacker_mana_multiplied)
         {
             attacker_mana_multiplied = _players[_combat_attacker_player].Nominal_Skill;
         }
-
         attacker_third_nominal_skill = (_players[_combat_attacker_player].Nominal_Skill / 3);
-
         if(attacker_third_nominal_skill > attacker_mana_multiplied)
         {
             attacker_third_nominal_skill = attacker_mana_multiplied;
         }
-
-        var_4C = 0;
-        var_50 = 0;
-        var_54 = 0;
-
+        attacker_attack_magic = 0;
+        attacker_ranged_magic = 0;
+        attacker_healing_magic = 0;
         if(attacker_mana_multiplied >= 10)
         {
-            spell_ranks = _players[_combat_attacker_player].spellranks[0];
-
+            spell_ranks = _players[_combat_attacker_player].spellranks[sbr_Nature];
             if(
                 (combat_structure == 2)
                 ||
@@ -8592,14 +8443,12 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
             {
                 spell_ranks = 0;
             }
-
             if(spell_ranks > 0)
             {
-                var_4C = (spell_ranks * 50);
-                var_50 = (spell_ranks * 10);
-                var_54 = (spell_ranks * 25);
+                attacker_attack_magic = (spell_ranks * 50);
+                attacker_ranged_magic = (spell_ranks * 10);
+                attacker_healing_magic = (spell_ranks * 25);
             }
-
             if(
                 (combat_structure == 3)
                 ||
@@ -8608,54 +8457,40 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
             {
                 spell_ranks = 0;
             }
-
             if(spell_ranks > 0)
             {
-                var_4C = (spell_ranks * 75);
-                var_54 = (spell_ranks * 25);
+                attacker_attack_magic = (spell_ranks * 75);
+                attacker_healing_magic = (spell_ranks * 25);
             }
-            
-            // Chaos
-            spell_ranks = _players[_combat_attacker_player].spellranks[2];
-
-            if(
-                (combat_structure == 2)
-                ||
-                (combat_structure == 3)
-            )
-            {
-                spell_ranks = 0;
-            }
-
-            if(spell_ranks > 0)
-            {
-                var_4C = (spell_ranks * 100);
-                var_50 = (spell_ranks * 30);
-            }
-
-            // Life
-            spell_ranks = _players[_combat_attacker_player].spellranks[3];
-
+            spell_ranks = _players[_combat_attacker_player].spellranks[sbr_Sorcery];
             if(
                 (combat_structure == 2)
                 ||
                 (combat_structure == 4)
+            )
+            {
+                spell_ranks = 0;
+            }
+            if(spell_ranks > 0)
+            {
+                attacker_attack_magic = (spell_ranks * 75);
+                attacker_healing_magic = (spell_ranks * 25);
+            }
+            spell_ranks = _players[_combat_attacker_player].spellranks[sbr_Chaos];
+            if(
+                (combat_structure == 2)
                 ||
                 (combat_structure == 3)
             )
             {
                 spell_ranks = 0;
             }
-
             if(spell_ranks > 0)
             {
-                var_50 = (spell_ranks * 15);
-                var_54 = (spell_ranks * 40);
+                attacker_attack_magic = (spell_ranks * 100);
+                attacker_ranged_magic = (spell_ranks * 30);
             }
-
-            // Death
-            spell_ranks = _players[_combat_attacker_player].spellranks[4];
-
+            spell_ranks = _players[_combat_attacker_player].spellranks[sbr_Life];
             if(
                 (combat_structure == 2)
                 ||
@@ -8666,158 +8501,100 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
             {
                 spell_ranks = 0;
             }
-
             if(spell_ranks > 0)
             {
-                var_4C = (spell_ranks * 75);
-                var_54 = (spell_ranks * 15);
+                attacker_ranged_magic = (spell_ranks * 15);
+                attacker_healing_magic = (spell_ranks * 40);
             }
+            spell_ranks = _players[_combat_attacker_player].spellranks[sbr_Death];
 
-            var_4C = (var_4C / 10);
-            var_50 = (var_50 / 10);
-            var_54 = (var_54 / 20);
-
+            if(
+                (combat_structure == 2)
+                ||
+                (combat_structure == 4)
+                ||
+                (combat_structure == 3)
+            )
+            {
+                spell_ranks = 0;
+            }
+            if(spell_ranks > 0)
+            {
+                attacker_attack_magic = (spell_ranks * 75);
+                attacker_healing_magic = (spell_ranks * 15);
+            }
+            attacker_attack_magic = (attacker_attack_magic / 10);
+            attacker_ranged_magic = (attacker_ranged_magic / 10);
+            attacker_healing_magic = (attacker_healing_magic / 20);
         }  /* if(attacker_mana_multiplied >= 10) */
 
     }  /* if(_combat_attacker_player >= _num_players) */
-
-    if(_combat_defender_player >= _num_players)
+    if(_combat_defender_player >= _num_players)  /* Neural Player or Monster */
     {
         defender_mana_multiplied = 0;
     }
     else
     {
         defender_mana_multiplied = ((10 * _players[_combat_defender_player].mana_reserve) / Combat_Casting_Cost_Multiplier(_combat_defender_player));
-
         if(_players[_combat_defender_player].Nominal_Skill < defender_mana_multiplied)
         {
             defender_mana_multiplied = _players[_combat_defender_player].Nominal_Skill;
         }
-
         defender_third_nominal_skill = (_players[_combat_defender_player].Nominal_Skill / 3);
-
         if(defender_third_nominal_skill > defender_mana_multiplied)
         {
             defender_third_nominal_skill = defender_mana_multiplied;
         }
-
-        var_4E = 0;
-        var_52 = 0;
-        var_56 = 0;
-
+        defender_attack_magic = 0;
+        defender_ranged_magic = 0;
+        defender_healing_magic = 0;
         if(defender_mana_multiplied >= 10)
         {
-            spell_ranks = _players[_combat_defender_player].spellranks[0];
-
-            if(
-                (combat_structure == 2)
-                ||
-                (combat_structure == 4)
-            )
-            {
-                spell_ranks = 0;
-            }
-
+            spell_ranks = _players[_combat_defender_player].spellranks[sbr_Nature];
             if(spell_ranks > 0)
             {
-                var_4E = (spell_ranks * 50);
-                var_52 = (spell_ranks * 10);
-                var_56 = (spell_ranks * 25);
+                defender_attack_magic = (spell_ranks * 50);
+                defender_ranged_magic = (spell_ranks * 10);
+                defender_healing_magic = (spell_ranks * 25);
             }
-
-            if(
-                (combat_structure == 3)
-                ||
-                (combat_structure == 4)
-            )
-            {
-                spell_ranks = 0;
-            }
-
+            spell_ranks = _players[_combat_defender_player].spellranks[sbr_Sorcery];
             if(spell_ranks > 0)
             {
-                var_4E = (spell_ranks * 75);
-                var_56 = (spell_ranks * 25);
+                defender_attack_magic = (spell_ranks * 75);
+                defender_healing_magic = (spell_ranks * 25);
             }
-            
-            // Chaos
-            spell_ranks = _players[_combat_defender_player].spellranks[2];
-
-            if(
-                (combat_structure == 2)
-                ||
-                (combat_structure == 3)
-            )
-            {
-                spell_ranks = 0;
-            }
-
+            spell_ranks = _players[_combat_defender_player].spellranks[sbr_Chaos];
             if(spell_ranks > 0)
             {
-                var_4E = (spell_ranks * 100);
-                var_52 = (spell_ranks * 30);
+                defender_attack_magic = (spell_ranks * 100);
+                defender_ranged_magic = (spell_ranks * 30);
             }
-
-            // Life
-            spell_ranks = _players[_combat_defender_player].spellranks[3];
-
-            if(
-                (combat_structure == 2)
-                ||
-                (combat_structure == 4)
-                ||
-                (combat_structure == 3)
-            )
-            {
-                spell_ranks = 0;
-            }
-
+            spell_ranks = _players[_combat_defender_player].spellranks[sbr_Life];
             if(spell_ranks > 0)
             {
-                var_52 = (spell_ranks * 15);
-                var_56 = (spell_ranks * 40);
+                defender_ranged_magic = (spell_ranks * 15);
+                defender_healing_magic = (spell_ranks * 40);
             }
-
-            // Death
-            spell_ranks = _players[_combat_defender_player].spellranks[4];
-
-            if(
-                (combat_structure == cs_SorceryNode)
-                ||
-                (combat_structure == cs_ChaosNode)
-                ||
-                (combat_structure == cs_NatureNode)
-            )
-            {
-                spell_ranks = 0;
-            }
-
+            spell_ranks = _players[_combat_defender_player].spellranks[sbr_Death];
             if(spell_ranks > 0)
             {
-                var_4E = (spell_ranks * 75);
-                var_56 = (spell_ranks * 15);
+                defender_attack_magic = (spell_ranks * 75);
+                defender_healing_magic = (spell_ranks * 15);
             }
-
-            var_4E = (var_4C / 10);
-            var_52 = (var_50 / 10);
-            var_56 = (var_54 / 20);
-
+            defender_attack_magic = (defender_attack_magic / 10);
+            defender_ranged_magic = (defender_ranged_magic / 10);
+            defender_healing_magic = (defender_healing_magic / 20);
         }
     }  /* if(_combat_defender_player >= _num_players) */
 
     /*
         END:  Mods - Mana / Spell-Ranks
     */
-
-
-    IDK_health_attacker__2 = IDK_health_attacker;
-    IDK_health_defender__2 = IDK_health_defender;
-
+    attacker_hits_start = attacker_hits_left;
+    defender_hits_start = defender_hits_left;
     /*
-        BEGIN:  ¿ halve values for Neutral Player ?
+        BEGIN:  CP Cheat vs. NCP/Monster
     */
-
-    // BUGBUG: should be ||? either or both
     if(
         (_combat_attacker_player != HUMAN_PLAYER_IDX)
         &&
@@ -8826,61 +8603,52 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
     {
         if(_combat_attacker_player != NEUTRAL_PLAYER_IDX)
         {
-            var_5C = (var_5C / 2);
-            var_64 = (var_64 / 2);
-            var_60 = (var_60 / 2);
-            IDK_health_attacker__2 = (IDK_health_attacker__2 / 2);
-            IDK_health_attacker = (IDK_health_attacker / 2);
-            IDK_melee_threat_attacker = (IDK_melee_threat_attacker / 2);
-            IDK_ranged_threat_attacker = (IDK_ranged_threat_attacker / 2);
-            var_4C = (var_4C / 2);
-            var_50 = (var_50 / 2);
-            var_54 = (var_54 / 2);
+            attacker_spell_ranged_pct += (attacker_spell_ranged_pct / 2);
+            attacker_spell_attack     += (attacker_spell_attack     / 2);
+            attacker_spell_healing    += (attacker_spell_healing    / 2);
+            attacker_hits_start       += (attacker_hits_start       / 2);
+            attacker_hits_left        += (attacker_hits_left        / 2);
+            attacker_melee_strength   += (attacker_melee_strength   / 2);
+            attacker_ranged_strength  += (attacker_ranged_strength  / 2);
+            attacker_attack_magic     += (attacker_attack_magic     / 2);
+            attacker_ranged_magic     += (attacker_ranged_magic     / 2);
+            attacker_healing_magic    += (attacker_healing_magic    / 2);
         }
-        if(_combat_attacker_player != NEUTRAL_PLAYER_IDX)
+        if(_combat_defender_player != NEUTRAL_PLAYER_IDX)
         {
-            var_5E = (var_5E / 2);
-            var_66 = (var_66 / 2);
-            var_62 = (var_62 / 2);
-            IDK_health_defender__2 = (IDK_health_defender__2 / 2);
-            IDK_health_defender = (IDK_health_defender / 2);
-            IDK_melee_threat_defender = (IDK_melee_threat_defender / 2);
-            IDK_ranged_threat_defender = (IDK_ranged_threat_defender / 2);
-            var_4E = (var_4E / 2);
-            var_52 = (var_52 / 2);
-            var_56 = (var_56 / 2);
+            defender_spell_ranged_pct += (defender_spell_ranged_pct / 2);
+            defender_spell_attack += (defender_spell_attack         / 2);
+            defender_spell_healing += (defender_spell_healing       / 2);
+            defender_hits_start     += (defender_hits_start         / 2);
+            defender_hits_left        += (defender_hits_left        / 2);
+            defender_melee_strength  += (defender_melee_strength    / 2);
+            defender_ranged_strength += (defender_ranged_strength   / 2);
+            defender_attack_magic += (defender_attack_magic         / 2);
+            defender_ranged_magic += (defender_ranged_magic         / 2);
+            defender_healing_magic += (defender_healing_magic       / 2);
         }
     }
-
     /*
-        END:  ¿ halve values for Neutral Player ?
+        END:  CP Cheat vs. NCP/Monster
     */
-
-
     /*
         BEGIN:  Combat Turn
     */
-
     for(itr_combat_turns = 0; itr_combat_turns < 3; itr_combat_turns++)
     {
-        if((IDK_ranged_threat_attacker > 10) || (IDK_ranged_threat_defender > 10))
+        if((attacker_ranged_strength > 10) || (defender_ranged_strength > 10))
         {
-            if((IDK_health_attacker > 0) && (IDK_health_defender > 0))
+            if((attacker_hits_left > 0) && (defender_hits_left > 0))
             {
                 if(attacker_mana_multiplied > 10)
                 {
-                    var_64 = ((var_4C * attacker_third_nominal_skill) / 5);
-                    var_5C = ((var_50 * attacker_third_nominal_skill) / 5);
-                    var_60 = ((var_54 * attacker_third_nominal_skill) / 5);
-
-                    var_64 += ((IDK_ranged_threat_attacker * var_5C) / 100);
-
-                    var_54 = (var_54 / 2);
-
+                    attacker_spell_attack = ((attacker_attack_magic * attacker_third_nominal_skill) / 5);
+                    attacker_spell_ranged_pct = ((attacker_ranged_magic * attacker_third_nominal_skill) / 5);
+                    attacker_spell_healing = ((attacker_healing_magic * attacker_third_nominal_skill) / 5);
+                    attacker_spell_attack += ((attacker_ranged_strength * attacker_spell_ranged_pct) / 100);
+                    attacker_healing_magic = (attacker_healing_magic / 2);
                     _players[_combat_attacker_player].mana_reserve -= ((Combat_Casting_Cost_Multiplier(_combat_attacker_player) * attacker_third_nominal_skill) / 10);
-
                     attacker_mana_multiplied -= attacker_third_nominal_skill;
-
                     if(attacker_third_nominal_skill < attacker_mana_multiplied)
                     {
                         attacker_third_nominal_skill = attacker_mana_multiplied;
@@ -8888,25 +8656,19 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
                 }
                 else
                 {
-                    var_5C = 0;
-                    var_64 = 0;
-                    var_60 = 0;
+                    attacker_spell_ranged_pct = 0;
+                    attacker_spell_attack = 0;
+                    attacker_spell_healing = 0;
                 }
-
                 if(defender_mana_multiplied > 10)
                 {
-                    var_66 = ((var_4E * defender_third_nominal_skill) / 5);
-                    var_5E = ((var_52 * defender_third_nominal_skill) / 5);
-                    var_62 = ((var_56 * defender_third_nominal_skill) / 5);
-
-                    var_66 += ((IDK_ranged_threat_defender * var_5E) / 100);
-
-                    var_56 = (var_56 / 2);
-
+                    defender_spell_attack = ((defender_attack_magic * defender_third_nominal_skill) / 5);
+                    defender_spell_ranged_pct = ((defender_ranged_magic * defender_third_nominal_skill) / 5);
+                    defender_spell_healing = ((defender_healing_magic * defender_third_nominal_skill) / 5);
+                    defender_spell_attack += ((defender_ranged_strength * defender_spell_ranged_pct) / 100);
+                    defender_healing_magic = (defender_healing_magic / 2);
                     _players[_combat_defender_player].mana_reserve -= ((Combat_Casting_Cost_Multiplier(_combat_defender_player) * defender_third_nominal_skill) / 10);
-
                     defender_mana_multiplied -= defender_third_nominal_skill;
-
                     if(defender_third_nominal_skill < defender_mana_multiplied)
                     {
                         defender_third_nominal_skill = defender_mana_multiplied;
@@ -8914,57 +8676,45 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
                 }
                 else
                 {
-                    var_5E = 0;
-                    var_66 = 0;
-                    var_62 = 0;
+                    defender_spell_ranged_pct = 0;
+                    defender_spell_attack = 0;
+                    defender_spell_healing = 0;
                 }
-
-
-                var_36 = (((IDK_ranged_threat_attacker + var_64) * Random(10)) / 100);
-                var_3A = (((IDK_ranged_threat_defender + var_66) * Random(10)) / 100);
-
-                IDK_health_attacker += var_60;
-                IDK_health_defender += var_62;
-
-                IDK_ranged_threat_attacker -= ((var_3A * IDK_ranged_threat_attacker) / IDK_health_attacker);
-                IDK_ranged_threat_defender -= ((var_36 * IDK_ranged_threat_defender) / IDK_health_defender);
-
-                IDK_melee_threat_attacker -= ((var_3A * IDK_melee_threat_attacker) / IDK_health_attacker);
-                IDK_melee_threat_defender -= ((var_36 * IDK_melee_threat_defender) / IDK_health_defender);
-
-                IDK_health_attacker -= var_3A;
-                IDK_health_defender -= var_36;
-
-                if(IDK_ranged_threat_attacker < 0)
+                damage_to_defender = (((attacker_ranged_strength + attacker_spell_attack) * Random(10)) / 100);
+                damage_to_attacker = (((defender_ranged_strength + defender_spell_attack) * Random(10)) / 100);
+                attacker_hits_left += attacker_spell_healing;
+                defender_hits_left += defender_spell_healing;
+                attacker_ranged_strength -= ((damage_to_attacker * attacker_ranged_strength) / attacker_hits_left);
+                defender_ranged_strength -= ((damage_to_defender * defender_ranged_strength) / defender_hits_left);
+                attacker_melee_strength -= ((damage_to_attacker * attacker_melee_strength) / attacker_hits_left);
+                defender_melee_strength -= ((damage_to_defender * defender_melee_strength) / defender_hits_left);
+                attacker_hits_left -= damage_to_attacker;
+                defender_hits_left -= damage_to_defender;
+                if(attacker_ranged_strength < 0)
                 {
-                    IDK_ranged_threat_attacker = 0;
+                    attacker_ranged_strength = 0;
                 }
-
-                if(IDK_ranged_threat_defender < 0)
+                if(defender_ranged_strength < 0)
                 {
-                    IDK_ranged_threat_defender = 0;
+                    defender_ranged_strength = 0;
                 }
-
             }
         }
-
     }  /* for(itr_combat_turns = 0; itr_combat_turns < 3; itr_combat_turns++) */
-
-
-    while((IDK_melee_threat_attacker > 10) && (IDK_melee_threat_defender > 10))
+    while((attacker_melee_strength > 10) && (defender_melee_strength > 10))
     {
         if(attacker_mana_multiplied <= 10)
         {
-            var_5C = 0;
-            var_64 = 0;
-            var_60 = 0;  // ¿ ~== healing ?
+            attacker_spell_ranged_pct = 0;
+            attacker_spell_attack = 0;
+            attacker_spell_healing = 0;  // ¿ ~== healing ?
         }
         else
         {
-            var_64 = ((var_4C * attacker_third_nominal_skill) / 5);
-            var_5C = ((var_50 * attacker_third_nominal_skill) / 5);
-            var_60 = ((var_50 * attacker_third_nominal_skill) / 5);  // ¿ ~== healing ?
-            var_64 += ((IDK_ranged_threat_attacker * var_5C) / 100);
+            attacker_spell_attack = ((attacker_attack_magic * attacker_third_nominal_skill) / 5);
+            attacker_spell_ranged_pct = ((attacker_ranged_magic * attacker_third_nominal_skill) / 5);
+            attacker_spell_healing = ((attacker_ranged_magic * attacker_third_nominal_skill) / 5);  // ¿ OGBUG  ...  ~== healing ?
+            attacker_spell_attack += ((attacker_ranged_strength * attacker_spell_ranged_pct) / 100);
             _players[_combat_attacker_player].mana_reserve -= ((Combat_Casting_Cost_Multiplier(_combat_attacker_player) * attacker_third_nominal_skill) / 10);
             attacker_mana_multiplied -= (attacker_third_nominal_skill / 2);
             if((attacker_mana_multiplied / 2) < attacker_third_nominal_skill)
@@ -8972,19 +8722,18 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
                 attacker_third_nominal_skill = (attacker_mana_multiplied / 2);
             }
         }
-
         if(defender_mana_multiplied <= 10)
         {
-            var_5E = 0;
-            var_66 = 0;
-            var_62 = 0;  // ¿ ~== healing ?
+            defender_spell_ranged_pct = 0;
+            defender_spell_attack = 0;
+            defender_spell_healing = 0;  // ¿ ~== healing ?
         }
         else
         {
-            var_66 = ((var_4E * defender_third_nominal_skill) / 5);
-            var_5E = ((var_52 * defender_third_nominal_skill) / 5);
-            var_62 = ((var_52 * defender_third_nominal_skill) / 5);  // ¿ ~== healing ?
-            var_66 += ((IDK_ranged_threat_defender * var_5E) / 100);
+            defender_spell_attack = ((defender_attack_magic * defender_third_nominal_skill) / 5);
+            defender_spell_ranged_pct = ((defender_ranged_magic * defender_third_nominal_skill) / 5);
+            defender_spell_healing = ((defender_ranged_magic * defender_third_nominal_skill) / 5);  // ¿ ~== healing ?
+            defender_spell_attack += ((defender_ranged_strength * defender_spell_ranged_pct) / 100);
             _players[_combat_defender_player].mana_reserve -= ((Combat_Casting_Cost_Multiplier(_combat_defender_player) * defender_third_nominal_skill) / 10);
             defender_mana_multiplied -= (defender_third_nominal_skill / 2);
             if((defender_mana_multiplied / 2) < defender_third_nominal_skill)
@@ -8992,120 +8741,91 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
                 defender_third_nominal_skill = (defender_mana_multiplied / 2);
             }
         }
+        damage_to_defender = (((attacker_melee_strength + attacker_spell_attack) * Random(10)) / 100);
+        damage_to_attacker = (((defender_melee_strength + defender_spell_attack) * Random(10)) / 100);
+        attacker_hits_left += attacker_spell_healing;  // ¿ ~== healing ?
+        defender_hits_left += defender_spell_healing;  // ¿ ~== healing ?
+        attacker_melee_strength -= ((attacker_melee_strength * damage_to_attacker) / attacker_hits_left);
+        defender_melee_strength -= ((defender_melee_strength * damage_to_defender) / defender_hits_left);
+        attacker_hits_left -= damage_to_attacker;
+        defender_hits_left -= damage_to_defender;
 
-        var_36 = (((IDK_melee_threat_attacker + var_64) * Random(10)) / 100);
-        var_3A = (((IDK_melee_threat_defender + var_66) * Random(10)) / 100);
-
-        IDK_health_attacker += var_60;  // ¿ ~== healing ?
-        IDK_health_defender += var_62;  // ¿ ~== healing ?
-
-        IDK_melee_threat_attacker -= ((IDK_melee_threat_attacker * var_3A) / IDK_health_attacker);
-        IDK_melee_threat_defender -= ((IDK_melee_threat_defender * var_36) / IDK_health_defender);
-
-        IDK_health_attacker -= var_3A;
-        IDK_health_defender -= var_36;
-
-    }  /* while((IDK_melee_threat_attacker > 10) & (IDK_melee_threat_defender > 10)) */
-
+    }  /* while((attacker_melee_strength > 10) & (defender_melee_strength > 10)) */
     /*
         END:  Combat Turn
     */
-
-
-    if(IDK_melee_threat_attacker > 10)
+    if(attacker_melee_strength > 10)
     {
         winner_player_idx = _combat_attacker_player;
-
-        var_44 = ((100 * IDK_health_attacker) / IDK_health_attacker__2);
-
-        var_42 = ((var_44 * IDK_damage_attacker) / 100);
-
-        var_40 = IDK_damage_attacker;
+        winner_health_pct = ((100 * attacker_hits_left) / attacker_hits_start);
+        winner_hits_floor = ((winner_health_pct * attacker_raw_hits) / 100);
+        winner_hits_countdown = attacker_raw_hits;
     }
-
     // BUGBUG: duplicated code?
-    if(IDK_melee_threat_attacker > 10)
+    if(attacker_melee_strength > 10)
     {
         winner_player_idx = _combat_attacker_player;
-        var_44 = ((100 * IDK_health_attacker) / IDK_health_attacker__2);
-        var_42 = ((var_44 * IDK_damage_attacker) / 100);
-        var_40 = IDK_damage_attacker;
+        winner_health_pct = ((100 * attacker_hits_left) / attacker_hits_start);
+        winner_hits_floor = ((winner_health_pct * attacker_raw_hits) / 100);
+        winner_hits_countdown = attacker_raw_hits;
     }
     else
     {
-        if(IDK_melee_threat_defender > 10)
+        if(defender_melee_strength > 10)
         {
             winner_player_idx = _combat_defender_player;
-            var_44 = ((100 * IDK_health_defender) / IDK_health_defender__2);
-            var_42 = ((var_44 * IDK_damage_defender) / 100);
-            var_40 = IDK_damage_defender;
+            winner_health_pct = ((100 * defender_hits_left) / defender_hits_start);
+            winner_hits_floor = ((winner_health_pct * defender_raw_hits) / 100);
+            winner_hits_countdown = defender_raw_hits;
         }
     }
-
-
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
         if(battle_units[itr].controller_idx != winner_player_idx)
         {
             battle_units[itr].status = bus_Dead;  /* Unit_Dead */
-            Weights[itr] = 0;
+            target_weights[itr] = 0;
         }
     }
-
-
-    damage_types[0] = 3;
-    damage_types[1] = 0;
-    damage_types[2] = 0;
-
+    damage_types[dt_Normal] = 3;
+    damage_types[dt_Drain] = 0;
+    damage_types[dt_Doom] = 0;
     if(winner_player_idx != ST_UNDEFINED)
     {
-        MsgType = ST_UNDEFINED;
-
-        while(var_40 > var_42)
+        repeat_target_idx = ST_UNDEFINED;
+        while(winner_hits_countdown > winner_hits_floor)
         {
-            if(MsgType <= ST_UNDEFINED)
+            if(repeat_target_idx <= ST_UNDEFINED)
             {
-                battle_unit_idx = Get_Weighted_Choice(&Weights[0], _combat_total_unit_count);
+                battle_unit_idx = Get_Weighted_Choice(&target_weights[0], _combat_total_unit_count);
             }
             else
             {
-                battle_unit_idx = MsgType;
+                battle_unit_idx = repeat_target_idx;
             }
-
-            Weights[battle_unit_idx] += 50;
-
+            target_weights[battle_unit_idx] += 50;
             Battle_Unit_Commit_Damage(battle_unit_idx, &damage_types[0]);
-
-            if(battle_units[battle_unit_idx].status <= 0)
+            if(battle_units[battle_unit_idx].status > 0)
             {
-                MsgType = battle_unit_idx;
+                target_weights[battle_unit_idx] = 0;
+                repeat_target_idx = ST_UNDEFINED;
             }
             else
             {
-                Weights[battle_unit_idx] = 0;
-                MsgType = ST_UNDEFINED;
+                repeat_target_idx = battle_unit_idx;
             }
-
-            var_40 -= 3;
+            winner_hits_countdown -= 3;
         }
     }
-
-
     if(winner_player_idx == HUMAN_PLAYER_IDX)
     {
-        MsgType = 6;  /* ¿ cmbmsg_DefVictory ? */
+        end_of_combat_message_type = csmt_VictoryStrategic;
     }
     else
     {
-        MsgType = 7;  /* ¿ cmbmsg_DefDefeat ?*/
+        end_of_combat_message_type = csmt_DefeatStrategic;
     }
-
-
-
-    End_Of_Combat__WIP(winner_player_idx, item_count, item_list, MsgType);
-
-
-
+    End_Of_Combat(winner_player_idx, item_count, item_list, end_of_combat_message_type);
     if(winner_player_idx == _combat_attacker_player)
     {
         did_win = ST_TRUE;
@@ -9114,8 +8834,6 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
     {
         did_win = ST_FALSE;
     }
-
-
     return did_win;
 }
 
@@ -9201,10 +8919,10 @@ void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t healing_amount, int16_t o
 ;     (hp*6) - (hp*13.5) - (hp*24) - (hp*37.5)...
 
 Strategic_Combat()
-    |-> HP = ((battle_units[itr_battle_units].hits / battle_units[itr_battle_units].figure_cnt) - battle_units[itr_battle_units].TopFig_Dmg);
-    |-> IDK_health_attacker += Get_Effective_Hits(HP, battle_units[itr_battle_units].defense);
+    |-> unit_current_hits  = ((battle_units[itr_battle_units].hits / battle_units[itr_battle_units].figure_cnt) - battle_units[itr_battle_units].TopFig_Dmg);
+    |-> attacker_hits_left += Get_Effective_Hits(unit_current_hits , battle_units[itr_battle_units].defense);
 
-HP = ((battle_units[].hits / battle_units[].figure_cnt) - battle_units[].TopFig_Dmg);
+unit_current_hits  = ((battle_units[].hits / battle_units[].figure_cnt) - battle_units[].TopFig_Dmg);
 
 battle_units[].defense = ¿ unit_type_table[_UNITS[].type].defense ?
 
@@ -9263,7 +8981,7 @@ int16_t Get_Effective_Hits(int16_t hits, int16_t defense)
 ;   eldritch w:    total*5/4
 
 Strategic_Combat()
-    |-> IDK_ranged_threat_defender += Get_Effective_Ranged_Strength(battle_units[itr_battle_units].ranged, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].Attack_Flags | battle_units[itr_battle_units].Ranged_ATK_Flags));
+    |-> defender_ranged_strength += Get_Effective_Ranged_Strength(battle_units[itr_battle_units].ranged, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].Attack_Flags | battle_units[itr_battle_units].Ranged_ATK_Flags));
 
 battle_units[].ranged
 battle_units[].figure_cnt
@@ -9384,7 +9102,7 @@ int16_t Get_Effective_Ranged_Strength(int16_t ranged, int16_t figures, int16_t a
 ;   multi-gaze:    +900
 
 Strategic_Combat()
-    |-> IDK_melee_threat_attacker += Get_Effective_Melee_Strength(battle_units[itr_battle_units].melee, special_ranged_attack_strength, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].Attack_Flags | battle_units[itr_battle_units].Melee_ATK_Flags), battle_units[itr_battle_units].ranged_type);
+    |-> attacker_melee_strength += Get_Effective_Melee_Strength(battle_units[itr_battle_units].melee, special_ranged_attack_strength, battle_units[itr_battle_units].figure_cnt, (battle_units[itr_battle_units].Attack_Flags | battle_units[itr_battle_units].Melee_ATK_Flags), battle_units[itr_battle_units].ranged_type);
 
 battle_units[itr_battle_units].melee
 special_ranged_attack_strength
@@ -14826,12 +14544,6 @@ int16_t Apply_Fear_Attack(int16_t attacker_battle_unit_idx, int16_t defender_bat
 // WZD o123p01
 // MoO2  Module: COMBINIT  End_Of_Combat_()
 /*
-    "WIP", cause Undead_Animation(ut_Zombies) and Undead_Animation(Find_Undead_Creator_Type(player_idx))
-
-    // ; finishes the active combat, processing all related
-    // ; events and effects - including the display of the
-    // ; summary scroll and undead creation animations if applicable
-    End_Of_Combat(winner_player_idx, item_count, item_list, MsgType);
 
 Diplomatic_Value:
     starts at 0
@@ -14839,7 +14551,7 @@ Diplomatic_Value:
     or Random(20) for Non-Hero Unit and Random(10) for Engineer or Settler
     passes negated value to G_DIPL_Action()
 */
-void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_list[], int16_t MsgType)
+void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[], int16_t end_of_combat_message_type)
 {
     // GCC  warning: storing the address of local variable 'Buildings_Lost' in 'CMB_LostBuildings' [-Wdangling-pointer=]
     // CMB_LostBuildings is read within the same function (the combat resolution / post-battle summary screen). So the pointer is still valid when it's actually used — it's not truly dangling at runtime, but GCC can't prove that.
@@ -14866,15 +14578,11 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
     int16_t IDK_population_lost = 0;  // _DI_
     int16_t bldg_msg_idx = 0;  // _DI_
     int16_t itr_hero_items = 0;  // _DI_
-
     Rare_Foe_Defeated = 0;
-
-    CMB_ScrollMsg_Type = MsgType;
-
+    combat_results_scroll_message = end_of_combat_message_type;
     CMB_Population_Lost = 0;
     CMB_Buildings_Lost = 0;
     CMB_Gold_Reward = 0;
-
     // ~ Monsters
     if((player_idx < HUMAN_PLAYER_IDX) || (player_idx > NEUTRAL_PLAYER_IDX))
     {
@@ -14886,15 +14594,11 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             }
         }
     }
-
     *item_count = 0;
-
     Experience_Gained = 0;
     Zombies_Raised = 0;
     Undead_Created = 0;
     No_Secondaries = ST_FALSE;
-
-
     // Lair Guard nibbles
     if(_combat_environ == 5)  /* Lair */
     {
@@ -14905,15 +14609,11 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         }
         _LAIRS[_combat_environ_idx].guard2_count = (_LAIRS[_combat_environ_idx].guard2_count & 0xF0);  // clear low-nibble
     }
-
-
     /*
         BEGIN:  
             drake178: process control change effects, regeneration, and recalls, while also counting the surviving units
     */
-
     Surviving_Unit_Count = 0;
-
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
         if((battle_units[itr_battle_units].combat_effects & bue_Confusion) != 0)
@@ -14927,7 +14627,6 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 battle_units[itr_battle_units].controller_idx = _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx;
             }
         }
-
         if(battle_units[itr_battle_units].controller_idx != player_idx)
         {
             if(battle_units[itr_battle_units].status == bus_Uninvolved)
@@ -14942,11 +14641,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 battle_units[itr_battle_units].status = bus_Active;
             }
         }
-
-        enchantments = battle_units[itr_battle_units].enchantments;
-        enchantments |= _UNITS[battle_units[itr_battle_units].unit_idx].enchantments;
-        enchantments |= battle_units[itr_battle_units].item_enchantments;
-
+        enchantments = (battle_units[itr_battle_units].enchantments | _UNITS[battle_units[itr_battle_units].unit_idx].enchantments | battle_units[itr_battle_units].item_enchantments);
         if(
             ((battle_units[itr_battle_units].combat_effects & bue_Possession) != 0)
             ||
@@ -14969,11 +14664,10 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 battle_units[itr_battle_units].status = bus_Gone;
             }
         }
-
         if(
             (battle_units[itr_battle_units].status <= bus_Dead)
             ||
-            (battle_units[itr_battle_units].status == bus_Flee)
+            (battle_units[itr_battle_units].status == bus_Fleeing)
             ||
             (battle_units[itr_battle_units].status == bus_Recalled)
         )
@@ -14984,17 +14678,13 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 {
                     battle_units[itr_battle_units].status = bus_Active;
                 }
-
                 battle_units[itr_battle_units].figure_cnt = battle_units[itr_battle_units].figure_max;
-
                 battle_units[itr_battle_units].front_figure_damage = 0;
             }
         }
-
         if(battle_units[itr_battle_units].status == bus_Recalled)
         {
             battle_unit_owner_idx = battle_units[itr_battle_units].controller_idx;
-
             _UNITS[battle_units[itr_battle_units].unit_idx].wx = (int8_t)_players[battle_unit_owner_idx].summon_wx;
             _UNITS[battle_units[itr_battle_units].unit_idx].wy = (int8_t)_players[battle_unit_owner_idx].summon_wy;
             _UNITS[battle_units[itr_battle_units].unit_idx].wp = (int8_t)_players[battle_unit_owner_idx].summon_wp;
@@ -15010,7 +14700,6 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx = 100;
             }
         }
-
         if(
             (battle_units[itr_battle_units].controller_idx == player_idx)
             &&
@@ -15019,32 +14708,25 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         {
             Surviving_Unit_Count++;
         }
-
     }  /* for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++) */
-
     /*
         END:  
     */
-
     Retreat_From_Combat(player_idx);
-
     GUI_Multipurpose_Int = 0;
-
     /*
-        BEGIN:  
-            drake178: process undead and zombie creation from dead units
-                      INCONSISTENT: does not remove enchantments and mutations that are not available for the new unit
+        BEGIN:  Undead / Zombie
+                INCONSISTENT: does not remove enchantments and mutations that are not available for the new unit
     */
-
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
         // Undead
         if(
-            (battle_units[itr_battle_units].controller_idx == player_idx)
+            (battle_units[itr_battle_units].controller_idx != player_idx)
             &&
             (battle_units[itr_battle_units].status == bus_Drained)
             &&
-            (battle_units[itr_battle_units].race == rt_Death)
+            (battle_units[itr_battle_units].race != rt_Death)
             &&
             (_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot == ST_UNDEFINED)
             &&
@@ -15077,13 +14759,11 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             (Surviving_Unit_Count < 9)
         )
         {
-            if(battle_units[itr_battle_units].controller_idx == player_idx)
+            if(battle_units[itr_battle_units].controller_idx != player_idx)
             {
                 Experience_Gained += 2;
             }
-
             Zombies_Raised++;
-
             _UNITS[battle_units[itr_battle_units].unit_idx].type = ut_Zombies;
             _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx = (int8_t)player_idx;
             _UNITS[battle_units[itr_battle_units].unit_idx].XP = 0;
@@ -15095,20 +14775,15 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             battle_units[itr_battle_units].figure_max = _unit_type_table[ut_Zombies].Figures;
             battle_units[itr_battle_units].front_figure_damage = 0;
             battle_units[itr_battle_units].status = bus_Active;
-
             Surviving_Unit_Count++;
         }
-
     }  /* for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++) */
-
     /*
-        END:  
+        END:  Undead / Zombie
     */
-
     /*
         BEGIN:  Enemey City
     */
-
     if(_combat_environ == 1)  /* City-Siege */
     {
         CMB_Population_Lost = 0;
@@ -15124,12 +14799,10 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 _players[_combat_defender_player].fame -= _CITIES[_combat_environ_idx].size;
                 SETMIN(_players[_combat_defender_player].fame, 0);
             }
-
-            if(_combat_defender_player != HUMAN_PLAYER_IDX)
+            if(_combat_defender_player == HUMAN_PLAYER_IDX)
             {
-                GUI_Multipurpose_Int = _CITIES[_combat_environ_idx].size;
+                GUI_Multipurpose_Int -= _CITIES[_combat_environ_idx].size;
             }
-
             if(_CITIES[_combat_environ_idx].population == 0)
             {
                 GAME_RazeCity = ST_TRUE;
@@ -15140,13 +14813,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 {
                     if(player_idx < _num_players)  /* ~== not NEUTRAL_PLAYER_IDX */
                     {
-                        // ; decides whether the AI will raze the selected city or not
-                        // ; returns 1 if yes, 0 if no
-                        // ; INCONSISTENT: Lawful wizards disproportionately
-                        // ;  adjust based on whether hidden relation is 0 or not
-                        // ; BUG? surviving units are checked without owners
-                        // TODO  GAME_RazeCity = Raze_Check(player_idx, OVL_Action_Structure);
-                        GAME_RazeCity = ST_FALSE;
+                        GAME_RazeCity = Raze_Check(player_idx, _combat_environ_idx);
                     }
                 }
                 else
@@ -15162,29 +14829,21 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 }
 
             }
-
             if(GAME_RazeCity == ST_FALSE)
             {
                 CMB_Gold_Reward = (_CITIES[_combat_environ_idx].size - 2);
-
                 SETMIN(CMB_Gold_Reward, 0);
-
                 _players[player_idx].fame += CMB_Gold_Reward;
-                
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
-                    GUI_Multipurpose_Int -= CMB_Gold_Reward;
+                    GUI_Multipurpose_Int += CMB_Gold_Reward;
                 }
-
                 CMB_Gold_Reward = 0;
-
                 CMB_Gold_Reward = City_Gold(_combat_environ_idx);  // the conquering wizard gets a portion of the previous owner's gold reserve as loot.
-
                 if(player_idx < _num_players)
                 {
                     Player_Add_Gold(player_idx, CMB_Gold_Reward);
                 }
-
                 if(_CITIES[_combat_environ_idx].owner_idx < _num_players)
                 {
                     _players[_combat_defender_player].gold_reserve -= CMB_Gold_Reward;
@@ -15193,23 +14852,17 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             else
             {
                 CMB_Gold_Reward = _CITIES[_combat_environ_idx].size;
-
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
                     GUI_Multipurpose_Int -= CMB_Gold_Reward;
                 }
-
                 _players[player_idx].fame -= CMB_Gold_Reward;
-
                 SETMIN(_players[player_idx].fame, 0);
-
                 CMB_Gold_Reward = City_Gold(_combat_environ_idx);
-
                 if(_CITIES[_combat_environ_idx].owner_idx < _num_players)
                 {
                     _players[_combat_defender_player].gold_reserve -= CMB_Gold_Reward;
                 }
-
                 for(itr_buildings = bt_Barracks; itr_buildings < NUM_BUILDINGS; itr_buildings++)
                 {
                     if(_CITIES[_combat_environ_idx].bldg_status[itr_buildings] > bs_NotBuilt)
@@ -15217,22 +14870,15 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                         CMB_Gold_Reward += (bldg_data_table[itr_buildings].construction_cost / 10);
                     }
                 }
-
                 if(player_idx < _num_players)
                 {
                     Player_Add_Gold(player_idx, CMB_Gold_Reward);
                 }
-
             }
-
         }  /* if(player_idx != _combat_attacker_player) */
-
-
-
         if(_CITIES[_combat_environ_idx].population != 0)
         {
-            Population_Loss_Percent = (_combat_city_damage / 2);
-
+            Population_Loss_Percent = (_combat_city_damage * 2);
             if(player_idx == _combat_attacker_player)
             {
                 if(player_idx == NEUTRAL_PLAYER_IDX)
@@ -15249,9 +14895,9 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                             {
                                 Summoned_Unit = ST_TRUE;
                             }
+                            break;
                         }
                     }
-
                     if(Summoned_Unit != ST_TRUE)
                     {
                         _active_battle_unit = 667;  /* 667 - raiders won (city neutral) */
@@ -15262,18 +14908,14 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
                         _active_battle_unit = Rampage_Combat_City();  /* 666 - rampage, no ruins  668 - rampage, created ruins */
                     }
-
                 }
                 else
                 {
                     Population_Loss_Percent += 10;
                 }
             }
-
             SETMAX(Population_Loss_Percent, 50);
-
             IDK_population_lost = 0;
-
             for(itr_population = 0; (_CITIES[_combat_environ_idx].population - 1) > itr_population; itr_population++)
             {
                 if(Random(100) <= Population_Loss_Percent)
@@ -15281,14 +14923,11 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                     IDK_population_lost++;
                 }
             }
-
             for(itr_buildings = 0; itr_buildings < NUM_BUILDINGS; itr_buildings++)
             {
                 Buildings_Lost[itr_buildings] = 0;
             }
-
             Destruction_Chance = _combat_city_damage;
-
             if(player_idx == _combat_attacker_player)
             {
                 if(player_idx != NEUTRAL_PLAYER_IDX)
@@ -15300,30 +14939,26 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                     Destruction_Chance += 50;
                 }
             }
-
             SETMAX(Destruction_Chance, 75);
-
             if(_active_battle_unit != 668)  /* 668 - rampage, created ruins */
             {
                 Apply_Damage_To_City(_combat_environ_idx, IDK_population_lost, Destruction_Chance, &Buildings_Lost[0]);
             }
-
             if(player_idx != _combat_defender_player)
             {
                 for(itr_bldg_msg = 0; g_bldg_msg_ctr> itr_bldg_msg; itr_bldg_msg++)
                 {
                     if(MSG_Building_Complete[itr_bldg_msg].city_idx == _combat_environ_idx)
                     {
-                        for(bldg_msg_idx = itr_bldg_msg; g_bldg_msg_ctr > itr_bldg_msg; itr_bldg_msg++)
+                        for(bldg_msg_idx = itr_bldg_msg; g_bldg_msg_ctr > bldg_msg_idx; bldg_msg_idx++)
                         {
                             MSG_Building_Complete[bldg_msg_idx].city_idx = MSG_Building_Complete[(bldg_msg_idx + 1)].city_idx;
                         }
+                        g_bldg_msg_ctr--;
                     }
                 }
             }
-
             CMB_Buildings_Lost = 0;
-
             for(itr_buildings = 0; itr_buildings < NUM_BUILDINGS; itr_buildings++)
             {
                 if(Buildings_Lost[itr_buildings] > 0)
@@ -15331,29 +14966,20 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                     CMB_Buildings_Lost++;
                 }
             }
-
             CMB_Population_Lost = IDK_population_lost;
-
             CMB_LostBuildings = &Buildings_Lost[0];
-
         }  /* if(OVL_Action_Type == 1) */
-
-
-    }  /* if(_CITIES[OVL_Action_Structure].population != 0) */
-
+    }  /* if(_CITIES[_combat_environ_idx].population != 0) */
     /*
         END:  Enemey City
     */
-
     /*
         BEGIN:  
     */
-
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
         assert(battle_units[itr_battle_units].unit_idx >= 0);
         assert(battle_units[itr_battle_units].unit_idx <= _units);
-
         /*
             Lair Combat, Neutral Player won, Neutral Player's Unit, Unit is ~Alive
             move the unit back into the lair unit count and kill it's battle unit record
@@ -15396,34 +15022,31 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 }
             }
         }
-
         /*
             @@Diplomatic_Value
         */
         Diplomatic_Value = 0;
-
         /*
             Current Battle Unit is Alive or Dead
         */
         if(
             (battle_units[itr_battle_units].status > bus_Active)
             ||
-            (_UNITS[battle_units[itr_battle_units].unit_idx].wp == 9)  /* BU Combat Summon */  /* ¿ ~unsummoned ? */
+            (_UNITS[battle_units[itr_battle_units].unit_idx].wp == 9)  /* Combat Summon - ¿ ~unsummoned ? */
             ||
             (
-                (battle_units[itr_battle_units].controller_idx == NEUTRAL_PLAYER_IDX)
+                (_UNITS[battle_units[itr_battle_units].unit_idx].owner_idx == NEUTRAL_PLAYER_IDX)
                 &&
-                (_combat_environ != 0)  /* Enemy Army */
+                (_combat_environ != cnv_Enemy_Stack)
                 &&
                 (
-                    (_combat_environ != 1)  /* Enemy City */
+                    (_combat_environ != cnv_Enemy_City)
                     ||
                     ((battle_units[itr_battle_units].Abilities & UA_FANTASTIC) != 0)
                 )
             )
         )
         {
-
             // it's dead, and it's not ours, so we killed it, and we deserve the credit
             if(battle_units[itr_battle_units].controller_idx != player_idx)
             {
@@ -15434,8 +15057,6 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                     Rare_Foe_Defeated = ST_TRUE;  // later, +1 Fame for "winning a battle where the enemy lost a very rare creature" - MoM-OSG
                 }
             }
-
-
             if(
                 (battle_units[itr_battle_units].controller_idx == _combat_defender_player)
                 &&
@@ -15449,31 +15070,25 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 else
                 {
                     Diplomatic_Value += Random(20);
-
-                    if(
-                        (battle_units[itr_battle_units].Construction > 0)
-                        ||
-                        ((battle_units[itr_battle_units].Abilities & UA_CREATEOUTPOST) != 0)
-                    )
-                    {
-                        Diplomatic_Value += Random(10);
-                    }
+                }
+                if(
+                    (battle_units[itr_battle_units].Construction > 0)
+                    ||
+                    ((battle_units[itr_battle_units].Abilities & UA_CREATEOUTPOST) != 0)
+                )
+                {
+                    Diplomatic_Value += Random(10);
                 }
             }
-
-
             /*
                 BEGIN: Hero Unit
 
                     IDA Color: brick red
             */
-            // if(_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot > ST_UNDEFINED)
             if(_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot > ST_UNDEFINED)
             {
                 for(itr_hero_items = 0; itr_hero_items < NUM_HERO_ITEMS; itr_hero_items++)
                 {
-
-                    // if(_players[BUNITSOWNER()].Heroes[BUNITSHEROSLOT()].Items[itr_hero_items] > ST_UNDEFINED)
                     if(_players[_UNITS[battle_units[itr_battle_units].unit_idx].owner_idx].Heroes[_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot].Items[itr_hero_items] > ST_UNDEFINED)
                     {
                         // BU Status 6 ~== unsummoned, banished, disintegrated, stoned, cracks called
@@ -15495,26 +15110,20 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                             }
                         }
                     }
-
                     _players[_UNITS[battle_units[itr_battle_units].unit_idx].owner_idx].Heroes[_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot].Items[itr_hero_items] = ST_UNDEFINED;
                 }
-
                 if(battle_units[itr_battle_units].controller_idx != player_idx)
                 {
                     if(battle_units[itr_battle_units].controller_idx == HUMAN_PLAYER_IDX)
                     {
                         GUI_Multipurpose_Int -= ((_UNITS[battle_units[itr_battle_units].unit_idx].Level + 1) / 2);
                     }
-
                     _players[battle_units[itr_battle_units].controller_idx].fame -= ((_UNITS[battle_units[itr_battle_units].unit_idx].Level + 1) / 2);
                 }
-
             }
             /*
                 END: Hero Unit
             */
-
-
             // BU Status 6 ~== unsummoned, banished, disintegrated, stoned, cracks called
             if(
                 (battle_units[itr_battle_units].status == bus_Gone)
@@ -15528,7 +15137,6 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             {
                 Kill_Unit(battle_units[itr_battle_units].unit_idx, kt_Normal);
             }
-
         }
         else
         {
@@ -15539,21 +15147,17 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             battle_units[itr_battle_units].Extra_Hits = 0;
             battle_units[itr_battle_units].enchantments = 0;
             BU_CombatHits = Battle_Unit_Hit_Points(&battle_units[itr_battle_units]);
-            BU_CombatHits -= battle_units[itr_battle_units].hits;
+            BU_CombatHits = (battle_units[itr_battle_units].hits - BU_CombatHits);
             battle_units[itr_battle_units].front_figure_damage -= BU_CombatHits;
             SETMIN(battle_units[itr_battle_units].front_figure_damage, 0);
             _UNITS[battle_units[itr_battle_units].unit_idx].Damage = (((battle_units[itr_battle_units].figure_max - battle_units[itr_battle_units].figure_cnt) * (battle_units[itr_battle_units].hits - BU_CombatHits)) + battle_units[itr_battle_units].front_figure_damage);
             _UNITS[battle_units[itr_battle_units].unit_idx].moves2 = 0;
         }
-
     // @@Next_Battle_Unit__2
     }
-
     /*
         END:  
     */
-
-
     if(
         (_combat_defender_player != HUMAN_PLAYER_IDX)
         &&
@@ -15564,19 +15168,15 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
     {
         Change_Relations(-Diplomatic_Value, _combat_attacker_player, _combat_defender_player, 8, ST_NULL, ST_NULL);
     }
-
-
     /*
         BEGIN:  
     */
-
     if(
         (_combat_environ == 5)  // Lair
         &&   
         (player_idx == NEUTRAL_PLAYER_IDX)
     )
     {
-
         if(
             ((_LAIRS[_combat_environ_idx].guard1_count & 0x0F) == 0)
             &&
@@ -15588,7 +15188,6 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             _LAIRS[_combat_environ_idx].guard2_count = 0;
             _LAIRS[_combat_environ_idx].guard2_unit_type = ut_Gargoyles;
         }
-
         if(
             (Undead_Created > 0)
             &&
@@ -15600,30 +15199,24 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             Undead_Created = 0;
         }
     }
-
     /*
         END:
 
     */
-
-
     /*
         BEGIN:  Fame for defeating 4+ enemy units
     */
-
     if(
         (player_idx != NEUTRAL_PLAYER_IDX)
         &&
-        (Experience_Gained > 8)
+        (Experience_Gained >= 8)
     )
     {
         if(player_idx == HUMAN_PLAYER_IDX)
         {
             GUI_Multipurpose_Int++;
         }
-
         _players[player_idx].fame++;
-
         if(player_idx != _combat_attacker_player)
         {
             if(
@@ -15633,9 +15226,8 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             )
             {
                 GUI_Multipurpose_Int--;
+                _players[_combat_attacker_player].fame--;
             }
-
-            _players[_combat_attacker_player].fame--;
         }
         else
         {
@@ -15646,26 +15238,18 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             )
             {
                 GUI_Multipurpose_Int--;
+                _players[_combat_defender_player].fame--;
             }
-
-            _players[_combat_defender_player].fame--;
         }
     }
-
     /*
         END:  Fame for defeating 4+ enemy units
     */
-
-
     if(player_idx == HUMAN_PLAYER_IDX)
     {
         GUI_Multipurpose_Int += Rare_Foe_Defeated;
     }
-
     _players[player_idx].fame += Rare_Foe_Defeated;
-
-
-
     if(
         (_combat_attacker_player == HUMAN_PLAYER_IDX)
         ||
@@ -15674,13 +15258,9 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
     {
         Combat_Results_Scroll();
     }
-
-
-
     /*
         BEGIN:  Experience
     */
-
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
         if(
@@ -15698,16 +15278,12 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             _UNITS[battle_units[itr_battle_units].unit_idx].XP += Experience_Gained;
         }
     }
-
     /*
         END:  Experience
     */
-
-
     /*
         BEGIN:  Zombies & Undead
     */
-
     if(
     (_combat_attacker_player == HUMAN_PLAYER_IDX)
     ||
@@ -15717,9 +15293,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         if(Zombies_Raised > 0)
         {
             stu_itoa(Zombies_Raised, temp_buffer, 10);
-
             stu_strcpy(GUI_NearMsgString, temp_buffer);
-
             if(Zombies_Raised > 1)
             {
                 stu_strcat(GUI_NearMsgString, cnst_Zombie_Msg_1);
@@ -15728,18 +15302,13 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             {
                 stu_strcat(GUI_NearMsgString, cnst_Zombie_Msg_2);
             }
-
             stu_strcat(GUI_NearMsgString, cnst_Zombie_Msg_3);
-
             Undead_Animation(ut_Zombies);
         }
-
         if(Undead_Created > 0)
         {
             stu_itoa(Undead_Created, temp_buffer, 10);
-
             stu_strcpy(GUI_NearMsgString, temp_buffer);
-
             if(Undead_Created > 1)
             {
                 stu_strcat(GUI_NearMsgString, cnst_Undead_Msg_1);
@@ -15748,7 +15317,6 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             {
                 stu_strcat(GUI_NearMsgString, cnst_Undead_Msg_2);
             }
-
             if(player_idx == HUMAN_PLAYER_IDX)
             {
                 stu_strcat(GUI_NearMsgString, cnst_Undead_Msg_3);
@@ -15772,21 +15340,16 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                     stu_strcat(GUI_NearMsgString, cnst_Dot9);
                 }
             }
-
             Undead_Animation(Find_Undead_Creator_Type(player_idx));
         }
-
     }
-
     /*
         END:  Zombies & Undead
     */
-
-    if(_combat_attacker_player == HUMAN_PLAYER_IDX)
+    if(_combat_attacker_player != HUMAN_PLAYER_IDX)
     {
-        // TODO  ¿ odd behavior, what to do ?  Set_Mouse_List(1, mouse_list_hourglass);
+        Set_Mouse_List(1, mouse_list_hourglass);
     }
-
 }
 
 
@@ -15827,7 +15390,7 @@ int16_t Find_Undead_Creator_Type(int16_t player_idx)
                     {
                         /* Access players[player_idx].Heroes[hero_slot].Items[itr2] */
                         item_idx = _players[player_idx].Heroes[_UNITS[battle_units[itr1].unit_idx].Hero_Slot].Items[itr2];
-                        if(item_idx != -1)
+                        if(item_idx > ST_UNDEFINED)
                         {
                             /* Check if the item has the Vampiric enchantment */
                             if((_ITEMS[item_idx].Powers & IP_VAMPIRIC) != 0)
@@ -15876,18 +15439,16 @@ void Combat_Results_Scroll_Draw(void)
 // Settings - Help - 'Raze City' "combat results scroll"
 void Combat_Results_Scroll(void)
 {
-    int16_t City_Capture;
-    int16_t Hotkey_R2_Index;
-    int16_t Hotkey_R1_Index;
-    int16_t hotkey_esc;
-    int16_t leave_screen;
-    int16_t spare;
-    int16_t IDK_popup_timer;  // _SI_
-    int16_t input_field_idx;  // _DI_
-
+    int16_t City_Capture = 0;
+    int16_t Hotkey_R2_Index = 0;
+    int16_t Hotkey_R1_Index = 0;
+    int16_t hotkey_esc = 0;
+    int16_t leave_screen = 0;
+    int16_t spare = 0;
+    int16_t IDK_popup_timer = 0;
+    int16_t input_field_idx = 0;
     City_Capture = ST_FALSE;
-
-    if(CMB_ScrollMsg_Type == 4)
+    if(combat_results_scroll_message == csmt_TurnLimit)
     {
         // SCROLL.LBX  011  CMBLOSE
         _scroll_paper_seg = LBX_Reload_Next(scroll_lbx_file__ovr123, 11, _screen_seg);
@@ -15897,11 +15458,11 @@ void Combat_Results_Scroll(void)
         if(_combat_environ == 1)  /* City-Siege */
         {
             if(
-                (CMB_ScrollMsg_Type == 1)
+                (combat_results_scroll_message == csmt_Victory)
                 ||
-                (CMB_ScrollMsg_Type == 5)
+                (combat_results_scroll_message == csmt_EnemyFled)
                 ||
-                (CMB_ScrollMsg_Type == 6)
+                (combat_results_scroll_message == csmt_VictoryStrategic)
             )
             {
                 // City, Won
@@ -15935,11 +15496,11 @@ void Combat_Results_Scroll(void)
         else
         {
             if(
-                (CMB_ScrollMsg_Type == 1)  // Combat Victory, Tactical Combat
+                (combat_results_scroll_message == csmt_Victory)
                 ||
-                (CMB_ScrollMsg_Type == 5)  // Enemy Fled
+                (combat_results_scroll_message == csmt_EnemyFled)
                 ||
-                (CMB_ScrollMsg_Type == 6)  // Combat Victory, Strategic Combat
+                (combat_results_scroll_message == csmt_VictoryStrategic)
             )
             {
                 // SCROLL.LBX  010  CMBWIN
@@ -15952,46 +15513,31 @@ void Combat_Results_Scroll(void)
             }
         }
     }
-
     // HELP.LBX  001  <no name, no description>
     _combat_results_scroll_bottom_seg = LBX_Reload_Next(help_lbx_file__ovr123, 1, _screen_seg);
-
     Set_Page_Off();
-
     _scroll_text_height = Combat_Results_Scroll_Text();
-
     _scroll_text_top = ((SCREEN_YMAX - (22 + _scroll_text_height)) / 2);
-
     Clear_Fields();
-
     Set_Page_Off();
-
     Combat_Results_Scroll_Draw();
-
     _page_flip_effect = 3;
     PageFlip_FX();
-    _page_flip_effect = 0;
-    
+    _page_flip_effect = pfe_None;
     Copy_On_To_Off_Page();
-
     Assign_Auto_Function(Combat_Results_Scroll_Draw, 1);
-    
     leave_screen = ST_FALSE;
-
     Hotkey_R1_Index = Add_Hot_Key(cnst_HOTKEY_R);
     Hotkey_R2_Index = Add_Hot_Key(cnst_HOTKEY_R_2);
     hotkey_esc = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc1A, ST_UNDEFINED);
-
     IDK_popup_timer = 0;
     while((IDK_popup_timer < 400) && (leave_screen == ST_FALSE))
     {
         input_field_idx = Get_Input();
-
         if(input_field_idx == hotkey_esc)
         {
             leave_screen = ST_TRUE;
         }
-
         if((input_field_idx == Hotkey_R1_Index) || (input_field_idx == Hotkey_R2_Index))
         {
             if(GAME_RazeCity == ST_FALSE)
@@ -16003,48 +15549,38 @@ void Combat_Results_Scroll(void)
                     if(spare == ST_FALSE)
                     {
                         GAME_RazeCity = ST_TRUE;
-                        // ; BUG: this is different than the original penalty, as conquest fame is already applied!
-                        // ; BUG: no zero check!
+                        // BUG: this is different than the original penalty, as conquest fame is already applied!
+                        // BUG: no zero check
                         _players[HUMAN_PLAYER_IDX].fame -= (_CITIES[_combat_environ_idx].size + 1);
                         GUI_Multipurpose_Int -= (_CITIES[_combat_environ_idx].size + 1);
-
-                        // ; (this resets the timeout counter)
+                        /* OGBUG: this resets the timeout counter */
                         for(IDK_popup_timer = 3; IDK_popup_timer < NUM_BUILDINGS; IDK_popup_timer++)
                         {
                             if(_CITIES[_combat_environ_idx].bldg_status[IDK_popup_timer] > bs_NotBuilt)
                             {
-                                // ; BUG: will re-award the original looted gold another time!
-                                CMB_Gold_Reward += bldg_data_table[IDK_popup_timer].construction_cost;
+                                /* OGBUG: will re-award the original looted gold another time */
+                                CMB_Gold_Reward += (bldg_data_table[IDK_popup_timer].construction_cost / 10);
                             }
                         }
-
                         Player_Add_Gold(HUMAN_PLAYER_IDX, CMB_Gold_Reward);
-
                         _scroll_text_height = Combat_Results_Scroll_Text();
-
                         _scroll_text_top = ((SCREEN_YMAX - (22 + _scroll_text_height)) / 2);
-
                     }
-
                     Clear_Fields();
-
                     hotkey_esc = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc1A, ST_UNDEFINED);
                 }
             }
         }
-
         if(leave_screen == ST_FALSE)
         {
             Set_Page_Off();
             Combat_Results_Scroll_Draw();
             PageFlip_FX();
         }
-
+        IDK_popup_timer++;
     }
-
     Deactivate_Auto_Function();
     Release_Block(_screen_seg);
-
 }
 
 
@@ -16056,34 +15592,23 @@ int16_t Combat_Results_Scroll_Text(void)
     uint8_t colors2[5] = { 0, 0, 0, 0, 0 };
     uint8_t colors1[5] = { 0, 0, 0, 0, 0 };
     int16_t next_x = 0;
-    int16_t text_height = 0;  // _SI_
-    int16_t itr_colors = 0;  // _DI_
-    int16_t itr_buildings = 0;  // _DI_
-
-
+    int16_t text_height = 0;
+    int16_t itr_colors = 0;
+    int16_t itr_buildings = 0;
     CMB_Scroll_MinHeight = 0;
-
-
     for(itr_colors = 0; itr_colors < 5; itr_colors++)
     {
         colors1[itr_colors] = 47;
     }
-
     for(itr_colors = 0; itr_colors < 5; itr_colors++)
     {
         colors2[itr_colors] = 55;
     }
-
     colors2[0] = 247;
-
     colors1[0] = 245;
-
     text_height = 92;
-
     Set_Font_Colors_15(4, &colors1[0]);
-
-
-    switch(CMB_ScrollMsg_Type)
+    switch(combat_results_scroll_message)
     {
         case 0:
         {
@@ -16110,9 +15635,8 @@ int16_t Combat_Results_Scroll_Text(void)
             {
                 Set_Font_Colors_15(1, &colors2[0]);
                 Set_Font_Spacing_Width(2);
-                Print_Paragraph(75, (_scroll_text_top + text_height), 75, GUI_NearMsgString, 0);
-                // TODO  text_height += (Get_Paragraph_Max_Height(175, GUI_NearMsgString, 0) + 2);
-                text_height += (Get_Paragraph_Max_Height(175, GUI_NearMsgString) + 2);
+                Print_Paragraph(75, (_scroll_text_top + text_height), 175, GUI_NearMsgString, 0);
+                text_height += (Get_Paragraph_Max_Height(175, GUI_NearMsgString) + 2);  /* OGBUG  wants 3rd argument; text_height += (Get_Paragraph_Max_Height(175, GUI_NearMsgString, 0) + 2); */
             }
         } break;
         case 4:
@@ -16143,14 +15667,12 @@ int16_t Combat_Results_Scroll_Text(void)
         } break;
         case 12:
         {
-            // _fstrcpy(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
+            // _fstrcpy(GUI_NearMsgString, _CITIES[_combat_environ_idx].name);
             stu_strcpy(GUI_NearMsgString, _CITIES[_combat_environ_idx].name);
             stu_strcat(GUI_NearMsgString, cnst_CityLost_Msg);  /* " has been conquered" */
             Print_Centered(160, (_scroll_text_top + 25), GUI_NearMsgString);
         } break;
     }
-
-
     if(_active_battle_unit == 666)  /* ; 666 - rampage, no ruins */
     {
         Set_Font_Colors_15(1, &colors2[0]);
@@ -16159,29 +15681,25 @@ int16_t Combat_Results_Scroll_Text(void)
         // TODO  text_height += (Get_Paragraph_Max_Height(175, message, 2) + 2));
         text_height += (Get_Paragraph_Max_Height(175, message) + 2);
     }
-
     if(_active_battle_unit == 668)  /* ; 668 - rampage, created ruins */
     {
         Set_Font_Colors_15(1, &colors2[0]);
-        // _fstrcpy(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
+        // _fstrcpy(GUI_NearMsgString, _CITIES[_combat_environ_idx].name);
         stu_strcpy(message, _CITIES[_combat_environ_idx].name);
         stu_strcat(message, cnst_NewRuins_Msg);  /* " has been reduced to ruins" */
         Print_Paragraph(75, (_scroll_text_top + text_height), 175, message, 2);
         // TODO  text_height += (Get_Paragraph_Max_Height(175, message, 2) + 2));
         text_height += (Get_Paragraph_Max_Height(175, message) + 2);
     }
-
     if(_active_battle_unit == 667)  /* ; 667 - raiders won (city neutral) */
     {
-        // _fstrcpy(GUI_NearMsgString, _CITIES[OVL_Action_Structure].name);
+        // _fstrcpy(GUI_NearMsgString, _CITIES[_combat_environ_idx].name);
         stu_strcpy(message, _CITIES[_combat_environ_idx].name);
         stu_strcat(message, cnst_CityRaided_Msg);  /* " has fallen to raiders" */
         Print_Paragraph(75, (_scroll_text_top + text_height), 175, message, 2);
         // TODO  text_height += (Get_Paragraph_Max_Height(175, message, 2) + 2));
         text_height += (Get_Paragraph_Max_Height(175, message) + 2);
     }
-
-
     if(GUI_Multipurpose_Int != 0)
     {
         Set_Font_Colors_15(1, &colors2[0]);
@@ -16200,8 +15718,6 @@ int16_t Combat_Results_Scroll_Text(void)
         Print_Centered(160, (_scroll_text_top + text_height), message);
         text_height += 9;
     }
-
-
     if(CMB_Gold_Reward > 0)
     {
         Set_Font_Colors_15(1, &colors2[0]);
@@ -16212,8 +15728,6 @@ int16_t Combat_Results_Scroll_Text(void)
         Print_Centered(160, (_scroll_text_top + text_height), message);
         text_height += 9;
     }
-
-
     if(GAME_RazeCity == ST_TRUE)
     {
         Set_Font_Colors_15(1, &colors2[0]);
@@ -16235,7 +15749,6 @@ int16_t Combat_Results_Scroll_Text(void)
             text_height += 7;
             text_height += 2;
         }
-
         if(CMB_Buildings_Lost > 0)
         {
             Set_Font_Colors_15(4, &colors1[0]);
@@ -16258,26 +15771,21 @@ int16_t Combat_Results_Scroll_Text(void)
             }
             text_height += 2;
         }
-
         // ¿ BUG: this should be outside this if / the second-to-last-thing to happen ?
         SETMIN(text_height, CMB_Scroll_MinHeight);
     }
-
     return text_height;
 }
 
 
 // WZD o123p06
-/* GEMINI */
 int16_t City_Gold(int16_t city_idx)
 {
     int16_t empire_population = 0;
     int16_t amount = 0;
     int16_t itr = 0;
     int16_t city_owner = 0;
-
     amount = 0;
-
     /* Check if the city belongs to the neutral player */
     if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
     {
@@ -16294,7 +15802,6 @@ int16_t City_Gold(int16_t city_idx)
         /* If owned by a wizard, amount is proportional to their gold reserve */
         empire_population = 0;
         city_owner = _CITIES[city_idx].owner_idx;
-
         /* Calculate total population of the owner's empire */
         for(itr = 0; itr < _cities; itr++)
         {
@@ -16303,96 +15810,66 @@ int16_t City_Gold(int16_t city_idx)
                 empire_population += _CITIES[itr].population;
             }
         }
-
-        /* Calculate fraction of gold reserve: (city_pop / total_empire_pop) * gold_reserve */
-        /* Assembly uses long multiplication and division (LXMUL@, LDIV@) */
-        if(empire_population > 0)
-        {
-            amount = (((int32_t)_players[city_owner].gold_reserve * _CITIES[city_idx].population) / empire_population);
-        }
-        else
-        {
-            amount = 0;
-        }
+        amount = (((int32_t)_players[city_owner].gold_reserve * _CITIES[city_idx].population) / empire_population);
     }
-
     return amount;
 }
 
 
 // WZD o123p07
-/* GEMINI */
 int16_t Rampage_Combat_City(void)
 {
-    int16_t primary_count = 0;
-    int16_t secondary_count = 0;
-    int16_t primary_unit = 0;
-    int16_t secondary_unit = 0;
-    int16_t unit_types_found = 0;
     int16_t current_u_type = 0;
+    int16_t unit_types_found = 0;
+    int16_t secondary_unit = 0;
+    int16_t primary_unit = 0;
+    int16_t secondary_count = 0;
+    int16_t primary_count = 0;
     int16_t empty_lair_idx = 0;
     int16_t itr = 0;
-    int16_t fortress_city_idx = 0;
-
     empty_lair_idx = ST_UNDEFINED;
-
-    for(itr = 0; itr < NUM_LAIRS; itr++)
+    for(itr = 0; (itr < NUM_LAIRS) && (empty_lair_idx == ST_UNDEFINED); itr++)
     {
         if(_LAIRS[itr].intact == ST_FALSE)
         {
             empty_lair_idx = itr;
-            break;
         }
     }
-
     primary_unit = 0;
     secondary_unit = 0;
     primary_count = 0;
     secondary_count = 0;
-
     /* 50% chance for rampage to create ruins/lair */
-    if(Random(2) == 1)
-    {
-        return 666;
-    }
-
     /* No room for a new lair record */
-    if(empty_lair_idx == ST_UNDEFINED)
-    {
-        return 666;
-    }
-
     /* Check if the city is a player's capital; capitals cannot be turned into ruins by rampage */
-    fortress_city_idx = Player_Fortress_City(_CITIES[_combat_environ_idx].owner_idx);
-    if(fortress_city_idx == _combat_environ_idx)
+    if(
+        (Random(2) == 1)
+        ||
+        (empty_lair_idx == ST_UNDEFINED)
+        ||
+        (Player_Fortress_City(_CITIES[_combat_environ_idx].owner_idx) == _combat_environ_idx)
+    )
     {
         return 666;
     }
-
     /* Transfer ownership to Neutral and destroy the city */
     Change_City_Ownership(_combat_environ_idx, NEUTRAL_PLAYER_IDX);
     Destroy_City(_combat_environ_idx);
-
     unit_types_found = 0;
-
     /* Identify the two most expensive unit types in the rampaging monster stack to guard the ruins */
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-        if(battle_units[itr].status != 1 /* bus_Active */)
+        if(battle_units[itr].status != bus_Active)
         {
             continue;
         }
-
         if(battle_units[itr].controller_idx != NEUTRAL_PLAYER_IDX)
         {
             continue;
         }
-
         /* Mark rampaging units as dead (clearing the combat state) */
         battle_units[itr].status = bus_Dead;
-
         current_u_type = _UNITS[battle_units[itr].unit_idx].type;
-
         if(current_u_type == primary_unit)
         {
             primary_count++;
@@ -16413,17 +15890,17 @@ int16_t Rampage_Combat_City(void)
             {
                 unit_types_found = 2;
                 /* If new unit is more expensive than primary, shift primary to secondary */
-                if(_unit_type_table[current_u_type].cost >= _unit_type_table[primary_unit].cost)
+                if(_unit_type_table[current_u_type].cost < _unit_type_table[primary_unit].cost)
+                {
+                    secondary_unit = current_u_type;
+                    secondary_count = 1;
+                }
+                else
                 {
                     secondary_unit = primary_unit;
                     secondary_count = primary_count;
                     primary_unit = current_u_type;
                     primary_count = 1;
-                }
-                else
-                {
-                    secondary_unit = current_u_type;
-                    secondary_count = 1;
                 }
             }
             else
@@ -16444,7 +15921,6 @@ int16_t Rampage_Combat_City(void)
             }
         }
     }
-
     /* Initialize the new Ruins lair */
     _LAIRS[empty_lair_idx].guard1_unit_type = (uint8_t)primary_unit;
     _LAIRS[empty_lair_idx].guard2_unit_type = (uint8_t)secondary_unit;
@@ -16463,7 +15939,6 @@ int16_t Rampage_Combat_City(void)
     _LAIRS[empty_lair_idx].Item_Values[0] = 0;
     _LAIRS[empty_lair_idx].Item_Values[1] = 0;
     _LAIRS[empty_lair_idx].Item_Values[2] = 0;
-
     return 668;
 }
 
@@ -17486,7 +16961,7 @@ int16_t Battle_Unit_Moves2(int16_t battle_unit_idx)
  *
  * @note GUI_Multipurpose_Int is used as a summary accumulator for human-visible fame changes.
  * @note The function updates multiple global combat-result fields, including CMB_Gold_Reward,
- *       CMB_ScrollMsg_Type, CMB_Population_Lost, and CMB_Buildings_Lost.
+ *       combat_results_scroll_message, CMB_Population_Lost, and CMB_Buildings_Lost.
  * @note A human-facing results scroll is only shown when either the attacker or the city owner is
  *       the human player.
  */
@@ -17683,12 +17158,12 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
 
     if(troop_owner_idx == HUMAN_PLAYER_IDX)
     {
-        CMB_ScrollMsg_Type = 1; /* combat victory */
+        combat_results_scroll_message = csmt_Victory;
     }
 
     if(city_owner_idx == HUMAN_PLAYER_IDX)
     {
-        CMB_ScrollMsg_Type = 12; /* city lost */
+        combat_results_scroll_message = csmt_CityLost;
     }
 
     CMB_Population_Lost = 0;
@@ -17795,30 +17270,23 @@ int16_t Retreat_Check(int16_t player_idx)
 
 
 // WZD o124p19
-/* GEMINI */
 int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
 {
     int16_t city_owner_units_on_landmass = 0;
     int16_t own_units_on_landmass = 0;
     int16_t city_landmass = 0;
     int16_t total_surviving = 0;
-    int16_t i = 0;
+    int16_t itr = 0;
     int16_t score = 0;
     int16_t city_owner = 0;
     int16_t personality = 0;
-    uint8_t * landmass_ptr = NULL;
-
     score = 0;
-
     if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
     {
-        return 0;
+        return ST_FALSE;
     }
-
     city_owner = _CITIES[city_idx].owner_idx;  // DNE in Dasm
-
     /* Adjust score based on AI personality */
-    /* Player struct size is 0x4C8 */
     personality = _players[player_idx].Personality;
     switch(personality)
     {
@@ -17839,13 +17307,13 @@ int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
         {
             /* OGBUG: this should either check the diplomatic status or hostility instead, or use a different jump */
             /* BUG: Lawful check uses Hidden_Rel == 0 to penalize raze score */
-            if(_players[player_idx].Dipl.Hidden_Rel[city_owner] == 0)
+            if(_players[player_idx].Dipl.Hidden_Rel[city_owner] != 0)
             {
-                score -= 200;
+                score += 25;
             }
             else
             {
-                score += 25;
+                score -= 200;
             }
         } break;
         case PRS_Peaceful:
@@ -17855,14 +17323,13 @@ int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
         default:
             break;
     }
-
     /* Count all active units surviving the battle */
     /* BUG? This counts units regardless of owner */
     {
         total_surviving = 0;
-        for(i = 0; i < _combat_total_unit_count; i++)
+        for(itr = 0; itr < _combat_total_unit_count; itr++)
         {
-            if(battle_units[i].status == bus_Active)
+            if(battle_units[itr].status == bus_Active)
             {
                 total_surviving++;
             }
@@ -17872,29 +17339,25 @@ int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
             score += 10;
         }
     }
-
     /* Identify the landmass (continent) of the city */
-    city_landmass = _landmasses[(_CITIES[city_idx].wp * WORLD_WIDTH) + (_CITIES[city_idx].wy * WORLD_WIDTH) + _CITIES[city_idx].wx];
-
+    city_landmass = _landmasses[(_CITIES[city_idx].wp * WORLD_SIZE) + (_CITIES[city_idx].wy * WORLD_WIDTH) + _CITIES[city_idx].wx];
     /* Count total units on the same landmass for current player and former owner */
     own_units_on_landmass = 0;
     city_owner_units_on_landmass = 0;
-
-    for(i = 0; i < _units; i++)
+    for(itr = 0; itr < _units; itr++)
     {
-        if(_landmasses[(_UNITS[i].wp * WORLD_WIDTH) + (_UNITS[i].wy * WORLD_WIDTH) + _UNITS[i].wx] == city_landmass)
+        if(_landmasses[(_UNITS[itr].wp * WORLD_SIZE) + (_UNITS[itr].wy * WORLD_WIDTH) + _UNITS[itr].wx] == city_landmass)
         {
-            if(_UNITS[i].owner_idx == player_idx)
+            if(_UNITS[itr].owner_idx == player_idx)
             {
                 own_units_on_landmass++;
             }
-            else if(_UNITS[i].owner_idx == city_owner)
+            else if(_UNITS[itr].owner_idx == city_owner)
             {
                 city_owner_units_on_landmass++;
             }
         }
     }
-
     /* Strategic value adjustment */
     if(city_owner_units_on_landmass == 0)
     {
@@ -17903,25 +17366,21 @@ int16_t Raze_Check(int16_t player_idx, int16_t city_idx)
     else
     {
         /* Ratio of own units vs former owner units on this continent */
-        /* score += ((Own * 50) / Enemy) - 50 */
-        score += (((int32_t)own_units_on_landmass * 50) / city_owner_units_on_landmass) - 50;
+        score += ((own_units_on_landmass * 50) / city_owner_units_on_landmass) - 50;
     }
-
     /* Chaotic wizards have a baseline chance to raze */
-    if(_players[player_idx].Personality == 3 /* PRS_Chaotic */)
+    if(_players[player_idx].Personality == PRS_Chaotic)
     {
         if(score < 10)
         {
             score = 10;
         }
     }
-
     /* Final probability check */
     if(Random(100) <= score)
     {
         return ST_TRUE; /* Raze city */
     }
-
     return ST_FALSE; /* Spare city */
 }
 
@@ -21390,50 +20849,18 @@ void Build_Battlefield(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD ovr154p02
-// drake178: CMB_GenerateMap()
 /*
-; generates the combat map based on the passed values,
-; including the associated movement maps, and wall,
-; house, tree, and rock arrays (the FlyFort argument is
-; not actually used here)
-;
-; has two wall-related BUGs: Outposts can not have City
-; Walls (i.e. Wall of Stone will have no effect), but
-; any non-city combat location can have destroyed
-; walls, as the field value is not zeroed for them
-*/
-/*
-Build_Battlefield()
-        Generate_Combat_Map(
-            combat_location_type, 
-            combat_house_style, 
-            &neighborhood_road_flags[0], 
-            roads_enchanted, 
-            combat_terrain_set, 
-            &neighborhood_river_flags[0], 
-            city_has_flying_fortress, 
-            attacker_on_floating_island, 
-            defender_on_floating_island, 
-            city_has_stone_walls, 
-            city_population, 
-            magic_wall_flags
-        );
-
-magic_wall_flags
+magic_walls
     two-bit mask, and the consumer proves it — Combat.c:22490 and 22503 bit-test it rather than comparing values:
     bit source city enchantment     becomes
     1    WALL_OF_FIRE                battlefield->wall_of_fire
     2    WALL_OF_DARKNESS            battlefield->wall_of_darkness
-
-city_has_flying_fortress
+flying_fortress_flag
     is passed and ignored
-
-city_has_stone_walls
+city_walls
     stone walls; standing, not rubble;
-
 city_population
     location class and house count
-
 */
 void Generate_Combat_Map(
     int16_t location_type, 
@@ -22650,7 +22077,7 @@ void Remove_Rough_Terrain(int16_t combat_location_type)
         {
             for(rough_cgx = MIN_CGX_CITY; rough_cgx <= MAX_CGX_CITY; rough_cgx++)
             {
-                if (battlefield->terrain_group[((rough_cgy * COMBAT_GRID_WIDTH) + rough_cgx)] == CTG_Rough)
+                if(battlefield->terrain_group[((rough_cgy * COMBAT_GRID_WIDTH) + rough_cgx)] == CTG_Rough)
                 {
                     battlefield->terrain_group[((rough_cgy * COMBAT_GRID_WIDTH) + rough_cgx)] = ctg_Grass;
                 }
@@ -23807,13 +23234,7 @@ void Wall_Rise_Load(int16_t wall_type)
 void Allocate_Combat_Base_Blocks(void)
 {
     // MoO2  _combat_data = Allocate_First_Block()
-    // battlefield          = (struct s_BATTLEFIELD   *)Allocate_First_Block(_screen_seg, 348);    // 348 PR, 5568 B
-    /*
-        member                  OG    port    delta
-        rock_pict_segs[100]    200     800     +600
-        house_pict_segs[16]     32     128      +96
-    */
-    battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, ((sizeof(struct s_BATTLEFIELD) + 15) / 16));
+    battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, ((sizeof(struct s_BATTLEFIELD) / 16) + 1));
     combat_grid_entities = (struct s_COMBAT_ENTITY *)Allocate_Next_Block( _screen_seg, 482);    // 482 PR, 7712 B
     _missiles            = (struct s_MISSILE       *)Allocate_Next_Block( _screen_seg,  10);    //  10 PR,  160 B
     _vortexes            = (struct s_MAGIC_VORTEX  *)Allocate_Next_Block( _screen_seg,   9);    //   9 PR,  144 B

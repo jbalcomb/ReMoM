@@ -27,6 +27,12 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 - One period per filename, reserved for the extension. Use underscores to separate stem components — `hemom_seed12345_stderr.log`, not `hemom.seed12345.stderr.log` or `hemom_seed12345.stderr.log`. Multiple dots confuse tools (shell glob behaviour, IDE syntax detection, archive extractors) and obscure which suffix is actually the extension.
 - Use real, recognized extensions (`.log`, `.txt`, `.csv`, `.json`). Do not use words like `raw`, `trace`, `out`, or `dump` as extensions — they aren't recognized by editors/tools and trigger "unknown file type" handling. If you need to distinguish kinds of output, encode that in the stem (`*_stderr.log`, `*_rng.log`), not the extension.
 
+## Presenting answers in chat (all agents)
+- **Every reference to a file, function, line, or symbol is a clickable markdown link.** `[Combat.c:15086](MoM/src/Combat.c#L15086)` — never a bare `Combat.c:15086`, never a backticked path, never a plain path. Ranges are `#L15086-L15090`; folders are `[MoM/src/](MoM/src/)`. Paths are workspace-relative from the repo root. (Docs under `doc/#CodeReview/` sit one level down and use `../../MoM/src/...`.)
+- **No exceptions, and brevity is never one.** "Just give me a short list", a one-line status answer, a findings table, a correction, a summary — all get links. A line number that cannot be clicked is worth *less* than none, because it still has to be hunted for by hand.
+- **Check before sending.** Scan the outgoing message for `Filename.ext:NNNN` or bare paths and convert every one.
+- **Commands are Bash, prose is not a command.** See *Shell and scripting* below — when a command belongs in the answer, give the command, not a description of it.
+
 ## Shell and scripting (all agents)
 - **Commands given to the user are Bash (Git Bash on Windows).** Use `/c/STU/devel/ReMoM/...` paths, real Unix tools, and `./ReMoM.exe`. Never hand over `C:\...` paths, PowerShell/cmd forms, or a prose description where a command belongs. This holds regardless of what an agent harness reports as the "primary" shell.
 - **All scripting defaults to Python, invoked as `python3`.** Not bare `python`, not `py`, not a sed/awk one-liner, not PowerShell.

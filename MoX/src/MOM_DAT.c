@@ -1248,7 +1248,7 @@ int16_t _wall_rise_on;
 // MoO2  Module: MoX  _combat_data
 // MoO2  Module: MoX  _combat_grid
 /*
-never allocated for Strategic_Combat__WIP?
+never allocated for Strategic_Combat?
 ...crashes at Calc_Battlefield_Bonuses(combat_structure);
 
 */
@@ -1279,18 +1279,15 @@ int16_t frame_scanned_flag;
 // WZD dseg:9284
 // WZD dseg:9286
 /*
-combat type?
-    ...mode, context, setting, circumstance, environment, ...
-¿ enum ?
-0: Open-Field  (Enemy Stack)
-1: City-Siege  (Enemy City)
-5: Lair
-
-STRUCTURES INFLUENCING COMBAT
+enum e_COMBAT_ENVIRONMENT_TYPE
+cnv_Enemy_Stack     = 0,        0: Open-Field  (Enemy Stack)
+cnv_Enemy_City      = 1,        1: City-Siege  (Enemy City)
+cnv_Lair            = 5         5: Lair
+...
+"STRUCTURES INFLUENCING COMBAT"
 ...
 vs. battlefield->center_square_structure?
-    enum Central_Structures
-
+    enum e_CENTRAL_STRUCTURES
 ¿ vs. _combat_structure ?
 */
 int16_t _combat_environ;
