@@ -797,7 +797,7 @@ enum e_BATTLE_UNIT_STATUS
     bus_Uninvolved  = 3,  /* ~ "can not engage" used for 'Floating Island', Transports, etc.; included in 'Flee'; EoC, set to bus_Active; */
     bus_Dead        = 4,  /* ¿ ? */
     bus_Drained     = 5,  /* ¿ ? */
-    bus_Gone        = 6   /* ¿ ? ¿ ~== _UNITS[].wp == 9 ? ¿ excluded from 'Raise Dead' */
+    bus_Gone        = 6   /* ¿ ? ¿ ~== _UNITS[].wp == 9 ? ¿ excluded from 'Raise Dead' */  /* ~== unsummoned, banished, disintegrated, stoned, cracks called */
 };
 
 /*
@@ -1461,7 +1461,7 @@ extern int16_t _combat_winner;
 extern int16_t _combat_turn;
 
 // WZD dseg:C974
-extern int16_t GAME_RazeCity;
+extern int16_t destroy_combat_city;
 
 // WZD dseg:C976
 extern int16_t CMB_Gold_Reward;
@@ -1676,7 +1676,7 @@ int16_t Battle_Unit_Instant_Movement_Mode(int16_t battle_unit_idx);
 */
 
 // WZD s96p01
-int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t troop_count, int16_t troops[]);
+int16_t Combat(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t troop_count, int16_t troops[]);
 
 // WZD s96p02
 // drake178: EZ_CreateGuardStack()

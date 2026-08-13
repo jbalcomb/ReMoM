@@ -63,7 +63,7 @@
 #include "../MoM/src/MOM_SCR.h"
 #include "../MoM/src/Settings.h"
 #include "../MoM/src/UNITTYPE.h"
-#include "../MoM/src/Combat.h"   /* CLAUDE: Combat__WIP() + CMB_Gold_Reward for --combat test mode */
+#include "../MoM/src/Combat.h"   /* CLAUDE: Combat() + CMB_Gold_Reward for --combat test mode */
 #include "../MoM/src/DIPLODEF.h" /* CLAUDE: DIPL_War for --combat test mode */
 #include "../MoM/src/WZD_o143.h"  /* Random_City_Name_By_Race */
 
@@ -828,7 +828,7 @@ static void HeMoM_Replay_Log_Field_Hit(void *log, int mouse_x, int mouse_y)
 /*  Loads a named fixture save (SAVECMBT.GAM), patches the minimal overland  */
 /*  state the combat dispatcher expects for a stack-vs-stack attack, seeds   */
 /*  the RNG immediately before combat entry (so overland load history cannot */
-/*  shift the combat rolls), invokes Combat__WIP() directly, and dumps the   */
+/*  shift the combat rolls), invokes Combat() directly, and dumps the   */
 /*  results as `key = value` text for the CTest assertion step.              */
 /*                                                                           */
 /*  Both combatants must be computer players: the dispatcher then routes to  */
@@ -936,11 +936,11 @@ static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
         }
     }
 
-    /* Patch diplomacy: Combat__WIP() silently aborts (No_Combat) when a non-human attacker strikes an Alliance/WizardPact partner, so force a state of war between the combatants in both directions. */
+    /* Patch diplomacy: Combat() silently aborts (No_Combat) when a non-human attacker strikes an Alliance/WizardPact partner, so force a state of war between the combatants in both directions. */
     _players[attacker_player_idx].Dipl.Dipl_Status[defender_player_idx] = DIPL_War;
     _players[defender_player_idx].Dipl.Dipl_Status[attacker_player_idx] = DIPL_War;
 
-    /* Patch the overland state Combat__WIP() reads for a stack-vs-stack attack.  OVL_Action_OriginX/Y is the square the attackers strike from; Combat__WIP() moves the troops there at entry, so it just needs to be a square adjacent to the defender. */
+    /* Patch the overland state Combat() reads for a stack-vs-stack attack.  OVL_Action_OriginX/Y is the square the attackers strike from; Combat() moves the troops there at entry, so it just needs to be a square adjacent to the defender. */
     _combat_environ = 0;      /* cnv_Enemy_Stack */
     _combat_environ_idx = 0;  /* unused for stack-vs-stack */
     OVL_Action_OriginX = (defender_wx > 0) ? (int16_t)(defender_wx - 1) : (int16_t)(defender_wx + 1);
@@ -962,13 +962,13 @@ static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
     Set_Random_Seed(combat_seed);
     rng_calls_before = g_random_call_count;
 
-    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] Invoking Combat__WIP() seed=%u troop_count=%d defender_stack_count=%d", combat_seed, troop_count, defender_stack_count);
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] Invoking Combat() seed=%u troop_count=%d defender_stack_count=%d", combat_seed, troop_count, defender_stack_count);
 
-    attacker_won = Combat__WIP(attacker_player_idx, defender_unit_idx, troop_count, troops);
+    attacker_won = Combat(attacker_player_idx, defender_unit_idx, troop_count, troops);
 
     g_cmbt_force_auto_combat = ST_FALSE;
 
-    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] Combat__WIP() returned %d", attacker_won);
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] Combat() returned %d", attacker_won);
 
     fout = fopen(HEMOM_COMBAT_DUMP_FILE, "w");
     if(fout == NULL)
@@ -978,7 +978,7 @@ static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
     }
 
     fprintf(fout, "# HeMoM Combat Dump\n");
-    fprintf(fout, "# Mode: %s (direct Combat__WIP invoke)\n", (tactical == 1) ? "tactical AI-vs-AI (forced auto-combat)" : "strategic");
+    fprintf(fout, "# Mode: %s (direct Combat invoke)\n", (tactical == 1) ? "tactical AI-vs-AI (forced auto-combat)" : "strategic");
     fprintf(fout, "# NOTE: unit indices are pre-combat indices; combat may free dead units, so a dumped slot reflects whatever occupies that index afterwards (deterministic for a fixed fixture + seed).\n");
     fprintf(fout, "combat.seed = %u\n", combat_seed);
     fprintf(fout, "combat.attacker_player_idx = %d\n", attacker_player_idx);

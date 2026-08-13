@@ -778,7 +778,7 @@ void Loaded_Game_Update(void)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    /* seg001 */ GAME_RazeCity = ST_FALSE;
+    /* seg001 */ destroy_combat_city = ST_FALSE;
 
     _human_player_idx = HUMAN_PLAYER_IDX;
 

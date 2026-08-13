@@ -205,7 +205,7 @@ void Screen_Control(void)
 #endif
 
                 m_magic_winner_idx = ST_UNDEFINED;
-                GAME_RazeCity = ST_FALSE;
+                destroy_combat_city = ST_FALSE;
                 if(prev__Settings_BG_Music != magic_set.background_music)
                 {
                     if(magic_set.background_music == ST_TRUE)

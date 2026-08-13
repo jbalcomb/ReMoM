@@ -5389,7 +5389,7 @@ Combat_Handlers:
     else
     {
 
-combat_result = Combat__WIP(player_idx, defender_idx, troop_count, &troops[0]);
+combat_result = Combat(player_idx, defender_idx, troop_count, &troops[0]);
 /* EOG_HACK */  magic_master_idx = Get_Winner();
 // ...units gets moved if they win
 if(combat_result == 1)

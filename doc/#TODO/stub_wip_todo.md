@@ -144,7 +144,7 @@
 - [x] Build_Battlefield — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:21787, faithful against ovr154/CMB_Terrain_Init__WIP.asm
 - [x] Set_Terrain_Tile_Types — done-done 2026-08-08 (doc/#CodeReview/Combat-Generate_Combat_Map.md); renamed from CMB_TileGen__WIP, Combat.c:22678, faithful against ovr154/CMB_TileGen__WIP.asm
 - [x] Prepare_All_Battle_Units — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); renamed from CMB_Units_Init__WIP, Combat.c:5041, faithful against ovr098/CMB_Units_Init__WIP.asm; 2 OGBUGs preserved
-- [ ] Combat__WIP
+- [x] Combat — done-done 2026-08-13 (doc/#CodeReview/Combat-Combat.md); renamed from Combat__WIP, Combat.c:3101, faithful against ovr096/Combat__WIP.asm; 1 finding and 5 deviations applied, builds clean; Lair_Make_Guardians (Combat.c:3447), Lair_Combat_Do (Combat.c:3487) and Update_Defender_Hostility (Combat.c:3503) walked with it and are faithful
 - [x] Combat_Cast_Spell — done-done 2026-07-07 (walkthrough doc in doc/#CodeReview/; renamed from Combat_Cast_Spell__WIP; R1 payment-index + R2 AI-branch/spellbook-gating fixed; Dispel_Attempt/Counter_Message arg orders verified vs asm; whole tree builds clean)
 - [x] Combat_Figure_Effect — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from Combat_Figure_Effect__WIP, Combat.c:7561, faithful against ovr105/Combat_Figure_Effect__WIP.asm
 - [x] Combat_Grid_Entities — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from Combat_Grid_Entities__WIP, Combat.c:5899, faithful against ovr099/Combat_Grid_Entities__WIP.asm

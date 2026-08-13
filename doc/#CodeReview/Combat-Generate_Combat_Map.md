@@ -1,5 +1,6 @@
 Combat-Generate_Combat_Map.md
 
+SEEALSO:  Combat-Combat.md
 SEEALSO:  Combat-Combat_Screen_Map_Draw.md
 SEEALSO:  Combat-Combat_Figure_Compose.md
 SEEALSO:  Combat-Generate_Combat_Map.md

@@ -1843,7 +1843,7 @@ struct s_UNIT
     /* 00 */  int8_t  wx;
     /* 01 */  int8_t  wy;
     /* 02 */  int8_t  wp;  // somewhere, doubles as a status? ... wp == 9 is excluded from 'Raise Dead', ~== battle_units[].status == bus_Gone
-    /* 03 */  int8_t  owner_idx;    /* set to ST_UNDEFINED when a unit dies */
+    /* 03 */  int8_t  owner_idx;    /* set to ST_UNDEFINED when a unit dies; set to 100 when recalled during combat to skip post-combat move */
     /* 04 */  int8_t  moves2_max;
     /* 05 */  uint8_t type;         /* 1-byte, unsigned;  Unit Type Index |-> Unit Type Table */
     /* 06 */  int8_t  Hero_Slot;    /* index into _players[owner_idx].Heroes[] */

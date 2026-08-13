@@ -1055,7 +1055,7 @@ int16_t _combat_info_wnd_start_x;
 int16_t _combat_winner;
 /* CLAUDE */ int16_t DBG_atk_active, DBG_atk_dead, DBG_atk_gone, DBG_def_active, DBG_def_dead, DBG_def_gone;
 // WZD dseg:C974
-int16_t GAME_RazeCity;
+int16_t destroy_combat_city;
 // WZD dseg:C976
 int16_t CMB_Gold_Reward;
 // WZD dseg:C978
@@ -3094,40 +3094,32 @@ int16_t Battle_Unit_Instant_Movement_Mode(int16_t battle_unit_idx)
 /*
 Move_Units() |-> Combat()
 Lair_Combat() |-> ... |-> Combat()
-...
-Combat()
-    |-> { Combat_City_Capture(), Tactical_Combat(), Strategic_Combat() }
 
+defender_player_idx
+    unit_idx or player_idx
 */
-int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t troop_count, int16_t troops[])
+int16_t Combat(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t troop_count, int16_t troops[])
 {
-    int16_t Item_List[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t City_Destroyed = 0;
-    int16_t Item_Count = 0;
-    int16_t Garrison_Size = 0;
+    int16_t item_list[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t city_destroyed = 0;
+    int16_t item_count = 0;
+    int16_t garrison_size = 0;
     int16_t combat_attacker_player_idx = 0;
-    int16_t Battle_Outcome = 0;
-    int16_t defender_idx = 0;  // _DI_
-    int16_t itr = 0;  // _SI_
+    int16_t attacker_won = 0;
+    int16_t defender_idx = 0;
+    int16_t itr = 0;
     int16_t combat_defender_player_idx = 0;
     int16_t return_value = 0;  // DNE in Dasm
-
-
-    City_Destroyed = ST_FALSE;
-
-    GAME_RazeCity = ST_FALSE;
-
+    city_destroyed = ST_FALSE;
+    destroy_combat_city = ST_FALSE;
     _unit_stack_count = 0;
-
     combat_attacker_player_idx = attacker_player_idx;
-    defender_idx = defender_player_idx;  // unit_idx or player_idx
-
+    defender_idx = defender_player_idx;
     for(itr = 0; itr < troop_count; itr++)
     {
         _UNITS[troops[itr]].wx = (int8_t)OVL_Action_OriginX;
         _UNITS[troops[itr]].wy = (int8_t)OVL_Action_OriginY;
     }
-
     if(combat_attacker_player_idx == NEUTRAL_PLAYER_IDX)
     {
         switch(_combat_environ)
@@ -3164,7 +3156,6 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
             } break;
         }
     }
-
     switch(_combat_environ)
     {
         case 0:  // Stack vs. Stack
@@ -3172,7 +3163,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
             _combat_wx = _UNITS[defender_idx].wx;
             _combat_wy = _UNITS[defender_idx].wy;
             _combat_wp = _UNITS[defender_idx].wp;
-            defender_idx = _UNITS[defender_idx].owner_idx;  // NOTE: after this, defender_idx is player_idx for both combat type 0 and 1
+            combat_defender_player_idx = _UNITS[defender_idx].owner_idx;
         } break;
         case 1:  // Stack vs. City
         {
@@ -3180,21 +3171,19 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
             _combat_wx = _CITIES[_combat_environ_idx].wx;
             _combat_wy = _CITIES[_combat_environ_idx].wy;
             _combat_wp = _CITIES[_combat_environ_idx].wp;
-            Garrison_Size = 0;
+            garrison_size = 0;
             for(itr = 0; itr < _units; itr++)
             {
                 if(
                     (_UNITS[itr].wx == _combat_wx) &&
                     (_UNITS[itr].wy == _combat_wy) &&
                     (_UNITS[itr].wp == _combat_wp) &&
-                    (_UNITS[itr].owner_idx == defender_idx)
+                    (_UNITS[itr].owner_idx == combat_defender_player_idx)
                 )
                 {
-                    Garrison_Size++;
+                    garrison_size++;
                 }
-
             }
-
         } break;
         case 5:  // Stack vs. Lair
         {
@@ -3205,11 +3194,10 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
             _combat_wp = _LAIRS[_combat_environ_idx].wp;
         } break;
     }
-
     if(
         (combat_attacker_player_idx < NEUTRAL_PLAYER_IDX)
         &&
-        (defender_idx < NEUTRAL_PLAYER_IDX)
+        (combat_defender_player_idx < NEUTRAL_PLAYER_IDX)
         &&
         (
             (_combat_environ == 1)  /* City-Siege */
@@ -3219,35 +3207,27 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
     )
     {
         if(
-            (_players[defender_idx].Dipl.Dipl_Status[combat_attacker_player_idx] == DIPL_Alliance)
+            (_players[combat_defender_player_idx].Dipl.Dipl_Status[combat_attacker_player_idx] == DIPL_Alliance)
             ||
-            (_players[defender_idx].Dipl.Dipl_Status[combat_attacker_player_idx] == DIPL_WizardPact)
+            (_players[combat_defender_player_idx].Dipl.Dipl_Status[combat_attacker_player_idx] == DIPL_WizardPact)
         )
         {
-            if(combat_attacker_player_idx != _human_player_idx)
-            {
-                for(itr = 0; itr < troop_count; itr++)
-                {
-                    _UNITS[troops[itr]].Status = us_Ready;
-                }
-                goto No_Combat;
-            }
-            else
+            if(combat_attacker_player_idx == _human_player_idx)
             {
                 stu_strcpy(GUI_NearMsgString, cnst_TreatyAtk_Msg1);  // "You have a treaty with "
-                stu_strcat(GUI_NearMsgString, _players[defender_idx].name);
+                stu_strcat(GUI_NearMsgString, _players[combat_defender_player_idx].name);
                 stu_strcat(GUI_NearMsgString, cnst_TreatyAtk_Msg2);  // ".  Do you still wish to attack?"
                 if(Confirmation_Box(GUI_NearMsgString) != ST_FALSE)
                 {
                     if(
-                        (combat_attacker_player_idx < 6)
+                        (combat_attacker_player_idx < NUM_PLAYERS)
                         &&
-                        (defender_idx < 6)
+                        (combat_defender_player_idx < NUM_PLAYERS)
                     )
                     {
-                        // drake178: ; BUG: calling these two functions in this order can allow war without declaring or properly applying it
-                        Change_Relations(-40, combat_attacker_player_idx, defender_idx, 5, 0, 0);
-                        Break_Treaties(defender_idx, combat_attacker_player_idx);
+                        /* OGBUG: doesn't set Dipl_Status or call Declare_War() on this path */
+                        Change_Relations(-40, combat_attacker_player_idx, combat_defender_player_idx, 5, 0, 0);
+                        Break_Treaties(combat_defender_player_idx, combat_attacker_player_idx);
                     }
                 }
                 else
@@ -3255,18 +3235,25 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
                     goto No_Combat;
                 }
             }
+            else
+            {
+                for(itr = 0; itr < troop_count; itr++)
+                {
+                    _UNITS[troops[itr]].Status = us_Ready;
+                }
+                goto No_Combat;
+            }
 
         }
     }
-
     if(
         (_combat_environ == 1)  /* City-Siege */
         &&
-        (Garrison_Size < 1)
+        (garrison_size < 1)
     )
     {
-        Battle_Outcome = ST_TRUE;
-        Item_Count = 0;
+        attacker_won = ST_TRUE;
+        item_count = 0;
         Combat_City_Capture(troop_count, &troops[0]);
     }
     else
@@ -3275,62 +3262,49 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
             (
                 (combat_attacker_player_idx == _human_player_idx)
                 ||
-                (defender_idx == _human_player_idx)
+                (combat_defender_player_idx == _human_player_idx)
             )
             &&
             (magic_set.strategic_combat_only == ST_FALSE)
         )
         {
-
-            // DOMSDOS  Stop_All_Sounds__STUB();
-
-            Battle_Outcome = Combat_Screen(combat_attacker_player_idx, defender_idx, troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &Item_Count, &Item_List[0]);
-            // Battle_Outcome = Combat_Screen_TST_001();
-            // Battle_Outcome = Combat_Screen_TST_002();
-            // Battle_Outcome = Combat_Screen_TST_003();
-            // Battle_Outcome = Combat_Screen_TST_004(combat_attacker_player_idx, defender_idx, troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &Item_Count, &Item_List[0]);
-
-            // DOMSDOS  Play_Background_Music();
+            Stop_All_Sounds__STUB();
+            attacker_won = Combat_Screen(combat_attacker_player_idx, combat_defender_player_idx, troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &item_count, &item_list[0]);
+            // attacker_won = Combat_Screen_TST_001();
+            // attacker_won = Combat_Screen_TST_002();
+            // attacker_won = Combat_Screen_TST_003();
+            // attacker_won = Combat_Screen_TST_004(combat_attacker_player_idx, combat_defender_player_idx, troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &item_count, &item_list[0]);
             Play_Background_Music();
-
         }
         else
         {
-
-            Battle_Outcome = Strategic_Combat(troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &Item_Count, &Item_List[0]);
-
-            Item_Count = 0;
-
+            attacker_won = Strategic_Combat(troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &item_count, &item_list[0]);
+            item_count = 0;
         }
-
     }
-
-
 // @@StartPostCombat
-    if(Battle_Outcome == ST_TRUE)
+    if(attacker_won == ST_TRUE)
     {
         for(itr = 0; itr < troop_count; itr++)
         {
-            if(_UNITS[troops[itr]].owner_idx != 100)  // DEDU  ¿ another case of this field being a status, like 'dead' ?
+            if(_UNITS[troops[itr]].owner_idx == 100)  /* 100 means 'recalled during combat, so don't do post-combat move */
+            {
+                _UNITS[troops[itr]].owner_idx = (int8_t)combat_attacker_player_idx;
+                _UNITS[troops[itr]].Finished = ST_TRUE;
+            }
+            else
             {
                 _UNITS[troops[itr]].wx = (int8_t)_combat_wx;
                 _UNITS[troops[itr]].wy = (int8_t)_combat_wy;
                 _UNITS[troops[itr]].wp = (int8_t)_combat_wp;
             }
-            else
-            {
-                _UNITS[troops[itr]].owner_idx = (int8_t)combat_attacker_player_idx;
-                _UNITS[troops[itr]].Finished = ST_TRUE;
-            }
         }
-
         item_pool_in_process = ST_TRUE;
         m_item_wx = _combat_wx;
         m_item_wy = _combat_wy;
         m_item_wp = _combat_wp;
-        Player_Process_Item_Pool(combat_attacker_player_idx, Item_Count, &Item_List[0]);
+        Player_Process_Item_Pool(combat_attacker_player_idx, item_count, &item_list[0]);
         item_pool_in_process = ST_FALSE;
-
         if(
             (_combat_environ == 1)  /* City-Siege */
             &&
@@ -3342,26 +3316,26 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
                 if(
                     (combat_attacker_player_idx < NUM_PLAYERS)
                     &&
-                    (defender_idx < NUM_PLAYERS)
+                    (combat_defender_player_idx < NUM_PLAYERS)
                 )
                 {
-                    Change_Relations(-40, combat_attacker_player_idx, defender_idx, 9, _combat_environ_idx, 0);
+                    Change_Relations(-40, combat_attacker_player_idx, combat_defender_player_idx, 9, _combat_environ_idx, 0);
                 }
-
                 if(
-                    (combat_attacker_player_idx != NEUTRAL_PLAYER_IDX) ||
-                    ((_unit_type_table[_UNITS[troops[0]].type].Abilities & UA_FANTASTIC) != 0)
+                    (combat_attacker_player_idx != NEUTRAL_PLAYER_IDX)
+                    ||
+                    ((_unit_type_table[_UNITS[troops[0]].type].Abilities & UA_FANTASTIC) == 0)
                 )
                 {
                     if(
-                        (combat_attacker_player_idx < NUM_PLAYERS) &&
-                        (defender_idx < NUM_PLAYERS)
+                        (combat_attacker_player_idx < NUM_PLAYERS)
+                        &&
+                        (combat_defender_player_idx < NUM_PLAYERS)
                     )
                     {
-                        Declare_War(combat_attacker_player_idx, defender_idx);
+                        Declare_War(combat_attacker_player_idx, combat_defender_player_idx);
                     }
-
-                    if(GAME_RazeCity == ST_FALSE)
+                    if(destroy_combat_city == ST_FALSE)
                     {
                         Change_City_Ownership(_combat_environ_idx, combat_attacker_player_idx);
 
@@ -3369,141 +3343,114 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
                         {
                             _CITIES[_combat_environ_idx].construction = bt_AUTOBUILD;  // -4 gran vizier
                         }
-
                     }
-
                 }
-
             }
             else
             {
                 if(
-                    (combat_attacker_player_idx != NEUTRAL_PLAYER_IDX) ||
-                    ((_unit_type_table[_UNITS[troops[0]].type].Abilities & UA_FANTASTIC) != 0)
+                    (combat_attacker_player_idx != NEUTRAL_PLAYER_IDX)
+                    ||
+                    ((_unit_type_table[_UNITS[troops[0]].type].Abilities & UA_FANTASTIC) == 0)
                 )
                 {
-                    City_Destroyed = ST_TRUE;
+                    city_destroyed = ST_TRUE;
                 }
             }
         }
-
     }
     else
     {
-        Player_Process_Item_Pool(defender_idx, Item_Count, &Item_List[0]);
-        item_pool_in_process = ST_FALSE;  // drake178: BUG: never set it to 1 in this branch
-
+        /* OGBUG: missing `item_pool_in_process = ST_TRUE;` */
+        Player_Process_Item_Pool(combat_defender_player_idx, item_count, &item_list[0]);
+        item_pool_in_process = ST_FALSE;
         if(_combat_environ == 1)  /* City-Siege */
         {
-            if(_CITIES[_combat_environ_idx].owner_idx == defender_idx)
+            if(_CITIES[_combat_environ_idx].owner_idx == combat_defender_player_idx)
             {
                 if(
-                    (combat_attacker_player_idx < 6) &&
-                    (defender_idx < 6)
+                    (combat_attacker_player_idx < NUM_PLAYERS)
+                    &&
+                    (combat_defender_player_idx < NUM_PLAYERS)
                 )
                 {
                     if(_CITIES[_combat_environ_idx].size != 0)
                     {
-                        if(Player_Fortress_City(defender_idx) != _combat_environ_idx)
+                        if(Player_Fortress_City(combat_defender_player_idx) == _combat_environ_idx)
                         {
-                            Change_Relations(-20, combat_attacker_player_idx, defender_idx, 9, _combat_environ_idx, 0);
+                            Change_Relations(-60, combat_attacker_player_idx, combat_defender_player_idx, 9, _combat_environ_idx, 0);
                         }
                         else
                         {
-                            Change_Relations(-60, combat_attacker_player_idx, defender_idx, 9, _combat_environ_idx, 0);
+                            Change_Relations(-20, combat_attacker_player_idx, combat_defender_player_idx, 9, _combat_environ_idx, 0);
                         }
                     }
-
                 }
-
             }
             else
             {
                 if(_CITIES[_combat_environ_idx].size == 0)
                 {
-                    City_Destroyed = ST_TRUE;
+                    city_destroyed = ST_TRUE;
                 }
                 else
                 {
-                    if(GAME_RazeCity == ST_FALSE)
+                    if(destroy_combat_city == ST_FALSE)
                     {
-                        Change_City_Ownership(_combat_environ_idx, defender_idx);
+                        Change_City_Ownership(_combat_environ_idx, combat_defender_player_idx);
                     }
                 }
             }
-
         }
-
     }
-
-
-
-    Update_Defender_Hostility(combat_attacker_player_idx, defender_idx);
-
-    if(City_Destroyed == ST_TRUE)
+    Update_Defender_Hostility(combat_attacker_player_idx, combat_defender_player_idx);
+    if(city_destroyed == ST_TRUE)
     {
         Change_City_Ownership(_combat_environ_idx, combat_attacker_player_idx);
         Destroy_City(_combat_environ_idx);
-        GAME_RazeCity = ST_FALSE;
+        destroy_combat_city = ST_FALSE;
     }
-
-    if(GAME_RazeCity == ST_TRUE)
+    if(destroy_combat_city == ST_TRUE)
     {
         Change_City_Ownership(_combat_environ_idx, combat_attacker_player_idx);
         Destroy_City(_combat_environ_idx);
-        GAME_RazeCity = ST_FALSE;
+        destroy_combat_city = ST_FALSE;
     }
-
     _combat_environ_idx = ST_UNDEFINED;
     _combat_environ = ST_UNDEFINED;
-
     o153p24_empty_function();
-
     Allocate_Reduced_Map();
-
     if(
         (combat_attacker_player_idx == _human_player_idx)
         ||
-        (defender_idx == _human_player_idx)
+        (combat_defender_player_idx == _human_player_idx)
     )
     {
         Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
         Full_Draw_Main_Screen();
         Copy_On_To_Off_Page();
     }
-
-    return_value = Battle_Outcome;
-
+    return_value = attacker_won;
     goto Done;
-
-
 No_Combat:
     _combat_environ_idx = ST_UNDEFINED;
     _combat_environ = ST_UNDEFINED;
-    return_value = 0;
+    return_value = ST_FALSE;
     goto Done;
-
-
 Done:
     return return_value;
 }
 
 
 // WZD s96p02
-// drake178: EZ_CreateGuardStack()
 // MoO2: DNE
 void Lair_Make_Guardians(int16_t lair_idx)
 {
     int16_t guard_count = 0;
     int16_t unit_count = 0;
-    int16_t itr = 0;  // _DI_
-
-    // TODO figure out lair guardian count high and low nibbles, so you can make a macro for them
-    // TODO make macro for lair guardian count high and low nibbles
+    int16_t itr = 0;
     guard_count = (_LAIRS[lair_idx].guard1_count & 0x0F);
-
     unit_count = 0;
-
     for(itr = 0; ((itr < guard_count) && (unit_count < MAX_STACK)); itr++)
     {
         if(Create_Unit(_LAIRS[lair_idx].guard1_unit_type, NEUTRAL_PLAYER_IDX, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, 2000) == ST_TRUE)
@@ -3515,9 +3462,7 @@ void Lair_Make_Guardians(int16_t lair_idx)
             unit_count++;
         }
     }
-
     guard_count = (_LAIRS[lair_idx].guard2_count & 0x0F);
-
     for(itr = 0; ((itr < guard_count) && (unit_count < MAX_STACK)); itr++)
     {
         if(Create_Unit(_LAIRS[lair_idx].guard2_unit_type, NEUTRAL_PLAYER_IDX, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, 2000) == ST_TRUE)
@@ -3529,12 +3474,10 @@ void Lair_Make_Guardians(int16_t lair_idx)
             unit_count++;
         }
     }
-
 }
 
 
 // WZD s96p03
-// drake178: EZ_ResolveEntry()
 /*
     wrapper for combat for lair
     rebuilds troop array
@@ -3546,11 +3489,8 @@ int16_t Lair_Combat_Do(int16_t lair_idx, int16_t player_idx)
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t troop_count = 0;
     int16_t winner = 0;
-
     Player_Army_At_Square(_LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, player_idx, &troop_count, &troops[0]);
-
-    winner = Combat__WIP(player_idx, NEUTRAL_PLAYER_IDX, troop_count, &troops[0]);
-
+    winner = Combat(player_idx, NEUTRAL_PLAYER_IDX, troop_count, &troops[0]);
     return winner;
 }
 
@@ -3558,31 +3498,25 @@ int16_t Lair_Combat_Do(int16_t lair_idx, int16_t player_idx)
 // WZD s96p04
 // drake178: sub_7DE08()
 
+
 // WZD s96p05
-// drake178: WIZ_SetHostile()
 void Update_Defender_Hostility(int16_t attacker_player_idx, int16_t defender_player_idx)
 {
-
     _players[defender_player_idx].Hostility[attacker_player_idx] = 2;
-
-    if(_players[defender_player_idx].Dipl.Dipl_Status[attacker_player_idx] >= 3)  // DIPL_War
+    if(_players[defender_player_idx].Dipl.Dipl_Status[attacker_player_idx] >= DIPL_War)
     {
         _players[defender_player_idx].Hostility[attacker_player_idx] = 3;
     }
-
-    if(_players[defender_player_idx].Dipl.Dipl_Status[attacker_player_idx] == 2)  // DIPL_Alliance
+    if(_players[defender_player_idx].Dipl.Dipl_Status[attacker_player_idx] == DIPL_Alliance)
     {
         _players[defender_player_idx].Hostility[attacker_player_idx] = 0;
     }
-
     _players[defender_player_idx].reevaluate_hostility_countdown = (15+ Random(10));
-
 }
 
 
 // WZD s96p06
 // UU_IDK_Main_Screen_Draw()
-
 
 
 
@@ -14551,11 +14485,11 @@ Diplomatic_Value:
     or Random(20) for Non-Hero Unit and Random(10) for Engineer or Settler
     passes negated value to G_DIPL_Action()
 */
-void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[], int16_t end_of_combat_message_type)
+void End_Of_Combat(int16_t winner_player_idx, int16_t * item_count, int16_t item_list[], int16_t end_of_combat_message_type)
 {
     // GCC  warning: storing the address of local variable 'Buildings_Lost' in 'CMB_LostBuildings' [-Wdangling-pointer=]
     // CMB_LostBuildings is read within the same function (the combat resolution / post-battle summary screen). So the pointer is still valid when it's actually used — it's not truly dangling at runtime, but GCC can't prove that.
-    static int16_t Buildings_Lost[36] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /* HACK  static moves this to the data segment */
+    static int16_t Buildings_Lost[NUM_BUILDINGS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /* HACK  static moves this to the data segment */
     int16_t Rare_Foe_Defeated = 0;
     int16_t Diplomatic_Value = 0;
     int16_t Summoned_Unit = 0;
@@ -14570,25 +14504,25 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
     int16_t Surviving_Unit_Count = 0;
     int16_t battle_unit_owner_idx = 0;
     uint32_t enchantments = 0;
-    int16_t itr_battle_units = 0;  // _SI_
-    int16_t RazeCity = 0;  // _SI_
-    int16_t itr_buildings = 0;  // _SI_
-    int16_t itr_population = 0;  // _SI_
-    int16_t itr_bldg_msg = 0;  // _SI_
-    int16_t IDK_population_lost = 0;  // _DI_
-    int16_t bldg_msg_idx = 0;  // _DI_
-    int16_t itr_hero_items = 0;  // _DI_
+    int16_t itr_battle_units = 0;
+    int16_t RazeCity = 0;
+    int16_t itr_buildings = 0;
+    int16_t itr_population = 0;
+    int16_t itr_bldg_msg = 0;
+    int16_t IDK_population_lost = 0;
+    int16_t bldg_msg_idx = 0;
+    int16_t itr_hero_items = 0;
     Rare_Foe_Defeated = 0;
     combat_results_scroll_message = end_of_combat_message_type;
     CMB_Population_Lost = 0;
     CMB_Buildings_Lost = 0;
     CMB_Gold_Reward = 0;
     // ~ Monsters
-    if((player_idx < HUMAN_PLAYER_IDX) || (player_idx > NEUTRAL_PLAYER_IDX))
+    if((winner_player_idx < HUMAN_PLAYER_IDX) || (winner_player_idx > NEUTRAL_PLAYER_IDX))
     {
         for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
         {
-            if(battle_units[itr_battle_units].controller_idx == player_idx)
+            if(battle_units[itr_battle_units].controller_idx == winner_player_idx)
             {
                 battle_units[itr_battle_units].status = bus_Gone;
             }
@@ -14618,7 +14552,7 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
     {
         if((battle_units[itr_battle_units].combat_effects & bue_Confusion) != 0)
         {
-            if(_UNITS[battle_units[itr_battle_units].unit_idx].owner_idx != player_idx)
+            if(_UNITS[battle_units[itr_battle_units].unit_idx].owner_idx != winner_player_idx)
             {
                 battle_units[itr_battle_units].status = bus_Dead;
             }
@@ -14627,7 +14561,7 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
                 battle_units[itr_battle_units].controller_idx = _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx;
             }
         }
-        if(battle_units[itr_battle_units].controller_idx != player_idx)
+        if(battle_units[itr_battle_units].controller_idx != winner_player_idx)
         {
             if(battle_units[itr_battle_units].status == bus_Uninvolved)
             {
@@ -14648,7 +14582,7 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
             ((battle_units[itr_battle_units].combat_effects & bue_Creature_Binding) != 0)
         )
         {
-            if(battle_units[itr_battle_units].controller_idx != player_idx)
+            if(battle_units[itr_battle_units].controller_idx != winner_player_idx)
             {
                 if(battle_units[itr_battle_units].controller_idx != _combat_attacker_player)
                 {
@@ -14674,7 +14608,7 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
         {
             if(((battle_units[itr_battle_units].Abilities & UA_REGENERATION) | (enchantments & UE_REGENERATION)) != 0)
             {
-                if(battle_units[itr_battle_units].controller_idx == player_idx)
+                if(battle_units[itr_battle_units].controller_idx == winner_player_idx)
                 {
                     battle_units[itr_battle_units].status = bus_Active;
                 }
@@ -14692,16 +14626,16 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
             Evict_Weakest_Unit(battle_units[itr_battle_units].unit_idx);
             battle_units[itr_battle_units].status = bus_Active;
             if(
-                (battle_unit_owner_idx == player_idx)
+                (battle_unit_owner_idx == winner_player_idx)
                 &&
                 (battle_unit_owner_idx == _combat_attacker_player)
             )
             {
-                _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx = 100;
+                _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx = 100;  /* 100 means 'recalled during combat, so don't do post-combat move */
             }
         }
         if(
-            (battle_units[itr_battle_units].controller_idx == player_idx)
+            (battle_units[itr_battle_units].controller_idx == winner_player_idx)
             &&
             (battle_units[itr_battle_units].status == bus_Active)
         )
@@ -14712,7 +14646,7 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
     /*
         END:  
     */
-    Retreat_From_Combat(player_idx);
+    Retreat_From_Combat(winner_player_idx);
     GUI_Multipurpose_Int = 0;
     /*
         BEGIN:  Undead / Zombie
@@ -14722,7 +14656,7 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
     {
         // Undead
         if(
-            (battle_units[itr_battle_units].controller_idx != player_idx)
+            (battle_units[itr_battle_units].controller_idx != winner_player_idx)
             &&
             (battle_units[itr_battle_units].status == bus_Drained)
             &&
@@ -14738,9 +14672,9 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
             _UNITS[battle_units[itr_battle_units].unit_idx].wx = (int8_t)_combat_wx;
             _UNITS[battle_units[itr_battle_units].unit_idx].wy = (int8_t)_combat_wy;
             _UNITS[battle_units[itr_battle_units].unit_idx].wp = (int8_t)_combat_wp;
-            _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx = (int8_t)player_idx;
+            _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx = (int8_t)winner_player_idx;
             _UNITS[battle_units[itr_battle_units].unit_idx].mutations |= UM_UNDEAD;
-            battle_units[itr_battle_units].controller_idx = (int8_t)player_idx;
+            battle_units[itr_battle_units].controller_idx = (int8_t)winner_player_idx;
             battle_units[itr_battle_units].status = bus_Active;
             Undead_Created++;
             Surviving_Unit_Count++;
@@ -14748,7 +14682,7 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
         }
         // Zombies
         if(
-            (_players[player_idx].Globals[ZOMBIE_MASTERY] > 0)
+            (_players[winner_player_idx].Globals[ZOMBIE_MASTERY] > 0)
             &&
             (battle_units[itr_battle_units].status == bus_Dead)
             &&
@@ -14759,13 +14693,13 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
             (Surviving_Unit_Count < 9)
         )
         {
-            if(battle_units[itr_battle_units].controller_idx != player_idx)
+            if(battle_units[itr_battle_units].controller_idx != winner_player_idx)
             {
                 Experience_Gained += 2;
             }
             Zombies_Raised++;
             _UNITS[battle_units[itr_battle_units].unit_idx].type = ut_Zombies;
-            _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx = (int8_t)player_idx;
+            _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx = (int8_t)winner_player_idx;
             _UNITS[battle_units[itr_battle_units].unit_idx].XP = 0;
             _UNITS[battle_units[itr_battle_units].unit_idx].Level = 0;
             _UNITS[battle_units[itr_battle_units].unit_idx].wx = (int8_t)_combat_wx;
@@ -14788,7 +14722,7 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
     {
         CMB_Population_Lost = 0;
         CMB_Buildings_Lost = 0;
-        if(player_idx != _combat_attacker_player)
+        if(winner_player_idx != _combat_attacker_player)
         {
             CMB_Gold_Reward = 0;
         }
@@ -14805,15 +14739,15 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
             }
             if(_CITIES[_combat_environ_idx].population == 0)
             {
-                GAME_RazeCity = ST_TRUE;
+                destroy_combat_city = ST_TRUE;
             }
             else
             {
-                if(player_idx != HUMAN_PLAYER_IDX)
+                if(winner_player_idx != HUMAN_PLAYER_IDX)
                 {
-                    if(player_idx < _num_players)  /* ~== not NEUTRAL_PLAYER_IDX */
+                    if(winner_player_idx < _num_players)  /* ~== not NEUTRAL_PLAYER_IDX */
                     {
-                        GAME_RazeCity = Raze_Check(player_idx, _combat_environ_idx);
+                        destroy_combat_city = Raze_Check(winner_player_idx, _combat_environ_idx);
                     }
                 }
                 else
@@ -14823,26 +14757,26 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
                         RazeCity = Raze_City_Prompt(cnst_RazeCity_Msg);
                         if(RazeCity == 0)
                         {
-                            GAME_RazeCity = ST_TRUE;
+                            destroy_combat_city = ST_TRUE;
                         }
                     }
                 }
 
             }
-            if(GAME_RazeCity == ST_FALSE)
+            if(destroy_combat_city == ST_FALSE)
             {
                 CMB_Gold_Reward = (_CITIES[_combat_environ_idx].size - 2);
                 SETMIN(CMB_Gold_Reward, 0);
-                _players[player_idx].fame += CMB_Gold_Reward;
-                if(player_idx == HUMAN_PLAYER_IDX)
+                _players[winner_player_idx].fame += CMB_Gold_Reward;
+                if(winner_player_idx == HUMAN_PLAYER_IDX)
                 {
                     GUI_Multipurpose_Int += CMB_Gold_Reward;
                 }
                 CMB_Gold_Reward = 0;
                 CMB_Gold_Reward = City_Gold(_combat_environ_idx);  // the conquering wizard gets a portion of the previous owner's gold reserve as loot.
-                if(player_idx < _num_players)
+                if(winner_player_idx < _num_players)
                 {
-                    Player_Add_Gold(player_idx, CMB_Gold_Reward);
+                    Player_Add_Gold(winner_player_idx, CMB_Gold_Reward);
                 }
                 if(_CITIES[_combat_environ_idx].owner_idx < _num_players)
                 {
@@ -14852,12 +14786,12 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
             else
             {
                 CMB_Gold_Reward = _CITIES[_combat_environ_idx].size;
-                if(player_idx == HUMAN_PLAYER_IDX)
+                if(winner_player_idx == HUMAN_PLAYER_IDX)
                 {
                     GUI_Multipurpose_Int -= CMB_Gold_Reward;
                 }
-                _players[player_idx].fame -= CMB_Gold_Reward;
-                SETMIN(_players[player_idx].fame, 0);
+                _players[winner_player_idx].fame -= CMB_Gold_Reward;
+                SETMIN(_players[winner_player_idx].fame, 0);
                 CMB_Gold_Reward = City_Gold(_combat_environ_idx);
                 if(_CITIES[_combat_environ_idx].owner_idx < _num_players)
                 {
@@ -14870,18 +14804,18 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
                         CMB_Gold_Reward += (bldg_data_table[itr_buildings].construction_cost / 10);
                     }
                 }
-                if(player_idx < _num_players)
+                if(winner_player_idx < _num_players)
                 {
-                    Player_Add_Gold(player_idx, CMB_Gold_Reward);
+                    Player_Add_Gold(winner_player_idx, CMB_Gold_Reward);
                 }
             }
-        }  /* if(player_idx != _combat_attacker_player) */
+        }  /* if(winner_player_idx != _combat_attacker_player) */
         if(_CITIES[_combat_environ_idx].population != 0)
         {
             Population_Loss_Percent = (_combat_city_damage * 2);
-            if(player_idx == _combat_attacker_player)
+            if(winner_player_idx == _combat_attacker_player)
             {
-                if(player_idx == NEUTRAL_PLAYER_IDX)
+                if(winner_player_idx == NEUTRAL_PLAYER_IDX)
                 {
                     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
                     {
@@ -14928,9 +14862,9 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
                 Buildings_Lost[itr_buildings] = 0;
             }
             Destruction_Chance = _combat_city_damage;
-            if(player_idx == _combat_attacker_player)
+            if(winner_player_idx == _combat_attacker_player)
             {
-                if(player_idx != NEUTRAL_PLAYER_IDX)
+                if(winner_player_idx != NEUTRAL_PLAYER_IDX)
                 {
                     Destruction_Chance += 10;
                 }
@@ -14944,7 +14878,7 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
             {
                 Apply_Damage_To_City(_combat_environ_idx, IDK_population_lost, Destruction_Chance, &Buildings_Lost[0]);
             }
-            if(player_idx != _combat_defender_player)
+            if(winner_player_idx != _combat_defender_player)
             {
                 for(itr_bldg_msg = 0; g_bldg_msg_ctr> itr_bldg_msg; itr_bldg_msg++)
                 {
@@ -14989,7 +14923,7 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
             if(
                 (_combat_environ == 5)  /* Lair */
                 &&
-                (player_idx == NEUTRAL_PLAYER_IDX)
+                (winner_player_idx == NEUTRAL_PLAYER_IDX)
                 &&
                 (battle_units[itr_battle_units].controller_idx == NEUTRAL_PLAYER_IDX)
                 &&
@@ -15048,7 +14982,7 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
         )
         {
             // it's dead, and it's not ours, so we killed it, and we deserve the credit
-            if(battle_units[itr_battle_units].controller_idx != player_idx)
+            if(battle_units[itr_battle_units].controller_idx != winner_player_idx)
             {
                 Experience_Gained += 2;
 
@@ -15091,7 +15025,6 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
                 {
                     if(_players[_UNITS[battle_units[itr_battle_units].unit_idx].owner_idx].Heroes[_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot].Items[itr_hero_items] > ST_UNDEFINED)
                     {
-                        // BU Status 6 ~== unsummoned, banished, disintegrated, stoned, cracks called
                         if(battle_units[itr_battle_units].status == bus_Gone)
                         {
                             Remove_Item(_players[_UNITS[battle_units[itr_battle_units].unit_idx].owner_idx].Heroes[_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot].Items[itr_hero_items]);
@@ -15112,7 +15045,7 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
                     }
                     _players[_UNITS[battle_units[itr_battle_units].unit_idx].owner_idx].Heroes[_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot].Items[itr_hero_items] = ST_UNDEFINED;
                 }
-                if(battle_units[itr_battle_units].controller_idx != player_idx)
+                if(battle_units[itr_battle_units].controller_idx != winner_player_idx)
                 {
                     if(battle_units[itr_battle_units].controller_idx == HUMAN_PLAYER_IDX)
                     {
@@ -15174,7 +15107,7 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
     if(
         (_combat_environ == 5)  // Lair
         &&   
-        (player_idx == NEUTRAL_PLAYER_IDX)
+        (winner_player_idx == NEUTRAL_PLAYER_IDX)
     )
     {
         if(
@@ -15207,17 +15140,17 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
         BEGIN:  Fame for defeating 4+ enemy units
     */
     if(
-        (player_idx != NEUTRAL_PLAYER_IDX)
+        (winner_player_idx != NEUTRAL_PLAYER_IDX)
         &&
         (Experience_Gained >= 8)
     )
     {
-        if(player_idx == HUMAN_PLAYER_IDX)
+        if(winner_player_idx == HUMAN_PLAYER_IDX)
         {
             GUI_Multipurpose_Int++;
         }
-        _players[player_idx].fame++;
-        if(player_idx != _combat_attacker_player)
+        _players[winner_player_idx].fame++;
+        if(winner_player_idx != _combat_attacker_player)
         {
             if(
                 (_players[_combat_attacker_player].fame > 20)
@@ -15245,11 +15178,11 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
     /*
         END:  Fame for defeating 4+ enemy units
     */
-    if(player_idx == HUMAN_PLAYER_IDX)
+    if(winner_player_idx == HUMAN_PLAYER_IDX)
     {
         GUI_Multipurpose_Int += Rare_Foe_Defeated;
     }
-    _players[player_idx].fame += Rare_Foe_Defeated;
+    _players[winner_player_idx].fame += Rare_Foe_Defeated;
     if(
         (_combat_attacker_player == HUMAN_PLAYER_IDX)
         ||
@@ -15266,7 +15199,7 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
         if(
             (battle_units[itr_battle_units].status == bus_Active)
             &&
-            (battle_units[itr_battle_units].controller_idx == player_idx)
+            (battle_units[itr_battle_units].controller_idx == winner_player_idx)
             &&
             (
                 (battle_units[itr_battle_units].race < rt_Arcane)
@@ -15317,13 +15250,13 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
             {
                 stu_strcat(GUI_NearMsgString, cnst_Undead_Msg_2);
             }
-            if(player_idx == HUMAN_PLAYER_IDX)
+            if(winner_player_idx == HUMAN_PLAYER_IDX)
             {
                 stu_strcat(GUI_NearMsgString, cnst_Undead_Msg_3);
             }
             else
             {
-                if(player_idx == NEUTRAL_PLAYER_IDX)
+                if(winner_player_idx == NEUTRAL_PLAYER_IDX)
                 {
                     if(Undead_Created > 1)
                     {
@@ -15336,11 +15269,11 @@ void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[]
                 }
                 else
                 {
-                    stu_strcat(GUI_NearMsgString, _players[player_idx].name);
+                    stu_strcat(GUI_NearMsgString, _players[winner_player_idx].name);
                     stu_strcat(GUI_NearMsgString, cnst_Dot9);
                 }
             }
-            Undead_Animation(Find_Undead_Creator_Type(player_idx));
+            Undead_Animation(Find_Undead_Creator_Type(winner_player_idx));
         }
     }
     /*
@@ -15540,7 +15473,7 @@ void Combat_Results_Scroll(void)
         }
         if((input_field_idx == Hotkey_R1_Index) || (input_field_idx == Hotkey_R2_Index))
         {
-            if(GAME_RazeCity == ST_FALSE)
+            if(destroy_combat_city == ST_FALSE)
             {
                 if(City_Capture == ST_TRUE)
                 {
@@ -15548,7 +15481,7 @@ void Combat_Results_Scroll(void)
 
                     if(spare == ST_FALSE)
                     {
-                        GAME_RazeCity = ST_TRUE;
+                        destroy_combat_city = ST_TRUE;
                         // BUG: this is different than the original penalty, as conquest fame is already applied!
                         // BUG: no zero check
                         _players[HUMAN_PLAYER_IDX].fame -= (_CITIES[_combat_environ_idx].size + 1);
@@ -15728,7 +15661,7 @@ int16_t Combat_Results_Scroll_Text(void)
         Print_Centered(160, (_scroll_text_top + text_height), message);
         text_height += 9;
     }
-    if(GAME_RazeCity == ST_TRUE)
+    if(destroy_combat_city == ST_TRUE)
     {
         Set_Font_Colors_15(1, &colors2[0]);
         Set_Font_Spacing_Width(2);
@@ -17015,11 +16948,11 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
     /* Raze Decision Logic */
     if(_CITIES[_combat_environ_idx].population == 0)
     {
-        GAME_RazeCity = ST_TRUE;
+        destroy_combat_city = ST_TRUE;
     }
     else
     {
-        GAME_RazeCity = ST_FALSE;
+        destroy_combat_city = ST_FALSE;
 
         if(troop_owner_idx == HUMAN_PLAYER_IDX)
         {
@@ -17030,18 +16963,18 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
                 itr = Raze_City_Prompt(cnst_RazeCity_Msg2);
                 if(itr == 0)
                 {
-                    GAME_RazeCity = ST_TRUE;
+                    destroy_combat_city = ST_TRUE;
                 }
             }
         }
         else if(troop_owner_idx < _num_players)
         {
             /* AI decides whether to raze or not. Returns 1 for yes, 0 for no. */
-            GAME_RazeCity = Raze_Check(_combat_environ_idx, troop_owner_idx);
+            destroy_combat_city = Raze_Check(_combat_environ_idx, troop_owner_idx);
         }
     }
 
-    if(GAME_RazeCity == ST_FALSE)
+    if(destroy_combat_city == ST_FALSE)
     {
         /* --- KEEP CITY --- */
         CMB_Gold_Reward = _CITIES[_combat_environ_idx].size - 2;
