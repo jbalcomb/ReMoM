@@ -214,7 +214,7 @@ char str_PERIOD__ovr098[] = ".";
 // WZD dseg:56E8                                                 BEGIN:  ovr099 - Initialized Data
 
 // WZD dseg:56E8
-uint8_t COL_CMBUI_Banner[6][4] = {
+uint8_t combat_name_font_colors_by_banner[6][4] = {
     { 97,  98,  99, 100}, 
     { 66,  67,  68,  69}, 
     { 33,  34,  35,  36}, 
@@ -3200,9 +3200,9 @@ int16_t Combat(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t
         (combat_defender_player_idx < NEUTRAL_PLAYER_IDX)
         &&
         (
-            (_combat_environ == 1)  /* City-Siege */
+            (_combat_environ == cnv_Enemy_City)   /* City-Siege */
             ||
-            (_combat_environ == 0)  /* Open-Field */
+            (_combat_environ == cnv_Enemy_Stack)  /* Open-Field */
         )
     )
     {
@@ -3559,9 +3559,9 @@ void Update_Combat_Enchantments_Icon_And_Help(void)
             is_active = ST_TRUE;
         }
         if(
-            (itr == COUNTER_MAGIC_ATTKR)  /* Counter Magic - Defender */
+            (itr == COUNTER_MAGIC_ATTKR)  /* Counter Magic - Attacker */
             ||
-            (itr == COUNTER_MAGIC_DFNDR)  /* Counter Magic - Attacker */
+            (itr == COUNTER_MAGIC_DFNDR)  /* Counter Magic - Defender */
         )
         {
             if(combat_enchantments[itr] > 0)
@@ -5200,14 +5200,6 @@ void Build_Flee_Loss_Message(int16_t troop_count, int16_t troop_list[])
 */
 
 // WZD o99p01
-// WZD o99p02
-// WZD o99p03
-// WZD o99p04
-// WZD o99p05
-// WZD o99p06
-// WZD o99p07
-
-// WZD o99p01
 // MoO2  Module: CMBTDRW1  Draw_Main_Combat_Screen_()
 /*
 Combat_Screen_Map_Draw() calls Copy_Back_To_Off() and Combat_Screen_Map_Draw_Entities()
@@ -5276,10 +5268,12 @@ void Combat_Screen_Draw(void)
                 if((_unit_type_table[_UNITS[battle_units[itr].unit_idx].type].Abilities & UA_FANTASTIC) != 0)
                 {
                     Opponent_Type = 1;  /* Monsters */
+                    break;
                 }
                 else
                 {
                     Opponent_Type = 2;  /* Raiders */
+                    break;
                 }
             }
         }
@@ -5288,7 +5282,7 @@ void Combat_Screen_Draw(void)
     {
         for(itr = 1; itr < 5; itr++)
         {
-            colors[itr] = COL_CMBUI_Banner[_players[_combat_ai_player].banner_id][(itr - 1)];
+            colors[itr] = combat_name_font_colors_by_banner[_players[_combat_ai_player].banner_id][(itr - 1)];
         }
         Set_Font_Colors_15(4, &colors[0]);
         Set_Font_Style_Shadow_Down(4, 15, 0, 0);
@@ -5313,7 +5307,7 @@ void Combat_Screen_Draw(void)
     {
         for(itr = 1; itr < 5; itr++)
         {
-            colors[itr] = COL_CMBUI_Banner[_players[_combat_ai_player].banner_id][(itr - 1)];
+            colors[itr] = combat_name_font_colors_by_banner[_players[_combat_ai_player].banner_id][(itr - 1)];
         }
         Set_Font_Colors_15(4, &colors[0]);
         Set_Font_Style_Shadow_Down(4, 15, 0, 0);
@@ -5367,7 +5361,7 @@ void Combat_Screen_Draw(void)
         GUI_String_1[string_index] -= 32;
         for(itr = 1; itr < 5; itr++)
         {
-            colors[itr] = COL_CMBUI_Banner[_players[_combat_ai_player].banner_id][(itr - 1)];
+            colors[itr] = combat_name_font_colors_by_banner[_combat_ai_player][(itr - 1)];  /* OGBUG:  should use _players[_combat_ai_player].banner_id, not just _combat_ai_player */
         }
         Set_Font_Colors_15(4, &colors[0]);
         Set_Font_Style_Shadow_Down(4, 15, 0, 0);
@@ -5376,7 +5370,7 @@ void Combat_Screen_Draw(void)
     }
     for(itr = 1; itr < 5; itr++)
     {
-        colors[itr] = COL_CMBUI_Banner[_players[_human_player_idx].banner_id][(itr - 1)];
+        colors[itr] = combat_name_font_colors_by_banner[_players[_human_player_idx].banner_id][(itr - 1)];
     }
     Set_Font_Colors_15(4, &colors[0]);
     Set_Font_Style_Shadow_Down(4, 15, 0, 0);
@@ -5443,7 +5437,7 @@ void Combat_Screen_Draw(void)
         frame_anim_cycle = 0;
     }
     _combat_mud_anim_phase++;
-    if(_combat_mud_anim_phase > 2)
+    if(_combat_mud_anim_phase > 4)
     {
         _combat_mud_anim_phase = 0;
     }
@@ -6600,10 +6594,6 @@ int16_t Combat_Info_Effects_Count(void)
             {
                 battle_effects_count++;
             }
-            if(_players[player_idx].Globals[CRUSADE] > 0)
-            {
-                battle_effects_count++;
-            }
         }
         player_idx = _human_player_idx;
     }
@@ -6644,6 +6634,7 @@ int16_t Combat_Info_Effects_Count(void)
         if(_players[itr_players].Globals[CHAOS_SURGE] > 0)
         {
             battle_effects_count++;
+            break;
         }
     }
     for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
@@ -6651,6 +6642,7 @@ int16_t Combat_Info_Effects_Count(void)
         if(_players[itr_players].Globals[ETERNAL_NIGHT] > 0)
         {
             battle_effects_count++;
+            break;
         }
     }
     return battle_effects_count;
@@ -6825,6 +6817,7 @@ void Next_Battle_Unit(int16_t player_idx)
             if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
             {
                 _active_battle_unit = itr_battle_units;
+                break;
             }
         }
     }
@@ -7055,7 +7048,7 @@ void Move_Confused(int16_t battle_unit_idx)
     int16_t target_x = 0;
     int16_t i = 0;
     target_found = ST_FALSE;
-    for(i = 0; i < 600; i++)
+    for(i = 0; ((i < 600) && (target_found == ST_FALSE)); i++)
     {
         random_x = (Random(COMBAT_GRID_WIDTH) - 1);
         random_y = (Random(COMBAT_GRID_HEIGHT) - 1);
@@ -7064,7 +7057,6 @@ void Move_Confused(int16_t battle_unit_idx)
             target_x = random_x;
             target_y = random_y;
             target_found = ST_TRUE;
-            break;
         }
     }
     if(target_found == ST_TRUE)
@@ -7191,7 +7183,7 @@ void Combat_Screen_Load_Resources(void)
     // COMPIX.LBX, 078  "SCANICON"   "red"
     for(itr = 0; itr < 18; itr++)
     {
-        IMG_CMB_ScanIcons[itr] = LBX_Reload_Next(compix_lbx_file__ovr103, (61 + itr), _screen_seg);
+        combat_scan_icon_segs[itr] = LBX_Reload_Next(compix_lbx_file__ovr103, (61 + itr), _screen_seg);
 
     }
     // COMPIX.LBX, 018  "HITBAR"     "unit hit bar"
@@ -7984,10 +7976,11 @@ int16_t Battle_Unit_Ranged_Attack_Icon(int16_t battle_unit_idx)
 */
 void Draw_Combat_Unit_Display(void)
 {
-    int16_t Resist_Score = 0;
-    int16_t Defense_Score = 0;
+    int16_t resist_value = 0;
+    int16_t defense_value = 0;
     uint8_t colors[2] = { 0, 0 };
-    int16_t Attribute_Value = 0;
+    int16_t attack_strength = 0;
+    int16_t level_cursor = 0;
     int16_t y2 = 0;
     int16_t x2 = 0;
     int16_t level_icon_count = 0;
@@ -7997,7 +7990,8 @@ void Draw_Combat_Unit_Display(void)
     int16_t unit_type = 0;
     int16_t unit_owner_idx = 0;
     int16_t unit_hero_slot_idx = 0;
-    int16_t Attr_Display_Var = 0;
+    int16_t scan_icon_idx = 0;
+    int16_t level_tier_base = 0;
     int16_t x1 = 0;
     int16_t y1 = 0;
     if(
@@ -8034,19 +8028,19 @@ void Draw_Combat_Unit_Display(void)
             stu_strcpy(GUI_String_1, *_unit_type_table[unit_type].name);
         }
         Print_Centered((x1 + ((x2 - x1) / 2)), (y1 + 2), GUI_String_1);
-        Attr_Display_Var = Battle_Unit_Melee_Attack_Icon(_scanned_battle_unit);
-        if(Attr_Display_Var != ST_UNDEFINED)
+        scan_icon_idx = Battle_Unit_Melee_Attack_Icon(_scanned_battle_unit);
+        if(scan_icon_idx != ST_UNDEFINED)
         {
-            Attribute_Value = battle_units[_scanned_battle_unit].melee;
-            Print_Integer_Right((x1 + 9), (y1 + 10), Attribute_Value);
-            FLIC_Draw((x1 + 11), (y1 + 8), IMG_CMB_ScanIcons[Attr_Display_Var]);
+            attack_strength = battle_units[_scanned_battle_unit].melee;
+            Print_Integer_Right((x1 + 9), (y1 + 10), attack_strength);
+            FLIC_Draw((x1 + 11), (y1 + 8), combat_scan_icon_segs[scan_icon_idx]);
         }
-        Attr_Display_Var = Battle_Unit_Ranged_Attack_Icon(_scanned_battle_unit);
-        if(Attr_Display_Var != ST_UNDEFINED)
+        scan_icon_idx = Battle_Unit_Ranged_Attack_Icon(_scanned_battle_unit);
+        if(scan_icon_idx != ST_UNDEFINED)
         {
-            Attribute_Value = battle_units[_scanned_battle_unit].ranged;
-            Print_Integer_Right((x1 + 9), (y1 + 17), Attribute_Value);
-            FLIC_Draw((x1 + 11), (y1 + 15), IMG_CMB_ScanIcons[Attr_Display_Var]);
+            attack_strength = battle_units[_scanned_battle_unit].ranged;
+            Print_Integer_Right((x1 + 9), (y1 + 17), attack_strength);
+            FLIC_Draw((x1 + 11), (y1 + 15), combat_scan_icon_segs[scan_icon_idx]);
         }
         if(battle_units[_scanned_battle_unit].movement_points != 0)
         {
@@ -8057,10 +8051,10 @@ void Draw_Combat_Unit_Display(void)
             Print_Integer_Right((x1 + 9), (y1 + 24), battle_units[_scanned_battle_unit].movement_points);
         }
         battle_unit_movement_mode = Battle_Unit_Movement_Mode(_scanned_battle_unit);
-        Attr_Display_Var = 11;
+        scan_icon_idx = 11;
         if(battle_unit_movement_mode == bumm_Flight)
         {
-            Attr_Display_Var = 12;
+            scan_icon_idx = 12;
         }
         if(
             (battle_unit_movement_mode == bumm_Sailing)
@@ -8068,19 +8062,19 @@ void Draw_Combat_Unit_Display(void)
             (battle_unit_movement_mode == bumm_Swimming)
         )
         {
-            Attr_Display_Var = 13;
+            scan_icon_idx = 13;
         }
-        FLIC_Draw((x1 + 11), (y1 + 22), IMG_CMB_ScanIcons[Attr_Display_Var]);
+        FLIC_Draw((x1 + 11), (y1 + 22), combat_scan_icon_segs[scan_icon_idx]);
         Print((x1 + 3), (y1 + 32), cnst_Hits_2);
         Gradient_Fill((x1 + 19), (y1 + 34), (x1 + 38), (y1 + 34), 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);
         Line((x1 + 19), (y1 + 35), (x1 + 38), (y1 + 35), 1);
         Draw_Active_Unit_Damage_Bar(_scanned_battle_unit, (x1 + 19), (y1 + 34));
-        Defense_Score = battle_units[_scanned_battle_unit].defense;
-        Print_Integer_Right((x1 + 48), (y1 + 10), Defense_Score);
-        FLIC_Draw((x1 + 50), (y1 + 8), IMG_CMB_ScanIcons[9]);
-        Resist_Score = battle_units[_scanned_battle_unit].resist;
-        Print_Integer_Right((x1 + 48), (y1 + 17), Resist_Score);
-        FLIC_Draw((x1 + 50), (y1 + 15), IMG_CMB_ScanIcons[14]);  // ~RESIST
+        defense_value = battle_units[_scanned_battle_unit].defense;
+        Print_Integer_Right((x1 + 48), (y1 + 10), defense_value);
+        FLIC_Draw((x1 + 50), (y1 + 8), combat_scan_icon_segs[9]);
+        resist_value = battle_units[_scanned_battle_unit].resist;
+        Print_Integer_Right((x1 + 48), (y1 + 17), resist_value);
+        FLIC_Draw((x1 + 50), (y1 + 15), combat_scan_icon_segs[14]);
         if(battle_units[_scanned_battle_unit].mana > 0)
         {
             Print_Integer_Right((x1 + 48), (y1 + 24), battle_units[_scanned_battle_unit].mana);
@@ -8098,25 +8092,26 @@ void Draw_Combat_Unit_Display(void)
         {
             if(_UNITS[unit_idx].Level > 6)
             {
-                level_icon_seg = IMG_CMB_ScanIcons[17];
-                Attr_Display_Var = 6;
+                level_icon_seg = combat_scan_icon_segs[17];
+                level_tier_base = 6;
             }
             else if(_UNITS[unit_idx].Level > 3)
             {
-                level_icon_seg = IMG_CMB_ScanIcons[16];
-                Attr_Display_Var = 3;
+                level_icon_seg = combat_scan_icon_segs[16];
+                level_tier_base = 3;
             }
             else
             {
-                level_icon_seg = IMG_CMB_ScanIcons[15];
-                Attr_Display_Var = 0;
+                level_icon_seg = combat_scan_icon_segs[15];
+                level_tier_base = 0;
             }
             level_icon_count = 0;
-            Attribute_Value = Attr_Display_Var;
-            while(_UNITS[unit_idx].Level > Attribute_Value)
+            level_cursor = level_tier_base;
+            while(_UNITS[unit_idx].Level > level_cursor)
             {
                 FLIC_Draw((x1 + 48 + (level_icon_count * 5)), (y1 + 33), level_icon_seg);
-                Attribute_Value++;
+                level_icon_count++;
+                level_cursor++;
             }
         }
     }

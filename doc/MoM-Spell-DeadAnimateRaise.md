@@ -27,7 +27,7 @@ Raise Dead:
 Tactical_Combat__WIP()
     if(input_field_idx == spell_button_field)
         Combat_Cast_Spell()
-            Combat_Spellbook_Build__WIP()
+            Combat_Spellbook_Build()
             CMB_ComposeBookBG__WIP()
             Combat_Spellbook_Screen()
             Do_Legal_Spell_Check__WIP()

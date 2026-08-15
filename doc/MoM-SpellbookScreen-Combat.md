@@ -16,7 +16,7 @@ before Cast_Spell_On_Battle_Unit()
 ...in Cast_Spell_On_Battle_Unit, case scc_Direct_Damage_Variable: just applies the cost and damage
 
 Combat_Cast_Spell()
-    Combat_Spellbook_Build__WIP()
+    Combat_Spellbook_Build()
     CMB_ComposeBookBG__WIP()
 Combat.C
     Combat_Spellbook_Screen()
@@ -43,7 +43,7 @@ _auto_combat_flag == ST_FALSE
 
 
 
-Combat_Spellbook_Build__WIP()
+Combat_Spellbook_Build()
 
 CMB_ComposeBookBG__WIP()
 CMB_ComposeBackgrnd__WIP()

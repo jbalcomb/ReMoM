@@ -611,6 +611,8 @@ Fill()
 
     fill_type 3 and 15 are the same except 3 always uses color block 0 (grayscale?)
 
+seg014/Gradient_Fill.asm declares nine parameters (bp+6…bp+16h). The box fill at asm:35-44 pushes six and cleans with add sp, 0Ch, leaving Slope, Scale and Seed reading the caller's own return address and saved registers. Combat.c:8005 passes ST_NULL ×3.
+Not reproducible 1:1 — a short-argument call was legal K&R C and is a constraint violation now. Production's padding is the house form used at every other site. Recorded, not to be changed.
 */
 void Gradient_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t fill_type, int16_t remap_block, int16_t Slope, int16_t Scale, int16_t Seed)
 {

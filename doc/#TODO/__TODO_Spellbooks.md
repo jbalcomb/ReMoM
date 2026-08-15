@@ -94,7 +94,7 @@ void Build_Spellbook(int16_t spell_list_type, int16_t page_spell_count);
 int16_t UU_IDK_turn_to_cast__STUB(int16_t player_idx);
 
 // WZD o117p06
-int16_t Combat_Spellbook_Build__WIP(int16_t caster_idx);
+int16_t Combat_Spellbook_Build(int16_t caster_idx);
 
 // WZD o117p07
 void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spellbook_bitmap);

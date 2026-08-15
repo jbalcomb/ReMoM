@@ -2960,7 +2960,7 @@ extern struct s_HEROES ** const _HEROES2;
 extern int16_t _computer_player_did_flee;
 
 // WZD dseg:924C
-extern SAMB_ptr IMG_CMB_ScanIcons[MAX_BATTLE_UNIT_COUNT];
+extern SAMB_ptr combat_scan_icon_segs[18];
 
 // WZD dseg:9270
 extern int16_t _wall_rise_frame;
@@ -3009,15 +3009,12 @@ extern SAMB_ptr unit_grass_diamond_seg;
 extern SAMB_ptr bldg_picts_seg[(NUM_BUILDINGS - 1)];
 
 // WZD dseg:92FE
-// drake178: IMG_CTY_CITYSPL4
 extern SAMB_ptr cityscape_city_walls_build_seg;
 
 // WZD dseg:9300
-// drake178: IMG_CTY_TradeGoods@
 extern SAMB_ptr building_trade_goods_seg;
 
 // WZD dseg:9302
-// drake178: IMG_CTY_Housing_Std@, IMG_CTY_Housing_Tre@, IMG_CTY_Housing_Mnd@
 extern SAMB_ptr bldg_housing_seg[3];
 
 // WZD dseg:9308

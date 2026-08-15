@@ -1679,19 +1679,15 @@ int16_t Battle_Unit_Instant_Movement_Mode(int16_t battle_unit_idx);
 int16_t Combat(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t troop_count, int16_t troops[]);
 
 // WZD s96p02
-// drake178: EZ_CreateGuardStack()
 void Lair_Make_Guardians(int16_t lair_idx);
 
 // WZD s96p03
-// drake178: EZ_ResolveEntry()
 int16_t Lair_Combat_Do(int16_t lair_idx, int16_t player_idx);
 
 // WZD s96p04
-// drake178: sub_7DE08()
 // UU_IDK_CMB_s7DE08()
 
 // WZD s96p05
-// drake178: WIZ_SetHostile()
 void Update_Defender_Hostility(int16_t attacker_player_idx, int16_t defender_player_idx);
 
 // WZD s96p06

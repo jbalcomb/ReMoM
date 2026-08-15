@@ -11,7 +11,8 @@ Combat_Screen_Draw_Buttons()  ==>  Tactical_Combat_Draw_Buttons()
 BU_SetVisibility__WIP()       ==>  Battle_Unit_Set_Invisibility_Effect()
 CMB_ComposeBackgrnd__WIP()    ==>  Combat_Compose_Background()
 Combat_Screen__WIP()          ==>  Combat_Screen()
-BU_HasSpellAbility()          ==>  BU_HasSpellAbility__WIP()
+BU_HasSpellAbility()          ==>  Battle_Unit_Has_Spell_Ability()
+BU_HasSpellAbility__WIP()     ==>  Battle_Unit_Has_Spell_Ability()
 sub_7EC81()                   ==>  NIU_Who_Has_More_Leadership()
 CMB_BaseAllocs__WIP()         ==>  Allocate_Combat_Base_Blocks()
 CMB_SetNearAllocs__WIP()      ==>  Allocate_Combat_Near_Buffers()
@@ -20,7 +21,6 @@ CMB_Terrain_Init__WIP()       ==>  Build_Battlefield()
 EMM_TILEX_Init__HACK()        ==>  Claim_EMS_Page_For_Figure_Set()
 CMB_Units_Init__WIP()         ==>  Prepare_All_Battle_Units()
 BU_Apply_Specials()           ==>  Apply_Enchantment_And_Mutation_Effects()
-BU_HasSpellAbility__WIP()     ==>  Battle_Unit_Has_Spell_Ability()
 
 combat_human_player           ==>  _combat_local_player
 combat_computer_player        ==>  _combat_remote_player
@@ -33,6 +33,8 @@ CE_Window_Left                ==>  enchantment_strip_left_x
 RightClick_X                  ==>  right_click_cgx 
 RightClick_Y                  ==>  right_click_cgy
 Battle_Result                 ==>  end_of_combat_message_type
+COL_CMBUI_Banner              ==>  combat_name_font_colors_by_banner
+IMG_CMB_ScanIcons             ==>  combat_scan_icon_segs
 
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr090\Combat_Screen__WIP.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr163\CMB_BaseAllocs__WIP.asm
@@ -127,7 +129,7 @@ Combat_Screen()
     |-> Begin_Combat_Turn()
     |-> Combat_Screen_Draw()
         |-> Combat_Grid_Entities__WIP()                             Combat-Combat_Screen_Map_Draw.md
-        |-> Combat_Screen_Map_Draw()                           Combat-Combat_Screen_Map_Draw.md
+        |-> Combat_Screen_Map_Draw()                                Combat-Combat_Screen_Map_Draw.md
         |-> Combat_Info_Effects_Count()
         |-> Tactical_Combat_Draw_Buttons()
         |-> Draw_Spell_Information_Window()
@@ -142,7 +144,7 @@ Combat_Screen()
     |-> Next_Battle_Unit()
     |-> Assign_Combat_Grids()
     |-> Turn_Off_Auto_Combat()
-    |-> BU_HasSpellAbility__WIP()
+    |-> Battle_Unit_Has_Spell_Ability()
     |-> Add_Combat_Enchantment_Fields()
     |-> Move_Confused()
     |-> Battle_Unit_Action()
@@ -157,13 +159,13 @@ Combat_Screen()
 
 # 1:1 Fidelity Review
 
-**Status: DONE-DONE (2026-08-08).** No findings open; five deviations. Thirty functions compared against 8,297 asm lines.
+**Status: DONE-DONE (2026-08-15).** No findings open; two deviations. Two passes: the setup chain (2026-08-08, thirty functions against 8,297 asm lines) and the input loop (2026-08-15, seventeen functions against 2,486 asm lines).
 
-Twenty-two reconstruction errors were raised and all twenty-two are fixed. Every game target links — `momlib`, `ReMoM.exe`, `HeMoM.exe`, `MOX_tests.exe` — and every rename in the ledger below compiles. `MOM_tests` does not build, on a pre-existing missing-`Combat.h` break in four test files that predates this review and touches none of its functions; see Build state.
+The first pass scoped itself to `Combat_Screen` "plus everything it reaches during setup" and left the input-loop handlers alone; seventeen functions this doc's header block names were never given a verdict. The second pass walked every one of them. Nine reconstruction errors were raised and all nine are fixed. `cmake --build --preset MSVC-debug` is clean — `STU.lib`, `MOX.lib`, `momlib.lib`, `Platform_Headless.lib`, `ReMoM.exe` and `HeMoM.exe` all build and link.
 
-`Combat_Compose_Background` and `Generate_Combat_Map` were moved out of scope by decision and are not covered by this verdict.
+Two functions the header block names are owned by nobody and were moved to [Combat-Miscellaneous.md](Combat-Miscellaneous.md) by the `MISC_DOC_SPREAD` rule in [tools/review_coverage.py](../../tools/review_coverage.py): `Combat_Grid_Screen_Coordinates` (walked, faithful) and `Calc_Battlefield_Bonuses` (not yet walked).
 
-`Combat_Screen` is the tactical-combat screen: it allocates the combat heaps, loads the graphics, builds the battlefield, seats the units, then runs the input loop until somebody wins or flees. The bundle below is that function plus everything it reaches during setup.
+Regenerate the outstanding set at any time with `python3 tools/review_coverage.py --attribution` — it is derived from this doc's header block and coverage table, so it cannot drift out of step with them the way a hand-typed list does.
 
 ## Scope
 
@@ -171,15 +173,15 @@ The Production column carries the current name and line; the ASM column keeps th
 
 | Function (production) | Production | ASM (ground truth) | Result |
 | --- | --- | --- | --- |
-| `Combat_Screen` | [Combat.c:1408](../../MoM/src/Combat.c#L1408) | [ovr090/Combat_Screen__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr090/Combat_Screen__WIP.asm) (1724) | faithful |
-| `Allocate_Combat_Base_Blocks` | [Combat.c:23807](../../MoM/src/Combat.c#L23807) | [ovr163/CMB_BaseAllocs__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr163/CMB_BaseAllocs__WIP.asm) (76) | faithful |
-| `Combat_Screen_Load_Resources` | [Combat.c:7228](../../MoM/src/Combat.c#L7228) | [ovr103/CMB_LoadResources__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr103/CMB_LoadResources__WIP.asm) (386) | faithful |
-| `Allocate_Combat_Near_Buffers` | [Combat.c:7356](../../MoM/src/Combat.c#L7356) | [ovr103/CMB_SetNearAllocs__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr103/CMB_SetNearAllocs__WIP.asm) (59) | faithful |
+| `Combat_Screen` | [Combat.c:1411](../../MoM/src/Combat.c#L1411) | [ovr090/Combat_Screen__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr090/Combat_Screen__WIP.asm) (1724) | faithful |
+| `Allocate_Combat_Base_Blocks` | [Combat.c:23176](../../MoM/src/Combat.c#L23176) | [ovr163/CMB_BaseAllocs__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr163/CMB_BaseAllocs__WIP.asm) (76) | faithful |
+| `Combat_Screen_Load_Resources` | [Combat.c:7075](../../MoM/src/Combat.c#L7075) | [ovr103/CMB_LoadResources__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr103/CMB_LoadResources__WIP.asm) (386) | faithful |
+| `Allocate_Combat_Near_Buffers` | [Combat.c:7202](../../MoM/src/Combat.c#L7202) | [ovr103/CMB_SetNearAllocs__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr103/CMB_SetNearAllocs__WIP.asm) (59) | faithful |
 | `Cache_Graphics_Combat` | [LOADER.c:1832](../../MoM/src/LOADER.c#L1832) | [ovr052/Cache_Graphics_Combat.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr052/Cache_Graphics_Combat.asm) (13) | faithful |
-| `Build_Battlefield` | [Combat.c:21132](../../MoM/src/Combat.c#L21132) | [ovr154/CMB_Terrain_Init__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/CMB_Terrain_Init__WIP.asm) (627) | faithful |
-| `Prepare_All_Battle_Units` | [Combat.c:5044](../../MoM/src/Combat.c#L5044) | [ovr098/CMB_Units_Init__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/CMB_Units_Init__WIP.asm) (527) | faithful |
-| `Battle_Unit_Has_Spell_Ability` | [Combat.c:3664](../../MoM/src/Combat.c#L3664) | [ovr098/BU_HasSpellAbility__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/BU_HasSpellAbility__WIP.asm) (73) | faithful |
-| `NIU_Who_Has_More_Leadership` | [Combat.c:3695](../../MoM/src/Combat.c#L3695) | [ovr098/NIU_Who_Has_More_Leadership.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/NIU_Who_Has_More_Leadership.asm) (27) | faithful |
+| `Build_Battlefield` | [Combat.c:20533](../../MoM/src/Combat.c#L20533) | [ovr154/CMB_Terrain_Init__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/CMB_Terrain_Init__WIP.asm) (627) | faithful |
+| `Prepare_All_Battle_Units` | [Combat.c:4857](../../MoM/src/Combat.c#L4857) | [ovr098/CMB_Units_Init__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/CMB_Units_Init__WIP.asm) (527) | faithful |
+| `Battle_Unit_Has_Spell_Ability` | [Combat.c:3601](../../MoM/src/Combat.c#L3601) | [ovr098/BU_HasSpellAbility__WIP.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/BU_HasSpellAbility__WIP.asm) (73) | faithful |
+| `NIU_Who_Has_More_Leadership` | [Combat.c:3632](../../MoM/src/Combat.c#L3632) | [ovr098/NIU_Who_Has_More_Leadership.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/NIU_Who_Has_More_Leadership.asm) (27) | faithful |
 | `Load_Battle_Unit` | [COMBINIT.c:445](../../MoM/src/COMBINIT.c#L445) | [ovr116/Load_Battle_Unit.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/Load_Battle_Unit.asm) (286) | faithful |
 | `Unit_Gold_Upkeep` | [CITYCALC.c:242](../../MoM/src/CITYCALC.c#L242) | [ovr120/Unit_Gold_Upkeep.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr120/Unit_Gold_Upkeep.asm) (140) | faithful |
 | `Battle_Unit_Regular_Stats` | [COMBINIT.c:535](../../MoM/src/COMBINIT.c#L535) | [ovr116/BU_Init_Battle_Unit.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Init_Battle_Unit.asm) (478) | faithful |
@@ -191,13 +193,13 @@ The Production column carries the current name and line; the ASM column keeps th
 | `Apply_Enchantment_And_Mutation_Effects` | [COMBINIT.c:705](../../MoM/src/COMBINIT.c#L705) | [ovr116/BU_Apply_Specials.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Apply_Specials.asm) (509) | faithful |
 | `Unit_Moves2` | [NEXTTURN.c:1530](../../MoM/src/NEXTTURN.c#L1530) | [ovr121/Unit_Moves2.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr121/Unit_Moves2.asm) (244) | faithful |
 | `Unit_Hit_Points` | [COMBINIT.c:266](../../MoM/src/COMBINIT.c#L266) | [ovr116/Unit_Hit_Points.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/Unit_Hit_Points.asm) (216) | faithful |
-| `Get_Combat_Grid_Cell_X` | [Combat.c:23326](../../MoM/src/Combat.c#L23326) | [ovr154/Get_Combat_Grid_Cell_X.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/Get_Combat_Grid_Cell_X.asm) (25) | faithful |
-| `Get_Combat_Grid_Cell_Y` | [Combat.c:23335](../../MoM/src/Combat.c#L23335) | [ovr154/Get_Combat_Grid_Cell_Y.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/Get_Combat_Grid_Cell_Y.asm) (28) | faithful |
-| `Deploy_Battle_Units` | [Combat.c:12280](../../MoM/src/Combat.c#L12280) | [ovr113/Deploy_Battle_Units.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr113/Deploy_Battle_Units.asm) (375) | faithful |
+| `Get_Combat_Grid_Cell_X` | [Combat.c:22695](../../MoM/src/Combat.c#L22695) | [ovr154/Get_Combat_Grid_Cell_X.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/Get_Combat_Grid_Cell_X.asm) (25) | faithful |
+| `Get_Combat_Grid_Cell_Y` | [Combat.c:22704](../../MoM/src/Combat.c#L22704) | [ovr154/Get_Combat_Grid_Cell_Y.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr154/Get_Combat_Grid_Cell_Y.asm) (28) | faithful |
+| `Deploy_Battle_Units` | [Combat.c:11934](../../MoM/src/Combat.c#L11934) | [ovr113/Deploy_Battle_Units.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr113/Deploy_Battle_Units.asm) (375) | faithful |
 
 **Two header lines need correcting.**
 
-- `BU_HasSpellAbility() ==> BU_HasSpellAbility__WIP()` is backwards, and no rename is needed either way — the IDA proc is *already* `BU_HasSpellAbility__WIP` (asm:2) and so is production. The `__WIP` suffix is inherited from the IDA database, not a marker somebody added here.
+- `BU_HasSpellAbility() ==> Battle_Unit_Has_Spell_Ability()` is backwards, and no rename is needed either way — the IDA proc is *already* `Battle_Unit_Has_Spell_Ability` (asm:2) and so is production. The `__WIP` suffix is inherited from the IDA database, not a marker somebody added here.
 - `sub_7EC81() ==> NIU_Who_Has_More_Leadership()` is already done on both sides: the listing is `ovr098/NIU_Who_Has_More_Leadership.asm` and its proc is named that.
 
 **Rename ledger** — IDA name on the left, production name on the right. The first two answer the `???` in the header block:
@@ -211,7 +213,7 @@ BU_SetVisibility__WIP          ==>  Battle_Unit_Set_Invisibility_Effect()
 Combat_Node_type               ==>  Combat_Node_Type()
 Bottom_GUI_Escape_Hotkey       ==>  escape_field
 Grid_X / Grid_Y                ==>  grid_sx / grid_sy
-IMG_CMB_ScanIcons@.Stat.Melee@ ==>  IMG_CMB_ScanIcons[]
+combat_scan_icon_segs@.Stat.Melee@ ==>  combat_scan_icon_segs[]
 GUI_String_1@                  ==>  GUI_String_1
 IDK_base_cgc2 / IDK_base_cgc1  ==>  row_start_cgx / row_start_cgy
 var_8                          ==>  niu_variable
@@ -223,7 +225,7 @@ m_unknown_variable__ovr090     ==>  niu_combat_screen_dirty
 First_CE_Help_Entry            ==>  enchantment_help_entry_base
 CE_Window_Left                 ==>  enchantment_strip_left_x
 RightClick_X / RightClick_Y    ==>  right_click_cgx / right_click_cgy
-BU_HasSpellAbility__WIP        ==>  Battle_Unit_Has_Spell_Ability()
+Battle_Unit_Has_Spell_Ability        ==>  Battle_Unit_Has_Spell_Ability()
 Battle_Result                  ==>  end_of_combat_message_type
 Ranged_Units / Melee_Units     ==>  ranged_battle_unit_idxs / melee_battle_unit_idxs
 Ranged_Count / Melee_Count     ==>  ranged_battle_unit_count / melee_battle_unit_count
@@ -250,6 +252,169 @@ Three of those correct a name rather than just expanding it, and the correction 
 **Anchors.** Production links point at **function start lines**. `Combat.c` moved repeatedly during this review while it was open in the editor; every line number was re-verified against the file as it stands after the last change. For statement-level precision use the `asm:N` references, which are stable ground truth.
 
 ---
+
+---
+
+# Reopened scope
+
+17 functions, 2,486 asm lines. Every one is named in this doc's header block; none has a coverage-table row.
+
+| function | production | listing | asm | state |
+| --- | --- | --- | --- | --- |
+| `Combat_Screen_Draw` | [Combat.c:5207](../../MoM/src/Combat.c#L5207) | `ovr099/Combat_Screen_Draw.asm` | 644 | **full body walk — faithful** |
+| `Draw_Combat_Unit_Display` | [Combat.c:7977](../../MoM/src/Combat.c#L7977) | `ovr105/Draw_Combat_Unit_Display.asm` | 566 | **full body walk — faithful; D8** |
+| `Load_Combat_Terrain_Pictures` | [Combat.c:22885](../../MoM/src/Combat.c#L22885) | `ovr163/Load_Combat_Terrain_Pictures.asm` | 161 | **faithful** — walk at [line 632](Combat-Combat_Screen.md#L632), spot-checked |
+| `Combat_Info_Effects_Count` | [Combat.c:6569](../../MoM/src/Combat.c#L6569) | `ovr103/Combat_Info_Effects_Count.asm` | 139 | **full body walk — faithful** |
+| `Undeployable_Battle_Units_On_Water` | [Combat.c:16278](../../MoM/src/Combat.c#L16278) | `ovr124/Undeployable_Battle_Units_On_Water.asm` | 135 | **full body walk — faithful** |
+| `Draw_Spell_Information_Window` | [Combat.c:5595](../../MoM/src/Combat.c#L5595) | `ovr099/Draw_Spell_Information_Window.asm` | 125 | **full body walk — faithful** |
+| `Update_Combat_Enchantments_Icon_And_Help` | [Combat.c:3547](../../MoM/src/Combat.c#L3547) | `ovr098/Update_Combat_Enchantments_Icon_And_Help.asm` | 108 | **full body walk — faithful** |
+| `Add_Combat_Enchantment_Fields` | [Combat.c:4730](../../MoM/src/Combat.c#L4730) | `ovr098/Add_Combat_Enchantment_Fields.asm` | 103 | **full body walk — faithful** |
+| `Next_Battle_Unit` | [Combat.c:6778](../../MoM/src/Combat.c#L6778) | `ovr103/Next_Battle_Unit.asm` | 89 | **full body walk — faithful** |
+| `Combat_Structure` | [Combat.c:16227](../../MoM/src/Combat.c#L16227) | `ovr124/Combat_Structure.asm` | 84 | **full body walk — faithful** |
+| `Combat_Node_Type` | [Combat.c:6654](../../MoM/src/Combat.c#L6654) | `ovr103/Combat_Node_Type.asm` | 82 | **full body walk — faithful** |
+| `Move_Confused` | [Combat.c:7042](../../MoM/src/Combat.c#L7042) | `ovr103/Move_Confused.asm` | 77 | **full body walk — faithful** |
+| `Combat_Cache_Write` | [Combat.c:22825](../../MoM/src/Combat.c#L22825) | `ovr154/Combat_Cache_Write.asm` | 64 | **full body walk — faithful; D7** |
+| `Map_Tile_EMS_Page_As_Sandbox` | [Combat.c:20387](../../MoM/src/Combat.c#L20387) | `ovr153/EMM_TILEX_Init__HACK.asm` | 41 | **faithful** — walk at [line 643](Combat-Combat_Screen.md#L643), spot-checked; EMS mapper call is D4 |
+| `Auto_Cast_Spell_And_Do_Combat_Turn` | [Combat.c:3650](../../MoM/src/Combat.c#L3650) | `ovr098/Auto_Cast_Spell_And_Do_Combat_Turn.asm` | 40 | **full body walk — faithful** |
+| `Switch_Active_Battle_Unit` | [Combat.c:2709](../../MoM/src/Combat.c#L2709) | `ovr091/Switch_Active_Battle_Unit.asm` | 16 | **full body walk — faithful** |
+| `Turn_Off_Auto_Combat` | [Combat.c:5120](../../MoM/src/Combat.c#L5120) | `ovr098/Turn_Off_Auto_Combat.asm` | 12 | **full body walk — faithful** |
+
+**The two prose walks are now transcribed.** `Load_Combat_Terrain_Pictures` and `Map_Tile_EMS_Page_As_Sandbox` were walked in full earlier in this doc and declared faithful; both verdicts are spot-checked against their listings and carried into the table above.
+
+- `Load_Combat_Terrain_Pictures` — the `cts_Water` early return is the bare zero test `or ctt, ctt` / `jnz` at asm:15-16, returning 0 in `ax`; the first load loop bound is `cmp itr, 48` at asm:117; and the filename buffer runs `bp-20h` through `bp-3` with `temp_seg` at `bp-2`, i.e. 30 bytes, matching `LEN_STRING`.
+- `Map_Tile_EMS_Page_As_Sandbox` — four `farpokew` writes at bare `EMS_PFBA` for MemSig1, MemSig2, size **3071** and used **1**, matching the four `SET_2B_OFS` calls at [Combat.c:20387-20390](../../MoM/src/Combat.c#L20387-L20390). The `EMM_MapMulti4(0, EmmHndl_TILEXXX)` the asm opens with is replaced by flat arithmetic in production — that is deviation D4, not a finding.
+
+**`Combat_Grid_Screen_Coordinates` is misc, not this doc's.** Its twelve call sites span four reviews — [Combat-Combat_Screen_Map_Draw.md](Combat-Combat_Screen_Map_Draw.md) (8), [Combat-Generate_Combat_Map.md](Combat-Generate_Combat_Map.md) (2), [Combat-Battle_Unit_Attack.md](Combat-Battle_Unit_Attack.md) (1) and this one (1) — so no single review can own it. It was walked here and found faithful; the verdict is recorded in [Combat-Miscellaneous.md](Combat-Miscellaneous.md) and its row has been removed from the table above.
+
+**`Calc_Battlefield_Bonuses` is misc, not this doc's.** Its callers span three reviews — `Combat_Screen` here, `Strategic_Combat` in [Combat-Strategic_Combat.md](Combat-Strategic_Combat.md) and `Begin_Combat_Turn` in [Combat-Init_Prep_Etc.md](Combat-Init_Prep_Etc.md) — with no dominant owner, so it falls to [Combat-Miscellaneous.md](Combat-Miscellaneous.md) by the `MISC_DOC_SPREAD` rule. It has not been walked by anyone yet.
+
+**Not in this scope, though the header block names them.** `Battle_Unit_Action`, `Assign_Combat_Grids`, `Combat_Next_Turn`, `Begin_Combat_Turn`, `Deploy_Battle_Units`, `Claim_EMS_Page_For_Figure_Set`, `Combat_Figure_Load`, `Draw_Active_Unit_Window`, `Combat_Compose_Background` and `Battle_Unit_Set_Invisibility_Effect` all carry verdicts in other reviews — the header block is the call tree `Combat_Screen` reaches, not the set this doc adjudicates.
+
+## Reopened — verified faithful
+
+### `Combat_Screen_Draw` ([Combat.c:5207](../../MoM/src/Combat.c#L5207), asm 644)
+
+**Frame.** Five slotted locals and two register locals, and [Combat.c:5209-5215](../../MoM/src/Combat.c#L5209-L5215) declares them in frame order — `enchantment_help_entry_base` at `bp-0Eh`, `Opponent_Type` at `-0Ch`, `Can_Split_Name` at `-0Ah`, `enchantment_strip_left_x` at `-8`, `colors[6]` at `-6`, with `itr` in SI and `string_index` in DI.
+
+**Both enchantment strips.** The compound condition is carried intact: `((first_shown + itr) < count) && (itr < 4)`, emitted as `jge` to the exit then `cmp si, 4` / `jl` back to the body (asm:87-93 and asm:138-144). `FLIC_Draw(left + itr*17, 179, icon_seg)` matches the push order, and the help-entry write scales by `size s_HELP_ENTRY` off `_help_entries.help_00`. The 247/9 and 8/13 pairs, and the eight `ST_UNDEFINED` help resets, all match.
+
+**The environment chain.** `_combat_environ == 0`, `== 1`, `== 5` as a compare chain, with `jz` / `jmp` long-branch fixups carrying the source conditions un-inverted. The city-siege neutral test — `(Opponent_Type == 0) || (_combat_attacker_player != NEUTRAL_PLAYER_IDX)` to the city name, else Monsters/Raiders — matches asm:337-356 clause for clause.
+
+**The lair name split.** `stu_strcpy(GUI_String_1, TBL_EZ_Names[_LAIRS[_combat_environ_idx].type])` with the word-scaled table read; the space scan with `string_index++` and `itr++` both inside the not-a-space path and the `break` skipping both (asm:387-402); the post-loop `string_index++` then `if(Can_Split_Name == ST_FALSE) string_index = 0` where the `jnz` skips the set; and `GUI_String_1[string_index] -= 32` reloading the base on both sides of the read-modify-write, exactly as asm:409-415 does.
+
+**The text calls.** `Set_Font_Colors_15(4, &colors[0])`, `Set_Font_Style_Shadow_Down(4, 15, 0, 0)`, `Set_Outline_Color(241)` in that order at all three sites; `Print_Centered(40, 168, ...)` for the open-field and siege banners, `(40, 167, &GUI_String_1[string_index])` for the lair, `(278, 167, _players[_human_player_idx].name)` for the human strip. `Cycle_Palette_Color(198, 0, 0, 0, 55, 0, 0, 11)` — eight words, `add sp, 10h`.
+
+**The immobile block.** The three-clause guard is `jz` / `jz` / `jnz` to continue, so the source reads `== ST_TRUE`, `== ST_FALSE`, `!= ST_UNDEFINED` (asm:537-547). `Print_Paragraph(84, 167, 58, cnst_Cmbt_Immobile, 0)` — five words, `add sp, 0Ah`. `colors[0] = 227`, `colors[1] = 243`, and `Set_Font_LF(1)` all match.
+
+**The counters.** Vortex wraps at 5 (asm:614) against `VORTEX_ANIM_FRAME_COUNT 5`, `frame_anim_cycle` at 2 (asm:628). The cell-effect counter is the known rescaling, not a finding — see the deviation note below.
+
+### `Update_Combat_Enchantments_Icon_And_Help` ([Combat.c:3547](../../MoM/src/Combat.c#L3547), asm 108)
+
+Faithful apart from R4. `s_COMBAT_ENCHANTMENTS` is `sizeof=0x1E`, fifteen 2-byte entries, so the `cmp itr, 30` bound at asm:98 is `NUM_COMBAT_ENCHANTMENTS * 2`. The array is bytes (`db`) read through `byte ptr`, and the Counter Magic test uses `jle` — a signed compare — matching `combat_enchantments[itr] > 0` with an `if`/`else` writing `is_active` twice rather than a ternary. `idx = itr / 2` is the `cwd` / `sub ax,dx` / `sar ax,1` idiom (asm:44-47) and the even/odd split is a real `idiv` with `or dx, dx` (asm:49-53). Both branches scale by 4 into `s_COMBAT_ENCHANTMENT_ICON_DATA` and `s_COMBAT_ENCHANTMENT_ICON` — `icon_idx`/`icon_seg` at +0, `help_idx` at +2 — with `combat_enchantment_icon_segs` word-indexed via `shl bx, 1`. `e_ST_TRUE = 1` (`WIZARDS.inc:9163`), so the literal `1` at [Combat.c:3557](../../MoM/src/Combat.c#L3557) is the same constant.
+
+### `Turn_Off_Auto_Combat` ([Combat.c:5120](../../MoM/src/Combat.c#L5120), asm 12)
+
+Faithful, nothing to change. Word store of `e_ST_FALSE` to `_auto_combat_flag` ([Combat.h:1399](../../MoM/src/Combat.h#L1399), `int16_t`); one `push` and a `pop cx` for `Next_Battle_Unit(_human_player_idx)`; no push and no cleanup for `Assign_Combat_Grids()`, matching its `(void)` signature. No `sub sp` — no locals — and nothing in `ax` before `retf`.
+
+### `Switch_Active_Battle_Unit` ([Combat.c:2709](../../MoM/src/Combat.c#L2709), asm 16)
+
+Faithful. Two statements in the asm's order: clear `Moving` on the *outgoing* unit — indexed by `_active_battle_unit`, before it is overwritten — then store the parameter into `_active_battle_unit`. The store carries no `byte ptr` override because the struct member settles the width: `Moving dw` in `s_BATTLE_UNIT` (`WIZARDS.inc`), matching `int16_t mid_move` at [Combat.h:1290](../../MoM/src/Combat.h#L1290). No `sub sp` — no locals — and one word parameter at `bp+6`.
+
+### `Auto_Cast_Spell_And_Do_Combat_Turn` ([Combat.c:3650](../../MoM/src/Combat.c#L3650), asm 40)
+
+Faithful. `winner` at `bp-2` is the only slotted local and production declares only that one; the parameter lives in SI, which is register allocation of the parameter itself, not an extra local.
+
+- **The guard is un-inverted.** asm:13-15 is `cmp player_idx, [_combat_human_player]` / `jnz short loc_7ECC1` / `jmp short loc_7ECDB` — the Borland long-branch shape, so the surviving short `jnz` carries the source condition as written: `player_idx != _combat_local_player`. (`combat_human_player` to `_combat_local_player` is the rename already in this doc's ledger.)
+- **Four arguments, right-to-left.** asm:17-24 pushes `_combat_wp`, `_combat_wy`, `_combat_wx__som_started_anim_ctr`, then `player_idx + 20`, and cleans with `add sp, 8`. That is `Combat_Cast_Spell((20 + player_idx), _combat_wx, _combat_wy, _combat_wp)`. `_combat_wx__som_started_anim_ctr` is the IDA label for `_combat_wx` — one storage reused for two purposes, already recorded in [Combat-Init_Prep_Etc.md:390](Combat-Init_Prep_Etc.md#L390) and [Combat-End_Of_Combat.md:332](Combat-End_Of_Combat.md#L332).
+- **The winner test runs the block when equal.** asm:28-29 is `cmp [bp+winner], e_ST_UNDEFINED` / `jnz short @@Done`, the jump-skips-the-body idiom, so the source reads `winner == ST_UNDEFINED`. `Update_Combat_Enchantments_Icon_And_Help()` then `Auto_Do_Combat_Turn(player_idx)` in that order.
+
+### `Combat_Grid_Screen_Coordinates` ([Combat.c:22653](../../MoM/src/Combat.c#L22653), asm 44)
+
+Faithful. `sx = ((cgx - cgy) * 16) + 158` is `sub` / `shl ax, 4` / `add 158` (asm:17-22); `sy = ((cgx + cgy) * 8) - 80` is `add` / `shl ax, 3` / `add -80` (asm:23-28). The sub-cell offsets follow the same shape — `(ox - oy) * 2` added to `sx` via `shl ax, 1` (asm:29-32) and a bare `(ox + oy)` added to `sy` (asm:33-35) — then both are stored through the out-pointers. The two accumulators live in DX and SI with no stack slots, so their declaration order carries no constraint.
+
+The asm parameter names are misleading and worth not copying: `cgc2` at `bp+6` is the **x** cell and `cgc1` at `bp+8` is the **y** cell, which is why production's `cgx, cgy` order is right.
+
+### `Combat_Cache_Write` ([Combat.c:22824](../../MoM/src/Combat.c#L22824), asm 64)
+
+Faithful in structure; the file I/O is the platform substitution described under Deviations. `world_data_size_PR > 2048` is `cmp 2048` / `jle` to the else (asm:12-13); the clamp writes **2047**, not 2048, and `more_world_data_size_PR = tmp_World_Data_Paras - 2047` is emitted as `add ax, -2047` (asm:14-17). Both `gfwrite` calls scale by `shl ax, 4`, i.e. `SZ_PARAGRAPH_B` = 16 ([MOX_BASE.h:82](../../MoX/src/MOX_BASE.h#L82)); the first passes file offset 0 and the second passes `world_data_size_PR * 16`, which production carries as the pointer arithmetic `World_Data + world_data_size_B`.
+
+### `Combat_Node_Type` ([Combat.c:6654](../../MoM/src/Combat.c#L6654), asm 82)
+
+Faithful. Both loops carry compound conditions and both are intact:
+
+- Outer, asm:70-75 — `cmp _CX_itr_nodes, e_NUM_NODES` / `jge` then `cmp _DI_node_type, e_ST_UNDEFINED` / `jnz`, i.e. `(itr_nodes < NUM_NODES) && (node_type == ST_UNDEFINED)`.
+- Inner, asm:56-67 — `power` loaded and compared with `jle` to exit, then the same `node_type` test, i.e. `(itr_auras < power) && (node_type == ST_UNDEFINED)`.
+
+The `wp` mismatch at asm:21-22 jumps to `loc_84868`, which is the outer `inc`, so it really is a `continue` and not a skipped body. The `Aura_Xs` / `Aura_Ys` pair short-circuits — both mismatches jump to `@@Next_Node` (asm:35, asm:45). All three locals are register-allocated, so no frame ordering applies. The proc is spelled `Combat_Node_type` in IDA; the rename is already in the ledger.
+
+### `Move_Confused` ([Combat.c:7042](../../MoM/src/Combat.c#L7042), asm 77)
+
+Faithful. The compound loop condition is carried intact — `(i < 600) && (target_found == ST_FALSE)` — with nothing jumping out of the body, matching asm:46-50. Everything else matches: `Random(21)` and `Random(22)` against `COMBAT_GRID_WIDTH 21` / `COMBAT_GRID_HEIGHT 22` ([Combat.h:143-144](../../MoM/src/Combat.h#L143-L144)), each followed by `dec ax` for the 1-based-to-0-based idiom; the cell test reads a pointer out of the row table (`shl bx, 1` then `mov bx, [g_combat_grid_action_map+bx]`, matching `int8_t * g_combat_grid_action_map[COMBAT_GRID_HEIGHT]` at [Combat.h:1421](../../MoM/src/Combat.h#L1421)) and compares the byte against `e_ST_UNDEFINED_DB`; `Move_Battle_Unit(battle_unit_idx, target_x, target_y)` matches the push order; and the two tail stores use `imul 6Eh` = 110 = `sizeof(s_BATTLE_UNIT)`.
+
+The frame confirms the declaration order exactly — `Target_Found` at `bp-0Ah`, then `cgx`, `cgy`, `Target_Y`, `Target_X` — against production's `target_found, random_x, random_y, target_y, target_x`.
+
+## More verified faithful
+
+### `Combat_Structure` ([Combat.c:16225](../../MoM/src/Combat.c#L16225), asm 84)
+
+Faithful. `cs_NONE` is the `xor si, si` initialiser; `Square_Is_Sailable` is tested with `or ax, ax` / `jz`, i.e. `!= ST_FALSE`; both city-enchantment tests use `jle` for `> 0` and write **2** into the `Dfndr` byte of `True_Light` and `Darkness`. The map read is byte-addressed — `wp * 4800`, `wy * 120`, then `wx * 2` for a word cell — matching `int16_t (*p_world_map)[WORLD_HEIGHT][WORLD_WIDTH]` ([MOM_DAT.h:3931](../../MoX/src/MOM_DAT.h#L3931)) with `e_WORLD_SIZE_DB` 4800 and `e_WORLD_WIDTH_DB` 120. The three node tests are separate `if`s, not an `else if` chain, exactly as production has them.
+
+Two things that look like findings and are not: the modulo is emitted as unsigned `div` while production writes `%` on a signed `int16_t`, and `_combat_environ == 1` is a literal where `cnv_Enemy_City` exists ([Combat.h:579](../../MoM/src/Combat.h#L579)). Both are house-wide idioms — the modulo form appears at six sites including [MAPGEN.c:7163](../../MoM/src/MAPGEN.c#L7163), and the literal appears in already-done-done code at [Combat.c:3203](../../MoM/src/Combat.c#L3203). Changing them here alone would make this function the odd one out.
+
+### `Undeployable_Battle_Units_On_Water` ([Combat.c:16276](../../MoM/src/Combat.c#L16276), asm 135)
+
+Faithful. The three-clause disqualifier short-circuits to a shared `xor ax, ax` return, and the second pass ANDs four conditions before writing `bus_Uninvolved` and bumping the count. The enchantment test is a split 32-bit compare — `and dx, 0` on the low word and `and ax, UE_WINDWALKING` on the high (asm:50-54) — which is `UE_WIND_WALKING` = `0x00010000` ([MOM_DEF.h:914](../../MoX/src/MOM_DEF.h#L914)) with its high word as the asm's mask value of 1. The unsailable path falls into the same `return unit_count` exit, and `unit_count` is still 0 there.
+
+### `Draw_Spell_Information_Window` ([Combat.c:5595](../../MoM/src/Combat.c#L5595), asm 125)
+
+Faithful, and the frame settles the array sizes exactly: `colors` at `bp-10h` (4 bytes), `Range_Display_String` at `bp-0Ch` (6), `Range_Number_String` at `bp-6` (6), `sub sp, 10h` — matching production's `uint8_t colors[4]`, `char [6]`, `char [6]` in that declaration order. The `value < 10` arm is the physically-first block, so it is the source `if`; the nested `Range_Number_String[1] != '0'` test is the jump-skips-the-body idiom. All eight text calls match in order and argument order.
+
+Worth noting alongside `Combat_Screen_Draw`: `Set_Font_Colors_15` copies 16 bytes ([Fonts.c:361](../../MoX/src/Fonts.c#L361)) from a **4**-byte `colors` here, so this site over-reads further than that one does. Faithful in both.
+
+### `Combat_Info_Effects_Count` — the parts that are right
+
+The two-pass combatant loop with `player_idx = _human_player_idx` at the bottom, the `Central_Structure` three-way `||`, the city-siege pair, and the `_combat_node_type` chain all match. The node chain deserves a note — the asm reads `or ax, ax` / `jz`, then `cnt_Chaos`, then `cnt_Nature`, while production reads `cnt_Sorcery`, `cnt_Nature`, `cnt_Chaos`. That is **not** a reordering: `WIZARDS.inc` defines `cnt_Chaos = 1` and `cnt_Nature = 2` where production has `cnt_Nature = 1` and `cnt_Chaos = 2` ([MOM_DAT.h:834-836](../../MoX/src/MOM_DAT.h#L834-L836)). Both sides test 0, 1, 2 in that order; only the label spelling in the disassembly is swapped.
+
+### `Draw_Combat_Unit_Display` ([Combat.c:7977](../../MoM/src/Combat.c#L7977), asm 566)
+
+## Deviation
+
+**D8 — the `Gradient_Fill` call is under-supplied in the original.** `seg014/Gradient_Fill.asm` declares nine parameters (`bp+6` through `bp+16h`), and this function calls it twice, under-supplying both times. The box fill at asm:35-44 pushes **six** (`add sp, 0Ch`); the hits-bar fill at asm:331-346 pushes **five** (`add sp, 0Ah`). Either way the original leaves the trailing parameters reading whatever sits above the pushed words — its own return address and saved registers. [Combat.c:8007](../../MoM/src/Combat.c#L8007) passes `ST_NULL, ST_NULL, ST_NULL` for those three.
+
+This one cannot be reproduced 1:1 in C99 — a short-argument call was legal in K&R C and is a constraint violation now. Production's explicit `ST_NULL` padding is the established house form, used at every other `Gradient_Fill` site ([AdvsrScr.c:827](../../MoM/src/AdvsrScr.c#L827), [ArmyList.c:664](../../MoM/src/ArmyList.c#L664)). Recorded, not to be changed.
+
+## Verified faithful
+
+**Frame.** Twelve slotted locals from `bp-1Ah` to `bp-2` in declaration order — `resist_value`, `defense_value`, `colors[2]`, `attack_strength`/`level_cursor`, `y2`, `x2`, `level_icon_count`, `battle_unit_movement_mode`, `level_icon_seg`, `unit_idx`, `unit_type`, `unit_owner_idx` — with `x1` in SI and `y1` in DI, matching [Combat.c:7979-7994](../../MoM/src/Combat.c#L7979-L7994). IDA labels the last slot `unit_hero_slot_idx__Attr_Display_Var` because the compiler shared one slot between two locals with disjoint lifetimes; production declaring `unit_hero_slot_idx`, `scan_icon_idx` and `level_tier_base` separately is correct and is not a divergence.
+
+**Entry guard.** asm:23-29 is two Borland long-branch fixups, so both surviving short jumps carry the source conditions un-inverted: `!= ST_UNDEFINED` and `< 36`.
+
+**The box.** Four `Line` calls in order with the right corners — `(x1,y1,x1,y2,230)`, `(x1,y1,x2-1,y1,230)`, `(x2,y1,x2,y2,237)`, `(x1+1,y2,x2,y2,237)`.
+
+**The movement row.** `movement_points != 0` takes the physically-first arm calling `Print_Moves_String(x1+9, y1+24, movement_points, ST_TRUE)` (four words, `add sp, 8`); the zero arm calls `Print_Integer_Right` (three words, `add sp, 6`). Both read the field as a signed byte via `cbw`. The icon selection that follows is three separate tests — `== 2` sets 12, then `== 4 || == 5` sets 13 — over a default of 11, not an if/else chain.
+
+**Mana and ammo carry different signedness, and both match.** asm:429-430 is `cmp mana, 0` / **`jbe`** — unsigned — while asm:464-465 is `cmp ammo, 0` / **`jle`** — signed. Two branch families on two adjacent fields, exactly as [Combat-Combat_Screen.md](Combat-Combat_Screen.md) already recorded for this struct.
+
+**The level tiers.** `Level > 0` gates the block (`jg`, else a far jump to the exit); inside, `cmp 6` / `jle` puts the `> 6` case in the fall-through and `cmp 3` / `jle` does the same for `> 3`, giving the `if` / `else if` / `else` production has, with icons 17/16/15 and start values 6/3/0.
+
+**The name row.** `unit_idx`, `unit_owner_idx`, `unit_hero_slot_idx` and `unit_type` are read in that order off `_UNITS[unit_idx]`, which is indexed `shl ax, 5` — 32 bytes per `s_UNIT`. The first three sign-extend with `cbw`; `unit_type` uses `mov ah, 0` instead, a zero-extend, matching `uint8_t type` at [MOM_DAT.h:1848](../../MoX/src/MOM_DAT.h#L1848) where the other three are signed. `unit_hero_slot_idx != ST_UNDEFINED` picks the hero name — `owner * sizeof(s_WIZARD) + slot * sizeof(s_OWNED_HERO) + offset _players.Heroes.name` — against the unit-type name otherwise, which is a word read at offset 0 of the 0x24-byte `_unit_type_table` element, i.e. the pointer production dereferences. `Print_Centered` then centres on `x1 + (x2 - x1) / 2` using the signed-halve idiom `cwd` / `sub ax, dx` / `sar ax, 1`.
+
+**The melee and ranged rows** (asm:178-247). Both have the same shape: call the icon function, store into the shared `bp-2` slot, `cmp e_ST_UNDEFINED` / `jz` to skip the row. Every coordinate matches — melee number at `(x1+9, y1+10)` and icon at `(x1+11, y1+8)`; ranged number at `(x1+9, y1+17)` and icon at `(x1+11, y1+15)`.
+
+**The hits bar and the defense/resist rows** (asm:310-422). Movement icon at `(x1+11, y1+22)`; `cnst_Hits_2` at `(x1+3, y1+32)`; the bar's `Gradient_Fill` at `(x1+19, y1+34)`-`(x1+38, y1+34)` with fill type 3, its `Line` underneath at `y1+35` in colour 1, and `Draw_Active_Unit_Damage_Bar(_scanned_battle_unit, x1+19, y1+34)`. Defense prints at `(x1+48, y1+10)` with its icon at `(x1+50, y1+8)`; resist prints at `(x1+48, y1+17)` with its icon at `(x1+50, y1+15)`.
+
+The two icon reads there are the independent confirmation of the hardcoded indices: IDA labels them `IMG_CMB_ScanIcons@.Stat.Defense@` and `IMG_CMB_ScanIcons@.Stat.Resist@`, which are entries **9** and **14** — exactly what production uses, and exactly what the `COMPIX.LBX` 61-78 comment block at [Combat.c:7166-7183](../../MoM/src/Combat.c#L7166-L7183) names "defense" and "resistance".
+
+## Reopened deviations
+
+**The cell-effect counter is rescaled on purpose.** asm:621 wraps `CMB_ChasmAnimStage` at 7; [Combat.c:5430](../../MoM/src/Combat.c#L5430) wraps `cmbt_cell_effect_frame` at `CELL_EFFECT_ANIM_FRAME_COUNT * CELL_EFFECT_ANIM_HOLD` = 49. This is the host-side slowdown already recorded at [Combat-Combat_Screen_Map_Draw.md:220](Combat-Combat_Screen_Map_Draw.md#L220), where the paired divide lives. Not a finding — but the two halves must move together if either is ever changed.
+
+**Renames not yet in the ledger.** `CMB_HumanTurn` to `m_turn_is_local`, `CMB_VortexAnimStage` to `_combat_vortex_anim_frame`, `CMB_ChasmAnimStage` to `cmbt_cell_effect_frame`, `CMB_MudAnimStage` to `_combat_mud_anim_phase`, `CMB_CityName` to `_combat_city_name`, `magic_set.Auto_Unit_Info` to `magic_set.auto_unit_information`, `Combat_Screen_Draw_Buttons` to `Tactical_Combat_Draw_Buttons`, `Combat_Grid_Entities__WIP` to `Combat_Grid_Entities`, `Cycle_Palette_Color__STUB` to `Cycle_Palette_Color`.
+
+**A debug block with no asm counterpart.** [Combat.c:5442-5447](../../MoM/src/Combat.c#L5442-L5447) calls `Combat_Screen_Draw_Debug_Information()` under `#ifdef STU_DEBUG`. Guarded, so it is a project addition rather than a divergence.
+
+
+**D7 — `Combat_Cache_Write`'s DOS file I/O is replaced by the host C library.** asm:22-57 calls `gfopen`, `gfwrite` twice and `gfclose`; production calls `stu_fopen_ci`, `fwrite` twice and `fclose`, with each original preserved in a comment beside its replacement. `gfwrite` takes a leading file-offset argument that `fwrite` has no room for, so the second call's `world_data_size_PR * 16` offset becomes pointer arithmetic on the buffer instead. The two extra `size_t` locals (`world_data_size_B`, `more_world_data_size_B`) exist only to widen the multiply and are marked `DNE in Dasm` in place. Platform layer, not a fidelity defect.
 
 # Findings
 
@@ -296,7 +461,7 @@ Production writes `for(itr = 0; itr < count; itr++)` with `if(itr >= 4) break;` 
 
 ## D5 — the figure block is over-allocated
 
-[Combat.h:588-590](../../MoM/src/Combat.h#L588-L590), the `FIGUREX_POINTER` macro, consumed at [Combat.c:24120](../../MoM/src/Combat.c#L24120).
+[Combat.h:588-590](../../MoM/src/Combat.h#L588-L590), the `FIGUREX_POINTER` macro.
 
 `Combat_Figure_Load.asm:33-38` asks `Allocate_First_Block` for **2** paragraphs; the macro asks for **33**. The host needs more than 2 because `SAMB_ptr` is wider than a real-mode segment word, but 33 does not follow from anything written down and the comment beside it does not explain the number. **This is the one deviation with an open question against it.**
 
@@ -364,11 +529,11 @@ Production writes `for(itr = 0; itr < count; itr++)` with `if(itr >= 4) break;` 
 
 # Allocate_Combat_Base_Blocks
 
-Faithful. Production [Combat.c:24110](../../MoM/src/Combat.c#L24110).
+Faithful. Production [Combat.c:23173](../../MoM/src/Combat.c#L23173).
 
 Four far allocations then five near ones: 348, 482, 10, 9, then `Near_Allocate_First(504)` and `Near_Allocate_Next` of 504, 1008, **60**, **60** (asm:5-73). It opens with `Allocate_First_Block`, which **resets** the screen segment's allocation chain — everything afterwards, here and through `Combat_Screen_Load_Resources`, carves with `Allocate_Next_Block`. The two are strictly ordered and calling the second without the first carves from wherever the previous screen left the pointer.
 
-drake178's note preserved at [Combat.c:24117](../../MoM/src/Combat.c#L24117) is right that the near block is redundant *on the `Combat_Screen` path* — `Combat_Screen_Load_Resources` runs next and its tail call re-issues `Near_Allocate_First`. It is **not** redundant on the other path: `NX_IDK_CombatInit_Tactical` calls this function and then `Build_Battlefield` with no resource load between them, so those five pointers are the ones that survive.
+The near block is redundant *on the `Combat_Screen` path* — `Combat_Screen_Load_Resources` runs next and its tail call re-issues `Near_Allocate_First`. It is **not** redundant on the other path: `NX_IDK_CombatInit_Tactical` calls this function and then `Build_Battlefield` with no resource load between them, so those five pointers are the ones that survive.
 
 IDA's `CMB_Projectiles@` is production's `_missiles`; the sizes match and only the name differs.
 
@@ -592,7 +757,7 @@ The arithmetic itself is exact: `(cgx - cgy) * 16 + 158` and `(cgx + cgy) * 8 - 
 
 # Load_Combat_Terrain_Pictures
 
-Faithful. Production [Combat.c:23688](../../MoM/src/Combat.c#L23688).
+Faithful. Production [Combat.c:22882](../../MoM/src/Combat.c#L22882).
 
 - **The `cts_Water` early return is a bare zero test** — asm:19 is `or di,di / jnz`, and `cts_Water` is 0.
 - **Five terrain arms, four filename pairs.** Plains, Hills and Forest share one arm (asm:24-29); Desert, Mountains and Tundra get their own. Every arm picks on `wp == 0`, and `ARCANUS_PLANE` is 0.
@@ -615,7 +780,7 @@ These are two different functions and the earlier draft of this doc paired the w
 
 # Combat_Figure_Load
 
-Faithful. Production [Combat.c:24110](../../MoM/src/Combat.c#L24110).
+Faithful. Production [Combat.c:20369](../../MoM/src/Combat.c#L20369).
 
 - **The filename is built in four steps and the plural test is `< 10`** — asm:71-72 is `cmp ax, 10 / jge`, so `str_figure_plural_s__ovr163` is appended only below ten. `itoa`, `strcpy`, the conditional `strcat`, then `strcat` of the buffer, then `strcat` of the empty string (asm:47-94).
 - **`(unit_type / 15) + 1` is computed three separate times** in the asm (asm:51-55, 66-70, 95-98) rather than cached, and production writes it out three times too.
@@ -624,7 +789,7 @@ Faithful. Production [Combat.c:24110](../../MoM/src/Combat.c#L24110).
 - **`Combat_Figure_Compose(bufpi, 0, 0, 0, 0)`** is present and the push order confirms `bufpi` is the first argument (asm:124-133).
 - Frame order matches: `file_name` (20 bytes at `bp-24h`), `buffer` (6 at `bp-10h`), the figure pointer, `offset`, `entry_num`.
 
-**Deviation D6 — the figure block is over-allocated.** `FIGUREX_POINTER` ([Combat.h:588-590](../../MoM/src/Combat.h#L588-L590)) asks `Allocate_First_Block` for **33** paragraphs; asm:33-38 asks for **2**. The host needs more than 2 because `SAMB_ptr` is wider than a real-mode segment word, but 33 does not follow from anything written down, and the comment beside it does not explain the number. Settle the figure before this bundle closes.
+**Deviation D5 (setup pass) — the figure block is over-allocated.** `FIGUREX_POINTER` ([Combat.h:588-590](../../MoM/src/Combat.h#L588-L590)) asks `Allocate_First_Block` for **33** paragraphs; asm:33-38 asks for **2**. The host needs more than 2 because `SAMB_ptr` is wider than a real-mode segment word, but 33 does not follow from anything written down, and the comment beside it does not explain the number. Settle the figure before this bundle closes.
 
 # Deploy_Battle_Units
 
@@ -684,7 +849,7 @@ Faithful.
 
 Three calls in order — `Graphics_Cache_Reset`, `Reload_Combat_Graphics_Cache`, `Spellbook_Load_Small_Pictures` (asm:5-10) — and nothing else. Production [Cache_Graphics_Combat](../../MoM/src/LOADER.c#L1765) adds a `LOG_DEBUG` on entry and exit; that is the project's logging instrumentation, not a reconstruction difference.
 
-# BU_HasSpellAbility__WIP
+# Battle_Unit_Has_Spell_Ability
 
 Faithful. Production [Combat.c:3661](../../MoM/src/Combat.c#L3661).
 
@@ -714,8 +879,6 @@ Currently unreferenced, hence the `NIU_` prefix; the only mention is the note at
 `Combat_Compose_Background` carries a `faithful` row in [Combat-Combat_Spellbook_Screen.md](Combat-Combat_Spellbook_Screen.md) from a spellbook-callee pass. That verdict covers fidelity only — the function still has a live `STU_DEBUG_BREAK()` on its river path, IDA-prefixed animation globals and bare magic numbers, so it is not finished to this project's standard.
 
 `Generate_Combat_Map` is the largest single listing in the bundle and is its own review. It consumes `Location_Type`, the house style, both matrices and the wall flags — every value the `Build_Battlefield` findings touched — so it is where those fixes actually land.
-
-**Not covered, and the `faithful` verdicts do not extend to them.** `Combat_Screen`'s input loop dispatches to a large set of handlers that are their own review: `Combat_Screen_Draw`, `Battle_Unit_Action`, `Combat_Next_Turn`, `Auto_Cast_Spell_And_Do_Combat_Turn`, `Check_For_Winner`, `Next_Battle_Unit`, `Switch_Active_Battle_Unit`, `Assign_Combat_Grids`, `Move_Confused`, `Combat_Cast_Spell*`, `Combat_Unit_Statistics_Window`, `Combat_Information_Window`, `End_Of_Combat__WIP`.
 
 **`Combat_Compose_Background` is the tail call of `Build_Battlefield`** (asm:621) and carries a `faithful` row in [Combat-Combat_Spellbook_Screen.md](Combat-Combat_Spellbook_Screen.md), where it was reviewed as a spellbook callee. That verdict covers fidelity only — the function still has a live `STU_DEBUG_BREAK()` on its river path, six IDA-prefixed animation globals, and bare magic numbers, so it is not finished to this project's standard. It needs its own pass, and this bundle is the more natural home for it.
 

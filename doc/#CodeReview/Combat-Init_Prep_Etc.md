@@ -104,7 +104,7 @@ Battle_Unit_Heal
 void Update_Combat_Enchantments_Icon_And_Help(void);
 
 // WZD o98p02
-int16_t BU_HasSpellAbility__WIP(int16_t battle_unit_idx);
+int16_t Battle_Unit_Has_Spell_Ability(int16_t battle_unit_idx);
 
 // WZD o98p03
 // NIU  int16_t NIU_Who_Has_More_Leadership(void);

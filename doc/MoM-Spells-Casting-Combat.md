@@ -209,7 +209,7 @@ BU_SummonDemon__STUB()
 
 
 
-BU_HasSpellAbility__WIP()
+Battle_Unit_Has_Spell_Ability()
 
 Combat_Cast_Spell_With_Caster()
 Combat_Cast_Spell()

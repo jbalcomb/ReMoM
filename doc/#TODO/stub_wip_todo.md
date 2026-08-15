@@ -118,7 +118,7 @@
 - [x] BU_CheckFlight__WIP — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Is_Airborne, Combat.c:5938; 1:1 with ovr098/BU_CheckFlight__WIP.asm)
 - [ ] Battle_Unit_Curse_Effects
 - [ ] BU_GetInstaMoveType__WIP
-- [ ] BU_HasSpellAbility__WIP
+- [ ] Battle_Unit_Has_Spell_Ability
 - [x] BU_IsVisible__STUB
 - [x] BU_MeleeWallCheck — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Action.md; renamed Check_Attack_Melee_City_Wall, Combat.c:14086; R3 split three Move_Flags tests back apart per asm:23/32/41; Flying Fortress OGBUG confirmed legit, teleport/merging OGBUG disproved; builds clean 2026-08-04)
 - [ ] BU_MoveConfused__WIP
@@ -163,6 +163,23 @@
 - [ ] UU15_AITP_Disintegrate — MISSING (comment-only, Combat.c:12245); likely not needed (Disintegrate targeted inline in AITP_Combat_Spell's resistance-kill case); verify no caller, then strike
 - [ ] WIZ_GetLastRangedStr__WIP
 
+- [x] Add_Combat_Enchantment_Fields — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:4730, faithful against ovr098/Add_Combat_Enchantment_Fields.asm (103 asm lines)
+- [x] Auto_Cast_Spell_And_Do_Combat_Turn — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:3650, faithful against ovr098/Auto_Cast_Spell_And_Do_Combat_Turn.asm (40 asm lines)
+- [x] Combat_Cache_Write — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:22825, faithful against ovr154/Combat_Cache_Write.asm (64 asm lines)
+- [x] Combat_Info_Effects_Count — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:6569, faithful against ovr103/Combat_Info_Effects_Count.asm (139 asm lines)
+- [x] Combat_Node_Type — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:6654, faithful against ovr103/Combat_Node_Type.asm (82 asm lines)
+- [x] Combat_Screen_Draw — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:5207, faithful against ovr099/Combat_Screen_Draw.asm (644 asm lines)
+- [x] Combat_Structure — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:16227, faithful against ovr124/Combat_Structure.asm (84 asm lines)
+- [x] Draw_Combat_Unit_Display — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:7977, faithful against ovr105/Draw_Combat_Unit_Display.asm (566 asm lines)
+- [x] Draw_Spell_Information_Window — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:5595, faithful against ovr099/Draw_Spell_Information_Window.asm (125 asm lines)
+- [x] Load_Combat_Terrain_Pictures — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:22885, faithful against ovr163/Load_Combat_Terrain_Pictures.asm (161 asm lines)
+- [x] Map_Tile_EMS_Page_As_Sandbox — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:20387, faithful against ovr153/EMM_TILEX_Init__HACK.asm (41 asm lines)
+- [x] Move_Confused — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:7042, faithful against ovr103/Move_Confused.asm (77 asm lines)
+- [x] Next_Battle_Unit — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:6778, faithful against ovr103/Next_Battle_Unit.asm (89 asm lines)
+- [x] Switch_Active_Battle_Unit — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:2709, faithful against ovr091/Switch_Active_Battle_Unit.asm (16 asm lines)
+- [x] Turn_Off_Auto_Combat — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:5120, faithful against ovr098/Turn_Off_Auto_Combat.asm (12 asm lines)
+- [x] Undeployable_Battle_Units_On_Water — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:16278, faithful against ovr124/Undeployable_Battle_Units_On_Water.asm (135 asm lines)
+- [x] Update_Combat_Enchantments_Icon_And_Help — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:3547, faithful against ovr098/Update_Combat_Enchantments_Icon_And_Help.asm (108 asm lines)
 ## CONQUEST
 - [x] Conquest_Animation_Draw
 - [x] Conquest_Animation_Draw_Setup_Zap_Scene
@@ -338,7 +355,7 @@
 - [ ] BigBook_Compose__WIP
 - [ ] CmbBook_Compose__WIP
 - [ ] CmbBook_Draw__WIP
-- [ ] Combat_Spellbook_Build__WIP
+- [x] Combat_Spellbook_Build
 - [ ] Build_Spellbook
 - [ ] SBK_DrawSpellDecode__STUB
 - [ ] BigBook_Load_Spell_Descriptions

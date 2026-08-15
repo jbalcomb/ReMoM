@@ -6,7 +6,7 @@
 Tactical_Combat__WIP()
     Combat_Cast_Spell()
         if(spell_idx == spl_NONE)
-            Can_Cast = Combat_Spellbook_Build__WIP(caster_idx);
+            Can_Cast = Combat_Spellbook_Build(caster_idx);
             CMB_ComposeBookBG__WIP();
             spell_idx = Combat_Spellbook_Screen(caster_idx, &Selected_Spell);
         // Combat_Spell_Target_Screen__WIP()

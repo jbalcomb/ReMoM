@@ -52,7 +52,7 @@ used in SmlBook_Compose__WIP() to calc turns to cast, which is used to draw the 
 
 
 Combat_Spellbook_Screen() uses it, doesn't calculate it like Spellbook_Screen() does
-...because, it's calc'd in Combat_Spellbook_Build__WIP(), which is called from Combat_Cast_Spell(), right before it calls Combat_Spellbook_Screen()
+...because, it's calc'd in Combat_Spellbook_Build(), which is called from Combat_Cast_Spell(), right before it calls Combat_Spellbook_Screen()
 ...xref/usage in Magic_Screen() is meaningless...
 
 XREF:
@@ -63,12 +63,12 @@ XREF:
     Build_Spellbook+120       mov     [SBK_BookManaLimit], ax
     Build_Spellbook+135       mov     [SBK_BookManaLimit], ax
     Build_Spellbook:loc_9A855 mov     [SBK_BookManaLimit], 0 
-    Combat_Spellbook_Build__WIP+78    mov     [SBK_BookManaLimit], ax
-    Combat_Spellbook_Build__WIP+99    cmp     ax, [SBK_BookManaLimit]
-    Combat_Spellbook_Build__WIP+BD    mov     [SBK_BookManaLimit], ax
-    Combat_Spellbook_Build__WIP+D6    mov     [SBK_BookManaLimit], ax
-    Combat_Spellbook_Build__WIP+304   cmp     ax, [SBK_BookManaLimit]
-    Combat_Spellbook_Build__WIP+407   cmp     ax, [SBK_BookManaLimit]
+    Combat_Spellbook_Build+78    mov     [SBK_BookManaLimit], ax
+    Combat_Spellbook_Build+99    cmp     ax, [SBK_BookManaLimit]
+    Combat_Spellbook_Build+BD    mov     [SBK_BookManaLimit], ax
+    Combat_Spellbook_Build+D6    mov     [SBK_BookManaLimit], ax
+    Combat_Spellbook_Build+304   cmp     ax, [SBK_BookManaLimit]
+    Combat_Spellbook_Build+407   cmp     ax, [SBK_BookManaLimit]
     SmlBook_Compose__WIP+85           cmp     [SBK_BookManaLimit], 0 
     SmlBook_Compose__WIP+97           idiv    [SBK_BookManaLimit]    
     CmbBook_Compose__WIP+FB           cmp     ax, [SBK_BookManaLimit]

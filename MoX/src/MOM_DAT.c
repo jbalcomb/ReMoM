@@ -1234,8 +1234,8 @@ struct s_HEROES ** const _HEROES2 = &heroes2_storage[1];
 int16_t _computer_player_did_flee;
 
 // WZD dseg:924C
-// struct CSCAN_ICONS IMG_CMB_ScanIcons;
-SAMB_ptr IMG_CMB_ScanIcons[MAX_BATTLE_UNIT_COUNT];
+// struct CSCAN_ICONS combat_scan_icon_segs;
+SAMB_ptr combat_scan_icon_segs[MAX_BATTLE_UNIT_COUNT];
 
 // WZD dseg:9270
 int16_t _wall_rise_frame;
