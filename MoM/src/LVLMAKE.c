@@ -252,7 +252,7 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
         for(itr = 0; itr < uv_specials_list_count; itr++)
         {
             
-            uv_special_icon_fields[itr] = Add_Picture_Field(xmin, ymin, (SAMB_ptr)uv_specials_list_array->picts[itr], str_empty_string__ovr102[0], uv_specials_list_array->helps[itr]);
+            uv_special_icon_fields[itr] = Add_Picture_Field(xmin, ymin, (SAMB_ptr)uv_specials_list_array->picts[itr], str_empty_string__ovr102, uv_specials_list_array->helps[itr]);
 
             // TODO  _help_entries[itr].help_00.entry_idx = uv_specials_list_array.helps[itr];
 
