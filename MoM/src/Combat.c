@@ -4741,7 +4741,7 @@ void Add_Combat_Enchantment_Fields(void)
     }
     for(itr = 0; (((attacker_enchantment_first_shown + itr)  < attacker_enchantment_count) && (itr < 4)); itr++)
     {
-        attacker_enchantment_fields[itr] = Add_Picture_Field((start_x + (itr * 17)), 179, _combat_enchantments_attacker[(attacker_enchantment_first_shown + itr)].icon_seg, str_empty_string__ovr098[0], _combat_enchantments_attacker[(attacker_enchantment_first_shown + itr)].help_idx);
+        attacker_enchantment_fields[itr] = Add_Picture_Field((start_x + (itr * 17)), 179, _combat_enchantments_attacker[(attacker_enchantment_first_shown + itr)].icon_seg, str_empty_string__ovr098, _combat_enchantments_attacker[(attacker_enchantment_first_shown + itr)].help_idx);
     }
     if(_combat_defender_player == _human_player_idx)
     {
@@ -4753,7 +4753,7 @@ void Add_Combat_Enchantment_Fields(void)
     }
     for(itr = 0; (((defender_enchantment_first_shown + itr)  < defender_enchantment_count) && (itr < 4)); itr++)
     {
-        defender_enchantment_fields[itr] = Add_Picture_Field((start_x + (itr * 17)), 179, _combat_enchantments_defender[(defender_enchantment_first_shown + itr)].icon_seg, str_empty_string__ovr098[0], _combat_enchantments_defender[(defender_enchantment_first_shown + itr)].help_idx);
+        defender_enchantment_fields[itr] = Add_Picture_Field((start_x + (itr * 17)), 179, _combat_enchantments_defender[(defender_enchantment_first_shown + itr)].icon_seg, str_empty_string__ovr098, _combat_enchantments_defender[(defender_enchantment_first_shown + itr)].help_idx);
     }
 }
 

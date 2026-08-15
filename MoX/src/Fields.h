@@ -663,8 +663,7 @@ int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t wi
 int16_t Add_Multi_Hot_Key_Field(char * string);
 
 // WZD s36p39
-// drake178: GUI_CreateImageLabel()
-int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
+int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, char * hotkey, int16_t help);
 
 // WZD s36p40
 // UU_GUI_CreateWndImgLbl()

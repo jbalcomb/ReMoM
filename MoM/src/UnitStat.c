@@ -1819,13 +1819,13 @@ void UV_Add_Specials_Fields(int16_t xstart, int16_t ystart, struct s_UV_List * s
 
         if(specials_list->flags[(specials_index + itr)] == -99)  /* 'Special' is 'Item' */
         {
-            uv_item_icon_fields[display_index] = Add_Picture_Field(xpos, ypos, (SAMB_ptr)specials_list->picts[(specials_index + itr)], 0, ST_UNDEFINED);
+            uv_item_icon_fields[display_index] = Add_Picture_Field(xpos, ypos, (SAMB_ptr)specials_list->picts[(specials_index + itr)], cnst_ZeroString_10, ST_UNDEFINED);
             uv_item_desc_fields[display_index] = Add_Hidden_Field((xpos + 19), (ypos + 5), (xpos + 93), (ypos + 13), 0, ST_UNDEFINED);
             display_index++;
         }
         else
         {
-            uv_special_icon_fields[itr] = Add_Picture_Field(xpos, ypos, (SAMB_ptr)specials_list->picts[(specials_index + itr)], 0,  specials_list->helps[(specials_index + itr)]);
+            uv_special_icon_fields[itr] = Add_Picture_Field(xpos, ypos, (SAMB_ptr)specials_list->picts[(specials_index + itr)], cnst_ZeroString_10,  specials_list->helps[(specials_index + itr)]);
             uv_special_desc_fields[itr] = Add_Hidden_Field((xpos + 19), (ypos + 5), (xpos + 93), (ypos + 13), 0, specials_list->helps[(specials_index + itr)]);
             uv_specials_fields_ability_flags[itr] = specials_list->flags[(specials_index + itr)];
         }

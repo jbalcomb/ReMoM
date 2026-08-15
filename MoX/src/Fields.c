@@ -839,8 +839,7 @@ int16_t Add_Multi_Hot_Key_Field(char * string)
 
 
 // WZD s36p39
-// drake178: GUI_CreateImageLabel()
-int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, int16_t hotkey, int16_t help)
+int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, char * hotkey, int16_t help)
 {
     p_fields[fields_count].x1 = xmin;
     p_fields[fields_count].y1 = ymin;
@@ -849,7 +848,8 @@ int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, int16_t
     p_fields[fields_count].help = help;
     p_fields[fields_count].pict_seg = pict_seg;
     p_fields[fields_count].type = ft_Picture;
-    UPPERCASE(p_fields[fields_count].type);
+    p_fields[fields_count].hotkey = hotkey[0];
+    UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
 #ifdef STU_DEBUG
     Dbg_Trace_Field_Added(fields_count - 1, "Add_Picture_Field");
