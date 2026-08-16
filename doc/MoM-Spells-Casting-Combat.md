@@ -219,7 +219,7 @@ Combat_Spellbook_Build__STUB()
 CMB_ComposeBookBG()
 CMB_ShowSpellbook()
 
-CMB_SpellSlider()
+Combat_Spellbook_Mana_Adder_Screen()
 
 CMB_CheckSpellErrors()
 

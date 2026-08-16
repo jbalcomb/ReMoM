@@ -130,7 +130,7 @@
 - [x] Check_For_Winner — was Check_For_Winner__WIP; suffix dropped in source, def Combat.c:9134 (verified 2026-07-21)
 - [x] Allocate_Combat_Base_Blocks — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:23980, faithful against ovr163/CMB_BaseAllocs__WIP.asm
 - [ ] CMB_CE_Refresh__WIP — NOT FOUND: no definition in source; appears only in comments (verified 2026-07-21)
-- [ ] CMB_ComposeBackgrnd__WIP
+- [ ] Combat_Compose_Background
 - [ ] CMB_ComposeBookBG__WIP
 - [x] Combat_Screen_Load_Resources — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:7297, faithful against ovr103/CMB_LoadResources__WIP.asm
 - [x] Begin_Combat_Turn — done-done 2026-08-05 (walkthrough doc doc/#CodeReview/Combat-Init_Prepare_Etc.md; renamed from CMB_PrepareTurn__WIP, Combat.c:2635; 1 finding fixed: the Web block was hoisted out of its guard and dropped action = bua_Finished; Add_City_Damage_From_Battle_Units_Within compared and faithful)
@@ -364,6 +364,10 @@
 - [x] SmlBook_PageTurn__WIP
 - [ ] UU_IDK_turn_to_cast__STUB
 
+- [x] Combat_Compose_Spellbook_Background — done-done 2026-08-16 (doc/#CodeReview/Combat-Combat_Spellbook_Screen.md); CMBMAGIC.c:157, faithful against ovr112/CMB_ComposeBookBG__WIP.asm (24 asm lines)
+- [x] Combat_Spellbook_Mana_Adder_Draw — done-done 2026-08-16 (doc/#CodeReview/Combat-Combat_Spellbook_Screen.md); SPLMASTR.c:677, faithful against ovr136/Combat_Spellbook_Mana_Adder_Draw.asm (259 asm lines)
+- [x] Combat_Spellbook_Mana_Adder_Load — done-done 2026-08-16 (doc/#CodeReview/Combat-Combat_Spellbook_Screen.md); SPLMASTR.c:650, faithful against ovr136/Combat_Spellbook_Mana_Adder_Load.asm (85 asm lines)
+- [x] Combat_Spellbook_Mana_Adder_Screen — done-done 2026-08-16 (doc/#CodeReview/Combat-Combat_Spellbook_Screen.md); SPLMASTR.c:732, faithful against ovr136/Combat_Spellbook_Mana_Adder_Screen.asm (341 asm lines)
 ## Spells128
 - [ ] WIZ_AddSpellRank__WIP
 - [x] Conquest_Spells

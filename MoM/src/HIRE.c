@@ -29,6 +29,7 @@
 #include "SBookScr.h"
 #include "Spellbook.h"
 #include "Spells132.h"
+#include "SPLMASTR.h"
 #include "UnitStat.h"
 #include "UNITTYPE.h"   // WTFMATE
 #include "UnitView.h"

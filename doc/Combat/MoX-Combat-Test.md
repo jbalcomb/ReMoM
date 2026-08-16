@@ -45,7 +45,7 @@ Combat_Screen_TST_004(); Combat_Screen_TST_004_Draw;
 
 
 
-CMB_ComposeBackgrnd__WIP()  ==>  Combat_Screen_Compose_Background()
+Combat_Compose_Background()  ==>  Combat_Screen_Compose_Background()
 
 Build_Battlefield()
 Load_Combat_Terrain_Pictures()
@@ -76,7 +76,7 @@ Screen()
 ```
 
 
-## CMB_ComposeBackgrnd__WIP()
+## Combat_Compose_Background()
     Set_Page_Off();
     Reset_Window();
     Claim_EMS_Page_For_Figure_Set();

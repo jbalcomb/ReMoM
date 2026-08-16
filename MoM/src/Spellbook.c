@@ -29,6 +29,7 @@
 #include "MainScr.h"   /* Allocate_Reduced_Map(); Play_Background_Music(); */
 #include "NEXTTURN.h"
 #include "SBookScr.h"  /* Spellbook_Screen_Draw(); */
+#include "SPLMASTR.h"
 #include "UNITTYPE.h"
 
 #include <assert.h>
@@ -1043,6 +1044,14 @@ void SmlBook_Compose(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spellboo
 
 
 // WZD o117p08
+/*
+Up   J NX_j_Combat_Spellbook_Compose jmp     Combat_Spellbook_Compose         
+Up   p Combat_Spellbook_Draw+91      call    near ptr Combat_Spellbook_Compose
+     p Combat_Spellbook_Draw+127     call    near ptr Combat_Spellbook_Compose
+Down p SmlBook_PageTurn+16C          call    near ptr Combat_Spellbook_Compose
+Down p SmlBook_PageTurn+261          call    near ptr Combat_Spellbook_Compose
+Down p SmlBook_PageTurn+3A4          call    near ptr Combat_Spellbook_Compose
+*/
 void Combat_Spellbook_Compose(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spellbook_bitmap, int16_t caster_idx)
 {
     char spell_name[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -1145,7 +1154,7 @@ void Combat_Spellbook_Compose(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr
                     Icon_Count = 0;
                 }
                 if(
-                    (spell_idx == spl_Cracks_Call)  // BUGBUG  should be abs(spell_idx)
+                    (spell_idx == spl_Cracks_Call)  /* OGBUG:  should be `(abs(spell_idx) == spl_Cracks_Call)` */
                     &&
                     (_combat_structure == cs_OceanTerrainType)
                 )

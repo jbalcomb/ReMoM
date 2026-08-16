@@ -9,7 +9,7 @@ SEEALSO:  C:\STU\devel\ReMoM\doc\Combat\MoM-CombatScreen-Grid.md
 CMB_PrepareTurn__WIP()        ==>  Begin_Combat_Turn()
 Combat_Screen_Draw_Buttons()  ==>  Tactical_Combat_Draw_Buttons()
 BU_SetVisibility__WIP()       ==>  Battle_Unit_Set_Invisibility_Effect()
-CMB_ComposeBackgrnd__WIP()    ==>  Combat_Compose_Background()
+Combat_Compose_Background()    ==>  Combat_Compose_Background()
 Combat_Screen__WIP()          ==>  Combat_Screen()
 BU_HasSpellAbility()          ==>  Battle_Unit_Has_Spell_Ability()
 BU_HasSpellAbility__WIP()     ==>  Battle_Unit_Has_Spell_Ability()
@@ -43,7 +43,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr103\CMB_SetNearAllocs__
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr052\Cache_Graphics_Combat.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr154\CMB_Terrain_Init__WIP.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr163\Load_Combat_Terrain_Pictures.asm
-C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr163\CMB_ComposeBackgrnd__WIP.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr163\Combat_Compose_Background.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr153\EMM_TILEX_Init__HACK.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr154\Combat_Grid_Screen_Coordinates.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr098\CMB_Units_Init__WIP.asm
@@ -873,7 +873,7 @@ Currently unreferenced, hence the `NIU_` prefix; the only mention is the note at
 
 | Function | ASM | Lines |
 | --- | --- | --- |
-| `Combat_Compose_Background` | `ovr163/CMB_ComposeBackgrnd__WIP.asm` | 206 |
+| `Combat_Compose_Background` | `ovr163/Combat_Compose_Background.asm` | 206 |
 | `Generate_Combat_Map` | `ovr154/Generate_Combat_Map.asm` | 907 |
 
 `Combat_Compose_Background` carries a `faithful` row in [Combat-Combat_Spellbook_Screen.md](Combat-Combat_Spellbook_Screen.md) from a spellbook-callee pass. That verdict covers fidelity only — the function still has a live `STU_DEBUG_BREAK()` on its river path, IDA-prefixed animation globals and bare magic numbers, so it is not finished to this project's standard.

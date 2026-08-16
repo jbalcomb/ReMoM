@@ -194,8 +194,6 @@ int16_t cast_spell_of_mastery_player_idx;
 // WZD dseg:C9F8 00                                              db    0
 // WZD dseg:C9F9 00                                              db    0
 
-// WZD dseg:C9FA                                                 BEGIN: ovr136 - Uninitialized Data
-
 
 
 // WZD dseg:C9FA                                                 BEGIN: ovr136 - Uninitialized Data
@@ -215,27 +213,39 @@ pointer to first element of the player's subset of the ovl_ench_list_spells arra
 int16_t * ovl_ench_list_ptr[(NUM_PLAYERS - 1)] = { 0, 0, 0, 0, 0 };
 
 // WZD dseg:CA10
-// drake178: is this really necessary?
-// MOM_Data  int16_t CMB_SliderLimit;
+int16_t combat_max_extra_casting_cost;
 
 // WZD dseg:CA12
 /*
 ; holds the spell strength during sliders
 ; holds the anim stage during global cast anims
+
+WIZ_GlobalSpellAnim()
+    for(g_spell_scratch_int = 0; ((g_spell_scratch_int < 120) && (_osc_leave_screen == 0)); g_spell_scratch_int++)
+...animation counter...anim_ctr...
+incrememnted in WIZ_GlobalSpellAnim()
+
+Combat_Spellbook_Mana_Adder_Draw()
+    additional power amount
+
+Role A — the mana-adder's running spell cost (all of SPLMASTR.c)
+Seeded with the base cost at 532 and 725, overwritten with the slider's extra portion at 454/549/637, then += casting_cost at 474/550/651 to become the total. From there it feeds casting_cost_original, casting_cost_remaining, the on-screen itoa, and is what 752 returns.
+Role B — an animation frame counter (Spells137.c)
+WIZ_GlobalSpellAnim drives for(g_spell_scratch_int = 0; g_spell_scratch_int < 120; ...) at 1237, and OVL_LoadGlobalAnim branches on it against 10/14/20/30/34 to pick frames. Same loop is duplicated at MOM_DAT.c:3525.
+Role C — a drained-mana amount (Spells137.c)
+Target_Wizard_Screen assigns Apply_Cruel_Unminding() / Apply_Drain_Power() into it at 1742/1746, and Target_Wizard_Screen_Draw prints it.
 */
-// MOM_Data  int16_t GAME_MP_SpellVar_1;
+int16_t g_spell_scratch_int;
+#define g_total_casting_cost g_spell_scratch_int
 
 // WZD dseg:CA14
-/*
-; steps 0 to 7 for sliders
-*/
-// MOM_Data  int16_t _osc_anim_ctr;
+int16_t _osc_anim_ctr;
 
 // WZD dseg:CA16
-// MOM_Data  int16_t g_active_spell_idx;
+int16_t g_active_spell_idx;
 
 // WZD dseg:CA18
-// MOM_Data  int16_t SBK_SliderState;
+int16_t _xtra_mana_pos;
 
 // WZD dseg:CA1A
 /*
@@ -244,17 +254,32 @@ index of first/current element in the player's subset of the ovl_ench_list_spell
 int16_t ovl_ench_list_fst[(NUM_PLAYERS - 1)] = { 0, 0, 0, 0, 0};
 
 // WZD dseg:CA24
-// MOM_Data  SAMB_ptr som_twinkle_seg;
+SAMB_ptr som_twinkle_seg;
 
-// WZD dseg:CA26 00 00                                           IMG_SBK_SliderBG@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+38w ...
-// WZD dseg:CA28 00 00                                           GAME_MP_SpellVar_2 dw 0                 ; DATA XREF: CMB_SliderRedraw+3Fr ...
-// WZD dseg:CA28                                                                                         ; holds the caster ID during combat sliders
-// WZD dseg:CA28                                                                                         ; holds the mirror reveal mask during global cast anims
+// WZD dseg:CA26
+SAMB_ptr g_spell_screen_backdrop_seg;
+
+// WZD dseg:CA28
+/*
+; holds the caster ID during combat sliders
+; holds the mirror reveal mask during global cast anims
+OVL_LoadGlobalAnim()
+        // SPECFX.LBX, 054  "MASK1"     ""
+        GAME_MP_SpellVar_2 = LBX_Reload_Next(specfx_lbx_file__ovr137, 54, _screen_seg);
+        // SPECFX.LBX, 055  "MASK2"     ""
+        GAME_MP_SpellVar_2 = LBX_Reload_Next(specfx_lbx_file__ovr137, 55, _screen_seg);
+*/
+SAMB_ptr GAME_MP_SpellVar_2;
+int16_t _mana_adder_caster_idx;  // DNE in Dasm
 
 // WZD dseg:CA2A
 SAMB_ptr IMG_OVL_TrgtWizCncl;
 
-// WZD dseg:CA2C 00 00                                           _temp_sint_4 dw 0        ; DATA XREF: Cast_Spell_Disjuncts_Draw__WIP+44r ...
+// WZD dseg:CA2C
+/*
+
+*/
+int16_t _temp_sint_4;
 
 // WZD dseg:CA2E
 /*
@@ -262,14 +287,45 @@ only used by 'Cast Spell Disjunct'
 */
 SAMB_ptr spellscr_oversbut_seg;
 
-
-// WZD dseg:CA30 00 00                                           IMG_SBK_SliderOK@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+7Dw ...
+// WZD dseg:CA30
+/*
+Sml Xtra Mana
+Cmb Xtra Mana
+    // SPELLSCR.LBX, 042  "XTRABUTT"    "var ok button"
+IDK_Spell_DisjunctOrBind_Load()
+    // SPELLSCR.LBX, 001  "OVERSBK2"    ""
+*/
+SAMB_ptr xtramana_ok_button_seg;
 
 // WZD dseg:CA32
 SAMB_ptr IMG_OVL_TargetWizBG;
 
-// WZD dseg:CA34 00 00                                           spl_anim_compose_seg@ dw 0                     ; DATA XREF: CMB_ShowSpellbook+30w ...
-// WZD dseg:CA36 00 00                                           g_gui_scratch_bitmap@ dw 0                  ; DATA XREF: Learn_Spell_Animation+34Bw ...
+// WZD dseg:CA34
+/*
+
+Combat_Spellbook_Draw() vs. SmlBook_Draw()
+    // SmlBook_Compose(m_spellbook_pages[g_spellbook_left_page], spellbook_bitmap);
+    // spellbook_bitmap  allocated in SmlBook_Draw(), passed to SmlBook_Compose()
+    Combat_Spellbook_Compose(m_spellbook_pages[g_spellbook_left_page], spl_anim_compose_seg, caster_idx);
+
+*/
+SAMB_ptr spl_anim_compose_seg;
+
+// WZD dseg:CA36
+/*
+OVL_LoadGlobalAnim()
+    g_gui_scratch_bitmap = Allocate_Next_Block(_screen_seg, 770);  // 770 PR, 12320 B
+OVL_DrawGlobalAnim()
+    Draw_Picture_To_Bitmap(m_global_anim_mirror_pane_seg, g_gui_scratch_bitmap);
+Merchant_Popup_Load()
+    g_gui_scratch_bitmap = Allocate_Next_Block(_screen_seg, 30);  // 30 PR, 480 B
+Merchant_Popup_Draw()
+        Item_View_Prepare()
+            item_view_workarea_bitm
+Combat_Spellbook_Mana_Adder_Draw()
+    arrow bar bitmap
+*/
+SAMB_ptr g_gui_scratch_bitmap;
 
 // WZD dseg:CA36                                                 END: ovr136 - Uninitialized Data
 
@@ -396,13 +452,13 @@ void Spellbook_Mana_Adder_Load(void)
     g_gui_scratch_bitmap = Allocate_Next_Block(_screen_seg, 40);
 
     // SPELLSCR.LBX, 005  "XTRAMANA"    "background"
-    IMG_SBK_SliderBG = LBX_Reload_Next(spellscr_lbx_file__ovr136, 5, _screen_seg);
+    m_extra_mana_background_seg = LBX_Reload_Next(spellscr_lbx_file__ovr136, 5, _screen_seg);
 
     // SPELLSCR.LBX, 003  "XTRAMANA"    "star"
-    IMG_SBK_SliderDot = LBX_Reload_Next(spellscr_lbx_file__ovr136, 3, _screen_seg);
+    mana_slider_thumb_seg = LBX_Reload_Next(spellscr_lbx_file__ovr136, 3, _screen_seg);
 
     // SPELLSCR.LBX, 004  "XTRAMANA"    "arrow bar"
-    IMG_SBK_SliderBar = LBX_Reload_Next(spellscr_lbx_file__ovr136, 4, _screen_seg);
+    mana_slider_arrow_bar_seg = LBX_Reload_Next(spellscr_lbx_file__ovr136, 4, _screen_seg);
 
     // SPELLSCR.LBX, 042  "XTRABUTT"    "var ok button"
     xtramana_ok_button_seg = LBX_Reload_Next(spellscr_lbx_file__ovr136, 42, _screen_seg);
@@ -449,13 +505,13 @@ void Spellbook_Mana_Adder_Draw(void)
 
     SmlBook_Draw(16, 10);
 
-    FLIC_Draw((x_start - 4), (y_start + 1), IMG_SBK_SliderBG);
+    FLIC_Draw((x_start - 4), (y_start + 1), m_extra_mana_background_seg);
 
-    GAME_MP_SpellVar_1 = (((_xtra_mana_pos - 3) * spell_data_table[g_active_spell_idx].casting_cost) / 100);  // extra mana amount
+    g_spell_scratch_int = (int16_t)(((int32_t)(_xtra_mana_pos - 3) * spell_data_table[g_active_spell_idx].casting_cost) / 100);  // extra mana amount
 
     stu_strcpy(string, str_PLUS_SIGN__ovr136);
 
-    stu_itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
+    stu_itoa(g_spell_scratch_int, buffer, 10);  // extra mana amount
 
     stu_strcat(string, buffer);  // extra mana amount
 
@@ -471,11 +527,11 @@ void Spellbook_Mana_Adder_Draw(void)
     Print((x_start + 4), (y_start + 8), str_AdditionalPower__ovr136);  // "Additional Power:"
     Print_Right((x_start + 144), (y_start + 8), string);  // extra mana amount
     
-    GAME_MP_SpellVar_1 += spell_data_table[g_active_spell_idx].casting_cost;
-    _players[HUMAN_PLAYER_IDX].casting_cost_original = GAME_MP_SpellVar_1;
-    _players[HUMAN_PLAYER_IDX].casting_cost_remaining = (GAME_MP_SpellVar_1 - (GAME_MP_SpellVar_1 * Casting_Cost_Reduction(HUMAN_PLAYER_IDX, g_active_spell_idx)) / 100);
+    g_spell_scratch_int += spell_data_table[g_active_spell_idx].casting_cost;
+    _players[HUMAN_PLAYER_IDX].casting_cost_original = g_spell_scratch_int;
+    _players[HUMAN_PLAYER_IDX].casting_cost_remaining = (uint16_t)(g_spell_scratch_int - ((int32_t)g_spell_scratch_int * Casting_Cost_Reduction(HUMAN_PLAYER_IDX, g_active_spell_idx)) / 100);
 
-    Draw_Picture_To_Bitmap(IMG_SBK_SliderBar, g_gui_scratch_bitmap);
+    Draw_Picture_To_Bitmap(mana_slider_arrow_bar_seg, g_gui_scratch_bitmap);
 
     Set_Window((x_start + 8), 0, (x_start + _xtra_mana_pos + 8), 199);
 
@@ -483,7 +539,7 @@ void Spellbook_Mana_Adder_Draw(void)
 
     Draw_Picture_Windowed((x_start + _osc_anim_ctr - 40), (y_start + 23), g_gui_scratch_bitmap);
 
-    FLIC_Draw((x_start + _xtra_mana_pos + 5),(y_start + 22), IMG_SBK_SliderDot);
+    FLIC_Draw((x_start + _xtra_mana_pos + 5),(y_start + 22), mana_slider_thumb_seg);
 
     Reset_Window();
 
@@ -506,7 +562,7 @@ void Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_field_idx)
     int16_t y_start = 0;
     int16_t ok_button_field = 0;
     int16_t input_field_idx = 0;
-    int16_t x_start = 0;  // _DI_
+    int16_t x_start = 0;
 
     _temp_sint_1 = spellbook_field_idx;
 
@@ -529,7 +585,7 @@ void Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_field_idx)
 
     _osc_anim_ctr = 0;
 
-    GAME_MP_SpellVar_1 = spell_data_table[spell_idx].casting_cost;
+    g_total_casting_cost = spell_data_table[spell_idx].casting_cost;
 
     _xtra_mana_pos = 3;
 
@@ -546,10 +602,10 @@ void Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_field_idx)
     _osc_leave_screen = ST_FALSE;
 
     // ; completely redundant, the result of all this is zero
-    GAME_MP_SpellVar_1 = (((_xtra_mana_pos - 3) * spell_data_table[g_active_spell_idx].casting_cost) / 100);
-    GAME_MP_SpellVar_1 += spell_data_table[g_active_spell_idx].casting_cost;
-    _players[HUMAN_PLAYER_IDX].casting_cost_original = GAME_MP_SpellVar_1;
-    _players[HUMAN_PLAYER_IDX].casting_cost_remaining = (GAME_MP_SpellVar_1 - (GAME_MP_SpellVar_1 * Casting_Cost_Reduction(HUMAN_PLAYER_IDX, g_active_spell_idx)) / 100);
+    g_total_casting_cost = (int16_t)(((int32_t)(_xtra_mana_pos - 3) * spell_data_table[g_active_spell_idx].casting_cost) / 100);
+    g_total_casting_cost += spell_data_table[g_active_spell_idx].casting_cost;
+    _players[HUMAN_PLAYER_IDX].casting_cost_original = g_total_casting_cost;
+    _players[HUMAN_PLAYER_IDX].casting_cost_remaining = (uint16_t)(g_total_casting_cost - ((int32_t)g_total_casting_cost * Casting_Cost_Reduction(HUMAN_PLAYER_IDX, g_active_spell_idx)) / 100);
 
     while(_osc_leave_screen == ST_FALSE)
     {
@@ -591,58 +647,39 @@ void Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_field_idx)
 
 
 // WZD o136p05
-/*
-; marks the sandbox, loads the spell slider images into
-; it, then redoes the book page work area and realm
-; icon allocations, the latter of which it rebuilds too
-*/
-/*
-
-*/
 void Combat_Spellbook_Mana_Adder_Load(void)
 {
-    int16_t itr = 0;  // _SI_
-
+    int16_t itr = 0;
     Mark_Block(_screen_seg);
-
     g_gui_scratch_bitmap = Allocate_Next_Block(_screen_seg, 40);
-
     // SPELLSCR.LBX, 005  "XTRAMANA"    "background"
-    IMG_SBK_SliderBG = LBX_Reload_Next(spellscr_lbx_file__ovr136, 5, _screen_seg);
-
+    m_extra_mana_background_seg = LBX_Reload_Next(spellscr_lbx_file__ovr136, 5, _screen_seg);
     // SPELLSCR.LBX, 003  "XTRAMANA"    "star"
-    IMG_SBK_SliderDot = LBX_Reload_Next(spellscr_lbx_file__ovr136, 3, _screen_seg);
-
+    mana_slider_thumb_seg = LBX_Reload_Next(spellscr_lbx_file__ovr136, 3, _screen_seg);
     // SPELLSCR.LBX, 004  "XTRAMANA"    "arrow bar"
-    IMG_SBK_SliderBar = LBX_Reload_Next(spellscr_lbx_file__ovr136, 4, _screen_seg);
-
+    mana_slider_arrow_bar_seg = LBX_Reload_Next(spellscr_lbx_file__ovr136, 4, _screen_seg);
     // SPELLSCR.LBX, 042  "XTRABUTT"    "var ok button"
     xtramana_ok_button_seg = LBX_Reload_Next(spellscr_lbx_file__ovr136, 42, _screen_seg);
-
     spl_anim_compose_seg = Allocate_Next_Block(_screen_seg, 1090);
-
     for(itr = 0; itr < 6; itr++)
     {
-
         spellbook_symbols_bitm[itr] = Allocate_Next_Block(_screen_seg, 4);
-
         Draw_Picture_To_Bitmap(_spellbook_small_symbols[itr], spellbook_symbols_bitm[itr]);
-
     }
-
     Reset_Cycle_Palette_Color();
-
 }
 
 
 // WZD o136p06
+/*
+OGBUG: ignores Evil Omens, should use Casting_Cost() and different calculation
+*/
 void Combat_Spellbook_Mana_Adder_Draw(void)
 {
-    char buffer[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
-    char string[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
-    int16_t x_start = 0;  // _SI_
-    int16_t y_start = 0;  // _DI_
-
+    char buffer[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char string[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t x_start = 0;
+    int16_t y_start = 0;
     if(_temp_sint_1 > 5)
     {
         x_start = 5;
@@ -651,243 +688,126 @@ void Combat_Spellbook_Mana_Adder_Draw(void)
     {
         x_start = 165;
     }
-
     y_start = (21 + ((_temp_sint_1 % 6) * 22));  // center the popup box on the selected spell, vertically
-
     _osc_anim_ctr = ((_osc_anim_ctr + 1) % 8);
-
     Copy_Back_To_Off();
-
-    // Combat_Spellbook_Draw(16, 10, (int16_t)GAME_MP_SpellVar_2);
     Combat_Spellbook_Draw(16, 10, _mana_adder_caster_idx);
-
-    FLIC_Draw((x_start - 4), (y_start + 1), IMG_SBK_SliderBG);
-
-    GAME_MP_SpellVar_1 = (((_xtra_mana_pos - 3) * CMB_SliderLimit) / 100);  // extra mana amount
-
+    FLIC_Draw((x_start - 4), (y_start + 1), m_extra_mana_background_seg);
+    g_total_casting_cost = (int16_t)(((int32_t)(_xtra_mana_pos - 3) * combat_max_extra_casting_cost) / 100);  // extra mana amount
     stu_strcpy(string, str_PLUS_SIGN__ovr136);
-
-    stu_itoa(GAME_MP_SpellVar_1, buffer, 10);  // extra mana amount
-
+    stu_itoa(g_total_casting_cost, buffer, 10);  // extra mana amount
     stu_strcat(string, buffer);  // extra mana amount
-
     Set_Outline_Color(246);
-
     Set_Font_Style_Shadow_Up(4, 4, 4, 4);
-
     Set_Alias_Color(6);
-
     Print((x_start + 4), (y_start + 8), str_AdditionalPower__ovr136);
-
     Print_Right((x_start + 144), (y_start + 8), string);  // extra mana amount
-
     Set_Outline_Color(251);
-
     Set_Font_Style_Shadow_Down(4, 4, 4, 4);
-
     Set_Alias_Color(6);
-
     Print((x_start + 4), (y_start + 8), str_AdditionalPower__ovr136);  // "Additional Power:"
-
     Print_Right((x_start + 144), (y_start + 8), string);
-
-    GAME_MP_SpellVar_1 += spell_data_table[g_active_spell_idx].casting_cost;  // extra mana amount
-
-    // if((int16_t)GAME_MP_SpellVar_2 > CASTER_IDX_BASE)
-    if(_mana_adder_caster_idx > CASTER_IDX_BASE)
+    g_total_casting_cost += spell_data_table[g_active_spell_idx].casting_cost;  // extra mana amount
+    if(_mana_adder_caster_idx > (CASTER_IDX_BASE - 1))
     {
-
-        // ; BUG: ignores Evil Omens
-        _players[HUMAN_PLAYER_IDX].casting_cost_remaining = (GAME_MP_SpellVar_1 - ((GAME_MP_SpellVar_1 * Casting_Cost_Reduction(HUMAN_PLAYER_IDX, g_active_spell_idx)) / 100));
-
+        _players[HUMAN_PLAYER_IDX].casting_cost_remaining = (uint16_t)(g_total_casting_cost - ((int32_t)g_total_casting_cost * Casting_Cost_Reduction(HUMAN_PLAYER_IDX, g_active_spell_idx)) / 100);
     }
     else
     {
-
-        // ; BUG: ignores Evil Omens
-        _players[HUMAN_PLAYER_IDX].casting_cost_remaining = GAME_MP_SpellVar_1;
-
+        _players[HUMAN_PLAYER_IDX].casting_cost_remaining = g_total_casting_cost;
     }
-
-    Draw_Picture_To_Bitmap(IMG_SBK_SliderBar, g_gui_scratch_bitmap);
-
+    Draw_Picture_To_Bitmap(mana_slider_arrow_bar_seg, g_gui_scratch_bitmap);
     Set_Window((x_start + 8), 0, (x_start + _xtra_mana_pos + 8), 199);
-
     Draw_Picture_Windowed((x_start + _osc_anim_ctr + 8), (y_start + 23), g_gui_scratch_bitmap);
-
     Draw_Picture_Windowed((x_start + _osc_anim_ctr - 40), (y_start + 23), g_gui_scratch_bitmap);
-
-    FLIC_Draw((x_start + _xtra_mana_pos + 5),(y_start + 22), IMG_SBK_SliderDot);
-
+    FLIC_Draw((x_start + _xtra_mana_pos + 5),(y_start + 22), mana_slider_thumb_seg);
     Reset_Window();
-
 }
 
 
 // WZD o136p07
-// drake178: CMB_SpellSlider()
 /*
-; displays the spell infusion dialog, allowing the
-; player to specify the additional power they wish to
-; channel into an infusable spell
-; returns the total cost of the spell
-; BUG: will not allow infusion with >16383 mana while
-; fighting at the fortress, ignores Evil Omens almost
-; entirely, and has several rounding bugs
-; WARNING: obscures the actual extra power value
-*/
-/*
-    OON XREF:
-
-    IDK_mana = CMB_SpellSlider__STUB(spell_idx, Selected_Spell, caster_idx);
-
-HERE:
-    From Combat_Spellbook_Screen()
-        spellbook_field_idx the passed in Selected_Spell@, the index on page of selected spell
-        g_combat_spellbook_left_page is the associated page number
-
-XREF:
-
+OGBUG: ignores Evil Omens, should use Casting_Cost() and different calculation
 */
 int16_t Combat_Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_field_idx, int16_t caster_idx)
 {
     int16_t y_start = 0;
     int16_t ok_button_field = 0;
     int16_t input_field_idx = 0;
-    int16_t cost_reduction = 0;  // _SI_
-    int16_t x_start = 0;  // DNE in DAsm, reuses cost_reduction
-
+    int16_t cost_reduction = 0;
+    int16_t x_start = 0;
     _temp_sint_1 = spellbook_field_idx;
-
-    // GAME_MP_SpellVar_2 = (SAMB_ptr)caster_idx;
     _mana_adder_caster_idx = caster_idx;
-
     g_active_spell_idx = spell_idx;
-
     Copy_On_To_Off_Page();
-
     Copy_Off_To_Back();
-
-    if(caster_idx < CASTER_IDX_BASE)
+    if(caster_idx > (CASTER_IDX_BASE - 1))
     {
-
-        // ; BUG: ignores Evil Omens
-        // ; is this really necessary?
-        CMB_SliderLimit = (battle_units[caster_idx].mana - spell_data_table[g_active_spell_idx].casting_cost);
-
-        if((spell_data_table[g_active_spell_idx].casting_cost * 4) < CMB_SliderLimit)
+        cost_reduction = Casting_Cost_Reduction(HUMAN_PLAYER_IDX, g_active_spell_idx);
+        combat_max_extra_casting_cost = (spell_data_table[g_active_spell_idx].casting_cost * 4);
+        if((int16_t)(((int32_t)_players[HUMAN_PLAYER_IDX].Cmbt_Skill_Left * (cost_reduction + 100)) / 100) < combat_max_extra_casting_cost)
         {
-
-            CMB_SliderLimit = (spell_data_table[g_active_spell_idx].casting_cost * 4);
-
+            combat_max_extra_casting_cost = (int16_t)(((int32_t)_players[HUMAN_PLAYER_IDX].Cmbt_Skill_Left * (cost_reduction + 100)) / 100);
         }
-
+        while(((combat_max_extra_casting_cost + spell_data_table[g_active_spell_idx].casting_cost) - (int16_t)((((int32_t)combat_max_extra_casting_cost + spell_data_table[g_active_spell_idx].casting_cost) * cost_reduction) / 100)) > _players[HUMAN_PLAYER_IDX].Cmbt_Skill_Left)
+        {
+            combat_max_extra_casting_cost--;
+        }
+        cost_reduction = Combat_Casting_Cost_Multiplier(HUMAN_PLAYER_IDX);
+        /* OGBUG: rounds the wrong way, one is a reverse-adjusted value, Casting_Cost() is not */
+        /* OGBUG: x0.5 multiplier results in a negative signed value if the player has over 16,383 mana */
+        if(((int16_t)(((int32_t)_players[HUMAN_PLAYER_IDX].mana_reserve * 10) / cost_reduction) - Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, 1)) < combat_max_extra_casting_cost)
+        {
+            combat_max_extra_casting_cost = ((int16_t)(((int32_t)_players[HUMAN_PLAYER_IDX].mana_reserve * 10) / cost_reduction) - Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, 1));
+        }
     }
     else
     {
-
-        cost_reduction = Casting_Cost_Reduction(HUMAN_PLAYER_IDX, g_active_spell_idx);
-
-        CMB_SliderLimit = (spell_data_table[g_active_spell_idx].casting_cost * 4);
-
-        if(((_players[HUMAN_PLAYER_IDX].Cmbt_Skill_Left * (cost_reduction + 100)) / 100) < CMB_SliderLimit)
+        combat_max_extra_casting_cost = (battle_units[caster_idx].mana - spell_data_table[g_active_spell_idx].casting_cost);
+        if((spell_data_table[g_active_spell_idx].casting_cost * 4) < combat_max_extra_casting_cost)
         {
-
-            CMB_SliderLimit = ((_players[HUMAN_PLAYER_IDX].Cmbt_Skill_Left * (cost_reduction + 100)) / 100);
-
+            combat_max_extra_casting_cost = (spell_data_table[g_active_spell_idx].casting_cost * 4);
         }
-
-        while((((CMB_SliderLimit + spell_data_table[g_active_spell_idx].casting_cost) * cost_reduction) /100) > _players[HUMAN_PLAYER_IDX].Cmbt_Skill_Left)
-        {
-
-            CMB_SliderLimit--;
-
-        }
-
-        cost_reduction = Combat_Casting_Cost_Multiplier(HUMAN_PLAYER_IDX);
-
-        // ; BUG: rounds the wrong way, one is a reverse-adjusted
-        // ; value, the other is not
-        // ; BUG: x0.5 multiplier results in a negative signed
-        // ; value if the player has over 16,383 mana
-        if((((_players[HUMAN_PLAYER_IDX].mana_reserve * 10) / cost_reduction) - Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, 1)) < CMB_SliderLimit)
-        {
-            CMB_SliderLimit = (((_players[HUMAN_PLAYER_IDX].mana_reserve * 10) / cost_reduction) - Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, 1));
-
-        }
-
     }
-
     if(spellbook_field_idx > 5)
     {
-
         x_start = 5;
-
     }
     else
     {
-        
         x_start = 165;
-
     }
-
     y_start = (21 + ((spellbook_field_idx % 6) * 22));  // center the popup box on the selected spell, vertically
-
     Combat_Spellbook_Mana_Adder_Load();
-
     _osc_anim_ctr = 0;
-
-    GAME_MP_SpellVar_1 = spell_data_table[spell_idx].casting_cost;
-
+    g_total_casting_cost = spell_data_table[spell_idx].casting_cost;
     _xtra_mana_pos = 3;
-
     Clear_Fields();
-
     Add_Scroll_Field((x_start + 12), (y_start + 22), 0, 106, 3, 103, 106, 7, &_xtra_mana_pos, (int16_t)str_empty_string__ovr136[0], ST_UNDEFINED);
-
     ok_button_field = Add_Button_Field((x_start + 123), (y_start + 18), &str_empty_string__ovr136[0], xtramana_ok_button_seg, (int16_t)str_hotkey_O__ovr136[0], ST_UNDEFINED);
-
     Assign_Auto_Function(Combat_Spellbook_Mana_Adder_Draw, 2);
-
     _osc_leave_screen = ST_FALSE;
-
-    while(_osc_leave_screen == ST_FALSE)
+    if(_osc_leave_screen == ST_FALSE)
     {
-
         Mark_Time();
-
         input_field_idx = Get_Input();
-
         if(input_field_idx == ok_button_field)
         {
-
             _osc_leave_screen = ST_TRUE;
-
         }
-
         if(_osc_leave_screen == ST_FALSE)
         {
-
             Set_Page_Off();
-
             Combat_Spellbook_Mana_Adder_Draw();
-                                   
             PageFlip_FX();
-
         }
-
+        Release_Time(2);
     }
-
     Clear_Fields();
-
     Deactivate_Auto_Function();
-
     Release_Block(_screen_seg);
-
     Combat_Compose_Background();
-
-    return GAME_MP_SpellVar_1;
-
+    return g_total_casting_cost;
 }
 
 
@@ -1698,17 +1618,17 @@ void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t pl
 static void Spell_Of_Mastery_Lose_Load(int16_t wizard_id)
 {
     // SPELLOSE.LBX, 028  "WIZLAB"    ""
-    IMG_SBK_SliderBG = LBX_Reload(spellose_lbx_file__ovr138, 28, _screen_seg);
+    m_wizard_lab_backdrop_seg = LBX_Reload(spellose_lbx_file__ovr138, 28, _screen_seg);
     // SPELLOSE.LBX, 030  "FAMILIAR"  ""
     // SPELLOSE.LBX, 031  "FAMILIAR"  ""
     // SPELLOSE.LBX, 032  "FAMILIAR"  ""
     // SPELLOSE.LBX, 033  "FAMILIAR"  ""
     // SPELLOSE.LBX, 034  "FAMILIAR"  ""
     wizlab_familiar_seg = LBX_Reload_Next(spellose_lbx_file__ovr138, (30 + _players[HUMAN_PLAYER_IDX].Prim_Realm), _screen_seg);
-    Load_Palette_From_Animation(IMG_SBK_SliderBG);
+    Load_Palette_From_Animation(m_wizard_lab_backdrop_seg);
     Apply_Palette();
     Set_Page_Off();
-    FLIC_Draw(0, 0, IMG_SBK_SliderBG);
+    FLIC_Draw(0, 0, m_wizard_lab_backdrop_seg);
     Copy_Off_To_Back();
     stu_strcpy(GUI_NearMsgString, _players[m_magic_winner_idx].name);
     stu_strcat(GUI_NearMsgString, strHasCastThe);  // " has cast the"

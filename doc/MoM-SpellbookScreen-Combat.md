@@ -46,7 +46,7 @@ _auto_combat_flag == ST_FALSE
 Combat_Spellbook_Build()
 
 CMB_ComposeBookBG__WIP()
-CMB_ComposeBackgrnd__WIP()
+Combat_Compose_Background()
 
 Combat_Spellbook_Screen()
 

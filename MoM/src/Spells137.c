@@ -35,6 +35,7 @@
 #include "RACETYPE.h"
 #include "SBookScr.h"
 #include "Spellbook.h"
+#include "SPLMASTR.h"
 #include "UNITTYPE.h"
 #include "WIZVIEW.h"
 
@@ -182,11 +183,12 @@ SAMB_ptr summon_fx_back_seg;
 // WZD dseg:CA42
 /*
 Item_Make_Screen()
-    IMG_SBK_SliderDot is used to hold the pict for m_itemmake_icon_window_left_arrow_button
-    IMG_SBK_SliderBar is used to hold the pict for m_itemmake_icon_window_right_arrow_button
+    mana_slider_thumb_seg is used to hold the pict for m_itemmake_icon_window_left_arrow_button
+    mana_slider_arrow_bar_seg is used to hold the pict for m_itemmake_icon_window_right_arrow_button
+In the mana-adder it's the scrolling arrow strip that animates inside the slider trough — SPELLSCR.LBX record 4, named "XTRAMANA" "arrow bar" in the load comment at SPLMASTR.c:466.
 */
-SAMB_ptr IMG_SBK_SliderBar;
-SAMB_ptr IMG_SBK_SliderDot;
+SAMB_ptr mana_slider_arrow_bar_seg;
+SAMB_ptr mana_slider_thumb_seg;
 
 // WZD dseg:CA44
 /*
@@ -934,7 +936,7 @@ void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx)
     g_gui_scratch_bitmap = Allocate_Next_Block(_screen_seg, 770);  // 770 PR, 12320 B
 
     if(
-        (GAME_MP_SpellVar_1 == 20)
+        (g_spell_scratch_int == 20)
         ||
         (magic_set.spell_animations == ST_FALSE)
     )
@@ -948,7 +950,7 @@ void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx)
         Reset_Animation_Frame(GAME_MP_SpellVar_2);
 
     }
-    else if(GAME_MP_SpellVar_1 == 30)
+    else if(g_spell_scratch_int == 30)
     {
 
         spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr137, (15 + specfx_entry_num), _screen_seg);
@@ -959,21 +961,21 @@ void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx)
         Reset_Animation_Frame(GAME_MP_SpellVar_2);
 
     }
-    else if(GAME_MP_SpellVar_1 < 10)
+    else if(g_spell_scratch_int < 10)
     {
 
         // DIPLOMAC.LBX, 001    "PANE"      "mirror pane"
-        IMG_SBK_SliderBG = LBX_Reload_Next(diplomac_lbx_file__ovr137, 1, _screen_seg);
+        m_global_anim_mirror_pane_seg = LBX_Reload_Next(diplomac_lbx_file__ovr137, 1, _screen_seg);
 
         // SPECFX.LBX, 054  "MASK1"     ""
         GAME_MP_SpellVar_2 = LBX_Reload_Next(specfx_lbx_file__ovr137, 54, _screen_seg);
 
     }
-    else if(GAME_MP_SpellVar_1 < 20)
+    else if(g_spell_scratch_int < 20)
     {
 
         // DIPLOMAC.LBX, 001    "PANE"      "mirror pane"
-        IMG_SBK_SliderBG = LBX_Reload_Next(diplomac_lbx_file__ovr137, 1, _screen_seg);
+        m_global_anim_mirror_pane_seg = LBX_Reload_Next(diplomac_lbx_file__ovr137, 1, _screen_seg);
 
         // SPECFX.LBX, 055  "MASK2"     ""
         GAME_MP_SpellVar_2 = LBX_Reload_Next(specfx_lbx_file__ovr137, 55, _screen_seg);
@@ -1049,7 +1051,7 @@ void OVL_DrawGlobalAnim(void)
     else  /* (magic_set.spell_animations != ST_TRUE) */
     {
 
-        if(GAME_MP_SpellVar_1 < 34)
+        if(g_spell_scratch_int < 34)
         {
 
             if(_osc_player_idx == 0)
@@ -1071,7 +1073,7 @@ void OVL_DrawGlobalAnim(void)
 
         }
 
-        if(GAME_MP_SpellVar_1 < 14)
+        if(g_spell_scratch_int < 14)
         {
 
             Reset_Animation_Frame(ge_anim_moodwiz_seg);
@@ -1080,7 +1082,7 @@ void OVL_DrawGlobalAnim(void)
 
             Draw_Picture_To_Bitmap(GAME_MP_SpellVar_2, spl_anim_compose_seg);
 
-            Draw_Picture_To_Bitmap(IMG_SBK_SliderBG, g_gui_scratch_bitmap);
+            Draw_Picture_To_Bitmap(m_global_anim_mirror_pane_seg, g_gui_scratch_bitmap);
 
             Clipped_Copy_Mask(0, 0, g_gui_scratch_bitmap, spl_anim_compose_seg);
 
@@ -1089,10 +1091,10 @@ void OVL_DrawGlobalAnim(void)
             FLIC_Draw(start_x, start_y, diplomacy_mirror_seg);
 
         }
-        else if(GAME_MP_SpellVar_1 < 20)
+        else if(g_spell_scratch_int < 20)
         {
 
-            FLIC_Draw((start_x + 12), (start_y + 12), IMG_SBK_SliderBG);
+            FLIC_Draw((start_x + 12), (start_y + 12), m_global_anim_mirror_pane_seg);
 
             Reset_Animation_Frame(ge_anim_moodwiz_seg);
 
@@ -1101,7 +1103,7 @@ void OVL_DrawGlobalAnim(void)
             FLIC_Draw(start_x, start_y, diplomacy_mirror_seg);
 
         }
-        else if(GAME_MP_SpellVar_1 < 34)
+        else if(g_spell_scratch_int < 34)
         {
 
             FLIC_Draw((start_x + 10), (start_y + 8), spell_animation_seg);
@@ -1212,7 +1214,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
     }
 
-    GAME_MP_SpellVar_1 = 0;
+    g_spell_scratch_int = 0;
 
     _osc_player_idx = player_idx;
 
@@ -1234,7 +1236,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
     _osc_leave_screen = ST_FALSE;
 
-    for(GAME_MP_SpellVar_1 = 0; ((GAME_MP_SpellVar_1 < 120) && (_osc_leave_screen == 0)); GAME_MP_SpellVar_1++)
+    for(g_spell_scratch_int = 0; ((g_spell_scratch_int < 120) && (_osc_leave_screen == 0)); g_spell_scratch_int++)
     {
 
         input_field_idx = abs(Get_Input());
@@ -1249,7 +1251,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
         if(_osc_leave_screen != ST_TRUE)
         {
 
-            if(GAME_MP_SpellVar_1 == 10)
+            if(g_spell_scratch_int == 10)
             {
 
                 Release_Block(_screen_seg);
@@ -1259,7 +1261,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
                 OVL_LoadGlobalAnim(spell_idx, player_idx);
 
             }
-            else if(GAME_MP_SpellVar_1 == 20)
+            else if(g_spell_scratch_int == 20)
             {
 
                 Release_Block(_screen_seg);
@@ -1269,7 +1271,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
                 OVL_LoadGlobalAnim(spell_idx, player_idx);
 
             }
-            else if(GAME_MP_SpellVar_1 == 30)
+            else if(g_spell_scratch_int == 30)
             {
 
                 Release_Block(_screen_seg);
@@ -1280,7 +1282,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
             }
 
-            if(GAME_MP_SpellVar_1 == 34)
+            if(g_spell_scratch_int == 34)
             {
                 _page_flip_effect = 3;
             }
@@ -1509,14 +1511,14 @@ static void Target_Wizard_Screen_Draw(void)
             case 1:
             {
                 stu_strcat(GUI_NearMsgString, aLoses);  // " loses "
-                stu_itoa(GAME_MP_SpellVar_1, buffer, 10);
+                stu_itoa(g_spell_scratch_int, buffer, 10);
                 stu_strcat(GUI_NearMsgString, buffer);
                 stu_strcat(GUI_NearMsgString, aPointsOfCastin);  // " points of casting ability"
             } break;
             case 2:
             {
                 stu_strcat(GUI_NearMsgString, aLoses);  // " loses "
-                stu_itoa(GAME_MP_SpellVar_1, buffer, 10);
+                stu_itoa(g_spell_scratch_int, buffer, 10);
                 stu_strcat(GUI_NearMsgString, buffer);
                 stu_strcat(GUI_NearMsgString, aPointsOfMana);  // " points of mana"
             } break;
@@ -1739,11 +1741,11 @@ int16_t Target_Wizard_Screen(int16_t spell_idx)
             } break;
             case 1:
             {
-                GAME_MP_SpellVar_1 = Apply_Cruel_Unminding(player_idx);
+                g_spell_scratch_int = Apply_Cruel_Unminding(player_idx);
             } break;
             case 2:
             {
-                GAME_MP_SpellVar_1 = Apply_Drain_Power(player_idx);
+                g_spell_scratch_int = Apply_Drain_Power(player_idx);
             } break;
             case 3:
             {

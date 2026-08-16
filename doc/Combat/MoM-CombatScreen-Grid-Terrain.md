@@ -5,7 +5,7 @@
 Load_Combat_Terrain_Pictures()
     for(itr = 0; itr < 48; itr++)
         _combat_terrain_pict_segs[itr] = LBX_Reload_Next(combat_terrain_set_lbx_filename, itr, EMS_PFBA);
-CMB_ComposeBackgrnd__WIP()
+Combat_Compose_Background()
     Clipped_Draw(screen_x, screen_y, _combat_terrain_pict_segs[combat_terrain_type]);
 Combat_Screen_Map_Draw()
     battlefield_terrain_type = battlefield->terrain_type[((cgy * COMBAT_GRID_WIDTH) + cgx)];
@@ -137,9 +137,9 @@ Build_Battlefield()
     ...
     |-> Load_Combat_Terrain_Pictures(Terrain_Type, wp);
     |-> Generate_Combat_Map__WIP(Location_Type, City_House_Type, &Road_Matrix[0], Enchanted_Roads, Terrain_Type, &River_Matrix[0], Flying_Fortress, ATKR_FloatingIsland, DEFR_FloatingIsland, City_Walls, City_Population, Magic_Walls);
-    |-> CMB_ComposeBackgrnd__WIP()
+    |-> Combat_Compose_Background()
 
-CMB_ComposeBackgrnd__WIP()
+Combat_Compose_Background()
     combat_terrain_type = battlefield->Tile_Terrain[((cgc1 * COMBAT_GRID_WIDTH) + cgc2)];
 
 #define TERRAIN_TYPE(_wx_, _wy_, _wp_)        ( GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2))) % NUM_TERRAIN_TYPES )
@@ -310,7 +310,7 @@ CMB_DrawMap__WIP() has a check for `if( (cgx >= 0) && (cgx < 21) && (cgy >= 0) &
 
 
 
-## CMB_ComposeBackgrnd__WIP()
+## Combat_Compose_Background()
 
 for(itr_y = 0; itr_y < 22; itr_y++)
     for(itr_x = 0; itr_x < 11; itr_x++)
@@ -334,15 +334,15 @@ combat_terrain_type = battlefield->Tile_Terrain[((cgy * 21) + cgx)];
 
 
 
-## CMB_ComposeBackgrnd__WIP() vs. CMB_DrawMap__WIP()
+## Combat_Compose_Background() vs. CMB_DrawMap__WIP()
 
 Tactical_Combat__WIP()
-    |-> CMB_ComposeBackgrnd__WIP()
+    |-> Combat_Compose_Background()
 
 Build_Battlefield()
-    |-> CMB_ComposeBackgrnd__WIP()
+    |-> Combat_Compose_Background()
 
-CMB_ComposeBackgrnd__WIP() gets called by Build_Battlefield() and, whenever there's a change/interaction, it gets called by Tactical_Combat__WIP().
+Combat_Compose_Background() gets called by Build_Battlefield() and, whenever there's a change/interaction, it gets called by Tactical_Combat__WIP().
 CMB_DrawMap__WIP() only gets called by CMB_DrawFullScreen__WIP(), when it is time to actually (re-)draw the screen.
 
 

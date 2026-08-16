@@ -394,10 +394,10 @@ static void Item_Make_Screen_Load(void)
     }
 
     // SPELLSCR.LBX, 035  "ENCHBUTT"    "left pic button"
-    IMG_SBK_SliderDot = LBX_Reload_Next(spellscr_lbx_file__ovr115, 35, _screen_seg);
+    m_itemmake_icon_window_left_arrow_seg = LBX_Reload_Next(spellscr_lbx_file__ovr115, 35, _screen_seg);
 
     // SPELLSCR.LBX, 036  "ENCHBUTT"    "right pic button"
-    IMG_SBK_SliderBar = LBX_Reload_Next(spellscr_lbx_file__ovr115, 36, _screen_seg);
+    m_itemmake_icon_window_right_arrow_seg = LBX_Reload_Next(spellscr_lbx_file__ovr115, 36, _screen_seg);
 
     // SPELLSCR.LBX, 037  "CHARGES1"    ""
     IMG_IC_SpellCharges = LBX_Reload_Next(spellscr_lbx_file__ovr115, 37, _screen_seg);

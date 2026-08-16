@@ -90,7 +90,7 @@ BU_CreateImage__SEGRAX()
 
 
 
-CMB_ComposeBackgrnd__WIP()  ==>  Combat_Screen_Compose_Background()
+Combat_Compose_Background()  ==>  Combat_Screen_Compose_Background()
 CMB_DrawMap__WIP  ==>  Combat_Screen_Draw_Map()
 
 
@@ -110,15 +110,15 @@ NOTE: combat information window and combat spellbook have their own Copy_Off_To_
 
 
 
-NOTE: Tactical_Combat_Draw() |-> CMB_DrawMap__WIP() calls Copy_Back_To_Off(), where 'Back' was drawn in CMB_ComposeBackgrnd__WIP()
+NOTE: Tactical_Combat_Draw() |-> CMB_DrawMap__WIP() calls Copy_Back_To_Off(), where 'Back' was drawn in Combat_Compose_Background()
 
-CMB_ComposeBackgrnd__WIP()
+Combat_Compose_Background()
     FLIC_Draw(0, 164, combat_background_bottom);
     Copy_Off_To_Back();
 ...
-the last thing Build_Battlefield() does is call CMB_ComposeBackgrnd__WIP()
+the last thing Build_Battlefield() does is call Combat_Compose_Background()
 
-CMB_ComposeBackgrnd__WIP()
+Combat_Compose_Background()
     j_CMB_ComposeBackgrnd__WIP jmp     
         Tactical_Combat__WIP+B98             
         Tactical_Combat__WIP+D4D             
@@ -151,7 +151,7 @@ Build_Battlefield()
 
 
 
-## CMB_ComposeBackgrnd__WIP()
+## Combat_Compose_Background()
     Set_Page_Off()
     Reset_Window()
     Claim_EMS_Page_For_Figure_Set()

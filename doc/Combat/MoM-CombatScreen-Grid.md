@@ -170,7 +170,7 @@ draw combat entities
 
 Tactical_Combat__WIP()
     // ...
-    |-> CMB_ComposeBackgrnd__WIP()
+    |-> Combat_Compose_Background()
     // ...
     CMB_DrawFullScreen__WIP()
         Combat_Grid_Entities()

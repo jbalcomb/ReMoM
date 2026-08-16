@@ -501,7 +501,7 @@ maps first 48 (of 58) entries from combat terrain LBX files
 
 
 
-## CMB_ComposeBackgrnd__WIP()
+## Combat_Compose_Background()
 
 iters 21
 iters 10
@@ -531,7 +531,7 @@ combat_terrain_type = battlefield->Tile_Terrain[((cgc1 * 21) + cgc2)];
 
 
 
-CMB_ComposeBackgrnd__WIP()
+Combat_Compose_Background()
 
 itr_y
 itr_x

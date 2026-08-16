@@ -646,7 +646,7 @@ Combat_Screen_Map_Compose_Figures()
 
 Tactical_Combat__WIP()
     // ...
-    |-> CMB_ComposeBackgrnd__WIP()
+    |-> Combat_Compose_Background()
     // ...
     CMB_DrawFullScreen__WIP()
         CMB_DrawMap__WIP()

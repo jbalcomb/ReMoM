@@ -17,10 +17,10 @@ extern "C" {
 
 
 // WZD dseg:CA40
-extern SAMB_ptr IMG_SBK_SliderBar;
-#define m_itemmake_icon_window_right_arrow_seg IMG_SBK_SliderBar
-extern SAMB_ptr IMG_SBK_SliderDot;
-#define m_itemmake_icon_window_left_arrow_seg IMG_SBK_SliderDot
+extern SAMB_ptr mana_slider_arrow_bar_seg;
+#define m_itemmake_icon_window_right_arrow_seg mana_slider_arrow_bar_seg
+extern SAMB_ptr mana_slider_thumb_seg;
+#define m_itemmake_icon_window_left_arrow_seg mana_slider_thumb_seg
 
 // WZD dseg:CA4C
 extern int16_t _osc_leave_screen;
