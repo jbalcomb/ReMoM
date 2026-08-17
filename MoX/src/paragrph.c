@@ -469,18 +469,13 @@ Done:
 }
 
 // WZD s19p05
-// drake178: VGA_GetTextHeight
-// EXACT  MoO2  Module: paragrph  Get_Paragraph_Max_Height()
-// TODO  int16_t Get_Paragraph_Max_Height(int16_t max_width, char * string, int16_t print_type)
+// MoO2  Module: paragrph  Get_Paragraph_Max_Height()
 int16_t Get_Paragraph_Max_Height(int16_t max_width, char * string)
 {
     int16_t ymax;
     int16_t font_height;
-
     font_height = GET_1B_OFS(font_style_data, FONT_HDR_POS_HEIGHT);
-
     Mark_Paragraph(0, 0, max_width, string);
-
     if(paragraph_max_lines >= 1)
     {
         ymax = (paragraph_line_y_start[(paragraph_max_lines - 1)] + font_height);
@@ -490,7 +485,6 @@ int16_t Get_Paragraph_Max_Height(int16_t max_width, char * string)
     {
         ymax = 0;
     }
-
     return ymax;
 }
 

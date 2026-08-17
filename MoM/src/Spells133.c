@@ -531,11 +531,11 @@ void Wall_Rise(int16_t spell_idx, int16_t caster_idx)
 // WZD o133p06
 void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spell_idx, char * title)
 {
-    int16_t string_length = 0;
-    char * ut_name = NULL;
-    int16_t Display_Counter = 0;
-    int16_t Hero_Slot = 0;
     char buffer[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t hero_slot_idx = 0;
+    int16_t itr_frames = 0;
+    int16_t string_length = 0;
+    char * caster_type_name = NULL;
     if(type == 5)
     {
         stu_strcpy(GUI_NearMsgString, cnst_CounterMsg3); /* "The power of " */
@@ -580,10 +580,10 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
     }
     else if(caster_idx < CASTER_IDX_BASE)
     {
-        Hero_Slot = _UNITS[battle_units[caster_idx].unit_idx].Hero_Slot;
-        if(Hero_Slot > -1)
+        hero_slot_idx = _UNITS[battle_units[caster_idx].unit_idx].Hero_Slot;
+        if(hero_slot_idx > -1)
         {
-            stu_strcpy(buffer, _players[battle_units[caster_idx].controller_idx].Heroes[Hero_Slot].name);
+            stu_strcpy(buffer, _players[battle_units[caster_idx].controller_idx].Heroes[hero_slot_idx].name);
             stu_strcat(GUI_NearMsgString, buffer);
             string_length = (int16_t)stu_strlen(buffer);
             if(buffer[string_length - 1] == 's')
@@ -598,10 +598,10 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
         else
         {
             stu_strcat(GUI_NearMsgString, cnst_CounterMsg7); /* "the " */
-            ut_name = *_unit_type_table[_UNITS[battle_units[caster_idx].unit_idx].type].name;
-            stu_strcat(GUI_NearMsgString, ut_name);
-            string_length = (int16_t)stu_strlen(ut_name);
-            if(ut_name[string_length - 1] == 's')
+            caster_type_name = *_unit_type_table[_UNITS[battle_units[caster_idx].unit_idx].type].name;
+            stu_strcat(GUI_NearMsgString, caster_type_name);
+            string_length = (int16_t)stu_strlen(caster_type_name);
+            if(caster_type_name[string_length - 1] == 's')
             {
                 stu_strcat(GUI_NearMsgString, cnst_Apostrophe); /* "' " */
             }
@@ -634,12 +634,12 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
     else
     {
         Play_Standard_Click();
-        for(Display_Counter = 0; Display_Counter < 30; Display_Counter++)
+        for(itr_frames = 0; itr_frames < 30; itr_frames++)
         {
             Mark_Time();
             Set_Page_Off();
             Combat_Screen_Draw();
-            GUI_DrawNearMessage();
+            Combat_Spell_Counter_Message_Box_Draw();
             PageFlip_FX();
             Release_Time(2);
         }
@@ -650,10 +650,10 @@ void Combat_Spell_Counter_Message(int16_t caster_idx, int16_t type, int16_t spel
 // WZD o133p07
 int16_t Combat_Spell_Dispel_Attempt(int16_t dispel_strength, int16_t spell_cast, int16_t player_idx, int16_t magic_realm)
 {
-    int16_t difficulty;
-    int16_t chance;
+    int16_t chance = 0;
+    int16_t difficulty = 0;
     difficulty = Calculate_Dispel_Difficulty(spell_cast, player_idx, magic_realm) + dispel_strength;
-    chance = (((int32_t)250 * dispel_strength) / difficulty);
+    chance = (int16_t)(((int32_t)250 * dispel_strength) / difficulty);
     if(Random(250) > chance)
     {
         return ST_FALSE;

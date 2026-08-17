@@ -1987,7 +1987,7 @@ int16_t Check_Attack_Melee_City_Wall(int16_t src_battle_unit_idx, int16_t dst_ba
 void Apply_Mana_Leak(void);
 
 // WZD o113p13
-void GUI_DrawNearMessage(void);
+void Combat_Spell_Counter_Message_Box_Draw(void);
 
 // WZD o113p14
 void Combat_Cast_Spell_Message(int16_t caster_idx, int16_t spell_idx);

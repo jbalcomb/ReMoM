@@ -12361,13 +12361,7 @@ void Apply_Mana_Leak(void)
 
 
 // WZD o113p13
-/*
-; creates a shaded rectangle at the top middle of the
-; screen using replacement color block 8, then draws
-; the contents of the GUI_NearMsgString into it with
-; the type 1 font (5 by 5+1)
-*/
-void GUI_DrawNearMessage(void)
+void Combat_Spell_Counter_Message_Box_Draw(void)
 {
     int16_t height = 0;
     int16_t width = 0;
@@ -12383,19 +12377,16 @@ void GUI_DrawNearMessage(void)
     Set_Alias_Color(182);
     Set_Outline_Color(2);
     width = Get_Paragraph_Max_Width(150, GUI_NearMsgString, 2);
-    // TODO  height = Get_Paragraph_Max_Height(150, GUI_NearMsgString, 2);
-    height = Get_Paragraph_Max_Height(150, GUI_NearMsgString);
-    /* Center horizontally on the 320-pixel screen with padding */
-    x1 = 155 - (width / 2);
-    x2 = 168 + (width / 2);
+    height = Get_Paragraph_Max_Height(150, GUI_NearMsgString);  /* OGBUG  passes 3rd argument */
+    x1 = 160 - (width / 2) - 5;
+    x2 = (width / 2) + 168;
     y1 = 5;
     y2 = height + 8;
     Gradient_Fill(x1, y1, x2, y2, 15, 8, ST_NULL, ST_NULL, ST_NULL);
-    /* Draw border lines */
-    Line(x1, y1, x1, y2, 230);     /* Left border */
-    Line(x1, y1, x2 - 1, y1, 230); /* Top border */
-    Line(x2, y1, x2, y2, 237);     /* Right border */
-    Line(x1 + 1, y2, x2, y2, 237); /* Bottom border */
+    Line(x1, y1, x1, y2, 230);
+    Line(x1, y1, x2 - 1, y1, 230);
+    Line(x2, y1, x2, y2, 237);
+    Line(x1 + 1, y2, x2, y2, 237);
     Print_Paragraph(x1 + 6, 8, 150, GUI_NearMsgString, 2);
 }
 
@@ -15578,7 +15569,7 @@ int16_t Combat_Results_Scroll_Text(void)
                 Set_Font_Colors_15(1, &colors2[0]);
                 Set_Font_Spacing_Width(2);
                 Print_Paragraph(75, (_scroll_text_top + text_height), 175, GUI_NearMsgString, 0);
-                text_height += (Get_Paragraph_Max_Height(175, GUI_NearMsgString) + 2);  /* OGBUG  wants 3rd argument; text_height += (Get_Paragraph_Max_Height(175, GUI_NearMsgString, 0) + 2); */
+                text_height += (Get_Paragraph_Max_Height(175, GUI_NearMsgString) + 2);  /* OGBUG  passes 3rd argument */
             }
         } break;
         case 4:
@@ -15620,27 +15611,22 @@ int16_t Combat_Results_Scroll_Text(void)
         Set_Font_Colors_15(1, &colors2[0]);
         LBX_Load_Data_Static(message_lbx_file__ovr123, 0, (SAMB_ptr)message, 10, 1, 150);  /* "The monsters rampage through the city and then disappear into the wilderness" */
         Print_Paragraph(75, (_scroll_text_top + text_height), 175, message, 2);
-        // TODO  text_height += (Get_Paragraph_Max_Height(175, message, 2) + 2));
-        text_height += (Get_Paragraph_Max_Height(175, message) + 2);
+        text_height += (Get_Paragraph_Max_Height(175, message) + 2);  /* OGBUG  passes 3rd argument */
     }
     if(_active_battle_unit == 668)  /* ; 668 - rampage, created ruins */
     {
         Set_Font_Colors_15(1, &colors2[0]);
-        // _fstrcpy(GUI_NearMsgString, _CITIES[_combat_environ_idx].name);
         stu_strcpy(message, _CITIES[_combat_environ_idx].name);
         stu_strcat(message, cnst_NewRuins_Msg);  /* " has been reduced to ruins" */
         Print_Paragraph(75, (_scroll_text_top + text_height), 175, message, 2);
-        // TODO  text_height += (Get_Paragraph_Max_Height(175, message, 2) + 2));
-        text_height += (Get_Paragraph_Max_Height(175, message) + 2);
+        text_height += (Get_Paragraph_Max_Height(175, message) + 2);  /* OGBUG  passes 3rd argument */
     }
     if(_active_battle_unit == 667)  /* ; 667 - raiders won (city neutral) */
     {
-        // _fstrcpy(GUI_NearMsgString, _CITIES[_combat_environ_idx].name);
         stu_strcpy(message, _CITIES[_combat_environ_idx].name);
         stu_strcat(message, cnst_CityRaided_Msg);  /* " has fallen to raiders" */
         Print_Paragraph(75, (_scroll_text_top + text_height), 175, message, 2);
-        // TODO  text_height += (Get_Paragraph_Max_Height(175, message, 2) + 2));
-        text_height += (Get_Paragraph_Max_Height(175, message) + 2);
+        text_height += (Get_Paragraph_Max_Height(175, message) + 2);  /* OGBUG  passes 3rd argument */
     }
     if(GUI_Multipurpose_Int != 0)
     {

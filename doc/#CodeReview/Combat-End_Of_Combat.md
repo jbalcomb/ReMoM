@@ -52,7 +52,7 @@ Combat_Screen()
 
 # 1:1 Fidelity Review
 
-**Status: DONE-DONE (2026-08-10).** No findings open. Eleven functions, 6,028 asm lines, every one walked against its listing.
+**Status: DONE-DONE (2026-08-10).** No findings open. Eleven functions, 6,028 asm lines, every one walked against its listing. D6 added 2026-08-17 — a deviation found while reviewing a shared callee, no reopening required.
 
 The whole of `WIZARDS.EXE ovr123` — `End_Of_Combat` plus its six same-overlay subfunctions, 4,081 asm lines — plus the retreat chain it calls into in `ovr098`: `Retreat_From_Combat`, `Process_Retreating_Units` and `Build_Flee_Loss_Message`, a further 1,699 lines, and `Raze_Check` in `ovr098`'s sibling overlay `ovr124` (248 lines). Every function got a full body walk.
 
@@ -169,6 +169,34 @@ Listed for completeness, not as defects:
 - `= 0` initialisers on locals the OG leaves uninitialised. This is the file-wide house style and is not called out per-site; the one place it changes observable behaviour is noted under OG behaviours.
 
 ---
+
+## D6 — `Get_Paragraph_Max_Height` is called with three arguments
+
+`seg019/Get_Paragraph_Max_Height.asm` declares exactly two parameters — `max_width` at `bp+6` and `string` at `bp+8` — and never reads `bp+0Ah`. Every call site in the original passes **three** words anyway and cleans six bytes. `Combat_Results_Scroll_Text` does it four times:
+
+```
+mov     ax, 2
+push    ax
+mov     ax, offset GUI_NearMsgString
+push    ax
+mov     ax, 175
+push    ax
+call    Get_Paragraph_Max_Height
+add     sp, 6
+```
+
+| production | asm | third argument |
+| --- | --- | --- |
+| [Combat.c:15572](../../MoM/src/Combat.c#L15572) | `ovr123/Combat_Results_Scroll_Text.asm:129-136` | `xor ax, ax` — **0** |
+| [Combat.c:15614](../../MoM/src/Combat.c#L15614) | `asm:225-232` | 2 |
+| [Combat.c:15622](../../MoM/src/Combat.c#L15622) | `asm:278-285` | 2 |
+| [Combat.c:15629](../../MoM/src/Combat.c#L15629) | `asm:325-332` | 2 |
+
+The value is the paragraph print type — 0 left, 1 right, 2 centre, 3 full width, per the `switch` in `Get_Paragraph_Max_Width` at [paragrph.c:515-538](../../MoX/src/paragrph.c#L515-L538). It tracks the `Print_Paragraph` call immediately above it at each site: 0 at the first, 2 at the other three. So this is not a stray word copied from the neighbouring width call — the original passes the alignment deliberately, to a function that cannot use it. Height is `paragraph_line_y_start[max_lines - 1] + font_height`, and line breaking happens in `Mark_Paragraph`, which takes no alignment at all.
+
+**Not reproducible in C99.** A long-argument call is a constraint violation, exactly like the short-argument `Gradient_Fill` calls recorded elsewhere. Production passes two arguments at all four sites, which is behaviourally identical since the callee ignores the third. The comments at those four lines record the original form; they are deviation notes, not pending work.
+
+The fifth site is `Combat_Spell_Dispel_Attempt` at [Combat.c:12380](../../MoM/src/Combat.c#L12380), `ovr113/Combat_Spell_Dispel_Attempt.asm:51-58`, third argument 2 — recorded in [Combat-Combat_Spell_Dispel.md](Combat-Combat_Spell_Dispel.md), which owns that function.
 
 # Verified faithful
 

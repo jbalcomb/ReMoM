@@ -15,7 +15,7 @@ Combat-Miscellaneous.md
 
 2.  Four moves
 [ ] inlude Spell_Resistance_Modifier() (o112p06) in Combat-Cast_Spell_On_Battle_Unit.md
-[ ] include GUI_DrawNearMessage() (o113p13) in Combat-Combat_Spell_Dispel.md
+[x] include Combat_Spell_Dispel_Attempt() (o113p13) in Combat-Combat_Spell_Dispel.md
 [ ] include Combat_Cast_Spell_Message (o113p14) in Combat-Spell_Cast.md
 [ ] move Combat_Cast_Spell (s103p14) to Combat-Spell_Cast.md
 [ ] move Combat_Cast_Spell_With_Caster (s103p14) to Combat-Spell_Cast.md

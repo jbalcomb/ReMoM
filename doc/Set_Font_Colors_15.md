@@ -145,7 +145,7 @@ CMB_DrawUnitDisplay+A8
 HoF_Screen_Draw_Strings+6E          
 HoF_Screen_Draw_Strings+10E         
 
-GUI_DrawNearMessage+17              
+Combat_Spell_Dispel_Attempt+17              
 
 CMB_SpellcastMessage+177            
 

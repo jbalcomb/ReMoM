@@ -379,11 +379,13 @@
 - [ ] Apply_Call_Chaos__WIP
 - [ ] BU_LifeDrain__WIP
 - [ ] Cast_Call_Chaos__WIP
-- [x] CMB_CounterMessage__STUB — renamed to Combat_Spell_Counter_Message (Spells133.c:532); implemented, compiles clean 2026-07-07
+- [x] Combat_Spell_Counter_Message — done-done 2026-08-17 (doc/#CodeReview/Combat-Combat_Spell_Dispel.md); Spells133.c:532, faithful against ovr133/Combat_Spell_Dispel_Attempt.asm (375 asm lines); R1 declaration order fixed
 - [ ] Combat_Spell_Animation_Generic__WIP
 - [ ] TILE_BoltFromAbove__WIP
-- [x] WIZ_DispelAttempt__STUB — renamed to Combat_Spell_Dispel_Attempt (Spells133.c:653); implemented, compiles clean 2026-07-07
+- [x] Combat_Spell_Dispel_Attempt — renamed to Combat_Spell_Dispel_Attempt (Spells133.c:653); implemented, compiles clean 2026-07-07
 
+- [x] Combat_Spell_Counter_Message_Box_Draw — done-done 2026-08-17 (doc/#CodeReview/Combat-Combat_Spell_Dispel.md); Combat.c:12364, faithful against ovr113/Combat_Spell_Dispel_Attempt.asm (142 asm lines)
+- [x] Combat_Spell_Dispel_Attempt — done-done 2026-08-17 (doc/#CodeReview/Combat-Combat_Spell_Dispel.md); Spells133.c:651, faithful against ovr133/Combat_Spell_Dispel_Attempt.asm (58 asm lines)
 ## Spells137
 - [ ] Cast_Spell_City_Enchantment_Animation_1__WIP
 - [ ] Cast_Spell_City_Enchantment_Animation_2__WIP
