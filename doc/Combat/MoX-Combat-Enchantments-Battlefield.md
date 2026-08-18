@@ -25,7 +25,7 @@ Strategic_Combat_Allocate()
 AITP_Combat_Spell()
 Cast_Spell_On_Battle_Unit()
 Combat_Cast_Spell()
-Do_Legal_Spell_Check__WIP()
+Do_Legal_Spell_Check()
 Apply_Mana_Leak()
 AI_MoveBattleUnits__WIP()
 Battle_Unit_Special_Stats()
@@ -38,7 +38,7 @@ AI_EvaluateCmbtSpell()
 Combat_Screen_Load_Resources()
 Strategic_Combat_Allocate()
 AITP_Combat_Spell()
-Do_Legal_Spell_Check__WIP()
+Do_Legal_Spell_Check()
 Cast_Disenchant()
 
 
@@ -66,7 +66,7 @@ Combat_Cast_Spell:loc_8D6F4            les     bx, [combat_enchantments]
 Combat_Cast_Spell+795                  les     bx, [combat_enchantments]           
 Combat_Cast_Spell+79F                  les     bx, [combat_enchantments]           
 Combat_Cast_Spell+7AC                  les     bx, [combat_enchantments]           
-Do_Legal_Spell_Check__WIP+527               add     bx, [word ptr combat_enchantments]  
+Do_Legal_Spell_Check+527               add     bx, [word ptr combat_enchantments]  
 Apply_Mana_Leak+7                           les     bx, [combat_enchantments]           
 Apply_Mana_Leak+16                          les     bx, [combat_enchantments]           
 Apply_Mana_Leak:loc_91AA3                   les     bx, [combat_enchantments]           
@@ -118,6 +118,6 @@ AI_EvaluateCmbtSpell:loc_C3211              les     bx, [combat_enchantments]
 Combat_Screen_Load_Resources+118                  mov     [word ptr combat_enchantments+2], dx
 Strategic_Combat_Allocate+37                mov     [word ptr combat_enchantments+2], dx
 AITP_Combat_Spell+DE9                  mov     es, [word ptr combat_enchantments+2]
-Do_Legal_Spell_Check__WIP+523               mov     es, [word ptr combat_enchantments+2]
+Do_Legal_Spell_Check+523               mov     es, [word ptr combat_enchantments+2]
 Cast_Disenchant+B1                          mov     es, [word ptr combat_enchantments+2]
 Cast_Disenchant+1AA                         mov     es, [word ptr combat_enchantments+2]

@@ -30,7 +30,7 @@ Tactical_Combat__WIP()
             Combat_Spellbook_Build()
             CMB_ComposeBookBG__WIP()
             Combat_Spellbook_Screen()
-            Do_Legal_Spell_Check__WIP()
+            Do_Legal_Spell_Check()
             Combat_Spell_Target_Screen__WIP()
             if(Target != 999)
                 Cast_Spell_On_Battle_Unit()
@@ -92,7 +92,7 @@ Spell_Animation_Load_Graphics__WIP()
 ## Cast_Raise_Dead()
 
 Combat_Cast_Spell()
-    Do_Legal_Spell_Check__WIP()
+    Do_Legal_Spell_Check()
         if(spell_idx == spl_Raise_Dead)
 
 Cast_Spell_On_Battle_Unit()
@@ -110,7 +110,7 @@ XREF:
 ## Cast_Animate_Dead()
 
 Combat_Cast_Spell()
-    Do_Legal_Spell_Check__WIP()
+    Do_Legal_Spell_Check()
         if(spell_idx == spl_Animate_Dead)
 
 Cast_Spell_On_Battle_Unit()

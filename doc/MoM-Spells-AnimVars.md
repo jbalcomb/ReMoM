@@ -513,7 +513,7 @@ XREF:
     Combat_Cast_Spell_With_Caster+B8     push    [_combat_wx]                            
     Combat_Cast_Spell_With_Caster+D6     push    [_combat_wx]                            
     Strategic_Combat__STUB+3E            mov     [_combat_wx], ax                        
-    Do_Legal_Spell_Check__WIP:loc_8E548  mov     ax, [_combat_wx]                        
+    Do_Legal_Spell_Check:loc_8E548  mov     ax, [_combat_wx]                        
     Combat_Casting_Cost_Multiplier+62    sub     ax, [_combat_wx]                        
     AITP_RecallHero+23                   cmp     ax, [_combat_wx]                        
     AI_BU_ProcessAction__WIP+8A6         push    [_combat_wx]                            

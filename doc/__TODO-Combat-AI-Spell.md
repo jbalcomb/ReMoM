@@ -21,7 +21,7 @@ Status legend: **[done-done]** reviewed 1:1 + doc + builds · **[impl]** substan
 
 | Function | Loc | Status | What it does |
 |---|---|---|---|
-| `Combat_Cast_Spell` | [Combat.c:13176](../MoM/src/Combat.c#L13176) | **done-done** | AI-branch cast dispatcher; [walkthrough](#CodeReview/Combat-Combat_Cast_Spell.md) |
+| `Combat_Cast_Spell` | [CMBMAGIC.c:218](../MoM/src/CMBMAGIC.c#L218) | **done-done** | AI-branch cast dispatcher; [walkthrough](#CodeReview/Combat-Spell_Cast.md) |
 | `AITP_Combat_Spell` | [Combat.c:11650](../MoM/src/Combat.c#L11650) | **done-done** | combined combat target picker; [walkthrough](ComputerPlayer/Combat-AITP_Combat_Spell.md) |
 | `Combat_Spell_Dispel_Attempt` | [Spells133.c:653](../MoM/src/Spells133.c#L653) | **impl** (builds clean) | counter/node dispel roll; was `Combat_Spell_Dispel_Attempt`; arg order verified vs asm |
 | `Combat_Spell_Counter_Message` | [Spells133.c:532](../MoM/src/Spells133.c#L532) | **impl** (builds clean) | "Counter Magic" popup; was `Combat_Spell_Counter_Message`; arg order verified vs asm |

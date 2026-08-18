@@ -61,7 +61,7 @@ int16_t Combat_Cast_Spell(int16_t caster_id, int16_t wx, int16_t wy, int16_t wp)
 int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell);
 
 // WZD o112p05
-int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx);
+int16_t Do_Legal_Spell_Check(int16_t spell_idx);
 
 // WZD o112p06
 int16_t Spell_Resistance_Modifier(int16_t spell_idx);

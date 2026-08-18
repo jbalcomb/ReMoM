@@ -330,7 +330,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                     Combat_Compose_Spellbook_Background();  // ... |-> Copy_Off_To_Back();
                     // where's the rest of the screen update?
                 }
-            } while(Do_Legal_Spell_Check__WIP(spell_idx) != ST_FALSE);
+            } while(Do_Legal_Spell_Check(spell_idx) != ST_FALSE);
             // ...not illegal...
             // not doing xtramana popup, so go right back to the combat screen
             if(
@@ -1066,40 +1066,25 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
 
 
 // WZD o112p05
-// drake178: CMB_CheckSpellErrors()
 /*
-; checks if there are any conditions in play that would
-; prevent the specified spell from being cast without
-; even selecting a target
-; returns 1 and displays a warning if the spell can't
-; be cast, or returns 0 if it can
-;
-; contains multiple BUGs and misses many conditions
-; that could have been evaluated here
-*/
-/*
-
 ¿ BUGBUG no legal check for 'Dispel Evil' ?
 */
-int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
+int16_t Do_Legal_Spell_Check(int16_t spell_idx)
 {
-    int16_t Controlled_Units = 0;
+    int16_t controlled_unit_count = 0;
     int16_t illegal = 0;
-    int16_t itr = 0;  // _SI_
-    int16_t IDK = 0;  // _DI_
-
+    int16_t itr = 0;
+    int16_t legal_target_found = 0;
+    int16_t side = 0;
     illegal = ST_FALSE;
-
     if(spell_idx == 666)
     {
         return ST_TRUE;
     }
-
     if(spell_idx <= spl_NONE)
     {
         return ST_FALSE;
     }
-
     if(spell_idx == spl_Magic_Vortex)
     {
         if(_vortex_count == 10)
@@ -1109,7 +1094,6 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
             illegal = ST_TRUE;
         }
     }
-
     if(spell_idx == spl_Word_Of_Recall)
     {
         if(_players[HUMAN_PLAYER_IDX].casting_spell_idx == spl_Spell_Of_Return)
@@ -1119,10 +1103,9 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
             illegal = ST_TRUE;
         }
     }
-
     if(spell_idx == spl_Recall_Hero)
     {
-        IDK = ST_FALSE;
+        legal_target_found = ST_FALSE;
         if(_players[HUMAN_PLAYER_IDX].casting_spell_idx == spl_Spell_Of_Return)
         {
             LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 85, 1, 150);  // "Word of Recall and Recall Hero may not be cast while you are banished"
@@ -1143,7 +1126,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
         }
         else
         {
-            for(itr = 0; ((itr < _combat_total_unit_count) && (IDK == ST_FALSE)); itr++)
+            for(itr = 0; ((itr < _combat_total_unit_count) && (legal_target_found == ST_FALSE)); itr++)
             {
                 if(
                     (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
@@ -1151,9 +1134,9 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
                     (_UNITS[battle_units[itr].unit_idx].Hero_Slot > ST_UNDEFINED)
                 )
                 {
-                    IDK = ST_TRUE;
+                    legal_target_found = ST_TRUE;
                 }
-                if(IDK == ST_FALSE)
+                if(legal_target_found == ST_FALSE)
                 {
                     LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 78, 1, 150);  // "There are no heroes left to recall"
                     Warn1(GUI_NearMsgString);
@@ -1162,14 +1145,13 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
             }
         }
     }
-
     if(spell_idx == spl_Star_Fires)
     {
-        IDK = ST_FALSE;
-        for(itr = 0; ((itr < _combat_total_unit_count) && (IDK == ST_FALSE)); itr++)
+        legal_target_found = ST_FALSE;
+        for(itr = 0; ((itr < _combat_total_unit_count) && (legal_target_found == ST_FALSE)); itr++)
         {
                 if(
-                    (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
+                    (battle_units[itr].controller_idx != HUMAN_PLAYER_IDX)
                     &&
                     (
                         (battle_units[itr].race == rt_Death)
@@ -1178,26 +1160,22 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
                     )
                 )
                 {
-                    IDK = ST_TRUE;
+                    legal_target_found = ST_TRUE;
                 }
         }
-        if(IDK == ST_FALSE)
+        if(legal_target_found == ST_FALSE)
         {
             LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 79, 1, 150);  // "There are no Chaos or Death units to throw this spell on"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
     }
-
-    // ; BUG: the former does not recognize confused units as
-    // ; not belonging to the player, while the latter counts
-    // ; uninvolved, recalled, and fleeing units as valid
-    // ; targets
+    // ; BUG: the former does not recognize confused units as not belonging to the player, while the latter counts uninvolved, recalled, and fleeing units as valid targets
     if(spell_idx == spl_Animate_Dead)
     {
-        IDK = ST_FALSE;
-        Controlled_Units = 0;
-        for(itr = 0; ((itr < _combat_total_unit_count) && (IDK == ST_FALSE)); itr++)
+        legal_target_found = ST_FALSE;
+        controlled_unit_count = 0;
+        for(itr = 0; ((itr < _combat_total_unit_count) && (legal_target_found == ST_FALSE)); itr++)
         {
                 if(
                     (battle_units[itr].status == bus_Active)
@@ -1205,7 +1183,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
                     (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
                 )
                 {
-                    Controlled_Units++;
+                    controlled_unit_count++;
                 }
                 if(
                     (battle_units[itr].status > bus_Active)
@@ -1223,16 +1201,16 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
                     (_UNITS[battle_units[itr].unit_idx].wp != 9)
                 )
                 {
-                    IDK = ST_TRUE;
+                    legal_target_found = ST_TRUE;
                 }
         }
-        if(IDK == ST_FALSE)
+        if(legal_target_found == ST_FALSE)
         {
             LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 80, 1, 150);  // "There are no dead units that can be animated"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
-        else if(Controlled_Units == MAX_STACK)
+        else if(controlled_unit_count == MAX_STACK)
         {
             LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 84, 1, 150);  // "You may only control 9 units in combat at one time"
             Warn1(GUI_NearMsgString);
@@ -1240,22 +1218,18 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
         }
     }
 
-    // ; BUG: the former does not recognize confused units as
-    // ; not belonging to the player, while the latter counts
-    // ; uninvolved, recalled, and fleeing units as valid
-    // ; targets
+    // ; BUG: the former does not recognize confused units as not belonging to the player, while the latter counts uninvolved, recalled, and fleeing units as valid targets
     /*
         Check if there are any (valid) *dead* units.
             invalid: status <= bus_Active (0)  ¿ ?
             invalid: controller is not Current/Human Player
             invalid: race >= rt_Arcane  ¿ ?
-            
     */
     if(spell_idx == spl_Raise_Dead)
     {
-        IDK = ST_FALSE;
-        Controlled_Units = 0;
-        for(itr = 0; ((itr < _combat_total_unit_count) && (IDK == ST_FALSE)); itr++)
+        legal_target_found = ST_FALSE;
+        controlled_unit_count = 0;
+        for(itr = 0; ((itr < _combat_total_unit_count) && (legal_target_found == ST_FALSE)); itr++)
         {
                 if(
                     (battle_units[itr].status == bus_Active)
@@ -1263,7 +1237,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
                     (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
                 )
                 {
-                    Controlled_Units++;
+                    controlled_unit_count++;
                 }
                 if(
                     (battle_units[itr].status > bus_Active)
@@ -1277,25 +1251,23 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
                     (_UNITS[battle_units[itr].unit_idx].wp != 9)
                 )
                 {
-                    IDK = ST_TRUE;
+                    legal_target_found = ST_TRUE;
                 }
         }
-        if(IDK == ST_FALSE)
+        if(legal_target_found == ST_FALSE)
         {
             LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 81, 1, 150);  // "There are no dead units that can be raised from the dead"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
-        else if(Controlled_Units == MAX_STACK)
+        else if(controlled_unit_count == MAX_STACK)
         {
             LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 84, 1, 150);  // "You may only control 9 units in combat at one time"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
     }
-
-    // ; BUG: the exclusions fail to include Mass Healing,
-    // ; which then can't be cast with True Light active
+    /* OGBUG: the exclusions fail to include Mass Healing, which then can't be cast with True Light active */
     if(
         (spell_data_table[spell_idx].type == scc_Battlefield_Spell)
         ||
@@ -1312,25 +1284,24 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
     {
         if(_combat_attacker_player == HUMAN_PLAYER_IDX)
         {
-            IDK = 0;
+            side = 0;
         }
         else
         {
-            IDK = 1;
+            side = 1;
         }
-        if(combat_enchantments[(spell_data_table[spell_idx].Param0 + IDK)] > 0)
+        if(combat_enchantments[(spell_data_table[spell_idx].cmbt_ench_idx + side)] > 0)
         {
             LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 82, 1, 150);  // "That combat enchantment is already in effect"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
     }
-
-    // ; BUG: fails to check if the units are active or not
+    /* OGBUG: fails to check if the units are active or not */
     if(spell_data_table[spell_idx].type == scc_Unit_Enchantment_Normal_Only)
     {
-        IDK = ST_FALSE;
-        for(itr = 0; ((itr < _combat_total_unit_count) && (IDK == ST_FALSE)); itr++)
+        legal_target_found = ST_FALSE;
+        for(itr = 0; ((itr < _combat_total_unit_count) && (legal_target_found == ST_FALSE)); itr++)
         {
                 if(
                     (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
@@ -1338,10 +1309,10 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
                     (battle_units[itr].race < rt_Arcane)
                 )
                 {
-                    IDK = ST_TRUE;
+                    legal_target_found = ST_TRUE;
                 }
         }
-        if(IDK == ST_FALSE)
+        if(legal_target_found == ST_FALSE)
         {
             LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 83, 1, 150);  // "There are no normal units to throw this spell on"
             Warn1(GUI_NearMsgString);
@@ -1350,27 +1321,26 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
     }
     if(spell_data_table[spell_idx].type == scc_Mundane_Curse)
     {
-        IDK = ST_FALSE;
-        for(itr = 0; ((itr < _combat_total_unit_count) && (IDK == ST_FALSE)); itr++)
+        legal_target_found = ST_FALSE;
+        for(itr = 0; ((itr < _combat_total_unit_count) && (legal_target_found == ST_FALSE)); itr++)
         {
                 if(
-                    (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
+                    (battle_units[itr].controller_idx != HUMAN_PLAYER_IDX)
                     &&
                     (battle_units[itr].race < rt_Arcane)
                 )
                 {
-                    IDK = ST_TRUE;
+                    legal_target_found = ST_TRUE;
                 }
         }
-        if(IDK == ST_FALSE)
+        if(legal_target_found == ST_FALSE)
         {
             LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 83, 1, 150);  // "There are no normal units to throw this spell on"
             Warn1(GUI_NearMsgString);
             illegal = ST_TRUE;
         }
     }
-
-    // ; should also include Possession and Creature Binding
+    /* OGBUG: should also include Possession and Creature Binding */
     if(spell_data_table[spell_idx].type == scc_Summoning)
     {
         if(_units == MAX_UNIT_COUNT)
@@ -1381,7 +1351,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
         }
         else
         {
-            Controlled_Units = 0;
+            controlled_unit_count = 0;
             for(itr = 0; itr < _combat_total_unit_count; itr++)
             {
                 if(
@@ -1390,10 +1360,10 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
                     (battle_units[itr].status == bus_Active)
                 )
                 {
-                    Controlled_Units++;
+                    controlled_unit_count++;
                 }
             }
-            if(Controlled_Units == MAX_STACK)
+            if(controlled_unit_count == MAX_STACK)
             {
                 LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 84, 1, 150);  // "You may only control 9 units in combat at one time"
                 Warn1(GUI_NearMsgString);
@@ -1401,9 +1371,7 @@ int16_t Do_Legal_Spell_Check__WIP(int16_t spell_idx)
             }
         }
     }
-
     return illegal;
-
 }
 
 
@@ -1471,9 +1439,8 @@ int16_t Spell_Resistance_Modifier(int16_t spell_idx)
 
 
 // WZD o112p07
-/*    combat = asting cost multiplier; )
-    Cost for Magic Reserve, not Casting Skill
-
+/*
+Cost for Magic Reserve, not Casting Skill
 ¿ maximum distance is 30, because world is 60 and it wraps ?
 ¿ 30 is 300% AKA 3x (*3.0) ?
 ¿ Neutral Player is hard-coded to 10% ?
@@ -1481,17 +1448,15 @@ int16_t Spell_Resistance_Modifier(int16_t spell_idx)
 int16_t Combat_Casting_Cost_Multiplier(int16_t player_idx)
 {
     int16_t delta_y;
-    int16_t modifier;  // _SI_
-    int16_t delta_x;  // _SI_  DNE in Dasm
-    int16_t distance;  // _DI_
-
+    int16_t modifier;
+    int16_t delta_x;
+    int16_t distance;
     if(player_idx == NEUTRAL_PLAYER_IDX)
     {
-        modifier = 1;
+        return 1;
     }
     else
     {
-
         if(_FORTRESSES[player_idx].wp != _combat_wp)
         {
             distance = (WORLD_WIDTH / 2);
@@ -1499,67 +1464,49 @@ int16_t Combat_Casting_Cost_Multiplier(int16_t player_idx)
         else
         {
             delta_y = abs(_FORTRESSES[player_idx].wy - _combat_wy);
-
             delta_x = abs(_FORTRESSES[player_idx].wx - _combat_wx);
-
             if(delta_x > (WORLD_WIDTH / 2))
             {
                 delta_x = (WORLD_WIDTH - delta_x);
             }
-
-            if(delta_x > (WORLD_WIDTH / 2))
-            {
-                delta_x = (WORLD_WIDTH - delta_x);
-            }
-
             if(delta_x < delta_y)
-            {
-                distance = delta_x;
-            }
-            else
             {
                 distance = delta_y;
             }
+            else
+            {
+                distance = delta_x;
+            }
         }
-
         if(distance == 0)
         {
-            modifier = 5;
+            return 5;
         }
         else
         {
-
             if(_players[player_idx].channeler > 0)
             {
                 distance = 2;
             }
-
             modifier = 10;
-
             if(distance > 5)
             {
                 modifier += 5;
             }
-
             if(distance > 10)
             {
                 modifier += 5;
             }
-
             if(distance > 15)
             {
                 modifier += 5;
             }
-
             if(distance > 20)
             {
                 modifier += 5;
             }
-
         }
-
     }
-
     return modifier;
 }
 

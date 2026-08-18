@@ -327,7 +327,7 @@ The original uses **both** views of the same 30 bytes, and production is wired t
 | listing | index |
 | --- | --- |
 | `ovr111/AITP_Combat_Spell.asm:1443-1447` | `spell_data_table[spell_idx].Param0 + Unit_Resist` |
-| `ovr112/Do_Legal_Spell_Check__WIP.asm:542-546` | same |
+| `ovr112/Do_Legal_Spell_Check.asm:542-546` | same |
 | `ovr131/Cast_Disenchant.asm:78-82`, `183-187` | `itr + Enchant_Offset`, a loop |
 
 The first two matter most: **`s_SPELL_DATA.Param0` holds the flat slot number**, so the 0..29 numbering is baked into the spell table data, not an artifact of the reconstruction. Any named-members-only representation would break those call sites.

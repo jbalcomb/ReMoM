@@ -791,10 +791,6 @@ int16_t g_ai_combat_attacker_realm_flags;
 int16_t _combat_local_player;
 
 // WZD dseg:C438
-/*
-{F,T} cast spell enabled
-Combat_Cast_Spell_Error(1);  // "You may only cast once per turn."
-*/
 int16_t m_wizard_cast_available;
 
 // WZD dseg:C43A
@@ -6993,16 +6989,6 @@ int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx)
 
 
 // WZD s103p10
-// drake178: CMB_SpellcastError()
-/*
-; displays a warning dialog for not being able to cast
-; combat spells due to either having cast one already
-; this turn (1), or not having any available that can
-; be cast in the current situation (2)
-*/
-/*
-
-*/
 void Combat_Cast_Spell_Error(int16_t type)
 {
     Clear_Fields();
@@ -7217,26 +7203,12 @@ void Allocate_Combat_Near_Buffers(void)
 
 
 // WZD s103p14
-// drake178: CMB_SelectCaster()
-/*
-; shows the combat spell caster selection dialog and,
-; if a valid caster is chosen, proceeds directly to
-; calling and resolving the CMB_CastSpell function
-*/
-/*
-
-*/
 void Combat_Cast_Spell_With_Caster(int16_t caster_id)
 {
     char * selection_list_text[4] = { 0, 0, 0, 0 };
     int16_t selection_list_idx = 0;
-    int16_t cast_status = 0;  // _SI_
-
-    if(m_wizard_cast_available != ST_TRUE)
-    {
-        cast_status = Combat_Cast_Spell(caster_id, _combat_wx, _combat_wy, _combat_wp);
-    }
-    else
+    int16_t cast_status = 0;
+    if(m_wizard_cast_available == ST_TRUE)
     {
         selection_list_text[0] = _players[HUMAN_PLAYER_IDX].name;
         selection_list_text[1] = *_unit_type_table[_UNITS[battle_units[caster_id].unit_idx].type].name;
@@ -7244,30 +7216,38 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
         selection_list_text[3] = str_empty_string__ovr103;
         Clear_Fields();
         selection_list_idx = Selection_Box(3, &selection_list_text[0], 0, cnst_CasterSelectMsg);  // "Who Will Cast"
-        if(selection_list_idx == 0)  /* Player */
+        switch(selection_list_idx)
         {
-            cast_status = Combat_Cast_Spell((20 + _human_player_idx), _combat_wx, _combat_wy, _combat_wp);
-            if(cast_status == 2)
+            case 0:  /* Player */
             {
-                m_wizard_cast_available = ST_FALSE;
-            }
+                cast_status = Combat_Cast_Spell((CASTER_IDX_BASE + _human_player_idx), _combat_wx, _combat_wy, _combat_wp);
+                switch(cast_status)
+                {
+                    case 2:
+                    {
+                        m_wizard_cast_available = ST_FALSE;
+                    } break;
+                }
+            } break;
+            case 1:  /* Battle Unit */
+            {
+                cast_status = Combat_Cast_Spell(caster_id, _combat_wx, _combat_wy, _combat_wp);
+            } break;
+            default:  /* Cancel */
+            {
+                cast_status = 1;
+            } break;
         }
-        else if(selection_list_idx == 1)  /* Battle Unit */
-        {
-            cast_status = Combat_Cast_Spell(caster_id, _combat_wx, _combat_wy, _combat_wp);
-        }
-        else  /* Cancel */
-        {
-            cast_status = 1;
-        }
+    }
+    else
+    {
+        cast_status = Combat_Cast_Spell(caster_id, _combat_wx, _combat_wy, _combat_wp);
     }
     if(cast_status == ST_FALSE)
     {
         Combat_Cast_Spell_Error(2);  // "You are unable to throw spells at this time."
     }
-
     Combat_Compose_Background();  // ... |-> Copy_Off_To_Back();
-
 }
 
 
@@ -9958,12 +9938,9 @@ int16_t AITP_DispelMagic(int16_t player_idx)
     return picked_target;
 }
 
+
 // WZD 111p08
 // drake178: G_CMB_SpellEffect()
-
-// WZD o111p
-/*
-*/
 /*
 
 Combat_Cast_Spell()
@@ -12392,17 +12369,6 @@ void Combat_Spell_Counter_Message_Box_Draw(void)
 
 
 // WZD o113p14
-// drake178: CMB_SpellcastMessage()
-/*
-; draws the successful combat spellcast message into
-; the current draw frame on a black shaded rectangle
-; background
-*/
-/*
-
-'caster' aware
-hard-coded "summon demon"
-*/
 void Combat_Cast_Spell_Message(int16_t caster_idx, int16_t spell_idx)
 {
     char spell_name[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -12411,18 +12377,17 @@ void Combat_Cast_Spell_Message(int16_t caster_idx, int16_t spell_idx)
     int16_t y2 = 0;
     int16_t x2 = 0;
     int16_t y1 = 0;
-    int16_t x1 = 0;  // _DI_
-
+    int16_t x1 = 0;
     if(caster_idx >= CASTER_IDX_BASE)
     {
-        stu_strcpy(GUI_NearMsgString, _players[(caster_idx - 20)].name);
+        stu_strcpy(GUI_NearMsgString, _players[(caster_idx - CASTER_IDX_BASE)].name);
         stu_strcat(GUI_NearMsgString, cnst_CombatCast_1);  // " has cast "
     }
-    else
+    else  /* (caster_idx < CASTER_IDX_BASE) */
     {
         if(_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot > ST_UNDEFINED)
         {
-            // ; BUG: this may not be the hero's original owner
+            /* OGBUG: this may not be the hero's original owner, should use _UNITS[].owner_idx */
             stu_strcpy(GUI_NearMsgString, _players[battle_units[caster_idx].controller_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].name);
             stu_strcat(GUI_NearMsgString, cnst_CombatCast_1);  // " has cast "
         }
@@ -12440,7 +12405,6 @@ void Combat_Cast_Spell_Message(int16_t caster_idx, int16_t spell_idx)
             }
         }
     }
-
     if(spell_idx != spl_NONE)
     {
         _fstrcpy(spell_name, spell_data_table[spell_idx].name);
@@ -12450,40 +12414,23 @@ void Combat_Cast_Spell_Message(int16_t caster_idx, int16_t spell_idx)
     {
         stu_strcat(GUI_NearMsgString, cnst_CombatCast_4);  // "summon demon"
     }
-
     colors[0] = 182;
     colors[1] = 177;
-
     Set_Font_Colors_15(0, &colors[0]);
-
     Set_Font_Style_Shadow_Down(1, 15, 0, 0);
-
     Set_Alias_Color(182);
-
     Set_Outline_Color(2);
-
     string_width = Get_String_Width(GUI_NearMsgString);
-
     x1 = (160 - (string_width / 2) - 5);
-
     x2 = (165 + (string_width / 2));
-
     y1 = 5;
-
     y2 = 15;
-
     Gradient_Fill(x1, y1, x2, y2, 15, 8, ST_NULL, ST_NULL, ST_NULL);
-
     Line(x1, y1, x1, y2, 230);
-
     Line(x1, y1, (x2 - 1), y1, 230);
-
     Line(x2, y1, x2, y2, 237);
-
     Line((x1 + 1), y2, x2, y2, 237);
-
     Print_Centered(160, 8, GUI_NearMsgString);
-
 }
 
 

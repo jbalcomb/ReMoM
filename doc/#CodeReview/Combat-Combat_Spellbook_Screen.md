@@ -73,10 +73,11 @@ The first pass covered `Combat_Spellbook_Screen` and everything it reaches, but 
 | Combat_Spellbook_Build | Spellbook.c:827 | ovr117/Combat_Spellbook_Build.asm | faithful; R4, R5, R6 fixed; R9 (type) fixed |
 | Combat_Spellbook_Add_Spells_From_Magic_Realm | Spellbook.c:531 | ovr117/Combat_Spellbook_Add_Spells_From_Magic_Realm.asm | faithful; R7 fixed |
 | Combat_Compose_Background | Combat.c:30454 | ovr163/Combat_Compose_Background.asm | faithful; R8 fixed; phantom debug cluster noted (deferred) |
-| Combat_Cast_Spell_With_Caster | Combat.c:9061 | ovr103/zCombat_Cast_Spell_With_Caster.asm | faithful |
 | Combat_Cast_Spell (spellbook slice) | Combat.c:13250-13288 | ovr112/Combat_Cast_Spell__WIP.asm loc_8D0A8-loc_8D135 | faithful |
 
 Line numbers drift as renames/fixes land; the ASM label anchors are stable.
+
+**`Combat_Cast_Spell_With_Caster` moved out 2026-08-17.** It carried a `faithful` row here from the first pass, picked up as a callee rather than as spellbook code — its sole caller is `Combat_Screen` and it is the cast-path entry wrapper. The row and its verdict now live in [Combat-Spell_Cast.md](Combat-Spell_Cast.md). No re-review; the verdict is unchanged.
 
 ---
 
