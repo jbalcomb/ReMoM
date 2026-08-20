@@ -45,7 +45,7 @@ void Apply_Holy_Word(int16_t player_idx);
 void Apply_Death_Spell(int16_t player_idx);
 
 // WZD o131p08
-void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx, int16_t Anims, int16_t caster_idx);
+void Combat_Spell_Animation(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx, int16_t Anims, int16_t caster_idx);
 
 // WZD o131p09
 void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy);

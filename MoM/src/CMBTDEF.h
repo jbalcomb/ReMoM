@@ -39,7 +39,18 @@ enum e_DAMAGE_TYPES
     dt_Doom    = 2      /* "doom" ~== "chaos" irreversible, destruction, disintegration, ... */
 };
 
-
+enum e_CALL_CHAOS_EFFECTS
+{
+    cce_Nothing = 0,
+    cce_Heal_5 = 1,
+    cce_Chaos_Channel = 2,
+    cce_Warp_Creature = 3,
+    cce_Fire_Bolt_15 = 4,
+    cce_Warp_Lightning = 5,
+    cce_Doom_Bolt = 6,
+    cce_Disintegrate = 7,
+    cce_MAX
+};
 
 
 

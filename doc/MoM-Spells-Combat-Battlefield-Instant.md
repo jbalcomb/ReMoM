@@ -15,12 +15,12 @@ Tactical_Combat__WIP()
             Combat_Cast_Apply_Spell_Effect(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
                 case scc_Battlefield_Spell:     // 10
                 case scc_Combat_Counter_Magic:  // 21
-                    Combat_Spell_Animation__WIP()
+                    Combat_Spell_Animation()
 
 #### 'Cast Flame Strike'
 
 Combat_Cast_Apply_Spell_Effect()
-Combat_Spell_Animation__WIP()
+Combat_Spell_Animation()
 
 Spell_Animation_Load_Graphics()
     case spl_Flame_Strike:

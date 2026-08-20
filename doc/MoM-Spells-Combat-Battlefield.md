@@ -16,7 +16,7 @@ NOTE: 'Counter Magic' uses count, rather than {F,T}
 Seems mostly just 'Combat Enchantment', but ...
 ...includes 'Counter Magic'
 
-all call Combat_Spell_Animation__WIP()
+all call Combat_Spell_Animation()
 excludes 
     spl_Flame_Strike
     spl_Holy_Word

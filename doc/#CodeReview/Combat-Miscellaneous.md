@@ -39,10 +39,6 @@ AITP_DispelMagic()
 AITP_HolyWord()
 
 WIZARDS.EXE  ovr112
-// WZD o112p06
-Spell_Resistance_Modifier()
-// WZD o112p07
-Combat_Casting_Cost_Multiplier()
 // WZD o112p08
 AITP_EarthToMud()
 // WZD o112p09
@@ -59,10 +55,6 @@ WIZARDS.EXE  ovr113
 Combat_Screen_Assign_Mouse_Images()
 // WZD o113p02
 Combat_Spell_Target_Screen_Draw()
-// WZD o113p13
-Combat_Spell_Dispel_Attempt()
-// WZD o113p14
-Combat_Cast_Spell_Message()
 
 WIZARDS.EXE  ovr114
 // WZD o114p02
@@ -87,8 +79,6 @@ Total_Ranged_Attack_Strength()
 AI_RestrictToCity__WIP()
 // WZD o124p06
 Get_Player_Mode()
-// WZD o124p09
-Combat_Load_Spell_Sound_Effect()
 // WZD o124p18
 Retreat_Check()
 // WZD o124p21
@@ -113,20 +103,13 @@ o153p22_empty_function()
 WIZARDS.EXE  ovr154
 // WZD ovr154p12
 Combat_Grid_Screen_Coordinates()
-// WZD ovr154p13
-Apply_Earth_To_Mud()
-
-WIZARDS.EXE  ovr163
-// WZD ovr163p03
-Wall_Rise_Load()
-
 ---
 
 # What this list is
 
-Every combat-overlay function that has **not** been taken to done-done **and has no home**: 49 of the 237 `// WZD` overlay slots in the combat sources.
+Every combat-overlay function that has **not** been taken to done-done **and has no home**: 39 of the 237 `// WZD` overlay slots in the combat sources.
 
-Miscellaneous means homeless. Of the 96 slots that are not done, 47 have a home — some finished review adjudicated the code that calls them, so they are that review's backlog, not a loose end. Those 47 are in the attribution table below, not in this list. The 49 above are what nothing claims.
+Miscellaneous means homeless. Of the 70 slots that are not done, 31 have a home — some finished review adjudicated the code that calls them, so they are that review's backlog, not a loose end. Those 31 are in the attribution table below, not in this list. The 39 above are what nothing claims.
 
 The list is generated, not hand-kept. Regenerate it with:
 
@@ -151,24 +134,22 @@ That yields five states. **`CLAIMED` and `NOT DONE` qualify for this list; attri
 
 | state | count | meaning |
 | --- | --- | --- |
-| `DONE` | 139 | a DONE-DONE doc gives it a coverage-table row, or a tracker box is checked |
-| `WALKED` | 2 | a DONE-DONE doc walks it under its own heading and declares it faithful, but never added a table row — a bookkeeping hole in the doc, not an unreviewed function |
-| `CLAIMED` | 18 | named in a DONE-DONE doc's header block and never adjudicated anywhere |
-| `NOT DONE` | 78 | no doc renders a verdict on it |
+| `DONE` | 167 | a DONE-DONE doc gives it a coverage-table row, or a tracker box is checked |
+| `WALKED` | 0 | a DONE-DONE doc walks it under its own heading and declares it faithful, but never added a table row — a bookkeeping hole in the doc, not an unreviewed function |
+| `CLAIMED` | 3 | named in a DONE-DONE doc's header block and never adjudicated anywhere |
+| `NOT DONE` | 67 | no doc renders a verdict on it |
 | `NO NAME` | 0 | an overlay slot nothing in the sources names |
 
-## The two `WALKED` functions
+## The `WALKED` bucket is empty
 
-Both need a coverage-table row added to [Combat-Combat_Screen.md](Combat-Combat_Screen.md); neither needs reviewing again.
-
-- **`Load_Combat_Terrain_Pictures`** — [Combat.c:22883](../../MoM/src/Combat.c#L22883). Walked at [Combat-Combat_Screen.md:593](Combat-Combat_Screen.md#L593), opening "Faithful", with the `cts_Water` bare-zero test, the five terrain arms, all three load loops and the 30-byte filename buffer each checked against the listing.
-- **`Map_Tile_EMS_Page_As_Sandbox`** — [Combat.c:20385](../../MoM/src/Combat.c#L20385). Walked at [Combat-Combat_Screen.md:604](Combat-Combat_Screen.md#L604) alongside `Claim_EMS_Page_For_Figure_Set` ("Both faithful"), which *does* have a row.
+`Load_Combat_Terrain_Pictures` and `Map_Tile_EMS_Page_As_Sandbox` were the two entries here; both now carry coverage-table rows in [Combat-Combat_Screen.md](Combat-Combat_Screen.md), so nothing is walked-but-unrecorded any more.
 
 ## The `CLAIMED` functions
 
-Sixteen of the eighteen are listed in the header block of [Combat-Combat_Screen.md](Combat-Combat_Screen.md), which is consistent with that doc's own words — [line 718](Combat-Combat_Screen.md#L718) names thirteen input-loop handlers as "not covered, and the `faithful` verdicts do not extend to them". The header block records the call tree `Combat_Screen` reaches, not the set the review adjudicated; the two were never meant to match. `Combat_Screen_Draw` is the clearest case: its listing is named at [Combat-Combat_Screen.md:68](Combat-Combat_Screen.md#L68) and it is explicitly disclaimed at line 718.
+Three remain, all named in a DONE-DONE doc’s header block and adjudicated nowhere:
 
-The remaining two are `Raze_City_Prompt`, claimed by [Combat-End_Of_Combat.md](Combat-End_Of_Combat.md), and `Combat_Grid_Screen_Coordinates`.
+- **`Calc_Battlefield_Bonuses`** and **`Combat_Grid_Screen_Coordinates`**, both claimed by [Combat-Combat_Screen.md](Combat-Combat_Screen.md). That doc’s header block records the call tree `Combat_Screen` reaches, not the set it adjudicated — [line 718](Combat-Combat_Screen.md#L718) says as much of the input-loop handlers — so a header-block name is an intent, not a verdict.
+- **`Raze_City_Prompt`**, claimed by [Combat-End_Of_Combat.md](Combat-End_Of_Combat.md).
 
 ## Which review each one belongs to
 
@@ -181,21 +162,20 @@ python3 tools/review_coverage.py --attribution-md     this table
 
 | review it belongs to | n | functions |
 | --- | --- | --- |
-| [Combat-Combat_Screen.md](Combat-Combat_Screen.md) | 17 | `Switch_Active_Battle_Unit`, `Auto_Cast_Spell_And_Do_Combat_Turn`, `Combat_Next_Turn`, `Assign_Mouse_Images`, `Add_Combat_Enchantment_Fields`, `Turn_Off_Auto_Combat`, `Combat_Information_Window`, `Combat_Info_Effects_Count`, `Combat_Node_Type`, `Next_Battle_Unit`, `Combat_Cast_Spell_Error`, `Move_Confused`, `Calc_Battlefield_Bonuses`, `Combat_Structure`, `Undeployable_Battle_Units_On_Water`, `Combat_Cache_Read`, `Combat_Cache_Write` |
-| [Combat-Spell_Cast.md](Combat-Spell_Cast.md) | 8 | `Update_Combat_Enchantments_Icon_And_Help`, `Combat_Cast_Apply_Spell_Effect`, `Combat_Compose_Spellbook_Background`, `Do_Legal_Spell_Check`, `Combat_Casting_Cost_Multiplier`, `Combat_Spell_Target_Screen`, `AI_SelectCmbtSpell`, `AI_SetCombatRealms` |
+| [Combat-Combat_Screen.md](Combat-Combat_Screen.md) | 8 | `Combat_Next_Turn`, `Assign_Mouse_Images`, `Tactical_Combat_Draw_Buttons`, `Combat_Information_Window`, `Battle_Unit_Melee_Attack_Icon`, `Battle_Unit_Ranged_Attack_Icon`, `Auto_Do_Combat_Turn`, `Combat_Cache_Read` |
 | [Combat-Battle_Unit_Process_Attack.md](Combat-Battle_Unit_Process_Attack.md) | 3 | `Get_Effective_Hits`, `Eliminated_Opponent`, `Battle_Unit_Is_Summoned_Creature` |
 | [Combat-Combat_Figure_Compose.md](Combat-Combat_Figure_Compose.md) | 3 | `Draw_Active_Unit_Stats_And_Icons`, `Draw_Active_Unit_Damage_Bar`, `Next_Battle_Unit_Nearest_Available` |
-| [Combat-Combat_Screen_Map_Draw.md](Combat-Combat_Screen_Map_Draw.md) | 3 | `Combat_Grid_Screen_Coordinates`, `Screen_To_Combat_Grid_Cell_X_And_Offset`, `Screen_To_Combat_Grid_Cell_Y_And_Offset` |
+| [Combat-Combat_Spellbook_Screen.md](Combat-Combat_Spellbook_Screen.md) | 3 | `Combat_Spell_Target_Screen`, `AI_SelectCmbtSpell`, `AI_SetCombatRealms` |
 | [Combat-End_Of_Combat.md](Combat-End_Of_Combat.md) | 3 | `Player_City_At_Square`, `Unit_Try_To_Move`, `Raze_City_Prompt` |
 | [Combat-Assign_Combat_Grids.md](Combat-Assign_Combat_Grids.md) | 2 | `Do_Auto_Unit_Turn`, `Auto_Move_Unit` |
 | [Combat-Combat.md](Combat-Combat.md) | 2 | `Combat_City_Capture`, `o153p24_empty_function` |
+| [Combat-Combat_Screen_Map_Draw.md](Combat-Combat_Screen_Map_Draw.md) | 2 | `Screen_To_Combat_Grid_Cell_X_And_Offset`, `Screen_To_Combat_Grid_Cell_Y_And_Offset` |
 | [Combat-Strategic_Combat.md](Combat-Strategic_Combat.md) | 2 | `Get_Effective_Ranged_Strength`, `Get_Effective_Melee_Strength` |
-| [Combat-Battle_Unit_Attack.md](Combat-Battle_Unit_Attack.md) | 1 | `Combat_Screen_Draw` |
+| [Combat-Combat_Summon.md](Combat-Combat_Summon.md) | 1 | `Battle_Unit_Pict_Open` |
 | [Combat-Init_Prep_Etc.md](Combat-Init_Prep_Etc.md) | 1 | `Apply_Mana_Leak` |
 | [Combat-Move_Battle_Unit.md](Combat-Move_Battle_Unit.md) | 1 | `Reload_Battle_Unit_Move_Sound` |
-| [Combat-Combat_Summon.md](Combat-Combat_Summon.md) | 1 | `Battle_Unit_Pict_Open` |
 
-**49 have no covered caller at all** — their callers are themselves unreviewed, so no existing session claims them: `Target_Is_Visible`, `UU_IDK_CMB_s7DE08`, `UU_IDK_Main_Screen_Draw`, `Ranged_Mouse_Image`, `Tactical_Combat_Draw_Buttons`, `Draw_Spell_Information_Window`, `Combat_Information_Window_Draw`, `Combat_Info_Effects`, `Combat_Info_Effects_Base`, `Battle_Unit_Melee_Attack_Icon`, `Battle_Unit_Ranged_Attack_Icon`, `Draw_Combat_Unit_Display`, `AITP_DarknessLight`, `AITP_Healing`, `AITP_WarpWood`, `AITP_WarpCreature`, `UU15_AITP_Disintegrate`, `AITP_DispelMagic`, `AITP_HolyWord`, `Spell_Resistance_Modifier`, `AITP_EarthToMud`, `AITP_Disrupt`, `AITP_CracksCall`, `UU_AITP_WordofRecall`, `AITP_RecallHero`, `Combat_Screen_Assign_Mouse_Images`, `Combat_Spell_Target_Screen_Draw`, `Combat_Spell_Dispel_Attempt`, `Combat_Cast_Spell_Message`, `AI_BU_ProcessAction`, `Sort_Battle_Units`, `Auto_Do_Combat_Turn`, `AI_BU_AssignAction`, `Choose_Target_And_Action`, `Target_Unit_Value`, `Total_Ranged_Attack_Strength`, `AI_RestrictToCity__WIP`, `Get_Player_Mode`, `Combat_Load_Spell_Sound_Effect`, `Retreat_Check`, `Raze_City_Prompt_Draw`, `AI_EvaluateCmbtSpell`, `Effective_Battle_Unit_Strength`, `AI_UnitThreatRealms`, `AI_CombatSpellList`, `NX_IDK_CombatInit_Tactical`, `o153p22_empty_function`, `Apply_Earth_To_Mud`, `Wall_Rise_Load`.
+**39 have no covered caller at all** — their callers are themselves unreviewed, so no existing session claims them: `Target_Is_Visible`, `UU_IDK_CMB_s7DE08`, `UU_IDK_Main_Screen_Draw`, `Ranged_Mouse_Image`, `Combat_Information_Window_Draw`, `Combat_Info_Effects`, `Combat_Info_Effects_Base`, `AITP_DarknessLight`, `AITP_Healing`, `AITP_WarpWood`, `AITP_WarpCreature`, `UU15_AITP_Disintegrate`, `AITP_DispelMagic`, `AITP_HolyWord`, `AITP_EarthToMud`, `AITP_Disrupt`, `AITP_CracksCall`, `UU_AITP_WordofRecall`, `AITP_RecallHero`, `Combat_Screen_Assign_Mouse_Images`, `Combat_Spell_Target_Screen_Draw`, `AI_BU_ProcessAction`, `Sort_Battle_Units`, `AI_BU_AssignAction`, `Choose_Target_And_Action`, `Calc_Battlefield_Bonuses`, `Target_Unit_Value`, `Total_Ranged_Attack_Strength`, `AI_RestrictToCity__WIP`, `Get_Player_Mode`, `Retreat_Check`, `Raze_City_Prompt_Draw`, `AI_EvaluateCmbtSpell`, `Effective_Battle_Unit_Strength`, `AI_UnitThreatRealms`, `AI_CombatSpellList`, `NX_IDK_CombatInit_Tactical`, `o153p22_empty_function`, `Combat_Grid_Screen_Coordinates`.
 
 ## Cross-doc referrals
 

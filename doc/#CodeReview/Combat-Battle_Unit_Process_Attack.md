@@ -1,7 +1,7 @@
 Combat-Battle_Unit_Process_Attack.md
 
 BU_ProcessAttack__WIP()                ==>  Battle_Unit_Process_Attack()
-BU_ApplyDamage__WIP__SEGRAX()          ==>  BU_ApplyDamage()
+Battle_Unit_Commit_Damage()          ==>  BU_ApplyDamage()
 BU_ApplyDamage()                       ==>  Battle_Unit_Commit_Damage()
 Apply_Battle_Unit_Damage_From_Spell()  ==>  Compute_Battle_Unit_Damage_From_Spell()
 CMB_AttackRoll__SEGRAX()               ==>  Combat_Roll_Damage_Dealt()    ~ Combat_Attack_Roll()
@@ -21,7 +21,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr124\Battle_Unit_Is_With
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr124\Combat_Grid_Cell_Has_City_Wall.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr110\Battle_Unit_Heal.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr113\Apply_Battle_Unit_Damage_From_Spell.asm
-C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr113\BU_ApplyDamage__WIP__SEGRAX.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr113\Battle_Unit_Commit_Damage.asm
 
 OON XREF:  Battle_Unit_Attack() |-> Battle_Unit_Attack_Target() |-> BU_ProcessAttack__WIP()
 
@@ -72,7 +72,7 @@ Anchors are function **start** lines. `Combat.c` has shifted repeatedly through 
 | `Combat_Roll_Damage_Blocked` | [Combat.c:15826](../../MoM/src/Combat.c#L15826) | `ovr122/CMB_DefenseRoll__SEGRAX.asm` | faithful |
 | `Battle_Unit_Heal` | [Combat.c:10667](../../MoM/src/Combat.c#L10667) | `ovr110/Battle_Unit_Heal.asm` | faithful (R18, R19 fixed) |
 | `Compute_Battle_Unit_Damage_From_Spell` | [Combat.c:13455](../../MoM/src/Combat.c#L13455) | `ovr113/Apply_Battle_Unit_Damage_From_Spell.asm` | faithful (R21-R24 fixed) |
-| `Battle_Unit_Commit_Damage` | [Combat.c:13620](../../MoM/src/Combat.c#L13620) | `ovr113/BU_ApplyDamage__WIP__SEGRAX.asm` | faithful (R20 fixed) |
+| `Battle_Unit_Commit_Damage` | [Combat.c:13620](../../MoM/src/Combat.c#L13620) | `ovr113/Battle_Unit_Commit_Damage.asm` | faithful (R20 fixed) |
 
 **Deferred to the BU-init pass:** `Battle_Unit_Regular_Stats` and `Battle_Unit_Special_Stats`, both `ovr116`, both reached from `Battle_Unit_Heal`. `Battle_Unit_Regular_Stats`'s handling of `movement_points` is what makes the save/restore at [10733-10736](../../MoM/src/Combat.c#L10733-L10736) necessary, so it is worth taking early in that pass.
 

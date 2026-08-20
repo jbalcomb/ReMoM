@@ -8758,7 +8758,7 @@ int16_t Strategic_Combat(int16_t troops[], int16_t troop_count, int16_t wx, int1
 // WZD o110p03
 void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t healing_amount, int16_t overheal_flag)
 {
-    int16_t damages[3] = { 0, 0, 0 };
+    int16_t damages[NUM_DAMAGE_TYPES] = { 0, 0, 0 };
     int16_t movement_points_saved = 0;
     int16_t damage_amount_healable = 0;
     int16_t healing_balance = 0;
@@ -8774,7 +8774,7 @@ void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t healing_amount, int16_t o
     {
         healing_amount = damage_amount_healable;
     }
-    damages[0] = battle_units[battle_unit_idx].damage[0];
+    damages[0] = battle_units[battle_unit_idx].damage[dt_Normal];
     damages[1] = battle_units[battle_unit_idx].damage[1];
     damages[2] = battle_units[battle_unit_idx].damage[2];
     damages[0] -= healing_amount;
@@ -8784,7 +8784,7 @@ void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t healing_amount, int16_t o
         damages[0] = 0;
         SETMIN(damages[1], 0);
     }
-    for(itr_damages = 0; itr_damages < 3; itr_damages++)
+    for(itr_damages = 0; itr_damages < NUM_DAMAGE_TYPES; itr_damages++)
     {
         battle_units[battle_unit_idx].damage[itr_damages] = damages[itr_damages];
     }
@@ -10017,7 +10017,7 @@ void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16
         case scc_Unit_Enchantment:
         case scc_Unit_Enchantment_Normal_Only:
         {
-            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+            Combat_Spell_Animation(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             if(spell_idx == spl_Haste)
             {
                 battle_units[target_idx].combat_effects |= bue_Haste;
@@ -10057,7 +10057,7 @@ void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16
         } break;
         case scc_Direct_Damage_Fixed:
         {
-            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+            Combat_Spell_Animation(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             Compute_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], 0);
             Battle_Unit_Commit_Damage(target_idx, &damage_types[0]);
             Set_Page_Off();
@@ -10074,7 +10074,7 @@ void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16
                 (spell_idx != spl_Animate_Dead)
             )
             {
-                Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+                Combat_Spell_Animation(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             }
             /* OGBUG: this was moved to scc_City_Enchantment_Positive */
             if(spell_idx == spl_Wall_Of_Stone)
@@ -10108,7 +10108,7 @@ void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16
             }
             if(spell_idx == spl_Healing)
             {
-                Battle_Unit_Heal(target_idx, 5, 0);
+                Battle_Unit_Heal(target_idx, 5, ST_FALSE);
             }
             if(spell_idx == spl_Creature_Binding)
             {
@@ -10190,7 +10190,7 @@ void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16
         case scc_Battlefield_Spell:
         case scc_Combat_Counter_Magic:
         {
-            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+            Combat_Spell_Animation(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             // Combat Battlefield Enchantment  (NOT Combat Battlefield Instant)
             if(
                 (spell_idx != spl_Flame_Strike)
@@ -10261,7 +10261,7 @@ void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16
                 )
             )
             {
-                Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+                Combat_Spell_Animation(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
                 if(spell_idx == spl_Disintegrate)
                 {
                     if((Combat_Effective_Resistance(battle_units[target_idx], sbr_Chaos) + resistance_modifier) < 10)
@@ -10312,7 +10312,7 @@ void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16
         case scc_Resistable_Spell:  // 13  Black Sleep, Confusion, Creature Binding, Vertigo, Weakness
         case scc_Mundane_Curse:     // 16  Possession, Shatter
         {
-            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+            Combat_Spell_Animation(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             resist_fails = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
             if(resist_fails <= 0)
             {
@@ -10406,7 +10406,7 @@ void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16
             }
             else
             {
-                Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+                Combat_Spell_Animation(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
                 battle_units[target_idx].combat_effects |= spell_data_table[spell_idx].Param0;  // e.g., bue_Black_Sleep
                 if(spell_idx == spl_Web)
                 {
@@ -10441,7 +10441,7 @@ void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16
         } break;
         case scc_Dispels:
         {
-            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+            Combat_Spell_Animation(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             _page_flip_effect = pfe_Dissolve;
             Set_Page_Off();
             Combat_Screen_Draw();
@@ -10486,7 +10486,7 @@ void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16
         } break;
         case scc_Disenchants:  // 19
         {
-            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+            Combat_Spell_Animation(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             _page_flip_effect = pfe_Dissolve;
             Set_Page_Off();
             Combat_Screen_Draw();
@@ -10536,7 +10536,7 @@ void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16
         } break;
         case scc_Direct_Damage_Variable:
         {
-            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+            Combat_Spell_Animation(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             if(spell_idx == spl_Life_Drain)
             {
                 Apply_Life_Drain(target_idx, &damage_types[0], caster_idx, tscc);
@@ -12566,6 +12566,26 @@ int16_t Combat_Resistance_Check(struct s_BATTLE_UNIT battle_unit, int16_t resist
 
 
 // WZD o122p04
+/**
+ * @brief Calculates a battle unit's effective resistance against a magic realm.
+ *
+ * Starts with the unit's base resistance and adds bonuses from hero status,
+ * magic immunity, realm-specific enchantments, and resistance enchantments.
+ *
+ * @param battle_unit Battle unit whose resistance and enchantments are evaluated.
+ * @param magic_realm Magic realm of the spell or attack being resisted.
+ * @return The effective resistance value used by combat resistance checks.
+ *
+ * @details Charmed heroes receive a +30 bonus. Magic immunity provides +30
+ * against Nature, Chaos, and Death realms. Righteousness provides +30 against
+ * Chaos and Death. Elemental Armor (+10) takes precedence over Resist Elements
+ * (+3) against Chaos and Nature. Bless (+3) applies against Chaos and Death,
+ * while Resist Magic (+5) applies against Nature, Chaos, and Death.
+ *
+ * @note This function does not modify the supplied battle unit or global game
+ * state. The returned value is combined with any spell-specific modifier by
+ * Combat_Resistance_Check().
+ */
 int16_t Combat_Effective_Resistance(struct s_BATTLE_UNIT battle_unit, int16_t magic_realm)
 {
     uint32_t enchantments = 0;
@@ -16431,34 +16451,12 @@ SAMB_ptr Reload_Melee_Sound(int16_t battle_unit_idx, /* HACK */ uint32_t * sound
 }
 
 // WZD o124p09
-// drake178: GAME_LoadSpellSound()
-/*
-; if sound effects are enabled, plays the silence
-; sound, marks the World_Data@ allocation, appends the
-; sound of the specified spell into it, assigns it to
-; a pointer, then undoes the allocation (the data
-; remains in memory); if sound effects are disabled,
-; the pointer is set to -1 instead
-*/
-/*
-
-XREF:
-    j_GAME_LoadSpellSound__WIP()
-        CMB_BattlefieldSpell()
-        CMB_PlaySpellAnim()
-        WIZ_CallLightning()
-        Cast_Call_Chaos__WIP()
-
-*/
 void Combat_Load_Spell_Sound_Effect(int16_t spell_idx)
 {
-
     if(magic_set.sound_effects == ST_TRUE)
     {
         Play_Sound(sound_silent_seg, sound_silent_seg_size);
-
         Mark_Block(World_Data);
-
         if(spell_data_table[spell_idx].Sound > ST_UNDEFINED)
         {
             SND_SpellCast = LBX_Reload_Next(soundfx_lbx_file__ovr124__2of2, spell_data_table[spell_idx].Sound, World_Data);
@@ -16469,15 +16467,12 @@ void Combat_Load_Spell_Sound_Effect(int16_t spell_idx)
             SND_SpellCast = LBX_Reload_Next(newsound_lbx_file__ovr124__2of2, abs(spell_data_table[spell_idx].Sound), World_Data);
             SND_SpellCast_size = lbxload_entry_length;
         }
-
         Release_Block(World_Data);
-
     }
     else
     {
         SND_SpellCast = (SAMB_ptr)ST_UNDEFINED;
     }
-
 }
 
 
@@ -23000,78 +22995,47 @@ void Combat_Compose_Background(void)
 
 
 // WZD ovr163p03
-// drake178: CMB_LoadWallRiseGFX()
-/*
-; marks the sandbox, reallocates the battle figure
-; space, then loads the animations for creating walls
-; during battle before undoing the mark
-*/
-/*
-
-*/
 void Wall_Rise_Load(int16_t wall_type)
 {
-    int16_t itr = 0;  // _SI_
-
-    // ; 0 branches wall entity creation (unknown IMG array)
+    int16_t itr = 0;
     _wall_rise_type = wall_type;
-
     Mark_Block(_screen_seg);
-
-// ; reallocate the battle figure predraw space and
-// ; reassign all of their pointers
-// ; WARNING: redoing the pointers may cause trouble
-
+    // ; reallocate the battle figure predraw space and reassign all of their pointers
+    // ; WARNING: redoing the pointers may cause trouble
     for(itr = 0; itr < 18; itr++)
     {
-
         battle_unit_picts_seg[itr] = Allocate_Next_Block(_screen_seg, 55);
-
     }
-
-    if(wall_type == 0)
+    switch(wall_type)
     {
-
-        // load a set of 12 animations based on what type of
-        // stone walls are being used in the battle
-        // WARNING: these animations are empty in the file (but
-        // are present in CMBTWALL.LBX, an otherwise unused data
-        // file, although the animation sequence is in reverse
-        // and the total is too large for the sandbox)
-
-        for(itr = 0; itr < 12; itr++)
+        case 0:
         {
-
-            _wallrise_seg[itr] = LBX_Reload_Next(wallrise_lbx_file__ovr163, ((_combat_wall_sprite_bank * 12) + itr), _screen_seg);
-
+            // load a set of 12 animations based on what type of walls are being used in the battle
+            // WARNING: these animations are empty in the file (but are present in CMBTWALL.LBX, an otherwise unused data file, although the animation sequence is in reverse and the total is too large for the sandbox)
+            for(itr = 0; itr < 12; itr++)
+            {
+                _wallrise_seg[itr] = LBX_Reload_Next(wallrise_lbx_file__ovr163, ((_combat_wall_sprite_bank * 12) + itr), _screen_seg);
+            }
+            break;
         }
-
-    }
-    else if(wall_type == 1)
-    {
-
-        for(itr = 0; itr < 14; itr++)
+        case 1:
         {
-
-            _wallrise_seg[itr] = LBX_Reload_Next(wallrise_lbx_file__ovr163, ((3 * 12) + itr), _screen_seg);
-
+            for(itr = 0; itr < 14; itr++)
+            {
+                _wallrise_seg[itr] = LBX_Reload_Next(wallrise_lbx_file__ovr163, ((3 * 12) + itr), _screen_seg);
+            }
+            break;
         }
-
-    }
-    else if(wall_type == 2)
-    {
-
-        for(itr = 0; itr < 14; itr++)
+        case 2:
         {
-
-            _wallrise_seg[itr] = LBX_Reload_Next(wallrise_lbx_file__ovr163, (((3 * 12) + 14) + itr), _screen_seg);
-
+            for(itr = 0; itr < 14; itr++)
+            {
+                _wallrise_seg[itr] = LBX_Reload_Next(wallrise_lbx_file__ovr163, (((3 * 12) + 14) + itr), _screen_seg);
+            }
+            break;
         }
-
     }
-
     Release_Block(_screen_seg);
-
 }
 
 

@@ -1899,7 +1899,7 @@ void Strategic_Combat_Allocate(void);
 int16_t Strategic_Combat(int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[]);
 
 // WZD o110p03
-void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t Healing, int16_t TempHits);
+void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t healing_amount, int16_t overheal_flag);
 
 // WZD o110p04
 int16_t Get_Effective_Hits(int16_t hits, int16_t defense);

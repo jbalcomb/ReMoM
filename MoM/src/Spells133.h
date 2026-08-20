@@ -45,10 +45,10 @@ int16_t Combat_Spell_Dispel_Attempt(int16_t dispel_strength, int16_t spell_cast,
 void Animate_Cracks_Call(int16_t cgx, int16_t cgy, int16_t caster_idx);
 
 // WZD o133p09
-void TILE_BoltFromAbove__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t caster_idx);
+void Combat_Spell_Animation_Bolt(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t caster_idx);
 
 // WZD o133p10
-void Combat_Spell_Animation_Generic__WIP(int16_t cgx, int16_t cgy, int16_t anim_size, int16_t caster_idx, int16_t spell_idx);
+void Combat_Spell_Animation_Default(int16_t cgx, int16_t cgy, int16_t anim_size, int16_t caster_idx, int16_t spell_idx);
 
 // WZD o133p11
 void Battle_Unit_Teleport(int16_t battle_unit_idx, int16_t cgx, int16_t cgy);
@@ -78,10 +78,10 @@ void Vortex_Combat_Round(void);
 void Vortex_Move_And_Attack(int Vortex_Index, int Next_X, int Next_Y);
 
 // WZD o133p20
-void Cast_Call_Chaos__WIP(int16_t caster_idx, int16_t anims_on);
+void Cast_Call_Chaos(int16_t caster_idx, int16_t anims_on);
 
 // WZD o133p21
-void Apply_Call_Chaos__WIP(int16_t player_idx, int16_t effects[]);
+void Apply_Call_Chaos(int16_t player_idx, int16_t effects[]);
 
 
 

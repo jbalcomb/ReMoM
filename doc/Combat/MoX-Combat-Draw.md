@@ -133,7 +133,7 @@ Combat_Compose_Background()
         Combat_Cast_Dispel+EA2                 
         CMB_RaiseDead+8                      
         CMB_AnimateDead+D                    
-        TILE_BoltFromAbove+1ED               
+        Combat_Spell_Animation_Bolt+1ED               
         CMB_CallChaos:loc_B85C1              
         CMB_CallChaos+460                    
         CMB_SpellSlider__STUB+2FB            

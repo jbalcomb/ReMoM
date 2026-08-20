@@ -117,17 +117,17 @@ Down r WIZ_Wrack+27B                          push    [spell_animation_seg]     
 Down r WIZ_Wrack:loc_B6A44                    push    [spell_animation_seg]           ; pict_seg     
 Down r TILE_CracksCall+21                     mov     ax, [spell_animation_seg]                      
 Down r TILE_CracksCall:loc_B71A9              push    [spell_animation_seg]           ; pict_seg     
-Down r TILE_BoltFromAbove+138                 push    [spell_animation_seg]           ; pict_seg     
-Down r TILE_BoltFromAbove+155                 push    [spell_animation_seg]           ; pict_seg     
-Down r TILE_BoltFromAbove:loc_B733B           push    [spell_animation_seg]           ; pict_seg     
-Down r TILE_BoltFromAbove+196                 push    [spell_animation_seg]           ; picture      
-Down r TILE_BoltFromAbove:loc_B7372           push    [spell_animation_seg]           ; picture      
-Down r TILE_CombatSpellAnim:loc_B7416         push    [spell_animation_seg]           ; pict_seg     
-Down r TILE_CombatSpellAnim+5B                push    [spell_animation_seg]           ; picture      
-Down r TILE_CombatSpellAnim+80                push    [spell_animation_seg]           ; picture      
+Down r Combat_Spell_Animation_Bolt+138                 push    [spell_animation_seg]           ; pict_seg     
+Down r Combat_Spell_Animation_Bolt+155                 push    [spell_animation_seg]           ; pict_seg     
+Down r Combat_Spell_Animation_Bolt:loc_B733B           push    [spell_animation_seg]           ; pict_seg     
+Down r Combat_Spell_Animation_Bolt+196                 push    [spell_animation_seg]           ; picture      
+Down r Combat_Spell_Animation_Bolt:loc_B7372           push    [spell_animation_seg]           ; picture      
+Down r Combat_Spell_Animation_Default:loc_B7416         push    [spell_animation_seg]           ; pict_seg     
+Down r Combat_Spell_Animation_Default+5B                push    [spell_animation_seg]           ; picture      
+Down r Combat_Spell_Animation_Default+80                push    [spell_animation_seg]           ; picture      
 Down r Battle_Unit_Summon_Animation+7F             mov     ax, [spell_animation_seg]                      
-Down r TILE_LightningBolt+8F                  push    [spell_animation_seg]           ; pict_seg     
-Down r TILE_LightningBolt+9A                  push    [spell_animation_seg]           ; picture      
+Down r Animate_Lightning_Bolt+8F                  push    [spell_animation_seg]           ; pict_seg     
+Down r Animate_Lightning_Bolt+9A                  push    [spell_animation_seg]           ; picture      
 Down w Spell_Animation_Load_Graphics__WIP+4D  mov     [spell_animation_seg], ax                      
 Down w Spell_Animation_Load_Graphics__WIP+F0  mov     [spell_animation_seg], ax                      
 Down w Spell_Animation_Load_Graphics__WIP+231 mov     [spell_animation_seg], ax                      

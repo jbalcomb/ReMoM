@@ -43,10 +43,10 @@ AI_BU_ProcessAction__WIP()
 
 
 
-## Combat_Spell_Animation__WIP() |-> Combat_Battlefield_Instant()
+## Combat_Spell_Animation() |-> Combat_Battlefield_Instant()
 
 
-## Combat_Spell_Animation__WIP()
+## Combat_Spell_Animation()
 
 Combat_Cast_Apply_Spell_Effect()
         case scc_Battlefield_Spell:     // 10

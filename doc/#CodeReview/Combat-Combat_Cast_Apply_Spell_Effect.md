@@ -56,7 +56,7 @@ Magic_Vortex_Create       54
 Apply_Earth_To_Mud was homeless in Combat-Miscellaneous.md; this gives it an owner.
 Deliberately excluded: the six AITP_* pickers that share ovr111 with the dispatcher — overlay membership isn't the boundary.
 They select targets and belong with AITP_Combat_Spell in Combat-Spell_Cast_AI_Target.md.
-Also excluded: the animation layer, the damage/resistance helpers (already in Combat-Battle_Unit_Process_Attack.md), and Cast_Raise_Dead/Cast_Animate_Dead (in Combat-Combat_Summon.md).
+Also excluded: the animation layer (now Combat-Combat_Spell_Animation.md), the damage/resistance helpers (already in Combat-Battle_Unit_Process_Attack.md), and Cast_Raise_Dead/Cast_Animate_Dead (in Combat-Combat_Summon.md).
 """
 
 ---
@@ -95,7 +95,7 @@ The seven companions all have the same profile — they are called from inside `
 ### What does *not* belong here
 
 - **The `AITP_*` target pickers**, even though six of them share `ovr111` with the dispatcher. They select a target; they do not apply an effect. `AITP_Combat_Spell` is already homed in [Combat-Spell_Cast_AI_Target.md](Combat-Spell_Cast_AI_Target.md), and the rest belong with it. Overlay membership is not the boundary here — `AITP_Combat_Spell` has its own `switch(spell_data_table[spell_idx].type)` at [Combat.c:9243](../../MoM/src/Combat.c#L9243) with case labels that read almost identically to this function's, which makes the two easy to confuse.
-- **The animation functions** — `Combat_Spell_Animation__WIP`, `Wall_Rise`, `Battle_Unit_Summon_Animation`. Every switch arm calls one, but they are the combat spell-animation layer that [Combat-Spell_Cast.md](Combat-Spell_Cast.md) records as having no session of its own.
+- **The animation functions** — `Combat_Spell_Animation`, `Wall_Rise`, `Battle_Unit_Summon_Animation`. Every switch arm calls one, but they are the combat spell-animation layer, which now has its own session: [Combat-Combat_Spell_Animation.md](Combat-Combat_Spell_Animation.md) covers `Combat_Spell_Animation` and `Wall_Rise`, and [Combat-Combat_Summon.md](Combat-Combat_Summon.md) covers `Battle_Unit_Summon_Animation`.
 - **The damage and resistance helpers** — `Compute_Battle_Unit_Damage_From_Spell`, `Battle_Unit_Commit_Damage`, `Combat_Resistance_Check`, `Combat_Effective_Resistance`, `Battle_Unit_Heal`. All are already covered by [Combat-Battle_Unit_Process_Attack.md](Combat-Battle_Unit_Process_Attack.md).
 - **`Cast_Raise_Dead` and `Cast_Animate_Dead`**, reached from the `scc_Special_Spell` arm but already covered by [Combat-Combat_Summon.md](Combat-Combat_Summon.md).
 - Nothing else. `Spell_Resistance_Modifier` was excluded here in an earlier draft on the claim that it had been walked in [Combat-Combat_Spell_Dispel.md](Combat-Combat_Spell_Dispel.md). **That claim was false** - it appears nowhere in that doc, and the coverage tool was correctly reporting the function as homeless the whole time. It is in scope here and walked below.
@@ -144,7 +144,7 @@ IDA names two of those slots `figure_count__did_create_unit` and `resist_fails__
 
 **Every arm has its `break`.** All twelve populated arms end in `jmp @@Done`; `jt_cscc_03_06_07_08_09_11_17_20` at asm:1797 is an empty label falling straight into `@@Done` at asm:1798, and `jt_cscc_00` reaches the end by falling through it. Given how often a missing `break` has turned up elsewhere in this codebase, that is worth stating explicitly.
 
-**The `scc_Direct_Damage_Fixed` arm.** asm:199-226 matches [Combat.c:10061-10067](../../MoM/src/Combat.c#L10061-L10067) call for call: `Combat_Spell_Animation__WIP` with six words, `Apply_Battle_Unit_Damage_From_Spell` with four (`add sp, 8`) which is production's `Compute_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], 0)`, `BU_ApplyDamage__WIP__SEGRAX` with two (`pop cx` twice) which is `Battle_Unit_Commit_Damage(target_idx, &damage_types[0])`, then the three screen calls.
+**The `scc_Direct_Damage_Fixed` arm.** asm:199-226 matches [Combat.c:10061-10067](../../MoM/src/Combat.c#L10061-L10067) call for call: `Combat_Spell_Animation` with six words, `Apply_Battle_Unit_Damage_From_Spell` with four (`add sp, 8`) which is production's `Compute_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], 0)`, `Battle_Unit_Commit_Damage` with two (`pop cx` twice) which is `Battle_Unit_Commit_Damage(target_idx, &damage_types[0])`, then the three screen calls.
 
 **The `damage_types` clear.** asm:172-184 is a bottom-tested loop over three words, matching [Combat.c:10005-10008](../../MoM/src/Combat.c#L10005-L10008).
 

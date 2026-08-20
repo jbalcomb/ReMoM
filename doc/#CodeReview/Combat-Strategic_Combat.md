@@ -35,7 +35,7 @@ Eight findings were raised and all eight are applied, along with five structural
 | --- | --- |
 | `Strategic_Combat__STUB` | `Strategic_Combat` |
 | `BU_Apply_Battlefield_Effects__WIP` | `Battle_Unit_Special_Stats` (COMBINIT.c; recorded in `Combat-Init_Prep_Etc.md`) |
-| `BU_ApplyDamage__WIP__SEGRAX` | `Battle_Unit_Commit_Damage` |
+| `Battle_Unit_Commit_Damage` | `Battle_Unit_Commit_Damage` |
 | `Allocate_Reduced_Map__1` | `Allocate_Reduced_Map` |
 | `CMB_IDK_4PR` | `_niu_battlefield_effect` |
 

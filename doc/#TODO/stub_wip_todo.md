@@ -113,7 +113,7 @@
 - [x] Battle_Unit_Action — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Action.md; renamed from Battle_Unit_Action__WIP, Combat.c:3259; 3 findings raised and fixed across 2 subfunctions, incl. Battle_Unit_Has_Flight dropping _UNITS[].enchantments so overland Flight never registered; Battle_Unit_Is_Within_City compared and faithful; builds clean 2026-08-04)
 - [x] Battle_Unit_Attack — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Attack.md; renamed from Battle_Unit_Attack__WIP, Combat.c:17247; 9 findings raised and fixed across the function and 3 subfunctions, incl. Wall Crusher never writing the destroyed wall and 9 of 13 projectile types rendering as a lightning bolt with no sound; Melee_Animation, Set_Gibs, Clear_Gibs and Reload_Melee_Sound compared and faithful; builds clean 2026-08-04)
 - [x] Battle_Unit_Special_Stats — done-done 2026-08-05 (walkthrough doc doc/#CodeReview/Combat-Init_Prepare_Etc.md; renamed from BU_Apply_Battlefield_Effects__WIP and moved to COMBINIT.c:1189; was ~92% unwritten, all thirty effect blocks written and checked against 1137 asm lines; 2 findings raised and fixed (Shatter store order had repaired an OGBUG; an else-if where the original has two ifs); node-aura realm pairing fixed via e_COMBAT_NODE_TYPE)
-- [x] BU_ApplyDamage  AKA BU_ApplyDamage__WIP__SEGRAX
+- [x] BU_ApplyDamage  AKA Battle_Unit_Commit_Damage
 - [x] Battle_Unit_Attack_Target — done-done 2026-08-04 (walkthrough doc doc/#CodeReview/Combat-Battle_Unit_Attack_Target.md; renamed from BU_AttackTarget__WIP, Combat.c:16013; 4 findings fixed incl. a missing ~120-line ranged-Haste block and an out-of-bounds write into the caller's array; Check_Attack_Ranged and Apply_Fear_Attack compared and faithful; builds clean 2026-08-04)
 - [x] BU_CheckFlight__WIP — done-done 2026-08-03 (walkthrough doc doc/#CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Is_Airborne, Combat.c:5938; 1:1 with ovr098/BU_CheckFlight__WIP.asm)
 - [ ] Battle_Unit_Curse_Effects
@@ -184,6 +184,8 @@
 - [x] Turn_Off_Auto_Combat — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:5120, faithful against ovr098/Turn_Off_Auto_Combat.asm (12 asm lines)
 - [x] Undeployable_Battle_Units_On_Water — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:16278, faithful against ovr124/Undeployable_Battle_Units_On_Water.asm (135 asm lines)
 - [x] Update_Combat_Enchantments_Icon_And_Help — done-done 2026-08-15 (doc/#CodeReview/Combat-Combat_Screen.md); Combat.c:3547, faithful against ovr098/Update_Combat_Enchantments_Icon_And_Help.asm (108 asm lines)
+- [x] Combat_Load_Spell_Sound_Effect — done-done 2026-08-20 (doc/#CodeReview/Combat-Combat_Spell_Animation.md); Combat.c:16454, faithful against ovr124/Combat_Load_Spell_Sound_Effect.asm (64 asm lines); moved here from Combat-Miscellaneous.md, which had it homeless
+- [x] Wall_Rise_Load — done-done 2026-08-20 (doc/#CodeReview/Combat-Combat_Spell_Animation.md); Combat.c:22998, faithful against ovr163/Wall_Rise_Load.asm (109 asm lines); 1 finding fixed — the wall_type dispatch is a switch
 ## CONQUEST
 - [x] Conquest_Animation_Draw
 - [x] Conquest_Animation_Draw_Setup_Zap_Scene
@@ -377,10 +379,14 @@
 - [x] Conquest_Spells
 
 ## Spells131
-- [ ] Combat_Spell_Animation__WIP
+- [x] Combat_Battlefield_Instant — done-done 2026-08-20 (doc/#CodeReview/Combat-Combat_Spell_Animation.md); Spells131.c:702, faithful against ovr131/Combat_Battlefield_Instant.asm (396 asm lines); 2 findings fixed — Cast_Call_Chaos was handed player_idx instead of caster_idx, and the anims_on arms were swapped
+- [x] Combat_Spell_Animation — done-done 2026-08-20 (doc/#CodeReview/Combat-Combat_Spell_Animation.md); Spells131.c:994, faithful against ovr131/Combat_Spell_Animation__WIP.asm (248 asm lines)
 
 ## Spells133
-- [ ] Apply_Call_Chaos__WIP
+- [x] Animate_Cracks_Call — done-done 2026-08-20 (doc/#CodeReview/Combat-Combat_Spell_Animation.md); Spells133.c:514, faithful against ovr133/Animate_Cracks_Call.asm (47 asm lines); D3 frame loop hoisted and scaled by CELL_EFFECT_ANIM_HOLD
+- [x] Animate_Lightning_Bolt — done-done 2026-08-20 (doc/#CodeReview/Combat-Combat_Spell_Animation.md); Spells133.c:972, faithful against ovr133/Animate_Lightning_Bolt.asm (118 asm lines)
+- [x] Wall_Rise — done-done 2026-08-20 (doc/#CodeReview/Combat-Combat_Spell_Animation.md); Spells133.c:319, faithful against ovr133/Wall_Rise.asm (101 asm lines); 2 findings fixed — Wall of Fire assigned its frame count instead of reducing it, and the wall_type dispatch is a switch
+- [x] Apply_Call_Chaos — done-done 2026-08-20 (doc/#CodeReview/Combat-Combat_Spell_Animation.md); renamed from Apply_Call_Chaos__WIP, Spells133.c:1607, faithful against ovr133/Apply_Call_Chaos__WIP.asm (180 asm lines); 2 findings fixed — all four damage effects computed damage and never committed it
 - [x] Apply_Cracks_Call — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Spells131.c:643, faithful against ovr131/Apply_Cracks_Call.asm (109 asm lines)
 - [x] Apply_Earth_To_Mud — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Combat.c:22576, faithful against ovr154/Apply_Earth_To_Mud.asm (93 asm lines); moved here from Combat-Miscellaneous.md, which had it homeless
 - [x] Apply_Life_Drain — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); renamed from BU_LifeDrain__WIP, Spells133.c:420, faithful against ovr133/BU_LifeDrain__WIP.asm (95 asm lines); body reconstructed from the stub, 4th parameter restored, declaration order fixed
@@ -390,10 +396,10 @@
 - [x] Combat_Cast_Dispel — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Spells131.c:274, faithful against ovr131/Cast_Dispel_Magic.asm (1,499 asm lines); 10 findings fixed including a missing vortex pass
 - [x] Magic_Vortex_Create — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Spells133.c:1327, faithful against ovr133/Magic_Vortex_Create.asm (54 asm lines)
 - [x] Spell_Resistance_Modifier — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); CMBMAGIC.c:1405, faithful against ovr112/Spell_Resistance_Modifier.asm (94 asm lines)
-- [ ] Cast_Call_Chaos__WIP
+- [x] Cast_Call_Chaos — done-done 2026-08-20 (doc/#CodeReview/Combat-Combat_Spell_Animation.md); renamed from Cast_Call_Chaos__WIP, Spells133.c:1452, faithful against ovr133/Cast_Call_Chaos__WIP.asm (472 asm lines); 3 findings fixed — wrong alias source, missing no-animation early return, and an apply that was unreachable
 - [x] Combat_Spell_Counter_Message — done-done 2026-08-17 (doc/#CodeReview/Combat-Combat_Spell_Dispel.md); Spells133.c:532, faithful against ovr133/Combat_Spell_Dispel_Attempt.asm (375 asm lines); R1 declaration order fixed
-- [ ] Combat_Spell_Animation_Generic__WIP
-- [ ] TILE_BoltFromAbove__WIP
+- [x] Combat_Spell_Animation_Default — done-done 2026-08-20 (doc/#CodeReview/Combat-Combat_Spell_Animation.md); renamed from Combat_Spell_Animation_Generic__WIP, Spells133.c:671, faithful against ovr133/Combat_Spell_Animation_Generic__WIP.asm (78 asm lines); 1 finding fixed — the draw position was assigned rather than adjusted, so every generic animation drew at a fixed corner
+- [x] Combat_Spell_Animation_Bolt — done-done 2026-08-20 (doc/#CodeReview/Combat-Combat_Spell_Animation.md); renamed from TILE_BoltFromAbove__WIP, Spells133.c:543, faithful against ovr133/TILE_BoltFromAbove.asm (206 asm lines); D1 case order, D2 added default arm
 - [x] Combat_Spell_Dispel_Attempt — renamed to Combat_Spell_Dispel_Attempt (Spells133.c:653); implemented, compiles clean 2026-07-07
 
 - [x] Combat_Spell_Counter_Message_Box_Draw — done-done 2026-08-17 (doc/#CodeReview/Combat-Combat_Spell_Dispel.md); Combat.c:12364, faithful against ovr113/Combat_Spell_Dispel_Attempt.asm (142 asm lines)

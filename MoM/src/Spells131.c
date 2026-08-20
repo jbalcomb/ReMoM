@@ -681,17 +681,8 @@ void Apply_Cracks_Call(int16_t cgx, int16_t cgy)
 
 
 // WZD o131p04
-// drake178: CMB_BattlefieldSpell()
 /*
-; processes the effects and animations for battlefield
-; spells that affect all of a player's units at the
-; same time
-; BUG: if spell anims are disabled, the effects nearly
-;  always won't be applied either
-; BUG: GUI_CallChaos has multiple other issues too
-*/
-/*
-OON XREF:  Combat_Spell_Animation__WIP()
+OON XREF:  Combat_Cast_Apply_Spell_Effect() |-> j_Combat_Spell_Animation__WIP() |-> Combat_Spell_Animation() |-> Combat_Battlefield_Instant()
 
 Boundaries?
     each does all _combat_total_unit_count?
@@ -704,30 +695,69 @@ calls out for Call Chaos, Death Spell, Holy Word, Flame Strike
 handles in-line Mass Healing
 
 XREF:
-    Combat_Spell_Animation__WIP()
+    Combat_Spell_Animation()
     NX_j_Combat_Battlefield_Instant()
 
 */
 void Combat_Battlefield_Instant(int16_t player_idx, int16_t spell_idx, int16_t anims_on, int16_t caster_idx)
 {
-    int16_t Anim_Delay_Array[MAX_BATTLE_UNIT_SLOT_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Anim_Size = 0;
+    int16_t unit_anim_delay[MAX_BATTLE_UNIT_SLOT_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t anim_size = 0;  /* HACK  anim_size is uninitialized */
     int16_t screen_y = 0;
     int16_t screen_x = 0;
     int16_t frame_count = 0;
     int16_t itr2 = 0;
-    int16_t itr1 = 0;  // _SI_
-
+    int16_t itr1 = 0;
     if(spell_idx == spl_Call_Chaos)
     {
-
-        Cast_Call_Chaos__WIP(player_idx, anims_on);
-
+        Cast_Call_Chaos(caster_idx, anims_on);
     }
     else
     {
-
-        if(anims_on != ST_FALSE)
+        if(anims_on == ST_FALSE)
+        {
+            if(spell_idx == spl_Death_Spell)
+            {
+                if(((frame_count + 4) / 2) == itr2)  /* OGBUG: bogus test */
+                {
+                    Apply_Death_Spell(player_idx);
+                }
+            }
+            if(spell_idx == spl_Holy_Word)
+            {
+                if(((frame_count + 4) / 2) == itr2)  /* OGBUG: bogus test */
+                {
+                    Apply_Holy_Word(player_idx);
+                }
+            }
+            if(spell_idx == spl_Flame_Strike)
+            {
+                if(((frame_count + 4) / 2) == itr2)  /* OGBUG: bogus test */
+                {
+                    Apply_Flame_Strike(player_idx);
+                }
+            }
+            if(spell_idx == spl_Mass_Healing)
+            {
+                if(((frame_count + 4) / 2) == itr2)  /* OGBUG: bogus test */
+                {
+                    if(spell_idx == spl_Mass_Healing)
+                    {
+                        if(
+                            (battle_units[itr1].controller_idx == player_idx)
+                            &&
+                            (battle_units[itr1].status == bus_Active)
+                            &&
+                            (battle_units[itr1].race != rt_Death)
+                        )
+                        {
+                            Battle_Unit_Heal(itr1, 5, 0);
+                        }
+                    }
+                }
+            }
+        }
+        else  /* (anims_on != ST_FALSE) */
         {
             Mark_Block(_screen_seg);
             Spell_Animation_Load_Graphics(spell_idx);
@@ -737,9 +767,7 @@ void Combat_Battlefield_Instant(int16_t player_idx, int16_t spell_idx, int16_t a
             {
                 Play_Sound(SND_SpellCast, SND_SpellCast_size);
             }
-            // ; randomize the animation delay array (0-4), or set it
-            // ; to -1 for units that belong to the wrong player to
-            // ; be affected by the spell
+            // ; randomize the animation delay array (0-4), or set it to -1 for units that belong to the wrong player to be affected by the spell
             for(itr1 = 0; itr1 < _combat_total_unit_count; itr1++)
             {
                 if(
@@ -760,11 +788,11 @@ void Combat_Battlefield_Instant(int16_t player_idx, int16_t spell_idx, int16_t a
                     (battle_units[itr1].status == bus_Active)
                 )
                 {
-                    Anim_Delay_Array[itr1] = (Random(5) - 1);
+                    unit_anim_delay[itr1] = (Random(5) - 1);
                 }
                 else
                 {
-                    Anim_Delay_Array[itr1] = ST_UNDEFINED;
+                    unit_anim_delay[itr1] = ST_UNDEFINED;
                 }
             }
             for(itr2 = 0; (frame_count + 4) > itr2; itr2++)
@@ -802,10 +830,11 @@ void Combat_Battlefield_Instant(int16_t player_idx, int16_t spell_idx, int16_t a
                 Combat_Cast_Spell_Message(caster_idx, spell_idx);
                 for(itr1 = 0; itr1 < _combat_total_unit_count; itr1++)
                 {
-                    if(Anim_Delay_Array[itr1] > ST_UNDEFINED)
+                    if(unit_anim_delay[itr1] > ST_UNDEFINED)
                     {
                         Combat_Grid_Screen_Coordinates(battle_units[itr1].cgx, battle_units[itr1].cgy, 4, 4, &screen_x, &screen_y);
-                        if(Anim_Size == 0)  /* Flame Strike */
+                        /* OGBUG: anim_size is never set */
+                        if(anim_size == 0)  /* Flame Strike */
                         {
                             screen_x -= 14;
                             screen_y -= 21;
@@ -816,12 +845,12 @@ void Combat_Battlefield_Instant(int16_t player_idx, int16_t spell_idx, int16_t a
                             screen_y -= 30;
                         }
                         if(
-                            ((itr2 - Anim_Delay_Array[itr1]) < frame_count)
+                            ((itr2 - unit_anim_delay[itr1]) < frame_count)
                             &&
-                            ((Anim_Delay_Array[itr1] - itr2) >= 0)
+                            ((unit_anim_delay[itr1] - itr2) >= 0)
                         )
                         {
-                            Set_Animation_Frame(spell_animation_seg, (itr2 - Anim_Delay_Array[itr1]));
+                            Set_Animation_Frame(spell_animation_seg, (itr2 - unit_anim_delay[itr1]));
                             Clipped_Draw(screen_x, screen_y, spell_animation_seg);
                         }
                     }
@@ -834,65 +863,7 @@ void Combat_Battlefield_Instant(int16_t player_idx, int16_t spell_idx, int16_t a
             Combat_Screen_Draw();
             PageFlip_FX();
         }
-        else  /* (anims_on == ST_FALSE) */
-        {
-
-            STU_DEBUG_BREAK();
-
-            // ; process Death Spell, Holy Word, Flame Strike, or Mass
-            // ; Healing without any animations
-            // ; BUG: the application frame condition block is
-            // ; repeated here, making this code branch fail nearly
-            // ; every time
-            if(spell_idx == spl_Death_Spell)
-            {
-                // ; BUG: this block should not be here
-                if(((frame_count + 4) / 2) == itr2)
-                {
-                    Apply_Death_Spell(player_idx);
-                }
-            }
-            if(spell_idx == spl_Holy_Word)
-            {
-                // ; BUG: this block should not be here
-                if(((frame_count + 4) / 2) == itr2)
-                {
-                    Apply_Holy_Word(player_idx);
-                }
-            }
-            if(spell_idx == spl_Flame_Strike)
-            {
-                // ; BUG: this block should not be here
-                if(((frame_count + 4) / 2) == itr2)
-                {
-                    Apply_Flame_Strike(player_idx);
-                }
-            }
-            if(spell_idx == spl_Mass_Healing)
-            {
-                // ; BUG: this block should not be here
-                if(((frame_count + 4) / 2) == itr2)
-                {
-                    if(spell_idx == spl_Mass_Healing)
-                    {
-                        if(
-                            (battle_units[itr1].controller_idx == player_idx)
-                            &&
-                            (battle_units[itr1].status == bus_Active)
-                            &&
-                            (battle_units[itr1].race != rt_Death)
-                        )
-                        {
-                            Battle_Unit_Heal(itr1, 5, 0);
-                        }
-                    }
-                }
-            }
-
-        }
-
     }
-
 }
 
 
@@ -936,9 +907,9 @@ void Apply_Holy_Word(int16_t player_idx)
     int16_t figure_count = 0;
     int16_t battle_unit_idx = 0;
     int16_t itr = 0;
-    damage_types[0] = 0;
-    damage_types[1] = 0;
-    damage_types[2] = 0;
+    damage_types[dt_Normal] = 0;
+    damage_types[dt_Drain] = 0;
+    damage_types[dt_Doom] = 0;
     for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
     {
         enchantments = ( _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].enchantments | battle_units[battle_unit_idx].item_enchantments);
@@ -1020,31 +991,13 @@ void Apply_Death_Spell(int16_t player_idx)
 
 
 // WZD o131p08
-// drake178: CMB_PlaySpellAnim()
-/*
-; plays the animation for and, in the case of spells
-; affecting all units of a player, also processes the
-; effects of the selected spell
-; inherits BUGs from GUI_CallChaos, and will nearly
-; always fail fail to apply "all units" spell effects
-; if combat spell anims (deprecated) are disabled
-*/
-/*
-    OON XREF:  Combat_Cast_Apply_Spell_Effect()
-
-XREF:
-    j_CMB_PlaySpellAnim__WIP(*)
-        Combat_Cast_Apply_Spell_Effect()
-            Combat_Spell_Animation__WIP()
-*/
-void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx, int16_t anims_on, int16_t caster_idx)
+void Combat_Spell_Animation(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t player_idx, int16_t anims_on, int16_t caster_idx)
 {
     int16_t blue = 0;
     int16_t green = 0;
     int16_t red = 0;
-    int16_t Anim_Size = 0;
-    int16_t itr = 0;  // _DI_
-
+    int16_t anim_size = 0;
+    int16_t itr = 0;
     if(
         (spell_data_table[spell_idx].type == scc_Battlefield_Spell)
         ||
@@ -1057,7 +1010,6 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
         (spell_idx == spl_Animate_Dead)
     )
     {
-
         if(
             (spell_idx == spl_Flame_Strike)
             ||
@@ -1070,54 +1022,46 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
             (spell_idx == spl_Mass_Healing)
         )
         {
-
             Combat_Battlefield_Instant(player_idx, spell_idx, anims_on, caster_idx);
-
         }
         else
         {
-
-            // shade the screen to 40% of the realm's color and
-            // then back to the original, while displaying the
-            // combat spell cast message (but no animation)
-
+            // shade the screen to 40% of the realm's color and then back to the original, while displaying the combat spell cast message (but no animation)
             if(anims_on != ST_FALSE)
             {
-
                 switch(spell_data_table[spell_idx].magic_realm)
                 {
-
-                    case sbr_Nature:   // 0
+                    case sbr_Nature:
                     {
                         red = 0;
                         green = 63;
                         blue = 0;
                     } break;
-                    case sbr_Sorcery:  // 1
+                    case sbr_Sorcery:
                     {
                         red = 0;
                         green = 0;
                         blue = 63;
                     } break;
-                    case sbr_Chaos:    // 2
+                    case sbr_Chaos:
                     {
                         red = 63;
                         green = 0;
                         blue = 0;
                     } break;
-                    case sbr_Life:     // 3
+                    case sbr_Life:
                     {
                         red = 63;
                         green = 63;
                         blue = 63;
                     } break;
-                    case sbr_Death:    // 4
+                    case sbr_Death:
                     {
                         red = 0;
                         green = 0;
                         blue = 0;
                     } break;
-                    case sbr_Arcane:   // 5
+                    case sbr_Arcane:
                     {
                         red = 63;
                         green = 63;
@@ -1129,37 +1073,22 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
                     } break;
 
                 }
-
                 Set_Page_Off();
-
                 Combat_Screen_Draw();
-
                 Combat_Cast_Spell_Message(caster_idx, spell_idx);
-
                 PageFlip_FX();
-
                 for(itr = 0; itr < 20; itr++)
                 {
-
                     Set_Palette_Changes(0, 255);
-
                     Tint_Palette((itr * 2), red, green, blue);
-
                 }
-
                 for(itr = 20; itr > -1; itr--)
                 {
-
                     Set_Palette_Changes(0, 255);
-
                     Tint_Palette((itr * 2), red, green, blue);
-
                 }
-
             }
-
         }
-
     }
     else
     {
@@ -1173,12 +1102,9 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
         // Lightning Bolt
         // Cracks Call
         // ..., Magic Vortex, ...
-
         if(anims_on != ST_FALSE)
         {
-
             Combat_Load_Spell_Sound_Effect(spell_idx);
-
             if(
                 (spell_idx == spl_Fireball)
                 ||
@@ -1189,17 +1115,12 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
                 (spell_idx == spl_Doom_Bolt)
             )
             {
-
-                /* SPELLY */  TILE_BoltFromAbove__WIP(cgx, cgy, spell_idx, caster_idx);
-
+                Combat_Spell_Animation_Bolt(cgx, cgy, spell_idx, caster_idx);
             }
             else if(spell_idx == spl_Lightning_Bolt)
             {
-
                 Spell_Animation_Load_Graphics(spl_Call_Lightning);
-
                 Animate_Lightning_Bolt(cgx, cgy, caster_idx);
-
             }
             else
             {
@@ -1208,18 +1129,12 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
                 // (spell_idx != spl_Ice_Bolt)
                 // (spell_idx != spl_Doom_Bolt)
                 // (spell_idx != spl_Lightning_Bolt)
-
                 Mark_Block(_screen_seg);
-
-                Anim_Size = Spell_Animation_Load_Graphics(spell_idx);
-
+                anim_size = Spell_Animation_Load_Graphics(spell_idx);
                 Release_Block(_screen_seg);
-
                 if(spell_idx == spl_Cracks_Call)
                 {
-
                     Animate_Cracks_Call(cgx, cgy, caster_idx);
-
                 }
                 else
                 {
@@ -1229,19 +1144,12 @@ void Combat_Spell_Animation__WIP(int16_t cgx, int16_t cgy, int16_t spell_idx, in
                     // (spell_idx != spl_Doom_Bolt)
                     // (spell_idx != spl_Lightning_Bolt)
                     // (spell_idx != spl_Cracks_Call)
-
-                    Combat_Spell_Animation_Generic__WIP(cgx, cgy, Anim_Size, caster_idx, spell_idx);
-
+                    Combat_Spell_Animation_Default(cgx, cgy, anim_size, caster_idx, spell_idx);
                 }
-
             }
-
-            Release_Block(_screen_seg);
-
+            Release_Block(_screen_seg);  /* OGBUG: no matching Mark_Block() */
         }
-
     }
-
 }
 
 

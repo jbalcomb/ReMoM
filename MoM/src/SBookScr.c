@@ -961,14 +961,10 @@ void Cast_Spell_City_Enchantment_Animation_Load_Music(int16_t spell_idx, int16_t
 int16_t Spell_Animation_Load_Graphics(int16_t spell_idx)
 {
     int16_t sw_spell_idx = 0;
-    int16_t return_value = 0;  // _DI_
-
+    int16_t return_value = 0;
     Allocate_Next_Block(_screen_seg, 1010);  // 1,010 PR  16,160 B
-
     return_value = ST_FALSE;
-
     sw_spell_idx = spell_idx;
-
     switch(sw_spell_idx)
     {
         case spl_Earth_To_Mud:
@@ -1162,10 +1158,8 @@ int16_t Spell_Animation_Load_Graphics(int16_t spell_idx)
         {
             spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 48, _screen_seg);
         } break;
-
         default:
         {
-
             if(
                 !(
                     (spell_data_table[spell_idx].type == scc_Summoning)
@@ -1195,13 +1189,9 @@ int16_t Spell_Animation_Load_Graphics(int16_t spell_idx)
                 spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, spell_data_table[spell_idx].magic_realm, _screen_seg);
                 return_value = ST_TRUE;
             }
-
         } break;
-        
     }
-
     return return_value;
-
 }
 
 // WZD o134p11
