@@ -896,14 +896,14 @@ void Battle_Unit_Summon_Animation(int16_t battle_unit_idx, int16_t cgx, int16_t 
     cmbt_cell_effect_cgx = battle_units[battle_unit_idx].cgx;
     cmbt_cell_effect_cgy = battle_units[battle_unit_idx].cgy;
     Combat_Grid_Screen_Coordinates(cgx, cgy, 4, 4, &screen_x, &screen_y);
-    uu_screen_x = screen_x - 14;
-    uu_screen_y = screen_y - 25;
+    uu_screen_x = (screen_x - 14);
+    uu_screen_y = (screen_y - 25);
     screen_x -= 13;
     screen_y -= 27;
     Mark_Block(_screen_seg);
     Spell_Animation_Load_Graphics(spl_Fire_Elemental);
     cmbt_cell_effect_seg = spell_animation_seg;
-    cmbt_cell_effect_active = 1;
+    cmbt_cell_effect_active = ST_TRUE;
     Mark_Block(World_Data);
     if(magic_set.sound_effects == ST_TRUE)
     {
@@ -933,7 +933,7 @@ void Battle_Unit_Summon_Animation(int16_t battle_unit_idx, int16_t cgx, int16_t 
     }
     for(anim_ctr = 0; anim_ctr < 16; anim_ctr++)
     {
-        cmbt_cell_effect_frame = anim_ctr;
+        cmbt_cell_effect_frame = (anim_ctr * CELL_EFFECT_ANIM_HOLD);  /* HACK  to slow down the cycle */
         Mark_Time();
         if(anim_ctr == 14)
         {
@@ -962,7 +962,7 @@ void Battle_Unit_Summon_Animation(int16_t battle_unit_idx, int16_t cgx, int16_t 
     Set_Page_Off();
     Combat_Screen_Draw();
     PageFlip_FX();
-    cmbt_cell_effect_active = 0;
+    cmbt_cell_effect_active = ST_FALSE;
     Release_Block(_screen_seg);
     Release_Block(World_Data);
 }

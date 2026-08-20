@@ -1161,17 +1161,15 @@ int16_t Spell_Animation_Load_Graphics(int16_t spell_idx)
         default:
         {
             if(
-                !(
+                (
                     (spell_data_table[spell_idx].type == scc_Summoning)
                     &&
-                    (spell_idx == spl_Floating_Island)
+                    (spell_idx != spl_Floating_Island)
                 )
-                &&
-                (
-                    (spell_idx == spl_Raise_Dead)
-                    ||
-                    (spell_idx == spl_Animate_Dead)
-                )
+                ||
+                (spell_idx == spl_Raise_Dead)
+                ||
+                (spell_idx == spl_Animate_Dead)
             )
             {
                 // CMBTFX.LBX, 022  "SUMMON"    "Summoning"
