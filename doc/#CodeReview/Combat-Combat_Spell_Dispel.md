@@ -1,7 +1,7 @@
 Combat-Combat_Spell_Dispel.md
 
 SEEALSO:  Combat-Spell_Cast.md
-SEEALSO:  Combat-Cast_Spell_On_Battle_Unit.md
+SEEALSO:  Combat-Combat_Cast_Apply_Spell_Effect.md
 
 WIZ_DispelAttempt__STUB()   ==>  Combat_Spell_Dispel_Attempt()
 CMB_CounterMessage__STUB()  ==>  Combat_Spell_Counter_Message()

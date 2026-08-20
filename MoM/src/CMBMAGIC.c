@@ -138,9 +138,9 @@ int16_t * _niu_battlefield_effect;
 // WZD dseg:C8A6
 int16_t _combat_spell_target_type;
 // WZD dseg:C8A8
-int16_t * CMB_NearDispel_UCs;
+int16_t * dispel_combat_effect_bits;
 // WZD dseg:C8AA
-int16_t * CMB_NearDispel_UEs;
+int16_t * dispel_enchantment_bits;
 // WZD dseg:C8AC
 uint16_t _combat_caster_idx;
 
@@ -184,7 +184,7 @@ void Combat_Spellbook_Screen_Draw(void)
  * This is the main combat-spell dispatch path. It determines which spell is being
  * cast, optionally opens the combat spellbook for a human caster, applies legality
  * checks, handles Counter Magic / combat dispel interception, selects a target, and
- * then applies the spell effect through Cast_Spell_On_Battle_Unit().
+ * then applies the spell effect through Combat_Cast_Apply_Spell_Effect().
  *
  * The function also handles several special cases:
  * - Battle-unit spell-like abilities such as Doom Bolt, Fireball, Web, Healing, and
@@ -735,7 +735,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
             // So, ... What's in back-page here?
             // Maybe, maybe not, we called the Combat_Spellbook_Mana_Adder_Screen()? 
             // Maybe, maybe not, we called the Combat_Spell_Target_Screen()?
-            Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, counter_magic_idx__target_cgx, target_cgy, available_mana_pool, ST_TRUE, ST_NULL, ST_NULL);
+            Combat_Cast_Apply_Spell_Effect(spell_idx, Target, caster_idx, counter_magic_idx__target_cgx, target_cgy, available_mana_pool, ST_TRUE, ST_NULL, ST_NULL);
             cast_status = 2;
             if(caster_idx >= CASTER_IDX_BASE)
             {
@@ -1376,11 +1376,6 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
 
 
 // WZD o112p06
-// drake178: SPL_GetResistMod()
-/*
-; returns the resistance modifier for the specified
-; spell, assigned through code rather than tables
-*/
 /*
 
 Are these all Combat-Only spells?
@@ -1390,8 +1385,7 @@ Barring that, why is this not in that function that updates the static game data
 XREF:
     j_Spell_Resistance_Modifier()
         AITP_Combat_Spell()
-        AITP_Combat_Spell()
-        Cast_Spell_On_Battle_Unit()
+        Combat_Cast_Apply_Spell_Effect()
 
 RESISTANCE TO SPELLS
 ...resistance to magic and poison (as symbolized by the number of crosses they have on their unit statistics window)
@@ -1404,14 +1398,8 @@ Each reduction has the effect of negating one enemy resistance (i.e., cross) or,
 */
 int16_t Spell_Resistance_Modifier(int16_t spell_idx)
 {
-    int16_t resist_mod = 0;  // _DX_
-
+    int16_t resist_mod = 0;
     resist_mod = 0;
-
-    // ¿ WTF ?  ; this is drake creating the database from the
-    // ¿ WTF ?  ; wrong file... it is actually -1 ($FFFF) in v1.31
-    // ¿ WTF ?  if(spell_idx == spl_Warp_Creature) { resist_mod = -15; }
-
     if(spell_idx == spl_Shatter)           { resist_mod =  0; }
     if(spell_idx == spl_Warp_Creature)     { resist_mod = -1; }
     if(spell_idx == spl_Weakness)          { resist_mod = -2; }
@@ -1432,9 +1420,7 @@ int16_t Spell_Resistance_Modifier(int16_t spell_idx)
     if(spell_idx == spl_Stasis)            { resist_mod = -5; }
     if(spell_idx == spl_Creature_Binding)  { resist_mod = -2; }
     if(spell_idx == spl_Great_Unsummoning) { resist_mod = -3; }
-
     return resist_mod;
-
 }
 
 

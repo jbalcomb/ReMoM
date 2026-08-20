@@ -4,9 +4,9 @@ SEEALSO:  Combat-Combat_Spellbook_Screen.md
 SEEALSO:  Combat-Combat_Spell_Target_Screen.md
 SEEALSO:  Combat-Spell_Cast_AI_Select.md
 SEEALSO:  Combat-Spell_Cast_AI_Target.md
-SEEALSO:  Combat-Cast_Spell_On_Battle_Unit.md
+SEEALSO:  Combat-Combat_Cast_Apply_Spell_Effect.md
 SEEALSO:  Combat-Combat_Spell_Dispel.md
-SEEALSO:  Combat-Summon_Demon.md
+SEEALSO:  Combat-Combat_Summon.md
 
 Do_Legal_Spell_Check__WIP()  ==>  Do_Legal_Spell_Check()
 
@@ -48,7 +48,7 @@ Combat_Cast_Spell()
     |-> Update_Combat_Enchantments_Icon_And_Help()
     |-> Combat_Spell_Target_Screen()
     |-> AITP_Combat_Spell()
-    |-> Cast_Spell_On_Battle_Unit()
+    |-> Combat_Cast_Apply_Spell_Effect()
 
 Combat_Battlefield_Instant()
 Combat_Spell_Animation__WIP()
@@ -79,8 +79,8 @@ NOT:
         AI_SelectCmbtSpell()
     'Combat Spell Cast - AI - Target'                               Combat-Spell_Cast_AI_Target.md
         AITP_Combat_Spell()
-    'Cast Spell On Unit'                                            Combat-Cast_Spell_On_Battle_Unit.md
-        Cast_Spell_On_Battle_Unit()
+    'Cast Spell On Unit'                                            Combat-Combat_Cast_Apply_Spell_Effect.md
+        Combat_Cast_Apply_Spell_Effect()
     'Combat Spell Dispell'                                          Combat-Combat_Spell_Dispel.md
         Combat_Spell_Dispel_Attempt()
         Combat_Spell_Counter_Message()
@@ -112,7 +112,7 @@ It carried a `faithful` row in [Combat-Combat_Spellbook_Screen.md](Combat-Combat
 
 `Combat_Cast_Spell` was reviewed on its own and taken to done-done on 2026-07-07. Two review docs whose names differed only by word order — `Combat-Combat_Cast_Spell.md` and `Combat-Spell_Cast.md` — was a trap, so that doc has been deleted and its walkthrough moved here verbatim below.
 
-**Its anchors were all stale and have been re-pointed.** The function moved out of `Combat.c` and into `CMBMAGIC.c` in commit `e79026eb` ("extract CMBMAGIC", 2026-08-01), after the review was written. Every `Combat.c#L13xxx` link in it still resolved — `Combat.c` is long enough that the line numbers existed — but landed on unrelated combat-damage code, which is the silent-failure case the anchor checker cannot catch. The body relocated as a block at a constant offset of **-12946**, so the mapping is mechanical; three cross-references outside the function were re-verified by name instead (`Cast_Spell_On_Battle_Unit`, `AI_SelectCmbtSpell`, `Combat_Spell_Dispel_Attempt`), and `B8` was retargeted from a section marker to the `; BUG:` comment it describes.
+**Its anchors were all stale and have been re-pointed.** The function moved out of `Combat.c` and into `CMBMAGIC.c` in commit `e79026eb` ("extract CMBMAGIC", 2026-08-01), after the review was written. Every `Combat.c#L13xxx` link in it still resolved — `Combat.c` is long enough that the line numbers existed — but landed on unrelated combat-damage code, which is the silent-failure case the anchor checker cannot catch. The body relocated as a block at a constant offset of **-12946**, so the mapping is mechanical; three cross-references outside the function were re-verified by name instead (`Combat_Cast_Apply_Spell_Effect`, `AI_SelectCmbtSpell`, `Combat_Spell_Dispel_Attempt`), and `B8` was retargeted from a section marker to the `; BUG:` comment it describes.
 
 The **verdict is carried, not re-earned**: those 1,379 asm lines were walked on 2026-07-07 and were not re-walked in this pass. The local-variable table below has been refreshed to the names production uses today; the asm slot assignments in it are as recorded by that pass.
 
@@ -160,7 +160,7 @@ Declared at [CMBMAGIC.c:219-238](../../MoM/src/CMBMAGIC.c#L219-L238). The slot a
 | Effective-cost computation (human popup vs AI skill/reserve budget) | `loc_8D204`-`loc_8D49E` | [386-505](../../MoM/src/CMBMAGIC.c#L386-L505) | faithful (carries the OG cost bugs) |
 | Counter Magic dispel (opponent's Counter Magic enchantment; `Combat_Spell_Dispel_Attempt` / `Combat_Spell_Counter_Message`) | `loc_8D4CE`-`loc_8D6EC` | [512-600](../../MoM/src/CMBMAGIC.c#L512-L600) | faithful |
 | Node-realm counter (Sorcery/Chaos/Nature node vs spell realm) | `loc_8D6F4`-`loc_8D986` | [601-692](../../MoM/src/CMBMAGIC.c#L601-L692) | faithful |
-| Target + effect + pay (`Combat_Spell_Target_Screen` / `AITP_Combat_Spell` → `Cast_Spell_On_Battle_Unit`) | `@@Target_And_Effect`-`loc_8DC4D` | [703-798](../../MoM/src/CMBMAGIC.c#L703-L798) | faithful |
+| Target + effect + pay (`Combat_Spell_Target_Screen` / `AITP_Combat_Spell` → `Combat_Cast_Apply_Spell_Effect`) | `@@Target_And_Effect`-`loc_8DC4D` | [703-798](../../MoM/src/CMBMAGIC.c#L703-L798) | faithful |
 | Post-cast unit cleanup (write back `mana`, zero `ranged` if depleted) | `loc_8DC4D`-`loc_8DCA9` | [798-810](../../MoM/src/CMBMAGIC.c#L798-L810) | faithful |
 
 ### Selection dispatch (the part most recently reconstructed)
@@ -195,7 +195,7 @@ The three near-identical XOR-toggle / item-charge / mana-debit payment blocks (`
 - `…\ovr112\Combat_Cast_Spell__WIP.asm` — IDA Pro 5.5 disassembly (**the authority**).
 - `…\ovr112\Combat_Cast_Spell__WIP__GEMINI.c` — Gemini translation (second opinion).
 - [`AITP_Combat_Spell`](../ComputerPlayer/Combat-AITP_Combat_Spell.md) — the AI target picker invoked at [733](../../MoM/src/CMBMAGIC.c#L733) for the non-human targeting path.
-- [`Cast_Spell_On_Battle_Unit`](../../MoM/src/Combat.c#L9964) — applies the chosen spell ([747](../../MoM/src/CMBMAGIC.c#L747)).
+- [`Combat_Cast_Apply_Spell_Effect`](../../MoM/src/Combat.c#L9964) — applies the chosen spell ([747](../../MoM/src/CMBMAGIC.c#L747)).
 - `AI_SelectCmbtSpell` ([Combat.c:17398](../../MoM/src/Combat.c#L17398)), `AI_SetCombatRealms` — the AI-branch pickers, now wired into the `else` selection path.
 - `Combat_Spell_Dispel_Attempt` ([Spells133.c:651](../../MoM/src/Spells133.c#L651), decl `Spells133.h:42`) — Counter-Magic / node dispel roll; **implemented** (was `Combat_Spell_Dispel_Attempt`); called at [532](../../MoM/src/CMBMAGIC.c#L532) and [632](../../MoM/src/CMBMAGIC.c#L632).
 - `Combat_Spell_Counter_Message` ([Spells133.c:532](../../MoM/src/Spells133.c#L532), decl `Spells133.h:39`) — "Counter Magic" popup; **implemented** (was `Combat_Spell_Counter_Message`); called at [538](../../MoM/src/CMBMAGIC.c#L538) and [639](../../MoM/src/CMBMAGIC.c#L639).

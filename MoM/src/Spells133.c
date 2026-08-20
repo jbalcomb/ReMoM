@@ -417,18 +417,35 @@ void Apply_Call_Lightning(int16_t player_idx)
 
 
 // WZD o133p04
-// drake178: BU_LifeDrain()
-/*
-Which damage type is 'Life Drain'?
-
-*/
-void BU_LifeDrain__WIP(int16_t target_idx, int16_t damage_types[], int16_t caster_idx)
+void Apply_Life_Drain(int16_t target_idx, int16_t damage_types[], int16_t caster_idx, int16_t mana)
 {
-
-    damage_types[0] = 1;
-    damage_types[1] = 1;
-    damage_types[2] = 1;
-
+    int16_t itr = 0;
+    int16_t save_mod = 0;
+    int16_t extra_save_bonus = 0;
+    int16_t damage = 0;
+    for(itr = 0; itr < NUM_DAMAGE_TYPES; itr++)
+    {
+        damage_types[itr] = 0;
+    }
+    extra_save_bonus = ((mana - spell_data_table[spl_Life_Drain].casting_cost) / 5);
+    if(extra_save_bonus < 0)
+    {
+        extra_save_bonus = 0;
+    }
+    save_mod = -extra_save_bonus;
+    damage = Combat_Resistance_Check(battle_units[target_idx], save_mod, sbr_Death);
+    if(damage > 0)
+    {
+        damage_types[dt_Drain] = damage;
+        if(caster_idx >= CASTER_IDX_BASE)
+        {
+            _players[(caster_idx - CASTER_IDX_BASE)].spell_casting_skill += (damage * 3);
+        }
+        else
+        {
+            Battle_Unit_Heal(caster_idx, damage, 1);
+        }
+    }
 }
 
 

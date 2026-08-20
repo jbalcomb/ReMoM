@@ -1,5 +1,7 @@
 Combat-Combat.md
 
+Combat - general/generic; 'Tactical Combat', but not 'Combat Screen' specific  e.g., Calc_Battlefield_Bonuses()
+
 SEEALSO:  Combat-Combat.md
 SEEALSO:  Combat-Combat_Screen.md
 SEEALSO:  Combat-Combat_Screen_Map_Draw.md
@@ -17,6 +19,9 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr096\Combat__WIP.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr096\Lair_Make_Guardians.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr096\Update_Defender_Hostility.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr096\Lair_Combat_Do.asm
+
+// MoO2  Module: COMBINIT  Tactical_Combat_()
+...MoM effectively combines Combat_Screen_() and Tactical_Combat_()
 
 Move_Units()
     |-> j_Combat()

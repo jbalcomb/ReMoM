@@ -28,9 +28,9 @@ extern int16_t * _niu_battlefield_effect;
 // WZD dseg:C8A6
 extern int16_t _combat_spell_target_type;
 // WZD dseg:C8A8
-// int16_t * CMB_NearDispel_UCs;
+// int16_t * dispel_combat_effect_bits;
 // WZD dseg:C8AA
-// int16_t * CMB_NearDispel_UEs;
+// int16_t * dispel_enchantment_bits;
 // WZD dseg:C8AC
 // uint16_t _combat_caster_idx;
 

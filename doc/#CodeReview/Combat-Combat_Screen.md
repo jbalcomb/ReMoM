@@ -49,7 +49,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr154\Combat_Grid_Screen_
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr098\CMB_Units_Init__WIP.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\Load_Battle_Unit.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr120\Unit_Gold_Upkeep.asm
-C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\BU_Init_Battle_Unit.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\Battle_Unit_Regular_Stats.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\BU_Apply_Level.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\BU_Init_Hero_Unit.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\BU_Apply_Item_Powers.asm
@@ -184,7 +184,7 @@ The Production column carries the current name and line; the ASM column keeps th
 | `NIU_Who_Has_More_Leadership` | [Combat.c:3632](../../MoM/src/Combat.c#L3632) | [ovr098/NIU_Who_Has_More_Leadership.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr098/NIU_Who_Has_More_Leadership.asm) (27) | faithful |
 | `Load_Battle_Unit` | [COMBINIT.c:445](../../MoM/src/COMBINIT.c#L445) | [ovr116/Load_Battle_Unit.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/Load_Battle_Unit.asm) (286) | faithful |
 | `Unit_Gold_Upkeep` | [CITYCALC.c:242](../../MoM/src/CITYCALC.c#L242) | [ovr120/Unit_Gold_Upkeep.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr120/Unit_Gold_Upkeep.asm) (140) | faithful |
-| `Battle_Unit_Regular_Stats` | [COMBINIT.c:535](../../MoM/src/COMBINIT.c#L535) | [ovr116/BU_Init_Battle_Unit.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Init_Battle_Unit.asm) (478) | faithful |
+| `Battle_Unit_Regular_Stats` | [COMBINIT.c:535](../../MoM/src/COMBINIT.c#L535) | [ovr116/Battle_Unit_Regular_Stats.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/Battle_Unit_Regular_Stats.asm) (478) | faithful |
 | `Battle_Unit_Level_Stats` | [COMBINIT.c:893](../../MoM/src/COMBINIT.c#L893) | [ovr116/BU_Apply_Level.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Apply_Level.asm) (275) | faithful |
 | `Battle_Unit_Hero_Skill_Stats` | [COMBINIT.c:1067](../../MoM/src/COMBINIT.c#L1067) | [ovr116/BU_Init_Hero_Unit.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Init_Hero_Unit.asm) (394) | faithful |
 | `Battle_Unit_Item_Stats` | [COMBINIT.c:39](../../MoM/src/COMBINIT.c#L39) | [ovr116/BU_Apply_Item_Powers.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Apply_Item_Powers.asm) (467) | faithful |

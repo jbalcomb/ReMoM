@@ -130,7 +130,7 @@ Combat_Compose_Background()
         Combat_Cast_Spell:loc_8D121     
         Combat_Cast_Spell+35D           
         Combat_Spellbook_Screen+7A6          
-        TILE_DispelMagic+EA2                 
+        Combat_Cast_Dispel+EA2                 
         CMB_RaiseDead+8                      
         CMB_AnimateDead+D                    
         TILE_BoltFromAbove+1ED               

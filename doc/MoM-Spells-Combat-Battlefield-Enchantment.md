@@ -18,7 +18,7 @@ e.g., 'Call Lightning'
 
 
 
-Cast_Spell_On_Battle_Unit()
+Combat_Cast_Apply_Spell_Effect()
 
 
 
@@ -31,15 +31,15 @@ Tactical_Combat__WIP()
         // Combat_Spell_Target_Screen__WIP()
         ...must be Target == 99?
         if(Target != 999)
-            Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
+            Combat_Cast_Apply_Spell_Effect(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
                 case scc_Battlefield_Spell:     // 10
                 case scc_Combat_Counter_Magic:  // 21
                     Combat_Spell_Animation__WIP()
 
 
-## Cast_Spell_On_Battle_Unit()
+## Combat_Cast_Apply_Spell_Effect()
 
-Cast_Spell_On_Battle_Unit()
+Combat_Cast_Apply_Spell_Effect()
     case scc_Battlefield_Spell:     // 10
         Combat_Spell_Animation__WIP()
         &&

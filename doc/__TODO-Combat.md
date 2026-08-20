@@ -2,6 +2,10 @@ __TODO-Combat.md
 
 ---
 
+[ ] put Calc_Battlefield_Bonuses() in Combat-Combat.md
+
+---
+
 Combat-Miscellaneous.md
 
 ## Fixing the splits
@@ -14,7 +18,7 @@ Combat-Miscellaneous.md
 [x] done-done Combat_Spellbook_Mana_Adder_Screen() in Combat-Combat_Spellbook_Screen.md
 
 2.  Four moves
-[ ] inlude Spell_Resistance_Modifier() (o112p06) in Combat-Cast_Spell_On_Battle_Unit.md
+[x] include Spell_Resistance_Modifier() (o112p06) in Combat-Combat_Cast_Apply_Spell_Effect.md - done 2026-08-19
 [x] include Combat_Spell_Dispel_Attempt() (o113p13) in Combat-Combat_Spell_Dispel.md
 [x] include Combat_Cast_Spell_Message (o113p14) in Combat-Spell_Cast.md
 [x] move Combat_Cast_Spell (s103p14) to Combat-Spell_Cast.md
@@ -56,7 +60,7 @@ Legend: **[done]** reconstructed/reviewed · **[impl]** substantive, not yet don
 | Setup / alloc / resources | `Allocate_Combat_Base_Blocks`, `Combat_Screen_Load_Resources`, `Item_Powers_To_Attack_Attributes`, `CMB_Units_Init__WIP` | **WIP** |
 | Map / terrain / spawn | `Generate_Combat_Map__WIP`, `Set_Terrain_Tile_Types`, `Build_Battlefield`, `CMB_SpawnStructures/Figure/DarkWall/FireWall/StoneWall__WIP` | **WIP** |
 | Drawing / rendering | `Combat_Compose_Background`, `CMB_ComposeBookBG__WIP`, `Combat_Screen_Map_Draw(_Entities)__WIP`, `Combat_Grid_Entities/Entity_Create__WIP`, `Combat_Figure_Effect`, `CMB_CE_Refresh__WIP` | **WIP** |
-| Unit action / attack / move | `Battle_Unit_Action/Attack__WIP`, `BU_AttackTarget/ProcessAttack__WIP`, `BU_Apply_Battlefield_Effects__WIP`, `BU_CheckFlight/GetCombatEffect/HasSpellAbility/MeleeWallCheck/MoveConfused/SetBaseAnims/SetCityMovement/SetVisibility__WIP`, `Move_Battle_Unit__WIP`; done: `BU_ApplyDamage`, `BU_IsVisible`, `BU_SortSlowestFirst` | mostly **WIP** |
+| Unit action / attack / move | `Battle_Unit_Action/Attack__WIP`, `BU_AttackTarget/ProcessAttack__WIP`, `Battle_Unit_Special_Stats`, `BU_CheckFlight/GetCombatEffect/HasSpellAbility/MeleeWallCheck/MoveConfused/SetBaseAnims/SetCityMovement/SetVisibility__WIP`, `Move_Battle_Unit__WIP`; done: `BU_ApplyDamage`, `BU_IsVisible`, `BU_SortSlowestFirst` | mostly **WIP** |
 | Spellcasting (shared/human) | `Combat_Cast_Spell` (**done**), `AITP_Combat_Spell` (**done**), `Combat_Spell_Dispel_Attempt`/`Combat_Spell_Counter_Message` (impl), `Combat_Spell_Target_Screen__WIP`, `Do_Legal_Spell_Check` | **done** for the cast core; targeting screen **WIP** |
 | Combat spellbook | `Combat_Spellbook_Build`, `CmbBook_Compose/Draw__WIP` (`Spellbook.c`) | **WIP** |
 | **AI Combat** | driver + per-unit action chain — see [__TODO-Combat-AI.md](__TODO-Combat-AI.md) | mostly **impl**, review-pending |

@@ -26,7 +26,7 @@ NOT:
     'Combat Spell Target Screen'                                    Combat-Combat_Spell_Target_Screen.md
     'Combat Spell Cast'  (non-AI; yay HP, nay CP, NP, NPC, Monster)
     'Combat Spell Cast - AI - Select'                               Combat-Spell_Cast_AI_Select.md
-    'Cast Spell On Unit'                                            Combat-Cast_Spell_On_Battle_Unit.md
+    'Cast Spell On Unit'                                            Combat-Combat_Cast_Apply_Spell_Effect.md
     'Combat Spell Dispell'                                          Combat-Combat_Spell_Dispel.md
 
 ---

@@ -30,7 +30,7 @@ void Apply_Wrack(int16_t player_idx);
 void Apply_Call_Lightning(int16_t player_idx);
 
 // WZD o133p04
-void BU_LifeDrain__WIP(int16_t target_idx, int16_t damage_types[], int16_t caster_idx);
+void Apply_Life_Drain(int16_t target_idx, int16_t damage_types[], int16_t caster_idx, int16_t mana);
 
 // WZD o133p05
 void Wall_Rise(int16_t spell_idx, int16_t caster_idx);

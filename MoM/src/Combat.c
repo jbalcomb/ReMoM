@@ -1399,6 +1399,7 @@ int16_t attacker_on_floating_island;
 
 // WZD s90p01
 // MoO2  Module: COMBINIT  Combat_Screen_()
+// MoO2  Module: COMBINIT  Tactical_Combat_()
 // 1oom
 /*
     returns ST_TRUE, if Combat_Winner is _combat_attacker_player
@@ -1715,7 +1716,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
             if(
                 ((battle_units[_active_battle_unit].combat_effects & bue_Confusion) != 0)
                 &&
-                (battle_units[_active_battle_unit].Confusion_State == 2)
+                (battle_units[_active_battle_unit].confusion_state == 2)
             )
             {
                 if(battle_units[_active_battle_unit].controller_idx == _combat_attacker_player)
@@ -1743,7 +1744,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
             END:  ¿ what is going on here ?
         */
         if(
-            (battle_units[_active_battle_unit].Confusion_State == 1)
+            (battle_units[_active_battle_unit].confusion_state == 1)
             &&
             (battle_units[_active_battle_unit].movement_points > 0)
         )
@@ -2420,7 +2421,7 @@ void Begin_Combat_Turn(void)
         */
         // ; BUG: resets the state without ever returning control of the unit to its previous owner!
         // ¿ NOBUG  pretty sure this is covered by having called Battle_Unit_Regular_Stats() to (re-)initialize the battle unit ?
-        battle_units[itr].Confusion_State = 0;
+        battle_units[itr].confusion_state = 0;
         if((battle_units[itr].combat_effects & bue_Confusion) != 0)
         {
             resist_fails = Random(4);
@@ -2431,11 +2432,11 @@ void Begin_Combat_Turn(void)
             }
             if(resist_fails == 2)
             {
-                battle_units[itr].Confusion_State = 1;
+                battle_units[itr].confusion_state = 1;
             }
             if(resist_fails == 3)
             {
-                battle_units[itr].Confusion_State = 2;
+                battle_units[itr].confusion_state = 2;
                 if(battle_units[itr].controller_idx == _combat_attacker_player)
                 {
                     battle_units[itr].controller_idx = (int8_t)_combat_defender_player;
@@ -7262,7 +7263,7 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
  * @brief Determines whether combat has ended and, if so, which side wins.
  *
  * This routine evaluates the current battle state in several stages. It first counts active
- * attacker and defender units, treating units with Confusion_State equal to 2 as belonging to the
+ * attacker and defender units, treating units with confusion_state equal to 2 as belonging to the
  * opposite side for winner determination. It then checks for outright elimination, applies the
  * combat turn-limit rule that awards the battle to the defender after turn 50, and finally allows
  * the AI-controlled side to concede through Retreat_Check() when that behavior is permitted.
@@ -7275,7 +7276,7 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
  * @return _combat_local_player if the computer-controlled side decides to flee.
  * @return ST_UNDEFINED if the battle should continue.
  *
- * @note Confused units with Confusion_State equal to 2 are counted for the opposing army.
+ * @note Confused units with confusion_state equal to 2 are counted for the opposing army.
  * @note A battle that exceeds 50 combat turns is resolved immediately in the defender's favor.
  * @note This function mutates unit action and status state when the AI flee path is taken.
  */
@@ -7293,8 +7294,8 @@ int16_t Check_For_Winner(void)
         {
             if(battle_units[itr].controller_idx == _combat_attacker_player)
             {
-                /* OGBUG: The assembly compares Confusion_State to 2 */
-                if(battle_units[itr].Confusion_State == 2)
+                /* OGBUG: The assembly compares confusion_state to 2 */
+                if(battle_units[itr].confusion_state == 2)
                 {
                     defender_count++;
                 }
@@ -7305,8 +7306,8 @@ int16_t Check_For_Winner(void)
             }
             else if(battle_units[itr].controller_idx == _combat_defender_player)
             {
-                /* OGBUG: The assembly compares Confusion_State to 2 */
-                if(battle_units[itr].Confusion_State == 2)
+                /* OGBUG: The assembly compares confusion_state to 2 */
+                if(battle_units[itr].confusion_state == 2)
                 {
                     attacker_count++;
                 }
@@ -9879,7 +9880,7 @@ int16_t AITP_DispelMagic(int16_t player_idx)
         {
             target_value = Effective_Battle_Unit_Strength(battle_unit_idx);
             if(bu_ptr->combat_effects & bue_Vertigo) target_value += 20;
-            if((bu_ptr->combat_effects & bue_Confusion) && (bu_ptr->Confusion_State != 2)) target_value += 30;
+            if((bu_ptr->combat_effects & bue_Confusion) && (bu_ptr->confusion_state != 2)) target_value += 30;
             if(bu_ptr->combat_effects & bue_Mind_Storm) target_value += 40;
             if(bu_ptr->combat_effects & bue_Shatter) target_value += 10;
             if(bu_ptr->combat_effects & bue_Weakness) target_value += 10;
@@ -9902,13 +9903,13 @@ int16_t AITP_DispelMagic(int16_t player_idx)
                 ||
                 ((bu_ptr->combat_effects & (bue_Haste | bue_Creature_Binding | bue_Possession)) != 0)
                 ||
-                (((bu_ptr->combat_effects & bue_Confusion) != 0) && (bu_ptr->Confusion_State == 2))
+                (((bu_ptr->combat_effects & bue_Confusion) != 0) && (bu_ptr->confusion_state == 2))
             )
             {
                 if(!Target_Is_Visible(battle_unit_idx)) continue;  /* skips the Phase 3 compare, as in the Dasm */
                 target_value = Effective_Battle_Unit_Strength(battle_unit_idx);
                 if(enchantments & UE_IMMOLATION) target_value += 20;
-                if((bu_ptr->combat_effects & bue_Confusion) && (bu_ptr->Confusion_State != 2)) target_value += 30;
+                if((bu_ptr->combat_effects & bue_Confusion) && (bu_ptr->confusion_state != 2)) target_value += 30;
                 if(enchantments & UE_GUARDIAN_WIND) target_value += 10;
                 if(enchantments & UE_CLOAK_OF_FEAR) target_value += 10;
                 if(enchantments & UE_WRAITH_FORM) target_value += 10;
@@ -9940,28 +9941,21 @@ int16_t AITP_DispelMagic(int16_t player_idx)
 
 
 // WZD 111p08
-// drake178: G_CMB_SpellEffect()
 /*
-
-Combat_Cast_Spell()
-    Target = Combat_Spell_Target_Screen(spell_idx, &target_cgx, &target_cgy);
-    Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, target_cgx, target_cgy, available_mana_pool, ST_TRUE, ST_NULL, ST_NULL);
-
-
 IDA Group Colors
-    scc_Summoning                  ( 0)  #24 reddish-brown
-    scc_Unit_Enchantment           ( 1)  #43 pea green
-    scc_City_Enchantment_Positive  ( 2)  #14 blueish lighter
-    scc_City_Enchantment_Negative  ( 3)  #14 blueish lighter
-    scc_Direct_Damage_Fixed        ( 4)  #32 purple
-    scc_Special_Spell              ( 5)  
-    scc_Global_Enchantment         ( 9)  #13 ~ blue, greyish/greenish
-    scc_Crafting_Spell             (11)  #17 mauve
-
-    scc_Direct_Damage_Variable     (22)  #31 redish purple
-
+    scc_Summoning                   ( 0)    #24 reddish-brown
+    scc_Unit_Enchantment            ( 1)    #43 pea green
+    scc_City_Enchantment_Positive   ( 2)    #14 blueish lighter
+    scc_City_Enchantment_Negative   ( 3)    #14 blueish lighter
+    scc_Direct_Damage_Fixed         ( 4)    #32 purple
+    scc_Special_Spell               ( 5)  
+    scc_Global_Enchantment          ( 9)    #13 ~ blue, greyish/greenish
+    scc_Crafting_Spell              (11)    #17 mauve
+    scc_Battlefield_Spell           (10,21) #11 green-yellow
+    scc_Combat_Counter_Magic        (10,21) #11 green-yellow
+    scc_Direct_Damage_Variable      (22)    #31 redish purple
 */
-void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy, int16_t tscc, int16_t anims_on, int16_t unused1, int16_t unused2)
+void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy, int16_t tscc, int16_t anims_on, int16_t unused1, int16_t unused2)
 {
     int16_t Not_Moved_Yet = 0;
     int16_t Moves_Left = 0;
@@ -9969,38 +9963,11 @@ void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t ca
     uint32_t enchantments = 0;
     int16_t resistance_modifier = 0;
     int16_t figure_count = 0;
-    int16_t did_create_unit = 0;  // DNE in Dasm, uses figure_count
+    int16_t did_create_unit = 0;
     int16_t player_idx = 0;
     int16_t itr = 0;
     int16_t resist_fails = 0;
-    int16_t combat_enchantment_index = 0;  // DNE in Dasm, uses resist_fails
-
-#define UPDATE_SCREEN_LOCAL()  \
-    do {  \
-        Set_Page_Off();  \
-        Combat_Screen_Draw();  /* |-> CMB_DrawMap__WIP() |-> Copy_Back_To_Off();  // 'combat background' from Combat_Screen_Compose_Background() */  \
-        PageFlip_FX();  \
-    } while(0)
-#define REINIT_BATTLEUNIT() \
-    do { \
-        Not_Moved_Yet = ST_FALSE;  \
-        if(battle_units[itr].status == bus_Active)  \
-        {  \
-            Moves_Left = Battle_Unit_Moves2(itr);  \
-            if(battle_units[itr].movement_points == (int8_t)Moves_Left)  \
-                Not_Moved_Yet = ST_TRUE;  \
-            else  \
-                Moves_Left = battle_units[itr].movement_points;  \
-            Battle_Unit_Regular_Stats(&battle_units[itr]);  \
-            Battle_Unit_Special_Stats(&battle_units[itr]);  \
-            if(Not_Moved_Yet == ST_TRUE)  \
-                battle_units[itr].movement_points = (int8_t)Battle_Unit_Moves2(itr);  \
-            else  \
-                battle_units[itr].movement_points = (int8_t)Moves_Left;  \
-        }  \
-    } while(0)
-
-
+    int16_t combat_enchantment_index = 0;
     if(caster_idx >= CASTER_IDX_BASE)
     {
         player_idx = (caster_idx - CASTER_IDX_BASE);
@@ -10009,34 +9976,10 @@ void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t ca
     {
         player_idx = battle_units[caster_idx].controller_idx;
     }
-
-    // ; BUG: range checking necessary, this can not only be
-    // ; 99, but also -1 or -2
-    // ...
-    // ; magicdvw bla-bla-bla marker
-    // ...
-    // ; used for checking Spell Lock vs Banish/Dispel Evil,
-    // ; and Righteousness vs non-resistables (none exist)
-    // CRASH  enchantments = (_UNITS[battle_units[target_idx].unit_idx].enchantments | battle_units[itr].enchantments | battle_units[itr].item_enchantments);
-    // BUGBUG  how was this working? what would have been going wrong?
-    if(
-        (target_idx >= 0)
-        &&
-        (target_idx <= MAX_BATTLE_UNIT_COUNT)
-    )
-    {
-        enchantments = (_UNITS[battle_units[target_idx].unit_idx].enchantments | battle_units[itr].enchantments | battle_units[itr].item_enchantments);
-    }
-    else
-    {
-        enchantments = 0;
-    }
-    
+    /* OGBUG:  need to range check target_idx, can be -1, -2, 99; `if((target_idx >= 0) && (target_idx <= MAX_BATTLE_UNIT_COUNT))` */
+    /* OGBUG: should use target_idx, not itr */
+    enchantments = (_UNITS[battle_units[target_idx].unit_idx].enchantments | battle_units[itr].enchantments | battle_units[itr].item_enchantments);
     resistance_modifier = Spell_Resistance_Modifier(spell_idx);
-
-    // ; apply -Spell Save modifiers, if any
-    // ; BUG: looks for the items based on the battle
-    // ; unit's owner, not the global one
     if(
         (caster_idx <= MAX_BATTLE_UNIT_COUNT)
         &&
@@ -10045,62 +9988,23 @@ void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t ca
     {
         for(itr = 0; itr < NUM_HERO_ITEM_SLOTS; itr++)
         {
-            // ; BUG: this may not be the hero's original owner
+            /* OGBUG: this may not be the hero's original owner, should use _UNITS[].owner_idx */
             if(_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[itr] > ST_UNDEFINED)
             {
                 // NON SPELL-SPECIFIC ARTIFACT ENCHANTMENTS
                 // Spell Save **
                 // ** Each -1 to Spell Save decreases the opponent’s ability to resist this unit’s spell attacks against it by 10%
                 //      (i.e., it negates one of the enemy unit’s crosses).
-                resistance_modifier -= _players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[itr];
+                resistance_modifier -= _ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[itr]].spell_save;
             }
         }
     }
-
     for(itr = 0; itr < 3; itr++)
     {
         damage_types[itr] = 0;
     }
-
-/*
-jt_cscc_cast
-offset jt_cscc_00
-offset jt_cscc_01_15
-offset jt_cscc_02
-offset jt_cscc_03_06_07_08_09_11_17_20
-offset jt_cscc_04
-offset jt_cscc_05
-offset jt_cscc_03_06_07_08_09_11_17_20
-offset jt_cscc_03_06_07_08_09_11_17_20
-offset jt_cscc_03_06_07_08_09_11_17_20
-offset jt_cscc_03_06_07_08_09_11_17_20
-offset jt_cscc_10_21
-offset jt_cscc_03_06_07_08_09_11_17_20
-offset jt_cscc_12_23
-offset jt_cscc_13_16
-offset jt_cscc_14
-offset jt_cscc_01_15
-offset jt_cscc_13_16
-offset jt_cscc_03_06_07_08_09_11_17_20
-offset jt_cscc_18
-offset jt_cscc_19
-offset jt_cscc_03_06_07_08_09_11_17_20
-offset jt_cscc_10_21
-offset jt_cscc_22
-offset jt_cscc_12_23
-
-case scc_City_Enchantment_Negative:  //  3
-case scc_Target_Wiz_Spell:  //  6
-DNE  7
-DNE  8
-case scc_Global_Enchantment:
-case scc_Crafting_Spell:  // 11
-DNE 17
-case scc_Disjunction_Spell:  // 20
-*/
     switch(spell_data_table[spell_idx].type)
     {
-
         case scc_Summoning:
         {
             did_create_unit = Create_Unit(spell_data_table[spell_idx].unit_type, player_idx, 0, 0, 9, 2000);
@@ -10110,32 +10014,57 @@ case scc_Disjunction_Spell:  // 20
                 Battle_Unit_Summon_Animation((_combat_total_unit_count - 1), target_cgx, target_cgy, spell_idx, caster_idx);
             }
         } break;
-
         case scc_Unit_Enchantment:
         case scc_Unit_Enchantment_Normal_Only:
         {
-
+            Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
+            if(spell_idx == spl_Haste)
+            {
+                battle_units[target_idx].combat_effects |= bue_Haste;
+            }
+            else
+            {
+                battle_units[target_idx].enchantments |= spell_data_table[spell_idx].enchantments;
+            }
+            Set_Page_Off();
+            Combat_Screen_Draw();
+            PageFlip_FX();
+            Moves_Left = Battle_Unit_Moves2(target_idx);
+            Not_Moved_Yet = ST_FALSE;
+            if(battle_units[target_idx].movement_points == Moves_Left)
+            {
+                Not_Moved_Yet = ST_TRUE;
+            }
+            else
+            {
+                Moves_Left = battle_units[target_idx].movement_points;
+            }
+            Battle_Unit_Regular_Stats(&battle_units[target_idx]);
+            Battle_Unit_Special_Stats(&battle_units[target_idx]);
+            Not_Moved_Yet = ST_FALSE;  /* OGBUG: clears the flag right before testing it, so the ST_TRUE branch is unreachable */
+            if(Not_Moved_Yet == ST_TRUE)
+            {
+                battle_units[target_idx].movement_points = Battle_Unit_Moves2(target_idx);
+            }
+            else
+            {
+                battle_units[target_idx].movement_points = Moves_Left;
+            }
         } break;
-
         case scc_City_Enchantment_Positive:
         {
-
+            Wall_Rise(spell_idx, caster_idx);
         } break;
-
         case scc_Direct_Damage_Fixed:
         {
-
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
-
             Compute_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], 0);
-
             Battle_Unit_Commit_Damage(target_idx, &damage_types[0]);
-
-            UPDATE_SCREEN_LOCAL();
-
+            Set_Page_Off();
+            Combat_Screen_Draw();
+            PageFlip_FX();
         } break;
-
-        case scc_Special_Spell:  //  5
+        case scc_Special_Spell:
         {
             if(
                 (spell_idx != spl_Wall_Of_Stone)
@@ -10147,7 +10076,7 @@ case scc_Disjunction_Spell:  // 20
             {
                 Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             }
-            // ; BUG: this is neither a combat nor a special spell
+            /* OGBUG: this was moved to scc_City_Enchantment_Positive */
             if(spell_idx == spl_Wall_Of_Stone)
             {
                 Wall_Rise(spl_Wall_Of_Stone, caster_idx);
@@ -10156,7 +10085,26 @@ case scc_Disjunction_Spell:  // 20
             {
                 battle_units[target_idx].ammo = 0;
                 battle_units[target_idx].ranged_type = rat_UNDEF;
-                REINIT_BATTLEUNIT();
+                Moves_Left = Battle_Unit_Moves2(target_idx);
+                Not_Moved_Yet = ST_FALSE;
+                if(battle_units[target_idx].movement_points == (int8_t)Moves_Left)
+                {
+                    Not_Moved_Yet = ST_TRUE;
+                }
+                else
+                {
+                    Moves_Left = battle_units[target_idx].movement_points;
+                }
+                Battle_Unit_Regular_Stats(&battle_units[target_idx]);
+                Battle_Unit_Special_Stats(&battle_units[target_idx]);
+                if(Not_Moved_Yet == ST_TRUE)
+                {
+                    battle_units[target_idx].movement_points = (int8_t)Battle_Unit_Moves2(target_idx);
+                }
+                else
+                {
+                    battle_units[target_idx].movement_points = (int8_t)Moves_Left;
+                }
             }
             if(spell_idx == spl_Healing)
             {
@@ -10185,7 +10133,26 @@ case scc_Disjunction_Spell:  // 20
                 {
                     Apply_Warp_Creature(target_idx);
                 }
-                REINIT_BATTLEUNIT();
+                Moves_Left = Battle_Unit_Moves2(target_idx);
+                Not_Moved_Yet = ST_FALSE;
+                if(battle_units[target_idx].movement_points == (int8_t)Moves_Left)
+                {
+                    Not_Moved_Yet = ST_TRUE;
+                }
+                else
+                {
+                    Moves_Left = battle_units[target_idx].movement_points;
+                }
+                Battle_Unit_Regular_Stats(&battle_units[target_idx]);
+                Battle_Unit_Special_Stats(&battle_units[target_idx]);
+                if(Not_Moved_Yet == ST_TRUE)
+                {
+                    battle_units[target_idx].movement_points = (int8_t)Battle_Unit_Moves2(target_idx);
+                }
+                else
+                {
+                    battle_units[target_idx].movement_points = (int8_t)Moves_Left;
+                }
             }
             if(
                 (spell_idx == spl_Recall_Hero)
@@ -10220,13 +10187,10 @@ case scc_Disjunction_Spell:  // 20
                 Cast_Animate_Dead(player_idx, caster_idx);
             }
         } break;
-
-        case scc_Battlefield_Spell:     // 10
-        case scc_Combat_Counter_Magic:  // 21
+        case scc_Battlefield_Spell:
+        case scc_Combat_Counter_Magic:
         {
-
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
-
             // Combat Battlefield Enchantment  (NOT Combat Battlefield Instant)
             if(
                 (spell_idx != spl_Flame_Strike)
@@ -10240,46 +10204,50 @@ case scc_Disjunction_Spell:  // 20
                 (spell_idx != spl_Mass_Healing)
             )
             {
-                
                 combat_enchantment_index = spell_data_table[spell_idx].ce_idx;
-
                 if(player_idx != _combat_attacker_player)
                 {
                     combat_enchantment_index++;
                 }
-
                 if(spell_idx == spl_Counter_Magic)
                 {
-
                     combat_enchantments[combat_enchantment_index] = (int8_t)tscc;
-
                 }
                 else
                 {
-
                     combat_enchantments[combat_enchantment_index] = ST_TRUE;
-
                 }
-
                 for(itr = 0; itr < _combat_total_unit_count; itr++)
                 {
-
                     if(battle_units[itr].status == bus_Active)
                     {
-                        
-                        REINIT_BATTLEUNIT();
+                        Not_Moved_Yet = ST_FALSE;
+                        Moves_Left = Battle_Unit_Moves2(itr);
+                        if(battle_units[itr].movement_points == (int8_t)Moves_Left)
+                        {
+                            Not_Moved_Yet = ST_TRUE;
+                        }
+                        else
+                        {
+                            Moves_Left = battle_units[itr].movement_points;
+                        }
+                        Battle_Unit_Regular_Stats(&battle_units[itr]);
+                        Battle_Unit_Special_Stats(&battle_units[itr]);
+                        if(Not_Moved_Yet == ST_TRUE)
+                        {
+                            battle_units[itr].movement_points = (int8_t)Battle_Unit_Moves2(itr);
+                        }
+                        else
+                        {
+                            battle_units[itr].movement_points = (int8_t)Moves_Left;
+                        }
                     }
-
                 }
-
             }
-
         } break;
-
-        case scc_Combat_Destroy_Unit:  // 12
-        case scc_Combat_Banish:        // 23  (XtraMana)
+        case scc_Combat_Destroy_Unit:
+        case scc_Combat_Banish:
         {
-
             // "If the target unit is a summoned creature, it also protects the bonds that keep it tied to the controlling wizard."
             if(
                 !(
@@ -10293,43 +10261,29 @@ case scc_Disjunction_Spell:  // 20
                 )
             )
             {
-
                 Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
-
                 if(spell_idx == spl_Disintegrate)
                 {
-
                     if((Combat_Effective_Resistance(battle_units[target_idx], sbr_Chaos) + resistance_modifier) < 10)
                     {
-                    
                         damage_types[2] = 200;
-                    
                         Battle_Unit_Commit_Damage(target_idx, &damage_types[0]);
-                    
                     }
-
                 }
                 else
                 {
-                    
                     if(
                         (spell_idx == spl_Dispel_Evil)
                         &&
                         ((_UNITS[battle_units[target_idx].unit_idx].mutations & UM_UNDEAD) != 0)
                     )
                     {
-                    
                         resistance_modifier -= 5;
-                    
                     }
-
                     if(spell_idx == spl_Banish)
                     {
-
-                        resistance_modifier -= (spell_data_table[spl_Banish].casting_cost / 15);
-
+                        resistance_modifier -= ((tscc - spell_data_table[spl_Banish].casting_cost) / 15);
                     }
-
                     if(
                         !(
                             (spell_idx == spl_Petrify)
@@ -10338,101 +10292,88 @@ case scc_Disjunction_Spell:  // 20
                         )
                     )
                     {
-
                         figure_count = battle_units[target_idx].figure_cnt;
-
                         for(itr = 0; itr < figure_count; itr++)
                         {
-
                             resist_fails = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
-
                             if(resist_fails > 0)
                             {
-
                                 damage_types[2] = battle_units[target_idx].hits;
-
                                 Battle_Unit_Commit_Damage(target_idx, &damage_types[0]);
-
                             }
-
                         }
-
                     }
-
                 }
-
-                UPDATE_SCREEN_LOCAL();
-
+            Set_Page_Off();
+            Combat_Screen_Draw();
+            PageFlip_FX();
             }
-
         } break;
-
         case scc_Resistable_Spell:  // 13  Black Sleep, Confusion, Creature Binding, Vertigo, Weakness
         case scc_Mundane_Curse:     // 16  Possession, Shatter
         {
-
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
-
             resist_fails = Combat_Resistance_Check(battle_units[target_idx], resistance_modifier, spell_data_table[spell_idx].magic_realm);
-
             if(resist_fails <= 0)
             {
-                UPDATE_SCREEN_LOCAL();
+                Set_Page_Off();
+                Combat_Screen_Draw();
+                PageFlip_FX();
             }
             else
             {
-
                 battle_units[target_idx].combat_effects |= spell_data_table[spell_idx].ce_idx;  // e.g., bue_Black_Sleep
-                
                 if(
                     (spell_idx == spl_Possession)
                     ||
                     (spell_idx == spl_Creature_Binding)
                 )
                 {
-
                     if(battle_units[target_idx].controller_idx == _combat_attacker_player)
                     {
-
                         battle_units[target_idx].controller_idx = (int8_t)_combat_defender_player;
-
                     }
                     else
                     {
-
                         battle_units[target_idx].controller_idx = (int8_t)_combat_attacker_player;
-
                     }
-
                     if(battle_units[target_idx].controller_idx == HUMAN_PLAYER_IDX)
                     {
-
                         battle_units[target_idx].action = bua_Ready;
-
                     }
-
                 }
-
                 if(spell_idx == spl_Black_Sleep)
                 {
-
                     battle_units[target_idx].action = bua_Finished;
-
                     battle_units[target_idx].movement_points = 0;
-
                 }
-
-                UPDATE_SCREEN_LOCAL();
-
-                REINIT_BATTLEUNIT();
-
+                Set_Page_Off();
+                Combat_Screen_Draw();
+                PageFlip_FX();
+                Moves_Left = Battle_Unit_Moves2(target_idx);
+                Not_Moved_Yet = ST_FALSE;
+                if(battle_units[target_idx].movement_points == (int8_t)Moves_Left)
+                {
+                    Not_Moved_Yet = ST_TRUE;
+                }
+                else
+                {
+                    Moves_Left = battle_units[target_idx].movement_points;
+                }
+                Battle_Unit_Regular_Stats(&battle_units[target_idx]);
+                Battle_Unit_Special_Stats(&battle_units[target_idx]);
+                if(Not_Moved_Yet == ST_TRUE)
+                {
+                    battle_units[target_idx].movement_points = (int8_t)Battle_Unit_Moves2(target_idx);
+                }
+                else
+                {
+                    battle_units[target_idx].movement_points = (int8_t)Moves_Left;
+                }
             }
-
         } break;
-
         case scc_Unresistable_Spell:  // 14  Mind Storm, Web
         {
-            
             if(
                 (
                     ((battle_units[target_idx].Attribs_1 & USA_IMMUNITY_MAGIC) != 0)
@@ -10459,111 +10400,146 @@ case scc_Disjunction_Spell:  // 20
                 )
             )
             {
-                UPDATE_SCREEN_LOCAL();
+                Set_Page_Off();
+                Combat_Screen_Draw();
+                PageFlip_FX();
             }
             else
             {
-
                 Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
-
                 battle_units[target_idx].combat_effects |= spell_data_table[spell_idx].Param0;  // e.g., bue_Black_Sleep
-                
                 if(spell_idx == spl_Web)
                 {
-
                     battle_units[target_idx].Web_HP = 12;
-
                     battle_units[target_idx].action = bua_Finished;
-
                     battle_units[target_idx].movement_points = 0;
-
                 }
-
-                UPDATE_SCREEN_LOCAL();
-
-                REINIT_BATTLEUNIT();
-
+                Set_Page_Off();
+                Combat_Screen_Draw();
+                PageFlip_FX();
+                Moves_Left = Battle_Unit_Moves2(target_idx);
+                Not_Moved_Yet = ST_FALSE;
+                if(battle_units[target_idx].movement_points == (int8_t)Moves_Left)
+                {
+                    Not_Moved_Yet = ST_TRUE;
+                }
+                else
+                {
+                    Moves_Left = battle_units[target_idx].movement_points;
+                }
+                Battle_Unit_Regular_Stats(&battle_units[target_idx]);
+                Battle_Unit_Special_Stats(&battle_units[target_idx]);
+                if(Not_Moved_Yet == ST_TRUE)
+                {
+                    battle_units[target_idx].movement_points = (int8_t)Battle_Unit_Moves2(target_idx);
+                }
+                else
+                {
+                    battle_units[target_idx].movement_points = (int8_t)Moves_Left;
+                }
             }
-
         } break;
-
-        case scc_Dispels:  // 18
+        case scc_Dispels:
         {
-
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
-
             _page_flip_effect = pfe_Dissolve;
-            UPDATE_SCREEN_LOCAL();
+            Set_Page_Off();
+            Combat_Screen_Draw();
+            PageFlip_FX();
             _page_flip_effect = pfe_None;  // ; this is done automatically already
-
             // ¿ BUGBUG  no runemaster for 'Dispel Magic' ?
             if(
                 (caster_idx >= CASTER_IDX_BASE)
                 &&
                 (_players[caster_idx].runemaster > 0)
-                &&
-                (spell_idx == spl_Dispel_Magic_True)
             )
             {
-
-                tscc *= 3;
-
+                tscc *= 2;
             }
-
+            if(spell_idx == spl_Dispel_Magic_True)
+            {
+                tscc *= 3;
+            }
             resistance_modifier = 0;
             Combat_Cast_Dispel(target_cgx, target_cgy, caster_idx, tscc, &resistance_modifier);
-
-            // ; BUG: Dispel Magic DOES NOT use unit-based targeting,
-            // ; this value can contain any valid index or even 99
-
-            REINIT_BATTLEUNIT();
-
+            // ; BUG: Dispel Magic DOES NOT use unit-based targeting, this value can contain any valid index or even 99
+            Moves_Left = Battle_Unit_Moves2(target_idx);
+            Not_Moved_Yet = ST_FALSE;
+            if(battle_units[target_idx].movement_points == (int8_t)Moves_Left)
+            {
+                Not_Moved_Yet = ST_TRUE;
+            }
+            else
+            {
+                Moves_Left = battle_units[target_idx].movement_points;
+            }
+            Battle_Unit_Regular_Stats(&battle_units[target_idx]);
+            Battle_Unit_Special_Stats(&battle_units[target_idx]);
+            if(Not_Moved_Yet == ST_TRUE)
+            {
+                battle_units[target_idx].movement_points = (int8_t)Battle_Unit_Moves2(target_idx);
+            }
+            else
+            {
+                battle_units[target_idx].movement_points = (int8_t)Moves_Left;
+            }
         } break;
-
         case scc_Disenchants:  // 19
         {
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
-
             _page_flip_effect = pfe_Dissolve;
-            UPDATE_SCREEN_LOCAL();
+            Set_Page_Off();
+            Combat_Screen_Draw();
+            PageFlip_FX();
             _page_flip_effect = pfe_None;  // ; this is done automatically already
-
             if(
                 (caster_idx >= CASTER_IDX_BASE)
                 &&
                 (_players[caster_idx].runemaster > 0)
             )
             {
-
                 tscc *= 2;
-
             }
             // BUGBUG  should be if *3 else *2, in previous block
             if(spell_idx == spl_Disenchant_True)
             {
-
                 tscc *= 3;
             }
-
             Combat_Cast_Disenchant(caster_idx, tscc);
-
             // BUGBUG  doesn't check active?
             for(itr = 0; itr < _combat_total_unit_count; itr++)
             {
-
-                REINIT_BATTLEUNIT();
-
+                Not_Moved_Yet = ST_FALSE;
+                if(battle_units[itr].status == bus_Active)
+                {
+                    Moves_Left = Battle_Unit_Moves2(itr);
+                    if(battle_units[itr].movement_points == (int8_t)Moves_Left)
+                    {
+                        Not_Moved_Yet = ST_TRUE;
+                    }
+                    else
+                    {
+                        Moves_Left = battle_units[itr].movement_points;
+                    }
+                    Battle_Unit_Regular_Stats(&battle_units[itr]);
+                    Battle_Unit_Special_Stats(&battle_units[itr]);
+                    if(Not_Moved_Yet == ST_TRUE)
+                    {
+                        battle_units[itr].movement_points = (int8_t)Battle_Unit_Moves2(itr);
+                    }
+                    else
+                    {
+                        battle_units[itr].movement_points = (int8_t)Moves_Left;
+                    }
+                }
             }
-
-
         } break;
-
-        case scc_Direct_Damage_Variable:  // 22
+        case scc_Direct_Damage_Variable:
         {
             Combat_Spell_Animation__WIP(target_cgx, target_cgy, spell_idx, player_idx, anims_on, caster_idx);
             if(spell_idx == spl_Life_Drain)
             {
-                /* SPELLY */  BU_LifeDrain__WIP(target_idx, &damage_types[0], caster_idx);
+                Apply_Life_Drain(target_idx, &damage_types[0], caster_idx, tscc);
             }
             // Fire Bolt, Ice Bolt, Lightning Bolt: +1 damage per extra mana spent
             if(
@@ -10578,10 +10554,9 @@ case scc_Disjunction_Spell:  // 20
                 if(tscc > 0)
                 {
                     Moves_Left += (tscc - spell_data_table[spell_idx].casting_cost);
-                    Compute_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], Moves_Left);
                 }
+                Compute_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], Moves_Left);
             }
-
             // Psionic_Blast: +1 damage per every 2 extra mana spent
             if(spell_idx == spl_Psionic_Blast)
             {
@@ -10589,8 +10564,8 @@ case scc_Disjunction_Spell:  // 20
                 if(tscc > 0)
                 {
                     Moves_Left += ((tscc - spell_data_table[spell_idx].casting_cost) / 2);
-                    Compute_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], Moves_Left);
                 }
+                Compute_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], Moves_Left);
             }
             // Fireball: +1 damage per every 3 extra mana spent
             if(spell_idx == spl_Fireball)
@@ -10599,22 +10574,17 @@ case scc_Disjunction_Spell:  // 20
                 if(tscc > 0)
                 {
                     Moves_Left += ((tscc - spell_data_table[spell_idx].casting_cost) / 3);
-                    Compute_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], Moves_Left);
                 }
+                Compute_Battle_Unit_Damage_From_Spell(spell_idx, target_idx, &damage_types[0], Moves_Left);
             }
-
             Battle_Unit_Commit_Damage(target_idx, &damage_types[0]);
-
-            UPDATE_SCREEN_LOCAL();
-
+            Set_Page_Off();
+            Combat_Screen_Draw();
+            PageFlip_FX();
         } break;
-
     }
-
     Combat_Screen_Draw();
-
     PageFlip_FX();
-
 }
 
 
@@ -12471,7 +12441,7 @@ int16_t Battle_Unit_Pict_Open(void)
  * @brief Determines whether either combat side has been completely eliminated.
  *
  * This routine scans all active battle units and counts how many effective combatants remain for
- * the attacker and defender. Units under Confusion_State value 2 are counted for the opposing side
+ * the attacker and defender. Units under confusion_state value 2 are counted for the opposing side
  * instead of their controller, matching the combat logic that treats fully confused units as acting
  * against their original army for winner-determination purposes.
  *
@@ -12483,7 +12453,7 @@ int16_t Battle_Unit_Pict_Open(void)
  * @return ST_UNDEFINED when both the attacker and defender still have effective units in combat.
  *
  * @note Only units with status bus_Active are considered.
- * @note Confused units with Confusion_State equal to 2 are counted for the opposite side.
+ * @note Confused units with confusion_state equal to 2 are counted for the opposite side.
  */
 int16_t Eliminated_Opponent(void)
 {
@@ -12498,7 +12468,7 @@ int16_t Eliminated_Opponent(void)
         {
             if(battle_units[itr].controller_idx == _combat_attacker_player)
             {
-                if(battle_units[itr].Confusion_State != 2)
+                if(battle_units[itr].confusion_state != 2)
                 {
                     attacker_count++;
                 }
@@ -12511,7 +12481,7 @@ int16_t Eliminated_Opponent(void)
             {
                 if(battle_units[itr].controller_idx == _combat_defender_player)
                 {
-                    if(battle_units[itr].Confusion_State != 2)
+                    if(battle_units[itr].confusion_state != 2)
                     {
                         defender_count++;
                     }
@@ -22602,7 +22572,7 @@ void Apply_Earth_To_Mud(int16_t cgx, int16_t cgy)
 {
     int16_t itr_cgy = 0;
     int16_t itr_cgx = 0;
-    int16_t combat_terrain_type_group = 0;  // DNE in Dasm
+    int16_t combat_terrain_type_group = 0;
     for(itr_cgy = -2; itr_cgy < 3; itr_cgy++)
     {
         for(itr_cgx = -2; itr_cgx < 3; itr_cgx++)

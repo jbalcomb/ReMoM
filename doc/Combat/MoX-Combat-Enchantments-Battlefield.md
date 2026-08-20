@@ -23,7 +23,7 @@ CMB_CE_Refresh__WIP()
 Combat_Screen_Load_Resources()
 Strategic_Combat_Allocate()
 AITP_Combat_Spell()
-Cast_Spell_On_Battle_Unit()
+Combat_Cast_Apply_Spell_Effect()
 Combat_Cast_Spell()
 Do_Legal_Spell_Check()
 Apply_Mana_Leak()
@@ -58,8 +58,8 @@ Combat_Screen_Load_Resources:loc_8500A            les     bx, [combat_enchantmen
 Strategic_Combat_Allocate+3B                mov     [word ptr combat_enchantments], ax  
 Strategic_Combat_Allocate:loc_888F2         les     bx, [combat_enchantments]           
 AITP_Combat_Spell+DED                  add     bx, [word ptr combat_enchantments]  
-Cast_Spell_On_Battle_Unit+A25               les     bx, [combat_enchantments]           
-Cast_Spell_On_Battle_Unit:loc_8C6C2         les     bx, [combat_enchantments]           
+Combat_Cast_Apply_Spell_Effect+A25               les     bx, [combat_enchantments]           
+Combat_Cast_Apply_Spell_Effect:loc_8C6C2         les     bx, [combat_enchantments]           
 Combat_Cast_Spell+58F                  les     bx, [combat_enchantments]           
 Combat_Cast_Spell+5B6                  les     bx, [combat_enchantments]           
 Combat_Cast_Spell:loc_8D6F4            les     bx, [combat_enchantments]           

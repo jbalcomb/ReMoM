@@ -127,5 +127,5 @@ Also calls `Target_Is_Visible` ([3741](../../MoM/src/Combat.c#L3741)), `Combat_E
 - `…\ovr111\AITP_CombatSpell__STUB.asm` — IDA Pro 5.5 disassembly (**the authority**).
 - `…\ovr111\_misc.asm` — holds the `off_8B1F3` category jump table.
 - `…\ovr111\AITP_CombatSpell__STUB__GEMINI.c` — Gemini translation (second opinion; source of the OG-bug annotations above).
-- [`Cast_Spell_On_Battle_Unit`](../../MoM/src/Combat.c#L12182) — applies the spell once a target is chosen (`…\ovr111\Cast_Spell_On_Battle_Unit.asm`).
+- [`Combat_Cast_Apply_Spell_Effect`](../../MoM/src/Combat.c#L12182) — applies the spell once a target is chosen (`…\ovr111\Combat_Cast_Apply_Spell_Effect.asm`).
 - [MOM_DAT.h `s_SPELL_DATA` union](../../MoX/src/MOM_DAT.h#L1063-L1085) — the polymorphic 4-byte payload (`enchantments` / `Param0`/`Params2_3` / `unit_type` / `ce_idx` / `oe_idx` / `strength`).

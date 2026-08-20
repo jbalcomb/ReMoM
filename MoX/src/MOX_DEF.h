@@ -51,6 +51,22 @@
 
 
 /*
+bit position of a single-bit mask; constant-folds, so it costs nothing at runtime
+
+Yes — for an exact power of two you can fold the position out at compile time. The standard branchless log2:
+Verified: all 32 single-bit masks round-trip, and it's a genuine constant expression — the compiler accepted it as a case label and as an array-size guard, both of which reject anything non-constant.
+e.g.,
+    BIT_POS(UE_HEROISM) → 24, BIT_POS(UE_FLIGHT) → 17, BIT_POS(UE_SPELL_LOCK) → 14.
+
+*/
+#define BIT_POS(_m_)  (                 \
+    (((_m_) & 0xFFFF0000UL) ? 16 : 0) | \
+    (((_m_) & 0xFF00FF00UL) ?  8 : 0) | \
+    (((_m_) & 0xF0F0F0F0UL) ?  4 : 0) | \
+    (((_m_) & 0xCCCCCCCCUL) ?  2 : 0) | \
+    (((_m_) & 0xAAAAAAAAUL) ?  1 : 0) )
+
+/*
 #define MIN(a, b) (((a) <= (b)) ? (a) : (b))
 #define MIN(a, b) (((a) <  (b)) ? (a) : (b))
 ...JL vs. JLE...

@@ -24,7 +24,7 @@ battle_item_from_parsed() ~== Load_Combat_Ship_()
 
 
 
-Load_Battle_Unit() vs. BU_Init_Battle_Unit()
+Load_Battle_Unit() vs. Battle_Unit_Regular_Stats()
     some same fields cleared
 Load_Battle_Unit()
     sets the strategic_unit->unit_idx
@@ -36,8 +36,8 @@ Battle_Unit_Level_Stats()
 ¿ if/why gets passed unit_idx ?
     Load_Battle_Unit()
     Battle_Unit_Level_Stats()
-        Battle_Unit_Level_Stats() is only called from BU_Init_Battle_Unit()
-        but, BU_Init_Battle_Unit() doesn't get passed the unit_idx
+        Battle_Unit_Level_Stats() is only called from Battle_Unit_Regular_Stats()
+        but, Battle_Unit_Regular_Stats() doesn't get passed the unit_idx
             it gets it from Load_Battle_Unit()
 
 BU_ApplyCombatFX()
@@ -46,7 +46,7 @@ BU_ApplyCombatFX()
 
 End-To-End:
     Load_Battle_Unit()
-    BU_Init_Battle_Unit() ... BU_ApplyCombatFX()
+    Battle_Unit_Regular_Stats() ... BU_ApplyCombatFX()
 
 
 
@@ -72,7 +72,7 @@ Main_Screen()
     BEGIN: Right-Click Unit Window Grid Field
         USW_FullDisplay()
             Load_Battle_Unit(unit_idx, BattleUnit)
-                BU_Init_Battle_Unit(BattleUnit)
+                Battle_Unit_Regular_Stats(BattleUnit)
                     Battle_Unit_Level_Stats(BattleUnit)
                     BU_Init_Hero_Unit(BattleUnit)
                     BU_Apply_Items(BattleUnit)
@@ -85,7 +85,7 @@ Main_Screen()
 Combat()
     Strategic_Combat()
         Load_Battle_Unit()
-            BU_Init_Battle_Unit(BattleUnit)
+            Battle_Unit_Regular_Stats(BattleUnit)
                 Battle_Unit_Level_Stats(BattleUnit)
                 BU_Init_Hero_Unit(BattleUnit)
                 BU_Apply_Items(BattleUnit)
@@ -150,7 +150,7 @@ BU_Apply_Items() uses s_STRATEGIC_UNIT.mana_max as if it means 'has spell caster
 
 
 
-### BU_Init_Battle_Unit()
+### Battle_Unit_Regular_Stats()
 
 gets called directly elsewhere
 so, not just a part of loading a 'Battle Unit'  ... Indeed. It's part of creating a new battle unit for combat summons
@@ -158,7 +158,7 @@ so, not just a part of loading a 'Battle Unit'  ... Indeed. It's part of creatin
     CMB_AnimateDead()
     CMB_PrepareTurn()
     CMB_RaiseDead()
-    Cast_Spell_On_Battle_Unit()
+    Combat_Cast_Apply_Spell_Effect()
 
 
 

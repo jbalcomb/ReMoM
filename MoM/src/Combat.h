@@ -1289,7 +1289,7 @@ struct s_BATTLE_UNIT
     /* 0x50 */  int16_t  outline_magic_realm;   /* enchantment_magic_realm ... enum e_MAGIC_REALM{} ... index into enchantment_outline_colors[], used for unit outline color */
     /* 0x52 */  int16_t  mid_move;              /* {F,T} unit is mid-move; selects walk vs idle animation frame; set to ST_FALSE in Switch_Active_Battle_Unit() */
     /* 0x54 */  int16_t  action;                /* enum e_BATTLE_UNIT_ACTION */
-    /* 0x56 */  int8_t   Confusion_State;       /* {0: , 1: , 2: }  ~== stand around and do nothing while looking foolish and confused, move randomly, attack allies, attack enemies for combat winner, 2 means it currently belong to the other player/opponent */
+    /* 0x56 */  int8_t   confusion_state;       /* {0: , 1: , 2: }  ~== stand around and do nothing while looking foolish and confused, move randomly, attack allies, attack enemies for combat winner, 2 means it currently belongs to the other player/opponent */
     /* 0x57 */  /* 2-byte alignment padding */
     /* 0x58 */  int16_t  gibs;
     /* 0x5A */  int16_t  Unknown_5A;
@@ -1451,8 +1451,8 @@ extern int16_t _combat_node_type;
 /*
 ¿ only used by/for TILE_DispelMagic__WIP() ?
 */
-extern int16_t * CMB_NearDispel_UCs;
-extern int16_t * CMB_NearDispel_UEs;
+extern int16_t * dispel_combat_effect_bits;
+extern int16_t * dispel_enchantment_bits;
 
 // WZD dseg:C972
 extern int16_t _combat_winner;
@@ -1938,7 +1938,7 @@ int16_t AITP_WarpCreature(int16_t player_idx);
 int16_t AITP_DispelMagic(int16_t player_idx);
 
 // WZD 111p08
-void Cast_Spell_On_Battle_Unit(int16_t spell_idx, int16_t target_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy, int16_t Mana, int16_t Anims, int16_t UU1, int16_t UU2);
+void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy, int16_t Mana, int16_t Anims, int16_t UU1, int16_t UU2);
 
 // WZD 111p09
 int16_t AITP_HolyWord(int16_t player_idx);

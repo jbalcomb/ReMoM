@@ -80,7 +80,7 @@ BU_ProcessAttack__WIP()
         Attack_Damage = CMB_AttackRoll__SEGRAX(attack_strength, attack_tohit);
 
 battle_units[].tohit, battle_units[].melee_tohit
-BU_Init_Battle_Unit()
+Battle_Unit_Regular_Stats()
     battle_unit->tohit = _unit_type_table[_UNITS[battle_unit->unit_idx].type].To_Hit;
     battle_unit->melee_tohit = 0;
     battle_unit->ranged_tohit = 0;

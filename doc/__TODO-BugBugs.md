@@ -32,7 +32,7 @@ ReMoM
 
     ...grep for USA_LUCKY, BU_LUCKY, HSA_LUCKY, HERO_LUCKY  VSC  Ctrl-Shft-F  USA_LUCKY|BU_LUCKY|HSA_LUCKY|HERO_LUCKY
     Combat.c
-        BU_Init_Battle_Unit()
+        Battle_Unit_Regular_Stats()
             if(BU_LUCKY())                                  #define BU_LUCKY()      ( ( battle_unit->Attribs_1 & USA_LUCKY     ) != 0 )
                 battle_unit->tohit += 1;
                 battle_unit->toblock += 1;
@@ -65,7 +65,7 @@ ReMoM
     Prayer Spell
         Combat.c
             Line 11746
-            Cast_Spell_On_Battle_Unit()
+            Combat_Cast_Apply_Spell_Effect()
             Line 12010
             case scc_Battlefield_Spell:     // 10
             // Combat Battlefield Enchantment  (NOT Combat Battlefield Instant)

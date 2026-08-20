@@ -170,15 +170,6 @@ Deploy_Battle_Units()
 
 
 /*
-Cast_Spell_On_Battle_Unit()
-
-    if(spell_idx == spl_Disrupt)
-        battlefield->walls[(((target_cgy - 10) * 3) + (target_cgx - 5))] = 2;
-*/
-
-
-
-/*
 Spawn_Figure_Entity()
     no battle_unit_idx, passed in cgx, cgy, target_cgx, target_cgy
 
@@ -341,7 +332,7 @@ this is as-seen in Spawn_Figure_Entity()
 
 
 /*
-Cast_Spell_On_Battle_Unit()
+Combat_Cast_Apply_Spell_Effect()
 
                 Moves_Left = Battle_Unit_Moves2(target_idx);
                 Not_Moved_Yet = ST_FALSE;

@@ -496,7 +496,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     battle_unit->front_figure_damage = (_UNITS[unit_idx].Damage % battle_unit->hits);
     battle_unit->figure_cnt = (battle_unit->figure_max - (_UNITS[unit_idx].Damage / battle_unit->hits));
     battle_unit->Atk_FigLoss = 0;
-    battle_unit->Confusion_State = 0;
+    battle_unit->confusion_state = 0;
     battle_unit->gibs = 0;
     battle_unit->Unknown_5A = 0;  // NOTE: Per the Dasm, duplicate `battle_unit->Unknown_5A = 0;`
     battle_unit->Unknown_5A = 0;

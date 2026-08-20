@@ -19,7 +19,7 @@ Tier 2 is Calc_Battlefield_Bonuses (ovr122, 450), which produces the three _batt
 
 CMB_PrepareTurn__WIP()               ==>  Begin_Combat_Turn()
 Prepare_All_Battle_Units()                ==>  Deploy_Battle_Units()
-BU_Init_Battle_Unit()                ==>  Battle_Unit_Regular_Stats()
+Battle_Unit_Regular_Stats()                ==>  Battle_Unit_Regular_Stats()
 BU_Apply_Battlefield_Effects__WIP()  ==>  Battle_Unit_Special_Stats()
 BU_Apply_Level()                     ==>  Battle_Unit_Level_Stats()
 BU_Apply_Specials()                  ==>  Apply_Enchantment_And_Mutation_Effects()
@@ -45,7 +45,7 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\BU_Apply_Item_Attac
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\Unit_Hit_Points.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\Battle_Unit_Hit_Points.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\Load_Battle_Unit.asm
-C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\BU_Init_Battle_Unit.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\Battle_Unit_Regular_Stats.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\BU_Apply_Specials.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\BU_Apply_Level.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr116\BU_Init_Hero_Unit.asm
@@ -254,7 +254,7 @@ Since this review began, `ovr116` has been split out of `Combat.c` into its own 
 | `Unit_Hit_Points` | [COMBINIT.c:292](../../MoM/src/COMBINIT.c#L292) | [ovr116/Unit_Hit_Points.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/Unit_Hit_Points.asm) (216) | faithful (R6, R8 fixed) |
 | `Battle_Unit_Hit_Points` | [COMBINIT.c:377](../../MoM/src/COMBINIT.c#L377) | [ovr116/Battle_Unit_Hit_Points.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/Battle_Unit_Hit_Points.asm) (261) | faithful (R5, R7, R9 fixed) |
 | `Load_Battle_Unit` | [COMBINIT.c:471](../../MoM/src/COMBINIT.c#L471) | [ovr116/Load_Battle_Unit.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/Load_Battle_Unit.asm) (286) | faithful |
-| `Battle_Unit_Regular_Stats` | [COMBINIT.c:566](../../MoM/src/COMBINIT.c#L566) | [ovr116/BU_Init_Battle_Unit.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Init_Battle_Unit.asm) (478) | faithful (R1, R2 fixed) |
+| `Battle_Unit_Regular_Stats` | [COMBINIT.c:566](../../MoM/src/COMBINIT.c#L566) | [ovr116/Battle_Unit_Regular_Stats.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/Battle_Unit_Regular_Stats.asm) (478) | faithful (R1, R2 fixed) |
 | `Apply_Enchantment_And_Mutation_Effects` | [COMBINIT.c:734](../../MoM/src/COMBINIT.c#L734) | [ovr116/BU_Apply_Specials.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Apply_Specials.asm) (509) | faithful (R11-R13 fixed) |
 | `Battle_Unit_Level_Stats` | [COMBINIT.c:922](../../MoM/src/COMBINIT.c#L922) | [ovr116/BU_Apply_Level.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Apply_Level.asm) (275) | faithful |
 | `Battle_Unit_Hero_Skill_Stats` | [COMBINIT.c:1102](../../MoM/src/COMBINIT.c#L1102) | [ovr116/BU_Init_Hero_Unit.asm](../../../STU-Extras/Piethawn/Piethawn/out/WIZARDS/ovr116/BU_Init_Hero_Unit.asm) (394) | faithful (R6 fixed) |
@@ -269,7 +269,7 @@ Since this review began, `ovr116` has been split out of `Combat.c` into its own 
 
 ```
 CMB_PrepareTurn__WIP                            ==>  Begin_Combat_Turn()
-BU_Init_Battle_Unit                             ==>  Battle_Unit_Regular_Stats()
+Battle_Unit_Regular_Stats                             ==>  Battle_Unit_Regular_Stats()
 BU_Apply_Battlefield_Effects__WIP               ==>  Battle_Unit_Special_Stats()
 BU_Apply_Specials                               ==>  Apply_Enchantment_And_Mutation_Effects()
 BU_Apply_Level                                  ==>  Battle_Unit_Level_Stats()
@@ -651,5 +651,5 @@ None of these touch the reconstruction fidelity recorded above, and none are dec
 
 - [Combat-Battle_Unit_Attack.md](Combat-Battle_Unit_Attack.md) — the Wind Mastery finding R2 mirrors, and the source of the `Battle_Unit_Item_Stats` ordering assumption; DONE-DONE.
 - [Combat-Battle_Unit_Action.md](Combat-Battle_Unit_Action.md) — DONE-DONE.
-- [Combat-Summon_Demon.md](Combat-Summon_Demon.md) — `Prepare_Battle_Unit` calls `Load_Battle_Unit`, reviewed there as out of scope and covered here; DONE-DONE.
+- [Combat-Combat_Summon.md](Combat-Combat_Summon.md) — `Prepare_Battle_Unit` calls `Load_Battle_Unit`, reviewed there as out of scope and covered here; DONE-DONE.
 - [MOM_DAT.h:831-837](../../MoX/src/MOM_DAT.h#L831-L837) — `e_COMBAT_NODE_TYPE`, whose values feed the node-aura test. See the note under `Battle_Unit_Special_Stats` before touching them.

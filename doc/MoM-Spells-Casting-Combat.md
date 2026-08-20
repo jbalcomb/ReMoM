@@ -8,14 +8,14 @@ CMB_ShowSpellbook__WIP()  ==>  Combat_Spellbook_Screen()
 CMB_RedrawSpellbook__WIP()  ==>  Combat_Spellbook_Screen_Draw()
 CMB_DrawFullScreen__WIP()  ==>  Tactical_Combat_Draw()
 CMB_CheckSpellErrors()  ==>  Do_Legal_Spell_Check__WIP()
-G_CMB_SpellEffect()  ==> G_CMB_SpellEffect__WIP()  ==>  Cast_Spell_On_Battle_Unit()
+G_CMB_SpellEffect()  ==> G_CMB_SpellEffect__WIP()  ==>  Combat_Cast_Apply_Spell_Effect()
 CMB_BattlefieldSpell()  ==>  Combat_Battlefield_Instant()
 
 
 
 
 
-Cast_Spell_On_Battle_Unit()
+Combat_Cast_Apply_Spell_Effect()
 ...not actually always casting *on* a 'Battle Unit'
 ...target_idx can be 99
 ...none take a target scc_Battlefield_Spell (10), scc_Combat_Counter_Magic (21)
@@ -48,7 +48,7 @@ AI_BU_ProcessAction__WIP()
 
 ## Combat_Spell_Animation__WIP()
 
-Cast_Spell_On_Battle_Unit()
+Combat_Cast_Apply_Spell_Effect()
         case scc_Battlefield_Spell:     // 10
         case scc_Combat_Counter_Magic:  // 21
 
@@ -67,13 +67,13 @@ Cast_Spell_On_Battle_Unit()
 
 
 
-## Cast_Spell_On_Battle_Unit()
+## Combat_Cast_Apply_Spell_Effect()
 
 
 
 Combat_Cast_Spell()
     if(Target != 999)
-        Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
+        Combat_Cast_Apply_Spell_Effect(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
 'Target' is battle_unit_idx
 'IDK_mana' is casting cost (as in TSCC)
 
@@ -93,7 +93,7 @@ no idea what's up with the two unused parameters
                     IDK_mana = Combat_Spellbook_Mana_Adder_Screen(spell_idx, Selected_Spell, caster_idx);
         if(spell_idx > spl_NONE)
             if(Target != 999)
-                Cast_Spell_On_Battle_Unit(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
+                Combat_Cast_Apply_Spell_Effect(spell_idx, Target, caster_idx, Target_X, Target_Y, IDK_mana, ST_TRUE, ST_NULL, ST_NULL);
 
 
 
@@ -104,7 +104,7 @@ no idea what's up with the two unused parameters
 Tactical_Combat__WIP()
     Combat_Cast_Spell()
         Combat_Spell_Target_Screen__WIP()
-        Cast_Spell_On_Battle_Unit()
+        Combat_Cast_Apply_Spell_Effect()
             Create_Unit
             Prepare_Battle_Unit_Summons()
             Battle_Unit_Summon_Animation()
@@ -117,7 +117,7 @@ Combat_Spell_Target_Screen__WIP()
             if(_combat_attacker_player == HUMAN_PLAYER_IDX)
                 CMB_TargetingType = CTT_Tile_NoUnitA;
 ...
-Cast_Spell_On_Battle_Unit()
+Combat_Cast_Apply_Spell_Effect()
     switch(spell_data_table[spell_idx].type)
         case scc_Summoning:
             Figure_Count = Create_Unitl_data_table[spell_idx].unit_type, player_idx, 0, 0, 9, 2000);
@@ -233,7 +233,7 @@ CMB_CounterMessage()
 CMB_TargetSpell()
 AITP_Combat_Spell()
 
-Cast_Spell_On_Battle_Unit()
+Combat_Cast_Apply_Spell_Effect()
 
 BU_SummonDemon()
 

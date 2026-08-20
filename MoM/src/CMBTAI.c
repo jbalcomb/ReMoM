@@ -498,7 +498,7 @@ that will never jump as written, likely intended to find a specific target
         {
             bu_ptr->Attribs_2 ^= 0x01; /* USA_DOOMBOLT bit */
             target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
-            Cast_Spell_On_Battle_Unit(47 /* spl_Doom_Bolt */, bu_ptr->target_battle_unit_idx, battle_unit_idx, target_ptr->cgx, target_ptr->cgy, 0, 1, ST_NULL, ST_NULL);
+            Combat_Cast_Apply_Spell_Effect(47 /* spl_Doom_Bolt */, bu_ptr->target_battle_unit_idx, battle_unit_idx, target_ptr->cgx, target_ptr->cgy, 0, 1, ST_NULL, ST_NULL);
             bu_ptr->movement_points = 0;
         }
         break;
@@ -507,7 +507,7 @@ that will never jump as written, likely intended to find a specific target
         {
             bu_ptr->Attribs_2 ^= 0x02; /* USA_FIREBALL bit */
             target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
-            Cast_Spell_On_Battle_Unit(40 /* spl_Fireball */, bu_ptr->target_battle_unit_idx, battle_unit_idx, target_ptr->cgx, target_ptr->cgy, 0, 1, ST_NULL, ST_NULL);
+            Combat_Cast_Apply_Spell_Effect(40 /* spl_Fireball */, bu_ptr->target_battle_unit_idx, battle_unit_idx, target_ptr->cgx, target_ptr->cgy, 0, 1, ST_NULL, ST_NULL);
             bu_ptr->movement_points = 0;
         }
         break;
@@ -578,7 +578,7 @@ that will never jump as written, likely intended to find a specific target
         {
             bu_ptr->Attribs_2 ^= 0x08; /* USA_WEB bit */
             target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
-            Cast_Spell_On_Battle_Unit(91 /* spl_Web */, bu_ptr->target_battle_unit_idx, battle_unit_idx, target_ptr->cgx, target_ptr->cgy, 0, 1, ST_NULL, ST_NULL);
+            Combat_Cast_Apply_Spell_Effect(91 /* spl_Web */, bu_ptr->target_battle_unit_idx, battle_unit_idx, target_ptr->cgx, target_ptr->cgy, 0, 1, ST_NULL, ST_NULL);
             bu_ptr->movement_points = 0;
         }
         break;

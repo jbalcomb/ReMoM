@@ -381,7 +381,15 @@
 
 ## Spells133
 - [ ] Apply_Call_Chaos__WIP
-- [ ] BU_LifeDrain__WIP
+- [x] Apply_Cracks_Call — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Spells131.c:643, faithful against ovr131/Apply_Cracks_Call.asm (109 asm lines)
+- [x] Apply_Earth_To_Mud — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Combat.c:22576, faithful against ovr154/Apply_Earth_To_Mud.asm (93 asm lines); moved here from Combat-Miscellaneous.md, which had it homeless
+- [x] Apply_Life_Drain — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); renamed from BU_LifeDrain__WIP, Spells133.c:420, faithful against ovr133/BU_LifeDrain__WIP.asm (95 asm lines); body reconstructed from the stub, 4th parameter restored, declaration order fixed
+- [x] Apply_Warp_Creature — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Spells133.c:103, faithful against ovr133/Apply_Warp_Creature.asm (129 asm lines)
+- [x] Combat_Cast_Apply_Spell_Effect — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); renamed from Cast_Spell_On_Battle_Unit, Combat.c:9955, faithful against ovr111/Cast_Spell_On_Battle_Unit.asm (1,806 asm lines); 8 findings fixed including two entirely missing switch arms
+- [x] Combat_Cast_Disenchant — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Spells131.c:68, faithful against ovr131/Cast_Disenchant.asm (693 asm lines); 10 findings fixed
+- [x] Combat_Cast_Dispel — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Spells131.c:274, faithful against ovr131/Cast_Dispel_Magic.asm (1,499 asm lines); 10 findings fixed including a missing vortex pass
+- [x] Magic_Vortex_Create — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Spells133.c:1327, faithful against ovr133/Magic_Vortex_Create.asm (54 asm lines)
+- [x] Spell_Resistance_Modifier — done-done 2026-08-19 (doc/#CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); CMBMAGIC.c:1405, faithful against ovr112/Spell_Resistance_Modifier.asm (94 asm lines)
 - [ ] Cast_Call_Chaos__WIP
 - [x] Combat_Spell_Counter_Message — done-done 2026-08-17 (doc/#CodeReview/Combat-Combat_Spell_Dispel.md); Spells133.c:532, faithful against ovr133/Combat_Spell_Dispel_Attempt.asm (375 asm lines); R1 declaration order fixed
 - [ ] Combat_Spell_Animation_Generic__WIP

@@ -15,7 +15,7 @@ spl_Warp_Wood
 spl_Healing
 spl_Creature_Binding
 spl_Disrupt
-    handled in-line in Cast_Spell_On_Battle_Unit()
+    handled in-line in Combat_Cast_Apply_Spell_Effect()
 spl_Recall_Hero
 spl_Word_Of_Recall
 

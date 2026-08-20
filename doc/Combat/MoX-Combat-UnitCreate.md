@@ -181,7 +181,7 @@ Summon_Demon()
 
 
 
-Cast_Spell_On_Battle_Unit()
+Combat_Cast_Apply_Spell_Effect()
 
     switch(spell_data_table[spell_idx].type)
         case scc_Summoning:

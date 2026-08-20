@@ -10,10 +10,10 @@ WHEREIS  add extra mana / slider
 
 scc_Direct_Damage_Variable       = 22,   /* COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast */
 
-before Cast_Spell_On_Battle_Unit()
+before Combat_Cast_Apply_Spell_Effect()
 ¿ 'Mana' is the extra mana passed in ?
 ...and, some things override this value...
-...in Cast_Spell_On_Battle_Unit, case scc_Direct_Damage_Variable: just applies the cost and damage
+...in Combat_Cast_Apply_Spell_Effect, case scc_Direct_Damage_Variable: just applies the cost and damage
 
 Combat_Cast_Spell()
     Combat_Spellbook_Build()

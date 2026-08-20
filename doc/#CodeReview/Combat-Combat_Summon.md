@@ -1,4 +1,4 @@
-Combat-Summon_Demon.md
+Combat-Combat_Summon.md
 
 BU_SummonDemon__SEGRAX()       ==>  Summon_Demon()
 BU_CombatSummon__SEGRAX()      ==>  Battle_Unit_Summon_Animation()
@@ -53,7 +53,7 @@ AI_BU_ProcessAction()
             |-> Release_Block()
 
 ~ Prepare_All_Battle_Units()  AKA Prepare_All_Battle_Units()
-OON XREF:  Prepare_Battle_Unit_Summons() |-> Prepare_Battle_Unit
+OON XREF:  Prepare_Battle_Unit_Summons() |-> Prepare_Battle_Unit()
 ...which is only used for scc_Summoning and USA 'Summon Demon'
 OON XREF:  Combat_Cast_Spell() |-> Summon_Demon()
 
@@ -67,7 +67,7 @@ Combat_Cast_Spell()
                 |-> Combat_Figure_Load()
         |-> Battle_Unit_Summon_Animation()
 
-Cast_Spell_On_Battle_Unit()
+Combat_Cast_Apply_Spell_Effect()
     switch(spell_data_table[spell_idx].type)
     case scc_Summoning:
     |-> Prepare_Battle_Unit_Summons(player_idx, (_units - 1), target_cgx, target_cgy);
@@ -193,7 +193,7 @@ The remaining stores — `controller_idx`, `cgx`, `cgy`, `target_cgx`, `target_c
 
 - **Battlefield effects are never applied to the summoned unit — but the "bug" is unproven.** The behaviour is real: nothing in this function's 121 lines calls `Battle_Unit_Special_Stats`, so a demon arrives without Prayer, Black Prayer, Terror or a node aura.
 
-  What the listings do **not** show is that this is an oversight. The other path that creates a new battle unit behaves identically — `ovr111/Cast_Spell_On_Battle_Unit.asm` runs `Create_Unit` (1773) → `Prepare_Battle_Unit_Summons` (1784) → `Battle_Unit_Summon_Animation` (1793) with no effects call anywhere in that block; its last one is back at 1663. Two independent new-unit paths agreeing is consistency, not omission.
+  What the listings do **not** show is that this is an oversight. The other path that creates a new battle unit behaves identically — `ovr111/Combat_Cast_Apply_Spell_Effect.asm` runs `Create_Unit` (1773) → `Prepare_Battle_Unit_Summons` (1784) → `Battle_Unit_Summon_Animation` (1793) with no effects call anywhere in that block; its last one is back at 1663. Two independent new-unit paths agreeing is consistency, not omission.
 
   `ovr131/Cast_Animate_Dead.asm:367` and `ovr131/Cast_Raise_Dead.asm:398` *do* apply effects before their summon, and an earlier draft of this review cited them as proof. That was the wrong comparison: neither calls `Create_Unit` or `Prepare_Battle_Unit_Summons` — they reanimate a battle unit that already exists on the field, which is a different situation.
 
@@ -229,5 +229,5 @@ A 16-frame summon animation wrapped around the moment the unit becomes real.
 
 - [Combat-Battle_Unit_Attack.md](Combat-Battle_Unit_Attack.md) — the HACK two-value-return pattern of D2; DONE-DONE.
 - [Combat-Battle_Unit_Action.md](Combat-Battle_Unit_Action.md) — where `g_combat_grid_action_map` was reviewed under its other name; DONE-DONE.
-- `Cast_Spell_On_Battle_Unit` (`ovr111`, 1806 lines) — the other caller of both `Prepare_Battle_Unit_Summons` and `Battle_Unit_Summon_Animation`, and the path that *does* apply battlefield effects. Not reviewed; the natural next bundle if the summon OGBUG is ever revisited.
+- `Combat_Cast_Apply_Spell_Effect` (`ovr111`, 1806 lines) — the other caller of both `Prepare_Battle_Unit_Summons` and `Battle_Unit_Summon_Animation`, and the path that *does* apply battlefield effects. Not reviewed; the natural next bundle if the summon OGBUG is ever revisited.
 - `Create_Unit` ([NEXTTURN.c:1023](../../MoM/src/NEXTTURN.c#L1023)) — 12 callers, own bundle.
