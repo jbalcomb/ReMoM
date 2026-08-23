@@ -421,7 +421,7 @@ enum e_AI_OBJECTIVE
 // 01 Spl_Healing   = 0x01  // 0000 0001
 // 02 Spl_Fireball  = 0x02
 // 04 Spl_DoomBolt  = 0x04
-// 08 Ab_Immolation = 0x08
+// 08 USA_IMMOLATION = 0x08
 // 10 Spl_Web       = 0x10
 // 20 Ab_CauseFear  = 0x20
 // 40 Ab_ResistAll  = 0x40

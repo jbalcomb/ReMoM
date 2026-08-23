@@ -151,7 +151,9 @@
 - [x] Combat_Screen__WIP — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen.md); renamed Combat_Screen, Combat.c:1405, faithful against ovr090/Combat_Screen__WIP.asm
 - [x] Combat_Screen_Map_Draw — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); Combat.c:19602, faithful against ovr153/Combat_Screen_Map_Draw__WIP.asm
 - [x] Combat_Screen_Map_Draw_Entities — done-done 2026-08-08 (doc/#CodeReview/Combat-Combat_Screen_Map_Draw.md); Combat.c:19908, faithful against ovr153/Combat_Screen_Map_Draw_Entities__WIP.asm
-- [ ] Combat_Spell_Target_Screen__WIP
+- [x] Combat_Spell_Target_Screen — done-done 2026-08-23 (doc/#CodeReview/Combat-Combat_Spell_Target_Screen.md); renamed from Combat_Spell_Target_Screen__WIP, Combat.c:10824, faithful against ovr113/Combat_Spell_Target_Screen__WIP.asm (1,414 asm lines); 5 findings fixed — the Dispel Magic vortex scan and ~840 asm lines of per-spell target-validity checking were missing entirely
+- [x] Combat_Screen_Assign_Mouse_Images — done-done 2026-08-23 (doc/#CodeReview/Combat-Combat_Spell_Target_Screen.md); Combat.c:10637, faithful against ovr113/Combat_Screen_Assign_Mouse_Images.asm (273 asm lines); 3 findings fixed — inverted controller test, missing animated cast cursor, if-chain that is a switch
+- [x] Combat_Spell_Target_Screen_Draw — done-done 2026-08-23 (doc/#CodeReview/Combat-Combat_Spell_Target_Screen.md); Combat.c:10805, faithful against ovr113/Combat_Spell_Target_Screen_Draw.asm (68 asm lines)
 - [x] Combat_Cast_Spell — done-done 2026-08-18 (doc/#CodeReview/Combat-Spell_Cast.md); CMBMAGIC.c:218, faithful against ovr112/Combat_Cast_Spell__WIP.asm (1,379 asm lines); walked phase-for-phase 2026-07-07, verdict carried when Combat-Combat_Cast_Spell.md was retired into the session doc
 - [x] Combat_Cast_Spell_Error — done-done 2026-08-18 (doc/#CodeReview/Combat-Spell_Cast.md); Combat.c:6992, faithful against ovr103/zCombat_Cast_Spell_Error.asm (26 asm lines)
 - [x] Combat_Cast_Spell_Message — done-done 2026-08-18 (doc/#CodeReview/Combat-Spell_Cast.md); Combat.c:12369, faithful against ovr113/Combat_Cast_Spell_Message.asm (276 asm lines)

@@ -12,6 +12,7 @@
         ovr110  ¿ Strategic Combat ?
         ovr111  ¿ AITP.* ?
         ovr112  ¿ LBX CMBMAGIC ?
+        ovr113  
         ovr114  ¿ MoO2  Module: CMBTAI ?
         ovr116  MoO2  COMBINIT
         ovr122
@@ -342,10 +343,14 @@ char cnst_CmbSpellMsg1[] = "Select a target for a ";
 char cnst_SpaceSpellDot_3[] = " spell.";
 // WZD dseg:5B40
 char message_lbx_file__ovr113__1of2[] = "message";
-// WZD dseg:5B48 54 68 61 74 20 75 6E 69 74 20 61 6C 72 65 61 64+cnst_SpellError_1 db 'That unit already has ',0
-// WZD dseg:5B5F 20 63 61 73 74 20 6F 6E 20 69 74 00             cnst_SpellError_2 db ' cast on it',0    ; DATA XREF: CMB_TargetSpell+5CBo ...
-// WZD dseg:5B6B 54 68 61 74 20 75 6E 69 74 20 69 73 20 69 6D 6D+cnst_SpellError_3 db 'That unit is immune to Death spells',0
-// WZD dseg:5B8F 6D 65 73 73 61 67 65 2E 6C 62 78 00             message_lbx_file__ovr113__2of2 db 'message.lbx',0
+// WZD dseg:5B48
+char cnst_SpellError_1[] = "That unit already has ";
+// WZD dseg:5B5F
+char cnst_SpellError_2[] = " cast on it";
+// WZD dseg:5B6B
+char cnst_SpellError_3[] = "That unit is immune to Death spells";
+// WZD dseg:5B8F
+char message_lbx_file__ovr113__2of2[] = "message.lbx";
 // WZD dseg:5B9B
 char soundfx_lbx_file__ovr113[] = "soundfx";
 // WZD dseg:5BA3
@@ -5186,7 +5191,7 @@ void Build_Flee_Loss_Message(int16_t troop_count, int16_t troop_list[])
     }
     else
     {
-        strcpy(GUI_NearMsgString, str_empty_string__ovr098);
+        stu_strcpy(GUI_NearMsgString, str_empty_string__ovr098);
     }
 }
 
@@ -10628,146 +10633,119 @@ int16_t AITP_HolyWord(int16_t player_idx)
 */
 
 // WZD o113p01
-// drake178: CMB_SetTargetCursor()
-/*
-; sets the GUI_CombatWindow@ structure as the active
-; window and changes the cursor according to the spell
-; being targeted and the object pointed at
-;
-; BUG: Wall Crusher units set the target index for wall
-;  squares to 99, which reads BU index #99 to determine
-;  its cursor type and target validity
-; BUG: square targeting allows invalid ones
-; BUG: Torin is treated as a fantastic unit
-; BUG: the targeting frame remains off for square spells
-; BUG: some targeting types show a red X over the
-;  bottom combat GUI
-*/
-/*
-
-*/
+/* OGBUG: drake178 observed that Torin The Chosen fails the race < rt_Arcane test and so is excluded from normal-unit-only spells; unverified here — race_type comes from UNITS.LBX at runtime, not from the source */
 void Combat_Screen_Assign_Mouse_Images(void)
 {
     int16_t pointer_offset = 0;
     int16_t cgy = 0;
     int16_t screen_y = 0;
     int16_t screen_x = 0;
-    int16_t Cursor_Unit = 0;
-    int16_t cgx = 0;  // _SI_
-    int16_t itr = 0;  // _DI_
-
+    int16_t battle_unit_idx = 0;
+    int16_t cgx = 0;
+    int16_t itr = 0;
     _combat_mouse_grid[0].image_num = crsr_Finger;
-
     _scanned_battle_unit = ST_UNDEFINED;
-
     pointer_offset = 4;
-
     screen_x = (Pointer_X() + pointer_offset);
-    
     screen_y = (Pointer_Y() + pointer_offset);
-
     frame_scanned_flag = ST_FALSE;
-
     if(screen_y <= (168 + pointer_offset))
     {
-
         cgx = Get_Combat_Grid_Cell_X(screen_x, screen_y);
-
         cgy = Get_Combat_Grid_Cell_Y(screen_x, screen_y);
-
-        if(g_combat_grid_action_map[cgy][cgx] == -2)
+        switch(g_combat_grid_action_map[cgy][cgx])
         {
-            if(_combat_spell_target_type < cstt_EnemyUnit)
+             case -2:
             {
-                _combat_mouse_grid[0].image_num =  crsr_CastBase;
-            }
-            else
-            {
-                _combat_mouse_grid[0].image_num =  crsr_RedCross;
-            }
-        }
-        else if(g_combat_grid_action_map[cgy][cgx] == -1)
-        {
-            if(_combat_spell_target_type < cstt_EnemyUnit)
-            {
-                _combat_mouse_grid[0].image_num =  crsr_CastBase;
-            }
-            else
-            {
-                _combat_mouse_grid[0].image_num =  crsr_RedCross;
-            }
-        }
-        else
-        {
-
-            frame_scanned_flag = ST_TRUE;
-            frame_scanned_cgx = cgx;
-            frame_scanned_cgy = cgy;
-            frame_anim_cycle = ((frame_anim_cycle + 1) % 3);
-
-            // ; BUG: this can be 99 for squares with walls when a Wall
-            // ; Crusher unit is selected while filling out the maps
-            Cursor_Unit = g_combat_grid_action_map[cgy][cgx];
-            _scanned_battle_unit = Cursor_Unit;
-
-            if(battle_units[Cursor_Unit].controller_idx == HUMAN_PLAYER_IDX)
-            {
-                if(
-                    (_combat_spell_target_type == cstt_FriendlyUnit)
-                    ||
-                    (_combat_spell_target_type == cstt_Tile)
-                    ||
-                    (_combat_spell_target_type == cstt_DispelMagic)
-                    ||
-                    (
-                        (_combat_spell_target_type == cstt_FriendlyNU)
-                        &&
-                        (battle_units[Cursor_Unit].race < rt_Arcane)
-                    )
-                    ||
-                    (
-                        (_combat_spell_target_type ==cstt_FriendlyHero)
-                        &&
-                        (_UNITS[battle_units[Cursor_Unit].unit_idx].Hero_Slot > ST_UNDEFINED)
-                    )
-                )
+                /* OGBUG: frame_scanned_flag is only set in the default arm, so square-target spells (empty cell, -1 or -2) never light the targeting frame; the two negative cases should set it too */
+                /* OGBUG: both empty-cell cases show crsr_CastBase for any target type below cstt_EnemyUnit, so COMBAT_CELL_NO_ACTION (-2) squares look castable; the click handler in Combat_Spell_Target_Screen() accepts them too */
+                if(_combat_spell_target_type < cstt_EnemyUnit)
                 {
-                    _combat_mouse_grid[0].image_num = crsr_CastBase;
+                    _combat_mouse_grid[0].image_num =  crsr_CastBase;
                 }
                 else
                 {
-                    _combat_mouse_grid[0].image_num = crsr_RedCross;
+                    _combat_mouse_grid[0].image_num =  crsr_RedCross;
                 }
-            }
-            else
+            } break;
+            case -1:
             {
-                if(
-                    (_combat_spell_target_type == cstt_EnemyUnit)
-                    ||
-                    (_combat_spell_target_type == cstt_Tile)
-                    ||
-                    (_combat_spell_target_type == cstt_DispelMagic)
-                    ||
-                    (
-                        (_combat_spell_target_type == cstt_EnemyNU)
-                        &&
-                        (battle_units[Cursor_Unit].race < rt_Arcane)
-                    )
-                )
+                /* OGBUG: frame_scanned_flag is only set in the default arm, so square-target spells (empty cell, -1 or -2) never light the targeting frame; the two negative cases should set it too */
+                /* OGBUG: both empty-cell cases show crsr_CastBase for any target type below cstt_EnemyUnit, so COMBAT_CELL_NO_ACTION (-2) squares look castable; the click handler in Combat_Spell_Target_Screen() accepts them too */
+                if(_combat_spell_target_type < cstt_EnemyUnit)
                 {
-                    _combat_mouse_grid[0].image_num = crsr_CastBase;
+                    _combat_mouse_grid[0].image_num =  crsr_CastBase;
                 }
                 else
                 {
-                    _combat_mouse_grid[0].image_num = crsr_RedCross;
+                    _combat_mouse_grid[0].image_num =  crsr_RedCross;
                 }
-            }
-
+            } break;
+            default:
+            {
+                frame_scanned_flag = ST_TRUE;
+                frame_scanned_cgx = cgx;
+                frame_scanned_cgy = cgy;
+                frame_anim_cycle = ((frame_anim_cycle + 1) % 3);
+                /* OGBUG: a wall square holds COMBAT_CELL_CITY_WALL (99) when a Wall Crusher is the active unit, and 99 is neither -1 nor -2, so it falls to default and battle_units[99] is read past the 36-slot array; should test for 99 alongside the two negative cells, not treat it as a unit index */
+                battle_unit_idx = g_combat_grid_action_map[cgy][cgx];
+                _scanned_battle_unit = battle_unit_idx;
+                if(battle_units[battle_unit_idx].controller_idx != HUMAN_PLAYER_IDX)
+                {
+                    if(
+                        (_combat_spell_target_type == cstt_EnemyUnit)
+                        ||
+                        (_combat_spell_target_type == cstt_Tile)
+                        ||
+                        (_combat_spell_target_type == cstt_DispelMagic)
+                        ||
+                        (
+                            (_combat_spell_target_type == cstt_EnemyNU)
+                            &&
+                            (battle_units[battle_unit_idx].race < rt_Arcane)
+                        )
+                    )
+                    {
+                        _combat_mouse_grid[0].image_num = crsr_CastBase;
+                    }
+                    else
+                    {
+                        _combat_mouse_grid[0].image_num = crsr_RedCross;
+                    }
+                }
+                else  /* (battle_units[battle_unit_idx].controller_idx == HUMAN_PLAYER_IDX) */
+                {
+                    if(
+                        (_combat_spell_target_type == cstt_FriendlyUnit)
+                        ||
+                        (_combat_spell_target_type == cstt_Tile)
+                        ||
+                        (_combat_spell_target_type == cstt_DispelMagic)
+                        ||
+                        (
+                            (_combat_spell_target_type == cstt_FriendlyNU)
+                            &&
+                            (battle_units[battle_unit_idx].race < rt_Arcane)
+                        )
+                        ||
+                        (
+                            (_combat_spell_target_type ==cstt_FriendlyHero)
+                            &&
+                            (_UNITS[battle_units[battle_unit_idx].unit_idx].Hero_Slot > ST_UNDEFINED)
+                        )
+                    )
+                    {
+                        _combat_mouse_grid[0].image_num = crsr_CastBase;
+                    }
+                    else
+                    {
+                        _combat_mouse_grid[0].image_num = crsr_RedCross;
+                    }
+                }
+            } break;
         }
-
     }
-
-
+    /* OGBUG: below y=172 the guard skips the grid scan, but the target-type overrides that follow still read cgx/cgy and force crsr_RedCross over the bottom GUI; they should be inside the guard */
     if(
         (_combat_spell_target_type == cstt_Tile_NoUnitA)
         &&
@@ -10776,7 +10754,6 @@ void Combat_Screen_Assign_Mouse_Images(void)
     {
         _combat_mouse_grid[0].image_num = crsr_RedCross;
     }
-
     if(
         (_combat_spell_target_type == cstt_Tile_NoUnitD)
         &&
@@ -10785,7 +10762,6 @@ void Combat_Screen_Assign_Mouse_Images(void)
     {
         _combat_mouse_grid[0].image_num = crsr_RedCross;
     }
-
     if(_combat_spell_target_type == cstt_Wall)
     {
         _combat_mouse_grid[0].image_num = crsr_RedCross;
@@ -10794,7 +10770,6 @@ void Combat_Screen_Assign_Mouse_Images(void)
             _combat_mouse_grid[0].image_num = crsr_CastBase;
         }
     }
-
     if(_combat_spell_target_type == cstt_DispelMagic)
     {
         for(itr = 0; itr < _vortex_count; itr++)
@@ -10809,43 +10784,33 @@ void Combat_Screen_Assign_Mouse_Images(void)
             }
         }
     }
-
+    if(_combat_mouse_grid[0].image_num == crsr_CastBase)
+    {
+        _combat_mouse_grid[0].image_num = (crsr_CastAnim1 + g_spellbook_anim_stage);
+    }
     g_spellbook_anim_stage = ((g_spellbook_anim_stage + 1) % 5);
-
     _combat_mouse_grid[0].center_offset = 2;
     _combat_mouse_grid[0].x1 = SCREEN_XMIN;
     _combat_mouse_grid[0].y1 = SCREEN_YMIN;
     _combat_mouse_grid[0].x2 = SCREEN_XMAX;
     _combat_mouse_grid[0].y2 = SCREEN_YMAX;
-
     Set_Mouse_List(1, &_combat_mouse_grid[0]);
-
 }
 
 
 // WZD o113p02
-// drake178: CMB_DrawTargetScreen()
 /*
-; redraws the combat screen with the spell targeting
-; message panel, and sets the active window and cursor
-; according to the object being pointed at
-;
-; inherits various BUGs from GUI_SetCmbTargetCrsr
-*/
-/*
-
 ~== SCastScr  Spell_Casting_Screen__WIP() |-> Spell_Casting_Screen_Assign_Mouse_Images()
-
 */
 void Combat_Spell_Target_Screen_Draw(void)
 {
-    SAMB_ptr Msg_Panel_IMG;
+    SAMB_ptr msg_panel_seg;
     Combat_Screen_Draw();
     Mark_Block(_screen_seg);
-    // COMBATFX.LBX, 028  "MSGPANEL"
-    Msg_Panel_IMG = LBX_Reload_Next(cmbtfx_lbx_file__ovr113, 28, _screen_seg);
+    // COMBTFX.LBX, 028  "MSGPANEL"
+    msg_panel_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr113, 28, _screen_seg);
     Release_Block(_screen_seg);
-    FLIC_Draw(238, 164, Msg_Panel_IMG);
+    FLIC_Draw(238, 164, msg_panel_seg);
     Set_Outline_Color(240);
     Set_Alias_Color(227);
     Set_Font_Style_Shadow_Down(0, 0, 0, 0);
@@ -10856,87 +10821,29 @@ void Combat_Spell_Target_Screen_Draw(void)
 
 
 // WZD o113p03
-/*
-Combat_Cast_Spell()
-    Target = Combat_Spell_Target_Screen(spell_idx, &target_cgx, &target_cgy);
-*/
 int16_t Combat_Spell_Target_Screen(int16_t spell_idx, int16_t * target_cgx, int16_t * target_cgy)
 {
     char spell_name[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t BU_Loop_Index = 0;
+    int16_t battle_unit_idx = 0;
     uint32_t enchantments = 0;
-    int16_t Vortex_Index = 0;
+    int16_t vortex_idx = 0;
     int16_t target_idx = 0;
     int16_t input_field_idx = 0;
-    // DOMSDOS  int16_t grid_sy = 0;
-    // DOMSDOS  int16_t grid_sx = 0;
-    int64_t grid_sy = 0;
-    int64_t grid_sx = 0;
+    int64_t grid_sy = 0;    // DOMSDOS  int16_t grid_sy = 0;
+    int64_t grid_sx = 0;    // DOMSDOS  int16_t grid_sx = 0;
     int16_t cancel_button_field = 0;
     int16_t combat_grid_field = 0;
-    int16_t leave_screen = 0;  // _DI_
-
+    int16_t leave_screen = 0;
     Assign_Auto_Function(Combat_Spell_Target_Screen_Draw, 2);
-
     g_spellbook_anim_stage = 0;
-
     if(spell_idx == spl_NONE)
     {
         _combat_spell_target_type = cstt_Tile_NoUnit;
     }
     else
     {
-/*
-jt_cstt_mouse
-offset jt_cstt_ms_00
-offset jt_cstt_ms_01
-offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
-offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
-offset jt_cstt_ms_04_12_13_14_22_23
-offset jt_cstt_ms_05
-offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
-offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
-offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
-offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
-offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
-offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
-offset jt_cstt_ms_04_12_13_14_22_23
-offset jt_cstt_ms_04_12_13_14_22_23
-offset jt_cstt_ms_04_12_13_14_22_23
-offset jt_cstt_ms_15
-offset jt_cstt_ms_16
-offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
-offset jt_cstt_ms_18
-offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
-offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
-offset jt_cstt_ms_02_03_04_06_07_08_09_10_11_17_19_20_21
-offset jt_cstt_ms_04_12_13_14_22_23
-offset jt_cstt_ms_04_12_13_14_22_23
-
-// NIU  scc_City_Enchantment_Positive     =  2,   Altar of Battle, Astral Gate, Cloud of Shadow, Consecration, Dark Rituals, Earth Gate, Flying Fortress, Gaias Blessing, Heavenly Light, Inspirations, Natures Eye, Prosperity, Stream of Life, Summoning Circle, Wall of Darkness, Wall of Fire
-// NIU  scc_City_Enchantment_Negative     =  3,   Chaos Rift, Cursed Lands, Evil Presence, Famine, Pestilence
-// NIU  scc_Direct_Damage_Fixed           =  4,   BOTH:    Doom Bolt, Fire Storm, Ice Storm, Star Fires, Warp Lightning
-// NIU  scc_Special_Spell                 =  5,   Animate Dead, Black Wind, Call The Void, Change Terrain, Chaos Channels, Corruption, Cracks Call, Death Wish, Disrupt, Earth Lore, Earth to Mud, Earthquake, Enchant Road, Great Unsummoning, Healing, Incarnation, Lycanthropy, Magic Vortex, Move Fortress, Natures Cures, Plane Shift, Raise Dead, Raise Volcano, Recall Hero, Resurrection, Spell Binding, Spell Of Mastery, Spell Of Return, Spell Ward, Stasis, Summon Champion, Summon Hero, Transmute, Wall of Stone, Warp Creature, Warp Node, Warp Wood, Word of Recall
-// NIU  scc_Target_Wiz_Spell              =  6,   WIZARD:  Cruel Unminding, Drain Power, Spell Blast, Subversion
-// NIU  DNE 7
-// NIU  DNE 8
-// NIU  scc_Global_Enchantment            =  9,   Armageddon, Aura of Majesty, Awareness, Chaos Surge, Charm of Life, Crusade, Detect Magic, Doom Mastery, Eternal Night, Evil Omens, Great Wasting, Herb Mastery, Holy Arms, Just Cause, Life Force, Meteor Storms, Natures Awareness, Natures Wrath, Planar Seal, Suppress Magic, Time Stop, Tranquility, Wind Mastery, Zombie Mastery
-// NIU  scc_Battlefield_Spell             = 10,   COMBAT:  Black Prayer, Blur, Call Chaos, Call Lightning, Darkness, Death Spell, Entangle, Flame Strike, High Prayer, Holy Word, Mana Leak, Mass Healing, Mass Invisibility, Metal Fires, Prayer, Terror, True Light, Warp Reality, Wrack
-// NIU  scc_Crafting_Spell                = 11,
-// NIU  scc_Unit_Enchantment_Normal_Only  = 15,            Eldritch Weapon, Flame Blade, Heroism, Holy Armor, Holy Weapon
-// NIU  scc_Mundane_Curse                 = 16,   COMBAT:  Possession, Shatter
-// NIU  DNE scc_Infusable_Spell           = 17,   below, no slider, above, maybe slider
-// NIU  scc_Dispels                       = 18,   COMBAT:  Dispel Magic, Dispel Magic True
-// NIU  scc_Disenchant_Spell              = 19,   ¿ BOTH ?  Disenchant Area, Disenchant True
-// NIU  scc_Disjunction_Spell             = 20,   OVERLAND:  Disjunction, Disjunction True
-// NIU  scc_Combat_Counter_Magic          = 21,   COMBAT:  Counter Magic
-
-But, where's 'Counter Magic'?
-Nowhere. It doesn't use a target, never even gets to that code.
-*/
         switch(spell_data_table[spell_idx].type)
         {
-
             case scc_Summoning:
             {
                 if(_combat_attacker_player == HUMAN_PLAYER_IDX)
@@ -11002,99 +10909,84 @@ Nowhere. It doesn't use a target, never even gets to that code.
                     _combat_spell_target_type = cstt_FriendlyUnit;
                 }
             } break;
-
-
-
-            case scc_Unit_Enchantment:  //  1
+            case scc_Unit_Enchantment:
             {
                 _combat_spell_target_type = cstt_FriendlyUnit;
             } break;
-
-
-
-            case scc_Direct_Damage_Fixed:  //  4  
-            case scc_Combat_Destroy_Unit:  // 12  COMBAT:  Disintegrate, Dispel Evil, Petrify, Word of Death
-            case scc_Resistable_Spell:     // 13  COMBAT:  Black Sleep, Confusion, Creature Binding, Vertigo, Weakness
-            case scc_Unresistable_Spell:   // 14  COMBAT:  Mind Storm, Web
-            case scc_Direct_Damage_Variable:        // 22  COMBAT:  Fire Bolt, Fireball, Ice Bolt, Life Drain, Lightning Bolt, Psionic Blast
-            case scc_Combat_Banish:         // 23  COMBAT:  Banish
+            case scc_Direct_Damage_Fixed:
+            case scc_Combat_Destroy_Unit:
+            case scc_Resistable_Spell:
+            case scc_Unresistable_Spell:
+            case scc_Direct_Damage_Variable:
+            case scc_Combat_Banish:
             {
                 _combat_spell_target_type = cstt_EnemyUnit;
             } break;
-
-            case scc_Unit_Enchantment_Normal_Only:  // 15
+            case scc_Unit_Enchantment_Normal_Only:
             {
                 _combat_spell_target_type = cstt_FriendlyNU;
             } break;
-
-            case scc_Mundane_Curse:  // 16
+            case scc_Mundane_Curse:
             {
                 _combat_spell_target_type = cstt_EnemyNU;
             } break;
-
-            case scc_Dispels:  // 18
+            case scc_Dispels:
             {
                 _combat_spell_target_type = cstt_DispelMagic;
             } break;
-
         }
-
     }
-
     Clear_Fields();
-
     combat_grid_field = Add_Grid_Field(0, 0, 1, 1, 319, 168, &grid_sx, &grid_sy, ST_UNDEFINED);
-
-    cancel_button_field = Add_Button_Field(263, 186, str_empty_string__ovr113, _cmbt_cancel_button_seg, (int16_t)str_hotkey_ESC__ovr113[0], ST_UNDEFINED);
-
+    /* OGBUG: passes the address of the ESC string where a hotkey character is expected, so the key code compared against input is a pointer value and ESC never matches this button; should be str_hotkey_ESC__ovr113[0] (0x1B) */
+    cancel_button_field = Add_Button_Field(263, 186, str_empty_string__ovr113, _cmbt_cancel_button_seg, (int16_t)(intptr_t)&str_hotkey_ESC__ovr113[0], ST_UNDEFINED);
     leave_screen = ST_FALSE;
-
     while(leave_screen == ST_FALSE)
     {
-
         stu_strcpy(GUI_NearMsgString, cnst_CmbSpellMsg1);  // "Select a target for a "
         _fstrcpy(spell_name, spell_data_table[spell_idx].name);
         stu_strcat(GUI_NearMsgString, spell_name);
         stu_strcat(GUI_NearMsgString, cnst_SpaceSpellDot_3);  // " spell."
-
         Mark_Time();
-
         input_field_idx = Get_Input();
-
         if(input_field_idx == cancel_button_field)
         {
             leave_screen = ST_TRUE;
             target_idx = 999;
         }
-
         if(input_field_idx == combat_grid_field)
         {
-
             *target_cgx = Get_Combat_Grid_Cell_X(((int16_t)grid_sx + 4), ((int16_t)grid_sy + 4));
-
             *target_cgy = Get_Combat_Grid_Cell_Y(((int16_t)grid_sx + 4), ((int16_t)grid_sy + 4));
-
+            /* Disrupt */
             if(
                 (_combat_spell_target_type == cstt_Wall)
                 &&
                 (Combat_Grid_Cell_Has_City_Wall(*target_cgx, *target_cgy) != ST_FALSE)
             )
             {
-                // ; BUG: the return value is undefined!
+                /* OGBUG: leaves target_idx unassigned, so the caller gets whatever the slot held; should be 99 (COMBAT_CELL_CITY_WALL) like the tile paths below, not 999 (the cancel marker). Combat_Cast_Apply_Spell_Effect() then indexes battle_units[target_idx] unguarded */
                 leave_screen = ST_TRUE;
+                /* HACK */  target_idx = 999;   /* not the OG value - 999 makes the caller skip the cast rather than deref an arbitrary index */
                 continue;
             }
-
             if(_combat_spell_target_type == cstt_DispelMagic)
             {
-                STU_DEBUG_BREAK();
+                for(vortex_idx = 0; vortex_idx < _vortex_count; vortex_idx++)
+                {
+                    if(
+                        (_vortexes[vortex_idx].cgx == *target_cgx)
+                        &&
+                        (_vortexes[vortex_idx].cgy == *target_cgy)
+                    )
+                    {
+                        leave_screen = ST_TRUE;
+                    }
+                }
             }
-
             target_idx = g_combat_grid_action_map[*target_cgy][*target_cgx];
-            
             if(target_idx < 0)
             {
-
                 if(
                     (_combat_spell_target_type == cstt_Tile_NoUnit)
                     ||
@@ -11102,10 +10994,9 @@ Nowhere. It doesn't use a target, never even gets to that code.
                 )
                 {
                     leave_screen = ST_TRUE;
-                    target_idx = 99;  // ; BUG: allows targeting squares outside the playfield
+                    target_idx = 99;  /* OGBUG: accepts any target_idx < 0, so COMBAT_CELL_NO_ACTION (-2) squares pass as well as COMBAT_CELL_REACHABLE (-1); and neither *target_cgx nor *target_cgy is range-checked before the map read above, so a click outside the 21x22 grid reads out of bounds */
                 }
-
-                // ; BUG: allows summoning on invalid squares
+                /* OGBUG: only checks which half of the field the square is on and rescans for an invisible occupant; never tests that the square is passable or inside the grid, so a summon can land on water, a wall segment, or an off-grid cell */
                 if(
                     (_combat_spell_target_type == cstt_Tile_NoUnitD)
                     &&
@@ -11114,14 +11005,14 @@ Nowhere. It doesn't use a target, never even gets to that code.
                 {
                     leave_screen = ST_TRUE;
                     target_idx = 99;
-                    for(BU_Loop_Index = 0; ((BU_Loop_Index < _combat_total_unit_count) && (leave_screen == ST_TRUE)); BU_Loop_Index++)
+                    for(battle_unit_idx = 0; ((battle_unit_idx < _combat_total_unit_count) && (leave_screen == ST_TRUE)); battle_unit_idx++)
                     {
                         if(
-                            (battle_units[BU_Loop_Index].status == bus_Active)
+                            (battle_units[battle_unit_idx].status == bus_Active)
                             &&
-                            (battle_units[BU_Loop_Index].cgx == *target_cgx)
+                            (battle_units[battle_unit_idx].cgx == *target_cgx)
                             &&
-                            (battle_units[BU_Loop_Index].cgy == *target_cgy)
+                            (battle_units[battle_unit_idx].cgy == *target_cgy)
                         )
                         {
                             leave_screen = ST_FALSE;
@@ -11130,8 +11021,7 @@ Nowhere. It doesn't use a target, never even gets to that code.
                         }
                     }
                 }
-
-                // ; BUG: allows summoning on invalid squares
+                /* OGBUG: only checks which half of the field the square is on and rescans for an invisible occupant; never tests that the square is passable or inside the grid, so a summon can land on water, a wall segment, or an off-grid cell */
                 if(
                     (_combat_spell_target_type == cstt_Tile_NoUnitA)
                     &&
@@ -11140,14 +11030,14 @@ Nowhere. It doesn't use a target, never even gets to that code.
                 {
                     leave_screen = ST_TRUE;
                     target_idx = 99;
-                    for(BU_Loop_Index = 0; ((BU_Loop_Index < _combat_total_unit_count) && (leave_screen == ST_TRUE)); BU_Loop_Index++)
+                    for(battle_unit_idx = 0; ((battle_unit_idx < _combat_total_unit_count) && (leave_screen == ST_TRUE)); battle_unit_idx++)
                     {
                         if(
-                            (battle_units[BU_Loop_Index].status == bus_Active)
+                            (battle_units[battle_unit_idx].status == bus_Active)
                             &&
-                            (battle_units[BU_Loop_Index].cgx == *target_cgx)
+                            (battle_units[battle_unit_idx].cgx == *target_cgx)
                             &&
-                            (battle_units[BU_Loop_Index].cgy == *target_cgy)
+                            (battle_units[battle_unit_idx].cgy == *target_cgy)
                         )
                         {
                             leave_screen = ST_FALSE;
@@ -11156,17 +11046,139 @@ Nowhere. It doesn't use a target, never even gets to that code.
                         }
                     }
                 }
-
             }
-            else
+            else  /* (target_idx >= 0) */
             {
-
                 enchantments = (_UNITS[battle_units[target_idx].unit_idx].enchantments | battle_units[target_idx].item_enchantments | battle_units[target_idx].enchantments);
-
-                // Target is Friend or Enemy
-                if(battle_units[target_idx].controller_idx == HUMAN_PLAYER_IDX)
+                if(battle_units[target_idx].controller_idx != HUMAN_PLAYER_IDX)/* Target is Enemy */
                 {
-                    
+                    if(
+                        (_combat_spell_target_type == cstt_EnemyUnit)
+                        ||
+                        (_combat_spell_target_type == cstt_Tile)
+                        ||
+                        (_combat_spell_target_type == cstt_DispelMagic)
+                    )
+                    {
+                        leave_screen = ST_TRUE;
+                    }
+                    if(
+                        (_combat_spell_target_type == cstt_EnemyNU)
+                        &&
+                        (battle_units[target_idx].race < rt_Arcane)
+                    )
+                    {
+                        leave_screen = ST_TRUE;
+                    }
+                    if(spell_idx == spl_Creature_Binding)
+                    {
+                        if(battle_units[target_idx].race < rt_Arcane)
+                        {
+                            leave_screen = 0;
+                            LBX_Load_Data_Static(message_lbx_file__ovr113__1of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 69, 1, 150);
+                            _fstrcpy((char *)spell_name, (char *)spell_data_table[spell_idx].name);
+                            stu_strcat(GUI_NearMsgString, spell_name);
+                            Warn1(GUI_NearMsgString);
+                        }
+                    }
+                    if(spell_idx == spl_Banish)
+                    {
+                        if(battle_units[target_idx].race < rt_Arcane)
+                        {
+                            leave_screen = 0;
+                            LBX_Load_Data_Static(message_lbx_file__ovr113__1of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 69, 1, 150);
+                            _fstrcpy((char *)spell_name, (char *)spell_data_table[spell_idx].name);
+                            stu_strcat(GUI_NearMsgString, spell_name);
+                            Warn1(GUI_NearMsgString);
+                        }
+                    }
+                    if(spell_idx == spl_Star_Fires)
+                    {
+                        if(
+                            battle_units[target_idx].race != rt_Chaos
+                            &&
+                            battle_units[target_idx].race != rt_Death
+                        )
+                        {
+                            leave_screen = 0;
+                            LBX_Load_Data_Static(message_lbx_file__ovr113__1of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 70, 1, 150);
+                            Warn1(GUI_NearMsgString);
+                        }
+                    }
+                    if(spell_idx == spl_Web)
+                    {
+                        if(battle_units[target_idx].Abilities & UA_NONCORPOREAL)
+                        {
+                            leave_screen = 0;
+                            LBX_Load_Data_Static(message_lbx_file__ovr113__1of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 71, 1, 150);
+                            Warn1(GUI_NearMsgString);
+                        }
+                    }
+                    if(spell_idx == spl_Warp_Wood)
+                    {
+                        if((battle_units[target_idx].ranged_type / 10) != rag_Missile)
+                        {
+                            leave_screen = 0;
+                            LBX_Load_Data_Static(message_lbx_file__ovr113__1of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 72, 1, 150);
+                            Warn1(GUI_NearMsgString);
+                        }
+                    }
+                    if(
+                        spell_data_table[spell_idx].type == scc_Resistable_Spell
+                        ||
+                        spell_data_table[spell_idx].type == scc_Mundane_Curse
+                        ||
+                        spell_data_table[spell_idx].type == scc_Unresistable_Spell
+                    )
+                    {
+                        if(spell_idx == spl_Web)
+                        {
+                            if(battle_units[target_idx].Web_HP > 0)
+                            {
+                                leave_screen = ST_FALSE;
+                                _fstrcpy((char *)spell_name, (char *)spell_data_table[spell_idx].name);
+                                stu_strcpy(GUI_NearMsgString, cnst_SpellError_1);
+                                stu_strcat(GUI_NearMsgString, spell_name);
+                                stu_strcat(GUI_NearMsgString, cnst_SpellError_2);
+                                Warn1(GUI_NearMsgString);
+                            }
+                        }
+                        else
+                        {
+                            if(((unsigned long)battle_units[target_idx].combat_effects & ((unsigned long)spell_data_table[spell_idx].Param0 | ((unsigned long)spell_data_table[spell_idx].Params2_3 << 16))) != 0)
+                            {
+                                leave_screen = ST_FALSE;
+                                _fstrcpy((char *)spell_name, (char *)spell_data_table[spell_idx].name);
+                                stu_strcpy(GUI_NearMsgString, cnst_SpellError_1);
+                                stu_strcat(GUI_NearMsgString, spell_name);
+                                stu_strcat(GUI_NearMsgString, cnst_SpellError_2);
+                                Warn1(GUI_NearMsgString);
+                            }
+                            else
+                            {
+                                if(spell_data_table[spell_idx].magic_realm == sbr_Sorcery)
+                                {
+                                    if(battle_units[target_idx].Attribs_1 & USA_IMMUNITY_ILLUSION)
+                                    {
+                                        leave_screen = ST_FALSE;
+                                        LBX_Load_Data_Static(message_lbx_file__ovr113__1of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 73, 1, 150);
+                                        Warn1(GUI_NearMsgString);
+                                    }
+                                }
+                                if(spell_data_table[spell_idx].magic_realm == sbr_Death)
+                                {
+                                    if(battle_units[target_idx].Attribs_1 & USA_IMMUNITY_DEATH)
+                                    {
+                                        leave_screen = ST_FALSE;
+                                        Warn1(cnst_SpellError_3);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else  /* Target is Friend */
+                {
                     if(
                         (_combat_spell_target_type == cstt_FriendlyUnit)
                         ||
@@ -11177,78 +11189,163 @@ Nowhere. It doesn't use a target, never even gets to that code.
                     {
                         leave_screen = ST_TRUE;
                     }
-
-
-
-                }
-                else  /* Target is Enemy */
-                {
-
+                    if(_combat_spell_target_type == cstt_FriendlyNU)
+                    {
+                        if(battle_units[target_idx].race < rt_Arcane)
+                        {
+                            leave_screen = 1;
+                        }
+                    }
+                    if(_combat_spell_target_type == cstt_FriendlyHero)
+                    {
+                        if(_UNITS[battle_units[target_idx].unit_idx].Hero_Slot > -1)
+                        {
+                            leave_screen = 1;
+                        }
+                    }
+                    if(spell_idx == spl_Healing)
+                    {
+                        if(
+                            battle_units[target_idx].race == rt_Death
+                            ||
+                            (_UNITS[battle_units[target_idx].unit_idx].mutations & UM_UNDEAD)
+                        )
+                        {
+                            leave_screen = ST_FALSE;
+                            LBX_Load_Data_Static(message_lbx_file__ovr113__1of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 74, 1, 150);
+                            Warn1(GUI_NearMsgString);
+                        }
+                    }
                     if(
-                        (_combat_spell_target_type == cstt_EnemyUnit)
+                        spell_data_table[spell_idx].type == scc_Unit_Enchantment
                         ||
-                        (_combat_spell_target_type == cstt_Tile)
-                        ||
-                        (_combat_spell_target_type == cstt_DispelMagic)
+                        spell_data_table[spell_idx].type == scc_Unit_Enchantment_Normal_Only
                     )
                     {
-
-                        leave_screen = ST_TRUE;
-                        
+                        if(spell_idx == spl_Haste)
+                        {
+                            if(battle_units[target_idx].combat_effects & bue_Haste)
+                            {
+                                leave_screen = ST_FALSE;
+                                _fstrcpy((char *)spell_name, (char *)spell_data_table[spell_idx].name);
+                                stu_strcpy(GUI_NearMsgString, cnst_SpellError_1);
+                                stu_strcat(GUI_NearMsgString, spell_name);
+                                stu_strcat(GUI_NearMsgString, cnst_SpellError_2);
+                                Warn1(GUI_NearMsgString);
+                            }
+                        }
+                        else if((enchantments & spell_data_table[spell_idx].enchantments) != 0)
+                        {
+                            leave_screen = ST_FALSE;
+                            _fstrcpy((char *)spell_name, (char *)spell_data_table[spell_idx].name);
+                            stu_strcpy(GUI_NearMsgString, cnst_SpellError_1);
+                            stu_strcat(GUI_NearMsgString, spell_name);
+                            stu_strcat(GUI_NearMsgString, cnst_SpellError_2);
+                            Warn1(GUI_NearMsgString);
+                        }
+                        else
+                        {
+                            if(spell_idx == spl_Immolation)
+                            {
+                                if((battle_units[target_idx].Attribs_2 & USA_IMMOLATION) != 0)
+                                {
+                                    leave_screen = ST_FALSE;
+                                    LBX_Load_Data_Static(message_lbx_file__ovr113__2of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 0x5A, 1, 150);
+                                    Warn1(GUI_NearMsgString);
+                                }
+                            }
+                            if(spell_idx == spl_Cloak_Of_Fear)
+                            {
+                                if((battle_units[target_idx].Attribs_2 & USA_CAUSEFEAR) != 0)
+                                {
+                                    leave_screen = ST_FALSE;
+                                    LBX_Load_Data_Static(message_lbx_file__ovr113__2of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 0x5A, 1, 150);
+                                    Warn1(GUI_NearMsgString);
+                                }
+                            }
+                            if(spell_idx == spl_True_Sight)
+                            {
+                                if(battle_units[target_idx].Attribs_1 & USA_IMMUNITY_ILLUSION)
+                                {
+                                    leave_screen = ST_FALSE;
+                                    LBX_Load_Data_Static(message_lbx_file__ovr113__2of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 0x5A, 1, 150);
+                                    Warn1(GUI_NearMsgString);
+                                }
+                            }
+                            if(spell_idx == spl_Magic_Immunity)
+                            {
+                                if(battle_units[target_idx].Attribs_1 & USA_IMMUNITY_MAGIC)
+                                {
+                                    leave_screen = ST_FALSE;
+                                    LBX_Load_Data_Static(message_lbx_file__ovr113__2of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 0x5A, 1, 150);
+                                    Warn1(GUI_NearMsgString);
+                                }
+                            }
+                            if(spell_idx == spl_Planar_Travel)
+                            {
+                                if((battle_units[target_idx].Abilities & UA_PLANARTRAVEL) != 0)
+                                {
+                                    leave_screen = ST_FALSE;
+                                    LBX_Load_Data_Static(message_lbx_file__ovr113__2of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 0x5A, 1, 150);
+                                    Warn1(GUI_NearMsgString);
+                                }
+                            }
+                            if(spell_idx == spl_Invisibility)
+                            {
+                                if(battle_units[target_idx].Abilities & UA_INVISIBILITY)
+                                {
+                                    leave_screen = ST_FALSE;
+                                    LBX_Load_Data_Static(message_lbx_file__ovr113__2of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 0x5A, 1, 150);
+                                    Warn1(GUI_NearMsgString);
+                                }
+                            }
+                            if(spell_idx == spl_Wraith_Form)
+                            {
+                                if(battle_units[target_idx].Abilities & UA_NONCORPOREAL)
+                                {
+                                    leave_screen = ST_FALSE;
+                                    LBX_Load_Data_Static(message_lbx_file__ovr113__2of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 0x5A, 1, 150);
+                                    Warn1(GUI_NearMsgString);
+                                }
+                            }
+                            if(spell_idx == spl_Wind_Walking)
+                            {
+                                if(battle_units[target_idx].Abilities & UA_WINDWALKING)
+                                {
+                                    leave_screen = ST_FALSE;
+                                    LBX_Load_Data_Static(message_lbx_file__ovr113__2of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 0x5A, 1, 150);
+                                    Warn1(GUI_NearMsgString);
+                                }
+                            }
+                            if(spell_idx == spl_Regeneration)
+                            {
+                                if(battle_units[target_idx].Abilities & UA_REGENERATION)
+                                {
+                                    leave_screen = ST_FALSE;
+                                    LBX_Load_Data_Static(message_lbx_file__ovr113__2of2, 0, (SAMB_ptr)&GUI_NearMsgString[0], 0x5A, 1, 150);
+                                    Warn1(GUI_NearMsgString);
+                                }
+                            }
+                        }
                     }
-
-                    if(
-                        (_combat_spell_target_type == cstt_EnemyNU)
-                        &&
-                        (battle_units[target_idx].race < rt_Arcane)
-                    )
-                    {
-
-                        leave_screen = ST_TRUE;
-
-                    }
-
-                    
-
-
-
-
-
-
-
                 }
-
             }
-
-
-
         }
-
         if(leave_screen == ST_FALSE)
         {
             stu_strcpy(GUI_NearMsgString, cnst_CmbSpellMsg1);  // "Select a target for a "
             _fstrcpy(spell_name, spell_data_table[spell_idx].name);
             stu_strcat(GUI_NearMsgString, spell_name);
             stu_strcat(GUI_NearMsgString, cnst_SpaceSpellDot_3);  // " spell."
-
             Combat_Spell_Target_Screen_Draw();
-
             PageFlip_FX();
-
-            // ; BUG: reduces responsiveness, should be 1
-            // ; ticks
+            /* OGBUG: the targeting loop yields two ticks per frame rather than one, so the cursor updates at roughly half the rate of the other input loops; faithful to the listing */
             Release_Time(2);
-
         }
-
     }
-
     Clear_Fields();
-
     Assign_Auto_Function(Combat_Screen_Draw, 2);
-
     return target_idx;
-
 }
 
 
