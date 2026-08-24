@@ -1,6 +1,6 @@
 Combat-Combat.md
 
-Combat - general/generic; 'Tactical Combat', but not 'Combat Screen' specific  e.g., Calc_Battlefield_Bonuses()
+Combat - general/generic; 'Tactical Combat', but not 'Combat Screen' specific  e.g., Calc_Battlefield_Bonuses(), but, also, unless it's AI specific.
 
 SEEALSO:  Combat-Combat.md
 SEEALSO:  Combat-Combat_Screen.md

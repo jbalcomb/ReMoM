@@ -38,22 +38,22 @@ extern int16_t _ai_battlefield_city_walls;
 */
 
 // WZD o114p01
-void AI_SetBasicAttacks(int16_t player_idx);
+void AI_Set_All_Action_Modes(int16_t player_idx);
 
 // WZD o114p02
-void AI_BU_ProcessAction(int16_t battle_unit_idx, int16_t rally_cgx, int16_t rally_cgy);
+void AI_Execute_Unit_Action(int16_t battle_unit_idx, int16_t rally_cgx, int16_t rally_cgy);
 
 // WZD o114p03
 void Sort_Battle_Units(int16_t * troop_list, int16_t troop_count);
 
 // WZD o114p04
-void AI_GetCombatRallyPt(int16_t battle_unit_idx, int16_t * cgx, int16_t * cgy);
+void AI_Stage_Point_For_Unit(int16_t battle_unit_idx, int16_t * cgx, int16_t * cgy);
 
 // WZD o114p05
 void Auto_Do_Combat_Turn(int16_t player_idx);
 
 // WZD o114p06
-int16_t AI_BU_AssignAction(int16_t battle_unit_idx, int16_t no_spells_flag);
+int16_t AI_Set_Unit_Action_Mode(int16_t battle_unit_idx, int16_t no_spells_flag);
 
 // WZD o114p07
 int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_action, int16_t has_ranged_attack);

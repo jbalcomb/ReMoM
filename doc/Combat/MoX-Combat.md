@@ -284,7 +284,7 @@ CMB_Victory:loc_A5827         cmp     [OVL_Action_Type], 1
 CMB_Units_Init+435            cmp     [OVL_Action_Type], 1 
 CMB_UnitCityDamage+4          cmp     [OVL_Action_Type], 1 
 CMB_TacticalCombat:loc_75EC4  cmp     [OVL_Action_Type], 1 
-AI_BU_ProcessAction+227       cmp     [OVL_Action_Type], 1 
+AI_Execute_Unit_Action+227       cmp     [OVL_Action_Type], 1 
 CMB_TacticalCombat+6A         cmp     [OVL_Action_Type], 1 
 CMB_ShowSpellbook+594         cmp     [OVL_Action_Type], 1 
 CMB_ComposeBookText+1B4       cmp     [OVL_Action_Type], 1 

@@ -380,7 +380,7 @@ set in 8 places
     CMB_PrepareTurn__WIP+8E       mov     [_active_battle_unit], ax                  
     Switch_Active_Battle_Unit+1A  mov     [_active_battle_unit], ax                  
     End_Of_Combat__WIP+B8F        mov     [_active_battle_unit], ax                  
-    AI_BU_ProcessAction+64        mov     [_active_battle_unit], si                  
+    AI_Execute_Unit_Action+64        mov     [_active_battle_unit], si                  
 
 [x] Switch_Active_Battle_Unit()
 [x] Next_Battle_Unit()

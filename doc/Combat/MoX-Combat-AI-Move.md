@@ -146,7 +146,7 @@ update battle unit cgx,cgy
 
 `battle_units[battle_unit_idx].target_cgx =`
 
-AI_SetBasicAttacks()
+AI_Set_All_Action_Modes()
 ...does not set the target battle unit
 
 Elsewhere, ...

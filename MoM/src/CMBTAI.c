@@ -85,12 +85,12 @@ int16_t _ai_battlefield_city_walls;
  * assigns each unit a default attack mode based on whether the unit currently has a ranged attack,
  * then compares the overall threat, mana-backed ranged potential, and selected player posture
  * against the opposing side. Using those aggregated values, it upgrades some units from static
- * attack modes into movement-enabled tactics such as bua_MoveAndStab or bua_MoveAndShoot.
+ * attack modes into movement-enabled tactics such as bua_AdvanceAndStab or bua_AdvanceAndShoot.
  *
  * The decision process runs in four stages: it initializes default unit actions and threat totals,
  * adds wizard ranged strength for both sides, computes supporting metrics such as ranged_diff and
  * own_melee_threat, and finally refines per-unit actions according to the safety level returned by
- * Get_Player_Mode().
+ * AI_Player_Mode().
  *
  * @param player_idx The combat controller index whose active units should receive tactical actions.
  *
@@ -101,33 +101,29 @@ int16_t _ai_battlefield_city_walls;
  * @note Case 2 logic relies on own_melee_threat when comparing force ratios; the translated code
  *       preserves the surrounding assembly behavior and comments about that assumption.
  */
-/* GEMINI */
-void AI_SetBasicAttacks(int16_t player_idx)
+void AI_Set_All_Action_Modes(int16_t player_idx)
 {
-    int16_t enemy_mana_and_ranged = 0;
-    int16_t safety_level = 0;
-    int16_t ranged_diff = 0;
-    int16_t own_melee_threat = 0;
-    int16_t own_threat_total = 0;
-    int16_t enemy_threat_total = 0;
-    int16_t rnd_offset = 0;
-    int16_t own_ranged_capacity = 0;
-    int16_t i = 0;
     int16_t enemy_player = 0;
-
+    int16_t i = 0;
+    int16_t own_ranged_capacity = 0;
+    int16_t rnd_offset = 0;
+    int16_t enemy_threat_total = 0;
+    int16_t own_threat_total = 0;
+    int16_t own_melee_threat = 0;
+    int16_t ranged_diff = 0;
+    int16_t player_mode_level = 0;
+    int16_t enemy_mana_and_ranged = 0;
     own_ranged_capacity = 0;
     enemy_mana_and_ranged = 0;
     own_threat_total = 0;
     enemy_threat_total = 0;
-
     /* Phase 1: Determine initial action and calculate total threats */
-    for (i = 0; i < _combat_total_unit_count; i++)
+    for(i = 0; i < _combat_total_unit_count; i++)
     {
         if(battle_units[i].status != bus_Active)
         {
             continue;
         }
-
         if(battle_units[i].controller_idx == player_idx)
         {
             if(Battle_Unit_Has_Ranged_Attack(i))
@@ -138,7 +134,6 @@ void AI_SetBasicAttacks(int16_t player_idx)
             {
                 battle_units[i].action = bua_Stab;
             }
-
             own_threat_total += Effective_Battle_Unit_Strength(i);
             own_ranged_capacity += (battle_units[i].mana / 4);
         }
@@ -148,10 +143,8 @@ void AI_SetBasicAttacks(int16_t player_idx)
             enemy_mana_and_ranged += (battle_units[i].mana / 4);
         }
     }
-
     /* Phase 2: Incorporate wizard ranged strengths and check early exit */
     own_ranged_capacity += Total_Ranged_Attack_Strength(player_idx);
-
     if(player_idx == _combat_attacker_player)
     {
         enemy_player = _combat_defender_player;
@@ -161,18 +154,15 @@ void AI_SetBasicAttacks(int16_t player_idx)
         enemy_player = _combat_attacker_player;
     }
     enemy_mana_and_ranged += Total_Ranged_Attack_Strength(enemy_player);
-
     if(own_threat_total == 0 || enemy_threat_total == 0)
     {
         return;
     }
-
     /* Phase 3: Gather additional metrics for tactical decision */
-    safety_level = Get_Player_Mode(player_idx);
+    player_mode_level = AI_Player_Mode(player_idx);
     ranged_diff = own_ranged_capacity - enemy_mana_and_ranged;
     own_melee_threat = 0;
-
-    for (i = 0; i < _combat_total_unit_count; i++)
+    for(i = 0; i < _combat_total_unit_count; i++)
     {
         if(battle_units[i].status == bus_Active && battle_units[i].controller_idx == player_idx)
         {
@@ -182,19 +172,16 @@ void AI_SetBasicAttacks(int16_t player_idx)
             }
         }
     }
-
-    rnd_offset = Random(3) - 4; /* Produces -4, -3, or -2 */
-
+    rnd_offset = (Random(3) - 4); /* {-3,-2,-1} */
     /* Phase 4: Refine actions based on safety level and tactical balance */
-    for (i = 0; i < _combat_total_unit_count; i++)
+    for(i = 0; i < _combat_total_unit_count; i++)
     {
         if(battle_units[i].status != bus_Active || battle_units[i].controller_idx != player_idx)
         {
             continue;
         }
-
         /* switch 4 cases */
-        switch (safety_level)
+        switch (player_mode_level)
         {
         case 0:
         case 1:
@@ -202,24 +189,21 @@ void AI_SetBasicAttacks(int16_t player_idx)
                 ranged_diff > rnd_offset && 
                 own_ranged_capacity > 0)
             {
-                battle_units[i].action = bua_MoveAndStab;
+                battle_units[i].action = bua_AdvanceAndStab;
             }
             break;
-
         case 2:
             if(battle_units[i].action == bua_Stab)
             {
-                /* Note: Assembly does not check for division by zero at loc_9239D, 
-                   relying on logic that melee threat exists if this branch is relevant */
+                /* Note: Assembly does not check for division by zero at loc_9239D, relying on logic that melee threat exists if this branch is relevant */
                 // OGBUG  divide by zero
                 if((enemy_threat_total / own_melee_threat) > 2 && 
                     ranged_diff > rnd_offset && 
                     own_ranged_capacity > 0)
                 {
-                    battle_units[i].action = bua_MoveAndStab;
+                    battle_units[i].action = bua_AdvanceAndStab;
                 }
             }
-
             if(battle_units[i].action == bua_Shoot)
             {
                 if(own_melee_threat != 0 && 
@@ -228,35 +212,33 @@ void AI_SetBasicAttacks(int16_t player_idx)
                 {
                     if(_ai_battlefield_city_walls == 0 || battle_units[i].controller_idx == _combat_attacker_player)
                     {
-                        battle_units[i].action = bua_MoveAndShoot;
+                        battle_units[i].action = bua_AdvanceAndShoot;
                     }
                 }
             }
             break;
-
         case 3:
             if(battle_units[i].action == bua_Stab)
             {
                 if(ranged_diff > 0)
                 {
-                    battle_units[i].action = bua_MoveAndStab;
+                    battle_units[i].action = bua_AdvanceAndStab;
                 }
             }
-            else /* Implicitly bua_Shoot based on Phase 1 init */
+            else /* here, must be implicitly (battle_units[i].action == bua_Shoot), based on Phase 1 init */
             {
                 if(ranged_diff < 0)
                 {
-                    battle_units[i].action = bua_MoveAndShoot;
+                    battle_units[i].action = bua_AdvanceAndShoot;
                 }
             }
             break;
-
         default:
             if(battle_units[i].action == bua_Shoot)
             {
-                if(Random(2) == 1)
+                if(Random(2) == 1)  /* 50% */
                 {
-                    battle_units[i].action = bua_MoveAndShoot;
+                    battle_units[i].action = bua_AdvanceAndShoot;
                 }
             }
             break;
@@ -266,8 +248,7 @@ void AI_SetBasicAttacks(int16_t player_idx)
 
 
 // WZD o114p02
-/* GEMINI */
-void AI_BU_ProcessAction(int16_t battle_unit_idx, int16_t rally_cgx, int16_t rally_cgy)
+void AI_Execute_Unit_Action(int16_t battle_unit_idx, int16_t rally_cgx, int16_t rally_cgy)
 {
     int16_t proceed_with_melee = 0;  // if you came in with a target, but there is a wall, you might get an override
     int16_t spell_result = 0;
@@ -276,7 +257,6 @@ void AI_BU_ProcessAction(int16_t battle_unit_idx, int16_t rally_cgx, int16_t ral
     struct s_BATTLE_UNIT * bu_ptr = NULL;
     struct s_BATTLE_UNIT * target_ptr = NULL;
     int16_t itr_battle_units = 0;  // DNE in Dasm
-
     /* If no stage point provided, use the target's current position */
     if(rally_cgx == 0 && rally_cgy == 0)
     {
@@ -286,112 +266,158 @@ void AI_BU_ProcessAction(int16_t battle_unit_idx, int16_t rally_cgx, int16_t ral
         rally_cgx = target_ptr->cgx;
         rally_cgy = target_ptr->cgy;
     }
-
     Switch_Active_Battle_Unit(battle_unit_idx);
     _active_battle_unit = battle_unit_idx;
-
     bu_ptr = &battle_units[battle_unit_idx];
-
     /* Switch on BATTLE_UNIT_ACTION (starting at 100) */
     switch (bu_ptr->action)
     {
-
         case bua_Stab:
         {
-
-            if(bu_ptr->melee == 0)
+            if(bu_ptr->melee != 0)
             {
-                goto Case_Finished;
-            }
-
-            // if wall, ...
-            if(_ai_battlefield_city_walls & BATTLEFIELD_CITY_WALL_STONE)
-            {
-                if(bu_ptr->target_battle_unit_idx == ST_UNDEFINED)
+                // if wall, ...
+                if(_ai_battlefield_city_walls & BATTLEFIELD_CITY_WALL_STONE)
                 {
-                    proceed_with_melee = ST_FALSE;
-                    // if I'm the attacker, I need to find the Gatekeeper
-                    if(bu_ptr->controller_idx == _combat_attacker_player)
+                    if(bu_ptr->target_battle_unit_idx == ST_UNDEFINED)
                     {
-                        /* Attacker - Kill the Gatekeeper */
-/*
-    would try to find the defending unit at the gate, if
-    any - but will never be executed because of the
-    conflicting condition of the target having to be -1
-    and not being -1 at the same time
-*/
-/*
-BUG: The original assembly has a conflicting condition loc_925A7 
-that will never jump as written, likely intended to find a specific target
-*/
-                        for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
+                        proceed_with_melee = ST_FALSE;
+                        // if I'm the attacker, I need to find the Gatekeeper
+                        if(bu_ptr->controller_idx == _combat_attacker_player)
                         {
-                            target_ptr = &battle_units[itr_battle_units];
-                            if(target_ptr->cgx == CGX_GATE && target_ptr->cgy == CGY_GATE && 
-                                target_ptr->controller_idx != bu_ptr->controller_idx &&
-                                target_ptr->status == bus_Active)
+                            /* Attacker - Kill the Gatekeeper */
+                            /* would try to find the defending unit at the gate, if any - but will never be executed because of the conflicting condition of the target having to be -1 and not being -1 at the same time */
+                            /* OGBUG: The original assembly has a conflicting condition loc_925A7 that will never jump as written, likely intended to find a specific target */
+                            for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
                             {
-                                bu_ptr->target_battle_unit_idx = (int8_t)itr_battle_units;
-                                proceed_with_melee = ST_TRUE;
+                                target_ptr = &battle_units[itr_battle_units];
+                                if(target_ptr->cgx == CGX_GATE && target_ptr->cgy == CGY_GATE && 
+                                    target_ptr->controller_idx != bu_ptr->controller_idx &&
+                                    target_ptr->status == bus_Active)
+                                {
+                                    bu_ptr->target_battle_unit_idx = (int8_t)itr_battle_units;
+                                    proceed_with_melee = ST_TRUE;
+                                }
                             }
-
+                            if(proceed_with_melee == ST_FALSE)
+                            {
+                                /* Attempt to move toward central gate area (8,12) */
+                                Do_Auto_Unit_Turn(battle_unit_idx, CGX_GATE, CGY_GATE, -666, CGX_GATE, CGY_GATE);
+                            }
                         }
-
-                        if(proceed_with_melee == ST_FALSE)
+                        else
                         {
-                            /* Attempt to move toward central gate area (8,12) */
+                            /* Defender - I am the Gatekeeper */
                             Do_Auto_Unit_Turn(battle_unit_idx, CGX_GATE, CGY_GATE, -666, CGX_GATE, CGY_GATE);
                         }
                     }
                     else
                     {
-                        /* Defender - I am the Gatekeeper */
-                        Do_Auto_Unit_Turn(battle_unit_idx, CGX_GATE, CGY_GATE, -666, CGX_GATE, CGY_GATE);
+                        proceed_with_melee = ST_TRUE;  // no target, no override needed
                     }
                 }
                 else
                 {
-                    proceed_with_melee = ST_TRUE;  // no target, no override needed
+                    proceed_with_melee = ST_TRUE;  // no wall, no override needed
                 }
-            }
-            else
-            {
-                proceed_with_melee = ST_TRUE;  // no wall, no override needed
-            }
-
-            if(proceed_with_melee == ST_TRUE)
-            {
-                /* Special check for neutral attacker/city capture context */
-                if(bu_ptr->target_battle_unit_idx == ST_UNDEFINED &&
-                    bu_ptr->controller_idx == NEUTRAL_PLAYER_IDX &&
-                    bu_ptr->controller_idx == _combat_attacker_player &&
-                    _combat_environ == 1)  /* City-Siege */
+                if(proceed_with_melee == ST_TRUE)
                 {
-                    Do_Auto_Unit_Turn(battle_unit_idx, 0, 0, ST_UNDEFINED, 0, 0);
-                    goto Case_Finished;
+                    /* Special check for neutral attacker/city capture context */
+                    if(bu_ptr->target_battle_unit_idx == ST_UNDEFINED &&
+                        bu_ptr->controller_idx == NEUTRAL_PLAYER_IDX &&
+                        bu_ptr->controller_idx == _combat_attacker_player &&
+                        _combat_environ == 1)  /* City-Siege */
+                    {
+                        Do_Auto_Unit_Turn(battle_unit_idx, 0, 0, ST_UNDEFINED, 0, 0);
+                    }
+                    else
+                    {
+                        /* Standard melee loop */
+                        some_variable = 220; /* Sentinel for starting movement */
+                        while(1)
+                        {
+                            bu_ptr = &battle_units[battle_unit_idx];
+                            some_variable = bu_ptr->movement_points;
+                            if(bu_ptr->target_battle_unit_idx < 0) break;
+                            target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
+                            Do_Auto_Unit_Turn(battle_unit_idx, target_ptr->cgx, target_ptr->cgy, bu_ptr->target_battle_unit_idx, rally_cgx, rally_cgy);
+                            bu_ptr = &battle_units[battle_unit_idx];
+                            target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
+                            /* If target is no longer active, reassign action */
+                            if(target_ptr->status != bus_Active)
+                            {
+                                AI_Set_Unit_Action_Mode(battle_unit_idx, 0);
+                            }
+                            bu_ptr = &battle_units[battle_unit_idx];
+                            if(bu_ptr->movement_points >= some_variable) break;
+                            if(bu_ptr->target_battle_unit_idx <= -1) break;
+                            if(bu_ptr->movement_points <= 0) break;
+                            if(bu_ptr->status != bus_Active) break;
+                        }
+                    }
                 }
-
-                /* Standard melee loop */
-                some_variable = 220; /* Sentinel for starting movement */
+            }
+            bu_ptr = &battle_units[battle_unit_idx];
+            bu_ptr->action = bua_Finished;
+        } break;
+        case bua_AdvanceAndShoot:
+        {
+            bu_ptr = &battle_units[battle_unit_idx];
+            if(bu_ptr->target_battle_unit_idx >= 0)
+            {
+                if(Range_To_Battle_Unit(battle_unit_idx, bu_ptr->target_battle_unit_idx) != 1)
+                {
+                    some_variable = bu_ptr->movement_points;
+                    bu_ptr->movement_points = 1; /* Use exactly 1 MP to move closer */
+                    target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
+                    Do_Auto_Unit_Turn(battle_unit_idx, target_ptr->cgx, target_ptr->cgy, bu_ptr->target_battle_unit_idx, rally_cgx, rally_cgy);
+                    /* Restore movement points minus cost of move */
+                    bu_ptr = &battle_units[battle_unit_idx];
+                    bu_ptr->movement_points = (some_variable + bu_ptr->movement_points - 1);
+                }
+                /* Shooting loop */
+                while(1)
+                {
+                    Battle_Unit_Attack(battle_unit_idx, bu_ptr->target_battle_unit_idx, 0, 0);
+                    bu_ptr = &battle_units[battle_unit_idx];
+                    target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
+                    if(target_ptr->status != bus_Active)
+                    {
+                        AI_Set_Unit_Action_Mode(battle_unit_idx, 0);
+                    }
+                    bu_ptr = &battle_units[battle_unit_idx];
+                    if(bu_ptr->movement_points <= 0) break;
+                    if(bu_ptr->target_battle_unit_idx <= -1) break;
+                }
+            }
+            bu_ptr->action = bua_Finished;
+        } break;
+        case bua_Shoot:
+        {
+            bu_ptr = &battle_units[battle_unit_idx];
+            if(bu_ptr->target_battle_unit_idx >= 0)
+            {
+                some_variable = 220;
                 while(1)
                 {
                     bu_ptr = &battle_units[battle_unit_idx];
                     some_variable = bu_ptr->movement_points;
-
-                    if(bu_ptr->target_battle_unit_idx < 0) break;
-
-                    target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
-                    Do_Auto_Unit_Turn(battle_unit_idx, target_ptr->cgx, target_ptr->cgy, bu_ptr->target_battle_unit_idx, rally_cgx, rally_cgy);
-
+                    if(bu_ptr->ranged_type == ST_UNDEFINED)
+                    {
+                        /* Unit has no ranged attack, try to move to target instead */
+                        target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
+                        Do_Auto_Unit_Turn(battle_unit_idx, target_ptr->cgx, target_ptr->cgy, bu_ptr->target_battle_unit_idx, rally_cgx, rally_cgy);
+                    }
+                    else
+                    {
+                        Battle_Unit_Attack(battle_unit_idx, bu_ptr->target_battle_unit_idx, 0, 0);
+                    }
                     bu_ptr = &battle_units[battle_unit_idx];
                     target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
-
-                    /* If target is no longer active, reassign action */
                     if(target_ptr->status != bus_Active)
                     {
-                        AI_BU_AssignAction(battle_unit_idx, 0);
+                        AI_Set_Unit_Action_Mode(battle_unit_idx, 0);
                     }
-
                     bu_ptr = &battle_units[battle_unit_idx];
                     if(bu_ptr->movement_points >= some_variable) break;
                     if(bu_ptr->target_battle_unit_idx <= -1) break;
@@ -399,133 +425,51 @@ that will never jump as written, likely intended to find a specific target
                     if(bu_ptr->status != bus_Active) break;
                 }
             }
-        }
-        goto Case_Finished;
-
-        case bua_MoveAndShoot:
+            bu_ptr->action = bua_Finished;
+        } break;
+        case bua_AdvanceAndStab:
         {
             bu_ptr = &battle_units[battle_unit_idx];
-            if(bu_ptr->target_battle_unit_idx < 0) goto Case_Finished;
-
-            if(Range_To_Battle_Unit(battle_unit_idx, bu_ptr->target_battle_unit_idx) != 1)
+            if(bu_ptr->target_battle_unit_idx >= 0)
             {
-                some_variable = bu_ptr->movement_points;
-                bu_ptr->movement_points = 1; /* Use exactly 1 MP to move closer */
-
                 target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
                 Do_Auto_Unit_Turn(battle_unit_idx, target_ptr->cgx, target_ptr->cgy, bu_ptr->target_battle_unit_idx, rally_cgx, rally_cgy);
-
-                /* Restore movement points minus cost of move */
-                bu_ptr = &battle_units[battle_unit_idx];
-                bu_ptr->movement_points = (some_variable + bu_ptr->movement_points - 1);
-            }
-
-            /* Shooting loop */
-            while(1)
-            {
-                Battle_Unit_Attack(battle_unit_idx, bu_ptr->target_battle_unit_idx, 0, 0);
-
                 bu_ptr = &battle_units[battle_unit_idx];
                 target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
                 if(target_ptr->status != bus_Active)
                 {
-                    AI_BU_AssignAction(battle_unit_idx, 0);
+                    AI_Set_Unit_Action_Mode(battle_unit_idx, 0);
                 }
-
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->movement_points <= 0) break;
-                if(bu_ptr->target_battle_unit_idx <= -1) break;
             }
-        }
-        goto Case_Finished;
-
-        case bua_Shoot:
+            bu_ptr->action = bua_Finished;
+        } break;
+        case bua_DoomBolt:
         {
-            bu_ptr = &battle_units[battle_unit_idx];
-            if(bu_ptr->target_battle_unit_idx < 0) goto Case_Finished;
-
-            some_variable = 220;
-            while(1)
-            {
-                bu_ptr = &battle_units[battle_unit_idx];
-                some_variable = bu_ptr->movement_points;
-
-                if(bu_ptr->ranged_type == ST_UNDEFINED)
-                {
-                    /* Unit has no ranged attack, try to move to target instead */
-                    target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
-                    Do_Auto_Unit_Turn(battle_unit_idx, target_ptr->cgx, target_ptr->cgy, bu_ptr->target_battle_unit_idx, rally_cgx, rally_cgy);
-                }
-                else
-                {
-                    Battle_Unit_Attack(battle_unit_idx, bu_ptr->target_battle_unit_idx, 0, 0);
-                }
-
-                bu_ptr = &battle_units[battle_unit_idx];
-                target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
-                if(target_ptr->status != bus_Active)
-                {
-                    AI_BU_AssignAction(battle_unit_idx, 0);
-                }
-
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->movement_points >= some_variable) break;
-                if(bu_ptr->target_battle_unit_idx <= -1) break;
-                if(bu_ptr->movement_points <= 0) break;
-                if(bu_ptr->status != bus_Active) break;
-            }
-        }
-        goto Case_Finished;
-
-        case bua_MoveAndStab:
-        {
-            bu_ptr = &battle_units[battle_unit_idx];
-            if(bu_ptr->target_battle_unit_idx < 0) goto Case_Finished;
-
+            bu_ptr->Attribs_2 ^= USA_DOOMBOLT;
             target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
-            Do_Auto_Unit_Turn(battle_unit_idx, target_ptr->cgx, target_ptr->cgy, bu_ptr->target_battle_unit_idx, rally_cgx, rally_cgy);
-
-            bu_ptr = &battle_units[battle_unit_idx];
-            target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
-            if(target_ptr->status != bus_Active)
-            {
-                AI_BU_AssignAction(battle_unit_idx, 0);
-            }
-        }
-        goto Case_Finished;
-
-        case BUA_DoomBolt:
-        {
-            bu_ptr->Attribs_2 ^= 0x01; /* USA_DOOMBOLT bit */
-            target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
-            Combat_Cast_Apply_Spell_Effect(47 /* spl_Doom_Bolt */, bu_ptr->target_battle_unit_idx, battle_unit_idx, target_ptr->cgx, target_ptr->cgy, 0, 1, ST_NULL, ST_NULL);
+            Combat_Cast_Apply_Spell_Effect(spl_Doom_Bolt, bu_ptr->target_battle_unit_idx, battle_unit_idx, target_ptr->cgx, target_ptr->cgy, 0, 1, ST_NULL, ST_NULL);
             bu_ptr->movement_points = 0;
-        }
-        break;
-
-        case BUA_Fireball:
+        } break;
+        case bua_Fireball:
         {
-            bu_ptr->Attribs_2 ^= 0x02; /* USA_FIREBALL bit */
+            bu_ptr->Attribs_2 ^= USA_FIREBALL;
             target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
-            Combat_Cast_Apply_Spell_Effect(40 /* spl_Fireball */, bu_ptr->target_battle_unit_idx, battle_unit_idx, target_ptr->cgx, target_ptr->cgy, 0, 1, ST_NULL, ST_NULL);
+            Combat_Cast_Apply_Spell_Effect(spl_Fireball, bu_ptr->target_battle_unit_idx, battle_unit_idx, target_ptr->cgx, target_ptr->cgy, 0, 1, ST_NULL, ST_NULL);
             bu_ptr->movement_points = 0;
-        }
-        break;
-
+        } break;
         case bua_Healing:
         {
+            /* OGBUG:  Choose_Target_And_Action() assigns bua_Healing, but AI_Execute_Unit_Action() doesn't have a case to handle it. */
             STU_DEBUG_BREAK();  /* DNE in Dasm */
         } break;
-
-        case BUA_UseItem:
-        case BUA_CastSpell:
+        case bua_UseItem:
+        case bua_CastSpell:
         {
             spell_result = Combat_Cast_Spell(battle_unit_idx, _combat_wx, _combat_wy, _combat_wp);
-            
             if(spell_result == ST_TRUE)
             {
                 /* Post-spell reassignment and movement logic */
-                AI_BU_AssignAction(battle_unit_idx, 1);
+                AI_Set_Unit_Action_Mode(battle_unit_idx, 1);
                 bu_ptr = &battle_units[battle_unit_idx];
                 if(bu_ptr->target_battle_unit_idx >= 0)
                 {
@@ -534,7 +478,6 @@ that will never jump as written, likely intended to find a specific target
                     {
                         bu_ptr = &battle_units[battle_unit_idx];
                         some_variable = bu_ptr->movement_points;
-
                         if(bu_ptr->ranged_type != rat_NONE)
                         {
                             Battle_Unit_Attack(battle_unit_idx, bu_ptr->target_battle_unit_idx, 0, 0);
@@ -544,14 +487,12 @@ that will never jump as written, likely intended to find a specific target
                             target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
                             Do_Auto_Unit_Turn(battle_unit_idx, target_ptr->cgx, target_ptr->cgy, bu_ptr->target_battle_unit_idx, rally_cgx, rally_cgy);
                         }
-
                         bu_ptr = &battle_units[battle_unit_idx];
                         target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
                         if(target_ptr->status != bus_Active)
                         {
-                            AI_BU_AssignAction(battle_unit_idx, 0);
+                            AI_Set_Unit_Action_Mode(battle_unit_idx, 0);
                         }
-
                         bu_ptr = &battle_units[battle_unit_idx];
                         if(bu_ptr->movement_points >= some_variable) break;
                         if(bu_ptr->target_battle_unit_idx <= -1) break;
@@ -564,52 +505,37 @@ that will never jump as written, likely intended to find a specific target
             {
                 bu_ptr->movement_points = 0;
             }
-        }
-        goto Case_Finished;
-
-        case BUA_SummonDemon:
+            bu_ptr = &battle_units[battle_unit_idx];
+            bu_ptr->action = bua_Finished;
+        } break;
+        case bua_SummonDemon:
         {
             Summon_Demon(battle_unit_idx);
             bu_ptr->movement_points = 0;
-        }
-        break;
-
+        } break;
         case bua_WebSpell:
         {
-            bu_ptr->Attribs_2 ^= 0x08; /* USA_WEB bit */
+            bu_ptr->Attribs_2 ^= USA_WEB;
             target_ptr = &battle_units[bu_ptr->target_battle_unit_idx];
-            Combat_Cast_Apply_Spell_Effect(91 /* spl_Web */, bu_ptr->target_battle_unit_idx, battle_unit_idx, target_ptr->cgx, target_ptr->cgy, 0, 1, ST_NULL, ST_NULL);
+            Combat_Cast_Apply_Spell_Effect(spl_Web, bu_ptr->target_battle_unit_idx, battle_unit_idx, target_ptr->cgx, target_ptr->cgy, 0, 1, ST_NULL, ST_NULL);
             bu_ptr->movement_points = 0;
-        }
-        break;
-        
+        } break;
         default:
-            break;
+        {
+            STU_DEBUG_BREAK();  /* Unhandled action mode */
+        } break;
     }
-
     /* Finished processing specific action */
-Case_Finished:
-    bu_ptr = &battle_units[battle_unit_idx];
-    bu_ptr->action = bua_Finished;
-
     /* Default handler / Exit clamping */
     if(bu_ptr->movement_points < 0)
     {
         bu_ptr->movement_points = 0;
     }
-
 }
 
 
 // WZD o114p03
-// drake178: Sort_Battle_Units()
-/*
-; sorts the battle units in the passed list based on
-; their remaining movement allowance, from least to
-; most - slowest to fastest if none have moved yet
-*/
 /* The function implements an Insertion Sort to order units by movement points (slowest first) */
-
 /*
 Sort_Battle_Units is an insertion sort that orders a list of battle unit indices by their movement_points, from least to most (slowest first).
 Purpose in context: It's called by Auto_Do_Combat_Turn before the AI moves its melee units. By sorting slowest-first, the AI moves the least-mobile units first. This matters because the stage point (where units converge) is derived from the last element in the sorted list — the fastest unit. Slow units move toward where the fast unit will end up, and the fast unit goes last so it can adapt to where everyone else already is.
@@ -623,7 +549,7 @@ void Sort_Battle_Units(int16_t * troop_list, int16_t troop_count)
     int16_t current_battle_unit_idx = 0;
     int16_t previous_list_idx = 0;
 
-    for (itr = 1; itr < troop_count; itr++)
+    for(itr = 1; itr < troop_count; itr++)
     {
         current_battle_unit_idx = troop_list[itr];
         
@@ -656,29 +582,27 @@ void Sort_Battle_Units(int16_t * troop_list, int16_t troop_count)
 
 
 // WZD o114p04
-/* GEMINI */
-void AI_GetCombatRallyPt(int16_t battle_unit_idx, int16_t * cgx, int16_t * cgy)
+void AI_Stage_Point_For_Unit(int16_t battle_unit_idx, int16_t * cgx, int16_t * cgy)
 {
-    int16_t itr;
-    int16_t target_idx;
-    int16_t cost_map_offset;
-    unsigned char cost;
-    int16_t move_points;
-
+    int16_t itr = 0;
+    int16_t target_idx = 0;
+    int16_t cost_map_offset = 0;
+    uint8_t cost = 0;
+    int16_t move_points = 0;
     /* Check if the unit is already executing a direct attack action */
-    if(battle_units[battle_unit_idx].action == bua_MoveAndStab || 
+    if(
+        battle_units[battle_unit_idx].action == bua_AdvanceAndStab
+        || 
         battle_units[battle_unit_idx].action == bua_Shoot)
     {
         *cgx = battle_units[battle_unit_idx].cgx;
         *cgy = battle_units[battle_unit_idx].cgy;
         return;
     }
-
     /* Initialize the base movement cost map based on terrain */
     Set_Movement_Cost_Map(battle_unit_idx);
-
     /* Update cost map with unit positions */
-    for (itr = 0; itr < _combat_total_unit_count; itr++)
+    for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
         /* If this unit is our target, mark it as reachable (cost 2) */
         if(battle_units[battle_unit_idx].target_battle_unit_idx == itr)
@@ -693,20 +617,18 @@ void AI_GetCombatRallyPt(int16_t battle_unit_idx, int16_t * cgx, int16_t * cgy)
             _cmbt_movepath_cost_map[cost_map_offset] = INF;
         }
     }
-
     /* Update cost map with magic vortex positions as obstacles */
-    for (itr = 0; itr < _vortex_count; itr++)
+    for(itr = 0; itr < _vortex_count; itr++)
     {
         cost_map_offset = (_vortexes[itr].cgy * COMBAT_GRID_WIDTH) + _vortexes[itr].cgx;
         _cmbt_movepath_cost_map[cost_map_offset] = INF;
     }
-
     /* Calculate the path to the current target unit */
-    target_idx = (int)battle_units[battle_unit_idx].target_battle_unit_idx;
-/*
-OGBUG: If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will attempt to compute a path to an invalid target, which can lead to out-of-bounds access in the cost map and movement path arrays, causing a crash.
-       //COPILOT+GPT54  The root cause is higher up than the crash site: Auto_Do_Combat_Turn computes a stage point before AI_BU_AssignAction assigns fresh targets, so the chosen melee unit can still have target_battle_unit_idx == ST_UNDEFINED.
-*/
+    target_idx = battle_units[battle_unit_idx].target_battle_unit_idx;
+    /*
+        OGBUG:  OOB AVRL  If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will attempt to compute a path to an invalid target, which can lead to out-of-bounds access in the cost map and movement path arrays, causing a crash.
+                The root cause is higher up: Auto_Do_Combat_Turn() computes a stage point before AI_Set_Unit_Action_Mode() assigns fresh targets, so the chosen melee unit can still have target_battle_unit_idx == ST_UNDEFINED.
+    */
     if(target_idx == ST_UNDEFINED)
     {
         *cgx = 0;
@@ -719,28 +641,24 @@ OGBUG: If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will att
         battle_units[target_idx].cgx,
         battle_units[target_idx].cgy
     );
-
     /* Iterate through path to find the furthest point reachable with current movement points */
-    move_points = (int)battle_units[battle_unit_idx].movement_points;
-    for (itr = 0; itr < movement_path_grid_cell_count; itr++)
+    move_points = battle_units[battle_unit_idx].movement_points;
+    for(itr = 0; itr < movement_path_grid_cell_count; itr++)
     {
         /* Skip starting square */
         if(itr == 0)
         {
             continue;
         }
-
         /* Check cost at the path coordinate (itr-1 because arrays are 0-indexed and loop uses dec) */
         cost_map_offset = (_cmbt_mvpth_y[itr - 1] * COMBAT_GRID_WIDTH) + _cmbt_mvpth_x[itr - 1];
         cost = _cmbt_mvpth_c[cost_map_offset];
-
         /* If movement points are exhausted by this step, stop */
-        if(move_points - (int)cost <= 0)
+        if(move_points - cost <= 0)
         {
             break;
         }
     }
-
     /* Set the stage point to the last valid cell found in the path */
     *cgx = _cmbt_mvpth_x[itr - 1];
     *cgy = _cmbt_mvpth_y[itr - 1];
@@ -748,9 +666,7 @@ OGBUG: If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will att
 
 
 // WZD o114p05
-/* GEMINI */
 /**
- * COPILOT
  * @brief Assigns and executes combat-turn actions for all battle units controlled by one player.
  *
  * This routine drives the high-level tactical AI for a single side during combat. It first
@@ -762,8 +678,8 @@ OGBUG: If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will att
  * Mana Leak.
  *
  * After the global combat posture is established, the function initializes basic unit actions via
- * AI_SetBasicAttacks(), optionally builds and sorts a list of melee-capable units to compute a
- * stage point with AI_GetCombatRallyPt(), and then processes units in two passes. The first pass
+ * AI_Set_All_Action_Modes(), optionally builds and sorts a list of melee-capable units to compute a
+ * stage point with AI_Stage_Point_For_Unit(), and then processes units in two passes. The first pass
  * handles active non-sleeping units generally, while the second pass revisits hero units under the
  * special hero melee safety rules controlled by _ai_disable_hero_melee_safety_check.
  *
@@ -777,27 +693,25 @@ OGBUG: If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will att
  */
 void Auto_Do_Combat_Turn(int16_t player_idx)
 {
-    int16_t melee_unit_count = 0;
-    int16_t rally_x = 0;
-    int16_t rally_y = 0;
-    int16_t our_ranged_attack_strength = 0;
-    int16_t their_ranged_attack_strength = 0;
-    int16_t attacker_vortex_count = 0;
     int16_t melee_unit_list[MAX_BATTLE_UNIT_SLOT_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t attacker_vortex_count = 0;
+    int16_t their_ranged_attack_strength = 0;
+    int16_t our_ranged_attack_strength = 0;
+    int16_t rally_y = 0;
+    int16_t rally_x = 0;
+    int16_t melee_unit_count = 0;
     int16_t itr_battle_units = 0;
     int16_t itr_vortexes = 0;
-    struct s_BATTLE_UNIT * bu_ptr = NULL;
     struct s_MAGIC_VORTEX * vortex_ptr = NULL;
-
+    struct s_BATTLE_UNIT * bu_ptr = NULL;
     our_ranged_attack_strength = 0;
     their_ranged_attack_strength = 0;
-
     /* Handle immobile neutrals if neutral player is the attacker and getting stuck */
     if(player_idx == NEUTRAL_PLAYER_IDX && 
         player_idx == _combat_attacker_player && 
         _ai_immobile_counter > 3)
     {
-        for (itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
+        for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
         {
             bu_ptr = &battle_units[itr_battle_units];
             if(bu_ptr->status == bus_Active && bu_ptr->controller_idx == NEUTRAL_PLAYER_IDX)
@@ -806,10 +720,8 @@ void Auto_Do_Combat_Turn(int16_t player_idx)
             }
         }
     }
-
     /* Calculate relative ranged strength */
     our_ranged_attack_strength += Total_Ranged_Attack_Strength(player_idx);
-
     if(player_idx == _combat_attacker_player)
     {
         their_ranged_attack_strength += Total_Ranged_Attack_Strength(_combat_defender_player);
@@ -818,7 +730,6 @@ void Auto_Do_Combat_Turn(int16_t player_idx)
     {
         their_ranged_attack_strength += Total_Ranged_Attack_Strength(_combat_attacker_player);
     }
-
     /* Determine active battlefield obstacles (walls) */
     _ai_battlefield_city_walls = 0;
     if(battlefield->walled == ST_TRUE)
@@ -833,7 +744,6 @@ void Auto_Do_Combat_Turn(int16_t player_idx)
     {
         _ai_battlefield_city_walls |= BATTLEFIELD_CITY_WALL_FIRE;
     }
-
     /* AI Strategy: Should defender stay behind walls? */
     if(player_idx == _combat_defender_player)
     {
@@ -851,14 +761,12 @@ void Auto_Do_Combat_Turn(int16_t player_idx)
                     }
                 }
             }
-
             /* Abandon walls if attacker has massive ranged superiority and we have none */
             if(their_ranged_attack_strength > 30 && our_ranged_attack_strength == 0)
             {
                 _ai_battlefield_city_walls = 0;
                 _ai_stay_in_city = ST_FALSE;
             }
-
             /* Abandon walls if dangerous environmental spells are active */
             if(attacker_vortex_count > 0 || 
                 combat_enchantments[WRACK_ATTKR] > 0 || 
@@ -871,48 +779,40 @@ void Auto_Do_Combat_Turn(int16_t player_idx)
         }
         else
         {
-            /* Attackers don't care about city walls for stage points */
             _ai_battlefield_city_walls = 0;
         }
     }
-
     _combat_winner = ST_UNDEFINED;
-
     /* Initialize attack parameters */
-    AI_SetBasicAttacks(player_idx);
-
+    AI_Set_All_Action_Modes(player_idx);
     /* Determine Rally Point */
     if(our_ranged_attack_strength >= their_ranged_attack_strength)
     {
         melee_unit_count = 0;
-        for (itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
+        for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
         {
             bu_ptr = &battle_units[itr_battle_units];
             if(bu_ptr->controller_idx == player_idx && bu_ptr->status == bus_Active)
             {
-                if(bu_ptr->action == bua_Stab || bu_ptr->action == bua_MoveAndStab)
+                if(bu_ptr->action == bua_Stab || bu_ptr->action == bua_AdvanceAndStab)
                 {
                     melee_unit_list[melee_unit_count] = itr_battle_units;
                     melee_unit_count++;
                 }
             }
         }
-
         Sort_Battle_Units(melee_unit_list, melee_unit_count);
-
         /* Get stage point based on the median speed melee unit's destination */
-        AI_GetCombatRallyPt(melee_unit_list[(melee_unit_count - 1) / 2], &rally_x, &rally_y);
+        AI_Stage_Point_For_Unit(melee_unit_list[(melee_unit_count - 1) / 2], &rally_x, &rally_y);
     }
     else
     {
         rally_x = 0;
         rally_y = 0;
     }
-
     _ai_disable_hero_melee_safety_check = ST_FALSE;
-
     /* Pass 1: Process non-hero units (or all units initially) */
-    for (itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
+    for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
         bu_ptr = &battle_units[itr_battle_units];
         if(bu_ptr->controller_idx == player_idx && 
@@ -922,25 +822,26 @@ void Auto_Do_Combat_Turn(int16_t player_idx)
         {
             Switch_Active_Battle_Unit(itr_battle_units);
             Assign_Combat_Grids();
-            AI_BU_AssignAction(itr_battle_units, bua_Ready);
-
+            AI_Set_Unit_Action_Mode(itr_battle_units, bua_Ready);
             /* If defending within walls, units outside must stage differently */
-            if(bu_ptr->controller_idx == _combat_defender_player &&  /* whoever's turn it is, check that it's the defenders turn */
-                _ai_battlefield_city_walls > 0 &&  /* there is a wall of some sort */
-                !Battle_Unit_Is_Within_City(itr_battle_units))  /* unit is outside the city */
+            if(
+                bu_ptr->controller_idx == _combat_defender_player  /* whoever's turn it is, check that it's the defenders turn */
+                &&
+                _ai_battlefield_city_walls > 0  /* there is a wall of some sort */
+                &&
+                !Battle_Unit_Is_Within_City(itr_battle_units)  /* unit is outside the city */
+            )
             {
-                AI_BU_ProcessAction(itr_battle_units, 0, 0);  /* "use the target enemy's position as the stage point instead." */
+                AI_Execute_Unit_Action(itr_battle_units, 0, 0);  /* "use the target enemy's position as the stage point instead." */
             }
             else
             {
-                AI_BU_ProcessAction(itr_battle_units, rally_x, rally_y);  /* in a city with a wall, so behave defensively */
+                AI_Execute_Unit_Action(itr_battle_units, rally_x, rally_y);  /* in a city with a wall, so behave defensively */
             }
-
-            // OGBUG: this is not set anywhere - Battle_Unit_Commit_Damage does not set it at the right time either
-            if(_combat_winner != ST_UNDEFINED) { break; }
         }
+        // OGBUG: this is not set anywhere - Battle_Unit_Commit_Damage does not set it at the right time either
+        if(_combat_winner != ST_UNDEFINED) { break; }
     }
-
     /* Pass 2: Specific logic for Hero units */
     if(_ai_immobile_counter != ST_UNDEFINED) { _ai_disable_hero_melee_safety_check = ST_TRUE; }
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
@@ -953,21 +854,42 @@ void Auto_Do_Combat_Turn(int16_t player_idx)
             {
                 Switch_Active_Battle_Unit(itr_battle_units);
                 Assign_Combat_Grids();
-                AI_BU_AssignAction(itr_battle_units, bua_Ready);
-                AI_BU_ProcessAction(itr_battle_units, rally_x, rally_y);
-                
-                // OGBUG: this is not set anywhere - Battle_Unit_Commit_Damage does not set it at the right time either
-                if(_combat_winner != ST_UNDEFINED) { break; }
+                AI_Set_Unit_Action_Mode(itr_battle_units, bua_Ready);
+                AI_Execute_Unit_Action(itr_battle_units, rally_x, rally_y);
             }
         }
+        // OGBUG: this is not set anywhere - Battle_Unit_Commit_Damage does not set it at the right time either
+        if(_combat_winner != ST_UNDEFINED) { break; }
     }
-
 }
 
 
 // WZD o114p06
-/* GEMINI */
-int16_t AI_BU_AssignAction(int16_t battle_unit_idx, int16_t no_spells_flag)
+/**
+ * @brief Selects and records the tactical action and target for an AI battle unit.
+ *
+ * The function first rejects inactive units, then delegates primary action and target selection
+ * to Choose_Target_And_Action(). Ranged units may be reconsidered as melee units when their
+ * selected target is immune to missiles and melee is at least as promising as ranged combat.
+ * For ordinary melee and ranged actions, the selected target is subsequently refined by choosing
+ * a closer enemy of the same unit type and defense rating, or by following a suitable target
+ * already selected by an earlier friendly melee unit.
+ *
+ * @param battle_unit_idx Index of the battle unit in battle_units.
+ * @param no_spells_flag If ST_TRUE, prevents normal spell selection by starting with bua_No_Spells;
+ *        otherwise action selection starts with bua_Ready.
+ * @return The selected target battle-unit index, or ST_UNDEFINED when the unit is inactive or no
+ *         target is selected. Special actions may return a non-unit sentinel such as 99.
+ *
+ * @note Updates battle_units[battle_unit_idx].action and
+ *       battle_units[battle_unit_idx].target_battle_unit_idx in place.
+ * @note Target refinement is skipped for attacking units while city-wall state is active, but is
+ *       available to defenders and to units when _ai_battlefield_city_walls is ST_FALSE.
+ * @see Choose_Target_And_Action()
+ * @see Battle_Unit_Has_Ranged_Attack()
+ * @see Target_Unit_Value()
+ */
+int16_t AI_Set_Unit_Action_Mode(int16_t battle_unit_idx, int16_t no_spells_flag)
 {
     int16_t player_idx = 0;
     int16_t has_ranged_attack = 0;
@@ -978,34 +900,27 @@ int16_t AI_BU_AssignAction(int16_t battle_unit_idx, int16_t no_spells_flag)
     struct s_BATTLE_UNIT * target_ptr = NULL;
     struct s_BATTLE_UNIT * itr_bu_ptr = NULL;
     struct s_BATTLE_UNIT * itr_target_ptr = NULL;
-
     bu_ptr = &battle_units[battle_unit_idx];
-
     /* Check if unit is active */
     if(bu_ptr->status != bus_Active)
     {
         return ST_UNDEFINED;
     }
-
     /* Set initial action state based on spellcasting permission */
     if(no_spells_flag == ST_TRUE)
     {
-        selected_action = BUA_No_Spells;
+        selected_action = bua_No_Spells;
     }
     else
     {
         selected_action = bua_Ready;
     }
-
     player_idx = bu_ptr->controller_idx;
     target_battle_unit_idx = ST_UNDEFINED;
-
     has_ranged_attack = Battle_Unit_Has_Ranged_Attack(battle_unit_idx);
-
     /* Primary action selection logic (WIP) */
     /* Choose_Target_And_Action updates selected_action via pointer and returns a target index */
     target_battle_unit_idx = Choose_Target_And_Action(battle_unit_idx, &selected_action, has_ranged_attack);
-
     /* Missile Immunity vs. Melee trade-off logic */
     if(target_battle_unit_idx > ST_UNDEFINED && has_ranged_attack == ST_TRUE)
     {
@@ -1024,26 +939,23 @@ int16_t AI_BU_AssignAction(int16_t battle_unit_idx, int16_t no_spells_flag)
             }
         }
     }
-
     /* Fallback to melee search if ranged was unsuccessful or rejected */
     if(has_ranged_attack == ST_TRUE && target_battle_unit_idx == ST_UNDEFINED)
     {
-        if(selected_action == bua_Ready || selected_action == BUA_No_Spells || selected_action == bua_Shoot || selected_action == bua_MoveAndShoot)
+        if(selected_action == bua_Ready || selected_action == bua_No_Spells || selected_action == bua_Shoot || selected_action == bua_AdvanceAndShoot)
         {
-            /* bua_Ready, BUA_No_Spells, bua_Shoot, bua_MoveAndShoot */
+            /* bua_Ready, bua_No_Spells, bua_Shoot, bua_AdvanceAndShoot */
             has_ranged_attack = ST_FALSE;
             target_battle_unit_idx = Choose_Target_And_Action(battle_unit_idx, &selected_action, has_ranged_attack);
-
             /* If the AI returned a ranged action despite has_ranged_attack being FALSE, force melee */
-            if(selected_action == bua_Shoot || selected_action == bua_MoveAndShoot)
+            if(selected_action == bua_Shoot || selected_action == bua_AdvanceAndShoot)
             {
                 selected_action = bua_Stab;
             }
         }
     }
-
     /* Assign the final action to the battle unit record */
-    if(selected_action == bua_Ready || selected_action == BUA_No_Spells)
+    if(selected_action == bua_Ready || selected_action == bua_No_Spells)
     {
         if(has_ranged_attack == ST_TRUE)
         {
@@ -1058,7 +970,6 @@ int16_t AI_BU_AssignAction(int16_t battle_unit_idx, int16_t no_spells_flag)
     {
         bu_ptr->action = selected_action;
     }
-
     /* Target Refinement Loop */
     if(bu_ptr->action == bua_Shoot || bu_ptr->action == bua_Stab)
     {
@@ -1069,7 +980,7 @@ int16_t AI_BU_AssignAction(int16_t battle_unit_idx, int16_t no_spells_flag)
             {
                 /* 1. Look for a closer target of the identical unit type and defense rating */
                 target_ptr = &battle_units[target_battle_unit_idx];
-                for (itr = 0; itr < _combat_total_unit_count; itr++)
+                for(itr = 0; itr < _combat_total_unit_count; itr++)
                 {
                     itr_bu_ptr = &battle_units[itr];
                     if(itr_bu_ptr->status == bus_Active && itr_bu_ptr->controller_idx != bu_ptr->controller_idx)
@@ -1086,12 +997,10 @@ int16_t AI_BU_AssignAction(int16_t battle_unit_idx, int16_t no_spells_flag)
                     }
                 }
             }
-
-            // NEWBUG  Lines 18082-18104: Focus-fire loop incorrectly scoped inside the defender/walls block
             /* 2. Focus fire logic: attempt to follow the lead of previous units in the list */
             if(has_ranged_attack == ST_FALSE)
             {
-                for (itr = 0; itr < battle_unit_idx; itr++)
+                for(itr = 0; itr < battle_unit_idx; itr++)
                 {
                     itr_bu_ptr = &battle_units[itr];
                     /* If a previous friendly unit is targeting the same unit type with same defense, switch to it */
@@ -1099,211 +1008,208 @@ int16_t AI_BU_AssignAction(int16_t battle_unit_idx, int16_t no_spells_flag)
                     {
                         continue;
                     }
-
                     if(itr_bu_ptr->controller_idx != bu_ptr->controller_idx)
                     {
                         continue;
                     }
-
                     /* OGBUG  battle_units[battle_unit_idx].target_battle_unit_idx can be ST_UNDEFINED which causes OoB when indexing battle_units[] */
                     /* OGBUG */  if(itr_bu_ptr->target_battle_unit_idx == ST_UNDEFINED)
                     /* OGBUG */  {
                     /* OGBUG */      continue;
                     /* OGBUG */  }
-
                     /* OGBUG  target_battle_unit_idx can be ST_UNDEFINED which causes OoB when indexing battle_units[] */
                     /* OGBUG */  if(target_battle_unit_idx == ST_UNDEFINED)
                     /* OGBUG */  {
                     /* OGBUG */      continue;
                     /* OGBUG */  }
-                    
                     itr_target_ptr = &battle_units[itr_bu_ptr->target_battle_unit_idx];
                     target_ptr = &battle_units[target_battle_unit_idx];
-
                     if(_UNITS[itr_target_ptr->unit_idx].type != _UNITS[target_ptr->unit_idx].type)
                     {
                         continue;
                     }
-
                     if(itr_target_ptr->status != bus_Active)
                     {
                         continue;
                     }
-
-                    if(itr_target_ptr->defense == target_ptr->defense)
+                    if(itr_target_ptr->defense != target_ptr->defense)
                     {
                         continue;
                     }
-                    
                     target_battle_unit_idx = itr_bu_ptr->target_battle_unit_idx;
                     target_ptr = &battle_units[target_battle_unit_idx];
-                    
                 }
             }
         }
     }
-
-    /* Store the refined target (truncated to byte for struct storage) */
+    /* Store the refined target */
     bu_ptr->target_battle_unit_idx = (int8_t)target_battle_unit_idx;
-
     return target_battle_unit_idx;
 }
 
 
 // WZD o114p07
-/* GEMINI */
 int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_action, int16_t has_ranged_attack)
 {
-    int16_t hero_slot_idx = 0;
-    int16_t total_health = 0;
-    int16_t target_health = 0;
-    int16_t highest_value = 0;
-    int16_t target_idx = 0;
-    int16_t player_unit_count = 0;
-    int16_t target_value = 0;
-    int16_t item_spell_idx = 0;
-    int16_t ability_chosen = 0;
-    int16_t spell_idx = 0;
-    int16_t target_x = 0;
     int16_t target_y = 0;
+    int16_t target_x = 0;
+    int16_t spell_idx = 0;
+    int16_t ability_chosen = 0;
+    int16_t item_spell_idx = 0;
+    int16_t target_value = 0;
+    int16_t player_unit_count = 0;
+    int16_t target_idx = 0;
+    int16_t highest_value = 0;
+    int16_t target_health = 0;
+    int16_t total_health = 0;
+    int16_t hero_slot_idx = 0;
     int16_t itr_battle_units = 0;
-    struct s_BATTLE_UNIT * bu_ptr = NULL;
-    struct s_BATTLE_UNIT * target_bu_ptr = NULL;
-    struct s_UNIT * unit_ptr = NULL;
     struct s_ITEM * item_ptr = NULL;
-
+    struct s_UNIT * unit_ptr = NULL;
+    struct s_BATTLE_UNIT * target_bu_ptr = NULL;
+    struct s_BATTLE_UNIT * bu_ptr = NULL;
     highest_value = -100;
     target_idx = ST_UNDEFINED;
     ability_chosen = ST_FALSE;
-
     if(_combat_winner != ST_UNDEFINED)
     {
         return ST_UNDEFINED;
     }
-
     bu_ptr = &battle_units[battle_unit_idx];
-
     /* Summon Demon check */
     if((bu_ptr->Attribs_1 & (USA_SUMMON_DEMON_1 | USA_SUMMON_DEMON_2)) != 0)
     {
         if(_combat_total_unit_count < MAX_BATTLE_UNIT_SLOT_COUNT && _units < MAX_UNIT_COUNT)
         {
             player_unit_count = 0;
-            for (itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
+            for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
             {
                 if(battle_units[itr_battle_units].controller_idx == bu_ptr->controller_idx && battle_units[itr_battle_units].status == bus_Active)
                 {
                     player_unit_count++;
                 }
             }
-
             if(player_unit_count < MAX_STACK)
             {
-                *selected_action = BUA_SummonDemon;
+                *selected_action = bua_SummonDemon;
                 ability_chosen = ST_TRUE;
                 target_idx = 99;
             }
         }
     }
-
     /* Doom Bolt check */
-    if(!ability_chosen && (bu_ptr->Attribs_2 & USA_DOOMBOLT))
+    if(
+        ((bu_ptr->Attribs_2 & USA_DOOMBOLT) != 0)
+        &&
+        (ability_chosen == ST_FALSE)
+    )
     {
         spell_idx = spl_Doom_Bolt;
         target_idx = AITP_Combat_Spell(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
-
-        if(target_idx > -1)
+        if(target_idx > ST_UNDEFINED)
         {
             highest_value = 30;
-            *selected_action = BUA_DoomBolt;
+            *selected_action = bua_DoomBolt;
             /* Note: ability_chosen is NOT set to TRUE here in asm, but usually implies selection */
         }
     }
-
     /* Fireball check */
-    if(!ability_chosen && (bu_ptr->Attribs_2 & USA_FIREBALL))
+    if(
+        ((bu_ptr->Attribs_2 & USA_FIREBALL) != 0)
+        &&
+        (ability_chosen == ST_FALSE)
+    )
     {
         spell_idx = spl_Fireball;
         target_idx = AITP_Combat_Spell(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
-
-        if(target_idx > -1)
+        if(target_idx > ST_UNDEFINED)
         {
             highest_value = 16 - Battle_Unit_Defense_Special(target_idx, rat_Fireball, (USA_IMMUNITY_FIRE | USA_IMMUNITY_MAGIC), 0, sbr_Chaos);
-            *selected_action = BUA_Fireball;
+            *selected_action = bua_Fireball;
         }
     }
-
     /* Healing check */
-    if(!ability_chosen && (bu_ptr->Attribs_2 & USA_HEALING))
+    if(
+        ((bu_ptr->Attribs_2 & USA_HEALING) != 0)
+        &&
+        (ability_chosen == ST_FALSE)
+    )
     {
         spell_idx = spl_Healing;
         target_idx = AITP_Combat_Spell(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
-
-        if(target_idx > -1)
+        if(target_idx > ST_UNDEFINED)
         {
             ability_chosen = ST_TRUE;
             bu_ptr->Attribs_2 ^= USA_HEALING; /* This has the same effect of toggling the healing bit, but is more semantically clear and preserves other bits */
             *selected_action = bua_Healing;
         }
     }
-
     /* Web check */
-    if(!ability_chosen && (bu_ptr->Attribs_2 & USA_WEB))
+    if(
+        ((bu_ptr->Attribs_2 & USA_WEB) != 0)
+        &&
+        (ability_chosen == ST_FALSE)
+    )
     {
         spell_idx = spl_Web;
         target_idx = AITP_Combat_Spell(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
-
-        if(target_idx > -1)
+        if(target_idx > ST_UNDEFINED)
         {
             ability_chosen = ST_TRUE;
             *selected_action = bua_WebSpell;
         }
     }
-
     /* Hero Item check */
     unit_ptr = &_UNITS[bu_ptr->unit_idx];
-    if(!ability_chosen && unit_ptr->Hero_Slot > -1)
+    if(
+        (unit_ptr->Hero_Slot > ST_UNDEFINED)
+        &&
+        (ability_chosen == ST_FALSE)
+    )
     {
         hero_slot_idx = unit_ptr->Hero_Slot;
         // OGBUG: this may not be the hero's original owner
         item_spell_idx = _ITEMS[_players[bu_ptr->controller_idx].Heroes[hero_slot_idx].Items[0]].embed_spell_idx;
-        
         if(item_spell_idx > 0 && bu_ptr->item_charges > 0)
         {
             spell_idx = item_spell_idx;
             target_idx = AITP_Combat_Spell(spell_idx, bu_ptr->controller_idx, &target_x, &target_y);
-            
-            if(target_idx > -1)
+            if(target_idx > ST_UNDEFINED)
             {
                 ability_chosen = ST_TRUE;
-                *selected_action = BUA_UseItem;
+                *selected_action = bua_UseItem;
             }
         }
     }
-
     /* Spellcasting check */
-    if(!ability_chosen && bu_ptr->mana > 2 && *selected_action != BUA_No_Spells)
+    if(
+        (bu_ptr->mana > 2)
+        &&
+        (ability_chosen == ST_FALSE)
+        &&
+        (*selected_action != bua_No_Spells)
+    )
     {
         if((bu_ptr->ranged - 5) <= Random(15))
         {
-            *selected_action = BUA_CastSpell;
+            *selected_action = bua_CastSpell;
             ability_chosen = ST_TRUE;
         }
     }
-
     /* Main Target Search Loop */
-    if(!ability_chosen)
+    if(ability_chosen == ST_FALSE)
     {
-        for (itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
+        for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
         {
             target_bu_ptr = &battle_units[itr_battle_units];
-
             if(target_bu_ptr->controller_idx == bu_ptr->controller_idx)
+            {
                 continue;
-
+            }
             if(target_bu_ptr->status != bus_Active)
+            {
                 continue;
-
+            }
             /* Invisibility checks for ranged */
             if(has_ranged_attack == ST_TRUE)
             {
@@ -1312,7 +1218,6 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
                 if((_UNITS[target_bu_ptr->unit_idx].enchantments & UE_INVISIBILITY) != 0) continue;
                 if((target_bu_ptr->Abilities & UA_INVISIBILITY) != 0) continue;
             }
-
             /* Wall of Darkness / City Walls check */
             if(has_ranged_attack == ST_TRUE)
             {
@@ -1324,15 +1229,13 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
                     }
                 }
             }
-
             /* If you're blocking the gate, you can still be targeted, so if invisible and NOT blocking the gate, then skip this target */
             if(!Target_Is_Visible(itr_battle_units) && (target_bu_ptr->cgx != CGX_GATE || target_bu_ptr->cgy != CGY_GATE))
             {
                     continue;
             }
-
             /* Hero Safety logic */
-            if(unit_ptr->Hero_Slot > -1 && has_ranged_attack == ST_FALSE && _ai_disable_hero_melee_safety_check != ST_TRUE)
+            if(unit_ptr->Hero_Slot > ST_UNDEFINED && has_ranged_attack == ST_FALSE && _ai_disable_hero_melee_safety_check != ST_TRUE)
             {
                 /* Skip if hero melee < target defense */
                 if(bu_ptr->melee < target_bu_ptr->defense)
@@ -1353,7 +1256,6 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
                     }
                 }
             }
-
             /* City Wall obstacle check for defenders */
             if(_ai_battlefield_city_walls > 0 && has_ranged_attack == ST_TRUE)
             {
@@ -1372,9 +1274,7 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
                     }
                 }
             }
-
             target_value = Target_Unit_Value(battle_unit_idx, itr_battle_units, has_ranged_attack);
-
             if(has_ranged_attack == ST_TRUE)
             {
                 /* Ranged comparison logic */
@@ -1382,7 +1282,6 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
                 {
                     total_health = (target_bu_ptr->figure_cnt * target_bu_ptr->hits) - target_bu_ptr->front_figure_damage;
                     target_health = (battle_units[target_idx].figure_cnt * battle_units[target_idx].hits) - battle_units[target_idx].front_figure_damage;
-                    
                     if(total_health < target_health)
                     {
                         if(target_value > highest_value) highest_value = target_value;
@@ -1400,18 +1299,25 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
             else
             {
                 /* Melee comparison logic */
-                if(target_value > highest_value)
+                if(target_value >= highest_value)
                 {
-                    highest_value = target_value;
-                    target_idx = itr_battle_units;
-                    *selected_action = bua_Ready;
-                }
-                else if(target_value == highest_value && target_idx > -1)
-                {
-                    total_health = (target_bu_ptr->figure_cnt * target_bu_ptr->hits) - target_bu_ptr->front_figure_damage;
-                    target_health = (battle_units[target_idx].figure_cnt * battle_units[target_idx].hits) - battle_units[target_idx].front_figure_damage;
-                    
-                    if(total_health > target_health) /* Target current unit if it's healthier? Or original logic swap? */
+                    if(target_value == highest_value)
+                    {
+                        /* HACK  no asm counterpart; guards battle_units[-1] when no target has been chosen yet */
+                        if(target_idx > ST_UNDEFINED)
+                        {
+                            total_health = (target_bu_ptr->figure_cnt * target_bu_ptr->hits) - target_bu_ptr->front_figure_damage;
+                            target_health = (battle_units[target_idx].figure_cnt * battle_units[target_idx].hits) - battle_units[target_idx].front_figure_damage;
+                            /* On equal target value, melee prefers the healthier target. */
+                            if(total_health > target_health)
+                            {
+                                highest_value = target_value;
+                                target_idx = itr_battle_units;
+                                *selected_action = bua_Ready;
+                            }
+                        }
+                    }
+                    else
                     {
                         highest_value = target_value;
                         target_idx = itr_battle_units;
@@ -1421,7 +1327,6 @@ int16_t Choose_Target_And_Action(int16_t battle_unit_idx, int16_t * selected_act
             }
         }
     }
-
     return target_idx;
 }
 
@@ -2244,10 +2149,10 @@ BUG: this has just been done in the parent function
     if(STU_Log_Category_Enabled(LOG_CAT_COMBAT_TEST))
     {
         int16_t cmbt_test_k;
-        LOG_INFO(LOG_CAT_COMBAT_TEST, "MOVE turn=%d unit=%d target=%d dst=(%d,%d) final=(%d,%d) mp=%d pathlen=%d", (int)_combat_turn, (int)battle_unit_idx, (int)target_battle_unit_idx, (int)dst_cgx, (int)dst_cgy, (int)battle_units[battle_unit_idx].cgx, (int)battle_units[battle_unit_idx].cgy, (int)battle_units[battle_unit_idx].movement_points, (int)movement_path_grid_cell_count);
+        LOG_INFO(LOG_CAT_COMBAT_TEST, "MOVE turn=%d unit=%d target=%d dst=(%d,%d) final=(%d,%d) mp=%d pathlen=%d", _combat_turn, battle_unit_idx, target_battle_unit_idx, dst_cgx, dst_cgy, battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, battle_units[battle_unit_idx].movement_points, movement_path_grid_cell_count);
         for(cmbt_test_k = 0; cmbt_test_k < movement_path_grid_cell_count; cmbt_test_k++)
         {
-            LOG_INFO(LOG_CAT_COMBAT_TEST, "MOVE_STEP unit=%d seq=%d cell=(%d,%d)", (int)battle_unit_idx, (int)cmbt_test_k, (int)_cmbt_mvpth_x[cmbt_test_k], (int)_cmbt_mvpth_y[cmbt_test_k]);
+            LOG_INFO(LOG_CAT_COMBAT_TEST, "MOVE_STEP unit=%d seq=%d cell=(%d,%d)", battle_unit_idx, cmbt_test_k, _cmbt_mvpth_x[cmbt_test_k], _cmbt_mvpth_y[cmbt_test_k]);
         }
     }
 

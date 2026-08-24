@@ -3,8 +3,10 @@ __TODO-Combat.md
 ---
 
 [ ] put Calc_Battlefield_Bonuses() in Combat-Combat.md
+[ ] put Check_For_Winner() in Combat-Combat.md
 
 [x] Combat-Combat_Spell_Target_Screen.md
+[x] Combat-AI_Turn.md
 [ ] Combat-Spell_Cast_AI_Select.md
 [ ] Combat-Spell_Cast_AI_Target.md
 [ ] Combat-Miscellaneous.md

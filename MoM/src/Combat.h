@@ -822,20 +822,20 @@ enum e_BATTLE_UNIT_ACTION
     bua_Finished        =   4,
     bua_Wait            =   5,
     /* ¿ BEGIN:  computer-player actions ? */
-    bua_Stab     = 100,
-    bua_Shoot    = 101,
-    bua_MoveAndShoot       = 102,
-    bua_MoveAndStab     = 103,
-    BUA_DoomBolt        = 104,
-    BUA_Fireball        = 105,
+    bua_Stab            = 100,  /* AI Action/Mode/Posture - Hold */
+    bua_Shoot           = 101,  /* AI Action/Mode/Posture - Hold */
+    bua_AdvanceAndShoot = 102,  /* AI Action/Mode/Posture - Advance */
+    bua_AdvanceAndStab  = 103,  /* AI Action/Mode/Posture - Advance */
+    bua_DoomBolt        = 104,
+    bua_Fireball        = 105,
     bua_Healing         = 106,
-    BUA_UseItem         = 107,
-    BUA_CastSpell       = 108,
-    BUA_SummonDemon     = 109,
+    bua_UseItem         = 107,
+    bua_CastSpell       = 108,
+    bua_SummonDemon     = 109,
     bua_WebSpell        = 110,
     bua_Flee            = 150,
     /* ¿ END:  computer-player actions ? */
-    BUA_No_Spells       = 333
+    bua_No_Spells       = 333
 };
 
 /*
@@ -2099,7 +2099,7 @@ int16_t Combat_Structure(int16_t wx, int16_t wy, int16_t wp, int16_t set_city_fl
 int16_t Undeployable_Battle_Units_On_Water(int16_t player_idx);
 
 // WZD o124p06
-int16_t Get_Player_Mode(int16_t player_idx);
+int16_t AI_Player_Mode(int16_t player_idx);
 
 // WZD o124p07
 SAMB_ptr Reload_Battle_Unit_Move_Sound(int16_t battle_unit_idx, /* HACK */ uint32_t * sound_seg_size);
@@ -2135,7 +2135,7 @@ int16_t Battle_Unit_Moves2(int16_t battle_unit_idx);
 void Combat_City_Capture(int16_t troop_count, int16_t * troops);
 
 // WZD o124p18
-int16_t Retreat_Check(int16_t player_idx);
+int16_t AI_Retreat_Check(int16_t player_idx);
 
 // WZD o124p19
 int16_t Raze_Check(int16_t player_idx, int16_t city_idx);
@@ -2156,7 +2156,7 @@ void Raze_City_Prompt_Draw(void);
 int16_t AI_SelectCmbtSpell(int16_t caster_id);
 
 // WZD ovr139p02
-int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t threat_idx);
+int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t player_mode_level);
 
 // WZD ovr139p03
 int16_t Effective_Battle_Unit_Strength(int16_t battle_unit_idx);

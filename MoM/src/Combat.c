@@ -7271,7 +7271,7 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
  * attacker and defender units, treating units with confusion_state equal to 2 as belonging to the
  * opposite side for winner determination. It then checks for outright elimination, applies the
  * combat turn-limit rule that awards the battle to the defender after turn 50, and finally allows
- * the AI-controlled side to concede through Retreat_Check() when that behavior is permitted.
+ * the AI-controlled side to concede through AI_Retreat_Check() when that behavior is permitted.
  *
  * If an AI side chooses to flee, all of that side's units are switched to bua_Flee and any active
  * units are marked bus_Fleeing before the opposing human-controlled side is returned as the winner.
@@ -7337,7 +7337,7 @@ int16_t Check_For_Winner(void)
         /* AI will not flee during wizard city sieges or on the first turn */
         if(_computer_player_city_seige == ST_FALSE && _combat_turn > 1)
         {
-            if(Retreat_Check(_combat_remote_player) == ST_TRUE)
+            if(AI_Retreat_Check(_combat_remote_player) == ST_TRUE)
             {
                 /* AI has decided to flee the battle */
                 for(itr = 0; itr < _combat_total_unit_count; itr++)
@@ -14241,39 +14241,38 @@ MoO2  Module: CMBTAI  Target_Ship_Value_()
 ...  Expected_Weapon_Damage_(); Missile_Overkill_Check_(); Being_Captured_();
 e.g., short-circuit in Target_Ship_Value_() is if(Ship_Is_In_Stasis_()) { return -2000 }
 */
-/* GEMINI */
 int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_ranged_attack)
 {
-    int16_t attack_strength = 0;
-    int16_t defense_strength = 0;
-    int16_t ship_value = 0;
-    int16_t target_atk_str = 0;
-    int16_t dist_penalty = 0;
-    int16_t attack_type = 0;
-    int16_t attack_realm = 0;
+    int16_t damage_array[NUM_DAMAGE_TYPES] = { 0, 0, 0 };
+    int16_t to_hit = 0;
+    uint16_t attack_immunities = 0;
     uint16_t attack_attributes = 0;
     uint16_t unused_local = 0;
-    uint16_t attack_immunities = 0;
-    int16_t to_hit = 0;
-    int16_t damage_array[3] = { 0, 0, 0 };
+    int16_t attack_realm = 0;
+    int16_t attack_type = 0;
+    int16_t dist_penalty = 0;
+    int16_t target_atk_str = 0;
+    int16_t ship_value = 0;
+    int16_t defense_strength = 0;
+    int16_t attack_strength = 0;
     int16_t attacker_defense = 0;
     int16_t distance = 0;
     struct s_BATTLE_UNIT * attacker = NULL;
     struct s_BATTLE_UNIT * target = NULL;
-
     target = &battle_units[target_idx];
     attacker = &battle_units[attacker_idx];
-
     ship_value = -100;
-
     /* Check if target is unreachable due to flight */
-    if((target->Move_Flags & MV_FLYING) && 
-        !(attacker->Move_Flags & MV_FLYING) && 
-        (attacker->ranged_type == rat_NONE)) 
+    if((
+        (target->Move_Flags & MV_FLYING) != 0)
+        &&
+        ((attacker->Move_Flags & MV_FLYING) == 0)
+        &&
+        (attacker->ranged_type == rat_NONE)
+    )
     {
         return -200;
     }
-
     /* Calculate target's highest attack strength for later comparison */
     if(target->ranged > target->melee)
     {
@@ -14283,10 +14282,8 @@ int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_
     {
         target_atk_str = target->melee;
     }
-
     attack_attributes = attacker->attack_attributes;
     to_hit = attacker->tohit;
-
     if(has_ranged_attack != ST_FALSE)
     {
         /* Ranged Attack Logic */
@@ -14296,7 +14293,6 @@ int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_
         attack_realm = Battle_Unit_Attack_Magic_Realm(attacker->ranged_type, attacker_idx);
         attack_type = attacker->ranged_type;
         to_hit += attacker->ranged_tohit;
-
         /* Calculate Distance Penalty for non-magic ranged attacks */
         if((attack_type / 10) != rag_Magic)
         {
@@ -14322,23 +14318,19 @@ int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_
         attack_realm = Battle_Unit_Attack_Magic_Realm(rat_NONE, attacker_idx);
         attack_type = rat_NONE;
     }
-
     /* Resolve defense and base value */
     defense_strength = Battle_Unit_Defense_Special(target_idx, attack_type, attack_immunities, attack_attributes, attack_realm);
     ship_value = attack_strength - defense_strength;
-
     /* Threat assessment: targets with ranged attacks are higher priority */
     if(Battle_Unit_Has_Ranged_Attack(target_idx))
     {
         ship_value += (target->ranged / 3) + 2;
     }
-
     /* Status effects */
     if(target->combat_effects & bue_Confusion)
     {
         ship_value -= 10;
     }
-
     /* Node effects: attacking spirits in a Sorcery Node */
     if(battlefield->center_square_structure >= CS_SorceryNode && ship_value > 0)
     {
@@ -14352,7 +14344,6 @@ int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_
             }
         }
     }
-
     /* Tactical safety: if our defense is high enough relative to target attack, de-prioritize */
     if(ship_value > 0 && attacker_idx < 40)
     {
@@ -14362,14 +14353,12 @@ int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_
             ship_value -= 10;
         }
     }
-
 CurrentTargetCheck:
     /* Stick to current target bonus */
     if(attacker->target_battle_unit_idx == target_idx)
     {
         ship_value += 10;
     }
-
     /* City Wall Logic (Melee Only) */
     if((_ai_battlefield_city_walls & 1) && (has_ranged_attack == ST_FALSE))
     {
@@ -14392,7 +14381,6 @@ CurrentTargetCheck:
                     ship_value = -20;
                 }
             }
-
             /* Hardcoded wall segment checks for specific coordinates */
             if(
                 (target->cgx == MIN_CGX_CITY_INNER || target->cgx == MAX_CGX_CITY_INNER)
@@ -14404,14 +14392,22 @@ CurrentTargetCheck:
             }
         }
     }
-
     /* Wall of Fire Logic (Melee Only) */
-    if((_ai_battlefield_city_walls & 2) && (has_ranged_attack == 0))
+    if(
+        ((_ai_battlefield_city_walls & 2) != 0)
+        &&
+        (has_ranged_attack == 0)
+    )
     {
-        if(attacker->controller_idx == _combat_attacker_player && 
-            !(attacker->Move_Flags & MV_FLYING) && 
-            !(attacker->Move_Flags & MV_TELEPORT) && 
-            !(attacker->Move_Flags & MV_MERGING))
+        if(
+            attacker->controller_idx == _combat_attacker_player
+            && 
+            !(attacker->Move_Flags & MV_FLYING)
+            &&
+            !(attacker->Move_Flags & MV_TELEPORT)
+            &&
+            !(attacker->Move_Flags & MV_MERGING)
+        )
         {
             /* If target is inside city and attacker is outside */
             if(Battle_Unit_Is_Within_City(target_idx) == 1 && Battle_Unit_Is_Within_City(attacker_idx) == 0)
@@ -14425,16 +14421,15 @@ CurrentTargetCheck:
             }
         }
     }
-
     /* Final range/movement adjustments */
-    if(has_ranged_attack == 1)
+    if(has_ranged_attack == ST_TRUE)
     {
         if(target->combat_effects & bue_Black_Sleep)
         {
             ship_value += 20;
         }
     }
-    else
+    if(has_ranged_attack == ST_FALSE)
     {
         /* Melee reach check */
         distance = Range_To_Battle_Unit(attacker_idx, target_idx);
@@ -14447,7 +14442,6 @@ CurrentTargetCheck:
             ship_value += 25;
         }
     }
-
     return ship_value;
 }
 
@@ -16340,39 +16334,31 @@ int16_t Undeployable_Battle_Units_On_Water(int16_t player_idx)
 
 
 // WZD o124p06
-// drake178: AI_CompareArmies()
 // ¿ MoO2  Fleet_Strength_Comparison_() ... Get_Player_Mode_()?!? ?
 /*
-; calculates the threat levels of both own and enemy
-; units, and returns a value ranging from 0
-; (overwhelming enemy advantage) to 5 (insignificant
-; opposition)
-;
-; WARNING: after the first turn, AI units with no
-;  target set don't count into the army strength!
-*/
-/*
-    returns {0,1,2,3,4,5}
+accumulates effective_strength from Effective_Battle_Unit_Strength()
+into own_effective_strength and enemy_effective_strength
+accumulates (battle_units[].melee + battle_units[].ranged)
+into own_attack_strength and enemy_attack_strength
+NOTE: Level 3 crosses over from "enemy is stronger" to "own is stronger"
+    returns {Level: 0,1,2,3,4,5}
 ...some sort of *mode* for making decisions? more/less offensive/defensive?
 */
-int16_t Get_Player_Mode(int16_t player_idx)
+int16_t AI_Player_Mode(int16_t player_idx)
 {
-    int16_t enemy_attack_strength = 0;
-    int16_t own_attack_strength = 0;
+    int16_t enemy_attack_strength = 0;      /* raw, per-figure, offence only */
+    int16_t own_attack_strength = 0;        /* raw, per-figure, offence only */
     int16_t effective_strength = 0;
-    int16_t Threat_Ratio_Level = 0;
-    int16_t enemy_effective_strength = 0;
-    int16_t itr = 0;  // _SI_
-    int16_t own_effective_strength = 0;  // _DI_
-
+    int16_t player_mode_level = 0;
+    int16_t enemy_effective_strength = 0;   /* real, whole-unit, combat-power estimate */
+    int16_t itr = 0;
+    int16_t own_effective_strength = 0;     /* real, whole-unit, combat-power estimate */
     own_effective_strength = 0;
     enemy_effective_strength = 0;
     own_attack_strength = 0;
     enemy_attack_strength = 0;
-
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-
         if(
             (battle_units[itr].status == bus_Active)
             &&
@@ -16385,90 +16371,60 @@ int16_t Get_Player_Mode(int16_t player_idx)
             )
         )
         {
-
             effective_strength = Effective_Battle_Unit_Strength(itr);
-
             if(battle_units[itr].controller_idx == player_idx)
             {
-
                 own_effective_strength += effective_strength;
-
                 own_attack_strength += (battle_units[itr].melee + battle_units[itr].ranged);
-
             }
             else
             {
-
                 enemy_effective_strength += effective_strength;
-
                 enemy_attack_strength += (battle_units[itr].melee + battle_units[itr].ranged);
-
             }
-
         }
-
     }
-
     if(
         (own_effective_strength == 0)
         ||
         (own_attack_strength == 0)
     )
     {
-
         return 0;
-
     }
-
     if(
         (enemy_effective_strength == 0)
-        &&
+        ||
         (enemy_attack_strength == 0)
     )
     {
-
         return 5;
-
     }
-
     if((enemy_effective_strength / own_effective_strength) > 3)
     {
-        
-        Threat_Ratio_Level = 0;
-
+        player_mode_level = 0;  /* floor(r) >= 4 */
     }
     else if((enemy_effective_strength / own_effective_strength) > 2)
     {
-        
-        Threat_Ratio_Level = 1;
-
+        player_mode_level = 1;  /* floor(r) == 3 */
     }
-    else if((enemy_effective_strength * 2) > (own_effective_strength * 3))
+    else if((enemy_effective_strength * 2) >= (own_effective_strength * 3))
     {
-        
-        Threat_Ratio_Level = 2;
-
+        player_mode_level = 2;  /* r >= 1.5 */
     }
     else if((own_effective_strength / enemy_effective_strength) > 3)
     {
-        
-        Threat_Ratio_Level = 5;
-
+        player_mode_level = 5;  /* floor(1/r) >= 4 */
     }
     else if((own_effective_strength / enemy_effective_strength) > 2)
     {
-        
-        Threat_Ratio_Level = 4;
-
+        player_mode_level = 4;  /* floor(1/r) == 3 */
     }
     else
     {
-
-        Threat_Ratio_Level = 3;
+        player_mode_level = 3;  /* 1/3 < r < 1.5 */
     }
-
-    return Threat_Ratio_Level;
-
+    return player_mode_level;
 }
 
 
@@ -17115,13 +17071,11 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
 
 
 // WZD o124p18
-/* GEMINI */
 /**
- * COPILOT
  * @brief Determines whether the AI should abandon combat and retreat.
  *
  * This routine evaluates the current combat state for one player and returns true only when the
- * AI considers the situation hopeless enough to flee. It first queries Get_Player_Mode() and only
+ * AI considers the situation hopeless enough to flee. It first queries AI_Player_Mode() and only
  * continues when that safety assessment returns the lowest-risk tolerance state. It then counts the
  * player's units that are still relevant to the battle, including both active and uninvolved units,
  * and classifies them into heroes and builder-type units.
@@ -17140,68 +17094,65 @@ void Combat_City_Capture(int16_t troop_count, int16_t * troops)
  * @note A unit is treated as a builder if it can create an outpost or has a positive Construction
  *       value.
  */
-int16_t Retreat_Check(int16_t player_idx)
+int16_t AI_Retreat_Check(int16_t player_idx)
 {
-    int16_t safety_level = 0;
-    int16_t builder_count = 0;
     int16_t risked_unit_count = 0;
+    int16_t builder_count = 0;
+    int16_t player_mode_level = 0;
     int16_t hero_count = 0;
-    int16_t i = 0;
+    int16_t itr = 0;
     struct s_BATTLE_UNIT * b_unit_ptr = NULL;
     struct s_UNIT * unit_ptr = NULL;
-
     hero_count = 0;
     builder_count = 0;
     risked_unit_count = 0;
-
-    /* Get_Player_Mode returns 0 if the AI's situation is considered hopeless */
-    safety_level = Get_Player_Mode(player_idx);
-
-    if(safety_level != 0)
+    /* AI_Player_Mode returns 0 if the AI's situation is considered hopeless */
+    player_mode_level = AI_Player_Mode(player_idx);
+    if(player_mode_level != 0)
     {
         return ST_FALSE;
     }
-
-    for(i = 0; i < _combat_total_unit_count; i++)
+    for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-        b_unit_ptr = &battle_units[i];
-
+        b_unit_ptr = &battle_units[itr];
         /* Only consider units that are actively in the fight or uninvolved (not dead/fled) */
-        if(b_unit_ptr->status == bus_Active || b_unit_ptr->status == bus_Uninvolved)
+        if(
+            (b_unit_ptr->status == bus_Active)
+            ||
+            (b_unit_ptr->status == bus_Uninvolved)
+        )
         {
             if(b_unit_ptr->controller_idx == player_idx)
             {
                 risked_unit_count++;
-
                 unit_ptr = &_UNITS[b_unit_ptr->unit_idx];
-
                 /* Check if the unit is a Hero */
                 if(unit_ptr->Hero_Slot > ST_UNDEFINED)
                 {
                     hero_count++;
                 }
-
-                /* Check if the unit is a "builder" (Settlers or units with Construction) */
-                if((b_unit_ptr->Abilities & UA_CREATEOUTPOST) || (b_unit_ptr->Construction > 0))
+                /* Check if the unit is a "builder" (Settlers or Engineer) */
+                if(
+                    ((b_unit_ptr->Abilities & UA_CREATEOUTPOST) != 0)
+                    ||
+                    (b_unit_ptr->Construction > 0)
+                )
                 {
                     builder_count++;
                 }
             }
         }
     }
-
     /* AI will flee if it has at least one hero to save */
     if(hero_count > 0)
     {
         return ST_TRUE;
     }
-
     /* AI will flee if all remaining units are just builders (non-combatants) */
     if(risked_unit_count == builder_count)
     {
         return ST_TRUE;
     }
-
     return ST_FALSE;
 }
 
@@ -17460,7 +17411,7 @@ highest-scoring spell index (0 = cast nothing).
 int16_t AI_SelectCmbtSpell(int16_t caster_id)
 {
     int16_t spell_list[92];       /* Spell_List  [bp-0C2h..bp-0Ah] */
-    int16_t threat_idx = 0;       /* Threat */
+    int16_t player_mode_level = 0;       /* Threat */
     int16_t player_idx = 0;       /* player_idx */
     int16_t list_idx = 0;         /* List_Index */
     int16_t chosen_spell = 0;     /* Chosen_Spell */
@@ -17492,11 +17443,11 @@ int16_t AI_SelectCmbtSpell(int16_t caster_id)
 
     AI_CombatSpellList(caster, &spell_list[0], spell_value);
 
-    threat_idx = Get_Player_Mode(player_idx);
+    player_mode_level = AI_Player_Mode(player_idx);
 
     for(list_idx = 0; list_idx < GUI_Multipurpose_Int; list_idx++)
     {
-        spell_value = AI_EvaluateCmbtSpell(player_idx, spell_list[list_idx], threat_idx);
+        spell_value = AI_EvaluateCmbtSpell(player_idx, spell_list[list_idx], player_mode_level);
         if(spell_value > highest_value)
         {
             highest_value = spell_value;
@@ -17511,20 +17462,18 @@ int16_t AI_SelectCmbtSpell(int16_t caster_id)
 // WZD ovr139p02
 // drake178: AI_EvaluateCmbtSpell()
 /*
-Scores one castable combat spell for the given player.  Situational base values come from five
-6-entry tables (drake178: struct AI_Combat_Situ) indexed by the caster's threat mode
-(Get_Player_Mode(): 0 Hopeless, 1 Losing, 2 Disadvantage, 3 Advantage, 4 Winning, 5 Certain),
-then a per-spell handler (Dasm jump table off_C3335, spells 1..205, verified in in\WIZARDS.asm
-153252/308411) adjusts for the battlefield situation.  Every path funnels into a common tail that
-adds half the casting-cost reduction and Random(20).
+Scores one castable combat spell for the given player.
+Situational base values come from five 6-entry tables
+(drake178: struct AI_Combat_Situ) indexed by the caster's threat mode
+(AI_Player_Mode(): 0 Hopeless, 1 Losing, 2 Disadvantage, 3 Advantage, 4 Winning, 5 Certain),
+then a per-spell handler (Dasm jump table off_C3335, spells 1..205, verified in in\WIZARDS.asm 153252/308411) adjusts for the battlefield situation.
+Every path funnels into a common tail that adds half the casting-cost reduction and Random(20).
 Returns -100 when there are no enemies, -1 when the spell has no valid target, else the score.
 OGBUG  the AITP_Combat_Spell() probe passes &spell_value for BOTH coordinate return pointers
-OGBUG  the attacker reads RP_AI_UnsetRealmVar1, the defender RP_AI_UnsetRealmVar2 - neither is
-       ever written, so every "realm threat" bonus term is 0
-NOTE   rp_disenchant_prio is computed from the Wrack / Mana Leak / Call Lightning enchantments but
-       never read afterwards - Dasm dead store, kept for fidelity
+OGBUG  the attacker reads RP_AI_UnsetRealmVar1, the defender RP_AI_UnsetRealmVar2 - neither is ever written, so every "realm threat" bonus term is 0
+NOTE   rp_disenchant_prio is computed from the Wrack / Mana Leak / Call Lightning enchantments but never read afterwards - Dasm dead store, kept for fidelity
 */
-int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t threat_idx)
+int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t player_mode_level)
 {
     int16_t group_1[6];              /* AI_Combat_Situ: Hopeless, Losing, Disadvantage, Advantage, Winning, Certain */
     int16_t group_2[6];
@@ -17640,7 +17589,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(spell_value != 0)
             {
-                spell_value += group_4[threat_idx];
+                spell_value += group_4[player_mode_level];
             }
             else
             {
@@ -17662,7 +17611,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                     if(bu_ptr->Move_Flags & MV_MERGING) continue;
                     counter++;
                 }
-                spell_value += (group_4[threat_idx] * counter);
+                spell_value += (group_4[player_mode_level] * counter);
             }
             else
             {
@@ -17671,7 +17620,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             break;
 
         case spl_Web:  /* loc_C19BD */
-            spell_value += group_2[threat_idx];
+            spell_value += group_2[player_mode_level];
             counter = 0;
             for(battle_unit_idx = 0; ((battle_unit_idx < _combat_total_unit_count) && (counter == 0)); battle_unit_idx++)
             {
@@ -17685,14 +17634,14 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             break;
 
         case spl_Stone_Skin:  /* loc_C1905 */
-            spell_value += group_4[threat_idx];
+            spell_value += group_4[player_mode_level];
             spell_value += 15;
             break;
 
         case spl_Cracks_Call:  /* loc_C1B02 */
             if(_combat_structure != cs_OceanTerrainType)
             {
-                spell_value += group_5[threat_idx];
+                spell_value += group_5[player_mode_level];
                 if((player_idx == _combat_attacker_player) && (battlefield->walled > 0))
                 {
                     spell_value += 20;
@@ -17716,7 +17665,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
         case spl_Star_Fires:      /* loc_C262B */
         case spl_Dispel_Evil:     /* loc_C28AC */
         case spl_Word_Of_Death:   /* loc_C2D90 */
-            spell_value += group_5[threat_idx];
+            spell_value += group_5[player_mode_level];
             break;
 
         case spl_Elemental_Armor:  /* loc_C1B3B */
@@ -17727,7 +17676,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(spell_value > 0)
             {
-                spell_value += group_4[threat_idx];
+                spell_value += group_4[player_mode_level];
             }
             else
             {
@@ -17736,7 +17685,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             break;
 
         case spl_Iron_Skin:  /* loc_C1B82 */
-            spell_value += group_4[threat_idx];
+            spell_value += group_4[player_mode_level];
             spell_value += 35;
             break;
 
@@ -17748,7 +17697,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             else
             {
-                spell_value += group_1[threat_idx];
+                spell_value += group_1[player_mode_level];
             }
             break;
 
@@ -17757,15 +17706,15 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
         case spl_Holy_Armor:     /* loc_C2640 */
         case spl_Cloak_Of_Fear:  /* loc_C29F6 */
         case spl_Wraith_Form:    /* loc_C2CD6 */
-            spell_value += group_4[threat_idx];
+            spell_value += group_4[player_mode_level];
             break;
 
         case spl_Call_Lightning:  /* loc_C1AEF */
-            if(threat_idx > 1)
+            if(player_mode_level > 1)
             {
                 spell_value += (enemy_units * 4);
             }
-            spell_value += group_5[threat_idx];
+            spell_value += group_5[player_mode_level];
             break;
 
         case spl_Resist_Magic:  /* loc_C1BC2 */
@@ -17777,7 +17726,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(spell_value > 0)
             {
-                spell_value += group_4[threat_idx];
+                spell_value += group_4[player_mode_level];
             }
             else
             {
@@ -17837,7 +17786,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(counter > 0)
             {
-                spell_value += group_4[threat_idx];
+                spell_value += group_4[player_mode_level];
                 spell_value += counter;
             }
             break;
@@ -17849,7 +17798,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             else
             {
-                spell_value += group_1[threat_idx];
+                spell_value += group_1[player_mode_level];
             }
             if((battlefield->city_enchantments[WALL_OF_FIRE] > 0) && (player_idx == _combat_attacker_player))
             {
@@ -17863,7 +17812,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
         case spl_Warp_Wood:      /* loc_C2403 */
         case spl_Warp_Creature:  /* loc_C234A */
         case spl_Weakness:       /* loc_C29EB */
-            spell_value += group_2[threat_idx];
+            spell_value += group_2[player_mode_level];
             break;
 
         case spl_Word_Of_Recall:  /* loc_C1CFD */
@@ -17884,7 +17833,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                     if(bu_ptr->status != bus_Active) continue;
                     if(bu_ptr->controller_idx != player_idx) continue;
                     if(bu_ptr->cost < 200) continue;
-                    if((threat_idx < 2) || ((bu_ptr->front_figure_damage + 3) >= bu_ptr->hits))
+                    if((player_mode_level < 2) || ((bu_ptr->front_figure_damage + 3) >= bu_ptr->hits))
                     {
                         counter++;
                     }
@@ -17904,7 +17853,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             if(opp_spell_realms > 0)
             {
                 spell_value += ((rp_realm_threat_value * 4) + 30);
-                spell_value += group_4[threat_idx];
+                spell_value += group_4[player_mode_level];
             }
             else
             {
@@ -18012,7 +17961,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                 if(bu_ptr->controller_idx == player_idx) continue;
                 counter++;
             }
-            spell_value += group_4[threat_idx];
+            spell_value += group_4[player_mode_level];
             if(counter == 0)
             {
                 spell_value += 20;
@@ -18022,7 +17971,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
 
         case spl_Phantom_Beast:   /* loc_C1F0B  -> loc_C2BAC */
         case spl_Air_Elemental:   /* loc_C1F11 */
-            spell_value += group_1[threat_idx];
+            spell_value += group_1[player_mode_level];
             break;
 
         case spl_Invisibility:       /* loc_C2087 */
@@ -18042,7 +17991,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(counter > 0)
             {
-                spell_value += group_4[threat_idx];
+                spell_value += group_4[player_mode_level];
                 if(spell_idx == spl_Invisibility)
                 {
                     spell_value += 5;
@@ -18071,7 +18020,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(spell_value > 0)
             {
-                spell_value += group_4[threat_idx];
+                spell_value += group_4[player_mode_level];
             }
             else
             {
@@ -18081,7 +18030,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
 
         case spl_Haste:    /* loc_C1FA9  -> loc_C26D3 */
         case spl_Heroism:  /* loc_C26D3 */
-            spell_value += group_3[threat_idx];
+            spell_value += group_3[player_mode_level];
             break;
 
         case spl_Creature_Binding:  /* loc_C1FFF */
@@ -18096,12 +18045,12 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(counter == 1)
             {
-                spell_value += group_5[threat_idx];
+                spell_value += group_5[player_mode_level];
             }
             else
             {
-                spell_value += group_1[threat_idx];
-                spell_value += group_5[threat_idx];
+                spell_value += group_1[player_mode_level];
+                spell_value += group_5[player_mode_level];
                 spell_value += 20;
             }
             break;
@@ -18135,7 +18084,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             {
                 spell_value += 25;
             }
-            spell_value += group_3[threat_idx];
+            spell_value += group_3[player_mode_level];
             break;
 
         case spl_Wall_Of_Fire:  /* loc_C2287 */
@@ -18152,7 +18101,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                     if(bu_ptr->Move_Flags & MV_MERGING) continue;
                     counter++;
                 }
-                spell_value += ((group_3[threat_idx] * (counter + 1)) / 2);
+                spell_value += ((group_3[player_mode_level] * (counter + 1)) / 2);
             }
             else
             {
@@ -18172,7 +18121,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                     counter = bu_ptr->figure_cnt;
                 }
             }
-            spell_value += group_5[threat_idx];
+            spell_value += group_5[player_mode_level];
             if(counter > 3)
             {
                 spell_value += ((counter - 3) * 5);
@@ -18181,7 +18130,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
 
         case spl_Immolation:  /* loc_C2406 */
         case spl_Berserk:     /* loc_C2AEC */
-            spell_value += group_3[threat_idx];
+            spell_value += group_3[player_mode_level];
             spell_value += 10;
             break;
 
@@ -18197,7 +18146,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(counter > 0)
             {
-                spell_value += group_3[threat_idx];
+                spell_value += group_3[player_mode_level];
                 spell_value += (counter * 5);
             }
             else
@@ -18224,7 +18173,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(counter > 0)
             {
-                spell_value += group_5[threat_idx];
+                spell_value += group_5[player_mode_level];
                 spell_value += (counter * 5);
             }
             else
@@ -18234,12 +18183,12 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             break;
 
         case spl_Flame_Strike:  /* loc_C24A3 */
-            spell_value += group_5[threat_idx];
+            spell_value += group_5[player_mode_level];
             spell_value += (enemy_units * 2);
             break;
 
         case spl_Disintegrate:  /* loc_C248A */
-            spell_value += group_5[threat_idx];
+            spell_value += group_5[player_mode_level];
             spell_value += 25;
             break;
 
@@ -18251,7 +18200,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(spell_value != 0)
             {
-                spell_value += group_4[threat_idx];
+                spell_value += group_4[player_mode_level];
             }
             else
             {
@@ -18296,7 +18245,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(spell_value != 0)
             {
-                spell_value += group_4[threat_idx];
+                spell_value += group_4[player_mode_level];
             }
             else
             {
@@ -18318,7 +18267,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(counter > 0)
             {
-                spell_value += group_1[threat_idx];
+                spell_value += group_1[player_mode_level];
             }
             else
             {
@@ -18336,12 +18285,12 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                 if(bu_ptr->controller_idx != player_idx) continue;
                 counter++;
             }
-            spell_value += group_3[threat_idx];
+            spell_value += group_3[player_mode_level];
             spell_value += (counter * ((spell_idx == spl_High_Prayer) ? 4 : 2));
             break;
 
         case spl_Invulnerability:  /* loc_C2768 */
-            spell_value += group_4[threat_idx];
+            spell_value += group_4[player_mode_level];
             spell_value += 30;
             break;
 
@@ -18353,7 +18302,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(spell_value > 0)
             {
-                spell_value += group_4[threat_idx];
+                spell_value += group_4[player_mode_level];
             }
             break;
 
@@ -18392,7 +18341,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(counter > 0)
             {
-                spell_value += group_5[threat_idx];
+                spell_value += group_5[player_mode_level];
                 spell_value += (counter * 3);
             }
             else
@@ -18402,12 +18351,12 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             break;
 
         case spl_Black_Sleep:  /* loc_C29F9 */
-            spell_value += group_2[threat_idx];
-            spell_value += group_5[threat_idx];
+            spell_value += group_2[player_mode_level];
+            spell_value += group_5[player_mode_level];
             break;
 
         case spl_Life_Drain:  /* loc_C2AEF */
-            spell_value += group_5[threat_idx];
+            spell_value += group_5[player_mode_level];
             spell_value += 10;
             break;
 
@@ -18424,7 +18373,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(counter > 0)
             {
-                spell_value += group_2[threat_idx];
+                spell_value += group_2[player_mode_level];
                 spell_value += (counter * 3);
             }
             else
@@ -18481,8 +18430,8 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             break;
 
         case spl_Possession:  /* loc_C2B9D */
-            spell_value += group_5[threat_idx];
-            spell_value += group_1[threat_idx];
+            spell_value += group_5[player_mode_level];
+            spell_value += group_1[player_mode_level];
             break;
 
         case spl_Black_Prayer:  /* loc_C2A9B */
@@ -18494,7 +18443,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                 if(bu_ptr->controller_idx == player_idx) continue;
                 counter++;
             }
-            spell_value += group_4[threat_idx];
+            spell_value += group_4[player_mode_level];
             spell_value += (counter * 4);
             break;
 
@@ -18510,7 +18459,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                     if(!Battle_Unit_Has_Ranged_Attack(battle_unit_idx)) continue;
                     counter += bu_ptr->ranged;
                 }
-                spell_value += (group_4[threat_idx] + (counter * 2));
+                spell_value += (group_4[player_mode_level] + (counter * 2));
             }
             else
             {
@@ -18531,7 +18480,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(counter > 0)
             {
-                spell_value += group_5[threat_idx];
+                spell_value += group_5[player_mode_level];
                 spell_value += (counter * 5);
             }
             else
@@ -18553,7 +18502,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
             }
             if(counter > 0)
             {
-                spell_value += group_5[threat_idx];
+                spell_value += group_5[player_mode_level];
                 spell_value += (counter * 3);
             }
             else
@@ -18595,7 +18544,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
                     if(bu_ptr->status != bus_Active) continue;
                     if(bu_ptr->controller_idx != player_idx) continue;
                     if(_UNITS[bu_ptr->unit_idx].Hero_Slot <= ST_UNDEFINED) continue;
-                    if((threat_idx < 2) || ((bu_ptr->front_figure_damage + 3) >= bu_ptr->hits))
+                    if((player_mode_level < 2) || ((bu_ptr->front_figure_damage + 3) >= bu_ptr->hits))
                     {
                         counter++;
                     }
@@ -18623,55 +18572,33 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t thre
 }
 
 // WZD ovr139p03
-// drake178: AI_GetThreat_BU()
 /*
-; calculates and returns an arbitrary battle unit
-; combat value based on attack attributes, defense,
-; and remaining hit points and figures
-*/
-/*
-
 Get_Effective_Melee_Strength()
 +
 Get_Effective_Hits()
 +
 Get_Effective_Ranged_Strength()
-
 */
 int16_t Effective_Battle_Unit_Strength(int16_t battle_unit_idx)
 {
     int16_t short_range_strength = 0;
-    int16_t efective_strength = 0;  // _DI_
-
-
+    int16_t effective_strength = 0;
     if(battle_units[battle_unit_idx].ranged_type >= srat_Thrown)
     {
-
         short_range_strength = battle_units[battle_unit_idx].ranged;
-
-        efective_strength = Get_Effective_Melee_Strength(battle_units[battle_unit_idx].melee, short_range_strength, battle_units[battle_unit_idx].figure_cnt, (battle_units[battle_unit_idx].attack_attributes | battle_units[battle_unit_idx].melee_attack_attributes), battle_units[battle_unit_idx].ranged_type);
-
+        effective_strength = Get_Effective_Melee_Strength(battle_units[battle_unit_idx].melee, short_range_strength, battle_units[battle_unit_idx].figure_cnt, (battle_units[battle_unit_idx].attack_attributes | battle_units[battle_unit_idx].melee_attack_attributes), battle_units[battle_unit_idx].ranged_type);
     }
     else
     {
-
         short_range_strength = 0;
-
-        efective_strength = Get_Effective_Melee_Strength(battle_units[battle_unit_idx].melee, short_range_strength, battle_units[battle_unit_idx].figure_cnt, (battle_units[battle_unit_idx].attack_attributes | battle_units[battle_unit_idx].melee_attack_attributes), ST_UNDEFINED);
-
+        effective_strength = Get_Effective_Melee_Strength(battle_units[battle_unit_idx].melee, short_range_strength, battle_units[battle_unit_idx].figure_cnt, (battle_units[battle_unit_idx].attack_attributes | battle_units[battle_unit_idx].melee_attack_attributes), ST_UNDEFINED);
     }
-
-    efective_strength += Get_Effective_Hits(((battle_units[battle_unit_idx].hits * battle_units[battle_unit_idx].figure_cnt) - battle_units[battle_unit_idx].front_figure_damage), battle_units[battle_unit_idx].defense);
-          
+    effective_strength += Get_Effective_Hits(((battle_units[battle_unit_idx].hits * battle_units[battle_unit_idx].figure_cnt) - battle_units[battle_unit_idx].front_figure_damage), battle_units[battle_unit_idx].defense);
     if(Battle_Unit_Has_Ranged_Attack(battle_unit_idx) != ST_FALSE)
     {
-
-        efective_strength += Get_Effective_Ranged_Strength(battle_units[battle_unit_idx].ranged, battle_units[battle_unit_idx].figure_cnt, (battle_units[battle_unit_idx].attack_attributes | battle_units[battle_unit_idx].ranged_attack_attributes));
-
+        effective_strength += Get_Effective_Ranged_Strength(battle_units[battle_unit_idx].ranged, battle_units[battle_unit_idx].figure_cnt, (battle_units[battle_unit_idx].attack_attributes | battle_units[battle_unit_idx].ranged_attack_attributes));
     }
-
-    return efective_strength;
-
+    return effective_strength;
 }
 
 

@@ -22,7 +22,7 @@ Combat_Cast_Spell_Message() (o113p14)
 ...nine callers are all spell animation functions in Spells131.c and Spells133.c — Animate_Lightning_Bolt, Wall_Rise, Battle_Unit_Summon_Animation, etc.
 ...probably not worth a 'Combat Spell Animation' session
 
-AI_BU_ProcessAction()                   CMBTAI
+AI_Execute_Unit_Action()                   CMBTAI
     |-> Combat_Cast_Spell()             Combat
 Combat_Screen()                         Combat
     |-> Combat_Cast_Spell()             Combat

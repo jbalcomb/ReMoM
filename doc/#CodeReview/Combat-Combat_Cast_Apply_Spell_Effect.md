@@ -24,7 +24,7 @@ Combat_Cast_Spell()
     |-> j_Cast_Spell_On_Battle_Unit()
         |-> Combat_Cast_Apply_Spell_Effect()
 
-AI_BU_ProcessAction()
+AI_Execute_Unit_Action()
     |-> j_Cast_Spell_On_Battle_Unit()
         |-> Combat_Cast_Apply_Spell_Effect()
 

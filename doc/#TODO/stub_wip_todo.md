@@ -84,19 +84,17 @@
 
 ## Combat
 - [x] Find_Undead_Creator_Type — was CMB_GetUndeadCreator; done-done 2026-07-23 (Combat.c:15644; faithful 1:1, builds clean; B1 cross-player hero-slot index preserved — see doc/#CodeReview/SPLMASTR-Undead_Animation.md)
-- [ ] AI_BU_AssignAction — renamed from AI_BU_AssignAction__WIP; impl (CMBTAI.c:968), needs done-done review (name verified 2026-07-21)
+- [ ] AI_Set_Unit_Action_Mode — renamed from AI_BU_AssignAction__WIP; impl (CMBTAI.c:968), needs done-done review (name verified 2026-07-21)
 - [x] AI_BU_GetAttackValue__STUB
-- [ ] AI_BU_ProcessAction — renamed from AI_BU_ProcessAction__WIP; impl (CMBTAI.c:268), needs done-done review (name verified 2026-07-21)
+- [ ] AI_Execute_Unit_Action — renamed from AI_BU_ProcessAction__WIP; impl (CMBTAI.c:268), needs done-done review (name verified 2026-07-21)
 - [ ] AI_BU_SelectAction__WIP — renamed to Choose_Target_And_Action (CMBTAI.c:1153); body substantive, needs done-done review
 - [ ] AI_CMB_PlayTurn__WIP — renamed to Auto_Cast_Spell_And_Do_Combat_Turn (Combat.c:4508); body substantive, needs done-done review
 - [ ] AI_CombatSpellList — impl (Combat.c:25959), needs done-done review; AI Combat Spell layer
 - [ ] AI_EvaluateCmbtSpell — impl (Combat.c:24632), needs done-done review; AI Combat Spell layer
 - [x] AI_FightorFlight__STUB
-- [x] AI_GetCombatRallyPt — was AI_GetCombatRallyPt__WIP; suffix dropped in source, def CMBTAI.c:658 (verified 2026-07-21)
 - [ ] AI_MoveBattleUnits__WIP
 - [ ] AI_RestrictToCity__WIP
 - [ ] AI_SelectCmbtSpell — impl (Combat.c:24565), needs done-done review; AI Combat Spell layer
-- [x] AI_SetBasicAttacks — was AI_SetBasicAttacks__WIP; suffix dropped in source, def CMBTAI.c:103 (verified 2026-07-21)
 - [ ] AI_SetCombatRealms — impl (Combat.c:25792), needs done-done review; AI Combat Spell layer
 - [ ] AI_UnitThreatRealms — impl (Combat.c:25860), needs done-done review; AI Combat Spell layer
 - [x] AITP_Combat_Spell — done-done 2026-07-07 (walkthrough doc doc/ComputerPlayer/Combat-AITP_Combat_Spell.md; faithful 1:1 to AITP_CombatSpell__STUB.asm; R1 summon-exhaustion + R2 buff-mask + R3 case-16 write-back fixed; builds clean)
@@ -379,6 +377,18 @@
 ## Spells128
 - [ ] WIZ_AddSpellRank__WIP
 - [x] Conquest_Spells
+
+## CMBTAI
+- [x] AI_Execute_Unit_Action — done-done 2026-08-24 (doc/#CodeReview/Combat-AI_Turn.md); CMBTAI.c:251, faithful against ovr114/AI_BU_ProcessAction.asm (1,097 asm lines); renamed from AI_BU_ProcessAction; 4 findings fixed — wrong ability bits, wrong spell indices, six action values wrongly marked finished, and an inverted melee guard that disabled the whole melee turn
+- [x] Choose_Target_And_Action — done-done 2026-08-24 (doc/#CodeReview/Combat-AI_Turn.md); CMBTAI.c:1052, faithful against ovr114/Choose_Target_And_Action.asm (844 asm lines); 2 findings fixed — ability-guard operand order across six blocks, and the melee comparison flattened where the listing nests
+- [x] Target_Unit_Value — done-done 2026-08-24 (doc/#CodeReview/Combat-AI_Turn.md); Combat.c:14244, faithful against ovr122/Target_Unit_Value.asm (584 asm lines); 2 findings fixed — twelve locals in reverse frame order, and an if/else where the listing has two independent ifs
+- [x] AI_Set_Unit_Action_Mode — done-done 2026-08-24 (doc/#CodeReview/Combat-AI_Turn.md); CMBTAI.c:892, faithful against ovr114/AI_BU_AssignAction.asm (418 asm lines); renamed from AI_BU_AssignAction; 1 finding fixed — an inverted defense test that disabled focus-fire
+- [x] Auto_Do_Combat_Turn — done-done 2026-08-24 (doc/#CodeReview/Combat-AI_Turn.md); CMBTAI.c:694, faithful against ovr114/Auto_Do_Combat_Turn.asm (407 asm lines); 2 findings fixed — declaration order, and the winner check placed inside the filtered block in both passes
+- [x] AI_Set_All_Action_Modes — done-done 2026-08-24 (doc/#CodeReview/Combat-AI_Turn.md); CMBTAI.c:104, faithful against ovr114/AI_SetBasicAttacks__WIP.asm (368 asm lines); renamed from AI_SetBasicAttacks; 1 finding fixed — declaration order
+- [x] AI_Stage_Point_For_Unit — done-done 2026-08-24 (doc/#CodeReview/Combat-AI_Turn.md); renamed from AI_GetCombatRallyPt, CMBTAI.c:585, faithful against ovr114/AI_GetCombatRallyPt.asm (240 asm lines); D1 adds a target-validity guard with no asm counterpart
+- [x] AI_Player_Mode — done-done 2026-08-24 (doc/#CodeReview/Combat-AI_Turn.md); Combat.c:16347, faithful against ovr124/Get_Player_Mode.asm (182 asm lines); renamed from Get_Player_Mode; 2 findings fixed — an && that should be ||, which could divide by zero, and a > that should be >=
+- [x] AI_Retreat_Check — done-done 2026-08-24 (doc/#CodeReview/Combat-AI_Turn.md); Combat.c:17097, faithful against ovr124/Retreat_Check.asm (107 asm lines); renamed from Retreat_Check; 1 finding fixed — declaration order
+- [x] Sort_Battle_Units — done-done 2026-08-24 (doc/#CodeReview/Combat-AI_Turn.md); CMBTAI.c:544, faithful against ovr114/Sort_Battle_Units.asm (102 asm lines); faithful; D2 records three locals the listing declares byte-wide
 
 ## Spells131
 - [x] Combat_Battlefield_Instant — done-done 2026-08-20 (doc/#CodeReview/Combat-Combat_Spell_Animation.md); Spells131.c:702, faithful against ovr131/Combat_Battlefield_Instant.asm (396 asm lines); 2 findings fixed — Cast_Call_Chaos was handed player_idx instead of caster_idx, and the anims_on arms were swapped

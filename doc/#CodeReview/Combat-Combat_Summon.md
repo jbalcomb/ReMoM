@@ -16,7 +16,7 @@ CMB_Chasm_Anim	    ==>  cmbt_cell_effect_active
 CMB_ChasmAnimStage	==>  cmbt_cell_effect_frame
 IMG_GUI_Chasm	    ==>  cmbt_cell_effect_seg
 
-AI_BU_ProcessAction()
+AI_Execute_Unit_Action()
     case BUA_SummonDemon:
     |-> Summon_Demon()
         |-> Create_Unit()
