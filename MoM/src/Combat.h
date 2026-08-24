@@ -2153,22 +2153,22 @@ void Raze_City_Prompt_Draw(void);
 */
 
 // WZD ovr139p01
-int16_t AI_SelectCmbtSpell(int16_t caster_id);
+int16_t AI_Select_Combat_Spell(int16_t caster_idx);
 
 // WZD ovr139p02
-int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t player_mode_level);
+int16_t AI_Score_Combat_Spell(int16_t player_idx, int16_t spell_idx, int16_t player_mode_level);
 
 // WZD ovr139p03
 int16_t Effective_Battle_Unit_Strength(int16_t battle_unit_idx);
 
 // WZD ovr139p04
-void AI_SetCombatRealms(void);
+void AI_Prepare_Combat_Realm_Threats(void);
 
 // WZD ovr139p05
-void AI_UnitThreatRealms(int16_t player_idx, int16_t * realm_array);
+void AI_Build_Unit_Realm_Threat_Percentages(int16_t player_idx, int16_t * realm_array);
 
 // WZD ovr139p06
-void AI_CombatSpellList(int16_t caster_id, int16_t * spell_list, int16_t range_mod);
+void AI_Build_Castable_Combat_Spell_List(int16_t caster_idx, int16_t * spell_list, int16_t range_mod);
 
 
 

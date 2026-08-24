@@ -89,14 +89,14 @@
 - [ ] AI_Execute_Unit_Action — renamed from AI_BU_ProcessAction__WIP; impl (CMBTAI.c:268), needs done-done review (name verified 2026-07-21)
 - [ ] AI_BU_SelectAction__WIP — renamed to Choose_Target_And_Action (CMBTAI.c:1153); body substantive, needs done-done review
 - [ ] AI_CMB_PlayTurn__WIP — renamed to Auto_Cast_Spell_And_Do_Combat_Turn (Combat.c:4508); body substantive, needs done-done review
-- [ ] AI_CombatSpellList — impl (Combat.c:25959), needs done-done review; AI Combat Spell layer
-- [ ] AI_EvaluateCmbtSpell — impl (Combat.c:24632), needs done-done review; AI Combat Spell layer
+- [ ] AI_Build_Castable_Combat_Spell_List — impl (Combat.c:25959), needs done-done review; AI Combat Spell layer
+- [ ] AI_Score_Combat_Spell — impl (Combat.c:24632), needs done-done review; AI Combat Spell layer
 - [x] AI_FightorFlight__STUB
 - [ ] AI_MoveBattleUnits__WIP
 - [ ] AI_RestrictToCity__WIP
-- [ ] AI_SelectCmbtSpell — impl (Combat.c:24565), needs done-done review; AI Combat Spell layer
-- [ ] AI_SetCombatRealms — impl (Combat.c:25792), needs done-done review; AI Combat Spell layer
-- [ ] AI_UnitThreatRealms — impl (Combat.c:25860), needs done-done review; AI Combat Spell layer
+- [ ] AI_Select_Combat_Spell — impl (Combat.c:24565), needs done-done review; AI Combat Spell layer
+- [ ] AI_Prepare_Combat_Realm_Threats — impl (Combat.c:25792), needs done-done review; AI Combat Spell layer
+- [ ] AI_Build_Unit_Realm_Threat_Percentages — impl (Combat.c:25860), needs done-done review; AI Combat Spell layer
 - [x] AITP_Combat_Spell — done-done 2026-07-07 (walkthrough doc doc/ComputerPlayer/Combat-AITP_Combat_Spell.md; faithful 1:1 to AITP_CombatSpell__STUB.asm; R1 summon-exhaustion + R2 buff-mask + R3 case-16 write-back fixed; builds clean)
 - [ ] AITP_CracksCall — impl (Combat.c:14763), needs done-done review; AI Combat Spell layer
 - [ ] AITP_DarknessLight — impl (Combat.c:12065), needs done-done review; AI Combat Spell layer
@@ -389,6 +389,14 @@
 - [x] AI_Player_Mode — done-done 2026-08-24 (doc/#CodeReview/Combat-AI_Turn.md); Combat.c:16347, faithful against ovr124/Get_Player_Mode.asm (182 asm lines); renamed from Get_Player_Mode; 2 findings fixed — an && that should be ||, which could divide by zero, and a > that should be >=
 - [x] AI_Retreat_Check — done-done 2026-08-24 (doc/#CodeReview/Combat-AI_Turn.md); Combat.c:17097, faithful against ovr124/Retreat_Check.asm (107 asm lines); renamed from Retreat_Check; 1 finding fixed — declaration order
 - [x] Sort_Battle_Units — done-done 2026-08-24 (doc/#CodeReview/Combat-AI_Turn.md); CMBTAI.c:544, faithful against ovr114/Sort_Battle_Units.asm (102 asm lines); faithful; D2 records three locals the listing declares byte-wide
+
+## ovr139  (Combat Spell Cast - AI - Select)
+- [x] AI_Score_Combat_Spell — done-done 2026-08-24 (doc/#CodeReview/Combat-Spell_Cast_AI_Select.md); Combat.c:17454, faithful against ovr139/AI_EvaluateCmbtSpell.asm (3,093 asm lines); renamed from AI_EvaluateCmbtSpell; 2 findings fixed - five case groups merged that the listing keeps as separate bodies (three reintroducing the distinction with a runtime spell_idx test the original never evaluates), and two five-iteration realm loops unrolled; 87 jump-table handlers walked individually
+- [x] AI_Build_Unit_Realm_Threat_Percentages — done-done 2026-08-24 (doc/#CodeReview/Combat-Spell_Cast_AI_Select.md); Combat.c:18699, faithful against ovr139/AI_UnitThreatRealms.asm (527 asm lines); renamed from AI_UnitThreatRealms; faithful; the Sorcery slot is never written, so spl_True_Sight's primary scoring term is always 0 (OG behaviour)
+- [x] AI_Build_Castable_Combat_Spell_List — done-done 2026-08-24 (doc/#CodeReview/Combat-Spell_Cast_AI_Select.md); Combat.c:18785, faithful against ovr139/AI_CombatSpellList.asm (287 asm lines); renamed from AI_CombatSpellList; faithful; preserves two OGBUGs - the hero pass gated at 19 instead of 20, and the sign-extended hero spell byte
+- [x] AI_Prepare_Combat_Realm_Threats — done-done 2026-08-24 (doc/#CodeReview/Combat-Spell_Cast_AI_Select.md); Combat.c:18641, faithful against ovr139/AI_SetCombatRealms.asm (171 asm lines); renamed from AI_SetCombatRealms; faithful; preserves the never-cleared realm flag globals and the defender-only Chaos Channels asymmetry
+- [x] Effective_Battle_Unit_Strength — done-done 2026-08-24 (doc/#CodeReview/Combat-Spell_Cast_AI_Select.md); Combat.c:18616, faithful against ovr139/Effective_Battle_Unit_Strength.asm (165 asm lines); faithful
+- [x] AI_Select_Combat_Spell — done-done 2026-08-24 (doc/#CodeReview/Combat-Spell_Cast_AI_Select.md); Combat.c:17405, faithful against ovr139/AI_SelectCmbtSpell.asm (123 asm lines); renamed from AI_SelectCmbtSpell; 1 finding fixed - the five situational tables assigned group-major where the listing assigns them field-major
 
 ## Spells131
 - [x] Combat_Battlefield_Instant — done-done 2026-08-20 (doc/#CodeReview/Combat-Combat_Spell_Animation.md); Spells131.c:702, faithful against ovr131/Combat_Battlefield_Instant.asm (396 asm lines); 2 findings fixed — Cast_Call_Chaos was handed player_idx instead of caster_idx, and the anims_on arms were swapped

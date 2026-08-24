@@ -349,16 +349,18 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
     else
     {
         /* AI / Auto Combat Control path */
-        AI_SetCombatRealms();
-        if(caster_idx < CASTER_IDX_BASE &&
-            battle_units[caster_idx].item_charges > 0 &&
+        AI_Prepare_Combat_Realm_Threats();
+        if(caster_idx < CASTER_IDX_BASE
+            &&
+            battle_units[caster_idx].item_charges > 0
+            &&
             battle_units[caster_idx].action == bua_UseItem)
         {
             spell_idx = _ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx;
         }
         else
         {
-            spell_idx = AI_SelectCmbtSpell(caster_idx);
+            spell_idx = AI_Select_Combat_Spell(caster_idx);
         }
         if(spell_idx > 0)
         {

@@ -33,7 +33,7 @@ Assign_Combat_Grids()
         |-> Combat_Screen()
         |-> Turn_Off_Auto_Combat()
         |-> Auto_Do_Combat_Turn()
-        |-> AI_EvaluateCmbtSpell()
+        |-> AI_Score_Combat_Spell()
 
 ---
 

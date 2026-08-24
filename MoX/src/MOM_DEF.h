@@ -135,6 +135,7 @@ ITEM_MAX_POWERS
 #define NUM_HERO_ITEM_SLOTS         3
 #define NUM_VAULT_ITEMS             4
 #define NUM_VAULT_ITEM_SLOTS        4
+#define NUM_HERO_SPELL_SLOTS         4
 
 #define VAULT_HERO_SLOT_IDX         6
 #define AWARD_HERO_SLOT_IDX         7

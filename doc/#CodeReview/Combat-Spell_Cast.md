@@ -39,8 +39,8 @@ Combat_Cast_Spell()
     |-> Do_Legal_Spell_Check()
     |-> Combat_Compose_Background()
     |-> Combat_Screen_Draw()
-    |-> AI_SetCombatRealms()
-    |-> AI_SelectCmbtSpell()
+    |-> AI_Prepare_Combat_Realm_Threats()
+    |-> AI_Select_Combat_Spell()
     |-> Combat_Spellbook_Mana_Adder_Screen()
     |-> Combat_Spell_Dispel_Attempt()
     |-> Combat_Spell_Counter_Message()
@@ -75,8 +75,8 @@ NOT:
     'Combat Spell Target Screen'                                    Combat-Combat_Spell_Target_Screen.md
         Combat_Spell_Target_Screen()
     'Combat Spell Cast - AI - Select'                               Combat-Spell_Cast_AI_Select.md
-        AI_SetCombatRealms()
-        AI_SelectCmbtSpell()
+        AI_Prepare_Combat_Realm_Threats()
+        AI_Select_Combat_Spell()
     'Combat Spell Cast - AI - Target'                               Combat-Spell_Cast_AI_Target.md
         AITP_Combat_Spell()
     'Cast Spell On Unit'                                            Combat-Combat_Cast_Apply_Spell_Effect.md
@@ -112,7 +112,7 @@ It carried a `faithful` row in [Combat-Combat_Spellbook_Screen.md](Combat-Combat
 
 `Combat_Cast_Spell` was reviewed on its own and taken to done-done on 2026-07-07. Two review docs whose names differed only by word order — `Combat-Combat_Cast_Spell.md` and `Combat-Spell_Cast.md` — was a trap, so that doc has been deleted and its walkthrough moved here verbatim below.
 
-**Its anchors were all stale and have been re-pointed.** The function moved out of `Combat.c` and into `CMBMAGIC.c` in commit `e79026eb` ("extract CMBMAGIC", 2026-08-01), after the review was written. Every `Combat.c#L13xxx` link in it still resolved — `Combat.c` is long enough that the line numbers existed — but landed on unrelated combat-damage code, which is the silent-failure case the anchor checker cannot catch. The body relocated as a block at a constant offset of **-12946**, so the mapping is mechanical; three cross-references outside the function were re-verified by name instead (`Combat_Cast_Apply_Spell_Effect`, `AI_SelectCmbtSpell`, `Combat_Spell_Dispel_Attempt`), and `B8` was retargeted from a section marker to the `; BUG:` comment it describes.
+**Its anchors were all stale and have been re-pointed.** The function moved out of `Combat.c` and into `CMBMAGIC.c` in commit `e79026eb` ("extract CMBMAGIC", 2026-08-01), after the review was written. Every `Combat.c#L13xxx` link in it still resolved — `Combat.c` is long enough that the line numbers existed — but landed on unrelated combat-damage code, which is the silent-failure case the anchor checker cannot catch. The body relocated as a block at a constant offset of **-12946**, so the mapping is mechanical; three cross-references outside the function were re-verified by name instead (`Combat_Cast_Apply_Spell_Effect`, `AI_Select_Combat_Spell`, `Combat_Spell_Dispel_Attempt`), and `B8` was retargeted from a section marker to the `; BUG:` comment it describes.
 
 The **verdict is carried, not re-earned**: those 1,379 asm lines were walked on 2026-07-07 and were not re-walked in this pass. The local-variable table below has been refreshed to the names production uses today; the asm slot assignments in it are as recorded by that pass.
 
@@ -156,7 +156,7 @@ Declared at [CMBMAGIC.c:219-238](../../MoM/src/CMBMAGIC.c#L219-L238). The slot a
 | Neutral caster early-out | `loc_8CFC7` | [252-255](../../MoM/src/CMBMAGIC.c#L252-L255) | faithful |
 | Human-interactive: unit ability spells (Doom Bolt / Fireball / Web / Healing) + Summon Demon | `loc_8CFE0`-`loc_8D0A6` | [267-311](../../MoM/src/CMBMAGIC.c#L267-L311) | faithful |
 | Human spellbook select loop (`Combat_Spellbook_Build/Screen`, `Do_Legal_Spell_Check`) — nested inside the human branch | `loc_8D0AF`-`loc_8D135` | [317-355](../../MoM/src/CMBMAGIC.c#L317-L355) | faithful |
-| AI/CP select: `AI_SetCombatRealms`, hero-item embed spell, `AI_SelectCmbtSpell`, target/immobile-counter | `loc_8D138`-`loc_8D1C1` | [357-382](../../MoM/src/CMBMAGIC.c#L357-L382) | faithful |
+| AI/CP select: `AI_Prepare_Combat_Realm_Threats`, hero-item embed spell, `AI_Select_Combat_Spell`, target/immobile-counter | `loc_8D138`-`loc_8D1C1` | [357-382](../../MoM/src/CMBMAGIC.c#L357-L382) | faithful |
 | Effective-cost computation (human popup vs AI skill/reserve budget) | `loc_8D204`-`loc_8D49E` | [386-505](../../MoM/src/CMBMAGIC.c#L386-L505) | faithful (carries the OG cost bugs) |
 | Counter Magic dispel (opponent's Counter Magic enchantment; `Combat_Spell_Dispel_Attempt` / `Combat_Spell_Counter_Message`) | `loc_8D4CE`-`loc_8D6EC` | [512-600](../../MoM/src/CMBMAGIC.c#L512-L600) | faithful |
 | Node-realm counter (Sorcery/Chaos/Nature node vs spell realm) | `loc_8D6F4`-`loc_8D986` | [601-692](../../MoM/src/CMBMAGIC.c#L601-L692) | faithful |
@@ -165,7 +165,7 @@ Declared at [CMBMAGIC.c:219-238](../../MoM/src/CMBMAGIC.c#L219-L238). The slot a
 
 ### Selection dispatch (the part most recently reconstructed)
 
-The human/AI split matches `loc_8CFCD`/`loc_8CFD6`: the interactive-human path (`player_idx == HUMAN_PLAYER_IDX && _auto_combat_flag == ST_FALSE`, [256-260](../../MoM/src/CMBMAGIC.c#L256-L260)) runs the unit-ability checks and, if still `spl_NONE`, the interactive spellbook — the spellbook is **nested inside the human branch** ([317](../../MoM/src/CMBMAGIC.c#L317)) so an AI caster never reaches it. The `else` branch ([357](../../MoM/src/CMBMAGIC.c#L357)) is the AI/CP path: `AI_SetCombatRealms()`, then the hero-item `embed_spell_idx` when a charged item is in use ([361-366](../../MoM/src/CMBMAGIC.c#L361-L366)) else `AI_SelectCmbtSpell(caster_idx)` ([369](../../MoM/src/CMBMAGIC.c#L369)), then `target_battle_unit_idx = caster` + non-human `_ai_immobile_counter = ST_UNDEFINED` ([371-381](../../MoM/src/CMBMAGIC.c#L371-L381)). The `spell_idx == 0` convergence the asm reaches via `loc_8D1FD → @@Target_And_Effect` is modelled structurally by the `if(spell_idx != spl_NONE)` cost/counter guard ([386](../../MoM/src/CMBMAGIC.c#L386)) and the `if(spell_idx > spl_NONE)` target guard ([703](../../MoM/src/CMBMAGIC.c#L703)) — no `goto` needed.
+The human/AI split matches `loc_8CFCD`/`loc_8CFD6`: the interactive-human path (`player_idx == HUMAN_PLAYER_IDX && _auto_combat_flag == ST_FALSE`, [256-260](../../MoM/src/CMBMAGIC.c#L256-L260)) runs the unit-ability checks and, if still `spl_NONE`, the interactive spellbook — the spellbook is **nested inside the human branch** ([317](../../MoM/src/CMBMAGIC.c#L317)) so an AI caster never reaches it. The `else` branch ([357](../../MoM/src/CMBMAGIC.c#L357)) is the AI/CP path: `AI_Prepare_Combat_Realm_Threats()`, then the hero-item `embed_spell_idx` when a charged item is in use ([361-366](../../MoM/src/CMBMAGIC.c#L361-L366)) else `AI_Select_Combat_Spell(caster_idx)` ([369](../../MoM/src/CMBMAGIC.c#L369)), then `target_battle_unit_idx = caster` + non-human `_ai_immobile_counter = ST_UNDEFINED` ([371-381](../../MoM/src/CMBMAGIC.c#L371-L381)). The `spell_idx == 0` convergence the asm reaches via `loc_8D1FD → @@Target_And_Effect` is modelled structurally by the `if(spell_idx != spl_NONE)` cost/counter guard ([386](../../MoM/src/CMBMAGIC.c#L386)) and the `if(spell_idx > spl_NONE)` target guard ([703](../../MoM/src/CMBMAGIC.c#L703)) — no `goto` needed.
 
 All three cost-payment blocks correctly index `_players[(caster_idx - CASTER_IDX_BASE)]` — counter-magic [545](../../MoM/src/CMBMAGIC.c#L545)/[546](../../MoM/src/CMBMAGIC.c#L546), node-counter [643](../../MoM/src/CMBMAGIC.c#L643)/[644](../../MoM/src/CMBMAGIC.c#L644), actual cast [752](../../MoM/src/CMBMAGIC.c#L752)/[753](../../MoM/src/CMBMAGIC.c#L753) — matching the asm's `_players.X-(14h*4c8h)[caster*size]` addressing.
 
@@ -196,7 +196,7 @@ The three near-identical XOR-toggle / item-charge / mana-debit payment blocks (`
 - `…\ovr112\Combat_Cast_Spell__WIP__GEMINI.c` — Gemini translation (second opinion).
 - [`AITP_Combat_Spell`](../ComputerPlayer/Combat-AITP_Combat_Spell.md) — the AI target picker invoked at [733](../../MoM/src/CMBMAGIC.c#L733) for the non-human targeting path.
 - [`Combat_Cast_Apply_Spell_Effect`](../../MoM/src/Combat.c#L9964) — applies the chosen spell ([747](../../MoM/src/CMBMAGIC.c#L747)).
-- `AI_SelectCmbtSpell` ([Combat.c:17398](../../MoM/src/Combat.c#L17398)), `AI_SetCombatRealms` — the AI-branch pickers, now wired into the `else` selection path.
+- `AI_Select_Combat_Spell` ([Combat.c:17398](../../MoM/src/Combat.c#L17398)), `AI_Prepare_Combat_Realm_Threats` — the AI-branch pickers, now wired into the `else` selection path.
 - `Combat_Spell_Dispel_Attempt` ([Spells133.c:651](../../MoM/src/Spells133.c#L651), decl `Spells133.h:42`) — Counter-Magic / node dispel roll; **implemented** (was `Combat_Spell_Dispel_Attempt`); called at [532](../../MoM/src/CMBMAGIC.c#L532) and [632](../../MoM/src/CMBMAGIC.c#L632).
 - `Combat_Spell_Counter_Message` ([Spells133.c:532](../../MoM/src/Spells133.c#L532), decl `Spells133.h:39`) — "Counter Magic" popup; **implemented** (was `Combat_Spell_Counter_Message`); called at [538](../../MoM/src/CMBMAGIC.c#L538) and [639](../../MoM/src/CMBMAGIC.c#L639).
 

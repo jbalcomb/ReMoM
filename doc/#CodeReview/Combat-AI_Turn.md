@@ -6,7 +6,7 @@ SEEALSO:  C:\STU\devel\ReMoM\doc\Combat\MoX-Combat-Auto.md  (Auto, not just AI)
 
 NOTE: drake178 defined 'player mode' (~AI_Player_Mode()) as {0:Hopeless, 1:Losing, 2:Disadvantage, 3:Advantage, 4:Winning, 5:Certain}, but 3 includes where the enemy is stronger, so went with the more generic "level" interpretation
 
-AI_Set_All_Action_Modes()  ==>  AI_Set_All_Action_Modes()
+AI_SetBasicAttacks__WIP()  ==>  AI_Set_All_Action_Modes()
 Get_Player_Mode()          ==>  AI_Player_Mode()
 Retreat_Check()            ==>  AI_Retreat_Check()
 AI_BU_ProcessAction()      ==>  AI_Execute_Unit_Action()
@@ -98,7 +98,7 @@ The cohort is a closed tree with one entry point. `Auto_Do_Combat_Turn` has exac
 ### What does *not* belong here
 
 - **`Auto_Cast_Spell_And_Do_Combat_Turn`** ([Combat.c:3652](../../MoM/src/Combat.c#L3652)), the caller. It is done-done in [Combat-Combat_Screen.md](Combat-Combat_Screen.md) and sits in `ovr098`, not `ovr114`. Its listing is named in the header block above for call-tree context only; it renders no verdict here. **Note:** the tracker still carries a second, stale row for it under its old name `AI_CMB_PlayTurn__WIP` with a wrong line number.
-- **`AI_SelectCmbtSpell`** and the rest of `ovr139`, owned by [Combat-Spell_Cast_AI_Select.md](Combat-Spell_Cast_AI_Select.md). The AI's spell choice is a separate layer that this one calls into.
+- **`AI_Select_Combat_Spell`** and the rest of `ovr139`, owned by [Combat-Spell_Cast_AI_Select.md](Combat-Spell_Cast_AI_Select.md). The AI's spell choice is a separate layer that this one calls into.
 - **`Do_Auto_Unit_Turn`** and **`Auto_Move_Unit`** — the other two `ovr114` slots. They are the overland auto-move path and attribute to [Combat-Assign_Combat_Grids.md](Combat-Assign_Combat_Grids.md).
 - **`Set_Movement_Cost_Map`**, **`Combat_Move_Path_Find`**, **`Total_Ranged_Attack_Strength`**, **`Battle_Unit_Is_Within_City`**, **`Switch_Active_Battle_Unit`**, **`Assign_Combat_Grids`** — helpers with callers across several reviews.
 
@@ -216,7 +216,7 @@ drake178 labelled the six {Hopeless, Losing, Disadvantage, Advantage, Winning, C
 
 **Both divides are safe in the original.** `idiv own_effective_strength` at asm:130 and asm:138 is protected by the first guard, and `idiv [bp+enemy_effective_strength]` at asm:158 and asm:166 by the second. R3 removes the second protection.
 
-**Ownership.** Three callers, in two files: `AI_Set_All_Action_Modes` ([CMBTAI.c:162](../../MoM/src/CMBTAI.c#L162)) here, `AI_Retreat_Check` ([Combat.c:17115](../../MoM/src/Combat.c#L17115)) which is `o124p18` and still homeless, and `AI_SelectCmbtSpell` ([Combat.c:17446](../../MoM/src/Combat.c#L17446)) which belongs to [Combat-Spell_Cast_AI_Select.md](Combat-Spell_Cast_AI_Select.md). It is adjudicated here by decision rather than by call graph: two of the three callers are combat-turn AI, and this is the only review that analyses what the value is used *for*. If `AI_Retreat_Check` later lands somewhere else, this verdict still stands and should not be duplicated.
+**Ownership.** Three callers, in two files: `AI_Set_All_Action_Modes` ([CMBTAI.c:162](../../MoM/src/CMBTAI.c#L162)) here, `AI_Retreat_Check` ([Combat.c:17115](../../MoM/src/Combat.c#L17115)) which is `o124p18` and still homeless, and `AI_Select_Combat_Spell` ([Combat.c:17446](../../MoM/src/Combat.c#L17446)) which belongs to [Combat-Spell_Cast_AI_Select.md](Combat-Spell_Cast_AI_Select.md). It is adjudicated here by decision rather than by call graph: two of the three callers are combat-turn AI, and this is the only review that analyses what the value is used *for*. If `AI_Retreat_Check` later lands somewhere else, this verdict still stands and should not be duplicated.
 
 ### `Sort_Battle_Units` ([CMBTAI.c:544](../../MoM/src/CMBTAI.c#L544), asm 102)
 

@@ -7,7 +7,7 @@ __TODO-Combat.md
 
 [x] Combat-Combat_Spell_Target_Screen.md
 [x] Combat-AI_Turn.md
-[ ] Combat-Spell_Cast_AI_Select.md
+[x] Combat-Spell_Cast_AI_Select.md
 [ ] Combat-Spell_Cast_AI_Target.md
 [ ] Combat-Miscellaneous.md
 

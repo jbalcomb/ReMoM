@@ -764,12 +764,12 @@ int16_t _combat_remote_player;
 */
 // WZD dseg:9294
 // drake178: RP_AI_UnsetRealmVar1
-/* DNE  no writer anywhere in the Dasm - always 0;  read by AITP_DispelMagic() (o111p07) and AI_EvaluateCmbtSpell() (ovr139p02, attacker branch) */
+/* DNE  no writer anywhere in the Dasm - always 0;  read by AITP_DispelMagic() (o111p07) and AI_Score_Combat_Spell() (ovr139p02, attacker branch) */
 int16_t g_ai_combat_unset_realm_flags;
 
 // WZD dseg:9296
 // drake178: RP_AI_UnsetRealmVar2
-/* DNE  no writer anywhere in the Dasm - always 0;  read by AI_EvaluateCmbtSpell() (ovr139p02, defender branch) */
+/* DNE  no writer anywhere in the Dasm - always 0;  read by AI_Score_Combat_Spell() (ovr139p02, defender branch) */
 int16_t g_ai_combat_unset_realm_flags_2;
 
 // WZD dseg:9298
@@ -2969,14 +2969,14 @@ int16_t Target_Is_Visible(int16_t battle_unit_idx)
 
     /* Get the controller of the target unit */
     bu_ptr = &battle_units[battle_unit_idx];
-    player_idx = bu_ptr->controller_idx;
+    player_idx = battle_units[battle_unit_idx].controller_idx;
 
     /* 
      * Combine enchantments from the active battle unit and the base unit template.
      */
     // OGBUG  ignores invisibility granted by items
-    u_ptr = &_UNITS[bu_ptr->unit_idx];
-    enchantments = bu_ptr->enchantments | u_ptr->enchantments;
+    u_ptr = &_UNITS[battle_units[battle_unit_idx].unit_idx];
+    enchantments = battle_units[battle_unit_idx].enchantments | u_ptr->enchantments;
 
     is_visible = ST_TRUE;
 
@@ -9282,7 +9282,7 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 if(spell_idx == spl_Life_Drain)
                 {
                     /* Manual effective resistance check for Life Drain */
-                    Unit_Resist = Combat_Effective_Resistance(*bu_ptr, sbr_Death);
+                    Unit_Resist = Combat_Effective_Resistance(battle_units[battle_unit_idx], sbr_Death);
                     damage_types[1] = 13 - Unit_Resist;
                     if(damage_types[1] < 0) damage_types[1] = 0;
                 }
@@ -9331,7 +9331,7 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 }
                 if(!Target_Is_Visible(battle_unit_idx)) continue;
                 Resist_Modifier = Spell_Resistance_Modifier(spell_idx);
-                Unit_Resist = Combat_Effective_Resistance(*bu_ptr, spell_data_table[spell_idx].magic_realm);
+                Unit_Resist = Combat_Effective_Resistance(battle_units[battle_unit_idx], spell_data_table[spell_idx].magic_realm);
                 Unit_Resist += Resist_Modifier;
                 if(Unit_Resist >= 10) continue;
                 if(spell_idx == spl_Disintegrate)
@@ -9429,7 +9429,7 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 }
                 if(!Target_Is_Visible(battle_unit_idx)) continue;
                 Resist_Modifier = Spell_Resistance_Modifier(spell_idx);
-                Unit_Resist = Combat_Effective_Resistance(*bu_ptr, spell_data_table[spell_idx].magic_realm);
+                Unit_Resist = Combat_Effective_Resistance(battle_units[battle_unit_idx], spell_data_table[spell_idx].magic_realm);
                 Unit_Resist += Resist_Modifier;
                 if(Unit_Resist >= 10) continue;
                 Target_Value = (Effective_Battle_Unit_Strength(battle_unit_idx) * (10 - Unit_Resist) + 9) / 10;
@@ -9460,7 +9460,7 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 if(bu_ptr->status != bus_Active) continue;
                 if(bu_ptr->race >= rt_Arcane) continue;
                 if(!Target_Is_Visible(battle_unit_idx)) continue;
-                Unit_Resist = Combat_Effective_Resistance(*bu_ptr, spell_data_table[spell_idx].magic_realm);
+                Unit_Resist = Combat_Effective_Resistance(battle_units[battle_unit_idx], spell_data_table[spell_idx].magic_realm);
                 if(Unit_Resist >= 10) continue;
                 Target_Value = (Effective_Battle_Unit_Strength(battle_unit_idx) * (10 - Unit_Resist) + 9) / 10;
                 if(Target_Value > highest_value)
@@ -9801,7 +9801,7 @@ int16_t AITP_WarpCreature(int16_t player_idx)
         if(bu_ptr->race >= rt_Arcane) continue;  /* Fantastic creatures are exempt */
         if(!Target_Is_Visible(battle_unit_idx)) continue;
 
-        unit_resist = Combat_Effective_Resistance(*bu_ptr, spell_data_table[spl_Warp_Creature].magic_realm);
+        unit_resist = Combat_Effective_Resistance(battle_units[battle_unit_idx], spell_data_table[spl_Warp_Creature].magic_realm);
         if(unit_resist >= 10) continue;
 
         /* attack value scaled by the failure chance of the resistance roll */
@@ -17402,98 +17402,74 @@ void Raze_City_Prompt_Draw(void)
 */
 
 // WZD ovr139p01
-// drake178: AI_SelectCmbtSpell()
-/*
-Top-level combat spell chooser for one caster (battle unit 0..19 or wizard CASTER_IDX_BASE+player):
-builds the castable-spell list, evaluates every entry with AI_EvaluateCmbtSpell(), and returns the
-highest-scoring spell index (0 = cast nothing).
-*/
-int16_t AI_SelectCmbtSpell(int16_t caster_id)
+int16_t AI_Select_Combat_Spell(int16_t caster_idx)
 {
-    int16_t spell_list[92];       /* Spell_List  [bp-0C2h..bp-0Ah] */
-    int16_t player_mode_level = 0;       /* Threat */
-    int16_t player_idx = 0;       /* player_idx */
-    int16_t list_idx = 0;         /* List_Index */
-    int16_t chosen_spell = 0;     /* Chosen_Spell */
-    int16_t highest_value = 0;    /* highest_value */
-    int16_t caster = 0;           /* _SI_ */
-    int16_t spell_value = 0;      /* _DI_  also reused for the cost multiplier */
-
-    caster = caster_id;
-    if(caster > (CASTER_IDX_BASE - 1))
+    int16_t spell_list[92] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t player_mode_level = 0;
+    int16_t player_idx = 0;
+    int16_t list_idx = 0;
+    int16_t chosen_spell = 0;
+    int16_t highest_value = 0;
+    int16_t spell_score = 0;
+    if(caster_idx > (CASTER_IDX_BASE - 1))
     {
-        player_idx = (caster - CASTER_IDX_BASE);
+        player_idx = (caster_idx - CASTER_IDX_BASE);
     }
     else
     {
-        player_idx = battle_units[caster].controller_idx;
+        player_idx = battle_units[caster_idx].controller_idx;
     }
-
     highest_value = 0;
     chosen_spell = 0;
-
-    if(caster > (CASTER_IDX_BASE - 1))
+    if(caster_idx > (CASTER_IDX_BASE - 1))
     {
-        spell_value = Combat_Casting_Cost_Multiplier(caster - CASTER_IDX_BASE);
+        spell_score = Combat_Casting_Cost_Multiplier(caster_idx - CASTER_IDX_BASE);
     }
     else
     {
-        spell_value = 1;
+        spell_score = 1;
     }
-
-    AI_CombatSpellList(caster, &spell_list[0], spell_value);
-
+    AI_Build_Castable_Combat_Spell_List(caster_idx, &spell_list[0], spell_score);
     player_mode_level = AI_Player_Mode(player_idx);
-
     for(list_idx = 0; list_idx < GUI_Multipurpose_Int; list_idx++)
     {
-        spell_value = AI_EvaluateCmbtSpell(player_idx, spell_list[list_idx], player_mode_level);
-        if(spell_value > highest_value)
+        spell_score = AI_Score_Combat_Spell(player_idx, spell_list[list_idx], player_mode_level);
+        if(spell_score > highest_value)
         {
-            highest_value = spell_value;
+            highest_value = spell_score;
             chosen_spell = spell_list[list_idx];
         }
     }
-
     return chosen_spell;
 }
 
 
 // WZD ovr139p02
-// drake178: AI_EvaluateCmbtSpell()
 /*
-Scores one castable combat spell for the given player.
-Situational base values come from five 6-entry tables
-(drake178: struct AI_Combat_Situ) indexed by the caster's threat mode
-(AI_Player_Mode(): 0 Hopeless, 1 Losing, 2 Disadvantage, 3 Advantage, 4 Winning, 5 Certain),
-then a per-spell handler (Dasm jump table off_C3335, spells 1..205, verified in in\WIZARDS.asm 153252/308411) adjusts for the battlefield situation.
-Every path funnels into a common tail that adds half the casting-cost reduction and Random(20).
 Returns -100 when there are no enemies, -1 when the spell has no valid target, else the score.
-OGBUG  the AITP_Combat_Spell() probe passes &spell_value for BOTH coordinate return pointers
-OGBUG  the attacker reads RP_AI_UnsetRealmVar1, the defender RP_AI_UnsetRealmVar2 - neither is ever written, so every "realm threat" bonus term is 0
-NOTE   rp_disenchant_prio is computed from the Wrack / Mana Leak / Call Lightning enchantments but never read afterwards - Dasm dead store, kept for fidelity
+OGBUG:  the AITP_Combat_Spell() probe passes &spell_value for BOTH coordinate return pointers
+OGBUG:  the attacker reads RP_AI_UnsetRealmVar1, the defender RP_AI_UnsetRealmVar2 - neither is ever written, so every "realm threat" bonus term is 0
+OGBUG:  rp_disenchant_prio is computed from the Wrack / Mana Leak / Call Lightning enchantments but never read afterwards - Dasm dead store, kept for fidelity
 */
-int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t player_mode_level)
+int16_t AI_Score_Combat_Spell(int16_t player_idx, int16_t spell_idx, int16_t player_mode_level)
 {
-    int16_t group_1[6];              /* AI_Combat_Situ: Hopeless, Losing, Disadvantage, Advantage, Winning, Certain */
-    int16_t group_2[6];
-    int16_t group_3[6];
-    int16_t group_4[6];
-    int16_t group_5[6];
-    int16_t rp_disenchant_prio = 0;  /* RP_Disenchant_Prio  NIU after assignment */
-    int16_t target_value = 0;        /* Target_Value */
-    int16_t enemy_units = 0;         /* Enemy_Units */
-    int16_t rp_realm_threat_value = 0;  /* RP_Realm_Threat_Value  always 0 (unset source globals) */
-    int16_t opp_spell_realms = 0;    /* Opp_Spell_Realms */
-    int16_t * opp_unit_realms = NULL;   /* Opp_Unit_Realms@ */
-    int16_t local_var = 0;           /* Local_Var */
-    int16_t spell_value = 0;         /* Spell_Value */
-    int16_t counter = 0;             /* _DI_ */
-    int16_t battle_unit_idx = 0;     /* _SI_ */
-    struct s_BATTLE_UNIT * bu_ptr = NULL;
-
+    int16_t group_1[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t group_2[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t group_3[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t group_4[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t group_5[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t rp_disenchant_prio = 0;
+    int16_t target_value = 0;
+    int16_t enemy_units = 0;
+    int16_t rp_realm_threat_value = 0;  /* OGBUG:  rp_realm_threat_value is permanently 0, uses bogus realm variables */
+    int16_t opp_spell_realms = 0;
+    int16_t * opp_unit_realms = NULL;
+    int16_t local_var = 0;
+    int16_t spell_value = 0;
+    int16_t counter = 0;
+    int16_t battle_unit_idx = 0;
+    int16_t realm_idx = 0;
     Assign_Combat_Grids();
-
     enemy_units = 0;
     for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
     {
@@ -17506,14 +17482,36 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
     {
         return -100;
     }
-
-    /*                    Hopeless  Losing  Disadvantage  Advantage  Winning  Certain */
-    group_5[0] = 500;  group_5[1] =  0;  group_5[2] = 10;  group_5[3] = 20;  group_5[4] = 30;  group_5[5] =  40;
-    group_4[0] = -900; group_4[1] = 30;  group_4[2] = 20;  group_4[3] = 15;  group_4[4] = 10;  group_4[5] =   0;
-    group_3[0] = -900; group_3[1] = 10;  group_3[2] = 20;  group_3[3] = 20;  group_3[4] = 20;  group_3[5] =  10;
-    group_2[0] = -900; group_2[1] = 30;  group_2[2] = 35;  group_2[3] = 15;  group_2[4] =  0;  group_2[5] =   0;
-    group_1[0] = 0;    group_1[1] = 10;  group_1[2] = 20;  group_1[3] = 25;  group_1[4] = 10;  group_1[5] = -10;
-
+    group_5[0] =  500;
+    group_4[0] = -900;
+    group_3[0] = -900;
+    group_2[0] = -900;
+    group_1[0] =    0;
+    group_5[1] =    0;
+    group_4[1] =   30;
+    group_3[1] =   10;
+    group_2[1] =   30;
+    group_1[1] =   10;
+    group_5[2] =   10;
+    group_4[2] =   20;
+    group_3[2] =   20;
+    group_2[2] =   35;
+    group_1[2] =   20;
+    group_5[3] =   20;
+    group_4[3] =   15;
+    group_3[3] =   20;
+    group_2[3] =   15;
+    group_1[3] =   25;
+    group_5[4] =   30;
+    group_4[4] =   10;
+    group_3[4] =   20;
+    group_2[4] =    0;
+    group_1[4] =   10;
+    group_5[5] =   40;
+    group_4[5] =    0;
+    group_3[5] =   10;
+    group_2[5] =    0;
+    group_1[5] =  -10;
     if(player_idx == _combat_attacker_player)
     {
         opp_spell_realms = g_ai_combat_defender_realm_flags;
@@ -17542,33 +17540,29 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
             rp_disenchant_prio = 0;
         }
     }
-
     /* OGBUG  passes &spell_value for both the X and Y return pointers */
     target_value = AITP_Combat_Spell(spell_idx, player_idx, &spell_value, &spell_value);
     if(target_value < 0)
     {
         return ST_UNDEFINED;
     }
-
     spell_value = 0;
-
     switch(spell_idx)
     {
-        case spl_Earth_To_Mud:  /* loc_C1A29 */
+        case spl_Earth_To_Mud:
             counter = 0;
             local_var = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
                 if(!Battle_Unit_Has_Ranged_Attack(battle_unit_idx)) continue;
-                if(bu_ptr->controller_idx == player_idx)
+                if(battle_units[battle_unit_idx].controller_idx == player_idx)
                 {
-                    counter += (bu_ptr->ranged * bu_ptr->figure_cnt);
+                    counter += (battle_units[battle_unit_idx].ranged * battle_units[battle_unit_idx].figure_cnt);
                 }
                 else
                 {
-                    local_var += (bu_ptr->ranged * bu_ptr->figure_cnt);
+                    local_var += (battle_units[battle_unit_idx].ranged * battle_units[battle_unit_idx].figure_cnt);
                 }
             }
             if((counter * 2) > (local_var * 3))
@@ -17580,8 +17574,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value -= 100;
             }
             break;
-
-        case spl_Resist_Elements:  /* loc_C18BF */
+        case spl_Resist_Elements:
             spell_value += ((opp_unit_realms[sbr_Nature] + opp_unit_realms[sbr_Chaos]) / 4);
             if(((opp_spell_realms & 0) != 0) || ((opp_spell_realms & 2) != 0))  /* OGBUG  `& 0` never passes */
             {
@@ -17596,19 +17589,17 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value -= 100;
             }
             break;
-
-        case spl_Wall_Of_Stone:  /* loc_C1921 */
+        case spl_Wall_Of_Stone:
             counter = 0;
             if(player_idx == _combat_defender_player)
             {
                 for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
                 {
-                    bu_ptr = &battle_units[battle_unit_idx];
-                    if(bu_ptr->status != bus_Active) continue;
-                    if(bu_ptr->controller_idx == player_idx) continue;
-                    if(bu_ptr->Move_Flags & MV_FLYING) continue;
-                    if(bu_ptr->Move_Flags & MV_TELEPORT) continue;
-                    if(bu_ptr->Move_Flags & MV_MERGING) continue;
+                    if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                    if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                    if(battle_units[battle_unit_idx].Move_Flags & MV_FLYING) continue;
+                    if(battle_units[battle_unit_idx].Move_Flags & MV_TELEPORT) continue;
+                    if(battle_units[battle_unit_idx].Move_Flags & MV_MERGING) continue;
                     counter++;
                 }
                 spell_value += (group_4[player_mode_level] * counter);
@@ -17618,27 +17609,23 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value = -100;
             }
             break;
-
-        case spl_Web:  /* loc_C19BD */
+        case spl_Web:
             spell_value += group_2[player_mode_level];
             counter = 0;
             for(battle_unit_idx = 0; ((battle_unit_idx < _combat_total_unit_count) && (counter == 0)); battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx == player_idx) continue;
-                if((bu_ptr->Move_Flags & MV_FLYING) == 0) continue;
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                if((battle_units[battle_unit_idx].Move_Flags & MV_FLYING) == 0) continue;
                 counter = 1;
             }
             spell_value += (counter * 10);
             break;
-
-        case spl_Stone_Skin:  /* loc_C1905 */
+        case spl_Stone_Skin:
             spell_value += group_4[player_mode_level];
             spell_value += 15;
             break;
-
-        case spl_Cracks_Call:  /* loc_C1B02 */
+        case spl_Cracks_Call:
             if(_combat_structure != cs_OceanTerrainType)
             {
                 spell_value += group_5[player_mode_level];
@@ -17652,23 +17639,22 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value = -100;
             }
             break;
-
-        case spl_Ice_Bolt:        /* loc_C191B  -> loc_C2D90 */
-        case spl_Petrify:         /* loc_C191E */
-        case spl_Psionic_Blast:   /* loc_C1CFA */
-        case spl_Banish:          /* loc_C1F08 */
-        case spl_Fire_Bolt:       /* loc_C2120 */
-        case spl_Lightning_Bolt:  /* loc_C21D9 */
-        case spl_Warp_Lightning:  /* loc_C2487 */
-        case spl_Doom_Bolt:       /* loc_C24A0 */
-        case spl_Magic_Vortex:    /* loc_C2484 */
-        case spl_Star_Fires:      /* loc_C262B */
-        case spl_Dispel_Evil:     /* loc_C28AC */
-        case spl_Word_Of_Death:   /* loc_C2D90 */
+        case spl_Ice_Bolt:
+        case spl_Petrify:
+        case spl_Psionic_Blast:
+        case spl_Banish:
+        case spl_Fire_Bolt:
+        case spl_Lightning_Bolt:
+        case spl_Warp_Lightning:
+        case spl_Doom_Bolt:
+        case spl_Magic_Vortex:
+        case spl_Star_Fires:
+        case spl_Dispel_Evil:
+        case spl_Word_Of_Death:
+        {
             spell_value += group_5[player_mode_level];
-            break;
-
-        case spl_Elemental_Armor:  /* loc_C1B3B */
+        } break;
+        case spl_Elemental_Armor:
             spell_value += ((opp_unit_realms[sbr_Nature] + opp_unit_realms[sbr_Chaos]) / 2);
             if(((opp_spell_realms & 0) != 0) || ((opp_spell_realms & 2) != 0))  /* OGBUG  `& 0` never passes */
             {
@@ -17683,14 +17669,12 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value -= 100;
             }
             break;
-
-        case spl_Iron_Skin:  /* loc_C1B82 */
+        case spl_Iron_Skin:
             spell_value += group_4[player_mode_level];
             spell_value += 35;
             break;
-
-        case spl_Earth_Elemental:  /* loc_C1B98 */
-        case spl_Fire_Elemental:   /* loc_C232B  identical block */
+        case spl_Earth_Elemental:
+        {
             if(_combat_structure == cs_OceanTerrainType)
             {
                 spell_value -= 100;
@@ -17699,26 +17683,39 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
             {
                 spell_value += group_1[player_mode_level];
             }
-            break;
-
-        case spl_Regeneration:   /* loc_C1BB7 */
-        case spl_Shatter:        /* loc_C21FE */
-        case spl_Holy_Armor:     /* loc_C2640 */
-        case spl_Cloak_Of_Fear:  /* loc_C29F6 */
-        case spl_Wraith_Form:    /* loc_C2CD6 */
+        } break;
+        case spl_Fire_Elemental:
+        {
+            if(_combat_structure == cs_OceanTerrainType)
+            {
+                spell_value -= 100;
+            }
+            else
+            {
+                spell_value += group_1[player_mode_level];
+            }
+        } break;
+        case spl_Regeneration:
+        case spl_Shatter:
+        case spl_Holy_Armor:
+        case spl_Cloak_Of_Fear:
+        case spl_Wraith_Form:
+        {
             spell_value += group_4[player_mode_level];
-            break;
-
-        case spl_Call_Lightning:  /* loc_C1AEF */
+        } break;
+        case spl_Call_Lightning:
             if(player_mode_level > 1)
             {
                 spell_value += (enemy_units * 4);
             }
             spell_value += group_5[player_mode_level];
             break;
-
-        case spl_Resist_Magic:  /* loc_C1BC2 */
-            counter = (opp_unit_realms[0] + opp_unit_realms[1] + opp_unit_realms[2] + opp_unit_realms[3] + opp_unit_realms[4]);
+        case spl_Resist_Magic:
+            counter = 0;
+            for(realm_idx = 0; realm_idx < 5; realm_idx++)
+            {
+                counter += opp_unit_realms[realm_idx];
+            }
             spell_value += (counter / 4);
             if(opp_spell_realms > 0)
             {
@@ -17733,18 +17730,16 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value -= 100;
             }
             break;
-
-        case spl_Dispel_Magic_True:  /* loc_C1C0E */
-        case spl_Dispel_Magic:       /* loc_C2EF0  same count, +25 instead of +35 */
+        case spl_Dispel_Magic:
+        {
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx == player_idx)
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx)
                 {
                     /* own unit carrying a dispellable debuff (signed > 0: a set bue_NoEffect bit makes this negative and uncounted) */
-                    if((int16_t)(bu_ptr->combat_effects & (int16_t)~(bue_Haste | bue_Possession | bue_Creature_Binding)) > 0)
+                    if((int16_t)(battle_units[battle_unit_idx].combat_effects & (int16_t)~(bue_Haste | bue_Possession | bue_Creature_Binding)) > 0)
                     {
                         counter++;
                     }
@@ -17753,11 +17748,11 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 {
                     /* enemy unit carrying enchantments (signed: Invulnerability-only reads as none) or beneficial effects */
                     if(
-                        ((int32_t)bu_ptr->enchantments > 0)
+                        ((int32_t)battle_units[battle_unit_idx].enchantments > 0)
                         ||
-                        ((int16_t)(bu_ptr->combat_effects & (bue_Haste | bue_Creature_Binding | bue_Possession)) > 0)
+                        ((int16_t)(battle_units[battle_unit_idx].combat_effects & (bue_Haste | bue_Creature_Binding | bue_Possession)) > 0)
                         ||
-                        ((int32_t)_UNITS[bu_ptr->unit_idx].enchantments > 0)
+                        ((int32_t)_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments > 0)
                     )
                     {
                         counter++;
@@ -17766,23 +17761,59 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
             }
             if(counter > 0)
             {
-                spell_value += ((spell_idx == spl_Dispel_Magic_True) ? 35 : 25);
+                spell_value += 25;
             }
             else
             {
                 spell_value -= 100;
             }
-            break;
-
-        case spl_Guardian_Wind:  /* loc_C1E1F */
+        } break;
+        case spl_Dispel_Magic_True:
+        {
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if((bu_ptr->ranged_type / 10) != rag_Missile) continue;
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx == player_idx) continue;
-                counter += bu_ptr->ranged;
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx)
+                {
+                    /* own unit carrying a dispellable debuff (signed > 0: a set bue_NoEffect bit makes this negative and uncounted) */
+                    if((int16_t)(battle_units[battle_unit_idx].combat_effects & (int16_t)~(bue_Haste | bue_Possession | bue_Creature_Binding)) > 0)
+                    {
+                        counter++;
+                    }
+                }
+                else
+                {
+                    /* enemy unit carrying enchantments (signed: Invulnerability-only reads as none) or beneficial effects */
+                    if(
+                        ((int32_t)battle_units[battle_unit_idx].enchantments > 0)
+                        ||
+                        ((int16_t)(battle_units[battle_unit_idx].combat_effects & (bue_Haste | bue_Creature_Binding | bue_Possession)) > 0)
+                        ||
+                        ((int32_t)_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments > 0)
+                    )
+                    {
+                        counter++;
+                    }
+                }
+            }
+            if(counter > 0)
+            {
+                spell_value += 35;
+            }
+            else
+            {
+                spell_value -= 100;
+            }
+        } break;
+        case spl_Guardian_Wind:
+            counter = 0;
+            for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+            {
+                if((battle_units[battle_unit_idx].ranged_type / 10) != rag_Missile) continue;
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                counter += battle_units[battle_unit_idx].ranged;
             }
             if(counter > 0)
             {
@@ -17790,8 +17821,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value += counter;
             }
             break;
-
-        case spl_Phantom_Warriors:  /* loc_C1DB7 */
+        case spl_Phantom_Warriors:
             if(_combat_structure == cs_OceanTerrainType)
             {
                 spell_value -= 100;
@@ -17805,22 +17835,21 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value = -100;
             }
             break;
-
-        case spl_Confusion:      /* loc_C1F0E  -> loc_C29EB */
-        case spl_Vertigo:        /* loc_C1E1C */
-        case spl_Mind_Storm:     /* loc_C1FAC */
-        case spl_Warp_Wood:      /* loc_C2403 */
-        case spl_Warp_Creature:  /* loc_C234A */
-        case spl_Weakness:       /* loc_C29EB */
+        case spl_Confusion:
+        case spl_Vertigo:
+        case spl_Mind_Storm:
+        case spl_Warp_Wood:
+        case spl_Warp_Creature:
+        case spl_Weakness:
+        {
             spell_value += group_2[player_mode_level];
-            break;
-
-        case spl_Word_Of_Recall:  /* loc_C1CFD */
+        } break;
+        case spl_Word_Of_Recall:
             if(_players[player_idx].casting_spell_idx == spl_Spell_Of_Return)
             {
                 spell_value = -100;
             }
-            else if(player_idx == 0)
+            else if(player_idx == HUMAN_PLAYER_IDX)
             {
                 spell_value = -100;
             }
@@ -17829,11 +17858,10 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 counter = 0;
                 for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
                 {
-                    bu_ptr = &battle_units[battle_unit_idx];
-                    if(bu_ptr->status != bus_Active) continue;
-                    if(bu_ptr->controller_idx != player_idx) continue;
-                    if(bu_ptr->cost < 200) continue;
-                    if((player_mode_level < 2) || ((bu_ptr->front_figure_damage + 3) >= bu_ptr->hits))
+                    if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                    if(battle_units[battle_unit_idx].controller_idx != player_idx) continue;
+                    if(battle_units[battle_unit_idx].cost < 200) continue;
+                    if((player_mode_level < 2) || ((battle_units[battle_unit_idx].front_figure_damage + 3) >= battle_units[battle_unit_idx].hits))
                     {
                         counter++;
                     }
@@ -17848,8 +17876,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 }
             }
             break;
-
-        case spl_Counter_Magic:  /* loc_C1DF0 */
+        case spl_Counter_Magic:
             if(opp_spell_realms > 0)
             {
                 spell_value += ((rp_realm_threat_value * 4) + 30);
@@ -17860,65 +17887,63 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value = -100;
             }
             break;
-
-        case spl_Disenchant_True:  /* loc_C2FDC */
-        case spl_Disenchant_Area:  /* same handler */
+        case spl_Disenchant_True:
+        case spl_Disenchant_Area:
             counter = 0;
             spell_value = 0;
             local_var = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
                 /* count non-invisible units not owned by the human player (feeds the +150 "nothing hidden" bonus) */
                 if(
-                    ((bu_ptr->enchantments & UE_INVISIBILITY) == 0)
+                    ((battle_units[battle_unit_idx].enchantments & UE_INVISIBILITY) == 0)
                     &&
-                    ((bu_ptr->item_enchantments & UE_INVISIBILITY) == 0)
+                    ((battle_units[battle_unit_idx].item_enchantments & UE_INVISIBILITY) == 0)
                     &&
-                    ((bu_ptr->Abilities & UA_INVISIBILITY) == 0)
+                    ((battle_units[battle_unit_idx].Abilities & UA_INVISIBILITY) == 0)
                     &&
-                    ((_UNITS[bu_ptr->unit_idx].enchantments & UE_INVISIBILITY) == 0)
+                    ((_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments & UE_INVISIBILITY) == 0)
                     &&
-                    (bu_ptr->controller_idx != 0)
+                    (battle_units[battle_unit_idx].controller_idx != 0)
                 )
                 {
                     local_var++;
                 }
                 /* own unit carrying a dispellable debuff */
                 if(
-                    (bu_ptr->status == bus_Active)
+                    (battle_units[battle_unit_idx].status == bus_Active)
                     &&
-                    (bu_ptr->controller_idx == player_idx)
+                    (battle_units[battle_unit_idx].controller_idx == player_idx)
                     &&
-                    ((int16_t)(bu_ptr->combat_effects & (int16_t)~(bue_Haste | bue_Possession | bue_Creature_Binding)) > 0)
+                    ((int16_t)(battle_units[battle_unit_idx].combat_effects & (int16_t)~(bue_Haste | bue_Possession | bue_Creature_Binding)) > 0)
                 )
                 {
                     counter++;
                 }
                 /* enemy unit carrying enchantments or beneficial effects */
                 if(
-                    (bu_ptr->status == bus_Active)
+                    (battle_units[battle_unit_idx].status == bus_Active)
                     &&
-                    (bu_ptr->controller_idx != player_idx)
+                    (battle_units[battle_unit_idx].controller_idx != player_idx)
                     &&
                     (
-                        ((int32_t)bu_ptr->enchantments > 0)
+                        ((int32_t)battle_units[battle_unit_idx].enchantments > 0)
                         ||
-                        ((int16_t)(bu_ptr->combat_effects & (bue_Haste | bue_Creature_Binding | bue_Possession)) > 0)
+                        ((int16_t)(battle_units[battle_unit_idx].combat_effects & (bue_Haste | bue_Creature_Binding | bue_Possession)) > 0)
                         ||
-                        ((int32_t)_UNITS[bu_ptr->unit_idx].enchantments > 0)
+                        ((int32_t)_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments > 0)
                     )
                 )
                 {
                     /* Holy Arms exemption: a lone free Holy Weapon from the global enchantment is not worth a disenchant */
                     if(
-                        (_players[bu_ptr->controller_idx].Globals[HOLY_ARMS] != 0)
+                        (_players[battle_units[battle_unit_idx].controller_idx].Globals[HOLY_ARMS] != 0)
                         &&
-                        (bu_ptr->enchantments == UE_HOLY_WEAPON)
+                        (battle_units[battle_unit_idx].enchantments == UE_HOLY_WEAPON)
                         &&
-                        (!((int16_t)(bu_ptr->combat_effects & (bue_Haste | bue_Creature_Binding | bue_Possession)) > 0))
+                        (!((int16_t)(battle_units[battle_unit_idx].combat_effects & (bue_Haste | bue_Creature_Binding | bue_Possession)) > 0))
                         &&
-                        (!((int32_t)_UNITS[bu_ptr->unit_idx].enchantments > 0))
+                        (!((int32_t)_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments > 0))
                     )
                     {
                         ;  /* not counted */
@@ -17950,15 +17975,13 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value = -100;
             }
             break;
-
-        case spl_Flight:  /* loc_C1EA1 */
+        case spl_Flight:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if((bu_ptr->Move_Flags & MV_FLYING) == 0) continue;
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx == player_idx) continue;
+                if((battle_units[battle_unit_idx].Move_Flags & MV_FLYING) == 0) continue;
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
                 counter++;
             }
             spell_value += group_4[player_mode_level];
@@ -17968,51 +17991,66 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
             }
             spell_value += (counter * 2);
             break;
-
-        case spl_Phantom_Beast:   /* loc_C1F0B  -> loc_C2BAC */
-        case spl_Air_Elemental:   /* loc_C1F11 */
+        case spl_Phantom_Beast:
+        case spl_Air_Elemental:
+        {
             spell_value += group_1[player_mode_level];
-            break;
-
-        case spl_Invisibility:       /* loc_C2087 */
-        case spl_Mass_Invisibility:  /* loc_C1F14  same count, no +5 */
+        } break;
+        case spl_Invisibility:
+        {
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx == player_idx) continue;
-                if(bu_ptr->Attribs_1 & USA_IMMUNITY_ILLUSION) continue;
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                if(battle_units[battle_unit_idx].Attribs_1 & USA_IMMUNITY_ILLUSION) continue;
                 counter++;
-                if(bu_ptr->ranged_type < srat_Thrown)
+                if(battle_units[battle_unit_idx].ranged_type < srat_Thrown)
                 {
-                    counter += bu_ptr->ranged;
+                    counter += battle_units[battle_unit_idx].ranged;
                 }
             }
             if(counter > 0)
             {
                 spell_value += group_4[player_mode_level];
-                if(spell_idx == spl_Invisibility)
-                {
-                    spell_value += 5;
-                }
+                spell_value += 5;
                 spell_value += counter;
             }
             else
             {
-                if(spell_idx == spl_Invisibility)
+                spell_value = -100;
+            }
+        } break;
+        case spl_Mass_Invisibility:
+        {
+            counter = 0;
+            for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+            {
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                if(battle_units[battle_unit_idx].Attribs_1 & USA_IMMUNITY_ILLUSION) continue;
+                counter++;
+                if(battle_units[battle_unit_idx].ranged_type < srat_Thrown)
                 {
-                    spell_value = -100;
-                }
-                else
-                {
-                    spell_value -= 100;
+                    counter += battle_units[battle_unit_idx].ranged;
                 }
             }
-            break;
-
-        case spl_Magic_Immunity:  /* loc_C1FAF */
-            counter = (opp_unit_realms[0] + opp_unit_realms[1] + opp_unit_realms[2] + opp_unit_realms[3] + opp_unit_realms[4]);
+            if(counter > 0)
+            {
+                spell_value += group_4[player_mode_level];
+                spell_value += counter;
+            }
+            else
+            {
+                spell_value -= 100;
+            }
+        } break;
+        case spl_Magic_Immunity:
+            counter = 0;
+            for(realm_idx = 0; realm_idx < 5; realm_idx++)
+            {
+                counter += opp_unit_realms[realm_idx];
+            }
             spell_value += (counter / 2);
             if(opp_spell_realms > 0)
             {
@@ -18027,20 +18065,18 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value -= 100;
             }
             break;
-
-        case spl_Haste:    /* loc_C1FA9  -> loc_C26D3 */
-        case spl_Heroism:  /* loc_C26D3 */
+        case spl_Haste:
+        case spl_Heroism:
+        {
             spell_value += group_3[player_mode_level];
-            break;
-
-        case spl_Creature_Binding:  /* loc_C1FFF */
+        } break;
+        case spl_Creature_Binding:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx == player_idx) continue;
-                if(bu_ptr->race < rt_Arcane) continue;
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                if(battle_units[battle_unit_idx].race < rt_Arcane) continue;
                 counter++;
             }
             if(counter == 1)
@@ -18054,8 +18090,7 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value += 20;
             }
             break;
-
-        case spl_Disrupt:  /* loc_C21DC */
+        case spl_Disrupt:
             if((player_idx == _combat_attacker_player) && (battlefield->walled > 0))
             {
                 spell_value += 20;
@@ -18065,17 +18100,14 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value -= 100;
             }
             break;
-
-        case spl_Eldritch_Weapon:  /* loc_C234D  (the Dasm has three identical copies of this block) */
-        case spl_Flame_Blade:      /* loc_C2123 */
-        case spl_Holy_Weapon:      /* loc_C252E */
+        case spl_Eldritch_Weapon:
+        {
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx == player_idx) continue;
-                if(((bu_ptr->enchantments | _UNITS[bu_ptr->unit_idx].enchantments | bu_ptr->item_enchantments) & UE_INVULNERABILITY) != 0)
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                if(((battle_units[battle_unit_idx].enchantments | _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].item_enchantments) & UE_INVULNERABILITY) != 0)
                 {
                     counter++;
                 }
@@ -18085,20 +18117,54 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value += 25;
             }
             spell_value += group_3[player_mode_level];
-            break;
-
-        case spl_Wall_Of_Fire:  /* loc_C2287 */
+        } break;
+        case spl_Flame_Blade:
+        {
+            counter = 0;
+            for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+            {
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                if(((battle_units[battle_unit_idx].enchantments | _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].item_enchantments) & UE_INVULNERABILITY) != 0)
+                {
+                    counter++;
+                }
+            }
+            if(counter > 0)
+            {
+                spell_value += 25;
+            }
+            spell_value += group_3[player_mode_level];
+        } break;
+        case spl_Holy_Weapon:
+        {
+            counter = 0;
+            for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+            {
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                if(((battle_units[battle_unit_idx].enchantments | _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].item_enchantments) & UE_INVULNERABILITY) != 0)
+                {
+                    counter++;
+                }
+            }
+            if(counter > 0)
+            {
+                spell_value += 25;
+            }
+            spell_value += group_3[player_mode_level];
+        } break;
+        case spl_Wall_Of_Fire:
             counter = 0;
             if(player_idx == _combat_defender_player)
             {
                 for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
                 {
-                    bu_ptr = &battle_units[battle_unit_idx];
-                    if(bu_ptr->status != bus_Active) continue;
-                    if(bu_ptr->controller_idx == player_idx) continue;
-                    if(bu_ptr->Move_Flags & MV_FLYING) continue;
-                    if(bu_ptr->Move_Flags & MV_TELEPORT) continue;
-                    if(bu_ptr->Move_Flags & MV_MERGING) continue;
+                    if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                    if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                    if(battle_units[battle_unit_idx].Move_Flags & MV_FLYING) continue;
+                    if(battle_units[battle_unit_idx].Move_Flags & MV_TELEPORT) continue;
+                    if(battle_units[battle_unit_idx].Move_Flags & MV_MERGING) continue;
                     counter++;
                 }
                 spell_value += ((group_3[player_mode_level] * (counter + 1)) / 2);
@@ -18108,17 +18174,15 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value = -100;
             }
             break;
-
-        case spl_Fireball:  /* loc_C2201 */
+        case spl_Fireball:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx == player_idx) continue;
-                if(bu_ptr->figure_cnt > counter)
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                if(battle_units[battle_unit_idx].figure_cnt > counter)
                 {
-                    counter = bu_ptr->figure_cnt;
+                    counter = battle_units[battle_unit_idx].figure_cnt;
                 }
             }
             spell_value += group_5[player_mode_level];
@@ -18127,21 +18191,19 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value += ((counter - 3) * 5);
             }
             break;
-
-        case spl_Immolation:  /* loc_C2406 */
-        case spl_Berserk:     /* loc_C2AEC */
+        case spl_Immolation:
+        case spl_Berserk:
+        {
             spell_value += group_3[player_mode_level];
             spell_value += 10;
-            break;
-
-        case spl_Metal_Fires:  /* loc_C2411 */
+        } break;
+        case spl_Metal_Fires:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx != player_idx) continue;
-                if(bu_ptr->race >= rt_Arcane) continue;
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx != player_idx) continue;
+                if(battle_units[battle_unit_idx].race >= rt_Arcane) continue;
                 counter++;
             }
             if(counter > 0)
@@ -18154,15 +18216,13 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value -= 100;
             }
             break;
-
-        case spl_Warp_Reality:  /* loc_C24B8 */
+        case spl_Warp_Reality:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->race != rt_Chaos) continue;
-                if(bu_ptr->controller_idx == player_idx)
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].race != rt_Chaos) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx)
                 {
                     counter++;
                 }
@@ -18181,18 +18241,17 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value -= 100;
             }
             break;
-
-        case spl_Flame_Strike:  /* loc_C24A3 */
+        case spl_Flame_Strike:
+        {
             spell_value += group_5[player_mode_level];
             spell_value += (enemy_units * 2);
-            break;
-
-        case spl_Disintegrate:  /* loc_C248A */
+        } break;
+        case spl_Disintegrate:
+        {
             spell_value += group_5[player_mode_level];
             spell_value += 25;
-            break;
-
-        case spl_Bless:  /* loc_C25E4 */
+        } break;
+        case spl_Bless:
             spell_value += ((opp_unit_realms[sbr_Death] + opp_unit_realms[sbr_Chaos]) / 4);
             if(((opp_spell_realms & 8) != 0) || ((opp_spell_realms & 2) != 0))
             {
@@ -18207,22 +18266,20 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value -= 100;
             }
             break;
-
-        case spl_Healing:  /* loc_C262E */
+        case spl_Healing:
+        {
             spell_value += (Effective_Battle_Unit_Strength(target_value) / 4);
-            break;
-
-        case spl_True_Light:  /* loc_C2643 */
+        } break;
+        case spl_True_Light:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if((bu_ptr->controller_idx == player_idx) && (bu_ptr->race == rt_Life))
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if((battle_units[battle_unit_idx].controller_idx == player_idx) && (battle_units[battle_unit_idx].race == rt_Life))
                 {
                     counter++;
                 }
-                else if((bu_ptr->controller_idx != player_idx) && (bu_ptr->race == rt_Death))
+                else if((battle_units[battle_unit_idx].controller_idx != player_idx) && (battle_units[battle_unit_idx].race == rt_Death))
                 {
                     counter++;
                 }
@@ -18236,8 +18293,8 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value += (counter * 3);
             }
             break;
-
-        case spl_True_Sight:  /* loc_C26DE */
+        case spl_True_Sight:
+        {
             spell_value += (opp_unit_realms[sbr_Sorcery] / 2);
             if((opp_spell_realms & 1) != 0)
             {
@@ -18251,18 +18308,16 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
             {
                 spell_value -= 100;
             }
-            break;
-
-        case spl_Raise_Dead:  /* loc_C280D */
+        } break;
+        case spl_Raise_Dead:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status <= bus_Active) continue;
-                if(bu_ptr->controller_idx != player_idx) continue;
-                if(bu_ptr->race >= rt_Arcane) continue;
-                if(bu_ptr->status == bus_Gone) continue;
-                if(_UNITS[bu_ptr->unit_idx].wp == 9) continue;
+                if(battle_units[battle_unit_idx].status <= bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx != player_idx) continue;
+                if(battle_units[battle_unit_idx].race >= rt_Arcane) continue;
+                if(battle_units[battle_unit_idx].status == bus_Gone) continue;
+                if(_UNITS[battle_units[battle_unit_idx].unit_idx].wp == 9) continue;
                 counter++;
             }
             if(counter > 0)
@@ -18274,27 +18329,35 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value -= 100;
             }
             break;
-
-        case spl_Prayer:       /* loc_C2719 */
-        case spl_High_Prayer:  /* loc_C296A  same count, x4 instead of x2 */
+        case spl_Prayer:
+        {
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx != player_idx) continue;
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx != player_idx) continue;
                 counter++;
             }
             spell_value += group_3[player_mode_level];
-            spell_value += (counter * ((spell_idx == spl_High_Prayer) ? 4 : 2));
+            spell_value += (counter * 2);
+        } break;
+        case spl_High_Prayer:
+            counter = 0;
+            for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+            {
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx != player_idx) continue;
+                counter++;
+            }
+            spell_value += group_3[player_mode_level];
+            spell_value += (counter * 4);
             break;
-
-        case spl_Invulnerability:  /* loc_C2768 */
+        case spl_Invulnerability:
+        {
             spell_value += group_4[player_mode_level];
             spell_value += 30;
-            break;
-
-        case spl_Righteousness:  /* loc_C29AE */
+        } break;
+        case spl_Righteousness:
             spell_value += (opp_unit_realms[sbr_Death] + opp_unit_realms[sbr_Chaos]);
             if(((opp_spell_realms & 8) != 0) || ((opp_spell_realms & 2) != 0))
             {
@@ -18305,15 +18368,13 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value += group_4[player_mode_level];
             }
             break;
-
-        case spl_Mass_Healing:  /* loc_C277E */
+        case spl_Mass_Healing:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx != player_idx) continue;
-                if((bu_ptr->figure_cnt > bu_ptr->figure_max) || (bu_ptr->front_figure_damage > 0))
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx != player_idx) continue;
+                if((battle_units[battle_unit_idx].figure_cnt > battle_units[battle_unit_idx].figure_max) || (battle_units[battle_unit_idx].front_figure_damage > 0))
                 {
                     counter++;
                 }
@@ -18327,17 +18388,15 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value = -1000;
             }
             break;
-
-        case spl_Holy_Word:  /* loc_C28AF */
+        case spl_Holy_Word:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx == player_idx) continue;
-                if((Combat_Effective_Resistance(*bu_ptr, sbr_Life) - 2) >= 10) continue;
-                if(bu_ptr->race < rt_Arcane) continue;
-                counter += bu_ptr->figure_cnt;
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                if((Combat_Effective_Resistance(battle_units[battle_unit_idx], sbr_Life) - 2) >= 10) continue;
+                if(battle_units[battle_unit_idx].race < rt_Arcane) continue;
+                counter += battle_units[battle_unit_idx].figure_cnt;
             }
             if(counter > 0)
             {
@@ -18349,26 +18408,24 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value -= 100;
             }
             break;
-
-        case spl_Black_Sleep:  /* loc_C29F9 */
+        case spl_Black_Sleep:
+        {
             spell_value += group_2[player_mode_level];
             spell_value += group_5[player_mode_level];
-            break;
-
-        case spl_Life_Drain:  /* loc_C2AEF */
+        } break;
+        case spl_Life_Drain:
+        {
             spell_value += group_5[player_mode_level];
             spell_value += 10;
-            break;
-
-        case spl_Terror:  /* loc_C2BB7 */
+        } break;
+        case spl_Terror:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx == player_idx) continue;
-                if((Combat_Effective_Resistance(*bu_ptr, sbr_Death) + 1) >= 10) continue;
-                if(bu_ptr->Attribs_1 & USA_IMMUNITY_DEATH) continue;
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                if((Combat_Effective_Resistance(battle_units[battle_unit_idx], sbr_Death) + 1) >= 10) continue;
+                if(battle_units[battle_unit_idx].Attribs_1 & USA_IMMUNITY_DEATH) continue;
                 counter++;
             }
             if(counter > 0)
@@ -18381,18 +18438,16 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value -= 100;
             }
             break;
-
-        case spl_Darkness:  /* loc_C2A0B */
+        case spl_Darkness:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if((bu_ptr->controller_idx == player_idx) && (bu_ptr->race == rt_Death))
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if((battle_units[battle_unit_idx].controller_idx == player_idx) && (battle_units[battle_unit_idx].race == rt_Death))
                 {
                     counter++;
                 }
-                else if((bu_ptr->controller_idx != player_idx) && (bu_ptr->race == rt_Life))
+                else if((battle_units[battle_unit_idx].controller_idx != player_idx) && (battle_units[battle_unit_idx].race == rt_Life))
                 {
                     counter++;
                 }
@@ -18406,17 +18461,15 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value += (counter * 3);
             }
             break;
-
-        case spl_Mana_Leak:  /* loc_C2B05 */
+        case spl_Mana_Leak:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx == player_idx) continue;
-                if((bu_ptr->mana > 0) || ((bu_ptr->ranged_type / 10) == rag_Magic))
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                if((battle_units[battle_unit_idx].mana > 0) || ((battle_units[battle_unit_idx].ranged_type / 10) == rag_Magic))
                 {
-                    counter += bu_ptr->figure_cnt;
+                    counter += battle_units[battle_unit_idx].figure_cnt;
                 }
             }
             if(counter > 0)
@@ -18428,36 +18481,32 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value = -100;
             }
             break;
-
-        case spl_Possession:  /* loc_C2B9D */
+        case spl_Possession:
+        {
             spell_value += group_5[player_mode_level];
             spell_value += group_1[player_mode_level];
-            break;
-
-        case spl_Black_Prayer:  /* loc_C2A9B */
+        } break;
+        case spl_Black_Prayer:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx == player_idx) continue;
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
                 counter++;
             }
             spell_value += group_4[player_mode_level];
             spell_value += (counter * 4);
             break;
-
-        case spl_Wall_Of_Darkness:  /* loc_C2C57 */
+        case spl_Wall_Of_Darkness:
             counter = 0;
             if(player_idx == _combat_defender_player)
             {
                 for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
                 {
-                    bu_ptr = &battle_units[battle_unit_idx];
-                    if(bu_ptr->status != bus_Active) continue;
-                    if(bu_ptr->controller_idx == player_idx) continue;
+                    if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                    if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
                     if(!Battle_Unit_Has_Ranged_Attack(battle_unit_idx)) continue;
-                    counter += bu_ptr->ranged;
+                    counter += battle_units[battle_unit_idx].ranged;
                 }
                 spell_value += (group_4[player_mode_level] + (counter * 2));
             }
@@ -18466,17 +18515,15 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value = -100;
             }
             break;
-
-        case spl_Wrack:  /* loc_C2CD9 */
+        case spl_Wrack:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx == player_idx) continue;
-                if((Combat_Effective_Resistance(*bu_ptr, sbr_Death) + 1) >= 10) continue;
-                if(bu_ptr->Attribs_1 & USA_IMMUNITY_DEATH) continue;
-                counter += bu_ptr->figure_cnt;
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                if((Combat_Effective_Resistance(battle_units[battle_unit_idx], sbr_Death) + 1) >= 10) continue;
+                if(battle_units[battle_unit_idx].Attribs_1 & USA_IMMUNITY_DEATH) continue;
+                counter += battle_units[battle_unit_idx].figure_cnt;
             }
             if(counter > 0)
             {
@@ -18488,17 +18535,15 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value -= 100;
             }
             break;
-
-        case spl_Death_Spell:  /* loc_C2DA2 */
+        case spl_Death_Spell:
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status != bus_Active) continue;
-                if(bu_ptr->controller_idx == player_idx) continue;
-                if((Combat_Effective_Resistance(*bu_ptr, sbr_Death) - 2) >= 10) continue;
-                if(bu_ptr->Attribs_1 & USA_IMMUNITY_DEATH) continue;
-                counter += bu_ptr->figure_cnt;
+                if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                if(battle_units[battle_unit_idx].controller_idx == player_idx) continue;
+                if((Combat_Effective_Resistance(battle_units[battle_unit_idx], sbr_Death) - 2) >= 10) continue;
+                if(battle_units[battle_unit_idx].Attribs_1 & USA_IMMUNITY_DEATH) continue;
+                counter += battle_units[battle_unit_idx].figure_cnt;
             }
             if(counter > 0)
             {
@@ -18510,28 +18555,25 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 spell_value -= 100;
             }
             break;
-
-        case spl_Animate_Dead:  /* loc_C2E5B */
-            /* NIU  the counted total is never applied to the score - Dasm dead code, kept for fidelity */
+        case spl_Animate_Dead:
+            /* OGBUG:  the counted total is never applied to the score - Dasm dead code, kept for fidelity */
             counter = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                bu_ptr = &battle_units[battle_unit_idx];
-                if(bu_ptr->status <= bus_Active) continue;
-                if(bu_ptr->status == bus_Gone) continue;
-                if(bu_ptr->race == rt_Death) continue;
-                if(_UNITS[bu_ptr->unit_idx].Hero_Slot != ST_UNDEFINED) continue;
-                if(_UNITS[bu_ptr->unit_idx].wp == 9) continue;
+                if(battle_units[battle_unit_idx].status <= bus_Active) continue;
+                if(battle_units[battle_unit_idx].status == bus_Gone) continue;
+                if(battle_units[battle_unit_idx].race == rt_Death) continue;
+                if(_UNITS[battle_units[battle_unit_idx].unit_idx].Hero_Slot != ST_UNDEFINED) continue;
+                if(_UNITS[battle_units[battle_unit_idx].unit_idx].wp == 9) continue;
                 counter++;
             }
             break;
-
-        case spl_Recall_Hero:  /* loc_C323E */
+        case spl_Recall_Hero:
             if(_players[player_idx].casting_spell_idx == spl_Spell_Of_Return)
             {
-                spell_value = -100;  /* NOTE  falls through to the checks below, unlike spl_Word_Of_Recall */
+                spell_value = -100;  /* OGBUG: falls through to the checks below, unlike spl_Word_Of_Recall */
             }
-            if(player_idx == 0)
+            if(player_idx == HUMAN_PLAYER_IDX)
             {
                 spell_value = -100;
             }
@@ -18540,11 +18582,10 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 counter = 0;
                 for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
                 {
-                    bu_ptr = &battle_units[battle_unit_idx];
-                    if(bu_ptr->status != bus_Active) continue;
-                    if(bu_ptr->controller_idx != player_idx) continue;
-                    if(_UNITS[bu_ptr->unit_idx].Hero_Slot <= ST_UNDEFINED) continue;
-                    if((player_mode_level < 2) || ((bu_ptr->front_figure_damage + 3) >= bu_ptr->hits))
+                    if(battle_units[battle_unit_idx].status != bus_Active) continue;
+                    if(battle_units[battle_unit_idx].controller_idx != player_idx) continue;
+                    if(_UNITS[battle_units[battle_unit_idx].unit_idx].Hero_Slot <= ST_UNDEFINED) continue;
+                    if((player_mode_level < 2) || ((battle_units[battle_unit_idx].front_figure_damage + 3) >= battle_units[battle_unit_idx].hits))
                     {
                         counter++;
                     }
@@ -18559,15 +18600,9 @@ int16_t AI_EvaluateCmbtSpell(int16_t player_idx, int16_t spell_idx, int16_t play
                 }
             }
             break;
-
-        default:  /* loc_C3306  no situational adjustment */
-            break;
     }
-
-    /* common tail (loc_C3306) */
     spell_value += (Casting_Cost_Reduction(player_idx, spell_idx) / 2);
     spell_value += Random(20);
-
     return spell_value;
 }
 
@@ -18603,23 +18638,15 @@ int16_t Effective_Battle_Unit_Strength(int16_t battle_unit_idx)
 
 
 // WZD ovr139p04
-// drake178: AI_SetCombatRealms()
-/*
-Combat-start setup for the AI spell-realm bookkeeping: for each side, builds the castable-spell
-list and ORs (1 << magic_realm) into the side's realm flags for every offensive spell (direct
-damage, destroy-unit, resistable, mundane curse, plus Creature Binding - the defender pass also
-counts Chaos Channels, an OG asymmetry), then computes both sides' per-realm unit threat arrays.
-NOTE  the realm flag globals are never cleared first - values accumulate across combats (faithful)
-*/
-void AI_SetCombatRealms(void)
+/* OGBUG: g_ai_combat_attacker_realm_flags and g_ai_combat_defender_unit_realms are not cleared, so flags accumulate across combat sessions */
+void AI_Prepare_Combat_Realm_Threats(void)
 {
-    int16_t spell_list[92];    /* Spell_List  [bp-0BAh..bp-2] */
-    int16_t range_modifier = 0;   /* Range_Modifier */
-    int16_t list_idx = 0;         /* _SI_ */
-    int16_t spell_type = 0;       /* _DI_ */
-
+    int16_t spell_list[92] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t range_modifier = 0;
+    int16_t list_idx = 0;
+    int16_t spell_type = 0;
     range_modifier = Combat_Casting_Cost_Multiplier(_combat_attacker_player);
-    AI_CombatSpellList((_combat_attacker_player + CASTER_IDX_BASE), &spell_list[0], range_modifier);
+    AI_Build_Castable_Combat_Spell_List((_combat_attacker_player + CASTER_IDX_BASE), &spell_list[0], range_modifier);
     for(list_idx = 0; list_idx < GUI_Multipurpose_Int; list_idx++)
     {
         spell_type = spell_data_table[spell_list[list_idx]].type;
@@ -18640,9 +18667,8 @@ void AI_SetCombatRealms(void)
             g_ai_combat_attacker_realm_flags |= (1 << spell_data_table[spell_list[list_idx]].magic_realm);
         }
     }
-
     range_modifier = Combat_Casting_Cost_Multiplier(_combat_defender_player);
-    AI_CombatSpellList((_combat_defender_player + CASTER_IDX_BASE), &spell_list[0], range_modifier);
+    AI_Build_Castable_Combat_Spell_List((_combat_defender_player + CASTER_IDX_BASE), &spell_list[0], range_modifier);
     for(list_idx = 0; list_idx < GUI_Multipurpose_Int; list_idx++)
     {
         spell_type = spell_data_table[spell_list[list_idx]].type;
@@ -18659,103 +18685,93 @@ void AI_SetCombatRealms(void)
             ||
             (spell_list[list_idx] == spl_Creature_Binding)
             ||
-            (spell_list[list_idx] == spl_Chaos_Channels)  /* defender-pass extra - OG asymmetry */
+            (spell_list[list_idx] == spl_Chaos_Channels)  /* OGBUG: defender-pass extra - asymmetry; see AITP_DispelMagic() */
         )
         {
             g_ai_combat_defender_realm_flags |= (1 << spell_data_table[spell_list[list_idx]].magic_realm);
         }
     }
-
-    AI_UnitThreatRealms(_combat_attacker_player, &g_ai_combat_attacker_unit_realms[0]);
-    AI_UnitThreatRealms(_combat_defender_player, &g_ai_combat_defender_unit_realms[0]);
+    AI_Build_Unit_Realm_Threat_Percentages(_combat_attacker_player, &g_ai_combat_attacker_unit_realms[0]);
+    AI_Build_Unit_Realm_Threat_Percentages(_combat_defender_player, &g_ai_combat_defender_unit_realms[0]);
 }
 
 
 // WZD ovr139p05
-// drake178: AI_UnitThreatRealms()
-/*
-Computes the given player's per-realm unit threat percentages: tallies every own active battle
-unit's attack contributions (melee/ranged strength, breath and gaze attacks, spell-caster and
-touch-attack specials) into a total plus per-realm buckets (indexed by sbr_ realm), then converts
-each bucket into a percentage of the total.
-*/
-void AI_UnitThreatRealms(int16_t player_idx, int16_t * realm_array)
+void AI_Build_Unit_Realm_Threat_Percentages(int16_t player_idx, int16_t * realm_array)
 {
-    int32_t enchantments = 0;     /* Enchants_HO:Enchants_LO */
-    int16_t total_strength = 0;   /* Total_Strength */
-    int16_t itr = 0;              /* _SI_ (realm loops) */
-    int16_t battle_unit_idx = 0;  /* _SI_ (unit loop) */
-    struct s_BATTLE_UNIT * bu_ptr = NULL;
-
+    int32_t enchantments = 0;
+    int16_t total_strength = 0;
+    int16_t itr = 0;
+    int16_t battle_unit_idx = 0;
     total_strength = 0;
     for(itr = 0; itr < 5; itr++)
     {
         realm_array[itr] = 0;
     }
-
     for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
     {
-        bu_ptr = &battle_units[battle_unit_idx];
-        if(bu_ptr->controller_idx != player_idx) continue;
-        if(bu_ptr->status != bus_Active) continue;
-
-        enchantments = bu_ptr->enchantments;
-        enchantments |= bu_ptr->item_enchantments;
-        enchantments |= _UNITS[bu_ptr->unit_idx].enchantments;
-
-        total_strength += (bu_ptr->melee * bu_ptr->figure_cnt);
-        total_strength += (bu_ptr->ranged * bu_ptr->figure_cnt);
-
-        if((bu_ptr->ranged_type == srat_FireBreath) || (bu_ptr->ranged_type == srat_Lightning))
+        if(battle_units[battle_unit_idx].controller_idx != player_idx)
         {
-            realm_array[sbr_Chaos] += (bu_ptr->ranged * bu_ptr->figure_cnt);
+            continue;
         }
-        if(bu_ptr->ranged_type == srat_StoneGaze)
+        if(battle_units[battle_unit_idx].status != bus_Active)
         {
-            realm_array[sbr_Nature] += (bu_ptr->ranged * bu_ptr->figure_cnt);
+            continue;
         }
-        if((bu_ptr->Attribs_2 & USA_FIREBALL) || (bu_ptr->Attribs_2 & USA_DOOMBOLT))
+        enchantments = battle_units[battle_unit_idx].enchantments;
+        enchantments |= battle_units[battle_unit_idx].item_enchantments;
+        enchantments |= _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
+        total_strength += (battle_units[battle_unit_idx].melee * battle_units[battle_unit_idx].figure_cnt);
+        total_strength += (battle_units[battle_unit_idx].ranged * battle_units[battle_unit_idx].figure_cnt);
+        if((battle_units[battle_unit_idx].ranged_type == srat_FireBreath) || (battle_units[battle_unit_idx].ranged_type == srat_Lightning))
+        {
+            realm_array[sbr_Chaos] += (battle_units[battle_unit_idx].ranged * battle_units[battle_unit_idx].figure_cnt);
+        }
+        if(battle_units[battle_unit_idx].ranged_type == srat_StoneGaze)
+        {
+            realm_array[sbr_Nature] += (battle_units[battle_unit_idx].ranged * battle_units[battle_unit_idx].figure_cnt);
+        }
+        if((battle_units[battle_unit_idx].Attribs_2 & USA_FIREBALL) || (battle_units[battle_unit_idx].Attribs_2 & USA_DOOMBOLT))
         {
             total_strength += 10;
             realm_array[sbr_Chaos] += 10;
         }
-        if((bu_ptr->Attribs_2 & USA_IMMOLATION) || (enchantments & UE_IMMOLATION))
+        if((battle_units[battle_unit_idx].Attribs_2 & USA_IMMOLATION) || (enchantments & UE_IMMOLATION))
         {
             total_strength += 20;
             realm_array[sbr_Chaos] += 20;
         }
-        if((bu_ptr->attack_attributes & Att_LifeSteal) || (bu_ptr->melee_attack_attributes & Att_LifeSteal) || (bu_ptr->ranged_attack_attributes & Att_LifeSteal))
+        if((battle_units[battle_unit_idx].attack_attributes & Att_LifeSteal) || (battle_units[battle_unit_idx].melee_attack_attributes & Att_LifeSteal) || (battle_units[battle_unit_idx].ranged_attack_attributes & Att_LifeSteal))
         {
-            total_strength += ((bu_ptr->Spec_Att_Attrib + 3) * bu_ptr->figure_cnt);
-            realm_array[sbr_Death] += ((bu_ptr->Spec_Att_Attrib + 3) * bu_ptr->figure_cnt);
+            total_strength += ((battle_units[battle_unit_idx].Spec_Att_Attrib + 3) * battle_units[battle_unit_idx].figure_cnt);
+            realm_array[sbr_Death] += ((battle_units[battle_unit_idx].Spec_Att_Attrib + 3) * battle_units[battle_unit_idx].figure_cnt);
         }
-        if((bu_ptr->attack_attributes & Att_Destruct) || (bu_ptr->melee_attack_attributes & Att_Destruct) || (bu_ptr->ranged_attack_attributes & Att_Destruct))
+        if((battle_units[battle_unit_idx].attack_attributes & Att_Destruct) || (battle_units[battle_unit_idx].melee_attack_attributes & Att_Destruct) || (battle_units[battle_unit_idx].ranged_attack_attributes & Att_Destruct))
         {
-            total_strength += (bu_ptr->figure_cnt * 5);
-            realm_array[sbr_Chaos] += (bu_ptr->figure_cnt * 5);
+            total_strength += (battle_units[battle_unit_idx].figure_cnt * 5);
+            realm_array[sbr_Chaos] += (battle_units[battle_unit_idx].figure_cnt * 5);
         }
-        if((bu_ptr->attack_attributes & Att_StnTouch) || (bu_ptr->melee_attack_attributes & Att_StnTouch) || (bu_ptr->ranged_attack_attributes & Att_StnTouch))
+        if((battle_units[battle_unit_idx].attack_attributes & Att_StnTouch) || (battle_units[battle_unit_idx].melee_attack_attributes & Att_StnTouch) || (battle_units[battle_unit_idx].ranged_attack_attributes & Att_StnTouch))
         {
-            total_strength += (bu_ptr->figure_cnt * 5);
-            realm_array[sbr_Nature] += (bu_ptr->figure_cnt * 5);
+            total_strength += (battle_units[battle_unit_idx].figure_cnt * 5);
+            realm_array[sbr_Nature] += (battle_units[battle_unit_idx].figure_cnt * 5);
         }
-        if((bu_ptr->Attribs_2 & USA_CAUSEFEAR) || (enchantments & UE_CLOAK_OF_FEAR))
+        if((battle_units[battle_unit_idx].Attribs_2 & USA_CAUSEFEAR) || (enchantments & UE_CLOAK_OF_FEAR))
         {
-            total_strength += bu_ptr->figure_cnt;
-            realm_array[sbr_Death] += bu_ptr->figure_cnt;
+            total_strength += battle_units[battle_unit_idx].figure_cnt;
+            realm_array[sbr_Death] += battle_units[battle_unit_idx].figure_cnt;
         }
-        if((bu_ptr->attack_attributes & Att_DthTouch) || (bu_ptr->melee_attack_attributes & Att_DthTouch) || (bu_ptr->ranged_attack_attributes & Att_DthTouch))
+        if((battle_units[battle_unit_idx].attack_attributes & Att_DthTouch) || (battle_units[battle_unit_idx].melee_attack_attributes & Att_DthTouch) || (battle_units[battle_unit_idx].ranged_attack_attributes & Att_DthTouch))
         {
-            total_strength += (bu_ptr->figure_cnt * 5);
-            realm_array[sbr_Death] += (bu_ptr->figure_cnt * 5);
+            total_strength += (battle_units[battle_unit_idx].figure_cnt * 5);
+            realm_array[sbr_Death] += (battle_units[battle_unit_idx].figure_cnt * 5);
         }
-        if((bu_ptr->attack_attributes & Att_DsplEvil) || (bu_ptr->melee_attack_attributes & Att_DsplEvil) || (bu_ptr->ranged_attack_attributes & Att_DsplEvil))
+        if((battle_units[battle_unit_idx].attack_attributes & Att_DsplEvil) || (battle_units[battle_unit_idx].melee_attack_attributes & Att_DsplEvil) || (battle_units[battle_unit_idx].ranged_attack_attributes & Att_DsplEvil))
         {
-            total_strength += (bu_ptr->figure_cnt * 5);
-            realm_array[sbr_Life] += (bu_ptr->figure_cnt * 5);
+            total_strength += (battle_units[battle_unit_idx].figure_cnt * 5);
+            realm_array[sbr_Life] += (battle_units[battle_unit_idx].figure_cnt * 5);
         }
     }
-
     if(total_strength != 0)
     {
         for(itr = 0; itr < 5; itr++)
@@ -18767,34 +18783,19 @@ void AI_UnitThreatRealms(int16_t player_idx, int16_t * realm_array)
 
 
 // WZD ovr139p06
-// drake178: AI_CombatSpellList()
-/*
-Builds the list of spells the caster could pay for right now and leaves the entry count in
-GUI_Multipurpose_Int.  A wizard caster (CASTER_IDX_BASE + player) is limited by remaining combat
-casting skill and by (mana reserve * 10 / range multiplier); a battle unit is limited by its own
-mana.  Caster-creature battle units (USA_CASTER_20/40) pick only from their own realm's 40 spells;
-everyone else scans the player's known spell list (wizards price by Casting_Cost(), units by base
-cost), and battle units also offer their hero's four innate spells.
-OGBUG  the hero-spell scan is gated on caster < 19, not < 20, so battle unit #19 never offers hero spells
-OGBUG  hero spell bytes are sign-extended: an innate spell with id > 127 reads as negative and is skipped
-*/
-void AI_CombatSpellList(int16_t caster_id, int16_t * spell_list, int16_t range_mod)
+void AI_Build_Castable_Combat_Spell_List(int16_t caster_idx, int16_t * spell_list, int16_t range_mod)
 {
-    int16_t mana_limit = 0;       /* Mana_Limit */
-    int16_t hero_spell_idx = 0;   /* Hero_Spell_Index */
-    int16_t spell_cost = 0;       /* Spell_Cost */
-    int16_t in_realm_idx = 0;     /* InRealm_Index */
-    int16_t realm_idx = 0;        /* Realm_Index */
-    int16_t player_idx = 0;       /* player_idx */
-    int16_t caster = 0;           /* _DI_ */
-    int16_t spell_idx = 0;        /* _SI_ */
-
-    caster = caster_id;
+    int16_t mana_limit = 0;
+    int16_t hero_spell_idx = 0;
+    int16_t spell_cost = 0;
+    int16_t in_realm_idx = 0;
+    int16_t realm_idx = 0;
+    int16_t player_idx = 0;
+    int16_t spell_idx = 0;
     GUI_Multipurpose_Int = 0;
-
-    if(caster > (CASTER_IDX_BASE - 1))
+    if(caster_idx > (CASTER_IDX_BASE - 1))
     {
-        player_idx = (caster - CASTER_IDX_BASE);
+        player_idx = (caster_idx - CASTER_IDX_BASE);
         mana_limit = _players[player_idx].Cmbt_Skill_Left;
         if((int16_t)(((int32_t)_players[player_idx].mana_reserve * 10) / range_mod) < mana_limit)
         {
@@ -18803,36 +18804,34 @@ void AI_CombatSpellList(int16_t caster_id, int16_t * spell_list, int16_t range_m
     }
     else
     {
-        player_idx = battle_units[caster].controller_idx;
-        mana_limit = (uint8_t)battle_units[caster].mana;
+        player_idx = battle_units[caster_idx].controller_idx;
+        mana_limit = (uint8_t)battle_units[caster_idx].mana;
     }
-
-    if(caster < CASTER_IDX_BASE)
+    if(caster_idx < CASTER_IDX_BASE)
     {
-        if(battle_units[caster].Attribs_1 & (USA_CASTER_20 | USA_CASTER_40))
+        if((battle_units[caster_idx].Attribs_1 & (USA_CASTER_20 | USA_CASTER_40)) != 0)
         {
-            /* caster creature: only its own realm's spells (fantastic race - 16 == sbr_ realm) */
-            for(in_realm_idx = 0; in_realm_idx < 40; in_realm_idx++)
+            /* caster_idx creature: only its own realm's spells (fantastic race - 16 == sbr_ realm) */
+            for(in_realm_idx = 0; in_realm_idx < NUM_SPELLS_PER_MAGIC_REALM; in_realm_idx++)
             {
-                spell_idx = (((battle_units[caster].race - 16) * 40) + in_realm_idx + 1);
-                if(spell_data_table[spell_idx].Eligibility == 1) continue;
+                spell_idx = (((battle_units[caster_idx].race - 16) * NUM_SPELLS_PER_MAGIC_REALM) + in_realm_idx + 1);
+                if(spell_data_table[spell_idx].Eligibility == 1) { continue; }
                 spell_cost = spell_data_table[spell_idx].casting_cost;
-                if(spell_cost > mana_limit) continue;
+                if(spell_cost > mana_limit) { continue; }
                 spell_list[GUI_Multipurpose_Int] = spell_idx;
                 GUI_Multipurpose_Int++;
             }
             return;
         }
     }
-
-    for(realm_idx = 0; realm_idx < 6; realm_idx++)
+    for(realm_idx = 0; realm_idx < NUM_MAGIC_REALMS; realm_idx++)
     {
-        for(in_realm_idx = 0; in_realm_idx < 40; in_realm_idx++)
+        for(in_realm_idx = 0; in_realm_idx < NUM_SPELLS_PER_MAGIC_REALM; in_realm_idx++)
         {
-            spell_idx = ((realm_idx * 40) + in_realm_idx + 1);
-            if(_players[player_idx].spells_list[((realm_idx * 40) + in_realm_idx)] != sls_Known) continue;
+            spell_idx = ((realm_idx * NUM_SPELLS_PER_MAGIC_REALM) + in_realm_idx + 1);
+            if(_players[player_idx].spells_list[((realm_idx * NUM_SPELLS_PER_MAGIC_REALM) + in_realm_idx)] != sls_Known) continue;
             if(spell_data_table[spell_idx].Eligibility == 1) continue;
-            if(caster > (CASTER_IDX_BASE - 1))
+            if(caster_idx > (CASTER_IDX_BASE - 1))
             {
                 spell_cost = Casting_Cost(player_idx, spell_idx, 1);
             }
@@ -18845,15 +18844,16 @@ void AI_CombatSpellList(int16_t caster_id, int16_t * spell_list, int16_t range_m
             GUI_Multipurpose_Int++;
         }
     }
-
-    if(caster < 19)  /* OGBUG: battle unit #19 is excluded; should be `< CASTER_IDX_BASE` */
+    /* OGBUG  the hero-spell scan is gated on caster_idx < 19, not < 20, so battle unit #19 never offers hero spells */
+    if(caster_idx < (CASTER_IDX_BASE - 1))  /* OGBUG: battle unit #19 is excluded; should be `< CASTER_IDX_BASE` */
     {
-        for(hero_spell_idx = 0; hero_spell_idx < 4; hero_spell_idx++)
+        for(hero_spell_idx = 0; hero_spell_idx < NUM_HERO_SPELL_SLOTS; hero_spell_idx++)
         {
-            spell_idx = (int8_t)_HEROES2[player_idx]->heroes[_UNITS[battle_units[caster].unit_idx].type].Spells[hero_spell_idx];  /* OGBUG  sign-extended byte */
-            if(spell_idx <= 0) continue;
-            if(spell_data_table[spell_idx].Eligibility == 1) continue;
-            if(spell_data_table[spell_idx].casting_cost > mana_limit) continue;
+            /* OGBUG  hero spell bytes are sign-extended: an innate spell with id > 127 reads as negative and is skipped */
+            spell_idx = (int8_t)_HEROES2[player_idx]->heroes[_UNITS[battle_units[caster_idx].unit_idx].type].Spells[hero_spell_idx];  /* OGBUG  sign-extended byte */
+            if(spell_idx <= 0) { continue; }
+            if(spell_data_table[spell_idx].Eligibility == 1) { continue; }
+            if(spell_data_table[spell_idx].casting_cost > mana_limit) { continue; }
             spell_list[GUI_Multipurpose_Int] = spell_idx;
             GUI_Multipurpose_Int++;
         }

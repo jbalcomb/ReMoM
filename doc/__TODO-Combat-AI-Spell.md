@@ -11,8 +11,8 @@ Call chain:
 ```
 AI_Execute_Unit_Action (CMBTAI.c:268)                       ← BUA_UseItem / BUA_CastSpell arm
   └ Combat_Cast_Spell(20+player, …)   CMBTAI.c:521       done-done
-      ├ AI_SetCombatRealms()                             → AI_UnitThreatRealms()
-      ├ AI_SelectCmbtSpell()                             → AI_CombatSpellList(), AI_EvaluateCmbtSpell()
+      ├ AI_Prepare_Combat_Realm_Threats()                             → AI_Build_Unit_Realm_Threat_Percentages()
+      ├ AI_Select_Combat_Spell()                             → AI_Build_Castable_Combat_Spell_List(), AI_Score_Combat_Spell()
       └ AITP_Combat_Spell()                              done-done
           └ 10 AITP_* sub-pickers
 ```
@@ -25,11 +25,11 @@ Status legend: **[done-done]** reviewed 1:1 + doc + builds · **[impl]** substan
 | `AITP_Combat_Spell` | [Combat.c:11650](../MoM/src/Combat.c#L11650) | **done-done** | combined combat target picker; [walkthrough](ComputerPlayer/Combat-AITP_Combat_Spell.md) |
 | `Combat_Spell_Dispel_Attempt` | [Spells133.c:653](../MoM/src/Spells133.c#L653) | **impl** (builds clean) | counter/node dispel roll; was `Combat_Spell_Dispel_Attempt`; arg order verified vs asm |
 | `Combat_Spell_Counter_Message` | [Spells133.c:532](../MoM/src/Spells133.c#L532) | **impl** (builds clean) | "Counter Magic" popup; was `Combat_Spell_Counter_Message`; arg order verified vs asm |
-| `AI_SelectCmbtSpell` | [Combat.c:24565](../MoM/src/Combat.c#L24565) | **impl** | builds castable list, scores via `AI_EvaluateCmbtSpell`, returns best |
-| `AI_EvaluateCmbtSpell` | [Combat.c:24632](../MoM/src/Combat.c#L24632) | **impl** | 5 situational tables by threat mode + per-spell adjustments; score / -1 / -100 |
-| `AI_CombatSpellList` | [Combat.c:25959](../MoM/src/Combat.c#L25959) | **impl** | affordable-spell list (wizard vs unit vs creature realm sets); count → `GUI_Multipurpose_Int` |
-| `AI_SetCombatRealms` | [Combat.c:25792](../MoM/src/Combat.c#L25792) | **impl** | sets attacker/defender realm bitmasks; calls `AI_UnitThreatRealms` ×2 |
-| `AI_UnitThreatRealms` | [Combat.c:25860](../MoM/src/Combat.c#L25860) | **impl** | per-realm attack tally → percentages |
+| `AI_Select_Combat_Spell` | [Combat.c:24565](../MoM/src/Combat.c#L24565) | **impl** | builds castable list, scores via `AI_Score_Combat_Spell`, returns best |
+| `AI_Score_Combat_Spell` | [Combat.c:24632](../MoM/src/Combat.c#L24632) | **impl** | 5 situational tables by threat mode + per-spell adjustments; score / -1 / -100 |
+| `AI_Build_Castable_Combat_Spell_List` | [Combat.c:25959](../MoM/src/Combat.c#L25959) | **impl** | affordable-spell list (wizard vs unit vs creature realm sets); count → `GUI_Multipurpose_Int` |
+| `AI_Prepare_Combat_Realm_Threats` | [Combat.c:25792](../MoM/src/Combat.c#L25792) | **impl** | sets attacker/defender realm bitmasks; calls `AI_Build_Unit_Realm_Threat_Percentages` ×2 |
+| `AI_Build_Unit_Realm_Threat_Percentages` | [Combat.c:25860](../MoM/src/Combat.c#L25860) | **impl** | per-realm attack tally → percentages |
 | `AITP_DarknessLight` | [Combat.c:12065](../MoM/src/Combat.c#L12065) | **impl** | active Life/Death-race unit → 99 |
 | `AITP_Healing` | [Combat.c:12099](../MoM/src/Combat.c#L12099) | **impl** | own unit missing most HP, weighted by attack |
 | `AITP_WarpWood` | [Combat.c:12144](../MoM/src/Combat.c#L12144) | **impl** | enemy missile unit by ammo value |
@@ -44,7 +44,7 @@ Status legend: **[done-done]** reviewed 1:1 + doc + builds · **[impl]** substan
 
 # To-Do List
 
-- [ ] **Done-done the 5 AI evaluators** — `AI_SelectCmbtSpell`, `AI_EvaluateCmbtSpell`, `AI_CombatSpellList`, `AI_SetCombatRealms`, `AI_UnitThreatRealms`: 1:1 walkthrough vs their `ovr139` disassembly, `B`/`R` bug pass, walkthrough doc, checkbox.
+- [ ] **Done-done the 5 AI evaluators** — `AI_Select_Combat_Spell`, `AI_Score_Combat_Spell`, `AI_Build_Castable_Combat_Spell_List`, `AI_Prepare_Combat_Realm_Threats`, `AI_Build_Unit_Realm_Threat_Percentages`: 1:1 walkthrough vs their `ovr139` disassembly, `B`/`R` bug pass, walkthrough doc, checkbox.
 - [ ] **Done-done the 10 `AITP_*` sub-pickers** (`DarknessLight`, `HolyWord`, `Healing`, `WarpWood`, `WarpCreature`, `EarthToMud`, `Disrupt`, `RecallHero`, `CracksCall`, `DispelMagic`) — same treatment vs `ovr111`.
 - [ ] **Resolve `UU15_AITP_Disintegrate`** — confirm nothing calls a standalone picker (Disintegrate targeting is inline in `AITP_Combat_Spell`'s `scc_Combat_Destroy_Unit`/`Banish` case) and delete the comment stub; else reconstruct it.
 - [ ] **Tracker hygiene** — add the 15 `impl` functions above to [stub_wip_todo.md](#TODO/stub_wip_todo.md); they are currently untracked.

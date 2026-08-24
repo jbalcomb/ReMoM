@@ -1,6 +1,10 @@
 Combat-Spell_Cast_AI_Target.md
 
 SEEALSO:  C:\STU\devel\ReMoM\doc\ComputerPlayer\Combat-AITP_Combat_Spell.md
+SEEALSO:  Combat-Combat_Spellbook_Screen.md
+SEEALSO:  Combat-Spell_Cast.md
+SEEALSO:  Combat-AI_Turn.md
+SEEALSO:  Combat-Spell_Cast_AI_Target.md
 
 AITP_Combat_Spell()
 
@@ -15,8 +19,8 @@ Combat_Cast_Spell_With_Caster()
     |-> Combat_Cast_Spell()
 
 Combat_Cast_Spell()
-    |-> AI_SetCombatRealms()
-    |-> AI_SelectCmbtSpell()
+    |-> AI_Prepare_Combat_Realm_Threats()
+    |-> AI_Select_Combat_Spell()
     |-> AITP_Combat_Spell()
 
 NOT:

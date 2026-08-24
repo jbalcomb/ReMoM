@@ -34,7 +34,7 @@ Calc_Battlefield_Bonuses()
 Combat_Structure()
 Cast_Disenchant()
 Cast_Dispel_Magic()
-AI_EvaluateCmbtSpell()
+AI_Score_Combat_Spell()
 Combat_Screen_Load_Resources()
 Strategic_Combat_Allocate()
 AITP_Combat_Spell()
@@ -108,13 +108,13 @@ Cast_Disenchant+B5                          add     bx, [word ptr combat_enchant
 Cast_Disenchant+1AE                         add     bx, [word ptr combat_enchantments]  
 Cast_Dispel_Magic+6B9                       les     bx, [combat_enchantments]           
 Cast_Dispel_Magic:loc_B281C                 les     bx, [combat_enchantments]           
-AI_EvaluateCmbtSpell+107                    les     bx, [combat_enchantments]           
-AI_EvaluateCmbtSpell+112                    les     bx, [combat_enchantments]           
-AI_EvaluateCmbtSpell+11D                    les     bx, [combat_enchantments]           
-AI_EvaluateCmbtSpell+147                    les     bx, [combat_enchantments]           
-AI_EvaluateCmbtSpell+152                    les     bx, [combat_enchantments]           
-AI_EvaluateCmbtSpell+15D                    les     bx, [combat_enchantments]           
-AI_EvaluateCmbtSpell:loc_C3211              les     bx, [combat_enchantments]           
+AI_Score_Combat_Spell+107                    les     bx, [combat_enchantments]           
+AI_Score_Combat_Spell+112                    les     bx, [combat_enchantments]           
+AI_Score_Combat_Spell+11D                    les     bx, [combat_enchantments]           
+AI_Score_Combat_Spell+147                    les     bx, [combat_enchantments]           
+AI_Score_Combat_Spell+152                    les     bx, [combat_enchantments]           
+AI_Score_Combat_Spell+15D                    les     bx, [combat_enchantments]           
+AI_Score_Combat_Spell:loc_C3211              les     bx, [combat_enchantments]           
 Combat_Screen_Load_Resources+118                  mov     [word ptr combat_enchantments+2], dx
 Strategic_Combat_Allocate+37                mov     [word ptr combat_enchantments+2], dx
 AITP_Combat_Spell+DE9                  mov     es, [word ptr combat_enchantments+2]
