@@ -253,9 +253,7 @@ void Save_Alias_Colors(void);
 void Restore_Alias_Colors(void);
 
 // WZD s17p15
-// PLATFORM  MSDOS  int16_t Print_Far(int16_t x, int16_t y, char * string);
-// int16_t Print_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt);
-int16_t Print_Far(int16_t x, int16_t y, char * src);
+int16_t Print_Far(int16_t x, int16_t y, char /* FAR */ * string);
 
 // WZD s17p16
 // int16_t Print_Centered_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt);

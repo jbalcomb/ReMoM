@@ -374,7 +374,7 @@ int16_t Combat_Screen_TST_004(int16_t combat_attacker_player_idx, int16_t combat
     
     defender_unit_count = TST_Prepare_All_Battle_Units(troop_count, troops);
 
-//     if(_combat_attacker_player == _human_player_idx)
+//     if(_combat_attacker_player == _current_player_idx)
 //         Switch_Active_Battle_Unit(0);  /* first attacker battle_unit_idx */
 //     else
 //         Switch_Active_Battle_Unit((_combat_total_unit_count - defender_unit_count));  /* first defender battle_unit_idx */

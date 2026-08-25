@@ -321,9 +321,9 @@ map w,h                     12,10
 (current) map x,y           _map_x,y
 (current) plane             _map_plane
 target x,y                  _prev_world_x,y
-player idx                  _human_player_idx
+player idx                  _current_player_idx
 
-    Main_Screen_Draw() |-> Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
+    Main_Screen_Draw() |-> Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _current_player_idx);
 
 
 
@@ -453,7 +453,7 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
         Reset_Stack_Draw_Priority();
         Set_Entities_On_Map_Window(l_map_x, l_map_y, map_plane);
 
-        if(player_idx == _human_player_idx)
+        if(player_idx == _current_player_idx)
         {
             _map_x = l_map_x;
             _map_y = l_map_y;
@@ -949,7 +949,7 @@ void Set_Unit_Draw_Priority(void)
         }
 
         if(
-            (_UNITS[unit_idx].owner_idx != _human_player_idx)
+            (_UNITS[unit_idx].owner_idx != _current_player_idx)
             &&
             (Unit_Has_Invisibility(unit_idx) == ST_TRUE)
         )

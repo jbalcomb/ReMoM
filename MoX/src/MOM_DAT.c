@@ -2962,12 +2962,12 @@ int16_t _map_x;         // AKA _curr_world_x
 
 // WZD dseg:BD8C
 /*
-¿ Curren Player?
+¿ Current Player?
 ¿ ~ Hot-Seat Multi-Player ?
 MoO2
     _PLAYER_NUM
 */
-int16_t _human_player_idx = HUMAN_PLAYER_IDX;
+int16_t _current_player_idx = HUMAN_PLAYER_IDX;
 
 // WZD dseg:BD8E
 // TODO  why,what,where is `_unit`?  ¿ MoO2 _g_ship ? "active"/"current"?

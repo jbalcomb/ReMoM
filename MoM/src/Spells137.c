@@ -1448,7 +1448,7 @@ static void Target_Wizard_Screen_Draw(void)
             if(g_active_spell_idx != spl_Spell_Blast)
             {
 
-                var_14 = ((_players[itr].Dipl.Visible_Rel[(1 + _human_player_idx)] + 100) / 20);
+                var_14 = ((_players[itr].Dipl.Visible_Rel[(1 + _current_player_idx)] + 100) / 20);
 
                 Print_Centered((x + 21), (y + 49), diplo_state[var_14]);
 

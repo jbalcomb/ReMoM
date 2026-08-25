@@ -40,7 +40,7 @@ g_bldg_msg_ctr = 0;
 
 
 ### City_Cancel_Production()
-if(_CITIES[city_idx].owner_idx == _human_player_idx)
+if(_CITIES[city_idx].owner_idx == _current_player_idx)
     if(g_bldg_msg_ctr < 20)
         MSG_Building_Complete[g_bldg_msg_ctr].city_idx = city_idx;
         MSG_Building_Complete[g_bldg_msg_ctr].bldg_type_idx = -(_CITIES[city_idx].construction);  // DEDU  negative means?  ("...can no longer produce...")

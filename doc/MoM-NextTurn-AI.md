@@ -65,7 +65,7 @@ Objective
 Diplomacy
 
     Magic Screen
-        diplomatic_relations_idx = ((_players[gem_player_nums[itr_gems]].Dipl.Visible_Rel[_human_player_idx] + 100) / 20);
+        diplomatic_relations_idx = ((_players[gem_player_nums[itr_gems]].Dipl.Visible_Rel[_current_player_idx] + 100) / 20);
         Print_Centered(45 + (77 * itr_gems), 53, diplo_state[diplomatic_relations_idx]);
         diplomatic_treaties = _players[gem_player_nums[itr_gems]].Dipl.Dipl_Status[gem_player_nums[itr_treaties]];
         char diplo_state[11][9] =
@@ -96,7 +96,7 @@ Diplomacy
         char aWar[] = "War";
         char aFinalWar[] = "Final War";
     Mirror Screen
-        stu_strcat(GUI_String_1, _treaty_type_names[_players[_human_player_idx].Dipl.Dipl_Status[mirror_screen_player_idx]]);
+        stu_strcat(GUI_String_1, _treaty_type_names[_players[_current_player_idx].Dipl.Dipl_Status[mirror_screen_player_idx]]);
 
 
 

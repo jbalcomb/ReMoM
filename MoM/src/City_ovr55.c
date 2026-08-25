@@ -317,7 +317,7 @@ void Enemy_City_Screen(void)
                 if(
                     (city_enchantment_fields[itr] == input_field_idx)
                     &&
-                    (city_enchantment_owner_list[(city_enchantment_display_first + itr)] == _human_player_idx)
+                    (city_enchantment_owner_list[(city_enchantment_display_first + itr)] == _current_player_idx)
                 )
                 {
                     Play_Left_Click();
@@ -795,7 +795,7 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
         _players[player_idx].summon_wy = _CITIES[fortress_city_idx].wy;
     }
 
-    if(player_idx == _human_player_idx)
+    if(player_idx == _current_player_idx)
     {
         // drake178: ; BUG: ignores Oracle exploration radius
         Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 2);  // TODO  manifest constant for default scout range
@@ -1301,7 +1301,7 @@ void City_Check_Production(int16_t city_idx)
 void City_Cancel_Production(int16_t city_idx)
 {
 
-    if(_CITIES[city_idx].owner_idx == _human_player_idx)
+    if(_CITIES[city_idx].owner_idx == _current_player_idx)
     {
 
         if(g_bldg_msg_ctr < 20)
@@ -2250,7 +2250,7 @@ void All_City_Removed_Buildings(void)
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
 
-        if(_CITIES[itr_cities].owner_idx == _human_player_idx)
+        if(_CITIES[itr_cities].owner_idx == _current_player_idx)
         {
             _CITIES[itr_cities].sold_building = ST_FALSE;
         }

@@ -92,7 +92,7 @@ if _human_out_of_moves isn't true, then _human_handle_immobile shouldn't matter?
         {
             _human_out_of_moves = ST_FALSE;  // Where does this get used after this?
             Combat_Next_Turn();
-            Next_Battle_Unit(_human_player_idx);    // maybe, sets _human_out_of_moves = ST_TRUE and/or _human_handle_immobile = ST_FALSE
+            Next_Battle_Unit(_current_player_idx);    // maybe, sets _human_out_of_moves = ST_TRUE and/or _human_handle_immobile = ST_FALSE
             Assign_Combat_Grids();
             ...
         }
@@ -194,7 +194,7 @@ XREF:
 
 Is there something here with the current/human player?
 Does it matter that it is the 'Human Player'?
-_combat_local_player = _human_player_idx = HUMAN_PLAYER_IDX = 0
+_combat_local_player = _current_player_idx = HUMAN_PLAYER_IDX = 0
 
 What's the relationship with _human_handle_immobile?
 
@@ -388,7 +388,7 @@ set in 8 places
 
 
 Tactical_Combat__WIP()
-    if(_combat_attacker_player == _human_player_idx)
+    if(_combat_attacker_player == _current_player_idx)
         Switch_Active_Battle_Unit(0);
     else
         Switch_Active_Battle_Unit((_combat_total_unit_count - Defending_Unit_Count));
@@ -411,8 +411,8 @@ Tactical_Combat__WIP()
         j_Combat_Next_Turn()
         j_Turn_Off_Auto_Combat()
             Turn_Off_Auto_Combat()
-                j_Next_Battle_Unit(_human_player_idx)
-                    Next_Battle_Unit(_human_player_idx)
+                j_Next_Battle_Unit(_current_player_idx)
+                    Next_Battle_Unit(_current_player_idx)
 
 
 Next_Battle_Unit()
@@ -441,22 +441,22 @@ called for Turn_Off_Auto_Combat(), so doesn't *feel* like "Next"
 other six?
 Tactical_Combat__WIP()
     Pre Screen Loop
-        if(_combat_attacker_player == _human_player_idx)
-            j_Next_Battle_Unit(_human_player_idx)
+        if(_combat_attacker_player == _current_player_idx)
+            j_Next_Battle_Unit(_current_player_idx)
     Screen / Input Loop
         Eh? _active_battle_unit has become unavailable?
-            j_Next_Battle_Unit(_human_player_idx)
+            j_Next_Battle_Unit(_current_player_idx)
         _active_battle_unit is *confused*
-            j_Next_Battle_Unit(_human_player_idx)
+            j_Next_Battle_Unit(_current_player_idx)
         input_field_idx == wait_button_field
-            j_Next_Battle_Unit(_human_player_idx)
+            j_Next_Battle_Unit(_current_player_idx)
         input_field_idx == done_button_field
-            j_Next_Battle_Unit(_human_player_idx)
+            j_Next_Battle_Unit(_current_player_idx)
     Closing The Loop
         if leave_screen == ST_FALSE && _human_out_of_moves == ST_TRUE && _human_handle_immobile == ST_FALSE
             _human_out_of_moves = ST_FALSE
             j_Combat_Next_Turn()
-            j_Next_Battle_Unit(_human_player_idx)
+            j_Next_Battle_Unit(_current_player_idx)
 
 
 
@@ -495,7 +495,7 @@ Combat_Handlers:
 
 
 combat_result = Combat__WIP(player_idx, defender_idx, troop_count, &troops[0]);
-    if(((combat_attacker_player_idx == _human_player_idx) || (defender_idx == _human_player_idx)) && (magic_set.strategic_combat_only == ST_FALSE))
+    if(((combat_attacker_player_idx == _current_player_idx) || (defender_idx == _current_player_idx)) && (magic_set.strategic_combat_only == ST_FALSE))
         Battle_Outcome = Tactical_Combat__WIP(combat_attacker_player_idx, defender_idx, troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &Item_Count, &Item_List[0]);
 
 

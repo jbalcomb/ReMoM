@@ -699,7 +699,7 @@ void Event_Twiddle(void)
             m_current_event = et_Meteor;
             m_event_city_idx = events_table->Meteor_Data;
             m_event_player_idx = player_idx;
-            if(player_idx == _human_player_idx)
+            if(player_idx == _current_player_idx)
             {
                 m_event_message_type = 0;
             }
@@ -732,7 +732,7 @@ void Event_Twiddle(void)
         m_event_city_idx = 0;
         events_table->Gift_Player = m_event_player_idx;
         events_table->Gift_Status = es_Nothing;
-        if(events_table->Gift_Player == _human_player_idx)
+        if(events_table->Gift_Player == _current_player_idx)
         {
             m_event_message_type = 0;
         }
@@ -799,7 +799,7 @@ void Event_Twiddle(void)
         EVNT_MsgDataValue = events_table->marriage_neutral_city_idx;
         m_current_event = et_Marriage;
         m_event_player_idx = events_table->marriage_player_idx;
-        if(events_table->marriage_player_idx == _human_player_idx)
+        if(events_table->marriage_player_idx == _current_player_idx)
         {
             m_event_message_type = 0;
         }
@@ -820,7 +820,7 @@ void Event_Twiddle(void)
         _CITIES[city_idx].construction = bt_TradeGoods;
         _CITIES[city_idx].Prod_Accu = 0;
         _CITIES[city_idx].sold_building = ST_FALSE;
-        if(player_idx == _human_player_idx)  /* ¿ current player ? */
+        if(player_idx == _current_player_idx)  /* ¿ current player ? */
         {
             Set_Map_Square_Explored_Flags_XYP_Range(CITYX(), CITYY(), CITYP(), 3);
         }
@@ -846,7 +846,7 @@ void Event_Twiddle(void)
         EVNT_MsgDataValue = 0;
         m_event_city_idx = events_table->Earthquake_Data;
         events_table->Earthquake_Status = es_Nothing;
-        if(events_table->Earthquake_Player == _human_player_idx)
+        if(events_table->Earthquake_Player == _current_player_idx)
         {
             m_event_message_type = 0;
         }
@@ -887,7 +887,7 @@ void Event_Twiddle(void)
         m_event_player_idx = events_table->Pirates_Player;
         EVNT_MsgDataValue = events_table->Pirates_Data;
         events_table->Pirates_Status = es_Nothing;
-        if(events_table->Pirates_Player == _human_player_idx)
+        if(events_table->Pirates_Player == _current_player_idx)
         {
             m_event_message_type = 0;
         }
@@ -912,7 +912,7 @@ void Event_Twiddle(void)
         m_current_event = et_Plague;
         m_event_city_idx = events_table->Plague_Data;
         m_event_player_idx = events_table->Plague_Player;
-        if(events_table->Plague_Player == _human_player_idx)
+        if(events_table->Plague_Player == _current_player_idx)
         {
             m_event_message_type = 0;
         }
@@ -948,7 +948,7 @@ void Event_Twiddle(void)
                 events_table->Plague_Status = es_Nothing;
                 _CITIES[events_table->Plague_Data].population = 2;
             }
-            if(player_idx == _human_player_idx)
+            if(player_idx == _current_player_idx)
             {
                 if(events_table->Plague_Status == es_Nothing)
                 {
@@ -972,7 +972,7 @@ void Event_Twiddle(void)
         m_event_player_idx = events_table->Rebellion_Player;
         m_current_event = et_Rebellion;
         events_table->Rebellion_Status = es_Nothing;
-        if(events_table->Rebellion_Player == _human_player_idx)
+        if(events_table->Rebellion_Player == _current_player_idx)
         {
             m_event_message_type = emt_Started;
         }
@@ -1009,7 +1009,7 @@ void Event_Twiddle(void)
         m_current_event = et_Donation;
         m_event_player_idx = events_table->Donation_Player;
         EVNT_MsgDataValue = events_table->Donation_Data;
-        if(events_table->Donation_Player == _human_player_idx)
+        if(events_table->Donation_Player == _current_player_idx)
         {
             m_event_message_type = 0;
         }
@@ -1038,7 +1038,7 @@ void Event_Twiddle(void)
         m_event_city_idx = events_table->Depletion_Data;
         Clear_Terrain_Specials(wx, wy, wp);
         EVNT_MsgDataValue = terrain_special;
-        if(events_table->Depletion_Player == _human_player_idx)
+        if(events_table->Depletion_Player == _current_player_idx)
         {
             m_event_message_type = 0;
         }
@@ -1066,7 +1066,7 @@ void Event_Twiddle(void)
         m_event_city_idx = events_table->minerals_data;
         /* TODO */  TILE_ReplaceMinerals__STUB(wx, wy, wp, terrain_special);
         EVNT_MsgDataValue = terrain_special;
-        if(events_table->minerals_player == _human_player_idx)
+        if(events_table->minerals_player == _current_player_idx)
         {
             m_event_message_type = 0;
         }
@@ -1090,7 +1090,7 @@ void Event_Twiddle(void)
         m_current_event = et_Population_Boom;
         m_event_player_idx = events_table->Population_Boom_Player;
         m_event_city_idx = events_table->Population_Boom_Data;
-        if(events_table->Population_Boom_Player == _human_player_idx)
+        if(events_table->Population_Boom_Player == _current_player_idx)
         {
             m_event_message_type = 0;
         }
@@ -1111,7 +1111,7 @@ void Event_Twiddle(void)
                 if(events_table->Population_Boom_Duration > 3)
                 {
                     events_table->Population_Boom_Status = es_Nothing;
-                    if(player_idx == _human_player_idx)
+                    if(player_idx == _current_player_idx)
                     {
                         m_event_message_type = 1;
                         Show_Event_Message();
@@ -1368,9 +1368,9 @@ void Show_Event_Message(void)
     if(
         (m_event_player_idx != 99)
         &&
-        (m_event_player_idx != _human_player_idx)
+        (m_event_player_idx != _current_player_idx)
         &&
-        (_players[_human_player_idx].Dipl.Contacted[m_event_player_idx] != 1)
+        (_players[_current_player_idx].Dipl.Contacted[m_event_player_idx] != 1)
     )
     {
         return;

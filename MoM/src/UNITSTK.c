@@ -421,7 +421,7 @@ int16_t Stack_Move_To(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int1
         }
     }
     /* Refresh graphics if the moving player is the local player */
-    if(player_idx == _human_player_idx)
+    if(player_idx == _current_player_idx)
     {
         o62p01_empty_function(player_idx);
         Set_Unit_Draw_Priority();
@@ -1760,7 +1760,7 @@ void Army_Do_Meld(int16_t troop_count, int16_t troops[])
             }
             else
             {
-                if(unit_owner == _human_player_idx)
+                if(unit_owner == _current_player_idx)
                 {
                     Warn0(_msg_guardian_kills_spirit);  /* "The Guardian Spirit occupying this node kills your spirit." */
                 }
@@ -1916,7 +1916,7 @@ int16_t Any_Units_Not_Busy(void)
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-        if(_UNITS[itr_units].owner_idx == _human_player_idx)
+        if(_UNITS[itr_units].owner_idx == _current_player_idx)
         {
             if(
                 (_UNITS[itr_units].Status != us_Patrol)

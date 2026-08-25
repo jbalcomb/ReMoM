@@ -492,7 +492,7 @@ void Magic_Screen(void)
 
         if(_FORTRESSES[itr_players].active == ST_TRUE)
         {
-            if(_players[_human_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
+            if(_players[_current_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
             {
                 gem_player_nums[gem_count] = itr_players;
                 // *(_help_entries + (itr_help * 10)) = ST_UNDEFINED;
@@ -531,7 +531,7 @@ void Magic_Screen(void)
         magic_ovl_ench_list_scroll_flag = ST_TRUE;
     }
 
-    human_player_summoning_circle_city_idx = Player_Summon_City(_human_player_idx);
+    human_player_summoning_circle_city_idx = Player_Summon_City(_current_player_idx);
 
     Set_Input_Delay(1);
 
@@ -610,7 +610,7 @@ void Magic_Screen(void)
 
         for(itr = 0; itr < ovl_ench_list_cnt1; itr++)
         {
-            if((magic_ovl_ench_flds[itr] == input_field_idx) && (ovl_ench_list_players[(magic_ovl_ench_list_first_item + itr)] == _human_player_idx))
+            if((magic_ovl_ench_flds[itr] == input_field_idx) && (ovl_ench_list_players[(magic_ovl_ench_list_first_item + itr)] == _current_player_idx))
             {
                 Play_Left_Click();
                 stu_strcpy(GUI_String_1, aDoYouWishToCancelYour);  // "Do you wish to cancel your \x02"
@@ -723,7 +723,7 @@ void Magic_Screen(void)
         {
             if((magic_gem_fields[itr] == input_field_idx) && (gem_player_nums[itr] > 0))
             {
-                if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
+                if(_players[_current_player_idx].casting_spell_idx == spl_Spell_Of_Return)
                 {
                     Warn1(aYouMayNotContactOth);  // "You may not contact other wizards while you are banished."
                 }
@@ -878,7 +878,7 @@ void Magic_Screen_Draw(void)
         {
             // TODO  *(_help_entries +   0 + (itr_players_help * 10)) = HLP_GRAY_GEM;
         }
-        if((_FORTRESSES[itr_players].active == ST_TRUE) && (_players[_human_player_idx].Dipl.Contacted[itr_players] == ST_TRUE))
+        if((_FORTRESSES[itr_players].active == ST_TRUE) && (_players[_current_player_idx].Dipl.Contacted[itr_players] == ST_TRUE))
         {
             // TODO  *(_help_entries +   0 + (itr_players_help * 10)) = ST_UNDEFINED;
             // TODO  *(_help_entries + 100 + (itr_players_help * 10)) = HLP_RELATIONS;
@@ -1176,8 +1176,8 @@ void Magic_Screen_Draw(void)
         "Casting Skill:"
     */
     Print(5, 177, aCastingSkill);
-    stu_itoa((Player_Base_Casting_Skill(_human_player_idx) + Player_Hero_Casting_Skill(_human_player_idx)), GUI_String_1, 10);
-    stu_itoa(Player_Base_Casting_Skill(_human_player_idx), GUI_String_2, 10);
+    stu_itoa((Player_Base_Casting_Skill(_current_player_idx) + Player_Hero_Casting_Skill(_current_player_idx)), GUI_String_1, 10);
+    stu_itoa(Player_Base_Casting_Skill(_current_player_idx), GUI_String_2, 10);
     stu_strcat(GUI_String_1, cnst_OpeningBrace_2);
     stu_strcat(GUI_String_1, GUI_String_2);
     stu_strcat(GUI_String_1, cnst_ClosingBrace_2);
@@ -1269,16 +1269,16 @@ void Magic_Screen_Draw(void)
             FLIC_Draw((24 + (77 * itr_gems)), 4, lilwiz_gem_segs[itr_gems]);
 
             // C6385  Reading invalid data from '_players':  the readable size is '7344' bytes, but 'gem_player_nums[itr_gems]' bytes may be read.
-            diplomatic_relations_idx = ((_players[gem_player_nums[itr_gems]].Dipl.Visible_Rel[_human_player_idx] + 100) / 20);
+            diplomatic_relations_idx = ((_players[gem_player_nums[itr_gems]].Dipl.Visible_Rel[_current_player_idx] + 100) / 20);
             Print_Centered(45 + (77 * itr_gems), 53, diplo_state[diplomatic_relations_idx]);
 
             // wizard pact, alliance, war  ...  icons  ...  scroll, peace symbol, crossed swords
-            diplomatic_treaties = (_players[gem_player_nums[itr_gems]].Dipl.Dipl_Status[_human_player_idx]);
+            diplomatic_treaties = (_players[gem_player_nums[itr_gems]].Dipl.Dipl_Status[_current_player_idx]);
             if(diplomatic_treaties > 0)
             {
                 if(diplomatic_treaties > 2) { diplomatic_treaties = 3; }
                 diplomatic_treaties--;
-                FLIC_Draw(x_start, y_start, magic_dipl_icon_segs[diplomatic_treaties + (_players[_human_player_idx].banner_id * 3)]);  // status + color to index icons
+                FLIC_Draw(x_start, y_start, magic_dipl_icon_segs[diplomatic_treaties + (_players[_current_player_idx].banner_id * 3)]);  // status + color to index icons
                 // TODO  _help_entries[43 + itr_gems] = HLP_TREATIES;
                 y_start += 12;
             }
@@ -1299,7 +1299,7 @@ void Magic_Screen_Draw(void)
                 }
             }
 
-            if(_players[_human_player_idx].Globals[DETECT_MAGIC] != ST_FALSE)
+            if(_players[_current_player_idx].Globals[DETECT_MAGIC] != ST_FALSE)
             {
                 colors2[0] = 182;
                 colors2[1] = 177;
@@ -1645,7 +1645,7 @@ void Alchemy_Popup(int16_t start_x, int16_t y_start)
 
     m_alchemy_divisor = 2;  // 50%
 
-    if(_players[_human_player_idx].alchemy == ST_TRUE)
+    if(_players[_current_player_idx].alchemy == ST_TRUE)
     {
         m_alchemy_divisor = 1;  // 100%
     }
@@ -1686,11 +1686,11 @@ void Alchemy_Popup(int16_t start_x, int16_t y_start)
             if(m_alchemy_conversion_direction == 1)
             {
                 _players[HUMAN_PLAYER_IDX].gold_reserve -= m_alchemy_amount;
-                Player_Add_Mana(_human_player_idx, (m_alchemy_amount / m_alchemy_divisor));
+                Player_Add_Mana(_current_player_idx, (m_alchemy_amount / m_alchemy_divisor));
             }
             else
             {
-                Player_Add_Gold(_human_player_idx, (m_alchemy_amount / m_alchemy_divisor));
+                Player_Add_Gold(_current_player_idx, (m_alchemy_amount / m_alchemy_divisor));
                 _players[HUMAN_PLAYER_IDX].mana_reserve -= m_alchemy_amount;
             }
         }

@@ -106,7 +106,7 @@ NPC diplomatic actions, contact discovery, treaty adjustments. Most functions ca
 Runs after normal/time-stop-else block. Applies all queued spell casts for all players.
 
 - [ ] **11A** [`All_Players_Apply_Spell_Casting`](../MoM/src/NEXTTURN.c#L3206) — iterates players and applies any queued overland spell that finished accumulating mana this turn.
-- [x] **11B** Human `Cast_Spell_Overland(_human_player_idx)` call inside `Next_Turn_Proc` ([NEXTTURN.c:403](../MoM/src/NEXTTURN.c#L403)) — **done-done** (commit `9cd8113d`, cross-ref [`__TODO-AiTurn.md`](__TODO-AiTurn.md) Wave 4A). Human-side casting completion; AI-side is in `AI_Next_Turn`.
+- [x] **11B** Human `Cast_Spell_Overland(_current_player_idx)` call inside `Next_Turn_Proc` ([NEXTTURN.c:403](../MoM/src/NEXTTURN.c#L403)) — **done-done** (commit `9cd8113d`, cross-ref [`__TODO-AiTurn.md`](__TODO-AiTurn.md) Wave 4A). Human-side casting completion; AI-side is in `AI_Next_Turn`.
 
 ### Wave 12 — End-of-turn unit passes
 XP, healing, history logging.

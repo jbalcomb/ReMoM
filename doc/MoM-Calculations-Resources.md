@@ -40,10 +40,10 @@ main()
 
 
 ## Main_Screen_Draw_Status_Window()
-    _players[_human_player_idx].gold_reserve
-    _players[_human_player_idx].mana_reserve
-    Print_Integer_Right(265, 68, _players[_human_player_idx].gold_reserve);
-    Print_Integer_Right(303, 68, _players[_human_player_idx].mana_reserve);
+    _players[_current_player_idx].gold_reserve
+    _players[_current_player_idx].mana_reserve
+    Print_Integer_Right(265, 68, _players[_current_player_idx].gold_reserve);
+    Print_Integer_Right(303, 68, _players[_current_player_idx].mana_reserve);
     Print(268, 68, cstr_GP);
     Print(306, 68, cstr_MP);
 
@@ -52,7 +52,7 @@ main()
 
 ## Main_Screen_Draw_Summary_Window()
 
-Player_Resource_Income_Total(_human_player_idx, &gold, &food, &mana);
+Player_Resource_Income_Total(_current_player_idx, &gold, &food, &mana);
 CITYCALC.C
 // WZD o120p07
 void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * mana)

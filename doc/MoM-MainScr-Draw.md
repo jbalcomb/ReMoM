@@ -65,7 +65,7 @@ Draw_Unit_StatFig()
         Replace_Color_All()
         Outline_Bitmap_Pixels_()
         _UNIT[].Status  ==/!= US_Patrol
-        unit_owner_idx ==/!= _human_player_idx
+        unit_owner_idx ==/!= _current_player_idx
         LBX_IMG_Grayscale()
         UNIT_Draw_UE_Outline()
     ...
@@ -292,7 +292,7 @@ GAME_Overland_Init()
     ...
     Center_Map(&_map_x, &_map_y, _FORTRESSES[0].world_x, _FORTRESSES[0].world_y, _map_plane)
     ...
-    WIZ_NextIdleStack(_human_player_idx, _map_x, _map_y, _map_plane)
+    WIZ_NextIdleStack(_current_player_idx, _map_x, _map_y, _map_plane)
 
 
 Main_Screen() 'C'
@@ -310,7 +310,7 @@ IDK_CheckSet_MapDisplay_XY()
     updates _prev_world_x,y and _map_x
 
 Main_Screen_Draw() |->
-Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx)
+Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _current_player_idx)
 
 So, ...
     for Center_Map()
@@ -343,7 +343,7 @@ DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1658]: _map_y: 1
 DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1659]: _map_plane: 0
 DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1660]: _prev_world_x: 54
 DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1661]: _prev_world_y: 4
-DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1662]: _human_player_idx: 0
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1662]: _current_player_idx: 0
 DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1666]: END: Main_Screen_Draw()
 
 The impact from changing _prev_world_x,y is in the path from Main_Screen_Draw() through Main_Screen_Draw_Do_Draw()
@@ -508,7 +508,7 @@ Main_Screen_Draw() |-> Main_Screen_Draw_Do_Draw()
     Reset_Window()
     Set_Page_Off()
 
-push    [_human_player_idx]             ; Player_Index
+push    [_current_player_idx]             ; Player_Index
 push    [_prev_world_y]                 ; YPos
 push    [_prev_world_x]                 ; XPos
 push    [_map_plane]                    ; Plane
@@ -534,9 +534,9 @@ main() |-> Screen_Control() |-> Main_Screen() |-> Main_Screen_Draw()
 #### Main_Screen_Draw()
     Reset_Window()
     Set_Page_Off()
-    Main_Screen_Draw_Do_Draw(_curr_world_x, _curr_world_y, _world_plane, _prev_world_x, _prev_world_y, _human_player_idx);
+    Main_Screen_Draw_Do_Draw(_curr_world_x, _curr_world_y, _world_plane, _prev_world_x, _prev_world_y, _current_player_idx);
 
-#### Main_Screen_Draw_Do_Draw(_curr_world_x, _curr_world_y, _world_plane, _prev_world_x, _prev_world_y, _human_player_idx);
+#### Main_Screen_Draw_Do_Draw(_curr_world_x, _curr_world_y, _world_plane, _prev_world_x, _prev_world_y, _current_player_idx);
 
 BackGround:
     FLIC_Draw(0, 0, main_background);
@@ -591,7 +591,7 @@ main() |-> Screen_Control() |-> Main_Screen() |-> Main_Screen_Draw() |-> Main_Sc
 `Main_Screen_Draw_Do_Draw()`
 main() |-> Screen_Control() |-> Main_Screen() |-> Main_Screen_Draw() |-> Main_Screen_Draw_Do_Draw()
 
-    Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
+    Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _current_player_idx);
         ...
         |-> Draw_Maps(0, 20, 12, 10, map_x, map_y, map_plane, x_pos, y_pos, player_idx);
 
@@ -620,7 +620,7 @@ API Boundary?
     _map_plane
     _prev_world_x
     _prev_world_y
-    _human_player_idx
+    _current_player_idx
 
 ush    [bp+player_idx]                 ; Player_Index
 push    [bp+YPos]                       ; YPos
@@ -914,7 +914,7 @@ dseg:BD84 00 00                                           _active_world_x dw 0  
 dseg:BD86 00 00                                           _map_plane dw 0                         ; DATA XREF: GAME_Overland_Init+13Fw ...
 dseg:BD88 00 00                                           _map_y dw 0                             ; DATA XREF: GAME_Overland_Init+FDw ...
 dseg:BD8A 00 00                                           _map_x dw 0                             ; DATA XREF: GAME_Overland_Init:loc_45E57w ...
-dseg:BD8C 00 00                                           _human_player_idx dw 0                  ; DATA XREF: WZD_Startup_MainGame+Aw ...
+dseg:BD8C 00 00                                           _current_player_idx dw 0                  ; DATA XREF: WZD_Startup_MainGame+Aw ...
 
 
 

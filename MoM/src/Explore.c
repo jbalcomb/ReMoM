@@ -306,7 +306,7 @@ void Update_Scouted_And_Contacted(void)
 
         Clear_Square_Scouted_Flags(itr_wp);  // ¿ MoO2  Clear_Planet_Explored_Flags_() ?
 
-        if(_players[_human_player_idx].Globals[NATURES_AWARENESS] != ST_FALSE)
+        if(_players[_current_player_idx].Globals[NATURES_AWARENESS] != ST_FALSE)
         {
 
             for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
@@ -323,8 +323,8 @@ void Update_Scouted_And_Contacted(void)
             // NOTE(drake178): INCONSISTENT with at least one parent function, which still checks for the visibility of their units (ie. if they are all invisible, contact is not made!)
             for(itr_players = 0; itr_players < _num_players; itr_players++)
             {
-                _players[_human_player_idx].Dipl.Contacted[itr_players] = ST_TRUE;
-                _players[itr_players].Dipl.Contacted[_human_player_idx] = ST_TRUE;
+                _players[_current_player_idx].Dipl.Contacted[itr_players] = ST_TRUE;
+                _players[itr_players].Dipl.Contacted[_current_player_idx] = ST_TRUE;
             }
 
         }
@@ -334,7 +334,7 @@ void Update_Scouted_And_Contacted(void)
             for(itr_units = 0; itr_units < _units; itr_units++)
             {
                 if(
-                    (_UNITS[itr_units].owner_idx == _human_player_idx)
+                    (_UNITS[itr_units].owner_idx == _current_player_idx)
                     &&
                     (
                         (_UNITS[itr_units].wp == curr_wp)
@@ -369,7 +369,7 @@ void Update_Scouted_And_Contacted(void)
             for(itr_cities = 0; itr_cities < _cities; itr_cities++)
             {
                 if(
-                    (_CITIES[itr_cities].owner_idx == _human_player_idx)
+                    (_CITIES[itr_cities].owner_idx == _current_player_idx)
                     &&
                     (
                         (_CITIES[itr_cities].wp == curr_wp)
@@ -398,7 +398,7 @@ void Update_Scouted_And_Contacted(void)
             for(itr_cities = 0; itr_cities < _cities; itr_cities++)
             {
                 if(
-                    (_CITIES[itr_cities].owner_idx != _human_player_idx)
+                    (_CITIES[itr_cities].owner_idx != _current_player_idx)
                     &&
                     (_CITIES[itr_cities].owner_idx != NEUTRAL_PLAYER_IDX)
                     &&
@@ -415,8 +415,8 @@ void Update_Scouted_And_Contacted(void)
                         (_CITIES[itr_cities].owner_idx < NEUTRAL_PLAYER_IDX)  // BUGBUG  ¿ leftover from MoO1, where this means *real players*, not monsters ?
                     )
                     {
-                        _players[_human_player_idx].Dipl.Contacted[_CITIES[itr_cities].owner_idx] = ST_TRUE;
-                        _players[_CITIES[itr_cities].owner_idx].Dipl.Contacted[_human_player_idx] = ST_TRUE;
+                        _players[_current_player_idx].Dipl.Contacted[_CITIES[itr_cities].owner_idx] = ST_TRUE;
+                        _players[_CITIES[itr_cities].owner_idx].Dipl.Contacted[_current_player_idx] = ST_TRUE;
                     }
                 }
             }
@@ -582,7 +582,7 @@ void Contact_Other_Player(int16_t unit_idx, int16_t wp)
     struct s_UNIT * unit_ptr;
     unit_ptr = &_UNITS[unit_idx];
     owner_idx = (int)unit_ptr->owner_idx;
-    if(owner_idx == _human_player_idx)
+    if(owner_idx == _current_player_idx)
     {
         return;
     }
@@ -605,8 +605,8 @@ void Contact_Other_Player(int16_t unit_idx, int16_t wp)
     {
         return;
     }
-    _players[_human_player_idx].Dipl.Contacted[owner_idx] = ST_TRUE;
-    _players[owner_idx].Dipl.Contacted[_human_player_idx] = ST_TRUE;
+    _players[_current_player_idx].Dipl.Contacted[owner_idx] = ST_TRUE;
+    _players[owner_idx].Dipl.Contacted[_current_player_idx] = ST_TRUE;
 }
 
 

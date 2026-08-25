@@ -2632,7 +2632,7 @@ void Get_Unit_Enchantment_Names(int16_t unit_idx, char ** unit_enchantment_names
 // WZD o89p05
 /*
     CalledFromFlag is passed from Thing_View_Draw__WIP()
-    if CalledFromFlag == 0, assumes _human_player_idx
+    if CalledFromFlag == 0, assumes _current_player_idx
     if CalledFromFlag != 0, gets figure count from *combat data*, instead of _unit_type_table
 
     // AKA Unit_Figure_Draw
@@ -2665,7 +2665,7 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_or_type, in
     {
         unit_type = unit_or_type;
         unit_figure_count = _unit_type_table[unit_type].Figures;
-        unit_owner_banner_idx = _players[_human_player_idx].banner_id;
+        unit_owner_banner_idx = _players[_current_player_idx].banner_id;
     }
 
     UU_Highest_Fig_Index = (unit_figure_count - 1);

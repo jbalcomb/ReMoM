@@ -35,7 +35,7 @@ GAME_Overland_Init()
 
     calls Center_Map () with &_map_x, &_map_y, _FORTRESSES[0].world_x, _FORTRESSES[0].world_y, _map_plane
         ¿ this changes _map_x, _map_y ?
-    calls WIZ_NextIdleStack() with _human_player_idx, &_map_x, &_map_y, &_map_plane
+    calls WIZ_NextIdleStack() with _current_player_idx, &_map_x, &_map_y, &_map_plane
         ¿ this changes _unit, _active_world_x, _active_world_y ?
 
 
@@ -43,7 +43,7 @@ Main_Screen()
     Right-Click Movement Map Grid
         (entity_idx != ST_UNDEFINED)
         (entity_idx < 1000)
-        (_UNITS[entity_idx].owner_idx == _human_player_idx)
+        (_UNITS[entity_idx].owner_idx == _current_player_idx)
             _unit = entity_idx;
             unit_idx = _unit;
             Unit_X = _UNITS[unit_idx].world_x;
@@ -66,7 +66,7 @@ dseg:BD84 00 00                                           _active_world_x dw 0  
 dseg:BD86 00 00                                           _map_plane dw 0                         ; DATA XREF: GAME_Overland_Init+13Fw ...
 dseg:BD88 00 00                                           _map_y dw 0                             ; DATA XREF: GAME_Overland_Init:loc_45E5Dw ...
 dseg:BD8A 00 00                                           _map_x dw 0                             ; DATA XREF: GAME_Overland_Init:loc_45E57w ...
-dseg:BD8C 00 00                                           _human_player_idx dw 0                  ; DATA XREF: Loaded_Game_Update_WZD+Aw ...
+dseg:BD8C 00 00                                           _current_player_idx dw 0                  ; DATA XREF: Loaded_Game_Update_WZD+Aw ...
 dseg:BD8C                                                                                         ; index of the human player (special rules apply)
 dseg:BD8E 00 00                                           _unit dw 0                              ; DATA XREF: Save_SAVE_GAM:loc_45727t ...
 

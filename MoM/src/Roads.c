@@ -242,8 +242,8 @@ void Road_Build_Screen(void)
                 if(roadbuilder_count > 0)
                 {
                     Set_Army_Road_Building(roadbuilder_count, &roadbuilders[0], m_road_dst_x, m_road_dst_y);
-                    Stack_Move_To(_human_player_idx, roadbuilders[0], m_road_dst_x, m_road_dst_y, &_map_x, &_map_y, _map_plane);
-                    WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+                    Stack_Move_To(_current_player_idx, roadbuilders[0], m_road_dst_x, m_road_dst_y, &_map_x, &_map_y, _map_plane);
+                    WIZ_NextIdleStack(_current_player_idx, &_map_x, &_map_y, &_map_plane);
                 }
             }
             current_screen = scr_Main_Screen;
@@ -359,7 +359,7 @@ void Road_Build_Screen_Draw(void)
 
     Reset_Map_Draw();
 
-    Draw_Maps(MAP_SCREEN_X, MAP_SCREEN_Y, MAP_WIDTH, MAP_HEIGHT, &_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
+    Draw_Maps(MAP_SCREEN_X, MAP_SCREEN_Y, MAP_WIDTH, MAP_HEIGHT, &_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _current_player_idx);
 
     FLIC_Draw(0, 0, main_background_seg);
 

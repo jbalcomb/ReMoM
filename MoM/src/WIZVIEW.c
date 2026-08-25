@@ -197,7 +197,7 @@ void Mirror_Screen(int16_t player_idx, int16_t OL, int16_t OT, int16_t OR, int16
     mirror_start_x = 75;
     mirror_start_y = 2;
 
-    if(mirror_screen_player_idx == _human_player_idx) /* ¿ current player ? */
+    if(mirror_screen_player_idx == _current_player_idx) /* ¿ current player ? */
     {
         Set_Page_Off();
         Mirror_Screen_Draw();
@@ -283,7 +283,7 @@ void Mirror_Screen_Draw(void)
 // TODO  mov     [bp+retort_helps+22h], HLP_ARTIFICER
 
 
-    if(mirror_screen_player_idx == _human_player_idx)
+    if(mirror_screen_player_idx == _current_player_idx)
     {
         // this happens when you right-click on an opponent wizard's gem on the Magic Screen not when you left-click on "Mirror" on the Info Screen or hit the F9 hot-key
         // TODO  G_USW_DrawEHLines();
@@ -316,10 +316,10 @@ void Mirror_Screen_Draw(void)
 // TODO  mov     [_help_entries.help_16.entry_idx], 0FFFFh
 // TODO  mov     [_help_entries.help_17.entry_idx], 0FFFFh
 
-    if(mirror_screen_player_idx != _human_player_idx)
+    if(mirror_screen_player_idx != _current_player_idx)
     {
 
-    var_14 = ((_players[_human_player_idx].Dipl.Visible_Rel[mirror_screen_player_idx] + 100) / 20);
+    var_14 = ((_players[_current_player_idx].Dipl.Visible_Rel[mirror_screen_player_idx] + 100) / 20);
 
     Set_Font_Style_Shadow_Down(1, 15, 0, 0);
 
@@ -349,19 +349,19 @@ void Mirror_Screen_Draw(void)
 
     stu_strcat(GUI_String_1, dest);
 
-    stu_strcat(GUI_String_1, _treaty_type_names[_players[_human_player_idx].Dipl.Dipl_Status[mirror_screen_player_idx]]);
+    stu_strcat(GUI_String_1, _treaty_type_names[_players[_current_player_idx].Dipl.Dipl_Status[mirror_screen_player_idx]]);
 
     Print((mirror_start_x + 59), (mirror_start_y + 33), GUI_String_1);
 
 
 // TODO  mov     [_help_entries.help_15.entry_idx], 0FFFFh
 
-    if(_players[_human_player_idx].Dipl.Dipl_Status[mirror_screen_player_idx] == 1)
+    if(_players[_current_player_idx].Dipl.Dipl_Status[mirror_screen_player_idx] == 1)
     {
         // TODO  mov     [_help_entries.help_15.entry_idx], HLP_WIZARD_PACT
     }
 
-    if(_players[_human_player_idx].Dipl.Dipl_Status[mirror_screen_player_idx] == 2)
+    if(_players[_current_player_idx].Dipl.Dipl_Status[mirror_screen_player_idx] == 2)
     {
         // TODO  mov     [_help_entries.help_15.entry_idx], HLP_ALLIANCE
     }

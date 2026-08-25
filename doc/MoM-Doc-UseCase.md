@@ -50,8 +50,8 @@ In Main_Screen(), 'Right-Click - Movement Map - Select Stack'
     selected_unit_y = _UNITS[unit_idx].world_y
     _active_world_x = _UNITS[unit_idx].world_x
     _active_world_y = _UNITS[unit_idx].world_y
-    Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_x, selected_unit_y)
-        Build_Unit_Stack(_human_player_idx, _map_plane, selected_unit_x, selected_unit_y)
+    Select_Unit_Stack(_current_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_x, selected_unit_y)
+        Build_Unit_Stack(_current_player_idx, _map_plane, selected_unit_x, selected_unit_y)
             checks HMoves & Finished to set active to ST_TRUE
                 and if status is 'Wait', changes status to 'No Orders'
             then, checks if status is 'Purify' and sets active to ST_FALSE
@@ -84,7 +84,7 @@ ArmyList_Screen()
     ¿ same logic/code as 'Right-Click - Movement Map - Select Stack' ?
     _unit = list_armies[itr]
     _map_plane = _UNITS[_unit].world_plane
-    Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[_unit].world_x, _UNITS[_unit].world_y)
+    Select_Unit_Stack(_current_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[_unit].world_x, _UNITS[_unit].world_y)
     _active_world_x = _UNITS[_unit].world_x
     _active_world_y = _UNITS[_unit].world_y
 

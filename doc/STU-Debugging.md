@@ -233,14 +233,14 @@ Main_Screen()
 entity_idx = entities_on_movement_map[( (_main_map_grid_y * MAP_WIDTH) + _main_map_grid_x )];
 // TODO  DLOG("if(entity_idx != ST_UNDEFINED)");
 // TODO  DLOG("if(entity_idx < 1000)");
-// TODO  DLOG("if(_UNITS[entity_idx].owner_idx == _human_player_idx)");
+// TODO  DLOG("if(_UNITS[entity_idx].owner_idx == _current_player_idx)");
     _unit = entity_idx;
     unit_idx = _unit;
     Unit_X = _UNITS[unit_idx].world_x;
     Unit_Y = _UNITS[unit_idx].world_y;
     OVL_Map_CenterX = _UNITS[unit_idx].world_x;
     OVL_Map_CenterY = _UNITS[unit_idx].world_y;
-    OVL_StackSelect(_human_player_idx, &_map_x, &_map_y, _map_plane, Unit_X, Unit_Y);
+    OVL_StackSelect(_current_player_idx, &_map_x, &_map_y, _map_plane, Unit_X, Unit_Y);
 
 entity_idx: 55
 

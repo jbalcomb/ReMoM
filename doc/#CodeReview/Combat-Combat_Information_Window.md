@@ -115,7 +115,7 @@ Faithful apart from R1.
 
 **Frame - order matches.** `computer_player_battle_effect_count` `-4`, `itr_combatants` `-2`; [Combat.c:6081-6082](../../MoM/src/Combat.c#L6081-L6082). `info_common_count` is SI and `player_idx` is DI, both named in the listing's own register aliases.
 
-**The two-combatant loop runs the AI player first, then the human.** `player_idx` starts at `_combat_ai_player` (asm:18) and is unconditionally reassigned to `_human_player_idx` at the bottom of each pass (asm:140), with `info_common_count` reset to `_combat_info_item_count + 1` - the odd-column start. The AI's running total is captured on the first pass only, `itr_combatants == 0` (asm:144-147). [Combat.c:6089-6131](../../MoM/src/Combat.c#L6089-L6131).
+**The two-combatant loop runs the AI player first, then the human.** `player_idx` starts at `_combat_ai_player` (asm:18) and is unconditionally reassigned to `_current_player_idx` at the bottom of each pass (asm:140), with `info_common_count` reset to `_combat_info_item_count + 1` - the odd-column start. The AI's running total is captured on the first pass only, `itr_combatants == 0` (asm:144-147). [Combat.c:6089-6131](../../MoM/src/Combat.c#L6089-L6131).
 
 **`_combat_per_side_effect_rows` takes the larger of the two sides**: `(total - ai_count) > ai_count ? (total - ai_count) : ai_count` (asm:155-165), which [Combat.c:6134-6141](../../MoM/src/Combat.c#L6134-L6141) writes out as the same if/else.
 

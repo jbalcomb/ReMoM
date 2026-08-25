@@ -68,7 +68,7 @@ OON record
 ~ Started, Ended, Happened, Ongoing, Elsewhere
 
 ```c
-if(events_table->Rebellion_Player == _human_player_idx)
+if(events_table->Rebellion_Player == _current_player_idx)
 {
     m_event_message_type = 0;
 }

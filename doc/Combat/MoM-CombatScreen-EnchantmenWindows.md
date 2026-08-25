@@ -102,9 +102,9 @@ CMB_ATKR_CE_Count
 CMB_DEFR_First_CE
 CMB_DEFR_CE_Count
 
-if(_combat_attacker_player == _human_player_idx)
+if(_combat_attacker_player == _current_player_idx)
 
-if(_combat_defender_player == _human_player_idx)
+if(_combat_defender_player == _current_player_idx)
 
 draws the attacker enchantments and sets the help entries
 draws the defender enchantments and sets the help entries

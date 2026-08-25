@@ -172,7 +172,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
     _page_flip_effect = pfe_None;
 
-    _osc_spell_idx = _players[_human_player_idx].casting_spell_idx;
+    _osc_spell_idx = _players[_current_player_idx].casting_spell_idx;
 
     word_42C10 = 0;
 
@@ -253,7 +253,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
         if(input_field_idx == _plane_button)
         {
             Play_Left_Click();
-            Do_Plane_Button__WIP(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+            Do_Plane_Button__WIP(_current_player_idx, &_map_x, &_map_y, &_map_plane);
             Reset_Map_Draw();
             MainScr_Create_Reduced_Map_Picture();
             Deactivate_Auto_Function();
@@ -319,7 +319,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                     if(entity_idx < MAX_UNIT_COUNT)
                     {
 
-                        if(_UNITS[entity_idx].owner_idx == _human_player_idx)
+                        if(_UNITS[entity_idx].owner_idx == _current_player_idx)
                         {
 
                             if(
@@ -366,7 +366,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                             case stt_Friendly_Unit:
                             case stt_Friendly_Group:
                             {
-                                if(_CITIES[entity_idx].owner_idx == _human_player_idx)
+                                if(_CITIES[entity_idx].owner_idx == _current_player_idx)
                                 {
                                     Army_At_City(entity_idx, &troop_count, &troops[0]);
                                     if(troop_count > 0)
@@ -380,7 +380,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                             case stt_Enemy_Unit:
                             case stt_Enemy_Group:
                             {
-                                if(_CITIES[entity_idx].owner_idx != _human_player_idx)
+                                if(_CITIES[entity_idx].owner_idx != _current_player_idx)
                                 {
                                     Army_At_City(entity_idx, &troop_count, &troops[0]);
                                     if(troop_count > 0)
@@ -398,7 +398,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
                             case stt_Friendly_City:
                             {
-                                if(_CITIES[entity_idx].owner_idx == _human_player_idx)
+                                if(_CITIES[entity_idx].owner_idx == _current_player_idx)
                                 {
                                     have_valid_target = ST_TRUE;
                                 }
@@ -406,7 +406,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
                             case stt_Enemy_City:
                             {
-                                if(_CITIES[entity_idx].owner_idx != _human_player_idx)
+                                if(_CITIES[entity_idx].owner_idx != _current_player_idx)
                                 {
                                     have_valid_target = ST_TRUE;
                                 }
@@ -599,7 +599,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
             {
                 if(entity_idx < MAX_UNIT_COUNT)
                 {
-                    if(_UNITS[entity_idx].owner_idx == _human_player_idx)
+                    if(_UNITS[entity_idx].owner_idx == _current_player_idx)
                     {
                         if(
                             (_osc_spell_target_type == stt_Friendly_Unit)
@@ -657,7 +657,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                         case stt_Friendly_Unit:
                         case stt_Friendly_Group:
                         {
-                            if(_CITIES[entity_idx].owner_idx == _human_player_idx)
+                            if(_CITIES[entity_idx].owner_idx == _current_player_idx)
                             {
                                 have_valid_target = ST_TRUE;
                             }
@@ -666,7 +666,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                         case stt_Enemy_Unit:
                         case stt_Enemy_Group:
                         {
-                            if(_CITIES[entity_idx].owner_idx != _human_player_idx)
+                            if(_CITIES[entity_idx].owner_idx != _current_player_idx)
                             {
                                 have_valid_target = ST_TRUE;
                             }
@@ -679,7 +679,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
                         case stt_Friendly_City:
                         {
-                            if(_CITIES[entity_idx].owner_idx == _human_player_idx)
+                            if(_CITIES[entity_idx].owner_idx == _current_player_idx)
                             {
                                 have_valid_target = ST_TRUE;
                             }
@@ -687,7 +687,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
                         case stt_Enemy_City:
                         {
-                            if(_CITIES[entity_idx].owner_idx != _human_player_idx)
+                            if(_CITIES[entity_idx].owner_idx != _current_player_idx)
                             {
                                 have_valid_target = ST_TRUE;
                             }
@@ -817,7 +817,7 @@ void Spell_Casting_Screen_Draw(void)
     Reset_Window();
     Set_Page_Off();
     Reset_Map_Draw();
-    Draw_Maps(0, 20, 12, 10, &_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
+    Draw_Maps(0, 20, 12, 10, &_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _current_player_idx);
     FLIC_Draw(0, 0, main_background_seg);
     Draw_World_Window(251, 21, 58, 30);
     Main_Screen_Draw_Unit_Action_Locked_Buttons();  // BUGBUG  ¿ isn't this completly hidden by the deselect bk and cancel butt ?
@@ -1228,7 +1228,7 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                             case stt_Friendly_Unit:
                             case stt_Friendly_Group:
                             {
-                                if(_UNITS[entity_idx].owner_idx == _human_player_idx)
+                                if(_UNITS[entity_idx].owner_idx == _current_player_idx)
                                 {
                                     /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                                 }
@@ -1240,7 +1240,7 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                             case stt_Enemy_Unit:
                             case stt_Enemy_Group:
                             {
-                                if(_UNITS[entity_idx].owner_idx != _human_player_idx)
+                                if(_UNITS[entity_idx].owner_idx != _current_player_idx)
                                 {
                                     /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                                 }
@@ -1278,7 +1278,7 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                         {
                             case stt_Friendly_Unit:
                             {
-                                if(_CITIES[entity_idx].owner_idx == _human_player_idx)
+                                if(_CITIES[entity_idx].owner_idx == _current_player_idx)
                                 {
                                     Army_At_City(entity_idx, &troop_count, &troops[0]);
                                     if(troop_count > 0)
@@ -1293,7 +1293,7 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                             } break;
                             case stt_Enemy_Unit:
                             {
-                                if(_CITIES[entity_idx].owner_idx != _human_player_idx)
+                                if(_CITIES[entity_idx].owner_idx != _current_player_idx)
                                 {
                                     Army_At_City(entity_idx, &troop_count, &troops[0]);
                                     if(troop_count > 0)
@@ -1312,14 +1312,14 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                             } break;
                             case stt_Friendly_City:
                             {
-                                if(_CITIES[entity_idx].owner_idx == _human_player_idx)
+                                if(_CITIES[entity_idx].owner_idx == _current_player_idx)
                                 {
                                     /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                                 }
                             } break;
                             case stt_Enemy_City:
                             {
-                                if(_CITIES[entity_idx].owner_idx != _human_player_idx)
+                                if(_CITIES[entity_idx].owner_idx != _current_player_idx)
                                 {
                                     /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                                 }

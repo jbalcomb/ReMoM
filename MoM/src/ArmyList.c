@@ -208,9 +208,9 @@ void ArmyList_Screen(void)
 
     ArmyList_Draw_Reduced_Map();
 
-    armylist_upkeep_gold = Player_Armies_Gold_Upkeep(_human_player_idx);
-    armylist_upkeep_mana = Player_Armies_And_Enchantments_Mana_Upkeep(_human_player_idx);
-    armylist_upkeep_food = Player_Armies_Food_Upkeep(_human_player_idx);
+    armylist_upkeep_gold = Player_Armies_Gold_Upkeep(_current_player_idx);
+    armylist_upkeep_mana = Player_Armies_And_Enchantments_Mana_Upkeep(_current_player_idx);
+    armylist_upkeep_food = Player_Armies_Food_Upkeep(_current_player_idx);
 
     Load_Palette_From_Animation(armylist_up_button_seg);
 
@@ -290,7 +290,7 @@ void ArmyList_Screen(void)
             Play_Left_Click();
             leave_screen_flag = ST_TRUE;
             current_screen = scr_Main_Screen;
-            // TODO  j_o62p01_Empty_pFxn(_human_player_idx);
+            // TODO  j_o62p01_Empty_pFxn(_current_player_idx);
 
             if(IDK_have_active_stack != ST_TRUE)
             {
@@ -298,7 +298,7 @@ void ArmyList_Screen(void)
             }
             else
             {
-                Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[_unit].wx, _UNITS[_unit].wy);
+                Select_Unit_Stack(_current_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[_unit].wx, _UNITS[_unit].wy);
             }
         }
 
@@ -354,7 +354,7 @@ void ArmyList_Screen(void)
                 { int16_t _prev_unit_dbg = _unit; _unit = list_armies[itr];
                   LOG_INFO(LOG_CAT_GENERAL, "[_unit ASSIGN] %d -> %d", _prev_unit_dbg, _unit); }
                 _map_plane  = _UNITS[_unit].wp;
-                Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[_unit].wx, _UNITS[_unit].wy);
+                Select_Unit_Stack(_current_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[_unit].wx, _UNITS[_unit].wy);
                 if(all_units_moved == ST_TRUE)
                 {
                     all_units_moved = ST_FALSE;
@@ -382,9 +382,9 @@ void ArmyList_Screen(void)
                 Build_Army_List_Counts();
                 ArmyList_Draw_Reduced_Map();
                 Set_Input_Delay(1);
-                armylist_upkeep_gold = Player_Armies_Gold_Upkeep(_human_player_idx);
-                armylist_upkeep_mana = Player_Armies_And_Enchantments_Mana_Upkeep(_human_player_idx);
-                armylist_upkeep_food = Player_Armies_Food_Upkeep(_human_player_idx);
+                armylist_upkeep_gold = Player_Armies_Gold_Upkeep(_current_player_idx);
+                armylist_upkeep_mana = Player_Armies_And_Enchantments_Mana_Upkeep(_current_player_idx);
+                armylist_upkeep_food = Player_Armies_Food_Upkeep(_current_player_idx);
                 Deactivate_Help_List();
                 Set_ArmyList_Screen_Help();
                 screen_changed = ST_TRUE;
@@ -422,10 +422,10 @@ void ArmyList_Screen(void)
             if(armylist_hero_portrait_fields[itr] == input_field_idx)
             {
                 Play_Left_Click();
-                { int16_t _prev_unit_dbg = _unit; _unit = _players[_human_player_idx].Heroes[itr].unit_idx;
+                { int16_t _prev_unit_dbg = _unit; _unit = _players[_current_player_idx].Heroes[itr].unit_idx;
                   LOG_INFO(LOG_CAT_GENERAL, "[_unit ASSIGN] %d -> %d", _prev_unit_dbg, _unit); }
                 _map_plane  = _UNITS[_unit].wp;
-                Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[_unit].wx, _UNITS[_unit].wy);
+                Select_Unit_Stack(_current_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[_unit].wx, _UNITS[_unit].wy);
                 if(all_units_moved == ST_TRUE)
                 {
                     all_units_moved = ST_FALSE;
@@ -450,9 +450,9 @@ void ArmyList_Screen(void)
                 Build_Army_List();
                 Build_Army_List_Counts();
                 ArmyList_Draw_Reduced_Map();
-                armylist_upkeep_gold = Player_Armies_Gold_Upkeep(_human_player_idx);
-                armylist_upkeep_mana = Player_Armies_And_Enchantments_Mana_Upkeep(_human_player_idx);
-                armylist_upkeep_food = Player_Armies_Food_Upkeep(_human_player_idx);
+                armylist_upkeep_gold = Player_Armies_Gold_Upkeep(_current_player_idx);
+                armylist_upkeep_mana = Player_Armies_And_Enchantments_Mana_Upkeep(_current_player_idx);
+                armylist_upkeep_food = Player_Armies_Food_Upkeep(_current_player_idx);
                 Deactivate_Help_List();
                 Set_ArmyList_Screen_Help();
                 ArmyList_Set_List_Item_Count();
@@ -516,7 +516,7 @@ void ArmyList_Screen_Draw(void)
         BEGIN: Print Title
     */
     stu_strcpy(GUI_String_1, aTheArmiesOf);
-    stu_strcat(GUI_String_1, _players[_human_player_idx].name);
+    stu_strcat(GUI_String_1, _players[_current_player_idx].name);
     for(itr_colors = 0; itr_colors < 5; itr_colors++)
     {
         colors1[itr_colors] = 237;
@@ -619,7 +619,7 @@ void ArmyList_Screen_Draw(void)
     */
     for(itr_hero_portraits = 0; itr_hero_portraits < NUM_HEROES; itr_hero_portraits++)
     {
-        hero_unit_idx = _players[_human_player_idx].Heroes[itr_hero_portraits].unit_idx;
+        hero_unit_idx = _players[_current_player_idx].Heroes[itr_hero_portraits].unit_idx;
         if((hero_unit_idx <= ST_UNDEFINED) || (_UNITS[hero_unit_idx].owner_idx == ST_UNDEFINED) )
         {
             // ¿ help entry offset ? (itr * 10)
@@ -638,7 +638,7 @@ void ArmyList_Screen_Draw(void)
             Set_Font_Style_Shadow_Down(0, 15, 0, 0);
             Set_Font_LF(0);
             Set_Font_Spacing_Width(1);
-            Print_Centered(x1 + 15, y1 + 37, _players[_human_player_idx].Heroes[itr_hero_portraits].name);
+            Print_Centered(x1 + 15, y1 + 37, _players[_current_player_idx].Heroes[itr_hero_portraits].name);
 
             // ¿ help entry offset ? (itr * 10)
             // TODO  *(_help_entries + 60 + (10 * itr)) = ST_UNDEFINED;
@@ -691,7 +691,7 @@ void ArmyList_Screen_Draw(void)
 
             if(IDK_Hero_Slot != ST_UNDEFINED)
             {
-                stu_strcpy(GUI_String_1, _players[_human_player_idx].Heroes[_UNITS[scanned_unit_idx].Hero_Slot].name);
+                stu_strcpy(GUI_String_1, _players[_current_player_idx].Heroes[_UNITS[scanned_unit_idx].Hero_Slot].name);
             }
             else
             {
@@ -831,7 +831,7 @@ void ArmyList_Add_List_Fields(void)
     armylist_hero_portrait_count = NUM_HERO_PORTRAIT;
     for(itr_num_hero_portrait = 0; itr_num_hero_portrait < NUM_HERO_PORTRAIT; itr_num_hero_portrait++)
     {
-        hero_unit_idx = _players[_human_player_idx].Heroes[itr_num_hero_portrait].unit_idx;
+        hero_unit_idx = _players[_current_player_idx].Heroes[itr_num_hero_portrait].unit_idx;
         if( (hero_unit_idx <= ST_UNDEFINED) || (_UNITS[hero_unit_idx].owner_idx == ST_UNDEFINED) )
         {
             armylist_hero_portrait_fields[itr_num_hero_portrait] = INVALID_FIELD;
@@ -841,7 +841,7 @@ void ArmyList_Add_List_Fields(void)
         {
             ArmyList_Hero_Portrait_Coords(itr_num_hero_portrait, &x1, &y1, &x2, &y2);
             armylist_hero_portrait_fields[itr_num_hero_portrait] = Add_Hidden_Field(x1, y1, x2, y2, armylist_hotkey_NUL, ST_UNDEFINED);
-            armylist_hero_portrait_unit_indices[itr_num_hero_portrait] = _players[_human_player_idx].Heroes[itr_num_hero_portrait].unit_idx;
+            armylist_hero_portrait_unit_indices[itr_num_hero_portrait] = _players[_current_player_idx].Heroes[itr_num_hero_portrait].unit_idx;
         }
     }
 
@@ -980,7 +980,7 @@ void Build_Army_List(void)
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-        if(_UNITS[itr_units].owner_idx == _human_player_idx)
+        if(_UNITS[itr_units].owner_idx == _current_player_idx)
         {
             armylist_unit_count++;  // BUGBUG
             same_stack = ST_UNDEFINED;
@@ -1039,7 +1039,7 @@ void Build_Army_List_Counts(void)
         for(itr_units = 0; itr_units < _units; itr_units++)
         {
             if(
-                (_UNITS[itr_units].owner_idx == _human_player_idx)
+                (_UNITS[itr_units].owner_idx == _current_player_idx)
                 &&
                 (_UNITS[itr_units].wx == m_armies_wx[(list_first_item + itr_list_item_count)])
                 &&
@@ -1116,7 +1116,7 @@ void ArmyList_Screen_Load(void)
 
     for(itr = 0; itr < NUM_HERO_PORTRAIT; itr++)
     {
-        hero_unit_idx = _players[_human_player_idx].Heroes[itr].unit_idx;
+        hero_unit_idx = _players[_current_player_idx].Heroes[itr].unit_idx;
 
         if((hero_unit_idx > -1) && (_UNITS[hero_unit_idx].owner_idx != ST_UNDEFINED))
         {

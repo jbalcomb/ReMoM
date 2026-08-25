@@ -894,7 +894,7 @@ static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
     defender_wy = _UNITS[defender_unit_idx].wy;
     defender_wp = _UNITS[defender_unit_idx].wp;
 
-    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] attacker_player=%d defender_player=%d human_player=%d defender_at=(%d,%d,%d)", attacker_player_idx, defender_player_idx, _human_player_idx, defender_wx, defender_wy, defender_wp);
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] attacker_player=%d defender_player=%d human_player=%d defender_at=(%d,%d,%d)", attacker_player_idx, defender_player_idx, _current_player_idx, defender_wx, defender_wy, defender_wp);
 
     if(attacker_player_idx == defender_player_idx)
     {
@@ -904,9 +904,9 @@ static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
     if(tactical == 1)
     {
         /* The dispatcher only routes to the tactical battle screen when a human participates and the "Strategic Combat Only" option is off; g_cmbt_force_auto_combat then makes the AI drive both sides so no input is needed. */
-        if((attacker_player_idx != _human_player_idx) && (defender_player_idx != _human_player_idx))
+        if((attacker_player_idx != _current_player_idx) && (defender_player_idx != _current_player_idx))
         {
-            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] --combat-tactical requires one combatant to be the human player (%d); the dispatcher would auto-resolve an AI-vs-AI fight", _human_player_idx);
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] --combat-tactical requires one combatant to be the human player (%d); the dispatcher would auto-resolve an AI-vs-AI fight", _current_player_idx);
             return 1;
         }
         magic_set.strategic_combat_only = ST_FALSE;
@@ -914,7 +914,7 @@ static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
     }
     else
     {
-        if((attacker_player_idx == _human_player_idx) || (defender_player_idx == _human_player_idx))
+        if((attacker_player_idx == _current_player_idx) || (defender_player_idx == _current_player_idx))
         {
             LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Combat] A combatant is the human player; the dispatcher would open the tactical battle screen -- use --combat-tactical for that");
             return 1;

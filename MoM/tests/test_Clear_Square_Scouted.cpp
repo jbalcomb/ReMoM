@@ -41,7 +41,7 @@ protected:
         memset(_UNITS, 0, units_size);
         memset(_players, 0, sizeof(_players));
 
-        _human_player_idx = 0;
+        _current_player_idx = 0;
         _units = 4;
     }
 
@@ -208,8 +208,8 @@ TEST_F(Clear_Square_Scouted_test, ContactOtherPlayerSetsMutualContactWhenForeign
 
     Contact_Other_Player(unit_idx, world_p);
 
-    EXPECT_EQ(_players[_human_player_idx].Dipl.Contacted[owner_idx], ST_TRUE);
-    EXPECT_EQ(_players[owner_idx].Dipl.Contacted[_human_player_idx], ST_TRUE);
+    EXPECT_EQ(_players[_current_player_idx].Dipl.Contacted[owner_idx], ST_TRUE);
+    EXPECT_EQ(_players[owner_idx].Dipl.Contacted[_current_player_idx], ST_TRUE);
 }
 
 TEST_F(Clear_Square_Scouted_test, ContactOtherPlayerIgnoresHumanOwnedUnits)
@@ -219,7 +219,7 @@ TEST_F(Clear_Square_Scouted_test, ContactOtherPlayerIgnoresHumanOwnedUnits)
     const int16_t world_y = 12;
     const int16_t world_p = 0;
 
-    _UNITS[unit_idx].owner_idx = static_cast<int8_t>(_human_player_idx);
+    _UNITS[unit_idx].owner_idx = static_cast<int8_t>(_current_player_idx);
     _UNITS[unit_idx].wx = static_cast<int8_t>(world_x);
     _UNITS[unit_idx].wy = static_cast<int8_t>(world_y);
     _UNITS[unit_idx].wp = static_cast<int8_t>(world_p);
@@ -229,8 +229,8 @@ TEST_F(Clear_Square_Scouted_test, ContactOtherPlayerIgnoresHumanOwnedUnits)
 
     Contact_Other_Player(unit_idx, world_p);
 
-    EXPECT_EQ(_players[_human_player_idx].Dipl.Contacted[1], ST_FALSE);
-    EXPECT_EQ(_players[1].Dipl.Contacted[_human_player_idx], ST_FALSE);
+    EXPECT_EQ(_players[_current_player_idx].Dipl.Contacted[1], ST_FALSE);
+    EXPECT_EQ(_players[1].Dipl.Contacted[_current_player_idx], ST_FALSE);
 }
 
 TEST_F(Clear_Square_Scouted_test, ContactOtherPlayerIgnoresInvisibleUnits)
@@ -252,8 +252,8 @@ TEST_F(Clear_Square_Scouted_test, ContactOtherPlayerIgnoresInvisibleUnits)
 
     Contact_Other_Player(unit_idx, world_p);
 
-    EXPECT_EQ(_players[_human_player_idx].Dipl.Contacted[owner_idx], ST_FALSE);
-    EXPECT_EQ(_players[owner_idx].Dipl.Contacted[_human_player_idx], ST_FALSE);
+    EXPECT_EQ(_players[_current_player_idx].Dipl.Contacted[owner_idx], ST_FALSE);
+    EXPECT_EQ(_players[owner_idx].Dipl.Contacted[_current_player_idx], ST_FALSE);
 }
 
 TEST_F(Clear_Square_Scouted_test, ContactOtherPlayerRequiresSquareToBeScouted)
@@ -274,6 +274,6 @@ TEST_F(Clear_Square_Scouted_test, ContactOtherPlayerRequiresSquareToBeScouted)
 
     Contact_Other_Player(unit_idx, world_p);
 
-    EXPECT_EQ(_players[_human_player_idx].Dipl.Contacted[owner_idx], ST_FALSE);
-    EXPECT_EQ(_players[owner_idx].Dipl.Contacted[_human_player_idx], ST_FALSE);
+    EXPECT_EQ(_players[_current_player_idx].Dipl.Contacted[owner_idx], ST_FALSE);
+    EXPECT_EQ(_players[owner_idx].Dipl.Contacted[_current_player_idx], ST_FALSE);
 }

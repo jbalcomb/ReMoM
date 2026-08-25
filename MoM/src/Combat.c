@@ -1520,7 +1520,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
     Set_Palette_Changes(0, 243);
     Calculate_Remap_Colors();
     /* OGBUG: should set _active_battle_unit manually, it's unset/leftover here, could OOB AVWL */
-    if(_combat_attacker_player == _human_player_idx)
+    if(_combat_attacker_player == _current_player_idx)
     {
         Switch_Active_Battle_Unit(0);  /* first attacker battle_unit_idx */
     }
@@ -1541,7 +1541,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
     Begin_Combat_Turn();
     _human_handle_immobile = ST_FALSE;
     /* OGBUG: redundant code, none of the above functions change the focus unit */
-    if(_combat_attacker_player == _human_player_idx)
+    if(_combat_attacker_player == _current_player_idx)
     {
         Switch_Active_Battle_Unit(0);
     }
@@ -1569,9 +1569,9 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
         leave_screen = ST_UNDEFINED;
     }
     _human_out_of_moves = ST_FALSE;
-    if(_combat_attacker_player == _human_player_idx)
+    if(_combat_attacker_player == _current_player_idx)
     {
-        Next_Battle_Unit(_human_player_idx);
+        Next_Battle_Unit(_current_player_idx);
     }
     else
     {
@@ -1733,7 +1733,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
                     battle_units[_active_battle_unit].controller_idx = (int8_t)_combat_attacker_player;
                 }
             }
-            Next_Battle_Unit(_human_player_idx);
+            Next_Battle_Unit(_current_player_idx);
             Assign_Combat_Grids();
             input_field_idx = ST_UNDEFINED;
             screen_changed = ST_TRUE;
@@ -1755,7 +1755,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
         )
         {
             Move_Confused(_active_battle_unit);
-            Next_Battle_Unit(_human_player_idx);
+            Next_Battle_Unit(_current_player_idx);
             Assign_Combat_Grids();
             input_field_idx = ST_UNDEFINED;
             screen_changed = ST_TRUE;
@@ -1882,7 +1882,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
                     (battle_units[battle_unit_idx].status == bus_Active)
                 )
                 {
-                    if(battle_units[battle_unit_idx].controller_idx != _human_player_idx)
+                    if(battle_units[battle_unit_idx].controller_idx != _current_player_idx)
                     {
                         Play_Left_Click();
                         Deactivate_Help_List();
@@ -1969,7 +1969,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
                 {
                     if(m_wizard_cast_available == ST_TRUE)
                     {
-                        cast_status = Combat_Cast_Spell((CASTER_IDX_BASE + _human_player_idx), _combat_wx, _combat_wy, _combat_wp);
+                        cast_status = Combat_Cast_Spell((CASTER_IDX_BASE + _current_player_idx), _combat_wx, _combat_wy, _combat_wp);
                         switch(cast_status)
                         {
                             case 0:
@@ -2024,7 +2024,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
                 _human_handle_immobile = ST_FALSE;
                 Play_Left_Click();
                 battle_units[_active_battle_unit].action = bua_Wait;
-                Next_Battle_Unit(_human_player_idx);
+                Next_Battle_Unit(_current_player_idx);
                 Assign_Combat_Grids();
                 niu_combat_screen_dirty = ST_TRUE;
             }
@@ -2069,7 +2069,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
                 Play_Left_Click();
                 battle_units[_active_battle_unit].action = bua_Finished;
                 battle_units[_active_battle_unit].movement_points = 0;
-                Next_Battle_Unit(_human_player_idx);
+                Next_Battle_Unit(_current_player_idx);
                 Assign_Combat_Grids();
                 if(_human_out_of_moves == ST_TRUE)  // human player's turn is over
                 {
@@ -2160,7 +2160,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
             _human_out_of_moves = ST_FALSE;  // Where does this get used after this?
             Combat_Next_Turn();
             // maybe, sets _human_out_of_moves = ST_TRUE and/or _human_handle_immobile = ST_FALSE
-            Next_Battle_Unit(_human_player_idx);
+            Next_Battle_Unit(_current_player_idx);
             Assign_Combat_Grids();
             input_field_idx = ST_UNDEFINED;
             screen_changed = ST_TRUE;
@@ -2199,7 +2199,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
     {
         end_of_combat_message_type = csmt_EnemyFled;
     }
-    else if(winner_player_idx == _human_player_idx)
+    else if(winner_player_idx == _current_player_idx)
     {
         end_of_combat_message_type = csmt_Victory;
     }
@@ -3214,7 +3214,7 @@ int16_t Combat(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t
             (_players[combat_defender_player_idx].Dipl.Dipl_Status[combat_attacker_player_idx] == DIPL_WizardPact)
         )
         {
-            if(combat_attacker_player_idx == _human_player_idx)
+            if(combat_attacker_player_idx == _current_player_idx)
             {
                 stu_strcpy(GUI_NearMsgString, cnst_TreatyAtk_Msg1);  // "You have a treaty with "
                 stu_strcat(GUI_NearMsgString, _players[combat_defender_player_idx].name);
@@ -3262,9 +3262,9 @@ int16_t Combat(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t
     {
         if(
             (
-                (combat_attacker_player_idx == _human_player_idx)
+                (combat_attacker_player_idx == _current_player_idx)
                 ||
-                (combat_defender_player_idx == _human_player_idx)
+                (combat_defender_player_idx == _current_player_idx)
             )
             &&
             (magic_set.strategic_combat_only == ST_FALSE)
@@ -3341,7 +3341,7 @@ int16_t Combat(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t
                     {
                         Change_City_Ownership(_combat_environ_idx, combat_attacker_player_idx);
 
-                        if(combat_attacker_player_idx != _human_player_idx)
+                        if(combat_attacker_player_idx != _current_player_idx)
                         {
                             _CITIES[_combat_environ_idx].construction = bt_AUTOBUILD;  // -4 gran vizier
                         }
@@ -3423,9 +3423,9 @@ int16_t Combat(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t
     o153p24_empty_function();
     Allocate_Reduced_Map();
     if(
-        (combat_attacker_player_idx == _human_player_idx)
+        (combat_attacker_player_idx == _current_player_idx)
         ||
-        (combat_defender_player_idx == _human_player_idx)
+        (combat_defender_player_idx == _current_player_idx)
     )
     {
         Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
@@ -3523,9 +3523,9 @@ void NIU_Enemy_Stack_Combat(int16_t defender_unit_idx, int16_t attacker_unit_idx
     _combat_attacker_wx = wx;
     _combat_attacker_wy = wy;
     _combat_environ = cnv_Enemy_Stack;
-    Player_Army_At_Square(wx, wy, wp, _human_player_idx, &troop_count, troops);
+    Player_Army_At_Square(wx, wy, wp, _current_player_idx, &troop_count, troops);
     // MainScr.c  combat_result = Combat(player_idx, defender_idx, troop_count, &troops[0]);
-    Combat(_human_player_idx, defender_player_idx, troop_count, troops);
+    Combat(_current_player_idx, defender_player_idx, troop_count, troops);
 }
 
 
@@ -3582,7 +3582,7 @@ void NIU_Combat_Redraw_Main_Screen(void)
     Set_Entities_On_Map_Window(wx, wy, _combat_wp);
     Reset_Map_Draw();
     MainScr_Create_Reduced_Map_Picture();
-    Main_Screen_Draw_Do_Draw(&wx, &wy, _combat_wp, wx, wy, _human_player_idx);
+    Main_Screen_Draw_Do_Draw(&wx, &wy, _combat_wp, wx, wy, _current_player_idx);
     PageFlip_FX();
     Copy_On_To_Off_Page();
     Reset_Map_Draw();
@@ -3881,7 +3881,7 @@ void Retreat_From_Combat(int16_t player_idx)
                     if(
                         (_difficulty <= god_Easy)
                         &&
-                        (fleeing_player_idx == _human_player_idx)
+                        (fleeing_player_idx == _current_player_idx)
                     )
                     {
                         battle_units[itr_battle_units].status = bus_Active;
@@ -4079,7 +4079,7 @@ void Retreat_From_Combat(int16_t player_idx)
                 if(battle_units[itr_battle_units].status == bus_Fleeing)
                 {
                     /* OGBUG: mixed conditions on status and road build cancel */
-                    if(fleeing_player_idx != _human_player_idx)  /* ~== NOT Current Player; Attacker || Defender; But, HERE, _combat_defender_player; */
+                    if(fleeing_player_idx != _current_player_idx)  /* ~== NOT Current Player; Attacker || Defender; But, HERE, _combat_defender_player; */
                     {
                         _UNITS[battle_units[itr_battle_units].unit_idx].Status = us_Ready;
                         _UNITS[battle_units[itr_battle_units].unit_idx].Rd_Constr_Left = ST_UNDEFINED;
@@ -4093,7 +4093,7 @@ void Retreat_From_Combat(int16_t player_idx)
                     if(
                         (_difficulty > god_Easy)
                         ||
-                        (fleeing_player_idx != _human_player_idx)
+                        (fleeing_player_idx != _current_player_idx)
                     )
                     {
                         if(_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot == ST_UNDEFINED)
@@ -4578,7 +4578,7 @@ void Assign_Mouse_Images(void)
                     (_auto_combat_flag != ST_FALSE)
                 )
                 &&
-                (battle_units[scanned_battle_unit_idx].controller_idx != _human_player_idx)
+                (battle_units[scanned_battle_unit_idx].controller_idx != _current_player_idx)
             )
             {
                 range_x = abs(battle_units[scanned_battle_unit_idx].cgx - battle_units[_active_battle_unit].cgx);
@@ -4701,7 +4701,7 @@ void Add_Combat_Enchantment_Fields(void)
 {
     int16_t start_x = 0;
     int16_t itr = 0;
-    if(_combat_attacker_player == _human_player_idx)
+    if(_combat_attacker_player == _current_player_idx)
     {
         start_x = 247;
     }
@@ -4713,7 +4713,7 @@ void Add_Combat_Enchantment_Fields(void)
     {
         attacker_enchantment_fields[itr] = Add_Picture_Field((start_x + (itr * 17)), 179, _combat_enchantments_attacker[(attacker_enchantment_first_shown + itr)].icon_seg, str_empty_string__ovr098, _combat_enchantments_attacker[(attacker_enchantment_first_shown + itr)].help_idx);
     }
-    if(_combat_defender_player == _human_player_idx)
+    if(_combat_defender_player == _current_player_idx)
     {
         start_x = 247;
     }
@@ -4844,14 +4844,14 @@ int16_t Prepare_All_Battle_Units(int16_t troop_count, int16_t troops[])
         }
         battle_units[_combat_total_unit_count].bufpi = Combat_Figure_Load(_UNITS[troops[itr]].type, itr);
         battle_units[_combat_total_unit_count].controller_idx = (int8_t)_combat_attacker_player;
-        if(battle_units[_combat_total_unit_count].controller_idx != _human_player_idx)
+        if(battle_units[_combat_total_unit_count].controller_idx != _current_player_idx)
         {
             _UNITS[battle_units[_combat_total_unit_count].unit_idx].Status = us_Ready;  // ; 'MoM Demo': NO ORDERS
             _UNITS[battle_units[_combat_total_unit_count].unit_idx].Rd_Constr_Left = ST_UNDEFINED;
         }
         _combat_total_unit_count++;
     }
-    if(_combat_attacker_player != _human_player_idx)
+    if(_combat_attacker_player != _current_player_idx)
     {
         _combat_ai_player = _combat_attacker_player;
     }
@@ -4868,7 +4868,7 @@ int16_t Prepare_All_Battle_Units(int16_t troop_count, int16_t troops[])
             (_UNITS[itr].owner_idx == _combat_defender_player)
         )
         {
-            if(_UNITS[itr].owner_idx != _human_player_idx)
+            if(_UNITS[itr].owner_idx != _current_player_idx)
             {
                 _UNITS[itr].Status = us_Ready;
             }
@@ -4892,7 +4892,7 @@ int16_t Prepare_All_Battle_Units(int16_t troop_count, int16_t troops[])
     {
         _combat_attacker_player = MOO_MONSTER_PLAYER_IDX;
     }
-    if(_combat_defender_player != _human_player_idx)
+    if(_combat_defender_player != _current_player_idx)
     {
         _combat_ai_player = _combat_defender_player;
     }
@@ -4905,7 +4905,7 @@ int16_t Prepare_All_Battle_Units(int16_t troop_count, int16_t troops[])
             attacker / defender
             current / opponent
     */
-    if(_combat_attacker_player == _human_player_idx)
+    if(_combat_attacker_player == _current_player_idx)
     {
         _combat_local_player = _combat_attacker_player;
         _combat_remote_player = _combat_defender_player;
@@ -5090,7 +5090,7 @@ SAMB_ptr Get_Battle_Unit_Move_Sound_Buffer(int16_t battle_unit_idx, /* HACK */ u
 void Turn_Off_Auto_Combat(void)
 {
     _auto_combat_flag = ST_FALSE;
-    Next_Battle_Unit(_human_player_idx);
+    Next_Battle_Unit(_current_player_idx);
     Assign_Combat_Grids();
 }
 
@@ -5189,7 +5189,7 @@ void Combat_Screen_Draw(void)
     Reset_Window();
     _combat_total_battle_effect_count = Combat_Info_Effects_Count();
     Tactical_Combat_Draw_Buttons();
-    if(_combat_attacker_player == _human_player_idx)
+    if(_combat_attacker_player == _current_player_idx)
     {
         enchantment_strip_left_x = 247;
         enchantment_help_entry_base = 9;
@@ -5212,7 +5212,7 @@ void Combat_Screen_Draw(void)
         FLIC_Draw((enchantment_strip_left_x + (itr * 17)), 179, _combat_enchantments_attacker[(attacker_enchantment_first_shown + itr)].icon_seg);
         _help_entries[(enchantment_help_entry_base + itr)].help_idx = _combat_enchantments_attacker[(attacker_enchantment_first_shown + itr)].help_idx;
     }
-    if(_combat_defender_player == _human_player_idx)
+    if(_combat_defender_player == _current_player_idx)
     {
         enchantment_strip_left_x = 247;
         enchantment_help_entry_base = 9;
@@ -5340,12 +5340,12 @@ void Combat_Screen_Draw(void)
     }
     for(itr = 1; itr < 5; itr++)
     {
-        colors[itr] = combat_name_font_colors_by_banner[_players[_human_player_idx].banner_id][(itr - 1)];
+        colors[itr] = combat_name_font_colors_by_banner[_players[_current_player_idx].banner_id][(itr - 1)];
     }
     Set_Font_Colors_15(4, &colors[0]);
     Set_Font_Style_Shadow_Down(4, 15, 0, 0);
     Set_Outline_Color(241);
-    Print_Centered(278, 167, _players[_human_player_idx].name);
+    Print_Centered(278, 167, _players[_current_player_idx].name);
     Draw_Spell_Information_Window();
     /*
         BEGIN:  Combat Unit Display
@@ -5573,11 +5573,11 @@ void Draw_Spell_Information_Window(void)
     Set_Font_Colors_15(0, &colors[0]);
     Set_Outline_Color(227);
     Set_Font_Style_Shadow_Down(0, 15, 0, 0);
-    Print_Integer_Right(236, 172, _players[_human_player_idx].Cmbt_Skill_Left);
+    Print_Integer_Right(236, 172, _players[_current_player_idx].Cmbt_Skill_Left);
     Print(200, 172, cnst_CMB_Skill);
-    Print_Integer_Right(236, 181, _players[_human_player_idx].mana_reserve);
+    Print_Integer_Right(236, 181, _players[_current_player_idx].mana_reserve);
     Print(200, 181, cnst_CMB_Mana);
-    value = Combat_Casting_Cost_Multiplier(_human_player_idx);
+    value = Combat_Casting_Cost_Multiplier(_current_player_idx);
     stu_itoa(value, Range_Number_String, 10);
     Print(200, 190, cnst_CMB_Range);
     if(value < 10)
@@ -6092,7 +6092,7 @@ void Combat_Info_Effects(void)
                 info_common_count += 2;
             }
         }
-        player_idx = _human_player_idx;
+        player_idx = _current_player_idx;
         info_common_count = (_combat_info_item_count + 1);
         if(itr_combatants == 0)
         {
@@ -6249,7 +6249,7 @@ int16_t Combat_Info_Effects_Count(void)
                 battle_effects_count++;
             }
         }
-        player_idx = _human_player_idx;
+        player_idx = _current_player_idx;
     }
     if(
         (battlefield->center_square_structure == CS_SorceryNode)
@@ -6877,7 +6877,7 @@ void Combat_Cast_Spell_With_Caster(int16_t caster_id)
         {
             case 0:  /* Player */
             {
-                cast_status = Combat_Cast_Spell((CASTER_IDX_BASE + _human_player_idx), _combat_wx, _combat_wy, _combat_wp);
+                cast_status = Combat_Cast_Spell((CASTER_IDX_BASE + _current_player_idx), _combat_wx, _combat_wy, _combat_wp);
                 switch(cast_status)
                 {
                     case 2:
@@ -15100,12 +15100,12 @@ void Combat_Results_Scroll(void)
     leave_screen = ST_FALSE;
     Hotkey_R1_Index = Add_Hot_Key(cnst_HOTKEY_R);
     Hotkey_R2_Index = Add_Hot_Key(cnst_HOTKEY_R_2);
-    hotkey_esc = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc1A, ST_UNDEFINED);
+    full_screen_esc_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc1A, ST_UNDEFINED);
     IDK_popup_timer = 0;
     while((IDK_popup_timer < 400) && (leave_screen == ST_FALSE))
     {
         input_field_idx = Get_Input();
-        if(input_field_idx == hotkey_esc)
+        if(input_field_idx == full_screen_esc_field)
         {
             leave_screen = ST_TRUE;
         }
@@ -15138,7 +15138,7 @@ void Combat_Results_Scroll(void)
                         _scroll_text_top = ((SCREEN_YMAX - (22 + _scroll_text_height)) / 2);
                     }
                     Clear_Fields();
-                    hotkey_esc = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc1A, ST_UNDEFINED);
+                    full_screen_esc_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc1A, ST_UNDEFINED);
                 }
             }
         }
@@ -16864,7 +16864,7 @@ int16_t Raze_City_Prompt(char * message)
 {
     int16_t spare = 0;
     int16_t window_fld = 0;
-    int16_t hotkey_esc = 0;
+    int16_t full_screen_esc_field = 0;
     int16_t raze_button_fld = 0;
     int16_t no_button_fld = 0;
     int16_t input_field_idx = 0;
@@ -16893,7 +16893,7 @@ int16_t Raze_City_Prompt(char * message)
     no_button_fld = Add_Button_Field((message_box_x + 101), (message_box_y + message_height + 15), "", confirmation_button_yes_seg, 'N', ST_UNDEFINED);
     raze_button_fld = Add_Button_Field((message_box_x + 18), (message_box_y + message_height + 15), "", confirmation_button_no_seg, 'R', ST_UNDEFINED);
     window_fld = Add_Hidden_Field(message_box_x, message_box_y, (message_box_x + 185), (message_box_y + 63), ST_NULL, ST_UNDEFINED);
-    hotkey_esc = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, '\x1B', ST_UNDEFINED);
+    full_screen_esc_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, '\x1B', ST_UNDEFINED);
     Assign_Auto_Function(Raze_City_Prompt_Draw, 1);
     leave_screen = ST_FALSE;
     while(leave_screen == ST_FALSE)

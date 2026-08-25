@@ -445,25 +445,101 @@ void Restore_Alias_Colors(void)
 }
 
 // PLATFORM  MSDOS  // WZD s17p15
-// PLATFORM  MSDOS  // drake178: VGA_DrawFarString()
-// PLATFORM  MSDOS  // PLATFORM
 // PLATFORM  MSDOS  int16_t Print_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt)
 // PLATFORM  MSDOS  {
 // PLATFORM  MSDOS      int16_t next_x;
-// PLATFORM  MSDOS  
 // PLATFORM  MSDOS      _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
-// PLATFORM  MSDOS  
 // PLATFORM  MSDOS      next_x = Print(x, y, near_buffer);
-// PLATFORM  MSDOS  
 // PLATFORM  MSDOS      return next_x;
 // PLATFORM  MSDOS  }
-// int16_t Print_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt)
-int16_t Print_Far(int16_t x, int16_t y, char * src)
+/*
+In Borland C/C++, FP_SEG and FP_OFF are implemented using typecasting.
+They treat the 32-bit far pointer as an array of two 16-bit integers, or use a built-in compiler extension.
+Here are the standard definitions found inside <dos.h>:
+#define FP_SEG(fp)   ((unsigned)(void _seg *)(fp))
+#define FP_OFF(fp)   ((unsigned)(fp))
+F_SCOPY@ — Borland's own far block copy
+seg000/F_SCOPY.asm does essentially the same job as _fstrcpy (copy DS:SI → ES:DI, save/restore DS), and it unambiguously takes two far pointers:
+
+*/
+/*
+36AA:D49A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+near_buffer db 100 dup(0)
+
+1573:00E1                                                 proc _fstrcpy far                       ; CODE XREF: Print_Far+10P ...
+1573:00E1                                                 dst_ofst= word ptr  6
+1573:00E1                                                 dst_sgmt= word ptr  8
+1573:00E1                                                 src_ofst= word ptr  0Ah
+1573:00E1                                                 src_sgmt= word ptr  0Ch
+1573:00E1 55                                                  push bp
+1573:00E2 8B EC                                               mov bp, sp
+1573:00E4 56                                                  push si
+1573:00E5 57                                                  push di
+1573:00E6 06                                                  push es
+1573:00E7 1E                                                  push ds
+1573:00E8 83 7E 08 00                                         cmp [bp+dst_sgmt], 0
+1573:00EC 75 05                                               jnz short loc_15823
+1573:00EE 8C D8                                               mov ax, ds
+1573:00F0 89 46 08                                            mov [bp+dst_sgmt], ax
+1573:00F3                                                 loc_15823:                              ; CODE XREF: _fstrcpy+Bj
+1573:00F3 83 7E 0C 00                                         cmp [bp+src_sgmt], 0
+1573:00F7 75 05                                               jnz short loc_1582E
+1573:00F9 8C D8                                               mov ax, ds
+1573:00FB 89 46 0C                                            mov [bp+src_sgmt], ax
+1573:00FE                                                 loc_1582E:                              ; CODE XREF: _fstrcpy+16j
+1573:00FE 8B 46 08                                            mov ax, [bp+dst_sgmt]
+1573:0101 8E C0                                               mov es, ax
+1573:0103 8B 76 0A                                            mov si, [bp+src_ofst]
+1573:0106 8B 7E 06                                            mov di, [bp+dst_ofst]
+1573:0109 8B 46 0C                                            mov ax, [bp+src_sgmt]
+1573:010C 8E D8                                               mov ds, ax
+1573:010E                                                 loc_1583E:                              ; CODE XREF: _fstrcpy+31j
+1573:010E AC                                                  lodsb
+1573:010F AA                                                  stosb
+1573:0110 3C 00                                               cmp al, 0
+1573:0112 75 FA                                               jnz short loc_1583E
+1573:0114 1F                                                  pop ds
+1573:0115 07                                                  pop es
+1573:0116 5F                                                  pop di
+1573:0117 5E                                                  pop si
+1573:0118 5D                                                  pop bp
+1573:0119 CB                                                  retf
+1573:0119                                                 endp _fstrcpy
+
+; char far * _fstrcpy(char far *dest, const char far *src);
+19B4:0323                                                 proc Print_Far far
+19B4:0323                                                 x   = word ptr  6
+19B4:0323                                                 y   = word ptr  8
+19B4:0323                                                 src_ofst= word ptr  0Ah
+19B4:0323                                                 src_sgmt= word ptr  0Ch
+19B4:0323 55                                                  push bp
+19B4:0324 8B EC                                               mov bp, sp
+19B4:0326 FF 76 0C                                            push [bp+src_sgmt]                  ; src_sgmt
+19B4:0329 FF 76 0A                                            push [bp+src_ofst]                  ; src_ofst
+19B4:032C 33 C0                                               xor ax, ax
+19B4:032E 50                                                  push ax                             ; dst_sgmt
+19B4:032F B8 9A D4                                            mov ax, offset near_buffer
+19B4:0332 50                                                  push ax                             ; dst_ofst
+19B4:0333 9A E1 00 73 15                                      call _fstrcpy
+19B4:0338 83 C4 08                                            add sp, 8
+19B4:033B B8 9A D4                                            mov ax, offset near_buffer
+19B4:033E 50                                                  push ax                             ; string
+19B4:033F FF 76 08                                            push [bp+y]                         ; y
+19B4:0342 FF 76 06                                            push [bp+x]                         ; x
+19B4:0345 90                                                  nop
+19B4:0346 0E                                                  push cs
+19B4:0347 E8 D9 03                                            call near ptr Print
+19B4:034A 83 C4 06                                            add sp, 6
+19B4:034D 5D                                                  pop bp
+19B4:034E CB                                                  retf
+19B4:034E                                                 endp Print_Far
+*/
+// int16_t Print(int16_t x, int16_t y, char * string)
+int16_t Print_Far(int16_t x, int16_t y, char /* FAR */ * string)
 {
     int16_t next_x;
 
-    // _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
-    _fstrcpy(near_buffer, src);
+    // MSDOS  _fstrcpy(near_buffer, 0, FP_SEG(string), FP_OFF(string));
+    _fstrcpy(near_buffer, string);
 
     next_x = Print(x, y, near_buffer);
 

@@ -557,7 +557,7 @@ void TaxCollector_Window(void)
     stu_strcpy(str_unrest, cnst_Info_Msg_7_4); // "% unrest"
 
 
-    tax_rate = _players[_human_player_idx].tax_rate;
+    tax_rate = _players[_current_player_idx].tax_rate;
 
 
 
@@ -644,7 +644,7 @@ void TaxCollector_Window(void)
 
     if(selection != ST_UNDEFINED)
     {
-        _players[_human_player_idx].tax_rate = selection;
+        _players[_current_player_idx].tax_rate = selection;
     }
 
     // TODO  CTY_RecalculateAll();
@@ -887,14 +887,14 @@ void Powergraph_Screen_Draw(void)
     {
         if(_FORTRESSES[itr_players].active == ST_TRUE)
         {
-            if(_players[_human_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)  // ¿ current player ?
+            if(_players[_current_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)  // ¿ current player ?
             {
                 IDK_Powergraph_Draw_Turn_Data(itr_players, turns_count, month);
             }
         }
     }
 
-    IDK_Powergraph_Draw_Turn_Data(_human_player_idx, turns_count, month);
+    IDK_Powergraph_Draw_Turn_Data(_current_player_idx, turns_count, month);
 
     colors[0] = banner_colors[(_players[HUMAN_PLAYER_IDX].banner_id)];
     colors[1] = banner_colors[(_players[HUMAN_PLAYER_IDX].banner_id)];
@@ -913,7 +913,7 @@ void Powergraph_Screen_Draw(void)
 
     for(itr_players = 1; itr_players < _num_players; itr_players++)
     {
-        if(_players[_human_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
+        if(_players[_current_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
         {
             colors[0] = banner_colors[(_players[itr_players].banner_id)];
             colors[1] = banner_colors[(_players[itr_players].banner_id)];
@@ -1150,7 +1150,7 @@ void Status_Screen_Draw(void)
     for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
     {
 
-        if(_players[_human_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
+        if(_players[_current_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
         {
             var_8 = 35;
 
@@ -1454,7 +1454,7 @@ void Cartograph_Screen_Draw_Map__WIP(int16_t flag)
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-        if(_players[_human_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
+        if(_players[_current_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
         {
             FLIC_Draw(260, (80 + (var_8 * 9)), mapflags_segs[_players[itr_players].banner_id]);
             Print(269, (82 + (var_8 * 9)), _players[itr_players].name);

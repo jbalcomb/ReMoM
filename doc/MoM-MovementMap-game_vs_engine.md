@@ -198,7 +198,7 @@ GAME_Overland_Init()
 
      Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane)
 
-     WIZ_NextIdleStack(_human_player_idx, _map_x@, _map_y@, _map_plane@)
+     WIZ_NextIdleStack(_current_player_idx, _map_x@, _map_y@, _map_plane@)
 
 WIZ_NextIdleStack() |-> OVL_StackSelect() |-> OVL_BringIntoView()
 

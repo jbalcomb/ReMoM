@@ -255,9 +255,9 @@ void GAME_NextHumanStack(void)
     Update_Scouted_And_Contacted();
 
     // ; does nothing and returns zero; at some point must have been some wizard data refresh function
-    o62p01_empty_function(_human_player_idx);
+    o62p01_empty_function(_current_player_idx);
 
-    WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+    WIZ_NextIdleStack(_current_player_idx, &_map_x, &_map_y, &_map_plane);
 
     Update_Scouted_And_Contacted();
 
@@ -780,7 +780,7 @@ void Loaded_Game_Update(void)
 
     /* seg001 */ destroy_combat_city = ST_FALSE;
 
-    _human_player_idx = HUMAN_PLAYER_IDX;
+    _current_player_idx = HUMAN_PLAYER_IDX;
 
     _page_flip_effect = pfe_None;
 
@@ -960,7 +960,7 @@ void Init_Overland(void)
     _map_x = 0;
     _map_y = 0;
 
-    // DONT  j_o62p01_empty_function(_human_player_idx)
+    // DONT  j_o62p01_empty_function(_current_player_idx)
 
     { int16_t _prev_unit_dbg = _unit; _unit = 0;  /* 0: None / No Unit */
       LOG_INFO(LOG_CAT_GENERAL, "[_unit ASSIGN] %d -> %d", _prev_unit_dbg, _unit); }
@@ -987,7 +987,7 @@ void Init_Overland(void)
 
     Cache_Graphics_Overland();
 
-    WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+    WIZ_NextIdleStack(_current_player_idx, &_map_x, &_map_y, &_map_plane);
 
     // DONT  j_o108p02_empty_function()
 

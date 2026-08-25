@@ -462,23 +462,23 @@ void End_Of_Game_Score(void)
     // HALOFAM, 026  "HOFPIX"   ""
     // HALOFAM, 027  "HOFPIX"   ""
     // HALOFAM, 028  "HOFPIX"   ""
-    IMG_GAME_HoF_Pop = LBX_Reload_Next(halofam_lbx_file__ovr107, (15 + _players[_human_player_idx].capital_race), _screen_seg);
+    IMG_GAME_HoF_Pop = LBX_Reload_Next(halofam_lbx_file__ovr107, (15 + _players[_current_player_idx].capital_race), _screen_seg);
     Assign_Auto_Function(End_Of_Game_Score_Draw, 2);
     /* If SoM Win, make all other Wizards as Banished */
-    if(m_magic_winner_idx == _human_player_idx)
+    if(m_magic_winner_idx == _current_player_idx)
     {
         for(itr = 1; itr < _num_players; itr++)
         {
             if(_FORTRESSES[itr].active == ST_TRUE)
             {
-                Set_Bit_Field_Near(itr, (char *)&_players[_human_player_idx].Defeated_Wizards);
+                Set_Bit_Field_Near(itr, (char *)&_players[_current_player_idx].Defeated_Wizards);
             }
         }
     }
     conquests_ctr = 0;
     for(itr = 0; itr < _num_players; itr++)
     {
-        if(Test_Bit_Field_Near(itr, (char *)&_players[_human_player_idx].Defeated_Wizards) == ST_TRUE)
+        if(Test_Bit_Field_Near(itr, (char *)&_players[_current_player_idx].Defeated_Wizards) == ST_TRUE)
         {
             // HALOFAM, 001  "HOFPIX"   "merlin"
             // HALOFAM, 002  "HOFPIX"   "shaman"
@@ -536,8 +536,8 @@ void End_Of_Game_Score(void)
                 magic_set.hof_races[itr2 + 1] = magic_set.hof_races[itr2];
             }
             magic_set.hof_scores[itr] = m_new_score;
-            magic_set.hof_races[itr] = _players[_human_player_idx].capital_race;
-            stu_strcpy(magic_set.hof_names[itr], _players[_human_player_idx].name);
+            magic_set.hof_races[itr] = _players[_current_player_idx].capital_race;
+            stu_strcpy(magic_set.hof_names[itr], _players[_current_player_idx].name);
             fp = stu_fopen_ci(cnst_Set_File3, cnst_WB3);
             if(fp != NULL)
             {
@@ -591,7 +591,7 @@ void End_Of_Game_Score_Draw(void)
     Set_Font_Style_Shadow_Down(3, 4, 0, 0);
     Set_Outline_Color(250);
     Set_Alias_Color(246);
-    Print_Centered(160, 3, _players[_human_player_idx].name);
+    Print_Centered(160, 3, _players[_current_player_idx].name);
     score = 0;
     temp_val = 0;
     /* +1 point per spell known */
@@ -599,7 +599,7 @@ void End_Of_Game_Score_Draw(void)
     {
         for(itr = 0; itr < NUM_SPELLS_PER_MAGIC_REALM; itr++)
         {
-            if(_players[_human_player_idx].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr)] == sls_Known)
+            if(_players[_current_player_idx].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr)] == sls_Known)
             {
                 temp_val++;
             }
@@ -631,7 +631,7 @@ void End_Of_Game_Score_Draw(void)
     temp_val = 0;
     for(itr = 0; itr < _cities; itr++)
     {
-        if(_CITIES[itr].owner_idx == _human_player_idx)
+        if(_CITIES[itr].owner_idx == _current_player_idx)
         {
             temp_val += _CITIES[itr].population;
         }
@@ -669,7 +669,7 @@ void End_Of_Game_Score_Draw(void)
     conquests_count = 0;
     for(itr = 0; itr < _num_players; itr++)
     {
-        if(Test_Bit_Field_Near(itr, (char *)&_players[_human_player_idx].Defeated_Wizards) == ST_TRUE)
+        if(Test_Bit_Field_Near(itr, (char *)&_players[_current_player_idx].Defeated_Wizards) == ST_TRUE)
         {
             conquests_count++;
         }
@@ -701,7 +701,7 @@ void End_Of_Game_Score_Draw(void)
         FLIC_Draw(draw_x, draw_y, hof_banished_seg[itr]);
         draw_x += 35;
     }
-    temp_val = Player_Fame(_human_player_idx);
+    temp_val = Player_Fame(_current_player_idx);
     stu_itoa(temp_val, GUI_String_2, 10);
     stu_strcpy(GUI_String_1, GUI_String_2);
     stu_strcat(GUI_String_1, space);
@@ -722,12 +722,12 @@ void End_Of_Game_Score_Draw(void)
     stu_strcat(GUI_String_1, space);
     temp_val = 0;
     if(
-        _FORTRESSES[_human_player_idx].active == ST_TRUE
+        _FORTRESSES[_current_player_idx].active == ST_TRUE
         &&
         (
             m_magic_winner_idx == ST_UNDEFINED
             ||
-            m_magic_winner_idx == _human_player_idx
+            m_magic_winner_idx == _current_player_idx
         )
     )
     {
@@ -749,7 +749,7 @@ void End_Of_Game_Score_Draw(void)
     stu_strcat(GUI_String_1, cnst_HoF_String_9);
     stu_strcat(GUI_String_1, Bonus_Pts_String);
     temp_val = 0;
-    if(m_magic_winner_idx == _human_player_idx)
+    if(m_magic_winner_idx == _current_player_idx)
     {
         temp_val = 250;
     }

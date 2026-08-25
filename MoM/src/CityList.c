@@ -471,7 +471,7 @@ void CityList_Screen_Draw(void)
     // BEGIN: Print Title
 
     stu_strcpy(GUI_String_1, aTheCitiesOf);
-    stu_strcat(GUI_String_1, _players[_human_player_idx].name);
+    stu_strcat(GUI_String_1, _players[_current_player_idx].name);
     for(itr_colors = 0; itr_colors < 5; itr_colors++)
     {
         colors1[itr_colors] = 237;
@@ -519,11 +519,11 @@ void CityList_Screen_Draw(void)
     Print(197, 17, aProducing);   /* "Producing" */
     Print(272, 17, aTime);        /* "Time"      */
 
-    stu_itoa(_players[_human_player_idx].gold_reserve, GUI_String_1, 10);
+    stu_itoa(_players[_current_player_idx].gold_reserve, GUI_String_1, 10);
     stu_strcat(GUI_String_1, cnst_GP_2);
     Print_Centered(242, 172, GUI_String_1);
 
-    stu_itoa(_players[_human_player_idx].mana_reserve, GUI_String_1, 10);
+    stu_itoa(_players[_current_player_idx].mana_reserve, GUI_String_1, 10);
     stu_strcat(GUI_String_1, cnst_MP_2);
     Print_Centered(276, 172, GUI_String_1);
 
@@ -629,7 +629,7 @@ void Build_City_List(void)
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)  /* MoO2  _NUM_COLONIES ~== _cities */
     {
-        if(_CITIES[itr_cities].owner_idx == _human_player_idx)  /* MoO2  _PLAYER_NUM ~== _human_player_idx */
+        if(_CITIES[itr_cities].owner_idx == _current_player_idx)  /* MoO2  _PLAYER_NUM ~== _current_player_idx */
         {
             m_city_list_array[m_city_list_count] = (unsigned char)itr_cities;  /* MoO2  _g_colony_list_ptr -> l_colony_list[250] */
 

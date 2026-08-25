@@ -181,7 +181,7 @@ int16_t Unit_List_Window(int16_t unit_idx, int16_t flag, int16_t x, int16_t y)
             (_UNITS[itr_units].wy == _UNITS[m_ulw_unit_idx].wy)
             &&
             (
-                (m_ulw_unit_owner_idx == _human_player_idx)
+                (m_ulw_unit_owner_idx == _current_player_idx)
                 ||
                 (Unit_Has_Invisibility(itr_units) != ST_TRUE)
             )
@@ -378,7 +378,7 @@ void Unit_List_Window_Draw(void)
     {
         unit_type = _UNITS[m_ulw_troops[itr]].type;
 
-        if(_UNITS[m_ulw_troops[itr]].owner_idx == _human_player_idx)
+        if(_UNITS[m_ulw_troops[itr]].owner_idx == _current_player_idx)
         {
             Draw_Unit_Picture(x_start, y_start, m_ulw_troops[itr], 1);
         }

@@ -84,7 +84,7 @@ else if((_NODES[node_idx].flags & NF_GUARDIAN) == 0)                     // enem
 else {                                                                    // enemy node WITH a guardian
     percentage = Random(100);
     if(percentage <= 25) { did_take_node = ST_TRUE; flags ^= NF_GUARDIAN; }   // 25% → take + clear guardian
-    else if(unit_owner == _human_player_idx) Warn0(_msg_guardian_kills_spirit); // 75% → fail (warn humans only)
+    else if(unit_owner == _current_player_idx) Warn0(_msg_guardian_kills_spirit); // 75% → fail (warn humans only)
 }
 
 if(did_take_node) {                                                      // [1766-1776]
@@ -110,7 +110,7 @@ Kill_Unit(melder_unit_idx, kt_Dismissed);                               // spiri
 
 ### Behaviour notes
 
-- **Guardian-node odds are symmetric**: an enemy node defended by a Guardian Spirit is taken only on `Random(100) <= 25` (25%), for **both** AI and human melders. The `unit_owner == _human_player_idx` check decides solely whether the "Guardian Spirit kills your spirit" message is shown — it does **not** change the outcome.
+- **Guardian-node odds are symmetric**: an enemy node defended by a Guardian Spirit is taken only on `Random(100) <= 25` (25%), for **both** AI and human melders. The `unit_owner == _current_player_idx` check decides solely whether the "Guardian Spirit kills your spirit" message is shown — it does **not** change the outcome.
 - **The spirit is always consumed** (`Kill_Unit` runs regardless of `did_take_node`): a melder that loses the roll dies for nothing; one that wins flips the node and (if it was a Guardian Spirit) re-flags `NF_GUARDIAN` to garrison it.
 - **Guardian Spirit is preferred as the melder** (the loop `break`s on it) and is what sets `node_has_garrison`, so a winning Guardian Spirit leaves the node guarded for the new owner.
 

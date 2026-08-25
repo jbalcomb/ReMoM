@@ -47,7 +47,7 @@ used to index spell_data_table to get .name for "Overland Enchantments"
 ovl_ench_list_players
 indexed by ovl_ench_cnt
 ovl_ench_list_players[ovl_ench_cnt] = player_idx;
-checked against _human_player_idx for "cancel"
+checked against _current_player_idx for "cancel"
 
 
 Magic_Screen_Load_Pictures()

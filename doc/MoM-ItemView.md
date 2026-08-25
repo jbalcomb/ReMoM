@@ -81,7 +81,7 @@ Item_Screen_Load()
 Item_Screen_Draw()
     j_Draw_Item_Icon_With_Enchantment_Outline(hero_ptr.Items[itr], m_item_icon_workarea)
     Draw_Picture((portrait_x1+40+(29*itr_hero_items)), (portrait_y1+15), m_item_icon_workarea)
-    j_Draw_Item_Icon_With_Enchantment_Outline(_players[_human_player_idx].Vault_Items[itr], m_item_icon_workarea)
+    j_Draw_Item_Icon_With_Enchantment_Outline(_players[_current_player_idx].Vault_Items[itr], m_item_icon_workarea)
     Draw_Picture(item_icon_x, item_icon_y, m_item_icon_workarea)
 
 Item_Pool_View()

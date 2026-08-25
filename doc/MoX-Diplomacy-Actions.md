@@ -61,7 +61,7 @@ IDK_Dipl_s72690()
         ||
         (m_IDK_diplomatic_order == 49)
     )
-        Player_Add_Gold(_human_player_idx, _players[HUMAN_PLAYER_IDX].Dipl.Tribute_Gold[m_diplomac_player_idx]);
+        Player_Add_Gold(_current_player_idx, _players[HUMAN_PLAYER_IDX].Dipl.Tribute_Gold[m_diplomac_player_idx]);
         if(_players[HUMAN_PLAYER_IDX].Dipl.Tribute_Spell[m_diplomac_player_idx] != spl_NONE)
             WIZ_DIPL_TeachSpell__STUB(HUMAN_PLAYER_IDX, _players[HUMAN_PLAYER_IDX].Dipl.Tribute_Spell[m_diplomac_player_idx]);
 

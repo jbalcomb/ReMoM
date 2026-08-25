@@ -296,7 +296,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
     Encounter_Outcome = ST_TRUE;
 
 
-    if(player_idx == _human_player_idx)
+    if(player_idx == _current_player_idx)
     {
         if(magic_set.event_music == ST_TRUE)
         {
@@ -341,7 +341,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
 
 
 
-        if(player_idx == _human_player_idx)
+        if(player_idx == _current_player_idx)
         {
             Set_Bit_Field(2, &_LAIRS[lair_idx].Misc_Flags);  // DEDU: ¿ bit 2 is ~ did_attack ? ¿ ever tested ? ¿ how diff from explored/visited ?
         }
@@ -351,7 +351,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
     if(
         (Encounter_Outcome == ST_TRUE)
         &&
-        (player_idx == _human_player_idx)
+        (player_idx == _current_player_idx)
     )
     {
         treasure_window_y = 60;
@@ -375,7 +375,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
 
         Lair_Generate_Treasure(player_idx, lair_idx, &Reward_Items[0], &Reward_Spell, &Reward_Hero, &Hero_Slot, &Total_Rewards, &Reward_Special_Count, &Reward_Specials[0]);
 
-        if(player_idx == _human_player_idx)
+        if(player_idx == _current_player_idx)
         {
             Lair_Treasure_Popup(lair_idx, treasure_window_y, &Reward_Items[0], Reward_Spell, Hero_Slot, Total_Rewards, Reward_Special_Count, &Reward_Specials[0]);
         }
@@ -390,7 +390,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
         if(
             (Hero_Slot != ST_UNDEFINED)
             &&
-            (player_idx == _human_player_idx)
+            (player_idx == _current_player_idx)
         )
         {
             Set_Draw_Active_Stack_Always();
@@ -416,7 +416,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
         if(
             (_LAIRS[lair_idx].Item_Count > 0)
             &&
-            (player_idx == _human_player_idx)
+            (player_idx == _current_player_idx)
         )
         {
             Previous_Game_State = current_screen;
@@ -469,7 +469,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
     confirmation_box_y_offset = 0;
     notify_draw_offscr = ST_FALSE;  // ¿ ALWAYS 0 ?
 
-    if(player_idx == _human_player_idx)
+    if(player_idx == _current_player_idx)
     {
         Check_Research_Spell_Is_Known(0);
     }

@@ -184,7 +184,7 @@ int16_t Prepare_All_Battle_Units(int16_t troop_count, int16_t troops[])
     {
         _combat_attacker_player = MOO_MONSTER_PLAYER_IDX;
     }
-    if(_combat_defender_player != _human_player_idx)
+    if(_combat_defender_player != _current_player_idx)
     {
         _combat_ai_player = _combat_defender_player;
     }
@@ -197,7 +197,7 @@ int16_t Prepare_All_Battle_Units(int16_t troop_count, int16_t troops[])
             attacker / defender
             current / opponent
     */
-    if(_combat_attacker_player == _human_player_idx)
+    if(_combat_attacker_player == _current_player_idx)
     {
         _combat_local_player = _combat_attacker_player;
         _combat_remote_player = _combat_defender_player;
@@ -218,7 +218,7 @@ The constants matter: HUMAN_PLAYER_IDX 0, NEUTRAL_PLAYER_IDX 5, MOO_MONSTER_PLAY
 
 3. Re-labelling the two sides by seat (5587-5602) — and this is what the IDGI is about. Attacker/defender is the wrong axis for the turn loop, which cares about which seat the interactive UI drives. So the pair gets flipped into _combat_local_player / _combat_remote_player, and those are what the loop uses: whose turn auto-plays (4182, 4189), whether the active unit accepts input (2509, 5066, 6176, 7905), win attribution (2032), retreat checks (8542).
 
-The names are the confusing part. The mapping is unconditional — if the attacker isn't the human, the defender gets labelled "human" whether or not a human is anywhere in the fight. In AI-vs-AI combat _combat_local_player names an AI wizard. That's deliberate, and 4195 proves it: under _auto_combat_flag the game calls Auto_Cast_Spell_And_Do_Combat_Turn(_combat_local_player) — machine-playing the "human" seat. So read them as seat A / seat B, named after the common case, not as a "is a person at the keyboard" flag. _human_player_idx (the variable at MOM_DAT.c:2957, always HUMAN_PLAYER_IDX) is the one that really means "the human".
+The names are the confusing part. The mapping is unconditional — if the attacker isn't the human, the defender gets labelled "human" whether or not a human is anywhere in the fight. In AI-vs-AI combat _combat_local_player names an AI wizard. That's deliberate, and 4195 proves it: under _auto_combat_flag the game calls Auto_Cast_Spell_And_Do_Combat_Turn(_combat_local_player) — machine-playing the "human" seat. So read them as seat A / seat B, named after the common case, not as a "is a person at the keyboard" flag. _current_player_idx (the variable at MOM_DAT.c:2957, always HUMAN_PLAYER_IDX) is the one that really means "the human".
 
 One thing that falls out of reading these together — the two sentinels don't agree. The fallbacks write 6, but every reader guards with 5: 1559 _combat_ai_player != NEUTRAL_PLAYER_IDX, and likewise 5960, 6001, 6042, and < NEUTRAL_PLAYER_IDX at 7141. A _combat_ai_player of 6 sails through every one of those and then indexes _players[6] — same one-past-the-end read as the Cmbt_Skill_Left write we just looked at, but on wizard_id, banner_id and name.
 
@@ -302,7 +302,7 @@ None open. The thirteen raised during this review are all fixed; the roster belo
 | --- | --- | --- |
 | R1 | [`Battle_Unit_Regular_Stats`](../../MoM/src/COMBINIT.c#L566) | Holy Arms' `\|\|` was reconstructed as nested `&&` with two tests inverted, so the normal units it exists to bless got nothing |
 | R2 | [`Battle_Unit_Regular_Stats`](../../MoM/src/COMBINIT.c#L566) | Chaos Surge's loop bound was the constant `NUM_PLAYERS`, not the live `_num_players` |
-| R3 | [`Prepare_All_Battle_Units`](../../MoM/src/Combat.c#L5436) | the defender-side `us_Ready` reset was inverted and read `HUMAN_PLAYER_IDX` instead of `_human_player_idx` |
+| R3 | [`Prepare_All_Battle_Units`](../../MoM/src/Combat.c#L5436) | the defender-side `us_Ready` reset was inverted and read `HUMAN_PLAYER_IDX` instead of `_current_player_idx` |
 | R4 | [`Begin_Combat_Turn`](../../MoM/src/Combat.c#L2635) | the Web block was hoisted out of its guard and dropped `action = bua_Finished` |
 | R5 | [`Battle_Unit_Hit_Points`](../../MoM/src/COMBINIT.c#L377) | `_unit_type_table` was indexed by *unit* index instead of unit *type* — an out-of-bounds read on almost every unit |
 | R6 | [`Unit_Hit_Points`](../../MoM/src/COMBINIT.c#L292), [`Battle_Unit_Hero_Skill_Stats`](../../MoM/src/COMBINIT.c#L1102) | four phantom `Random()` guards with no asm counterpart, injecting RNG into a stat calculation that runs once per unit per turn |

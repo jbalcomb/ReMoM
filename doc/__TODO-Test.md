@@ -519,7 +519,7 @@ Main_Screen_Draw_Summary_Window()
     int16_t mana = 0;
     int16_t food = 0;
     int16_t gold = 0;
-    Player_Resource_Income_Total(_human_player_idx, &gold, &food, &mana);
+    Player_Resource_Income_Total(_current_player_idx, &gold, &food, &mana);
         Player_Magic_Power_Income_Total(&mana_income, &food_income, &gold_income, player_idx);
 
         mana_expense = Player_Armies_And_Enchantments_Mana_Upkeep(player_idx);

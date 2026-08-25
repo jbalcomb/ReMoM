@@ -366,7 +366,7 @@ void Next_Turn_Proc(void)
 
         LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Next_Turn_Proc(): if(g_bldg_msg_ctr > 0)", __FILE__, __LINE__);
 
-        o62p01_empty_function(_human_player_idx);
+        o62p01_empty_function(_current_player_idx);
 
         for(itr_msg = 0; itr_msg < g_bldg_msg_ctr; itr_msg++)
         {
@@ -444,7 +444,7 @@ void Next_Turn_Proc(void)
 
     Update_Units_MvsSts();
 
-    o62p01_empty_function(_human_player_idx);
+    o62p01_empty_function(_current_player_idx);
 
     o59p10_empty_function();
 
@@ -453,12 +453,12 @@ void Next_Turn_Proc(void)
 #endif
 
     if(
-        (_players[_human_player_idx].casting_cost_remaining <= 0)
+        (_players[_current_player_idx].casting_cost_remaining <= 0)
         &&
-        (_players[_human_player_idx].casting_spell_idx > spl_NONE))
+        (_players[_current_player_idx].casting_spell_idx > spl_NONE))
     {
 
-        Cast_Spell_Overland(_human_player_idx);
+        Cast_Spell_Overland(_current_player_idx);
 
         /* EOG_HACK */  magic_master_idx = Get_Winner();
 
@@ -468,7 +468,7 @@ void Next_Turn_Proc(void)
 
     all_units_moved = ST_FALSE;
 
-    WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+    WIZ_NextIdleStack(_current_player_idx, &_map_x, &_map_y, &_map_plane);
 
     Reset_Draw_Active_Stack();
 
@@ -506,7 +506,7 @@ void All_AI_Refresh_Units_Movement(void)
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
 
-        if(_UNITS[itr_units].owner_idx != _human_player_idx)  // ¿ current player ?
+        if(_UNITS[itr_units].owner_idx != _current_player_idx)  // ¿ current player ?
         {
 
             _UNITS[itr_units].Finished = ST_FALSE;

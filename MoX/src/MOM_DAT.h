@@ -4050,7 +4050,7 @@ extern int16_t _map_y;
 extern int16_t _map_x;
 
 // WZD dseg:BD8C
-extern int16_t _human_player_idx;
+extern int16_t _current_player_idx;
 
 
 // WZD dseg:BD8E

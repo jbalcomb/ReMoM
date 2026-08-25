@@ -63,7 +63,7 @@ The original ends each terminal branch with `GAME_EXE_Swap(cnst_MAGIC_EXE_File, 
 | Conquest animation, guarded by `resign != ST_TRUE` (`Conquest_Animation`, asm `WIZ_Conquest__WIP`) | `loc_78E80`-`loc_78E96` | [308-311](../../MoM/src/CONQUEST.c#L308-L311) | faithful |
 | Diplomacy: zero both directions, `Change_Relations(-40, player_idx, itr_players, 7, 0, 0)` | `loc_78E9A`-`loc_78EFE` | [313-328](../../MoM/src/CONQUEST.c#L313-L328) | faithful |
 | `Conquest_Spells(player_idx, city_owner_idx)` (asm `WIZ_ConquestSpells`) | `loc_78EFE` tail | [329](../../MoM/src/CONQUEST.c#L329) | faithful |
-| Human defeated → `Lose_Animation` + `End_Of_Game_Score` + `s01p16_empty_function` + ~~`Respawn`~~ | `cmp di,_human_player_idx` / `GAME_LimboFallAnim` / `GAME_OVER` / `GAME_EXE_Swap` | [330-336](../../MoM/src/CONQUEST.c#L330-L336) | faithful + **D2** |
+| Human defeated → `Lose_Animation` + `End_Of_Game_Score` + `s01p16_empty_function` + ~~`Respawn`~~ | `cmp di,_current_player_idx` / `GAME_LimboFallAnim` / `GAME_OVER` / `GAME_EXE_Swap` | [330-336](../../MoM/src/CONQUEST.c#L330-L336) | faithful + **D2** |
 | Else `CP_Is_Dead()` (asm `GAME_IsWon__STUB`) → `Win_Animation` + `End_Of_Game_Score` + `s01p16_empty_function` + ~~`Respawn`~~ | `loc_78F40`-`@@Done` / `GAME_PlayVictoryAnim` / `GAME_OVER` / `GAME_EXE_Swap` | [337-346](../../MoM/src/CONQUEST.c#L337-L346) | faithful + **D2** |
 
 ## Verified faithful (spot notes)

@@ -22,8 +22,8 @@ Main_Screen()
                         Unit_Gold_Upkeep()  
                     Player_Armies_Food_Upkeep()  
             Main_Screen_Draw_Status_Window()  
-                _players[_human_player_idx].gold_reserve  
-                _players[_human_player_idx].mana_reserve  
+                _players[_current_player_idx].gold_reserve  
+                _players[_current_player_idx].mana_reserve  
 
 Gold Income
     WIZARDS.EXE  
@@ -46,7 +46,7 @@ Gold Income
 Player_Resource_Income_Total()  
 
 Mana Income & MP,RP,SP  
-Player_Resource_Income_Total(_human_player_idx, &gold, &food, &mana);  
+Player_Resource_Income_Total(_current_player_idx, &gold, &food, &mana);  
     Player_Magic_Power_Income_Total(&mana_income, &food_income, &gold_income, player_idx);  
     mana_expense = Player_Armies_And_Enchantments_Mana_Upkeep(player_idx);  
     *mana_total = mana_income - mana_expense;  

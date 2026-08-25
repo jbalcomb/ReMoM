@@ -70,7 +70,7 @@ Bug taxonomy follows the project convention: **OGBUG/B** = faithful-to-disassemb
 
 **Where implemented.**
 - Conversion (AI): [AIDUDES.c:1706-1804](../../MoM/src/AIDUDES.c#L1706-L1804) (`AI_Update_Gold_And_Mana_Reserves`) and the magic-investment nudge at [AIDUDES.c:658-665](../../MoM/src/AIDUDES.c#L658-L665) (`AI_Update_Magic_Power`).
-- Conversion (human UI): [MagicScr.c:1648](../../MoM/src/MagicScr.c#L1648) (`_human_player_idx` — not AI).
+- Conversion (human UI): [MagicScr.c:1648](../../MoM/src/MagicScr.c#L1648) (`_current_player_idx` — not AI).
 - Magic weapon on built units (shared): [NEXTTURN.c:1069-1075](../../MoM/src/NEXTTURN.c#L1069-L1075) — `mutations = wq_Magic` for any owner with alchemy.
 
 **AI usage — active, three sites:**

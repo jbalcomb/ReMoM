@@ -247,7 +247,7 @@ void City_Screen__WIP(void)
     city_wx = _CITIES[_city_idx].wx;
     city_wy = _CITIES[_city_idx].wy;
 
-    Select_Unit_Stack(_human_player_idx, &city_map_wx, &city_map_wy, _map_plane, city_wx, city_wy);
+    Select_Unit_Stack(_current_player_idx, &city_map_wx, &city_map_wy, _map_plane, city_wx, city_wy);
 
     Set_Draw_Active_Stack_Always();
 
@@ -618,7 +618,7 @@ void City_Screen__WIP(void)
             if(input_field_idx == city_screen_buy_button)
             {
                 Play_Left_Click();
-                building_value = _players[_human_player_idx].gold_reserve;
+                building_value = _players[_current_player_idx].gold_reserve;
                 if(
                     (m_city_n_turns_to_produce > 1)
                     &&
@@ -638,7 +638,7 @@ void City_Screen__WIP(void)
                     stu_strcat(GUI_String_1, cnst_QuestionMark);  // "?"
                     if(Confirmation_Box(GUI_String_1) == ST_TRUE)
                     {
-                        Player_City_Buy_Production(_human_player_idx, _city_idx);
+                        Player_City_Buy_Production(_current_player_idx, _city_idx);
                     }
                     Deactivate_Auto_Function();
                     Assign_Auto_Function(City_Screen_Draw__WIP, 1);
@@ -675,7 +675,7 @@ void City_Screen__WIP(void)
             if(
                 (city_enchantment_fields[itr_ench_fields] == input_field_idx)
                 &&
-                (city_enchantment_owner_list[(city_enchantment_display_first + itr_ench_fields)] == _human_player_idx)
+                (city_enchantment_owner_list[(city_enchantment_display_first + itr_ench_fields)] == _current_player_idx)
             )
             {
 
@@ -920,7 +920,7 @@ void City_Screen__WIP(void)
                     City_Screen_Allocate_First_Block();
                     city_wx = _CITIES[_city_idx].wx;
                     city_wy = _CITIES[_city_idx].wy;
-                    Select_Unit_Stack(_human_player_idx, &city_map_wx, &city_map_wy, _map_plane, city_wx, city_wy);
+                    Select_Unit_Stack(_current_player_idx, &city_map_wx, &city_map_wy, _map_plane, city_wx, city_wy);
                     Do_Build_City_Enchantment_List();
                     Reset_Map_Draw();
                     Deactivate_Help_List();
@@ -1159,7 +1159,7 @@ void City_Screen_Draw__WIP(void)
     Set_Page_Off();
     Reset_Map_Draw();
     Reduced_Map_Set_Dims(58, 30);
-    Draw_Maps(215, 4, 5, 5, &city_map_wx, &city_map_wy, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
+    Draw_Maps(215, 4, 5, 5, &city_map_wx, &city_map_wy, _map_plane, _prev_world_x, _prev_world_y, _current_player_idx);
     City_Screen_Draw_Map();
     Reset_Window();
 
@@ -2045,7 +2045,7 @@ int16_t City_Can_Buy_Product(void)
     }
     else
     {
-        if(City_Cost_To_Buy_Product(_city_idx) > _players[_human_player_idx].gold_reserve)
+        if(City_Cost_To_Buy_Product(_city_idx) > _players[_current_player_idx].gold_reserve)
         {
             m_city_no_buy = ST_TRUE;
         }

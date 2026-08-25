@@ -67,7 +67,7 @@ The value is the paragraph print type: 0 left, 1 right, 2 centre, 3 full width, 
 
 **Not reproducible in C99** — a long-argument call is a constraint violation, the mirror of the short-argument `Gradient_Fill` calls recorded in [Combat-Combat_Screen.md](Combat-Combat_Screen.md). Production passes two arguments, which is behaviourally identical because the callee ignores the third. The comment at [Combat.c:12380](../../MoM/src/Combat.c#L12380) records the original form; it is a deviation note, not pending work.
 
-The other four call sites are in `Combat_Results_Scroll_Text` and are recorded as D6 in [Combat-End_Of_Combat.md](Combat-End_Of_Combat.md), which owns that function.
+The other four call sites are in `Combat_Results_Scroll_Text` and are recorded as D5 in [Combat-End_Of_Combat.md](Combat-End_Of_Combat.md), which owns that function.
 
 ## Findings
 

@@ -47,7 +47,7 @@ Line-verified 2026-07-19. **Model:** [`Get_Winner()`](../../MoM/src/NEXTTURN.c#L
 |---|---|---|
 | Overland combat resolves | `Move_Units`, right after `combat_result = Combat__WIP(...)` — [MainScr.c:5413](../../MoM/src/MainScr.c#L5413) | **all** combat captures — human interactive, AI, neutral, and rampage (rampage runs *inside* `Combat__WIP`). Call unconditionally — either the attacker-won (Combat.c:4184) or defender (4248) branch can eliminate. |
 | Rebellion event | `Event_Twiddle`, right after `Change_City_Ownership` — [EVENTS.c:996](../../MoM/src/EVENTS.c#L996) | a wizard losing their fortress/last city to rebellion |
-| Human SoM completes | after `Cast_Spell_Overland(_human_player_idx)` — [NEXTTURN.c:461](../../MoM/src/NEXTTURN.c#L461) | human Spell-of-Mastery win (`GAME_SoM_Cast_By` set inside `Spell_Of_Mastery`) |
+| Human SoM completes | after `Cast_Spell_Overland(_current_player_idx)` — [NEXTTURN.c:461](../../MoM/src/NEXTTURN.c#L461) | human Spell-of-Mastery win (`GAME_SoM_Cast_By` set inside `Spell_Of_Mastery`) |
 | AI SoM completes | after `Cast_Spell_Overland(player_idx)` — [AIDUDES.c:267](../../MoM/src/AIDUDES.c#L267) | AI Spell-of-Mastery win/loss |
 
 The `Move_Units` combat set is shared by the human and AI/neutral combat paths (all funnel through `Move_Units → Combat__WIP`), so it reads as "after any overland battle, re-check the winner" — one line feeding both boundaries. Rampage and neutral capture ride this same set (they resolve inside `Combat__WIP`); only the two non-combat conditions (rebellion, SoM) need their own SET.

@@ -418,10 +418,34 @@ void s01p16_empty_function(void)
     ~== BCPP _fstrcpy()
 */ 
 // void String_Copy_Far(uint16_t dst_ofst, char * dst_sgmt, uint16_t src_ofst, char * src_sgmt)
+/*
+Two things to note. IDA typed the parameters dword ptr, and the pointers load in one instruction each. lds/les is what those instructions exist for, and Borland reaches for them: 34 sites across the seg* listings load a parameter that way.
+_fstrcpy does neither
+dst_ofst= word ptr  6
+dst_sgmt= word ptr  8
+src_ofst= word ptr  0Ah
+src_sgmt= word ptr  0Ch
+...
+mov     ax, [bp+dst_sgmt]
+mov     es, ax
+mov     si, [bp+src_ofst]
+mov     di, [bp+dst_ofst]
+mov     ax, [bp+src_sgmt]
+mov     ds, ax
+Four word ptr slots, four separate loads, segments bounced through AX. Same task, same register targets, same DS save/restore — and completely different codegen from the control. There's no reason for the compiler to decline lds/les if it held far pointers; it uses them 34 times elsewhere.
+That's the real evidence, and it's usage-based rather than layout-based, which is why it survives where the frame comparison didn't. (IDA's dword ptr vs word ptr split is downstream of the same usage, so it's corroboration, not a second witness.)
+The write-back is suggestive, not conclusive
+_fstrcpy asm:15-16 and asm:20-21 write only the segment word:
+mov     ax, ds
+mov     [bp+dst_sgmt], ax
+...
+IMHO, SimTex's _fstrcpy() took known near and far pointers, and it took four parameters, and its calls used FP_SEG() and FP_OFF().
+*/
+// void _fstrcpy(dst_sgmt, dst_ofst, src_sgmt, src_ofst)
 void _fstrcpy(char * dst, char * src)
 {
     char character;
-
+    // if (FP_SEG(dst) == 0) dst = MK_FP(_DS, FP_OFF(dst)); expresses exactly the same thing with far-pointer parameters. 
     while(1)
     {
         character = *src++;

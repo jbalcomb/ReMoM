@@ -464,7 +464,7 @@ void Units_In_Tower(int16_t troop_count, int16_t troops[], int16_t map_p)
         }
         unit_idx = troops[0];
         _TOWERS[tower_idx].owner_idx = _UNITS[unit_idx].owner_idx;
-        if(_UNITS[unit_idx].owner_idx == _human_player_idx)
+        if(_UNITS[unit_idx].owner_idx == _current_player_idx)
         {
             Set_Map_Square_Explored_Flags_XYP(_TOWERS[tower_idx].wx, _TOWERS[tower_idx].wy, 0);
             Set_Map_Square_Explored_Flags_XYP(_TOWERS[tower_idx].wx, _TOWERS[tower_idx].wy, 1);
@@ -562,7 +562,7 @@ void Cheat_Reveal(void)
         }
     }
 
-    _players[_human_player_idx].Globals[NATURES_AWARENESS] = ST_TRUE;
+    _players[_current_player_idx].Globals[NATURES_AWARENESS] = ST_TRUE;
 
     Update_Scouted_And_Contacted();
 

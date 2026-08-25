@@ -36,15 +36,15 @@ Where is the update to casting_cost_remaining?
     All_Units_In_Towers();
     Chancellor_Screen();  /* "End of Turn Summary" */
     if g_bldg_msg_ctr > 0
-        o62p01_empty_function(_human_player_idx);
+        o62p01_empty_function(_current_player_idx);
     current_screen = scr_Main_Screen;
     g_bldg_msg_ctr = 0;
     Update_Units_MvsSts();
-    o62p01_empty_function(_human_player_idx);
+    o62p01_empty_function(_current_player_idx);
     o59p10_empty_function();
-    Cast_Spell_Overland(_human_player_idx);
+    Cast_Spell_Overland(_current_player_idx);
     all_units_moved = ST_FALSE;
-    WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+    WIZ_NextIdleStack(_current_player_idx, &_map_x, &_map_y, &_map_plane);
     Reset_Draw_Active_Stack();
 
 
@@ -57,8 +57,8 @@ Delete_Dead_Units();  All_Units_In_Towers();
 if g_bldg_msg_ctr > 0  g_bldg_msg_ctr = 0;
 current_screen = scr_Main_Screen;
 *** Update_Units_MvsSts(); ***
-*** Cast_Spell_Overland(_human_player_idx); ***
-all_units_moved = ST_FALSE;  WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);  Reset_Draw_Active_Stack();
+*** Cast_Spell_Overland(_current_player_idx); ***
+all_units_moved = ST_FALSE;  WIZ_NextIdleStack(_current_player_idx, &_map_x, &_map_y, &_map_plane);  Reset_Draw_Active_Stack();
 
 
 ## Next_Turn_Calc()
@@ -224,8 +224,8 @@ Next_Turn_Proc()
 ## Unit Status Changes:
 
 In Main_Screen(), 'Right-Click - Movement Map - Select Stack'
-    Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_x, selected_unit_y)
-            Build_Unit_Stack(_human_player_idx, _map_plane, selected_unit_x, selected_unit_y)
+    Select_Unit_Stack(_current_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_x, selected_unit_y)
+            Build_Unit_Stack(_current_player_idx, _map_plane, selected_unit_x, selected_unit_y)
                 checks HMoves & Finished to set active to ST_TRUE
                     and if status is 'Wait', changes status to 'No Orders'
 

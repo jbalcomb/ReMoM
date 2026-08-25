@@ -304,7 +304,7 @@ void Item_Screen(void)
                     Play_Left_Click__DUPE();
                     Deactivate_Help_List();
                     Item_Window_Picture_Coords(itr_hero_slots, &portrait_x1, &portrait_y1, &portrait_x2, &portrait_y2);
-                    unit_idx = _players[_human_player_idx].Heroes[itr_hero_slots].unit_idx;
+                    unit_idx = _players[_current_player_idx].Heroes[itr_hero_slots].unit_idx;
 
                     Main_Unit_Statistics_Window(unit_idx, portrait_x1, portrait_y1, portrait_x2, portrait_y2);
 
@@ -331,7 +331,7 @@ void Item_Screen(void)
                 {
                     if(-(m_item_screen_hero_item_fields[itr_hero_slots][itr_item_slots]) == input_field_idx)
                     {
-                        if(_players[_human_player_idx].Heroes[itr_hero_slots].Items[itr_item_slots] > -1)
+                        if(_players[_current_player_idx].Heroes[itr_hero_slots].Items[itr_item_slots] > -1)
                         {
                             Deactivate_Help_List();
                             Play_Left_Click__DUPE();
@@ -366,7 +366,7 @@ void Item_Screen(void)
             {
                 if(-(m_item_screen_vault_item_fields[itr_vault_item_slots]) == input_field_idx)
                 {
-                    if(_players[_human_player_idx].Vault_Items[itr_vault_item_slots] > -1)
+                    if(_players[_current_player_idx].Vault_Items[itr_vault_item_slots] > -1)
                     {
                         Play_Left_Click__DUPE();
                         Deactivate_Help_List();
@@ -519,7 +519,7 @@ void Item_Screen_Draw(void)
 
     for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
     {
-        hero_ptr = &_players[_human_player_idx].Heroes[itr_heroes];
+        hero_ptr = &_players[_current_player_idx].Heroes[itr_heroes];
 
         if(hero_ptr->unit_idx > -1)
         {
@@ -604,20 +604,20 @@ void Item_Screen_Draw(void)
 
     for(itr_vault_items = 0; itr_vault_items < NUM_VAULT_ITEMS; itr_vault_items++)
     {
-        if(_players[_human_player_idx].Vault_Items[itr_vault_items] > -1)
+        if(_players[_current_player_idx].Vault_Items[itr_vault_items] > -1)
         {
             item_icon_x = (_item_window_start_x + 52 + (itr_vault_items * 21));
             item_icon_y = (_item_window_start_y + 170);
-            Draw_Item_Icon_With_Enchantment_Outline(_players[_human_player_idx].Vault_Items[itr_vault_items], m_item_icon_workarea);
+            Draw_Item_Icon_With_Enchantment_Outline(_players[_current_player_idx].Vault_Items[itr_vault_items], m_item_icon_workarea);
             Draw_Picture(item_icon_x, item_icon_y, m_item_icon_workarea);
         }
     }
 
 
     if(
-        (_players[_human_player_idx].gold_reserve > 19999)
+        (_players[_current_player_idx].gold_reserve > 19999)
         ||
-        (_players[_human_player_idx].mana_reserve > 19999)
+        (_players[_current_player_idx].mana_reserve > 19999)
     )
     {
         Set_Font_Style_Shadow_Down(0, 0, 0, 0);  // narrow
@@ -689,7 +689,7 @@ void Item_Screen_Load(void)
     for(itr = 0; itr < NUM_HERO_PORTRAIT; itr++)
     {
 
-        hero_unit_idx = _players[_human_player_idx].Heroes[itr].unit_idx;
+        hero_unit_idx = _players[_current_player_idx].Heroes[itr].unit_idx;
 
         if(
             (hero_unit_idx > -1)
@@ -813,7 +813,7 @@ void Destroy_Item(void)
     Set_Mouse_List(1, mouse_list_default);
     if(Confirmation_Box(GUI_String_1) == ST_TRUE)
     {
-        Player_Add_Mana(_human_player_idx, item_cost_mana);
+        Player_Add_Mana(_current_player_idx, item_cost_mana);
         _ITEMS[m_cursor_item_idx].cost = -1;  // NOTE:  Remove_Item() sets cost to 0
         m_item_slot_idx = -1;
         m_cursor_item_idx = -1;
@@ -853,11 +853,11 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
 
     if(hero_slot_idx == VAULT_HERO_SLOT_IDX)
     {
-        item_slots_ptr = &_players[_human_player_idx].Vault_Items[0];
+        item_slots_ptr = &_players[_current_player_idx].Vault_Items[0];
     }
     else
     {
-        item_slots_ptr = &_players[_human_player_idx].Heroes[hero_slot_idx].Items[0];
+        item_slots_ptr = &_players[_current_player_idx].Heroes[hero_slot_idx].Items[0];
     }
 
     /*
@@ -883,7 +883,7 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
             // Item is "Weapon"
 
             if(
-                (_players[_human_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx] == 3) /* SwordStaff_Slot */
+                (_players[_current_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx] == 3) /* SwordStaff_Slot */
                 &&
                 (
                     (_ITEMS[m_cursor_item_idx].Slot_Type == 1) /* Sword_Slot */
@@ -896,7 +896,7 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
             }
 
             if(
-                (_players[_human_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx] == 2) /* Bow_Slot */
+                (_players[_current_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx] == 2) /* Bow_Slot */
                 &&
                 (
                     (_ITEMS[m_cursor_item_idx].Slot_Type == 1) /* Sword_Slot */
@@ -908,7 +908,7 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
                 Can_Equip = ST_TRUE;
             }
 
-            if(_ITEMS[m_cursor_item_idx].Slot_Type == _players[_human_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx])
+            if(_ITEMS[m_cursor_item_idx].Slot_Type == _players[_current_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx])
             {
                 Can_Equip = ST_TRUE;
             }
@@ -927,13 +927,13 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
                 Can_Equip = ST_TRUE;
             }
 
-            if(_ITEMS[m_cursor_item_idx].Slot_Type == _players[_human_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx])
+            if(_ITEMS[m_cursor_item_idx].Slot_Type == _players[_current_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx])
             {
                 Can_Equip = ST_TRUE;
             }
 
             if(
-                (_players[_human_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx] == 3) /* SwordStaff_Slot */
+                (_players[_current_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx] == 3) /* SwordStaff_Slot */
                 &&
                 (
                     (_ITEMS[m_cursor_item_idx].Slot_Type == 1) /* Sword_Slot */
@@ -946,7 +946,7 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
             }
 
             if(
-                (_players[_human_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx] == 2) /* Bow_Slot */
+                (_players[_current_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx] == 2) /* Bow_Slot */
                 &&
                 (
                     (_ITEMS[m_cursor_item_idx].Slot_Type == 1) /* Sword_Slot */
@@ -995,7 +995,7 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
                 }
                 else
                 {
-                    if(_players[_human_player_idx].mana_reserve < 20)
+                    if(_players[_current_player_idx].mana_reserve < 20)
                     {
                         Set_Mouse_List(1, mouse_list_default);
                         Copy_On_To_Off_Page();
@@ -1019,7 +1019,7 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
 
                         if(Can_Equip == ST_TRUE)
                         {
-                            _players[_human_player_idx].mana_reserve -= 20;
+                            _players[_current_player_idx].mana_reserve -= 20;
                         }
                     }
                 }
@@ -1273,7 +1273,7 @@ int16_t Check_Wont_Drown(int16_t hero_slot_idx, int16_t item_idx)
     int16_t itr_troops;  // _DI_
     int16_t itr_items;  // _DI_
 
-    hero_unit_idx = _players[_human_player_idx].Heroes[hero_slot_idx].unit_idx;
+    hero_unit_idx = _players[_current_player_idx].Heroes[hero_slot_idx].unit_idx;
 
     if(hero_unit_idx == ST_UNDEFINED)
     {
@@ -1317,7 +1317,7 @@ int16_t Check_Wont_Drown(int16_t hero_slot_idx, int16_t item_idx)
     {
         for(itr_items = 0; itr_items < NUM_HERO_ITEMS; itr_items++)
         {
-            Equipped_Item_Index = _players[_human_player_idx].Heroes[hero_slot_idx].Items[itr_items];
+            Equipped_Item_Index = _players[_current_player_idx].Heroes[hero_slot_idx].Items[itr_items];
             if(
                 (Equipped_Item_Index > ST_UNDEFINED)
                 &&

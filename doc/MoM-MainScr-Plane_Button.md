@@ -35,7 +35,7 @@ Main Screen
         if(input_field_idx == _plane_button)
         {
             // TODO  SND_LeftClickSound();
-            Do_Plane_Button(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+            Do_Plane_Button(_current_player_idx, &_map_x, &_map_y, &_map_plane);
             Main_Screen_Reset();
             Reset_Map_Draw();
             MainScr_Prepare_Reduced_Map();
@@ -66,7 +66,7 @@ Set_Entities_On_Map_Window()
 
 
 // WZD o59p18
-Do_Plane_Button(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+Do_Plane_Button(_current_player_idx, &_map_x, &_map_y, &_map_plane);
 
 has a variable for the state of the situation
     Nay Active Stack

@@ -110,7 +110,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
 
         if(Init_Outpost() != ST_TRUE)   
         {
-            if(outpost_owner == _human_player_idx)
+            if(outpost_owner == _current_player_idx)
             {
                 Warn0(str_NoMoreOutposts);  // "No more outposts may be built."
             }
@@ -131,7 +131,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
             _CITIES[city_idx].race = (int8_t)outpost_race;
 
 
-            if(outpost_owner == _human_player_idx)
+            if(outpost_owner == _current_player_idx)
             {
                 Stop_All_Sounds__STUB();
 
@@ -159,7 +159,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
             {
                 if(_players[itr_players].Globals[AWARENESS] > 0)
                 {
-                    if(itr_players == _human_player_idx)
+                    if(itr_players == _current_player_idx)
                     {
                         Set_Map_Square_Explored_Flags_XYP_Range(outpost_wx, outpost_wy, outpost_wp, 1);
                     }
@@ -303,7 +303,7 @@ void Outpost_Screen(int16_t flag)
                 if(
                     (city_enchantment_fields[itr] == input_field_idx)
                     &&
-                    (city_enchantment_owner_list[(city_enchantment_display_first + itr)] == _human_player_idx)
+                    (city_enchantment_owner_list[(city_enchantment_display_first + itr)] == _current_player_idx)
                 )
                 {
                     Play_Left_Click();
@@ -373,11 +373,11 @@ void Outpost_Screen(int16_t flag)
                 if(g_unit_window_fields[itr] == input_field_idx)
                 {
                     Play_Left_Click();
-                    if(_CITIES[_city_idx].owner_idx == _human_player_idx)
+                    if(_CITIES[_city_idx].owner_idx == _current_player_idx)
                     {
                         _active_world_x = _CITIES[_city_idx].wx;
                         _active_world_y = _CITIES[_city_idx].wy;
-                        Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, _active_world_x, _active_world_y);
+                        Select_Unit_Stack(_current_player_idx, &_map_x, &_map_y, _map_plane, _active_world_x, _active_world_y);
                     }
                     leave_screen = ST_UNDEFINED;
                 }
@@ -789,7 +789,7 @@ void Cast_Awareness(int16_t player_idx)
     for(itr = 0; itr < _cities; itr++)
     {
 
-        if(player_idx == _human_player_idx)
+        if(player_idx == _current_player_idx)
         {
 
             Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, 1);

@@ -577,7 +577,7 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
                             if(dismissed_unit == ST_TRUE)
                             {
                                 leave_screen = ST_UNDEFINED;
-                                WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+                                WIZ_NextIdleStack(_current_player_idx, &_map_x, &_map_y, &_map_plane);
                             }
                             else
                             {
@@ -636,7 +636,7 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
                 if(_UNITS[uv_unit_idx].Hero_Slot != -1)
                 {
                     stu_strcpy(GUI_String_1, cnst_Dismiss_Msg);  // "Do you wish to dismiss "
-                    stu_strcat(GUI_String_1, _players[_human_player_idx].Heroes[_UNITS[uv_unit_idx].Hero_Slot].name);
+                    stu_strcat(GUI_String_1, _players[_current_player_idx].Heroes[_UNITS[uv_unit_idx].Hero_Slot].name);
                 }
                 else
                 {
@@ -649,8 +649,8 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
                 {
                     leave_screen = ST_TRUE;
                     Dismiss_Unit(uv_unit_idx);
-                    // DONT  j_o62p01_Empty_pFxn(_human_player_idx);  // ; does nothing and returns zero; at some point must have been some wizard data refresh function
-                    Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[uv_unit_idx].wx, _UNITS[uv_unit_idx].wy);
+                    // DONT  j_o62p01_Empty_pFxn(_current_player_idx);  // ; does nothing and returns zero; at some point must have been some wizard data refresh function
+                    Select_Unit_Stack(_current_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[uv_unit_idx].wx, _UNITS[uv_unit_idx].wy);
                     Set_Unit_Draw_Priority();
                     Reset_Stack_Draw_Priority();
                 }

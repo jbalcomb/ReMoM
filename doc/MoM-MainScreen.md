@@ -37,7 +37,7 @@ AKA reduced_map_window_wx, reduced_map_window_wy
         target_world_y =  (_map_y + _main_map_grid_y);
         if(EarthGateTeleport__WIP(target_world_x, target_world_y, _map_plane) == ST_FALSE)
         ...
-        Move_Stack(target_world_x, target_world_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
+        Move_Stack(target_world_x, target_world_y, _current_player_idx, &_map_x, &_map_y, &_map_plane);
 
     Right-Click Movement Map Grid Field
     /* #### Section 9.2.2.2      Right-Click Movement Map - Stack - Other */

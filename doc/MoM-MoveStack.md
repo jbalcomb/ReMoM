@@ -326,7 +326,7 @@ Path_Length > 1
 
 
 Move_Units(player_idx, map_p, Path_Length, map_x, map_y, unit_array, unit_array_count)
-display_moves = (player_idx == _human_player_idx  ||  magic_set.enemy_moves == ST_TRUE)
+display_moves = (player_idx == _current_player_idx  ||  magic_set.enemy_moves == ST_TRUE)
 CLUE:
     if(Check_Square_Scouted() == ST_TRUE)
         x,y here is? src? dst? either?
@@ -630,7 +630,7 @@ calls Do_Move_Stack_DirKey(), with *direction*
 Stack_Moves_Active()
 
 
-Do_Move_Stack(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane)
+Do_Move_Stack(move_x, move_y, _current_player_idx, &_map_x, &_map_y, &_map_plane)
 
 
 Build_Moveable_Stack()
@@ -791,7 +791,7 @@ if((input_field_idx == _main_map_grid_field) && (_unit_stack_count != 0) )
 BRANCH: Stack_Moves_Active() < 1 vs >= 1
 
     Stack_Moves_Active() < 1
-        Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, 3, MMX2WMX(), MMY2WMY());  /* Action 3: 'Go-To' */
+        Stack_Action(_current_player_idx, &_map_x, &_map_y, &_map_plane, 3, MMX2WMX(), MMY2WMY());  /* Action 3: 'Go-To' */
 
 
 

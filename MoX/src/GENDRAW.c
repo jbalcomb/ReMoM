@@ -450,30 +450,23 @@ int16_t Confirmation_Box(char * text_string)
 }
 
 // WZD o149p02
-// drake178: GUI_DrawConfrmDialog()
+/*
+=== Combat.c Raze_City_Prompt_Draw()
+*/
 void Confirmation_Box_Draw(void)
 {
     int16_t paragraph_height = 0;
-
     Set_Font_Style(4, 4, 15, ST_NULL);
-
     paragraph_height = Get_Paragraph_Max_Height(166, message_box_text);
-
     Set_Page_Off();
-
     Set_Window(0, 0, SCREEN_XMAX, (message_box_y + paragraph_height + 12));
-
     Clipped_Draw(message_box_x, message_box_y, confirmation_background_top_seg);
-
     Reset_Window();
-
     FLIC_Draw(message_box_x, (message_box_y + paragraph_height + 10), confirmation_background_bottom_seg);
-
     Set_Font_Colors_15(4, &COL_ConfirmShadows[0]);
     Set_Font_Style(4, 15, 15, ST_NULL);
     Print_Paragraph((message_box_x + 10), (message_box_y + 10), 166, message_box_text, 0);  // print_type 0: Print Left Aligned
     Print_Paragraph((message_box_x +  9), (message_box_y + 10), 166, message_box_text, 0);  // print_type 0: Print Left Aligned
-
     Set_Alias_Color(18);
     Set_Font_Colors_15(4, &COL_Dialog_Text[0]);
     Set_Font_Style(4, 4, 15, ST_NULL);

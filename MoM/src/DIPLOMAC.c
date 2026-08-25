@@ -896,7 +896,7 @@ static void Get_Main_Diplomacy_Choices(void)
 
         }
 
-        Get_Exchange_Spell_List(_human_player_idx, m_diplomac_player_idx, 0);
+        Get_Exchange_Spell_List(_current_player_idx, m_diplomac_player_idx, 0);
 
         if(
             (_players[HUMAN_PLAYER_IDX].gold_reserve <= 25)
@@ -1778,7 +1778,7 @@ static void Diplomacy_Break_Treaty(void)
 
             _variable = 0;
 
-            if(Invader_Army_Strength_Comparison(_human_player_idx, m_diplomac_player_idx, &value1, &value2) != 0)
+            if(Invader_Army_Strength_Comparison(_current_player_idx, m_diplomac_player_idx, &value1, &value2) != 0)
             {
 
                 if(value1 < value2)  /* invader is stronger */
@@ -1909,7 +1909,7 @@ static void Diplomacy_Break_Treaty(void)
 
                                 _players[HUMAN_PLAYER_IDX].peace_duration[m_diplomac_player_idx] = (uint8_t)Random(15);
 
-                                Player_Add_Gold(_human_player_idx, Amount);
+                                Player_Add_Gold(_current_player_idx, Amount);
 
                                 diplomacy_message_id = 69;
 
@@ -3022,7 +3022,7 @@ static int16_t Diplomacy_Test(int16_t type_modifier, int16_t type)
     value1 = 0;
     value2 = 0;
 
-    Invader_Army_Strength_Comparison(_human_player_idx, m_diplomac_player_idx, &value1, &value2);
+    Invader_Army_Strength_Comparison(_current_player_idx, m_diplomac_player_idx, &value1, &value2);
 
     if(value2 < value1)  /* invader is stronger */
     {
@@ -3225,7 +3225,7 @@ static void Diplomacy_Player_Gets_Spell(int16_t player_idx, int16_t spell_idx)
 
     Player_Gets_Spell(player_idx, spell_idx, ST_FALSE);
 
-    if(player_idx == _human_player_idx)
+    if(player_idx == _current_player_idx)
     {
 
         DIPL_LoadTalkGFX();
@@ -3283,9 +3283,9 @@ static void Start_Treaty(int16_t player1, int16_t player2, int16_t type)
     _players[player2].Hostility[player1] = 0;
 
     if(
-        (player1 == _human_player_idx)
+        (player1 == _current_player_idx)
         ||
-        (player2 == _human_player_idx)
+        (player2 == _current_player_idx)
     )
     {
 
@@ -3348,9 +3348,9 @@ static void Declare_Peace(int16_t player1, int16_t player2)
     _players[player2].reevaluate_hostility_countdown = (15 + Random(10));
 
     if(
-        (player1 == _human_player_idx)
+        (player1 == _current_player_idx)
         ||
-        (player2 == _human_player_idx)
+        (player2 == _current_player_idx)
     )
     {
 
@@ -3921,7 +3921,7 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx)
 /*
 
 Get_Main_Diplomacy_Choices()
-    Get_Exchange_Spell_List(_human_player_idx, m_diplomac_player_idx, 0);
+    Get_Exchange_Spell_List(_current_player_idx, m_diplomac_player_idx, 0);
 Diplomacy_Offer_Tribute()
     Get_Exchange_Spell_List(HUMAN_PLAYER_IDX, m_diplomac_player_idx, byte_42E39[itr]);
 
@@ -4050,7 +4050,7 @@ static void Diplomacy_Offer_Tribute(void)
 
         stu_strcat(G_Some_DIPL_Allocs_7[itr], aGold_0);
 
-        if(gold_amounts[itr] < _players[_human_player_idx].gold_reserve)
+        if(gold_amounts[itr] < _players[_current_player_idx].gold_reserve)
         {
 
             list_item_active_flags[itr] = ST_FALSE;
@@ -4409,7 +4409,7 @@ static void Diplomacy_Exchange_Spell__WIP(void)
 
                     Spell_Index = IDK_DIPLO_NIU[((var_E * 10) + _variable)];
 
-                    Diplomacy_Player_Gets_Spell(_human_player_idx, spell_idx);
+                    Diplomacy_Player_Gets_Spell(_current_player_idx, spell_idx);
 
                     Diplomacy_Player_Gets_Spell(m_diplomac_player_idx, Spell_Index);
 
@@ -4723,7 +4723,7 @@ static void Npc_Diplomacy_Screen(void)
                         )
                         {
 
-                            Player_Add_Gold(_human_player_idx, _players[HUMAN_PLAYER_IDX].Dipl.offer_gold[m_diplomac_player_idx]);
+                            Player_Add_Gold(_current_player_idx, _players[HUMAN_PLAYER_IDX].Dipl.offer_gold[m_diplomac_player_idx]);
 
                             if(_players[HUMAN_PLAYER_IDX].Dipl.offer_spell[m_diplomac_player_idx] != spl_NONE)
                             {
@@ -4904,7 +4904,7 @@ void NPC_To_NPC_Treaty_Negotiations(void)
     int16_t itr_players2 = 0;
 
     /* OGBUG  drake178: what does this have to do with AI-AI diplomacy? */
-    if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
+    if(_players[_current_player_idx].casting_spell_idx == spl_Spell_Of_Return)
     {
         return;
     }
@@ -5600,14 +5600,14 @@ void Determine_First_Contacts(void)
     for(itr = 1; itr < _num_players; itr++)
     {
         if(
-            (_players[_human_player_idx].Dipl.contact_stage[itr] == pcs_Unmet)
+            (_players[_current_player_idx].Dipl.contact_stage[itr] == pcs_Unmet)
             &&
-            (_players[_human_player_idx].Dipl.Contacted[itr] == ST_TRUE)
+            (_players[_current_player_idx].Dipl.Contacted[itr] == ST_TRUE)
         )
         {
-            _players[_human_player_idx].Dipl.contact_stage[itr] = pcs_Greeted;
-            _players[_human_player_idx].Dipl.Dipl_Status[itr] = DIPL_NoTreaty;
-            _players[itr].Dipl.Dipl_Status[_human_player_idx] = DIPL_NoTreaty;
+            _players[_current_player_idx].Dipl.contact_stage[itr] = pcs_Greeted;
+            _players[_current_player_idx].Dipl.Dipl_Status[itr] = DIPL_NoTreaty;
+            _players[itr].Dipl.Dipl_Status[_current_player_idx] = DIPL_NoTreaty;
         }
     }
 }
@@ -5621,7 +5621,7 @@ void NPC_To_Human_Diplomacy(void)
     int16_t Lowest_Interest = 0;
     int16_t player_idx = 0;
     int16_t da_strength = 0;
-    if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
+    if(_players[_current_player_idx].casting_spell_idx == spl_Spell_Of_Return)
     {
         return;
     }
@@ -5691,7 +5691,7 @@ void NPC_To_Human_Diplomacy(void)
                     else
                     {
                         if(
-                            (_players[_human_player_idx].Dipl.Dipl_Status[player_idx] == DIPL_War)
+                            (_players[_current_player_idx].Dipl.Dipl_Status[player_idx] == DIPL_War)
                             &&
                             ((30 + Random(100)) < _players[HUMAN_PLAYER_IDX].Dipl.peace_modifier[player_idx])
                         )
@@ -5763,7 +5763,7 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
         return;
     }
 
-    if(Player_1 == _human_player_idx && _turn < 100) {
+    if(Player_1 == _current_player_idx && _turn < 100) {
         return;
     }
 
@@ -5987,7 +5987,7 @@ void NPC_Required_Alliances(int16_t target_player_idx)
 void Resolve_Delayed_Diplomacy_Orders(void)
 {
     int16_t itr = 0;
-    if(_players[_human_player_idx].casting_spell_idx == spl_Spell_Of_Return)
+    if(_players[_current_player_idx].casting_spell_idx == spl_Spell_Of_Return)
     {
         return;
     }
@@ -6203,8 +6203,8 @@ IDK_message= word ptr -2
     int16_t IDK_modifier = 0;
     int16_t itr_players = 0;
 
-    if(_players[_human_player_idx].Dipl.Contacted[player2_idx] == 0 ||
-        _players[player2_idx].Dipl.Contacted[_human_player_idx] == 0)
+    if(_players[_current_player_idx].Dipl.Contacted[player2_idx] == 0 ||
+        _players[player2_idx].Dipl.Contacted[_current_player_idx] == 0)
     {
         if(_players[0].Dipl.DA_Strength[0] == 0 ||
             _players[0].Dipl.Dipl_Status[player2_idx] >= DIPL_War ||
@@ -6264,7 +6264,7 @@ IDK_message= word ptr -2
                 continue;
             }
             if(_players[player2_idx].Dipl.Dipl_Status[itr_players] >= DIPL_War &&
-                _players[_human_player_idx].Dipl.Contacted[itr_players] != ST_TRUE)
+                _players[_current_player_idx].Dipl.Contacted[itr_players] != ST_TRUE)
             {
                 var_8 = itr_players;
             }
@@ -6448,7 +6448,7 @@ void DIPL_HumanWarOrPeace(int16_t player_idx)
     niu_npc_war_bonus = 0;  /* ¿ Debug Override ? */
 
     if(
-        _players[_human_player_idx].Dipl.Contacted[player_idx] != ST_TRUE
+        _players[_current_player_idx].Dipl.Contacted[player_idx] != ST_TRUE
         || 
         _players[0].Dipl.DA_Strength[player_idx] == 0)
     {

@@ -201,7 +201,7 @@ namespace
 
         _cities = 0;
         _num_players = 1;
-        _human_player_idx = HUMAN_PLAYER_IDX;
+        _current_player_idx = HUMAN_PLAYER_IDX;
         _players[HUMAN_PLAYER_IDX].casting_spell_idx = 0;
         _players[HUMAN_PLAYER_IDX].researching_spell_idx = 0;
         magic_set.random_events = ST_FALSE;

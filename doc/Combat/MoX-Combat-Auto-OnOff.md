@@ -106,5 +106,5 @@ Combat_Next_Turn()
 
 ## Turn_Off_Auto_Combat()
     _auto_combat_flag = ST_FALSE;
-    Next_Battle_Unit(_human_player_idx);
+    Next_Battle_Unit(_current_player_idx);
     Assign_Combat_Grids();

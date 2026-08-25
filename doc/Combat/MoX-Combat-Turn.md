@@ -14,7 +14,7 @@ Human attacks Computer
         AI_CMB_PlayTurn__WIP(_combat_defender_player);
         CMB_PrepareTurn__WIP();
         m_cp_took_turn = ST_TRUE;
-    if(_combat_attacker_player == _human_player_idx)
+    if(_combat_attacker_player == _current_player_idx)
         Next_Battle_Unit(0);  /* first attacker battle_unit_idx */
 
 Computer attacks Human
@@ -22,7 +22,7 @@ Computer attacks Human
     m_cp_took_turn = ST_FALSE;
     NOT if(_combat_defender_player == _combat_remote_player)
     _human_out_of_moves = ST_FALSE;
-    NOT if(_combat_attacker_player == _human_player_idx)
+    NOT if(_combat_attacker_player == _current_player_idx)
         Switch_Active_Battle_Unit((_combat_total_unit_count - defender_unit_count));  /* first defender battle_unit_idx */
 
 
@@ -42,7 +42,7 @@ once right before screen redraw in screen-loop
     if((leave_screen == ST_FALSE) && (_human_out_of_moves == ST_TRUE) && (_human_handle_immobile == ST_FALSE))
         _human_out_of_moves = ST_FALSE;  // Where does this get used after this?
         Combat_Next_Turn();
-        Next_Battle_Unit(_human_player_idx);
+        Next_Battle_Unit(_current_player_idx);
         Assign_Combat_Grids();
         input_field_idx = ST_UNDEFINED;
         screen_changed = ST_TRUE;
@@ -218,7 +218,7 @@ so, it's getting called when it shouldn't?
 'Left-Click Done Button'
     battle_units[_active_battle_unit].action = bua_Finished;
     battle_units[_active_battle_unit].movement_points = 0;
-    Next_Battle_Unit(_human_player_idx);
+    Next_Battle_Unit(_current_player_idx);
 
 
 
@@ -402,7 +402,7 @@ Tactical_Combat__WIP()
     _human_handle_immobile = 0;
     G_AI_StayInTownProper = 1;
     _scanned_battle_unit = ST_UNDEFINED;
-    if(_combat_attacker_player == _human_player_idx)
+    if(_combat_attacker_player == _current_player_idx)
         Switch_Active_Battle_Unit(0);
     else
         Switch_Active_Battle_Unit((_combat_total_unit_count - Defending_Unit_Count));
@@ -414,7 +414,7 @@ Tactical_Combat__WIP()
     _auto_combat_flag = ST_FALSE;
     CMB_PrepareTurn__WIP();
     _human_handle_immobile = 0;
-    if(_combat_attacker_player == _human_player_idx)
+    if(_combat_attacker_player == _current_player_idx)
         Switch_Active_Battle_Unit(0);
     else
         Switch_Active_Battle_Unit((_combat_total_unit_count - Defending_Unit_Count));
@@ -430,8 +430,8 @@ Tactical_Combat__WIP()
     if(Combat_Winner != ST_UNDEFINED)
         leave_screen = ST_UNDEFINED;
     _human_out_of_moves = ST_FALSE;
-    if(_combat_attacker_player == _human_player_idx)
-        Next_Battle_Unit(_human_player_idx);
+    if(_combat_attacker_player == _current_player_idx)
+        Next_Battle_Unit(_current_player_idx);
     else
         Switch_Active_Battle_Unit((_combat_total_unit_count - Defending_Unit_Count));
     Assign_Combat_Grids();

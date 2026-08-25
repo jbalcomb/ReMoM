@@ -15,7 +15,7 @@
 
 
     Defending_Unit_Count = Prepare_All_Battle_Units(troop_count, troops);
-    if(_combat_attacker_player == _human_player_idx)
+    if(_combat_attacker_player == _current_player_idx)
         Switch_Active_Battle_Unit(0);
     else
         Switch_Active_Battle_Unit((_combat_total_unit_count - Defending_Unit_Count));

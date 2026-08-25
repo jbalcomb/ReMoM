@@ -316,7 +316,7 @@ void Surveyor_Screen(void)
         if(input_field_idx == _plane_button)
         {
             Play_Left_Click();
-            Do_Plane_Button__WIP(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+            Do_Plane_Button__WIP(_current_player_idx, &_map_x, &_map_y, &_map_plane);
             Reset_Map_Draw();
             MainScr_Create_Reduced_Map_Picture();
             Deactivate_Auto_Function();
@@ -403,7 +403,7 @@ void Surveyor_Screen_Draw(void)
 
     Set_Page_Off();
 
-    Draw_Maps(MAP_SCREEN_X, MAP_SCREEN_Y, MAP_WIDTH, MAP_HEIGHT, &_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
+    Draw_Maps(MAP_SCREEN_X, MAP_SCREEN_Y, MAP_WIDTH, MAP_HEIGHT, &_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _current_player_idx);
 
     FLIC_Draw(0, 0, main_background_seg);
 

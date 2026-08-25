@@ -982,7 +982,7 @@ void Spell_Target_Global_Enchantment_Screen_Draw(void)
             (
                 (_FORTRESSES[itr2].active == ST_TRUE)
                 &&
-                (_players[_human_player_idx].Dipl.Contacted[itr2] == ST_TRUE)
+                (_players[_current_player_idx].Dipl.Contacted[itr2] == ST_TRUE)
             )
             ||
             (ovl_ench_list_cnt2[itr2] > 0)

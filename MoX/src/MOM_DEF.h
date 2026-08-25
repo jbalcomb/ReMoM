@@ -1418,8 +1418,8 @@ Spell_Of_Return  = 214
 
 
 Status Window
-    Print_Integer_Right(265, 68, _players[_human_player_idx].gold_reserve);
-    Print_Integer_Right(303, 68, _players[_human_player_idx].mana_reserve);
+    Print_Integer_Right(265, 68, _players[_current_player_idx].gold_reserve);
+    Print_Integer_Right(303, 68, _players[_current_player_idx].mana_reserve);
     Print(268, 68, cstr_GP);
     Print(306, 68, cstr_MP);
 

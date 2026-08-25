@@ -272,7 +272,7 @@ void Resolve_Wizard_Conquest(int16_t loser_Idx, int16_t winner_idx, int16_t city
                     }
                 }
             }
-            if(_CITIES[itr_cities].owner_idx != _human_player_idx)  /* OGBUG  DEDU  Why just human player? */
+            if(_CITIES[itr_cities].owner_idx != _current_player_idx)  /* OGBUG  DEDU  Why just human player? */
             {
                 _CITIES[itr_cities].owner_idx = NEUTRAL_PLAYER_IDX;
             }
@@ -327,7 +327,7 @@ void Resolve_Wizard_Conquest(int16_t loser_Idx, int16_t winner_idx, int16_t city
         }
     }
     Conquest_Spells(winner_idx, loser_Idx);
-    if(loser_Idx == _human_player_idx)
+    if(loser_Idx == _current_player_idx)
     {
         Lose_Animation(loser_Idx);
         End_Of_Game_Score();
@@ -338,7 +338,7 @@ void Resolve_Wizard_Conquest(int16_t loser_Idx, int16_t winner_idx, int16_t city
     {
         if(CP_Is_Dead() == ST_TRUE)
         {
-            Win_Animation(_human_player_idx);
+            Win_Animation(_current_player_idx);
             End_Of_Game_Score();
             s01p16_empty_function();
             /* EOG_HACK */  // DONT  Respawn(magic_exe_file__ovr093, str_JENNY__ovr093, str_empty_string__ovr093, str_empty_string__ovr093);
@@ -375,9 +375,9 @@ void Conquest_Animation(int16_t loser_Idx, int16_t winner_idx)
     {
         return;
     }
-    if(winner_idx == _human_player_idx)
+    if(winner_idx == _current_player_idx)
     {
-        Set_Bit_Field_Near(loser_Idx, (char *)&_players[_human_player_idx].Defeated_Wizards);
+        Set_Bit_Field_Near(loser_Idx, (char *)&_players[_current_player_idx].Defeated_Wizards);
     }
     GAME_Conquered_Wiz = loser_Idx;
     GAME_Conquering_Wiz = winner_idx;
@@ -480,7 +480,7 @@ void Conquest_Animation(int16_t loser_Idx, int16_t winner_idx)
     if(magic_set.background_music == ST_TRUE)
     {
         itr_cities = 109;  /* MUSIC_WIN_Military */
-        if(loser_Idx == _human_player_idx) 
+        if(loser_Idx == _current_player_idx) 
         {
             itr_cities = MUSIC_LOSE_Military;
         }
@@ -1109,7 +1109,7 @@ int16_t Banish_Wizard(int16_t loser_idx, int16_t winner_idx)
     _players[loser_idx].casting_cost_remaining = Casting_Cost(loser_idx, spl_Spell_Of_Return, 0);
     _players[loser_idx].casting_cost_original = Casting_Cost(loser_idx, spl_Spell_Of_Return, 0);
     turns_to_return = _players[loser_idx].casting_cost_remaining / _players[loser_idx].Nominal_Skill;
-    if(loser_idx != _human_player_idx)
+    if(loser_idx != _current_player_idx)
     {
         if(
             (Player_Base_Casting_Skill(loser_idx) + Player_Hero_Casting_Skill(loser_idx) < 40)
@@ -1136,7 +1136,7 @@ int16_t Banish_Wizard(int16_t loser_idx, int16_t winner_idx)
     Allocate_Reduced_Map();
     Full_Draw_Main_Screen();
     Copy_On_To_Off_Page();
-    if(loser_idx == _human_player_idx)
+    if(loser_idx == _current_player_idx)
     {
         stu_itoa(turns_to_return, buffer, 10);
         stu_strcpy(GUI_NearMsgString, cnst_SoReturn_Msg1);  // "There are at least "

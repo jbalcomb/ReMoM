@@ -103,11 +103,11 @@ Spellbook_Screen()
 Next_Turn_Proc()
 {
     if(
-        (_players[_human_player_idx].casting_cost_remaining <= 0)
+        (_players[_current_player_idx].casting_cost_remaining <= 0)
         &&
-        (_players[_human_player_idx].casting_spell_idx > spl_NONE))
+        (_players[_current_player_idx].casting_spell_idx > spl_NONE))
     {
-        Cast_Spell_Overland(_human_player_idx);
+        Cast_Spell_Overland(_current_player_idx);
     }
 }
 ```
@@ -165,11 +165,11 @@ Change_Relations_For_Enchantments(player_idx, spell_idx, 1);
 
 Next_Turn_Proc()
     if(
-        (_players[_human_player_idx].casting_cost_remaining <= 0)
+        (_players[_current_player_idx].casting_cost_remaining <= 0)
         &&
-        (_players[_human_player_idx].casting_spell_idx > spl_NONE))
+        (_players[_current_player_idx].casting_spell_idx > spl_NONE))
     {
-        Cast_Spell_Overland(_human_player_idx);
+        Cast_Spell_Overland(_current_player_idx);
     }
 
 

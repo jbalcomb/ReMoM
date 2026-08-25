@@ -20,7 +20,7 @@ Magic_Screen()
 BEGIN:  Left-Click Gem
     for(itr = 0; itr < gem_count; itr++)
         if((magic_gem_fields[itr] == input_field_idx) && (gem_player_nums[itr] > 0))
-            if(_players[_human_player_idx].casting_spell_idx == 214)  /* Spell_Of_Return */
+            if(_players[_current_player_idx].casting_spell_idx == 214)  /* Spell_Of_Return */
             else
                 Play_Left_Click();
                 m_diplomac_player_idx = gem_player_nums[itr];

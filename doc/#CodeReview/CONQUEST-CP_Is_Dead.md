@@ -46,7 +46,7 @@ Locals map onto the asm's frame / register slots exactly:
 
 - **Return framing.** The function returns `ST_TRUE` when *no* opponents remain — the test reads equally as "all computer players dead" or "the human has won" (opposite sides of the same condition). The `ST_TRUE`-on-zero-survivors semantics are preserved verbatim.
 
-- **Slot 0 skipped (`itr_players` starts at 1).** The scan covers `1 … _num_players-1`; index 0 is never examined. The code's own doc comment ([941](../../MoM/src/CONQUEST.c#L941)) calls it the "presumed human slot." The caller `Resolve_Wizard_Conquest` ([440](../../MoM/src/CONQUEST.c#L440)) only reaches `CP_Is_Dead` on the `city_owner_idx != _human_player_idx` branch, consistent with slot 0 being the human. This is the OG behaviour — the start-at-1 is in the asm (`mov itr_players, 1`), not a reconstruction choice.
+- **Slot 0 skipped (`itr_players` starts at 1).** The scan covers `1 … _num_players-1`; index 0 is never examined. The code's own doc comment ([941](../../MoM/src/CONQUEST.c#L941)) calls it the "presumed human slot." The caller `Resolve_Wizard_Conquest` ([440](../../MoM/src/CONQUEST.c#L440)) only reaches `CP_Is_Dead` on the `city_owner_idx != _current_player_idx` branch, consistent with slot 0 being the human. This is the OG behaviour — the start-at-1 is in the asm (`mov itr_players, 1`), not a reconstruction choice.
 
 ## Inner-loop cap `city_count < 2` — matches
 
@@ -65,4 +65,4 @@ Neither is redundant-to-remove: dropping 952 would break the zero-init conventio
 
 - `…\ovr093\GAME_IsWon__STUB.asm` — IDA Pro 5.5 disassembly (**the authority**).
 - `…\ovr093\GAME_IsWon__STUB.c` — Gemini translation (second opinion; agrees).
-- [`Resolve_Wizard_Conquest`](../../MoM/src/CONQUEST.c#L191) — sole caller; invokes `CP_Is_Dead` at [440](../../MoM/src/CONQUEST.c#L440) on the non-human-conquest branch to gate `GAME_PlayVictoryAnim__STUB(_human_player_idx)`.
+- [`Resolve_Wizard_Conquest`](../../MoM/src/CONQUEST.c#L191) — sole caller; invokes `CP_Is_Dead` at [440](../../MoM/src/CONQUEST.c#L440) on the non-human-conquest branch to gate `GAME_PlayVictoryAnim__STUB(_current_player_idx)`.
