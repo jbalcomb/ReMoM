@@ -517,8 +517,8 @@ XREF:
     Combat_Casting_Cost_Multiplier+62    sub     ax, [_combat_wx]                        
     AITP_RecallHero+23                   cmp     ax, [_combat_wx]                        
     AI_BU_ProcessAction__WIP+8A6         push    [_combat_wx]                            
-    End_Of_Combat__WIP+5DA               mov     al, [byte ptr _combat_wx]               
-    End_Of_Combat__WIP+7E4               mov     al, [byte ptr _combat_wx]               
+    End_Of_Combat+5DA               mov     al, [byte ptr _combat_wx]               
+    End_Of_Combat+7E4               mov     al, [byte ptr _combat_wx]               
     CTY_RampageVictory+267               mov     al, [byte ptr _combat_wx]               
     Undeployable_Battle_Units_On_Water+F push    [_combat_wx]                    ; XPos  
     CMB_Disenchant+2D7                   cmp     ax, [_combat_wx]                        

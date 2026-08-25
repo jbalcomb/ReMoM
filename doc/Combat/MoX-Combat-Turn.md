@@ -278,8 +278,8 @@ ovr105
 set to ST_FALSE during setup section of Tactical_Combat__WIP()
 set to ST_TRUE in Check_For_Winner() if AI decides to Flee
 checked after existing screen-loop in Tactical_Combat__WIP()
-used to set Battle_Result for End_Of_Combat__WIP()
-...in End_Of_Combat__WIP(..., MsgType)
+used to set Battle_Result for End_Of_Combat()
+...in End_Of_Combat(..., MsgType)
         combat_results_scroll_message = MsgType  (only usage)
     ...in Combat_Results_Scroll() and Combat_Results_Scroll_Text()
         combat_results_scroll_message

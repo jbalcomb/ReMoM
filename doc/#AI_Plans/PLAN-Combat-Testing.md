@@ -31,7 +31,7 @@ Test combat all the way through — both tactical (battle screen, turn-by-turn) 
 - **Human decisions are injectable.** The tactical loop consumes input via registered fields (`Add_Button_Field`/`Add_Grid_Field`/`Add_Hot_Key`, Combat.c:1784-1812) read by one blocking `Get_Input()` — `.hms` scripted clicks can drive specific unit actions.
 - **Determinism holds** — combat's only entropy is `Random()` (~88 call sites in Combat.c). Caveat: cosmetic draws (e.g. music selection `Random(2)` at Combat.c:1595,1600) advance the shared seed, so outcomes are seed-*stream*-sensitive; any RNG-consuming code change upstream of an assertion shifts it. Same tradeoff the worldgen tests already accept.
 - **Existing scaffolding:** `Combat_Screen_TST_001..004` (`MoM/src/CMBTTST.c`) are self-contained tactical harnesses, wired (commented out) into `Combat__WIP` at Combat.c:4101-4104. They still open the screen and block on `Get_Input()`. See `doc/Combat/MoX-Combat-Test.md`.
-- **Outputs:** `End_Of_Combat__WIP()` (Combat.c:21256) writes unit death/status/XP, city losses (`CMB_Population_Lost`, `CMB_Buildings_Lost`), gold (`CMB_Gold_Reward`), lair guard updates; `Combat__WIP` then applies move-in, ownership change, relations.
+- **Outputs:** `End_Of_Combat()` (Combat.c:21256) writes unit death/status/XP, city losses (`CMB_Population_Lost`, `CMB_Buildings_Lost`), gold (`CMB_Gold_Reward`), lair guard updates; `Combat__WIP` then applies move-in, ownership change, relations.
 
 ## Decisions
 
@@ -54,7 +54,7 @@ New mode: load a crafted save, call `Set_Random_Seed()` *immediately before* com
 - **Strategic:** both sides AI → `Strategic_Combat__WIP` runs as-is, headless today.
 - **Tactical AI-vs-AI:** force the tactical path with `_auto_combat_flag = ST_TRUE`. Unproven piece: the tactical alloc/draw path (`Allocate_Combat_Base_Blocks`, `Combat_Screen_Load_Resources`, `Cache_Graphics_Combat`, `PageFlip_FX`) under `Platform_Headless` — this is the tracer bullet.
 
-After `End_Of_Combat__WIP`, write the `Combat_Dump` and assert. Scenario matrix: open-field stack fight, city assault with walls, lair, flee/retreat, turn-50 timeout — several seeds each.
+After `End_Of_Combat`, write the `Combat_Dump` and assert. Scenario matrix: open-field stack fight, city assault with walls, lair, flee/retreat, turn-50 timeout — several seeds each.
 
 ### Tier 3 — Full end-to-end via `.hms`
 

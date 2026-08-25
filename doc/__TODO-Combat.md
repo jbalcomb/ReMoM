@@ -4,8 +4,8 @@ __TODO-Combat.md
 
 [ ] put Calc_Battlefield_Bonuses() in Combat-Combat.md
 [ ] put Check_For_Winner() in Combat-Combat.md
-
-¿ Assign_Mouse_Images() |-> Ranged_Mouse_Image() ?
+[x] put Assign_Mouse_Images() in Combat-Combat_Screen.md
+[x] put Ranged_Mouse_Image() in Combat-Combat_Screen.md
 
 [x] Combat-Combat_Spell_Target_Screen.md
 [x] Combat-AI_Turn.md
@@ -57,7 +57,7 @@ Combat__WIP / Combat_Screen__WIP          ← enter & host the battle
   └ Combat_Next_Turn (Combat.c:4528)      ← turn flow (was CMB_ProgressTurnFlow__WIP)
       └ Auto_Cast_Spell_And_Do_Combat_Turn → AI Combat  → AI Combat Spell
   └ (human input path)                    → Battle_Unit_Action / Move_Battle_Unit / spellbook
-  └ End_Of_Combat__WIP                     ← resolve, capture, cleanup
+  └ End_Of_Combat                     ← resolve, capture, cleanup
 ```
 
 ## Subsystem status
@@ -66,7 +66,7 @@ Legend: **[done]** reconstructed/reviewed · **[impl]** substantive, not yet don
 
 | Subsystem | Representative functions | Status |
 |---|---|---|
-| Entry & turn flow | `Combat__WIP`, `Combat_Screen__WIP`, `Combat_Next_Turn` (impl), `CMB_PrepareTurn__WIP`, `Check_For_Winner` (done), `End_Of_Combat__WIP` | mostly **WIP** |
+| Entry & turn flow | `Combat__WIP`, `Combat_Screen__WIP`, `Combat_Next_Turn` (impl), `CMB_PrepareTurn__WIP`, `Check_For_Winner` (done), `End_Of_Combat` | mostly **WIP** |
 | Setup / alloc / resources | `Allocate_Combat_Base_Blocks`, `Combat_Screen_Load_Resources`, `Item_Powers_To_Attack_Attributes`, `CMB_Units_Init__WIP` | **WIP** |
 | Map / terrain / spawn | `Generate_Combat_Map__WIP`, `Set_Terrain_Tile_Types`, `Build_Battlefield`, `CMB_SpawnStructures/Figure/DarkWall/FireWall/StoneWall__WIP` | **WIP** |
 | Drawing / rendering | `Combat_Compose_Background`, `CMB_ComposeBookBG__WIP`, `Combat_Screen_Map_Draw(_Entities)__WIP`, `Combat_Grid_Entities/Entity_Create__WIP`, `Combat_Figure_Effect`, `CMB_CE_Refresh__WIP` | **WIP** |
@@ -75,7 +75,7 @@ Legend: **[done]** reconstructed/reviewed · **[impl]** substantive, not yet don
 | Combat spellbook | `Combat_Spellbook_Build`, `CmbBook_Compose/Draw__WIP` (`Spellbook.c`) | **WIP** |
 | **AI Combat** | driver + per-unit action chain — see [__TODO-Combat-AI.md](__TODO-Combat-AI.md) | mostly **impl**, review-pending |
 | **AI Combat Spell** | selection/scoring + `AITP_*` pickers — see [__TODO-Combat-AI-Spell.md](__TODO-Combat-AI-Spell.md) | **done / impl** (review-only) |
-| End / capture / strategic | `End_Of_Combat__WIP`, `STK_CaptureCity__WIP`, `STK_ComposeFleeLost__STUB`, `Strategic_Combat__WIP`, `Lair_Combat__WIP` (`Lair.c`) | **WIP** |
+| End / capture / strategic | `End_Of_Combat`, `STK_CaptureCity__WIP`, `STK_ComposeFleeLost__STUB`, `Strategic_Combat__WIP`, `Lair_Combat__WIP` (`Lair.c`) | **WIP** |
 
 ## Test coverage
 
@@ -97,7 +97,7 @@ Combat now has deterministic characterization tests (seed 12345); reconstruction
 - [ ] **Draw layer** — `CMB_Compose*__WIP`, `Combat_Screen_Map_Draw*__WIP`, grid-entity + figure-effect helpers.
 - [ ] **Water / shore combat rendering** — combat on a coastal/ocean square (`cts_Water`) is unreconstructed: `Load_Combat_Terrain_Pictures` early-returns for `cts_Water` (no tileset loaded), and `Combat_Compose_Background` then `assert`s on ocean battlefield tiles (`btt_Ocean` 48–51 vs its `< 48` guard). Surfaced when a tactical combat lands on a shore tile. OG supports coastal combat, so this is a reconstruction gap, not "unsupported."
 - [ ] **Human spellcasting UI** — `Combat_Spell_Target_Screen__WIP`, `Do_Legal_Spell_Check`, `Combat_Spellbook_Build`.
-- [ ] **Resolution** — `End_Of_Combat__WIP`, `STK_CaptureCity__WIP`, `Strategic_Combat__WIP`, `Lair_Combat__WIP`.
+- [ ] **Resolution** — `End_Of_Combat`, `STK_CaptureCity__WIP`, `Strategic_Combat__WIP`, `Lair_Combat__WIP`.
 - [ ] **AI Combat** — finish the review/reconstruction tracked in [__TODO-Combat-AI.md](__TODO-Combat-AI.md).
 - [ ] **AI Combat Spell** — finish the review tracked in [__TODO-Combat-AI-Spell.md](__TODO-Combat-AI-Spell.md).
 

@@ -68,7 +68,7 @@ Three of the subfunctions (`City_Gold`, `Rampage_Combat_City`, and parts of `Com
 
 | dasm | production |
 | --- | --- |
-| `End_Of_Combat__WIP` | `End_Of_Combat` |
+| `End_Of_Combat` | `End_Of_Combat` |
 | `STK_ComposeFleeLost__STUB` | `Build_Flee_Loss_Message` |
 | `Evict_Weakest_From_Full_Stack` | `Evict_Weakest_Unit` — the asm name carries the "full stack" precondition |
 | `MsgType` / `CMB_ScrollMsg_Type` | `end_of_combat_message_type` / `combat_results_scroll_message` |
@@ -90,7 +90,7 @@ Three of the subfunctions (`City_Gold`, `Rampage_Combat_City`, and parts of `Com
 
 | function | production | listing | asm lines | coverage |
 | --- | --- | --- | --- | --- |
-| `End_Of_Combat` | [Combat.c:14756](../../MoM/src/Combat.c#L14756) | `ovr123/End_Of_Combat__WIP.asm` | 2493 | **full body walk — faithful** |
+| `End_Of_Combat` | [Combat.c:14756](../../MoM/src/Combat.c#L14756) | `ovr123/End_Of_Combat.asm` | 2493 | **full body walk — faithful** |
 | `Combat_Results_Scroll_Text` | [Combat.c:15792](../../MoM/src/Combat.c#L15792) | `ovr123/Combat_Results_Scroll_Text.asm` | 613 | **full body walk — faithful** |
 | `Rampage_Combat_City` | [Combat.c:16024](../../MoM/src/Combat.c#L16024) | `ovr123/Rampage_Combat_City.asm` | 342 | **full body walk — faithful** |
 | `Combat_Results_Scroll` | [Combat.c:15644](../../MoM/src/Combat.c#L15644) | `ovr123/Combat_Results_Scroll.asm` | 309 | **full body walk — faithful** |

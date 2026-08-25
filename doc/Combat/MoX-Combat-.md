@@ -374,12 +374,12 @@ TODO  rename bufpi to pict_idx or some such, after your're done feeling confused
 
 set in 8 places
     CMB_VortexPlayerMove+63       mov     [_active_battle_unit], -1                  
-    End_Of_Combat__WIP:loc_A5B34  mov     [_active_battle_unit], 667                 
+    End_Of_Combat:loc_A5B34  mov     [_active_battle_unit], 667                 
     Next_Battle_Unit+AA           mov     [_active_battle_unit], _SI_itr_battle_units
     STK_CaptureCity+372           mov     [_active_battle_unit], ax                  
     CMB_PrepareTurn__WIP+8E       mov     [_active_battle_unit], ax                  
     Switch_Active_Battle_Unit+1A  mov     [_active_battle_unit], ax                  
-    End_Of_Combat__WIP+B8F        mov     [_active_battle_unit], ax                  
+    End_Of_Combat+B8F        mov     [_active_battle_unit], ax                  
     AI_Execute_Unit_Action+64        mov     [_active_battle_unit], si                  
 
 [x] Switch_Active_Battle_Unit()

@@ -20,10 +20,10 @@ XREF:
     City_Delete_Building_Complete_Messages+63        mov     al, [g_bldg_msg_ctr]
     City_Delete_Building_Complete_Messages+68        mov     [g_bldg_msg_ctr], al
     City_Delete_Building_Complete_Messages:loc_A22AB mov     al, [g_bldg_msg_ctr]
-    End_Of_Combat__WIP:loc_A5C0E                     mov     al, [g_bldg_msg_ctr]
-    End_Of_Combat__WIP+C76                           mov     al, [g_bldg_msg_ctr]
-    End_Of_Combat__WIP+C7B                           mov     [g_bldg_msg_ctr], al
-    End_Of_Combat__WIP:loc_A5C1F                     mov     al, [g_bldg_msg_ctr]
+    End_Of_Combat:loc_A5C0E                     mov     al, [g_bldg_msg_ctr]
+    End_Of_Combat+C76                           mov     al, [g_bldg_msg_ctr]
+    End_Of_Combat+C7B                           mov     [g_bldg_msg_ctr], al
+    End_Of_Combat:loc_A5C1F                     mov     al, [g_bldg_msg_ctr]
     CTY_ProdProgress+2C8                             cmp     [g_bldg_msg_ctr], 20
     CTY_ProdProgress+2CF                             mov     al, [g_bldg_msg_ctr]
     CTY_ProdProgress+2E0                             mov     al, [g_bldg_msg_ctr]
@@ -49,6 +49,6 @@ if(_CITIES[city_idx].owner_idx == _human_player_idx)
 
 City_Delete_Building_Complete_Messages()
 
-End_Of_Combat__WIP()
+End_Of_Combat()
 
 CTY_ProdProgress()

@@ -13,7 +13,7 @@ Next_Turn_Proc()
 
 IIF/OON:  |-> Evict_Weakest_Unit()  |-> Evict_Unit_With_Message()  |-> Evict_Unit()
 XREF:
-    End_Of_Combat__WIP()
+    End_Of_Combat()
     Hire_Hero_Popup()
     AI_Accept_Hero()
     Cast_Word_Of_Recall()

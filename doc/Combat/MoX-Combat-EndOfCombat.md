@@ -2,7 +2,7 @@
 WIZARDS.EXE
 ovr123
 // WZD o123p01
-End_Of_Combat__WIP()
+End_Of_Combat()
 
 
 
@@ -152,7 +152,7 @@ WZD dseg:5FBD   " has fallen to raiders"
 
 
 XREF:  (11)
-    End_Of_Combat__WIP()          mov  [combat_results_scroll_message], ax
+    End_Of_Combat()          mov  [combat_results_scroll_message], ax
     Combat_Results_Scroll()       cmp  [combat_results_scroll_message], 4
     Combat_Results_Scroll()       cmp  [combat_results_scroll_message], 1
     Combat_Results_Scroll()       cmp  [combat_results_scroll_message], 5
@@ -171,9 +171,9 @@ XREF:  (11)
 ### CMB_Population_Lost
 
 XREF:  (7)
-    End_Of_Combat__WIP()            mov   [CMB_Population_Lost], 0
-    End_Of_Combat__WIP()            mov   [CMB_Population_Lost], 0
-    End_Of_Combat__WIP()            mov   [CMB_Population_Lost], _DI_IDK_population_lost
+    End_Of_Combat()            mov   [CMB_Population_Lost], 0
+    End_Of_Combat()            mov   [CMB_Population_Lost], 0
+    End_Of_Combat()            mov   [CMB_Population_Lost], _DI_IDK_population_lost
     Combat_Results_Scroll_Text()    cmp   [CMB_Population_Lost], 0
     Combat_Results_Scroll_Text()    push  [CMB_Population_Lost]
     STK_CaptureCity()               mov   [CMB_Population_Lost], 0
@@ -196,13 +196,13 @@ XREF:  (112)
     WIZ_BU_SelectNext()
     WIZ_BU_SelectClosest()
     AI_Execute_Unit_Action()
-    End_Of_Combat__WIP()
+    End_Of_Combat()
     Combat_Results_Scroll_Text()
     STK_CaptureCity()
     CMB_VortexPlayerMove()
 
 For 'Strategic Combat', only relevant references...
-    End_Of_Combat__WIP()
+    End_Of_Combat()
     STK_CaptureCity()
 
 

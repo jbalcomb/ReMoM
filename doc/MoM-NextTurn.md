@@ -160,10 +160,10 @@ XREF:
     City_Delete_Building_Complete_Messages+68        mov     [g_bldg_msg_ctr], al
     City_Delete_Building_Complete_Messages:loc_A229A mov     al, [g_bldg_msg_ctr]
     City_Delete_Building_Complete_Messages:loc_A22AB mov     al, [g_bldg_msg_ctr]
-    End_Of_Combat__WIP+C76                           mov     al, [g_bldg_msg_ctr]
-    End_Of_Combat__WIP+C7B                           mov     [g_bldg_msg_ctr], al
-    End_Of_Combat__WIP:loc_A5C0E                     mov     al, [g_bldg_msg_ctr]
-    End_Of_Combat__WIP:loc_A5C1F                     mov     al, [g_bldg_msg_ctr]
+    End_Of_Combat+C76                           mov     al, [g_bldg_msg_ctr]
+    End_Of_Combat+C7B                           mov     [g_bldg_msg_ctr], al
+    End_Of_Combat:loc_A5C0E                     mov     al, [g_bldg_msg_ctr]
+    End_Of_Combat:loc_A5C1F                     mov     al, [g_bldg_msg_ctr]
     Next_Turn_Proc+292                               mov     [g_bldg_msg_ctr], 0 
     Next_Turn_Proc:loc_52B5B                         cmp     [g_bldg_msg_ctr], 0 
     Next_Turn_Proc:loc_52D8A                         mov     al, [g_bldg_msg_ctr]

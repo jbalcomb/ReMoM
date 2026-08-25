@@ -4394,22 +4394,13 @@ int16_t Unit_Try_To_Move(int16_t wx, int16_t wy, int16_t wp, int16_t unit_idx, i
 
 
 // WZD o98p10
-// drake178: CMB_SetActionCursor()
 // MoO2  Module:  COMBAT1  Assign_Mouse_Images_()
 /*
-; sets the cursor based on the currently selected unit
-; and the contents of the space that the mouse is over
-;
-; has multiple BUGs regarding the melee and ranged
-; cursors
-*/
-/*
-
 finger on own unit
 winged boot on reachable move
 red x on unreachable
 crossed swords on reachable attack
-
+wand?
 */
 void Assign_Mouse_Images(void)
 {
@@ -4419,22 +4410,15 @@ void Assign_Mouse_Images(void)
     int16_t screen_x = 0;
     int16_t range_y = 0;
     int16_t range_x = 0;
-    int16_t scanned_battle_unit_idx = 0;  // _SI_
-    int16_t cgx = 0;  // _DI_
-
+    int16_t scanned_battle_unit_idx = 0;
+    int16_t cgx = 0;
     _scanned_battle_unit = ST_UNDEFINED;
-
     frame_active_flag = ST_FALSE;
-
     if(_active_battle_unit > ST_UNDEFINED)
     {
-
         frame_active_flag = ST_TRUE;
-
         frame_active_cgx = battle_units[_active_battle_unit].cgx;
-
         frame_active_cgy = battle_units[_active_battle_unit].cgy;
-
         if(
             (_human_handle_immobile == ST_TRUE)
             &&
@@ -4443,68 +4427,40 @@ void Assign_Mouse_Images(void)
             (battle_units[_active_battle_unit].controller_idx == _combat_local_player)
         )
         {
-
             frame_active_flag = ST_FALSE;
-
         }
-
     }
-
     _combat_mouse_grid->image_num = crsr_Finger;
-
-    screen_x = (Pointer_X() + 4);  // ¿ why the (+ 4) ?
-
-    screen_y = (Pointer_Y() + 4);  // ¿ why the (+ 4) ?
-
+    screen_x = (Pointer_X() + 4);
+    screen_y = (Pointer_Y() + 4);
     frame_scanned_flag = ST_FALSE;
-
     if(screen_y < SCREEN_YBOT_CMBT)
     {
-
         cgx = Get_Combat_Grid_Cell_X(screen_x, screen_y);
-
         cgy = Get_Combat_Grid_Cell_Y(screen_x, screen_y);
-
         if(g_combat_grid_action_map[cgy][cgx] == -2)
         {
-
             _combat_mouse_grid->image_num = crsr_RedCross;  /* Page 92  (PDF Page 97) "Squares that are not valid as targets for an active unit’s actions show a red "X" when the mouse cursor moves over them." */
-
         }
         else if(g_combat_grid_action_map[cgy][cgx] == -1)
         {
-
             frame_scanned_flag = ST_TRUE;
-
             frame_scanned_cgx = cgx;
-
             frame_scanned_cgy = cgy;
-
             _combat_mouse_grid->image_num = crsr_WingedBoot;
-
         }
         else if(g_combat_grid_action_map[cgy][cgx] == 99)
         {
-
             frame_scanned_flag = ST_TRUE;
-
             frame_scanned_cgx = cgx;
-
             frame_scanned_cgy = cgy;
-
             frame_anim_cycle = ((frame_anim_cycle + 1) % 3);
-
             scanned_battle_unit_idx = g_combat_grid_action_map[cgy][cgx];
-
             range_x = abs((cgx - battle_units[_active_battle_unit].cgx));
-
             range_y = abs((cgy - battle_units[_active_battle_unit].cgy));
-
             _combat_mouse_grid->image_num = crsr_RedCross;
-
             if(battle_units[_active_battle_unit].movement_points > 0)
             {
-
                 // ; BUG: ranged units will still make this as a ranged attack?
                 if(
                     (range_x <= 1)
@@ -4512,15 +4468,11 @@ void Assign_Mouse_Images(void)
                     (range_y <= 1)
                 )
                 {
-
                     _combat_mouse_grid->image_num = crsr_Melee;
-
                 }
                 else
                 {
-
                     ranged_attack_type_group = (battle_units[_active_battle_unit].ranged_type / 10);
-
                     if(
                         (ranged_attack_type_group == rag_Boulder)
                         ||
@@ -4529,33 +4481,20 @@ void Assign_Mouse_Images(void)
                         (ranged_attack_type_group == rag_Magic)
                     )
                     {
-
                         STU_DEBUG_BREAK();
-
                         _combat_mouse_grid->image_num = crsr_Ranged;
-
                     }
-
                 }
-
             }
-
         }
         else  /* not -2, -1, 99 */
         {
-
             frame_scanned_flag = ST_TRUE;
-
             frame_scanned_cgx = cgx;
-
             frame_scanned_cgy = cgy;
-
             frame_anim_cycle = ((frame_anim_cycle + 1) % 3);
-
             scanned_battle_unit_idx = g_combat_grid_action_map[cgy][cgx];
-
             _scanned_battle_unit = scanned_battle_unit_idx;  // ; the combat unit display is based on this
-
             // Eh? Opposite conditions as above for turning off the active unit highlight frame?
             // Just human mousing around while it's not their turn?
             // ...MoO2 uses net_flag and clock mouse image?
@@ -4569,75 +4508,48 @@ void Assign_Mouse_Images(void)
                 (battle_units[scanned_battle_unit_idx].controller_idx != _human_player_idx)
             )
             {
-
                 range_x = abs(battle_units[scanned_battle_unit_idx].cgx - battle_units[_active_battle_unit].cgx);
-
                 range_y = abs(battle_units[scanned_battle_unit_idx].cgy - battle_units[_active_battle_unit].cgy);
-
                 _combat_mouse_grid->image_num = crsr_RedCross;
-
                 if(battle_units[_active_battle_unit].movement_points > 0)
                 {
-
                     if(Check_Attack_Melee(_active_battle_unit, scanned_battle_unit_idx) == ST_TRUE)
                     {
-
                         if(
                             (range_x <= 1)
                             &&
                             (range_y <= 1)
                         )
                         {
-
                             if(Check_Attack_Melee_City_Wall(_active_battle_unit, scanned_battle_unit_idx) == ST_TRUE)
                             {
-
                                 _combat_mouse_grid->image_num = crsr_Melee;
-
                             }
                             else
                             {
-
                                 _combat_mouse_grid->image_num = Ranged_Mouse_Image(_active_battle_unit, scanned_battle_unit_idx);
-
                             }
-
                         }
                         else
                         {
-
                             _combat_mouse_grid->image_num = Ranged_Mouse_Image(_active_battle_unit, scanned_battle_unit_idx);
-
                         }
-
                     }
-
                 }
-
             }
-
         }
-
     }
-
-
     if(_auto_combat_flag == ST_TRUE)
     {
-        
         frame_active_flag = ST_FALSE;
-
         frame_scanned_flag = ST_FALSE;
-
     }
-
     _combat_mouse_grid->center_offset = 0;
     _combat_mouse_grid->x1 = SCREEN_XMIN;
     _combat_mouse_grid->y1 = SCREEN_YMIN;
     _combat_mouse_grid->x2 = SCREEN_XMAX;
     _combat_mouse_grid->y2 = SCREEN_YMAX;
-
     Set_Mouse_List(1, _combat_mouse_grid);
-
 }
 
 
@@ -4673,11 +4585,8 @@ int16_t Ranged_Mouse_Image(int16_t attacker_idx, int16_t defender_idx)
     uint32_t attacker_enchantments = 0;
     int16_t ranged_attack_group = 0;
     int16_t image_num = 0;
-
     image_num = crsr_RedCross;
-
     ranged_attack_group = (battle_units[attacker_idx].ranged_type / 10);
-
     if(
         (ranged_attack_group != rag_Boulder)
         &&
@@ -4688,18 +4597,12 @@ int16_t Ranged_Mouse_Image(int16_t attacker_idx, int16_t defender_idx)
     {
         return crsr_RedCross;
     }        
-
     image_num = crsr_Ranged;
-
-    defender_enchantments = (battle_units[defender_idx].enchantments | battle_units[defender_idx].item_enchantments);
-
-    attacker_enchantments = (battle_units[attacker_idx].enchantments | battle_units[attacker_idx].item_enchantments);
-
+    defender_enchantments = (battle_units[defender_idx].enchantments | battle_units[defender_idx].item_enchantments | _UNITS[battle_units[defender_idx].unit_idx].enchantments);
+    attacker_enchantments = (battle_units[attacker_idx].enchantments | battle_units[attacker_idx].item_enchantments | _UNITS[battle_units[attacker_idx].unit_idx].enchantments);
     if((attacker_enchantments & UE_TRUE_SIGHT) != 0)
     {
-
         image_num = crsr_Ranged;
-
     }
     else if(
         ((defender_enchantments & UE_INVISIBILITY) != 0)
@@ -4707,24 +4610,16 @@ int16_t Ranged_Mouse_Image(int16_t attacker_idx, int16_t defender_idx)
         ((battle_units[defender_idx].Abilities & UA_INVISIBILITY) != 0)
     )
     {
-
         if(_attacker_sees_illusions == ST_TRUE)
         {
-
             image_num = crsr_Ranged;
-
         }
         else
         {
-
             image_num = crsr_RedCross;
-
         }
-
     }
-
     return image_num;
-
 }
 
 

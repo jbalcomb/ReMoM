@@ -6,10 +6,6 @@ UU_IDK_CMB_s7DE08()    // no production body — comment-only placeholder
 // WZD s96p06
 UU_IDK_Main_Screen_Draw()    // no production body — comment-only placeholder
 
-WIZARDS.EXE  ovr098
-// WZD o98p11
-Ranged_Mouse_Image()
-
 WIZARDS.EXE  ovr110
 // WZD o110p04
 Get_Effective_Hits()
@@ -37,9 +33,9 @@ Combat_Grid_Screen_Coordinates()
 
 # What this list is
 
-Every combat-overlay function that has **not** been taken to done-done **and has no home**: 10 of the 237 `// WZD` overlay slots in the combat sources.
+Every combat-overlay function that has **not** been taken to done-done **and has no home**: 9 of the 237 `// WZD` overlay slots in the combat sources.
 
-Miscellaneous means homeless. Of the 37 slots that are not done, 27 have a home — some finished review adjudicated the code that calls them, so they are that review's backlog, not a loose end. Those 31 are in the attribution table below, not in this list. The 39 above are what nothing claims.
+Miscellaneous means homeless. Of the 35 slots that are not done, 26 have a home — some finished review adjudicated the code that calls them, so they are that review's backlog, not a loose end. Those 31 are in the attribution table below, not in this list. The 39 above are what nothing claims.
 
 The list is generated, not hand-kept. Regenerate it with:
 
@@ -64,10 +60,10 @@ That yields five states. **`CLAIMED` and `NOT DONE` qualify for this list; attri
 
 | state | count | meaning |
 | --- | --- | --- |
-| `DONE` | 200 | a DONE-DONE doc gives it a coverage-table row, or a tracker box is checked |
+| `DONE` | 202 | a DONE-DONE doc gives it a coverage-table row, or a tracker box is checked |
 | `WALKED` | 0 | a DONE-DONE doc walks it under its own heading and declares it faithful, but never added a table row — a bookkeeping hole in the doc, not an unreviewed function |
 | `CLAIMED` | 3 | named in a DONE-DONE doc's header block and never adjudicated anywhere |
-| `NOT DONE` | 34 | no doc renders a verdict on it |
+| `NOT DONE` | 32 | no doc renders a verdict on it |
 | `NO NAME` | 0 | an overlay slot nothing in the sources names |
 
 ## The `WALKED` bucket is empty
@@ -92,7 +88,7 @@ python3 tools/review_coverage.py --attribution-md     this table
 
 | review it belongs to | n | functions |
 | --- | --- | --- |
-| [Combat-Combat_Screen.md](Combat-Combat_Screen.md) | 6 | `Combat_Next_Turn`, `Assign_Mouse_Images`, `Tactical_Combat_Draw_Buttons`, `Battle_Unit_Melee_Attack_Icon`, `Battle_Unit_Ranged_Attack_Icon`, `Combat_Cache_Read` |
+| [Combat-Combat_Screen.md](Combat-Combat_Screen.md) | 5 | `Combat_Next_Turn`, `Tactical_Combat_Draw_Buttons`, `Battle_Unit_Melee_Attack_Icon`, `Battle_Unit_Ranged_Attack_Icon`, `Combat_Cache_Read` |
 | [Combat-Combat_Figure_Compose.md](Combat-Combat_Figure_Compose.md) | 3 | `Draw_Active_Unit_Stats_And_Icons`, `Draw_Active_Unit_Damage_Bar`, `Next_Battle_Unit_Nearest_Available` |
 | [Combat-End_Of_Combat.md](Combat-End_Of_Combat.md) | 3 | `Player_City_At_Square`, `Unit_Try_To_Move`, `Raze_City_Prompt` |
 | [Combat-AI_Turn.md](Combat-AI_Turn.md) | 2 | `Do_Auto_Unit_Turn`, `Total_Ranged_Attack_Strength` |
@@ -106,7 +102,7 @@ python3 tools/review_coverage.py --attribution-md     this table
 | [Combat-Move_Battle_Unit.md](Combat-Move_Battle_Unit.md) | 1 | `Reload_Battle_Unit_Move_Sound` |
 | [Combat-Spell_Cast_AI_Target.md](Combat-Spell_Cast_AI_Target.md) | 1 | `Target_Is_Visible` |
 
-**10 have no covered caller at all** — their callers are themselves unreviewed, so no existing session claims them: `UU_IDK_CMB_s7DE08`, `UU_IDK_Main_Screen_Draw`, `Ranged_Mouse_Image`, `Get_Effective_Hits`, `Calc_Battlefield_Bonuses`, `AI_RestrictToCity__WIP`, `Raze_City_Prompt_Draw`, `NX_IDK_CombatInit_Tactical`, `o153p22_empty_function`, `Combat_Grid_Screen_Coordinates`.
+**9 have no covered caller at all** — their callers are themselves unreviewed, so no existing session claims them: `UU_IDK_CMB_s7DE08`, `UU_IDK_Main_Screen_Draw`, `Get_Effective_Hits`, `Calc_Battlefield_Bonuses`, `AI_RestrictToCity__WIP`, `Raze_City_Prompt_Draw`, `NX_IDK_CombatInit_Tactical`, `o153p22_empty_function`, `Combat_Grid_Screen_Coordinates`.
 
 ## Cross-doc referrals
 

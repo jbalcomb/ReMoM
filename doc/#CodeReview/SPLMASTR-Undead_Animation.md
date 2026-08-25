@@ -17,7 +17,7 @@ CMB_DrawUndeadAnim()    ==>  Undead_Animation_Draw()
 CMB_LoadUndeadAnim()    ==>  Undead_Animation_Load()
 CMB_GetUndeadCreator()  ==>  Find_Undead_Creator_Type()
 
-End_Of_Combat__WIP()
+End_Of_Combat()
     |-> CMB_CreateUndeadAnim()
         |-> CMB_LoadUndeadAnim()
         |-> CMB_DrawUndeadAnim()
@@ -138,5 +138,5 @@ This function resolves an open question from [`Summon_Animation`](Spells137-Summ
 ## Related references
 
 - `…\ovr138\CMB_{Create,Draw,Load}UndeadAnim.asm` — IDA Pro 5.5 disassembly (**the authority**), retaining the pre-rename filenames; Gemini `.c` second opinions (which carried the same undefined `uy_BeastSwordsmen`, since resolved to MONSTER.LBX `47`).
-- Callers — **both live and building**: [Combat.c:22165](../../MoM/src/Combat.c#L22165) `Undead_Animation(ut_Zombies)` and [:22207](../../MoM/src/Combat.c#L22207) `Undead_Animation(Find_Undead_Creator_Type(player_idx))`. Context: the `End_Of_Combat__WIP` note at [Combat.c:21260](../../MoM/src/Combat.c#L21260).
+- Callers — **both live and building**: [Combat.c:22165](../../MoM/src/Combat.c#L22165) `Undead_Animation(ut_Zombies)` and [:22207](../../MoM/src/Combat.c#L22207) `Undead_Animation(Find_Undead_Creator_Type(player_idx))`. Context: the `End_Of_Combat` note at [Combat.c:21260](../../MoM/src/Combat.c#L21260).
 - Declarations already present: [SPLMASTR.h:116](../../MoM/src/SPLMASTR.h#L116) / [:119](../../MoM/src/SPLMASTR.h#L119) / [:122](../../MoM/src/SPLMASTR.h#L122).
