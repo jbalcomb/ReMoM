@@ -5,7 +5,7 @@
         ovr090
         ovr091  ¿ MoO2  COMBINIT ?
         ovr096
-        ovr098  ¿ MoO2  COMBINIT ?
+        ovr098  ¿ MoO2  COMBINIT || COMBAT1 ?
         ovr099  ¿ MoO2  Module: CMBTDRW1 ?  (would have been CMBTDRW or CMBTDRAW?)
         ovr103
         ovr105
@@ -1007,9 +1007,9 @@ SAMB_ptr unit_hit_bar_seg;
 SAMB_ptr battle_unit_scratch_seg;
 
 // WZD dseg:C7B4
-int16_t CMB_HeavenlyLight;
+int16_t _combat_info_heavenly_light;
 // WZD dseg:C7B5
-int16_t CMB_CloudofShadow;
+int16_t _combat_info_cloud_of_shadow;
 // WZD dseg:C7B6
 int16_t g_center_square_structure;
 
@@ -1026,7 +1026,7 @@ SAMB_ptr _combat_info_wnd_mid_seg;
 SAMB_ptr _combat_info_wnd_top_seg;
 
 // WZD dseg:C7C0
-int16_t CMB_PerSideInfo;
+int16_t _combat_per_side_effect_rows;
 
 // WZD dseg:C7C2
 // ; contains a Node_Type flag or -1 (unit bonus aura)
@@ -1646,14 +1646,14 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
             (m_wizard_cast_available == ST_TRUE)
         )
         {
-            spell_button_field = Add_Button_Field(144, 168, str_empty_string__ovr090, _cmbt_spell_button_seg, cnst_HOTKEY_S_3[0], ST_UNDEFINED);
+            spell_button_field = Add_Button_Field(144, SCREEN_YBOT_CMBT, str_empty_string__ovr090, _cmbt_spell_button_seg, cnst_HOTKEY_S_3[0], ST_UNDEFINED);
         }
         else
         {
             spell_button_field = INVALID_FIELD;
         }
-        wait_button_field = Add_Button_Field(170, 168, str_empty_string__ovr090, _cmbt_wait_button_seg, cnst_HOTKEY_W_2[0], ST_UNDEFINED);
-        done_button_field = Add_Button_Field(170, 188, str_empty_string__ovr090, _cmbt_done_button_seg, cnst_HOTKEY_D_5[0], ST_UNDEFINED);
+        wait_button_field = Add_Button_Field(170, SCREEN_YBOT_CMBT, str_empty_string__ovr090, _cmbt_wait_button_seg, cnst_HOTKEY_W_2[0], ST_UNDEFINED);
+        done_button_field = Add_Button_Field(170, (SCREEN_YBOT_CMBT + 20), str_empty_string__ovr090, _cmbt_done_button_seg, cnst_HOTKEY_D_5[0], ST_UNDEFINED);
         if(_combat_total_battle_effect_count > 0)
         {
             info_button_field = Add_Button_Field(144, 178, str_empty_string__ovr090, _cmbt_info_button_seg, cnst_HOTKEY_U_5[0], ST_UNDEFINED);
@@ -1662,13 +1662,13 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
         {
             info_button_field = INVALID_FIELD;
         }
-        auto_button_field = Add_Button_Field(170, 178, str_empty_string__ovr090, _cmbt_auto_button_seg, cnst_HOTKEY_A_4[0], ST_UNDEFINED);
-        flee_button_field = Add_Button_Field(144, 188, str_empty_string__ovr090, _cmbt_flee_button_seg, cnst_HOTKEY_F[0], ST_UNDEFINED);
+        auto_button_field = Add_Button_Field(170, (SCREEN_YBOT_CMBT + 10), str_empty_string__ovr090, _cmbt_auto_button_seg, cnst_HOTKEY_A_4[0], ST_UNDEFINED);
+        flee_button_field = Add_Button_Field(144, (SCREEN_YBOT_CMBT + 20), str_empty_string__ovr090, _cmbt_flee_button_seg, cnst_HOTKEY_F[0], ST_UNDEFINED);
         // ¿ Right-Click brings up 'Unit View' ?
         active_unit_window_field = Add_Hidden_Field(83, 173, 116, 198, str_empty_string__ovr090[0], ST_UNDEFINED);
         Add_Combat_Enchantment_Fields();
-        escape_field = Add_Hidden_Field(0, 164, 319, 199, str_hotkey_ESC__ovr090[0], ST_UNDEFINED);
-        combat_grid_field = Add_Grid_Field(0, 0, 1, 1, 319, 164, &grid_sx, &grid_sy, ST_UNDEFINED);
+        escape_field = Add_Hidden_Field(0, 164, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr090[0], ST_UNDEFINED);
+        combat_grid_field = Add_Grid_Field(0, 0, 1, 1, SCREEN_XMAX, 164, &grid_sx, &grid_sy, ST_UNDEFINED);
         space_hotkey_field = Add_Hot_Key(cnst_HOTKEY_SPACE_4[0]);
 #ifdef STU_DEBUG
         hotkey_idx_Z = Add_Hot_Key('Z');  // debug_hotkey  ...  Derp. 'D' is already used for the "Done" button.
@@ -4458,7 +4458,7 @@ void Assign_Mouse_Images(void)
 
     frame_scanned_flag = ST_FALSE;
 
-    if(screen_y < 168)
+    if(screen_y < SCREEN_YBOT_CMBT)
     {
 
         cgx = Get_Combat_Grid_Cell_X(screen_x, screen_y);
@@ -5291,17 +5291,17 @@ void Combat_Screen_Draw(void)
         Set_Outline_Color(241);
         if(_combat_ai_player != NEUTRAL_PLAYER_IDX)
         {
-            Print_Centered(40, 168, _players[_combat_ai_player].name);
+            Print_Centered(40, SCREEN_YBOT_CMBT, _players[_combat_ai_player].name);
         }
         else
         {
             if(Opponent_Type == 1)  /* Monsters */
             {
-                Print_Centered(40, 168, str_Monsters__ovr099);
+                Print_Centered(40, SCREEN_YBOT_CMBT, str_Monsters__ovr099);
             }
             else  /* Raiders */
             {
-                Print_Centered(40, 168, str_Raiders__ovr099);
+                Print_Centered(40, SCREEN_YBOT_CMBT, str_Raiders__ovr099);
             }
         }
     }
@@ -5316,7 +5316,7 @@ void Combat_Screen_Draw(void)
         Set_Outline_Color(241);
         if(_combat_ai_player != NEUTRAL_PLAYER_IDX)
         {
-            Print_Centered(40, 168, _players[_combat_ai_player].name);
+            Print_Centered(40, SCREEN_YBOT_CMBT, _players[_combat_ai_player].name);
         }
         else
         {
@@ -5326,17 +5326,17 @@ void Combat_Screen_Draw(void)
                 (_combat_attacker_player != NEUTRAL_PLAYER_IDX)
             )
             {
-                Print_Centered(40, 168, _combat_city_name);
+                Print_Centered(40, SCREEN_YBOT_CMBT, _combat_city_name);
             }
             else
             {
                 if(Opponent_Type == 1)  /* Monsters */
                 {
-                    Print_Centered(40, 168, str_Monsters__ovr099);
+                    Print_Centered(40, SCREEN_YBOT_CMBT, str_Monsters__ovr099);
                 }
                 else  /* Raiders */
                 {
-                    Print_Centered(40, 168, str_Raiders__ovr099);
+                    Print_Centered(40, SCREEN_YBOT_CMBT, str_Raiders__ovr099);
                 }
             }
         }
@@ -5541,12 +5541,12 @@ void Tactical_Combat_Draw_Buttons(void)
     if(_auto_combat_flag == ST_TRUE)
     {
         Set_Animation_Frame(_cmbt_auto_button_seg, 0);
-        FLIC_Draw(170, 178, _cmbt_auto_button_seg);
-        FLIC_Draw(144, 168, _cmbt_lock_spell_button_seg);
-        FLIC_Draw(170, 168, _cmbt_lock_wait_button_seg);
-        FLIC_Draw(170, 188, _cmbt_lock_done_button_seg);
-        FLIC_Draw(144, 178, _cmbt_lock_info_button_seg);
-        FLIC_Draw(144, 188, _cmbt_lock_flee_button_seg);
+        FLIC_Draw(170, (SCREEN_YBOT_CMBT + 10), _cmbt_auto_button_seg);
+        FLIC_Draw(144, SCREEN_YBOT_CMBT, _cmbt_lock_spell_button_seg);
+        FLIC_Draw(170, SCREEN_YBOT_CMBT, _cmbt_lock_wait_button_seg);
+        FLIC_Draw(170, (SCREEN_YBOT_CMBT + 20), _cmbt_lock_done_button_seg);
+        FLIC_Draw(144, (SCREEN_YBOT_CMBT + 10), _cmbt_lock_info_button_seg);
+        FLIC_Draw(144, (SCREEN_YBOT_CMBT + 20), _cmbt_lock_flee_button_seg);
     }
     else
     {
@@ -5566,29 +5566,29 @@ void Tactical_Combat_Draw_Buttons(void)
         )
         {
             Set_Animation_Frame(_cmbt_spell_button_seg, 0);
-            FLIC_Draw(144, 168, _cmbt_spell_button_seg);
+            FLIC_Draw(144, SCREEN_YBOT_CMBT, _cmbt_spell_button_seg);
         }
         else
         {
-            FLIC_Draw(144, 168, _cmbt_lock_spell_button_seg);
+            FLIC_Draw(144, SCREEN_YBOT_CMBT, _cmbt_lock_spell_button_seg);
         }
         Set_Animation_Frame(_cmbt_wait_button_seg, 0);
-        FLIC_Draw(170, 168, _cmbt_wait_button_seg);
+        FLIC_Draw(170, SCREEN_YBOT_CMBT, _cmbt_wait_button_seg);
         Set_Animation_Frame(_cmbt_done_button_seg, 0);
-        FLIC_Draw(170, 188, _cmbt_done_button_seg);
+        FLIC_Draw(170, (SCREEN_YBOT_CMBT + 20), _cmbt_done_button_seg);
         if(_combat_total_battle_effect_count > 0)
         {
             Set_Animation_Frame(_cmbt_info_button_seg, 0);
-            FLIC_Draw(144, 178, _cmbt_info_button_seg);
+            FLIC_Draw(144, (SCREEN_YBOT_CMBT + 10), _cmbt_info_button_seg);
         }
         else
         {
-            FLIC_Draw(144, 178, _cmbt_lock_info_button_seg);
+            FLIC_Draw(144, (SCREEN_YBOT_CMBT + 10), _cmbt_lock_info_button_seg);
         }
         Set_Animation_Frame(_cmbt_auto_button_seg, 0);
-        FLIC_Draw(170, 178, _cmbt_auto_button_seg);
+        FLIC_Draw(170, (SCREEN_YBOT_CMBT + 10), _cmbt_auto_button_seg);
         Set_Animation_Frame(_cmbt_flee_button_seg, 0);
-        FLIC_Draw(144, 188, _cmbt_flee_button_seg);
+        FLIC_Draw(144, (SCREEN_YBOT_CMBT + 20), _cmbt_flee_button_seg);
     }
 }
 
@@ -5847,67 +5847,38 @@ void Draw_Active_Unit_Damage_Bar(int16_t battle_unit_idx, int16_t x, int16_t y)
 */
 
 // WZD s103p01
-// drake178: CMB_ShowInfoWindow()
-/*
-; sets up and displays the combat information window
-;
-; INCONSISTENT: excludes Evil Omens and Spell Wards
-*/
-/*
-
-*/
+/* OGBUG:  INCONSISTENT: excludes Evil Omens and Spell Wards */
 void Combat_Information_Window(void)
 {
-    int16_t full_screen_ESC_field = 0;
+    int16_t full_screen_esc_field = 0;
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
-    int16_t itr = 0;  // _SI_
-    int16_t IDK_screen_offset = 0;  // _DI_
-
+    int16_t itr = 0;
+    int16_t window_height = 0;
     g_center_square_structure = battlefield->center_square_structure;
-
-    CMB_CloudofShadow = battlefield->city_enchantments[CLOUD_OF_SHADOW];
-    CMB_HeavenlyLight = battlefield->city_enchantments[HEAVENLY_LIGHT];
-
+    _combat_info_cloud_of_shadow = battlefield->city_enchantments[CLOUD_OF_SHADOW];
+    _combat_info_heavenly_light = battlefield->city_enchantments[HEAVENLY_LIGHT];
     Clear_Fields();
-
     Deactivate_Auto_Function();
-
     Assign_Auto_Function(Combat_Information_Window_Draw, 1);
-
     Set_Mouse_List(1, mouse_list_default);
-
     Copy_On_To_Off_Page();
-
     Copy_Off_To_Back();
-
     GUI_String_1 = (char *)Near_Allocate_First(80);
-
     for(itr = 0; itr < 14; itr++)
     {
-
-        // _combat_info_effects[itr] = Near_Allocate_Next(30);
         _combat_info_effects[itr] = (struct s_CMB_InfoItem *)Near_Allocate_Next(sizeof(struct s_CMB_InfoItem));
-
     }
-
     Mark_Block(World_Data);
-
     Mark_Block(_screen_seg);
-
     Allocate_Next_Block(_screen_seg, 990);
-
     // COMPIX.LBX, 056  "INFOBAC1"   "info bot"
     // COMPIX.LBX, 057  "INFOBAC2"   "info mid"
     // COMPIX.LBX, 058  "INFOBAC3"   "info top"
     // COMPIX.LBX, 059  "INFOBOX"    "info box"
-
     _combat_info_wnd_bot_seg = LBX_Reload_Next(compix_lbx_file__ovr103, 56, World_Data);
-
     _combat_info_wnd_mid_seg = LBX_Reload_Next(compix_lbx_file__ovr103, 57, World_Data);
-
     _combat_info_wnd_box_seg = LBX_Reload_Next(compix_lbx_file__ovr103, 59, World_Data);
-
     // COMPIX.LBX, 042  "INFOICON"   "crusade"
     // COMPIX.LBX, 043  "INFOICON"   "holy arms"
     // COMPIX.LBX, 044  "INFOICON"   "holy light"
@@ -5922,652 +5893,365 @@ void Combat_Information_Window(void)
     // COMPIX.LBX, 053  "INFOICON"   "green node w/aura"
     // COMPIX.LBX, 054  "INFOICON"   "blue node"
     // COMPIX.LBX, 055  "INFOICON"   "blue node w/aura"
-
     for(itr = 0; itr < 14; itr++)
     {
-
         _combat_info_effect_icon_segs[itr] = LBX_Reload_Next(compix_lbx_file__ovr103, (42 + itr), World_Data);
-
     }
-
     _combat_info_wnd_top_seg = LBX_Reload_Next(compix_lbx_file__ovr103, 58, _screen_seg);
-
-
     Combat_Info_Effects();
-
-
     _combat_info_wnd_start_x = 50;
     _combat_info_wnd_start_y = 10;
-
-
     if(_combat_info_item_count > 0)
     {
-
-        IDK_screen_offset = (((_combat_info_item_count / 2) * 19) + 9);
-
+        window_height = (((_combat_info_item_count / 2) * 19) + 9);
     }
     else
     {
-
-        IDK_screen_offset = 4;
-
+        window_height = 4;
     }
-
-
-    if(CMB_PerSideInfo > 0)
+    if(_combat_per_side_effect_rows > 0)
     {
-
-        IDK_screen_offset = (_combat_info_wnd_start_y + (CMB_PerSideInfo * 20) + IDK_screen_offset + 21);
-
+        window_height = (_combat_info_wnd_start_y + (_combat_per_side_effect_rows * 20) + window_height + 21);
     }
     else
     {
-
-        IDK_screen_offset = (_combat_info_wnd_start_y + (CMB_PerSideInfo * 20) + IDK_screen_offset);
-
+        window_height = (_combat_info_wnd_start_y + (_combat_per_side_effect_rows * 20) + window_height);
     }
-
-    _combat_info_wnd_start_y = (100 - (IDK_screen_offset / 2));
-
-    IDK_screen_offset = (_combat_info_wnd_start_y + IDK_screen_offset);
-
+    _combat_info_wnd_start_y = (SCREEN_YMID - (window_height / 2));
+    window_height = (_combat_info_wnd_start_y + window_height);  /* OGBUG:  dead store - never read after here; re-purposes the local as the window's bottom edge */
     Deactivate_Help_List();
-
     for(itr = 0; itr < 20; itr++)
     {
-
         _help_entries[itr].help_idx = ST_UNDEFINED;
         _help_entries[itr].x1 = 0;
         _help_entries[itr].y1 = 0;
         _help_entries[itr].x2 = 0;
         _help_entries[itr].y2 = 0;
-
     }
-
     Set_Help_List(_help_entries, 20);
-
     leave_screen = ST_FALSE;
-
     while(leave_screen == ST_FALSE)
     {
-
         Mark_Time();
-
         Clear_Fields();
-
-        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc13[0], ST_UNDEFINED);
-
+        full_screen_esc_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc13[0], ST_UNDEFINED);
         input_field_idx = Get_Input();
-
-        if(input_field_idx == full_screen_ESC_field)
+        if(input_field_idx == full_screen_esc_field)
         {
-
             leave_screen = ST_UNDEFINED;
-
         }
-
         if(leave_screen == ST_FALSE)
         {
-
             Copy_Back_To_Off();
-
             Combat_Information_Window_Draw();
-
             PageFlip_FX();
-
             Release_Time(1);
-
         }
-
     }
-
     Release_Block(_screen_seg);
-
     Release_Block(World_Data);
-
     Clear_Fields();
-
     Deactivate_Auto_Function();
-
-    _page_flip_effect = 3;
-
+    _page_flip_effect = pfe_Dissolve;
     Deactivate_Help_List();
-
 }
 
 
 // WZD s103p02
-// drake178: CMB_DrawInfoWindow()
 void Combat_Information_Window_Draw(void)
 {
-    int16_t Drawing_Sides = 0;
+    int16_t in_per_side_section = 0;
     uint8_t colors[4] = { 0, 0, 0, 0 };
-    int16_t PerSide_Draw_Top = 0;
-    int16_t Draw_Top = 0;
-    int16_t Draw_Left = 0;
-    // int16_t Middle_Y = 0;
-    int16_t IDK_itr = 0;  // _SI_
-    // int16_t IDK_count = 0;  // _DI_
-    int16_t top_y2 = 0;  // uses IDK_count
-    int16_t mid_start_y = 0;  // same as top_y2
-    int16_t mid_y2 = 0;  // Middle_Y
-    int16_t bot_y1 = 0;  // same as mid_y2
-    int16_t bot_start_y = 0;  // same as bot_y1 - 2
-
+    int16_t section_top_offset = 0;
+    int16_t cell_y = 0;
+    int16_t cell_x = 0;
+    int16_t cell_idx = 0;
+    int16_t top_y2 = 0;
+    int16_t mid_start_y = 0;
+    int16_t mid_y2 = 0;
+    int16_t bot_y1 = 0;
+    int16_t bot_start_y = 0;
     Set_Page_Off();
-
     if(_combat_info_item_count > 0)
     {
-
-        // IDK_count = (9 + ((_combat_info_item_count / 2) * 19));
-        // IDK_count += _combat_info_wnd_start_y;
-        // Set_Window(0, 0, 319, IDK_count);
         top_y2 = (9 + ((_combat_info_item_count / 2) * 19));
         top_y2 += _combat_info_wnd_start_y;
-        Set_Window(0, 0, 319, top_y2);
-
+        Set_Window(0, 0, SCREEN_XMAX, top_y2);
     }
     else
     {
-
-        // IDK_count = 4;
-        // Set_Window(0, 0, 319, IDK_count);
         top_y2 = 4;
-        Set_Window(0, 0, 319, top_y2);
-
+        Set_Window(0, 0, SCREEN_XMAX, top_y2);
     }
-
     Clipped_Draw(_combat_info_wnd_start_x, _combat_info_wnd_start_y, _combat_info_wnd_top_seg);
-
     Reset_Window();
-
-    if(CMB_PerSideInfo > 0)
+    if(_combat_per_side_effect_rows > 0)
     {
-
-        // Middle_Y = (CMB_PerSideInfo * 20) + IDK_count + 21;
-        mid_y2 = (CMB_PerSideInfo * 20) + top_y2 + 21;
-
+        mid_y2 = (_combat_per_side_effect_rows * 20) + top_y2 + 21;
     }
     else
     {
-
-        // Middle_Y = ((CMB_PerSideInfo * 20) + IDK_count);
-        mid_y2 = ((CMB_PerSideInfo * 20) + top_y2);
-
+        mid_y2 = ((_combat_per_side_effect_rows * 20) + top_y2);
     }
-
-    // Set_Window(0, 0, 319, Middle_Y);
-    Set_Window(0, 0, 319, mid_y2);
-
-    // Clipped_Draw(_combat_info_wnd_start_x, IDK_count, _combat_info_wnd_mid_seg);
+    Set_Window(0, 0, SCREEN_XMAX, mid_y2);
     mid_start_y = top_y2;
     Clipped_Draw(_combat_info_wnd_start_x, mid_start_y, _combat_info_wnd_mid_seg);
-
-    if(CMB_PerSideInfo > 0)
+    if(_combat_per_side_effect_rows > 0)
     {
-
         Reset_Window();
-
     }
     else
     {
-
-        // Set_Window(0, Middle_Y, 319, 199);
-        // Middle_Y -= 2;
         bot_y1 = mid_y2;
-        Set_Window(0, bot_y1, 319, 199);
+        Set_Window(0, bot_y1, SCREEN_XMAX, SCREEN_YMAX);
         bot_y1 -= 2;
-
     }
-
-    // Clipped_Draw(_combat_info_wnd_start_x, Middle_Y, _combat_info_wnd_bot_seg);
     bot_start_y = bot_y1;
     Clipped_Draw(_combat_info_wnd_start_x, bot_start_y, _combat_info_wnd_bot_seg);
-
     Reset_Window();
-
     colors[0] = 250;
     colors[1] = 177;
-
     Set_Outline_Color(254);
-
     Set_Font_Colors_15(2, &colors[0]);
-
     Set_Font_Style_Shadow_Down(2, 15, 0, 0);
-
     Set_Font_Spacing_Width(2);
-
-    if(CMB_PerSideInfo > 0)
+    if(_combat_per_side_effect_rows > 0)
     {
-
         if(_combat_info_item_count > 0)
         {
-
-            PerSide_Draw_Top = (15 + ((_combat_info_item_count / 2) * 19));
-
+            section_top_offset = (15 + ((_combat_info_item_count / 2) * 19));
         }
         else
         {
-
-            PerSide_Draw_Top = 11;
-
+            section_top_offset = 11;
         }
-
         if(_combat_ai_player < NEUTRAL_PLAYER_IDX)
         {
-
             stu_strcpy(GUI_String_1, _players[_combat_ai_player].name);
-
             stu_strcat(GUI_String_1, cnst_SpaceSpells);
-
-            Print_Centered((_combat_info_wnd_start_x + 54), (_combat_info_wnd_start_y + PerSide_Draw_Top), GUI_String_1);
-
+            Print_Centered((_combat_info_wnd_start_x + 54), (_combat_info_wnd_start_y + section_top_offset), GUI_String_1);
         }
-
         stu_strcpy(GUI_String_1, _players[_combat_local_player].name);
-
         stu_strcat(GUI_String_1, cnst_SpaceSpells);
-
-        Print_Centered((_combat_info_wnd_start_x + 170), (_combat_info_wnd_start_y + PerSide_Draw_Top), GUI_String_1);
-
+        Print_Centered((_combat_info_wnd_start_x + 170), (_combat_info_wnd_start_y + section_top_offset), GUI_String_1);
     }
-
     if(_combat_info_item_count > 0)
     {
-
-        PerSide_Draw_Top = 10;
-
+        section_top_offset = 10;
     }
     else
     {
-
-        PerSide_Draw_Top = 26;
-
+        section_top_offset = 26;
     }
-
-    Drawing_Sides = 0;
-
-    for(IDK_itr = 0; ((CMB_PerSideInfo / 2) + _combat_info_item_count) > IDK_itr; IDK_itr++)
+    in_per_side_section = 0;
+    for(cell_idx = 0; ((_combat_per_side_effect_rows / 2) + _combat_info_item_count) > cell_idx; cell_idx++)
     {
-
         if(
-            (IDK_itr >= _combat_info_item_count)
+            (cell_idx >= _combat_info_item_count)
             &&
             (_combat_info_item_count > 0)
             &&
-            (Drawing_Sides == 0)
+            (in_per_side_section == 0)
         )
         {
-
-            Drawing_Sides = 1;
-            PerSide_Draw_Top = 31;
-
+            in_per_side_section = 1;
+            section_top_offset = 31;
         }
-
-        Draw_Left = (_combat_info_wnd_start_x + ((IDK_itr % 2) * 112) + 11);
-
-        Draw_Top = _combat_info_wnd_start_y + PerSide_Draw_Top + ((IDK_itr / 2) * 19);
-
-        FLIC_Draw((Draw_Left - 1), (Draw_Top - 1), _combat_info_wnd_box_seg);
-
-        if(_combat_info_effects[IDK_itr]->icon_seg != (SAMB_ptr)ST_UNDEFINED)
+        cell_x = (_combat_info_wnd_start_x + ((cell_idx % 2) * 112) + 11);
+        cell_y = _combat_info_wnd_start_y + section_top_offset + ((cell_idx / 2) * 19);
+        FLIC_Draw((cell_x - 1), (cell_y - 1), _combat_info_wnd_box_seg);
+        if(_combat_info_effects[cell_idx]->icon_seg != (SAMB_ptr)ST_UNDEFINED)
         {
-
-            FLIC_Draw(Draw_Left, Draw_Top, _combat_info_effects[IDK_itr]->icon_seg);
-
-            Print((Draw_Left + 20), (Draw_Top + 5), _combat_info_effects[IDK_itr]->Name);
-
-            _help_entries[IDK_itr].help_idx = _combat_info_effects[IDK_itr]->help_idx;
-            _help_entries[IDK_itr].x1 = Draw_Left;
-            _help_entries[IDK_itr].y1 = Draw_Top;
-            _help_entries[IDK_itr].x2 = (Draw_Left + 100);
-            _help_entries[IDK_itr].y2 = (Draw_Top  +  15);
-
+            FLIC_Draw(cell_x, cell_y, _combat_info_effects[cell_idx]->icon_seg);
+            Print((cell_x + 20), (cell_y + 5), _combat_info_effects[cell_idx]->Name);
+            _help_entries[cell_idx].help_idx = _combat_info_effects[cell_idx]->help_idx;
+            _help_entries[cell_idx].x1 = cell_x;
+            _help_entries[cell_idx].y1 = cell_y;
+            _help_entries[cell_idx].x2 = (cell_x + 100);
+            _help_entries[cell_idx].y2 = (cell_y  +  15);
         }
-
     }
-
 }
 
 
 // WZD s103p03
-// drake178: CMB_FillInfoArrays()
-/*
-; fills out the CMB_External_FX@ array and related
-; global variables for the display of the combat info
-; window
-;
-; INCONSISTENT: excludes Evil Omens and Spell Wards
-*/
-/*
-
-handles
-Crusade
-Holy Arms
-Charm Of Life
-Zombie Mastery
-
-¿ info_common_count isn't actually used for anything ?
-...used to index _combat_info_effects[]
-+= 2, because it's a pointer to 2-byte values?
-...doesn't make sense
-
-*/
+/* OGBUG:  INCONSISTENT: excludes Evil Omens and Spell Wards */
 void Combat_Info_Effects(void)
 {
     int16_t computer_player_battle_effect_count = 0;
     int16_t itr_combatants = 0;
-    int16_t info_common_count = 0;  // _SI_
-    int16_t player_idx = 0;  // _DI_
-
-
+    int16_t info_common_count = 0;
+    int16_t player_idx = 0;
     Combat_Info_Effects_Base();
-
-
     _combat_total_battle_effect_count = 0;
-
     info_common_count = _combat_info_item_count;  // just set in Combat_Info_Effects_Base()
-
     computer_player_battle_effect_count = 0;
-
     player_idx = _combat_ai_player;
-
     for(itr_combatants = 0; itr_combatants < 2; itr_combatants++)
     {
-
         if(player_idx < NEUTRAL_PLAYER_IDX)
         {
-
             if(_players[player_idx].Globals[CRUSADE] > 0)
             {
-
                 _combat_info_effects[info_common_count]->icon_seg = _combat_info_effect_icon_segs[0];
-
                 _combat_info_effects[info_common_count]->help_idx = HLP_CRUSADE;
-
                 stu_strcpy(_combat_info_effects[info_common_count]->Name, cnst_Crusade);
-
                 _combat_total_battle_effect_count++;
-
                 info_common_count += 2;
-
             }
-
             if(_players[player_idx].Globals[HOLY_ARMS] > 0)
             {
-
                 _combat_info_effects[info_common_count]->icon_seg = _combat_info_effect_icon_segs[1];
-
                 _combat_info_effects[info_common_count]->help_idx = HLP_HOLY_ARMS;
-
                 stu_strcpy(_combat_info_effects[info_common_count]->Name, cnst_HolyArms);
-
                 _combat_total_battle_effect_count++;
-
                 info_common_count += 2;
-
             }
-
             if(_players[player_idx].Globals[CHARM_OF_LIFE] > 0)
             {
-
-                _combat_info_effects[info_common_count]->icon_seg = _combat_info_effect_icon_segs[0];
-
-                _combat_info_effects[info_common_count]->help_idx = HLP_CRUSADE;
-
-                stu_strcpy(_combat_info_effects[info_common_count]->Name, cnst_Crusade);
-
+                _combat_info_effects[info_common_count]->icon_seg = _combat_info_effect_icon_segs[3];
+                _combat_info_effects[info_common_count]->help_idx = HLP_CHARM_OF_LIFE;
+                stu_strcpy(_combat_info_effects[info_common_count]->Name, cnst_CharmofLife);
                 _combat_total_battle_effect_count++;
-
                 info_common_count += 2;
-
             }
-
             if(_players[player_idx].Globals[ZOMBIE_MASTERY] > 0)
             {
-
                 _combat_info_effects[info_common_count]->icon_seg = _combat_info_effect_icon_segs[9];
-
                 _combat_info_effects[info_common_count]->help_idx = HLP_ZOMBIE_MASTERY;
-
                 stu_strcpy(_combat_info_effects[info_common_count]->Name, cnst_ZombieMastery);
-
                 _combat_total_battle_effect_count++;
-
                 info_common_count += 2;
-
             }
-
         }
-
         player_idx = _human_player_idx;
-
         info_common_count = (_combat_info_item_count + 1);
-
         if(itr_combatants == 0)
         {
-
             computer_player_battle_effect_count = _combat_total_battle_effect_count;
-
         }
-
     }
-
-
     if((_combat_total_battle_effect_count - computer_player_battle_effect_count) > computer_player_battle_effect_count)
     {
-
-        CMB_PerSideInfo = (_combat_total_battle_effect_count - computer_player_battle_effect_count);
-
+        _combat_per_side_effect_rows = (_combat_total_battle_effect_count - computer_player_battle_effect_count);
     }
     else
     {
-
-        CMB_PerSideInfo = computer_player_battle_effect_count;
-        
+        _combat_per_side_effect_rows = computer_player_battle_effect_count;
     }
-
 }
 
 
 // WZD s103p04
-// drake178: CMB_SetCommonXFX()
 /*
-; counts and adds to the CMB_Extrenal_FX@ array any
-; universal / neutral external effects, whose affected
-; targets do not depend on the effect origin
-;
-; INCONSISTENT: ignores Evil Omens
-*/
-/*
-
 handles
 node dispel - Sorcery, Chaos, Nature
 node auta - Sorcery, Nature, Chaos
 Cloud of Shadows, Heavenly Light
 Chaos Surge, Eternal Night
-
 */
+/* OGBUG:  INCONSISTENT: ignores Evil Omens */
 void Combat_Info_Effects_Base(void)
 {
-    int16_t itr = 0;  // _DI_
-    int16_t idx = 0;  // _SI_
-
+    int16_t itr = 0;
+    int16_t idx = 0;
     for(itr = 0; itr < 14; itr++)
     {
-
         _combat_info_effects[itr]->icon_seg = (SAMB_ptr)ST_UNDEFINED;
-
     }
-
     idx = 0;
-
     if(g_center_square_structure == CS_SorceryNode)
     {
-
         _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[12];
-
         _combat_info_effects[idx]->help_idx = HLP_DISPELS_NON_SORCERY;
-
         stu_strcpy(_combat_info_effects[idx]->Name, cnst_SorcNodeDispel);
-
         idx++;
-
     }
     else if(g_center_square_structure == CS_ChaosNode)
     {
-
         _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[5];
-
         _combat_info_effects[idx]->help_idx = HLP_DISPELS_NON_CHAOS;
-
         stu_strcpy(_combat_info_effects[idx]->Name, cnst_ChaosNodeDispel);
-
         idx++;
-
     }
     else if(g_center_square_structure == CS_NatureNode)
     {
-
         _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[10];
-
         _combat_info_effects[idx]->help_idx = HLP_DISPELS_NON_NATURE;
-
         stu_strcpy(_combat_info_effects[idx]->Name, cnst_NatNodeDispel);
-
         idx++;
-
     }
-
-
     if(_combat_node_type == cnt_Sorcery)
     {
-
         _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[13];
-
         _combat_info_effects[idx]->help_idx = HLP_SORCERY_NODE_AURA;
-
         stu_strcpy(_combat_info_effects[idx]->Name, cnst_SorceryAura);
-
         idx++;
-
     }
     else if(_combat_node_type == cnt_Nature)
     {
-
         _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[11];
-
         _combat_info_effects[idx]->help_idx = HLP_NATURE_NODE_AURA;
-
         stu_strcpy(_combat_info_effects[idx]->Name, cnst_NatureAura);
-
         idx++;
-
     }
     else if(_combat_node_type == cnt_Chaos)
     {
-
         _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[6];
-
         _combat_info_effects[idx]->help_idx = HLP_CHAOS_NODE_AURA;
-
         stu_strcpy(_combat_info_effects[idx]->Name, cnst_ChaosAura);
-
         idx++;
-
     }
-
-
     if(_combat_environ == 1)  /* City-Siege */
     {
-
-        if(CMB_CloudofShadow > 0)
+        if(_combat_info_cloud_of_shadow > 0)
         {
-
             _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[8];
-
             _combat_info_effects[idx]->help_idx = HLP_CLOUD_OF_DARKNESS;
-
             stu_strcpy(_combat_info_effects[idx]->Name, cnst_CloudOfDarkness);
-
             idx++;
-
         }
-
-        if(CMB_HeavenlyLight > 0)
+        if(_combat_info_heavenly_light > 0)
         {
-
             _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[2];
-
             _combat_info_effects[idx]->help_idx = HLP_HOLY_LIGHT;
-
             stu_strcpy(_combat_info_effects[idx]->Name, cnst_HolyLight);
-
             idx++;
-
         }
-
     }
-
     for(itr = 0; itr < NUM_PLAYERS; itr++)
     {
-
         if(_players[itr].Globals[CHAOS_SURGE] > 0)
         {
-
             _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[4];
-
             _combat_info_effects[idx]->help_idx = HLP_CHAOS_SURGE;
-
             stu_strcpy(_combat_info_effects[idx]->Name, cnst_ChaosSurge);
-
             idx++;
-
+            break;
         }
-
     }
-
     for(itr = 0; itr < NUM_PLAYERS; itr++)
     {
-
         if(_players[itr].Globals[ETERNAL_NIGHT] > 0)
         {
-
             _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[7];
-
             _combat_info_effects[idx]->help_idx = HLP_ETERNAL_NIGHT;
-
             stu_strcpy(_combat_info_effects[idx]->Name, cnst_EternalNight);
-
             idx++;
-
+            break;
         }
-
     }
-
-
     if((idx % 2) != 0)
     {
-
         _combat_info_effects[idx]->icon_seg = (SAMB_ptr)ST_UNDEFINED;
-
         idx++;
-
     }
-
-
     _combat_info_item_count = idx;
-
 }
 
 
 // WZD s103p05
 /* OGBUG: missing Evil Omens */
-/*
-¿ exact same logic as Combat_Info_Effects() and Combat_Info_Effects_Base() ?
-~ Battle Effects
-~ External
-*/
 int16_t Combat_Info_Effects_Count(void)
 {
     int16_t battle_effects_count = 0;
@@ -6619,7 +6303,6 @@ int16_t Combat_Info_Effects_Count(void)
     {
         battle_effects_count++;
     }
-
     if(_combat_environ == 1)  /* City-Siege */
     {
         if(battlefield->city_enchantments[CLOUD_OF_SHADOW] > 0)
@@ -10632,7 +10315,7 @@ void Combat_Screen_Assign_Mouse_Images(void)
     screen_x = (Pointer_X() + pointer_offset);
     screen_y = (Pointer_Y() + pointer_offset);
     frame_scanned_flag = ST_FALSE;
-    if(screen_y <= (168 + pointer_offset))
+    if(screen_y <= (SCREEN_XMID_168 + pointer_offset))
     {
         cgx = Get_Combat_Grid_Cell_X(screen_x, screen_y);
         cgy = Get_Combat_Grid_Cell_Y(screen_x, screen_y);
@@ -10798,7 +10481,7 @@ void Combat_Spell_Target_Screen_Draw(void)
     Set_Alias_Color(227);
     Set_Font_Style_Shadow_Down(0, 0, 0, 0);
     Set_Font_Spacing_Width(1);
-    Print_Paragraph(241, 168, 75, GUI_NearMsgString, 0);
+    Print_Paragraph(241, SCREEN_YBOT_CMBT, 75, GUI_NearMsgString, 0);
     Combat_Screen_Assign_Mouse_Images(); 
 }
 
@@ -10920,7 +10603,7 @@ int16_t Combat_Spell_Target_Screen(int16_t spell_idx, int16_t * target_cgx, int1
         }
     }
     Clear_Fields();
-    combat_grid_field = Add_Grid_Field(0, 0, 1, 1, 319, 168, &grid_sx, &grid_sy, ST_UNDEFINED);
+    combat_grid_field = Add_Grid_Field(0, 0, 1, 1, SCREEN_XMAX, SCREEN_YBOT_CMBT, &grid_sx, &grid_sy, ST_UNDEFINED);
     /* OGBUG: passes the address of the ESC string where a hotkey character is expected, so the key code compared against input is a pointer value and ESC never matches this button; should be str_hotkey_ESC__ovr113[0] (0x1B) */
     cancel_button_field = Add_Button_Field(263, 186, str_empty_string__ovr113, _cmbt_cancel_button_seg, (int16_t)(intptr_t)&str_hotkey_ESC__ovr113[0], ST_UNDEFINED);
     leave_screen = ST_FALSE;
@@ -12406,7 +12089,7 @@ void Combat_Spell_Counter_Message_Box_Draw(void)
     width = Get_Paragraph_Max_Width(150, GUI_NearMsgString, 2);
     height = Get_Paragraph_Max_Height(150, GUI_NearMsgString);  /* OGBUG  passes 3rd argument */
     x1 = 160 - (width / 2) - 5;
-    x2 = (width / 2) + 168;
+    x2 = (SCREEN_XMID_168 + (width / 2));
     y1 = 5;
     y2 = height + 8;
     Gradient_Fill(x1, y1, x2, y2, 15, 8, ST_NULL, ST_NULL, ST_NULL);

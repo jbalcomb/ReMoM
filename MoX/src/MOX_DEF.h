@@ -760,6 +760,10 @@ enum enum_BANNER_COLOR_ID
 #define SCREEN_YMIN       0
 #define SCREEN_XMAX     319
 #define SCREEN_YMAX     199
+#define SCREEN_XMID     (SCREEN_WIDTH / 2)
+#define SCREEN_YMID     (SCREEN_HEIGHT / 2)
+#define SCREEN_XMID_168 168
+#define SCREEN_YBOT_CMBT 168
 #define CURSOR_WIDTH     16
 #define CURSOR_HEIGHT    16
 #endif

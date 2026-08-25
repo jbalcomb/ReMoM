@@ -5,10 +5,13 @@ __TODO-Combat.md
 [ ] put Calc_Battlefield_Bonuses() in Combat-Combat.md
 [ ] put Check_For_Winner() in Combat-Combat.md
 
+¿ Assign_Mouse_Images() |-> Ranged_Mouse_Image() ?
+
 [x] Combat-Combat_Spell_Target_Screen.md
 [x] Combat-AI_Turn.md
 [x] Combat-Spell_Cast_AI_Select.md
 [x] Combat-Spell_Cast_AI_Target.md
+[x] Combat-Combat_Information_Window.md
 [ ] Combat-Miscellaneous.md
 
 ---

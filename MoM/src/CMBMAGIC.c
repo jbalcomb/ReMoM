@@ -1655,9 +1655,6 @@ int16_t AITP_Disrupt(int16_t player_idx, int16_t * target_cgx, int16_t * target_
 
 
 // WZD o112p10
-/*
-NOTE  unlike AITP_EarthToMud(), MV_TELEPORT units are NOT excluded
-*/
 int16_t AITP_CracksCall(int16_t player_idx, int16_t * target_cgx, int16_t * target_cgy)
 {
     int16_t unit_threat = 0;
