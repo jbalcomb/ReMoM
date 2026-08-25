@@ -210,8 +210,8 @@ dseg:C5EE 00 00                                           CRP_OVL_Obstacle_Var2 
 
 OVL_SWardTriggered
 
-OVL_Action_OriginY
-OVL_Action_OriginX
+_combat_attacker_wy
+_combat_attacker_wx
 
 
 

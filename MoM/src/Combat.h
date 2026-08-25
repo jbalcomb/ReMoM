@@ -1685,13 +1685,13 @@ void Lair_Make_Guardians(int16_t lair_idx);
 int16_t Lair_Combat_Do(int16_t lair_idx, int16_t player_idx);
 
 // WZD s96p04
-// UU_IDK_CMB_s7DE08()
+void NIU_Enemy_Stack_Combat(int16_t defender_unit_idx, int16_t attacker_unit_idx, int16_t plane);
 
 // WZD s96p05
 void Update_Defender_Hostility(int16_t attacker_player_idx, int16_t defender_player_idx);
 
 // WZD s96p06
-// UU_IDK_Main_Screen_Draw()
+void NIU_Combat_Redraw_Main_Screen(void);
 
 
 
@@ -2090,7 +2090,7 @@ int16_t Total_Ranged_Attack_Strength(int16_t player_idx);
 void Update_Move_Map_City_Area_Restrictions(int16_t battle_unit_idx);
 
 // WZD o124p03
-void AI_RestrictToCity__WIP(void);
+void Update_Move_Map_City_Perimeter_Restrictions(void);
 
 // WZD o124p04
 int16_t Combat_Structure(int16_t wx, int16_t wy, int16_t wp, int16_t set_city_flag);
@@ -2177,7 +2177,7 @@ void AI_Build_Castable_Combat_Spell_List(int16_t caster_idx, int16_t * spell_lis
 */
 
 // WZD ovr153p01
-void NX_IDK_CombatInit_Tactical(int16_t wx, int16_t wy, int16_t wp);
+void NIU_Allocate_And_Build_Battlefield(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD ovr153p02
 void Combat_Screen_Map_Draw(void);

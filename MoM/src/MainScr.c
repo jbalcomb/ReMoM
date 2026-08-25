@@ -5300,13 +5300,13 @@ Start_Path:
 
     if(path_length <= 1)
     {
-        OVL_Action_OriginX = unit_wx;
-        OVL_Action_OriginY = unit_wy;
+        _combat_attacker_wx = unit_wx;
+        _combat_attacker_wy = unit_wy;
     }
     else
     {
-        OVL_Action_OriginX = movepath_x_array[(path_length - 1)];
-        OVL_Action_OriginY = movepath_y_array[(path_length - 1)];
+        _combat_attacker_wx = movepath_x_array[(path_length - 1)];
+        _combat_attacker_wy = movepath_y_array[(path_length - 1)];
     }
 
     if(path_length <= 0)
@@ -5364,8 +5364,8 @@ Combat_Handlers:
                     (_UNITS[troops[itr_troops]].wy == _combat_wy)
                 )
                 {
-                    _UNITS[troops[itr_troops]].wx = (int8_t)OVL_Action_OriginX;
-                    _UNITS[troops[itr_troops]].wy = (int8_t)OVL_Action_OriginY;
+                    _UNITS[troops[itr_troops]].wx = (int8_t)_combat_attacker_wx;
+                    _UNITS[troops[itr_troops]].wy = (int8_t)_combat_attacker_wy;
                 }
             }
         }
@@ -5379,8 +5379,8 @@ Combat_Handlers:
 
             for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
             {
-                _UNITS[troops[itr_troops]].wx = (int8_t)OVL_Action_OriginX;
-                _UNITS[troops[itr_troops]].wy = (int8_t)OVL_Action_OriginY;
+                _UNITS[troops[itr_troops]].wx = (int8_t)_combat_attacker_wx;
+                _UNITS[troops[itr_troops]].wy = (int8_t)_combat_attacker_wy;
             }
 
         }
@@ -5701,33 +5701,17 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 
     if(display_moves == ST_TRUE)
     {
-
         OVL_BringIntoView(map_x, map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_p);
-
         _map_x = *map_x;
         _map_y = *map_y;
-        assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
-        assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
-
         Set_Unit_Draw_Priority();
-
         Set_Entities_On_Map_Window(*map_x, *map_y, map_p);
-
         Reset_Map_Draw();
-
         MainScr_Create_Reduced_Map_Picture();
-
-        assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
-        assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
-
         Main_Screen_Draw_Do_Draw(map_x, map_y, map_p, *map_x, *map_y, player_idx);
-
         PageFlip_FX();
-
         Copy_On_To_Off_Page();
-
         Reset_Map_Draw();
-
     }
 
     /*

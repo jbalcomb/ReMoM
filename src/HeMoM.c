@@ -940,11 +940,11 @@ static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
     _players[attacker_player_idx].Dipl.Dipl_Status[defender_player_idx] = DIPL_War;
     _players[defender_player_idx].Dipl.Dipl_Status[attacker_player_idx] = DIPL_War;
 
-    /* Patch the overland state Combat() reads for a stack-vs-stack attack.  OVL_Action_OriginX/Y is the square the attackers strike from; Combat() moves the troops there at entry, so it just needs to be a square adjacent to the defender. */
+    /* Patch the overland state Combat() reads for a stack-vs-stack attack.  _combat_attacker_wx/Y is the square the attackers strike from; Combat() moves the troops there at entry, so it just needs to be a square adjacent to the defender. */
     _combat_environ = 0;      /* cnv_Enemy_Stack */
     _combat_environ_idx = 0;  /* unused for stack-vs-stack */
-    OVL_Action_OriginX = (defender_wx > 0) ? (int16_t)(defender_wx - 1) : (int16_t)(defender_wx + 1);
-    OVL_Action_OriginY = defender_wy;
+    _combat_attacker_wx = (defender_wx > 0) ? (int16_t)(defender_wx - 1) : (int16_t)(defender_wx + 1);
+    _combat_attacker_wy = defender_wy;
     for(itr = 0; itr < troop_count; itr++)
     {
         _UNITS[troops[itr]].Status = us_Ready;

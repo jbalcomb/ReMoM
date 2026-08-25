@@ -3119,8 +3119,8 @@ int16_t Combat(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t
     defender_idx = defender_player_idx;
     for(itr = 0; itr < troop_count; itr++)
     {
-        _UNITS[troops[itr]].wx = (int8_t)OVL_Action_OriginX;
-        _UNITS[troops[itr]].wy = (int8_t)OVL_Action_OriginY;
+        _UNITS[troops[itr]].wx = (int8_t)_combat_attacker_wx;
+        _UNITS[troops[itr]].wy = (int8_t)_combat_attacker_wy;
     }
     if(combat_attacker_player_idx == NEUTRAL_PLAYER_IDX)
     {
@@ -3498,7 +3498,35 @@ int16_t Lair_Combat_Do(int16_t lair_idx, int16_t player_idx)
 
 
 // WZD s96p04
-// drake178: sub_7DE08()
+/*
+How different from overland combat init or Lair_Combat_Do()?
+rebuilds troop array
+hard-coded with Current Player as Attacker
+hard-coded for 'Enemy Stack', Non-City, Non-Lair
+¿ hot-seat combat initializer ?
+*/
+/*
+NIU
+*/
+void NIU_Enemy_Stack_Combat(int16_t defender_unit_idx, int16_t attacker_unit_idx, int16_t plane)
+{
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t defender_player_idx = 0;
+    int16_t wp = 0;
+    int16_t wy = 0;
+    int16_t troop_count = 0;
+    int16_t wx = 0;
+    wx = _UNITS[attacker_unit_idx].wx;
+    wy = _UNITS[attacker_unit_idx].wy;
+    wp = plane;
+    defender_player_idx = _UNITS[defender_unit_idx].owner_idx;
+    _combat_attacker_wx = wx;
+    _combat_attacker_wy = wy;
+    _combat_environ = cnv_Enemy_Stack;
+    Player_Army_At_Square(wx, wy, wp, _human_player_idx, &troop_count, troops);
+    // MainScr.c  combat_result = Combat(player_idx, defender_idx, troop_count, &troops[0]);
+    Combat(_human_player_idx, defender_player_idx, troop_count, troops);
+}
 
 
 // WZD s96p05
@@ -3513,12 +3541,57 @@ void Update_Defender_Hostility(int16_t attacker_player_idx, int16_t defender_pla
     {
         _players[defender_player_idx].Hostility[attacker_player_idx] = 0;
     }
-    _players[defender_player_idx].reevaluate_hostility_countdown = (15+ Random(10));
+    _players[defender_player_idx].reevaluate_hostility_countdown = (15 + Random(10));
 }
 
 
 // WZD s96p06
-// UU_IDK_Main_Screen_Draw()
+/*
+¿ ~== MainScr.c  Move_Units_Draw() ?
+    if(display_moves == ST_TRUE)
+    {
+        OVL_BringIntoView(map_x, map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_p);
+        _map_x = *map_x;
+        _map_y = *map_y;
+        Set_Unit_Draw_Priority();
+        Set_Entities_On_Map_Window(*map_x, *map_y, map_p);
+        Reset_Map_Draw();
+        MainScr_Create_Reduced_Map_Picture();
+        Main_Screen_Draw_Do_Draw(map_x, map_y, map_p, *map_x, *map_y, player_idx);
+        PageFlip_FX();
+        Copy_On_To_Off_Page();
+        Reset_Map_Draw();
+    }
+*/
+/*
+NIU
+*/
+void NIU_Combat_Redraw_Main_Screen(void)
+{
+    int16_t wy = 0;
+    int16_t wx = 0;
+    int16_t tmp_curr_world_y = 0;
+    int16_t tmp_curr_world_x = 0;
+    tmp_curr_world_x = _map_x;
+    tmp_curr_world_y = _map_y;
+    /* \/\/\/ same as MainScr.c  Move_Units_Draw() \/\/\/ */
+    OVL_BringIntoView(&wx, &wy, _combat_wx, _combat_wy, _combat_wp);
+    _map_x = wx;
+    _map_y = wy;
+    Set_Unit_Draw_Priority();
+    Set_Entities_On_Map_Window(wx, wy, _combat_wp);
+    Reset_Map_Draw();
+    MainScr_Create_Reduced_Map_Picture();
+    Main_Screen_Draw_Do_Draw(&wx, &wy, _combat_wp, wx, wy, _human_player_idx);
+    PageFlip_FX();
+    Copy_On_To_Off_Page();
+    Reset_Map_Draw();
+    /* /\/\/\ same as MainScr.c  Move_Units_Draw() /\/\/\ */
+    Mark_Time();
+    Release_Time(6);
+    _map_x = tmp_curr_world_x;
+    _map_y = tmp_curr_world_y;
+}
 
 
 
@@ -3782,8 +3855,8 @@ void Retreat_From_Combat(int16_t player_idx)
             if(battle_units[itr_battle_units].status == bus_Fleeing)
             {
                 unit_idx = battle_units[itr_battle_units].unit_idx;
-                _UNITS[unit_idx].wx = (int8_t)OVL_Action_OriginX;
-                _UNITS[unit_idx].wy = (int8_t)OVL_Action_OriginY;
+                _UNITS[unit_idx].wx = (int8_t)_combat_attacker_wx;
+                _UNITS[unit_idx].wy = (int8_t)_combat_attacker_wy;
                 battle_units[itr_battle_units].status = bus_Active;
 
             }
@@ -8409,36 +8482,13 @@ void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t healing_amount, int16_t o
 
 
 // WZD o110p04
-/*
-; assigns and returns an arbitrary effective health
-; value based on the passed defense and hit points:
-;   defense 1:           hp*18/10        (*1.8)
-;   defense 2:           hp*21/10        (*2.1)
-;   defense 3:           hp*24/10        (*2.4)
-;   defense 4+:          hp*(def-2)*(def-2)*3/2
-;     (hp*6) - (hp*13.5) - (hp*24) - (hp*37.5)...
-
-Strategic_Combat()
-    |-> unit_current_hits  = ((battle_units[itr_battle_units].hits / battle_units[itr_battle_units].figure_cnt) - battle_units[itr_battle_units].TopFig_Dmg);
-    |-> attacker_hits_left += Get_Effective_Hits(unit_current_hits , battle_units[itr_battle_units].defense);
-
-unit_current_hits  = ((battle_units[].hits / battle_units[].figure_cnt) - battle_units[].TopFig_Dmg);
-
-battle_units[].defense = ¿ unit_type_table[_UNITS[].type].defense ?
-
-*/
 int16_t Get_Effective_Hits(int16_t hits, int16_t defense)
 {
-    int16_t effective_hits;  // _SI_
-
+    int16_t effective_hits = 0;
     effective_hits = (hits * 3);
-
     if(defense > 3)
     {
         effective_hits = (effective_hits * (((defense + -2) * (defense + -2)) / 2));
-        // 4:  ((4 - 2) * (4 - 2)) = (2 * 2) =  4 / 2 = 2  200%
-        // 5:  ((5 - 2) * (5 - 2)) = (3 * 3) =  9 / 2 = 4  400%
-        // 6:  ((6 - 2) * (6 - 2)) = (4 * 4) = 16 / 2 = 8  800%
     }
     else
     {
@@ -8446,23 +8496,22 @@ int16_t Get_Effective_Hits(int16_t hits, int16_t defense)
         {
             case 0:
             {
-                effective_hits = (effective_hits / 2);  // 50%
+                effective_hits = (effective_hits /  2);
             } break;
             case 1:
             {
-                effective_hits = ((effective_hits * 3) / 5);  // 60%
+                effective_hits = ((effective_hits * 3) / 5);
             } break;
             case 2:
             {
-                effective_hits = ((effective_hits * 7) / 10);  // 70%
+                effective_hits = ((effective_hits * 7) / 10);
             } break;
             case 3:
             {
-                effective_hits = ((effective_hits * 4) / 5);  // 80%
+                effective_hits = ((effective_hits * 4) / 5);
             } break;
         }
     }
-
     return effective_hits;
 }
 
@@ -15692,92 +15741,48 @@ Check_FlyingFortress_Bug:
 
 
 // WZD o124p03
-// drake178: AI_RestrictToCity()
-/*
-; marks the squares surrounding the city proper area in
-; battle as impassable in GUI_ActiveMoveMap,
-; preventing units from pathing to the outside
-*/
-/*
-
-    sets city area perimeter as impassible
-
-XREF:
-    Do_Auto_Unit_Turn()
-    Auto_Move_Unit()
-
-*/
-void AI_RestrictToCity__WIP(void)
+void Update_Move_Map_City_Perimeter_Restrictions(void)
 {
-    int16_t itr1 = 0;  // _SI_
-    int16_t itr2 = 0;  // _CX_
-
-    for(itr1 = 0; itr1 < 4; itr1++)
+    int16_t cgx = 0;
+    int16_t cgy = 0;
+    for(cgx = 0; cgx < 4; cgx++)
     {
-
-        for(itr2 = 0; itr2 < 4; itr2++)
+        for(cgy = 0; cgy < 4; cgy++)
         {
-
-            if(itr1 == 0)
+            if(cgx == 0)
             {
-
-                _cmbt_movepath_cost_map[(((10 + itr2) * COMBAT_GRID_WIDTH) + 4)] = INF;
-
-                if(itr2 == 0)
+                _cmbt_movepath_cost_map[(((MIN_CGY_CITY + cgy) * COMBAT_GRID_WIDTH) + (MIN_CGX_CITY - 1))] = INF;
+                if(cgy == 0)  /* corner */
                 {
-
-                    _cmbt_movepath_cost_map[((9 * COMBAT_GRID_WIDTH) + 4)] = INF;  // 0xC1  193  (9 * 21) = 189 + 4
-
+                    _cmbt_movepath_cost_map[(((MIN_CGY_CITY - 1) * COMBAT_GRID_WIDTH) + (MIN_CGX_CITY - 1))] = INF;
                 }
-
-                if(itr2 == 3)
+                if(cgy == 3)  /* corner */
                 {
-
-                    _cmbt_movepath_cost_map[((14 * COMBAT_GRID_WIDTH) + 4)] = INF;  // 0x12A  298  (14 * 21) = 294 + 4
-
+                    _cmbt_movepath_cost_map[(((MIN_CGY_CITY + 4) * COMBAT_GRID_WIDTH) + (MIN_CGX_CITY - 1))] = INF;
                 }
-
             }
-
-            if(itr2 == 0)
+            if(cgy == 0)
             {
-
-                _cmbt_movepath_cost_map[(((9 * COMBAT_GRID_WIDTH) + 5) + itr1)] = INF;  // 0xC2  194  (9 * 21) = 189 + 5
-
+                _cmbt_movepath_cost_map[((((MIN_CGY_CITY - 1) * COMBAT_GRID_WIDTH) + MIN_CGX_CITY) + cgx)] = INF;
             }
-
-            if(itr1 == 3)
+            if(cgx == 3)
             {
-
-                _cmbt_movepath_cost_map[(((10 + itr2) * COMBAT_GRID_WIDTH) + 9)] = INF;
-
-                if(itr2 == 0)
+                _cmbt_movepath_cost_map[(((MIN_CGY_CITY + cgy) * COMBAT_GRID_WIDTH) + (MIN_CGX_CITY + 4))] = INF;
+                if(cgy == 0)  /* corner */
                 {
-
-                    _cmbt_movepath_cost_map[((9 * COMBAT_GRID_WIDTH) + 9)] = INF;  // 0xC6  198  (9 * 21) = 189 + 9
-
+                    _cmbt_movepath_cost_map[(((MIN_CGY_CITY - 1) * COMBAT_GRID_WIDTH) + (MIN_CGX_CITY + 4))] = INF;
                 }
-
-                if(itr2 == 3)
+                if(cgy == 3)  /* corner */
                 {
-
-                    _cmbt_movepath_cost_map[((14 * COMBAT_GRID_WIDTH) + 9)] = INF;  // 0x12F  303  (14 * 21) = 294 + 9
-
+                    _cmbt_movepath_cost_map[(((MIN_CGY_CITY + 4) * COMBAT_GRID_WIDTH) + (MIN_CGX_CITY + 4))] = INF;
                 }
-
             }
-
-            if(itr2 == 3)
+            if(cgy == 3)
             {
-
-                _cmbt_movepath_cost_map[(((14 * COMBAT_GRID_WIDTH) + 5) + itr1)] = INF;  // 0x12B  299  (14 * 21) = 294 + 5
-
+                _cmbt_movepath_cost_map[(((MIN_CGY_CITY + 4) * COMBAT_GRID_WIDTH) + MIN_CGX_CITY + cgx)] = INF;
             }
-
         }
-
     }
-
 }
 
 
@@ -18441,7 +18446,7 @@ Combat_Screen()
     Cache_Graphics_Combat();
     Build_Battlefield(wx, wy, wp);
 */
-void NX_IDK_CombatInit_Tactical(int16_t wx, int16_t wy, int16_t wp)
+void NIU_Allocate_And_Build_Battlefield(int16_t wx, int16_t wy, int16_t wp)
 {
     Allocate_Combat_Base_Blocks();
     Build_Battlefield(wx, wy, wp);

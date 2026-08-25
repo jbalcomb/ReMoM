@@ -72,7 +72,7 @@ Total_Move_Cost += OVL_Path_Costs[itr]  itr < Path_Length
 
 checks updated path length - now just 'moves length'
 
-sets OVL_Action_OriginX and OVL_Action_OriginY
+sets _combat_attacker_wx and _combat_attacker_wy
     if <= 1 unit_wx,wy
     if > 1 Fst_Dst_X[Path_Length], IDK_MovePath_Y[Path_Length]
 
@@ -205,12 +205,12 @@ dseg:C6E1 00                                              movepath_X_4 db    0  
 mov     bx, [bp+Path_Length]
 mov     al, [byte ptr OON_movepath_X_1+bx]
 cbw
-mov     [OVL_Action_OriginX], ax
+mov     [_combat_attacker_wx], ax
 
 mov     bx, [bp+Path_Length]
 mov     al, [byte ptr OON_movepath_Y_1+bx]
 cbw
-mov     [OVL_Action_OriginY], ax
+mov     [_combat_attacker_wy], ax
 
 ovr095:048A 8A 87 DE C6                                     mov     al, [byte ptr OON_movepath_X_1+bx]
 
@@ -242,12 +242,12 @@ movepath_X_3[itr] = movepath_X_4[Current_Stap[itr]]
 ~== movepath_x[2+itr] = movepath_x[3+Current_Stap[itr]]
 
 so, ...
-    OVL_Action_OriginX = OON_movepath_X_1[Path_Length]
+    _combat_attacker_wx = OON_movepath_X_1[Path_Length]
     only happens when useable move path length is > 1
     always indexing movepath_x[1+1] or higher
     e.g.,
         useable move path length = 2
-        OVL_Action_OriginX = movepath_x[1 + 2] = movepath_x[3]
+        _combat_attacker_wx = movepath_x[1 + 2] = movepath_x[3]
         which is the square before the final destination
     what about movepath_x[{0,1,2}]?
 but, ...
@@ -264,7 +264,7 @@ then, ...
             Check_Square_Scouted(movepath_x_array[2+0])
             Check_Square_Scouted(movepath_x_array[2+1])
             no use of movepath_x_array[{0,1}]
-            just like the setting of OVL_Action_OriginX?
+            just like the setting of _combat_attacker_wx?
     sets destination_x to movepath_x_array[1+Path_Length]
     sets unit wx to destination_x
     Move_Units_Draw() is called before the check for Combat_Move
@@ -286,24 +286,24 @@ dseg:C6E0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+MovePath_X db 76h dup(
 
 
                     // TODO(JimBalcomb,20231016):  ¿ why the `[bx-2]` ? indexing lo-bye of word, but array is DB? so, sizeof() pointer data-type?
-                    // mov     bx, [bp+Path_Length];  mov     al, OVL_Path_Xs[bx-2];  cbw;  mov     [OVL_Action_OriginX], ax
+                    // mov     bx, [bp+Path_Length];  mov     al, OVL_Path_Xs[bx-2];  cbw;  mov     [_combat_attacker_wx], ax
                     // ... mov     al, [bx-3922h] ...
                     
-                    // mov     bx, [bp+Path_Length];  mov     al, OVL_Path_Ys[bx-2];  cbw;  mov     [OVL_Action_OriginY], ax
+                    // mov     bx, [bp+Path_Length];  mov     al, OVL_Path_Ys[bx-2];  cbw;  mov     [_combat_attacker_wy], ax
                     // ... mov     al, [bx-399Ah] ...
                     
                     // mov     bx, [bp+Path_Length];  mov     al, [Scd_Dst_Y+bx];     cbw;  mov     [bp+destination_y], ax
                     // ... mov     al, [bx-3999h] ...
                     // mov     al, [(IDK_MovePath_Y+1)+bx]
 
-                    // // // OVL_Action_OriginX = Fst_Dst_X[Path_Length];
-                    // // // OVL_Action_OriginY = Fst_Dst_Y[Path_Length];
-                    // // OVL_Action_OriginX = *(Fst_Dst_X + Path_Length);
-                    // // OVL_Action_OriginY = *(Fst_Dst_Y + Path_Length);
-                    // OVL_Action_OriginX = *(((uint8_t *)(&Fst_Dst_X)) + 1 + Path_Length);
-                    // OVL_Action_OriginY = *(((uint8_t *)(&Fst_Dst_Y)) + 1 + Path_Length);
-                    OVL_Action_OriginX = MovePath_X[(Path_Length - 1)];
-                    OVL_Action_OriginY = MovePath_Y[(Path_Length - 1)];
+                    // // // _combat_attacker_wx = Fst_Dst_X[Path_Length];
+                    // // // _combat_attacker_wy = Fst_Dst_Y[Path_Length];
+                    // // _combat_attacker_wx = *(Fst_Dst_X + Path_Length);
+                    // // _combat_attacker_wy = *(Fst_Dst_Y + Path_Length);
+                    // _combat_attacker_wx = *(((uint8_t *)(&Fst_Dst_X)) + 1 + Path_Length);
+                    // _combat_attacker_wy = *(((uint8_t *)(&Fst_Dst_Y)) + 1 + Path_Length);
+                    _combat_attacker_wx = MovePath_X[(Path_Length - 1)];
+                    _combat_attacker_wy = MovePath_Y[(Path_Length - 1)];
 
 sizeof:  76h  118d
 00000000 struc MovePath ; (sizeof=0x76, standard type)
@@ -456,7 +456,7 @@ dseg:C756 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IDK_MovePath db 3Eh du
 
 
 
-Elsewhere, WTF is OVL_Action_OriginX, Y?
+Elsewhere, WTF is _combat_attacker_wx, Y?
     different than *active x,y* for the *active* stack, first, highest priority unit `_unit`
 
 
@@ -503,8 +503,8 @@ OVL_Path_Costs[]
 OVL_Path_Xs[]
 OVL_Path_Ys[]
 
-OVL_Action_OriginX
-OVL_Action_OriginY
+_combat_attacker_wx
+_combat_attacker_wy
 
 
 

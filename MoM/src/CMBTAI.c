@@ -1423,7 +1423,7 @@ void Do_Auto_Unit_Turn(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
     {
 
         // sets city area perimeter as impassible
-        AI_RestrictToCity__WIP();
+        Update_Move_Map_City_Perimeter_Restrictions();
 
     }
 
@@ -1629,7 +1629,7 @@ int16_t Auto_Move_Unit(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
     )
     {
 
-        AI_RestrictToCity__WIP();
+        Update_Move_Map_City_Perimeter_Restrictions();
 
     }
 

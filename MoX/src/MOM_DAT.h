@@ -4451,11 +4451,11 @@ extern int16_t OVL_SWardTriggered;
 
 // WZD dseg:C5DE
 // drake178: set to the path square before the last before moving units overland
-extern int16_t OVL_Action_OriginY;
+extern int16_t _combat_attacker_wy;
 
 // WZD dseg:C5E0
 // drake178: set to the path square before the last before moving units overland
-extern int16_t OVL_Action_OriginX;
+extern int16_t _combat_attacker_wx;
 
 // WZD dseg:C5E2 00                                              db    0
 // WZD dseg:C5E3 00                                              db    0

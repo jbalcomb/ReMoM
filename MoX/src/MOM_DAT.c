@@ -3401,12 +3401,14 @@ int16_t item_pool_in_process;
 int16_t OVL_SWardTriggered;
 
 // WZD dseg:C5DE
-// drake178: set to the path square before the last before moving units overland
-int16_t OVL_Action_OriginY;
-
 // WZD dseg:C5E0
-// drake178: set to the path square before the last before moving units overland
-int16_t OVL_Action_OriginX;
+/*
+Hold the world square the attacking stack fights from — the square the attackers stand on for the duration of the battle, and the square they are returned to whenever the attack doesn't stick.
+MainScr.c:5301-5309, right after the move path is computed: movepath_x_array[path_length - 1] — the last path node short of the destination — falling back to the unit's own square when path_length <= 1. The stack never actually steps onto the contested square; this is where it stops.
+Combat.c:3522, in NIU_Enemy_Stack_Combat: set to the attacker's own wx/wy, because that entry point attacks an adjacent stack with no path to walk.
+*/
+int16_t _combat_attacker_wy;
+int16_t _combat_attacker_wx;
 
 // WZD dseg:C5E2 00                                              db    0
 // WZD dseg:C5E3 00                                              db    0

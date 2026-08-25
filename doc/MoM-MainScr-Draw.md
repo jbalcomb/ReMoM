@@ -1012,8 +1012,8 @@ Surveyor_Screen+12B
 Surveyor_Screen+1C9           
 Surveyor_Screen+A1            
 USW_HireHero+51               
-UU_IDK_Main_Screen_Draw+51    
-UU_IDK_Main_Screen_Draw+83    
+NIU_Combat_Redraw_Main_Screen+51    
+NIU_Combat_Redraw_Main_Screen+83    
 
 WIZ_NextIdleStack+1D          
 

@@ -320,9 +320,9 @@ Down r IDK_Surveyor_s7A761+79                add     ax, [_map_y]
 Down w OVL_MoveUnitStack+E9                  mov     [_map_y], ax                              
 Down w OVL_MoveUnitStack+4FE                 mov     [_map_y], ax                              
 Down r OVL_ResolveConflict+76C               push    [_map_y]                        ; TopY    
-Down r UU_IDK_Main_Screen_Draw+C             mov     ax, [_map_y]                              
-Down w UU_IDK_Main_Screen_Draw+37            mov     [_map_y], ax                              
-Down w UU_IDK_Main_Screen_Draw+A0            mov     [_map_y], ax                              
+Down r NIU_Combat_Redraw_Main_Screen+C             mov     ax, [_map_y]                              
+Down w NIU_Combat_Redraw_Main_Screen+37            mov     [_map_y], ax                              
+Down w NIU_Combat_Redraw_Main_Screen+A0            mov     [_map_y], ax                              
 Down r AI_Execute_Orders:loc_81E01                mov     ax, [_map_y]                              
 Down w AI_Execute_Orders+AB                       mov     [_map_y], ax                              
 Down r AI_Execute_Orders+B4                       mov     ax, [_map_y]                              

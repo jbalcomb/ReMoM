@@ -22,7 +22,7 @@ and the real one land under different keys and a reconstructed function reads as
 Usage:
   python3 tools/review_coverage.py                     full report
   python3 tools/review_coverage.py --doc NAME          one doc's reconciliation
-  python3 tools/review_coverage.py --misc              the homeless functions -- Combat-Miscellaneous.md's list body
+  python3 tools/review_coverage.py --homeless          the homeless functions -- Combat-Homeless.md's list body
   python3 tools/review_coverage.py --attribution       which review each uncovered function belongs to
   python3 tools/review_coverage.py --referrals         cross-doc "covered in X" claims that X does not support
   python3 tools/review_coverage.py --anchors           dead #L line anchors across the docs
@@ -38,7 +38,7 @@ SOURCES = ['Combat.c', 'COMBINIT.c', 'CMBMAGIC.c', 'CMBTAI.c', 'CMBTMVPT.c']
 HEADERS = ['Combat.h']
 DOC_DIR = 'doc/#CodeReview'
 DOC_PREFIX = 'Combat-'
-SKIP_DOCS = {'Combat-Miscellaneous.md'}
+SKIP_DOCS = {'Combat-Homeless.md'}
 TRACKER = 'doc/#TODO/stub_wip_todo.md'
 ASM_ROOT = 'C:/STU/devel/STU-Extras/Piethawn/Piethawn/out/WIZARDS'
 
@@ -52,7 +52,7 @@ MARKER_RE = re.compile(r'^//\s*WZD\s+([a-z]*)(\d+)p(\d+)\s*$')
 DEF_RE = re.compile(r'^\s*(?:static\s+)?(?:void|int8_t|int16_t|int32_t|uint8_t|uint16_t|uint32_t|char|int|long|unsigned|SAMB_ptr|s_[A-Za-z_0-9]+\s*\*?|[A-Za-z_][A-Za-z_0-9]*\s*\*)\s*\**\s*([A-Za-z_][A-Za-z_0-9]*)\s*\(')
 CMT_RE = re.compile(r'^//\s*(?:drake178:\s*)?([A-Za-z_][A-Za-z_0-9]*)\s*\(')
 DRAKE_RE = re.compile(r'^//\s*drake178:')
-MISC_DOC_SPREAD = 3      # callers owned by this many distinct reviews -> nobody owns it, it is misc
+HOMELESS_DOC_SPREAD = 3  # callers owned by this many distinct reviews -> nobody owns it, it is homeless
 LOOKAHEAD = 400          # a slot's name may sit past a long banner comment; the next marker stops the scan
 
 
@@ -370,10 +370,10 @@ def report_markers(rows):
           % (len(rows), counts['DONE'], counts['NOT DONE'], counts['NO NAME']))
 
 
-def emit_misc(rows, covered):
-    """the Combat-Miscellaneous.md list body, grouped by overlay
+def emit_homeless(rows, covered):
+    """the Combat-Homeless.md list body, grouped by overlay
 
-    Miscellaneous means homeless.  A function whose callers were adjudicated by some review has
+    Homeless means no review owns it.  A function whose callers were adjudicated by some review has
     a home -- it is that review's backlog, not a loose end -- so attribution runs first and only
     what it cannot place lands here.  Use --attribution-md for the ones that do have a home.
     """
@@ -501,7 +501,7 @@ def attribution_groups(rows, covered):
                 homes.setdefault(fn, set()).add(caller)
                 seen_callers.add(caller)
                 break                                      # a caller adjudicated twice is still one caller
-        if len(homes) >= MISC_DOC_SPREAD:
+        if len(homes) >= HOMELESS_DOC_SPREAD:
             homeless.append(name)                          # too widely shared for any one review to own
             continue
         if not homes:
@@ -513,7 +513,7 @@ def attribution_groups(rows, covered):
 
 
 def report_attribution_md(rows, covered):
-    """the attribution table as markdown, for pasting into Combat-Miscellaneous.md"""
+    """the attribution table as markdown, for pasting into Combat-Homeless.md"""
     groups, homeless = attribution_groups(rows, covered)
     out = ['| review it belongs to | n | functions |', '| --- | --- | --- |']
     for fn in sorted(groups, key=lambda k: (-len(groups[k]), k)):
@@ -592,7 +592,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--doc', help='report on one doc only')
     ap.add_argument('--csv', help='write the per-marker matrix here')
-    ap.add_argument('--misc', action='store_true', help='emit the Combat-Miscellaneous.md list body')
+    ap.add_argument('--homeless', '--misc', dest='homeless', action='store_true',
+                    help="emit the Combat-Homeless.md list body (--misc kept as an alias)")
     ap.add_argument('--attribution', action='store_true', help='name the review each uncovered function belongs to')
     ap.add_argument('--attribution-md', action='store_true', dest='attribution_md', help='attribution table as markdown')
     ap.add_argument('--referrals', action='store_true', help='check cross-doc "covered in X" claims')
@@ -618,8 +619,8 @@ def main():
         report_attribution(rows, covered)
         return
 
-    if args.misc:
-        out = emit_misc(rows, covered)
+    if args.homeless:
+        out = emit_homeless(rows, covered)
         io.open(1, 'w', encoding='utf-8', closefd=False).write(out + '\n')
         return
 

@@ -65,8 +65,8 @@ NOT:
 | `AITP_HolyWord` | [Combat.c:10588](../../MoM/src/Combat.c#L10588) | `ovr111/AITP_HolyWord.asm` | 76 | **full body walk — faithful** |
 | `AITP_Disrupt` | [CMBMAGIC.c:1611](../../MoM/src/CMBMAGIC.c#L1611) | `ovr112/AITP_Disrupt.asm` | 66 | **full body walk — faithful** |
 | `AITP_DarknessLight` | [Combat.c:9625](../../MoM/src/Combat.c#L9625) | `ovr111/AITP_DarknessLight.asm` | 54 | **full body walk — faithful** |
-| `AITP_Disintegrate` | *(none)* | `ovr111/AITP_Disintegrate.asm` | 172 | **not implemented** |
-| `AITP_Word_Of_Recall` | *(none)* | `ovr112/AITP_Word_Of_Recall.asm` | 126 | **not implemented** |
+| `AITP_Disintegrate` | [Combat.c:9417](../../MoM/src/Combat.c#L9417) | `ovr111/UU15_AITP_Disintegrate.asm` | 172 | **full body walk — faithful** |
+| `AITP_Word_Of_Recall` | [CMBMAGIC.c:1759](../../MoM/src/CMBMAGIC.c#L1759) | `ovr112/UU_AITP_WordofRecall.asm` | 126 | **full body walk — faithful** |
 
 ## What belongs here, and why
 
@@ -155,7 +155,7 @@ Both were tracked as `UU15_AITP_Disintegrate` and `UU_AITP_WordofRecall` - drake
 
 Both **do** have production bodies and both are now walked. `UU` is a property of the call graph, not of the function, so both have shed the prefix: **`AITP_Disintegrate`** and **`AITP_Word_Of_Recall`**.
 
-### `AITP_Disintegrate` ([Combat.c:9770](../../MoM/src/Combat.c#L9770), asm 172)
+### `AITP_Disintegrate` ([Combat.c:9417](../../MoM/src/Combat.c#L9417), asm 172)
 
 Faithful. Frame order matches - `Retn_Value` `-0Ah`, `Highest_Value` `-8`, `Effective_Resist` `-6`, then the 32-bit enchantments occupying `-4..-1`; [Combat.c:9772](../../MoM/src/Combat.c#L9772) onward declares them in that order.
 
@@ -163,7 +163,7 @@ Faithful. Frame order matches - `Retn_Value` `-0Ah`, `Highest_Value` `-8`, `Effe
 
 The spell is baked in at the instruction level: asm:102 indexes `spl_Disintegrate*24h` as a compile-time constant, so the function can only ever score for Disintegrate. Scoring is `(melee + ranged) * figure_cnt`, with the usual Magic Immunity, Righteousness, own-side, active and visibility gates ahead of it.
 
-### `AITP_Word_Of_Recall` ([CMBMAGIC.c:1762](../../MoM/src/CMBMAGIC.c#L1762), asm 126)
+### `AITP_Word_Of_Recall` ([CMBMAGIC.c:1759](../../MoM/src/CMBMAGIC.c#L1759), asm 126)
 
 Faithful. This is `AITP_RecallHero`'s twin - identical frame (`Current_HP` `-8`, `Max_HP` `-6`, `Retn_Value` `-4`, `Highest_Danger` `-2`) and near-identical body, differing only in the eligibility test: this one takes any own active unit costing `>= 200` ([CMBMAGIC.c:1783](../../MoM/src/CMBMAGIC.c#L1783)), where `AITP_RecallHero` requires a hero slot and bails on the own-Fortress battle.
 

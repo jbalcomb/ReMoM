@@ -1,144 +1,177 @@
 Combat-Miscellaneous.md
 
-WIZARDS.EXE  ovr096
-// WZD s96p04
-UU_IDK_CMB_s7DE08()    // no production body — comment-only placeholder
-// WZD s96p06
-UU_IDK_Main_Screen_Draw()    // no production body — comment-only placeholder
+SEEALSO:  Combat-Homeless.md
+SEEALSO:  Combat-Combat.md
+SEEALSO:  Combat-Combat_Screen.md
+SEEALSO:  Combat-End_Of_Combat.md
 
-WIZARDS.EXE  ovr110
-// WZD o110p04
-Get_Effective_Hits()
+NX_EmptyFxn_o153p22()         ==>  o153p22_empty_function()
+NX_IDK_CombatInit_Tactical()  ==>  NIU_Allocate_And_Build_Battlefield()
+AI_RestrictToCity__WIP()      ==>  Update_Move_Map_City_Perimeter_Restrictions()
+UU_IDK_Main_Screen_Draw()     ==>  NIU_Combat_Redraw_Main_Screen()
+UU_IDK_CMB_s7DE08()           ==>  NIU_Enemy_Stack_Combat()
 
-WIZARDS.EXE  ovr122
-// WZD o122p10
-Calc_Battlefield_Bonuses()
+OVL_Action_OriginX  ==>  _combat_attacker_wx
+OVL_Action_OriginY  ==>  _combat_attacker_wy
 
-WIZARDS.EXE  ovr124
-// WZD o124p03
-AI_RestrictToCity__WIP()
-// WZD o124p21
-Raze_City_Prompt_Draw()
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr096\UU_IDK_CMB_s7DE08.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr096\UU_IDK_Main_Screen_Draw.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr110\Get_Effective_Hits.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr124\AI_RestrictToCity__WIP.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr153\NX_IDK_CombatInit_Tactical.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr153\NX_EmptyFxn_o153p22.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr154\Combat_Grid_Screen_Coordinates.asm
 
-WIZARDS.EXE  ovr153
-// WZD ovr153p01
-NX_IDK_CombatInit_Tactical()
-// WZD ovr153p22
-o153p22_empty_function()
-
-WIZARDS.EXE  ovr154
-// WZD ovr154p12
-Combat_Grid_Screen_Coordinates()
 ---
 
-# What this list is
+# 1:1 Fidelity Review
 
-Every combat-overlay function that has **not** been taken to done-done **and has no home**: 9 of the 237 `// WZD` overlay slots in the combat sources.
+**Status: DONE-DONE (2026-08-25).** No findings open. Seven functions across six overlays, 353 asm lines, every one walked against its listing and every one faithful. Two findings were raised, both declaration-order defects in the `ovr096` pair, and both are applied. Every one of these was on the homeless list in [Combat-Homeless.md](Combat-Homeless.md); this review is the work of clearing it. Every one of these is on the homeless list in [Combat-Homeless.md](Combat-Homeless.md); this review is the work of clearing it.
 
-Miscellaneous means homeless. Of the 35 slots that are not done, 26 have a home — some finished review adjudicated the code that calls them, so they are that review's backlog, not a loose end. Those 31 are in the attribution table below, not in this list. The 39 above are what nothing claims.
+## Scope
 
-The list is generated, not hand-kept. Regenerate it with:
+| function | production | listing | asm | state |
+| --- | --- | --- | --- | --- |
+| `Update_Move_Map_City_Perimeter_Restrictions` | [Combat.c:15740](../../MoM/src/Combat.c#L15740) | `ovr124/AI_RestrictToCity__WIP.asm` | 77 | **full body walk — faithful** |
+| `Get_Effective_Hits` | [Combat.c:8481](../../MoM/src/Combat.c#L8481) | `ovr110/Get_Effective_Hits.asm` | 74 | **full body walk — faithful** |
+| `NIU_Enemy_Stack_Combat` | [Combat.c:3507](../../MoM/src/Combat.c#L3507) | `ovr096/NIU_Enemy_Stack_Combat.asm` | 72 | **full body walk — faithful** |
+| `NIU_Combat_Redraw_Main_Screen` | [Combat.c:3565](../../MoM/src/Combat.c#L3565) | `ovr096/UU_IDK_Main_Screen_Draw.asm` | 60 | **full body walk — faithful** |
+| `Combat_Grid_Screen_Coordinates` | [Combat.c:22138](../../MoM/src/Combat.c#L22138) | `ovr154/Combat_Grid_Screen_Coordinates.asm` | 44 | **full body walk — faithful** |
+| `NIU_Allocate_And_Build_Battlefield` | [Combat.c:18445](../../MoM/src/Combat.c#L18445) | `ovr153/NX_IDK_CombatInit_Tactical.asm` | 19 | **full body walk — faithful** |
+| `o153p22_empty_function` | [Combat.c:19882](../../MoM/src/Combat.c#L19882) | `ovr153/NX_EmptyFxn_o153p22.asm` | 7 | **full body walk — faithful** |
 
-```
-python3 tools/review_coverage.py --misc
-```
+## What belongs here, and why
 
-Run the tool with no arguments for the full reconciliation report, or `--csv out.csv` for the per-slot matrix.
+**This is not a cohort.** Every other review in this tree is organised around a call graph - a screen, a dispatcher and its leaves, an overlay that does one job. These seven share nothing except the property that made them homeless: no finished review owns their callers, so no existing session could claim them.
 
-## How a function is classified
+That is a real category, not a filing accident. [tools/review_coverage.py](../../tools/review_coverage.py) computes it - attribution runs first, and only what it cannot place lands on the homeless list. A function gets here two ways: its callers are themselves unreviewed, or its callers span three or more reviews (`HOMELESS_DOC_SPREAD`) so no single one can reasonably own it. `Combat_Grid_Screen_Coordinates` is the second kind - twelve call sites across four reviews.
 
-[tools/review_coverage.py](../../tools/review_coverage.py) compares four independent inventories and never guesses — where they disagree it reports the difference rather than picking a winner.
+The value of doing them together is that they are the tail. Clearing this list takes combat-overlay coverage to complete, and each one closes a slot that has been sitting unclaimed through every cohort review so far.
 
-| inventory | what it is |
+### What does *not* belong here
+
+- **`Raze_City_Prompt_Draw`** (`ovr124`, 126 asm) - homeless only because its sole caller, `Raze_City_Prompt`, is itself unadjudicated: [Combat-End_Of_Combat.md](Combat-End_Of_Combat.md) names that caller in its header block and call tree but never gave it a scope row or a verdict. Both go to that review together; walking the callee here would have left the caller unwalked and the callee still unattributable.
+- **`Calc_Battlefield_Bonuses`** (`o122p10`, ~450 asm) - homeless by the same rule, but going to [Combat-Combat.md](Combat-Combat.md) instead. It is large enough to deserve placement rather than lumping.
+- **[Combat-Homeless.md](Combat-Homeless.md)** is the generated inventory, not a review. It renders no verdicts and [tools/review_coverage.py](../../tools/review_coverage.py) skips it via `SKIP_DOCS` for exactly that reason. This document is where the verdicts go.
+
+## Findings
+
+None outstanding. Two were raised against the `ovr096` pair and both are fixed: `NIU_Enemy_Stack_Combat` declared three locals in reverse frame order and was missing a fourth (the `Plane` slot at `bp-6`, a copy of the plane parameter), and `NIU_Combat_Redraw_Main_Screen` declared all four in reverse frame order.
+
+## Verified faithful
+
+### `Get_Effective_Hits` ([Combat.c:8481](../../MoM/src/Combat.c#L8481), asm 74)
+
+Faithful, all 74 lines. It converts a unit's per-figure hit points into an arbitrary "effective health" score scaled by defense, for the strategic-combat estimator - [Strategic_Combat](../../MoM/src/Combat.c#L7783) sums it over the attacker's units at [Combat.c:7941](../../MoM/src/Combat.c#L7941) and the defender's at [Combat.c:7964](../../MoM/src/Combat.c#L7964).
+
+**Frame.** Far call, so the parameters sit at `bp+6` and `bp+8`: `hits` first, `defense` second, matching the production signature. No `sub sp` and no stack locals - `effective_hits` is SI and the `defense` parameter is cached into DI, both register locals. Production declares exactly one local, `int16_t effective_hits`, and leaves it uninitialised; the listing's first write to SI is the `hits * 3` at asm:15, so that is correct.
+
+**The `defense > 3` arm.** asm:16 tests `cmp di, 3 / jle` - signed, and the surviving `jle` sends control to the switch, so the fall-through path is `defense > 3` un-inverted. asm:18-21 build `(defense - 2)` twice from `add ax, -2` / `add dx, -2`, which is where production's `(defense + -2)` spelling comes from. asm:22 `imul dx`; asm:23-25 is the signed-halve idiom `cwd / sub ax,dx / sar ax,1`, whose `cwd` also truncates the product to 16 bits - immaterial here, since a 16-bit C `int` already truncates it. asm:27-29 then multiplies SI by that result in that operand order. Production's single expression at [Combat.c:8487](../../MoM/src/Combat.c#L8487) reproduces it term for term.
+
+**The switch is a bounded jump table**, `mov bx, di / cmp bx, 3 / ja loc_89F41 / shl bx,1 / jmp [cs:off_89F4A+bx]` (asm:33-37). The table is in `ovr110/_misc.asm:6-9` and reads `loc_89F13, loc_89F1E, loc_89F27, loc_89F33` - defense 0, 1, 2, 3 in order, exactly production's four cases:
+
+| defense | listing | production | net |
+| --- | --- | --- | --- |
+| 0 | asm:39-42, signed-halve idiom | `effective_hits / 2` | 50% |
+| 1 | asm:47-49 `imul 3`, then `bx = 5` | `(effective_hits * 3) / 5` | 60% |
+| 2 | asm:52-55 `imul 7`, `bx = 10` | `(effective_hits * 7) / 10` | 70% |
+| 3 | asm:58-60 `shl ax, 2`, then `bx = 5` | `(effective_hits * 4) / 5` | 80% |
+
+Case 3's `shl ax, cl` with `cl = 2` is the compiler's strength reduction of `* 4`; writing the multiply in C is the faithful form, not a deviation.
+
+**Cross-jump tails.** `loc_89F39` (`bx = 5`) is shared by cases 1 and 3, `loc_89F3C` (`cwd / idiv bx`) by cases 1, 2 and 3, and `loc_89F1A` (the store back to SI) by case 0 and the merged divide tail. This is Borland tail-merging identical code; production writing each case out in full is correct.
+
+**Negative `defense` falls through to the return.** The outer `jle` is signed so a negative reaches the switch, but the table's bounds check is the *unsigned* `ja`, which sends it straight to `loc_89F41` with SI still holding `hits * 3`. Production's `switch` has no `default`, so it exits with `effective_hits` unchanged - identical behaviour.
+
+
+### `Update_Move_Map_City_Perimeter_Restrictions` ([Combat.c:15740](../../MoM/src/Combat.c#L15740), asm 77)
+
+Faithful, all 77 lines. It seals the one-square band immediately outside the city block by writing `INF` (`0xFF`, [MOX_TYPE.h:36](../../MoX/src/MOX_TYPE.h#L36)) into `_cmbt_movepath_cost_map`, so the combat path solver cannot route across it and a defender inside has no legal exit. Called twice, from [CMBTAI.c:1426](../../MoM/src/CMBTAI.c#L1426) and [CMBTAI.c:1632](../../MoM/src/CMBTAI.c#L1632), in both cases immediately after [Update_Move_Map_City_Area_Restrictions](../../MoM/src/Combat.c#L15563) and under a guard requiring the defender, `_ai_stay_in_city`, a Wall of Fire or Wall of Darkness, and the unit already being inside the city.
+
+**No frame.** No `sub sp`; both loop counters are register locals - SI and CX - and only SI is preserved. Both loops are bounded at 4 (asm:64, asm:70).
+
+**Four independent `if`s, not a chain.** Each block falls through into the next test - asm:32, 37, 56 and 61 are all reached by fall-through, with no jump past the remaining tests. Production writes four separate `if` statements at [Combat.c:15748](../../MoM/src/Combat.c#L15748), [15760](../../MoM/src/Combat.c#L15760), [15764](../../MoM/src/Combat.c#L15764) and [15776](../../MoM/src/Combat.c#L15776), in the listing's order. The `or reg, reg / jnz` at asm:14, 23, 33 and 47 is the `== 0` test.
+
+**All six hard-coded offsets are exact.** The listing writes raw byte offsets where production writes row/column arithmetic. Every one reconciles at `COMBAT_GRID_WIDTH` = 21 ([Combat.h:143](../../MoM/src/Combat.h#L143)) with the city bounds from [CMBTDEF.h:83-86](../../MoM/src/CMBTDEF.h#L83-L86) - `MIN_CGX_CITY` 5, `MAX_CGX_CITY` 8, `MIN_CGY_CITY` 10, `MAX_CGY_CITY` 13:
+
+| listing | production | value |
+| --- | --- | --- |
+| `[bx+0C1h]` (asm:26) | `(MIN_CGY_CITY - 1) * 21 + (MIN_CGX_CITY - 1)` | 193 |
+| `[bx+12Ah]` (asm:31) | `(MIN_CGY_CITY + 4) * 21 + (MIN_CGX_CITY - 1)` | 298 |
+| `[bx+si+0C2h]` (asm:36) | `(MIN_CGY_CITY - 1) * 21 + MIN_CGX_CITY + cgx` | 194 |
+| `[bx+0C6h]` (asm:50) | `(MIN_CGY_CITY - 1) * 21 + (MIN_CGX_CITY + 4)` | 198 |
+| `[bx+12Fh]` (asm:55) | `(MIN_CGY_CITY + 4) * 21 + (MIN_CGX_CITY + 4)` | 303 |
+| `[bx+si+12Bh]` (asm:60) | `(MIN_CGY_CITY + 4) * 21 + MIN_CGX_CITY + cgx` | 299 |
+
+The two `si`-indexed forms are the top and bottom edges walked by `cgx`; the two `(MIN_CGY_CITY + cgy) * 21` writes at asm:22 and asm:46 are the left and right edges at columns 4 and 9, walked by `cgy`. Together they trace the complete perimeter of rows 9-14 by columns 4-9 around the 4x4 city interior, with all four corners covered by the nested `cgy == 0` / `cgy == 3` tests.
+
+**Two notes on the constant spelling.** `MIN_CGY_CITY + 4` is 14 and `MIN_CGX_CITY + 4` is 9, which are `MAX_CGY_CITY + 1` and `MAX_CGX_CITY + 1`; the `+ 4` form ties the expression to the loop's 0..3 span instead of to the far edge, which reads oddly next to the `- 1` on the near edge. Separately, `cgx` and `cgy` name the loop counters here, but everywhere else in this file those identifiers mean absolute combat-grid coordinates (`battle_units[].cgx`); here they are 0..3 offsets within the ring. Neither affects fidelity - the listing has no names to be faithful to, since both counters are registers.
+
+### `NIU_Allocate_And_Build_Battlefield` ([Combat.c:18445](../../MoM/src/Combat.c#L18445), asm 19)
+
+Faithful, all 19 lines. No locals and no `sub sp` - just a prologue, two calls, and an epilogue.
+
+`j_CMB_BaseAllocs__WIP` at asm:9 is production's `Allocate_Combat_Base_Blocks()`, and `j_CMB_Terrain_Init__WIP` at asm:15 is `Build_Battlefield()`; both renames are recorded in [Combat-Combat_Screen.md](Combat-Combat_Screen.md)'s header block, where those two functions are adjudicated. Push order at asm:11-14 is `wp`, `wy`, `wx`, so the call is `Build_Battlefield(wx, wy, wp)` - [Combat.c:18445](../../MoM/src/Combat.c#L18445).
+
+The commented block directly above the function at [Combat.c:18433-18443](../../MoM/src/Combat.c#L18433-L18443) is reference material, not this listing - it shows a fuller initialisation that sets `_combat_wp`, the two player indices and calls `Cache_Graphics_Combat()`. None of that is in `ovr153/NX_IDK_CombatInit_Tactical.asm`, which does exactly two things.
+
+### `o153p22_empty_function` ([Combat.c:19882](../../MoM/src/Combat.c#L19882), asm 7)
+
+Faithful. The listing is a bare frame - `push bp` / `mov bp, sp` / `pop bp` / `retf` - with no body at all, and [Combat.c:19882-19885](../../MoM/src/Combat.c#L19882-L19885) is an empty function with those four instructions quoted in comments so the reader can see there is nothing missing.
+
+Nothing calls it. The only other reference in the tree is its prototype at [Combat.h:2243](../../MoM/src/Combat.h#L2243). Its sibling `o153p24_empty_function` at [Combat.c:19981](../../MoM/src/Combat.c#L19981) is identical in form and *is* called, from [Combat.c:3423](../../MoM/src/Combat.c#L3423) - so the empty-function shape is real in this overlay, not an artifact of a missing reconstruction.
+
+### `NIU_Enemy_Stack_Combat` ([Combat.c:3507](../../MoM/src/Combat.c#L3507), asm 72)
+
+Body faithful; see R1 for the frame. A thin entry point that opens combat against an enemy stack standing on the map.
+
+**Which parameter feeds which read is easy to get backwards, and production has it right.** asm:19-26 reads `_UNITS[si].wx` where SI is `unit_idx` at `bp+8`, the **second** parameter; asm:37-44 reads `_UNITS[arg_0].owner_idx` from `bp+6`, the **first**. [Combat.c:3515-3517](../../MoM/src/Combat.c#L3515-L3517) matches - position from the attacker, owner from the defender.
+
+**Both call argument orders confirmed from push order.** `Player_Army_At_Square(wx, wy, wp, _human_player_idx, &troop_count, troops)` at asm:49-58, and `Combat(_human_player_idx, combat_defender_player_idx, troop_count, troops)` at asm:59-66. `Combat__WIP` in the listing is production's `Combat` at [Combat.c:3103](../../MoM/src/Combat.c#L3103).
+
+**`_combat_environ = 0` is `cnv_Enemy_Stack`** ([Combat.h:578](../../MoM/src/Combat.h#L578)) - the named form at [Combat.c:3521](../../MoM/src/Combat.c#L3521) is the same value.
+
+### `NIU_Combat_Redraw_Main_Screen` ([Combat.c:3565](../../MoM/src/Combat.c#L3565), asm 60)
+
+Body faithful; see R2 for the frame. It saves the map scroll position, brings the combat square into view, redraws the main screen, holds briefly, and restores the scroll position.
+
+**The save/restore bracket is exact** - `_map_x`/`_map_y` into the two `tmp_curr_world_*` locals at asm:10-13 and back at asm:53-56, with everything else between them. [Combat.c:3571-3572](../../MoM/src/Combat.c#L3571-L3572) and [Combat.c:3588-3589](../../MoM/src/Combat.c#L3588-L3589).
+
+**Two six-argument calls, both confirmed from push order.** `OVL_BringIntoView(&wx, &wy, _combat_wx, _combat_wy, _combat_wp)` at asm:14-22, and `Main_Screen_Draw_Do_Draw(&wx, &wy, _combat_wp, wx, wy, _human_player_idx)` at asm:35-44 - note that one passes `wx`/`wy` **both** by address and by value, which is faithful.
+
+**`Release_Time(6)`** at asm:49-52 is the only literal in the function, and the `_combat_wx__som_started_anim_ctr` at asm:16 is IDA's merged alias for plain `_combat_wx`, which production uses.
+
+### `Combat_Grid_Screen_Coordinates` ([Combat.c:22138](../../MoM/src/Combat.c#L22138), asm 44)
+
+Faithful, all 44 lines. The combat grid's forward isometric transform: cell coordinates plus a sub-cell offset in, screen pixels out through two pointers.
+
+**No stack frame.** `push bp` / `mov bp, sp` with no `sub sp` - production's `sx` and `sy` are register locals (DX and SI), and the six parameters occupy `bp+6` through `bp+10h`.
+
+**The arithmetic is exact, term for term:**
+
+| production | listing |
 | --- | --- |
-| **markers** | every `// WZD <overlay><part>` in [Combat.c](../../MoM/src/Combat.c), [COMBINIT.c](../../MoM/src/COMBINIT.c), [CMBMAGIC.c](../../MoM/src/CMBMAGIC.c), [CMBTAI.c](../../MoM/src/CMBTAI.c), [CMBTMVPT.c](../../MoM/src/CMBTMVPT.c), resolved to the name that follows it |
-| **intent** | the `ovrNNN/Name.asm` paths in a review doc's header block, bridged to production names through the doc's rename ledger and its coverage table |
-| **verdict** | the rows of a review doc's coverage table, each rendering a fidelity result on one function |
-| **tracker** | the checked boxes in [stub_wip_todo.md](../#TODO/stub_wip_todo.md) |
+| `sx = ((cgx - cgy) * 16) + 158` | `sub ax, [bp+cgc1]` / `mov cl, 4` / `shl ax, cl` / `add ax, 158` (asm:18-21) |
+| `sy = ((cgx + cgy) * 8) - 80` | `add ax, [bp+cgc1]` / `mov cl, 3` / `shl ax, cl` / `add ax, -80` (asm:24-27) |
+| `sx += ((cgx_subcell_offset - cgy_subcell_offset) * 2)` | `sub` / `shl ax, 1` / `add dx, ax` (asm:29-32) |
+| `sy += (cgx_subcell_offset + cgy_subcell_offset)` | `add` / `add si, ax` (asm:33-35) |
 
-That yields five states. **`CLAIMED` and `NOT DONE` qualify for this list; attribution then removes any of them that a finished review can be held responsible for.**
+Both shifts are the multiplications written as shifts, and `add ax, -80` is the subtraction. [Combat.c:22142-22145](../../MoM/src/Combat.c#L22142-L22145).
 
-| state | count | meaning |
-| --- | --- | --- |
-| `DONE` | 202 | a DONE-DONE doc gives it a coverage-table row, or a tracker box is checked |
-| `WALKED` | 0 | a DONE-DONE doc walks it under its own heading and declares it faithful, but never added a table row — a bookkeeping hole in the doc, not an unreviewed function |
-| `CLAIMED` | 3 | named in a DONE-DONE doc's header block and never adjudicated anywhere |
-| `NOT DONE` | 32 | no doc renders a verdict on it |
-| `NO NAME` | 0 | an overlay slot nothing in the sources names |
+**The IDA parameter names are inverted and should not be copied.** `cgc2` sits at `bp+6` and is therefore the **first** parameter - the **x** cell - while `cgc1` at `bp+8` is the second, the **y** cell. Production's `(cgx, cgy, ...)` order is correct; the numbering in the listing suggests the opposite and is simply wrong.
 
-## The `WALKED` bucket is empty
+**Both results are written through out-pointers** at asm:36-39, matching [Combat.c:22146-22147](../../MoM/src/Combat.c#L22146-L22147). Nothing is returned.
 
-`Load_Combat_Terrain_Pictures` and `Map_Tile_EMS_Page_As_Sandbox` were the two entries here; both now carry coverage-table rows in [Combat-Combat_Screen.md](Combat-Combat_Screen.md), so nothing is walked-but-unrecorded any more.
+## Deviations - structurally different, behaviour unchanged
 
-## The `CLAIMED` functions
+These do not change what the code does. They are listed because the target is 1:1 with the disassembly, not functional equivalence.
 
-Three remain, unchanged, all named in a DONE-DONE doc’s header block and adjudicated nowhere:
+### D1 - zero-initialised locals
 
-- **`Calc_Battlefield_Bonuses`** and **`Combat_Grid_Screen_Coordinates`**, both claimed by [Combat-Combat_Screen.md](Combat-Combat_Screen.md). That doc’s header block records the call tree `Combat_Screen` reaches, not the set it adjudicated — [line 718](Combat-Combat_Screen.md#L718) says as much of the input-loop handlers — so a header-block name is an intent, not a verdict.
-- **`Raze_City_Prompt`**, claimed by [Combat-End_Of_Combat.md](Combat-End_Of_Combat.md).
+`Get_Effective_Hits` declares `int16_t effective_hits = 0` ([Combat.c:8483](../../MoM/src/Combat.c#L8483)) and `Update_Move_Map_City_Perimeter_Restrictions` declares `int16_t cgx = 0` / `int16_t cgy = 0` ([Combat.c:15742-15743](../../MoM/src/Combat.c#L15742-L15743)). Neither listing emits those stores - in both functions the counters and the accumulator live in registers, and the first write in each is the real one (`mov si, ax` after the `imul` at asm:15 in `Get_Effective_Hits`; the loop initialisers in the other). The initialisers are dead in every path and cost nothing observable. This is the same house-style deviation recorded as D1 in [Combat-Spell_Cast_AI_Select.md](Combat-Spell_Cast_AI_Select.md).
 
-## Which review each one belongs to
+## A note on this function's prior coverage
 
-A function belongs with whatever review covered the code that calls it. `--attribution` walks every call site of an uncovered function, finds the enclosing function, and reports which DONE-DONE review adjudicated *that*. The table below is `--attribution-md` verbatim:
+`Combat_Grid_Screen_Coordinates` was named in [Combat-Combat_Screen.md](Combat-Combat_Screen.md)'s header block but never given a scope-table row, which is why it has shown as `CLAIMED - never adjudicated` in every reconciliation run. That doc carries **two** prose sections on it that disagree: one calls it faithful, the other says "**One finding — R22**" - and **R22 is defined nowhere in that document or any other**. It is a dangling reference with no content behind it.
 
-```
-python3 tools/review_coverage.py --attribution        full form, every candidate home
-python3 tools/review_coverage.py --attribution-md     this table
-```
-
-| review it belongs to | n | functions |
-| --- | --- | --- |
-| [Combat-Combat_Screen.md](Combat-Combat_Screen.md) | 5 | `Combat_Next_Turn`, `Tactical_Combat_Draw_Buttons`, `Battle_Unit_Melee_Attack_Icon`, `Battle_Unit_Ranged_Attack_Icon`, `Combat_Cache_Read` |
-| [Combat-Combat_Figure_Compose.md](Combat-Combat_Figure_Compose.md) | 3 | `Draw_Active_Unit_Stats_And_Icons`, `Draw_Active_Unit_Damage_Bar`, `Next_Battle_Unit_Nearest_Available` |
-| [Combat-End_Of_Combat.md](Combat-End_Of_Combat.md) | 3 | `Player_City_At_Square`, `Unit_Try_To_Move`, `Raze_City_Prompt` |
-| [Combat-AI_Turn.md](Combat-AI_Turn.md) | 2 | `Do_Auto_Unit_Turn`, `Total_Ranged_Attack_Strength` |
-| [Combat-Battle_Unit_Process_Attack.md](Combat-Battle_Unit_Process_Attack.md) | 2 | `Eliminated_Opponent`, `Battle_Unit_Is_Summoned_Creature` |
-| [Combat-Combat.md](Combat-Combat.md) | 2 | `Combat_City_Capture`, `o153p24_empty_function` |
-| [Combat-Combat_Screen_Map_Draw.md](Combat-Combat_Screen_Map_Draw.md) | 2 | `Screen_To_Combat_Grid_Cell_X_And_Offset`, `Screen_To_Combat_Grid_Cell_Y_And_Offset` |
-| [Combat-Spell_Cast_AI_Select.md](Combat-Spell_Cast_AI_Select.md) | 2 | `Get_Effective_Ranged_Strength`, `Get_Effective_Melee_Strength` |
-| [Combat-Assign_Combat_Grids.md](Combat-Assign_Combat_Grids.md) | 1 | `Auto_Move_Unit` |
-| [Combat-Combat_Summon.md](Combat-Combat_Summon.md) | 1 | `Battle_Unit_Pict_Open` |
-| [Combat-Init_Prep_Etc.md](Combat-Init_Prep_Etc.md) | 1 | `Apply_Mana_Leak` |
-| [Combat-Move_Battle_Unit.md](Combat-Move_Battle_Unit.md) | 1 | `Reload_Battle_Unit_Move_Sound` |
-| [Combat-Spell_Cast_AI_Target.md](Combat-Spell_Cast_AI_Target.md) | 1 | `Target_Is_Visible` |
-
-**9 have no covered caller at all** — their callers are themselves unreviewed, so no existing session claims them: `UU_IDK_CMB_s7DE08`, `UU_IDK_Main_Screen_Draw`, `Get_Effective_Hits`, `Calc_Battlefield_Bonuses`, `AI_RestrictToCity__WIP`, `Raze_City_Prompt_Draw`, `NX_IDK_CombatInit_Tactical`, `o153p22_empty_function`, `Combat_Grid_Screen_Coordinates`.
-
-## Cross-doc referrals
-
-A claim of the form "X is covered in <other doc>" is a coverage claim like any other, and nothing was checking them. `--referrals` resolves each one against the actual verdict inventory.
-
-```
-python3 tools/review_coverage.py --referrals
-```
-
-**Ten are unsupported.** Five name a function that no doc renders a verdict on:
-
-| doc making the claim | function | claimed covered in |
-| --- | --- | --- |
-| [Combat-Combat_Figure_Compose.md](Combat-Combat_Figure_Compose.md) | `Draw_Active_Unit_Stats_And_Icons` | [Combat-Combat_Screen.md](Combat-Combat_Screen.md) |
-| [Combat-Combat_Figure_Compose.md](Combat-Combat_Figure_Compose.md) | `Draw_Active_Unit_Damage_Bar` | [Combat-Combat_Screen.md](Combat-Combat_Screen.md) |
-| [Combat-Combat_Screen.md](Combat-Combat_Screen.md) | `Combat_Grid_Screen_Coordinates` | [Combat-Miscellaneous.md](Combat-Miscellaneous.md) |
-| [Combat-Combat_Screen.md](Combat-Combat_Screen.md) | `Calc_Battlefield_Bonuses` | [Combat-Miscellaneous.md](Combat-Miscellaneous.md) |
-| [Combat-Generate_Combat_Map.md](Combat-Generate_Combat_Map.md) | `Combat_Grid_Screen_Coordinates` | [Combat-Combat_Screen.md](Combat-Combat_Screen.md), [Combat-Combat_Screen_Map_Draw.md](Combat-Combat_Screen_Map_Draw.md) |
-
-The last three of those are self-referential in effect: two reviews point at *this* file for `Combat_Grid_Screen_Coordinates` and `Calc_Battlefield_Bonuses`, and this file is a homeless list, not an adjudication. Both are also in the `CLAIMED` bucket above - the same two functions, reached by a different route.
-
-Five more point at the wrong doc for a function that *is* covered somewhere: `Spell_Resistance_Modifier`, `Draw_Active_Unit_Window` (twice), `Build_Battlefield` and `Load_Battle_Unit`. Those are cheap to fix - the referral just needs to name the doc that actually holds the verdict.
-
-## Known parsing edges
-
-- Overlay prefixes are written three ways in the sources — `s163`, `o163`, `ovr163` — so marker keys are normalised to (overlay number, part number). Marker text in this list is reproduced exactly as it appears in the source, so a `grep` on any line finds it.
-- Two slots have no production body, only a commented-out name: `s96p04` and `s96p06`. This bullet previously listed four, adding `111p06` and `o112p11` - **that was wrong**. Both of those have real bodies and are now walked in [Combat-Spell_Cast_AI_Target.md](Combat-Spell_Cast_AI_Target.md); the tool mis-reported them while they still carried drake178's `UU15_` / `UU_` prefixes, and started resolving them once they were renamed to `AITP_Disintegrate` and `AITP_Word_Of_Recall`. Treat a `notimpl` on a `UU`-prefixed slot as a prompt to open the file, not as a fact.
-- The two functions that used to sit in the `WALKED` bucket are cited in [Combat-Combat_Screen.md](Combat-Combat_Screen.md) at production lines that no longer exist - 20387, 21605, 21616 and 22885 against a 23376-line [Combat.c](../../MoM/src/Combat.c). The true definitions are [Map_Tile_EMS_Page_As_Sandbox](../../MoM/src/Combat.c#L20215) at 20215 and [Load_Combat_Terrain_Pictures](../../MoM/src/Combat.c#L22713) at 22713. The line numbers in that doc drift every time `Combat.c` moves; the walks themselves are still good.
-- Two header-block listings name `.asm` files that are not on disk: `ovr163/Allocate_Combat_Base_Blocks.asm` in [Combat-Assign_Combat_Grids.md](Combat-Assign_Combat_Grids.md) and `ovr098/Prepare_All_Battle_Units.asm` in [Combat-Init_Prep_Etc.md](Combat-Init_Prep_Etc.md). Both are production names written where the IDA name belongs.
-
-## Adjudicated, but owned by nobody
-
-Functions whose callers span three or more reviews land here by the `MISC_DOC_SPREAD` rule in [tools/review_coverage.py](../../tools/review_coverage.py) — no single review can own them, so their verdicts are recorded in this doc.
-
-**`Combat_Grid_Screen_Coordinates`** ([Combat.c:22482](../../MoM/src/Combat.c#L22482), `ovr154/Combat_Grid_Screen_Coordinates.asm`, 44 asm lines) — **faithful**. Twelve call sites across four reviews: [Combat-Combat_Screen_Map_Draw.md](Combat-Combat_Screen_Map_Draw.md) (8), [Combat-Generate_Combat_Map.md](Combat-Generate_Combat_Map.md) (2), [Combat-Battle_Unit_Attack.md](Combat-Battle_Unit_Attack.md) (1), [Combat-Combat_Screen.md](Combat-Combat_Screen.md) (1).
-
-`sx = ((cgx - cgy) * 16) + 158` is `sub` / `shl ax, 4` / `add 158` (asm:17-22); `sy = ((cgx + cgy) * 8) - 80` is `add` / `shl ax, 3` / `add -80` (asm:23-28). The sub-cell offsets follow — `(ox - oy) * 2` into `sx` via `shl ax, 1`, a bare `(ox + oy)` into `sy` — then both store through the out-pointers. Both accumulators are register locals with no stack slots, so their declaration order carries no constraint.
-
-The asm parameter names invert what a reader expects: `cgc2` at `bp+6` is the **x** cell and `cgc1` at `bp+8` is the **y** cell, which is why production's `cgx, cgy` order is correct.
+This walk was done from the listing rather than from either section. The result is faithful, so the "R22" mention describes nothing that exists. Both sections should come out of that doc now that the verdict lives here.

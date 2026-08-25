@@ -30,7 +30,7 @@ Move_Units()
 Lair_Combat_Do()
     |-> Combat()
 
-UU_IDK_CMB_s7DE08()
+NIU_Enemy_Stack_Combat()
     |-> Combat()
 
 Combat()
@@ -76,8 +76,6 @@ One finding was raised — the same inverted `UA_FANTASTIC` test at both city-ca
 | `Lair_Combat_Do` | [Combat.c:3487](../../MoM/src/Combat.c#L3487) | `ovr096/Lair_Combat_Do.asm` | 68 | **full body walk — faithful** |
 
 `Combat` calls only two of its same-overlay siblings — `Lair_Make_Guardians` at `asm:293` and `Update_Defender_Hostility` at `asm:772`. `Lair_Combat_Do` is included because it is the lair entry point that calls back into `Combat`, from [Lair.c:340](../../MoM/src/Lair.c#L340).
-
-Two listings in `ovr096` have no production counterpart and are out of scope: `UU_IDK_Main_Screen_Draw.asm` (60) and `UU_IDK_CMB_s7DE08.asm` (72). Both are recorded as comment-only placeholders at [Combat.c:3519](../../MoM/src/Combat.c#L3519) and [Combat.h:1691](../../MoM/src/Combat.h#L1691).
 
 ---
 

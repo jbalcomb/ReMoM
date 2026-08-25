@@ -315,11 +315,11 @@ mov     [bp+Next_Tile_Y], ax
 
 
 Move_Stack()
-    sets OVL_Action_OriginX, OVL_Action_OriginY
+    sets _combat_attacker_wx, _combat_attacker_wy
 
 Path_Length > 1
-    OVL_Action_OriginX = Fst_Dst_X[Path_Length]
-    OVL_Action_OriginY = Fst_Dst_Y[Path_Length]
+    _combat_attacker_wx = Fst_Dst_X[Path_Length]
+    _combat_attacker_wy = Fst_Dst_Y[Path_Length]
 
 
 

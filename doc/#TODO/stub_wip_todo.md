@@ -83,6 +83,12 @@
 - [ ] City_Screen_Draw__WIP
 
 ## Combat
+- [x] Get_Effective_Hits — impl (Combat.c:8481); done-done 2026-08-25 (doc/#CodeReview/Combat-Miscellaneous.md; faithful 1:1, builds clean)
+- [x] NIU_Enemy_Stack_Combat — impl (Combat.c:3507); done-done 2026-08-25 (doc/#CodeReview/Combat-Miscellaneous.md; faithful 1:1, builds clean); R1 declaration order + missing bp-6 Plane local fixed
+- [x] NIU_Combat_Redraw_Main_Screen — impl (Combat.c:3565); done-done 2026-08-25 (doc/#CodeReview/Combat-Miscellaneous.md; faithful 1:1, builds clean); R2 declaration order fixed
+- [x] Combat_Grid_Screen_Coordinates — impl (Combat.c:22138); done-done 2026-08-25 (doc/#CodeReview/Combat-Miscellaneous.md; faithful 1:1, builds clean)
+- [x] NX_IDK_CombatInit_Tactical — renamed to NIU_Allocate_And_Build_Battlefield (Combat.c:18445); done-done 2026-08-25 (doc/#CodeReview/Combat-Miscellaneous.md; faithful 1:1, builds clean)
+- [x] NX_EmptyFxn_o153p22 — renamed to o153p22_empty_function (Combat.c:19882); done-done 2026-08-25 (doc/#CodeReview/Combat-Miscellaneous.md; faithful 1:1, builds clean); empty in the listing too, nothing calls it
 - [x] Find_Undead_Creator_Type — was CMB_GetUndeadCreator; done-done 2026-07-23 (Combat.c:15644; faithful 1:1, builds clean; B1 cross-player hero-slot index preserved — see doc/#CodeReview/SPLMASTR-Undead_Animation.md)
 - [ ] AI_Set_Unit_Action_Mode — renamed from AI_BU_AssignAction__WIP; impl (CMBTAI.c:968), needs done-done review (name verified 2026-07-21)
 - [x] AI_BU_GetAttackValue__STUB
@@ -93,7 +99,7 @@
 - [ ] AI_Score_Combat_Spell — impl (Combat.c:24632), needs done-done review; AI Combat Spell layer
 - [x] AI_FightorFlight__STUB
 - [ ] AI_MoveBattleUnits__WIP
-- [ ] AI_RestrictToCity__WIP
+- [x] AI_RestrictToCity__WIP — renamed to Update_Move_Map_City_Perimeter_Restrictions (Combat.c:15740); done-done 2026-08-25 (doc/#CodeReview/Combat-Miscellaneous.md; faithful 1:1, builds clean)
 - [ ] AI_Select_Combat_Spell — impl (Combat.c:24565), needs done-done review; AI Combat Spell layer
 - [ ] AI_Prepare_Combat_Realm_Threats — impl (Combat.c:25792), needs done-done review; AI Combat Spell layer
 - [ ] AI_Build_Unit_Realm_Threat_Percentages — impl (Combat.c:25860), needs done-done review; AI Combat Spell layer
