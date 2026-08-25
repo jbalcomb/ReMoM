@@ -1919,28 +1919,28 @@ int16_t Get_Effective_Melee_Strength(int16_t melee, int16_t thrown, int16_t figu
 // WZD o111p01
 int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * target_wx, int16_t * target_wy);
 
-// WZD 111p02
-int16_t AITP_DarknessLight(int16_t Spell_Index);
+// WZD o111p02
+int16_t AITP_DarknessLight(int16_t spell_idx);
 
-// WZD 111p03
+// WZD o111p03
 int16_t AITP_Healing(int16_t player_idx);
 
-// WZD 111p04
+// WZD o111p04
 int16_t AITP_WarpWood(int16_t player_idx);
 
-// WZD 111p05
+// WZD o111p05
 int16_t AITP_WarpCreature(int16_t player_idx);
 
-// WZD 111p06
-// UU15_AITP_Disintegrate()
+// WZD o111p06
+int16_t AITP_Disintegrate(int16_t player_idx);
 
-// WZD 111p07
+// WZD o111p07
 int16_t AITP_DispelMagic(int16_t player_idx);
 
-// WZD 111p08
+// WZD o111p08
 void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy, int16_t Mana, int16_t Anims, int16_t UU1, int16_t UU2);
 
-// WZD 111p09
+// WZD o111p09
 int16_t AITP_HolyWord(int16_t player_idx);
 
 

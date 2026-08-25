@@ -32,7 +32,7 @@ AITP_WarpWood()
 // WZD 111p05
 AITP_WarpCreature()
 // WZD 111p06
-UU15_AITP_Disintegrate()    // no production body — comment-only placeholder
+AITP_Disintegrate()    // no production body — comment-only placeholder
 // WZD 111p07
 AITP_DispelMagic()
 // WZD 111p09
@@ -46,7 +46,7 @@ AITP_Disrupt()
 // WZD o112p10
 AITP_CracksCall()
 // WZD o112p11
-UU_AITP_WordofRecall()    // no production body — comment-only placeholder
+AITP_Word_Of_Recall()    // no production body — comment-only placeholder
 // WZD o112p12
 AITP_RecallHero()
 
@@ -175,7 +175,7 @@ python3 tools/review_coverage.py --attribution-md     this table
 | [Combat-Init_Prep_Etc.md](Combat-Init_Prep_Etc.md) | 1 | `Apply_Mana_Leak` |
 | [Combat-Move_Battle_Unit.md](Combat-Move_Battle_Unit.md) | 1 | `Reload_Battle_Unit_Move_Sound` |
 
-**39 have no covered caller at all** — their callers are themselves unreviewed, so no existing session claims them: `Target_Is_Visible`, `UU_IDK_CMB_s7DE08`, `UU_IDK_Main_Screen_Draw`, `Ranged_Mouse_Image`, `Combat_Information_Window_Draw`, `Combat_Info_Effects`, `Combat_Info_Effects_Base`, `AITP_DarknessLight`, `AITP_Healing`, `AITP_WarpWood`, `AITP_WarpCreature`, `UU15_AITP_Disintegrate`, `AITP_DispelMagic`, `AITP_HolyWord`, `AITP_EarthToMud`, `AITP_Disrupt`, `AITP_CracksCall`, `UU_AITP_WordofRecall`, `AITP_RecallHero`, `Combat_Screen_Assign_Mouse_Images`, `Combat_Spell_Target_Screen_Draw`, `AI_Execute_Unit_Action`, `Sort_Battle_Units`, `AI_Set_Unit_Action_Mode`, `Choose_Target_And_Action`, `Calc_Battlefield_Bonuses`, `Target_Unit_Value`, `Total_Ranged_Attack_Strength`, `AI_RestrictToCity__WIP`, `AI_Player_Mode`, `AI_Retreat_Check`, `Raze_City_Prompt_Draw`, `AI_Score_Combat_Spell`, `Effective_Battle_Unit_Strength`, `AI_Build_Unit_Realm_Threat_Percentages`, `AI_Build_Castable_Combat_Spell_List`, `NX_IDK_CombatInit_Tactical`, `o153p22_empty_function`, `Combat_Grid_Screen_Coordinates`.
+**39 have no covered caller at all** — their callers are themselves unreviewed, so no existing session claims them: `Target_Is_Visible`, `UU_IDK_CMB_s7DE08`, `UU_IDK_Main_Screen_Draw`, `Ranged_Mouse_Image`, `Combat_Information_Window_Draw`, `Combat_Info_Effects`, `Combat_Info_Effects_Base`, `AITP_DarknessLight`, `AITP_Healing`, `AITP_WarpWood`, `AITP_WarpCreature`, `AITP_Disintegrate`, `AITP_DispelMagic`, `AITP_HolyWord`, `AITP_EarthToMud`, `AITP_Disrupt`, `AITP_CracksCall`, `AITP_Word_Of_Recall`, `AITP_RecallHero`, `Combat_Screen_Assign_Mouse_Images`, `Combat_Spell_Target_Screen_Draw`, `AI_Execute_Unit_Action`, `Sort_Battle_Units`, `AI_Set_Unit_Action_Mode`, `Choose_Target_And_Action`, `Calc_Battlefield_Bonuses`, `Target_Unit_Value`, `Total_Ranged_Attack_Strength`, `AI_RestrictToCity__WIP`, `AI_Player_Mode`, `AI_Retreat_Check`, `Raze_City_Prompt_Draw`, `AI_Score_Combat_Spell`, `Effective_Battle_Unit_Strength`, `AI_Build_Unit_Realm_Threat_Percentages`, `AI_Build_Castable_Combat_Spell_List`, `NX_IDK_CombatInit_Tactical`, `o153p22_empty_function`, `Combat_Grid_Screen_Coordinates`.
 
 ## Cross-doc referrals
 

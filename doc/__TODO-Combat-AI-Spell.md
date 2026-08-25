@@ -40,13 +40,13 @@ Status legend: **[done-done]** reviewed 1:1 + doc + builds · **[impl]** substan
 | `AITP_Disrupt` | [Combat.c:14708](../MoM/src/Combat.c#L14708) | **impl** | five wall-square probes (attacker vs walled city) |
 | `AITP_CracksCall` | [Combat.c:14763](../MoM/src/Combat.c#L14763) | **impl** | strongest visible enemy ground unit + wall fallback |
 | `AITP_RecallHero` | [Combat.c:14876](../MoM/src/Combat.c#L14876) | **impl** | own hero in most danger (excludes own-fortress battle) |
-| `UU15_AITP_Disintegrate` | [Combat.c:12245](../MoM/src/Combat.c#L12245) | **missing** | comment-only; likely not needed (see notes) |
+| `AITP_Disintegrate` | [Combat.c:12245](../MoM/src/Combat.c#L12245) | **missing** | comment-only; likely not needed (see notes) |
 
 # To-Do List
 
 - [ ] **Done-done the 5 AI evaluators** — `AI_Select_Combat_Spell`, `AI_Score_Combat_Spell`, `AI_Build_Castable_Combat_Spell_List`, `AI_Prepare_Combat_Realm_Threats`, `AI_Build_Unit_Realm_Threat_Percentages`: 1:1 walkthrough vs their `ovr139` disassembly, `B`/`R` bug pass, walkthrough doc, checkbox.
 - [ ] **Done-done the 10 `AITP_*` sub-pickers** (`DarknessLight`, `HolyWord`, `Healing`, `WarpWood`, `WarpCreature`, `EarthToMud`, `Disrupt`, `RecallHero`, `CracksCall`, `DispelMagic`) — same treatment vs `ovr111`.
-- [ ] **Resolve `UU15_AITP_Disintegrate`** — confirm nothing calls a standalone picker (Disintegrate targeting is inline in `AITP_Combat_Spell`'s `scc_Combat_Destroy_Unit`/`Banish` case) and delete the comment stub; else reconstruct it.
+- [ ] **Resolve `AITP_Disintegrate`** — confirm nothing calls a standalone picker (Disintegrate targeting is inline in `AITP_Combat_Spell`'s `scc_Combat_Destroy_Unit`/`Banish` case) and delete the comment stub; else reconstruct it.
 - [ ] **Tracker hygiene** — add the 15 `impl` functions above to [stub_wip_todo.md](#TODO/stub_wip_todo.md); they are currently untracked.
 
 ## Notes

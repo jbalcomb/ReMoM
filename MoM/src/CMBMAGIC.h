@@ -79,7 +79,7 @@ int16_t AITP_Disrupt(int16_t player_idx, int16_t * target_cgx, int16_t * target_
 int16_t AITP_CracksCall(int16_t player_idx, int16_t * target_cgx, int16_t * target_cgy);
 
 // WZD o112p11
-// UU_AITP_WordofRecall()
+int16_t AITP_Word_Of_Recall(int16_t player_idx);
 
 // WZD o112p12
 int16_t AITP_RecallHero(int16_t player_idx);

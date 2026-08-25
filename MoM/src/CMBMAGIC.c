@@ -1219,7 +1219,6 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
             illegal = ST_TRUE;
         }
     }
-
     // ; BUG: the former does not recognize confused units as not belonging to the player, while the latter counts uninvolved, recalled, and fleeing units as valid targets
     /*
         Check if there are any (valid) *dead* units.
@@ -1500,35 +1499,26 @@ int16_t Combat_Casting_Cost_Multiplier(int16_t player_idx)
 
 
 // WZD o112p08
-// drake178: AITP_EarthToMud()
-/*
-Earth to Mud target picker: scans every combat map square and scores it by proximity (Chebyshev-ish, see below) to ground-bound units - enemy units within 2 squares add
-(3 - distance), own units within 2 squares subtract (3 - distance).  Returns 99 with the best square in *target_cgx / *target_cgy, or -1 on an ocean battlefield / no positive
-square.  Flying, merging, teleporting, and non-corporeal units are ignored on both sides.
-NOTE  the distance test only scores the LARGER of the two axis deltas: when delta-x > delta-y only delta-x is range-checked, otherwise only delta-y - a faithful quirk, not a
-      reconstruction shortcut
-*/
+/* OGBUG: the distance test only scores the LARGER of the two axis deltas: when delta-x > delta-y only delta-x is range-checked, otherwise only delta-y */
+/* OGBUG: Ignores speed and terrain */
 int16_t AITP_EarthToMud(int16_t player_idx, int16_t * target_cgx, int16_t * target_cgy)
 {
-    int16_t best_result = 0;      /* Best_Result */
-    int16_t cgy = 0;              /* Y_Loop_Var */
-    int16_t cgx = 0;              /* X_Loop_Var */
-    int16_t retn_value = 0;       /* Retn_Value */
-    int16_t delta_cgy = 0;        /* Y_Dist */
-    int16_t delta_cgx = 0;        /* X_Dist */
-    int16_t square_value = 0;     /* _DI_ */
-    int16_t battle_unit_idx = 0;  /* _SI_ */
+    int16_t best_result = 0;
+    int16_t cgy = 0;
+    int16_t cgx = 0;
+    int16_t selected_target_idx = 0;
+    int16_t delta_cgy = 0;
+    int16_t delta_cgx = 0;
+    int16_t square_value = 0;
+    int16_t battle_unit_idx = 0;
     struct s_BATTLE_UNIT * bu_ptr = NULL;
-
-    retn_value = ST_UNDEFINED;
+    selected_target_idx = ST_UNDEFINED;
     best_result = 0;
-
     /* no mud on an ocean battlefield */
     if(_combat_structure == cs_OceanTerrainType)
     {
         return ST_UNDEFINED;
     }
-
     for(cgx = 0; cgx < COMBAT_GRID_WIDTH; cgx++)
     {
         for(cgy = 0; cgy < COMBAT_GRID_HEIGHT; cgy++)
@@ -1537,7 +1527,6 @@ int16_t AITP_EarthToMud(int16_t player_idx, int16_t * target_cgx, int16_t * targ
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
                 bu_ptr = &battle_units[battle_unit_idx];
-
                 if(bu_ptr->controller_idx != player_idx)
                 {
                     /* enemy unit: mud near it is good */
@@ -1605,108 +1594,83 @@ int16_t AITP_EarthToMud(int16_t player_idx, int16_t * target_cgx, int16_t * targ
                     }
                 }
             }
-
             if(square_value > best_result)
             {
                 best_result = square_value;
                 *target_cgx = cgx;
                 *target_cgy = cgy;
-                retn_value = 99;
+                selected_target_idx = 99;
             }
         }
     }
-
-    return retn_value;
+    return selected_target_idx;
 }
 
 
 // WZD o112p09
-// drake178: AITP_Disrupt()
-/*
-Disrupt target picker: only useful for the attacker against a walled city; probes five wall squares - the gate (8,13), then (8,11), (8,10), (7,13), (7,10) - and returns 99 with
-the first one still standing in *target_cgx / *target_cgy, else -1.
-OGBUG  the wall-state probes index walls[cgy][cgx] without rebasing to walls[cgy - 10][cgx - 5], so the reads land past the end of s_BATTLEFIELD (Dasm raw offsets 15B6h..15D0h) in
-       leftover _screen_seg arena memory - the "uninitialized wall structure offsets" bug noted at the dispatch call site
-*/
 int16_t AITP_Disrupt(int16_t player_idx, int16_t * target_cgx, int16_t * target_cgy)
 {
-    int16_t retn_value = 0;  /* _DX_ */
-
-    retn_value = ST_UNDEFINED;
-
+    int16_t selected_target_idx = 0;
+    selected_target_idx = ST_UNDEFINED;
     if(_combat_defender_player != player_idx)  /* the defender owns the walls */
     {
         if(battlefield->walled == 1)
         {
-            /* OGBUG  each probe below reads walls[cgy][cgx] instead of the
-             *   rebased walls[cgy - 10][cgx - 5], so it lands past the end of
-             *   walls[4][4] in leftover _screen_seg memory (Dasm raw offsets
-             *   15B6h..15D0h).  We preserve the OG OOB read via pointer
-             *   arithmetic on a flat int16_t* so -Warray-bounds doesn't fire.
-             *   OG (preserved):    ((int16_t*)&walls[0][0])[cgy * 4 + cgx]
-             *   Correct rebased:   battlefield->walls[cgy - 10][cgx - 5]  */
+            /* OGBUG:  OOB AVRL  each probe below reads walls[cgy][cgx] instead of the rebased walls[cgy - 10][cgx - 5], so it lands past the end of walls[4][4] in leftover _screen_seg memory.  We preserve the OG OOB read via pointer arithmetic on a flat int16_t* so -Warray-bounds doesn't fire. OG (preserved):    ((int16_t*)&walls[0][0])[cgy * 4 + cgx] Correct rebased:   battlefield->walls[cgy - 10][cgx - 5] */
             int16_t * walls_flat = (int16_t *)&battlefield->walls[0][0];
-            if(walls_flat[13 * 4 + 8] == 1)       /* OGBUG 15D0h; rebased: walls[3][3] */
+            if(walls_flat[13 * 4 + 8] == 1)       /* OGBUG: rebased: walls[3][3] */
             {
                 *target_cgx = 8;
                 *target_cgy = 13;
-                retn_value = 99;
+                selected_target_idx = 99;
             }
-            else if(walls_flat[11 * 4 + 8] == 1)  /* OGBUG 15C0h; rebased: walls[1][3] */
+            else if(walls_flat[11 * 4 + 8] == 1)  /* OGBUG: rebased: walls[1][3] */
             {
                 *target_cgx = 8;
                 *target_cgy = 11;
-                retn_value = 99;
+                selected_target_idx = 99;
             }
-            else if(walls_flat[10 * 4 + 8] == 1)  /* OGBUG 15B8h; rebased: walls[0][3] */
+            else if(walls_flat[10 * 4 + 8] == 1)  /* OGBUG: rebased: walls[0][3] */
             {
                 *target_cgx = 8;
                 *target_cgy = 10;
-                retn_value = 99;
+                selected_target_idx = 99;
             }
-            else if(walls_flat[13 * 4 + 7] == 1)  /* OGBUG 15CEh; rebased: walls[3][2] */
+            else if(walls_flat[13 * 4 + 7] == 1)  /* OGBUG: rebased: walls[3][2] */
             {
                 *target_cgx = 7;
                 *target_cgy = 13;
-                retn_value = 99;
+                selected_target_idx = 99;
             }
-            else if(walls_flat[10 * 4 + 7] == 1)  /* OGBUG 15B6h; rebased: walls[0][2] */
+            else if(walls_flat[10 * 4 + 7] == 1)  /* OGBUG: rebased: walls[0][2] */
             {
                 *target_cgx = 7;
                 *target_cgy = 10;
-                retn_value = 99;
+                selected_target_idx = 99;
             }
         }
     }
-
-    return retn_value;
+    return selected_target_idx;
 }
 
 
 // WZD o112p10
-// drake178: AITP_CracksCall()
 /*
-Cracks Call target picker: picks the strongest visible enemy ground unit (not flying, merging, or non-corporeal), with a +30 bonus for a unit standing on an intact wall square
-when attacking a walled city.  If no unit qualifies but the city is walled, falls back to the same five wall-square probes as AITP_Disrupt() and returns 99 with the square.
-OGBUG  both the in-loop wall test and the fallback probes index walls[cgy][cgx] without rebasing (see AITP_Disrupt())
 NOTE  unlike AITP_EarthToMud(), MV_TELEPORT units are NOT excluded
 */
 int16_t AITP_CracksCall(int16_t player_idx, int16_t * target_cgx, int16_t * target_cgy)
 {
-    int16_t unit_threat = 0;      /* Unit_Threat */
-    int16_t retn_value = 0;       /* Retn_Value */
-    int16_t highest_threat = 0;   /* Highest_Threat */
-    int16_t battle_unit_idx = 0;  /* _DI_ */
+    int16_t unit_threat = 0;
+    int16_t selected_target_idx = 0;
+    int16_t highest_threat = 0;
+    int16_t battle_unit_idx = 0;
     struct s_BATTLE_UNIT * bu_ptr = NULL;
-
     highest_threat = 0;
-    retn_value = ST_UNDEFINED;
-
+    selected_target_idx = ST_UNDEFINED;
     for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
     {
         unit_threat = ST_UNDEFINED;
         bu_ptr = &battle_units[battle_unit_idx];
-
         if(
             (bu_ptr->controller_idx != player_idx)
             &&
@@ -1740,89 +1704,115 @@ int16_t AITP_CracksCall(int16_t player_idx, int16_t * target_cgx, int16_t * targ
                 unit_threat += 30;  /* drop the wall out from under it */
             }
         }
-
         if(unit_threat > highest_threat)
         {
             highest_threat = unit_threat;
-            retn_value = battle_unit_idx;
+            selected_target_idx = battle_unit_idx;
             *target_cgx = bu_ptr->cgx;
             *target_cgy = bu_ptr->cgy;
         }
     }
-
     /* fallback: no unit target, but the city is walled - target a standing wall square instead */
     if(
         (_combat_defender_player != player_idx)
         &&
         (battlefield->walled == 1)
         &&
-        (retn_value == ST_UNDEFINED)
+        (selected_target_idx == ST_UNDEFINED)
     )
     {
-        /* OGBUG  same unrebased walls[cgy][cgx] pattern as AITP_Disrupt() —
-         *   see the header comment there for details.  Preserved via
-         *   pointer arithmetic on a flat int16_t*.
-         *   OG (preserved):    ((int16_t*)&walls[0][0])[cgy * 4 + cgx]
-         *   Correct rebased:   battlefield->walls[cgy - 10][cgx - 5]  */
+        /* OGBUG  same unrebased walls[cgy][cgx] pattern as AITP_Disrupt() — see the header comment there for details. Preserved via pointer arithmetic on a flat int16_t*. OG (preserved):    ((int16_t*)&walls[0][0])[cgy * 4 + cgx] Correct rebased:   battlefield->walls[cgy - 10][cgx - 5] */
         int16_t * walls_flat = (int16_t *)&battlefield->walls[0][0];
-        if(walls_flat[13 * 4 + 8] == 1)       /* OGBUG 15D0h; rebased: walls[3][3] */
+        if(walls_flat[13 * 4 + 8] == 1)       /* OGBUG: rebased: walls[3][3] */
         {
             *target_cgx = 8;
             *target_cgy = 13;
-            retn_value = 99;
+            selected_target_idx = 99;
         }
-        else if(walls_flat[11 * 4 + 8] == 1)  /* OGBUG 15C0h; rebased: walls[1][3] */
+        else if(walls_flat[11 * 4 + 8] == 1)  /* OGBUG: rebased: walls[1][3] */
         {
             *target_cgx = 8;
             *target_cgy = 11;
-            retn_value = 99;
+            selected_target_idx = 99;
         }
-        else if(walls_flat[10 * 4 + 8] == 1)  /* OGBUG 15B8h; rebased: walls[0][3] */
+        else if(walls_flat[10 * 4 + 8] == 1)  /* OGBUG: rebased: walls[0][3] */
         {
             *target_cgx = 8;
             *target_cgy = 10;
-            retn_value = 99;
+            selected_target_idx = 99;
         }
-        else if(walls_flat[13 * 4 + 7] == 1)  /* OGBUG 15CEh; rebased: walls[3][2] */
+        else if(walls_flat[13 * 4 + 7] == 1)  /* OGBUG: rebased: walls[3][2] */
         {
             *target_cgx = 7;
             *target_cgy = 13;
-            retn_value = 99;
+            selected_target_idx = 99;
         }
-        else if(walls_flat[10 * 4 + 7] == 1)  /* OGBUG 15B6h; rebased: walls[0][2] */
+        else if(walls_flat[10 * 4 + 7] == 1)  /* OGBUG: rebased: walls[0][2] */
         {
             *target_cgx = 7;
             *target_cgy = 10;
-            retn_value = 99;
+            selected_target_idx = 99;
         }
     }
-
-    return retn_value;
+    return selected_target_idx;
 }
 
 
 // WZD o112p11
-// drake178: UU_AITP_WordofRecall()
+int16_t AITP_Word_Of_Recall(int16_t player_idx)
+{
+    int16_t current_hp = 0;
+    int16_t max_hp = 0;
+    int16_t selected_target_idx = 0;
+    int16_t highest_danger = 0;
+    int16_t battle_unit_idx = 0;
+    int16_t unit_danger = 0;
+    highest_danger = 0;
+    selected_target_idx = ST_UNDEFINED;
+    for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
+    {
+        unit_danger = -1;
+        if(battle_units[battle_unit_idx].controller_idx != player_idx)
+        {
+            continue;
+        }
+        if(battle_units[battle_unit_idx].status != bus_Active)
+        {
+            continue;
+        }
+        if(battle_units[battle_unit_idx].cost < 200)
+        {
+            continue;
+        }
+        unit_danger = Effective_Battle_Unit_Strength(battle_unit_idx);
+        max_hp = battle_units[battle_unit_idx].figure_max * battle_units[battle_unit_idx].hits;
+        current_hp = (battle_units[battle_unit_idx].figure_cnt * battle_units[battle_unit_idx].hits) - battle_units[battle_unit_idx].front_figure_damage;
+        if(current_hp != 0)
+        {
+            unit_danger = ((int16_t)(unit_danger * max_hp) / current_hp);
+        }
+        if(unit_danger > highest_danger)
+        {
+            highest_danger = unit_danger;
+            selected_target_idx = battle_unit_idx;
+        }
+    }
+    return selected_target_idx;
+}
+
 
 // WZD o112p12
-// drake178: AITP_RecallHero()
-/*
-Recall Hero target picker: picks the own active hero in the most danger - effective strength scaled up by max-HP / current-HP - unless the battle is at the caster's own Fortress
-(never recall the Fortress defense).  Returns the battle unit index or -1.
-*/
 int16_t AITP_RecallHero(int16_t player_idx)
 {
-    int16_t current_hp = 0;       /* Current_HP */
-    int16_t max_hp = 0;           /* Max_HP */
-    int16_t picked_target = 0;    /* Target_Index */
-    int16_t highest_danger = 0;   /* Highest_Danger */
-    int16_t unit_danger = 0;      /* _DI_ */
-    int16_t battle_unit_idx = 0;  /* _SI_ */
+    int16_t current_hp = 0;
+    int16_t max_hp = 0;
+    int16_t selected_target_idx = 0;
+    int16_t highest_danger = 0;
+    int16_t unit_danger = 0;
+    int16_t battle_unit_idx = 0;
     struct s_BATTLE_UNIT * bu_ptr = NULL;
-
     highest_danger = 0;
-    picked_target = ST_UNDEFINED;
-
+    selected_target_idx = ST_UNDEFINED;
     if(
         (_FORTRESSES[player_idx].wx == _combat_wx)
         &&
@@ -1831,33 +1821,28 @@ int16_t AITP_RecallHero(int16_t player_idx)
         (_FORTRESSES[player_idx].wp == _combat_wp)
     )
     {
-        return picked_target;  /* -1: never recall out of the own-Fortress battle */
+        return selected_target_idx;  /* -1: never recall out of the own-Fortress battle */
     }
-
     for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
     {
         unit_danger = -1;
         bu_ptr = &battle_units[battle_unit_idx];
-
         if(bu_ptr->controller_idx != player_idx) continue;
         if(bu_ptr->status != bus_Active) continue;
         if(_UNITS[bu_ptr->unit_idx].Hero_Slot <= ST_UNDEFINED) continue;
-
         unit_danger = Effective_Battle_Unit_Strength(battle_unit_idx);
         max_hp = (bu_ptr->figure_max * bu_ptr->hits);
         current_hp = ((bu_ptr->figure_cnt * bu_ptr->hits) - bu_ptr->front_figure_damage);
         if(current_hp != 0)
         {
-            /* Dasm: `imul Max_HP` followed by `cwd` - the product is truncated to 16 bits before the divide */
+            /* OGBUG: `imul max_hp` followed by `cwd` - the product is truncated to 16 bits before the divide */
             unit_danger = ((int16_t)(unit_danger * max_hp) / current_hp);
         }
-
         if(unit_danger > highest_danger)
         {
             highest_danger = unit_danger;
-            picked_target = battle_unit_idx;
+            selected_target_idx = battle_unit_idx;
         }
     }
-
-    return picked_target;
+    return selected_target_idx;
 }

@@ -79,7 +79,7 @@ XREF:
     j_Combat_Effective_Resistance()
         AITP_Combat_Spell()
         AITP_WarpCreature()
-        UU15_AITP_Disintegrate()
+        AITP_Disintegrate()
         Combat_Cast_Apply_Spell_Effect()
         WIZ_CallChaos()
         AI_EvaluateCmbtSpell()

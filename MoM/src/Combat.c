@@ -2725,7 +2725,7 @@ void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy)
     int16_t delta_x = 0;
     int16_t delta_y = 0;
     int16_t ranged_group = 0;
-    int16_t Unused_Local = 0;
+    int16_t niu_local_variable = 0;
     battle_unit_idx = _battle_unit_idx;
     /* Get target unit/object index from combat grid */
     combat_grid_target = g_combat_grid_action_map[cgy][cgx];
@@ -2759,7 +2759,7 @@ void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy)
     /* Calculate Manhattan distance components */
     delta_x = abs(target_cgx - battle_units[battle_unit_idx].cgx);
     delta_y = abs(target_cgy - battle_units[battle_unit_idx].cgy);
-    Unused_Local = -2;
+    niu_local_variable = -2;
     if(battle_units[battle_unit_idx].movement_points <= 0)
     {
         return;
@@ -9226,35 +9226,32 @@ int16_t Get_Effective_Melee_Strength(int16_t melee, int16_t thrown, int16_t figu
  */
 int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * target_wx, int16_t * target_wy)
 {
-    int16_t damage_types[3] = { 0, 0, 0 };
-    int16_t Resist_Modifier = 0;
+    int16_t damage_types[NUM_DAMAGE_TYPES] = { 0, 0, 0 };
+    int16_t spell_resistance_modifier = 0;
     int32_t enchantments = 0;
-    int16_t Unit_Resist = 0;
-    int16_t Picked_Target = 0;
-    int16_t Target_Value = 0;
+    int16_t unit_resistance = 0;  /* Unit_Resist  reused: attacker/defender side index in the Battlefield arm, own-unit count then retry counter in the Summoning arm */
+    int16_t selected_target_idx = 0;
+    int16_t target_value = 0;
     int16_t highest_value = 0;
     int16_t battle_unit_idx = 0;
     struct s_BATTLE_UNIT * bu_ptr = NULL;
     uint32_t battle_unit_enchantments = 0;
-
     highest_value = ST_UNDEFINED;
-    Picked_Target = ST_UNDEFINED;
-
+    selected_target_idx = ST_UNDEFINED;
     /* OGBUG  switch jump table excludes Wall spells */
     if(spell_data_table[spell_idx].type > scc_Combat_Banish)
     {
-        return Picked_Target;
+        return selected_target_idx;
     }
-
     switch(spell_data_table[spell_idx].type)
     {
         case scc_Direct_Damage_Fixed:
         case scc_Direct_Damage_Variable:  /* Direct Damage */
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
-                damage_types[0] = 0;
-                damage_types[1] = 0;
-                damage_types[2] = 0;
+                damage_types[dt_Normal] = 0;
+                damage_types[dt_Drain] = 0;
+                damage_types[dt_Doom] = 0;
                 bu_ptr = &battle_units[battle_unit_idx];
                 if(bu_ptr->Attribs_1 & USA_IMMUNITY_MAGIC) continue;
                 if(spell_idx == spl_Star_Fires)
@@ -9282,29 +9279,28 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 if(spell_idx == spl_Life_Drain)
                 {
                     /* Manual effective resistance check for Life Drain */
-                    Unit_Resist = Combat_Effective_Resistance(battle_units[battle_unit_idx], sbr_Death);
-                    damage_types[1] = 13 - Unit_Resist;
-                    if(damage_types[1] < 0) damage_types[1] = 0;
+                    unit_resistance = Combat_Effective_Resistance(battle_units[battle_unit_idx], sbr_Death);
+                    damage_types[dt_Drain] = (13 - unit_resistance);
+                    if(damage_types[dt_Drain] < 0) damage_types[dt_Drain] = 0;
                 }
                 else
                 {
                     Compute_Battle_Unit_Damage_From_Spell(spell_idx, battle_unit_idx, &damage_types[0], 25);
                 }
-                Target_Value = damage_types[0] + damage_types[1] + damage_types[2];
-                if(Target_Value > 0)
+                target_value = damage_types[dt_Normal] + damage_types[dt_Drain] + damage_types[dt_Doom];
+                if(target_value > 0)
                 {
                     /* MoM AI heuristic: Prioritize damaged/weakened units */
                     /* Value += (100 - current_total_hp) + current_figure_damage */
-                    Target_Value += (100 - (bu_ptr->figure_cnt * bu_ptr->hits)) + bu_ptr->front_figure_damage;
+                    target_value += (100 - (bu_ptr->figure_cnt * bu_ptr->hits)) + bu_ptr->front_figure_damage;
                 }
-                if(Target_Value > highest_value)
+                if(target_value > highest_value)
                 {
-                    highest_value = Target_Value;
-                    Picked_Target = battle_unit_idx;
+                    highest_value = target_value;
+                    selected_target_idx = battle_unit_idx;
                 }
             }
             break;
-
         case scc_Combat_Destroy_Unit:
         case scc_Combat_Banish: /* Resistance-based Kill Spells */
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
@@ -9330,27 +9326,26 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                     if(spell_data_table[spell_idx].magic_realm == sbr_Chaos || spell_data_table[spell_idx].magic_realm == sbr_Death) continue;
                 }
                 if(!Target_Is_Visible(battle_unit_idx)) continue;
-                Resist_Modifier = Spell_Resistance_Modifier(spell_idx);
-                Unit_Resist = Combat_Effective_Resistance(battle_units[battle_unit_idx], spell_data_table[spell_idx].magic_realm);
-                Unit_Resist += Resist_Modifier;
-                if(Unit_Resist >= 10) continue;
+                spell_resistance_modifier = Spell_Resistance_Modifier(spell_idx);
+                unit_resistance = Combat_Effective_Resistance(battle_units[battle_unit_idx], spell_data_table[spell_idx].magic_realm);
+                unit_resistance += spell_resistance_modifier;
+                if(unit_resistance >= 10) continue;
                 if(spell_idx == spl_Disintegrate)
                 {
-                    Target_Value = Effective_Battle_Unit_Strength(battle_unit_idx);
+                    target_value = Effective_Battle_Unit_Strength(battle_unit_idx);
                 }
                 else
                 {
                     /* Scaled strength value based on failure chance */
-                    Target_Value = (Effective_Battle_Unit_Strength(battle_unit_idx) * (10 - Unit_Resist) + 9) / 10;
+                    target_value = (Effective_Battle_Unit_Strength(battle_unit_idx) * (10 - unit_resistance) + 9) / 10;
                 }
-                if(Target_Value > highest_value)
+                if(target_value > highest_value)
                 {
-                    highest_value = Target_Value;
-                    Picked_Target = battle_unit_idx;
+                    highest_value = target_value;
+                    selected_target_idx = battle_unit_idx;
                 }
             }
             break;
-
         case scc_Unit_Enchantment: /* Unit Buffs */
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
@@ -9373,17 +9368,16 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                     /* Don't berserk if target is out of range of movement */
                     if(Range_To_Battle_Unit(battle_unit_idx, bu_ptr->target_battle_unit_idx) > bu_ptr->movement_points) continue;
                     /* Don't berserk Heroes */
-                    if(_UNITS[bu_ptr->unit_idx].Hero_Slot != ST_UNDEFINED) continue;
+                    if(_UNITS[bu_ptr->unit_idx].Hero_Slot > ST_UNDEFINED) continue;
                 }
-                Target_Value = (bu_ptr->figure_cnt * 10) + bu_ptr->melee;
-                if(Target_Value > highest_value)
+                target_value = (bu_ptr->figure_cnt * 10) + bu_ptr->melee;
+                if(target_value > highest_value)
                 {
-                    highest_value = Target_Value;
-                    Picked_Target = battle_unit_idx;
+                    highest_value = target_value;
+                    selected_target_idx = battle_unit_idx;
                 }
             }
             break;
-
         case scc_Unit_Enchantment_Normal_Only:
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
@@ -9396,15 +9390,14 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 enchantments |= bu_ptr->item_enchantments;
                 if(enchantments & spell_data_table[spell_idx].enchantments) continue;
                 if(spell_idx == spl_Heroism && _UNITS[bu_ptr->unit_idx].Level > 2) continue;
-                Target_Value = (bu_ptr->figure_cnt * 10) + bu_ptr->melee;
-                if(Target_Value > highest_value)
+                target_value = (bu_ptr->figure_cnt * 10) + bu_ptr->melee;
+                if(target_value > highest_value)
                 {
-                    highest_value = Target_Value;
-                    Picked_Target = battle_unit_idx;
+                    highest_value = target_value;
+                    selected_target_idx = battle_unit_idx;
                 }
             }
             break;
-
         case scc_Resistable_Spell: /* Combat Enchantments / Debuffs */
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
@@ -9428,19 +9421,18 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                     if(bu_ptr->melee <= 1 && bu_ptr->ranged <= 1) continue;
                 }
                 if(!Target_Is_Visible(battle_unit_idx)) continue;
-                Resist_Modifier = Spell_Resistance_Modifier(spell_idx);
-                Unit_Resist = Combat_Effective_Resistance(battle_units[battle_unit_idx], spell_data_table[spell_idx].magic_realm);
-                Unit_Resist += Resist_Modifier;
-                if(Unit_Resist >= 10) continue;
-                Target_Value = (Effective_Battle_Unit_Strength(battle_unit_idx) * (10 - Unit_Resist) + 9) / 10;
-                if(Target_Value > highest_value)
+                spell_resistance_modifier = Spell_Resistance_Modifier(spell_idx);
+                unit_resistance = Combat_Effective_Resistance(battle_units[battle_unit_idx], spell_data_table[spell_idx].magic_realm);
+                unit_resistance += spell_resistance_modifier;
+                if(unit_resistance >= 10) continue;
+                target_value = (Effective_Battle_Unit_Strength(battle_unit_idx) * (10 - unit_resistance) + 9) / 10;
+                if(target_value > highest_value)
                 {
-                    highest_value = Target_Value;
-                    Picked_Target = battle_unit_idx;
+                    highest_value = target_value;
+                    selected_target_idx = battle_unit_idx;
                 }
             }
             break;
-
         case scc_Mundane_Curse: /* Resistance-based Debuffs */
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
@@ -9460,17 +9452,16 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                 if(bu_ptr->status != bus_Active) continue;
                 if(bu_ptr->race >= rt_Arcane) continue;
                 if(!Target_Is_Visible(battle_unit_idx)) continue;
-                Unit_Resist = Combat_Effective_Resistance(battle_units[battle_unit_idx], spell_data_table[spell_idx].magic_realm);
-                if(Unit_Resist >= 10) continue;
-                Target_Value = (Effective_Battle_Unit_Strength(battle_unit_idx) * (10 - Unit_Resist) + 9) / 10;
-                if(Target_Value > highest_value)
+                unit_resistance = Combat_Effective_Resistance(battle_units[battle_unit_idx], spell_data_table[spell_idx].magic_realm);
+                if(unit_resistance >= 10) continue;
+                target_value = (Effective_Battle_Unit_Strength(battle_unit_idx) * (10 - unit_resistance) + 9) / 10;
+                if(target_value > highest_value)
                 {
-                    highest_value = Target_Value;
-                    Picked_Target = battle_unit_idx;
+                    highest_value = target_value;
+                    selected_target_idx = battle_unit_idx;
                 }
             }
             break;
-
         case scc_Unresistable_Spell:
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
@@ -9502,106 +9493,99 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                     if(spell_data_table[spell_idx].magic_realm == sbr_Chaos || spell_data_table[spell_idx].magic_realm == sbr_Death) continue;
                 }
                 if(!Target_Is_Visible(battle_unit_idx)) continue;
-                Target_Value = Effective_Battle_Unit_Strength(battle_unit_idx);
+                target_value = Effective_Battle_Unit_Strength(battle_unit_idx);
                 if(spell_idx == spl_Web && (bu_ptr->Move_Flags & MV_FLYING))
                 {
-                    Target_Value += 2000;
+                    target_value += 2000;
                 }
-                if(Target_Value > highest_value)
+                if(target_value > highest_value)
                 {
-                    highest_value = Target_Value;
-                    Picked_Target = battle_unit_idx;
+                    highest_value = target_value;
+                    selected_target_idx = battle_unit_idx;
                 }
             }
             break;
-
         case scc_Battlefield_Spell:
         case scc_Combat_Counter_Magic: /* Global Battlefield Enchantments */
-            Unit_Resist = (player_idx == _combat_attacker_player) ? 0 : 1;
-            if(combat_enchantments[*(int16_t /* */ *)&spell_data_table[spell_idx].Param0 + Unit_Resist] > 0)
+            unit_resistance = (player_idx == _combat_attacker_player) ? 0 : 1;
+            if(combat_enchantments[*(int16_t /* */ *)&spell_data_table[spell_idx].Param0 + unit_resistance] > 0)
             {
                 return ST_UNDEFINED;
             }
             if(spell_idx == spl_True_Light || spell_idx == spl_Darkness)
             {
-                /* Returns 99 if valid targets exist, else -1 */
-                /* BUG: Assumes realm exclusivity, doesn't check allegiance */
-                Picked_Target = AITP_DarknessLight(spell_idx);
+                selected_target_idx = AITP_DarknessLight(spell_idx);
             }
             else if(spell_idx == spl_Holy_Word)
             {
-                /* BUG: Fails to set a return value, checks inactive units, ignores magic immunity */
-                Picked_Target = AITP_HolyWord(player_idx);
+                selected_target_idx = AITP_HolyWord(player_idx);
             }
             else
             {
-                Picked_Target = 99;
+                selected_target_idx = 99;
             }
             break;
-
         case scc_Special_Spell: /* Special Target Pickers */
+        {
             if(spell_idx == spl_Healing)
             {
-                Picked_Target = AITP_Healing(player_idx);
+                selected_target_idx = AITP_Healing(player_idx);
             }
-            else if(spell_idx == spl_Mass_Healing)
+            if(spell_idx == spl_Mass_Healing)
             {
-                Picked_Target = AITP_Healing(player_idx);
-                if(Picked_Target != ST_UNDEFINED) Picked_Target = 99;
+                selected_target_idx = AITP_Healing(player_idx);
+                if(selected_target_idx > ST_UNDEFINED)
+                {
+                    selected_target_idx = 99;
+                }
             }
-            else if(spell_idx == spl_Warp_Wood)
+            if(spell_idx == spl_Warp_Wood)
             {
-                Picked_Target = AITP_WarpWood(player_idx);
+                selected_target_idx = AITP_WarpWood(player_idx);
             }
-            else if(spell_idx == spl_Warp_Creature)
+            if(spell_idx == spl_Warp_Creature)
             {
-                Picked_Target = AITP_WarpCreature(player_idx);
+                selected_target_idx = AITP_WarpCreature(player_idx);
             }
-            else if(spell_idx == spl_Earth_To_Mud)
+            if(spell_idx == spl_Earth_To_Mud)
             {
-                /* BUG: Ignores speed and terrain */
-                Picked_Target = AITP_EarthToMud(player_idx, target_wx, target_wy);
+                selected_target_idx = AITP_EarthToMud(player_idx, target_wx, target_wy);
             }
-            else if(spell_idx == spl_Disrupt)
+            if(spell_idx == spl_Disrupt)
             {
-                /* BUG: Uses uninitialized wall structure offsets */
-                Picked_Target = AITP_Disrupt(player_idx, target_wx, target_wy);
+                selected_target_idx = AITP_Disrupt(player_idx, target_wx, target_wy);
             }
-            else if(spell_idx == spl_Recall_Hero)
+            if(spell_idx == spl_Recall_Hero)
             {
-                /* WARNING: Does not check for banishment */
-                Picked_Target = AITP_RecallHero(player_idx);
+                selected_target_idx = AITP_RecallHero(player_idx);
             }
-            else if(spell_idx == spl_Cracks_Call)
+            if(spell_idx == spl_Cracks_Call)
             {
-                /* BUG: Uninitialized wall structure offsets */
-                Picked_Target = AITP_CracksCall(player_idx, target_wx, target_wy);
+                selected_target_idx = AITP_CracksCall(player_idx, target_wx, target_wy);
             }
-            else if(spell_idx == spl_Raise_Dead)
+            if(spell_idx == spl_Raise_Dead)
             {
-                Picked_Target = 99;
+                selected_target_idx = 99;
                 *target_wx = 0;
                 *target_wy = 0;
             }
-            break;
-
+        } break;
         case scc_Dispels:
-            /* BUGs: Dispel confusion on own units, ignores Invulnerability except for some conditions */
-            Picked_Target = AITP_DispelMagic(player_idx);
-            break;
-
+        {
+            selected_target_idx = AITP_DispelMagic(player_idx);
+        } break;
         case scc_Summoning: /* Unit Summoning (Find valid square) */
             if(_units == 1000) return ST_UNDEFINED;
-            Unit_Resist = 0;
+            unit_resistance = 0;
             for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
             {
                 if(battle_units[battle_unit_idx].controller_idx == player_idx && battle_units[battle_unit_idx].status == bus_Active)
                 {
-                    Unit_Resist++;
+                    unit_resistance++;
                 }
             }
-            if(Unit_Resist >= 9 || _combat_total_unit_count >= 36) return ST_UNDEFINED;
-            Unit_Resist = 0;
+            if(unit_resistance >= 9 || _combat_total_unit_count >= 36) return ST_UNDEFINED;
+            unit_resistance = 0;
             do {
                 if(player_idx == _combat_attacker_player)
                 {
@@ -9612,44 +9596,45 @@ int16_t AITP_Combat_Spell(int16_t spell_idx, int16_t player_idx, int16_t * targe
                     *target_wx = 7 + Random(3);
                 }
                 *target_wy = 8 + Random(3);
-                Unit_Resist++;
+                unit_resistance++;
                 /* Check square validity via g_combat_grid_action_map lookup */
-                /* BUG: Can potentially loop indefinitely or return invalid coords if it hits 200 tries */
+                /* OGBUG: should signal failure when all 200 rolls land on an occupied square; instead the loop falls out with the last rejected coordinates still in *target_wx / *target_wy and the caller is told 99 (target found) regardless */
                 if(g_combat_grid_action_map[*target_wy][*target_wx] < 0)
                 {
                     break;
                 }
-            } while(Unit_Resist < 200);
-            Picked_Target = 99;
+            } while(unit_resistance < 200);
+            selected_target_idx = 99;
             break;
-
         case scc_Disenchants:
-            Picked_Target = 99;
-            break;
-
+        {
+            selected_target_idx = 99;
+        } break;
         default:
+        {
             /* loc_8B1E4 - Do nothing */
-            break;
+        } break;
     }
-
-    return Picked_Target;
-
+    return selected_target_idx;
 }
 
-// WZD 111p02
-int16_t AITP_DarknessLight(int16_t Spell_Index)
+
+// WZD o111p02
+/* Returns 99 if valid targets exist, else -1 */
+/* BUG: Assumes realm exclusivity, doesn't check allegiance */
+int16_t AITP_DarknessLight(int16_t spell_idx)
 {
-    int16_t Unused_Local;
-    int16_t Picked_Target;
-    int16_t itr;
-    Picked_Target = ST_UNDEFINED;
-    if(Spell_Index == spl_True_Light)
+    int16_t niu_local_variable = 0;
+    int16_t selected_target_idx = 0;
+    int16_t itr = 0;
+    selected_target_idx = ST_UNDEFINED;
+    if(spell_idx == spl_True_Light)
     {
-        Unused_Local = 1;
+        niu_local_variable = 1;
     }
     else
     {
-        Unused_Local = 0;
+        niu_local_variable = 0;
     }
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
@@ -9657,39 +9642,30 @@ int16_t AITP_DarknessLight(int16_t Spell_Index)
         {
             if(battle_units[itr].status == bus_Active)
             {
-                Picked_Target = 99;
+                selected_target_idx = 99;
             }
         }
     }
-    return Picked_Target;
+    return selected_target_idx;
 }
 
 
-// WZD 111p03
-// drake178: AITP_Healing()
-/*
-Healing / Mass Healing target picker: picks the own active non-Death battle unit missing the most hit-points (missing whole figures * hits-per-figure, plus the damage on the front
-figure), weighted by attack strength (melee + ranged).  Units missing 2 or fewer hit-points are not worth a heal (value 0).
-*/
+// WZD o111p03
 int16_t AITP_Healing(int16_t player_idx)
 {
-    int16_t picked_target = 0;    /* BU_Index */
-    int16_t target_value = 0;     /* _SI_ */
-    int16_t highest_value = 0;    /* _DI_ */
-    int16_t battle_unit_idx = 0;  /* _CX_ */
+    int16_t selected_target_idx = 0;
+    int16_t target_value = 0;
+    int16_t highest_value = 0;
+    int16_t battle_unit_idx = 0;
     struct s_BATTLE_UNIT * bu_ptr = NULL;
-
     highest_value = 0;
-    picked_target = ST_UNDEFINED;
-
+    selected_target_idx = ST_UNDEFINED;
     for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
     {
         bu_ptr = &battle_units[battle_unit_idx];
-
         if(bu_ptr->controller_idx != player_idx) continue;
         if(bu_ptr->status != bus_Active) continue;
         if(bu_ptr->race == rt_Death) continue;  /* Death creatures cannot be healed */
-
         target_value = (((bu_ptr->figure_max - bu_ptr->figure_cnt) * bu_ptr->hits) + bu_ptr->front_figure_damage);
         if(target_value > 2)
         {
@@ -9699,50 +9675,38 @@ int16_t AITP_Healing(int16_t player_idx)
         {
             target_value = 0;
         }
-
         if(target_value > highest_value)
         {
             highest_value = target_value;
-            picked_target = battle_unit_idx;
+            selected_target_idx = battle_unit_idx;
         }
     }
-
-    return picked_target;
+    return selected_target_idx;
 }
 
-// WZD 111p04
-// drake178: AITP_WarpWood()
-/*
-Warp Wood target picker: picks the visible enemy missile unit whose remaining ammunition is worth the most (ranged strength * ammo * figures).  Non-missile units get a value of -10,
-which never beats the -1 starting value, so only missile units can be picked.
-*/
+
+// WZD o111p04
 int16_t AITP_WarpWood(int16_t player_idx)
 {
-    int32_t enchantments = 0;     /* Enchants_HO:Enchants_LO */
-    int16_t picked_target = 0;    /* BU_Index */
-    int16_t highest_value = 0;    /* Target_Value */
-    int16_t target_value = 0;     /* _DI_ */
-    int16_t battle_unit_idx = 0;  /* _SI_ */
+    int32_t enchantments = 0;
+    int16_t selected_target_idx = 0;
+    int16_t highest_value = 0;
+    int16_t target_value = 0;
+    int16_t battle_unit_idx = 0;
     struct s_BATTLE_UNIT * bu_ptr = NULL;
-
-    picked_target = ST_UNDEFINED;
+    selected_target_idx = ST_UNDEFINED;
     highest_value = ST_UNDEFINED;
-
     for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
     {
         bu_ptr = &battle_units[battle_unit_idx];
-
         if(bu_ptr->Attribs_1 & USA_IMMUNITY_MAGIC) continue;
-
         enchantments = _UNITS[bu_ptr->unit_idx].enchantments;
         enchantments |= bu_ptr->enchantments;
         enchantments |= bu_ptr->item_enchantments;
         if(enchantments & UE_RIGHTEOUSNESS) continue;
-
         if(bu_ptr->controller_idx == player_idx) continue;
         if(bu_ptr->status != bus_Active) continue;
         if(!Target_Is_Visible(battle_unit_idx)) continue;
-
         if((bu_ptr->ranged_type / 10) == rag_Missile)
         {
             target_value = ((bu_ptr->ranged * bu_ptr->ammo) * bu_ptr->figure_cnt);
@@ -9751,104 +9715,129 @@ int16_t AITP_WarpWood(int16_t player_idx)
         {
             target_value = -10;
         }
-
         if(target_value > highest_value)
         {
             highest_value = target_value;
-            picked_target = battle_unit_idx;
+            selected_target_idx = battle_unit_idx;
         }
     }
-
-    return picked_target;
+    return selected_target_idx;
 }
 
-// WZD 111p05
-// drake178: AITP_WarpCreature()
-/*
-Warp Creature target picker: picks the visible enemy normal (non-Fantastic) unit with the highest attack value scaled by the chance to beat its resistance, skipping units that
-already carry any Warp Creature effect.
-*/
+
+// WZD o111p05
 int16_t AITP_WarpCreature(int16_t player_idx)
 {
-    int32_t enchantments = 0;     /* Enchants_HO:Enchants_LO */
-    int16_t picked_target = 0;    /* BU_Index */
-    int16_t highest_value = 0;    /* highest_value */
-    int16_t target_value = 0;     /* Target_Value */
-    int16_t unit_resist = 0;      /* _DI_ */
-    int16_t battle_unit_idx = 0;  /* _SI_ */
+    int32_t enchantments = 0;
+    int16_t selected_target_idx = 0;
+    int16_t highest_value = 0;
+    int16_t target_value = 0;
+    int16_t unit_resist = 0;
+    int16_t battle_unit_idx = 0;
     struct s_BATTLE_UNIT * bu_ptr = NULL;
-
-    picked_target = ST_UNDEFINED;
+    selected_target_idx = ST_UNDEFINED;
     highest_value = ST_UNDEFINED;
-
     for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
     {
         bu_ptr = &battle_units[battle_unit_idx];
-
         if(bu_ptr->Attribs_1 & USA_IMMUNITY_MAGIC) continue;
-
         enchantments = _UNITS[bu_ptr->unit_idx].enchantments;
         enchantments |= bu_ptr->enchantments;
         enchantments |= bu_ptr->item_enchantments;
         if(enchantments & UE_RIGHTEOUSNESS) continue;
-
         if(bu_ptr->combat_effects & bue_Warped_Attack) continue;
         if(bu_ptr->combat_effects & bue_Warped_Defense) continue;
         if(bu_ptr->combat_effects & bue_Warped_Resist) continue;
-
         if(bu_ptr->controller_idx == player_idx) continue;
         if(bu_ptr->status != bus_Active) continue;
         if(bu_ptr->race >= rt_Arcane) continue;  /* Fantastic creatures are exempt */
         if(!Target_Is_Visible(battle_unit_idx)) continue;
-
         unit_resist = Combat_Effective_Resistance(battle_units[battle_unit_idx], spell_data_table[spl_Warp_Creature].magic_realm);
         if(unit_resist >= 10) continue;
-
         /* attack value scaled by the failure chance of the resistance roll */
         target_value = (((((bu_ptr->melee + bu_ptr->ranged) * bu_ptr->figure_cnt) * (10 - unit_resist)) + 9) / 10);
-
         if(target_value > highest_value)
         {
             highest_value = target_value;
-            picked_target = battle_unit_idx;
+            selected_target_idx = battle_unit_idx;
         }
     }
-
-    return picked_target;
+    return selected_target_idx;
 }
 
-// WZD 111p06
-// drake178: UU15_AITP_Disintegrate() 
-// UU15_AITP_Disintegrate()
 
-// WZD 111p07
-// drake178: AITP_DispelMagic()
+// WZD o111p06
+int16_t AITP_Disintegrate(int16_t player_idx)
+{
+    int16_t selected_target_idx = 0;
+    int16_t highest_value = 0;
+    int16_t effective_resist = 0;
+    uint32_t enchantments = 0;
+    int16_t unit_idx = 0;
+    int16_t target_value = 0;
+    selected_target_idx = ST_UNDEFINED;
+    highest_value = -1;
+    for(unit_idx = 0; unit_idx < _combat_total_unit_count; unit_idx++)
+    {
+        if((battle_units[unit_idx].Attribs_1 & USA_IMMUNITY_MAGIC) != 0)
+        {
+            continue;
+        }
+        enchantments = _UNITS[battle_units[unit_idx].unit_idx].enchantments | battle_units[unit_idx].enchantments | battle_units[unit_idx].item_enchantments;
+        if((enchantments & UE_RIGHTEOUSNESS) != 0)  /* provides complete immunity from all death and chaos magic spells */
+        {
+            continue;
+        }
+        if(battle_units[unit_idx].controller_idx == player_idx)
+        {
+            continue;
+        }
+        if(battle_units[unit_idx].status != bus_Active)
+        {
+            continue;
+        }
+        if(!Target_Is_Visible(unit_idx))
+        {
+            continue;
+        }
+        effective_resist = Combat_Effective_Resistance(battle_units[unit_idx], spell_data_table[spl_Disintegrate].magic_realm);
+        if(effective_resist > 10)
+        {
+            continue;
+        }
+        target_value = ((battle_units[unit_idx].melee + battle_units[unit_idx].ranged) * battle_units[unit_idx].figure_cnt);
+        if(target_value > highest_value)
+        {
+            highest_value = target_value;
+            selected_target_idx = unit_idx;
+        }
+    }
+    return selected_target_idx;
+}
+
+
+// WZD o111p07
 /*
-Dispel Magic target picker.  Scores every battle unit two ways and keeps the highest: an own active unit carrying combat debuffs (Vertigo, Confusion, Black Sleep, Warp effects,
-...) is worth its strength plus a bonus per debuff; a visible enemy active unit carrying enchantments (or Haste / Creature Binding / Possession / hostile Confusion) is worth its
-strength plus a bonus per enchantment worth stripping.
-OGBUG  the attacker/defender branch fails to swap: both branches assign own = attacker and enemy = defender realm data, so a defending caster evaluates with the attacker's realms
-OGBUG  the enemy-side eligibility test is a SIGNED compare of the combined enchantments, so a unit whose only enchantment is Invulnerability (bit 31) reads as "no enchantments"
-       and is only eligible via the Haste/Binding/Possession/Confusion effects (the "ignores Invulnerability" bug noted at the dispatch call site)
-NOTE   unlike the other AITP pickers, the combined enchantments here do NOT include item_enchantments
+OGBUG:  the attacker/defender branch fails to swap: both branches assign own = attacker and enemy = defender realm data, so a defending caster evaluates with the attacker's realms
+OGBUG:  the enemy-side eligibility test is a SIGNED compare of the combined enchantments, so a unit whose only enchantment is Invulnerability (bit 31) reads as "no enchantments" and is only eligible via the Haste/Binding/Possession/Confusion effects (the "ignores Invulnerability" bug noted at the dispatch call site)
+OGBUG:  the combined enchantments is missing item_enchantments
 */
+/* BUGs: Dispel confusion on own units, ignores Invulnerability except for some conditions */
 int16_t AITP_DispelMagic(int16_t player_idx)
 {
-    int16_t rp_realm_value = 0;          /* RP_RealmValue  NIU after assignment */
+    int16_t niu_realm_value = 0;         /* NIU after assignment */
     int16_t enemy_spell_realms = 0;      /* NIU after assignment */
     int16_t own_spell_realms = 0;
     int16_t * own_unit_realms = NULL;    /* NIU after assignment */
     int16_t * enemy_unit_realms = NULL;  /* NIU after assignment */
-    int32_t enchantments = 0;            /* Enchants_HO:Enchants_LO */
+    int32_t enchantments = 0;
     int16_t highest_value = 0;
-    int16_t picked_target = 0;           /* Target_Index */
-    int16_t target_value = 0;            /* _SI_ */
-    int16_t battle_unit_idx = 0;         /* _DI_ */
+    int16_t selected_target_idx = 0;
+    int16_t target_value = 0;
+    int16_t battle_unit_idx = 0;
     struct s_BATTLE_UNIT * bu_ptr = NULL;
-
     highest_value = 0;
-    picked_target = ST_UNDEFINED;
-
+    selected_target_idx = ST_UNDEFINED;
     /* OGBUG  both branches are identical - the defender branch was never swapped */
     if(player_idx == _combat_attacker_player)
     {
@@ -9864,16 +9853,13 @@ int16_t AITP_DispelMagic(int16_t player_idx)
         enemy_spell_realms = g_ai_combat_defender_realm_flags;
         enemy_unit_realms = &g_ai_combat_defender_unit_realms[0];
     }
-    rp_realm_value = g_ai_combat_unset_realm_flags;
-
+    niu_realm_value = g_ai_combat_unset_realm_flags;
     for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
     {
         target_value = ST_UNDEFINED;
         bu_ptr = &battle_units[battle_unit_idx];
-
         enchantments = bu_ptr->enchantments;
         enchantments |= _UNITS[bu_ptr->unit_idx].enchantments;
-
         /* Phase 1: own unit carrying combat debuffs - value dispelling them off of it */
         if(
             (bu_ptr->status == bus_Active)
@@ -9895,7 +9881,6 @@ int16_t AITP_DispelMagic(int16_t player_idx)
             if(bu_ptr->combat_effects & bue_Warped_Resist) target_value += 10;
             if(bu_ptr->combat_effects & bue_Mind_Twist) target_value += 10;
         }
-
         /* Phase 2: enemy unit carrying enchantments / beneficial effects - value stripping them */
         if(
             (bu_ptr->status == bus_Active)
@@ -9932,20 +9917,18 @@ int16_t AITP_DispelMagic(int16_t player_idx)
                 if(bu_ptr->combat_effects & bue_Possession) target_value += 70;
             }
         }
-
         /* Phase 3: keep the best-scoring unit */
         if(target_value > highest_value)
         {
             highest_value = target_value;
-            picked_target = battle_unit_idx;
+            selected_target_idx = battle_unit_idx;
         }
     }
-
-    return picked_target;
+    return selected_target_idx;
 }
 
 
-// WZD 111p08
+// WZD o111p08
 /*
 IDA Group Colors
     scc_Summoning                   ( 0)    #24 reddish-brown
@@ -10593,7 +10576,7 @@ void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16
 }
 
 
-// WZD 111p09
+// WZD o111p09
 // drake178: AITP_HolyWord()
 /*
 Holy Word target check: looks for any enemy Fantastic (race >= rt_Arcane) battle unit not protected by Spell Lock.
