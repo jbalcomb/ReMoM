@@ -15013,7 +15013,7 @@ void Combat_Results_Scroll(void)
     int16_t City_Capture = 0;
     int16_t Hotkey_R2_Index = 0;
     int16_t Hotkey_R1_Index = 0;
-    int16_t hotkey_esc = 0;
+    int16_t full_screen_esc_field = 0;
     int16_t leave_screen = 0;
     int16_t spare = 0;
     int16_t IDK_popup_timer = 0;
@@ -15181,23 +15181,19 @@ int16_t Combat_Results_Scroll_Text(void)
     Set_Font_Colors_15(4, &colors1[0]);
     switch(combat_results_scroll_message)
     {
-        case 0:
-        {
-
-        } break;
-        case 1:
-        case 6:
+        case csmt_Victory:
+        case csmt_VictoryStrategic:
         {
             LBX_Load_Data_Static(message_lbx_file__ovr123, 0, (SAMB_ptr)message, 5, 1, 150);  /* "You are triumphant" */
             Print_Centered(160, (25 + _scroll_text_top), message);
         } break;
-        case 2:
-        case 7:
+        case csmt_Defeat:
+        case csmt_DefeatStrategic:
         {
             LBX_Load_Data_Static(message_lbx_file__ovr123, 0, (SAMB_ptr)message, 6, 1, 150);  /* "You have been defeated" */
             Print_Centered(160, (25 + _scroll_text_top), message);
         } break;
-        case 3:
+        case csmt_PlayerFled:
         {
             LBX_Load_Data_Static(message_lbx_file__ovr123, 0, (SAMB_ptr)message, 7, 1, 150);  /* "Your forces have retreated" */
             Print_Centered(160, (_scroll_text_top + 25), message);
@@ -15210,36 +15206,19 @@ int16_t Combat_Results_Scroll_Text(void)
                 text_height += (Get_Paragraph_Max_Height(175, GUI_NearMsgString) + 2);  /* OGBUG  passes 3rd argument */
             }
         } break;
-        case 4:
+        case csmt_TurnLimit:
         {
             LBX_Load_Data_Static(message_lbx_file__ovr123, 0, (SAMB_ptr)message, 8, 1, 150);  /*  "All units retreat exhausted" */
             Print_Centered(160, (25 + _scroll_text_top), message);
         } break;
-        case 5:
+        case csmt_EnemyFled:
         {
             LBX_Load_Data_Static(message_lbx_file__ovr123, 0, (SAMB_ptr)message, 9, 1, 150);  /*  "Your opponent has fled" */
             Print_Centered(160, (25 + _scroll_text_top), message);
         } break;
-        case 8:
+        case csmt_CityLost:
         {
-
-        } break;
-        case 9:
-        {
-
-        } break;
-        case 10:
-        {
-
-        } break;
-        case 11:
-        {
-
-        } break;
-        case 12:
-        {
-            // _fstrcpy(GUI_NearMsgString, _CITIES[_combat_environ_idx].name);
-            stu_strcpy(GUI_NearMsgString, _CITIES[_combat_environ_idx].name);
+            _fstrcpy(GUI_NearMsgString, _CITIES[_combat_environ_idx].name);
             stu_strcat(GUI_NearMsgString, cnst_CityLost_Msg);  /* " has been conquered" */
             Print_Centered(160, (_scroll_text_top + 25), GUI_NearMsgString);
         } break;
@@ -15254,14 +15233,14 @@ int16_t Combat_Results_Scroll_Text(void)
     if(_active_battle_unit == 668)  /* ; 668 - rampage, created ruins */
     {
         Set_Font_Colors_15(1, &colors2[0]);
-        stu_strcpy(message, _CITIES[_combat_environ_idx].name);
+        _fstrcpy(message, _CITIES[_combat_environ_idx].name);
         stu_strcat(message, cnst_NewRuins_Msg);  /* " has been reduced to ruins" */
         Print_Paragraph(75, (_scroll_text_top + text_height), 175, message, 2);
         text_height += (Get_Paragraph_Max_Height(175, message) + 2);  /* OGBUG  passes 3rd argument */
     }
     if(_active_battle_unit == 667)  /* ; 667 - raiders won (city neutral) */
     {
-        stu_strcpy(message, _CITIES[_combat_environ_idx].name);
+        _fstrcpy(message, _CITIES[_combat_environ_idx].name);
         stu_strcat(message, cnst_CityRaided_Msg);  /* " has fallen to raiders" */
         Print_Paragraph(75, (_scroll_text_top + text_height), 175, message, 2);
         text_height += (Get_Paragraph_Max_Height(175, message) + 2);  /* OGBUG  passes 3rd argument */
@@ -15327,8 +15306,7 @@ int16_t Combat_Results_Scroll_Text(void)
             {
                 if(CMB_LostBuildings[itr_buildings] > 0)
                 {
-                    // next_x = Print_Far((75 + ((itr_buildings % 2) * 90)), (_scroll_text_top + text_height), bldg_data_table[CMB_LostBuildings[itr_buildings]]);
-                    next_x = Print((75 + ((itr_buildings % 2) * 90)), (_scroll_text_top + text_height), bldg_data_table[CMB_LostBuildings[itr_buildings]].name);
+                    next_x = Print_Far((75 + ((itr_buildings % 2) * 90)), (_scroll_text_top + text_height), bldg_data_table[CMB_LostBuildings[itr_buildings]].name);
                 }
                 if((itr_buildings % 2) == 1)
                 {
@@ -15436,11 +15414,11 @@ int16_t Rampage_Combat_City(void)
         /* Mark rampaging units as dead (clearing the combat state) */
         battle_units[itr].status = bus_Dead;
         current_u_type = _UNITS[battle_units[itr].unit_idx].type;
-        if(current_u_type == primary_unit)
+        if(primary_unit == current_u_type)
         {
             primary_count++;
         }
-        else if(current_u_type == secondary_unit)
+        else if(secondary_unit == current_u_type)
         {
             secondary_count++;
         }
@@ -16926,39 +16904,27 @@ int16_t Raze_City_Prompt(char * message)
 
 
 // WZD o124p21
-// drake178: ; byte-identical to GUI_DrawConfrmDialog()  AKA Confirmation_Box_Draw()  GENDRAW.C
 /*
-    === Confirmation_Box_Draw()
-        presumably copied to this overlay to avoid swapping
+=== GENDRAW.c  Confirmation_Box_Draw()
 */
 void Raze_City_Prompt_Draw(void)
 {
-    int16_t paragraph_height;
-
+    int16_t paragraph_height = 0;
     Set_Font_Style(4, 4, 15, ST_NULL);
-
     paragraph_height = Get_Paragraph_Max_Height(166, message_box_text);
-
     Set_Page_Off();
-
     Set_Window(0, 0, SCREEN_XMAX, (message_box_y + paragraph_height + 12));
-
     Clipped_Draw(message_box_x, message_box_y, confirmation_background_top_seg);
-
     Reset_Window();
-
     FLIC_Draw(message_box_x, (message_box_y + paragraph_height + 10), confirmation_background_bottom_seg);
-
     Set_Font_Colors_15(4, &COL_ConfirmShadows[0]);
     Set_Font_Style(4, 15, 15, ST_NULL);
     Print_Paragraph((message_box_x + 10), (message_box_y + 10), 166, message_box_text, 0);  // print_type 0: Print Left Aligned
     Print_Paragraph((message_box_x +  9), (message_box_y + 10), 166, message_box_text, 0);  // print_type 0: Print Left Aligned
-
     Set_Alias_Color(18);
     Set_Font_Colors_15(4, &COL_Dialog_Text[0]);
     Set_Font_Style(4, 4, 15, ST_NULL);
     Print_Paragraph((message_box_x +  9), (message_box_y +  9), 166, message_box_text, 0);  // print_type 0: Print Left Aligned
-
 }
 
 

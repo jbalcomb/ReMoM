@@ -7,17 +7,13 @@ Get_Effective_Ranged_Strength()
 WIZARDS.EXE  ovr122
 // WZD o122p10
 Calc_Battlefield_Bonuses()
-
-WIZARDS.EXE  ovr124
-// WZD o124p21
-Raze_City_Prompt_Draw()
 ---
 
 # What this list is
 
-Every combat-overlay function that has **not** been taken to done-done **and has no home**: 3 of the 237 `// WZD` overlay slots in the combat sources.
+Every combat-overlay function that has **not** been taken to done-done **and has no home**: 2 of the 237 `// WZD` overlay slots in the combat sources.
 
-Miscellaneous means homeless. Of the 26 slots that are not done, 23 have a home — some finished review adjudicated the code that calls them, so they are that review's backlog, not a loose end. Those 23 are in the attribution table below, not in this list. The 3 above are what nothing claims.
+Miscellaneous means homeless. Of the 25 slots that are not done, 23 have a home — some finished review adjudicated the code that calls them, so they are that review's backlog, not a loose end. Those 23 are in the attribution table below, not in this list. The 2 above are what nothing claims.
 
 The list is generated, not hand-kept. Regenerate it with:
 
@@ -54,12 +50,9 @@ That yields five states. **`CLAIMED` and `NOT DONE` qualify for this list; attri
 
 ## The `CLAIMED` functions
 
-Two remain, both named in a DONE-DONE doc’s header block and adjudicated nowhere:
+One remains: **`Calc_Battlefield_Bonuses`**, claimed by [Combat-Combat_Screen.md](Combat-Combat_Screen.md). That doc's header block records the call tree `Combat_Screen` reaches, not the set it adjudicated — [line 718](Combat-Combat_Screen.md#L718) says as much of the input-loop handlers — so a header-block name is an intent, not a verdict. It is going to [Combat-Combat.md](Combat-Combat.md).
 
-- **`Calc_Battlefield_Bonuses`**, claimed by [Combat-Combat_Screen.md](Combat-Combat_Screen.md). That doc’s header block records the call tree `Combat_Screen` reaches, not the set it adjudicated — [line 718](Combat-Combat_Screen.md#L718) says as much of the input-loop handlers — so a header-block name is an intent, not a verdict. It is going to [Combat-Combat.md](Combat-Combat.md).
-- **`Raze_City_Prompt`**, claimed by [Combat-End_Of_Combat.md](Combat-End_Of_Combat.md), which names it in its ASM listing block and its call tree but gave it no coverage-table row. Its own callee `Raze_City_Prompt_Draw` is homeless for exactly that reason — with the caller unadjudicated, attribution has nothing to route the callee to. Both are going to that review together.
-
-`Combat_Grid_Screen_Coordinates` was the third entry here; it now carries a verdict in [Combat-Miscellaneous.md](Combat-Miscellaneous.md).
+`Combat_Grid_Screen_Coordinates` and `Raze_City_Prompt` were the other two. The first now carries a verdict in [Combat-Miscellaneous.md](Combat-Miscellaneous.md); the second, together with its callee `Raze_City_Prompt_Draw`, in [Combat-End_Of_Combat.md](Combat-End_Of_Combat.md).
 
 ## Which review each one belongs to
 
@@ -74,11 +67,11 @@ python3 tools/review_coverage.py --attribution-md     this table
 | --- | --- | --- |
 | [Combat-Combat_Screen.md](Combat-Combat_Screen.md) | 5 | `Combat_Next_Turn`, `Tactical_Combat_Draw_Buttons`, `Battle_Unit_Melee_Attack_Icon`, `Battle_Unit_Ranged_Attack_Icon`, `Combat_Cache_Read` |
 | [Combat-Combat_Figure_Compose.md](Combat-Combat_Figure_Compose.md) | 3 | `Draw_Active_Unit_Stats_And_Icons`, `Draw_Active_Unit_Damage_Bar`, `Next_Battle_Unit_Nearest_Available` |
-| [Combat-End_Of_Combat.md](Combat-End_Of_Combat.md) | 3 | `Player_City_At_Square`, `Unit_Try_To_Move`, `Raze_City_Prompt` |
 | [Combat-AI_Turn.md](Combat-AI_Turn.md) | 2 | `Do_Auto_Unit_Turn`, `Total_Ranged_Attack_Strength` |
 | [Combat-Battle_Unit_Process_Attack.md](Combat-Battle_Unit_Process_Attack.md) | 2 | `Eliminated_Opponent`, `Battle_Unit_Is_Summoned_Creature` |
 | [Combat-Combat.md](Combat-Combat.md) | 2 | `Combat_City_Capture`, `o153p24_empty_function` |
 | [Combat-Combat_Screen_Map_Draw.md](Combat-Combat_Screen_Map_Draw.md) | 2 | `Screen_To_Combat_Grid_Cell_X_And_Offset`, `Screen_To_Combat_Grid_Cell_Y_And_Offset` |
+| [Combat-End_Of_Combat.md](Combat-End_Of_Combat.md) | 2 | `Player_City_At_Square`, `Unit_Try_To_Move` |
 | [Combat-Assign_Combat_Grids.md](Combat-Assign_Combat_Grids.md) | 1 | `Auto_Move_Unit` |
 | [Combat-Combat_Summon.md](Combat-Combat_Summon.md) | 1 | `Battle_Unit_Pict_Open` |
 | [Combat-Init_Prep_Etc.md](Combat-Init_Prep_Etc.md) | 1 | `Apply_Mana_Leak` |
@@ -86,7 +79,7 @@ python3 tools/review_coverage.py --attribution-md     this table
 | [Combat-Spell_Cast_AI_Select.md](Combat-Spell_Cast_AI_Select.md) | 1 | `Get_Effective_Melee_Strength` |
 | [Combat-Spell_Cast_AI_Target.md](Combat-Spell_Cast_AI_Target.md) | 1 | `Target_Is_Visible` |
 
-**3 have no covered caller at all** â€” their callers are themselves unreviewed, so no existing session claims them: `Get_Effective_Ranged_Strength`, `Calc_Battlefield_Bonuses`, `Raze_City_Prompt_Draw`.
+**2 have no covered caller at all** â€” their callers are themselves unreviewed, so no existing session claims them: `Get_Effective_Ranged_Strength`, `Calc_Battlefield_Bonuses`.
 
 ## Cross-doc referrals
 

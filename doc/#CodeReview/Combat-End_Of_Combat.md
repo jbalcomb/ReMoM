@@ -20,11 +20,15 @@ C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr098\STK_ComposeFleeLost
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr098\Process_Retreating_Units.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr124\Raze_Check.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr124\Raze_City_Prompt.asm
+C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr124\Raze_City_Prompt_Draw.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr123\Rampage_Combat_City.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr055\Apply_Damage_To_City.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr123\Combat_Results_Scroll.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr123\Combat_Results_Scroll_Text.asm
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr123\Combat_Results_Scroll_Draw.asm
+
+// WZD o124p21
+Combat.c Raze_City_Prompt_Draw() is byte-identical to GENDRAW.c Confirmation_Box_Draw(), presumably copied to this overlay to avoid code-overlay swapping.
 
 Combat_Screen()
     |-> End_Of_Combat()
@@ -53,7 +57,7 @@ Combat_Screen()
 
 # 1:1 Fidelity Review
 
-**Status: DONE-DONE (2026-08-10).** No findings open. Eleven functions, 6,028 asm lines, every one walked against its listing. D6 added 2026-08-17 — a deviation found while reviewing a shared callee, no reopening required.
+**Status: DONE-DONE (2026-08-25).** No findings open. Thirteen functions, 6,359 asm lines, every one walked against its listing. D5 added 2026-08-17 — a deviation found while reviewing a shared callee, no reopening required. Reopened 2026-08-25 to adjudicate `Raze_City_Prompt` and `Raze_City_Prompt_Draw`, both faithful; see *The raze prompt* below.
 
 The whole of `WIZARDS.EXE ovr123` — `End_Of_Combat` plus its six same-overlay subfunctions, 4,081 asm lines — plus the retreat chain it calls into in `ovr098`: `Retreat_From_Combat`, `Process_Retreating_Units` and `Build_Flee_Loss_Message`, a further 1,699 lines, and `Raze_Check` in `ovr098`'s sibling overlay `ovr124` (248 lines). Every function got a full body walk.
 
@@ -91,17 +95,19 @@ Three of the subfunctions (`City_Gold`, `Rampage_Combat_City`, and parts of `Com
 
 | function | production | listing | asm lines | coverage |
 | --- | --- | --- | --- | --- |
-| `End_Of_Combat` | [Combat.c:14756](../../MoM/src/Combat.c#L14756) | `ovr123/End_Of_Combat.asm` | 2493 | **full body walk — faithful** |
-| `Combat_Results_Scroll_Text` | [Combat.c:15792](../../MoM/src/Combat.c#L15792) | `ovr123/Combat_Results_Scroll_Text.asm` | 613 | **full body walk — faithful** |
-| `Rampage_Combat_City` | [Combat.c:16024](../../MoM/src/Combat.c#L16024) | `ovr123/Rampage_Combat_City.asm` | 342 | **full body walk — faithful** |
-| `Combat_Results_Scroll` | [Combat.c:15644](../../MoM/src/Combat.c#L15644) | `ovr123/Combat_Results_Scroll.asm` | 309 | **full body walk — faithful** |
-| `Find_Undead_Creator_Type` | [Combat.c:15561](../../MoM/src/Combat.c#L15561) | `ovr123/Find_Undead_Creator_Type.asm` | 171 | **full body walk — faithful** |
-| `City_Gold` | [Combat.c:15986](../../MoM/src/Combat.c#L15986) | `ovr123/City_Gold.asm` | 116 | **full body walk — faithful** |
-| `Combat_Results_Scroll_Draw` | [Combat.c:15630](../../MoM/src/Combat.c#L15630) | `ovr123/Combat_Results_Scroll_Draw.asm` | 37 | **full body walk — faithful** |
-| `Raze_Check` | [Combat.c:17471](../../MoM/src/Combat.c#L17471) | `ovr124/Raze_Check.asm` | 248 | **full body walk — faithful** |
-| `Retreat_From_Combat` | [Combat.c:3771](../../MoM/src/Combat.c#L3771) | `ovr098/Retreat_From_Combat.asm` | 1039 | **full body walk — faithful** |
-| `Process_Retreating_Units` | [Combat.c:4230](../../MoM/src/Combat.c#L4230) | `ovr098/Process_Retreating_Units.asm` | 429 | **full body walk — faithful** |
-| `Build_Flee_Loss_Message` | [Combat.c:5201](../../MoM/src/Combat.c#L5201) | `ovr098/STK_ComposeFleeLost__STUB.asm` | 231 | **full body walk — faithful** |
+| `End_Of_Combat` | [Combat.c:14126](../../MoM/src/Combat.c#L14126) | `ovr123/End_Of_Combat__WIP.asm` | 2493 | **full body walk — faithful** |
+| `Combat_Results_Scroll_Text` | [Combat.c:15159](../../MoM/src/Combat.c#L15159) | `ovr123/Combat_Results_Scroll_Text.asm` | 613 | **full body walk — faithful** |
+| `Rampage_Combat_City` | [Combat.c:15364](../../MoM/src/Combat.c#L15364) | `ovr123/Rampage_Combat_City.asm` | 342 | **full body walk — faithful** |
+| `Combat_Results_Scroll` | [Combat.c:15011](../../MoM/src/Combat.c#L15011) | `ovr123/Combat_Results_Scroll.asm` | 309 | **full body walk — faithful** |
+| `Find_Undead_Creator_Type` | [Combat.c:14928](../../MoM/src/Combat.c#L14928) | `ovr123/Find_Undead_Creator_Type.asm` | 171 | **full body walk — faithful** |
+| `City_Gold` | [Combat.c:15326](../../MoM/src/Combat.c#L15326) | `ovr123/City_Gold.asm` | 116 | **full body walk — faithful** |
+| `Combat_Results_Scroll_Draw` | [Combat.c:14997](../../MoM/src/Combat.c#L14997) | `ovr123/Combat_Results_Scroll_Draw.asm` | 37 | **full body walk — faithful** |
+| `Raze_Check` | [Combat.c:16705](../../MoM/src/Combat.c#L16705) | `ovr124/Raze_Check.asm` | 248 | **full body walk — faithful** |
+| `Raze_City_Prompt` | [Combat.c:16841](../../MoM/src/Combat.c#L16841) | `ovr124/Raze_City_Prompt.asm` | 205 | **full body walk — faithful** |
+| `Raze_City_Prompt_Draw` | [Combat.c:16910](../../MoM/src/Combat.c#L16910) | `ovr124/Raze_City_Prompt_Draw.asm` | 126 | **full body walk — faithful** |
+| `Retreat_From_Combat` | [Combat.c:3780](../../MoM/src/Combat.c#L3780) | `ovr098/Retreat_From_Combat.asm` | 1039 | **full body walk — faithful** |
+| `Process_Retreating_Units` | [Combat.c:4239](../../MoM/src/Combat.c#L4239) | `ovr098/Process_Retreating_Units.asm` | 429 | **full body walk — faithful** |
+| `Build_Flee_Loss_Message` | [Combat.c:5099](../../MoM/src/Combat.c#L5099) | `ovr098/STK_ComposeFleeLost__STUB.asm` | 231 | **full body walk — faithful** |
 
 The `ovr123` jump table lives in `ovr123/_misc.asm` (17 lines) and is decoded under *The battle-result switch* below.
 
@@ -119,24 +125,24 @@ These do not change what the code does. They are listed because the target is 1:
 
 ## D1 — inverted `if`/`else` arms
 
-Borland lays the `if` body down first and jumps to the `else`, so the physically-first block is the source's `if`. Fourteen sites have the arms exchanged:
+Borland lays the `if` body down first and jumps to the `else`, so the physically-first block is the source's `if`. Twelve sites have the arms exchanged:
 
 | production | asm | the asm's `if` condition |
 | --- | --- | --- |
-| [Combat.c:14825](../../MoM/src/Combat.c#L14825) | asm:145-172 | `_UNITS[...].owner_idx == player_idx` (confusion) |
-| [Combat.c:14828](../../MoM/src/Combat.c#L14828) | asm:174-215 | `controller_idx == player_idx` (uninvolved) |
-| [Combat.c:14851](../../MoM/src/Combat.c#L14851) | asm:262-297 | `controller_idx == player_idx` (possession) |
-| [Combat.c:14857](../../MoM/src/Combat.c#L14857) | asm:280-296 | `controller_idx == _combat_attacker_player` |
-| [Combat.c:14995](../../MoM/src/Combat.c#L14995) | asm:845-847 | `player_idx == _combat_attacker_player` |
-| [Combat.c:15010](../../MoM/src/Combat.c#L15010) | asm:903-940 | `player_idx == HUMAN_PLAYER_IDX` (raze) |
-| [Combat.c:15094](../../MoM/src/Combat.c#L15094) | asm:1141-1147 | `(Abilities & UA_FANTASTIC) != 0` |
-| [Combat.c:15105](../../MoM/src/Combat.c#L15105) | asm:1149-1160 | `Summoned_Unit == ST_TRUE` |
-| [Combat.c:15137](../../MoM/src/Combat.c#L15137) | asm:1213-1219 | `player_idx == NEUTRAL_PLAYER_IDX` (destruction) |
-| [Combat.c:15215](../../MoM/src/Combat.c#L15215) | asm:1424-1472 | `No_Secondaries == ST_TRUE` |
-| [Combat.c:15424](../../MoM/src/Combat.c#L15424) | asm:2185-2211 | `winner_player_idx == _combat_attacker_player` |
-| [Combat.c:15530](../../MoM/src/Combat.c#L15530) | asm:2380-2400 | `winner_player_idx != NEUTRAL_PLAYER_IDX` |
-| [Combat.c:15576](../../MoM/src/Combat.c#L15576) | `Find_Undead_Creator_Type` asm:19-45 | `controller_idx == player_idx && (LifeSteal \|\| CreateUndead)` |
-| [Combat.c:16091](../../MoM/src/Combat.c#L16091) | `Rampage_Combat_City` asm:100-125 | see R21 |
+| [Combat.c:14193](../../MoM/src/Combat.c#L14193) | asm:145-172 | `_UNITS[...].owner_idx == player_idx` (confusion) |
+| [Combat.c:14202](../../MoM/src/Combat.c#L14202) | asm:174-215 | `controller_idx == player_idx` (uninvolved) |
+| [Combat.c:14223](../../MoM/src/Combat.c#L14223) | asm:262-297 | `controller_idx == player_idx` (possession) |
+| [Combat.c:14225](../../MoM/src/Combat.c#L14225) | asm:280-296 | `controller_idx == _combat_attacker_player` |
+| [Combat.c:14363](../../MoM/src/Combat.c#L14363) | asm:873-876 | `winner_player_idx == _combat_attacker_player` |
+| [Combat.c:14374](../../MoM/src/Combat.c#L14374) | asm:903-940 | `player_idx == HUMAN_PLAYER_IDX` (raze) |
+| [Combat.c:14462](../../MoM/src/Combat.c#L14462) | asm:1141-1147 | `(Abilities & UA_FANTASTIC) != 0` |
+| [Combat.c:14473](../../MoM/src/Combat.c#L14473) | asm:1149-1160 | `Summoned_Unit == ST_TRUE` |
+| [Combat.c:14503](../../MoM/src/Combat.c#L14503) | asm:1213-1219 | `player_idx == NEUTRAL_PLAYER_IDX` (destruction) |
+| [Combat.c:14583](../../MoM/src/Combat.c#L14583) | asm:1424-1472 | `No_Secondaries == ST_TRUE` |
+| [Combat.c:14943](../../MoM/src/Combat.c#L14943) | `Find_Undead_Creator_Type` asm:19-45 | `controller_idx == player_idx && (LifeSteal \|\| CreateUndead)` |
+| [Combat.c:15417](../../MoM/src/Combat.c#L15417) | `Rampage_Combat_City` asm:100-125 | see R21 |
+
+Two rows were removed on 2026-08-25 rather than re-anchored. Their original anchors had drifted out of `End_Of_Combat` entirely, and re-derivation found no construct matching what they claimed: the cited `asm:2185-2211` is the `Undead_Created > 0` guard around the lair guard-type writes, and `asm:2380-2400` is the `cnst_Zombie_Msg_3` `strcat`. Neither contains an `if`/`else` pair. Every comparison against `_combat_attacker_player` (asm:297, 492, 874, 1126, 1217, 2104) and against `NEUTRAL_PLAYER_IDX` (asm:45, 878, 1128, 1138, 1219, 1308, 1317, 1504, 2102, 2124, 2205, 2434) was checked; the only one that is a genuine arm inversion is asm:873-876, which is now the row above at [Combat.c:14363](../../MoM/src/Combat.c#L14363). The rest are guards with no `else`, which is not what this deviation records.
 
 ## D2 — ternaries reconstructed as `if`/`else`
 
@@ -144,34 +150,27 @@ Five sites where the asm computes a value into a register through two paths and 
 
 | production | asm | faithful form |
 | --- | --- | --- |
-| [Combat.c:14857-14863](../../MoM/src/Combat.c#L14857-L14863) | asm:280-296 | `controller_idx = (controller_idx == attacker) ? defender : attacker;` |
-| [Combat.c:15905-15917](../../MoM/src/Combat.c#L15905-L15917) | `..._Text` asm:355-364 | `strcat(message, (GUI_Multipurpose_Int < 0) ? cnst_ScrlFame_Msg_2 : cnst_ScrlFame_Msg_3);` |
-| [Combat.c:15327-15336](../../MoM/src/Combat.c#L15327-L15336) | asm:2124-2143 | `Kill_Unit(unit_idx, (status == bus_Gone \|\| (mutations & UM_UNDEAD)) ? kt_Disappeared : kt_Normal);` |
-| [Combat.c:15501-15507](../../MoM/src/Combat.c#L15501-L15507) | asm:2344-2352 | `strcat(GUI_NearMsgString, (Zombies_Raised > 1) ? cnst_Zombie_Msg_1 : cnst_Zombie_Msg_2);` |
-| [Combat.c:15516-15522](../../MoM/src/Combat.c#L15516-L15522) | asm:2390-2400 | `strcat(GUI_NearMsgString, (Undead_Created > 1) ? cnst_Undead_Msg_4 : cnst_Undead_Msg_5);` |
+| [Combat.c:14225-14232](../../MoM/src/Combat.c#L14225-L14232) | asm:280-296 | `controller_idx = (controller_idx == attacker) ? defender : attacker;` |
+| [Combat.c:15252-15259](../../MoM/src/Combat.c#L15252-L15259) | `..._Text` asm:355-364 | `strcat(message, (GUI_Multipurpose_Int < 0) ? cnst_ScrlFame_Msg_2 : cnst_ScrlFame_Msg_3);` |
+| [Combat.c:14700-14709](../../MoM/src/Combat.c#L14700-L14709) | asm:2124-2143 | `Kill_Unit(unit_idx, (status == bus_Gone \|\| (mutations & UM_UNDEAD)) ? kt_Disappeared : kt_Normal);` |
+| [Combat.c:14868-14874](../../MoM/src/Combat.c#L14868-L14874) | asm:2344-2352 | `strcat(GUI_NearMsgString, (Zombies_Raised > 1) ? cnst_Zombie_Msg_1 : cnst_Zombie_Msg_2);` |
+| [Combat.c:14899-14905](../../MoM/src/Combat.c#L14899-L14905) | asm:2390-2400 | `strcat(GUI_NearMsgString, (Undead_Created > 1) ? cnst_Undead_Msg_4 : cnst_Undead_Msg_5);` |
 
 ## D3 — operand order in sums
 
-The asm loads the left operand first. Four sites read the other way round: [Combat.c:15627](../../MoM/src/Combat.c#L15627) (`_scroll_text_top + _scroll_text_height`, asm loads height first), and the `Print_Centered` y-coordinates for message types 1/6, 2/7, 4 and 5 ([Combat.c:15825](../../MoM/src/Combat.c#L15825) onward) written as `25 + _scroll_text_top` where types 3 and 12 in the same switch correctly read `_scroll_text_top + 25`. Also `100 + upkeep` at [Combat.c:15613](../../MoM/src/Combat.c#L15613) where the asm loads `upkeep` and does `add ax, 100`.
+The asm loads the left operand first. Four sites read the other way round: [Combat.c:15000](../../MoM/src/Combat.c#L15000) (`_scroll_text_top + _scroll_text_height`, asm loads height first), and the `Print_Centered` y-coordinates for message types 1/6, 2/7, 4 and 5 ([Combat.c:15188](../../MoM/src/Combat.c#L15188) onward) written as `25 + _scroll_text_top` where types 3 and 12 in the same switch correctly read `_scroll_text_top + 25`. Also `100 + upkeep` at [Combat.c:15199](../../MoM/src/Combat.c#L15199) where the asm loads `upkeep` and does `add ax, 100`.
 
-## D4 — `==` operand order
-
-`if(a == b)` loads `a` into AX. `Rampage_Combat_City` asm:129-138 loads `Primary_Unit` and `Secondary_Unit`; [Combat.c:16077](../../MoM/src/Combat.c#L16077) and [Combat.c:16081](../../MoM/src/Combat.c#L16081) write `current_u_type == primary_unit`.
-
-## D5 — port-model and reconstruction aids with no asm counterpart
+## D4 — port-model and reconstruction aids with no asm counterpart
 
 Listed for completeness, not as defects:
 
-- `static int16_t Buildings_Lost[36]` at [Combat.c:14762](../../MoM/src/Combat.c#L14762) — a documented HACK. The OG has it at `bp-6Eh` and hands `&Buildings_Lost` to the file-scope `CMB_LostBuildings@`; `static` is how the port keeps that pointer valid.
-- `assert()` at [Combat.c:15185-15179](../../MoM/src/Combat.c#L15185-L15179).
-- `case 0:` in the battle-result switch at [Combat.c:15811](../../MoM/src/Combat.c#L15811) — the asm has no case 0; `dec bx` makes 0 wrap to 0xFFFF and fail the `jbe`, landing on the default, which is the same continuation point. Harmless, but invented.
-- `stu_strcpy` / `stu_strcat` for the asm's `_fstrcpy` / `strcat`, with the original far-pointer calls preserved commented-out ([Combat.c:15874](../../MoM/src/Combat.c#L15874), [Combat.c:15885](../../MoM/src/Combat.c#L15885), [Combat.c:15894](../../MoM/src/Combat.c#L15894)). Good practice — noted so it is not re-flagged.
-- `Print` with an explicit `.name` for the asm's `Print_Far` with a struct pointer ([Combat.c:15963](../../MoM/src/Combat.c#L15963)), original preserved above it. `s_BLDG_DATA.name` is at offset 0 (`WIZARDS.inc:221`), so the two are the same address.
+- `static int16_t Buildings_Lost[NUM_BUILDINGS]` at [Combat.c:14130](../../MoM/src/Combat.c#L14130) — a documented HACK. The OG has it at `bp-6Eh` and hands `&Buildings_Lost` to the file-scope `CMB_LostBuildings@`; `static` is how the port keeps that pointer valid.
+- `stu_strcpy` / `stu_strcat` for the asm's **near** string copies. `End_Of_Combat__WIP.asm` calls only the near library routines (`strcpy` twice, `strcat` seven times, no `_fstrcpy` at all), so [Combat.c:14867](../../MoM/src/Combat.c#L14867) and [Combat.c:14882](../../MoM/src/Combat.c#L14882) are faithful as near copies. The three `_fstrcpy` calls in this overlay are all in `Combat_Results_Scroll_Text.asm`, each copying a city name out of the far `_CITIES` block, and production now calls `_fstrcpy` at all three — asm:167 at [Combat.c:15221](../../MoM/src/Combat.c#L15221), asm:256 at [Combat.c:15236](../../MoM/src/Combat.c#L15236), asm:302 at [Combat.c:15243](../../MoM/src/Combat.c#L15243). The listing's destinations differ between them: asm:167 writes the DS global `GUI_NearMsgString`, while asm:256 and asm:302 write a **stack local** (`lea ax, [bp+Msg_String]`) and still pass segment 0, which works only because `SS == DS` in this model — see the *Listing notes* entry on the sentinel.
 - `= 0` initialisers on locals the OG leaves uninitialised. This is the file-wide house style and is not called out per-site; the one place it changes observable behaviour is noted under OG behaviours.
 
 ---
 
-## D6 — `Get_Paragraph_Max_Height` is called with three arguments
+## D5 — `Get_Paragraph_Max_Height` is called with three arguments
 
 `seg019/Get_Paragraph_Max_Height.asm` declares exactly two parameters — `max_width` at `bp+6` and `string` at `bp+8` — and never reads `bp+0Ah`. Every call site in the original passes **three** words anyway and cleans six bytes. `Combat_Results_Scroll_Text` does it four times:
 
@@ -188,18 +187,30 @@ add     sp, 6
 
 | production | asm | third argument |
 | --- | --- | --- |
-| [Combat.c:15572](../../MoM/src/Combat.c#L15572) | `ovr123/Combat_Results_Scroll_Text.asm:129-136` | `xor ax, ax` — **0** |
-| [Combat.c:15614](../../MoM/src/Combat.c#L15614) | `asm:225-232` | 2 |
-| [Combat.c:15622](../../MoM/src/Combat.c#L15622) | `asm:278-285` | 2 |
-| [Combat.c:15629](../../MoM/src/Combat.c#L15629) | `asm:325-332` | 2 |
+| [Combat.c:15206](../../MoM/src/Combat.c#L15206) | `ovr123/Combat_Results_Scroll_Text.asm:129-136` | `xor ax, ax` — **0** |
+| [Combat.c:15231](../../MoM/src/Combat.c#L15231) | `asm:225-232` | 2 |
+| [Combat.c:15239](../../MoM/src/Combat.c#L15239) | `asm:278-285` | 2 |
+| [Combat.c:15246](../../MoM/src/Combat.c#L15246) | `asm:325-332` | 2 |
 
 The value is the paragraph print type — 0 left, 1 right, 2 centre, 3 full width, per the `switch` in `Get_Paragraph_Max_Width` at [paragrph.c:515-538](../../MoX/src/paragrph.c#L515-L538). It tracks the `Print_Paragraph` call immediately above it at each site: 0 at the first, 2 at the other three. So this is not a stray word copied from the neighbouring width call — the original passes the alignment deliberately, to a function that cannot use it. Height is `paragraph_line_y_start[max_lines - 1] + font_height`, and line breaking happens in `Mark_Paragraph`, which takes no alignment at all.
 
 **Not reproducible in C99.** A long-argument call is a constraint violation, exactly like the short-argument `Gradient_Fill` calls recorded elsewhere. Production passes two arguments at all four sites, which is behaviourally identical since the callee ignores the third. The comments at those four lines record the original form; they are deviation notes, not pending work.
 
-The fifth site is `Combat_Spell_Dispel_Attempt` at [Combat.c:12380](../../MoM/src/Combat.c#L12380), `ovr113/Combat_Spell_Dispel_Attempt.asm:51-58`, third argument 2 — recorded in [Combat-Combat_Spell_Dispel.md](Combat-Combat_Spell_Dispel.md), which owns that function.
+The fifth site is in `ovr113/GUI_DrawNearMessage.asm:51-57`, third argument 2 — the only other listing in `ovr113` that calls `Get_Paragraph_Max_Height`. Its production counterpart has not been identified here; whichever review owns `GUI_DrawNearMessage` should record it.
 
 # Verified faithful
+
+## D6 — `Set_Font_Style` is called with three arguments
+
+The same shape as D5, and tree-wide rather than specific to this chain. Production declares `Set_Font_Style` with four parameters ([Fonts.h:209](../../MoX/src/Fonts.h#L209), defined at [Fonts.c:2135](../../MoX/src/Fonts.c#L2135)) and every call site in the port passes four. In the original, **53 of the 89 call sites across the listings push only three words and clean six bytes**; 36 push four. Both raze functions are three-word sites — `Raze_City_Prompt` asm:62-69, `Raze_City_Prompt_Draw` asm:7-14, 56-64 and 102-109 — and production supplies `ST_NULL` as the missing fourth.
+
+That substitution is not free: `color3` is read at [Fonts.c:2141](../../MoX/src/Fonts.c#L2141) and again at [Fonts.c:2165](../../MoX/src/Fonts.c#L2165), where it selects the special-colour row. The original leaves whatever the stack happened to hold there; the port pins it to 0. Listed rather than filed as a finding because the decision is codebase-wide and predates this chain — adjudicating it belongs to whichever review owns `Set_Font_Style`, not here.
+
+## D7 — field hotkeys are strings in the original, character codes in the port
+
+`Add_Button_Field` and `Add_Hidden_Field` take their hotkey as a `char *` in the listings: `Raze_City_Prompt` pushes `str_hotkey_N__ovr124` (asm:93), `str_hotkey_R__ovr124` (asm:110), `str_hotkey_ESC__ovr124` (asm:142) and `str_empty_string__ovr124` (asm:127). Production declares the parameter `int16_t hotkey` ([Fields.h:678](../../MoX/src/Fields.h#L678), [Fields.h:685](../../MoX/src/Fields.h#L685)) and passes `'N'`, `'R'`, `''` and `ST_NULL`. The mapping is consistent — an empty hotkey string becomes no hotkey — and applies across the whole port, not just here.
+
+---
 
 ## `Combat_Results_Scroll_Draw` — full body walk, no defects
 
@@ -299,7 +310,7 @@ mov     _SI_text_height, [CMB_Scroll_MinHeight]
 
 ## `City_Gold` — the arithmetic
 
-The long multiply/divide was traced through the stack. `empire_population` is pushed as a long first, the city population second, `gold_reserve` ends up in DX:AX, `LXMUL@` takes the product and `LDIV@` divides by what was pushed first — so the expression is `(gold_reserve * city_population) / empire_population`, which is what [Combat.c:16017](../../MoM/src/Combat.c#L16017) computes. Both loops and the neutral-owner branch match.
+The long multiply/divide was traced through the stack. `empire_population` is pushed as a long first, the city population second, `gold_reserve` ends up in DX:AX, `LXMUL@` takes the product and `LDIV@` divides by what was pushed first — so the expression is `(gold_reserve * city_population) / empire_population`, which is what [Combat.c:15357](../../MoM/src/Combat.c#L15357) computes. Both loops and the neutral-owner branch match.
 
 ## `Rampage_Combat_City` — the new lair record
 
@@ -311,7 +322,7 @@ asm:274-341. Seventeen field writes in the asm's order, all correct: both guard 
 
 # Deviations — `ovr098`
 
-- **Inverted `if`/`else` arms.** `Retreat_From_Combat.asm:24-31` puts `player_idx == _combat_attacker_player` first, so the `if` body is `fleeing_player_idx = _combat_defender_player`; [Combat.c:3786](../../MoM/src/Combat.c#L3786) leads with `!=`. Same at [Combat.c:5211](../../MoM/src/Combat.c#L5211), where `Build_Flee_Loss_Message.asm:19-21` (`jg` past the far `jmp`) gives `troop_count > 0` as the `if` and the empty-string `strcpy` as the `else`; production uses an early return.
+
 - **Missing redundant reset.** `Process_Retreating_Units.asm:137` writes `mov [bp+Wind_Walker], e_ST_FALSE` on entry to the troops block. The block is only reached when `Wind_Walker` is already `ST_FALSE`, so the store has no effect, but it is a store the asm makes and [Combat.c:4292](../../MoM/src/Combat.c#L4292) does not.
 - **Y-loop guard folded into the condition.** `Retreat_From_Combat.asm:913-914` tests `Checked_Y >= WORLD_HEIGHT` **inside** the body and jumps to the increment, so the loop keeps counting to `Min_Y + Diameter`. [Combat.c:4151](../../MoM/src/Combat.c#L4151) folds it into the `while` condition and exits instead. Nothing else happens in those iterations, so the outcome matches.
 - **Return value.** `Retreat_From_Combat` is `void` in production. The asm zeroes AX on two of its three exits — the early-out at `asm:96-97` and the end of the attacker branch (`asm:702`, `jmp @@JmpDone__Return_ZERO`) — but the defender branch falls into `@@Done` with AX untouched. `End_Of_Combat` ignores the result either way, so nothing depends on it; recorded because a `void` function would not have produced the two `xor ax, ax`.
@@ -320,7 +331,7 @@ asm:274-341. Seventeen field writes in the asm's order, all correct: both guard 
 
 # Verified faithful — `ovr098`
 
-**Frames.** All three match. `Retreat_From_Combat` has thirteen slotted locals and [Combat.c:3770-3782](../../MoM/src/Combat.c#L3770-L3782) declares them in frame order; `Process_Retreating_Units` has six and [Combat.c:4238-4243](../../MoM/src/Combat.c#L4238-L4243) matches; `Build_Flee_Loss_Message` has eight and [Combat.c:5203-5209](../../MoM/src/Combat.c#L5203-L5209) matches.
+**Frames.** All three match. `Retreat_From_Combat` has thirteen slotted locals and [Combat.c:3782-3796](../../MoM/src/Combat.c#L3782-L3796) declares them in frame order; `Process_Retreating_Units` has six and [Combat.c:4241-4251](../../MoM/src/Combat.c#L4241-L4251) matches; `Build_Flee_Loss_Message` has eight and [Combat.c:5203-5209](../../MoM/src/Combat.c#L5203-L5209) matches.
 
 **`Retreat_From_Combat`.** The `wp == 9` combat-summon kill; the fleeing rolls in both branches — `Random(2) == 1` for a non-hero and `Random(4) != 1` for a hero in the attacker branch, `Random(2) == 1` and `Random(4) == 1` setting `bus_Dead` in the defender branch; the Black Sleep / Confusion / Web + `Web_HP > 0` chain in both; the road-building reset (`us_Ready`, `Rd_Constr_Left = ST_UNDEFINED`) at all three sites; the `Min_Y`/`Min_X` derivation including the `WORLD_WIDTH` wrap; `Diameter = 3`; the `Square_Has_Lair` / `Player_City_At_Square` pair of `ST_UNDEFINED` tests; and both `Build_Flee_Loss_Message` call sites.
 
@@ -329,6 +340,48 @@ asm:274-341. Seventeen field writes in the asm's order, all correct: both guard 
 **`Build_Flee_Loss_Message`.** The `Type_Counts` clear over `MAX_STACK`; the duplicate-detection inner loop with its `Added_Count` flag; `Add_Comma_Or_And(&Added_Count, Record_Count, GUI_NearMsgString)`; the `itoa` / `strcat` / `cnst_Space_6` / unit-name sequence; the `Huntress` and `Priestess` exclusions from the plural trim; `strlen(...) - 1` and the `'s'` test; and the closing `cnst_Dot8`.
 
 `s_UNIT_TYPE.name` is a `dw` — a pointer, not an inline string (`WIZARDS.inc:221` is `s_BLDG_DATA`'s inline `name db 20 dup(?)`, which is the other convention) — so `push [word ptr _unit_type_table.name+bx]` passing it straight to `strcat` matches production's `char **name` at [UNITTYPE.h:275](../../MoM/src/UNITTYPE.h#L275).
+
+## The raze prompt — `Raze_City_Prompt` and `Raze_City_Prompt_Draw`
+
+Both faithful, 331 asm lines between them, no findings. These are the two `ovr124` functions the review named in its header block and call tree from the start but never gave a coverage row; they were adjudicated on 2026-08-25.
+
+### `Raze_City_Prompt` ([Combat.c:16841](../../MoM/src/Combat.c#L16841), asm 205)
+
+The modal confirm dialog behind the raze decision: save screen state, load the art, build four fields, spin an input loop, restore, return the choice.
+
+**Declaration order is exact.** Seven stack locals, and the frame orders them from `-0Eh` up:
+
+| bp | listing | production |
+| --- | --- | --- |
+| -0Eh | `Keep_City` | `spare` |
+| -0Ch | `Label_Ctrl_Index` | `window_fld` |
+| -0Ah | `Esc_Hotkey_Index` | `hotkey_esc` |
+| -8 | `Raze_Button_Index` | `raze_button_fld` |
+| -6 | `NoRaze_Button_Index` | `no_button_fld` |
+| -4 | `input_field_idx` | `input_field_idx` |
+| -2 | `Dialog_Box_Height` | `message_box_height` |
+
+Production declares them in exactly that order, then the two register locals `message_height` (SI) and `leave_screen` (DI), which carry no ordering constraint.
+
+**The listing's `Keep_City` name is the right one, and the Renames table's open question resolves in its favour.** The value is `ST_FALSE` on the raze path (asm:178) and `ST_TRUE` on the spare path (asm:184), and it is what the function returns (asm:198). `spare` says the same thing; nothing here argues for reverting beyond taste.
+
+**The two button fields carry each other's art, and that is what the listing does.** `no_button_fld` gets `confirmation_button_yes_seg` (asm:95) and `raze_button_fld` gets `confirmation_button_no_seg` (asm:112). The production comments at [Combat.c:16859-16860](../../MoM/src/Combat.c#L16859-L16860) record why: COMPIX entry 81 *is* the "no raze" button and 82 *is* the "raze" button, so the `_yes_`/`_no_` halves of those global names describe the dialog's answer, not the button's caption. Preserved, correctly.
+
+**Loop shape.** `xor di, di / jmp short loc_A8E67` (asm:163-164) enters at the test, and `or di, di / jz loc_A8E28` (asm:191-192) is the `while(leave_screen == ST_FALSE)`. Inside, `cmp input_field_idx, -1 / jz` (asm:171-172) jumps **to** the body and `cmp ax, Raze_Button_Index / jnz` (asm:174-175) skips **past** it — `||`, matching production's two-clause guard. The second `if` is independent, not an `else`, since asm:179 is reached by fall-through.
+
+**Everything else checks out term for term:** both `LBX_Reload_Next` art loads and their two globals, `Get_Paragraph_Max_Height(166, message)`, `message_box_height = 34 + message_height`, the `(SCREEN_HEIGHT - message_box_height) / 2` centring via the signed-halve idiom at asm:85-87, all four field-add argument lists read off the push order, `Assign_Auto_Function(Raze_City_Prompt_Draw, 1)` as a far pointer plus the `1`, and the five-call teardown at asm:193-197.
+
+### `Raze_City_Prompt_Draw` ([Combat.c:16910](../../MoM/src/Combat.c#L16910), asm 126)
+
+The dialog's redraw callback, installed by the prompt and also called directly at the bottom of each input iteration (asm:187-188).
+
+**No stack locals** — `push bp / mov bp, sp / push si` with no `sub sp`. `paragraph_height` is SI, and unlike its neighbours production leaves it uninitialised, matching the listing exactly.
+
+Straight-line, no branches. Set the font, measure the paragraph, size the window to `message_box_y + paragraph_height + 12`, `Clipped_Draw` the top art, reset the window, `FLIC_Draw` the bottom art at `+ 10`, then three `Print_Paragraph` passes: two shadow passes in `COL_ConfirmShadows` at `(x+10, y+10)` and `(x+9, y+10)`, then `Set_Alias_Color(18)` and the real text in `COL_Dialog_Text` at `(x+9, y+9)`. Every literal, every global, and all five `Print_Paragraph` arguments (`add sp, 0Ah`) match.
+
+The header comment credits drake178's observation that this is byte-identical to `Confirmation_Box_Draw` in `GENDRAW.C`, copied into the overlay to avoid a swap. Nothing in the listing contradicts that.
+
+**One listing artifact.** `loc_A8F24:` (asm:61) sits between `mov ax, 4` and its `push ax`, splitting a single argument setup. Nothing in this listing jumps to it. It has no bearing on the reconstruction — noted so the next reader does not go looking for a branch.
 
 ## `Raze_Check` — full body walk, no defects
 
@@ -349,7 +402,7 @@ Faithful to the disassembly; not to be "fixed".
 - **The building-message compaction shifts only `city_idx`.** Entries are 4 bytes (`shl bx, 2`) but the copy at asm:1256-1263 moves one byte per slot. Whatever else the record holds is left behind.
 - **The hero-item slot is cleared unconditionally.** asm:1811-1854 writes `-1` even on the path that skipped the body because the slot was already `<= -1`.
 - **`_active_battle_unit` carries sentinels.** 666 (rampage, no ruins), 667 (raiders took the city), 668 (rampage, ruins created) are stashed in a variable otherwise holding a battle-unit index, and `Combat_Results_Scroll_Text` reads them back to pick messages.
-- **`Combat_Results_Scroll_Text` returns early on the raze path**, skipping the `CMB_Scroll_MinHeight` floor — asm:471 is `jmp @@Done`, past the clamp at `loc_A722B`. Production preserves this by putting the clamp inside the `else`; the in-code `¿ BUG:` note at [Combat.c:15979](../../MoM/src/Combat.c#L15979) records the observation without acting on it.
+- **`Combat_Results_Scroll_Text` returns early on the raze path**, skipping the `CMB_Scroll_MinHeight` floor — asm:471 is `jmp @@Done`, past the clamp at `loc_A722B`. Production preserves this by putting the clamp inside the `else`; the in-code `¿ BUG:` note at [Combat.c:15318](../../MoM/src/Combat.c#L15318) records the observation without acting on it.
 - **`Find_Undead_Creator_Type` indexes the wrong player's hero array** — `_players[player_idx].Heroes[_UNITS[battle_units[itr1].unit_idx].Hero_Slot]` where the unit under `itr1` may belong to someone else. Recorded as B1 in `SPLMASTR-Undead_Animation.md`; unchanged.
 - **`Rampage_Combat_City` scales guard counts by 17 and truncates to a byte.** Four or more of one guard type overflows the low nibble into the high one.
 
@@ -359,7 +412,7 @@ Faithful to the disassembly; not to be "fixed".
 
 - `Rampage_Combat_City` asm:83 renders the battle-unit stride as `mov dx, size s_BATTLE_UNIT+s_BATTLE_UNIT.melee`, and `End_Of_Combat` asm:1573 does the same. Every other one of the ~140 sites in this overlay that indexes `battle_units` uses the plain `size s_BATTLE_UNIT`, and the surrounding instruction sequence is identical at all of them. Treat these two as IDA symbolisation artifacts, not as a different computation.
 - `End_Of_Combat` asm:850 and asm:625 write `_combat_wx__som_started_anim_ctr`; production uses `_combat_wx` ([Combat.h:1414](../../MoM/src/Combat.h#L1414)). The compound label is Piethawn's, marking storage reused for a second purpose.
-- The `_fstrcpy` calls at asm:2032 and `Combat_Results_Scroll_Text` asm:165 push `0` as the segment of a data-segment object. Recorded because it looks wrong; it is moot in the port, which uses near copies.
+- The `_fstrcpy` calls in `Combat_Results_Scroll_Text.asm` (asm:167, 256, 302) push `0` as the segment of the destination. This was recorded here as looking wrong; it is not. `seg009/_fstrcpy.asm:13-21` tests both segment arguments against zero and substitutes `DS`, so **segment 0 means "near, use DS"** — a deliberate sentinel that lets a four-word interface take a near destination without the caller synthesising a segment. The calls pair it with a genuine far source (`push [word ptr _CITIES+2] / push dx` at asm:161-162). The routine is SimTex's own, not a vendor one: it sits in `seg009` and carries no `library function` attribute, whereas `strcpy`, `strcat` and `strlen` sit in `seg000` and are all FLIRT-matched as library code. It is hand-rolled because the binary is medium model — far code, near data — so the library `strcpy` cannot reach an LBX-loaded far block. All of this is moot in the port, which uses near copies.
 
 ---
 
