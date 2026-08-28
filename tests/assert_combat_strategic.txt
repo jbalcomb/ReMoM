@@ -10,6 +10,14 @@
 # combat path shifts them, and this file must be re-captured (rerun the
 # command above and copy HEMOM_COMBAT.txt values).
 #
+# Re-captured after commit 7dc4be0d "bugfix 0 mv pt for phantasmal units": the
+# uint8_t cast in Set_Movement_Cost_Map (Combat.c) restored mobility to
+# UA_NONCORPOREAL / Wraith-Form / swimming units (INF move-cost was being read
+# as a signed -1, i.e. cheaper than any real cost, and immobilizing them).  That
+# changed this battle: defender[2] now takes 0 damage instead of 6, removing one
+# attack's 3 RNG draws (30 -> 27) and shifting random_seed_after.  All other
+# fields were unaffected.
+#
 combat.seed = 12345
 combat.attacker_player_idx = 2
 combat.defender_player_idx = 3
@@ -21,8 +29,8 @@ combat.attacker_won = 0
 combat.turns = 0
 combat.winner_player_idx = 3
 combat.gold_reward = 0
-combat.rng_calls = 30
-combat.random_seed_after = 1992184331
+combat.rng_calls = 27
+combat.random_seed_after = 1533722877
 game.units_after = 842
 troop[0].unit_idx = 12
 troop[0].owner_idx = -1
@@ -80,7 +88,7 @@ defender[2].type = 123
 defender[2].status = 0
 defender[2].level = 1
 defender[2].xp = 56
-defender[2].damage = 6
+defender[2].damage = 0
 defender[2].wx = 20
 defender[2].wy = 15
 defender[2].wp = 0
