@@ -1092,7 +1092,7 @@ void Vortex_Move_Screen_Assign_Mouse_Images(int vortex_idx)
 //             )
 
             if(
-                (movement_cost != -1) // INF
+                (movement_cost != INF)  /* CLAUDE: was `!= -1`; MoveCost_Teleport is now uint8_t so INF (0xFF) no longer sign-extends to -1 in movement_cost */
                 &&
                 (abs(delta_x) <= 1)
                 &&
@@ -1171,7 +1171,7 @@ void Vortex_Move_Screen(int vortex_idx)
                 )
                 {
 
-                    if(battlefield->MoveCost_Teleport[((target_cgy * COMBAT_GRID_WIDTH) + target_cgx)] != -1)  // INF
+                    if(battlefield->MoveCost_Teleport[((target_cgy * COMBAT_GRID_WIDTH) + target_cgx)] != INF)  /* CLAUDE: was `!= -1`; MoveCost_Teleport is now uint8_t */
                     {
 
                         if(
@@ -1271,7 +1271,7 @@ void Vortex_Combat_Round(void)
                 {
 
                     if(
-                        (battlefield->MoveCost_Teleport[((next_cgy * COMBAT_GRID_WIDTH) + next_cgx)] != ST_UNDEFINED)
+                        (battlefield->MoveCost_Teleport[((next_cgy * COMBAT_GRID_WIDTH) + next_cgx)] != INF)  /* CLAUDE: was `!= ST_UNDEFINED` (== -1); MoveCost_Teleport is now uint8_t */
                         &&
                         (next_cgx >= 0)
                         &&

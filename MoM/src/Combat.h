@@ -1043,10 +1043,10 @@ struct s_BATTLEFIELD
     /* 0x0000 */  int16_t  terrain_type[COMBAT_GRID_CELL_COUNT];    /* 21 x 22 */
     /* 0x039C */  int8_t   terrain_group[COMBAT_GRID_CELL_COUNT];   /* 1-byte, unsigned */
     /* 0x056A */  int8_t   roads[COMBAT_GRID_CELL_COUNT];
-    /* 0x0738 */  int8_t   MoveCost_Ground[COMBAT_GRID_CELL_COUNT];
-    /* 0x0906 */  int8_t   MoveCost_Teleport[COMBAT_GRID_CELL_COUNT];   /* DEDU TODO uint8_t vs. ING is -1? ... The root cause is the struct's int8_t typing when INF=0xFF. Every reader has to cast. Long term, changing Combat.h:1046-1049 to uint8_t would eliminate the whole class of bug ... */
-    /* 0x0AD4 */  int8_t   MoveCost_Ground2[COMBAT_GRID_CELL_COUNT];
-    /* 0x0CA2 */  int8_t   MoveCost_Sailing[COMBAT_GRID_CELL_COUNT];
+    /* 0x0738 */  uint8_t  MoveCost_Ground[COMBAT_GRID_CELL_COUNT];    /* CLAUDE: was int8_t; INF is 0xFF, which reads as -1 under int8_t and broke every signed comparison (min-cost in Set_Movement_Cost_Map, `< 4` tree/rock-clamp guards) */
+    /* 0x0906 */  uint8_t  MoveCost_Teleport[COMBAT_GRID_CELL_COUNT];  /* CLAUDE: was int8_t; readers use `!= INF` */
+    /* 0x0AD4 */  uint8_t  MoveCost_Ground2[COMBAT_GRID_CELL_COUNT];   /* CLAUDE: was int8_t */
+    /* 0x0CA2 */  uint8_t  MoveCost_Sailing[COMBAT_GRID_CELL_COUNT];   /* CLAUDE: was int8_t */
     /* 0x0E70 */  int16_t  tree_count;
     /* 0x0E72 */  int16_t  Tree_DrawXs[100];
     /* 0x0F3A */  int16_t  Tree_DrawYs[100];

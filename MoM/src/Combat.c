@@ -62,7 +62,6 @@
 #include "LOADER.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
-#include "MOM_DBG.h"
 #include "NEXTTURN.h"
 #include "RACETYPE.h"
 #include "SBookScr.h"
@@ -2522,8 +2521,7 @@ void Set_Movement_Cost_Map(int16_t battle_unit_idx)
             {
                 for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++)
                 {
-                    /* cast to uint8_t so INF (stored as -1 in int8_t) reads as 255 = worst-cost; signed compare treated INF as smaller than any real cost and produced INF for every cell, making UA_NONCORPOREAL / Wraith-Form / swimming units immobile. */
-                    if((uint8_t)battlefield->MoveCost_Sailing[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] > (uint8_t)battlefield->MoveCost_Ground[((itr_y * COMBAT_GRID_WIDTH) + itr_x)])
+                    if(battlefield->MoveCost_Sailing[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] > battlefield->MoveCost_Ground[((itr_y * COMBAT_GRID_WIDTH) + itr_x)])
                     {
                         _cmbt_movepath_cost_map[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = battlefield->MoveCost_Ground[((itr_y * COMBAT_GRID_WIDTH) + itr_x)];
                     }
@@ -21713,14 +21711,14 @@ void Set_Movement_Cost_Maps(int16_t location_type, int16_t city_walls)
                     battlefield->MoveCost_Ground[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]   = 2;
                     battlefield->MoveCost_Teleport[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = 2;
                     battlefield->MoveCost_Ground2[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = 2;
-                    battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = -1;  // INF
+                    battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;  /* CLAUDE: was `-1  // INF`; MoveCost_* flipped to uint8_t */
                 } break;
                 case CTG_Rough:  /* "Rough (Dirt)" ... ¿ also, "Tree" ? */
                 {
                     battlefield->MoveCost_Ground[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]   = 4;
                     battlefield->MoveCost_Teleport[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = 2;
                     battlefield->MoveCost_Ground2[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = 4;
-                    battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = -1;  // INF
+                    battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;  /* CLAUDE: was `-1  // INF` */
                 } break;
                 case ctg_River:
                 {
@@ -21731,9 +21729,9 @@ void Set_Movement_Cost_Maps(int16_t location_type, int16_t city_walls)
                 } break;
                 case ctg_Ocean:
                 {
-                    battlefield->MoveCost_Ground[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]   = -1;  // INF
+                    battlefield->MoveCost_Ground[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]   = INF;  /* CLAUDE: was `-1  // INF` */
                     battlefield->MoveCost_Teleport[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = 2;
-                    battlefield->MoveCost_Ground2[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = -1;  // INF
+                    battlefield->MoveCost_Ground2[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;  /* CLAUDE: was `-1  // INF` */
                     battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = 2;
                 } break;
             }
