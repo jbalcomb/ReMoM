@@ -29,7 +29,8 @@
 
 #include "../../STU/src/STU_DBG.h"
 
-#include "../../MoX/src/MOM_DAT.h"
+#include "../../MoX/src/MOM_DAT.h"  /* NUM_CITY_ENCHANTMENTS */
+#include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/MOX_TYPE.h"
 
 
@@ -1043,7 +1044,7 @@ struct s_BATTLEFIELD
     /* 0x039C */  int8_t   terrain_group[COMBAT_GRID_CELL_COUNT];   /* 1-byte, unsigned */
     /* 0x056A */  int8_t   roads[COMBAT_GRID_CELL_COUNT];
     /* 0x0738 */  int8_t   MoveCost_Ground[COMBAT_GRID_CELL_COUNT];
-    /* 0x0906 */  int8_t   MoveCost_Teleport[COMBAT_GRID_CELL_COUNT];
+    /* 0x0906 */  int8_t   MoveCost_Teleport[COMBAT_GRID_CELL_COUNT];   /* DEDU TODO uint8_t vs. ING is -1? ... The root cause is the struct's int8_t typing when INF=0xFF. Every reader has to cast. Long term, changing Combat.h:1046-1049 to uint8_t would eliminate the whole class of bug ... */
     /* 0x0AD4 */  int8_t   MoveCost_Ground2[COMBAT_GRID_CELL_COUNT];
     /* 0x0CA2 */  int8_t   MoveCost_Sailing[COMBAT_GRID_CELL_COUNT];
     /* 0x0E70 */  int16_t  tree_count;
@@ -1205,148 +1206,6 @@ struct s_MAGIC_VORTEX
     /* 0A */ int16_t owner_idx;
     /* 0C */
 };
-
-
-
-
-
-
-// sizeof: 6Eh  110d
-#pragma pack(push)
-#pragma pack(2)
-struct s_BATTLE_UNIT
-{
-    /* 0x00 */  int8_t   melee;             /* ~ "melee attack strength" */
-    /* 0x01 */  int8_t   ranged;            /* ~ "ranged attack strength" */
-    /* 0x02 */  int8_t   ranged_type;       /* 1-byte, signed */  /* ~ "ranged attack type" */
-    /* 0x03 */  int8_t   ammo;
-    /* 0x04 */  int8_t   tohit;
-    /* 0x05 */  int8_t   defense;
-    /* 0x06 */  int8_t   resist;
-    /* 0x07 */  int8_t   movement_points;   /* ¿ moves2 ? */
-    /* 0x08 */  int16_t  cost;
-    /* 0x0A */  int8_t   upkeep;
-    /* 0x0B */  int8_t   race;              /* 1-byte, signed;  enum e_RACE_TYPE;  -16 == Magic/Spellbook Realm */
-    /* 0x0C */  /* int8_t Unused_0Ch; */                          // reqd_bldg_1 & hero_portrait
-    union {
-                int8_t   reqd_bldg_1;
-                int8_t   hero_portrait_idx;
-    };
-    /* 0x0D */  /* int8_t figure_cnt; */                         // reqd_bldg_2 & hero_type
-    union {
-                int8_t   figure_cnt;   /* DEDU  range of values ? */
-                int8_t   reqd_bldg_2;
-                int8_t   hero_type;
-    };
-    /* 0x0E */
-    union {
-        int64_t seg_or_idx;
-        int16_t bufpi;  /* used to index picture cache */
-        SAMB_ptr pict_seg;
-    };
-    /* 0x10 */  int8_t   hits;                  /* Hit-Points ¿ Per Figure ? */
-    /* 0x11 */  int8_t   scout_range;
-    /* 0x12 */  int8_t   carry_capacity;
-    /* 0x13 */  int8_t   figure_max;
-    /* 0x14 */  int8_t   Construction;
-    /* 0x15 */  int8_t   Spec_Att_Attrib;       // -abs() is resistance_modifier
-    /* 0x16 */  uint16_t Move_Flags;            // ; enum MOVEFLAGS
-    /* 0x17 */  /* 2-byte alignment padding */
-    /* 0x18 */  int16_t  Attribs_1;             // any reason these arent a uint32?  ; enum ATTRIB_1
-    /* 0x1A */  int8_t   Attribs_2;             // any reason these arent a uint32?  ¿ ?
-    /* 0x1B */  int8_t   Unused_1Bh;            // any reason these arent a uint32?  ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
-    /* 0x1C */  uint16_t Abilities;             // ; enum ABL_FLAGS  ~ 'Unit Abilities'
-    /* 0x1E */  uint16_t attack_attributes;     /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
-    /* 0x20 */  int16_t  Sound;
-    /* 0x22 */  int16_t  combat_effects;        /* enum e_BATTLE_UNIT_EFFECT */
-    /* 0x24 */  int8_t   melee_tohit;
-    /* 0x25 */  int8_t   ranged_tohit;
-    /* 0x26 */  int8_t   toblock;
-    /* 0x27 */  int8_t   Weapon_Plus1;          /* ~ Magic Weapon ... `if(!= 0)` */
-    /* 0x28 */  uint16_t melee_attack_attributes;   /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
-    /* 0x2A */  uint16_t ranged_attack_attributes;  /* defs Att_  enum e_ATTACK_FLAGS  AKA ATK_FLAGS */
-    /* 0x2C */  uint32_t item_enchantments;     // Item Powers, as Unit Enchantments  enum e_UNIT_ENCHANTMENTS ... macro UE_...
-    /* 0x30 */  int16_t  unit_idx;
-    /* 0x32 */  int8_t   Extra_Hits;
-    /* 0x33 */  int8_t   Web_HP;
-    /* 0x34 */  int8_t   status;                /* enum e_BATTLE_UNIT_STATUS */
-    /* 0x35 */  int8_t   controller_idx;        // Player Number of the Controlling Wizard  (was owner_idx, but conflicts with _UNITS[unit_idx].owner_idx)
-    /* 0x36 */  uint8_t  damage[3];             // Regular_Dmg, Undeath_Dmg, Irreversible_Dmg
-    /* 0x39 */  int8_t   front_figure_damage;
-    /* 0x3A */  uint32_t enchantments;          // Unit Enchantments
-    /* 0x3E */  int8_t   Suppression;
-    /* 0x3F */  uint8_t  mana_max;
-    /* 0x40 */  uint8_t  mana;                  /* 1-byte, unsigned */
-    /* 0x41 */  int8_t   item_charges;
-    /* 0x42 */  int8_t   Poison_Strength;
-    /* 0x43 */  int8_t   target_battle_unit_idx;    /* 1-byte, signed */
-    /* 0x44 */  int16_t  cgx;                   /* combat grid x coordinate */
-    /* 0x46 */  int16_t  cgy;                   /* combat grid y coordinate */
-    /* 0x48 */  int16_t  target_cgx;            /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */
-    /* 0x4A */  int16_t  target_cgy;            /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */
-    /* 0x4C */  int16_t  move_anim_ctr;         /* ¿ ~ MoO2 ship_frame ?  movement animation counter/increment  {0,1,2,3,4,5,6,7} */
-    /* 0x4E */  int16_t  Atk_FigLoss;
-    /* 0x50 */  int16_t  outline_magic_realm;   /* enchantment_magic_realm ... enum e_MAGIC_REALM{} ... index into enchantment_outline_colors[], used for unit outline color */
-    /* 0x52 */  int16_t  mid_move;              /* {F,T} unit is mid-move; selects walk vs idle animation frame; set to ST_FALSE in Switch_Active_Battle_Unit() */
-    /* 0x54 */  int16_t  action;                /* enum e_BATTLE_UNIT_ACTION */
-    /* 0x56 */  int8_t   confusion_state;       /* {0: , 1: , 2: }  ~== stand around and do nothing while looking foolish and confused, move randomly, attack allies, attack enemies for combat winner, 2 means it currently belongs to the other player/opponent */
-    /* 0x57 */  /* 2-byte alignment padding */
-    /* 0x58 */  int16_t  gibs;
-    /* 0x5A */  int16_t  Unknown_5A;
-    /* 0x5C */  int16_t  animate_idle;
-    /* 0x5E */  int16_t  Melee_Anim;            /* {0,1,2}; not just {F,T}; set in CMB_MeleeAnim() */
-    /* 0x60 */  int16_t  figure_effect;         /* enum e_BATTLE_UNIT_FIGURE_EFFECT;  passed to Combat_Figure_Effect() for BU figure bitmap composition */
-    /* 0x62 */  int16_t  animate_move_as_idle;  /* IIF flight animation ... if((battle_units[battle_unit_idx].Attribs_1 & USA_FLYING) != 0) */
-    /* 0x64 */  int8_t   Gold_Melee;
-    /* 0x65 */  int8_t   Gold_Ranged;
-    /* 0x66 */  int8_t   Gold_Defense;
-    /* 0x67 */  int8_t   Gold_Resist;
-    /* 0x68 */  int8_t   Gold_Hits;
-    /* 0x69 */  int8_t   Grey_Melee;
-    /* 0x6A */  int8_t   Grey_Ranged;
-    /* 0x6B */  int8_t   Grey_Defense;
-    /* 0x6C */  int8_t   Grey_Resist;
-    /* 0x6D */  int8_t   Grey_Hits;
-    /* 0x6E */
-};
-#pragma pack(pop)
-
-
-#pragma pack(push)
-#pragma pack(2)
-struct s_CMBT_DATA
-{
-    /* 0x00 */  int8_t melee;
-    /* 0x01 */  int8_t ranged;
-    /* 0x02 */  int8_t ranged_type;
-    /* 0x03 */  int8_t ammo;
-    /* 0x04 */  int8_t tohit;
-    /* 0x05 */  int8_t defense;
-    /* 0x06 */  int8_t resist;
-    /* 0x07 */  int8_t movement_points;
-    /* 0x08 */  int8_t cost;
-    /* 0x0A */  int8_t upkeep;
-    /* 0x0B */  int8_t race;                                // ; enum Race_Code
-    /* 0x0C */  int8_t Unused_0Ch;
-    /* 0x0D */  int8_t figure_cnt;
-    /* 0x0E */  int16_t bufpi;
-    /* 0x10 */  int8_t hits;
-    /* 0x11 */  int8_t scout_range;
-    /* 0x12 */  int8_t carry_capacity;
-    /* 0x13 */  int8_t figure_max;
-    /* 0x14 */  int8_t Construction;
-    /* 0x15 */  int8_t Spec_Att_Attrib;
-    /* 0x16 */  int8_t Move_Flags;                          // ; enum MOVEFLAGS
-    /* 0x17 */  int8_t Unused_17h;  // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
-    /* 0x18 */  int16_t Attribs_1;                          // ; enum ATTRIB_1
-    /* 0x1A */  int8_t Attribs_2;
-    /* 0x1B */  int8_t Unused_1Bh;  // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
-    /* 0x1C */  int16_t Abilities;                          // ; enum ABL_FLAGS
-    /* 0x1E */  int16_t Attack_Flags;                       // ; enum ATK_FLAGS
-    /* 0x20 */  int16_t Sound;
-
-};
-#pragma pack(pop)
 
 
 

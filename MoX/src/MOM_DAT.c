@@ -3,8 +3,6 @@
 #include "MOX_DEF.h"
 #include "MOX_TYPE.h"
 
-#include "../../MoM/src/AIDATA.h"  /* struct s_AI_CONTINENTS */
-
 #include "../../MoM/src/Combat.h" /* struct s_BATTLE_UNIT */
 
 #include "../../MoM/src/MovePath.h"  /* struct s_MOVE_MODE_COST_MAPS */
