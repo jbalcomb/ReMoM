@@ -228,7 +228,7 @@ TEST_F(AIStacksSurveyExpeditionForcesTest, StackHookHonorsExcessCountLimit)
 }
 
 /*
- * DISABLED: this test is non-deterministic because of an OGBUG in
+ * DISABLED: this test is non-deterministic because of an OGBUG: in
  * AI_Stacks_Survey_Expedition_Forces_Stack().
  *
  * The drafted-unit "value" is the faithfully-reconstructed original-game garbage
@@ -243,7 +243,7 @@ TEST_F(AIStacksSurveyExpeditionForcesTest, StackHookHonorsExcessCountLimit)
  * eligibility/reset behavior this test wanted to cover is asserted elsewhere.
  *
  * Re-enable only after the lowest-value assertions are rewritten to deterministic
- * state (e.g. cp_drafted_unit_count and G_Seafaring_Count), or the OGBUG value is
+ * state (e.g. cp_drafted_unit_count and G_Seafaring_Count), or the OGBUG: value is
  * replaced with a real strength score.
  */
 TEST_F(AIStacksSurveyExpeditionForcesTest, DISABLED_ResetsAndHonorsStackEligibilityRules)

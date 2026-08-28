@@ -508,7 +508,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     battle_unit->animate_idle = ST_FALSE;
     battle_unit->figure_effect = 0;
     battle_unit->animate_move_as_idle = 0;
-    /* OGBUG  only Items[0]'s embedded spell is ever usable */
+    /* OGBUG: only Items[0]'s embedded spell is ever usable */
     if(_UNITS[unit_idx].Hero_Slot > ST_UNDEFINED)
     {
         if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0] > ST_UNDEFINED)
@@ -866,7 +866,7 @@ void Apply_Enchantment_And_Mutation_Effects(struct s_BATTLE_UNIT * battle_unit, 
         battle_unit->defense += 2;
         battle_unit->Gold_Defense += 2;
     }
-    /* OGBUG  undead are also supposed to gain Cold, Poison, and Illusions Immunities (native Death units have all of these anyway) */
+    /* OGBUG: undead are also supposed to gain Cold, Poison, and Illusions Immunities (native Death units have all of these anyway) */
     if(battle_unit->race == rt_Death)
     {
         battle_unit->Attribs_1 |= USA_IMMUNITY_DEATH;
@@ -1155,7 +1155,7 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
 {
     int16_t magic_node_structure = 0;
     int16_t item_idx = 0;
-    int16_t Mutation_Flags = 0;
+    int16_t mutation_flags = 0;
     uint32_t enchantments = 0;
     int16_t unit_idx = 0;
     int16_t itr_hero_items = 0;
@@ -1230,7 +1230,7 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
             }
         }
     }
-    Mutation_Flags = _UNITS[battle_unit->unit_idx].mutations;
+    mutation_flags = _UNITS[battle_unit->unit_idx].mutations;
     if(
         (combat_enchantments[HIGH_PRAYER_ATTKR] == 1 && battle_unit->controller_idx == _combat_attacker_player)
         ||
@@ -1405,7 +1405,7 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
         battle_unit->Grey_Resist += 5;
     }
     enchantments = (_UNITS[battle_unit->unit_idx].enchantments ^ battle_unit->enchantments) & battle_unit->enchantments;
-    Apply_Enchantment_And_Mutation_Effects(battle_unit, enchantments, Mutation_Flags);
+    Apply_Enchantment_And_Mutation_Effects(battle_unit, enchantments, mutation_flags);
     if(battle_unit->combat_effects & bue_Warped_Attack)
     {
         battle_unit->Grey_Melee += (battle_unit->melee + 1) / 2;
@@ -1471,4 +1471,3 @@ int16_t NIU_Unit_Has_Spell_Enchantment(int16_t unit_idx, int16_t spell_idx)
     }
     return has_it;
 }
-

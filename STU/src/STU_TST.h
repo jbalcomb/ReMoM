@@ -9,7 +9,7 @@ extern "C" {
 
 
 /*
-    Scenario patching -- see doc/#Devel/Scenario-Patching.md
+    Scenario patching -- see doc/@Devel/Scenario-Patching.md
 
     TST_Patch_Game_Data() runs from Loaded_Game_Update(), immediately after every save load, in EVERY
     build including Release.  That is deliberate: the demo reel is filmed from the Release binary an

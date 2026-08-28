@@ -9,7 +9,7 @@ compromise, and print the questions it CANNOT answer so they are recorded as gap
 silently omitted.
 
 The policy this implements - what the tiers mean, why each check exists, and the xz-utils worked
-example - lives in doc/#Devel/Dependency-Vetting.md.  Read that first.
+example - lives in doc/@Devel/Dependency-Vetting.md.  Read that first.
 
 Usage:
   python tools/vet_dependency.py --repo OWNER/NAME
@@ -410,7 +410,7 @@ def main():
 
     print("")
     print("No score is produced by design. Decide, record the decision and its date, and re-check")
-    print("when the version changes. See doc/#Devel/Dependency-Vetting.md")
+    print("when the version changes. See doc/@Devel/Dependency-Vetting.md")
     print("")
 
     return 0

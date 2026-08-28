@@ -3291,7 +3291,7 @@ void Update_Cycle(int16_t *color_min, int16_t * color_max)
             /* Max is actually lower than Min (Negative gradient) */
             cycle_color_value -= cycle_step_value;
             
-            /* ¿ OGBUG  Claude feels strongly that this should be (cycle_color_value <= *color_max) ? */
+            /* ¿ OGBUG: Claude feels strongly that this should be (cycle_color_value <= *color_max) ? */
             if(cycle_color_value <= *color_min) {
                 cycle_color_value = *color_min + 1; /* Bounce back */
                 cycle_direction_flag = 1;           /* Switch direction */
@@ -3312,7 +3312,7 @@ void Update_Cycle(int16_t *color_min, int16_t * color_max)
             /* Max is actually lower than Min (Negative gradient) */
             cycle_color_value += cycle_step_value;
             
-            /* ¿ OGBUG  Claude feels strongly that this should be (cycle_color_value >= *color_min) ? */
+            /* ¿ OGBUG: Claude feels strongly that this should be (cycle_color_value >= *color_min) ? */
             if(cycle_color_value >= *color_max) {
                 cycle_color_value = *color_max - 1; /* Bounce back */
                 cycle_direction_flag = 0;           /* Switch direction */

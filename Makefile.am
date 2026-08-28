@@ -292,7 +292,7 @@ ReMoM_CFLAGS = $(AM_CFLAGS) \
 
 # Export dynamic symbols so STU_BRAK's POSIX backtrace prints function names
 # instead of raw hex.  Mirrors CMake's ENABLE_EXPORTS on ReMoMber.  See
-# doc/#Devel/Devel-Crash-Reports.md for how to symbolicate crash reports.
+# doc/@Devel/Devel-Crash-Reports.md for how to symbolicate crash reports.
 ReMoM_LDFLAGS = -rdynamic
 
 ReMoM_LDADD = \

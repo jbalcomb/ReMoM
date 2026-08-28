@@ -141,7 +141,7 @@ void AI_Execute_Orders(int16_t player_idx)
     l_map_y = _map_y;
     l_map_plane = _map_plane;
 
-    /* ¿ OGBUG  This is in and only in a per-player-loop that already checks for Time-Stop ? */
+    /* ¿ OGBUG: This is in and only in a per-player-loop that already checks for Time-Stop ? */
 
     /* Time Stop Logic Check */
     if(g_timestop_player_num > 0)
@@ -531,12 +531,12 @@ void Evict_Unit(int16_t unit_idx)
     wy_start = (unit_wy - 1);
     if(wy_start < 0)
     {
-        wy_start = 0;  /* OGBUG:  drake178: BUG: range checking must be performed on the test coordinates, doing it here shifts the rectangle */
+        wy_start = 0;  /* OGBUG: drake178: BUG: range checking must be performed on the test coordinates, doing it here shifts the rectangle */
     }
     wx_start = (unit_wx - 1);
     if(wx_start < 0)
     {
-        wx_start += WORLD_WIDTH;  /* OGBUG:  drake178: BUG: range checking must be performed on the test coordinates, doing it here shifts the rectangle */
+        wx_start += WORLD_WIDTH;  /* OGBUG: drake178: BUG: range checking must be performed on the test coordinates, doing it here shifts the rectangle */
     }
     range = 3;
     found_square = ST_FALSE;
@@ -586,7 +586,7 @@ void Evict_Unit(int16_t unit_idx)
         _UNITS[unit_idx].wx = (int8_t)target_square_wx;
         _UNITS[unit_idx].wy = (int8_t)target_square_wy;
         troops[0] = unit_idx;
-        Units_In_Tower(1, &troops[0], _UNITS[unit_idx].wp);  /* OGBUG  drake178: Towers of Wizardry are not valid push destinations */
+        Units_In_Tower(1, &troops[0], _UNITS[unit_idx].wp);  /* OGBUG: drake178: Towers of Wizardry are not valid push destinations */
     }
     else
     {

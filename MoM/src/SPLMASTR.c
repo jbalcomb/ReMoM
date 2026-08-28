@@ -1693,7 +1693,7 @@ static void Spell_Of_Mastery_Lose_Draw(void)
     Set_Font_Colors_15(5, &colors[0]);
     Set_Outline_Color(0);
     Set_Font_Style_Outline(5, 15, 0, 0);
-    Print_Centered(160, 5, GUI_NearMsgString);  /* OGBUG  extra parameter `Print_Centered(160, 5, GUI_NearMsgString, 2);` */
+    Print_Centered(160, 5, GUI_NearMsgString);  /* OGBUG: extra parameter `Print_Centered(160, 5, GUI_NearMsgString, 2);` */
     Print_Centered(160, 25, strSpellOfMastery);  // "Spell of Mastery"
     if(_osc_anim_ctr < 12)
     {
@@ -1707,7 +1707,7 @@ static void Spell_Of_Mastery_Lose_Draw(void)
         {
             Set_Animation_Frame(spellose_sphere_seg, 5);
             FLIC_Draw(start_x, 34, spellose_sphere_seg);
-            x = 61;  /* OGBUG  gets overwritten before used */
+            x = 61;  /* OGBUG: gets overwritten before used */
             max_shear = -y1;
             if(((_osc_anim_ctr - 12) / 2) < 2)
             {
@@ -1808,7 +1808,7 @@ static void Cast_Spell_Of_Mastery_Draw(void)
     }
     Set_Outline_Color(0);
     Set_Font_Style_Outline(5, 5, 0, 0);
-    Print_Centered(160, 160, GUI_NearMsgString);  /* OGBUG  extra parameter - `Print_Centered(160, 160, GUI_NearMsgString, 2);` */
+    Print_Centered(160, 160, GUI_NearMsgString);  /* OGBUG: extra parameter - `Print_Centered(160, 160, GUI_NearMsgString, 2);` */
     Print_Centered(160, 180, strSpellOfMastery);
     _combat_wx++;
 }

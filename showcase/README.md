@@ -6,8 +6,8 @@ that code drives rendering functions directly and its output must never appear i
 
 
 The editable source of the ReMoM showcase video.  Shot list and editorial intent:
-[doc/#AI_Plans/PLAN-Demo-Reel-Scenes.md](../doc/%23AI_Plans/PLAN-Demo-Reel-Scenes.md).
-Capture/render machinery: [doc/#AI_Plans/PRD-Scripted-Demo-Capture.md](../doc/%23AI_Plans/PRD-Scripted-Demo-Capture.md).
+[doc/@AI_Plans/PLAN-Demo-Reel-Scenes.md](../doc/%23AI_Plans/PLAN-Demo-Reel-Scenes.md).
+Capture/render machinery: [doc/@AI_Plans/PRD-Scripted-Demo-Capture.md](../doc/%23AI_Plans/PRD-Scripted-Demo-Capture.md).
 
 Files are numbered so `--concat "out/demo/[0-9]*.mp4"` orders the cut correctly.
 

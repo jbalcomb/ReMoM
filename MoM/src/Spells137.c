@@ -1795,7 +1795,7 @@ int16_t Target_Wizard_Screen(int16_t spell_idx)
 
     Dissolve_Main_Screen();
 
-    /* OGBUG  called Release_Block() without seg parameter */
+    /* OGBUG: called Release_Block() without seg parameter */
     Release_Block(_screen_seg);
 
     Deactivate_Auto_Function();

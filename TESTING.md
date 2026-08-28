@@ -128,4 +128,4 @@ see the note in [PLAYING.md](PLAYING.md) ("Troubleshooting").
 - Issues: https://github.com/jbalcomb/ReMoM/issues
 - Discord: [#mom-reverse-engineering](https://discord.gg/kSNA8bE6Wt) on the "Master of Magic - Fans" server
 
-*(Developer detail on crash symbolization lives in `doc/#Devel/Devel-Crash-Reports.md`.)*
+*(Developer detail on crash symbolization lives in `doc/@Devel/Devel-Crash-Reports.md`.)*

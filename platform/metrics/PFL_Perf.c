@@ -1,7 +1,7 @@
 /**
  * PFL_Perf.c -- zone recorder and percentile reporter for the performance-measurement layer.
  *
- * See Platform_Perf.h for the API contract and doc/#AI_Plans/{BRA,PRD,PLAN}-Performance-Management.md
+ * See Platform_Perf.h for the API contract and doc/@AI_Plans/{BRA,PRD,PLAN}-Performance-Management.md
  * for why the layer exists.  Backend-agnostic: nothing here touches SDL, Win32, or engine globals.
  *
  * OBSERVER EFFECT IS THE DESIGN CONSTRAINT

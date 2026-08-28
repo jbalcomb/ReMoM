@@ -726,7 +726,7 @@ int16_t Combat_Spellbook_Build(int16_t caster_idx)
     {
         unit_type = Combat_Casting_Cost_Multiplier(HUMAN_PLAYER_IDX);
         g_spellbook_cast_mana_limit = _players[HUMAN_PLAYER_IDX].Cmbt_Skill_Left;
-        /* OGBUG  rounds the wrong way ; BUG: x0.5 multiplier results in a negative signed ; value if the player has over 16,383 mana */
+        /* OGBUG: rounds the wrong way ; BUG: x0.5 multiplier results in a negative signed ; value if the player has over 16,383 mana */
         if(((_players[HUMAN_PLAYER_IDX].mana_reserve * 10) / unit_type) < g_spellbook_cast_mana_limit)
         {
             g_spellbook_cast_mana_limit = ((_players[HUMAN_PLAYER_IDX].mana_reserve * 10) / unit_type);
@@ -768,7 +768,7 @@ int16_t Combat_Spellbook_Build(int16_t caster_idx)
             if(battle_units[caster_idx].item_charges > 0)
             {
                 unit_type = _UNITS[battle_units[caster_idx].unit_idx].Hero_Slot;
-                /* OGBUG  this may not be the hero's original owner; should use unit owner, not current battle_unit controller */
+                /* OGBUG: this may not be the hero's original owner; should use unit owner, not current battle_unit controller */
                 item_embed_spell_idx = _ITEMS[_players[battle_units[caster_idx].controller_idx].Heroes[unit_type].Items[0]].embed_spell_idx;
                 if(item_embed_spell_idx > 0)
                 {
@@ -798,14 +798,14 @@ int16_t Combat_Spellbook_Build(int16_t caster_idx)
     {
         if(battle_units[caster_idx].item_charges > 0)
         {
-            /* OGBUG  just because it is in an item, the spell may not necessarily be castable (e.g. Earth Elemental on a water square) */
+            /* OGBUG: just because it is in an item, the spell may not necessarily be castable (e.g. Earth Elemental on a water square) */
             spellbook_has_castable_spell = ST_TRUE;
         }
         else
         {
             for(itr1 = 0; itr1 < m_spell_list_count; itr1++)
             {
-                /* OGBUG  ignores Evil Omens */
+                /* OGBUG: ignores Evil Omens */
                 if(spell_data_table[abs(m_spellbook_spell_list[itr1])].casting_cost <= g_spellbook_cast_mana_limit)
                 {
                     if(
@@ -820,7 +820,7 @@ int16_t Combat_Spellbook_Build(int16_t caster_idx)
                         )
                         &&
                         !(
-                            (m_spellbook_spell_list[itr1] == spl_Cracks_Call)  /* OGBUG  should be abs(spell_idx) */
+                            (m_spellbook_spell_list[itr1] == spl_Cracks_Call)  /* OGBUG: should be abs(spell_idx) */
                             &&
                             (_combat_structure == cs_OceanTerrainType)
                         )
@@ -850,7 +850,7 @@ int16_t Combat_Spellbook_Build(int16_t caster_idx)
                     )
                     &&
                     !(
-                        (m_spellbook_spell_list[itr1] == spl_Cracks_Call)  /* OGBUG  should be abs(spell_idx) */
+                        (m_spellbook_spell_list[itr1] == spl_Cracks_Call)  /* OGBUG: should be abs(spell_idx) */
                         &&
                         (_combat_structure == cs_OceanTerrainType)
                     )
@@ -1154,7 +1154,7 @@ void Combat_Spellbook_Compose(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr
                     Icon_Count = 0;
                 }
                 if(
-                    (spell_idx == spl_Cracks_Call)  /* OGBUG:  should be `(abs(spell_idx) == spl_Cracks_Call)` */
+                    (spell_idx == spl_Cracks_Call)  /* OGBUG: should be `(abs(spell_idx) == spl_Cracks_Call)` */
                     &&
                     (_combat_structure == cs_OceanTerrainType)
                 )
@@ -2136,7 +2136,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
         _page_flip_effect = pfe_TogglePagesFadeIn;
         PageFlip_FX();
         Clear_Fields();
-        /* OGBUG  spellbook_page is promptly overwritten and never tested against input */
+        /* OGBUG: spellbook_page is promptly overwritten and never tested against input */
         spellbook_page = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__ovr118[0], ST_UNDEFINED);
         Assign_Auto_Function(Learn_Spell_Animation_Draw, 2);
         for(itr = 0; ((itr < 60) && (Get_Input() == ST_FALSE)); itr++)
@@ -2189,10 +2189,10 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
                 }
             }
         }
-        /* OGBUG  spell_found is always true; Player_Gets_Spell() marks the spell Known before the Learn_Spell_Animation() call */
+        /* OGBUG: spell_found is always true; Player_Gets_Spell() marks the spell Known before the Learn_Spell_Animation() call */
         if(spell_found == ST_FALSE)
         {
-            /* OGBUG  should be (spell_idx - 1), not (spell_idx - 2) */
+            /* OGBUG: should be (spell_idx - 1), not (spell_idx - 2) */
             _players[HUMAN_PLAYER_IDX].spells_list[((((spell_idx - 2) / NUM_SPELLS_PER_MAGIC_REALM) * NUM_SPELLS_PER_MAGIC_REALM) + ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM))] = 1;  /* S_Knowable */
             Build_Spellbook(slt_Library, 4);
             for(spellbook_page = 0; (((m_spellbook_page_count - 1) > spellbook_page) && (spell_found == ST_FALSE)); spellbook_page++)
@@ -2719,7 +2719,7 @@ void BigBook_Compose(int16_t page, SAMB_ptr pict_seg, int16_t flag)
             {
                 research_cost = spell_data_table[abs(m_spellbook_pages[page].spell[itr])].research_cost;
             }
-            /* OGBUG  should be per spell, not per realm; this is an arbitrary estimate */
+            /* OGBUG: should be per spell, not per realm; this is an arbitrary estimate */
             if(g_research_income_by_realm[spell_data_table[abs(m_spellbook_pages[page].spell[itr])].magic_realm] == 0)
             {
                 turns_left = 999;

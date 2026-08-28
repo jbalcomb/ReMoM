@@ -809,7 +809,7 @@ void Cast_Spell_Overland(int16_t player_idx)
         if(spell_idx == spl_Spell_Of_Mastery)
         {
             Spell_Of_Mastery(player_idx);  /* OG-MoM NO_RETURN; HACK  set flag, fall back to Screen_Control() */
-            g_ai_recompute_needed = ST_TRUE;  /* ¿ OGBUG  unreachable code ? */
+            g_ai_recompute_needed = ST_TRUE;  /* ¿ OGBUG: unreachable code ? */
         }
         else
         {
@@ -819,7 +819,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                 // Air Elemental, Angel, Arch Angel, Basilisk, Behemoth, Chaos Spawn, Chimeras, Cockatrices, Colossus, Death Knights, Demon Lord, Djinn, Doom Bat, Earth Elemental, Efreet, Fire Elemental, Fire Giant, Floating Island, Gargoyles, Ghouls, Giant Spiders, Gorgons, Great Drake, Great Wyrm, Guardian Spirit, Hell Hounds, Hydra, Magic Spirit, Nagas, Night Stalker, Phantom Beast, Phantom Warriors, Shadow Demons, Skeletons, Sky Drake, Sprites, Stone Giant, Storm Giant, Unicorns, War Bears, Wraiths
                 case scc_Summoning:
                 {
-                    /* ¿ OGBUG should be ((player_idx == HUMAN_PLAYER_IDX) && (_units < 950)) ? */
+                    /* ¿ OGBUG: should be ((player_idx == HUMAN_PLAYER_IDX) && (_units < 950)) ? */
                     if(
                         (_units < 980)
                         ||
@@ -871,7 +871,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                             _active_world_x = _UNITS[_units].wx;
                             _active_world_y = _UNITS[_units].wy;
                             _map_plane = _UNITS[_units].wp;
-                            /* HACK */ /* WASBUG */ Select_Stack_At_Unit((_units - 1));  /* OGBUG  missing parameter*/   // how to reproduce calling this without the unit_idx parameter?
+                            /* HACK */ /* WASBUG */ Select_Stack_At_Unit((_units - 1));  /* OGBUG: missing parameter*/   // how to reproduce calling this without the unit_idx parameter?
                         }
                         cast_can_continue = ST_TRUE;
                     }
@@ -1434,20 +1434,20 @@ void Cast_Spell_Overland(int16_t player_idx)
                         case spl_Word_Of_Recall:    { cast_can_continue = Cast_Word_Of_Recall(player_idx); } break;
                         case spl_Enchant_Road:      { cast_can_continue = Cast_Enchant_Road(player_idx); } break;
                         case spl_Spell_Ward:        { cast_can_continue = Cast_Spell_Ward(player_idx); } break;
-                        case spl_Spell_Binding:     { Cast_Spell_Binding(player_idx);  /* OGBUG  no return_value  cast_can_continue = Cast_Spell_Binding(player_idx); */ } break;
+                        case spl_Spell_Binding:     { Cast_Spell_Binding(player_idx);  /* OGBUG: no return_value  cast_can_continue = Cast_Spell_Binding(player_idx); */ } break;
                         case spl_Chaos_Channels:    { cast_can_continue = Cast_Chaos_Channels(player_idx); } break;
                         case spl_Warp_Node:         { cast_can_continue = Cast_Warp_Node(player_idx); } break;
                         case spl_Raise_Volcano:     { cast_can_continue = Cast_Raise_Volcano(player_idx); } break;
                         case spl_Call_The_Void:     { cast_can_continue = Cast_Call_The_Void(player_idx); } break;
                         case spl_Plane_Shift:       { cast_can_continue = Cast_Plane_Shift(player_idx); } break;
-                        case spl_Resurrection:      { Cast_Resurrection(player_idx);  /* OGBUG  no return value  cast_can_continue = Cast_Resurrection(player_idx); */ } break;
-                        case spl_Incarnation:       { Cast_Incarnation(player_idx);  /* OGBUG  no return value  cast_can_continue = Cast_Incarnation(player_idx); */ } break;
+                        case spl_Resurrection:      { Cast_Resurrection(player_idx);  /* OGBUG: no return value  cast_can_continue = Cast_Resurrection(player_idx); */ } break;
+                        case spl_Incarnation:       { Cast_Incarnation(player_idx);  /* OGBUG: no return value  cast_can_continue = Cast_Incarnation(player_idx); */ } break;
                         case spl_Great_Unsummoning: { cast_can_continue = Cast_GreatUnsummoning(player_idx); } break;
                         case spl_Death_Wish:        { cast_can_continue = Cast_DeathWish(player_idx); } break;
                         case spl_Black_Wind:        { cast_can_continue = Cast_Black_Wind(player_idx); } break;
                         case spl_Lycanthropy:       { cast_can_continue = Cast_Lycantrophy(player_idx); } break;
-                        case spl_Summon_Hero:       { Cast_Summon_Hero(player_idx, 1);  /* OGBUG  no return value  cast_can_continue = Cast_Summon_Hero(player_idx, 1); */ } break;
-                        case spl_Summon_Champion:   { Cast_Summon_Hero(player_idx, 2);  /* OGBUG  no return value  cast_can_continue = Cast_Summon_Hero(player_idx, 2); */ } break;
+                        case spl_Summon_Hero:       { Cast_Summon_Hero(player_idx, 1);  /* OGBUG: no return value  cast_can_continue = Cast_Summon_Hero(player_idx, 1); */ } break;
+                        case spl_Summon_Champion:   { Cast_Summon_Hero(player_idx, 2);  /* OGBUG: no return value  cast_can_continue = Cast_Summon_Hero(player_idx, 2); */ } break;
                         default: { STU_DEBUG_BREAK(); } break;
                     }
                 } break;  /* case scc_Special_Spell:  //  5 */
@@ -2016,7 +2016,7 @@ int16_t Overland_Enchantment_Spell_Index(int16_t oe_idx)
         case DETECT_MAGIC:      return spl_Detect_Magic;
         case AWARENESS:         return spl_Awareness;
         default:
-            /* ¿ OGBUG  If oe_idx > 23, the assembly jumps directly to @@Done, returning the value of DX on entry (uninitialized/undefined). ? */
+            /* ¿ OGBUG: If oe_idx > 23, the assembly jumps directly to @@Done, returning the value of DX on entry (uninitialized/undefined). ? */
             return 0;
     }
 

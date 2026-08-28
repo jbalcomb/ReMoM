@@ -274,7 +274,7 @@ void AI_Next_Turn(void)
                 PERF_CALL(Player_Hostile_Opponents(player_idx));
                 PERF_CALL(AI_Player_Calculate_Target_Values(player_idx));
             }
-            /* OGBUG  redundant - will be caught by the next block */
+            /* OGBUG: redundant - will be caught by the next block */
             if(_players[player_idx].casting_spell_idx == spl_NONE)
             {
                 PERF_CALL(AI_Spell_Select(player_idx));
@@ -618,7 +618,7 @@ void AI_Update_Magic_Power(int16_t player_idx)
 
     _players[player_idx].reevaluate_magic_power_countdown = (15 + Random(10));
 
-    /* OGBUG  spells that are already research candidates are ignored by this loop */
+    /* OGBUG: spells that are already research candidates are ignored by this loop */
     knowable_spell_count = 0;
     for(itr_realms = 0; ((itr_realms < NUM_MAGIC_REALMS) & (knowable_spell_count == 0)); itr_realms++)
     {
@@ -631,10 +631,10 @@ void AI_Update_Magic_Power(int16_t player_idx)
         }
     }
 
-    /* OGBUG  branching this here removes the AI's ability to adjust power distribution entirely when all spells have been researched, including the intended modifiers for researching and casting the SoM */
+    /* OGBUG: branching this here removes the AI's ability to adjust power distribution entirely when all spells have been researched, including the intended modifiers for researching and casting the SoM */
     if(knowable_spell_count == 0)
     {
-        _players[player_idx].skill_ratio = (_players[player_idx].research_ratio / 2);  /* OGBUG  should be added, not replacing */
+        _players[player_idx].skill_ratio = (_players[player_idx].research_ratio / 2);  /* OGBUG: should be added, not replacing */
         _players[player_idx].research_ratio = 0;
     }
     else
@@ -769,7 +769,7 @@ void AI_Update_Magic_Power(int16_t player_idx)
 
         }
 
-        /* OGBUG  should be spl_Spell_Of_Mastery, not spl_Fire_Elemental */
+        /* OGBUG: should be spl_Spell_Of_Mastery, not spl_Fire_Elemental */
         if(_players[player_idx].researching_spell_idx == spl_Fire_Elemental)
         {
             _players[player_idx].research_ratio = 70;
@@ -974,7 +974,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                     ||
                     (_CITIES[itr_cities].race == rt_Dwarf)
                     ||
-                    (_CITIES[itr_cities].race == rt_Standard)  /* OGBUG  should be rt_Trolls */
+                    (_CITIES[itr_cities].race == rt_Standard)  /* OGBUG: should be rt_Trolls */
                 )
                 {
 
@@ -1001,7 +1001,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                 }
                 
                 /* The Human Player is our favorite Enemy */
-                /* OGBUG  should use itr_cities, not itr_units */
+                /* OGBUG: should use itr_cities, not itr_units */
                 if(_CITIES[itr_units].owner_idx == HUMAN_PLAYER_IDX)
                 {
 
@@ -1026,7 +1026,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                 ||
                 (_CITIES[itr_cities].race == rt_Dwarf)
                 ||
-                (_CITIES[itr_cities].race == rt_Standard)  /* OGBUG  should be rt_Trolls */
+                (_CITIES[itr_cities].race == rt_Standard)  /* OGBUG: should be rt_Trolls */
             )
             {
 
@@ -1060,7 +1060,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
 
-        /* ¿ OGBUG  gets here with -1 and illegally indexes arrays ? */
+        /* ¿ OGBUG: gets here with -1 and illegally indexes arrays ? */
         /* HACK */  if(
         /* HACK */      (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
         /* HACK */      ||
@@ -1078,7 +1078,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
 
         unit_has_watertravel = Unit_Has_WaterTravel(itr_units);
 
-        /* OGBUG  ignores Barbarian Spearmen */
+        /* OGBUG: ignores Barbarian Spearmen */
         if(_UNITS[itr_units].type < ut_BarbSwordsmen)  /* ¿ hero or boat ? */ 
         {
 
@@ -1327,7 +1327,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
 
                     }
 
-                    /* OGBUG  duplicate transport check */
+                    /* OGBUG: duplicate transport check */
                     if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
                     {
 
@@ -1375,7 +1375,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
 
                     }
 
-                    /* OGBUG  duplicate construction check */
+                    /* OGBUG: duplicate construction check */
                     if(_unit_type_table[_UNITS[itr_units].type].Construction > 0)
                     {
 
@@ -1505,7 +1505,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
 
                     _ai_all_own_stacks[_ai_all_own_stack_count].abilities |= AICAP_Hero;
 
-                    /* ¿ OGBUG  does not do effective_unit_strength += 50% ? */
+                    /* ¿ OGBUG: does not do effective_unit_strength += 50% ? */
 
                 }
 
@@ -1603,9 +1603,9 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
     }
 
 
-    /* OGBUG  doesn't set city_owner_idx */
-    /* OGBUG  _ai_all_enemy_garrison_strengths[] is per city not per stack */
-    /* OGBUG  should check high-hostility `>= 2` */
+    /* OGBUG: doesn't set city_owner_idx */
+    /* OGBUG: _ai_all_enemy_garrison_strengths[] is per city not per stack */
+    /* OGBUG: should check high-hostility `>= 2` */
     for(itr_units = 0; itr_units < _ai_all_enemy_stack_count; itr_units++)
     {
 
@@ -1619,8 +1619,8 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
     }
 
 
-    /* OGBUG  mixed up iterators; c&p error? */
-    /* OGBUG  should be NOT instead of OR; c&p error? */
+    /* OGBUG: mixed up iterators; c&p error? */
+    /* OGBUG: should be NOT instead of OR; c&p error? */
     for(itr_units = 0; itr_units < _ai_all_own_stack_count; itr_units++)
     {
         if((_ai_all_own_stacks[itr_units].abilities & AICAP_WindWalk) != 0)
@@ -1742,11 +1742,11 @@ void AI_Update_Gold_And_Mana_Reserves(int16_t player_idx)
     {
         if(_players[player_idx].alchemy == 1)
         {
-            _players[player_idx].mana_reserve = _players[player_idx].gold_reserve;  /* OGBUG  should be +=, not = */
+            _players[player_idx].mana_reserve = _players[player_idx].gold_reserve;  /* OGBUG: should be +=, not = */
         }
         else
         {
-            _players[player_idx].mana_reserve = (_players[player_idx].gold_reserve / 2);  /* OGBUG  should be +=, not = */
+            _players[player_idx].mana_reserve = (_players[player_idx].gold_reserve / 2);  /* OGBUG: should be +=, not = */
         }
         _players[player_idx].gold_reserve = 0;
     }
@@ -1883,7 +1883,7 @@ void AI_Update_Gold_Income_And_Food_Income(int16_t player_idx)
                 {
                     CITIES_FARMER_COUNT(city_idx, (_CITIES[city_idx].farmer_count + 1));
                     
-                    food_income -= 2;  /* OGBUG  not all farmers generate 2 food */
+                    food_income -= 2;  /* OGBUG: not all farmers generate 2 food */
                 }
             }
             tries++;
@@ -1927,7 +1927,7 @@ void NPC_Farmers(void)
             /* Count units currently in the city square to calculate food maintenance */
             unit_count = Map_Square_Unit_Count(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp);
             /* Check for production bonus (Halflings or Granary). */
-            /* OGBUG:  wrong calculation */
+            /* OGBUG: wrong calculation */
             if(_CITIES[city_idx].race == rt_Halfling || _CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Built)
             {
                 /* Halfling/Granary logic (3 food per farmer) */
@@ -2270,7 +2270,7 @@ void Build_Dock_Linked_List(void)
                 }
 /* 4. The 3x3 Shoreline Scan  (3x3 Moore neighborhood) */
                 square_is_shoreline = ST_FALSE;
-                /* OGBUG  no bounds checks */
+                /* OGBUG: no bounds checks */
                 for(wx_ofst = -1; ((wx_ofst < 2) && (square_is_shoreline == ST_FALSE)); wx_ofst++)
                 {
                     for(wy_ofst = -1; ((wy_ofst < 2) && (square_is_shoreline == ST_FALSE)); wy_ofst++)

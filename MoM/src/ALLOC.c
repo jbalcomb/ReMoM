@@ -139,7 +139,7 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     _landmasses    = (uint8_t *)Allocate_Next_Block(World_Data, 302);  // 302 PR, 4832 B  ((2 * 60 * 40) / 16)
 
     /*
-        OGBUG  same OOB AVRL/AVWL issue as _world_maps
+        OGBUG: same OOB AVRL/AVWL issue as _world_maps
         Generate_Terrain_Specials() goes as far out as wx=63,wy=45,p=1,offset = 5163; 2400 + 2400 + 363; 363 / 16 = 22.6875
     */
     /* CLAUDE Phase 5a: retired the WORLD_OVERFLOW padding (Generate_Terrain_Specials OOB is now pool-safe). */
@@ -147,7 +147,7 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     _map_square_terrain_specials = (uint8_t *)Allocate_Next_Block(World_Data, (((NUM_PLANES * WORLD_SIZE) * sizeof(uint8_t)) / SZ_PARAGRAPH_B) + 2);   // 302 PR, 4832 B
 
     /*
-        OGBUG  same OOB AVRL/AVWL issue as _world_maps
+        OGBUG: same OOB AVRL/AVWL issue as _world_maps
         Generate_Roads () ... (60, 40)
     */
     /* CLAUDE Phase 5a: retired the +60+1 over-allocation padding (Generate_Roads wp=1 OOB is now pool-safe). */

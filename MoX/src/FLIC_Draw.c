@@ -840,13 +840,13 @@ void Shear_Array_Bitmap_X(int8_t * shear_array, SAMB_ptr bitmap)
         else
         {
             /* Positive Shift (Right) */
-            /* OGBUG  uses height instead of width for warped_width calculation */
+            /* OGBUG: uses height instead of width for warped_width calculation */
             warped_width = (height - current_shear);
             if(warped_width > 0)
             {
-                /* OGBUG  i is undefined here; it contains the last value from the previous block */
+                /* OGBUG: i is undefined here; it contains the last value from the previous block */
                 niu_var1 = bitmap_array[i];
-                /* OGBUG  loop condition 'i >= 0' incorrect; should stop at (i >= shear_add); reads up to -18 on bitmap_array */
+                /* OGBUG: loop condition 'i >= 0' incorrect; should stop at (i >= shear_add); reads up to -18 on bitmap_array */
                 /* Shift pixels right by current_shear columns */
                 /* Shift pixels right. We iterate backwards to avoid overwriting pixels we haven't shifted yet. */
                 /* Start from the last pixel in the row and move backwards */
@@ -1378,7 +1378,7 @@ void Draw_Bitmap_Animation_Block(int16_t tl_x, int16_t tl_y, int16_t tr_x, int16
     uint8_t* vga_frame_buffer;
     const uint8_t* texture_data;
     const uint8_t* remap_palettes;
-    col1_hgt = 0;  /* OGBUG  uninitialized variable */
+    col1_hgt = 0;  /* OGBUG: uninitialized variable */
     /* Populate geometric workspace arrays */
     x[1] = tl_x; x[2] = tr_x; x[3] = br_x; x[4] = bl_x;
     y[1] = tl_y; y[2] = tr_y; y[3] = br_y; y[4] = bl_y;
@@ -1462,7 +1462,7 @@ draw_left = x[1];
         if(y[2] < y[1]) {
             int32_t delta_y = (int32_t)(y[3] - y[1]) * (x[2] - x[1]);
             draw_height = (int16_t)(delta_y / (x[3] - x[1])) + y[1] - y[2] + 1;
-            /* OGBUG  uninitialized variable */
+            /* OGBUG: uninitialized variable */
             if(col1_hgt < 1) col1_hgt = 1;
         } else {
             int32_t delta_y = (int32_t)(y[1] - y[3]) * (x[2] - x[1]);

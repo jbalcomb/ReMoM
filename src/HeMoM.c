@@ -63,7 +63,7 @@
 #include "../MoM/src/MOM_SCR.h"
 #include "../MoM/src/Settings.h"
 #include "../MoM/src/UNITTYPE.h"
-#include "../MoM/src/Combat.h"   /* CLAUDE: Combat() + CMB_Gold_Reward for --combat test mode */
+#include "../MoM/src/Combat.h"   /* CLAUDE: Combat() + combat_results_gold for --combat test mode */
 #include "../MoM/src/DIPLODEF.h" /* CLAUDE: DIPL_War for --combat test mode */
 #include "../MoM/src/WZD_o143.h"  /* Random_City_Name_By_Race */
 
@@ -990,7 +990,7 @@ static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
     fprintf(fout, "combat.attacker_won = %d\n", attacker_won);
     fprintf(fout, "combat.turns = %d\n", _combat_turn);
     fprintf(fout, "combat.winner_player_idx = %d\n", _combat_winner);
-    fprintf(fout, "combat.gold_reward = %d\n", CMB_Gold_Reward);
+    fprintf(fout, "combat.gold_reward = %d\n", combat_results_gold);
     fprintf(fout, "combat.rng_calls = %llu\n", (unsigned long long)(g_random_call_count - rng_calls_before));
     fprintf(fout, "combat.random_seed_after = %u\n", Get_Random_Seed());
     fprintf(fout, "game.units_after = %d\n", _units);

@@ -1,7 +1,7 @@
 /**
  * Platform_Input_Metrics.h — Layer 1 of the Platform-Input responsiveness toolkit.
  *
- * See doc/#AI_Plans/{BRA,PRD,PLAN}-Platform-Input.md.
+ * See doc/@AI_Plans/{BRA,PRD,PLAN}-Platform-Input.md.
  *
  * An in-memory, per-present timeline of input/render cadence, written at exit as a fixed-width
  * values file (.fwv -- project convention, NOT csv).  It answers the three questions the "mouse

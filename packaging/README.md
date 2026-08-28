@@ -5,7 +5,7 @@ AppImage build and the Debian package install these, so the two cannot drift.
 
 | File | Used by | Purpose |
 |------|---------|---------|
-| `AppRun` | AppImage (`linuxdeploy --custom-apprun`) | Launcher with portable-mode detection. See [`doc/#Devel/Devel-Linux-AppImage.md`](../doc/%23Devel/Devel-Linux-AppImage.md). |
+| `AppRun` | AppImage (`linuxdeploy --custom-apprun`) | Launcher with portable-mode detection. See [`doc/@Devel/Devel-Linux-AppImage.md`](../doc/%23Devel/Devel-Linux-AppImage.md). |
 | `remom.desktop` | AppImage + `.deb` (`/usr/share/applications/`) | Desktop menu entry. |
 | `remom.png` | AppImage + `.deb` (`/usr/share/icons/hicolor/256x256/apps/`) | Application icon, 256x256. |
 

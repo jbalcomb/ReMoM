@@ -45,7 +45,7 @@ Status legend: **[done-done]** reviewed 1:1 + doc · **[impl]** substantive body
 - [ ] **Reconstruct `bua_Healing`** — the `case bua_Healing` arm of `AI_Execute_Unit_Action` ([CMBTAI.c:515](../MoM/src/CMBTAI.c#L515)) is a bare `STU_DEBUG_BREAK()` (DNE in Dasm). Implement the AI combat-heal action from the `ovr98` disassembly so AI-vs-AI battles with a healer don't abort.
 - [x] **Assess `Auto_Do_Combat_Turn`** — classified **impl** (substantive): confirmed executing real attack/defense rolls and summons during combat testing.
 - [ ] **Reconstruct the WIP movement helpers** — `AI_MoveBattleUnits__WIP`, `AI_RestrictToCity__WIP`.
-- [ ] **Tracker hygiene** — [stub_wip_todo.md](#TODO/stub_wip_todo.md) still lists `AI_CMB_PlayTurn__WIP` / `AI_BU_ProcessAction__WIP` / `AI_BU_SelectAction__WIP` / `AI_BU_AssignAction__WIP` as `[ ]`, but their renamed/real bodies exist and are substantive; reconcile.
+- [ ] **Tracker hygiene** — [stub_wip_todo.md](@TODO/stub_wip_todo.md) still lists `AI_CMB_PlayTurn__WIP` / `AI_BU_ProcessAction__WIP` / `AI_BU_SelectAction__WIP` / `AI_BU_AssignAction__WIP` as `[ ]`, but their renamed/real bodies exist and are substantive; reconcile.
 
 ## Notes
 

@@ -17,7 +17,7 @@
 #     tools/format.sh fix   FILE...      # format explicit files in place
 #
 # `check` exits non-zero if any file would change (suitable for a gate).
-# clang-format 20 (LLVM 20) is the pinned version; see doc/#Devel/Devel-Clang.md.
+# clang-format 20 (LLVM 20) is the pinned version; see doc/@Devel/Devel-Clang.md.
 
 set -euo pipefail
 

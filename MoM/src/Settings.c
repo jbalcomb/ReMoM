@@ -680,7 +680,7 @@ void Set_Default_Game_Settings(void)
 // HLPENTRY.LBX  "settings Help"
 void Set_Settings_Screen_Help_List(void)
 {
-    /* OGBUG  OK button shows Load button help */
+    /* OGBUG: OK button shows Load button help */
     LBX_Load_Data_Static(hlpentry_lbx_file, 34, (SAMB_ptr)_help_entries, 0, 21, 10);
     Set_Help_List((char *)&_help_entries[0], 21);
 }

@@ -171,9 +171,9 @@ int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
             {
                 food_units = 0;
             } break;
-            case tt_Swamp1:  /* OGBUG  manual says 1/2 food for Swamp */
-            case tt_Swamp2:  /* OGBUG  manual says 1/2 food for Swamp */
-            case tt_Swamp3:  /* OGBUG  manual says 1/2 food for Swamp */
+            case tt_Swamp1:  /* OGBUG: manual says 1/2 food for Swamp */
+            case tt_Swamp2:  /* OGBUG: manual says 1/2 food for Swamp */
+            case tt_Swamp3:  /* OGBUG: manual says 1/2 food for Swamp */
             {
                 food_units = 0;
             } break;
@@ -189,7 +189,7 @@ int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
             } break;
             case tt_NatureNode:
             {
-                food_units = 5;  /* OGBUG  MGC NewGame version has 4 */
+                food_units = 5;  /* OGBUG: MGC NewGame version has 4 */
             } break;
             case tt_ChaosNode:
             {
@@ -210,7 +210,7 @@ int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
         }
     }
 
-    food_units *= 2;  /* ¿ OGBUG  should be /= 2, not *= 2 ? everywhere else is food2, not foodx2 */
+    food_units *= 2;  /* ¿ OGBUG: should be /= 2, not *= 2 ? everywhere else is food2, not foodx2 */
 
     if(City_Area_Square_Is_Shared(wx, wy, wp) == ST_TRUE)
     {

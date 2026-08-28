@@ -104,7 +104,7 @@ const char * g_tst_patch_scenario = NULL;
     a presentation function.  After this runs, the player (or a .hms script) opens the spellbook and
     casts it, SBookScr.c hands off to Cast_Spell_Of_Mastery(), casting accumulates over turns, and
     when it completes OverSpel.c calls Spell_Of_Mastery() and the endgame plays out -- all the game's
-    own logic.  That distinction is the whole point; see doc/#AI_Plans/BRA-Demo-Reel.md section 9.
+    own logic.  That distinction is the whole point; see doc/@AI_Plans/BRA-Demo-Reel.md section 9.
 */
 static void TST_Scenario_Som_Ready(int16_t player_idx)
 {

@@ -1003,23 +1003,23 @@ void Init_Magic_Personalities_Objectives(void)
         {
             case sbr_Nature:
             {
-                _players[itr_players].spells_list[spl_Water_Walking] = sls_Known;  /* OGBUG  spl_Sprites ? */
+                _players[itr_players].spells_list[spl_Water_Walking] = sls_Known;  /* OGBUG: spl_Sprites ? */
             } break;
             case sbr_Sorcery:
             {
-                _players[itr_players].spells_list[spl_Counter_Magic] = sls_Known;  /* OGBUG  spl_Nagas ? */
+                _players[itr_players].spells_list[spl_Counter_Magic] = sls_Known;  /* OGBUG: spl_Nagas ? */
             } break;
             case sbr_Chaos:
             {
-                _players[itr_players].spells_list[spl_Fire_Bolt] = sls_Known;  /* OGBUG  should be spl_Hell_Hounds ? */
+                _players[itr_players].spells_list[spl_Fire_Bolt] = sls_Known;  /* OGBUG: should be spl_Hell_Hounds ? */
             } break;
             case sbr_Life:
             {
-                _players[itr_players].spells_list[spl_True_Light] = sls_Known;  /* OGBUG  spl_Guardian_Spirit ? */
+                _players[itr_players].spells_list[spl_True_Light] = sls_Known;  /* OGBUG: spl_Guardian_Spirit ? */
             } break;
             case sbr_Death:
             {
-                _players[itr_players].spells_list[spl_Black_Sleep] = sls_Known;  /* OGBUG  spl_Ghouls ? */
+                _players[itr_players].spells_list[spl_Black_Sleep] = sls_Known;  /* OGBUG: spl_Ghouls ? */
             } break;
         }
 
@@ -1036,28 +1036,28 @@ void Init_Magic_Personalities_Objectives(void)
                 } break;
                 case sbr_Sorcery:
                 {
-                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)  /* OGBUG  should be spl_Phantom_Beast, not spl_Basilisk */
+                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)  /* OGBUG: should be spl_Phantom_Beast, not spl_Basilisk */
                     {
                         _players[itr_players].spells_list[spl_Phantom_Beast] = sls_Knowable;
                     }
                 } break;
                 case sbr_Chaos:
                 {
-                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)  /* OGBUG  should be spl_Chimeras, not spl_Basilisk */
+                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)  /* OGBUG: should be spl_Chimeras, not spl_Basilisk */
                     {
                         _players[itr_players].spells_list[spl_Chimeras] = sls_Knowable;
                     }
                 } break;
                 case sbr_Life:
                 {
-                    if(_players[itr_players].spells_list[spl_Path_Finding] == sls_Unknown)  /* OGBUG  should be spl_Unicorns, not spl_Path_Finding */
+                    if(_players[itr_players].spells_list[spl_Path_Finding] == sls_Unknown)  /* OGBUG: should be spl_Unicorns, not spl_Path_Finding */
                     {
                         _players[itr_players].spells_list[spl_Unicorns] = sls_Knowable;
                     }
                 } break;
                 case sbr_Death:
                 {
-                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)  /* OGBUG  should be spl_Shadow_Demons, not spl_Basilisk */
+                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)  /* OGBUG: should be spl_Shadow_Demons, not spl_Basilisk */
                     {
                         _players[itr_players].spells_list[spl_Shadow_Demons] = sls_Knowable;
                     }
@@ -1322,7 +1322,7 @@ void Init_Players(void)
         _players[itr_players].skill_ratio = 33;
         _players[itr_players].mana_ratio = 33;
         _players[itr_players].research_ratio = 34;
-        _players[itr_players].spells_list[spl_Summon_Champion] = sls_Researchable;  /* OGBUG  should be 213 spl_Spell_Of_Mastery */
+        _players[itr_players].spells_list[spl_Summon_Champion] = sls_Researchable;  /* OGBUG: should be 213 spl_Spell_Of_Mastery */
         _players[itr_players].casting_spell_idx = spl_NONE;
         _players[itr_players].casting_cost_remaining = 0;
         _players[itr_players].Globals[ETERNAL_NIGHT] = 0;
@@ -1475,7 +1475,7 @@ BeginTopLevelPlayerLoop:
                     wsa_ptr = &_players[itr2].alchemy;
                     for(itr3 = 0; itr3 < NUM_WIZARD_SPECIAL_ABILITIES; itr3++)
                     {
-                        /* OGBUG  should use itr3, not itr1 */
+                        /* OGBUG: should use itr3, not itr1 */
                         wsa_ptr[itr1] = ST_FALSE;
                     }
                 } break;
@@ -2435,10 +2435,10 @@ void Init_Heroes(void)
                     {
                         if(((abilities & HSA_ARCANE_POWER2) == 0) && (mage_picks > 0))
                         {
-                            /* OGBUG  the Knight has no caster picks, this should be $1E (the Elven Archer) */
+                            /* OGBUG: the Knight has no caster picks, this should be $1E (the Elven Archer) */
                             if(itr_hero_types != ut_Knight)  /* ¿ should ut_ElvenArcher  = 30 ? */
                             {
-                                /* OGBUG  excludes the Warlock and the Chaos Warrior, this should be $1E (Ranged_Lightning) */
+                                /* OGBUG: excludes the Warlock and the Chaos Warrior, this should be $1E (Ranged_Lightning) */
                                 if(
                                     ((abilities & HSA_ARCANE_POWER) != 0)
                                     &&
@@ -2478,7 +2478,7 @@ void Init_Heroes(void)
                     case 11:  /* Lucky */
                     {
                         if((abilities & HSA_LUCKY) == 0) { abilities |= HSA_LUCKY; warrior_picks--; mage_picks--; }
-                    } /* OGBUG  missing `break;` */
+                    } /* OGBUG: missing `break;` */
                     case 12:  /* Agility */
                     {
                         if(((abilities & HSA_AGILITY2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_AGILITY) != 0) { abilities ^= HSA_AGILITY; abilities |= HSA_AGILITY2; } else { abilities |= HSA_AGILITY; } warrior_picks--; mage_picks--; }

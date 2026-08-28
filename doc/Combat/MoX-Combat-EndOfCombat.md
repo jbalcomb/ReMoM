@@ -168,16 +168,16 @@ XREF:  (11)
 
 
 
-### CMB_Population_Lost
+### combat_results_population_lost
 
 XREF:  (7)
-    End_Of_Combat()            mov   [CMB_Population_Lost], 0
-    End_Of_Combat()            mov   [CMB_Population_Lost], 0
-    End_Of_Combat()            mov   [CMB_Population_Lost], _DI_IDK_population_lost
-    Combat_Results_Scroll_Text()    cmp   [CMB_Population_Lost], 0
-    Combat_Results_Scroll_Text()    push  [CMB_Population_Lost]
-    STK_CaptureCity()               mov   [CMB_Population_Lost], 0
-    STK_CaptureCity()               mov   [CMB_Population_Lost], 0
+    End_Of_Combat()            mov   [combat_results_population_lost], 0
+    End_Of_Combat()            mov   [combat_results_population_lost], 0
+    End_Of_Combat()            mov   [combat_results_population_lost], _DI_IDK_population_lost
+    Combat_Results_Scroll_Text()    cmp   [combat_results_population_lost], 0
+    Combat_Results_Scroll_Text()    push  [combat_results_population_lost]
+    STK_CaptureCity()               mov   [combat_results_population_lost], 0
+    STK_CaptureCity()               mov   [combat_results_population_lost], 0
 
 
 

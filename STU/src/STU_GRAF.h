@@ -33,7 +33,7 @@ extern "C" {
    environment variable overrides it with a bare directory NAME (separators, "."
    and ".." are rejected).  That override exists for portable layouts, where the
    app directory shares a folder with the executable and so cannot also be called
-   "ReMoM" -- see doc/#Devel/Devel-Linux-AppImage.md. */
+   "ReMoM" -- see doc/@Devel/Devel-Linux-AppImage.md. */
 #define STU_GRAF_APP_DIR_DEFAULT "ReMoM"
 
 /* Selects the default data-location policy applied by STU_GRAF_Init(). */

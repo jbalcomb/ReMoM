@@ -779,7 +779,7 @@ void Extend_Islands(int16_t wp)
                                 )
                                 {
                                     /*
-                                        OGBUG (preserved, faithful to Dasm):
+                                        OGBUG: (preserved, faithful to Dasm):
                                         Grid_Index was meant to map the 3x3 neighborhood (current + 8 adjacent
                                         squares) to {1,...,9}, which needs ((rnd_wy + 1) * 3) + (rnd_wx + 1) + 1.
                                         The OG instead uses the formula below, whose range is {-3,...,5}, NOT
@@ -946,7 +946,7 @@ void Generate_Towers(void)
     while(itr1 < NUM_TOWERS)
     {
 
-        tries++;  /* OGBUG  Tries is uninitialized in the OG (stack leftover 13173, not 0) — see init above */
+        tries++;  /* OGBUG: Tries is uninitialized in the OG (stack leftover 13173, not 0) — see init above */
         if(tries > 500)
         {
             tries = 450;
@@ -1100,7 +1100,7 @@ Loop_Distances:
         {
 Loop_MaxPopTries:
 
-            /* OGBUG  there are only at most 5 players, should iter over _num_players */
+            /* OGBUG: there are only at most 5 players, should iter over _num_players */
             for(player_idx = 0; player_idx < NUM_PLAYERS; player_idx++)
             {
 
@@ -1141,7 +1141,7 @@ Loop_Location_1:
                         }
                     }
 
-                    /* ¿ OGBUG  because the distance is halved, same map square is not excluded ? */
+                    /* ¿ OGBUG: because the distance is halved, same map square is not excluded ? */
                     for(bldg_idx = 0; bldg_idx < NUM_NODES; bldg_idx++)
                     {
                         if(_NODES[bldg_idx].wp == wp)
@@ -1156,7 +1156,7 @@ Loop_Location_1:
                         }
                     }
 
-                    /* ¿ OGBUG  because the distance is halved, same map square is not excluded ? */
+                    /* ¿ OGBUG: because the distance is halved, same map square is not excluded ? */
                     for(bldg_idx = 0; bldg_idx < NUM_TOWERS; bldg_idx++)
                     {
 
@@ -1171,7 +1171,7 @@ Loop_Location_1:
 
                     }
 
-                    /* ¿ OGBUG  because the distance is halved, same map square is not excluded ? */
+                    /* ¿ OGBUG: because the distance is halved, same map square is not excluded ? */
                     for(bldg_idx = 0; bldg_idx < NUM_LAIRS; bldg_idx++)
                     {
                         if(_LAIRS[bldg_idx].wp == wp)
@@ -1322,14 +1322,14 @@ Loop_Location_1:
                             }
                         }
                     }
-                    /* OGBUG  wx/wy/wp here are leftover from the last fortress placed in the location loop, NOT this city's own square (_FORTRESSES[itr]); so for every city except the last-placed one, the High Elf forest requirement is tested against the wrong square. Faithful to the asm (loc_44375 pushes [bp+wx]/[bp+wy]/[bp+wp]). */
+                    /* OGBUG: wx/wy/wp here are leftover from the last fortress placed in the location loop, NOT this city's own square (_FORTRESSES[itr]); so for every city except the last-placed one, the High Elf forest requirement is tested against the wrong square. Faithful to the asm (loc_44375 pushes [bp+wx]/[bp+wy]/[bp+wp]). */
                     if(
                         (_CITIES[_cities].race == rt_High_Elf)
                         &&
                         (Square_Is_Forest_NewGame(wx, wy, wp) == ST_FALSE)
                     )
                     {
-                        /* OGBUG  taking this jump lands in a bad state: the location loop has already run to completion, so player_idx == NUM_PLAYERS (6) here (this loop iterates itr, not player_idx). Re-entering Loop_Location_1 does a junk location pick for the nonexistent 6th slot (_players[6] / _FORTRESSES[6] — the B1 over-iteration) before the whole city loop restarts at _cities=0. Faithful to the asm (jmp @@Loop_Location with player_idx left at 6). */
+                        /* OGBUG: taking this jump lands in a bad state: the location loop has already run to completion, so player_idx == NUM_PLAYERS (6) here (this loop iterates itr, not player_idx). Re-entering Loop_Location_1 does a junk location pick for the nonexistent 6th slot (_players[6] / _FORTRESSES[6] — the B1 over-iteration) before the whole city loop restarts at _cities=0. Faithful to the asm (jmp @@Loop_Location with player_idx left at 6). */
                         goto Loop_Location_1;
                     }
                 }
@@ -1928,7 +1928,7 @@ void Rebalance_Node_Types(int16_t wp)
     Nature_Convert = 0;
     if(wp == ARCANUS_PLANE)
     {
-        /* OGBUG does not decrement the excess sorcery count */
+        /* OGBUG: does not decrement the excess sorcery count */
         if(Sorcery_Count > 9)
         {
             Excess_Sorcery = (Sorcery_Count - 9);
@@ -1950,7 +1950,7 @@ void Rebalance_Node_Types(int16_t wp)
     }
     else  /* MYRROR_PLANE */
     {
-        /* OGBUG does not decrement the excess sorcery count */
+        /* OGBUG: does not decrement the excess sorcery count */
         if(Sorcery_Count > 4)
         {
             Excess_Sorcery = (Sorcery_Count - 4);
@@ -2122,7 +2122,7 @@ void Generate_Climate_Terrain_Types(int16_t wp)
         {
             curr_wx = (base_wx + dir_chg_tbl_wx[direction]);
             curr_wy = (base_wy + dir_chg_tbl_wy[direction]);
-            new_direction = ST_UNDEFINED;  /* OGBUG not used in this block - c&p error? */
+            new_direction = ST_UNDEFINED;  /* OGBUG: not used in this block - c&p error? */
             Steps_To_Take = (4 + Random(6));  // {5, ..., 10}
             for(Steps_Taken = 0; Steps_Taken < Steps_To_Take; Steps_Taken++)
             {
@@ -2156,7 +2156,7 @@ void Generate_Climate_Terrain_Types(int16_t wp)
         {
             base_wx = ( 1 + Random( (WORLD_WIDTH  - ( 2 * 2)) ) );  /* {  2, ..., 57 } */
             base_wy = (10 + Random( (WORLD_HEIGHT - (10 * 2)) ) );  /* { 11, ..., 30 } */
-        } while((base_wy >= 35) && (base_wy <= 45));  /* OGBUG  out of bounds of the world map; was probably meant as a equitorial band? */
+        } while((base_wy >= 35) && (base_wy <= 45));  /* OGBUG: out of bounds of the world map; was probably meant as a equitorial band? */
         if(p_world_map[wp][base_wy][base_wx] == tt_Forest1)
         {
             p_world_map[wp][base_wy][base_wx] = tt_Swamp1;
@@ -2165,7 +2165,7 @@ void Generate_Climate_Terrain_Types(int16_t wp)
         {
             curr_wx = (base_wx + dir_chg_tbl_wx[direction]);
             curr_wy = (base_wy + dir_chg_tbl_wy[direction]);
-            new_direction = ST_UNDEFINED;  /* OGBUG not used in this block - c&p error? */
+            new_direction = ST_UNDEFINED;  /* OGBUG: not used in this block - c&p error? */
             Steps_To_Take = (2 + Random(3));  /* {3, ..., 5} */
             for(Steps_Taken = 0; Steps_Taken < Steps_To_Take; Steps_Taken++)
             {
@@ -2627,7 +2627,7 @@ somehow1:
         while(1)
         {
 Attempt_Myrror:
-            /* OGBUG  base offset, should be (itr - 16), not - 20 */
+            /* OGBUG: base offset, should be (itr - 16), not - 20 */
             base_wx = (((itr - 20) % 5) * 12);  
             base_wy = (((itr - 20) / 5) * 20);
             wx = (base_wx + (Random(24) - 1));
@@ -2636,7 +2636,7 @@ Attempt_Myrror:
             if(wy >= WORLD_HEIGHT) { wy -= WORLD_HEIGHT; }
             if(wx <  WORLD_XSTART) { wx += WORLD_WIDTH;  }
             if(wy <  WORLD_YSTART) { wy += WORLD_HEIGHT; }
-            /* OGBUG  north-pole margin is 2 (wy<2) while west/east/south are 3 — asm cmp wy,2 / cmp wy,37; preserved */
+            /* OGBUG: north-pole margin is 2 (wy<2) while west/east/south are 3 — asm cmp wy,2 / cmp wy,37; preserved */
             if(
                 (wx < 3)
                 ||
@@ -2650,7 +2650,7 @@ Attempt_Myrror:
                 continue;
             }
             if(
-                (p_world_map[ARCANUS_PLANE][wy][wx] != tt_Ocean)  /* OGBUG  should be MYRROR_PLANE, not ARCANUS_PLANE */
+                (p_world_map[ARCANUS_PLANE][wy][wx] != tt_Ocean)  /* OGBUG: should be MYRROR_PLANE, not ARCANUS_PLANE */
                 ||
                 (Random(25) == 1)  // 4.0%
             )
@@ -3333,11 +3333,11 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
     {
         switch((Random(5) - 1))
         {
-            case 0: { race_type = rt_Death;  }  /* OGBUG:  falls through, missing break */
-            case 1: { race_type = rt_Death;  }  /* OGBUG:  falls through, missing break */
-            case 2: { race_type = rt_Chaos;  }  /* OGBUG:  falls through, missing break */
-            case 3: { race_type = rt_Chaos;  }  /* OGBUG:  falls through, missing break */
-            case 4: { race_type = rt_Nature; }  /* OGBUG:  falls through, missing break */
+            case 0: { race_type = rt_Death;  }  /* OGBUG: falls through, missing break */
+            case 1: { race_type = rt_Death;  }  /* OGBUG: falls through, missing break */
+            case 2: { race_type = rt_Chaos;  }  /* OGBUG: falls through, missing break */
+            case 3: { race_type = rt_Chaos;  }  /* OGBUG: falls through, missing break */
+            case 4: { race_type = rt_Nature; }  /* OGBUG: falls through, missing break */
         }
     }
     /* Pick Guard 1 */
@@ -3385,7 +3385,7 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
     if(
         (tries < 200)
         &&
-        (_LAIRS[lair_idx].guard1_count != 9)  /* OGBUG  not possible, we just set the max to 8 */
+        (_LAIRS[lair_idx].guard1_count != 9)  /* OGBUG: not possible, we just set the max to 8 */
         &&
         (_LAIRS[lair_idx].guard1_count != 0)
     )
@@ -3983,7 +3983,7 @@ void Simtex_Autotiling(void)
                         &&
                         (p_world_map[wp][(wy + 1)][adj_wx] <= tte_Hills)
                         &&
-                        (wy < WORLD_HEIGHT)  /* OGBUG  should be (wy + 1) */
+                        (wy < WORLD_HEIGHT)  /* OGBUG: should be (wy + 1) */
                     )
                     {
                         mask += 16;
@@ -3994,7 +3994,7 @@ void Simtex_Autotiling(void)
                         &&
                         (p_world_map[wp][(wy + 1)][wx] <= tte_Hills)
                         &&
-                        (wy < WORLD_HEIGHT)  /* OGBUG  should be (wy + 1) */
+                        (wy < WORLD_HEIGHT)  /* OGBUG: should be (wy + 1) */
                     )
                     {
                         mask += 32;
@@ -4007,7 +4007,7 @@ void Simtex_Autotiling(void)
                         &&
                         (p_world_map[wp][(wy + 1)][adj_wx] <= tte_Hills)
                         &&
-                        (wy < WORLD_HEIGHT)  /* OGBUG  should be (wy + 1) */
+                        (wy < WORLD_HEIGHT)  /* OGBUG: should be (wy + 1) */
                     )
                     {
                         mask += 64;
@@ -4136,7 +4136,7 @@ void Simtex_Autotiling(void)
                     &&
                     ((wx + 1) < WORLD_WIDTH)
                     &&
-                    (wy < WORLD_HEIGHT)  /* OGBUG should be (wy + 1) */
+                    (wy < WORLD_HEIGHT)  /* OGBUG: should be (wy + 1) */
                 )
                 {
 
@@ -4155,7 +4155,7 @@ void Simtex_Autotiling(void)
                         )
                     )
                     &&
-                    (wy < WORLD_HEIGHT)  /* OGBUG should be (wy + 1) */
+                    (wy < WORLD_HEIGHT)  /* OGBUG: should be (wy + 1) */
                 )
                 {
 
@@ -4176,7 +4176,7 @@ void Simtex_Autotiling(void)
                     &&
                     ((wx - 1) >= 0)
                     &&
-                    (wy < WORLD_HEIGHT)  /* OGBUG should be (wy + 1) */
+                    (wy < WORLD_HEIGHT)  /* OGBUG: should be (wy + 1) */
                 )
                 {
                     mask += 64;
@@ -4304,7 +4304,7 @@ void Simtex_Autotiling(void)
                 {
                     adj_wx -= WORLD_WIDTH;
                 }
-                /* OGBUG  AVRL  overflows p_world_map, because of wy=39+1 on wp=1 */
+                /* OGBUG: AVRL  overflows p_world_map, because of wy=39+1 on wp=1 */
                 if(
                     (p_world_map[wp][(wy + 1)][adj_wx] != tte_Tundra)
                     &&
@@ -4314,13 +4314,13 @@ void Simtex_Autotiling(void)
                         (p_world_map[wp][(wy + 1)][adj_wx] > _TerType_Count)
                     )
                     &&
-                    (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
+                    (wy < WORLD_HEIGHT)  /* OGBUG: ((wy + 1) < WORLD_HEIGHT) */
                 )
                 {
                     mask += 16;
                 }
                 // S: {0,+1}
-                /* OGBUG  AVRL  overflows p_world_map, because of wy=39+1 on wp=1 */
+                /* OGBUG: AVRL  overflows p_world_map, because of wy=39+1 on wp=1 */
                 if(
                     (p_world_map[wp][(wy + 1)][wx] != tte_Tundra)
                     &&
@@ -4330,7 +4330,7 @@ void Simtex_Autotiling(void)
                         (p_world_map[wp][(wy + 1)][wx] > _TerType_Count)
                     )
                     &&
-                    (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
+                    (wy < WORLD_HEIGHT)  /* OGBUG: ((wy + 1) < WORLD_HEIGHT) */
                 )
                 {
                     mask += 32;
@@ -4341,7 +4341,7 @@ void Simtex_Autotiling(void)
                 {
                     adj_wx += WORLD_WIDTH;
                 }
-                /* OGBUG  AVRL  overflows p_world_map, because of wy=39+1 on wp=1 */
+                /* OGBUG: AVRL  overflows p_world_map, because of wy=39+1 on wp=1 */
                 if(
                     (p_world_map[wp][(wy + 1)][adj_wx] != tte_Tundra)
                     &&
@@ -4351,7 +4351,7 @@ void Simtex_Autotiling(void)
                         (p_world_map[wp][(wy + 1)][adj_wx] > _TerType_Count)
                     )
                     &&
-                    (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
+                    (wy < WORLD_HEIGHT)  /* OGBUG: ((wy + 1) < WORLD_HEIGHT) */
                 )
                 {
                     mask += 64;
@@ -4485,7 +4485,7 @@ void Simtex_Autotiling(void)
                     &&
                     ((wx + 1) < WORLD_WIDTH)
                     &&
-                    (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
+                    (wy < WORLD_HEIGHT)  /* OGBUG: ((wy + 1) < WORLD_HEIGHT) */
                 )
                 {
                     mask += 16;
@@ -4502,7 +4502,7 @@ void Simtex_Autotiling(void)
                         )
                     )
                     &&
-                    (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
+                    (wy < WORLD_HEIGHT)  /* OGBUG: ((wy + 1) < WORLD_HEIGHT) */
                 )
                 {
                     mask += 32;
@@ -4521,7 +4521,7 @@ void Simtex_Autotiling(void)
                     &&
                     ((wx - 1) >= 0)
                     &&
-                    (wy < WORLD_HEIGHT)  /* OGBUG  ((wy + 1) < WORLD_HEIGHT) */
+                    (wy < WORLD_HEIGHT)  /* OGBUG: ((wy + 1) < WORLD_HEIGHT) */
                 )
                 {
                     mask += 64;
@@ -4544,7 +4544,7 @@ void Simtex_Autotiling(void)
                 mask += 128;
                 }
 
-                /* OGBUG  no-cardinal conversion causes the square to become Grassland instead e.g., Hills pass writes 16 + terrtype[256+mask] → 0xA4 + 16 = 0xB4 = tt_Grasslands4. The lone hill becomes grassland. */
+                /* OGBUG: no-cardinal conversion causes the square to become Grassland instead e.g., Hills pass writes 16 + terrtype[256+mask] → 0xA4 + 16 = 0xB4 = tt_Grasslands4. The lone hill becomes grassland. */
                 if(mask > 0)
                 {
                     p_world_map[wp][wy][wx] = (16 + terrtype[(256 + mask)]);
@@ -4591,7 +4591,7 @@ void Simtex_Autotiling(void)
  * @note Processes both planes (`wp` in `[0, NUM_PLANES)`) and all world squares.
  * @note Preserves OG behavior where a TERRTYPE record is loaded but not used by
  *       this function body.
- * @warning Preserves OGBUG in tundra shuffle logic: the switch cases are
+ * @warning Preserves OGBUG: in tundra shuffle logic: the switch cases are
  *          `1, 2, 3, 4` while `shuffle = Random(3)`; this leaves one intended
  *          tundra variant path unreachable and keeps case-2 as a no-op.
  */
@@ -4605,7 +4605,7 @@ void Shuffle_Terrains(void)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    /* OGBUG  this terrtype load is never used (is in Desert_Autile()) */
+    /* OGBUG: this terrtype load is never used (is in Desert_Autile()) */
     terrtype = (int16_t *)Near_Allocate_First(5 * 512);
     LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, (SAMB_ptr)terrtype, 0, 5, 512);
 
@@ -4699,7 +4699,7 @@ void Shuffle_Terrains(void)
                         } break;
                     }
                 }
-                if(p_world_map[wp][wy][wx] == tt_Tundra1)  /* OGBUG  Tundra shuffle switch should be 1,2,3 not 1,3,4 */
+                if(p_world_map[wp][wy][wx] == tt_Tundra1)  /* OGBUG: Tundra shuffle switch should be 1,2,3 not 1,3,4 */
                 {
                     shuffle = Random(3);
                     switch(shuffle)
@@ -4774,19 +4774,19 @@ void Shuffle_Terrains(void)
  */
 int16_t Generate_River(int16_t wp)
 {
-    int16_t niu_directions_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /* OGBUG  as coded, completely useless */
+    int16_t niu_directions_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /* OGBUG: as coded, completely useless */
     int16_t wy_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t wx_array[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t end_wy = 0;
     int16_t end_wx = 0;
-    int16_t niu_prev_dir = 0;  /* OGBUG  as coded, completely useless */
+    int16_t niu_prev_dir = 0;  /* OGBUG: as coded, completely useless */
     int16_t next_wy = 0;
     int16_t next_wx = 0;
     int16_t attemps = 0;
     int16_t reached_mouth = 0;
     int16_t direction = 0;
     int16_t itr = 0;
-    int16_t same_dir = 0;  /* OGBUG  as coded, should just be a 'first run' flag; looks like new_direction from Generate_Landmasses(), c&p error? */
+    int16_t same_dir = 0;  /* OGBUG: as coded, should just be a 'first run' flag; looks like new_direction from Generate_Landmasses(), c&p error? */
     int16_t downstream = 0;
     int16_t base_wy = 0;
     int16_t base_wx = 0;
@@ -5584,7 +5584,7 @@ void Generate_Neutral_Cities(int16_t wp)
             {
                 reject = ST_TRUE;
             }
-            /* OGBUG  there are no such map squares yet at this stage */
+            /* OGBUG: there are no such map squares yet at this stage */
             if((TERRAIN_TYPE(wx, wy, wp) >= tt_Shore1_Fst) && (TERRAIN_TYPE(wx, wy, wp) <= tt_Shore1_Lst)
             )
             {
@@ -5697,10 +5697,10 @@ void Generate_Neutral_Cities(int16_t wp)
         _CITIES[_cities].wy = (int8_t)wy;
         _CITIES[_cities].wp = (int8_t)wp;
         _CITIES[_cities].owner_idx = NEUTRAL_PLAYER_IDX;
-        _CITIES[_cities].population = (1 + ((_difficulty + 1) / 3) + Random(4));  /* OGBUG  ignores terrain */
+        _CITIES[_cities].population = (1 + ((_difficulty + 1) / 3) + Random(4));  /* OGBUG: ignores terrain */
         if((_difficulty > god_Normal) && (Random(5) == 1))
         {
-            _CITIES[_cities].population = (((_difficulty + 1) / 3) + Random(10));  /* OGBUG  ignores terrain */
+            _CITIES[_cities].population = (((_difficulty + 1) / 3) + Random(10));  /* OGBUG: ignores terrain */
         }
         _CITIES[_cities].size = (_CITIES[_cities].population / 4);
         _CITIES[_cities].bldg_cnt = 0;
@@ -5773,7 +5773,7 @@ void Generate_Neutral_Cities(int16_t wp)
         }
 
         /* Enforce building prerequisites */
-        /* OGBUG  buildings with a terrain requirement will be randomly removed through a read out of the structure bounds, whereas if they also have a building req, that will be ignored completely */
+        /* OGBUG: buildings with a terrain requirement will be randomly removed through a read out of the structure bounds, whereas if they also have a building req, that will be ignored completely */
         for(itr2 = 1; itr2 < NUM_BUILDINGS; itr2++)
         {
             if(_CITIES[_cities].bldg_status[itr2] == bs_Built)
@@ -5781,7 +5781,7 @@ void Generate_Neutral_Cities(int16_t wp)
                 /* ¿ BUGBUG  code should not be same on both branches ?  maybe, was two different fields, then got merged into a union? ...or, should just be checking reqd_bldg_2, because the first one is reqd_terrain and not reqd_bldg_1 */
                 if(bldg_data_table[itr2].reqd_bldg_1 > 100)  // bldg_idx  >= 100 is Terrain Type
                 {
-                    if(_CITIES[_cities].bldg_status[bldg_data_table[itr2].reqd_terrain] == bs_NotBuilt)  /* OGBUG  OOB AVRL */
+                    if(_CITIES[_cities].bldg_status[bldg_data_table[itr2].reqd_terrain] == bs_NotBuilt)  /* OGBUG: OOB AVRL */
                     {
                         _CITIES[_cities].bldg_status[itr2] = bs_NotBuilt;
                     }
@@ -5801,7 +5801,7 @@ void Generate_Neutral_Cities(int16_t wp)
         }
 
         /* Handle building upgrades (mark lower tier as Replaced) */
-        /* OGBUG only handles one level, misses prereqs that have prereqs */
+        /* OGBUG: only handles one level, misses prereqs that have prereqs */
         for(itr2 = 1; itr2 < NUM_BUILDINGS; itr2++)
         {
             if(
@@ -5901,14 +5901,14 @@ void Generate_Neutral_Cities(int16_t wp)
 
 
         /* Phase 6: Spawn Garrison Units */
-        /* OGBUG  dark elves will have no such units, resulting in half the intended starting garrison */
+        /* OGBUG: dark elves will have no such units, resulting in half the intended starting garrison */
         for(itr2 = 0; (((_CITIES[_cities].population / 4) > itr2) && (itr2 < MAX_STACK)); itr2++)
         {
             Create_Unit_NewGame(Best_Melee_Unit, NEUTRAL_PLAYER_IDX, _CITIES[_cities].wx, _CITIES[_cities].wy, _CITIES[_cities].wp, _cities);
         }
         if(Best_Ranged_Unit == 0)
         {
-            /* OGBUG  dark elves will have no such units, resulting in half the intended starting garrison */
+            /* OGBUG: dark elves will have no such units, resulting in half the intended starting garrison */
             for(itr2 = 0; (((_CITIES[_cities].population / 4) > itr2) && (itr2 < MAX_STACK)); itr2++)
             {
                 Create_Unit_NewGame(Best_Melee_Unit, NEUTRAL_PLAYER_IDX, _CITIES[_cities].wx, _CITIES[_cities].wy, _CITIES[_cities].wp, _cities);
@@ -6043,7 +6043,7 @@ void Generate_Roads(int16_t wp)
                 ||
                 (GET_LANDMASS(src_wx, src_wy, wp) != GET_LANDMASS(dst_wx, dst_wy, wp))
                 ||
-                (Range(src_wx, src_wy, dst_wx, dst_wy) >= 11)  /* OGBUG  should used Delta_XY_With_Wrap() */
+                (Range(src_wx, src_wy, dst_wx, dst_wy) >= 11)  /* OGBUG: should used Delta_XY_With_Wrap() */
             )
             {
                 continue;
@@ -6069,7 +6069,7 @@ void Generate_Roads(int16_t wp)
                 {
                     reject = ST_TRUE;
                 }
-                /* OGBUG  this batch should start at $C5 (not that any of these can be present on the map at this stage) */
+                /* OGBUG: this batch should start at $C5 (not that any of these can be present on the map at this stage) */
                 if(
                     (GET_TERRAIN_TYPE(wx, wy, wp) >= _Shore00001R10)
                     &&
@@ -6103,8 +6103,8 @@ void Generate_Roads(int16_t wp)
             }
         }
     }
-    /* OGBUG  ignores the passed plane value, and instead processes every city */
-    /* OGBUG  Myrran roads will have normal roads as the map square coordinates upgraded are not set up before doing so */
+    /* OGBUG: ignores the passed plane value, and instead processes every city */
+    /* OGBUG: Myrran roads will have normal roads as the map square coordinates upgraded are not set up before doing so */
     for(city_idx = 0; city_idx < _cities; city_idx++)
     {
         SET_MAP_SQUARE_FLAG(
@@ -6127,8 +6127,8 @@ Roads beneath captured neutral cities and original Fortress sites on Myrror lack
 */
         if(wp == MYRROR_PLANE)
         {
-            /* OGBUG  these are not the city coordinates */
-            /* OGBUG  at exactly wx=60,wy=40,wp=1 this causes an AVRL */
+            /* OGBUG: these are not the city coordinates */
+            /* OGBUG: at exactly wx=60,wy=40,wp=1 this causes an AVRL */
 /*
 If no city pair qualifies on Myrror (no roads built), wx and wy retain (60, 40) from the flag-clear loop's exit.
 SET_MAP_SQUARE_FLAG(60, 40, 1, …) indexes _map_square_flags[(1*2400)+(40*60)+60 = 4860] — past the logical 4800.
@@ -6276,9 +6276,9 @@ void Generate_Terrain_Specials(int16_t wp)
         for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx += radius)  /* {0,...,56}; {0,...,57} */
         {
             /* Add random jitter inside the grid cell */
-            wy = (itr_wy + Random((radius * 2)));  /* OGBUG  could be 39 + random(8) = 46, which is out of bounds */
-            wx = (itr_wx + Random((radius * 2)));  /* OGBUG  could be 59 + random(8) = 67, which is out of bounds */
-            /* OGBUG  OOB AVRL  e.g., wx=63,wy=45,p=1,offset = 5163 ACCESS VIOLATION READING LOCATION!!!!! */
+            wy = (itr_wy + Random((radius * 2)));  /* OGBUG: could be 39 + random(8) = 46, which is out of bounds */
+            wx = (itr_wx + Random((radius * 2)));  /* OGBUG: could be 59 + random(8) = 67, which is out of bounds */
+            /* OGBUG: OOB AVRL  e.g., wx=63,wy=45,p=1,offset = 5163 ACCESS VIOLATION READING LOCATION!!!!! */
 
             /* Sanity check location */
             square_has_city = ST_FALSE;
@@ -6328,7 +6328,7 @@ void Generate_Terrain_Specials(int16_t wp)
                 (square_has_site != ST_FALSE)
                 ||
                 (
-                    (wy <= (WORLD_YMIN + 2))  /* OGBUG  should all be ||, not && */
+                    (wy <= (WORLD_YMIN + 2))  /* OGBUG: should all be ||, not && */
                     &&
                     (wy >= (WORLD_HEIGHT - 2))
                     &&
@@ -7016,7 +7016,7 @@ void Animate_Oceans(void)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
 
-    /* OGBUG  the wy/wx loops use `<=` so the final iteration reads (and possibly
+    /* OGBUG: the wy/wx loops use `<=` so the final iteration reads (and possibly
      *   writes) one row/column past the declared world map bounds.  The extra
      *   reads land in the WORLD_OVERFLOW padding at the tail of the _world_maps
      *   allocation (7 * WORLD_WIDTH int16_t cells) — always allocated, but past
@@ -7029,9 +7029,9 @@ void Animate_Oceans(void)
     int16_t * flat_map = (int16_t *)_world_maps;
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
-        for(wy = 0; wy <= WORLD_HEIGHT; wy++)  /* OGBUG  OOB AVRL; should be <, not <=; overruns by 1 */
+        for(wy = 0; wy <= WORLD_HEIGHT; wy++)  /* OGBUG: OOB AVRL; should be <, not <=; overruns by 1 */
         {
-            for(wx = 0; wx <= WORLD_WIDTH; wx++)  /* OGBUG  OOB AVRL; should be <, not <=; overruns by 1 */
+            for(wx = 0; wx <= WORLD_WIDTH; wx++)  /* OGBUG: OOB AVRL; should be <, not <=; overruns by 1 */
             {
                 int32_t map_idx = ((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
                 /* Check for Ocean on Arcanus plane */
@@ -7042,7 +7042,7 @@ void Animate_Oceans(void)
                         flat_map[map_idx] = tte_OceanAnim;
                     }
                 }
-                /* OGBUG conflicting condition - will always jump (myrran square types are only valid in graphics) - coded as if Myrror has its own terrain type indices */
+                /* OGBUG: conflicting condition - will always jump (myrran square types are only valid in graphics) - coded as if Myrror has its own terrain type indices */
                 if(flat_map[map_idx] == (TerType_Count + tte_Ocean))
                 {
                     if(Random(5) == 1)  /* 1:5  20% */
@@ -7159,9 +7159,9 @@ int16_t Square_Is_River_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
     int16_t is_river = 0;  // DNE in Dasm
-    /* OGBUG  `% TerType_Count` converts 1000 (0x3E8) tt_River_Placeholder into $EE (fortunately actually a river) (1000 mod 762 = 238  0xEE) */
+    /* OGBUG: `% TerType_Count` converts 1000 (0x3E8) tt_River_Placeholder into $EE (fortunately actually a river) (1000 mod 762 = 238  0xEE) */
     terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
-    if((terrain_type > tt_Forest3     ) && (terrain_type < tt_Lake2         )) { is_river = ST_TRUE; }  /* OGBUG  this should be tt_Lake1 ($C5), not tt_Lake2 */
+    if((terrain_type > tt_Forest3     ) && (terrain_type < tt_Lake2         )) { is_river = ST_TRUE; }  /* OGBUG: this should be tt_Lake1 ($C5), not tt_Lake2 */
     if((terrain_type > tt_Shore2F_end ) && (terrain_type < tt_Mountains_Fst )) { is_river = ST_TRUE; }
     if((terrain_type > tt_Shore2_end  ) && (terrain_type < tt_Shore3_1st    )) { is_river = ST_TRUE; }
     if(terrain_type == TT_RIVER_PLACEHOLDER) { is_river = ST_TRUE; }
@@ -7521,7 +7521,7 @@ int16_t City_Maximum_Size_NewGame(int16_t wx, int16_t wy, int16_t wp)
         city_area_food_units += Square_Food2_NewGame(wx_array[itr], wy_array[itr], wp);
     }
     /* N/A - Granary, Farmer's Market, Forester's Guild */
-    /* OGBUG  missing City_Food_WildGame() (but no TS's yet) */
+    /* OGBUG: missing City_Food_WildGame() (but no TS's yet) */
     maximum_size = (city_area_food_units / 2);
     return maximum_size;  /* 2 food units ("food2") === 1 population unit */
 }
@@ -8406,7 +8406,7 @@ void Build_Connectivity_Graph(int8_t * move_map, uint8_t * result_map)
             {
                 result_map[Y_GridIndex_2 * 12 + X_GridIndex_2 - 1] |= 2;
             }
-            /* OGBUG  East column bound tests the wrong loop variable: the asm (ovr055, loc_5227A) does `cmp [bp+Y_GridIndex_2], 0Bh; jge` -- it compares the ROW index Y_GridIndex_2 to 11, not the COLUMN index X_GridIndex_2. Since Y_GridIndex_2 is in [0,7], `< 11` is always true, so the East->West reciprocal bit is written even for the rightmost column (X_GridIndex_2 == 11), where the target index Y*12+12 == (Y+1)*12+0 leaks a West bit into column 0 of the next row down. Faithful to the OG; harmless because connectivity_grid_land/connectivity_grid_sea are NIU (never read for gameplay). Do not "fix". */
+            /* OGBUG: East column bound tests the wrong loop variable: the asm (ovr055, loc_5227A) does `cmp [bp+Y_GridIndex_2], 0Bh; jge` -- it compares the ROW index Y_GridIndex_2 to 11, not the COLUMN index X_GridIndex_2. Since Y_GridIndex_2 is in [0,7], `< 11` is always true, so the East->West reciprocal bit is written even for the rightmost column (X_GridIndex_2 == 11), where the target index Y*12+12 == (Y+1)*12+0 leaks a West bit into column 0 of the next row down. Faithful to the OG; harmless because connectivity_grid_land/connectivity_grid_sea are NIU (never read for gameplay). Do not "fix". */
             if((result_map[Y_GridIndex_2 * 12 + X_GridIndex_2] & 2) && Y_GridIndex_2 < 11)
             {
                 result_map[Y_GridIndex_2 * 12 + X_GridIndex_2 + 1] |= 8;

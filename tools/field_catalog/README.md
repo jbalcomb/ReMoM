@@ -8,8 +8,8 @@ runtime state (loop indices, popup origins, sprite extents) are flagged
 `runtime=1` for the runtime `FIELDADD` log to fill in.
 
 This is the Phase 0 catalog builder for the HMS named-actions work — see
-[doc/#AI_Plans/PLAN-HMS-Named-Actions-And-Waits.md](../../doc/%23AI_Plans/PLAN-HMS-Named-Actions-And-Waits.md)
-and [doc/#Devel/HMS-Scripting.md](../../doc/%23Devel/HMS-Scripting.md).
+[doc/@AI_Plans/PLAN-HMS-Named-Actions-And-Waits.md](../../doc/%23AI_Plans/PLAN-HMS-Named-Actions-And-Waits.md)
+and [doc/@Devel/HMS-Scripting.md](../../doc/%23Devel/HMS-Scripting.md).
 
 ## Run
 

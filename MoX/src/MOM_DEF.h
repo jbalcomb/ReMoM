@@ -280,7 +280,7 @@ WIZARDS.LBX
 #define WORLD_SIZE_DB       2400  // 1-byte values
 #define WORLD_SIZE_DW       4800  // 2-byte values
 /*
-OGBUG  too many AVRL/AVWL and no way to duplicate the OG-MoM behavior
+OGBUG: too many AVRL/AVWL and no way to duplicate the OG-MoM behavior
 Generate_Terrain_Specials() goes as far out as wx=63,wy=45,p=1,offset = 5163; 2400 + 2400 + 363; 363 / 16 = 22.6875; 363 / 60 = 6.0666666666666666666666666666667
 ...touches _map_square_terrain_specials and p_world_maps/_world_maps
 ...max seen so far?

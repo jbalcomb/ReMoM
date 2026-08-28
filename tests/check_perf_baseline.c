@@ -1,7 +1,7 @@
 /**
  * check_perf_baseline.c -- performance regression gate for the .fwv zone captures.
  *
- * See doc/#AI_Plans/{PRD,PLAN}-Performance-Management.md.  Compares a candidate capture against a
+ * See doc/@AI_Plans/{PRD,PLAN}-Performance-Management.md.  Compares a candidate capture against a
  * committed reference baseline and fails (non-zero exit) on regression.
  *
  * WHY THIS IS NOT THE PERCENTILE GATE THE PRD ASKED FOR

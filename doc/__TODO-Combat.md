@@ -2,8 +2,8 @@ __TODO-Combat.md
 
 ---
 
-[ ] put Calc_Battlefield_Bonuses() in Combat-Combat.md
-[ ] put Check_For_Winner() in Combat-Combat.md
+[x] put Calc_Battlefield_Bonuses() in Combat-Combat.md
+[x] put Check_For_Winner() in Combat-Combat.md
 [x] put Assign_Mouse_Images() in Combat-Combat_Screen.md
 [x] put Ranged_Mouse_Image() in Combat-Combat_Screen.md
 
@@ -12,7 +12,7 @@ __TODO-Combat.md
 [x] Combat-Spell_Cast_AI_Select.md
 [x] Combat-Spell_Cast_AI_Target.md
 [x] Combat-Combat_Information_Window.md
-[ ] Combat-Miscellaneous.md
+[x] Combat-Miscellaneous.md
 
 ---
 
@@ -43,7 +43,7 @@ Combat-Miscellaneous.md
 
 # 'Combat' - Overview
 
-Scope: the whole **tactical (battlefield) combat** system — entering combat, turn flow, map/terrain build, unit actions/attacks/movement, spellcasting, drawing, and resolution. The full per-function checklist lives in [stub_wip_todo.md](#TODO/stub_wip_todo.md) under `## Combat` (plus `## Spellbook`, `## Lair`); this doc is the **subsystem map** and points to two sub-areas:
+Scope: the whole **tactical (battlefield) combat** system — entering combat, turn flow, map/terrain build, unit actions/attacks/movement, spellcasting, drawing, and resolution. The full per-function checklist lives in [stub_wip_todo.md](@TODO/stub_wip_todo.md) under `## Combat` (plus `## Spellbook`, `## Lair`); this doc is the **subsystem map** and points to two sub-areas:
 
 - [AI Combat](__TODO-Combat-AI.md) — the computer player's combat turn.
 - [AI Combat Spell](__TODO-Combat-AI-Spell.md) — the computer player's combat spellcasting (functionally complete; review-only).
@@ -79,7 +79,7 @@ Legend: **[done]** reconstructed/reviewed · **[impl]** substantive, not yet don
 
 ## Test coverage
 
-Combat now has deterministic characterization tests (seed 12345); reconstruction work can be regression-checked against pinned baselines. See [BRA-Combat-Testing.md](#AI_Plans/BRA-Combat-Testing.md) / [PRD-Combat-Testing.md](#AI_Plans/PRD-Combat-Testing.md) for the channel model.
+Combat now has deterministic characterization tests (seed 12345); reconstruction work can be regression-checked against pinned baselines. See [BRA-Combat-Testing.md](@AI_Plans/BRA-Combat-Testing.md) / [PRD-Combat-Testing.md](@AI_Plans/PRD-Combat-Testing.md) for the channel model.
 
 | Channel | Path | Runner | CTest |
 |---|---|---|---|
@@ -104,5 +104,5 @@ Combat now has deterministic characterization tests (seed 12345); reconstruction
 ## Notes
 
 - **Rename applied:** `CMB_ProgressTurnFlow__WIP` → `Combat_Next_Turn` ([Combat.c:4528](../MoM/src/Combat.c#L4528)). (AI-layer renames — `AI_CMB_PlayTurn__WIP` → `Auto_Cast_Spell_And_Do_Combat_Turn`, `AI_BU_SelectAction__WIP` → `Choose_Target_And_Action` — are recorded in [__TODO-Combat-AI.md](__TODO-Combat-AI.md).)
-- Authoritative per-function checkboxes remain in [stub_wip_todo.md](#TODO/stub_wip_todo.md); these three `__TODO-Combat*` docs are the navigable overview layered on top of it. When a function is done-done, check it there **and** update the relevant subsystem/table row here.
+- Authoritative per-function checkboxes remain in [stub_wip_todo.md](@TODO/stub_wip_todo.md); these three `__TODO-Combat*` docs are the navigable overview layered on top of it. When a function is done-done, check it there **and** update the relevant subsystem/table row here.
 - The AI spell path (bottom of the tree) is intentionally the most complete — combat spellcasting was reconstructed first so the CP can act; the surrounding battlefield mechanics are the larger remaining body of work.

@@ -169,7 +169,7 @@ For each function in the todolist, "done-done" means:
 4. **GEMINI variant deletion** (if any)
 5. **`__WIP` / `__STUB` / `__ALWAYS_FALSE` suffix removal** (if real body exists)
 6. **Naming convention sweep** — `Tile` → `Square`, `AI_Do_*` → `AI_Stacks_Do_*` family, CamelCase locals → lower_snake_case, etc.
-7. **Cross-doc sweep** — index entry in [MoM-AI-AIMOVE-Index.md](ComputerPlayer/MoM-AI-AIMOVE-Index.md), [stub_wip_todo.md](#TODO/stub_wip_todo.md), call-chain docs
+7. **Cross-doc sweep** — index entry in [MoM-AI-AIMOVE-Index.md](ComputerPlayer/MoM-AI-AIMOVE-Index.md), [stub_wip_todo.md](@TODO/stub_wip_todo.md), call-chain docs
 
 ---
 
@@ -179,4 +179,4 @@ For each function in the todolist, "done-done" means:
 - [doc/MoM-NextTurn-AI-Move.md](MoM-NextTurn-AI-Move.md) — the original chain notes
 - [doc/ComputerPlayer/MoM-AI-Move.md](ComputerPlayer/MoM-AI-Move.md) — overview map
 - [doc/ComputerPlayer/MoM-AI-AIMOVE-Index.md](ComputerPlayer/MoM-AI-AIMOVE-Index.md) — AIMOVE.c function index
-- [doc/#TODO/stub_wip_todo.md](#TODO/stub_wip_todo.md) — running `__STUB`/`__WIP` punchlist
+- [doc/@TODO/stub_wip_todo.md](@TODO/stub_wip_todo.md) — running `__STUB`/`__WIP` punchlist

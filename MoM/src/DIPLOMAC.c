@@ -3670,7 +3670,7 @@ void Change_Relations(int16_t value, int16_t attacker_idx, int16_t defender_idx,
                             _players[defender_idx].Dipl.peace_modifier[attacker_idx] += relation_value_pre_charisma;
                         }
                         if(
-                            (spell_idx == spl_Earth_Lore)  /* OGBUG  should be spl_Spell_Of_Mastery, not spl_Earth_Lore */
+                            (spell_idx == spl_Earth_Lore)  /* OGBUG: should be spl_Spell_Of_Mastery, not spl_Earth_Lore */
                             &&
                             (Random(100) < 11)
                         )
@@ -4852,7 +4852,7 @@ static void Npc_Diplomacy_Screen(void)
  *
  * Main negotiation pass:
  * 1. Early-out if the human is casting @c spl_Spell_Of_Return
- *    (preserved OGBUG behavior, even though the routine is AI-vs-AI).
+ *    (preserved OGBUG: behavior, even though the routine is AI-vs-AI).
  * 2. Iterate ordered non-human player pairs with active fortresses and contact.
  * 3. Gate negotiation by a difficulty-scaled random check.
  * 4. Build @c Base_Score from hidden relation, visible relation, and defender
@@ -4903,7 +4903,7 @@ void NPC_To_NPC_Treaty_Negotiations(void)
     int16_t itr_players1 = 0;
     int16_t itr_players2 = 0;
 
-    /* OGBUG  drake178: what does this have to do with AI-AI diplomacy? */
+    /* OGBUG: drake178: what does this have to do with AI-AI diplomacy? */
     if(_players[_current_player_idx].casting_spell_idx == spl_Spell_Of_Return)
     {
         return;
@@ -5712,7 +5712,7 @@ void NPC_To_Human_Diplomacy(void)
                             {
                                 if(_players[HUMAN_PLAYER_IDX].Dipl.field_126[player_idx] > 0)
                                 {
-                                    /* ¿ OGBUG  doesn't set a diplomatic order ? */
+                                    /* ¿ OGBUG: doesn't set a diplomatic order ? */
                                     _players[HUMAN_PLAYER_IDX].Dipl.field_126[player_idx] = 0;
                                 }
                                 else

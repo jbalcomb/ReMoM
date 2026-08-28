@@ -15,7 +15,7 @@ def Parse_Command_Line() -> argparse.Namespace:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("doc/#TODO/stub_wip_todo.md"),
+        default=Path("doc/@TODO/stub_wip_todo.md"),
         help="Markdown document to create.",
     )
 

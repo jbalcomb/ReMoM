@@ -28,7 +28,7 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 - Use real, recognized extensions (`.log`, `.txt`, `.csv`, `.json`). Do not use words like `raw`, `trace`, `out`, or `dump` as extensions — they aren't recognized by editors/tools and trigger "unknown file type" handling. If you need to distinguish kinds of output, encode that in the stem (`*_stderr.log`, `*_rng.log`), not the extension.
 
 ## Presenting answers in chat (all agents)
-- **Every reference to a file, function, line, or symbol is a clickable markdown link.** `[Combat.c:15086](MoM/src/Combat.c#L15086)` — never a bare `Combat.c:15086`, never a backticked path, never a plain path. Ranges are `#L15086-L15090`; folders are `[MoM/src/](MoM/src/)`. Paths are workspace-relative from the repo root. (Docs under `doc/#CodeReview/` sit one level down and use `../../MoM/src/...`.)
+- **Every reference to a file, function, line, or symbol is a clickable markdown link.** `[Combat.c:15086](MoM/src/Combat.c#L15086)` — never a bare `Combat.c:15086`, never a backticked path, never a plain path. Ranges are `#L15086-L15090`; folders are `[MoM/src/](MoM/src/)`. Paths are workspace-relative from the repo root. (Docs under `doc/@CodeReview/` sit one level down and use `../../MoM/src/...`.)
 - **No exceptions, and brevity is never one.** "Just give me a short list", a one-line status answer, a findings table, a correction, a summary — all get links. A line number that cannot be clicked is worth *less* than none, because it still has to be hunted for by hand.
 - **Check before sending.** Scan the outgoing message for `Filename.ext:NNNN` or bare paths and convert every one.
 - **Commands are Bash, prose is not a command.** See *Shell and scripting* below — when a command belongs in the answer, give the command, not a description of it.
@@ -65,10 +65,10 @@ Bypass for emergencies (only meaningful on a main-bound push, since other pushes
 git push --no-verify
 ```
 
-The same gate is also wired up as the VS Code task `check: safe-to-push` (`Tasks: Run Task...`) for on-demand IDE-side runs. See `doc/#AI_Plans/PRD-Git-Hook-Pre-Push-Release-Check.md` and `doc/#AI_Plans/PRD-VSCode-Task-Safe-To-Push.md`.
+The same gate is also wired up as the VS Code task `check: safe-to-push` (`Tasks: Run Task...`) for on-demand IDE-side runs. See `doc/@AI_Plans/PRD-Git-Hook-Pre-Push-Release-Check.md` and `doc/@AI_Plans/PRD-VSCode-Task-Safe-To-Push.md`.
 
 ## PRDs and Plans
-- Product requirements documents (`PRD-*.md`) and implementation plans live in `doc/#AI_Plans/`.
+- Product requirements documents (`PRD-*.md`) and implementation plans live in `doc/@AI_Plans/`.
 
 ## Glossary of Terms
 - Dasm stands for Disassembly  (the disassembley of the Borland C++ 3.0 code from IDA Pro 5.5)
@@ -89,7 +89,7 @@ The same gate is also wired up as the VS Code task `check: safe-to-push` (`Tasks
 ## Vetting third-party dependencies (all agents)
 Before recommending, installing, or adding ANY external binary, library, package, or tool — including
 anything from winget/choco/vcpkg/`FetchContent`, and any DLL committed to the repo — follow
-`doc/#Devel/Dependency-Vetting.md`. Run `python3 tools/vet_dependency.py --repo OWNER/NAME
+`doc/@Devel/Dependency-Vetting.md`. Run `python3 tools/vet_dependency.py --repo OWNER/NAME
 [--upstream OWNER/NAME --author "Exact Name"] [--tier A|B|C]` for the checkable facts.
 
 Two rules that are easy to break:

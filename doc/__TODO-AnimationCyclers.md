@@ -1,6 +1,14 @@
 
 
 
+RE:  CMBTAI.c  Auto_Move_Unit()  lines 1825-1832
+CLAUDE said:
+"""
+My recommendation: move the pacing into PageFlip_FX, not this loop. It's the frame-presentation call, it's already port-side and substantially reworked (several cases are commented out or TODO), and every OG draw-then-flip loop gets consistent pacing instead of one being patched at a time. That keeps Auto_Move_Unit byte-for-byte with its listing and puts the platform compensation where platform compensation belongs.
+"""
+
+
+
 ## Cityscape_Window()
 
     /*

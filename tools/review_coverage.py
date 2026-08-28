@@ -8,7 +8,14 @@ Four independent inventories are compared:
             production names through the doc's rename ledger and the coverage tables
   VERDICT   the rows of a review doc's coverage table (`## Scope` / `## Review status` / the
             unnamed lead table), each of which renders a fidelity result on one function
-  TRACKER   the checked boxes in doc/#TODO/stub_wip_todo.md
+  TRACKER   the checked boxes in doc/@TODO/stub_wip_todo.md
+
+COVERAGE AND DEBT ARE TWO DIFFERENT AXES.  A VERDICT says the C matches the listing; it says
+nothing about whether the C is clean.  `--debt` reports the second axis -- non-compliant PARAMETERS,
+header prototypes that disagree with their .c definition, raw `; BUG:` markers,
+non-compliant locals, `/* CLAUDE */` edits to original game code, `DBG_` leftovers and
+commented-out code -- per function, cross-referenced with the DONE set.  A function can be
+perfectly faithful and still be a mess, and nothing here could see that until 2026-08-26.
 
 A function counts as COVERED only when a DONE-DONE doc gives it a VERDICT row, or a DONE-DONE
 doc is named after it.  A header-block listing is a statement of intent, not a verdict -- one
@@ -26,6 +33,7 @@ Usage:
   python3 tools/review_coverage.py --attribution       which review each uncovered function belongs to
   python3 tools/review_coverage.py --referrals         cross-doc "covered in X" claims that X does not support
   python3 tools/review_coverage.py --anchors           dead #L line anchors across the docs
+  python3 tools/review_coverage.py --debt              style/annotation debt in DONE functions
   python3 tools/review_coverage.py --csv OUT.csv       per-marker matrix
 """
 import argparse
@@ -36,10 +44,10 @@ import re
 SRC_DIR = 'MoM/src'
 SOURCES = ['Combat.c', 'COMBINIT.c', 'CMBMAGIC.c', 'CMBTAI.c', 'CMBTMVPT.c']
 HEADERS = ['Combat.h']
-DOC_DIR = 'doc/#CodeReview'
+DOC_DIR = 'doc/@CodeReview'
 DOC_PREFIX = 'Combat-'
 SKIP_DOCS = {'Combat-Homeless.md'}
-TRACKER = 'doc/#TODO/stub_wip_todo.md'
+TRACKER = 'doc/@TODO/stub_wip_todo.md'
 ASM_ROOT = 'C:/STU/devel/STU-Extras/Piethawn/Piethawn/out/WIZARDS'
 
 
@@ -415,7 +423,7 @@ def report_anchors():
             target = os.path.normpath(os.path.join(DOC_DIR, m.group(1)))
             if not os.path.exists(target):
                 # some docs were written with repo-root-relative links, which do not resolve
-                # from doc/#CodeReview/ -- a different defect from a target that is simply gone
+                # from doc/@CodeReview/ -- a different defect from a target that is simply gone
                 root = os.path.normpath(m.group(1))
                 kind = 'root-relative link' if os.path.exists(root) else 'missing file'
                 print('   %-42s %-20s %s' % (fn, kind, m.group(1)))
@@ -588,6 +596,262 @@ def report_referrals(docs, covered, universe):
     print('%d unsupported referrals' % bad)
 
 
+
+# ----------------------------------------------------------------- debt ---
+# Fidelity is one axis; house style is another.  These are the tells that a function was walked
+# against its listing but never cleaned up afterwards.  All deterministic text scans, no judgement.
+DEBT_DEF_RE = re.compile(
+    r'^(?:static\s+)?(?:void|int8_t|int16_t|int32_t|uint8_t|uint16_t|uint32_t'
+    r'|char|long|unsigned|size_t|FILE|SAMB_ptr|struct\s+\w+\s*\*?|[A-Za-z_]\w*_ptr)\s+\*?'
+    r'\s*([A-Za-z_]\w*)\s*\(')
+DEBT_DECL_RE = re.compile(
+    r'^\s+(?:static\s+)?(?:void|int8_t|int16_t|int32_t|uint8_t|uint16_t|uint32_t'
+    r'|char|long|unsigned|size_t|FILE|SAMB_ptr|struct\s+\w+\s*\*?|[A-Za-z_]\w*_ptr)\s+\*?'
+    r'\s*([A-Za-z_]\w*)\s*(?:\[[^\]]*\])?\s*(?:=|;)')
+DEBT_RAW_BUG_RE = re.compile(r'(?:^|[^A-Za-z_])(?:BUG|TODO|FIXME|XXX)\b')
+DEBT_OGBUG_RE = re.compile(r'OGBUG')
+DEBT_CMT_CODE_RE = re.compile(r'^\s*//\s*[A-Za-z_][\w\[\]\.\->]*\s*(?:\(|=|\+=|-=)')
+# `NOTE(who,when): prose` and friends are annotation conventions, not commented-out code -- but
+# they are an identifier followed by '(', so DEBT_CMT_CODE_RE scores them as debt.
+DEBT_CMT_ANNOT_RE = re.compile(r'^\s*//\s*(?:NOTE|TODO|DEDU|OGBUG|BUG|FIXME|XXX|HACK|CLAUDE|GEMINI|WZD)\b',
+                               re.I)
+
+# Parameters live on the column-0 signature line, which DEBT_DECL_RE can never match:
+# that pattern anchors on ^\s+ (body indentation) and requires the line to end in '=' or ';'.
+# Scanning only bodies left every parameter in the tree unchecked, which is how Max_X / Max_Y
+# survived a full review pass.  DEBT_PARAM_TYPE mirrors the type alternation used above.
+DEBT_PARAM_TYPE = (r'(?:const\s+)?(?:void|int8_t|int16_t|int32_t|uint8_t|uint16_t|uint32_t'
+                   r'|char|long|short|unsigned|signed|size_t|FILE|SAMB_ptr'
+                   r'|struct\s+\w+|[A-Za-z_]\w*_ptr|[A-Za-z_]\w*_t)')
+DEBT_PARAM_RE = re.compile(DEBT_PARAM_TYPE + r'\s+\*?\s*([A-Za-z_]\w*)\s*(?:\[[^\]]*\])?\s*$')
+DEBT_SIG_RE = re.compile(r'^(?:static\s+)?' + DEBT_PARAM_TYPE + r'\s+\*?\s*[A-Za-z_]\w*\s*\(([^;]*)\)\s*$')
+DEBT_GOOD_IDENT_RE = re.compile(r'^[a-z][a-z0-9_]*$')
+DEBT_CATS = ('CLAUDE', 'BUG', 'loc', 'prm', 'DBG', 'cmt', 'blank')
+
+
+def _debt_is_preserved_original(body, i):
+    """True when a commented-out line is the OG form kept beside its live replacement.
+
+    AGENTS.md REQUIRES that shape -- faithful code that must change is commented out with the
+    replacement below it -- so counting it as debt makes `cmt` a number that can never reach zero,
+    and a metric nobody can clear is a metric nobody reads.  The tell is a live statement within a
+    couple of lines below, after any further comment lines in the same stack.
+
+    Deliberately NOT keyed on the identifier matching: the platform substitutions rename as they
+    replace (`gfopen` -> `stu_fopen_ci`, `gfread` -> `fread`), and an identifier test scores those
+    as reviewable while passing the genuinely dead ones.  That mistake hid a corrupted half-typed
+    comment inside Combat_Cache_Read for a month.
+    """
+    for j in range(i + 1, min(i + 4, len(body))):
+        s = body[j].strip()
+        if not s or s.startswith('//'):
+            continue                      # a stack of drafts: keep looking for the live line
+        if s.startswith(('/*', '*', '*/')):
+            return False                  # a prose block, not a replacement
+        return not s.startswith(('}', '{'))
+    return False
+
+
+def debt_bad_params(sig_line):
+    """Parameter names on one signature line that are not lower_snake_case."""
+    m = DEBT_SIG_RE.match(sig_line.rstrip())
+    if not m:
+        return []
+    bad = []
+    for raw in m.group(1).split(','):
+        raw = raw.strip()
+        if not raw or raw == 'void':
+            continue
+        pm = DEBT_PARAM_RE.match(raw)
+        if pm and not DEBT_GOOD_IDENT_RE.match(pm.group(1)):
+            bad.append(pm.group(1))
+    return bad
+
+
+def debt_functions(path):
+    """(name, first_line, [body lines], joined signature) for every column-0 definition.
+
+    Two things here are easy to get wrong and both produced silent, wrong answers:
+
+    A definition's signature may span lines.  Requiring the opening line to end in ')' or '{'
+    skips those functions entirely -- and worse, the PRECEDING function then swallows them,
+    because the body end used to be found by scanning BACKWARD from the next recognised
+    definition to the last '}'.  That overshoot is what made `Build_Battlefield` report a blank
+    run that sits three functions further down the file.
+
+    So: join continuation lines to recover the full signature, and find the body end by scanning
+    FORWARD to the first column-0 '}' -- which is the real close of a column-0 definition and does
+    not depend on correctly spotting whatever comes next.
+    """
+    lines = read(path).split('\n')
+    starts = []
+    for i, l in enumerate(lines):
+        if l.rstrip().endswith(';'):
+            continue
+        sig, j = l.rstrip(), i
+        while sig.count('(') > sig.count(')') and j + 1 < len(lines) and j - i < 20:
+            j += 1
+            sig += ' ' + lines[j].strip()
+        sig = ' '.join(sig.split())
+        m = DEBT_DEF_RE.match(sig)
+        if m and (sig.endswith(')') or sig.endswith('{')):
+            starts.append((i, m.group(1), sig))
+    for n, (i, name, sig) in enumerate(starts):
+        limit = starts[n + 1][0] if n + 1 < len(starts) else len(lines)
+        j = i + 1
+        while j < limit and lines[j].rstrip() != '}':
+            j += 1
+        yield name, i + 1, lines[i:min(j, limit - 1) + 1], sig
+
+
+def scan_debt_body(body, sig=None):
+    """Per-function tell counts.  A 2+ run of blank lines counts once, not once per line."""
+    c = dict((k, 0) for k in DEBT_CATS)
+    if sig is None:
+        sig = body[0] if body else ''
+    c['prm'] = len(debt_bad_params(sig))
+    run = 0
+    for i, l in enumerate(body):
+        s = l.strip()
+        if not s:
+            run += 1
+            if run == 2:
+                c['blank'] += 1
+            continue
+        run = 0
+        if 'CLAUDE' in l:
+            c['CLAUDE'] += 1
+        if DEBT_RAW_BUG_RE.search(l) and not DEBT_OGBUG_RE.search(l):
+            c['BUG'] += 1
+        if 'DBG_' in l:
+            c['DBG'] += 1
+        if (DEBT_CMT_CODE_RE.match(l)
+                and not DEBT_CMT_ANNOT_RE.match(l)
+                and not _debt_is_preserved_original(body, i)):
+            c['cmt'] += 1
+        m = DEBT_DECL_RE.match(l)
+        if m and not s.startswith('//'):
+            ident = m.group(1)
+            if ident != ident.lower() and ident != ident.upper():
+                c['loc'] += 1
+    return c
+
+
+# A header prototype and its definition are two hand-maintained copies of one signature, so a
+# rename applied to the .c silently leaves the .h asserting the old name.  That is worse than a
+# non-compliant name: the header actively contradicts the source.  Nothing checked it until
+# 2026-08-27, by which point 22 parameters across 14 prototypes had drifted.
+DEBT_HDR_PAIRS = [('Combat.h', ['Combat.c']),
+                  ('CMBTAI.h', ['CMBTAI.c']),
+                  ('CMBMAGIC.h', ['CMBMAGIC.c']),
+                  ('COMBINIT.h', ['COMBINIT.c']),
+                  ('CMBTMVPT.h', ['CMBTMVPT.c'])]
+DEBT_PROTO_RE = re.compile(r'^(?:extern\s+)?(?:static\s+)?' + DEBT_PARAM_TYPE +
+                           r'\s+\*?\s*([A-Za-z_]\w*)\s*\((.*)\)\s*;\s*$')
+
+
+def _debt_param_names(sig):
+    """Parameter identifiers on one signature, or None if any chunk will not parse."""
+    out = []
+    for raw in sig.split(','):
+        s = ' '.join(raw.split())
+        if not s or s == 'void':
+            continue
+        m = DEBT_PARAM_RE.match(s)
+        if not m:
+            return None
+        out.append(m.group(1))
+    return out
+
+
+def scan_header_drift():
+    """[(header, function, argno, header_name, source_name)] where the two copies disagree."""
+    out = []
+    for hdr, srcs in DEBT_HDR_PAIRS:
+        hpath = os.path.join(SRC_DIR, hdr)
+        if not os.path.exists(hpath):
+            continue
+        defs = {}
+        for s in srcs:
+            spath = os.path.join(SRC_DIR, s)
+            if not os.path.exists(spath):
+                continue
+            for l in read(spath).split('\n'):
+                m = DEBT_SIG_RE.match(l.rstrip())
+                if m:
+                    dm = DEBT_DEF_RE.match(l)
+                    if dm:
+                        defs.setdefault(dm.group(1), _debt_param_names(m.group(1)))
+        for l in read(hpath).split('\n'):
+            m = DEBT_PROTO_RE.match(l.strip())
+            if not m:
+                continue
+            want = defs.get(m.group(1))
+            have = _debt_param_names(m.group(2))
+            if not want or not have or len(want) != len(have):
+                continue
+            for i, (h, s) in enumerate(zip(have, want)):
+                if h != s:
+                    out.append((hdr, m.group(1), i + 1, h, s))
+    return out
+
+
+def report_debt(rows, only_done=True):
+    """Second-axis report: what a VERDICT never looked at."""
+    state = dict((name, st) for (_k, _raw, name, _impl, st, _n, _s, _l) in rows if name)
+    found = []
+    for src in SOURCES:
+        path = os.path.join(SRC_DIR, src)
+        if not os.path.exists(path):
+            continue
+        for name, line, body, sig in debt_functions(path):
+            c = scan_debt_body(body, sig)
+            if not sum(c.values()):
+                continue
+            if only_done and state.get(name, '-') != 'DONE':
+                continue
+            found.append((sum(c.values()), src, name, line, c, debt_bad_params(sig)))
+    found.sort(key=lambda r: -r[0])
+
+    scope = 'DONE-marked' if only_done else 'all'
+    print('--- style/annotation debt in %s combat functions: %d ---' % (scope, len(found)))
+    print('  %-38s %-12s %7s %6s %4s %4s %4s %4s %4s %5s'
+          % ('function', 'file', 'line', 'CLAUDE', 'BUG', 'loc', 'prm', 'DBG', 'cmt', 'blank'))
+    for _tot, src, name, line, c, _bad in found:
+        print('  %-38s %-12s %7d %6d %4d %4d %4d %4d %4d %5d'
+              % (name[:38], src, line, c['CLAUDE'], c['BUG'], c['loc'], c['prm'],
+                 c['DBG'], c['cmt'], c['blank']))
+    agg = dict((k, sum(r[4][k] for r in found)) for k in DEBT_CATS)
+    print()
+    print('  totals: ' + ' | '.join('%s %d' % (k, agg[k]) for k in DEBT_CATS))
+    claude = [r for r in found if r[4]['CLAUDE']]
+    if claude:
+        print()
+        print('  /* CLAUDE */ edits to original game code sit in %d function(s):' % len(claude))
+        for _tot, src, name, line, c, _bad in claude:
+            print('    %-38s %-12s line %-6d %d marker(s)' % (name[:38], src, line, c['CLAUDE']))
+    print()
+    prm = [r for r in found if r[4]['prm']]
+    if prm:
+        print()
+        print('  non-lower_snake_case PARAMETERS sit in %d function(s):' % len(prm))
+        for _tot, src, name, line, c, bad in prm:
+            print('    %-38s %-12s line %-6d %s'
+                  % (name[:38], src, line, ', '.join(bad)))
+    drift = scan_header_drift()
+    if drift:
+        print()
+        print('  HEADER DRIFT -- %d prototype parameter(s) disagree with the .c definition:' % len(drift))
+        for hdr, fn, argno, h, s in drift:
+            print('    %-12s %-42s arg%-2d .h=%-24s .c=%s' % (hdr, fn[:42], argno, h, s))
+        print('    The header is the copy that is wrong; sync it to the definition.')
+    print()
+    print('  CLAUDE  edits to original game code      BUG    raw ; BUG:/TODO not in OGBUG form')
+    print('  loc     local not lower_snake_case       prm    PARAMETER not lower_snake_case')
+    print('  DBG     DBG_ leftovers                   cmt    commented-out code')
+    print('  blank   2+ consecutive blank lines')
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--doc', help='report on one doc only')
@@ -598,6 +862,8 @@ def main():
     ap.add_argument('--attribution-md', action='store_true', dest='attribution_md', help='attribution table as markdown')
     ap.add_argument('--referrals', action='store_true', help='check cross-doc "covered in X" claims')
     ap.add_argument('--anchors', action='store_true', help='report dead #L line anchors and exit')
+    ap.add_argument('--debt', action='store_true', help='style/annotation debt per function (the second axis)')
+    ap.add_argument('--debt-all', action='store_true', dest='debt_all', help='--debt over every function, not just DONE')
     ap.add_argument('--quiet-docs', action='store_true', help='skip the per-doc reconciliation')
     args = ap.parse_args()
 
@@ -606,6 +872,10 @@ def main():
         return
 
     _slots, docs, covered, to_production, rows, universe = build()
+
+    if args.debt or args.debt_all:
+        report_debt(rows, only_done=not args.debt_all)
+        return
 
     if args.referrals:
         report_referrals(docs, covered, universe)

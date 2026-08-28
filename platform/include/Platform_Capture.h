@@ -3,7 +3,7 @@
  *
  * The game records its own frames and audio while it plays a `.hms` scenario, so a demo video is
  * produced by a build step rather than by screen-recording a live session.  See
- * doc/#AI_Plans/PRD-Scripted-Demo-Capture.md.
+ * doc/@AI_Plans/PRD-Scripted-Demo-Capture.md.
  *
  * Video is written as a CONSTANT-rate raw RGB24 stream, not one frame per present.  The game does
  * not present at a fixed rate (the DOS-derived timer, Release_Time() waits and per-screen loops all

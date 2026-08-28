@@ -380,7 +380,7 @@ void Production_Screen(void)
     
     Reset_Window();
 
-    // OGBUG  these should be one or the other, and not allow for neither
+    // OGBUG: these should be one or the other, and not allow for neither
     if(production_screen_return_screen == 1)
     {
         current_screen = scr_Cities_Screen;

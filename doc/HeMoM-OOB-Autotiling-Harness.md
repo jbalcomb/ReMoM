@@ -1,6 +1,6 @@
 # HeMoM OOB Autotiling Harness
 
-*Phase 3 of the Static-Pool-Backed SimTex Space Alloc (see `doc/#AI_Plans/PLAN-Static-Pool-Allocator.md`).*
+*Phase 3 of the Static-Pool-Backed SimTex Space Alloc (see `doc/@AI_Plans/PLAN-Static-Pool-Allocator.md`).*
 
 ## What it proves
 

@@ -1226,7 +1226,7 @@ int16_t AI_Select_Spell_Group_Summon(int16_t player_idx)
     have_the_chosen = ST_FALSE;
     for(unit_idx = 0; unit_idx < _units; unit_idx++)
     {
-        if(_UNITS[unit_idx].owner_idx == player_idx && _UNITS[unit_idx].type == ut_BarbSpearmen)  /* OGBUG  should be The Chosen, Barbarian Spearmen */
+        if(_UNITS[unit_idx].owner_idx == player_idx && _UNITS[unit_idx].type == ut_BarbSpearmen)  /* OGBUG: should be The Chosen, Barbarian Spearmen */
         {
             have_the_chosen = ST_TRUE;
         }
@@ -1234,7 +1234,7 @@ int16_t AI_Select_Spell_Group_Summon(int16_t player_idx)
 
     if(Player_Hero_Count(player_idx) < NUM_HERO_SLOTS)
     {
-        /* OGBUG  test inverted, should be `have_the_chosen != ST_TRUE` */
+        /* OGBUG: test inverted, should be `have_the_chosen != ST_TRUE` */
         if(players_spell_list[spl_Incarnation] == sls_Known && have_the_chosen == ST_TRUE)
         {
             AI_OVL_SplPriorities[40] = 500;
@@ -2860,11 +2860,11 @@ int16_t AITP_Transmute(int16_t player_idx, int16_t * targeted_wx, int16_t * targ
                         }
 
                         if(
-                            ((GET_TERRAIN_SPECIAL(city_area_wx, city_area_wy, city_wp) & TS_COAL) != 0) /* OGBUG  this is not a bitflag */
+                            ((GET_TERRAIN_SPECIAL(city_area_wx, city_area_wy, city_wp) & TS_COAL) != 0) /* OGBUG: this is not a bitflag */
                             ||
-                            ((GET_TERRAIN_SPECIAL(city_area_wx, city_area_wy, city_wp) & TS_IRON) != 0)  /* OGBUG  this is not a bitflag */
+                            ((GET_TERRAIN_SPECIAL(city_area_wx, city_area_wy, city_wp) & TS_IRON) != 0)  /* OGBUG: this is not a bitflag */
                             ||
-                            ((GET_TERRAIN_SPECIAL(city_area_wx, city_area_wy, city_wp) & TS_SILVER) != 0)  /* OGBUG  this is not a bitflag */
+                            ((GET_TERRAIN_SPECIAL(city_area_wx, city_area_wy, city_wp) & TS_SILVER) != 0)  /* OGBUG: this is not a bitflag */
                         )
                         {
                             if(_ai_all_own_city_values[itr_cities] > highest_value)
@@ -2955,8 +2955,8 @@ int16_t AITP_Transmute(int16_t player_idx, int16_t * targeted_wx, int16_t * targ
  * @see AI_Select_Spell_Group_City_Enchantment(), Square_Is_Desert(), Square_Is_Swamp()
  */
 /*
-OGBUG  treats catchment corners as affecting the city, should skip corners
-¿ OGBUG  only targets deserts and swamps ?
+OGBUG: treats catchment corners as affecting the city, should skip corners
+¿ OGBUG: only targets deserts and swamps ?
 */
 int16_t AITP_Change_Terrain(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp)
 {
@@ -3884,7 +3884,7 @@ int16_t AITP_Cloud_Of_Shadow(int16_t player_idx, int16_t * targeted_city_idx)
 }
 
 // WZD o156p34
-/* ¿ OGBUG  the fallback random option can return a realm against which the selected city already has a ward ? */
+/* ¿ OGBUG: the fallback random option can return a realm against which the selected city already has a ward ? */
 int16_t AITP_Spell_Ward(int16_t player_idx, int16_t * targeted_city_idx, int16_t * magic_realm)
 {
     int16_t Target_Realm = 0;
@@ -4587,7 +4587,7 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
 
-        /* OGBUG  could OOB `_ai_all_own_stacks[-1]` */
+        /* OGBUG: could OOB `_ai_all_own_stacks[-1]` */
         if(
             _UNITS[itr_units].wx != _ai_all_own_stacks[best_stack_idx].wx
             ||
@@ -4630,7 +4630,7 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
             continue;
         }
 
-        if(flag3 != ST_FALSE && _UNITS[itr_units].type <= ut_BarbSwordsmen)  /* OGBUG  should be ut_Warship, ut_BarbSwordsmen */
+        if(flag3 != ST_FALSE && _UNITS[itr_units].type <= ut_BarbSwordsmen)  /* OGBUG: should be ut_Warship, ut_BarbSwordsmen */
         {
             continue;
         }
@@ -4657,7 +4657,7 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
 
         if(flag4 == ST_TRUE)
         {
-            /* OGBUG  Settlers were already excluded */
+            /* OGBUG: Settlers were already excluded */
             if(_unit_type_table[_UNITS[itr_units].type].Abilities & UA_CREATEOUTPOST)
             {
                 current_unit_score *= 20;
@@ -4715,7 +4715,7 @@ int16_t AITP_Node(int16_t * targeted_node_idx, int16_t spell_idx)
     }
     else
     {
-        target_owner_idx = Random(_cp_hostile_opponent_count);  /* OGBUG  should be `_cp_hostile_opponents[Random(count) - 1]`, as-is can selct self or non-hostile */
+        target_owner_idx = Random(_cp_hostile_opponent_count);  /* OGBUG: should be `_cp_hostile_opponents[Random(count) - 1]`, as-is can selct self or non-hostile */
     }
 
     best_node_idx = ST_UNDEFINED;
@@ -4727,7 +4727,7 @@ int16_t AITP_Node(int16_t * targeted_node_idx, int16_t spell_idx)
         {
             if(_NODES[node_idx].power > highest_power)
             {
-                if((_NODES[node_idx].flags & NF_WARPED) == NF_WARPED)  /* OGBUG  should be != == NF_WARPED */
+                if((_NODES[node_idx].flags & NF_WARPED) == NF_WARPED)  /* OGBUG: should be != == NF_WARPED */
                 {
                     highest_power = _NODES[node_idx].power;
                     best_node_idx = node_idx;
@@ -4804,7 +4804,7 @@ int16_t AITP_Node(int16_t * targeted_node_idx, int16_t spell_idx)
  */
 int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell_idx, int16_t spell_idx, int16_t player_idx)
 {
-    /* OGBUG  target_spell_scores should be uint8_t, not int8_t */
+    /* OGBUG: target_spell_scores should be uint8_t, not int8_t */
     int8_t target_spell_scores[6][25] = {
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -5042,7 +5042,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             {
                 if(_players[player_idx].Prim_Realm == sbr_Life || _players[player_idx].Sec_Realm == sbr_Life)
                 {
-                    target_spell_scores[itr_players][ETERNAL_NIGHT] = (int8_t)200;  /* OGBUG  target_spell_scores should be uint8_t, not int8_t */
+                    target_spell_scores[itr_players][ETERNAL_NIGHT] = (int8_t)200;  /* OGBUG: target_spell_scores should be uint8_t, not int8_t */
                 }
                 else
                 {
@@ -5056,7 +5056,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
                 if(_players[player_idx].Prim_Realm == sbr_Life || _players[player_idx].Sec_Realm == sbr_Life ||
                     _players[player_idx].Prim_Realm == sbr_Nature || _players[player_idx].Sec_Realm == sbr_Nature)
                 {
-                    target_spell_scores[itr_players][EVIL_OMENS] = (int8_t)200;  /* OGBUG  target_spell_scores should be uint8_t, not int8_t */
+                    target_spell_scores[itr_players][EVIL_OMENS] = (int8_t)200;  /* OGBUG: target_spell_scores should be uint8_t, not int8_t */
                 }
                 else
                 {
@@ -5085,7 +5085,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             /* Suppress Magic */
             if(_players[itr_players].Globals[SUPPRESS_MAGIC] != 0)
             {
-                target_spell_scores[itr_players][SUPPRESS_MAGIC] = (int8_t)250;  /* OGBUG  target_spell_scores should be uint8_t, not int8_t */
+                target_spell_scores[itr_players][SUPPRESS_MAGIC] = (int8_t)250;  /* OGBUG: target_spell_scores should be uint8_t, not int8_t */
             }
 
             /* Time Stop */
@@ -5106,7 +5106,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
                 if(_players[player_idx].Prim_Realm == sbr_Death || _players[player_idx].Sec_Realm == sbr_Death ||
                     _players[player_idx].Prim_Realm == sbr_Chaos || _players[player_idx].Sec_Realm == sbr_Chaos)
                 {
-                    target_spell_scores[itr_players][NATURES_WRATH] = (int8_t)200;  /* OGBUG  target_spell_scores should be uint8_t, not int8_t */
+                    target_spell_scores[itr_players][NATURES_WRATH] = (int8_t)200;  /* OGBUG: target_spell_scores should be uint8_t, not int8_t */
                 }
                 else
                 {
@@ -5169,7 +5169,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             {
                 if(_players[player_idx].Prim_Realm == sbr_Chaos || _players[player_idx].Sec_Realm == sbr_Chaos)
                 {
-                    target_spell_scores[itr_players][TRANQUILITY] = (int8_t)200;  /* OGBUG  target_spell_scores should be uint8_t, not int8_t */
+                    target_spell_scores[itr_players][TRANQUILITY] = (int8_t)200;  /* OGBUG: target_spell_scores should be uint8_t, not int8_t */
                 }
                 else
                 {
@@ -5182,7 +5182,7 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             {
                 if(_players[player_idx].Prim_Realm == sbr_Chaos || _players[player_idx].Sec_Realm == sbr_Chaos)
                 {
-                    target_spell_scores[itr_players][LIFE_FORCE] = (int8_t)200;  /* OGBUG  target_spell_scores should be uint8_t, not int8_t */
+                    target_spell_scores[itr_players][LIFE_FORCE] = (int8_t)200;  /* OGBUG: target_spell_scores should be uint8_t, not int8_t */
                 }
                 else
                 {
@@ -5323,7 +5323,7 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx,
         default:
         {
             Cast_Spell_Target_Error(spell_idx);  // "[spell name] could not be found for CP."
-            /* OGBUG  IDGI, but leaves the passed in parameter in AX which means it's the return value  `mov ax, [bp+spell_target_type]; mov [bp+niu_variable], ax;` */
+            /* OGBUG: IDGI, but leaves the passed in parameter in AX which means it's the return value  `mov ax, [bp+spell_target_type]; mov [bp+niu_variable], ax;` */
             return_value = spell_target_type;
             niu_variable = return_value;
         } break;
@@ -5335,8 +5335,8 @@ int16_t Get_Map_Square_Target_For_Spell(int16_t spell_target_type, int16_t * wx,
 
 
 // WZD o156p46
-/* OGBUG  ignores invisibility */
-/* OGBUG  ignores the sight range of units (using 2) */
+/* OGBUG: ignores invisibility */
+/* OGBUG: ignores the sight range of units (using 2) */
 int16_t AITP_Attack_Stack(int16_t player_idx, int16_t * targeted_wx, int16_t * targeted_wy, int16_t * targeted_wp)
 {
     int16_t target_wx = 0;
@@ -5356,7 +5356,7 @@ int16_t AITP_Attack_Stack(int16_t player_idx, int16_t * targeted_wx, int16_t * t
 
     for(itr_enemy_stack_count = 0; itr_enemy_stack_count < _ai_all_enemy_stack_count; itr_enemy_stack_count++)
     {
-        /* OGBUG  should be signed, not unsigned */
+        /* OGBUG: should be signed, not unsigned */
         if((uint16_t)_ai_all_enemy_stacks[itr_enemy_stack_count].value > (uint16_t)highest_value)
         {
             stack_is_visible = ST_FALSE;
@@ -5385,7 +5385,7 @@ int16_t AITP_Attack_Stack(int16_t player_idx, int16_t * targeted_wx, int16_t * t
                             scouting_radious = 5;
                         }
 
-                        /* OGBUG  should use itr_cities, not itr_enemy_stack_count */
+                        /* OGBUG: should use itr_cities, not itr_enemy_stack_count */
                         if(Delta_XY_With_Wrap(enemy_stack_wx, enemy_stack_wy, _CITIES[itr_enemy_stack_count].wx, _CITIES[itr_enemy_stack_count].wy, WORLD_WIDTH) <= scouting_radious)
                         {
                             highest_value = _ai_all_enemy_stacks[itr_enemy_stack_count].value;
@@ -5412,7 +5412,7 @@ int16_t AITP_Attack_Stack(int16_t player_idx, int16_t * targeted_wx, int16_t * t
                     {
                         if(_UNITS[itr_cities].wp == enemy_stack_wp)
                         {
-                            /* OGBUG  should use itr_cities, not itr_enemy_stack_count */
+                            /* OGBUG: should use itr_cities, not itr_enemy_stack_count */
                             if(Delta_XY_With_Wrap(enemy_stack_wx, enemy_stack_wy, _UNITS[itr_enemy_stack_count].wx, _UNITS[itr_enemy_stack_count].wy, WORLD_WIDTH) <= scouting_radious)
                             {
                                 highest_value = _ai_all_enemy_stacks[itr_enemy_stack_count].value;
@@ -5589,7 +5589,7 @@ int16_t AITP_Enchant_Road(int16_t player_idx, int16_t * targeted_wx, int16_t * t
                     {
                         continue;
                     }
-                    /* OGBUG  doesn't add wy_offset and wx_offset, so it only checks city center square */
+                    /* OGBUG: doesn't add wy_offset and wx_offset, so it only checks city center square */
                     if((GET_MAP_SQUARE_FLAG(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, _CITIES[itr_cities].wp) & MSF_ROAD) != 0)
                     {
                         have_road = ST_TRUE;
@@ -5707,7 +5707,7 @@ int16_t AITP_Disenchant(int16_t player_idx, int16_t * targeted_wx, int16_t * tar
         return ST_TRUE;
     }
 
-    /* OGBUG  checks landmass without plane */
+    /* OGBUG: checks landmass without plane */
     fortress_landmass_idx = _landmasses[_FORTRESSES[player_idx].wp * WORLD_SIZE + _FORTRESSES[player_idx].wy * WORLD_WIDTH + _FORTRESSES[player_idx].wx];
     highest_cost_unit_idx = ST_UNDEFINED;
     highest_cost = 0;
@@ -5735,9 +5735,9 @@ int16_t AITP_Disenchant(int16_t player_idx, int16_t * targeted_wx, int16_t * tar
         /* OGBUG: The original code uses target_city_idx instead of highest_cost_unit_idx here.
          * Since target_city_idx is guaranteed to be ST_UNDEFINED if we reached this block,
          * this results in an out-of-bounds read of _UNITS[ST_UNDEFINED]. */
-        *targeted_wx = _UNITS[target_city_idx].wx;  /* OGBUG  OOB AVWL  target_city_idx is ST_UNDEFINED */
-        *targeted_wy = _UNITS[target_city_idx].wy;  /* OGBUG  OOB AVWL  target_city_idx is ST_UNDEFINED */
-        *targeted_wp = _UNITS[target_city_idx].wp;  /* OGBUG  OOB AVWL  target_city_idx is ST_UNDEFINED */
+        *targeted_wx = _UNITS[target_city_idx].wx;  /* OGBUG: OOB AVWL  target_city_idx is ST_UNDEFINED */
+        *targeted_wy = _UNITS[target_city_idx].wy;  /* OGBUG: OOB AVWL  target_city_idx is ST_UNDEFINED */
+        *targeted_wp = _UNITS[target_city_idx].wp;  /* OGBUG: OOB AVWL  target_city_idx is ST_UNDEFINED */
         return ST_TRUE;
     }
 
@@ -5842,7 +5842,7 @@ int16_t AITP_Attack_Terrain(int16_t player_idx, int16_t * targeted_wx, int16_t *
                 continue;
             }
 
-            /* OGBUG  this condition can only apply to spl_Corruption, should come after that condition */
+            /* OGBUG: this condition can only apply to spl_Corruption, should come after that condition */
             if(Square_Has_Corruption(city_area_wx, city_area_wy, city_wp) != ST_FALSE)
             {
                 continue;
@@ -5885,7 +5885,7 @@ int16_t AITP_Attack_Terrain(int16_t player_idx, int16_t * targeted_wx, int16_t *
     {
         *targeted_wx = target_wx;
         *targeted_wy = target_wy;
-        *targeted_wp = city_wp;  /* OGBUG  should return target_wp, not city_wp - last city_wp */
+        *targeted_wp = city_wp;  /* OGBUG: should return target_wp, not city_wp - last city_wp */
         return ST_TRUE;
     }
 }
@@ -6054,7 +6054,7 @@ int16_t AITP_Corruption(int16_t player_idx, int16_t * targeted_wx, int16_t * tar
     {
         *targeted_wx = target_wx;
         *targeted_wy = target_wy;
-        *targeted_wp = city_wp;  /* OGBUG  should use target_wp, not city_wp */
+        *targeted_wp = city_wp;  /* OGBUG: should use target_wp, not city_wp */
         return 1;
     }
 
@@ -6070,7 +6070,7 @@ int16_t AITP_Plane_Shift(int16_t player_idx, int16_t * targeted_wx, int16_t * ta
     int itr_stacks;
     int best_stack_idx;
 
-    itr_stacks = player_idx;  /* OGBUG  pointless */
+    itr_stacks = player_idx;  /* OGBUG: pointless */
 
     best_stack_idx = ST_UNDEFINED;
     highest_value = 0;
@@ -6080,7 +6080,7 @@ int16_t AITP_Plane_Shift(int16_t player_idx, int16_t * targeted_wx, int16_t * ta
 
         stack_value = _ai_all_own_stacks[itr_stacks].value;
 
-        if((_ai_all_own_stacks[itr_stacks].abilities & AICAP_Settler) == 0)  /* OGBUG  condition is inverted, only considers Settlers instead of never */
+        if((_ai_all_own_stacks[itr_stacks].abilities & AICAP_Settler) == 0)  /* OGBUG: condition is inverted, only considers Settlers instead of never */
         {
             stack_value = 0;
         }
@@ -6098,7 +6098,7 @@ int16_t AITP_Plane_Shift(int16_t player_idx, int16_t * targeted_wx, int16_t * ta
         {
             if(stack_value > highest_value)
             {
-                /* OGBUG  should test if square is occupieable */
+                /* OGBUG: should test if square is occupieable */
                 if((_ai_all_own_stacks[itr_stacks].abilities & AICAP_Transport) != 0)
                 {
                     if(Square_Is_Sailable(_ai_all_own_stacks[itr_stacks].wx, _ai_all_own_stacks[itr_stacks].wy, MYRROR_PLANE) == ST_TRUE)
@@ -6117,7 +6117,7 @@ int16_t AITP_Plane_Shift(int16_t player_idx, int16_t * targeted_wx, int16_t * ta
                 }
             }
         }
-        /* OGBUG  missing MYRROR_PLANE -> ARCANUS_PLANE block */
+        /* OGBUG: missing MYRROR_PLANE -> ARCANUS_PLANE block */
     }
 
     if(best_stack_idx == ST_UNDEFINED)
@@ -6191,7 +6191,7 @@ int16_t AITP_Attack_Wizard(int16_t * targeted_player_idx, int16_t spell_idx, int
     {
         if(Random(2) == 1)
         {
-            *targeted_player_idx = _cp_hostile_opponents[0];  /* OGBUG  should HUMAN_PLAYER_IDX, not _cp_hostile_opponents[0] */
+            *targeted_player_idx = _cp_hostile_opponents[0];  /* OGBUG: should HUMAN_PLAYER_IDX, not _cp_hostile_opponents[0] */
         }
         else
         {

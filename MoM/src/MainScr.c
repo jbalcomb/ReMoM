@@ -7016,7 +7016,7 @@ void Main_Screen_Draw_Debug_Information(void)
         }
     }
 
-/* CLAUDE: live performance readout (PRD FR10, doc/#AI_Plans/SPEC-Perf-Debug-Screen-Readout.md).
+/* CLAUDE: live performance readout (PRD FR10, doc/@AI_Plans/SPEC-Perf-Debug-Screen-Readout.md).
  * Continues the `pos` row sequence above, so it can never collide with the rows already drawn.
  * The three lines are pre-formatted once per second by the perf layer -- this function runs EVERY
  * frame, so formatting or computing percentiles here would inflate the very frame time it reports.

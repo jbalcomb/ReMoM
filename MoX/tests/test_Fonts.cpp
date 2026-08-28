@@ -65,7 +65,7 @@ TEST(Update_Cycle_test, Forward_PositiveGradient_BounceAtMax)
 // combinations — forward+positive, reverse+positive, forward+negative,
 // reverse+negative — including the two suspected-broken negative cases.
 // The visual output is the ground truth: if the original game's palette
-// cycles look wrong in negative gradient on real hardware, the OGBUG is real;
+// cycles look wrong in negative gradient on real hardware, the OGBUG: is real;
 // if they look right despite the comparison anomaly, the disassembly may
 // have been misread or there's a calling-convention twist we missed.
 // ============================================================================
@@ -77,7 +77,7 @@ TEST(Update_Cycle_test, DISABLED_Forward_NegativeGradient_NormalStep)
     //
     // DISABLED — Update_Cycle's forward-negative-gradient branch compares against
     // *color_min instead of *color_max, so any starting value inside the legal
-    // range bounces immediately.  See OGBUG note above.  Re-enable once the GUI
+    // range bounces immediately.  See OGBUG: note above.  Re-enable once the GUI
     // test confirms the intended semantics.
     int16_t lo = 30, hi = 10;
     Setup_Cycle(0, 25, 3);
@@ -131,7 +131,7 @@ TEST(Update_Cycle_test, DISABLED_Reverse_NegativeGradient_NormalStep)
     //
     // DISABLED — Update_Cycle's reverse-negative-gradient branch compares against
     // *color_max instead of *color_min, so any starting value inside the legal
-    // range bounces immediately.  See OGBUG note above the forward case.
+    // range bounces immediately.  See OGBUG: note above the forward case.
     int16_t lo = 30, hi = 10;
     Setup_Cycle(1, 15, 3);
     Update_Cycle(&lo, &hi);

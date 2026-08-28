@@ -1133,7 +1133,7 @@ void Conquest_Spells(int16_t winner_idx, int16_t loser_idx)
     uint8_t spell_list[60] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t spell_list_idx = 0;
     SAMB_ptr new_spell_img = 0;
-    // char p_spell_name;  /* OGBUG  should have been `char *`? */
+    // char p_spell_name;  /* OGBUG: should have been `char *`? */
     // char * p_spell_name;
     char p_spell_name[LEN_SPELLDAT_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t awarded_spells[3] = { 0, 0, 0 };

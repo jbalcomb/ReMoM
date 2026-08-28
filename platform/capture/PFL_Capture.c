@@ -1,6 +1,6 @@
 /**
  * PFL_Capture.c — in-engine A/V capture (see Platform_Capture.h and
- * doc/#AI_Plans/PRD-Scripted-Demo-Capture.md).
+ * doc/@AI_Plans/PRD-Scripted-Demo-Capture.md).
  *
  * Backend-agnostic: each windowed backend's Platform_Video_Update() feeds video here, and the SDL
  * backends' post-mix hook feeds audio.  Nothing in this file touches SDL or Win32.

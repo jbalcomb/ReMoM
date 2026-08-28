@@ -4,7 +4,7 @@ render_demo.py - render one scripted demo scene to an mp4, end to end.
 
 Drives ReMoM through a .hms scenario (or a .RMR replay) with in-engine A/V capture enabled, then
 encodes the captured raw stream to H.264 with ffmpeg, muxing the captured game audio if there is
-any.  See doc/#AI_Plans/PRD-Scripted-Demo-Capture.md.
+any.  See doc/@AI_Plans/PRD-Scripted-Demo-Capture.md.
 
   python tools/render_demo.py --scene overland --scenario showcase/03_overland.hms
   python tools/render_demo.py --scene intro --replay assets/DEMO_QUIT_KD.RMR --max-seconds 30

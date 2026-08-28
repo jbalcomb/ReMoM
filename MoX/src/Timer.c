@@ -91,7 +91,7 @@ void Release_Time(int ticks)
         Platform_Sleep_Millies(1);
     }
 
-    /* CLAUDE: FR5a tick-aware accounting (doc/#AI_Plans/PRD-Performance-Management.md).
+    /* CLAUDE: FR5a tick-aware accounting (doc/@AI_Plans/PRD-Performance-Management.md).
      *
      * MEASUREMENT ONLY -- this reports, it does not change pacing.  The wait above is untouched:
      * same condition, same loop body, same exit.  Two clock reads and one call are added around it.

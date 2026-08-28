@@ -197,7 +197,7 @@ endif()
 
 add_compile_definitions($<$<CONFIG:Debug>:STU_DEBUG>)
 
-# Performance instrumentation (doc/#AI_Plans/PRD-Performance-Management.md FR6).
+# Performance instrumentation (doc/@AI_Plans/PRD-Performance-Management.md FR6).
 #
 # This is the ONE switch that decides whether PERF_ZONE / PERF_CALL compile to timing code or to
 # nothing.  It replaces the old hand-toggled two-#define PHASE scheme in MoM/src/NEXTTURN.c, which
@@ -400,7 +400,7 @@ endif()
 #   "FHS"  (BINDIR "bin") -> /usr, /usr/local, or the .deb staging tree: docs under
 #                           share/doc/, plus a .desktop entry and an icon so the
 #                           game shows up in the desktop application menu.
-# See doc/#AI_Plans/PRD-Linux-Package-Install.md.
+# See doc/@AI_Plans/PRD-Linux-Package-Install.md.
 if(CMAKE_INSTALL_BINDIR STREQUAL ".")
     set(REMOM_INSTALL_FLAT TRUE)
 else()
@@ -572,7 +572,7 @@ elseif(REMOM_INSTALL_FLAT)
     set(CPACK_GENERATOR "ZIP;TGZ")
 else()
     # Linux native distro package -- built from the FHS layout by the
-    # `linux-package-release` preset.  See doc/#AI_Plans/PRD-Linux-Package-Install.md.
+    # `linux-package-release` preset.  See doc/@AI_Plans/PRD-Linux-Package-Install.md.
     #
     # This is the counterpart to the AppImage, not a replacement: the AppImage
     # BUNDLES SDL2 so it runs on any distro, while the .deb DEPENDS on the distro's

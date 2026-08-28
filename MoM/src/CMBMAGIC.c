@@ -228,7 +228,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
     int16_t counter_magic_idx__target_cgx = 0;  // AKA counter_magic_idx, target_cgx, counter_realm, cost_multiplier
     int16_t counter_realm = 0;
     int16_t cost_multiplier = 0;
-    int16_t Target = 0;
+    int16_t target = 0;
     int16_t selected_page_slot = 0;
     int16_t effective_cost = 0;
     int16_t overland_spell_idx_saved = 0;
@@ -390,12 +390,12 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
         {
             if(caster_idx > CASTER_IDX_BASE)
             {
-                // ; BUG: causes counters to use the effective cost
+                /* OGBUG: causes counters to use the effective cost */
                 available_mana_pool = Casting_Cost(player_idx, spell_idx, 1);
             }
             else
             {
-                /* OGBUG  ignores Evil Omens */
+                /* OGBUG: ignores Evil Omens */
                 available_mana_pool = spell_data_table[spell_idx].casting_cost;
             }
             effective_cost = available_mana_pool;
@@ -417,7 +417,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 }
                 else
                 {
-                    /* OGBUG  ignores Evil Omens */
+                    /* OGBUG: ignores Evil Omens */
                     _players[HUMAN_PLAYER_IDX].casting_cost_remaining = spell_data_table[spell_idx].casting_cost;
                 }
                 available_mana_pool = Combat_Spellbook_Mana_Adder_Screen(spell_idx, selected_page_slot, caster_idx);
@@ -440,25 +440,25 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
             {
                 if(caster_idx >= CASTER_IDX_BASE)
                 {
-                    //  ; BUG: ignores the base casting cost
+                    /* OGBUG: ignores the base casting cost */
                     available_mana_pool = _players[player_idx].Cmbt_Skill_Left;
-                    // ; BUG: ignores casting cost modifiers
+                    /* OGBUG: ignores casting cost modifiers */
                     if(spell_data_table[spell_idx].casting_cost < available_mana_pool)
                     {
                         available_mana_pool = spell_data_table[spell_idx].casting_cost;
                     }
                     extra_mana_cost = Combat_Casting_Cost_Multiplier(player_idx);
-                    // ; BUG: ignores casting cost modifiers
+                    /* OGBUG: ignores casting cost modifiers */
                     if(((_players[player_idx].mana_reserve * 10) / extra_mana_cost) < spell_data_table[spell_idx].casting_cost)
                     {
-                        // ; BUG: ignores casting cost modifiers
+                        /* OGBUG: ignores casting cost modifiers */
                         available_mana_pool = (((_players[player_idx].mana_reserve * 10) / extra_mana_cost) - spell_data_table[spell_idx].casting_cost);
                     }
                 }
                 else
                 {
-                    /* OGBUG  ignores Evil Omens */
-                    /* OGBUG  infusable item charges will be automatically countered if the user has no mana */
+                    /* OGBUG: ignores Evil Omens */
+                    /* OGBUG: infusable item charges will be automatically countered if the user has no mana */
                     available_mana_pool = (battle_unit_mana - spell_data_table[spell_idx].casting_cost);
                     if(spell_data_table[spell_idx].casting_cost < available_mana_pool)
                     {
@@ -467,7 +467,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 }
                 base_mana_cost = spell_data_table[spell_idx].casting_cost;
                 extra_mana_cost = 0;
-                // ; BUG: Banish has an effective gain of 1/15 mana, not 5
+                /* OGBUG: Banish has an effective gain of 1/15 mana, not 5 */
                 if(
                     (spell_idx == spl_Life_Drain)
                     ||
@@ -487,7 +487,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 total_mana_cost = (base_mana_cost + extra_mana_cost);
                 if(caster_idx > CASTER_IDX_BASE)
                 {
-                    /* OGBUG  ignores Evil Omens */
+                    /* OGBUG: ignores Evil Omens */
                     effective_cost = (total_mana_cost - ((total_mana_cost * Casting_Cost_Reduction(player_idx, spell_idx)) / 100));
                 }
                 else
@@ -531,9 +531,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                     Combat_Spell_Counter_Message(caster_idx, counter_player_idx, spell_idx, cnst_Counter_Magic);  // "Counter Magic"
                     if(caster_idx >= CASTER_IDX_BASE)
                     {
-                        // ; BUG: this variable is still in use and needed below!
-                        // This code is the same as the 'pay the cost' for when it actually gets cast, below?
-                        // This bug could be because it was a macro?
+                        /* OGBUG: counter_magic_idx__target_cgx is still in use and needed below; This code is the same as the 'pay the cost' for when it actually gets cast, below? This bug could be because it was a macro? */
                         counter_magic_idx__target_cgx = Combat_Casting_Cost_Multiplier((caster_idx - CASTER_IDX_BASE));
                         _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= effective_cost;
                         _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= (counter_magic_idx__target_cgx / 10);
@@ -542,7 +540,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                     {
                         if(is_spell_like_ability != ST_TRUE)
                         {
-                            // ; BUG: this may not be the hero's original owner
+                            /* OGBUG: this may not be the hero's original owner - should use owner_idx, not player_idx */
                             if(
                                 (battle_units[caster_idx].item_charges > 0)
                                 &&
@@ -640,7 +638,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 {
                     if(is_spell_like_ability != ST_TRUE)
                     {
-                        // ; BUG: this may not be the hero's original owner
+                        /* OGBUG: this may not be the hero's original owner - should use owner_idx, not player_idx */
                         if(
                             (battle_units[caster_idx].item_charges > 0)
                             &&
@@ -707,7 +705,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
             (spell_idx == spl_Animate_Dead)
         )
         {
-            Target = 99;
+            target = 99;
             counter_magic_idx__target_cgx = 0;
             target_cgy = 0;
         }
@@ -719,25 +717,25 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 (_auto_combat_flag == ST_FALSE)
             )
             {
-                Target = Combat_Spell_Target_Screen(spell_idx, &counter_magic_idx__target_cgx, &target_cgy);
+                target = Combat_Spell_Target_Screen(spell_idx, &counter_magic_idx__target_cgx, &target_cgy);
             }
             else
             {
-                Target = AITP_Combat_Spell(spell_idx, player_idx, &counter_magic_idx__target_cgx, &target_cgy);
-                if(Target != 99)
+                target = AITP_Combat_Spell(spell_idx, player_idx, &counter_magic_idx__target_cgx, &target_cgy);
+                if(target != 99)
                 {
-                    counter_magic_idx__target_cgx = battle_units[Target].cgx;
-                    target_cgy = battle_units[Target].cgy;
+                    counter_magic_idx__target_cgx = battle_units[target].cgx;
+                    target_cgy = battle_units[target].cgy;
                 }
             }
         }
-        if(Target != 999)
+        if(target != 999)
         {
             // ... |-> Tactical_Combat_Draw() |-> CMB_DrawMap__WIP() |-> Copy_Back_To_Off()  // 'combat background' from Combat_Screen_Compose_Background()
             // So, ... What's in back-page here?
             // Maybe, maybe not, we called the Combat_Spellbook_Mana_Adder_Screen()? 
             // Maybe, maybe not, we called the Combat_Spell_Target_Screen()?
-            Combat_Cast_Apply_Spell_Effect(spell_idx, Target, caster_idx, counter_magic_idx__target_cgx, target_cgy, available_mana_pool, ST_TRUE, ST_NULL, ST_NULL);
+            Combat_Cast_Apply_Spell_Effect(spell_idx, target, caster_idx, counter_magic_idx__target_cgx, target_cgy, available_mana_pool, ST_TRUE, ST_NULL, ST_NULL);
             cast_status = 2;
             if(caster_idx >= CASTER_IDX_BASE)
             {
@@ -749,7 +747,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
             {
                 if(is_spell_like_ability != ST_TRUE)
                 {
-                    // ; BUG: this may not be the hero's original owner
+                    /* OGBUG: this may not be the hero's original owner - should use owner_idx, not player_idx */
                     if(
                         (battle_units[caster_idx].item_charges > 0)
                         &&
@@ -792,7 +790,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
     }
 // AFTER:
 //     spell_idx > 0
-//     Target
+//     target
 //     Effect
     if(caster_idx < CASTER_IDX_BASE)
     {
@@ -803,7 +801,7 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
             (battle_units[caster_idx].ammo == 0)
         )
         {
-            // ; BUG: also removes short range attacks
+            /* OGBUG: also removes short range attacks */
             battle_units[caster_idx].ranged = 0;
             battle_units[caster_idx].ranged_type = ST_UNDEFINED;
         }
@@ -1011,7 +1009,7 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
                 {
                     spell_idx = ST_UNDEFINED;
                 }
-                // ; BUG: this may not be the unit's original owner
+                /* OGBUG: this may not be the unit's original owner; should use unit owner, not battle unit controller */
                 if(
                     (spell_cost > g_spellbook_cast_mana_limit)
                     &&
@@ -1069,7 +1067,16 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
 
 // WZD o112p05
 /*
-¿ BUGBUG no legal check for 'Dispel Evil' ?
+OSG  Page 150
+"""
+Note that creatures taken over through
+spells like Confusion (e.g., Creature Binding,
+Possession, etc.) need not be killed in order to
+end a battle. For the purposes of declaring a
+winner, they are con-
+sidered dead to their
+previous owner.
+"""
 */
 int16_t Do_Legal_Spell_Check(int16_t spell_idx)
 {
@@ -1087,6 +1094,7 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
     {
         return ST_FALSE;
     }
+    /* OGBUG: no legality check for 'Dispel Evil'; "target chaos or death creature"; ~ spl_Star_Fires? */
     if(spell_idx == spl_Magic_Vortex)
     {
         if(_vortex_count == 10)
@@ -1172,7 +1180,7 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
             illegal = ST_TRUE;
         }
     }
-    // ; BUG: the former does not recognize confused units as not belonging to the player, while the latter counts uninvolved, recalled, and fleeing units as valid targets
+    /* OGBUG: counts uninvolved, recalled, and fleeing units as valid targets; NOTE: confused units still count towards the owner's stack limit, even though they belong to the enemy for purposes of ending combat */
     if(spell_idx == spl_Animate_Dead)
     {
         legal_target_found = ST_FALSE;
@@ -1190,7 +1198,7 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
                 if(
                     (battle_units[itr].status > bus_Active)
                     &&
-                    (battle_units[itr].status != bus_Gone)
+                    (battle_units[itr].status != bus_Gone)  /* destroyed / disintegrated (doom damage?) */
                     &&
                     (battle_units[itr].race != rt_Death)
                     &&
@@ -1200,7 +1208,7 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
                     &&
                     (_UNITS[battle_units[itr].unit_idx].Hero_Slot == ST_UNDEFINED)
                     &&
-                    (_UNITS[battle_units[itr].unit_idx].wp != 9)
+                    (_UNITS[battle_units[itr].unit_idx].wp != 9)  /* unsummoned */
                 )
                 {
                     legal_target_found = ST_TRUE;
@@ -1219,13 +1227,13 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
             illegal = ST_TRUE;
         }
     }
-    // ; BUG: the former does not recognize confused units as not belonging to the player, while the latter counts uninvolved, recalled, and fleeing units as valid targets
     /*
         Check if there are any (valid) *dead* units.
             invalid: status <= bus_Active (0)  ¿ ?
             invalid: controller is not Current/Human Player
             invalid: race >= rt_Arcane  ¿ ?
     */
+    /* OGBUG: counts uninvolved, recalled, and fleeing units as valid targets; NOTE: confused units still count towards the owner's stack limit, even though they belong to the enemy for purposes of ending combat */
     if(spell_idx == spl_Raise_Dead)
     {
         legal_target_found = ST_FALSE;
@@ -1247,9 +1255,9 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
                     &&
                     (battle_units[itr].race < rt_Arcane)
                     &&
-                    (battle_units[itr].status != bus_Gone)
+                    (battle_units[itr].status != bus_Gone)  /* destroyed / disintegrated (doom damage?) */
                     &&
-                    (_UNITS[battle_units[itr].unit_idx].wp != 9)
+                    (_UNITS[battle_units[itr].unit_idx].wp != 9)  /* unsummoned */
                 )
                 {
                     legal_target_found = ST_TRUE;
@@ -1616,7 +1624,7 @@ int16_t AITP_Disrupt(int16_t player_idx, int16_t * target_cgx, int16_t * target_
     {
         if(battlefield->walled == 1)
         {
-            /* OGBUG:  OOB AVRL  each probe below reads walls[cgy][cgx] instead of the rebased walls[cgy - 10][cgx - 5], so it lands past the end of walls[4][4] in leftover _screen_seg memory.  We preserve the OG OOB read via pointer arithmetic on a flat int16_t* so -Warray-bounds doesn't fire. OG (preserved):    ((int16_t*)&walls[0][0])[cgy * 4 + cgx] Correct rebased:   battlefield->walls[cgy - 10][cgx - 5] */
+            /* OGBUG: OOB AVRL  each probe below reads walls[cgy][cgx] instead of the rebased walls[cgy - 10][cgx - 5], so it lands past the end of walls[4][4] in leftover _screen_seg memory.  We preserve the OG OOB read via pointer arithmetic on a flat int16_t* so -Warray-bounds doesn't fire. OG (preserved):    ((int16_t*)&walls[0][0])[cgy * 4 + cgx] Correct rebased:   battlefield->walls[cgy - 10][cgx - 5] */
             int16_t * walls_flat = (int16_t *)&battlefield->walls[0][0];
             if(walls_flat[13 * 4 + 8] == 1)       /* OGBUG: rebased: walls[3][3] */
             {
@@ -1695,7 +1703,7 @@ int16_t AITP_CracksCall(int16_t player_idx, int16_t * target_cgx, int16_t * targ
                 &&
                 (bu_ptr->cgy <= 13)
                 &&
-                (battlefield->walls[bu_ptr->cgy][bu_ptr->cgx] == 1)  /* OGBUG  unrebased walls index */
+                (battlefield->walls[bu_ptr->cgy][bu_ptr->cgx] == 1)  /* OGBUG: unrebased walls index */
             )
             {
                 unit_threat += 30;  /* drop the wall out from under it */
@@ -1718,7 +1726,7 @@ int16_t AITP_CracksCall(int16_t player_idx, int16_t * target_cgx, int16_t * targ
         (selected_target_idx == ST_UNDEFINED)
     )
     {
-        /* OGBUG  same unrebased walls[cgy][cgx] pattern as AITP_Disrupt() — see the header comment there for details. Preserved via pointer arithmetic on a flat int16_t*. OG (preserved):    ((int16_t*)&walls[0][0])[cgy * 4 + cgx] Correct rebased:   battlefield->walls[cgy - 10][cgx - 5] */
+        /* OGBUG: same unrebased walls[cgy][cgx] pattern as AITP_Disrupt() — see the header comment there for details. Preserved via pointer arithmetic on a flat int16_t*. OG (preserved):    ((int16_t*)&walls[0][0])[cgy * 4 + cgx] Correct rebased:   battlefield->walls[cgy - 10][cgx - 5] */
         int16_t * walls_flat = (int16_t *)&battlefield->walls[0][0];
         if(walls_flat[13 * 4 + 8] == 1)       /* OGBUG: rebased: walls[3][3] */
         {

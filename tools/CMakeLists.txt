@@ -111,7 +111,7 @@ set_target_properties(Extract_FONTS_LBX PROPERTIES POSITION_INDEPENDENT_CODE ON)
 #  a faulting D3D/OpenGL ICD on Windows) by testing every video x render driver combo in
 #  its own child process, so a fatal exit can't take the probe down.  Also measures
 #  present-cadence jitter for "choppy framerate" reports (--timing).
-#  See doc/#Devel/Devel-Graphics.md.
+#  See doc/@Devel/Devel-Graphics.md.
 #
 #  Isolation is fork() on UNIX and spawn-self on Windows, so the only hard requirement is
 #  SDL2 itself.  Skipped under SDL3 (USE_SDL3=ON): the probe is deliberately written

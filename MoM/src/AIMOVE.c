@@ -543,7 +543,7 @@ void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_i
     /* Phase 2 */
     /* Locate Fortress City for the player */
     /* player_idx, here, because fortress cities are created during world-gen in player order */
-    /* OGBUG  should early-exit with `break;`*/
+    /* OGBUG: should early-exit with `break;`*/
     fortress_city_idx = player_idx;
     for(itr = 0; itr < _cities; itr++)
     {
@@ -654,7 +654,7 @@ void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_i
         {
             continue;
         }
-        /* OGBUG  redundant code */
+        /* OGBUG: redundant code */
         node_wx = _NODES[itr].wx;
         node_wy = _NODES[itr].wy;
         /* Ensure Node is on the active landmass being processed */
@@ -675,7 +675,7 @@ void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_i
                 (_ai_own_stack_wy[itr_stacks] == node_wy)
             )
             {
-                /* OGBUG  should be if 4 else 8, concern/threat is backwards */
+                /* OGBUG: should be if 4 else 8, concern/threat is backwards */
                 if(low_concern_landmass == ST_TRUE)
                 {
                     node_garrison_shortfall[node_count] = (8 - _ai_own_stack_unit_count[itr_stacks]);
@@ -694,7 +694,7 @@ void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_i
         }
         if(site_added == ST_FALSE)
         {
-            node_garrison_shortfall[node_count] = 8;  /* OGBUG  should if 4 else 8, as above */
+            node_garrison_shortfall[node_count] = 8;  /* OGBUG: should if 4 else 8, as above */
             node_list[node_count] = (int8_t)itr;
             node_count++;
         }
@@ -728,7 +728,7 @@ void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_i
         list_unit_count = _ai_own_stack_unit_count[itr_stacks];
         stack_wx = _ai_own_stack_wx[itr_stacks];
         stack_wy = _ai_own_stack_wy[itr_stacks];
-        list_unit_count = _ai_own_stack_unit_count[itr_stacks];  /* OGBUG  diplicate line, see three above */
+        list_unit_count = _ai_own_stack_unit_count[itr_stacks];  /* OGBUG: diplicate line, see three above */
         best_target_value = 1000;
 
         /* Phase 5c: Choose City */
@@ -785,7 +785,7 @@ void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_i
         {
             for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
             {
-                /* OGBUG  should track units sent, not processed - will exit early */
+                /* OGBUG: should track units sent, not processed - will exit early */
                 if(itr_list_units >= units_to_send)
                 {
                     break;
@@ -991,7 +991,7 @@ void AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(int16_t player_idx, int16_t wp
         /* Phase 5b: Collect our Decision Criteria */
         for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
         {
-            /* OGBUG  should evaluate the rest of the units in the stack - misses any more invalid units */
+            /* OGBUG: should evaluate the rest of the units in the stack - misses any more invalid units */
             if(stack_has_busy_unit != ST_FALSE)
             {
                 break;
@@ -1028,7 +1028,7 @@ void AI_Stacks_Wartime_Ocean_Movement_And_Cleanup(int16_t player_idx, int16_t wp
     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI Stack Stranded", __FILE__, __LINE__, __FUNCTION__);
     STU_DEBUG_BREAK();
 #endif
-            /* ¿ OGBUG  Claude is quite concerned this is killing Seafaring Units that might still be on this square ? */
+            /* ¿ OGBUG: Claude is quite concerned this is killing Seafaring Units that might still be on this square ? */
             stack_wx = _ai_own_stack_wx[itr_stacks];
             stack_wy = _ai_own_stack_wy[itr_stacks];
             for(itr = 0; itr < _units; itr++)
@@ -1123,7 +1123,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
                 (_ai_ferry_wp_array[itr1] == wp)
             )
             {
-                /* OGBUG  for unit_idx, should use itr2, instead of itr1 */
+                /* OGBUG: for unit_idx, should use itr2, instead of itr1 */
                 /* available stack slots at destination (+1 to account for the boat's place in the stack) */
                 Transport_Spaces[itr1] -= (_unit_type_table[_UNITS[itr1].type].Transport + 1);
             }
@@ -1208,7 +1208,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
         if(stack_has_only_boats != ST_FALSE)
         {
 
-            min_delta_distance = 10000;  /* OGBUG  should be 1000, instead of 10000 */
+            min_delta_distance = 10000;  /* OGBUG: should be 1000, instead of 10000 */
             for(itr1 = 0; itr1 < _ai_ferry_count; itr1++)
             {
                 if(_ai_ferry_wp_array[itr1] == wp)
@@ -1259,7 +1259,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
 
 
         /* 5e	1313ST_UNDEFINED335	3x3 adjacent ocean-square scan */
-        /* OGBUG  no range checks */
+        /* OGBUG: no range checks */
         adjacent_landmass_wx = 0;
         adjacent_landmass_wy = 0;
         Landing_Allowed = ST_FALSE;
@@ -1267,7 +1267,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
         {
             for(wx_offset = ST_UNDEFINED; wx_offset < 2; wx_offset++)
             {
-                /* ¿ OGBUG bad indexing, incorrect order of operation ? */
+                /* ¿ OGBUG: bad indexing, incorrect order of operation ? */
                 /* adjacent square is a land square and occupieable */
                 if(
                     (_landmasses[((wp * WORLD_SIZE) + ((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset))] != 0)
@@ -1293,7 +1293,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
 
                 /* IDA grey-purple */
 
-                /* OGBUG  no range checking */
+                /* OGBUG: no range checking */
                 Landing_Allowed = ST_FALSE;
                 for(wy_offset = ST_UNDEFINED; wy_offset < 2; wy_offset++)
                 {
@@ -1356,7 +1356,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
                 /* IDA light-purple */
 
                 /* 5g	1397ST_UNDEFINED435	Settler landing eligibility (target + enemy-proximity) */
-                /* OGBUG  no range checking */
+                /* OGBUG: no range checking */
                 for(wy_offset = ST_UNDEFINED; wy_offset < 2; wy_offset++)
                 {
                     for(wx_offset = ST_UNDEFINED; wx_offset < 2; wx_offset++)
@@ -1407,7 +1407,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
         {
             for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
             {
-                /* OGBUG  MUST test unit_idx is not ST_UNDEFINED */
+                /* OGBUG: MUST test unit_idx is not ST_UNDEFINED */
                 unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
                 unit_type = _UNITS[unit_idx].type;
                 if(_unit_type_table[unit_type].Transport > 0)
@@ -1463,7 +1463,7 @@ BEGIN:  fixup bad orders, for valid colony or military stack
                     {
                         adjacent_landmass_wx = (wx_offset + _ai_landmass_settler_targets_wx_array[wp][player_idx]);
                         adjacent_landmass_wy = (wy_offset + _ai_landmass_settler_targets_wy_array[wp][player_idx]);
-                        Landing_Allowed = ST_TRUE;  /* OGBUG  bogus line of code; c&p error? */
+                        Landing_Allowed = ST_TRUE;  /* OGBUG: bogus line of code; c&p error? */
                     }
                 }
             }
@@ -1693,7 +1693,7 @@ void AI_Stacks_Roamers_Target_Or_Deploy(int16_t landmass_idx, int16_t wp, int16_
         landmass_node_count++;
         landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
     }
-    /* HACK */  /* OGBUG  divide by zero, should `if(landmass_node_count > 0)` */
+    /* HACK */  /* OGBUG: divide by zero, should `if(landmass_node_count > 0)` */
     /* HACK */  if(landmass_node_count == 0)
     /* HACK */  {
     /* HACK */      landmass_node_centroid_wx = 0;
@@ -1857,7 +1857,7 @@ void AI_Stacks_Order_To_War_Landmass(int16_t player_idx, int16_t wp)
         for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
         {
             unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
-            /* ¿ OGBUG  should check wind-walk and items ? */
+            /* ¿ OGBUG: should check wind-walk and items ? */
             if(
                 (Unit_Has_AirTravel(unit_idx) != ST_TRUE)
                 &&
@@ -1962,9 +1962,9 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
 
 
     /* Phase 2: Find adjacent Ocean square */
-    /* OGBUG  should handle no ocean found */
-    /* OGBUG  should validate coordinates */
-    /* OGBUG  should early-exit on Ocean found */
+    /* OGBUG: should handle no ocean found */
+    /* OGBUG: should validate coordinates */
+    /* OGBUG: should early-exit on Ocean found */
     for(wy_offset = ST_UNDEFINED; wy_offset < 2; wy_offset++)
     {
         for(wx_offset = ST_UNDEFINED; wx_offset < 2; wx_offset++)
@@ -1979,7 +1979,7 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
 
 
     /* Phase 3 */
-    /* OGBUG  will add the original land square if there was no ocean around the stack */
+    /* OGBUG: will add the original land square if there was no ocean around the stack */
     AI_Stacks_Ferry_Add_Location(ocean_wx, ocean_wy, wp);
 
 
@@ -2044,8 +2044,8 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
 
     /* Phase 6 */
     /* Search all units for a nearby transport on the ocean */
-    /* OGBUG  should skip center square */
-    /* OGBUG  should track coordinates and capacity for where flag was set */
+    /* OGBUG: should skip center square */
+    /* OGBUG: should track coordinates and capacity for where flag was set */
     found_adjacent_unit_on_ocean = ST_FALSE;
     min_wx = (stack_wx - 1);
     min_wy = (stack_wy - 1);
@@ -2073,7 +2073,7 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
         {
             continue;
         }
-        /* OGBUG  should use unit's wp */
+        /* OGBUG: should use unit's wp */
         if(_landmasses[((wp * WORLD_SIZE) + (unit_wy * WORLD_WIDTH) + unit_wx)] != 0)
         {
             continue;
@@ -2209,12 +2209,12 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
     /* Phase 2 */
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-        /* ¿ OGBUG  own fortress is not excluded - caught by _players[player_idx].Hostility[] check ? */
+        /* ¿ OGBUG: own fortress is not excluded - caught by _players[player_idx].Hostility[] check ? */
         if(_FORTRESSES[itr_players].wp != wp)
         {
             continue;
         }
-        /* OGBUG  should be >= for {DIPL_War, DIPL_Crusade} */
+        /* OGBUG: should be >= for {DIPL_War, DIPL_Crusade} */
         if(_players[player_idx].Dipl.Dipl_Status[itr_players] == DIPL_War)
         {
             target_value_base = 10;
@@ -2226,12 +2226,12 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
         /* Human Player Fortress is 25% more difficult/tougher */
         if(itr_players == HUMAN_PLAYER_IDX)
         {
-            /* OGBUG  unset fortress_wx, fortress_wy */
+            /* OGBUG: unset fortress_wx, fortress_wy */
             target_strength = ((g_ai_evaluation_map[wp][((fortress_wy * WORLD_WIDTH) + fortress_wx)] & AI_TARGET_STRENGTH_MASK) * 5 / 4);
         }
         else
         {
-            /* OGBUG  unset fortress_wx, fortress_wy */
+            /* OGBUG: unset fortress_wx, fortress_wy */
             target_strength = (g_ai_evaluation_map[wp][((fortress_wy * WORLD_WIDTH) + fortress_wx)] & AI_TARGET_STRENGTH_MASK);
         }
         fortress_wx = _FORTRESSES[itr_players].wx;
@@ -2260,7 +2260,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
         target_owner_idx = _CITIES[itr_cities].owner_idx;
         city_wx = _CITIES[itr_cities].wx;
         city_wy = _CITIES[itr_cities].wy;
-        /* OGBUG  should be >= for {DIPL_War, DIPL_Crusade} */
+        /* OGBUG: should be >= for {DIPL_War, DIPL_Crusade} */
         if(
             (target_owner_idx != NEUTRAL_PLAYER_IDX)
             &&
@@ -2273,7 +2273,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
         {
             target_value_base = 1;
         }
-        /* OGBUG  should be target_owner_idx, not itr; c&p error from above? */
+        /* OGBUG: should be target_owner_idx, not itr; c&p error from above? */
         /* Human Player Fortress is 25% more difficult/tougher */
         if(itr_cities == HUMAN_PLAYER_IDX)
         {
@@ -2302,7 +2302,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
             {
                 continue;
             }
-            /* OGBUG  duplicate city_wx,city_wy */
+            /* OGBUG: duplicate city_wx,city_wy */
             city_wx = _CITIES[itr_cities].wx;
             city_wy = _CITIES[itr_cities].wy;
             if(_landmasses[((wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)] != landmass_idx)
@@ -2388,7 +2388,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
         {
             continue;
         }
-        /* OGBUG  WTF? (target_owner_idx != ST_UNDEFINED) accessing arrays with ST_UNDEFINED index? */
+        /* OGBUG: WTF? (target_owner_idx != ST_UNDEFINED) accessing arrays with ST_UNDEFINED index? */
         if(
             (_players[player_idx].Hostility[target_owner_idx] < 2)
             &&
@@ -2477,7 +2477,7 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
             }
             else
             {
-                /* OGBUG  WTF? (target_owner_idx != ST_UNDEFINED) accessing arrays with ST_UNDEFINED index? */
+                /* OGBUG: WTF? (target_owner_idx != ST_UNDEFINED) accessing arrays with ST_UNDEFINED index? */
                 if(
                     (_players[player_idx].Hostility[target_owner_idx] < 2)
                     &&
@@ -2609,7 +2609,7 @@ int16_t AI_Stacks_Assign_Target(int16_t stack_wx, int16_t stack_wy, int16_t * ta
         {
             wp = _UNITS[unit_idx].wp;
             player_idx = _UNITS[unit_idx].owner_idx;
-            /* ¿ OGBUG  should be once true, always true (ever false), for the whole stack ? */
+            /* ¿ OGBUG: should be once true, always true (ever false), for the whole stack ? */
             last_move_failed = _UNITS[unit_idx].Move_Failed;
             effective_unit_strength = (Effective_Unit_Strength(unit_idx) / 10);
             effective_stack_strength += effective_unit_strength;
@@ -2762,7 +2762,7 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
     {
         if
         (
-            /* ¿ OGBUG  should break on >= MAX_AI_STACKS ? */
+            /* ¿ OGBUG: should break on >= MAX_AI_STACKS ? */
             (_ai_own_stack_count >= MAX_AI_STACKS)
             ||
             (_UNITS[itr_units1].owner_idx != player_idx)
@@ -2803,7 +2803,7 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
             )
             {
                 stack_idx = itr_stacks2;
-                /* ¿ OGBUG  should break here ? */
+                /* ¿ OGBUG: should break here ? */
             }
         }
 
@@ -3258,7 +3258,7 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
 
             Kill_Unit(lowest_value_unit_idx, kt_Normal);
 
-            _UNITS[lowest_value_unit_idx].wp = 0;  /* ¿ OGBUG  ...because, Kill_Unit() sets ST_UNDEFINED  ...but, why? */
+            _UNITS[lowest_value_unit_idx].wp = 0;  /* ¿ OGBUG: ...because, Kill_Unit() sets ST_UNDEFINED  ...but, why? */
 
         }
 
@@ -3289,7 +3289,7 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
                 if(unit_landmass_idx > 0)
                 {
 
-                    /* OGBUG  should use Effective_Unit_Type_Strength() or pass itr_units */
+                    /* OGBUG: should use Effective_Unit_Type_Strength() or pass itr_units */
                     unit_value = (Effective_Unit_Strength(_UNITS[itr_units].type) / 10);
 
                     if(_ai_landmass_strength_ratios[unit_wp][unit_landmass_idx] == 0)
@@ -3330,7 +3330,7 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
 
             Kill_Unit(lowest_value_unit_idx, kt_Normal);
 
-            _UNITS[lowest_value_unit_idx].wp = 0;  /* ¿ OGBUG  ...because, Kill_Unit() sets ST_UNDEFINED  ...but, why? */
+            _UNITS[lowest_value_unit_idx].wp = 0;  /* ¿ OGBUG: ...because, Kill_Unit() sets ST_UNDEFINED  ...but, why? */
 
         }
 
@@ -3561,7 +3561,7 @@ void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp)
                 unit_is_on_node_square = ST_FALSE;
                 for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
                 {
-                    /* ¿ OGBUG  should check if Nodes is owned ? */
+                    /* ¿ OGBUG: should check if Nodes is owned ? */
                     if(
                         (_NODES[itr_nodes].wx == unit_wx)
                         &&
@@ -3763,7 +3763,7 @@ void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_co
 
     /* Phase 4 */
     /* Limit processing to the requested number of excess units */
-    // OGBUG  This truncates by list order, not by score — so for a type-3/4 garrison, it sends the first N combat units in list order, not the N weakest.
+    // OGBUG: This truncates by list order, not by score — so for a type-3/4 garrison, it sends the first N combat units in list order, not the N weakest.
     if(excess_count < military_unit_count)
     {
         military_unit_count = excess_count;
@@ -3965,7 +3965,7 @@ void AI_Stacks_Do_Meld(int16_t player_idx)
 
             unit_idx = _ai_own_stack_unit_list[itr][list_unit_idx];
 
-            /* OGBUG  MUST check for ST_UNDEFINED first */
+            /* OGBUG: MUST check for ST_UNDEFINED first */
             if((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_MELD) == 0)
             {
                 continue;
@@ -4123,7 +4123,7 @@ void AI_Stacks_Do_Settle(int16_t player_idx, int16_t landmass_idx)
         if(
             (_ai_own_stack_type[itr_stacks] == AISTK_Garrison)
             &&
-            (_ai_own_stack_unit_count[itr_stacks] < 1)  /* OGBUG  stacks can't have zero or negatives */
+            (_ai_own_stack_unit_count[itr_stacks] < 1)  /* OGBUG: stacks can't have zero or negatives */
         )
         {
             have_empty_garrison = ST_TRUE;
@@ -4302,10 +4302,10 @@ void AI_Stacks_Do_Settle(int16_t player_idx, int16_t landmass_idx)
  *
  * @note Preserves the original game's broad search: it scans the entire landmass
  *       land-square list and a full 5x5 area rather than restricting to city
- *       catchment squares (see the OGBUG comment below), and it dispatches every
+ *       catchment squares (see the OGBUG: comment below), and it dispatches every
  *       qualifying purifier toward the single scouted square.
  */
-/* OGBUG  should only check in city areas (excluding corners)*/
+/* OGBUG: should only check in city areas (excluding corners)*/
 void AI_Stacks_Do_Purify(int16_t landmass_idx, int16_t wp)
 {
     int16_t unit_idx = 0;
@@ -4499,14 +4499,14 @@ void AI_Stacks_Do_RoadBuild(int16_t landmass_idx)
                 min_delta_distance = 1000;
                 for(city_idx = 0; city_idx < _cities; city_idx++)
                 {
-                    /* OGBUG  `_CITIES[city_idx].wp != unit_wp` is redundant */
-                    /* OGBUG  should use _CITIES[city_idx].wp, not unit_wp */
+                    /* OGBUG: `_CITIES[city_idx].wp != unit_wp` is redundant */
+                    /* OGBUG: should use _CITIES[city_idx].wp, not unit_wp */
                     if(_CITIES[city_idx].wp != unit_wp)
                     {
                         continue;
                     }
                     /* If stack is walker and city is on different landmass */
-                    /* ¿ OGBUG  should be walker && can't walk there ? */
+                    /* ¿ OGBUG: should be walker && can't walk there ? */
                     if(
                         ((_ai_all_own_stacks[itr_stacks].abilities & AICAP_LandOnly) == 0)
                         &&
@@ -5046,8 +5046,8 @@ void AI_Stacks_Reorder_Settle_Elsewhere(int16_t unit_idx, int16_t wx, int16_t wy
     /* Phase 1: Init */
     uu_landmass_idx = _landmasses[((WORLD_SIZE * wp) + (wy * WORLD_WIDTH) + wx)];
     unit_wx = _UNITS[unit_idx].wx;
-    unit_wy = _UNITS[unit_idx].wx;  /* OGBUG  should be _UNITS[].wy, not _UNITS[].wx */
-    wp = _UNITS[unit_idx].wp;  /* OGBUG  overwrites WP */
+    unit_wy = _UNITS[unit_idx].wx;  /* OGBUG: should be _UNITS[].wy, not _UNITS[].wx */
+    wp = _UNITS[unit_idx].wp;  /* OGBUG: overwrites WP */
 
 
     /* Phase 2: Determine if the unit is seafaring */
@@ -5109,7 +5109,7 @@ void AI_Stacks_Reorder_Settle_Elsewhere(int16_t unit_idx, int16_t wx, int16_t wy
                 if(Square_Is_Embarkable(unit_wx, unit_wy, wp) != ST_FALSE)
                 {
                     square_is_embarkable = ST_TRUE;
-                    new_target_wx = itr_wx;  /* OGBUG  this should be unit_wx, not itr_wx */
+                    new_target_wx = itr_wx;  /* OGBUG: this should be unit_wx, not itr_wx */
                     new_target_wy = unit_wy;
                 }
             }
@@ -5368,8 +5368,8 @@ void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t w
 
     /* Phase 2: */
     // ; cancel the orders of every unit on the continent except for engineers
-    /* ¿ OGBUG  should clear all non-military units ? */
-    /* OGBUG  should condition on same plane */
+    /* ¿ OGBUG: should clear all non-military units ? */
+    /* OGBUG: should condition on same plane */
     /* (landmass indices are per-plane and the value space overlaps) */
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
@@ -5422,17 +5422,17 @@ void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t w
     BEGIN:  Classify the landmass  {lmt_NoOwnCity, lmt_Own, lmt_Contested, lmt_NoOwnCityAndAllyHasCity}
 */
 
-    /* OGBUG  should use separate vars/clear vars beforehand - vars still contain city coordinate sums */
+    /* OGBUG: should use separate vars/clear vars beforehand - vars still contain city coordinate sums */
     for (itr_units = 0; itr_units < _units; itr_units++)
     {
         unit_type = _UNITS[itr_units].type;
-        /* ¿ OGBUG  should skip all non-military units ? */
+        /* ¿ OGBUG: should skip all non-military units ? */
         /* Skip Settlers */
         if((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
         {
             continue;
         }
-        /* OGBUG  should condition on same plane */
+        /* OGBUG: should condition on same plane */
         if(_landmasses[((_UNITS[itr_units].wp * WORLD_SIZE) + (_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx)] == landmass_idx)
         {
             if(_UNITS[itr_units].owner_idx == player_idx)
@@ -5581,7 +5581,7 @@ if we can move units off the current landmass, make sure the stage-square is the
             landmass_node_count++;
             landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
         }
-        /* OGBUG  possible division by 0, should `if(landmass_node_count > 0)` */
+        /* OGBUG: possible division by 0, should `if(landmass_node_count > 0)` */
         landmass_node_centroid_wx /= landmass_node_count;
         landmass_node_centroid_wy /= landmass_node_count;
         min_delta_distance = 1000;
@@ -5619,7 +5619,7 @@ if we can move units off the current landmass, make sure the stage-square is the
         }
     }
 
-    /* ¿ OGBUG  no EMMDATAH_Map() ? */
+    /* ¿ OGBUG: no EMMDATAH_Map() ? */
 
 }
 
@@ -6118,7 +6118,7 @@ int16_t Make_Monster_List(int16_t budget, int16_t lair_race, int16_t * unit_type
     while(current_budget >= 25 && tries < 2000)
     {
         /* Generate a random unit index from the pool of rampage monsters */
-        /* OGBUG  should be Random(44) */
+        /* OGBUG: should be Random(44) */
         /* BUG: should be 153 (base index) */
         /* ¿ is meant to be inclusively between { ut_Magic_Spirit  = 154, ..., ut_Nagas  = 197 } ? */
         rolled_unit_type = (ut_TrollShaman + Random(47));
@@ -6401,10 +6401,10 @@ HERE:
 
     /* Phase 3: */
     // cancel the orders of all non-engineer units moving to a square with no enemy presence
-/* OGBUG  should check unit wp */
-/* OGBUG  settlers and transports (non-military) are not excluded ? */
+/* OGBUG: should check unit wp */
+/* OGBUG: settlers and transports (non-military) are not excluded ? */
 /* DEDU  ¿ clearning orders for destination without a site or enemy stack means the orders are considered invalid because they don't have a target for an attack ? */
-/* OGBUG  wp leftover from previously loop */
+/* OGBUG: wp leftover from previously loop */
     if(wp < 0 || wp > 1)
     {
         LOG_DEBUG(LOG_CAT_OGBUG, "wp: %d", wp);
@@ -6495,7 +6495,7 @@ HERE:
         sum_own_city_wy__enemy_units_cost[0][itr_landmasses] = 0;
         sum_own_city_wy__enemy_units_cost[1][itr_landmasses] = 0;
     }
-/*  ¿ OGBUG  should exclude non-military, rather than just Settlers (or, why exclude anything?) ? */
+/*  ¿ OGBUG: should exclude non-military, rather than just Settlers (or, why exclude anything?) ? */
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
         unit_type = _UNITS[itr_units].type;
@@ -6523,7 +6523,7 @@ HERE:
         for(landmass_idx = 0; landmass_idx < NUM_LANDMASSES; landmass_idx++)
         {
             /* if already lmt_NoTargets and no enemy units, then still lmt_NoTargets */
-            /* OGBUG  checking for landmass status/type, but actually just city count */
+            /* OGBUG: checking for landmass status/type, but actually just city count */
             if(
                 (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoTargets)
                 &&
@@ -6538,7 +6538,7 @@ HERE:
                 if(
                     (uint16_t)sum_own_city_wx__own_units_cost[wp][landmass_idx]
                     >
-                    (uint16_t)(sum_own_city_wy__enemy_units_cost[wp][landmass_idx] * 10)  /* OGBUG  could overflow - Dasm shows cast to 16-bit unsigned - only AX (low 16 bits) is used, JBE is unsigned comparison */
+                    (uint16_t)(sum_own_city_wy__enemy_units_cost[wp][landmass_idx] * 10)  /* OGBUG: could overflow - Dasm shows cast to 16-bit unsigned - only AX (low 16 bits) is used, JBE is unsigned comparison */
                 )
                 {
                     _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Own;
@@ -6623,7 +6623,7 @@ HERE:
                 /* occupieable - no site or enemy stack */
                 if(g_ai_evaluation_map[wp][world_offset] == 0)
                 {
-                    /* OGBUG  landmass_node_centroid_wx and landmass_node_centroid_wy are uninitialized */
+                    /* OGBUG: landmass_node_centroid_wx and landmass_node_centroid_wy are uninitialized */
                     delta_distance = (
                         Random(20)
                         +
@@ -6703,7 +6703,7 @@ HERE:
                             min_delta_distance = delta_distance;
                             target_square_wx = _ai_landmass_land_squares_wx_array[wp][landmass_node_index];
                             target_square_wy = _ai_landmass_land_squares_wy_array[wp][landmass_node_index];
-                            target_landmass_idx = landmass_idx;  /* OGBUG  c&p error? target_landmass_idx is not used in this phase */
+                            target_landmass_idx = landmass_idx;  /* OGBUG: c&p error? target_landmass_idx is not used in this phase */
                         }
                     }
                     landmass_node_index = _ai_landmass_land_squares_lists[wp][landmass_node_index];
@@ -6759,7 +6759,7 @@ HERE:
                         min_delta_distance = delta_distance;
                         target_square_wx = _ai_landmass_dock_squares_wx_array[wp][landmass_node_index];
                         target_square_wy = _ai_landmass_dock_squares_wy_array[wp][landmass_node_index];
-                        target_landmass_idx = landmass_idx;  /* OGBUG  c&p error? target_landmass_idx is not used in this phase */
+                        target_landmass_idx = landmass_idx;  /* OGBUG: c&p error? target_landmass_idx is not used in this phase */
                     }
                 }
                 landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
@@ -6807,14 +6807,14 @@ if we can move units off the current landmass, make sure the stage-square is the
                     landmass_node_count++;
                     landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
                 }
-                /* OGBUG  divide by zero, should `if(landmass_node_count > 0)` */
+                /* OGBUG: divide by zero, should `if(landmass_node_count > 0)` */
                 landmass_node_centroid_wx /= landmass_node_count;
                 landmass_node_centroid_wy /= landmass_node_count;
                 min_delta_distance = 1000;
                 landmass_node_index = _ai_landmass_dock_squares_heads[wp][landmass_idx];
                 while(landmass_node_index != ST_UNDEFINED)
                 {
-                    /* ¿ OGBUG  no jitter ? */
+                    /* ¿ OGBUG: no jitter ? */
                     delta_distance = Delta_XY_With_Wrap(
                         _ai_landmass_dock_squares_wx_array[wp][landmass_node_index],
                         _ai_landmass_dock_squares_wy_array[wp][landmass_node_index],
@@ -7004,19 +7004,19 @@ void AI_Evaluation_Map(int16_t player_idx)
 
         p_unit = &_UNITS[itr_units];
 
-        unit_owner_idx = p_unit->owner_idx;  /* OGBUG  OOB AVRL  _UNITS[itr_units].owner_idx is ST_UNDEFINED */
+        unit_owner_idx = p_unit->owner_idx;  /* OGBUG: OOB AVRL  _UNITS[itr_units].owner_idx is ST_UNDEFINED */
 
         /* Skip units belonging to the player being evaluated */
         if(
             (unit_owner_idx == player_idx)
             ||
-            (p_unit->owner_idx == player_idx)  /* OGBUG  conflicting condition - will always jump */
+            (p_unit->owner_idx == player_idx)  /* OGBUG: conflicting condition - will always jump */
         )
         {
             continue;
         }
 
-        wp = p_unit->wp;  /* OGBUG  OOB AVRL  p_unit->wp is ST_UNDEFINED */
+        wp = p_unit->wp;  /* OGBUG: OOB AVRL  p_unit->wp is ST_UNDEFINED */
         xy_ofst = ((p_unit->wy * WORLD_WIDTH) + p_unit->wx);
 
         /* Add 1/10th of the unit's effective strength to the map square */
@@ -7024,13 +7024,13 @@ void AI_Evaluation_Map(int16_t player_idx)
         if(aiem_capture_strength)
             LOG_TRACE(LOG_CAT_GENERAL, "[GD] 608_AI_Evaluation_Map_Strength unit_strength[%d].s = %d", (int)itr_units, (int)strength);
         strength = strength / 10;
-        g_ai_evaluation_map[wp][xy_ofst] += strength;  /* OGBUG  could index g_ai_evaluation_map with wp = -1 */
+        g_ai_evaluation_map[wp][xy_ofst] += strength;  /* OGBUG: could index g_ai_evaluation_map with wp = -1 */
 
         /* If the unit owner is non-hostile, mark the square with a flag */
-        // OGBUG  OOB AVRL  will index nonhostiles[] with unit_owner_idx = ST_UNDEFINED, because it *sanitizes* owner_idx to ST_UNDEFINED at start of turn
+        // OGBUG: OOB AVRL  will index nonhostiles[] with unit_owner_idx = ST_UNDEFINED, because it *sanitizes* owner_idx to ST_UNDEFINED at start of turn
         if(nonhostiles[unit_owner_idx] == ST_TRUE)
         {
-            g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_NONHOSTILE;  /* OGBUG  OOB AVRL  could index g_ai_evaluation_map with wp = -1 */
+            g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_NONHOSTILE;  /* OGBUG: OOB AVRL  could index g_ai_evaluation_map with wp = -1 */
         }
 
     }
@@ -7348,8 +7348,8 @@ void AI_Choose_War_Landmass(int16_t player_idx)
         if(!aicwl_gd_done) { aicwl_gd_done = 1; gd_dump_ai_landmass_squares("605_AI_Choose_War_Landmass_Squares"); gd_dump_ai_dock_squares("606_AI_Choose_War_Landmass_Dock_Squares"); }
     }
 
-    /* OGBUG  should check spl_Spell_Of_Mastery, not spl_Fire_Elemental */
-    /* OGBUG  should exclude self - `itr_players != player_idx` */
+    /* OGBUG: should check spl_Spell_Of_Mastery, not spl_Fire_Elemental */
+    /* OGBUG: should exclude self - `itr_players != player_idx` */
     for(itr_players = 0; ((itr_players < _num_players) & (first_hostile_player_idx == ST_UNDEFINED)); itr_players++)
     {
         if(
@@ -7561,7 +7561,7 @@ void AI_Choose_War_Landmass(int16_t player_idx)
                     {
                         delta_distance = Delta_XY_With_Wrap(dock_square_wx, dock_square_wy, empire_wx, empire_wy, WORLD_WIDTH);
                     }
-                    /* OGBUG  this nearest test should be inside the occupieable test block */
+                    /* OGBUG: this nearest test should be inside the occupieable test block */
                     if(delta_distance < min_delta_distance)
                     {
                         min_delta_distance = delta_distance;

@@ -435,7 +435,7 @@ int main(int argc, char * argv[])
         int argi;
         /* CLAUDE: --capture is collected across the whole loop (so --capture-fps may appear on
            either side of it) and started once, after parsing.  See
-           doc/#AI_Plans/PRD-Scripted-Demo-Capture.md. */
+           doc/@AI_Plans/PRD-Scripted-Demo-Capture.md. */
         const char * capture_dir = NULL;
         int capture_fps = 0;
         for(argi = 1; argi < argc; argi++)
@@ -506,7 +506,7 @@ int main(int argc, char * argv[])
             {
                 /* CLAUDE: --patch <name> selects a scenario for TST_Patch_Game_Data(), which runs
                    from Loaded_Game_Update() after every save load.  Ships in Release and is inert
-                   unless named here -- see doc/#Devel/Scenario-Patching.md. */
+                   unless named here -- see doc/@Devel/Scenario-Patching.md. */
                 argi++;
                 g_tst_patch_scenario = argv[argi];
                 LOG_INFO(LOG_CAT_REMOM, "[ReMoM] CLI: --patch \"%s\"", g_tst_patch_scenario);

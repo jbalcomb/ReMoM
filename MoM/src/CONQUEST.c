@@ -272,7 +272,7 @@ void Resolve_Wizard_Conquest(int16_t loser_Idx, int16_t winner_idx, int16_t city
                     }
                 }
             }
-            if(_CITIES[itr_cities].owner_idx != _current_player_idx)  /* OGBUG  DEDU  Why just human player? */
+            if(_CITIES[itr_cities].owner_idx != _current_player_idx)  /* OGBUG: DEDU  Why just human player? */
             {
                 _CITIES[itr_cities].owner_idx = NEUTRAL_PLAYER_IDX;
             }
@@ -859,7 +859,7 @@ void Win_Animation(int16_t player_idx)
     temp_seg = LBX_Reload(win_lbx_file__ovr093, hands_type, _screen_seg);
     FLIC_Draw(22, 143, temp_seg);
     Copy_Off_To_Back();
-    Copy_Off_To_Page4();  /* OGBUG  ; this image is never loaded back from here */
+    Copy_Off_To_Page4();  /* OGBUG: ; this image is never loaded back from here */
     // WIN.LBX, 003  "MERLBLUE" ""
     // WIN.LBX, 004  "SHAMBLUE" ""
     // WIN.LBX, 005  "PRIEBLUE" ""
@@ -885,7 +885,7 @@ void Win_Animation(int16_t player_idx)
         sound_data_seg_size = lbxload_entry_length;
         Play_Sound(sound_data_seg, sound_data_seg_size);
     }
-    /* OGBUG  Win_Animation_Draw() uses GUI_String_1, but Win_Animation() doesn't allocate it. */
+    /* OGBUG: Win_Animation_Draw() uses GUI_String_1, but Win_Animation() doesn't allocate it. */
     GUI_String_1 = (char *)Near_Allocate_First(100);   /* <-- here */
     /* Note: Segment stub093 used as base for function pointer */
     Assign_Auto_Function(Win_Animation_Draw, 4);

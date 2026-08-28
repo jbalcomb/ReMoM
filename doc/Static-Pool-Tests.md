@@ -1,7 +1,7 @@
 # Static Pool — Test Catalog
 
 Tests covering the static-pool-backed SimTex Space Alloc
-(`doc/#AI_Plans/PLAN-Static-Pool-Allocator.md`). All are CTest-discovered and
+(`doc/@AI_Plans/PLAN-Static-Pool-Allocator.md`). All are CTest-discovered and
 run under a plain `ctest`.
 
 | Target / test | Layer | What it covers |

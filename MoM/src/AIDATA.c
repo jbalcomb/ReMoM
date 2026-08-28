@@ -233,7 +233,7 @@ void Make_Monsters(void)
             {
                 break;
             }
-            /* OGBUG  OOB AVRL  lair_idx can be -1 at _LAIRS[lair_idx] */
+            /* OGBUG: OOB AVRL  lair_idx can be -1 at _LAIRS[lair_idx] */
             if(_FORTRESSES[HUMAN_PLAYER_IDX].wp == _LAIRS[lair_idx].wp)
             {
                 break;
@@ -254,7 +254,7 @@ void Make_Monsters(void)
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Monsters selected lair %d at (%d,%d) plane %d after %d tries", lair_idx, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, tries);
 #endif
-    /* OGBUG  OOB AVRL  lair_idx can be -1 at _LAIRS[lair_idx] */
+    /* OGBUG: OOB AVRL  lair_idx can be -1 at _LAIRS[lair_idx] */
     lair_wx = _LAIRS[lair_idx].wx;
     lair_wy = _LAIRS[lair_idx].wy;
     lair_wp = _LAIRS[lair_idx].wp;
@@ -612,7 +612,7 @@ int16_t NPC_Destinations(void)
 
     EMMDATAH_Map();
 
-    Build_NPC_Stacks();  // OGBUG  definitely passes NEUTRAL_PLAYER_IDX here, but Build_NPC_Stacks doesn't take a parameter and is hard-coded for NEUTRAL_PLAYER_IDX
+    Build_NPC_Stacks();  // OGBUG: definitely passes NEUTRAL_PLAYER_IDX here, but Build_NPC_Stacks doesn't take a parameter and is hard-coded for NEUTRAL_PLAYER_IDX
 
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: NPC_Destinations evaluating %d neutral stacks", _ai_all_own_stack_count);
@@ -665,7 +665,7 @@ int16_t NPC_Destinations(void)
             {
                 /* Evaluate the worth of attacking the adjacent city */
                 Army_At_Square_1(_CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, _CITIES[adj_city_idx].wp, &troop_count, troops);
-                /* ¿ OGBUG  Delta_XY_With_Wrap() is always 1 here ?  ... adj_city_idx */
+                /* ¿ OGBUG: Delta_XY_With_Wrap() is always 1 here ?  ... adj_city_idx */
                 adj_city_val = 10 - troop_count - Delta_XY_With_Wrap(_CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, stack_wx, stack_wy, WORLD_WIDTH);
                 
                 if(_difficulty > god_Normal && _CITIES[adj_city_idx].owner_idx == HUMAN_PLAYER_IDX) adj_city_val += 5;
@@ -675,7 +675,7 @@ int16_t NPC_Destinations(void)
                 Army_At_Square_1(dst_wx, dst_wy, stack_wp, &troop_count, troops);
                 cur_target_val = 10 - troop_count - Delta_XY_With_Wrap(dst_wx, dst_wy, stack_wx, stack_wy, WORLD_WIDTH);
                 
-                /* OGBUG  OOB AVRL  target_city_idx can be -1 at `_CITIES[target_city_idx]` */
+                /* OGBUG: OOB AVRL  target_city_idx can be -1 at `_CITIES[target_city_idx]` */
                 if(_difficulty > god_Normal && _CITIES[target_city_idx].owner_idx == HUMAN_PLAYER_IDX) cur_target_val += 5;
                 if(_difficulty > god_Hard   && _CITIES[target_city_idx].owner_idx == HUMAN_PLAYER_IDX) cur_target_val += 5;
 
@@ -879,7 +879,7 @@ void AI_Evaluate_Magic_Power_Strategy(int16_t player_idx)
     }
 
     /* Determine if spell research is a priority */
-    /* OGBUG  always true, should use HUMAN_PLAYER_IDX */
+    /* OGBUG: always true, should use HUMAN_PLAYER_IDX */
     if(
         (Player_Known_Spell_Count(player_idx) < 20)
         ||

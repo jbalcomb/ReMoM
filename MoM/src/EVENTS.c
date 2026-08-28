@@ -280,7 +280,7 @@ void Determine_Event(void)
         event_pressure_accumulator = (_turn - events_table->last_event_turn);
         SETMIN(event_pressure_accumulator, 0);
     }
-    /* OGBUG  events can not be processed in the first 5 turns after launching the game, should be _turn based for 'Load Game' */
+    /* OGBUG: events can not be processed in the first 5 turns after launching the game, should be _turn based for 'Load Game' */
     if(_event_delay_count < 5)
     {
         _event_delay_count++;

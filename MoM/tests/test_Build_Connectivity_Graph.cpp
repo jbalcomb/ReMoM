@@ -26,7 +26,7 @@ extern "C" {
 
     OOB padding: the OG reconstruction reads one row before/after the map (row -1 at the top
     grid row reaches move_map[-60..-1]; the bottom grid row's builds reach ~move_map[2459]), and
-    the preserved east-column OGBUG writes result_map[96]. So move_map gets a leading WORLD_WIDTH
+    the preserved east-column OGBUG: writes result_map[96]. So move_map gets a leading WORLD_WIDTH
     and trailing WORLD_OVERFLOW of padding, and result_map slack.
 */
 
@@ -39,7 +39,7 @@ namespace
     void Run_Worker(int8_t * move_map, uint8_t result_out[96])
     {
         uint8_t result_map[128];
-        memset(result_map, 0xCC, sizeof(result_map));       /* sentinel; OGBUG writes index 96 */
+        memset(result_map, 0xCC, sizeof(result_map));       /* sentinel; OGBUG: writes index 96 */
         Build_Connectivity_Graph(move_map, result_map);
         memcpy(result_out, result_map, 96);
     }

@@ -174,7 +174,7 @@ void Player_Colony_Autobuild_CP(int16_t player_idx, int16_t city_idx)
     {
         if(_CITIES[itr].owner_idx == player_idx)
         {
-            if(_CITIES[city_idx].construction == bt_TradeGoods)  /* OGBUG  should be itr, not city_Idx */
+            if(_CITIES[city_idx].construction == bt_TradeGoods)  /* OGBUG: should be itr, not city_Idx */
             {
                 tradegoods_city_count++;
             }
@@ -337,7 +337,7 @@ void Player_Colony_Autobuild_CP(int16_t player_idx, int16_t city_idx)
             );
         }
     }
-    if(_CITIES[itr].population < 5)  /* OGBUG  should use city_idx, not itr */
+    if(_CITIES[itr].population < 5)  /* OGBUG: should use city_idx, not itr */
     {
         for(itr = 0; itr < product_count; itr++)
         {
@@ -755,7 +755,7 @@ void Player_Colony_Autobuild_HP(int16_t city_idx)
             );
         }
     }
-    if(_CITIES[itr].population < 5)  /* OGBUG  should use city_idx, not itr */
+    if(_CITIES[itr].population < 5)  /* OGBUG: should use city_idx, not itr */
     {
         for(itr = 0; itr < product_count; itr++)
         {

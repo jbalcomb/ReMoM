@@ -196,7 +196,7 @@ void AI_Set_All_Action_Modes(int16_t player_idx)
             if(battle_units[i].action == bua_Stab)
             {
                 /* Note: Assembly does not check for division by zero at loc_9239D, relying on logic that melee threat exists if this branch is relevant */
-                // OGBUG  divide by zero
+                // OGBUG: divide by zero
                 if((enemy_threat_total / own_melee_threat) > 2 && 
                     ranged_diff > rnd_offset && 
                     own_ranged_capacity > 0)
@@ -459,7 +459,7 @@ void AI_Execute_Unit_Action(int16_t battle_unit_idx, int16_t rally_cgx, int16_t 
         } break;
         case bua_Healing:
         {
-            /* OGBUG:  Choose_Target_And_Action() assigns bua_Healing, but AI_Execute_Unit_Action() doesn't have a case to handle it. */
+            /* OGBUG: Choose_Target_And_Action() assigns bua_Healing, but AI_Execute_Unit_Action() doesn't have a case to handle it. */
             STU_DEBUG_BREAK();  /* DNE in Dasm */
         } break;
         case bua_UseItem:
@@ -626,7 +626,7 @@ void AI_Stage_Point_For_Unit(int16_t battle_unit_idx, int16_t * cgx, int16_t * c
     /* Calculate the path to the current target unit */
     target_idx = battle_units[battle_unit_idx].target_battle_unit_idx;
     /*
-        OGBUG:  OOB AVRL  If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will attempt to compute a path to an invalid target, which can lead to out-of-bounds access in the cost map and movement path arrays, causing a crash.
+        OGBUG: OOB AVRL  If the target_battle_unit_idx is ST_UNDEFINED (-1), the function will attempt to compute a path to an invalid target, which can lead to out-of-bounds access in the cost map and movement path arrays, causing a crash.
                 The root cause is higher up: Auto_Do_Combat_Turn() computes a stage point before AI_Set_Unit_Action_Mode() assigns fresh targets, so the chosen melee unit can still have target_battle_unit_idx == ST_UNDEFINED.
     */
     if(target_idx == ST_UNDEFINED)
@@ -1012,16 +1012,16 @@ int16_t AI_Set_Unit_Action_Mode(int16_t battle_unit_idx, int16_t no_spells_flag)
                     {
                         continue;
                     }
-                    /* OGBUG  battle_units[battle_unit_idx].target_battle_unit_idx can be ST_UNDEFINED which causes OoB when indexing battle_units[] */
-                    /* OGBUG */  if(itr_bu_ptr->target_battle_unit_idx == ST_UNDEFINED)
-                    /* OGBUG */  {
-                    /* OGBUG */      continue;
-                    /* OGBUG */  }
-                    /* OGBUG  target_battle_unit_idx can be ST_UNDEFINED which causes OoB when indexing battle_units[] */
-                    /* OGBUG */  if(target_battle_unit_idx == ST_UNDEFINED)
-                    /* OGBUG */  {
-                    /* OGBUG */      continue;
-                    /* OGBUG */  }
+                    /* OGBUG: battle_units[battle_unit_idx].target_battle_unit_idx can be ST_UNDEFINED which causes OoB when indexing battle_units[] */
+                    /* OGBUG: */  if(itr_bu_ptr->target_battle_unit_idx == ST_UNDEFINED)
+                    /* OGBUG: */  {
+                    /* OGBUG: */      continue;
+                    /* OGBUG: */  }
+                    /* OGBUG: target_battle_unit_idx can be ST_UNDEFINED which causes OoB when indexing battle_units[] */
+                    /* OGBUG: */  if(target_battle_unit_idx == ST_UNDEFINED)
+                    /* OGBUG: */  {
+                    /* OGBUG: */      continue;
+                    /* OGBUG: */  }
                     itr_target_ptr = &battle_units[itr_bu_ptr->target_battle_unit_idx];
                     target_ptr = &battle_units[target_battle_unit_idx];
                     if(_UNITS[itr_target_ptr->unit_idx].type != _UNITS[target_ptr->unit_idx].type)
@@ -1374,39 +1374,28 @@ void Do_Auto_Unit_Turn(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
     int16_t city_area_cgy = 0;
     int16_t city_area_cgx = 0;
     int16_t itr_battle_units = 0;
-
 /*
     BEGIN:   Init Movement Cost Map  (~== Auto_Move_Unit())
 */
-
     // sets _cmbt_movepath_cost_map[]
     Set_Movement_Cost_Map(battle_unit_idx);
-
     /*
         mark all squares with units other than the target as
         impassable
     */
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
-
         if(
             (itr_battle_units != target_battle_unit_idx)
             &&
             (battle_units[itr_battle_units].status == bus_Active)
         )
         {
-
             _cmbt_movepath_cost_map[((battle_units[itr_battle_units].cgy * COMBAT_GRID_WIDTH) + battle_units[itr_battle_units].cgx)] = INF;
-
         }
-
     }
-
-
     // sets city squares as impassible
     Update_Move_Map_City_Area_Restrictions(battle_unit_idx);
-
-
     if(
         (battle_units[battle_unit_idx].controller_idx == _combat_defender_player)
         &&
@@ -1421,27 +1410,18 @@ void Do_Auto_Unit_Turn(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
         (Battle_Unit_Is_Within_City(battle_unit_idx) == ST_TRUE)
     )
     {
-
         // sets city area perimeter as impassible
         Update_Move_Map_City_Perimeter_Restrictions();
-
     }
-
-
     for(itr_battle_units = 0; itr_battle_units < _vortex_count; itr_battle_units++)
     {
-
         _cmbt_movepath_cost_map[((_vortexes[itr_battle_units].cgy * COMBAT_GRID_WIDTH) + _vortexes[itr_battle_units].cgx)] = INF;
-
     }
-
     // sets movement_path_grid_cell_count
     Combat_Move_Path_Find(battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, dst_cgx, dst_cgy);
-
 /*
     END:  Init Movement Cost Map  (~== Auto_Move_Unit())
 */
-
 /*
     BEGIN: Stomp-Around
 */
@@ -1459,161 +1439,94 @@ void Do_Auto_Unit_Turn(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
         (battle_units[battle_unit_idx].controller_idx == _combat_attacker_player)
     )
     {
-
-        // check if there is a path available to any of the
-        // city proper squares and if so, find the shortest
+        // check if there is a path available to any of the city proper squares and if so, find the shortest
         path_count = 999;
         for(city_area_cgx = 5; city_area_cgx < 9; city_area_cgx++)
         {
-
             for(city_area_cgy = 10; city_area_cgy < 14; city_area_cgy++)
             {
-
                 // sets movement_path_grid_cell_count
                 Combat_Move_Path_Find(battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, city_area_cgx, city_area_cgy);
-
                 if(
                     (movement_path_grid_cell_count > 0)
                     &&
                     (movement_path_grid_cell_count < path_count)
                 )
                 {
-
                     stomp_cgx = city_area_cgx;
-
                     stomp_cgy = city_area_cgy;
-
                     path_count = movement_path_grid_cell_count;
-
                 }
-
             }
-
         }
-
         if(path_count < 999)
         {
-
             // HERE: stomp_cgx,cgy are the nearest, valid stomping coordinates
             Auto_Move_Unit(battle_unit_idx, stomp_cgx, stomp_cgy, ST_UNDEFINED, stomp_cgx, stomp_cgy);
-
         }
-
     }
 /*
     END: Stomp-Around
 */
-
-    // ¿ what do we have here if we did the stomp-around ?
+    // ¿ DEDU  what do we have here if we did the stomp-around ?
     // HERE: dst_cgx,cgy and rally_cgx,cgy are as passed in
     Auto_Move_Unit(battle_unit_idx, dst_cgx, dst_cgy, target_battle_unit_idx, rally_cgx, rally_cgy);
-
 }
 
 
 // WZD o114p09
-// drake178: G_AI_BU_Move()
-/*
-; creates a path and moves, or starts moving, the
-; chosen unit to the specified destination or target
-;
-; if not the same as the destination, Max_X/Y define
-; the stage point - a center square around which the unit
-; can only move within the quadrant it starts in
-;
-; moves are only expended for the last step, and
-; remaining moves are checked only after the first one
-;
-; recreates the same move map and path as the parent
-; function
-;
-; this is one horrible way of doing things, RE-EXAMINE!
-*/
-/*
-    returns {F,T} did_move
-
-Do_Auto_Unit_Turn()
-    // HERE: stomp_cgx,cgy are the nearest, valid stomping coordinates
-    Auto_Move_Unit(battle_unit_idx, stomp_cgx, stomp_cgy, ST_UNDEFINED, stomp_cgx, stomp_cgy);
-    // HERE: dst_cgx,cgy and rally_cgx,cgy are as passed in
-    Auto_Move_Unit(battle_unit_idx, dst_cgx, dst_cgy, target_battle_unit_idx, rally_cgx, rally_cgy);
-
-*/
-int16_t Auto_Move_Unit(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy, int16_t target_battle_unit_idx, int16_t Max_X, int16_t Max_Y)
+int16_t Auto_Move_Unit(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy, int16_t target_battle_unit_idx, int16_t rally_cgx, int16_t rally_cgy)
 {
     int16_t move_anim_speed = 0;
-    int16_t First_Step_Index = 0;
-    SAMB_ptr move_sound_seg = 0;  // TODO  SAMB_INT move_sound_seg = 0;
-    int16_t Move_Visible = 0;
+    int16_t first_step_index = 0;
+    SAMB_ptr move_sound_seg = NULL;
+    int16_t move_visible = 0;
     int16_t delta_y = 0;
     int16_t delta_x = 0;
-    int16_t Min_Y = 0;
-    int16_t Min_X = 0;
-    int16_t RP_Origin_Y_2 = 0;
-    int16_t RP_Origin_X_2 = 0;
-    int16_t First_Step = 0;
-    int16_t Attack_Step = 0;
-    int16_t Last_Target_Y = 0;
-    int16_t Last_Target_X = 0;
-    int16_t Origin_Y = 0;
-    int16_t Origin_X = 0;
-    int16_t Facing_Y_Offset = 0;
-    int16_t Facing_X_Offset = 0;
+    int16_t min_y = 0;
+    int16_t min_x = 0;
+    int16_t rp_origin_y_2 = 0;
+    int16_t rp_origin_x_2 = 0;
+    int16_t first_step = 0;
+    int16_t attack_step = 0;
+    int16_t last_target_y = 0;
+    int16_t last_target_x = 0;
+    int16_t origin_y = 0;
+    int16_t origin_x = 0;
+    int16_t facing_y_offset = 0;
+    int16_t facing_x_offset = 0;
     int16_t itr_battle_units = 0;
-    int16_t itr_grid = 0;  // _DI_
-    int16_t DBG_path_cost = 0;
-    uint32_t move_sound_seg_size = 0;  // DNE in Dasm
+    int16_t itr_grid = 0;
+    uint32_t move_sound_seg_size = 0;
     int8_t movement_points = 0;
-    int8_t DBG_last_movement_points = 0;
-
-
+    int16_t max_x = 0;
+    int16_t max_y = 0;
     if(_auto_combat_flag == ST_TRUE)
     {
-
         move_anim_speed = 2;
-
     }
     else
     {
-
         move_anim_speed = 1;
-
     }
-
-
 /*
     BEGIN:  ~== Do_Auto_Unit_Turn()
 */
-
     Set_Movement_Cost_Map(battle_unit_idx);
-
-
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
-
-        /*
-            mark all squares with units other than the target as
-            impassable
-
-            BUG: this has just been done in the parent function
-        */
+        /* mark all squares with units other than the target as impassable */
+        /* OGBUG: this has just been done in the parent function */
         if(
             (itr_battle_units != target_battle_unit_idx)
             &&
             (battle_units[itr_battle_units].status == bus_Active)
         )
         {
-
             _cmbt_movepath_cost_map[((battle_units[itr_battle_units].cgy * COMBAT_GRID_WIDTH) + battle_units[itr_battle_units].cgx)] = INF;
-
         }
-
     }
-
-
     Update_Move_Map_City_Area_Restrictions(battle_unit_idx);
-
-
     if(
         (battle_units[battle_unit_idx].controller_idx == _combat_defender_player)
         &&
@@ -1628,60 +1541,35 @@ int16_t Auto_Move_Unit(int16_t battle_unit_idx, int16_t dst_cgx, int16_t dst_cgy
         (Battle_Unit_Is_Within_City(battle_unit_idx) == ST_TRUE)
     )
     {
-
         Update_Move_Map_City_Perimeter_Restrictions();
-
     }
-
-/*
-mark all squares with Magic Vortices on them as
-impassable
-
-BUG: this has just been done in the parent function
-*/
+    /* mark all squares with Magic Vortices on them as impassable */
+    /* OGBUG: this has just been done in the parent function */
     for(itr_battle_units = 0; itr_battle_units < _vortex_count; itr_battle_units++)
     {
-
         _cmbt_movepath_cost_map[((_vortexes[itr_battle_units].cgy * COMBAT_GRID_WIDTH) + _vortexes[itr_battle_units].cgx)] = INF;
-
     }
-
     // sets movement_path_grid_cell_count
     Combat_Move_Path_Find(battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, dst_cgx, dst_cgy);
-
 /*
     END:  ~== Do_Auto_Unit_Turn()
 */
-
-
     if(movement_path_grid_cell_count == 0)
     {
-
         return ST_FALSE;
-
     }
-
-
-    if(battle_units[battle_unit_idx].controller_idx == HUMAN_PLAYER_IDX)
+    if(battle_units[battle_unit_idx].controller_idx != HUMAN_PLAYER_IDX)
     {
-
         _ai_immobile_counter = -1;
-
     }
-
-    Origin_X = battle_units[battle_unit_idx].cgx;
-    Origin_Y = battle_units[battle_unit_idx].cgy;
-
+    origin_x = battle_units[battle_unit_idx].cgx;
+    origin_y = battle_units[battle_unit_idx].cgy;
     battle_units[battle_unit_idx].target_cgx = dst_cgx;
     battle_units[battle_unit_idx].target_cgy = dst_cgy;
-
     uu_combat_movement_variable = 0;
-
     battle_units[battle_unit_idx].mid_move = ST_TRUE;
-
-    RP_Origin_X_2 = battle_units[battle_unit_idx].cgx;
-    RP_Origin_Y_2 = battle_units[battle_unit_idx].cgy;
-
+    rp_origin_x_2 = battle_units[battle_unit_idx].cgx;
+    rp_origin_y_2 = battle_units[battle_unit_idx].cgy;
     if(target_battle_unit_idx > -1)
     {
 
@@ -1689,74 +1577,80 @@ BUG: this has just been done in the parent function
         dst_cgy = battle_units[target_battle_unit_idx].cgy;
 
     }
-
-
-    if((Max_X == dst_cgx) && (Max_Y == dst_cgy))
+    /*
+        The original reuses the two incoming parameter slots (bp+0Eh, bp+10h) as the movement box's
+        max corner.  Production splits that into rally_cgx/rally_cgy (the parameter, read only) and
+        max_x/max_y (the box).  The seed below is what makes the split faithful, and it is NOT
+        cosmetic: several paths through the quadrant selection never assign the max corner at all --
+        branch A with rp_origin_y_2 < dst_cgy leaves Y unwritten, branch B with rp_origin_x_2 <
+        dst_cgx leaves X unwritten, and branch C leaves either.  On those paths the original's box
+        max IS the rally coordinate, by falling through without a store.  Dropping the seed would
+        leave max_x / max_y at 0 and silently shrink the box.
+    */
+    max_x = rally_cgx;  // DNE in Dasm
+    max_y = rally_cgy;  // DNE in Dasm
+    if((rally_cgx == dst_cgx) && (rally_cgy == dst_cgy))
     {
-        Min_X = COMBAT_GRID_XMIN;
-        Max_X = COMBAT_GRID_XMAX;
-        Min_Y = COMBAT_GRID_YMIN;
-        Max_Y = COMBAT_GRID_YMAX;
+        min_x = COMBAT_GRID_XMIN;
+        max_x = COMBAT_GRID_XMAX;
+        min_y = COMBAT_GRID_YMIN;
+        max_y = COMBAT_GRID_YMAX;
     }
     else
     {
-        delta_x = abs(RP_Origin_X_2 - dst_cgx);
-        delta_y = abs(RP_Origin_Y_2 - dst_cgy);
+        delta_x = abs(rp_origin_x_2 - dst_cgx);
+        delta_y = abs(rp_origin_y_2 - dst_cgy);
         if(delta_x < delta_y)
         {
-            Min_X = COMBAT_GRID_XMIN;
-            Max_X = COMBAT_GRID_XMAX;
-            if(RP_Origin_Y_2 < dst_cgy)
+            min_x = COMBAT_GRID_XMIN;
+            max_x = COMBAT_GRID_XMAX;
+            if(rp_origin_y_2 < dst_cgy)
             {
-                Min_Y = COMBAT_GRID_YMIN;
+                min_y = COMBAT_GRID_YMIN;
             }
             else
             {
-                Min_Y = Max_Y;
-                Max_Y = COMBAT_GRID_YMAX;
+                min_y = rally_cgy;
+                max_y = COMBAT_GRID_YMAX;
             }
         }
         if(delta_x > delta_y)
         {
-            Min_Y = COMBAT_GRID_YMIN;
-            Max_Y = COMBAT_GRID_YMAX;
-            if(RP_Origin_X_2 < dst_cgx)
+            min_y = COMBAT_GRID_YMIN;
+            max_y = COMBAT_GRID_YMAX;
+            if(rp_origin_x_2 < dst_cgx)
             {
-                Min_X = COMBAT_GRID_XMIN;
+                min_x = COMBAT_GRID_XMIN;
             }
             else
             {
-                Min_X = Max_X;
-                Max_X = COMBAT_GRID_XMAX;
+                min_x = rally_cgx;
+                max_x = COMBAT_GRID_XMAX;
             }
         }
         if(delta_x == delta_y)
         {
-            if(RP_Origin_X_2 < dst_cgx)
+            if(rp_origin_x_2 < dst_cgx)
             {
-                Min_X = COMBAT_GRID_XMIN;
+                min_x = COMBAT_GRID_XMIN;
             }
             else
             {
-                Min_X = Max_X;
-                Max_X = COMBAT_GRID_XMAX;
+                min_x = rally_cgx;
+                max_x = COMBAT_GRID_XMAX;
             }
-            if(RP_Origin_Y_2 > dst_cgy)
+            if(rp_origin_y_2 < dst_cgy)
             {
-                Min_Y = COMBAT_GRID_YMIN;
+                min_y = COMBAT_GRID_YMIN;
             }
             else
             {
-                Min_Y = Max_Y;
-                Max_Y = COMBAT_GRID_YMAX;
+                min_y = rally_cgy;
+                max_y = COMBAT_GRID_YMAX;
             }
         }
     }
-
-
-    First_Step = ST_TRUE;
-
-
+    first_step = ST_TRUE;
     if(
         (
             ((battle_units[battle_unit_idx].enchantments & UE_INVISIBILITY) != 0)
@@ -1771,7 +1665,6 @@ BUG: this has just been done in the parent function
         (battle_units[battle_unit_idx].controller_idx != HUMAN_PLAYER_IDX)
     )
     {
-
         if(
             (
                 (battle_units[battle_unit_idx].controller_idx != _combat_attacker_player)
@@ -1786,36 +1679,24 @@ BUG: this has just been done in the parent function
             )
         )
         {
-
-            Move_Visible = ST_FALSE;
-
+            move_visible = ST_FALSE;
         }
         else
         {
-
-            Move_Visible = ST_TRUE;
-
+            move_visible = ST_TRUE;
         }
-
     }
     else
     {
-
-        Move_Visible = ST_TRUE;
-
+        move_visible = ST_TRUE;
     }
-
-
-    First_Step_Index = 0;
-
-
+    first_step_index = 0;
     if(
         ((battle_units[battle_unit_idx].Move_Flags & MV_TELEPORT) != 0)
         ||
         ((battle_units[battle_unit_idx].Move_Flags & MV_MERGING) != 0)
     )
     {
-
         if(
             (target_battle_unit_idx > -1)
             &&
@@ -1824,50 +1705,36 @@ BUG: this has just been done in the parent function
             (_cmbt_mvpth_y[(movement_path_grid_cell_count - 1)] == battle_units[target_battle_unit_idx].cgy)
         )
         {
-
             if(movement_path_grid_cell_count > 1)
             {
-
-                First_Step_Index = (movement_path_grid_cell_count - 2);
-
+                first_step_index = (movement_path_grid_cell_count - 2);
             }
-
         }
         else
         {
-
-            First_Step_Index = (movement_path_grid_cell_count - 1);
-
+            first_step_index = (movement_path_grid_cell_count - 1);
         }
-
     }
-
-    // TODO  itr_path = path_start
-    for(itr_grid = First_Step_Index; itr_grid < movement_path_grid_cell_count; itr_grid++)
+    /* TODO: itr_path = path_start */
+    for(itr_grid = first_step_index; itr_grid < movement_path_grid_cell_count; itr_grid++)
     {
-
-        DBG_path_cost = _cmbt_mvpth_c[((_cmbt_mvpth_y[(itr_grid - 1)] * COMBAT_GRID_WIDTH) + _cmbt_mvpth_x[(itr_grid - 1)])];
-
         if(
-            (First_Step != ST_TRUE)
+            (first_step != ST_TRUE)
             &
             (battle_units[battle_unit_idx].movement_points <= _cmbt_mvpth_c[((_cmbt_mvpth_y[(itr_grid - 1)] * COMBAT_GRID_WIDTH) + _cmbt_mvpth_x[(itr_grid - 1)])])
         )
         {
-
             break;
-
         }
-
         if(
             (
-                (_cmbt_mvpth_x[itr_grid] <= Max_X)
+                (_cmbt_mvpth_x[itr_grid] <= max_x)
                 &&
-                (_cmbt_mvpth_x[itr_grid] >= Min_X)
+                (_cmbt_mvpth_x[itr_grid] >= min_x)
                 &&
-                (_cmbt_mvpth_y[itr_grid] <= Max_Y)
+                (_cmbt_mvpth_y[itr_grid] <= max_y)
                 &&
-                (_cmbt_mvpth_y[itr_grid] >= Min_Y)
+                (_cmbt_mvpth_y[itr_grid] >= min_y)
             )
             ||
             (
@@ -1877,14 +1744,10 @@ BUG: this has just been done in the parent function
             )
         )
         {
-
-            First_Step = ST_FALSE;
-
+            first_step = ST_FALSE;
             battle_units[battle_unit_idx].target_cgx = _cmbt_mvpth_x[itr_grid];
             battle_units[battle_unit_idx].target_cgy = _cmbt_mvpth_y[itr_grid];
-
-            Attack_Step = ST_FALSE;
-
+            attack_step = ST_FALSE;
             if(
                 (battle_units[battle_unit_idx].target_cgx == battle_units[target_battle_unit_idx].cgx)
                 &&
@@ -1893,38 +1756,27 @@ BUG: this has just been done in the parent function
                 (battle_units[target_battle_unit_idx].status == bus_Active)
             )
             {
-
-                Attack_Step = ST_TRUE;
-
+                attack_step = ST_TRUE;
             }
-
-            if(Attack_Step == ST_TRUE)
+            if(attack_step == ST_TRUE)
             {
-
                 if(battle_units[battle_unit_idx].figure_cnt <= 0)
                 {
-
                     battle_units[battle_unit_idx].movement_points = -2;
-
                 }
                 else
                 {
-
                     Battle_Unit_Attack(battle_unit_idx, target_battle_unit_idx, 0, 0);
-
                 }
-
                 itr_grid--;
-
             }
             else
             {
-
                 // if attacker, no walls, move is into city area, move is not from city area
                 if(
                     (battle_units[battle_unit_idx].controller_idx != _combat_defender_player)
                     ||
-                    (_ai_battlefield_city_walls != BATTLEFIELD_CITY_WALL_STONE)  /* ; BUG: will only be 1 if there's only a stone wall but  ; no other types */
+                    (_ai_battlefield_city_walls != BATTLEFIELD_CITY_WALL_STONE)  /* OGBUG: will only be 1 if there's only a stone wall but no other types */
                     ||
                     (
                         (_cmbt_mvpth_x[itr_grid] >= MIN_CGX_CITY)
@@ -1939,17 +1791,14 @@ BUG: this has just been done in the parent function
                     (Battle_Unit_Is_Within_City(battle_unit_idx) != ST_TRUE)
                 )
                 {
-
-                    if(Move_Visible == ST_TRUE)
+                    if(move_visible == ST_TRUE)
                     {
-
                         if(
                             ((battle_units[battle_unit_idx].Move_Flags & MV_TELEPORT) != 0)
                             ||
                             ((battle_units[battle_unit_idx].Move_Flags & MV_MERGING) != 0)
                         )
                         {
-
                             if((battle_units[battle_unit_idx].Move_Flags & MV_TELEPORT) != 0)
                             {
                                 Battle_Unit_Teleport(battle_unit_idx, _cmbt_mvpth_x[itr_grid], _cmbt_mvpth_y[itr_grid]);
@@ -1958,194 +1807,101 @@ BUG: this has just been done in the parent function
                             {
                                 Battle_Unit_Tunnel(battle_unit_idx, _cmbt_mvpth_x[itr_grid], _cmbt_mvpth_y[itr_grid]);
                             }
-
                         }
                         else
                         {
-
                             if(magic_set.sound_effects == ST_TRUE)
                             {
-
                                 Play_Sound(sound_silent_seg, sound_silent_seg_size);
-
                                 Mark_Block(World_Data);
-
                                 move_sound_seg = Reload_Battle_Unit_Move_Sound(battle_unit_idx, &move_sound_seg_size);
-
                                 Release_Block(World_Data);
-
                             }
                             else
                             {
                                 move_sound_seg = (SAMB_ptr)ST_UNDEFINED;
                             }
-
                             battle_units[battle_unit_idx].move_anim_ctr = 1;
-
                             if(move_sound_seg != (SAMB_ptr)ST_UNDEFINED)
                             {
-
                                 Play_Sound(move_sound_seg, move_sound_seg_size);
-
                             }
-
                             if(magic_set.movement_animations == ST_TRUE)
                             {
-//                                 // for(itr_battle_units = 0; itr_battle_units < MOVE_ANIM_CNT; itr_battle_units += move_anim_speed)
-//                                 for(itr_battle_units = 0; itr_battle_units < (MOVE_ANIM_CNT * 10); itr_battle_units++)
-                                // // for(itr = 0; itr < MOVE_ANIM_CNT; itr++)
-                                //  for(itr = 0; itr < (MOVE_ANIM_CNT * 10); itr++)
-                                /* CLAUDE */  for(itr_battle_units = 0; itr_battle_units < MOVE_ANIM_CNT; itr_battle_units += move_anim_speed)
+                                for(itr_battle_units = 0; itr_battle_units < MOVE_ANIM_CNT; itr_battle_units += move_anim_speed)
                                 {
-//                                     // battle_units[battle_unit_idx].move_anim_ctr += move_anim_speed);
-//                                     /* CLAUDE bugfix: was * move_anim_speed, which overshot 2x during auto-combat */
-//                                     battle_units[battle_unit_idx].move_anim_ctr = ((itr_battle_units + (10 - 1)) / 10);
-                                    /* CLAUDE */  Mark_Time();
-                                    battle_units[battle_unit_idx].move_anim_ctr = itr_battle_units;
+                                    /* HACK */  Mark_Time();
+                                    battle_units[battle_unit_idx].move_anim_ctr += move_anim_speed;
                                     Combat_Screen_Draw();
                                     PageFlip_FX();
-                                    /* CLAUDE */  Release_Time(1);
+                                    /* HACK */  Release_Time(1);
                                 }
-
                             }
                             else
                             {
-
                                 battle_units[battle_unit_idx].move_anim_ctr = MOVE_ANIM_MAX;
-
                                 Combat_Screen_Draw();
-
                                 PageFlip_FX();
-
                             }
-
-
                             if(magic_set.sound_effects == ST_TRUE)
                             {
-
                                 Play_Sound(sound_silent_seg, sound_silent_seg_size);
-
                             }
-
                         }
-
                         battle_units[battle_unit_idx].move_anim_ctr = 0;
-
                         battle_units[battle_unit_idx].cgx = _cmbt_mvpth_x[itr_grid];
                         battle_units[battle_unit_idx].cgy = _cmbt_mvpth_y[itr_grid];
-
-                        assert(battle_units[battle_unit_idx].cgx >= COMBAT_GRID_XMIN);
-                        assert(battle_units[battle_unit_idx].cgx <= COMBAT_GRID_XMAX);
-                        assert(battle_units[battle_unit_idx].cgy >= COMBAT_GRID_YMIN);
-                        assert(battle_units[battle_unit_idx].cgy <= COMBAT_GRID_YMAX);
-
                     }
-
                 }
-
             }
-
         }  /* end of the if( in-cone || == dst ) */
         else
         {
-            /*
-                asm loc_948EA -> jmp loc_94C51:
-                a path cell outside the movement box that is not the destination ends the move loop.
-                Falling through to the next path cell let a quadrant-locked melee unit skip its out-of-box steps,
-                reach the destination cell (== the target unit),
-                and fire Attack_Step from its start square -> range>1 attack.
-            */
+            /* a path cell outside the movement box that is not the destination ends the move loop. */
             break;
         }
-    }  /* END: for(itr_grid = First_Step_Index; itr_grid < movement_path_grid_cell_count; itr_grid++) */
+    }  /* END: for(itr_grid = first_step_index; itr_grid < movement_path_grid_cell_count; itr_grid++) */
     /*
         END: Move-Path Movement Animation
     */
-
     battle_units[battle_unit_idx].move_anim_ctr = 0;
-
     battle_units[battle_unit_idx].mid_move = ST_FALSE;
-
     if(itr_grid > 1)
     {
-
-        Origin_X = _cmbt_mvpth_x[(itr_grid - 2)];
-        Origin_Y = _cmbt_mvpth_y[(itr_grid - 2)];
-
-        assert(Origin_X >= COMBAT_GRID_XMIN);
-        assert(Origin_X <= COMBAT_GRID_XMAX);
-        assert(Origin_Y >= COMBAT_GRID_YMIN);
-        assert(Origin_Y <= COMBAT_GRID_YMAX);
-
-        Last_Target_X = _cmbt_mvpth_x[(itr_grid - 1)];
-        Last_Target_Y = _cmbt_mvpth_y[(itr_grid - 1)];
-
-        assert(Last_Target_X >= COMBAT_GRID_XMIN);
-        assert(Last_Target_X <= COMBAT_GRID_XMAX);
-        assert(Last_Target_Y >= COMBAT_GRID_YMIN);
-        assert(Last_Target_Y <= COMBAT_GRID_YMAX);
-
+        origin_x = _cmbt_mvpth_x[(itr_grid - 2)];
+        origin_y = _cmbt_mvpth_y[(itr_grid - 2)];
+        last_target_x = _cmbt_mvpth_x[(itr_grid - 1)];
+        last_target_y = _cmbt_mvpth_y[(itr_grid - 1)];
     }
     else  /* itr_grid == 0 || 1 */
     {
-
-        Last_Target_X = dst_cgx;
-        Last_Target_Y = dst_cgy;
-
-        assert(Last_Target_X >= COMBAT_GRID_XMIN);
-        assert(Last_Target_X <= COMBAT_GRID_XMAX);
-        assert(Last_Target_Y >= COMBAT_GRID_YMIN);
-        assert(Last_Target_Y <= COMBAT_GRID_YMAX);
-
+        last_target_x = dst_cgx;
+        last_target_y = dst_cgy;
     }
-
-    Facing_X_Offset = (Last_Target_X - Origin_X);
-    Facing_Y_Offset = (Last_Target_Y - Origin_Y);
-
+    facing_x_offset = (last_target_x - origin_x);
+    facing_y_offset = (last_target_y - origin_y);
     if(itr_grid != 0)
     {
-
         battle_units[battle_unit_idx].cgx = _cmbt_mvpth_x[(itr_grid - 1)];
         battle_units[battle_unit_idx].cgy = _cmbt_mvpth_y[(itr_grid - 1)];
-
-        assert(battle_units[battle_unit_idx].cgx >= COMBAT_GRID_XMIN);
-        assert(battle_units[battle_unit_idx].cgx <= COMBAT_GRID_XMAX);
-        assert(battle_units[battle_unit_idx].cgy >= COMBAT_GRID_YMIN);
-        assert(battle_units[battle_unit_idx].cgy <= COMBAT_GRID_YMAX);
-
-        battle_units[battle_unit_idx].target_cgx = (Last_Target_X + Facing_X_Offset);
-        battle_units[battle_unit_idx].target_cgy = (Last_Target_Y + Facing_Y_Offset);
-
-        // ¿ negative is OK for facing ?  assert(battle_units[battle_unit_idx].target_cgx >= COMBAT_GRID_XMIN);
-        // ¿ negative is OK for facing ?  assert(battle_units[battle_unit_idx].target_cgx <= COMBAT_GRID_XMAX);
-        // ¿ negative is OK for facing ?  assert(battle_units[battle_unit_idx].target_cgy >= COMBAT_GRID_YMIN);
-        // ¿ negative is OK for facing ?  assert(battle_units[battle_unit_idx].target_cgy <= COMBAT_GRID_YMAX);
-
+        battle_units[battle_unit_idx].target_cgx = (last_target_x + facing_x_offset);
+        battle_units[battle_unit_idx].target_cgy = (last_target_y + facing_y_offset);
     }
-
     if(
         ((battle_units[battle_unit_idx].Move_Flags & MV_TELEPORT) != 0)
         ||
         ((battle_units[battle_unit_idx].Move_Flags & MV_MERGING) != 0)
     )
     {
-
-        // ; BUG: teleporting units can't use roads
+        /* OGBUG: teleporting units can't use roads */
         battle_units[battle_unit_idx].movement_points -= 2;
-
     }
     else
     {
-        DBG_last_movement_points = movement_points;
         movement_points = _cmbt_mvpth_c[((battle_units[battle_unit_idx].cgy * COMBAT_GRID_WIDTH) + battle_units[battle_unit_idx].cgx)];
         battle_units[battle_unit_idx].movement_points -= movement_points;
-
     }
-
-    /* CLAUDE: test-only combat-legality logging (LOG_CAT_COMBAT_TEST, off by default).
-       Emits the full move path so a checker can verify every step is grid-adjacent
-       (a non-adjacent step is the "streak across the map") and correlate the move to
-       its target.  Auto_Move_Unit is the one frame that holds mover + destination + target. */
+    /* CLAUDE: test-only combat-legality logging (LOG_CAT_COMBAT_TEST, off by default). Emits the full move path so a checker can verify every step is grid-adjacent and correlate the move to its target.  Auto_Move_Unit is the one frame that holds mover + destination + target. */
     if(STU_Log_Category_Enabled(LOG_CAT_COMBAT_TEST))
     {
         int16_t cmbt_test_k;
@@ -2155,7 +1911,5 @@ BUG: this has just been done in the parent function
             LOG_INFO(LOG_CAT_COMBAT_TEST, "MOVE_STEP unit=%d seq=%d cell=(%d,%d)", battle_unit_idx, cmbt_test_k, _cmbt_mvpth_x[cmbt_test_k], _cmbt_mvpth_y[cmbt_test_k]);
         }
     }
-
     return ST_TRUE;
-
 }

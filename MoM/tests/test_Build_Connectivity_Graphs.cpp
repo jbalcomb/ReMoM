@@ -31,7 +31,7 @@ extern "C" {
     - movement_mode_cost_maps gets WORLD_OVERFLOW of trailing slack for the OG out-of-bounds
       reads past the last plane's sailing submap.
     - connectivity_grid_land/sea are sized like the game's 224-byte allocation (NUM_PLANES*96 used + slack;
-      the east-column OGBUG writes one byte past a plane's 96-byte record).
+      the east-column OGBUG: writes one byte past a plane's 96-byte record).
 
     With every passable square == 0 and impassable == 0xFF, an all-passable plane yields the
     fully-connected section pattern (0xEE top row / 0xFF interior / 0xBB bottom row, matching

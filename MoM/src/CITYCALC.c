@@ -1947,9 +1947,9 @@ int16_t City_Maximum_Size(int16_t city_idx)
     {
         maximum_size += 3;
     }
-    /* OGBUG  ¿ no FORESTERS_GUILD ? */
+    /* OGBUG: ¿ no FORESTERS_GUILD ? */
     maximum_size += City_Food_WildGame(city_idx);
-    return maximum_size;  /* OGBUG be `/ 2` - 2 food === 1 pop */
+    return maximum_size;  /* OGBUG: be `/ 2` - 2 food === 1 pop */
 }
 
 
@@ -2527,7 +2527,7 @@ int16_t City_Mana_Production(int16_t city_idx)
  *         and starvation can produce a negative intermediate value before
  *         final clamping in the normal path.
  *
- * @note Contains documented legacy OGBUG behaviors around max-population checks
+ * @note Contains documented legacy OGBUG: behaviors around max-population checks
  *       and early exits that can suppress expected negative growth in some
  *       edge cases.
  *
@@ -2548,7 +2548,7 @@ int16_t City_Growth_Rate(int16_t city_idx)
     }
     maximum_size = City_Maximum_Size(city_idx);
     /* If population matches maximum size, growth is 0 */
-    /* OGBUG  drake178: BUG #1: prevents negative growth at max pop */
+    /* OGBUG: drake178: BUG #1: prevents negative growth at max pop */
     if(_CITIES[city_idx].population == maximum_size)
     {
         population_growth_rate = 0;
@@ -2588,7 +2588,7 @@ int16_t City_Growth_Rate(int16_t city_idx)
         population_growth_rate += 3;
     }
     /* Max population limit for growth is 25 (25,000) */
-    /* OGBUG  drake178: BUG #2: prevents negative growth at 25 pop */
+    /* OGBUG: drake178: BUG #2: prevents negative growth at 25 pop */
     if(_CITIES[city_idx].population >= MAX_CITY_POPULATION)
     {
         population_growth_rate = 0;
@@ -2647,7 +2647,7 @@ int16_t City_Growth_Rate(int16_t city_idx)
             population_growth_modifier += 15;
         }
         /* Recheck population limit */
-        /* OGBUG  drake178: BUG #3: prevents negative growth at 25 pop if housing is selected as the build project, even with zero workers and no buildings */
+        /* OGBUG: drake178: BUG #3: prevents negative growth at 25 pop if housing is selected as the build project, even with zero workers and no buildings */
         if(_CITIES[city_idx].population >= MAX_CITY_POPULATION)
         {
             population_growth_rate = 0;
@@ -3155,8 +3155,8 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 // WZD o142p21
 // MoO2  Module: COLCALC  Apply_Colony_Pop_Growth_()
 /*
-OGBUG  ignores Wild Game, both as a source of food and as a terrain special
-OGBUG  difficulty-based outpost growth modifiers are applied to both AI and human player outposts
+OGBUG: ignores Wild Game, both as a source of food and as a terrain special
+OGBUG: difficulty-based outpost growth modifiers are applied to both AI and human player outposts
 */
 /**
  * @brief Applies one-turn growth/shrink updates to all outposts.
@@ -3237,8 +3237,8 @@ void All_Outpost_Population_Growth(void)
         useable_map_squares = Get_Useable_City_Area(CITIESX(), CITIESY(), city_wp, &wx_array[0], &wy_array[0]);
         for(itr = 0; itr < useable_map_squares; itr++)
         {
-            /* OGBUG  should use itr, not itr_cities */
-            /* OGBUG  OOB AVRL  itr_cities >= 25 */
+            /* OGBUG: should use itr, not itr_cities */
+            /* OGBUG: OOB AVRL  itr_cities >= 25 */
             terrain_special = GET_TERRAIN_SPECIAL(wx_array[itr_cities], wy_array[itr_cities], city_wp);
             if(terrain_special != 0)
             {
@@ -3934,7 +3934,7 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
 
                 if((GET_TERRAIN_SPECIAL(curr_wx, itr_wy, wp) & ts_Wild_Game) != 0)
                 {
-                    *MaxPop += 2;  /* OGBUG  should be 8 (counting quarter foods here) */
+                    *MaxPop += 2;  /* OGBUG: should be 8 (counting quarter foods here) */
                 }
 
                 *production_bonus += Square_Production_Bonus(curr_wx, itr_wy, wp, ST_FALSE);
@@ -3955,7 +3955,7 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
 
                 if((GET_TERRAIN_SPECIAL(curr_wx, itr_wy, wp) & ts_Wild_Game) != 0)
                 {
-                    food2_units += 2;  /* OGBUG  should be 8 (counting quarter foods here) */
+                    food2_units += 2;  /* OGBUG: should be 8 (counting quarter foods here) */
                 }
 
                 *MaxPop += ((food2_units + food2_remainder) / 2);
@@ -3986,7 +3986,7 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
 
             if(Square_Has_Adamantium(curr_wx, itr_wy, wp) == ST_TRUE)
             {
-                /* ¿ OGBUG  Why does this unset have_mithril here ? */
+                /* ¿ OGBUG: Why does this unset have_mithril here ? */
                 *have_adamantium = ST_TRUE;
                 *have_mithril = ST_FALSE;
             }

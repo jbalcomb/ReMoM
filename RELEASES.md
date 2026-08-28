@@ -69,7 +69,7 @@ existing install. See [TESTING.md](TESTING.md).
 - **`remom_video_probe.exe`** — the graphics-stack probe: driver matrix + `--timing`
   (refresh rate / vsync jitter), plus the GPU adapter list, the Remote-Desktop check, and
   the real OS build. This is the first thing to run against a "won't start" or "choppy"
-  report. See [Devel-Graphics.md](doc/#Devel/Devel-Graphics.md).
+  report. See [Devel-Graphics.md](doc/@Devel/Devel-Graphics.md).
 
 The probe rides along in the main package rather than in a separate diagnostics zip (the
 shape Linux uses) because the Windows package **already** carries `ReMoM_diagnostic.exe`
@@ -114,7 +114,7 @@ and the `.deb` is deliberately lintian-clean and engine-only.
 The zip contains:
 
 - **`remom_video_probe`** (Release build) — the graphics-stack probe: driver matrix +
-  `--timing` (refresh rate / vsync jitter). See [Devel-Graphics.md](doc/#Devel/Devel-Graphics.md).
+  `--timing` (refresh rate / vsync jitter). See [Devel-Graphics.md](doc/@Devel/Devel-Graphics.md).
 - **`ReMoM_diagnostic`** — the Linux diagnostic build. On Linux this is simply a **Debug**
   build (`STU_DEBUG`, `/Od`, asserts, verbose logging, symbols); unlike MSVC there is no
   debug-CRT redistribution restriction, so a Debug binary ships freely — no `REMOM_DIAGNOSTIC`

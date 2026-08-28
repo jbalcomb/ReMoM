@@ -132,7 +132,7 @@ static void sdl2_Log_Graphics_Environment(void)
        with a fatal Xlib BadValue, killing the process INSIDE SDL_CreateRenderer before
        it can return NULL.  Seeing this list plus which driver is first tells us whether
        a run is about to walk into that.  Workarounds: SDL_RENDER_DRIVER=software (skip
-       GL) or SDL_VIDEODRIVER=wayland (EGL instead of GLX).  See doc/#Devel. */
+       GL) or SDL_VIDEODRIVER=wayland (EGL instead of GLX).  See doc/@Devel. */
     n = SDL_GetNumRenderDrivers();
     LOG_INFO(LOG_CAT_SDL2_INIT, "graphics: %d render drivers available (index -1 picks the first)", n);
     for(i = 0; i < n; i++)
@@ -150,7 +150,7 @@ static void sdl2_Log_Graphics_Environment(void)
        "choppy framerate" reports.  ReMoM presents through a vsync'd renderer, so a
        high-refresh or VRR (G-Sync/FreeSync) panel paces frames differently than a plain
        60 Hz one.  tools/remom_video_probe --timing measures the resulting jitter.  See
-       doc/#Devel/Devel-Graphics.md. */
+       doc/@Devel/Devel-Graphics.md. */
     n = SDL_GetNumVideoDisplays();
     for(i = 0; i < n; i++)
     {
@@ -177,7 +177,7 @@ static SDL_Renderer * sdl2_Create_Renderer_With_Fallback(SDL_Window * window)
     LOG_INFO(LOG_CAT_SDL2_INIT, "graphics: creating renderer (driver index -1, vsync)...");
     LOG_INFO(LOG_CAT_SDL2_INIT, "graphics: if this is the LAST line in the log, renderer creation crashed "
                                 "hard (likely GLX over XWayland) -- retry with SDL_RENDER_DRIVER=software.  "
-                                "See doc/#Devel/Devel-Graphics.md");
+                                "See doc/@Devel/Devel-Graphics.md");
     STU_Log_Flush_All();  /* survive a fatal Xlib exit inside the call below */
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
@@ -304,7 +304,7 @@ void Startup_Platform(void)
 
     /* CLAUDE: Platform-Input Layer 1 -- runtime-gated input responsiveness metrics, OFF by default.
        REMOM_INPUT_METRICS=1 writes ./remom_input_metrics.fwv; =PATH writes PATH; unset/0 stays off.
-       See doc/#AI_Plans/{BRA,PRD,PLAN}-Platform-Input.md. */
+       See doc/@AI_Plans/{BRA,PRD,PLAN}-Platform-Input.md. */
     {
         const char * im_env = getenv("REMOM_INPUT_METRICS");
         if(im_env != NULL && im_env[0] != '\0' && strcmp(im_env, "0") != 0)

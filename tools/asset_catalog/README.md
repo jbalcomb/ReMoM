@@ -56,4 +56,4 @@ LBX and FLIC parsing (`lbx.py`) is ported from `tools/lbx_extract.c` and
 Sibling of [tools/field_catalog/](../field_catalog/) (input fields). Shares its `fwv`
 fixed-width reader/writer. The planned **runtime draw-trace** (instrumenting `FLIC_Draw`)
 will add *where* each asset is drawn — see the HMS plan
-[doc/#AI_Plans/PLAN-HMS-Named-Actions-And-Waits.md](../../doc/%23AI_Plans/PLAN-HMS-Named-Actions-And-Waits.md).
+[doc/@AI_Plans/PLAN-HMS-Named-Actions-And-Waits.md](../../doc/%23AI_Plans/PLAN-HMS-Named-Actions-And-Waits.md).

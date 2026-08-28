@@ -1078,7 +1078,7 @@ int16_t Create_Unit(int16_t unit_type, int16_t owner_idx, int16_t wx, int16_t wy
 
     if((R_Param < 0) || R_Param >= 2000)
     {
-        /* ¿ OGBUG  this means level 0 Raiders never get created ? */
+        /* ¿ OGBUG: this means level 0 Raiders never get created ? */
         if(R_Param < -1)
         {
             R_Param = (abs(R_Param) - 1);
@@ -2097,11 +2097,11 @@ void City_Delete_Building_Complete_Messages(int16_t city_idx)
             {
                 itr2 = itr1;
 
-                // BUG BUGBUG OGBUG moves the city_idx for the message, but not the bldg_type_idx
+                // BUG BUGBUG OGBUG: moves the city_idx for the message, but not the bldg_type_idx
                 while(g_bldg_msg_ctr > itr2)
                 {
                     MSG_Building_Complete[itr2].city_idx = MSG_Building_Complete[(itr2 + 1)].city_idx;
-                    // OGBUG DNE  MSG_Building_Complete[itr2].bldg_type_idx = MSG_Building_Complete[(itr2 + 1)].bldg_type_idx;
+                    // OGBUG: DNE  MSG_Building_Complete[itr2].bldg_type_idx = MSG_Building_Complete[(itr2 + 1)].bldg_type_idx;
                     itr2++;
                 }
 
@@ -3036,7 +3036,7 @@ void Apply_City_Changes(void)
 
                 _CITIES[itr_cities].population = (_CITIES[itr_cities].population + 1);
 
-                _CITIES[itr_cities].Pop_10s = 0;  /* OGBUG  discards excess population */
+                _CITIES[itr_cities].Pop_10s = 0;  /* OGBUG: discards excess population */
 
                 New_Min_Farmers = City_Minimum_Farmers(itr_cities);
 
@@ -3061,7 +3061,7 @@ void Apply_City_Changes(void)
                 if(_CITIES[itr_cities].owner_idx == NEUTRAL_PLAYER_IDX)
                 {
 
-                    /* OGBUG  In City_Growth_Rate(), uses `if(_CITIES[city_idx].population >= ((_difficulty + 1) * 2))` */
+                    /* OGBUG: In City_Growth_Rate(), uses `if(_CITIES[city_idx].population >= ((_difficulty + 1) * 2))` */
                     if(_CITIES[itr_cities].population > MAX_CITY_POPULATION_NEUTRAL_PLAYER)
                     {
 
@@ -3944,7 +3944,7 @@ Finally, when units occupy map squares with Natural Healers (see Special Unit Ab
  *      companions not already marked as healed this turn.
  *
  * The routine also preserves known legacy behavior in the city/stack filtering
- * branches, including OGBUG paths retained for compatibility.
+ * branches, including OGBUG: paths retained for compatibility.
  *
  * @return This function returns no value.
  *
@@ -3978,7 +3978,7 @@ void Heal_All_Units(void)
         Army_At_City(itr_cities, &troop_count, &troops[0]);
         for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
         {
-            /* OGBUG  conflicting condition, will always jump; Army_At_City() already filters by owner */
+            /* OGBUG: conflicting condition, will always jump; Army_At_City() already filters by owner */
             if(_UNITS[troops[itr_troops]].owner_idx != _CITIES[itr_cities].owner_idx)
             {
                 Kill_Unit(troops[itr_troops], kt_Disappeared);
@@ -4016,7 +4016,7 @@ void Heal_All_Units(void)
         if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_HEALER) != 0)
         {
             Army_At_Square_1(_UNITS[itr_units].wx, _UNITS[itr_units].wy, _UNITS[itr_units].wp, &troop_count, &troops[0]);
-            /* OGBUG  `(troop_count > MAX_STACK)` is impossible - this whole block is dead code */
+            /* OGBUG: `(troop_count > MAX_STACK)` is impossible - this whole block is dead code */
             if(troop_count > MAX_STACK)
             {
                 troops_has_human_player_units = ST_FALSE;

@@ -1832,7 +1832,7 @@ int16_t Apply_Earthquake(int16_t city_idx, int16_t * item_count, int16_t item_li
  * @return This function does not return a value.
  *
  * @note Hero item slots are incorrectly cleared to 0 instead of the canonical
- *       empty-slot sentinel -1 (marked @c OGBUG in code).
+ *       empty-slot sentinel -1 (marked @c OGBUG: in code).
  * @note The function unconditionally plays the animation regardless of whether
  *       the human player can see the affected cities.
  */
@@ -1981,7 +1981,7 @@ void Call_Forth_The_Force_Of_Nature(int16_t player_idx)
                         item_list_count++;
                     }
                     /* Mark item slot as empty/deleted */
-                    _players[player_idx].Heroes[hero_slot].Items[itr2] = 0;  /* OGBUG  empty slots are -1, not 0 */
+                    _players[player_idx].Heroes[hero_slot].Items[itr2] = 0;  /* OGBUG: empty slots are -1, not 0 */
                 }
             }
             

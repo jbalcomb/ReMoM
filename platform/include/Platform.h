@@ -258,7 +258,7 @@ void Check_Mouse_Shape(int16_t x, int16_t y);
 /*  restores the DOS hardware-sprite behaviour: an SDL cursor built from the  */
 /*  current game sprite that the compositor tracks at native rate.  Opt-in    */
 /*  via REMOM_HW_CURSOR=1; when off, every hook is a single branch.          */
-/*  See doc/#AI_Plans/PLAN-Platform-Input.md.                                */
+/*  See doc/@AI_Plans/PLAN-Platform-Input.md.                                */
 /* ========================================================================= */
 
 /** Non-zero when the hardware-cursor prototype is enabled (REMOM_HW_CURSOR). Cheap gate. */

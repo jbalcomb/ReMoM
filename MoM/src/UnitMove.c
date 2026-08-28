@@ -241,7 +241,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                     Units_With_Same--;
                 }
 
-                /* OGBUG  drake178: misplaced parentheses in the original code —
+                /* OGBUG: drake178: misplaced parentheses in the original code —
                    the condition is supposed to skip all 4 of the following blocks,
                    not just the first one.  Preserved faithfully via C operator
                    precedence (&& binds tighter than ||).  Explicit parentheses
@@ -614,7 +614,7 @@ int16_t Unit_Has_Invisibility(int16_t unit_idx)
 }
 
 // WZD o71p012
-/* OGBUG  does not check hero items */
+/* OGBUG: does not check hero items */
 /**
  * @brief Checks whether a unit currently has the Endurance enchantment.
  *

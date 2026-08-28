@@ -17,7 +17,7 @@ set_target_properties(ReMoM PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # Export dynamic symbols so STU_BRAK's POSIX backtrace prints function names
 # instead of raw hex.  On GCC/Clang this is `-rdynamic`; on MSVC it is a no-op
-# (dbghelp resolves symbols via the .pdb).  See doc/#Devel/Devel-Crash-Reports.md.
+# (dbghelp resolves symbols via the .pdb).  See doc/@Devel/Devel-Crash-Reports.md.
 set_target_properties(ReMoM PROPERTIES ENABLE_EXPORTS ON)
 
 if(USE_WIN32)
@@ -65,7 +65,7 @@ add_executable(HeMoM HeMoM.c ReMoM_Init.c Artificial_Human_Player.c Game_Save_Du
 set_target_properties(HeMoM PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # Export dynamic symbols so STU_BRAK's POSIX backtrace prints function names
-# instead of raw hex.  See ReMoM above and doc/#Devel/Devel-Crash-Reports.md.
+# instead of raw hex.  See ReMoM above and doc/@Devel/Devel-Crash-Reports.md.
 set_target_properties(HeMoM PROPERTIES ENABLE_EXPORTS ON)
 
 target_link_libraries(HeMoM PUBLIC

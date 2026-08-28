@@ -1464,16 +1464,16 @@ extern int16_t _combat_turn;
 extern int16_t destroy_combat_city;
 
 // WZD dseg:C976
-extern int16_t CMB_Gold_Reward;
+extern int16_t combat_results_gold;
 
 // WZD dseg:C978
-extern int16_t CMB_Buildings_Lost;
+extern int16_t combat_results_buildings_lost;
 
 // WZD dseg:C97A
-extern int16_t * CMB_LostBuildings;
+extern int16_t * combat_results_lost_buildings;
 
 // WZD dseg:C97C
-extern int16_t CMB_Population_Lost;
+extern int16_t combat_results_population_lost;
 
 // WZD dseg:C97E
 extern int16_t combat_results_scroll_message;
@@ -1655,7 +1655,7 @@ void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t targe
 void Switch_Active_Battle_Unit(int16_t battle_unit_idx);
 
 // WZD s91p06
-void Battle_Unit_Action(int16_t _battle_unit_idx, int16_t cgx, int16_t cgy);
+void Battle_Unit_Action(int16_t acting_battle_unit_idx, int16_t cgx, int16_t cgy);
 
 // WZD s91p07
 void Assign_Combat_Grids(void);
@@ -1731,7 +1731,7 @@ int16_t Unit_Try_To_Move(int16_t wx, int16_t wy, int16_t wp, int16_t unit_idx, i
 void Assign_Mouse_Images(void);
 
 // WZD o98p11
-int16_t Ranged_Mouse_Image(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);
+int16_t Ranged_Mouse_Image(int16_t attacker_idx, int16_t defender_idx);
 
 // WZD o98p12
 void Add_Combat_Enchantment_Fields(void);
@@ -1857,7 +1857,7 @@ void Combat_Figure_Banner_Color(int16_t player_idx);
 void Combat_Figure_Active_Red_Outline(int16_t battle_unit_idx);
 
 // WZD o105p04
-void Combat_Figure_Effect(int16_t effect);
+void Combat_Figure_Effect(int16_t figure_effect);
 
 // WZD o105p05
 void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx);
@@ -1938,7 +1938,7 @@ int16_t AITP_Disintegrate(int16_t player_idx);
 int16_t AITP_DispelMagic(int16_t player_idx);
 
 // WZD o111p08
-void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy, int16_t Mana, int16_t Anims, int16_t UU1, int16_t UU2);
+void Combat_Cast_Apply_Spell_Effect(int16_t spell_idx, int16_t target_idx, int16_t caster_idx, int16_t target_cgx, int16_t target_cgy, int16_t tscc, int16_t anims_on, int16_t unused1, int16_t unused2);
 
 // WZD o111p09
 int16_t AITP_HolyWord(int16_t player_idx);
@@ -1960,13 +1960,13 @@ void Combat_Spell_Target_Screen_Draw(void);
 int16_t Combat_Spell_Target_Screen(int16_t spell_idx, int16_t * target_cgx, int16_t * target_cgy);
 
 // WZD o113p04
-void Ranged_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t Target_Damage_Sum, int16_t cgx, int16_t cgy);
+void Ranged_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t target_damage_sum, int16_t cgx, int16_t cgy);
 
 // WZD o113p05
 void Melee_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy);
 
 // WZD o113p06
-void Compute_Battle_Unit_Damage_From_Spell(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t damage_types[], int16_t attack_override_flag);
+void Compute_Battle_Unit_Damage_From_Spell(uint16_t spell_idx, uint16_t battle_unit_idx, int16_t damage_types[], int16_t attack_strength_override);
 
 // WZD o113p07
 void Battle_Unit_Commit_Damage(int16_t battle_unit_idx, int16_t damage_types[]);
@@ -2038,7 +2038,7 @@ void Calc_Battlefield_Bonuses(int16_t combat_structure);
 void Battle_Unit_Attack(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy);
 
 // WZD o122p12
-int16_t Range_To_Battle_Unit(int16_t BU_1, int16_t BU_2);
+int16_t Range_To_Battle_Unit(int16_t battle_unit_idx_a, int16_t battle_unit_idx_b);
 
 // WZD o122p13
 int16_t Target_Unit_Value(int16_t attacker_idx, int16_t target_idx, int16_t has_ranged_attack);
@@ -2057,7 +2057,7 @@ int16_t Apply_Fear_Attack(int16_t attacker_battle_unit_idx, int16_t defender_bat
 */
 
 // WZD o123p01
-void End_Of_Combat(int16_t player_idx, int16_t * item_count, int16_t item_list[], int16_t MsgType);
+void End_Of_Combat(int16_t winner_player_idx, int16_t * item_count, int16_t item_list[], int16_t end_of_combat_message_type);
 
 // WZD o123p02
 int16_t Find_Undead_Creator_Type(int16_t player_idx);
@@ -2114,7 +2114,7 @@ void Combat_Load_Spell_Sound_Effect(int16_t spell_idx);
 void Check_Wall_Of_Fire_Attack(int16_t battle_unit_idx);
 
 // WZD o124p11
-void Set_Gibs(int16_t battle_unit_idx, int16_t Damage);
+void Set_Gibs(int16_t battle_unit_idx, int16_t damage);
 
 // WZD o124p12
 void Clear_Gibs(int16_t battle_unit_idx);
@@ -2123,7 +2123,7 @@ void Clear_Gibs(int16_t battle_unit_idx);
 int16_t Battle_Unit_Is_Within_City(int16_t battle_unit_idx);
 
 // WZD o124p14
-int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgc2, int16_t cgc1);
+int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgx, int16_t cgy);
 
 // WZD o124p15
 int16_t Battle_Unit_Is_Summoned_Creature(int16_t battle_unit_idx);
@@ -2228,13 +2228,13 @@ void Spawn_Missile_Entities(void);
 void Battle_Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t * figure_x, int16_t * figure_y);
 
 // WZD ovr153p18
-void Combat_Grid_Entity_Create(int16_t draw_x, int16_t draw_y, int64_t seg_or_idx, int16_t draw_x_shift, int16_t draw_y_shift, int16_t Frame, int16_t entity_type, int16_t controller_idx, int16_t niu_figure_set_idx, int16_t outline_magic_realm, int16_t gibs, int16_t UU_14h, int16_t BldFrm);
+void Combat_Grid_Entity_Create(int16_t draw_x, int16_t draw_y, int64_t seg_or_idx, int16_t draw_x_shift, int16_t draw_y_shift, int16_t frame_num, int16_t entity_type, int16_t controller_idx, int16_t niu_figure_set_idx, int16_t outline_magic_realm, int16_t gibs, int16_t niu_14h, int16_t blood_frame);
 
 // WZD ovr153p19
 void Set_Entity_Draw_Order(void);
 
 // WZD ovr153p20
-void Claim_EMS_Page_For_Figure_Set(int16_t figure_index);
+void Claim_EMS_Page_For_Figure_Set(int16_t bufpi);
 
 // WZD ovr153p21
 void Map_Tile_EMS_Page_As_Sandbox(void);
@@ -2274,16 +2274,16 @@ void Generate_Combat_Map(
 );
 
 // WZD ovr154p03
-void Scatter_Tree_Scenery(int16_t TerrType, int16_t combat_location_type);
+void Scatter_Tree_Scenery(int16_t combat_terrain_set, int16_t combat_location_type);
 
 // WZD ovr154p04
-void Scatter_Rock_Scenery(int16_t TerrType, int16_t combat_location_type);
+void Scatter_Rock_Scenery(int16_t combat_terrain_set, int16_t combat_location_type);
 
 // WZD ovr154p05
 void Build_Road_Network(int16_t location_type, int16_t * roads_array);
 
 // WZD ovr154p06
-void Carve_River_Terrain(int16_t * RiverMatrix);
+void Carve_River_Terrain(int16_t * rivers_array);
 
 // WZD ovr154p07
 void Merge_Dirt_Patches(void);
@@ -2313,10 +2313,10 @@ int16_t Get_Combat_Grid_Cell_X(int16_t screen_x, int16_t screen_y);
 int16_t Get_Combat_Grid_Cell_Y(int16_t screen_x, int16_t screen_y);
 
 // WZD ovr154p16
-void Screen_To_Combat_Grid_Cell_X_And_Offset(int16_t screen_x, int16_t screen_y, int16_t * Tile_X, int16_t * InTile_X);
+void Screen_To_Combat_Grid_Cell_X_And_Offset(int16_t screen_x, int16_t screen_y, int16_t * combat_grid_cell_x, int16_t * combat_grid_cell_x_offset);
 
 // WZD ovr154p17
-void Screen_To_Combat_Grid_Cell_Y_And_Offset(int16_t screen_x, int16_t screen_y, int16_t * Tile_Y, int16_t * InTile_Y);
+void Screen_To_Combat_Grid_Cell_Y_And_Offset(int16_t screen_x, int16_t screen_y, int16_t * combat_grid_cell_y, int16_t * combat_grid_cell_y_offset);
 
 // WZD ovr154p18
 void Combat_Cache_Read(void);
@@ -2331,7 +2331,7 @@ void Combat_Cache_Write(void);
 */
 
 // WZD ovr163p01
-void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp);
+void Load_Combat_Terrain_Pictures(int16_t combat_terrain_set, int16_t wp);
 
 // WZD ovr163p02
 void Combat_Compose_Background(void);
@@ -2343,7 +2343,7 @@ void Wall_Rise_Load(int16_t wall_type);
 void Allocate_Combat_Base_Blocks(void);
 
 // WZD ovr163p05
-void Make_Missiles(int16_t missile_count, int16_t Targets, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t type);
+void Make_Missiles(int16_t missile_count, int16_t target_figure_count, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t type);
 
 // WZD ovr163p06
 int16_t Combat_Figure_Load(int16_t unit_type, int16_t bufpi);

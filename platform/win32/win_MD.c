@@ -6,7 +6,7 @@
  * Live mouse events are handled in Win_Window_Proc (win_PFL.cpp).
  *
  * This file carries the Win32 hardware-cursor support, mirroring
- * platform/sdl2/sdl2_MD.c.  Baseline (doc/#AI_Plans/{BRA,PRD,PLAN}-Platform-Input.md)
+ * platform/sdl2/sdl2_MD.c.  Baseline (doc/@AI_Plans/{BRA,PRD,PLAN}-Platform-Input.md)
  * showed the software cursor only reaches the screen at the ~18 fps present
  * cadence.  Here we build a real HCURSOR from the current game cursor sprite so
  * the OS/compositor tracks it at native rate, decoupled from the framebuffer

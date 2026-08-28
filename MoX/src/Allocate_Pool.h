@@ -20,7 +20,7 @@
 
     This module knows nothing about SAMB headers or any MoM concept.
 
-    See doc/#AI_Plans/PRD-Static-Pool-Allocator.md and PLAN-Static-Pool-Allocator.md.
+    See doc/@AI_Plans/PRD-Static-Pool-Allocator.md and PLAN-Static-Pool-Allocator.md.
 */
 
 #ifndef ALLOCATE_POOL_H

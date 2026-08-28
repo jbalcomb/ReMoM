@@ -1,6 +1,6 @@
 /**
  * PFL_Input_Metrics.c — Layer 1 of the Platform-Input responsiveness toolkit (see the header and
- * doc/#AI_Plans/{BRA,PRD,PLAN}-Platform-Input.md).
+ * doc/@AI_Plans/{BRA,PRD,PLAN}-Platform-Input.md).
  *
  * Backend-agnostic: nothing here touches SDL or engine globals.  The windowed backend feeds it three
  * ways -- Note_Tick() per event-handler tick, Note_Poll() per cursor sample, Record_Present() around

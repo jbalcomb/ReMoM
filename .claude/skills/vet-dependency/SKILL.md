@@ -5,7 +5,7 @@ description: Vet a third-party dependency before recommending, installing, or ad
 
 # Vet a Dependency
 
-**This skill is an adapter. The source of truth is [`doc/#Devel/Dependency-Vetting.md`](../../../doc/%23Devel/Dependency-Vetting.md) — read it and follow it.** Do not restate its policy here; it is shared with the other AI agents working this repo and must not drift.
+**This skill is an adapter. The source of truth is [`doc/@Devel/Dependency-Vetting.md`](../../../doc/%23Devel/Dependency-Vetting.md) — read it and follow it.** Do not restate its policy here; it is shared with the other AI agents working this repo and must not drift.
 
 ## Trigger
 

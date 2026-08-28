@@ -3471,7 +3471,7 @@ SAMB_ptr _scroll_paper_seg;
 
 // WZD dseg:C9D2 00 00                                           word_43472 dw 0                         ; DATA XREF: Chancellor_Screen+1Aw ...
 // WZD dseg:C9D4
-int16_t CMB_Scroll_MinHeight;
+int16_t _scroll_text_min_height;
 // WZD dseg:C9D6
 int16_t _scroll_text_height;
 // WZD dseg:C9D8

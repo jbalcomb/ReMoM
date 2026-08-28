@@ -2526,7 +2526,7 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
         Screen_Picture_Capture(start_x, start_y, start_x + 19, start_y + 17, node_warp_scratchpad_seg);
         if(terrain_anim_ctr >= 0)
         {
-            /* OGBUG  this is entirely unnecessary here and will have no effect on what follows */
+            /* OGBUG: this is entirely unnecessary here and will have no effect on what follows */
             warp_node_seed_save = Get_Random_Seed();
             for (shear_array_idx = 0; shear_array_idx < 20; shear_array_idx++)
             {
@@ -2538,7 +2538,7 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                 m_node_warp_shear_array[shear_array_idx] = current_shear;
             }
         }
-        /* OGBUG  replacing the random seed is pointless here, as the function inbetween uses its own generator and can't be manipulated this way */
+        /* OGBUG: replacing the random seed is pointless here, as the function inbetween uses its own generator and can't be manipulated this way */
         tmp_random_seed = Get_Random_Seed();
         Set_Random_Seed(warp_node_seed_save);
         Vanish_Bitmap(node_warp_scratchpad_seg, 50);

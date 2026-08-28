@@ -1,7 +1,7 @@
 /**
  * Platform_Perf.h -- the performance-measurement layer's zone primitive and frame-time sink.
  *
- * See doc/#AI_Plans/{BRA,PRD,PLAN}-Performance-Management.md.  This is the graduated form of the
+ * See doc/@AI_Plans/{BRA,PRD,PLAN}-Performance-Management.md.  This is the graduated form of the
  * hand-toggled PHASE macro that used to live in MoM/src/NEXTTURN.c (PRD FR6/FR7, PLAN step 4).
  *
  * WHAT IT REPLACES AND WHY

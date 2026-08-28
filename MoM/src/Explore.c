@@ -594,7 +594,7 @@ void Contact_Other_Player(int16_t unit_idx, int16_t wp)
     {
         return;
     }
-    // OGBUG  only checks the unit's active enchantments, t fails to check for  natural invisibility abilities (e.g. Nightstalker) or  invisibility granted by magical items.
+    // OGBUG: only checks the unit's active enchantments, t fails to check for  natural invisibility abilities (e.g. Nightstalker) or  invisibility granted by magical items.
     if((unit_ptr->enchantments & UE_INVISIBILITY) != 0)
     {
         return;

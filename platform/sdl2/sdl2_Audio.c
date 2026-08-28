@@ -290,7 +290,7 @@ Mix_PlayChannel(0, wav_sound_chunk3, 0);
    device stream (music + all SFX channels), i.e. exactly what the player hears, already summed and
    already in the device format.  Writing that gives an audio track that lines up with the captured
    video by construction.  Costs nothing when no capture is running.
-   See doc/#AI_Plans/PRD-Scripted-Demo-Capture.md. */
+   See doc/@AI_Plans/PRD-Scripted-Demo-Capture.md. */
 static void sdl2_Capture_PostMix(void * userdata, uint8_t * stream, int len)
 {
     (void)userdata;

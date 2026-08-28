@@ -80,7 +80,7 @@ int Platform_Get_Window_Width(void)
 
 /* ========================================================================= */
 /*  CLAUDE: Hardware-cursor path (Platform-Input follow-on) -- SDL3 port of   */
-/*  the SDL2 implementation in sdl2_MD.c.  See doc/#AI_Plans/PLAN-Platform-   */
+/*  the SDL2 implementation in sdl2_MD.c.  See doc/@AI_Plans/PLAN-Platform-   */
 /*  Input.md.  Builds a real SDL cursor from the current game cursor sprite   */
 /*  so the compositor tracks it at native rate, decoupled from the ~18 fps    */
 /*  framebuffer present.  Opt-in via REMOM_HW_CURSOR=1.                        */

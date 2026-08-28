@@ -1,0 +1,531 @@
+# STUB and WIP Function TODO List
+
+## AdvsrScr
+- [ ] Cartograph_Screen_Draw_Map__WIP
+- [ ] Cartographer_Screen__WIP
+- [ ] Cartographer_Screen_Draw__WIP
+
+## AIDATA
+- [ ] AI_Magic_Strategy__WIP
+
+## AIDUDES
+- [ ] AI_Landmass_Values_And_Strengths
+- [ ] AI_Next_Turn
+- [ ] CONTX_CreateChains__WIP
+- [ ] CONTX_CreateLChains__WIP
+- [ ] CONTXXX_Map
+
+## AIMOVE
+- [x] AI_Stacks_Assign_Target
+- [x] AI_CanSettleOffPlane__STUB — renamed to AI_Find_Tower_To_Settle_Elsewhere; body was already real (mis-named), compiles clean as of 2026-05-30
+- [x] AI_Evaluate_Continents
+- [x] AI_Stacks_Garrison_Sites
+- [x] AI_Stacks_Move_Out_NonMilitary_Garrisoned
+- [x] AI_Choose_War_Landmass
+- [x] AI_Stacks_Wartime_Ocean_Movement_And_Cleanup
+- [x] AI_Stacks_Roamers_Target_Or_Deploy
+- [x] AI_Stacks_Order_To_War_Landmass
+- [x] AI_Stacks_Ferry_Add_Location
+- [x] AI_Stacks_Survey_Expedition_Forces
+- [x] AI_Stacks_Survey_Expedition_Forces_Stack
+- [x] AI_Stacks_Reorder_Settle_Elsewhere — renamed from AI_SendToColonize__WIP; done-done 2026-06-03 (R1 + Y-bounds fixed, GEMINI variant deleted)
+- [ ] AI_Set_Unit_Orders
+- [x] AI_Reevaluate_Continent
+- [x] AI_Stacks_Relocate_Roamers
+- [x] AI_Stacks_Ocean_Landmass_Orders
+- [x] AI_Stacks_Stage_Expedition_Forces
+- [x] AI_Stacks_Setup_Ferry
+- [ ] TILE_AI_FindEmptyLnd__WIP
+- [ ] Next_Nearest_Ferry_Square
+- [ ] TILE_NextFreeLand
+
+## AISPELL
+- [ ] AI_Research_Picker__STUB — NOT FOUND: no definition in source; only a comment reference at CITYCALC.c:988 (verified 2026-07-21)
+- [x] AI_Spell_Select — done-done 2026-06-11 (walkthrough doc, `__STUB` suffix dropped, GEMINI deleted, variable casing normalized, 9 leaf pickers stubbed `return 0;`)
+- [ ] AITP_Change_Terrain
+- [ ] AITP_Spell_Ward
+- [ ] AITP_Spell_Ward
+- [ ] AITP_Disjunction
+- [ ] AITP_Attack_Wizard
+- [ ] AITP_Unit_Enchantment
+- [ ] AITP_City_Enchantment
+
+## capture
+- [x] F11_Key__WIP
+- [x] Screen_Flic_Capture — was Screen_Flic_Capture__STUB; suffix dropped in source, def capture.c:132 (verified 2026-07-21)
+- [x] VGA_GetDACBlock
+- [x] VGA_ReadScreenLine
+- [x] Screen_Picture_Capture()  // WZD s24p07  // MoO2  Module: capture  Screen_Flic_Capture()
+- [x] Capture_Screen_Block()    // WZD s24p08
+
+## City_ovr55
+- [ ] Resource_Breakdown__STUB
+- [ ] Resource_Breakdown_Draw__STUB
+
+## CITYCALC
+- [ ] WIZ_Get_Astr_ArmyStr__STUB
+- [ ] WIZ_Get_Astr_Power__STUB
+- [ ] WIZ_Get_Astr_Resrch__STUB
+- [ ] WIZ_Get_Nation_Size__STUB
+
+## CITYSCAP
+- [ ] Cityscape_Roads_1__WIP
+- [ ] Cityscape_Roads_2__WIP
+- [ ] Cityscape_Roads_3__WIP
+- [ ] Cityscape_Roads_4__WIP
+- [ ] Cityscape_Roads_5__WIP
+- [ ] Cityscape_Window__WIP
+
+## CityScr
+- [ ] City_Screen__WIP
+- [ ] City_Screen_Add_Fields__WIP
+- [ ] City_Screen_Draw2__WIP
+- [ ] City_Screen_Draw__WIP
+
+## Combat
+- [x] Tactical_Combat_Draw_Buttons — impl (Combat.c:5496); done-done 2026-08-27 (doc/@CodeReview/Combat-Combat_Screen.md; faithful 1:1, builds clean)
+- [x] Apply_Mana_Leak — impl (Combat.c:11775); done-done 2026-08-27 (doc/@CodeReview/Combat-Init_Prep_Etc.md; faithful 1:1, builds clean)
+- [x] Battle_Unit_Pict_Open — impl (Combat.c:11967); done-done 2026-08-27 (doc/@CodeReview/Combat-Combat_Summon.md; faithful 1:1, builds clean); OGBUG preserved: no return value when every slot is taken
+- [x] Eliminated_Opponent — impl (Combat.c:12017); done-done 2026-08-27 (doc/@CodeReview/Combat-Battle_Unit_Process_Attack.md; faithful 1:1, builds clean)
+- [x] Reload_Battle_Unit_Move_Sound — impl (Combat.c:15801); done-done 2026-08-27 (doc/@CodeReview/Combat-Move_Battle_Unit.md; faithful 1:1, builds clean)
+- [x] Battle_Unit_Is_Summoned_Creature — impl (Combat.c:16055); done-done 2026-08-27 (doc/@CodeReview/Combat-Combat.md; faithful 1:1, builds clean)
+- [x] Target_Is_Visible — impl (Combat.c:2965); done-done 2026-08-27 (doc/@CodeReview/Combat-Spell_Cast_AI_Target.md; faithful 1:1, builds clean)
+- [x] Combat_City_Capture — impl (Combat.c:16312); done-done 2026-08-27 (doc/@CodeReview/Combat-Combat.md; faithful 1:1, builds clean); deviation: raze-branch fame penalty uses a local where the OG reuses CMB_Gold_Reward
+- [x] o153p24_empty_function — impl (Combat.c:19859); done-done 2026-08-27 (doc/@CodeReview/Combat-Combat.md; faithful 1:1, builds clean); empty in the listing too; called from Combat()
+- [x] Player_City_At_Square — impl (Combat.c:4222); done-done 2026-08-27 (doc/@CodeReview/Combat-End_Of_Combat.md; faithful 1:1, builds clean)
+- [x] Unit_Try_To_Move — impl (Combat.c:4451); done-done 2026-08-27 (doc/@CodeReview/Combat-End_Of_Combat.md; faithful 1:1, builds clean)
+- [x] Next_Battle_Unit_Nearest_Available — impl (Combat.c:6463); done-done 2026-08-26 (doc/@CodeReview/Combat-Combat_Figure_Compose.md; faithful 1:1, builds clean)
+- [x] Draw_Active_Unit_Stats_And_Icons — impl (Combat.c:5618); done-done 2026-08-26 (doc/@CodeReview/Combat-Combat_Figure_Compose.md; faithful 1:1, builds clean); D: movement-mode tests are two independent ifs in the asm, else-if in production
+- [x] Draw_Active_Unit_Damage_Bar — impl (Combat.c:5736); done-done 2026-08-26 (doc/@CodeReview/Combat-Combat_Figure_Compose.md; faithful 1:1, builds clean)
+- [x] Battle_Unit_Melee_Attack_Icon — impl (Combat.c:7425); done-done 2026-08-26 (doc/@CodeReview/Combat-Combat_Screen.md; faithful 1:1, builds clean)
+- [x] Battle_Unit_Ranged_Attack_Icon — impl (Combat.c:7478); done-done 2026-08-26 (doc/@CodeReview/Combat-Combat_Screen.md; faithful 1:1, builds clean); OGBUG preserved: four srat_ cases unreachable
+- [x] Screen_To_Combat_Grid_Cell_X_And_Offset — impl (Combat.c:22186); done-done 2026-08-25 (doc/@CodeReview/Combat-Combat_Screen_Map_Draw.md; faithful 1:1, builds clean)
+- [x] Screen_To_Combat_Grid_Cell_Y_And_Offset — impl (Combat.c:22220); done-done 2026-08-25 (doc/@CodeReview/Combat-Combat_Screen_Map_Draw.md; faithful 1:1, builds clean)
+- [x] Combat_Cache_Read — impl (Combat.c:22235); done-done 2026-08-25 (doc/@CodeReview/Combat-Combat_Screen.md; faithful 1:1, builds clean)
+- [x] Calc_Battlefield_Bonuses — impl (Combat.c:13436); done-done 2026-08-25 (doc/@CodeReview/Combat-Combat.md; faithful 1:1, builds clean)
+- [x] Raze_City_Prompt — impl (Combat.c:16841); done-done 2026-08-25 (doc/@CodeReview/Combat-End_Of_Combat.md; faithful 1:1, builds clean)
+- [x] Raze_City_Prompt_Draw — impl (Combat.c:16910); done-done 2026-08-25 (doc/@CodeReview/Combat-End_Of_Combat.md; faithful 1:1, builds clean); byte-identical to Confirmation_Box_Draw, copied into ovr124
+- [x] Get_Effective_Hits — impl (Combat.c:8485); done-done 2026-08-25 (doc/@CodeReview/Combat-Miscellaneous.md; faithful 1:1, builds clean)
+- [x] NIU_Enemy_Stack_Combat — impl (Combat.c:3511); done-done 2026-08-25 (doc/@CodeReview/Combat-Miscellaneous.md; faithful 1:1, builds clean); R1 declaration order + missing bp-6 Plane local fixed
+- [x] NIU_Combat_Redraw_Main_Screen — impl (Combat.c:3569); done-done 2026-08-25 (doc/@CodeReview/Combat-Miscellaneous.md; faithful 1:1, builds clean); R2 declaration order fixed
+- [x] Combat_Grid_Screen_Coordinates — impl (Combat.c:22108); done-done 2026-08-25 (doc/@CodeReview/Combat-Miscellaneous.md; faithful 1:1, builds clean)
+- [x] NX_IDK_CombatInit_Tactical — renamed to NIU_Allocate_And_Build_Battlefield (Combat.c:18415); done-done 2026-08-25 (doc/@CodeReview/Combat-Miscellaneous.md; faithful 1:1, builds clean)
+- [x] NX_EmptyFxn_o153p22 — renamed to o153p22_empty_function (Combat.c:19852); done-done 2026-08-25 (doc/@CodeReview/Combat-Miscellaneous.md; faithful 1:1, builds clean); empty in the listing too, nothing calls it
+- [x] Find_Undead_Creator_Type — was CMB_GetUndeadCreator; done-done 2026-07-23 (Combat.c:14928; faithful 1:1, builds clean; B1 cross-player hero-slot index preserved — see doc/@CodeReview/SPLMASTR-Undead_Animation.md)
+- [ ] AI_Set_Unit_Action_Mode — renamed from AI_BU_AssignAction__WIP; impl (CMBTAI.c:968), needs done-done review (name verified 2026-07-21)
+- [x] AI_BU_GetAttackValue__STUB
+- [ ] AI_Execute_Unit_Action — renamed from AI_BU_ProcessAction__WIP; impl (CMBTAI.c:268), needs done-done review (name verified 2026-07-21)
+- [ ] AI_BU_SelectAction__WIP — renamed to Choose_Target_And_Action (CMBTAI.c:1153); body substantive, needs done-done review
+- [ ] AI_CMB_PlayTurn__WIP — renamed to Auto_Cast_Spell_And_Do_Combat_Turn (Combat.c:3725); body substantive, needs done-done review
+- [ ] AI_Build_Castable_Combat_Spell_List — impl (Combat.c:18318), needs done-done review; AI Combat Spell layer
+- [ ] AI_Score_Combat_Spell — impl (Combat.c:16986), needs done-done review; AI Combat Spell layer
+- [x] AI_FightorFlight__STUB
+- [ ] AI_MoveBattleUnits__WIP
+- [x] AI_RestrictToCity__WIP — renamed to Update_Move_Map_City_Perimeter_Restrictions (Combat.c:15722); done-done 2026-08-25 (doc/@CodeReview/Combat-Miscellaneous.md; faithful 1:1, builds clean)
+- [ ] AI_Select_Combat_Spell — impl (Combat.c:16937), needs done-done review; AI Combat Spell layer
+- [ ] AI_Prepare_Combat_Realm_Threats — impl (Combat.c:18174), needs done-done review; AI Combat Spell layer
+- [ ] AI_Build_Unit_Realm_Threat_Percentages — impl (Combat.c:18232), needs done-done review; AI Combat Spell layer
+- [x] AITP_Combat_Spell — done-done 2026-07-07 (walkthrough doc doc/ComputerPlayer/Combat-AITP_Combat_Spell.md; faithful 1:1 to AITP_CombatSpell__STUB.asm; R1 summon-exhaustion + R2 buff-mask + R3 case-16 write-back fixed; builds clean)
+- [ ] AITP_CracksCall — impl (Combat.c:14763), needs done-done review; AI Combat Spell layer
+- [ ] AITP_DarknessLight — impl (Combat.c:9252), needs done-done review; AI Combat Spell layer
+- [ ] AITP_DispelMagic — impl (Combat.c:9453), needs done-done review; AI Combat Spell layer
+- [ ] AITP_Disrupt — impl (Combat.c:14708), needs done-done review; AI Combat Spell layer
+- [ ] AITP_EarthToMud — impl (Combat.c:14588), needs done-done review; AI Combat Spell layer
+- [ ] AITP_Healing — impl (Combat.c:9281), needs done-done review; AI Combat Spell layer
+- [ ] AITP_HolyWord — impl (Combat.c:10215), needs done-done review; AI Combat Spell layer
+- [ ] AITP_RecallHero — impl (Combat.c:14876), needs done-done review; AI Combat Spell layer
+- [ ] AITP_WarpCreature — impl (Combat.c:9356), needs done-done review; AI Combat Spell layer
+- [ ] AITP_WarpWood — impl (Combat.c:9316), needs done-done review; AI Combat Spell layer
+- [x] Battle_Unit_Action — done-done 2026-08-04 (walkthrough doc doc/@CodeReview/Combat-Battle_Unit_Action.md; renamed from Battle_Unit_Action__WIP, Combat.c:2719; 3 findings raised and fixed across 2 subfunctions, incl. Battle_Unit_Has_Flight dropping _UNITS[].enchantments so overland Flight never registered; Battle_Unit_Is_Within_City compared and faithful; builds clean 2026-08-04)
+- [x] Battle_Unit_Attack — done-done 2026-08-04 (walkthrough doc doc/@CodeReview/Combat-Battle_Unit_Attack.md; renamed from Battle_Unit_Attack__WIP, Combat.c:13571; 9 findings raised and fixed across the function and 3 subfunctions, incl. Wall Crusher never writing the destroyed wall and 9 of 13 projectile types rendering as a lightning bolt with no sound; Melee_Animation, Set_Gibs, Clear_Gibs and Reload_Melee_Sound compared and faithful; builds clean 2026-08-04)
+- [x] Battle_Unit_Special_Stats — done-done 2026-08-05 (walkthrough doc doc/@CodeReview/Combat-Init_Prepare_Etc.md; renamed from BU_Apply_Battlefield_Effects__WIP and moved to COMBINIT.c:1189; was ~92% unwritten, all thirty effect blocks written and checked against 1137 asm lines; 2 findings raised and fixed (Shatter store order had repaired an OGBUG; an else-if where the original has two ifs); node-aura realm pairing fixed via e_COMBAT_NODE_TYPE)
+- [x] BU_ApplyDamage  AKA Battle_Unit_Commit_Damage
+- [x] Battle_Unit_Attack_Target — done-done 2026-08-04 (walkthrough doc doc/@CodeReview/Combat-Battle_Unit_Attack_Target.md; renamed from BU_AttackTarget__WIP, Combat.c:12433; 4 findings fixed incl. a missing ~120-line ranged-Haste block and an out-of-bounds write into the caller's array; Check_Attack_Ranged and Apply_Fear_Attack compared and faithful; builds clean 2026-08-04)
+- [x] BU_CheckFlight__WIP — done-done 2026-08-03 (walkthrough doc doc/@CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Is_Airborne, Combat.c:5938; 1:1 with ovr098/BU_CheckFlight__WIP.asm)
+- [ ] Battle_Unit_Curse_Effects
+- [ ] BU_GetInstaMoveType__WIP
+- [ ] Battle_Unit_Has_Spell_Ability
+- [x] BU_IsVisible__STUB
+- [x] BU_MeleeWallCheck — done-done 2026-08-04 (walkthrough doc doc/@CodeReview/Combat-Battle_Unit_Action.md; renamed Check_Attack_Melee_City_Wall, Combat.c:14086; R3 split three Move_Flags tests back apart per asm:23/32/41; Flying Fortress OGBUG confirmed legit, teleport/merging OGBUG disproved; builds clean 2026-08-04)
+- [ ] BU_MoveConfused__WIP
+- [x] BU_ProcessAttack__WIP — done-done 2026-08-04 (walkthrough doc doc/@CodeReview/Combat-Battle_Unit_Process_Attack.md; renamed Battle_Unit_Process_Attack, Combat.c:16429; 24 findings raised and fixed across the function and 12 subfunctions, incl. an infinite loop and a damage-doubling heal; builds clean 2026-08-04)
+- [x] BU_SetBaseAnims__WIP — done-done 2026-08-03 (walkthrough doc doc/@CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Set_Animation_Flags, Combat.c:9411; Param0 -> unit_type union arm fixed; D2 dead-argument divergence recorded)
+- [ ] BU_SetCityMovement__WIP
+- [x] BU_SetVisibility — done-done 2026-08-03 (walkthrough doc doc/@CodeReview/Combat-Move_Battle_Unit.md; renamed Battle_Unit_Set_Invisibility_Effect, Combat.c:9286; 1:1 with ovr105/BU_SetVisibility__WIP.asm)
+- [x] BU_SortSlowestFirst__WIP
+- [x] Check_For_Winner — was Check_For_Winner__WIP; suffix dropped in source, def Combat.c:6939; done-done 2026-08-25 (doc/@CodeReview/Combat-Combat.md; faithful 1:1, builds clean)
+- [x] Allocate_Combat_Base_Blocks — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:22599, faithful against ovr163/CMB_BaseAllocs__WIP.asm
+- [ ] CMB_CE_Refresh__WIP — NOT FOUND: no definition in source; appears only in comments (verified 2026-07-21)
+- [ ] Combat_Compose_Background
+- [ ] CMB_ComposeBookBG__WIP
+- [x] Combat_Screen_Load_Resources — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:6718, faithful against ovr103/CMB_LoadResources__WIP.asm
+- [x] Begin_Combat_Turn — done-done 2026-08-05 (walkthrough doc doc/@CodeReview/Combat-Init_Prepare_Etc.md; renamed from CMB_PrepareTurn__WIP, Combat.c:2286; 1 finding fixed: the Web block was hoisted out of its guard and dropped action = bua_Finished; Add_City_Damage_From_Battle_Units_Within compared and faithful)
+- [ ] Combat_Next_Turn — renamed from CMB_ProgressTurnFlow__WIP (Combat.c:3745); body substantive, needs done-done review
+- [x] Item_Powers_To_Attack_Attributes — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen.md); COMBINIT.c:224, faithful against ovr116/BU_Apply_Item_Attack_Specials.asm
+- [x] Spawn_Dark_Wall_Entities — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from CMB_SpawnDarkWall__WIP, Combat.c:19036, faithful against ovr153/CMB_SpawnDarkWall.asm
+- [x] Spawn_Figure_Entity — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from CMB_SpawnFigure__WIP, Combat.c:19358, faithful against ovr153/CMB_SpawnFigure__WIP.asm
+- [x] Spawn_Fire_Wall_Entities — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from CMB_SpawnFireWall__WIP, Combat.c:19177, faithful against ovr153/CMB_SpawnFireWall.asm
+- [x] Spawn_Stone_Wall_Entities — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from CMB_SpawnStoneWall__WIP, Combat.c:18917, faithful against ovr153/CMB_SpawnStoneWall.asm
+- [x] Spawn_Structure_Entities — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from CMB_SpawnStructures__WIP, Combat.c:18859, faithful against ovr153/CMB_SpawnStructures.asm
+- [x] Build_Battlefield — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:19987, faithful against ovr154/CMB_Terrain_Init__WIP.asm
+- [x] Set_Terrain_Tile_Types — done-done 2026-08-08 (doc/@CodeReview/Combat-Generate_Combat_Map.md); renamed from CMB_TileGen__WIP, Combat.c:21501, faithful against ovr154/CMB_TileGen__WIP.asm
+- [x] Prepare_All_Battle_Units — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen.md); renamed from CMB_Units_Init__WIP, Combat.c:4827, faithful against ovr098/CMB_Units_Init__WIP.asm; 2 OGBUGs preserved
+- [x] Combat — done-done 2026-08-13 (doc/@CodeReview/Combat-Combat.md); renamed from Combat__WIP, Combat.c:3103, faithful against ovr096/Combat__WIP.asm; 1 finding and 5 deviations applied, builds clean; Lair_Make_Guardians (Combat.c:3447), Lair_Combat_Do (Combat.c:3487) and Update_Defender_Hostility (Combat.c:3503) walked with it and are faithful
+- [x] Combat_Figure_Effect — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from Combat_Figure_Effect__WIP, Combat.c:7047, faithful against ovr105/Combat_Figure_Effect__WIP.asm
+- [x] Combat_Grid_Entities — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen_Map_Draw.md); renamed from Combat_Grid_Entities__WIP, Combat.c:5716, faithful against ovr099/Combat_Grid_Entities__WIP.asm
+- [x] Combat_Grid_Entity_Create — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen_Map_Draw.md); Combat.c:19762, faithful against ovr153/Combat_Grid_Entity_Create__WIP.asm
+- [x] Combat_Screen__WIP — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen.md); renamed Combat_Screen, Combat.c:1405, faithful against ovr090/Combat_Screen__WIP.asm
+- [x] Combat_Screen_Map_Draw — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen_Map_Draw.md); Combat.c:18423, faithful against ovr153/Combat_Screen_Map_Draw__WIP.asm
+- [x] Combat_Screen_Map_Draw_Entities — done-done 2026-08-08 (doc/@CodeReview/Combat-Combat_Screen_Map_Draw.md); Combat.c:18729, faithful against ovr153/Combat_Screen_Map_Draw_Entities__WIP.asm
+- [x] Combat_Spell_Target_Screen — done-done 2026-08-23 (doc/@CodeReview/Combat-Combat_Spell_Target_Screen.md); renamed from Combat_Spell_Target_Screen__WIP, Combat.c:10434, faithful against ovr113/Combat_Spell_Target_Screen__WIP.asm (1,414 asm lines); 5 findings fixed — the Dispel Magic vortex scan and ~840 asm lines of per-spell target-validity checking were missing entirely
+- [x] Combat_Screen_Assign_Mouse_Images — done-done 2026-08-23 (doc/@CodeReview/Combat-Combat_Spell_Target_Screen.md); Combat.c:10247, faithful against ovr113/Combat_Screen_Assign_Mouse_Images.asm (273 asm lines); 3 findings fixed — inverted controller test, missing animated cast cursor, if-chain that is a switch
+- [x] Combat_Spell_Target_Screen_Draw — done-done 2026-08-23 (doc/@CodeReview/Combat-Combat_Spell_Target_Screen.md); Combat.c:10415, faithful against ovr113/Combat_Spell_Target_Screen_Draw.asm (68 asm lines)
+- [x] Combat_Cast_Spell — done-done 2026-08-18 (doc/@CodeReview/Combat-Spell_Cast.md); CMBMAGIC.c:218, faithful against ovr112/Combat_Cast_Spell__WIP.asm (1,379 asm lines); walked phase-for-phase 2026-07-07, verdict carried when Combat-Combat_Cast_Spell.md was retired into the session doc
+- [x] Combat_Cast_Spell_Error — done-done 2026-08-18 (doc/@CodeReview/Combat-Spell_Cast.md); Combat.c:6649, faithful against ovr103/zCombat_Cast_Spell_Error.asm (26 asm lines)
+- [x] Combat_Cast_Spell_Message — done-done 2026-08-18 (doc/@CodeReview/Combat-Spell_Cast.md); Combat.c:12049, faithful against ovr113/Combat_Cast_Spell_Message.asm (276 asm lines)
+- [x] Combat_Cast_Spell_With_Caster — done-done 2026-08-18 (doc/@CodeReview/Combat-Spell_Cast.md); Combat.c:6863, faithful against ovr103/zCombat_Cast_Spell_With_Caster.asm (111 asm lines); swapped branch arms and two switch statements reconstructed as if chains, all fixed
+- [x] Combat_Casting_Cost_Multiplier — done-done 2026-08-18 (doc/@CodeReview/Combat-Spell_Cast.md); CMBMAGIC.c:1448, faithful against ovr112/Combat_Casting_Cost_Multiplier.asm (109 asm lines); duplicated wrap correction, min/max inversion and two flattened early returns, all fixed
+- [x] Do_Legal_Spell_Check — done-done 2026-08-18 (doc/@CodeReview/Combat-Spell_Cast.md); CMBMAGIC.c:1072, faithful against ovr112/Do_Legal_Spell_Check__WIP.asm (767 asm lines); two inverted controller_idx tests fixed
+- [x] End_Of_Combat — done-done 2026-08-10 (doc/@CodeReview/Combat-End_Of_Combat.md); renamed from End_Of_Combat, Combat.c:14126, faithful against ovr123/End_Of_Combat.asm; review covers the whole ovr123 overlay plus the ovr098 retreat chain (Retreat_From_Combat, Process_Retreating_Units, Build_Flee_Loss_Message) and ovr124/Raze_Check — 11 functions, 6,028 asm lines, 44 findings
+- [x] Generate_Combat_Map — done-done 2026-08-08 (doc/@CodeReview/Combat-Generate_Combat_Map.md); renamed from Generate_Combat_Map__WIP, Combat.c:20261, faithful against ovr154/Generate_Combat_Map.asm; all eight subfunctions implemented, renamed and walked
+- [x] Move_Battle_Unit__WIP — done-done 2026-08-03 (walkthrough doc doc/@CodeReview/Combat-Move_Battle_Unit.md; suffix already dropped in source, Combat.c:3067; instant-move flat-2 deduction and move_anim_ctr increment fixed; D1 pacing/sound-size divergences recorded)
+- [ ] STK_CaptureCity__WIP
+- [x] Build_Flee_Loss_Message — done-done 2026-08-10 (doc/@CodeReview/Combat-End_Of_Combat.md); renamed from STK_ComposeFleeLost__STUB, Combat.c:5099, faithful against ovr098/STK_ComposeFleeLost__STUB.asm
+- [x] Strategic_Combat — done-done 2026-08-11 (doc/@CodeReview/Combat-Strategic_Combat.md); renamed from Strategic_Combat__WIP, Combat.c:7787, faithful against ovr110/Strategic_Combat__STUB.asm; 8 findings and 5 deviations applied, all locals named, frame order preserved, builds clean; Strategic_Combat_Allocate (Combat.c:8196) walked with it
+- [ ] AITP_Disintegrate — MISSING (comment-only, Combat.c:9397); likely not needed (Disintegrate targeted inline in AITP_Combat_Spell's resistance-kill case); verify no caller, then strike
+- [ ] WIZ_GetLastRangedStr__WIP
+
+- [x] Add_Combat_Enchantment_Fields — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:4700, faithful against ovr098/Add_Combat_Enchantment_Fields.asm (103 asm lines)
+- [x] Auto_Cast_Spell_And_Do_Combat_Turn — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:3725, faithful against ovr098/Auto_Cast_Spell_And_Do_Combat_Turn.asm (40 asm lines)
+- [x] Combat_Cache_Write — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:22279, faithful against ovr154/Combat_Cache_Write.asm (64 asm lines)
+- [x] Combat_Info_Effects_Count — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:6223, faithful against ovr103/Combat_Info_Effects_Count.asm (139 asm lines)
+- [x] Combat_Node_Type — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:6307, faithful against ovr103/Combat_Node_Type.asm (82 asm lines)
+- [x] Combat_Screen_Draw — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:5177, faithful against ovr099/Combat_Screen_Draw.asm (644 asm lines)
+- [x] Combat_Structure — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:15785, faithful against ovr124/Combat_Structure.asm (84 asm lines)
+- [x] Draw_Combat_Unit_Display — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:7614, faithful against ovr105/Draw_Combat_Unit_Display.asm (566 asm lines)
+- [x] Draw_Spell_Information_Window — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:5565, faithful against ovr099/Draw_Spell_Information_Window.asm (125 asm lines)
+- [x] Load_Combat_Terrain_Pictures — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:22339, faithful against ovr163/Load_Combat_Terrain_Pictures.asm (161 asm lines)
+- [x] Map_Tile_EMS_Page_As_Sandbox — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:19841, faithful against ovr153/EMM_TILEX_Init__HACK.asm (41 asm lines)
+- [x] Move_Confused — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:6685, faithful against ovr103/Move_Confused.asm (77 asm lines)
+- [x] Next_Battle_Unit — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:6431, faithful against ovr103/Next_Battle_Unit.asm (89 asm lines)
+- [x] Switch_Active_Battle_Unit — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:2711, faithful against ovr091/Switch_Active_Battle_Unit.asm (16 asm lines)
+- [x] Turn_Off_Auto_Combat — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:5090, faithful against ovr098/Turn_Off_Auto_Combat.asm (12 asm lines)
+- [x] Undeployable_Battle_Units_On_Water — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:15836, faithful against ovr124/Undeployable_Battle_Units_On_Water.asm (135 asm lines)
+- [x] Update_Combat_Enchantments_Icon_And_Help — done-done 2026-08-15 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:3622, faithful against ovr098/Update_Combat_Enchantments_Icon_And_Help.asm (108 asm lines)
+- [x] Combat_Load_Spell_Sound_Effect — done-done 2026-08-20 (doc/@CodeReview/Combat-Combat_Spell_Animation.md); Combat.c:16051, faithful against ovr124/Combat_Load_Spell_Sound_Effect.asm (64 asm lines); moved here from Combat-Miscellaneous.md, which had it homeless
+- [x] Wall_Rise_Load — done-done 2026-08-20 (doc/@CodeReview/Combat-Combat_Spell_Animation.md); Combat.c:22554, faithful against ovr163/Wall_Rise_Load.asm (109 asm lines); 1 finding fixed — the wall_type dispatch is a switch
+## CONQUEST
+- [x] Conquest_Animation_Draw
+- [x] Conquest_Animation_Draw_Setup_Zap_Scene
+- [x] Conquest_Animation_Draw_Conquerors_Approach
+- [x] Conquest_Animation_Draw_Zapped_Wizard
+- [x] Conquest_Animation_Draw_Zap_Strike
+- [x] CP_Is_Dead
+- [x] Lose_Animation
+- [x] Win_Animation
+- [x] Conquest_Animation_Draw_End_Pose
+- [x] Banish_Wizard
+- [x] Resolve_Wizard_Conquest
+- [x] Conquest_Animation
+
+## DIPLOMAC
+- [ ] Change_Relations — renamed from Change_Relations__WIP; impl (DIPLOMAC.c:3450), needs done-done review (name verified 2026-07-21)
+- [ ] DIPL_sub_72DB6__STUB
+- [ ] Diplomacy_Exchange_Spell__WIP
+- [ ] Diplomacy_Propose_Treaty__WIP
+- [ ] Diplomacy_Screen__WIP
+- [ ] Diplomacy_Screen_Draw__WIP
+- [ ] Diplomacy_Screen_Load__WIP
+- [ ] IDK_Npc_Counteroffer__STUB
+- [ ] IDK_Npc_Target_Player__STUB
+- [ ] Npc_Proposal__WIP
+- [ ] NPC_To_Human_Diplomacy
+- [ ] NPC_To_NPC_Treaty_Negotiations — renamed from NPC_To_NPC_Treaty_Negotiations__STUB; impl (DIPLOMAC.c:4894), needs done-done review (name verified 2026-07-21)
+
+## EMM
+- [ ] EMM_ReleaseAll__STUB
+
+## EXIT
+- [ ] DBG_Close_ERROR_LOG__STUB
+- [ ] DBG_Open_ERROR_LOG__STUB
+
+## Explore
+- [ ] Update_Scouted_And_Contacted — renamed from Update_Scouted_And_Contacted__WIP; impl (Explore.c:292), needs done-done review (name verified 2026-07-21)
+
+## Fields
+- [ ] GUI_MoveDlgHighlight__STUB
+
+## FLIC_Draw
+- [x] Shear_Bitmap_Y            // WZD s30p03
+- [x] Shear_Array_Bitmap_Y      // WZD s30p04; was LBX_IMG_VertWarp; done-done 2026-07-23 (FLIC_Draw.c:696; faithful 1:1, builds clean)
+- [x] Shear_Array_Bitmap_X      // WZD s30p05; was LBX_IMG_HorzWarp; done-done 2026-07-23 (FLIC_Draw.c:813; faithful 1:1, builds clean; B1-B3 OG bugs preserved)
+- [ ] UU_LBX_IMG_ColorShift         // WZD s30p07
+- [ ] UU_LBX_IMG_CReplaceRect       // WZD s30p08
+- [ ] VGA_WndDrawRotateImg()        // WZD s30p20
+- [ ] VGA_WndDrawImageRect()        // WZD s30p21
+- [ ] UU_VGA_WndDrawTransform()     // WZD s30p22
+- [ ] VGA_RotateRect()              // WZD s30p23
+- [ ] UU_LBX_IMG_CropRect()         // WZD s30p29
+- [ ] UU_LBX_IMG_FullGScale()       // WZD s30p31
+- [ ] UU_LBX_IMG_ExtGScaleEC()      // WZD s30p32
+- [ ] UU_LBX_IMG_ExtGrayScale()     // WZD s30p33
+- [ ] UU_LBX_IMG_DrawRect()         // WZD s30p45
+- [ ] VGA_DrawPartEmsImg()          // WZD s32p01
+- [ ] EMM_MapNextIMGPages()         // WZD s32p02
+- [ ] VGA_DrawPartEmsImg_R()        // WZD s32p03
+- [ ] Add_Picture_To_Bitmap_EMM()   // WZD s33p03
+- [ ] EMM_MapNextIMGPages2()        // WZD s33p04
+- [ ] UU_LBX_IMG_GetIntensity()     // WZD s33p10
+- [ ] Vanish_Bitmap__WIP()          // WZD s33p15
+- [ ] Gray_Scale_Bitmap()           // WZD s33p16 // MoO2  Module: bitmap  Gray_Scale_Bitmap()
+- [x] Inverse_Gray_Scale_Bitmap — done-done 2026-08-08; renamed from LBX_IMG_RevGrayscale__STUB, FLIC_Draw.c:3983, faithful against seg033/LBX_IMG_RevGrayscale.asm  // WZD s33p17
+- [x] DUPE_Inverse_Gray_Scale_Bitmap — done-done 2026-08-08; FLIC_Draw.c:4048, byte-identical copy, faithful against seg033/UU_DUP_RevGrayscale.asm  // WZD s33p18
+- [ ] RNG_GFX_Random__WIP()         // WZD s33p19
+
+## Fonts
+- [ ] VGA_SlideColors__STUB
+
+## Graphics
+- [ ] DOS_PrintString__STUB
+- [x] WZD s14p11 UU_Interlaced_Fill
+- [x] WZD s14p12 UU_VGA_DrawRect
+- [x] WZD s14p13 UU_VGA_WndDrawRect
+- [x] WZD s14p14 UU_VGA_DrawDblRect
+
+## INITGAME
+- [x] Init_CP_Strategy
+- [ ] NEWG_FinalizeTables__WIP
+
+## Input
+- [ ] Process_Direction_Key__STUB
+
+## Items
+- [ ] AI_Process_Item_Pool__STUB
+
+## Lair
+- [ ] Lair_Combat__WIP
+
+## LOADER
+- [ ] Spellbook_Load_Small_Pictures — renamed from Spellbook_Load_Small_Pictures__WIP; impl (LOADER.c:1614), needs done-done review (name verified 2026-07-21)
+
+## MainScr
+- [ ] CTY_CheckSpellWard__STUB
+- [ ] EarthGateTeleport__WIP
+- [ ] Eval_Move_Path__WIP
+- [ ] RP_CTY_CheckSpellWard__STUB
+- [ ] sdl2_Play_Background_Music__WIP
+
+## MAPGEN
+- [ ] Build_Connectivity_Graph
+- [ ] Build_Connectivity_Graphs
+- [ ] Generate_Home_City__WIP
+- [ ] Generate_Neutral_Cities — renamed from Generate_Neutral_Cities__WIP; impl (MAPGEN.c:5511), needs done-done review (name verified 2026-07-21)
+
+## NewGame
+- [ ] GAME_WizardsLaunch__WIP
+- [ ] NEWG_DrawDefShelf__WIP
+- [ ] NEWG_FinalizeTables__WIP
+- [ ] Newgame_Screen_1__WIP
+- [ ] Newgame_Screen_2__WIP
+- [ ] Newgame_Screen_3__WIP
+- [ ] Newgame_Screen_3_Draw__WIP
+- [ ] Newgame_Screen_4__WIP
+- [ ] Newgame_Screen_4_Draw__WIP
+- [ ] Newgame_Screen_6__WIP
+- [ ] Newgame_Screen_6_Draw__WIP
+- [ ] Newgame_Screen_7__WIP
+- [ ] Newgame_Screen_7_Draw__WIP
+
+## NEXTTURN
+- [ ] Create_Unit
+- [ ] Diplomacy_Growth_For_Enchantments — renamed from Diplomacy_Growth_For_Enchantments__WIP; impl (NEXTTURN.c:4125), needs done-done review (name verified 2026-07-21)
+- [ ] Players_Apply_Upkeeps__WIP
+- [ ] WIZ_MatchFoodUpkeep__WIP
+- [ ] WIZ_MatchManaUpkeep__WIP
+
+## OverSpel
+- [x] Cast_Spell_Overland — done-done 2026-06-10 (walkthrough doc, Nature's Wrath wired, GEMINI variant deleted, `__WIP` suffix dropped)
+- [ ] IDK_Get_Global_Enchant_Index__STUB
+
+## ProdScr
+- [ ] Building_Allows_List__WIP
+
+## REPORT
+- [ ] Chancellor_Screen__WIP
+- [ ] Chancellor_Screen_Scroll_Draw__WIP
+
+## SBookScr
+- [ ] Dissolve_Main_Screen
+- [ ] Spell_Animation_Load_Sound_Effect__WIP
+- [ ] Spell_Animation_Screen__WIP
+
+## SCastScr
+- [ ] Spell_Casting_Screen__WIP
+
+## SCORE
+- [x] End_Of_Game_Score_Draw
+- [x] End_Of_Game_Score
+
+## SETTLE
+- [ ] AI_Execute_Orders
+- [ ] AI_Unit_Army_Do_Road
+- [x] AI_UNIT_Meld__WIP — renamed to AI_Unit_Army_Do_Meld; body implemented in SETTLE.c:224
+- [ ] AI_Unit_Army_Do_Move
+- [ ] AI_Unit_Army_Do_Ferry
+- [x] AI_Unit_Army_Do_Settle — renamed from AI_UNIT_Settle__WIP; body implemented; GEMINI variant deleted 2026-06-04
+
+## SOUND
+- [ ] Audio_Error__STUB
+- [ ] Audio_Init__WIP
+- [ ] Audio_Uninit__STUB
+- [ ] Get_Music_Volume__STUB
+- [ ] Set_Music_Volume__STUB
+- [ ] Stop_All_Sounds__STUB
+- [ ] Stop_Music__STUB
+
+## Spellbook
+- [ ] Apprentice_Screen__WIP
+- [x] BigBook_PageTurn__WIP
+- [ ] BigBook_Compose__WIP
+- [ ] CmbBook_Compose__WIP
+- [ ] CmbBook_Draw__WIP
+- [x] Combat_Spellbook_Build
+- [ ] Build_Spellbook
+- [ ] SBK_DrawSpellDecode__STUB
+- [ ] BigBook_Load_Spell_Descriptions
+- [ ] SmlBook_Compose__WIP
+- [x] SmlBook_Draw — was SmlBook_Draw__WIP; suffix dropped in source, def Spellbook.c:1526 (verified 2026-07-21)
+- [x] SmlBook_PageTurn__WIP
+- [ ] UU_IDK_turn_to_cast__STUB
+
+- [x] Combat_Compose_Spellbook_Background — done-done 2026-08-16 (doc/@CodeReview/Combat-Combat_Spellbook_Screen.md); CMBMAGIC.c:157, faithful against ovr112/CMB_ComposeBookBG__WIP.asm (24 asm lines)
+- [x] Combat_Spellbook_Mana_Adder_Draw — done-done 2026-08-16 (doc/@CodeReview/Combat-Combat_Spellbook_Screen.md); SPLMASTR.c:677, faithful against ovr136/Combat_Spellbook_Mana_Adder_Draw.asm (259 asm lines)
+- [x] Combat_Spellbook_Mana_Adder_Load — done-done 2026-08-16 (doc/@CodeReview/Combat-Combat_Spellbook_Screen.md); SPLMASTR.c:650, faithful against ovr136/Combat_Spellbook_Mana_Adder_Load.asm (85 asm lines)
+- [x] Combat_Spellbook_Mana_Adder_Screen — done-done 2026-08-16 (doc/@CodeReview/Combat-Combat_Spellbook_Screen.md); SPLMASTR.c:732, faithful against ovr136/Combat_Spellbook_Mana_Adder_Screen.asm (341 asm lines)
+## Spells128
+- [ ] WIZ_AddSpellRank__WIP
+- [x] Conquest_Spells
+
+## CMBTAI
+- [x] AI_Execute_Unit_Action — done-done 2026-08-24 (doc/@CodeReview/Combat-AI_Turn.md); CMBTAI.c:251, faithful against ovr114/AI_BU_ProcessAction.asm (1,097 asm lines); renamed from AI_BU_ProcessAction; 4 findings fixed — wrong ability bits, wrong spell indices, six action values wrongly marked finished, and an inverted melee guard that disabled the whole melee turn
+- [x] Choose_Target_And_Action — done-done 2026-08-24 (doc/@CodeReview/Combat-AI_Turn.md); CMBTAI.c:1052, faithful against ovr114/Choose_Target_And_Action.asm (844 asm lines); 2 findings fixed — ability-guard operand order across six blocks, and the melee comparison flattened where the listing nests
+- [x] Target_Unit_Value — done-done 2026-08-24 (doc/@CodeReview/Combat-AI_Turn.md); Combat.c:13854, faithful against ovr122/Target_Unit_Value.asm (584 asm lines); 2 findings fixed — twelve locals in reverse frame order, and an if/else where the listing has two independent ifs
+- [x] AI_Set_Unit_Action_Mode — done-done 2026-08-24 (doc/@CodeReview/Combat-AI_Turn.md); CMBTAI.c:892, faithful against ovr114/AI_BU_AssignAction.asm (418 asm lines); renamed from AI_BU_AssignAction; 1 finding fixed — an inverted defense test that disabled focus-fire
+- [x] Auto_Do_Combat_Turn — done-done 2026-08-24 (doc/@CodeReview/Combat-AI_Turn.md); CMBTAI.c:694, faithful against ovr114/Auto_Do_Combat_Turn.asm (407 asm lines); 2 findings fixed — declaration order, and the winner check placed inside the filtered block in both passes
+- [x] AI_Set_All_Action_Modes — done-done 2026-08-24 (doc/@CodeReview/Combat-AI_Turn.md); CMBTAI.c:104, faithful against ovr114/AI_SetBasicAttacks__WIP.asm (368 asm lines); renamed from AI_SetBasicAttacks; 1 finding fixed — declaration order
+- [x] AI_Stage_Point_For_Unit — done-done 2026-08-24 (doc/@CodeReview/Combat-AI_Turn.md); renamed from AI_GetCombatRallyPt, CMBTAI.c:585, faithful against ovr114/AI_GetCombatRallyPt.asm (240 asm lines); D1 adds a target-validity guard with no asm counterpart
+- [x] AI_Player_Mode — done-done 2026-08-24 (doc/@CodeReview/Combat-AI_Turn.md); Combat.c:15891, faithful against ovr124/Get_Player_Mode.asm (182 asm lines); renamed from Get_Player_Mode; 2 findings fixed — an && that should be ||, which could divide by zero, and a > that should be >=
+- [x] AI_Retreat_Check — done-done 2026-08-24 (doc/@CodeReview/Combat-AI_Turn.md); Combat.c:16641, faithful against ovr124/Retreat_Check.asm (107 asm lines); renamed from Retreat_Check; 1 finding fixed — declaration order
+- [x] Sort_Battle_Units — done-done 2026-08-24 (doc/@CodeReview/Combat-AI_Turn.md); CMBTAI.c:544, faithful against ovr114/Sort_Battle_Units.asm (102 asm lines); faithful; D2 records three locals the listing declares byte-wide
+
+## ovr098  (Combat Screen - mouse images, reopened 2026-08-25)
+- [x] Assign_Mouse_Images — done-done 2026-08-25 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:4478, faithful against ovr098/Assign_Mouse_Images.asm (336 asm lines); faithful; the combat screen's per-frame cursor picker - grid-cell dispatch on -2/-1/99, then the melee/ranged split on range_x<=1 && range_y<=1
+- [x] Ranged_Mouse_Image — done-done 2026-08-25 (doc/@CodeReview/Combat-Combat_Screen.md); Combat.c:4655, faithful against ovr098/BU_GetRangedCursor__WIP.asm (150 asm lines); renamed from drake178's BU_GetRangedCursor__WIP; 1 finding fixed (R23) - both enchantment chains dropped the _UNITS[].enchantments source, so True Sight / Invisibility carried by unit type drew the wrong cursor
+
+## ovr103  (Combat Information Window)
+- [x] Combat_Information_Window_Draw — done-done 2026-08-25 (doc/@CodeReview/Combat-Combat_Information_Window.md); Combat.c:5929, faithful against ovr103/Combat_Information_Window_Draw.asm (328 asm lines); faithful; D1 records one reused stack slot split into five named locals; five locals renamed for compliance
+- [x] Combat_Information_Window — done-done 2026-08-25 (doc/@CodeReview/Combat-Combat_Information_Window.md); Combat.c:5819, faithful against ovr103/Combat_Information_Window.asm (288 asm lines); faithful; the Near_Allocate_Next(30) literal is reconstructed as sizeof(struct s_CMB_InfoItem), which is 0x1E
+- [x] Combat_Info_Effects_Base — done-done 2026-08-25 (doc/@CodeReview/Combat-Combat_Information_Window.md); Combat.c:6122, faithful against ovr103/Combat_Info_Effects_Base.asm (271 asm lines); 1 finding fixed - both global-enchantment loops were missing the early exit the listing performs; all ten icon indices verified; the node-aura block is the documented cnt_ label-swap trap, not a defect
+- [x] Combat_Info_Effects — done-done 2026-08-25 (doc/@CodeReview/Combat-Combat_Information_Window.md); Combat.c:6047, faithful against ovr103/Combat_Info_Effects.asm (171 asm lines); 1 finding fixed - the Charm of Life block filled its info item with Crusade's icon, help index and name
+- [x] Combat_Info_Effects_Count — done-done 2026-08-25 (doc/@CodeReview/Combat-Combat_Information_Window.md); Combat.c:6223, faithful against ovr103/Combat_Info_Effects_Count.asm (139 asm lines); faithful; transferred in from Combat-Combat_Screen.md and re-walked rather than inheriting that verdict; it already carries the early exits that Combat_Info_Effects_Base was missing
+
+## ovr111 + ovr112  (Combat Spell Cast - AI - Target)
+- [x] AITP_Combat_Spell — done-done 2026-08-25 (doc/@CodeReview/Combat-Spell_Cast_AI_Target.md); Combat.c:8854, faithful against ovr111/AITP_Combat_Spell.asm (1,665 asm lines); the type-dispatch target picker; 2 findings fixed - an else-if chain where the listing has nine independent ifs, and two != ST_UNDEFINED tests where the listing compares > -1; all twelve jump-table handlers walked individually
+- [x] AITP_DispelMagic — done-done 2026-08-25 (doc/@CodeReview/Combat-Spell_Cast_AI_Target.md); Combat.c:9453, faithful against ovr111/AITP_DispelMagic.asm (445 asm lines); faithful; all 27 scoring constants match position for position; preserves the signed enchantments > 0 OGBUG and the `& 0` term that can never pass
+- [x] AITP_EarthToMud — done-done 2026-08-25 (doc/@CodeReview/Combat-Spell_Cast_AI_Target.md); CMBMAGIC.c:1504, faithful against ovr112/AITP_EarthToMud.asm (267 asm lines); faithful; preserves the unrebased walls[cgy][cgx] OOB probes
+- [x] AITP_CracksCall — done-done 2026-08-25 (doc/@CodeReview/Combat-Spell_Cast_AI_Target.md); CMBMAGIC.c:1661, faithful against ovr112/AITP_CracksCall.asm (239 asm lines); faithful; same unrebased wall probes; unlike AITP_EarthToMud it does not exclude MV_TELEPORT units
+- [x] AITP_WarpCreature — done-done 2026-08-25 (doc/@CodeReview/Combat-Spell_Cast_AI_Target.md); Combat.c:9356, faithful against ovr111/AITP_WarpCreature.asm (210 asm lines); faithful; 1 finding fixed - niu_local_variable renamed to selected_target_idx, it is the returned index
+- [x] AITP_Word_Of_Recall — done-done 2026-08-25 (doc/@CodeReview/Combat-Spell_Cast_AI_Target.md); CMBMAGIC.c:1762, faithful against ovr112/UU_AITP_WordofRecall.asm (126 asm lines); renamed from UU_AITP_WordofRecall; 2 findings fixed - four stack locals in reverse frame order, and a missing (int16_t) cast for the cwd-after-imul truncation; never called in the OG (overlay thunk only)
+- [x] AITP_Disintegrate — done-done 2026-08-25 (doc/@CodeReview/Combat-Spell_Cast_AI_Target.md); Combat.c:9397, faithful against ovr111/UU15_AITP_Disintegrate.asm (172 asm lines); renamed from UU15_AITP_Disintegrate; faithful; its resistance reject is > 10 where every other targeter uses >= 10; never called in the OG (overlay thunk only)
+- [x] AITP_RecallHero — done-done 2026-08-25 (doc/@CodeReview/Combat-Spell_Cast_AI_Target.md); CMBMAGIC.c:1805, faithful against ovr112/AITP_RecallHero.asm (162 asm lines); faithful; the cwd-after-imul 16-bit truncation is reproduced with an (int16_t) cast
+- [x] AITP_WarpWood — done-done 2026-08-25 (doc/@CodeReview/Combat-Spell_Cast_AI_Target.md); Combat.c:9316, faithful against ovr111/AITP_WarpWood.asm (161 asm lines); faithful; 1 finding fixed - niu_local_variable renamed to selected_target_idx
+- [x] AITP_Healing — done-done 2026-08-25 (doc/@CodeReview/Combat-Spell_Cast_AI_Target.md); Combat.c:9281, faithful against ovr111/AITP_Healing.asm (128 asm lines); faithful; 1 finding fixed - niu_local_variable renamed to selected_target_idx
+- [x] AITP_HolyWord — done-done 2026-08-25 (doc/@CodeReview/Combat-Spell_Cast_AI_Target.md); Combat.c:10215, faithful against ovr111/AITP_HolyWord.asm (76 asm lines); faithful; preserves three OGBUGs - the <= bus_Active status test that excludes active enemies, no Magic Immunity check, and the Dasm never loading the result into AX before returning
+- [x] AITP_Disrupt — done-done 2026-08-25 (doc/@CodeReview/Combat-Spell_Cast_AI_Target.md); CMBMAGIC.c:1611, faithful against ovr112/AITP_Disrupt.asm (66 asm lines); faithful; all five raw wall offsets 15B6h..15D0h verified against the flat-index arithmetic
+- [x] AITP_DarknessLight — done-done 2026-08-25 (doc/@CodeReview/Combat-Spell_Cast_AI_Target.md); Combat.c:9252, faithful against ovr111/AITP_DarknessLight.asm (54 asm lines); faithful; the True Light / Darkness discriminator is computed into niu_local_variable and never read, and with no player_idx parameter there is no allegiance test at all
+
+## ovr139  (Combat Spell Cast - AI - Select)
+- [x] AI_Score_Combat_Spell — done-done 2026-08-24 (doc/@CodeReview/Combat-Spell_Cast_AI_Select.md); Combat.c:16986, faithful against ovr139/AI_EvaluateCmbtSpell.asm (3,093 asm lines); renamed from AI_EvaluateCmbtSpell; 2 findings fixed - five case groups merged that the listing keeps as separate bodies (three reintroducing the distinction with a runtime spell_idx test the original never evaluates), and two five-iteration realm loops unrolled; 87 jump-table handlers walked individually
+- [x] AI_Build_Unit_Realm_Threat_Percentages — done-done 2026-08-24 (doc/@CodeReview/Combat-Spell_Cast_AI_Select.md); Combat.c:18232, faithful against ovr139/AI_UnitThreatRealms.asm (527 asm lines); renamed from AI_UnitThreatRealms; faithful; the Sorcery slot is never written, so spl_True_Sight's primary scoring term is always 0 (OG behaviour)
+- [x] AI_Build_Castable_Combat_Spell_List — done-done 2026-08-24 (doc/@CodeReview/Combat-Spell_Cast_AI_Select.md); Combat.c:18318, faithful against ovr139/AI_CombatSpellList.asm (287 asm lines); renamed from AI_CombatSpellList; faithful; preserves two OGBUGs - the hero pass gated at 19 instead of 20, and the sign-extended hero spell byte
+- [x] AI_Prepare_Combat_Realm_Threats — done-done 2026-08-24 (doc/@CodeReview/Combat-Spell_Cast_AI_Select.md); Combat.c:18174, faithful against ovr139/AI_SetCombatRealms.asm (171 asm lines); renamed from AI_SetCombatRealms; faithful; preserves the never-cleared realm flag globals and the defender-only Chaos Channels asymmetry
+- [x] Effective_Battle_Unit_Strength — done-done 2026-08-24 (doc/@CodeReview/Combat-Spell_Cast_AI_Select.md); Combat.c:18149, faithful against ovr139/Effective_Battle_Unit_Strength.asm (165 asm lines); faithful
+- [x] AI_Select_Combat_Spell — done-done 2026-08-24 (doc/@CodeReview/Combat-Spell_Cast_AI_Select.md); Combat.c:16937, faithful against ovr139/AI_SelectCmbtSpell.asm (123 asm lines); renamed from AI_SelectCmbtSpell; 1 finding fixed - the five situational tables assigned group-major where the listing assigns them field-major
+
+## Spells131
+- [x] Combat_Battlefield_Instant — done-done 2026-08-20 (doc/@CodeReview/Combat-Combat_Spell_Animation.md); Spells131.c:702, faithful against ovr131/Combat_Battlefield_Instant.asm (396 asm lines); 2 findings fixed — Cast_Call_Chaos was handed player_idx instead of caster_idx, and the anims_on arms were swapped
+- [x] Combat_Spell_Animation — done-done 2026-08-20 (doc/@CodeReview/Combat-Combat_Spell_Animation.md); Spells131.c:994, faithful against ovr131/Combat_Spell_Animation__WIP.asm (248 asm lines)
+
+## Spells133
+- [x] Animate_Cracks_Call — done-done 2026-08-20 (doc/@CodeReview/Combat-Combat_Spell_Animation.md); Spells133.c:514, faithful against ovr133/Animate_Cracks_Call.asm (47 asm lines); D3 frame loop hoisted and scaled by CELL_EFFECT_ANIM_HOLD
+- [x] Animate_Lightning_Bolt — done-done 2026-08-20 (doc/@CodeReview/Combat-Combat_Spell_Animation.md); Spells133.c:972, faithful against ovr133/Animate_Lightning_Bolt.asm (118 asm lines)
+- [x] Wall_Rise — done-done 2026-08-20 (doc/@CodeReview/Combat-Combat_Spell_Animation.md); Spells133.c:319, faithful against ovr133/Wall_Rise.asm (101 asm lines); 2 findings fixed — Wall of Fire assigned its frame count instead of reducing it, and the wall_type dispatch is a switch
+- [x] Apply_Call_Chaos — done-done 2026-08-20 (doc/@CodeReview/Combat-Combat_Spell_Animation.md); renamed from Apply_Call_Chaos__WIP, Spells133.c:1607, faithful against ovr133/Apply_Call_Chaos__WIP.asm (180 asm lines); 2 findings fixed — all four damage effects computed damage and never committed it
+- [x] Apply_Cracks_Call — done-done 2026-08-19 (doc/@CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Spells131.c:643, faithful against ovr131/Apply_Cracks_Call.asm (109 asm lines)
+- [x] Apply_Earth_To_Mud — done-done 2026-08-19 (doc/@CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Combat.c:22122, faithful against ovr154/Apply_Earth_To_Mud.asm (93 asm lines); moved here from Combat-Miscellaneous.md, which had it homeless
+- [x] Apply_Life_Drain — done-done 2026-08-19 (doc/@CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); renamed from BU_LifeDrain__WIP, Spells133.c:420, faithful against ovr133/BU_LifeDrain__WIP.asm (95 asm lines); body reconstructed from the stub, 4th parameter restored, declaration order fixed
+- [x] Apply_Warp_Creature — done-done 2026-08-19 (doc/@CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Spells133.c:103, faithful against ovr133/Apply_Warp_Creature.asm (129 asm lines)
+- [x] Combat_Cast_Apply_Spell_Effect — done-done 2026-08-19 (doc/@CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); renamed from Cast_Spell_On_Battle_Unit, Combat.c:9573, faithful against ovr111/Cast_Spell_On_Battle_Unit.asm (1,806 asm lines); 8 findings fixed including two entirely missing switch arms
+- [x] Combat_Cast_Disenchant — done-done 2026-08-19 (doc/@CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Spells131.c:68, faithful against ovr131/Cast_Disenchant.asm (693 asm lines); 10 findings fixed
+- [x] Combat_Cast_Dispel — done-done 2026-08-19 (doc/@CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Spells131.c:274, faithful against ovr131/Cast_Dispel_Magic.asm (1,499 asm lines); 10 findings fixed including a missing vortex pass
+- [x] Magic_Vortex_Create — done-done 2026-08-19 (doc/@CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); Spells133.c:1327, faithful against ovr133/Magic_Vortex_Create.asm (54 asm lines)
+- [x] Spell_Resistance_Modifier — done-done 2026-08-19 (doc/@CodeReview/Combat-Combat_Cast_Apply_Spell_Effect.md); CMBMAGIC.c:1405, faithful against ovr112/Spell_Resistance_Modifier.asm (94 asm lines)
+- [x] Cast_Call_Chaos — done-done 2026-08-20 (doc/@CodeReview/Combat-Combat_Spell_Animation.md); renamed from Cast_Call_Chaos__WIP, Spells133.c:1452, faithful against ovr133/Cast_Call_Chaos__WIP.asm (472 asm lines); 3 findings fixed — wrong alias source, missing no-animation early return, and an apply that was unreachable
+- [x] Combat_Spell_Counter_Message — done-done 2026-08-17 (doc/@CodeReview/Combat-Combat_Spell_Dispel.md); Spells133.c:532, faithful against ovr133/Combat_Spell_Dispel_Attempt.asm (375 asm lines); R1 declaration order fixed
+- [x] Combat_Spell_Animation_Default — done-done 2026-08-20 (doc/@CodeReview/Combat-Combat_Spell_Animation.md); renamed from Combat_Spell_Animation_Generic__WIP, Spells133.c:671, faithful against ovr133/Combat_Spell_Animation_Generic__WIP.asm (78 asm lines); 1 finding fixed — the draw position was assigned rather than adjusted, so every generic animation drew at a fixed corner
+- [x] Combat_Spell_Animation_Bolt — done-done 2026-08-20 (doc/@CodeReview/Combat-Combat_Spell_Animation.md); renamed from TILE_BoltFromAbove__WIP, Spells133.c:543, faithful against ovr133/TILE_BoltFromAbove.asm (206 asm lines); D1 case order, D2 added default arm
+- [x] Combat_Spell_Dispel_Attempt — renamed to Combat_Spell_Dispel_Attempt (Spells133.c:653); implemented, compiles clean 2026-07-07
+
+- [x] Combat_Spell_Counter_Message_Box_Draw — done-done 2026-08-17 (doc/@CodeReview/Combat-Combat_Spell_Dispel.md); Combat.c:12018, faithful against ovr113/Combat_Spell_Dispel_Attempt.asm (142 asm lines)
+- [x] Combat_Spell_Dispel_Attempt — done-done 2026-08-17 (doc/@CodeReview/Combat-Combat_Spell_Dispel.md); Spells133.c:651, faithful against ovr133/Combat_Spell_Dispel_Attempt.asm (58 asm lines)
+## Spells137
+- [ ] Cast_Spell_City_Enchantment_Animation_1__WIP
+- [ ] Cast_Spell_City_Enchantment_Animation_2__WIP
+- [x] Summon_Animation — was IDK_SummonAnim; done-done 2026-07-21 (walkthrough doc/@CodeReview/Spells137-Summon_Animation.md; faithful 1:1)
+- [x] Summon_Animation_Draw — was IDK_SummonAnim_Draw; done-done 2026-07-21
+- [x] Summon_Animation_Load — was IDK_SummonAnim_Load; done-done 2026-07-21 (former R1 monster-index resolved faithful; B1 type_or_other==0 gap preserved)
+
+## SPLMASTR
+- [x] Cast_Spell_Of_Mastery
+- [x] Cast_Spell_Of_Mastery_Draw
+- [x] Spell_Of_Mastery_Lose_Load
+- [x] Spell_Of_Mastery_Lose_Draw
+- [x] Spell_Of_Mastery_Lose
+- [x] Spell_Of_Mastery_Load
+- [x] Spell_Of_Mastery_Draw
+- [x] Spell_Of_Mastery
+- [x] Undead_Animation — was CMB_CreateUndeadAnim; done-done 2026-07-23 (walkthrough doc/@CodeReview/SPLMASTR-Undead_Animation.md; faithful 1:1, builds clean)
+- [x] Undead_Animation_Draw — was CMB_DrawUndeadAnim; done-done 2026-07-23
+- [x] Undead_Animation_Load — was CMB_LoadUndeadAnim; done-done 2026-07-23 (segment globals declared+renamed; uy_BeastSwordsmen resolved to MONSTER.LBX 47)
+- [ ] Spell_Target_Global_Enchantment_Bind__WIP
+- [ ] Spell_Target_Global_Enchantment_Disjunct__WIP
+
+## TEXTBOX
+- [ ] Draw_Help_Entry__WIP
+
+## UnitStat
+- [ ] Building_Allows_List__WIP
+- [ ] Thing_View_Draw__WIP
+
+## UNITSTK
+- [ ] RdBd_UNIT_MoveStack
+
+## UnitView
+- [ ] UNIT_GetDependants__WIP
+
+## Util  (seg022)
+- [ ] UU_DBG_SetSelectSetting()
+- [ ] UU_DBG_SelectDialog()
+- [x] Draw_Expanding_Bitmap()
+
+## Video
+- [ ] PageFlip_Dissolve
+
+## WZD_o059
+- [ ] Do_Plane_Button__WIP
+
+## WZD_o143
+- [ ] EVNT_FindNewMineral__STUB
+- [ ] EVNT_TargetDepletion__STUB
+- [ ] TILE_GenerateOre__STUB
+- [ ] TILE_ReplaceMinerals__STUB

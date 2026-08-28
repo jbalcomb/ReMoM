@@ -114,7 +114,7 @@ static int graf_compose_dir(char * out, size_t cap, const char * base, const cha
    cannot hold a file and a directory of the same name.  The AppImage's AppRun sets
    REMOM_APP_DIR=remom_app_dir when it engages portable mode; nothing else sets it,
    so installed/XDG users are unaffected and need no migration.
-   See doc/#Devel/Devel-Linux-AppImage.md.
+   See doc/@Devel/Devel-Linux-AppImage.md.
 
    The override is deliberately a NAME, not a path: separators, "." and ".." are
    rejected so it can only ever select a leaf directory under the resolved base and
@@ -536,7 +536,7 @@ int STU_GRAF_User_Data_Dir(char * out, size_t cap)
    it fail with ENOTDIR instead -- a silent, misdiagnosable failure.  The concrete
    case is the AppImage's portable layout, where the ReMoM save directory and the
    ReMoM executable would otherwise compete for one name in one folder.  See
-   doc/#Devel/Devel-Linux-AppImage.md. */
+   doc/@Devel/Devel-Linux-AppImage.md. */
 static int graf_mkdir_one(const char * path)
 {
     struct stat st;

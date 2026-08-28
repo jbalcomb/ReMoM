@@ -2114,7 +2114,7 @@ void Randomize_Book_Heights(void)
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    /* OGBUG  niu is leftover, should be remnoved */
+    /* OGBUG: niu is leftover, should be remnoved */
     niu = ((((magic_set.MagicPower * magic_set.Opponents) * (magic_set.Difficulty * magic_set.LandSize)) * 123) + 1234);
 
     for(itr = 0; itr < 11; itr++)
