@@ -262,11 +262,15 @@ add_test(
 # absorb slow-CI variance while still catching a real hang promptly.
 set_tests_properties(HeMoM_AIBehavior_Setup PROPERTIES
     TIMEOUT 60
+    # Debug-only: this fixture only feeds the Debug-config Run/Evaluate below, so
+    # gate it too -- otherwise it runs a dangling ~1.5s newgame in every other
+    # config for a fixture nothing there requires.
+    CONFIGURATIONS Debug
     FIXTURES_SETUP HeMoM_AIBehavior
     LABELS "hemom;integration;ai"
 )
 
-# HeMoM_AIBehavior_Run + HeMoM_AIBehavior_Evaluate are Debug-only.
+# HeMoM_AIBehavior_Run + HeMoM_AIBehavior_Evaluate are Debug-config-only.
 #
 # Two reasons:
 #   1. --ai-metrics is gated by #ifdef STU_DEBUG (HeMoM logs "ai-metrics
@@ -280,38 +284,43 @@ set_tests_properties(HeMoM_AIBehavior_Setup PROPERTIES
 #      Root cause is in headless input dispatch, not in our metrics or
 #      the scenario itself.
 #
-# Reactivate for Release builds when both issues are fixed.
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+# "Debug-only" is expressed via the CTest CONFIGURATIONS property, NOT a
+# configure-time `if(CMAKE_BUILD_TYPE STREQUAL "Debug")`.  Under a multi-config
+# generator (Ninja Multi-Config, Visual Studio) CMAKE_BUILD_TYPE is empty -- the
+# config is chosen at build/test time (`ctest -C Debug`) -- so that `if()` was
+# always false and these tests never registered at all (the AI-metrics coverage
+# silently vanished; Setup became a dangling fixture).  CONFIGURATIONS Debug is
+# honored by both single- and multi-config generators: the test registers, and
+# runs only when the active config is Debug.
+add_test(
+    NAME HeMoM_AIBehavior_Run
+    COMMAND $<TARGET_FILE:HeMoM>
+        --continue
+        --scenario "${HEMOM_TEST_ASSETS}/test_ai_5turns.hms"
+        --ai-metrics
+        --dump-save SAVE1.GAM
+        --seed1 12345
+    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+)
+set_tests_properties(HeMoM_AIBehavior_Run PROPERTIES
+    TIMEOUT 120
+    CONFIGURATIONS Debug
+    FIXTURES_REQUIRED HeMoM_AIBehavior
+    FIXTURES_SETUP HeMoM_AIBehavior_Done
+    LABELS "hemom;integration;ai"
+)
 
-    add_test(
-        NAME HeMoM_AIBehavior_Run
-        COMMAND $<TARGET_FILE:HeMoM>
-            --continue
-            --scenario "${HEMOM_TEST_ASSETS}/test_ai_5turns.hms"
-            --ai-metrics
-            --dump-save SAVE1.GAM
-            --seed1 12345
-        WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
-    )
-    set_tests_properties(HeMoM_AIBehavior_Run PROPERTIES
-        TIMEOUT 120
-        FIXTURES_REQUIRED HeMoM_AIBehavior
-        FIXTURES_SETUP HeMoM_AIBehavior_Done
-        LABELS "hemom;integration;ai"
-    )
-
-    add_test(
-        NAME HeMoM_AIBehavior_Evaluate
-        COMMAND $<TARGET_FILE:check_ai_metrics>
-            "${HEMOM_TEST_WORKDIR}"
-            "${CMAKE_CURRENT_SOURCE_DIR}/assert_ai_5turns.txt"
-    )
-    set_tests_properties(HeMoM_AIBehavior_Evaluate PROPERTIES
-        FIXTURES_REQUIRED HeMoM_AIBehavior_Done
-        LABELS "hemom;integration;ai"
-    )
-
-endif()
+add_test(
+    NAME HeMoM_AIBehavior_Evaluate
+    COMMAND $<TARGET_FILE:check_ai_metrics>
+        "${HEMOM_TEST_WORKDIR}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/assert_ai_5turns.txt"
+)
+set_tests_properties(HeMoM_AIBehavior_Evaluate PROPERTIES
+    CONFIGURATIONS Debug
+    FIXTURES_REQUIRED HeMoM_AIBehavior_Done
+    LABELS "hemom;integration;ai"
+)
 
 
 
