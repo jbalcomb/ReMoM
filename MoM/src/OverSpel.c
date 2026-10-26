@@ -868,9 +868,9 @@ void Cast_Spell_Overland(int16_t player_idx)
                         _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;
                         if(player_idx == HUMAN_PLAYER_IDX)
                         {
-                            _active_world_x = _UNITS[_units].wx;
-                            _active_world_y = _UNITS[_units].wy;
-                            _map_plane = _UNITS[_units].wp;
+                            _active_world_x = _UNITS[(_units - 1)].wx;
+                            _active_world_y = _UNITS[(_units - 1)].wy;
+                            _map_plane = _UNITS[(_units - 1)].wp;
                             /* HACK */ /* WASBUG */ Select_Stack_At_Unit((_units - 1));  /* OGBUG: missing parameter*/   // how to reproduce calling this without the unit_idx parameter?
                         }
                         cast_can_continue = ST_TRUE;

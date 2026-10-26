@@ -307,6 +307,7 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     {
         case sa_Single:
         {
+            Pool_Note_Carve_Label(lbx_name, entry_num);  /* CLAUDE: names this arena in static-pool guard reports */
             SAMB_data = Allocate_Space_No_Header(num_blocks);
             if(SAMB_data == NULL) { Error_Handler(lbx_name, 3, entry_num, ST_NULL); }
         } break;
@@ -536,6 +537,7 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     {
         case 0:  /* sa_Single */
         {
+            Pool_Note_Carve_Label(lbx_name, entry_num);  /* CLAUDE: names this arena in static-pool guard reports */
             SAMB_data = Allocate_Space_No_Header(num_blocks);
             if(SAMB_data == NULL) { Error_Handler(lbx_name, 3, entry_num, ST_NULL); }
         } break;

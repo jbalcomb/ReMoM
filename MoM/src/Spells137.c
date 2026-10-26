@@ -7,6 +7,7 @@
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
+#include "Integrity_Check.h"  /* CLAUDE: Integrity_Checkpoint() */
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/GENDRAW.h"
@@ -437,6 +438,7 @@ void Summon_Animation(int16_t unit_type, int16_t rarity, int16_t player_idx)
     int16_t anim_stg_cnt;
     int16_t input_field_idx;
     int16_t full_screen_field;
+    Integrity_Checkpoint("Summon_Animation enter");  /* CLAUDE: runtime integrity checkpoint -- see Integrity_Check.h */
     Stop_All_Sounds__STUB();
     // MUSIC.LBX, 013 "MOM56 XM"    "Weak Creature Summons"
     // MUSIC.LBX, 014 "MOM57 XM"    "Avg Creature Summons"
@@ -494,6 +496,7 @@ void Summon_Animation(int16_t unit_type, int16_t rarity, int16_t player_idx)
     {
         Set_Mouse_List(1, mouse_list_hourglass);
     }
+    Integrity_Checkpoint("Summon_Animation exit");  /* CLAUDE: runtime integrity checkpoint -- see Integrity_Check.h */
 }
 
 

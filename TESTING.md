@@ -92,6 +92,19 @@ The diagnostic build catches crashes and writes a **stack trace** — lines star
 name the actual functions and source locations, which is exactly what we need. **Just send
 the log** — the crash trace is already in it.
 
+Look for lines tagged `[INTEGRITY]` too. ReMoM checks its own state at a few points and
+logs what it finds wrong (for example, the map pointed at a world plane that doesn't exist)
+— often *before* anything crashes, and sometimes instead of a crash.
+
+**If we ask for a "guarded" run:** some crashes are caused by one part of the game writing
+past the end of its memory and damaging something else. ReMoM can watch for that. Start it
+with the environment variable `REMOM_POOL_GUARDS` set to `1`, reproduce the crash, and send
+the log — the `[INTEGRITY]` lines will name the piece of memory that was overrun and where it
+was allocated.
+
+- Windows (Command Prompt, in the ReMoM folder): `set REMOM_POOL_GUARDS=1` then `ReMoM.exe`
+- Linux (terminal, in the ReMoM folder): `REMOM_POOL_GUARDS=1 ./ReMoM`
+
 ## Reporting a bug — please include
 
 - **What you did** — steps to reproduce, and which screen you were on.

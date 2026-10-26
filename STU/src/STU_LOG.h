@@ -79,7 +79,8 @@ enum log_category
     LOG_CAT_CALL_TRACE   = 46,
     LOG_CAT_STU_GRAF     = 47,
     LOG_CAT_OGBUG        = 48,
-    LOG_CAT_COMBAT_TEST  = 49   /* test-only: combat move/attack legality logging */
+    LOG_CAT_COMBAT_TEST  = 49,  /* test-only: combat move/attack legality logging */
+    LOG_CAT_INTEGRITY    = 50   /* runtime integrity checkpoints: invalid game state, static-pool guard damage, rejected draws -- keep last; LOG_N_CATEGORIES derives from it */
 };
 
 /* CALL_TRACE rng-call ordinal -- read by the [FN-ENTER]/[FN-EXIT] log lines.

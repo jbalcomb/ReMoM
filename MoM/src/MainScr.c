@@ -18,6 +18,7 @@
 
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/Allocate.h"
+#include "Integrity_Check.h"  /* CLAUDE: Integrity_Checkpoint() */
 #include "../../MoX/src/GENDRAW.h"
 #include "../../MoX/src/Input.h"
 #include "../../MoX/src/LBX_Load.h"
@@ -2212,6 +2213,8 @@ void Main_Screen_Draw(void)
     // CANT  assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
     assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_WIDTH);  /*  0 & 60 */
     assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
+
+    Integrity_Checkpoint("Main_Screen_Draw");  /* CLAUDE: runtime integrity checkpoint -- every main-screen draw passes here, so bad map focus is logged before the map layers index with it; see Integrity_Check.h */
 
     Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _current_player_idx);
 }

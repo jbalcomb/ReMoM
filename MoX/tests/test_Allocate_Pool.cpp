@@ -26,7 +26,15 @@ extern "C" void Allocation_Error(uint16_t error_num, uint16_t blocks)
 class AllocatePoolTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        Pool_Init();
+        // Guard mode explicitly off: Pool_Init() would read REMOM_POOL_GUARDS from the environment, and the packed-layout tests below assume no padding.
+        Pool_Init_Guard_Mode(0);
+    }
+};
+
+class AllocatePoolGuardTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        Pool_Init_Guard_Mode(1);
     }
 };
 
@@ -171,4 +179,142 @@ TEST_F(AllocatePoolTest, Trailing_Margin_Is_Never_Handed_Out)
     // The margin is reported free but must not be carvable.
     EXPECT_EQ((uint32_t)POOL_FIXED_MARGIN, Pool_Bytes_Free());
     EXPECT_EXIT(Pool_Carve(1), ::testing::ExitedWithCode(STUB_ALLOCATION_ERROR_EXIT_CODE), "Allocation_Error");
+}
+
+// ==============================================================================
+// Guard mode
+// ==============================================================================
+
+TEST_F(AllocatePoolTest, Guard_Mode_Off_Reports_Nothing_And_Packs_Tightly)
+{
+    struct s_POOL_GUARD_DAMAGE damage[4];
+    uint8_t * a = Pool_Carve(32);
+    uint8_t * b = Pool_Carve(32);
+
+    EXPECT_EQ(0, Pool_Guards_Enabled());
+    EXPECT_EQ(a + 32, b);  // no padding between arenas
+    a[32] = 0x00;          // an overrun off a lands in b, silently
+    EXPECT_EQ(0, Pool_Check_Guards(damage, 4));
+}
+
+TEST_F(AllocatePoolGuardTest, Arenas_Are_Separated_By_Guard_Bytes)
+{
+    uint8_t * a = Pool_Carve(32);
+    uint8_t * b = Pool_Carve(32);
+
+    EXPECT_NE(0, Pool_Guards_Enabled());
+    EXPECT_EQ(a + 32 + POOL_GUARD_BYTES, b);
+    for (int ofst = 0; ofst < POOL_GUARD_BYTES; ofst++)
+    {
+        ASSERT_EQ(POOL_GUARD_BYTE, a[32 + ofst]) << "guard offset " << ofst;
+    }
+}
+
+TEST_F(AllocatePoolGuardTest, Clean_Pool_Reports_No_Damage)
+{
+    struct s_POOL_GUARD_DAMAGE damage[4];
+    uint8_t * a = Pool_Carve(32);
+    std::memset(a, 0x11, 32);  // writing the whole arena, and no further, is fine
+    Pool_Carve(48);
+
+    EXPECT_EQ(0, Pool_Check_Guards(damage, 4));
+}
+
+TEST_F(AllocatePoolGuardTest, Overrun_Names_The_Arena_That_Wrote_Past_Its_End)
+{
+    struct s_POOL_GUARD_DAMAGE damage[4];
+    uint8_t * a = Pool_Carve(32);
+    Pool_Note_Carve_Site("victim_file.c", 20);
+    Pool_Carve(32);
+    Pool_Note_Carve_Site("overrunner_file.c", 99);
+    Pool_Note_Carve_Label("TERRAIN", 1);
+    uint8_t * c = Pool_Carve(16);
+    Pool_Carve(16);
+
+    (void)a;
+    c[16 + 3] = 0x00;  // 4th byte past the end of arena #2
+    c[16 + 4] = 0x00;
+
+    ASSERT_EQ(1, Pool_Check_Guards(damage, 4));
+    EXPECT_EQ(2, damage[0].arena_idx);
+    EXPECT_EQ(c, damage[0].arena_base);
+    EXPECT_EQ(16u, damage[0].arena_bytes);
+    EXPECT_STREQ("overrunner_file.c", damage[0].site_file);
+    EXPECT_EQ(99, damage[0].site_line);
+    EXPECT_STREQ("TERRAIN", damage[0].label);
+    EXPECT_EQ(1, damage[0].label_num);
+    EXPECT_EQ(3u, damage[0].first_bad_offset);
+    EXPECT_EQ(2u, damage[0].bad_byte_count);
+}
+
+TEST_F(AllocatePoolGuardTest, Carve_Site_And_Label_Apply_To_One_Carve_Only)
+{
+    struct s_POOL_GUARD_DAMAGE damage[4];
+    Pool_Note_Carve_Site("tagged.c", 7);
+    Pool_Note_Carve_Label("LABELED", 3);
+    Pool_Carve(16);
+    uint8_t * untagged = Pool_Carve(16);
+
+    untagged[16] = 0x00;
+
+    ASSERT_EQ(1, Pool_Check_Guards(damage, 4));
+    EXPECT_EQ(1, damage[0].arena_idx);
+    EXPECT_EQ(nullptr, damage[0].site_file);
+    EXPECT_STREQ("", damage[0].label);
+    EXPECT_EQ(-1, damage[0].label_num);
+}
+
+TEST_F(AllocatePoolGuardTest, Long_Label_Is_Truncated_Not_Overflowed)
+{
+    struct s_POOL_GUARD_DAMAGE damage[1];
+    Pool_Note_Carve_Label("AN_LBX_NAME_LONGER_THAN_THE_LABEL_FIELD", 0);
+    uint8_t * a = Pool_Carve(16);
+    a[16] = 0x00;
+
+    ASSERT_EQ(1, Pool_Check_Guards(damage, 1));
+    EXPECT_EQ((size_t)(POOL_CARVE_LABEL_LEN - 1), std::strlen(damage[0].label));
+}
+
+TEST_F(AllocatePoolGuardTest, Underrun_Into_Leading_Guard_Is_Reported)
+{
+    struct s_POOL_GUARD_DAMAGE damage[4];
+    uint8_t * first = Pool_Carve(16);
+    first[-1] = 0x00;
+
+    ASSERT_EQ(1, Pool_Check_Guards(damage, 4));
+    EXPECT_EQ(POOL_GUARD_REGION_LEADING, damage[0].arena_idx);
+    EXPECT_EQ((uint32_t)(POOL_LEADING_GUARD - 1), damage[0].first_bad_offset);
+}
+
+TEST_F(AllocatePoolGuardTest, Reset_Guards_Clears_Reported_Damage)
+{
+    struct s_POOL_GUARD_DAMAGE damage[4];
+    uint8_t * a = Pool_Carve(16);
+    a[16] = 0x00;
+    ASSERT_EQ(1, Pool_Check_Guards(damage, 4));
+
+    Pool_Reset_Guards();
+
+    EXPECT_EQ(0, Pool_Check_Guards(damage, 4));
+    EXPECT_EQ(POOL_GUARD_BYTE, a[16]);
+}
+
+TEST_F(AllocatePoolGuardTest, Damage_Count_Exceeds_Buffer_When_Many_Guards_Hit)
+{
+    struct s_POOL_GUARD_DAMAGE damage[2];
+    for (int itr = 0; itr < 5; itr++)
+    {
+        uint8_t * p = Pool_Carve(16);
+        p[16] = 0x00;
+    }
+
+    EXPECT_EQ(5, Pool_Check_Guards(damage, 2));  // total reported, only 2 filled in
+    EXPECT_EQ(0, damage[0].arena_idx);
+    EXPECT_EQ(1, damage[1].arena_idx);
+}
+
+TEST_F(AllocatePoolGuardTest, Guard_Bytes_Count_Against_Capacity)
+{
+    // A carve that fits without its guard but not with it must still be fatal.
+    EXPECT_EXIT(Pool_Carve(POOL_ARENA_CAPACITY - (POOL_GUARD_BYTES / 2)), ::testing::ExitedWithCode(STUB_ALLOCATION_ERROR_EXIT_CODE), "Allocation_Error");
 }

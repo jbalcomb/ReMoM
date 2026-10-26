@@ -33,6 +33,7 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 #include "../../STU/src/STU_LOG.h"  /* CLAUDE  LOG_TRACE for the biota draw-intent hook */
 
 #include "Explore.h"
+#include "Integrity_Check.h"  /* CLAUDE: Integrity_Terrain_Square_Is_Valid(), Integrity_Report_Refused_Squares() */
 #include "MainScr.h"
 #include "MOM_SCR.h"
 #include "SCastScr.h"  /* World_To_Screen() */
@@ -1205,6 +1206,11 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
     uint8_t animated_terrain_flag;
     uint8_t square_explored_flag;
     SAMB_ptr unexplored_mask_pict_seg;
+    static int16_t refusing_squares = 0;  /* CLAUDE: Integrity_Report_Refused_Squares() state */
+    int16_t square_is_valid = 0;  /* CLAUDE */
+    int16_t refused_count = 0;  /* CLAUDE */
+    int16_t refused_first_wx = 0;  /* CLAUDE */
+    int16_t refused_first_wy = 0;  /* CLAUDE */
 
     itr_screen_y = screen_y;
     itr_world_y = world_grid_y;
@@ -1223,14 +1229,23 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
                 curr_world_x = itr_world_x - WORLD_WIDTH;
             }
 
-            terrain_001_index = GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2)));
+            // terrain_001_index = GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2)));
+            /* CLAUDE: integrity guard (GitHub #21) -- a bad plane/square/terrain index read outside _world_maps, m_terrain_lbx_001, and _square_explored, then drew a garbage mask picture (segfault in FLIC_Draw); draw such a square black (the Clipped_Fill below) and report it once */
+            square_is_valid = Integrity_Terrain_Square_Is_Valid(curr_world_x, itr_world_y, wp);  /* CLAUDE */
+            if(square_is_valid != ST_TRUE)
+            {
+                if(refused_count == 0) { refused_first_wx = curr_world_x; refused_first_wy = itr_world_y; }  /* CLAUDE */
+                refused_count++;  /* CLAUDE */
+            }
+            terrain_001_index = (square_is_valid == ST_TRUE) ? GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2))) : 0;  /* CLAUDE */
             terrain_001_0 = GET_1B_OFS(m_terrain_lbx_001, (terrain_001_index * 2) + 0);
 
             animated_terrain_flag = ((terrain_001_0 & 0x80) != 0);  // ¿ prefer ((bitfield >> 7) & 0x01) - saves the CPU doing a full register-sized compare ?
 
             // if( (map_draw_full == ST_TRUE) || (animated_terrain_flag != ST_TRUE) )
             // {
-                square_explored_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
+                // square_explored_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
+                square_explored_flag = (square_is_valid == ST_TRUE) ? GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp) : 0;  /* CLAUDE: integrity guard -- 0 draws no mask and takes the black fill below */
 
                 if(
                     (square_explored_flag != 0x0)
@@ -1256,6 +1271,8 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
         itr_screen_y += SQUARE_HEIGHT;
         itr_world_y += 1;
     }
+
+    Integrity_Report_Refused_Squares("Redraw_Map_Unexplored_Area", &refusing_squares, refused_count, refused_first_wx, refused_first_wy, wp);  /* CLAUDE */
 
 }
 
@@ -1980,6 +1997,10 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
     uint8_t l_terrain_001_0;
     uint8_t l_terrain_001_1;  // DNE in Dasm
     byte_ptr terrain_pict_seg;
+    static int16_t refusing_squares = 0;  /* CLAUDE: Integrity_Report_Refused_Squares() state */
+    int16_t refused_count = 0;  /* CLAUDE */
+    int16_t refused_first_wx = 0;  /* CLAUDE */
+    int16_t refused_first_wy = 0;  /* CLAUDE */
 
     if(wp == 0)
     {
@@ -2012,7 +2033,18 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
             }
 
             // DELETEME  unexplored_area_flag = _square_explored[(wp * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-            unexplored_area_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
+            // unexplored_area_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
+            /* CLAUDE: integrity guard (GitHub #21) -- a bad plane/square/terrain index read outside _square_explored, _world_maps, and the TERRAIN.LBX data and crashed in the picture draw; draw such a square as unexplored (the Fill below) and report it once */
+            if(Integrity_Terrain_Square_Is_Valid(curr_world_x, itr_world_y, wp) == ST_TRUE)  /* CLAUDE */
+            {
+                unexplored_area_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);  /* CLAUDE */
+            }
+            else
+            {
+                if(refused_count == 0) { refused_first_wx = curr_world_x; refused_first_wy = itr_world_y; }  /* CLAUDE */
+                refused_count++;  /* CLAUDE */
+                unexplored_area_flag = ST_FALSE;  /* CLAUDE */
+            }
 
             if(unexplored_area_flag == ST_FALSE)
             {
@@ -2087,6 +2119,8 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
         itr_world_y++;
     }
 
+    Integrity_Report_Refused_Squares("Draw_Map_Terrain", &refusing_squares, refused_count, refused_first_wx, refused_first_wy, wp);  /* CLAUDE */
+
 }
 
 
@@ -2118,6 +2152,11 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
     uint8_t animated_terrain_flag;
     uint8_t square_explored_flag;
     SAMB_ptr unexplored_mask_pict_seg;
+    static int16_t refusing_squares = 0;  /* CLAUDE: Integrity_Report_Refused_Squares() state */
+    int16_t square_is_valid = 0;  /* CLAUDE */
+    int16_t refused_count = 0;  /* CLAUDE */
+    int16_t refused_first_wx = 0;  /* CLAUDE */
+    int16_t refused_first_wy = 0;  /* CLAUDE */
 
     itr_screen_y = screen_y;
     itr_world_y = world_grid_y;
@@ -2136,7 +2175,15 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
                 curr_world_x = itr_world_x - WORLD_WIDTH;
             }
 
-            terrain_001_index = GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2)));
+            // terrain_001_index = GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2)));
+            /* CLAUDE: integrity guard (GitHub #21) -- a bad plane/square/terrain index read outside _world_maps, m_terrain_lbx_001, and _square_explored; skip such a square's mask and report it once */
+            square_is_valid = Integrity_Terrain_Square_Is_Valid(curr_world_x, itr_world_y, wp);  /* CLAUDE */
+            if(square_is_valid != ST_TRUE)
+            {
+                if(refused_count == 0) { refused_first_wx = curr_world_x; refused_first_wy = itr_world_y; }  /* CLAUDE */
+                refused_count++;  /* CLAUDE */
+            }
+            terrain_001_index = (square_is_valid == ST_TRUE) ? GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2))) : 0;  /* CLAUDE */
             terrain_001_0 = GET_1B_OFS(m_terrain_lbx_001, (terrain_001_index * 2) + 0);
             animated_terrain_flag = ((terrain_001_0 & 0x80) != 0);  // ¿ prefer ((bitfield >> 7) & 0x01) - saves the CPU doing a full register-sized compare ?
 
@@ -2146,7 +2193,8 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
             if( (map_draw_full == ST_TRUE) || (animated_terrain_flag != ST_TRUE) )
             {
                 // DELETEME  square_explored_flag = _square_explored[(wp * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-                square_explored_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
+                // square_explored_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
+                square_explored_flag = (square_is_valid == ST_TRUE) ? GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp) : 0;  /* CLAUDE: integrity guard -- 0 draws no mask */
 
                 if( (square_explored_flag != 0) && (square_explored_flag != 15) )
                 {
@@ -2163,6 +2211,8 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
         itr_screen_y += SQUARE_HEIGHT;
         itr_world_y += 1;
     }
+
+    Integrity_Report_Refused_Squares("Draw_Map_Unexplored_Area", &refusing_squares, refused_count, refused_first_wx, refused_first_wy, wp);  /* CLAUDE */
 
 }
 

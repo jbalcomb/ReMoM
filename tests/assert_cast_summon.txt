@@ -1,0 +1,34 @@
+# assert_cast_summon.txt -- Field assertions for the HeMoM_Cast_Summon test (GitHub issue #21).
+#
+#   HeMoM --cast-summon 201 --seed1 12345
+# Fixture: SAVECMBT.GAM.  HeMoM kills the last two units (840, 841) and compacts, which leaves dead records
+# (owner = -1, wp = ST_UNDEFINED) past the end of _UNITS[], then casts Magic Spirit (spell 201) for the human player
+# through the real Cast_Spell_Overland() and draws the main screen.
+#
+# The summon re-centers the map on the new unit.  The reconstruction read _UNITS[_units] -- the dead record past the
+# new unit -- so _map_plane became -1 and the next main-screen draw read before _world_maps and crashed.  The asm
+# reads _UNITS[_units - 1].
+#
+# The summon.stale_slot_* lines are the PRECONDITION: they prove the record the bad read would hit really is a dead
+# one, so this test exercises the crash state rather than passing by luck on a harmless leftover.
+
+# --- precondition ---
+summon.stale_slot_owner_idx = -1
+summon.stale_slot_wp = -1
+
+# --- the summon happened ---
+summon.unit_created = 1
+check.new_unit_type_matches_spell = 1
+check.new_unit_owned_by_human = 1
+
+# --- the map focus is the new unit, not the record past it ---
+check.map_plane_in_range = 1
+check.map_plane_matches_new_unit = 1
+check.active_world_x_matches_new_unit = 1
+check.active_world_y_matches_new_unit = 1
+map.active_world_x = 20
+map.active_world_y = 7
+map.map_plane = 0
+
+# --- the main-screen draw that crashed in the report completes ---
+check.main_screen_drawn = 1
