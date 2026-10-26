@@ -31,9 +31,11 @@ protected:
     }
 };
 
-class AllocatePoolGuardTest : public ::testing::Test {
+class AllocatePoolGuardTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
         Pool_Init_Guard_Mode(1);
     }
 };
@@ -204,7 +206,7 @@ TEST_F(AllocatePoolGuardTest, Arenas_Are_Separated_By_Guard_Bytes)
 
     EXPECT_NE(0, Pool_Guards_Enabled());
     EXPECT_EQ(a + 32 + POOL_GUARD_BYTES, b);
-    for (int ofst = 0; ofst < POOL_GUARD_BYTES; ofst++)
+    for(int ofst = 0; ofst < POOL_GUARD_BYTES; ofst++)
     {
         ASSERT_EQ(POOL_GUARD_BYTE, a[32 + ofst]) << "guard offset " << ofst;
     }
@@ -302,7 +304,7 @@ TEST_F(AllocatePoolGuardTest, Reset_Guards_Clears_Reported_Damage)
 TEST_F(AllocatePoolGuardTest, Damage_Count_Exceeds_Buffer_When_Many_Guards_Hit)
 {
     struct s_POOL_GUARD_DAMAGE damage[2];
-    for (int itr = 0; itr < 5; itr++)
+    for(int itr = 0; itr < 5; itr++)
     {
         uint8_t * p = Pool_Carve(16);
         p[16] = 0x00;

@@ -43,7 +43,7 @@ static uint32_t pool_arena_count = 0;
 /* Pending call site / label for the next carve; cleared when consumed. */
 static const char * pool_next_site_file = NULL;
 static int32_t pool_next_site_line = 0;
-static char pool_next_label[POOL_CARVE_LABEL_LEN] = { 0 };
+static char pool_next_label[POOL_CARVE_LABEL_LEN] = {0};
 static int32_t pool_next_label_num = -1;
 
 

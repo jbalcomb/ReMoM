@@ -266,7 +266,7 @@ SAMB_ptr Allocate_Dos_Data_Space(int32_t size);
 
 /* CLAUDE: tag every Space Alloc arena with the call site that allocated it, so the static pool's guard mode can name the arena that overran its end (see Allocate_Pool.h).  A function-like macro does not re-expand its own name, so the inner call is the real function.  Allocate.c #undefs both to define them. */
 #include "Allocate_Pool.h"
-#define Allocate_Space(_size_)              (Pool_Note_Carve_Site(__FILE__, __LINE__), Allocate_Space(_size_))
-#define Allocate_Space_No_Header(_size_)    (Pool_Note_Carve_Site(__FILE__, __LINE__), Allocate_Space_No_Header(_size_))
+#define Allocate_Space(_size_) (Pool_Note_Carve_Site(__FILE__, __LINE__), Allocate_Space(_size_))
+#define Allocate_Space_No_Header(_size_) (Pool_Note_Carve_Site(__FILE__, __LINE__), Allocate_Space_No_Header(_size_))
 
 #endif /* ALLOCATE_H */

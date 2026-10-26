@@ -22,17 +22,18 @@
 #include "../../MoX/src/MOX_TYPE.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /* Run every check; log each new failure with `where`.  Returns the number of checks currently failing (0 = all good). */
-int16_t Integrity_Checkpoint(const char * where);
+    int16_t Integrity_Checkpoint(const char * where);
 
 /* Non-zero when the world-map terrain index at (wx, wy, wp) can be drawn: the plane and square are in range and the terrain index is within TerType_Count.  For draw code that must refuse a bad square instead of reading outside the terrain data. */
-int16_t Integrity_Terrain_Square_Is_Valid(int16_t wx, int16_t wy, int16_t wp);
+    int16_t Integrity_Terrain_Square_Is_Valid(int16_t wx, int16_t wy, int16_t wp);
 
 /* Draw code that refused squares calls this once per draw pass with the count (0 included).  Logged when refusing starts and when it stops -- tracked in the caller's *refusing_state -- not on every frame. */
-void Integrity_Report_Refused_Squares(const char * where, int16_t * refusing_state, int16_t refused_count, int16_t first_wx, int16_t first_wy, int16_t wp);
+    void Integrity_Report_Refused_Squares(const char * where, int16_t * refusing_state, int16_t refused_count, int16_t first_wx, int16_t first_wy, int16_t wp);
 
 #ifdef __cplusplus
 }

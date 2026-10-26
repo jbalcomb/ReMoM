@@ -1212,6 +1212,13 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
     int16_t refused_first_wx = 0;  /* CLAUDE */
     int16_t refused_first_wy = 0;  /* CLAUDE */
 
+    /* CLAUDE: integrity guard (GitHub #21) -- with a bad plane every per-square read below lands outside _world_maps and _square_explored and draws a garbage mask picture (segfault in FLIC_Draw); refuse the whole pass and report it once */
+    if((wp < 0) || (wp >= NUM_PLANES))
+    {
+        Integrity_Report_Refused_Squares("Redraw_Map_Unexplored_Area", &refusing_squares, (int16_t)(map_grid_width * map_grid_height), world_grid_x, world_grid_y, wp);  /* CLAUDE */
+        return;  /* CLAUDE */
+    }
+
     itr_screen_y = screen_y;
     itr_world_y = world_grid_y;
     while(world_grid_y + map_grid_height > itr_world_y)
@@ -1234,7 +1241,11 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
             square_is_valid = Integrity_Terrain_Square_Is_Valid(curr_world_x, itr_world_y, wp);  /* CLAUDE */
             if(square_is_valid != ST_TRUE)
             {
-                if(refused_count == 0) { refused_first_wx = curr_world_x; refused_first_wy = itr_world_y; }  /* CLAUDE */
+                if(refused_count == 0)
+                {
+                    refused_first_wx = curr_world_x;
+                    refused_first_wy = itr_world_y;
+                }  /* CLAUDE */
                 refused_count++;  /* CLAUDE */
             }
             terrain_001_index = (square_is_valid == ST_TRUE) ? GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2))) : 0;  /* CLAUDE */
@@ -1244,8 +1255,7 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
 
             // if( (map_draw_full == ST_TRUE) || (animated_terrain_flag != ST_TRUE) )
             // {
-                // square_explored_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
-                square_explored_flag = (square_is_valid == ST_TRUE) ? GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp) : 0;  /* CLAUDE: integrity guard -- 0 draws no mask and takes the black fill below */
+                square_explored_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
 
                 if(
                     (square_explored_flag != 0x0)
@@ -1273,7 +1283,6 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
     }
 
     Integrity_Report_Refused_Squares("Redraw_Map_Unexplored_Area", &refusing_squares, refused_count, refused_first_wx, refused_first_wy, wp);  /* CLAUDE */
-
 }
 
 
@@ -2041,7 +2050,11 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
             }
             else
             {
-                if(refused_count == 0) { refused_first_wx = curr_world_x; refused_first_wy = itr_world_y; }  /* CLAUDE */
+                if(refused_count == 0)
+                {
+                    refused_first_wx = curr_world_x;
+                    refused_first_wy = itr_world_y;
+                }  /* CLAUDE */
                 refused_count++;  /* CLAUDE */
                 unexplored_area_flag = ST_FALSE;  /* CLAUDE */
             }
@@ -2120,7 +2133,6 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
     }
 
     Integrity_Report_Refused_Squares("Draw_Map_Terrain", &refusing_squares, refused_count, refused_first_wx, refused_first_wy, wp);  /* CLAUDE */
-
 }
 
 
@@ -2180,7 +2192,11 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
             square_is_valid = Integrity_Terrain_Square_Is_Valid(curr_world_x, itr_world_y, wp);  /* CLAUDE */
             if(square_is_valid != ST_TRUE)
             {
-                if(refused_count == 0) { refused_first_wx = curr_world_x; refused_first_wy = itr_world_y; }  /* CLAUDE */
+                if(refused_count == 0)
+                {
+                    refused_first_wx = curr_world_x;
+                    refused_first_wy = itr_world_y;
+                }  /* CLAUDE */
                 refused_count++;  /* CLAUDE */
             }
             terrain_001_index = (square_is_valid == ST_TRUE) ? GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2))) : 0;  /* CLAUDE */
@@ -2213,7 +2229,6 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
     }
 
     Integrity_Report_Refused_Squares("Draw_Map_Unexplored_Area", &refusing_squares, refused_count, refused_first_wx, refused_first_wy, wp);  /* CLAUDE */
-
 }
 
 // WZD o150p08
