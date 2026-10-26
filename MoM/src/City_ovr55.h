@@ -59,7 +59,7 @@ void Turn_Off_City_Enchantment(int16_t city_idx, int16_t ench_idx);
 // sub_4B9BF()
 
 // WZD o55p12
-int16_t City_Remove_Building(int16_t city_idx, int16_t bldg_idx);
+int16_t City_Remove_Building(int16_t bldg_idx, int16_t city_idx);
 
 // WZD o55p13
 int16_t City_Sell_Building(int16_t city_idx, int16_t bldg_idx, int16_t gold_amount);

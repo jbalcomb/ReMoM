@@ -841,10 +841,10 @@ void Apply_Damage_To_City(int16_t city_idx, int16_t population_lost, int16_t bld
         bldg_ctr = 0;
         for(itr_buildings = 1; itr_buildings < NUM_BUILDINGS; itr_buildings++)
         {
-            if(_CITIES[city_idx].bldg_status[itr_buildings] > bs_Built)
+            if(_CITIES[city_idx].bldg_status[itr_buildings] >= bs_Built)
             {
                 bldg_roll = Random(100);
-                if(bldg_roll > bldg_chance)
+                if(bldg_roll <= bldg_chance)
                 {
                     if(City_Remove_Building(itr_buildings, city_idx) == ST_TRUE)
                     {
@@ -1021,7 +1021,7 @@ void Turn_Off_City_Enchantment(int16_t city_idx, int16_t ench_idx)
 /*
 
 */
-int16_t City_Remove_Building(int16_t city_idx, int16_t bldg_idx)
+int16_t City_Remove_Building(int16_t bldg_idx, int16_t city_idx)
 {
     int16_t has_reqd_bldg = 0;
     int16_t itr_buildings = 0;  // _CX_
@@ -1066,7 +1066,7 @@ int16_t City_Sell_Building(int16_t city_idx, int16_t bldg_idx, int16_t gold_amou
 {
     int16_t sold_building = 0;  // DNE in Dasm
 
-    if(City_Remove_Building(city_idx, bldg_idx) != ST_TRUE)
+    if(City_Remove_Building(bldg_idx, city_idx) != ST_TRUE)
     {
         sold_building = ST_FALSE;
     }
