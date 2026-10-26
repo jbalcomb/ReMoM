@@ -65,6 +65,12 @@
 #include "../MoM/src/UNITTYPE.h"
 #include "../MoM/src/Combat.h"   /* CLAUDE: Combat() + combat_results_gold for --combat test mode */
 #include "../MoM/src/DIPLODEF.h" /* CLAUDE: DIPL_War for --combat test mode */
+#include "../MoM/src/CITYCALC.h"  /* CLAUDE: Kill_Unit() for --cast-summon test mode */
+#include "../MoM/src/NEXTTURN.h"  /* CLAUDE: Delete_Dead_Units() for --cast-summon test mode */
+#include "../MoM/src/OverSpel.h"  /* CLAUDE: Cast_Spell_Overland() for --cast-summon test mode */
+#include "../MoM/src/Spellbook.h" /* CLAUDE: spl_ enum for --cast-summon test mode */
+#include "../MoM/src/SBookScr.h"  /* CLAUDE: Full_Draw_Main_Screen() for --cast-summon test mode */
+#include "../MoM/src/Integrity_Check.h"  /* CLAUDE: Integrity_Checkpoint() at shutdown */
 #include "../MoM/src/WZD_o143.h"  /* Random_City_Name_By_Race */
 
 #include "ReMoM_Init.h"
@@ -1010,6 +1016,137 @@ static int HeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
 
 
 
+/* ========================================================================= */
+/*  Summon test mode (--cast-summon)                                         */
+/*                                                                           */
+/*  Regression test for GitHub issue #21: after the human                    */
+/*  player's overland creature summon, Cast_Spell_Overland() re-centers the  */
+/*  map on the new unit.  The reconstruction read _UNITS[_units] (one past   */
+/*  the new unit) instead of _UNITS[_units - 1].  That slot is whatever      */
+/*  record was last left behind there.  Kill_Unit() sets wp = ST_UNDEFINED   */
+/*  and Delete_Dead_Units() drops the count without clearing the record, so  */
+/*  once the last two units have died, the new unit fills the first dead     */
+/*  slot and the bad read hits the second: _map_plane became -1 and the      */
+/*  next Draw_Map_Terrain() read before _world_maps and crashed.  With any   */
+/*  other leftover record the map silently re-centers on the wrong square.   */
+/*                                                                           */
+/*  Loads SAVECMBT.GAM, reproduces that exact state (kills the last two      */
+/*  units and compacts), casts SPELL_IDX for the human player through the    */
+/*  real Cast_Spell_Overland(), and dumps the post-cast map focus for the    */
+/*  CTest assertion step.                                                    */
+/* ========================================================================= */
+
+#define HEMOM_SUMMON_DUMP_FILE "HEMOM_SUMMON.txt"
+
+static int HeMoM_Summon_Run(int16_t spell_idx)
+{
+    FILE * fout = NULL;
+    int16_t killed_unit_idx = 0;
+    int16_t units_before_cast = 0;
+    int16_t stale_slot_owner_idx = 0;
+    int16_t stale_slot_wp = 0;
+    int16_t new_unit_idx = 0;
+
+    if(spell_idx <= spl_NONE || spell_idx >= NUM_SPELLS)
+    {
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Summon] spell_idx %d out of range", spell_idx);
+        return 1;
+    }
+    if(spell_data_table[spell_idx].type != scc_Summoning)
+    {
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Summon] spell_idx %d (%s) is not a creature summoning spell (type %d)", spell_idx, spell_data_table[spell_idx].name, spell_data_table[spell_idx].type);
+        return 1;
+    }
+    if(_units < 3)
+    {
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Summon] fixture has too few units (%d)", _units);
+        return 1;
+    }
+
+    /* Reproduce the precondition the way the game produces it: the last two units die, and the end-of-turn compaction drops the count without overwriting their records, leaving dead records (wp = ST_UNDEFINED) at _UNITS[_units] and _UNITS[_units + 1].  The summon fills the first; the bad read hits the second. */
+    killed_unit_idx = (int16_t)(_units - 2);
+    Kill_Unit((int16_t)(_units - 1), kt_Normal);
+    Kill_Unit(killed_unit_idx, kt_Normal);
+    Delete_Dead_Units();
+    units_before_cast = _units;
+    stale_slot_owner_idx = _UNITS[(_units + 1)].owner_idx;
+    stale_slot_wp = _UNITS[(_units + 1)].wp;
+
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Summon] killed units %d,%d; _units=%d; slot past the new unit _UNITS[%d] owner=%d wp=%d", killed_unit_idx, (killed_unit_idx + 1), _units, (_units + 1), stale_slot_owner_idx, stale_slot_wp);
+
+    /* Cosmetic-only: shorten the summon screen's animation loop and skip music; neither affects the cast. */
+    magic_set.spell_animations = ST_FALSE;
+    magic_set.background_music = ST_FALSE;
+    magic_set.sound_effects = ST_FALSE;
+
+    _players[HUMAN_PLAYER_IDX].casting_spell_idx = spell_idx;
+    _map_plane = 0;
+    _active_world_x = 0;
+    _active_world_y = 0;
+
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Summon] Invoking Cast_Spell_Overland() spell=%d (%s) summon_at=(%d,%d,%d)", spell_idx, spell_data_table[spell_idx].name, _players[HUMAN_PLAYER_IDX].summon_wx, _players[HUMAN_PLAYER_IDX].summon_wy, _players[HUMAN_PLAYER_IDX].summon_wp);
+
+    Cast_Spell_Overland(HUMAN_PLAYER_IDX);
+
+    new_unit_idx = (int16_t)(_units - 1);
+
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Summon] Cast_Spell_Overland() returned; _units=%d _map_plane=%d _active_world=(%d,%d)", _units, _map_plane, _active_world_x, _active_world_y);
+
+    fout = fopen(HEMOM_SUMMON_DUMP_FILE, "w");
+    if(fout == NULL)
+    {
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Summon] Could not create: %s", HEMOM_SUMMON_DUMP_FILE);
+        return 1;
+    }
+
+    fprintf(fout, "# HeMoM Summon Dump\n");
+    fprintf(fout, "summon.spell_idx = %d\n", spell_idx);
+    fprintf(fout, "summon.killed_unit_idx = %d\n", killed_unit_idx);
+    fprintf(fout, "summon.units_before_cast = %d\n", units_before_cast);
+    fprintf(fout, "summon.units_after_cast = %d\n", _units);
+    fprintf(fout, "summon.unit_created = %d\n", (_units == (units_before_cast + 1)) ? 1 : 0);
+    fprintf(fout, "summon.stale_slot_owner_idx = %d\n", stale_slot_owner_idx);
+    fprintf(fout, "summon.stale_slot_wp = %d\n", stale_slot_wp);
+    fprintf(fout, "summon.location_wx = %d\n", _players[HUMAN_PLAYER_IDX].summon_wx);
+    fprintf(fout, "summon.location_wy = %d\n", _players[HUMAN_PLAYER_IDX].summon_wy);
+    fprintf(fout, "summon.location_wp = %d\n", _players[HUMAN_PLAYER_IDX].summon_wp);
+    fprintf(fout, "new_unit.idx = %d\n", new_unit_idx);
+    fprintf(fout, "new_unit.type = %d\n", _UNITS[new_unit_idx].type);
+    fprintf(fout, "new_unit.owner_idx = %d\n", _UNITS[new_unit_idx].owner_idx);
+    fprintf(fout, "new_unit.wx = %d\n", _UNITS[new_unit_idx].wx);
+    fprintf(fout, "new_unit.wy = %d\n", _UNITS[new_unit_idx].wy);
+    fprintf(fout, "new_unit.wp = %d\n", _UNITS[new_unit_idx].wp);
+    fprintf(fout, "map.active_world_x = %d\n", _active_world_x);
+    fprintf(fout, "map.active_world_y = %d\n", _active_world_y);
+    fprintf(fout, "map.map_plane = %d\n", _map_plane);
+    fprintf(fout, "check.new_unit_type_matches_spell = %d\n", (_UNITS[new_unit_idx].type == spell_data_table[spell_idx].unit_type) ? 1 : 0);
+    fprintf(fout, "check.new_unit_owned_by_human = %d\n", (_UNITS[new_unit_idx].owner_idx == HUMAN_PLAYER_IDX) ? 1 : 0);
+    fprintf(fout, "check.map_plane_in_range = %d\n", ((_map_plane >= 0) && (_map_plane < NUM_PLANES)) ? 1 : 0);
+    fprintf(fout, "check.map_plane_matches_new_unit = %d\n", (_map_plane == _UNITS[new_unit_idx].wp) ? 1 : 0);
+    fprintf(fout, "check.active_world_x_matches_new_unit = %d\n", (_active_world_x == _UNITS[new_unit_idx].wx) ? 1 : 0);
+    fprintf(fout, "check.active_world_y_matches_new_unit = %d\n", (_active_world_y == _UNITS[new_unit_idx].wy) ? 1 : 0);
+    fclose(fout);
+
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Summon] Wrote %s; drawing the main screen with the post-cast map focus", HEMOM_SUMMON_DUMP_FILE);
+
+    /* The reported crash is the first main-screen draw after the summon screen closes.  Do that draw here; if it faults, the dump above is already on disk and check.main_screen_drawn never gets written. */
+    Full_Draw_Main_Screen();
+
+    fout = fopen(HEMOM_SUMMON_DUMP_FILE, "a");
+    if(fout == NULL)
+    {
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Summon] Could not append to: %s", HEMOM_SUMMON_DUMP_FILE);
+        return 1;
+    }
+    fprintf(fout, "check.main_screen_drawn = 1\n");
+    fclose(fout);
+
+    LOG_INFO(LOG_CAT_HEMOM, "[HeMoM Summon] Main screen drawn");
+    return 0;
+}
+
+
+
 static void Print_Usage(const char *program_name)
 {
     LOG_INFO(LOG_CAT_HEMOM, "HeMoM — Headless Master of Magic\n");
@@ -1030,6 +1167,7 @@ static void Print_Usage(const char *program_name)
     LOG_INFO(LOG_CAT_HEMOM, "  --dump-save FILE   After Screen_Control returns, dump FILE.GAM to FILE.txt");
     LOG_INFO(LOG_CAT_HEMOM, "  --combat D A,B,..  Load SAVECMBT.GAM, run strategic combat: attacker units A,B,.. vs the stack of defender unit D; dump results to %s", HEMOM_COMBAT_DUMP_FILE);
     LOG_INFO(LOG_CAT_HEMOM, "  --combat-tactical D A,B,..  Same, but run the tactical battle screen with forced auto-combat (one side must be the human player)");
+    LOG_INFO(LOG_CAT_HEMOM, "  --cast-summon S    Load SAVECMBT.GAM, leave a dead record past the last unit, cast creature-summon spell S for the human player; dump map focus to %s", HEMOM_SUMMON_DUMP_FILE);
     LOG_INFO(LOG_CAT_HEMOM, "  --help             Show this help");
 }
 
@@ -1041,7 +1179,7 @@ static void Print_Usage(const char *program_name)
 
 int main(int argc, char *argv[])
 {
-    int hemom_mode = 0;  /* 0=none, 1=newgame, 2=load, 3=combat */
+    int hemom_mode = 0;  /* 0=none, 1=newgame, 2=load, 3=combat, 4=cast-summon */
     char hemom_file[260] = { 0 };
     char hemom_scenario[260] = { 0 };
     char hemom_dump_save[260] = { 0 };
@@ -1049,6 +1187,7 @@ int main(int argc, char *argv[])
     int16_t combat_troops[HEMOM_COMBAT_MAX_TROOPS] = { 0 };
     int16_t combat_troop_count = 0;
     int16_t combat_tactical = 0;
+    int16_t summon_spell_idx = 0;
     int argi;
 
     STU_Log_Startup("ReMoM.ini");
@@ -1218,6 +1357,14 @@ int main(int argc, char *argv[])
             }
             LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: %s defender_unit=%d attacker_troop_count=%d", combat_tactical ? "--combat-tactical" : "--combat", combat_defender_unit_idx, combat_troop_count);
         }
+        else if(stu_strcmp(argv[argi], "--cast-summon") == 0 && (argi + 1) < argc)
+        {
+            hemom_mode = 4;
+            stu_strcpy(hemom_file, "SAVECMBT.GAM");
+            argi++;
+            summon_spell_idx = (int16_t)stu_atoi(argv[argi]);
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --cast-summon spell_idx=%d", summon_spell_idx);
+        }
         else if(strcmp(argv[argi], "--ai-metrics") == 0)
         {
 #ifdef STU_DEBUG
@@ -1332,6 +1479,21 @@ int main(int argc, char *argv[])
         m_magic_winner_idx = ST_UNDEFINED;
         current_screen = scr_Main_Screen;
     }
+    else if(hemom_mode == 4)
+    {
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Loading summon fixture save: %s", hemom_file);
+        Load_WZD_Resources();
+        g_load_save_gam_name_override = hemom_file;
+        Load_SAVE_GAM(ST_UNDEFINED);
+        Loaded_Game_Update();
+        current_screen = scr_Main_Screen;
+        if(HeMoM_Summon_Run(summon_spell_idx) != 0)
+        {
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Summon run failed");
+            Shutdown_Platform();
+            return 1;
+        }
+    }
     else if(hemom_mode == 3)
     {
         LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Loading combat fixture save: %s", hemom_file);
@@ -1392,6 +1554,10 @@ int main(int argc, char *argv[])
     if(hemom_mode == 3)
     {
         LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Combat run complete — skipping Screen_Control()");
+    }
+    else if(hemom_mode == 4)
+    {
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Summon run complete — skipping Screen_Control()");
     }
     else if(hemom_mode == 1 && hemom_scenario[0] == '\0')
     {
@@ -1478,6 +1644,9 @@ int main(int argc, char *argv[])
 #endif
 
     LOG_INFO(LOG_CAT_GENERAL, "[POOL] peak bytes used = %u  (vs POOL_ARENA_CAPACITY)", Pool_Bytes_Peak());  /* CLAUDE: static-pool high-water mark; informs POOL_ARENA_CAPACITY sizing (PLAN-Static-Pool-Allocator Phase 2b) */
+    LOG_INFO(LOG_CAT_INTEGRITY, "[POOL] guard mode = %d, arenas carved = %u, tracked = %u", Pool_Guards_Enabled(), Pool_Arena_Count(), Pool_Tracked_Arena_Count());  /* CLAUDE: proves whether the guard check below had anything to check */
+    /* CLAUDE: final integrity checkpoint -- headless runs (next-turn, AI, world-gen) may never reach Main_Screen_Draw(), so check once here; with REMOM_POOL_GUARDS=1 this catches any overrun the run caused */
+    LOG_INFO(LOG_CAT_INTEGRITY, "[INTEGRITY] HeMoM shutdown: %d checks failing", Integrity_Checkpoint("HeMoM shutdown"));
 
     LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: END: HeMoM  main()", __FILE__, __LINE__);
 

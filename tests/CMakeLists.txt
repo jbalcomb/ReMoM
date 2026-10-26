@@ -363,6 +363,43 @@ set_tests_properties(HeMoM_Combat_Strategic_Assertions PROPERTIES
 
 
 # =========================================================================
+#  Overland Summon: map focus after the human player's creature summon
+#  (GitHub issue #21)
+#
+#  Loads SAVECMBT.GAM, kills the last two units so dead records sit past the
+#  end of _UNITS[], casts Magic Spirit (201) for the human player through the
+#  real Cast_Spell_Overland(), then draws the main screen.  The bug read the
+#  record past the new unit and set _map_plane = -1; the draw then crashed.
+#  HeMoM writes HEMOM_SUMMON.txt; see assert_cast_summon.txt.
+# =========================================================================
+
+add_test(
+    NAME HeMoM_Cast_Summon_Run
+    COMMAND $<TARGET_FILE:HeMoM>
+        --cast-summon 201
+        --seed1 12345
+    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+)
+set_tests_properties(HeMoM_Cast_Summon_Run PROPERTIES
+    TIMEOUT 60
+    FIXTURES_SETUP HeMoM_Cast_Summon
+    LABELS "hemom;integration;spells"
+)
+
+add_test(
+    NAME HeMoM_Cast_Summon_Assertions
+    COMMAND $<TARGET_FILE:check_save_fields>
+        ${HEMOM_TEST_WORKDIR}/HEMOM_SUMMON.txt
+        ${CMAKE_CURRENT_SOURCE_DIR}/assert_cast_summon.txt
+)
+set_tests_properties(HeMoM_Cast_Summon_Assertions PROPERTIES
+    FIXTURES_REQUIRED HeMoM_Cast_Summon
+    LABELS "hemom;integration;spells"
+)
+
+
+
+# =========================================================================
 #  Tactical Combat: Scenario 1  (channel 1 -- real battle screen, scripted)
 #
 #  4 Human Halberdiers (player 0) attack 4 Stag Beetles (player 2); resolved

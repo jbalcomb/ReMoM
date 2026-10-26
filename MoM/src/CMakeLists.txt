@@ -26,6 +26,7 @@ set(LIBMOM_SOURCES
     HIRE.c
     Init.c
     INITGAME.c
+    Integrity_Check.c
     INTRO.c
     ItemMake.c
     Items.c

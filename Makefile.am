@@ -213,6 +213,7 @@ libmom_a_SOURCES = \
     MoM/src/HIRE.c \
     MoM/src/Init.c \
     MoM/src/INITGAME.c \
+    MoM/src/Integrity_Check.c \
     MoM/src/INTRO.c \
     MoM/src/ItemMake.c \
     MoM/src/Items.c \

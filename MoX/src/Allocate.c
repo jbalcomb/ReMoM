@@ -28,6 +28,9 @@
 */
 
 #include "Allocate.h"
+/* CLAUDE: Allocate.h wraps these two in call-site-tagging macros for the static pool's guard mode; the definitions below need the bare names. */
+#undef Allocate_Space
+#undef Allocate_Space_No_Header
 
 #include "Allocate_Pool.h"  /* CLAUDE: Pool_Carve() - static-pool backing for Allocate_Space (PLAN-Static-Pool-Allocator Phase 2b) */
 #include "capture.h"  /* Check_Release_Version() */
