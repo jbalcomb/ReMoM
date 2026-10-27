@@ -9,8 +9,8 @@ record count and record size.  Only the content is invented:
   - pictures: valid FLIC files of random pixels, each exactly the original entry's size (the game sizes its buffers
               from those): raw noise where it fits, runs of one colour where space is tight, transparent columns last
   - sounds:   0xDEAF sound entries -- type 2 = a short noise VOC, type 1 = a minimal silent XMIDI
-  - data:     records of the original size, zero-filled, with placeholder names/text and the few numeric fields
-              the game cannot take as zero (see DATA_TABLES)
+  - data:     every field of every record drawn from the range the game code accepts (tables.py), and checked
+              against it on the way out (schema.py)
   - anything else (raw tile sheets, cursors, drivers, ...): random bytes of the original length
 
 Usage (from the repo root):
@@ -30,6 +30,9 @@ import sys
 
 from tools.field_catalog import fwv
 
+from .check import check_folder
+from .tables import RECORD_ARCHIVES, TABLES
+
 LBX_MAGIC = 0xFEAD
 LBX_HDR_SIZE = 0x200
 LBX_NAME_RECORD = 32
@@ -41,74 +44,27 @@ CATALOG = os.path.join(os.path.dirname(__file__), "..", "fields", "assets.fwv")
 # Archives whose entries are 0xDEAF sound entries (catalog kind "other").  MUSIC is XMIDI (type 1), the rest VOC (type 2).
 SOUND_ARCHIVES = {"SOUNDFX.LBX": 2, "NEWSOUND.LBX": 2, "CMBTSND.LBX": 2, "INTROSFX.LBX": 2, "INTROSND.LBX": 2, "MUSIC.LBX": 1}
 
-# Data tables: (archive, entry) -> (record count, record size).  Sizes are the ones the game passes to LBX_Load_Data*;
-# each matches the original entry length as 4 + count * size.
-DATA_TABLES = {
-    ("BUILDDAT.LBX", 0): (36, 52),
-    ("BUILDESC.LBX", 0): (36, 200),
-    ("CITYNAME.LBX", 0): (14, 280),           # one record per race: 20 names of 14 characters
-    ("DESC.LBX", 0): (241, 110),
-    ("DIPLOMSG.LBX", 0): (74, 6),
-    ("DIPLOMSG.LBX", 1): (1110, 200),
-    ("EVENTMSG.LBX", 0): (126, 200),
-    ("HELP.LBX", 2): (1614, 1048),
-    ("HERODATA.LBX", 0): (125, 12),
-    ("ITEMDATA.LBX", 0): (250, 56),
-    ("ITEMPOW.LBX", 0): (67, 30),
-    ("LISTDAT.LBX", 0): (75, 200),
-    ("MESSAGE.LBX", 0): (100, 150),
-    ("NAMES.LBX", 0): (200, 13),
-    ("SPELLDAT.LBX", 0): (215, 36),
-    ("TERRSTAT.LBX", 0): (770, 6),
-    ("TERRTYPE.LBX", 0): (5, 512),
-}
-
-# Tables whose every record is a NUL-terminated string.
-TEXT_TABLES = {"BUILDESC.LBX", "DESC.LBX", "EVENTMSG.LBX", "LISTDAT.LBX", "MESSAGE.LBX", "NAMES.LBX"}
-
-# Archives where every non-empty entry is a table of fixed-size records (record size here; count from the length).
-RECORD_ARCHIVES = {"HLPENTRY.LBX": 10}
-
-
 def put_text(record, offset, size, text):
     raw = text.encode("ascii")[: size - 1]
     record[offset:offset + len(raw)] = raw
 
 
-def fill_record(lbx, entry, index, size, rng):
-    """One record of a data table.  Zero-filled, with names / text and the numeric fields that must not be zero."""
-    rec = bytearray(size)
-    stem = lbx.split(".")[0].title()
-    if lbx in TEXT_TABLES or (lbx, entry) == ("DIPLOMSG.LBX", 1):
-        put_text(rec, 0, size, "%s %d" % (stem, index))
-    elif lbx == "CITYNAME.LBX":
-        for name_idx in range(size // 14):
-            put_text(rec, name_idx * 14, 14, "City %d-%d" % (index, name_idx))
-    elif lbx == "SPELLDAT.LBX":
-        put_text(rec, 0, 19, "Spell %d" % index)
-        struct.pack_into("<hh", rec, 0x1A, 10 + index, 20 + index * 2)    # casting_cost, research_cost
-        struct.pack_into("<h", rec, 0x20, 154 + index % 44)                # type 0 = summoning: a fantastic unit (ut_Magic_Spirit..)
-    elif lbx == "BUILDDAT.LBX":
-        put_text(rec, 0, 20, "Building %d" % index)
-        struct.pack_into("<h", rec, 0x20, 1)                               # maintenance_cost
-        struct.pack_into("<h", rec, 0x2C, 30 + index * 5)                  # construction_cost
-    elif lbx == "ITEMPOW.LBX":
-        put_text(rec, 0, 18, "Power %d" % index)
-    elif lbx == "ITEMDATA.LBX":
-        put_text(rec, 0, 30, "Item %d" % index)
-    elif (lbx, entry) == ("DIPLOMSG.LBX", 0):
-        struct.pack_into("<h", rec, 0, 1 + (index % 15))                   # message variant count: feeds Random()
-    elif (lbx, entry) == ("HELP.LBX", 2):
-        put_text(rec, 0, 30, "Help %d" % index)                            # title
-        struct.pack_into("<hh", rec, 44, -1, -1)                           # lbx_entry, Include_Entry: none
-        put_text(rec, 48, 1000, "Placeholder help text %d." % index)
-    return bytes(rec)
+def table_for(lbx, entry):
+    """The record layout of a data-table entry, or None if the entry is not a data table."""
+    if (lbx, entry) in TABLES:
+        return TABLES[(lbx, entry)]
+    return RECORD_ARCHIVES.get(lbx)
 
 
-def build_data_table(lbx, entry, count, size, rng):
+def build_data_table(table, length, where, rng):
+    """A data table filling exactly `length` bytes: (count, size) header, then range-checked records."""
+    size = table.record_size
+    count, rest = divmod(length - 4, size)
+    if rest or (table.count is not None and count != table.count):
+        raise ValueError("%s: %d bytes is not 4 + %s x %d" % (where, length, table.count or "n", size))
     out = bytearray(struct.pack("<hh", count, size))
     for index in range(count):
-        out += fill_record(lbx, entry, index, size, rng)
+        out += table.build_record(rng, index, where)
     return bytes(out)
 
 
@@ -203,32 +159,16 @@ def build_sound(sound_type, length, rng):
     return struct.pack("<HH", SOUND_MAGIC, sound_type) + bytes(SOUND_HDR_SIZE - 4) + payload
 
 
-def is_data_record_table(row):
-    """Entries the catalog took for sprites but are record tables: (count, size) in the header, length 4 + count * size."""
-    try:
-        width, height, length = int(row["width"]), int(row["height"]), int(row["length"])
-    except ValueError:
-        return False
-    return length == 4 + width * height
-
-
 def build_entry(row, rng):
     lbx, entry, length = row["lbx"], int(row["entry"]), int(row["length"])
     if length == 0:
         return b""
-    if (lbx, entry) in DATA_TABLES:
-        count, size = DATA_TABLES[(lbx, entry)]
-        assert 4 + count * size == length, "%s %d: %d x %d does not match length %d" % (lbx, entry, count, size, length)
-        return build_data_table(lbx, entry, count, size, rng)
-    if lbx in RECORD_ARCHIVES:
-        size = RECORD_ARCHIVES[lbx]
-        assert (length - 4) % size == 0, "%s %d: length %d is not 4 + n * %d" % (lbx, entry, length, size)
-        return build_data_table(lbx, entry, (length - 4) // size, size, rng)
+    table = table_for(lbx, entry)
+    if table is not None:
+        return build_data_table(table, length, "%s entry %d" % (lbx, entry), rng)
     if lbx in SOUND_ARCHIVES:
         return build_sound(SOUND_ARCHIVES[lbx], length, rng)
     if row["kind"] == "sprite":
-        if is_data_record_table(row):
-            return build_data_table(lbx, entry, int(row["width"]), int(row["height"]), rng)
         return build_flic(int(row["width"]), int(row["height"]), int(row["frames"]), int(row["loop"]),
                           row["has_palette"] == "1", row["store"] == "1", length, rng)
     if lbx == "FONTS.LBX" and entry >= 2:
@@ -300,12 +240,21 @@ def load_catalog(path):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Generate stand-in LBX files (noise pictures and sounds, placeholder data).")
-    parser.add_argument("out_dir", help="folder to write the .LBX files into (created if missing)")
+    parser.add_argument("out_dir", help="folder to write the .LBX files into (created if missing), or to check with --check")
+    parser.add_argument("--check", action="store_true", help="validate the .LBX files in out_dir instead of writing them")
     parser.add_argument("--seed", type=int, default=12345, help="random seed; the same seed gives byte-identical files")
     parser.add_argument("--catalog", default=CATALOG, help="asset catalog (default: tools/fields/assets.fwv)")
     args = parser.parse_args(argv)
 
     archives = load_catalog(args.catalog)
+    if args.check:
+        problems, counts = check_folder(args.out_dir, archives)
+        for problem in problems:
+            print(problem)
+        print("checked %(archives)d archives (%(missing)d not present): %(tables)d data tables, %(records)d records, "
+              "%(pictures)d pictures" % counts)
+        print("%d problem(s)" % len(problems))
+        return 1 if problems else 0
     os.makedirs(args.out_dir, exist_ok=True)
     for lbx in sorted(archives):
         rng = random.Random("%d:%s" % (args.seed, lbx))

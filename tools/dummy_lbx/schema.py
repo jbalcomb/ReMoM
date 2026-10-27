@@ -33,10 +33,11 @@ class Field:
     gen:    optional function(rng, record_index, record_so_far) -> value, for fields whose good values are narrower
             than the valid range or depend on another field; its result is still range-checked
     count:  >1 for an array of `count` elements of `kind` starting at `offset`
+    first:  generate this field before the others (other fields' gen functions read it from the record)
     """
 
-    def __init__(self, offset, kind, name, lo=None, hi=None, values=None, size=None, gen=None, count=1, note=""):
-        self.offset, self.kind, self.name = offset, kind, name
+    def __init__(self, offset, kind, name, lo=None, hi=None, values=None, size=None, gen=None, count=1, note="", first=False):
+        self.offset, self.kind, self.name, self.first = offset, kind, name, first
         self.values = tuple(values) if values is not None else None
         self.size, self.gen, self.count, self.note = size, gen, count, note
         if kind == "text":
@@ -108,6 +109,8 @@ class Table:
     """A data table: `record_size`-byte records described by `fields`; bytes no field covers are written as zero."""
 
     def __init__(self, record_size, fields, count=None, check=None):
+        """count: expected number of records (None: whatever the entry holds).  check(record) -> problem text or None,
+        for rules that span fields or depend on the record's position (record["_index"])."""
         self.record_size, self.fields, self.count, self.check = record_size, fields, count, check
         covered = bytearray(record_size)
         for f in fields:
@@ -118,8 +121,8 @@ class Table:
 
     def build_record(self, rng, index, where):
         buf = bytearray(self.record_size)
-        record = {}
-        for f in self.fields:
+        record = {"_index": index}
+        for f in sorted(self.fields, key=lambda f: not f.first):
             if f.count > 1:
                 value = [f.random_value(rng, index, record) for _ in range(f.count)]
             else:
@@ -135,7 +138,7 @@ class Table:
     def check_record(self, buf, index, where):
         """Problems with one existing record, as a list of strings (empty = valid)."""
         problems = []
-        record = {}
+        record = {"_index": index}
         for f in self.fields:
             value = f.unpack(buf)
             record[f.name] = value
