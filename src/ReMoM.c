@@ -37,6 +37,7 @@
 #include "../STU/src/STU_GRAF.h"
 #include "../STU/src/STU_LOG.h"
 #include "../STU/src/STU_TST.h"   /* CLAUDE: g_tst_patch_scenario, for --patch */
+#include "../MOD/src/MOD_Load.h"  /* CLAUDE: MOD_Load_Directory(), for --mod */
 #include "../STU/src/STU_WRLD.h"
 
 #include "../MoX/src/capture.h"
@@ -510,6 +511,16 @@ int main(int argc, char * argv[])
                 argi++;
                 g_tst_patch_scenario = argv[argi];
                 LOG_INFO(LOG_CAT_REMOM, "[ReMoM] CLI: --patch \"%s\"", g_tst_patch_scenario);
+            }
+            else if(stu_strcmp(argv[argi], "--mod") == 0 && (argi + 1) < argc)
+            {
+                /* CLAUDE: --mod <dir> loads a mod folder (MOD/src/MOD_Load.h): runs <dir>/scripts/main.lua, which registers hook handlers. */
+                argi++;
+                LOG_INFO(LOG_CAT_REMOM, "[ReMoM] CLI: --mod \"%s\"", argv[argi]);
+                if(MOD_Load_Directory(argv[argi]) != 0)
+                {
+                    LOG_ERROR(LOG_CAT_REMOM, "[ReMoM] --mod \"%s\" failed to load; continuing without it (see the MOD log category)", argv[argi]);
+                }
             }
             else if(stu_strcmp(argv[argi], "--demo") == 0)
             {

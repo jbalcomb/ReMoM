@@ -76,6 +76,7 @@
 #include "ReMoM_Init.h"
 #include "Artificial_Human_Player.h"
 #include "Game_Save_Dump.h"
+#include "../MOD/src/MOD_Load.h"  /* CLAUDE: MOD_Load_Directory(), for --mod */
 
 /* _wizard_presets_table is defined in NewGame.c but has no extern in a header */
 extern struct s_WIZARD_PRESET _wizard_presets_table[];
@@ -1162,6 +1163,7 @@ static void Print_Usage(const char *program_name)
     LOG_INFO(LOG_CAT_HEMOM, "  --load FILE        Load a save file (SAVE1.GAM .. SAVE9.GAM, SAVETEST.GAM)");
     LOG_INFO(LOG_CAT_HEMOM, "  --scenario FILE    Run artificial human player from scenario script (.hms)");
     LOG_INFO(LOG_CAT_HEMOM, "  --alias-points F   Named-action points table for `click Screen.Alias` (alias_points.fwv)");
+    LOG_INFO(LOG_CAT_HEMOM, "  --mod DIR          Load the mod in DIR (runs DIR/scripts/main.lua); may be given more than once");
     LOG_INFO(LOG_CAT_HEMOM, "  --replay FILE      Replay recorded input from .RMR file");
     LOG_INFO(LOG_CAT_HEMOM, "  --record FILE      Record input to .RMR file");
     LOG_INFO(LOG_CAT_HEMOM, "  --dump-save FILE   After Screen_Control returns, dump FILE.GAM to FILE.txt");
@@ -1315,6 +1317,17 @@ int main(int argc, char *argv[])
             argi++;
             HeMoM_Player_Set_Alias_Points_Path(argv[argi]);
             LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --alias-points \"%s\"", argv[argi]);
+        }
+        else if(stu_strcmp(argv[argi], "--mod") == 0 && (argi + 1) < argc)
+        {
+            /* CLAUDE: --mod <dir> loads a mod folder (MOD/src/MOD_Load.h).  A mod that fails to load stops HeMoM, so a test never runs without the mod it asked for. */
+            argi++;
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --mod \"%s\"", argv[argi]);
+            if(MOD_Load_Directory(argv[argi]) != 0)
+            {
+                LOG_ERROR(LOG_CAT_HEMOM, "[HeMoM] --mod \"%s\" failed to load (see the MOD log category)", argv[argi]);
+                return 1;
+            }
         }
         else if(strcmp(argv[argi], "--dump-save") == 0 && (argi + 1) < argc)
         {

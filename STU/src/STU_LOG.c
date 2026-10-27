@@ -53,7 +53,7 @@
 #define LOG_FILE_NEW         "remom_log_new.txt"
 #define LOG_FILE_CURRENT     "remom_log_current.txt"
 #define LOG_FILE_PREVIOUS    "remom_log_previous.txt"
-#define LOG_N_CATEGORIES (LOG_CAT_INTEGRITY + 1)   /* CLAUDE: derived from the last enum value; was a hand-kept 50 (and 47 before that, which under-sized cat_enabled[] past STU_GRAF/OGBUG) */
+#define LOG_N_CATEGORIES (LOG_CAT_MOD + 1)   /* CLAUDE: derived from the last enum value; was a hand-kept 50 (and 47 before that, which under-sized cat_enabled[] past STU_GRAF/OGBUG) */
 
 /* CALL_TRACE rng-call ordinal.  Definition lives here in libSTU so the
    stu_compat.h CALL_TRACE wrappers (part of libSTU via stu_compat.c) link
@@ -145,7 +145,8 @@ static const char * const log_cat_str[] = {
     "STU_GRAF               ",
     "OGBUG                  ",
     "COMBAT_TEST            ",  /* CLAUDE: was missing -- LOG_CAT_COMBAT_TEST (49) indexed one past the end of this table */
-    "INTEGRITY              "};
+    "INTEGRITY              ",
+    "MOD                    "};
 
 static const char * const log_cat_ini_key[] = {
     "GENERAL",
@@ -198,7 +199,8 @@ static const char * const log_cat_ini_key[] = {
     "STU_GRAF",
     "OGBUG",
     "COMBAT_TEST",
-    "INTEGRITY"};
+    "INTEGRITY",
+    "MOD"};
 
 /* CLAUDE: compile-time size checks (C89 negative-array idiom).  A category added to the enum without a row in either table made the logger read past the end of log_cat_str[]; now that fails the build. */
 typedef char log_cat_str_covers_all_categories[((sizeof(log_cat_str) / sizeof(log_cat_str[0])) == LOG_N_CATEGORIES) ? 1 : -1];

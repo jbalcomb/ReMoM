@@ -330,9 +330,11 @@ endif()
 
 
 
+add_subdirectory(ext)
 add_subdirectory(STU)
 add_subdirectory(platform)
 add_subdirectory(MoX)
+add_subdirectory(MOD)
 add_subdirectory(MoM)
 add_subdirectory(src)
 add_subdirectory(tools)

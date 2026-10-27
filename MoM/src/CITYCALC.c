@@ -20,6 +20,8 @@
 #include "../../MoX/src/Util.h"
 #include "../../MoX/src/EMS/EMS.h"  /* EMMDATAH_Map() used in Do_City_Calculations */
 
+#include "../../MOD/src/MOD_Hook.h"  /* CLAUDE: MOD_Hook_City_Value() used in Do_City_Calculations */
+
 #include "AIDUDES.h"
 #include "Items.h"
 #include "MovePath.h"
@@ -61,12 +63,19 @@ void Do_City_Calculations(int16_t city_idx)
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
     EMMDATAH_Map();
-    CITIES_FOOD_UNITS(city_idx, (int8_t)City_Food_Production(city_idx));
-    CITIES_PRODUCTION_UNITS(city_idx, (int8_t)City_Production_Production(city_idx));
-    CITIES_GOLD_UNITS(city_idx, (uint8_t)City_Gold_Production(city_idx));
+    // CITIES_FOOD_UNITS(city_idx, (int8_t)City_Food_Production(city_idx));
+    // CITIES_PRODUCTION_UNITS(city_idx, (int8_t)City_Production_Production(city_idx));
+    // CITIES_GOLD_UNITS(city_idx, (uint8_t)City_Gold_Production(city_idx));
+    // CITIES_BUILDING_MAINTENANCE(city_idx, (int8_t)City_Gold_Mainanence(city_idx));
+    // CITIES_RESEARCH_UNITS(city_idx, (int8_t)City_Research_Production(city_idx));
+    // CITIES_MANA_UNITS(city_idx, (int8_t)City_Mana_Production(city_idx));
+    /* CLAUDE: mod hooks (MOD/src/MOD_Hook.h).  Each per-resource result passes through its hook before the AI difficulty modifier below; with no mod loaded the value is unchanged. */
+    CITIES_FOOD_UNITS(city_idx, (int8_t)MOD_Hook_City_Value(MOD_HOOK_CITY_FOOD, city_idx, City_Food_Production(city_idx)));
+    CITIES_PRODUCTION_UNITS(city_idx, (int8_t)MOD_Hook_City_Value(MOD_HOOK_CITY_PRODUCTION, city_idx, City_Production_Production(city_idx)));
+    CITIES_GOLD_UNITS(city_idx, (uint8_t)MOD_Hook_City_Value(MOD_HOOK_CITY_GOLD, city_idx, City_Gold_Production(city_idx)));
     CITIES_BUILDING_MAINTENANCE(city_idx, (int8_t)City_Gold_Mainanence(city_idx));
-    CITIES_RESEARCH_UNITS(city_idx, (int8_t)City_Research_Production(city_idx));
-    CITIES_MANA_UNITS(city_idx, (int8_t)City_Mana_Production(city_idx));
+    CITIES_RESEARCH_UNITS(city_idx, (int8_t)MOD_Hook_City_Value(MOD_HOOK_CITY_RESEARCH, city_idx, City_Research_Production(city_idx)));
+    CITIES_MANA_UNITS(city_idx, (int8_t)MOD_Hook_City_Value(MOD_HOOK_CITY_POWER, city_idx, City_Mana_Production(city_idx)));
     if(
         (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
         &&

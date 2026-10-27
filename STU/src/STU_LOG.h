@@ -80,7 +80,8 @@ extern "C" {
         LOG_CAT_STU_GRAF = 47,
         LOG_CAT_OGBUG = 48,
         LOG_CAT_COMBAT_TEST = 49,  /* test-only: combat move/attack legality logging */
-        LOG_CAT_INTEGRITY = 50   /* runtime integrity checkpoints: invalid game state, static-pool guard damage, rejected draws -- keep last; LOG_N_CATEGORIES derives from it */
+        LOG_CAT_INTEGRITY = 50,  /* runtime integrity checkpoints: invalid game state, static-pool guard damage, rejected draws */
+        LOG_CAT_MOD = 51         /* mod loading, hooks and scripts -- keep last; LOG_N_CATEGORIES derives from it */
     };
 
     /* CALL_TRACE rng-call ordinal -- read by the [FN-ENTER]/[FN-EXIT] log lines.
