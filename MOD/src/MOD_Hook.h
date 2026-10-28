@@ -46,8 +46,7 @@ void MOD_Hook_Clear_All(void);
 /* Number of handlers registered on hook_id (0 for an unknown hook). */
 int16_t MOD_Hook_Count(int16_t hook_id);
 
-/* Runs hook_id's chain over value and returns the result.  Fast path: no handler -> value unchanged.
-   With handlers, the result is clamped to what the game's one-byte city field holds (gold 0..255, the others -128..127). */
+/* Runs hook_id's chain over value and returns the result.  Fast path: no handler -> value unchanged. */
 int32_t MOD_Hook_City_Value(int16_t hook_id, int16_t city_idx, int32_t value);
 
 /* Script-facing name of a hook ("city_gold"), or NULL for an unknown hook. */

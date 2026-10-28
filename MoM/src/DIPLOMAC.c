@@ -2214,7 +2214,8 @@ static void Diplomacy_Screen_Load__WIP(void)
     Combat_Cache_Write();
 
     // DOMSDOS  _CITIES = SA_MK_FP0(Allocate_First_Block(World_Data, 714));
-    _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);
+    // _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);
+    _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, (((NUM_CITIES * sizeof(struct s_CITY)) / 16) + 1));  /* CLAUDE: s_CITY grew; same size as ALLOC.c */
 
     sound_buffer1 = LBX_Reload_Next(music_lbx_file__ovr084, (MUSIC_Merlin_Good + (_players[m_diplomac_player_idx].wizard_id * 2)), World_Data);
     sound_buffer1_size = lbxload_entry_length;

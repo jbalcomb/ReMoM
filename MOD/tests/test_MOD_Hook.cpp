@@ -77,19 +77,13 @@ TEST_F(MOD_Hook_test, Register_RejectsFullChain)
     EXPECT_EQ(MOD_Hook_City_Value(MOD_HOOK_CITY_RESEARCH, 0, 0), 10 * MOD_HOOK_MAX_HANDLERS);
 }
 
-TEST_F(MOD_Hook_test, Result_ClampedToCityFieldRange)
+TEST_F(MOD_Hook_test, Result_NotLimitedToOneByte)
 {
     ASSERT_EQ(MOD_Hook_Register(MOD_HOOK_CITY_GOLD, Double_It, nullptr), 0);
-    EXPECT_EQ(MOD_Hook_City_Value(MOD_HOOK_CITY_GOLD, 0, 200), 255);
-    EXPECT_EQ(MOD_Hook_City_Value(MOD_HOOK_CITY_GOLD, 0, -5), 0);
+    EXPECT_EQ(MOD_Hook_City_Value(MOD_HOOK_CITY_GOLD, 0, 200), 400);
+    EXPECT_EQ(MOD_Hook_City_Value(MOD_HOOK_CITY_GOLD, 0, -5), -10);
     ASSERT_EQ(MOD_Hook_Register(MOD_HOOK_CITY_FOOD, Double_It, nullptr), 0);
-    EXPECT_EQ(MOD_Hook_City_Value(MOD_HOOK_CITY_FOOD, 0, 100), 127);
-    EXPECT_EQ(MOD_Hook_City_Value(MOD_HOOK_CITY_FOOD, 0, -100), -128);
-}
-
-TEST_F(MOD_Hook_test, NoHandler_DoesNotClamp)
-{
-    EXPECT_EQ(MOD_Hook_City_Value(MOD_HOOK_CITY_GOLD, 0, 300), 300);
+    EXPECT_EQ(MOD_Hook_City_Value(MOD_HOOK_CITY_FOOD, 0, 100000), 200000);
 }
 
 TEST_F(MOD_Hook_test, ClearAll_RemovesHandlers)

@@ -47,6 +47,17 @@
 */
 
 
+/* CLAUDE: OGBUG log for the widened city economy fields.  Returns value unchanged; logs when 1.31's 1-byte field (range lo..hi) would have wrapped it. */
+static int32_t City_Value_OGBUG(int16_t city_idx, const char * field, int32_t value, int32_t lo, int32_t hi)
+{
+    if((value < lo) || (value > hi))
+    {
+        LOG_INFO(LOG_CAT_OGBUG, "[OGBUG] city %d %s = %ld: 1.31 stored this in one byte (%ld..%ld) and would have wrapped it to %ld", (int)city_idx, field, (long)value, (long)lo, (long)hi, (long)((lo < 0) ? (int8_t)value : (uint8_t)value));
+    }
+    return value;
+}
+
+
 // WZD o120p01
 /*
     sets
@@ -69,25 +80,33 @@ void Do_City_Calculations(int16_t city_idx)
     // CITIES_BUILDING_MAINTENANCE(city_idx, (int8_t)City_Gold_Mainanence(city_idx));
     // CITIES_RESEARCH_UNITS(city_idx, (int8_t)City_Research_Production(city_idx));
     // CITIES_MANA_UNITS(city_idx, (int8_t)City_Mana_Production(city_idx));
-    /* CLAUDE: mod hooks (MOD/src/MOD_Hook.h).  Each per-resource result passes through its hook before the AI difficulty modifier below; with no mod loaded the value is unchanged. */
-    CITIES_FOOD_UNITS(city_idx, (int8_t)MOD_Hook_City_Value(MOD_HOOK_CITY_FOOD, city_idx, City_Food_Production(city_idx)));
-    CITIES_PRODUCTION_UNITS(city_idx, (int8_t)MOD_Hook_City_Value(MOD_HOOK_CITY_PRODUCTION, city_idx, City_Production_Production(city_idx)));
-    CITIES_GOLD_UNITS(city_idx, (uint8_t)MOD_Hook_City_Value(MOD_HOOK_CITY_GOLD, city_idx, City_Gold_Production(city_idx)));
-    CITIES_BUILDING_MAINTENANCE(city_idx, (int8_t)City_Gold_Mainanence(city_idx));
-    CITIES_RESEARCH_UNITS(city_idx, (int8_t)MOD_Hook_City_Value(MOD_HOOK_CITY_RESEARCH, city_idx, City_Research_Production(city_idx)));
-    CITIES_MANA_UNITS(city_idx, (int8_t)MOD_Hook_City_Value(MOD_HOOK_CITY_POWER, city_idx, City_Mana_Production(city_idx)));
+    /* CLAUDE: mod hooks (MOD/src/MOD_Hook.h).  Each per-resource result passes through its hook before the AI difficulty modifier below; with no mod loaded the value is unchanged.
+       The fields are int32_t now (1-byte in 1.31), so nothing is cast down; City_Value_OGBUG() logs where 1.31 would have wrapped the value. */
+    CITIES_FOOD_UNITS(city_idx, City_Value_OGBUG(city_idx, "food_units", MOD_Hook_City_Value(MOD_HOOK_CITY_FOOD, city_idx, City_Food_Production(city_idx)), INT8_MIN, INT8_MAX));
+    CITIES_PRODUCTION_UNITS(city_idx, City_Value_OGBUG(city_idx, "production_units", MOD_Hook_City_Value(MOD_HOOK_CITY_PRODUCTION, city_idx, City_Production_Production(city_idx)), INT8_MIN, INT8_MAX));
+    CITIES_GOLD_UNITS(city_idx, City_Value_OGBUG(city_idx, "gold_units", MOD_Hook_City_Value(MOD_HOOK_CITY_GOLD, city_idx, City_Gold_Production(city_idx)), 0, UINT8_MAX));
+    CITIES_BUILDING_MAINTENANCE(city_idx, City_Value_OGBUG(city_idx, "building_maintenance", City_Gold_Mainanence(city_idx), INT8_MIN, INT8_MAX));
+    CITIES_RESEARCH_UNITS(city_idx, City_Value_OGBUG(city_idx, "research_units", MOD_Hook_City_Value(MOD_HOOK_CITY_RESEARCH, city_idx, City_Research_Production(city_idx)), INT8_MIN, INT8_MAX));
+    CITIES_MANA_UNITS(city_idx, City_Value_OGBUG(city_idx, "mana_units", MOD_Hook_City_Value(MOD_HOOK_CITY_POWER, city_idx, City_Mana_Production(city_idx)), 0, UINT8_MAX));  /* 1.31 cast to int8_t into a uint8_t field: same bits, so 0..255 */
     if(
         (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
         &&
         (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX)
     )
     {
-        CITIES_FOOD_UNITS(city_idx,           ( ( _CITIES[city_idx].food_units           * difficulty_modifiers_table[_difficulty].food                 ) / 100 ) );
-        CITIES_PRODUCTION_UNITS(city_idx,     ( ( _CITIES[city_idx].production_units     * difficulty_modifiers_table[_difficulty].production           ) / 100 ) );
-        CITIES_MANA_UNITS(city_idx,           ( ( _CITIES[city_idx].mana_units           * difficulty_modifiers_table[_difficulty].mana                 ) / 100 ) );
-        CITIES_GOLD_UNITS(city_idx,           ( ( _CITIES[city_idx].gold_units           * difficulty_modifiers_table[_difficulty].gold                 ) / 100 ) );
-        CITIES_RESEARCH_UNITS(city_idx,       ( ( _CITIES[city_idx].research_units       * difficulty_modifiers_table[_difficulty].research             ) / 100 ) );
-        CITIES_BUILDING_MAINTENANCE(city_idx, ( ( _CITIES[city_idx].building_maintenance * difficulty_modifiers_table[_difficulty].maintenance          ) / 100 ) );
+        // CITIES_FOOD_UNITS(city_idx,           ( ( _CITIES[city_idx].food_units           * difficulty_modifiers_table[_difficulty].food                 ) / 100 ) );
+        // CITIES_PRODUCTION_UNITS(city_idx,     ( ( _CITIES[city_idx].production_units     * difficulty_modifiers_table[_difficulty].production           ) / 100 ) );
+        // CITIES_MANA_UNITS(city_idx,           ( ( _CITIES[city_idx].mana_units           * difficulty_modifiers_table[_difficulty].mana                 ) / 100 ) );
+        // CITIES_GOLD_UNITS(city_idx,           ( ( _CITIES[city_idx].gold_units           * difficulty_modifiers_table[_difficulty].gold                 ) / 100 ) );
+        // CITIES_RESEARCH_UNITS(city_idx,       ( ( _CITIES[city_idx].research_units       * difficulty_modifiers_table[_difficulty].research             ) / 100 ) );
+        // CITIES_BUILDING_MAINTENANCE(city_idx, ( ( _CITIES[city_idx].building_maintenance * difficulty_modifiers_table[_difficulty].maintenance          ) / 100 ) );
+        /* CLAUDE: OGBUG -- in 1.31 a large AI city's value times the difficulty multiplier could overflow the 1-byte field and wrap; the int32_t fields keep it.  Logged per occurrence. */
+        CITIES_FOOD_UNITS(city_idx,           City_Value_OGBUG(city_idx, "food_units (AI difficulty)",           ( ( _CITIES[city_idx].food_units           * difficulty_modifiers_table[_difficulty].food        ) / 100 ), INT8_MIN, INT8_MAX));
+        CITIES_PRODUCTION_UNITS(city_idx,     City_Value_OGBUG(city_idx, "production_units (AI difficulty)",     ( ( _CITIES[city_idx].production_units     * difficulty_modifiers_table[_difficulty].production  ) / 100 ), INT8_MIN, INT8_MAX));
+        CITIES_MANA_UNITS(city_idx,           City_Value_OGBUG(city_idx, "mana_units (AI difficulty)",           ( ( _CITIES[city_idx].mana_units           * difficulty_modifiers_table[_difficulty].mana        ) / 100 ), 0, UINT8_MAX));
+        CITIES_GOLD_UNITS(city_idx,           City_Value_OGBUG(city_idx, "gold_units (AI difficulty)",           ( ( _CITIES[city_idx].gold_units           * difficulty_modifiers_table[_difficulty].gold        ) / 100 ), 0, UINT8_MAX));
+        CITIES_RESEARCH_UNITS(city_idx,       City_Value_OGBUG(city_idx, "research_units (AI difficulty)",       ( ( _CITIES[city_idx].research_units       * difficulty_modifiers_table[_difficulty].research    ) / 100 ), INT8_MIN, INT8_MAX));
+        CITIES_BUILDING_MAINTENANCE(city_idx, City_Value_OGBUG(city_idx, "building_maintenance (AI difficulty)", ( ( _CITIES[city_idx].building_maintenance * difficulty_modifiers_table[_difficulty].maintenance ) / 100 ), INT8_MIN, INT8_MAX));
     }
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);

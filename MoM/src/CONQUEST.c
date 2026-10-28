@@ -827,7 +827,8 @@ void Win_Animation(int16_t player_idx)
     SAMB_ptr temp_seg = ST_NULL;
     Combat_Cache_Write();
     // ; OGBUG: overwrites the city data pointer, only to be overwritten itself by an LBXE_LoadReplace...
-    _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);
+    // _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);
+    _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, (((NUM_CITIES * sizeof(struct s_CITY)) / 16) + 1));  /* CLAUDE: s_CITY grew; same size as ALLOC.c */
     Stop_All_Sounds__STUB();
     Set_Mouse_List(1, mouse_list_none);
     Clear_Fields();

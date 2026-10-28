@@ -46,7 +46,8 @@ add_test(
     NAME HeMoM_WorldGen_Validate
     COMMAND ${CMAKE_COMMAND}
         -DSAVE_FILE=${HEMOM_TEST_WORKDIR}/SAVE9.GAM
-        -DEXPECTED_SIZE=123300
+        -DEXPECTED_SIZE=125748
+        -DEXPECTED_MAGIC=ReMoMSav
         -P "${CMAKE_CURRENT_SOURCE_DIR}/validate_save.cmake"
 )
 set_tests_properties(HeMoM_WorldGen_Validate PROPERTIES

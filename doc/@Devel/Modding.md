@@ -38,9 +38,22 @@ Handlers on one hook run in registration order, each receiving the previous resu
 A handler that ignores `value` overrides the original computation.
 The hooks run **before** the AI difficulty modifier.
 
-The results are stored in the original one-byte city fields, so with a handler registered the final value is clamped: gold to 0..255, the others to -128..127 (a warning is logged).
+Results are stored as full `int32_t` (the city economy fields were one byte in 1.31). Where 1.31 would have wrapped a
+value, the `OGBUG` log category records it.
 
 If a handler raises an error, returns a non-number, or returns a value outside 32-bit range, the value is kept unchanged and the error is logged.
+
+## Save files
+
+ReMoM writes its own save format ([MoX/src/SAVEFILE.h](../../MoX/src/SAVEFILE.h)): a `ReMoMSav` header, then tagged
+sections, each holding an in-memory array as-is with its record size and count. Structures can grow (`struct s_CITY`
+went from 114 to 134 bytes) without converting anything; a save from a build with different record sizes is refused,
+naming the section; sections the loader does not know (e.g. added by a mod) are skipped.
+
+1.31-layout saves (from 1.31 or earlier ReMoM builds) still load: they are imported once, and the next save is written
+in the ReMoM format. Nothing writes the 1.31 layout any more, so
+[tools/parity_check.py](../../tools/parity_check.py) (byte comparison against DOSBox saves) applies to the `faithful`
+branch only. [src/Game_Save_Dump.c](../../src/Game_Save_Dump.c) and `savedump` read both formats.
 
 ## Script API (`game` table)
 

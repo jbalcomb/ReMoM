@@ -30,6 +30,8 @@
 #include <stdlib.h>
 #include <string.h>     /* memset(), stu_strcat(), stu_strcpy(); */
 #include "LOADSAVE.h"
+#include "SAVEFILE.h"  /* CLAUDE: ReMoM save format */
+#include "EXIT.h"      /* CLAUDE: Exit_With_Message() */
 
 
 
@@ -68,6 +70,13 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 0);
 
+    /* CLAUDE: ReMoM writes its own save format (SAVEFILE.c): tagged sections written straight from memory with sizeof, so structures can grow
+       (struct s_CITY did) without converting them.  The 1.31 layout below is kept for reference and disabled; it is still read, to import old saves. */
+    if(Save_File_Write(file_pointer) != 0)
+    {
+        LOG_ERROR(LOG_CAT_LOADSAVE, "Save_SAVE_GAM: writing \"%s\" failed", file_name);
+    }
+#if 0  /* CLAUDE: 1.31 save layout */
     stu_fwrite(_HEROES2[0], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
     stu_fwrite(_HEROES2[1], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
     stu_fwrite(_HEROES2[2], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
@@ -191,6 +200,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
 
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == LEN_SAVE_GAM_FILE);
+#endif  /* CLAUDE: end of the disabled 1.31 save layout */
 
     fclose(file_pointer);
 
@@ -280,6 +290,22 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 0);  // BoF
+
+    /* CLAUDE: ReMoM's own save format (SAVEFILE.c): tagged sections written straight from memory.  Files without its header are 1.31-layout saves
+       (from 1.31 or an earlier ReMoM build) and are imported by the original code below. */
+    if(Save_File_Is_ReMoM(file_pointer))
+    {
+        if(Save_File_Read(file_pointer, file_name) != 0)
+        {
+            stu_fclose(file_pointer);
+            LOG_FATAL(LOG_CAT_LOADSAVE, "FATAL: Load_SAVE_GAM() could not read \"%s\" (see the LOADSAVE log category)", file_name);
+            Exit_With_Message("The save game could not be read: it is damaged, or was written by a different ReMoM build.");
+        }
+        stu_fclose(file_pointer);
+        LOG_INFO(LOG_CAT_LOADSAVE, "Load_SAVE_GAM: read ReMoM save \"%s\"  _unit = %d", file_name, _unit);
+        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        return;
+    }
 
     stu_fread(_HEROES2[0], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
     stu_fread(_HEROES2[1], sizeof(struct s_HERO), NUM_HERO_TYPES, file_pointer);
@@ -378,7 +404,9 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 35500);
 
-    stu_fread(_CITIES, NUM_CITIES, 114, file_pointer);
+    // stu_fread(_CITIES, NUM_CITIES, 114, file_pointer);
+    /* CLAUDE: struct s_CITY is wider than the 1.31 114-byte record; import field by field (one way: ReMoM never writes this layout). */
+    Save_File_Import_Cities_V131(file_pointer);
     // stu_fread(_CITIES, CITY_COUNT_MAX, sizeof(struct s_CITY), file_pointer);
 
     file_pointer_position = stu_ftell(file_pointer);

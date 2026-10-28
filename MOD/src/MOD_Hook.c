@@ -18,10 +18,6 @@ struct s_MOD_HOOK_HANDLER
 static struct s_MOD_HOOK_HANDLER mod_hook_handlers[MOD_HOOK_COUNT][MOD_HOOK_MAX_HANDLERS];
 static int16_t mod_hook_handler_count[MOD_HOOK_COUNT];
 
-/* The game stores these results in the original one-byte _CITIES[] fields; a handler's result is clamped to fit. */
-static const int32_t mod_hook_min[MOD_HOOK_COUNT] = { -128, -128,   0, -128, -128 };
-static const int32_t mod_hook_max[MOD_HOOK_COUNT] = {  127,  127, 255,  127,  127 };
-
 static const char * mod_hook_names[MOD_HOOK_COUNT] =
 {
     "city_food",
@@ -81,20 +77,9 @@ int32_t MOD_Hook_City_Value(int16_t hook_id, int16_t city_idx, int32_t value)
         return value;
     }
 
-    if(mod_hook_handler_count[hook_id] == 0)
-    {
-        return value;
-    }
-
     for(itr = 0; itr < mod_hook_handler_count[hook_id]; itr++)
     {
         value = mod_hook_handlers[hook_id][itr].fn(hook_id, city_idx, value, mod_hook_handlers[hook_id][itr].user_data);
-    }
-
-    if((value < mod_hook_min[hook_id]) || (value > mod_hook_max[hook_id]))
-    {
-        LOG_WARN(LOG_CAT_MOD, "[MOD] hook \"%s\" city %d: result %ld outside %ld..%ld, clamped", mod_hook_names[hook_id], (int)city_idx, (long)value, (long)mod_hook_min[hook_id], (long)mod_hook_max[hook_id]);
-        value = (value < mod_hook_min[hook_id]) ? mod_hook_min[hook_id] : mod_hook_max[hook_id];
     }
 
     return value;

@@ -81,7 +81,9 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     /// lots of XREFs from City, Cmb, SplBk, ...
 
     // tmp_World_Data_Paras = 3519;
-    tmp_World_Data_Paras = 3519;
+    // tmp_World_Data_Paras = 3519;
+    /* CLAUDE: _CITIES is the first block in World_Data and s_CITY grew from the 1.31 114 bytes; grow the arena by the same amount so every later block keeps its size. */
+    tmp_World_Data_Paras = 3519 + (((NUM_CITIES * (sizeof(struct s_CITY) - CITY_RECORD_SIZE_V131)) / 16) + 1);
 
     // 3519 paragraphs = 16 * 3519 = 56,304 bytes
     World_Data = Allocate_Space(tmp_World_Data_Paras);

@@ -250,7 +250,10 @@ struct s_AI_CONTINENTS
 #define MOXSET_RECORD_SIZE 466
 
 // sizeof(struct s_CITY)
-#define CITY_RECORD_SIZE         114
+// #define CITY_RECORD_SIZE         114
+/* CLAUDE: struct s_CITY grew (int32_t economy fields).  CITY_RECORD_SIZE is the in-memory / ReMoM-save record; CITY_RECORD_SIZE_V131 is the 1.31 save record. */
+#define CITY_RECORD_SIZE         134
+#define CITY_RECORD_SIZE_V131    114
 // sizeof(struct s_FORTRESS)
 #define FORTRESS_RECORD_SIZE       4
 // sizeof(struct s_HERO)
@@ -1762,15 +1765,27 @@ struct s_CITY
              // uint8_t enchantments[26];  /* ¿ 0 for NONE, (player_idx + 1) for which wizard has which spell on this city ? */
     /* 5C */ // int8_t Nightshade;  as seens in Player_City_Enchantments_Upkeep() for city_enchantment_upkeep_table
              int8_t enchantments[NUM_CITY_ENCHANTMENTS];    /* 1-byte, signed */
-    /* 5D */ int8_t production_units;
-    /* 5E */ int16_t Prod_Accu;
-    /* 60 */ uint8_t gold_units;  // AKA Income
-    /* 61 */ int8_t building_maintenance;  // AKA Upkeep
-    /* 62 */ uint8_t mana_units;             /* 1-byte, unsigned */
-    /* 63 */ int8_t research_units;
-    /* 64 */ int8_t food_units;
-    /* 65 */ int8_t road_connections[13];  // Bit-Field; use Test_Bit_Field(); bit_idx is city_idx;
-    /* 66 */ 
+    /* CLAUDE: the six per-turn economy results are full int32_t in ReMoM (1-byte in 1.31: production/maintenance/research/food int8, gold/mana uint8),
+       so mods are not capped at 127 / 255.  Where 1.31 would have wrapped a value, CITYCALC.c logs it under LOG_CAT_OGBUG.  The 1.31 save layout
+       (114-byte records) is only read, for importing old saves (LOADSAVE.c); ReMoM writes its own format (SAVEFILE.c). */
+    // /* 5D */ int8_t production_units;
+    // /* 5E */ int16_t Prod_Accu;
+    // /* 60 */ uint8_t gold_units;  // AKA Income
+    // /* 61 */ int8_t building_maintenance;  // AKA Upkeep
+    // /* 62 */ uint8_t mana_units;             /* 1-byte, unsigned */
+    // /* 63 */ int8_t research_units;
+    // /* 64 */ int8_t food_units;
+    // /* 65 */ int8_t road_connections[13];  // Bit-Field; use Test_Bit_Field(); bit_idx is city_idx;
+    // /* 66 */ 
+    /* 5E */ int32_t production_units;
+    /* 62 */ int16_t Prod_Accu;
+    /* 64 */ int32_t gold_units;  // AKA Income
+    /* 68 */ int32_t building_maintenance;  // AKA Upkeep
+    /* 6C */ int32_t mana_units;
+    /* 70 */ int32_t research_units;
+    /* 74 */ int32_t food_units;
+    /* 78 */ int8_t road_connections[13];  // Bit-Field; use Test_Bit_Field(); bit_idx is city_idx;
+    /* 85 */
 };
 #pragma pack(pop)
 

@@ -152,7 +152,7 @@ void Test_Run(void)
     assert(sizeof(struct s_TOWER) == TOWER_RECORD_SIZE);        //    4  _TOWERS
     assert(sizeof(struct s_LAIR) == LAIR_RECORD_SIZE);          //   24  _LAIRS
     assert(sizeof(struct s_ITEM) == ITEM_RECORD_SIZE);          //   50  _ITEMS
-    assert(sizeof(struct s_CITY) == CITY_RECORD_SIZE);          //  114  _CITIES
+    assert(sizeof(struct s_CITY) == CITY_RECORD_SIZE);          //  134  _CITIES  (CLAUDE: 114 in 1.31; int32_t economy fields)
     assert(sizeof(struct s_UNIT) == UNIT_RECORD_SIZE);          //   32  _UNITS
 
     // _map_square_terrain_specials

@@ -1,9 +1,12 @@
 /**
  * Game_Save_Dump.c — Dump a .GAM save file to structured human-readable text.
  *
- * Reads the raw 123300-byte binary save and prints every field as a named
- * key=value line. The field layout matches Save_SAVE_GAM() / Load_SAVE_GAM()
- * in MoX/src/LOADSAVE.c exactly.
+ * Reads a save and prints every field as a named key=value line.  Two formats:
+ *   - ReMoM saves (MoX/src/SAVEFILE.c): a header and tagged sections, cities in the
+ *     134-byte int32_t-economy layout;
+ *   - 1.31-layout saves (123300 bytes, Save_SAVE_GAM() / Load_SAVE_GAM() in
+ *     MoX/src/LOADSAVE.c), cities in the 114-byte layout.
+ * The output keys are the same for both.
  *
  * Output format (one field per line):
  *   section.index.field = value
@@ -85,6 +88,26 @@
 #define SD_OFF_PREMADE 122490
 #define SD_OFF_HERONAMES 122740
 #define SD_TOTAL_SIZE  123300
+
+/* ReMoM save format (MoX/src/SAVEFILE.c): "ReMoMSav", uint32 version, uint32 section count, then per section
+   char tag[8], uint32 record size, uint32 record count, data.  Every section but CITIES has the 1.31 size, so its
+   bytes are placed at their 1.31 offset and the dump functions read them unchanged. */
+#define SD_REMOM_MAGIC      "ReMoMSav"
+#define SD_REMOM_VERSION    1
+#define SD_REMOM_CITY_SIZE  134
+
+static const struct { const char * tag; int offset; int length; } sd_remom_sections[] =
+{
+    { "HEROES_0", 0, 420 }, { "HEROES_1", 420, 420 }, { "HEROES_2", 840, 420 }, { "HEROES_3", 1260, 420 },
+    { "HEROES_4", 1680, 420 }, { "HEROES_5", 2100, 420 }, { "GAMEVARS", SD_OFF_GAME, 16 },
+    { "PLAYERS ", SD_OFF_PLAYERS, 7344 }, { "WORLDMAP", SD_OFF_WORLDMAPS, 9600 },
+    { "CONNLAND", SD_OFF_CONNECTIVITY_GRID, 192 }, { "CONNSEA ", SD_OFF_CONNECTIVITY_GRID + 192, 192 },
+    { "LANDMASS", SD_OFF_LANDMASS, 4800 }, { "NODES   ", SD_OFF_NODES, 1440 }, { "FORTRESS", SD_OFF_FORTRESS, 24 },
+    { "TOWERS  ", SD_OFF_TOWERS, 24 }, { "LAIRS   ", SD_OFF_LAIRS, 2448 }, { "ITEMS   ", SD_OFF_ITEMS, 6900 },
+    { "UNITS   ", SD_OFF_UNITS, 32288 }, { "TSPECIAL", SD_OFF_TERRAIN, 4800 }, { "EXPLORED", SD_OFF_EXPLORED, 4800 },
+    { "MOVECOST", SD_OFF_MOVEMENT, 28800 }, { "EVENTS  ", SD_OFF_EVENTS, 100 }, { "SQFLAGS ", SD_OFF_FLAGS, 4800 },
+    { "VIZIER  ", SD_OFF_VIZIER, 2 }, { "PREFABS ", SD_OFF_PREMADE, 250 }, { "HERONAME", SD_OFF_HERONAMES, 560 },
+};
 
 
 
@@ -462,13 +485,14 @@ static void Dump_Items(FILE *fp, const uint8_t *sav)
 /*
  * Dump every field in struct s_CITY (114 bytes).  Layout from MOM_DAT.h:1673.
  */
-static void Dump_Cities(FILE *fp, const uint8_t *sav)
+static void Dump_Cities(FILE *fp, const uint8_t *sav, int city_size)
 {
     int itr, base, b;
     char name[15];
+    int wide = (city_size == SD_REMOM_CITY_SIZE);  /* ReMoM layout: int32_t economy fields from 0x5E */
     for (itr = 0; itr < SD_NUM_CITIES; itr++)
     {
-        base = SD_OFF_CITIES + (itr * SD_CITY_SIZE);
+        base = itr * city_size;
 
         /* 0x00 */ rd_str(sav, base, 14, name);
         fprintf(fp, "city[%d].name = %s\n", itr, name);
@@ -494,6 +518,21 @@ static void Dump_Cities(FILE *fp, const uint8_t *sav)
         /* 0x43 */ for (b = 0; b < SD_NUM_CITY_ENCHANTMENTS; b++)
         {
             fprintf(fp, "city[%d].enchantment[%d] = %d\n", itr, b, rd_u8(sav, base + 0x43 + b));
+        }
+        if(wide)
+        {
+            /* 0x5E */ fprintf(fp, "city[%d].production_units = %d\n",  itr, (int)rd_i32(sav, base + 0x5E));
+            /* 0x62 */ fprintf(fp, "city[%d].prod_accu = %d\n",         itr, rd_i16(sav, base + 0x62));
+            /* 0x64 */ fprintf(fp, "city[%d].gold_units = %d\n",        itr, (int)rd_i32(sav, base + 0x64));
+            /* 0x68 */ fprintf(fp, "city[%d].building_maintenance = %d\n", itr, (int)rd_i32(sav, base + 0x68));
+            /* 0x6C */ fprintf(fp, "city[%d].mana_units = %d\n",        itr, (int)rd_i32(sav, base + 0x6C));
+            /* 0x70 */ fprintf(fp, "city[%d].research_units = %d\n",    itr, (int)rd_i32(sav, base + 0x70));
+            /* 0x74 */ fprintf(fp, "city[%d].food_units = %d\n",        itr, (int)rd_i32(sav, base + 0x74));
+            /* 0x78 */ for (b = 0; b < 13; b++)
+            {
+                fprintf(fp, "city[%d].road_connections[%d] = %d\n", itr, b, rd_u8(sav, base + 0x78 + b));
+            }
+            continue;
         }
         /* 0x5D */ fprintf(fp, "city[%d].production_units = %d\n",  itr, rd_i8(sav, base + 0x5D));
         /* 0x5E */ fprintf(fp, "city[%d].prod_accu = %d\n",         itr, rd_i16(sav, base + 0x5E));
@@ -592,6 +631,83 @@ static void Dump_Tail(FILE *fp, const uint8_t *sav)
 
 
 
+/*
+ * Reads a ReMoM-format save: every section but CITIES into `sav` at its 1.31 offset, CITIES into `cities`.
+ * Returns 0 on success, -1 if the file is not a ReMoM save or a section is not the expected size.
+ */
+static int Read_ReMoM_Save(FILE *fin, const char *path, uint8_t *sav, uint8_t *cities, int *city_size)
+{
+    char magic[8];
+    uint32_t header[2];
+    uint32_t itr;
+    int s;
+
+    if((fread(magic, 1, 8, fin) != 8) || (memcmp(magic, SD_REMOM_MAGIC, 8) != 0))
+    {
+        return -1;
+    }
+    if((fread(header, sizeof(header), 1, fin) != 1) || (header[0] != SD_REMOM_VERSION))
+    {
+        LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] %s: unsupported ReMoM save version", path);
+        return -1;
+    }
+    *city_size = 0;
+    for(itr = 0; itr < header[1]; itr++)
+    {
+        char tag[9];
+        uint32_t sizes[2];
+        long length;
+        uint8_t *dest = NULL;
+
+        if((fread(tag, 1, 8, fin) != 8) || (fread(sizes, sizeof(sizes), 1, fin) != 1))
+        {
+            LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] %s: truncated at section %u", path, (unsigned)itr);
+            return -1;
+        }
+        tag[8] = '\0';
+        length = (long)sizes[0] * (long)sizes[1];
+        if(memcmp(tag, "CITIES  ", 8) == 0)
+        {
+            if((sizes[0] != SD_REMOM_CITY_SIZE) || (sizes[1] != SD_NUM_CITIES))
+            {
+                LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] %s: CITIES is %u x %u bytes; this dumper reads %d x %d", path, (unsigned)sizes[1], (unsigned)sizes[0], SD_NUM_CITIES, SD_REMOM_CITY_SIZE);
+                return -1;
+            }
+            dest = cities;
+            *city_size = SD_REMOM_CITY_SIZE;
+        }
+        for(s = 0; (dest == NULL) && (s < (int)(sizeof(sd_remom_sections) / sizeof(sd_remom_sections[0]))); s++)
+        {
+            if(memcmp(tag, sd_remom_sections[s].tag, 8) == 0)
+            {
+                if(length != sd_remom_sections[s].length)
+                {
+                    LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] %s: section %s is %ld bytes, expected %d", path, tag, length, sd_remom_sections[s].length);
+                    return -1;
+                }
+                dest = sav + sd_remom_sections[s].offset;
+            }
+        }
+        if(dest == NULL)
+        {
+            fseek(fin, length, SEEK_CUR);  /* a section this dumper does not know (e.g. added by a mod) */
+            continue;
+        }
+        if(fread(dest, 1, (size_t)length, fin) != (size_t)length)
+        {
+            LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] %s: truncated in section %s", path, tag);
+            return -1;
+        }
+    }
+    if(*city_size == 0)
+    {
+        LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] %s: no CITIES section", path);
+        return -1;
+    }
+    return 0;
+}
+
+
 /* ========================================================================= */
 /*  Public API                                                               */
 /* ========================================================================= */
@@ -600,7 +716,10 @@ int Game_Save_Dump(const char *save_filepath, const char *text_filepath)
 {
     FILE *fin;
     FILE *fout;
-    uint8_t sav[SD_TOTAL_SIZE];
+    static uint8_t sav[SD_TOTAL_SIZE];
+    static uint8_t cities[SD_NUM_CITIES * SD_REMOM_CITY_SIZE];
+    const uint8_t *city_records;
+    int city_size;
     size_t bytes_read;
 
     fin = stu_fopen_ci(save_filepath, "rb");
@@ -610,14 +729,25 @@ int Game_Save_Dump(const char *save_filepath, const char *text_filepath)
         return 1;
     }
 
-    bytes_read = fread(sav, 1, SD_TOTAL_SIZE, fin);
-    fclose(fin);
-
-    if(bytes_read != SD_TOTAL_SIZE)
+    memset(sav, 0, sizeof(sav));
+    if(Read_ReMoM_Save(fin, save_filepath, sav, cities, &city_size) == 0)
     {
-        LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] Short read: %zu bytes (expected %d) from %s", bytes_read, SD_TOTAL_SIZE, save_filepath);
-        return 1;
+        city_records = cities;
     }
+    else
+    {
+        fseek(fin, 0, SEEK_SET);
+        bytes_read = fread(sav, 1, SD_TOTAL_SIZE, fin);
+        if(bytes_read != SD_TOTAL_SIZE)
+        {
+            fclose(fin);
+            LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] Neither a ReMoM save nor a %d-byte 1.31 save: %zu bytes from %s", SD_TOTAL_SIZE, bytes_read, save_filepath);
+            return 1;
+        }
+        city_records = sav + SD_OFF_CITIES;
+        city_size = SD_CITY_SIZE;
+    }
+    fclose(fin);
 
     fout = fopen(text_filepath, "w");
     if(fout == NULL)
@@ -656,7 +786,7 @@ int Game_Save_Dump(const char *save_filepath, const char *text_filepath)
     Dump_Items(fout, sav);
     fprintf(fout, "\n");
 
-    Dump_Cities(fout, sav);
+    Dump_Cities(fout, city_records, city_size);
     fprintf(fout, "\n");
 
     Dump_Units(fout, sav);

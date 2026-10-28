@@ -23,6 +23,7 @@ set(LIBMOX_SOURCES
     Keyboard.c
     LBX_Load.c
     LOADSAVE.c
+    SAVEFILE.c
     Mouse.c
     MOM_DAT.c
     MOX_DAT.c

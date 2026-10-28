@@ -9,6 +9,7 @@ add_executable(MOX_tests
     test_Fonts.cpp
     test_Graphics.cpp
     test_capture.cpp
+    test_SAVEFILE.cpp
 )
 
 target_include_directories(MOX_tests PRIVATE
