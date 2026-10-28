@@ -17,9 +17,11 @@ Log lines go to the `MOD` category (`[Log]` section of `ReMoM.ini`).
 
 ```
 mods/<name>/
-    mod.ini            optional for now: [Mod] name=..., version=...
-    scripts/main.lua   run once at load; registers handlers with game.on(...)
+    mod.ini            [Mod] name=..., version=...; [CAS] binds Caster of Magic scripts to hooks
+    scripts/main.lua   optional; run once at load; registers handlers with game.on(...)
 ```
+
+A mod needs `scripts/main.lua`, at least one `[CAS]` script, or both.
 
 See [mods/example_economy](../../mods/example_economy) for a complete example.
 
@@ -77,19 +79,47 @@ An invalid city or building index raises a Lua error (logged; the hook keeps its
 - Loaded libraries: base, coroutine, math, string, table, utf8. Not available: `io`, `os`, `package`, `debug`, `dofile`, `loadfile`, `load`, `require`.
 - `math.random` draws from the game's `Random()`; `math.randomseed` is removed. Scripts therefore stay deterministic under `--record` / `--replay`.
 
+## CAS scripts (Caster of Magic)
+
+ReMoM runs Caster of Magic for Windows `.CAS` scripts directly ([MOD/src/CAS.h](../../MOD/src/CAS.h) describes the language). Bind them in `mod.ini`:
+
+```ini
+[CAS]
+master=scripts/MASTER.CAS        ; optional (CoM2: System); run first, its variables are readable everywhere
+city_gold=scripts/EcoGold.CAS    ; a hook name, or CoM2's [Scripts] name: EconomyGold, EconomyFood,
+EconomyFood=scripts/EcoFood.CAS  ; EconomyProd, EconomyResearch, EconomyPower
+```
+
+- A hook script gets `CITYID` (0-based) and `VALUE` (the value so far), and `RESULT` starts as `VALUE`. If the script adds `ADDRESLINE` lines (CoM2's economy scripts work this way), the hook gets their total. Otherwise it gets `RESULT`.
+- A `[CAS]` key naming a CoM2 script ReMoM has no hook for yet (e.g. `EconomyUnrest`) is logged and skipped.
+- A script that fails to parse fails the mod load. A run-time error, such as a built-in ReMoM does not implement yet, is logged and the hook keeps its value.
+- Expressions have no precedence and are evaluated right to left: `A*B+C` is `A*(B+C)`.
+- CoM2 accepts some broken syntax: a missing `;` or `)`, an extra `)` or `}`, a comment, string or `{` left open, a second `ELSE`. ReMoM accepts the same and logs each case as a warning at load.
+
+`cas_check` checks scripts without running the game. It reports parse errors, warnings, and which built-ins are used and implemented:
+
+```bash
+./out/build/clang-debug/bin/Debug/cas_check -v /path/to/WARLORD/*.CAS
+```
+
+Status against Warlord 1.5.12.6.2 plus CoM2 1.05.11's own scripts: all 44 files parse, with 275 warnings (132 missing `;`, 95 missing `)`, 39 extra `)`, and 9 structural problems: brace, comment and `ELSE` errors). Of the 111 built-ins they use, 15 are implemented.
+
 ## Code
 
 | File | Role |
 |---|---|
 | [MOD/src/MOD_Hook.h](../../MOD/src/MOD_Hook.h) | Hook ids and the C dispatcher API |
 | [MOD/src/MOD_Lua.cpp](../../MOD/src/MOD_Lua.cpp) | Lua runtime through sol2 (the only C++ in the game) |
-| [MOD/src/MOD_Load.c](../../MOD/src/MOD_Load.c) | Mod folder loader |
+| [MOD/src/MOD_Load.c](../../MOD/src/MOD_Load.c) | Mod folder loader, `[CAS]` hook bindings |
+| [MOD/src/CAS.c](../../MOD/src/CAS.c) | CAS interpreter |
+| [tools/cas_check.c](../../tools/cas_check.c) | CAS checker CLI |
 | [MOD/tests/](../../MOD/tests/) | Unit tests (`MOD_tests`) |
 | [ext/lua/](../../ext/lua/), [ext/sol2/](../../ext/sol2/) | Vendored Lua 5.4.8 and sol2 3.5.0, each with `PROVENANCE.md` |
 
 ## Not yet
 
-- CAS script interpreter, and the other Caster of Magic hooks (unit stats, combat, spells, AI).
+- The other 96 CAS built-ins Warlord uses (unit, spell, wizard and map queries and commands), and the other Caster of Magic hooks (unit stats, combat, spells, AI).
+- CAS→Lua converter.
 - Data tables (units, spells, buildings) loaded from mod files; asset overrides.
 - Recording the loaded mods in save files.
 - An end-to-end test that runs a game with a mod (needs the original LBX files, so it belongs with the HeMoM integration tests).

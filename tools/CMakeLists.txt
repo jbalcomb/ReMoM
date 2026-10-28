@@ -10,6 +10,10 @@
 
 # --- savedump: dump a .GAM save file to structured text ---
 
+# cas_check -- syntax-check Caster of Magic .CAS scripts and list the built-ins ReMoM does not implement yet.
+add_executable(cas_check cas_check.c)
+target_link_libraries(cas_check PRIVATE MOD MOX STU Platform_Headless)
+
 add_executable(savedump
     savedump.c
     ${PROJECT_SOURCE_DIR}/src/Game_Save_Dump.c

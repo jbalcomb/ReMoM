@@ -2,6 +2,7 @@
 # The game's C code includes only the C headers; MOD_Lua.cpp is the one C++ translation unit.
 
 add_library(MOD STATIC
+    CAS.c
     MOD_Hook.c
     MOD_Load.c
     MOD_Lua.cpp

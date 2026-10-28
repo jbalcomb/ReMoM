@@ -195,3 +195,62 @@ TEST_F(MOD_Lua_test, LoadDirectory_MissingScriptFails)
 {
     EXPECT_EQ(MOD_Load_Directory("this/folder/does/not/exist"), -1);
 }
+
+/* A mod folder written to the test's temp directory: mod.ini [CAS] binds scripts to hooks. */
+class MOD_Load_CAS_test : public MOD_Lua_test
+{
+protected:
+    std::string dir;
+
+    void Write(const std::string & name, const char * text)
+    {
+        FILE * fp = fopen((dir + "/" + name).c_str(), "w");
+        ASSERT_NE(fp, nullptr);
+        fputs(text, fp);
+        fclose(fp);
+    }
+
+    void SetUp() override
+    {
+        MOD_Lua_test::SetUp();
+        dir = ::testing::TempDir() + "remom_cas_mod_" + ::testing::UnitTest::GetInstance()->current_test_info()->name();   /* ctest runs tests in parallel */
+#ifdef _WIN32
+        std::system(("mkdir \"" + dir + "\"").c_str());
+#else
+        std::system(("mkdir -p '" + dir + "'").c_str());
+#endif
+    }
+
+    void TearDown() override
+    {
+        MOD_Unload();
+        MOD_Lua_test::TearDown();
+    }
+};
+
+TEST_F(MOD_Load_CAS_test, Binds_Hooks_With_Master_And_Com2_Names)
+{
+    Write("mod.ini", "[Mod]\nname=CAS test\n[CAS]\nmaster=MASTER.CAS\ncity_gold=Gold.CAS\nEconomyFood=Food.CAS\nEconomyUnrest=Unrest.CAS\n");
+    Write("MASTER.CAS", "BONUS=100;");
+    Write("Gold.CAS", "RESULT = VALUE + BONUS + CITYOWNER(CITYID);");
+    Write("Food.CAS", "ADDRESLINE \"Farmers\", 6; ADDRESLINE \"Granary\", 2;");
+    ASSERT_EQ(MOD_Load_Directory(dir.c_str()), 0);
+    EXPECT_EQ(MOD_Hook_Count(MOD_HOOK_CITY_GOLD), 1);
+    EXPECT_EQ(MOD_Hook_City_Value(MOD_HOOK_CITY_GOLD, 1, 5), 107);       /* city 1 is owned by player 2 */
+    EXPECT_EQ(MOD_Hook_City_Value(MOD_HOOK_CITY_FOOD, 0, 99), 8);         /* result lines replace the value */
+}
+
+TEST_F(MOD_Load_CAS_test, Script_Error_Keeps_Value)
+{
+    Write("mod.ini", "[CAS]\ncity_gold=Gold.CAS\n");
+    Write("Gold.CAS", "RESULT = BOOKS(1,2);");                          /* not implemented in ReMoM yet */
+    ASSERT_EQ(MOD_Load_Directory(dir.c_str()), 0);
+    EXPECT_EQ(MOD_Hook_City_Value(MOD_HOOK_CITY_GOLD, 0, 9), 9);
+}
+
+TEST_F(MOD_Load_CAS_test, Broken_Script_Fails_To_Load)
+{
+    Write("mod.ini", "[CAS]\ncity_gold=Gold.CAS\n");
+    Write("Gold.CAS", "IF 1 THEN RESULT = 2;");
+    EXPECT_EQ(MOD_Load_Directory(dir.c_str()), -1);
+}
