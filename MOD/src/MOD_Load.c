@@ -6,7 +6,9 @@
 #include "MOD_Hook.h"
 #include "MOD_Lua.h"
 #include "CAS.h"
+#include "CAS_Game.h"
 
+#include "../../MoX/src/SAVEFILE.h"
 #include "../../STU/src/STU_LOG.h"
 
 #include <ctype.h>
@@ -141,22 +143,33 @@ static int MOD_Name_Equal(const char * a, const char * b)
     return (*a == *b);
 }
 
-/* Hook handler for a CAS script: inputs CITYID (the subject) and VALUE (the value so far), RESULT starts as VALUE.
+/* Hook handler for a CAS script: inputs CITYID (the subject), VALUE (the value so far) and the hook's own inputs
+   (MOD_Hook_Inputs()); RESULT starts as VALUE.
    A script that adds result lines (ADDRESLINE, CoM2's economy scripts) gives their total; otherwise RESULT.
    A script error keeps the value it was given. */
 static int32_t MOD_CAS_Hook(int16_t hook_id, int16_t subject_idx, int32_t value, void * user_data)
 {
     CAS_Script * script = (CAS_Script *)user_data;
-    struct s_CAS_INPUT inputs[2];
+    struct s_CAS_INPUT inputs[2 + MOD_HOOK_MAX_INPUTS];
+    int input_count = 2;
+    int hook_input_count = 0;
+    const struct s_MOD_HOOK_INPUT * hook_inputs = MOD_Hook_Inputs(&hook_input_count);
     int32_t result = value;
     int32_t line_total = 0;
+    int itr;
 
     inputs[0].name = "CITYID";
-    inputs[0].value = subject_idx;
+    inputs[0].value = subject_idx + 1;                                  /* CAS cities are 1-based (CAS_Game.h) */
     inputs[1].name = "VALUE";
     inputs[1].value = value;
+    for(itr = 0; (itr < hook_input_count) && (input_count < 2 + MOD_HOOK_MAX_INPUTS); itr++)
+    {
+        inputs[input_count].name = hook_inputs[itr].name;
+        inputs[input_count].value = hook_inputs[itr].value;
+        input_count++;
+    }
 
-    if(CAS_Run(script, inputs, 2, "RESULT", &result) != 0)
+    if(CAS_Run(script, inputs, input_count, "RESULT", &result) != 0)
     {
         LOG_ERROR(LOG_CAT_MOD, "[MOD] hook %s for city %d: script failed, keeping %d", MOD_Hook_Name(hook_id), (int)subject_idx, (int)value);
         return value;
@@ -298,7 +311,12 @@ int MOD_Load_Directory(const char * mod_dir)
         return -1;
     }
 
+    CAS_Game_Reset_Slots();                                             /* the scripts' city / wizard slots, saved with the game */
     cas_scripts = MOD_CAS_Load_Section(mod_dir, path);
+    if(cas_scripts == 0)
+    {
+        Save_File_Unregister_Sections();                                /* no CAS scripts: nothing to save */
+    }
     if(cas_scripts < 0)
     {
         LOG_ERROR(LOG_CAT_MOD, "[MOD] mod in \"%s\" failed to load its CAS scripts", mod_dir);
@@ -337,4 +355,5 @@ void MOD_Unload(void)
     }
     mod_cas_script_count = 0;
     CAS_Clear_Master();
+    Save_File_Unregister_Sections();
 }

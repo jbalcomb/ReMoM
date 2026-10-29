@@ -38,6 +38,14 @@ int Save_File_Write(FILE * fp);
    whose structures differ (logged, naming the section).  file_name is only used in messages. */
 int Save_File_Read(FILE * fp, const char * file_name);
 
+/* Adds a section to every save written and read from now on (for mod data).  tag is exactly SAVEFILE_TAG_LEN
+   characters and must stay valid; data must hold record_size * record_count bytes.  A save without the section loads
+   with the data zeroed.  Re-registering a tag replaces it.  Returns 0 on success, -1 if the table is full. */
+int Save_File_Register_Section(const char * tag, void * data, uint32_t record_size, uint32_t record_count);
+
+/* Removes every section added with Save_File_Register_Section(). */
+void Save_File_Unregister_Sections(void);
+
 /* Imports the city section of a 1.31-layout save (100 records of 114 bytes) into _CITIES.  Returns 0 on success. */
 int Save_File_Import_Cities_V131(FILE * fp);
 

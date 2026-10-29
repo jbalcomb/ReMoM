@@ -274,3 +274,34 @@ TEST_F(SAVEFILE_test, ImportV131Cities_ReadsTheOneByteFields)
     EXPECT_EQ((uint8_t)c.road_connections[0], 0x55);
     EXPECT_EQ((uint8_t)c.road_connections[12], 0xAA);
 }
+
+TEST_F(SAVEFILE_test, RegisteredSection_RoundTrips_And_Is_Zeroed_When_Missing)
+{
+    static int32_t mod_data[4][3];
+    Fill(5);
+    std::vector<uint8_t> plain = Write();                                  /* saved without the mod */
+
+    ASSERT_EQ(Save_File_Register_Section("MODTEST ", mod_data, sizeof(mod_data[0]), 4), 0);
+    for(int i = 0; i < 4; i++) { for(int j = 0; j < 3; j++) { mod_data[i][j] = (i * 10) + j; } }
+    std::vector<uint8_t> with_mod = Write();
+    EXPECT_NE(Section_Header(with_mod, "MODTEST "), 0u);
+    EXPECT_EQ(with_mod.size(), plain.size() + 16 + sizeof(mod_data));
+
+    std::memset(mod_data, 0x7F, sizeof(mod_data));
+    ASSERT_EQ(Read(with_mod), 0);
+    EXPECT_EQ(mod_data[3][2], 32);
+
+    ASSERT_EQ(Read(plain), 0);                                               /* the mod is loaded, the save predates it */
+    EXPECT_EQ(mod_data[3][2], 0);
+
+    Save_File_Unregister_Sections();
+    EXPECT_EQ(Write().size(), plain.size());
+    EXPECT_EQ(Read(with_mod), 0);                                            /* without the mod its section is skipped */
+}
+
+TEST_F(SAVEFILE_test, RegisterSection_RefusesABadTag)
+{
+    static int32_t mod_data[1];
+    EXPECT_EQ(Save_File_Register_Section("SHORT", mod_data, sizeof(mod_data), 1), -1);
+    EXPECT_EQ(Write().size(), Write().size());
+}

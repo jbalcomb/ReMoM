@@ -3,6 +3,7 @@
 
 add_library(MOD STATIC
     CAS.c
+    CAS_Game.c
     MOD_Hook.c
     MOD_Load.c
     MOD_Lua.cpp

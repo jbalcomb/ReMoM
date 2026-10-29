@@ -90,9 +90,21 @@ city_gold=scripts/EcoGold.CAS    ; a hook name, or CoM2's [Scripts] name: Econom
 EconomyFood=scripts/EcoFood.CAS  ; EconomyProd, EconomyResearch, EconomyPower
 ```
 
-- A hook script gets `CITYID` (0-based) and `VALUE` (the value so far), and `RESULT` starts as `VALUE`. If the script adds `ADDRESLINE` lines (CoM2's economy scripts work this way), the hook gets their total. Otherwise it gets `RESULT`.
+- A hook script gets `CITYID` and `VALUE` (the value so far), and `RESULT` starts as `VALUE`. If the script adds `ADDRESLINE` lines (CoM2's economy scripts work this way), the hook gets their total. Otherwise it gets `RESULT`.
+- The economy hooks also pass the inputs CoM2 gives its economy scripts, computed by [MoM/src/City_Hook_Inputs.c](../../MoM/src/City_Hook_Inputs.c) only when the hook has a handler:
+
+  | Hook | Inputs |
+  |---|---|
+  | `city_food` (EconomyFood) | `FARMERS`, `MAXPOP` |
+  | `city_production` (EconomyProd) | `WORKERS`, `FARMERS`, `PRODPER` (production % from terrain) |
+  | `city_gold` (EconomyGold) | `ROADBONUS` (road trade %), `TERRAINGOLD` (shore/river trade %), `BASEGOLD` (tax gold) |
 - A `[CAS]` key naming a CoM2 script ReMoM has no hook for yet (e.g. `EconomyUnrest`) is logged and skipped.
 - A script that fails to parse fails the mod load. A run-time error, such as a built-in ReMoM does not implement yet, is logged and the hook keeps its value.
+- IDs follow CoM2, not ReMoM's arrays ([MOD/src/CAS_Game.h](../../MOD/src/CAS_Game.h)):
+  - Cities and units are 1-based (ReMoM index + 1), and 0 means "none". Wizards are 0 (human) to `NOFWIZARDS()`. Planes are 1 (Arcanus) and 2 (Myrror).
+  - Buildings, city and global enchantments, retorts, realms, ores, overland tiles and events use the constants in Warlord's MASTER.CAS. They are translated to 1.31's by name; CoM2-only ones read as absent.
+  - `DIFFICULTY()` puts 1.31's five levels on CoM2's nine as 1, 2, 3, 5, 7 (Hard and Impossible are a judgement call). `SCORINGOPTION()` is always 0, because ReMoM has none of CoM2's options.
+- `GETCITYDATA`/`SETCITYDATA` and `GETWIZARDDATA`/`SETWIZARDDATA` are 100 integer slots per city and per wizard, kept for the scripts. They are saved with the game as the sections `CASCITYD` and `CASWIZD ` ([MoX/src/SAVEFILE.h](../../MoX/src/SAVEFILE.h) `Save_File_Register_Section`). A save made without the mod loads them as zeros.
 - Expressions have no precedence and are evaluated right to left: `A*B+C` is `A*(B+C)`.
 - CoM2 accepts some broken syntax: a missing `;` or `)`, an extra `)` or `}`, a comment, string or `{` left open, a second `ELSE`. ReMoM accepts the same and logs each case as a warning at load.
 
@@ -102,7 +114,7 @@ EconomyFood=scripts/EcoFood.CAS  ; EconomyProd, EconomyResearch, EconomyPower
 ./out/build/clang-debug/bin/Debug/cas_check -v /path/to/WARLORD/*.CAS
 ```
 
-Status against Warlord 1.5.12.6.2 plus CoM2 1.05.11's own scripts: all 44 files parse, with 275 warnings (132 missing `;`, 95 missing `)`, 39 extra `)`, and 9 structural problems: brace, comment and `ELSE` errors). Of the 111 built-ins they use, 15 are implemented.
+Status against Warlord 1.5.12.6.2 plus CoM2 1.05.11's own scripts: all 44 files parse, with 275 warnings (132 missing `;`, 95 missing `)`, 39 extra `)`, and 9 structural problems: brace, comment and `ELSE` errors). Of the 111 built-ins they use, 46 are implemented, including all 40 that Warlord's five economy scripts (EcoFood, EcoGold, EcoProd, EcoRes, EcoPower) use. With those five scripts bound, a HeMoM new game plus one turn on the generated stand-in data ran without a script error and changed the cities' values. `GETSTAT` reads only `SOwner` so far.
 
 ## Code
 
@@ -112,14 +124,16 @@ Status against Warlord 1.5.12.6.2 plus CoM2 1.05.11's own scripts: all 44 files 
 | [MOD/src/MOD_Lua.cpp](../../MOD/src/MOD_Lua.cpp) | Lua runtime through sol2 (the only C++ in the game) |
 | [MOD/src/MOD_Load.c](../../MOD/src/MOD_Load.c) | Mod folder loader, `[CAS]` hook bindings |
 | [MOD/src/CAS.c](../../MOD/src/CAS.c) | CAS interpreter |
+| [MOD/src/CAS_Game.c](../../MOD/src/CAS_Game.c) | CAS built-ins that read and change the game; CoM2 → ReMoM ID tables |
+| [MoM/src/City_Hook_Inputs.c](../../MoM/src/City_Hook_Inputs.c) | Economy hooks with CoM2's script inputs |
 | [tools/cas_check.c](../../tools/cas_check.c) | CAS checker CLI |
 | [MOD/tests/](../../MOD/tests/) | Unit tests (`MOD_tests`) |
 | [ext/lua/](../../ext/lua/), [ext/sol2/](../../ext/sol2/) | Vendored Lua 5.4.8 and sol2 3.5.0, each with `PROVENANCE.md` |
 
 ## Not yet
 
-- The other 96 CAS built-ins Warlord uses (unit, spell, wizard and map queries and commands), and the other Caster of Magic hooks (unit stats, combat, spells, AI).
+- The other 65 CAS built-ins Warlord uses (unit, spell, wizard and map queries and commands), and the other Caster of Magic hooks (unit stats, combat, spells, AI).
 - CAS→Lua converter.
 - Data tables (units, spells, buildings) loaded from mod files; asset overrides.
-- Recording the loaded mods in save files.
+- Recording the loaded mods in save files. The CAS slots are not cleared when a new game starts in the same session.
 - An end-to-end test that runs a game with a mod (needs the original LBX files, so it belongs with the HeMoM integration tests).

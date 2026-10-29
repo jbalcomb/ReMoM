@@ -8,6 +8,7 @@
 */
 
 #include "CAS.h"
+#include "CAS_Game.h"
 
 #include "../../STU/src/STU_LOG.h"
 #include "../../MoX/src/MOM_DEF.h"
@@ -718,22 +719,9 @@ struct s_CAS_BUILTIN
     int kind;
     int min_args;
     int max_args;
-    cas_builtin_fn fn;            /* NULL: known, not implemented in ReMoM yet */
+    cas_builtin_fn fn;            /* language built-in */
+    CAS_Game_Fn game;             /* game built-in (CAS_Game.c); both NULL: known, not implemented in ReMoM yet */
 };
-
-static int city_arg(struct s_CAS_RUN * r, cas_value * v)
-{
-    int64_t c = int_value(r, v);
-    if(_CITIES == NULL || c < 0 || c >= _cities) { cas_fail(r, "no city %lld", (long long)c); }
-    return (int)c;
-}
-
-static int player_arg(struct s_CAS_RUN * r, cas_value * v)
-{
-    int64_t w = int_value(r, v);
-    if(w < 0 || w >= NUM_PLAYERS) { cas_fail(r, "no wizard %lld", (long long)w); }
-    return (int)w;
-}
 
 static cas_value bi_rnd(struct s_CAS_RUN * r, cas_value * a, int n)
 {
@@ -778,22 +766,6 @@ static cas_value bi_sqrt(struct s_CAS_RUN * r, cas_value * a, int n)
     return make_int((int64_t)floor(sqrt((double)x)));
 }
 
-static cas_value bi_difficulty(struct s_CAS_RUN * r, cas_value * a, int n) { return make_int(_difficulty); }
-static cas_value bi_landsize(struct s_CAS_RUN * r, cas_value * a, int n) { return make_int(_landsize); }
-static cas_value bi_nofwizards(struct s_CAS_RUN * r, cas_value * a, int n) { return make_int(_num_players - 1); }
-static cas_value bi_maxcity(struct s_CAS_RUN * r, cas_value * a, int n) { return make_int((_CITIES != NULL) ? _cities - 1 : -1); }
-static cas_value bi_cityowner(struct s_CAS_RUN * r, cas_value * a, int n) { return make_int(_CITIES[city_arg(r, &a[0])].owner_idx); }
-static cas_value bi_cityrace(struct s_CAS_RUN * r, cas_value * a, int n) { return make_int(_CITIES[city_arg(r, &a[0])].race); }
-static cas_value bi_gold(struct s_CAS_RUN * r, cas_value * a, int n) { return make_int(_players[player_arg(r, &a[0])].gold_reserve); }
-static cas_value bi_mana(struct s_CAS_RUN * r, cas_value * a, int n) { return make_int(_players[player_arg(r, &a[0])].mana_reserve); }
-
-static cas_value bi_isbuilt(struct s_CAS_RUN * r, cas_value * a, int n)
-{
-    int c = city_arg(r, &a[0]);
-    int64_t b = int_value(r, &a[1]);
-    if(b < 0 || b >= NUM_BUILDINGS) { cas_fail(r, "ISBUILT: no building %lld", (long long)b); }
-    return make_int((_CITIES[c].bldg_status[b] == bs_Built) || (_CITIES[c].bldg_status[b] == bs_Replaced));
-}
 
 static cas_value bi_sumreslines(struct s_CAS_RUN * r, cas_value * a, int n) { return make_num(r->res_sum); }
 
@@ -813,8 +785,10 @@ static cas_value bi_debuglog(struct s_CAS_RUN * r, cas_value * a, int n)
     return make_int(0);
 }
 
-#define F(name, lo, hi, fn) { name, BI_FUNC, lo, hi, fn }
-#define C(name, lo, hi, fn) { name, BI_CMD, lo, hi, fn }
+#define F(name, lo, hi, fn) { name, BI_FUNC, lo, hi, fn, NULL }
+#define C(name, lo, hi, fn) { name, BI_CMD, lo, hi, fn, NULL }
+#define G(name, lo, hi, fn) { name, BI_FUNC, lo, hi, NULL, fn }
+#define GC(name, lo, hi, fn) { name, BI_CMD, lo, hi, NULL, fn }
 
 /* Every built-in Scripts.TXT documents, plus the ones Warlord uses that it does not (GETCITYDATA, GETWIZARDDATA,
    PRIMARYREALM).  fn == NULL: not implemented in ReMoM yet. */
@@ -822,40 +796,40 @@ static const struct s_CAS_BUILTIN cas_builtins[] =
 {
     F("RND", 1, 1, bi_rnd), F("SGN", 1, 1, bi_sgn), F("ABS", 1, 1, bi_abs), F("EXPON", 2, 2, bi_expon),
     F("STRS", 1, 1, bi_strs), F("VAL", 1, 1, bi_val), F("SQRT", 1, 1, bi_sqrt),
-    F("DIFFICULTY", 0, 0, bi_difficulty), F("LANDSIZE", 0, 0, bi_landsize), F("NOFWIZARDS", 0, 0, bi_nofwizards),
-    F("MAXCITY", 0, 0, bi_maxcity), F("CITYOWNER", 1, 1, bi_cityowner), F("CITYRACE", 1, 1, bi_cityrace),
-    F("ISBUILT", 2, 2, bi_isbuilt), F("GOLD", 1, 1, bi_gold), F("MANA", 1, 1, bi_mana),
     F("SUMRESLINES", 0, 0, bi_sumreslines),
+    G("DIFFICULTY", 0, 0, CAS_Game_Difficulty), G("LANDSIZE", 0, 0, CAS_Game_Landsize), G("NOFWIZARDS", 0, 0, CAS_Game_Nofwizards),
+    G("MAXCITY", 0, 0, CAS_Game_Maxcity), G("CITYOWNER", 1, 1, CAS_Game_Cityowner), G("CITYRACE", 1, 1, CAS_Game_Cityrace),
+    G("ISBUILT", 2, 2, CAS_Game_Isbuilt), G("GOLD", 1, 1, CAS_Game_Gold), G("MANA", 1, 1, CAS_Game_Mana),
     C("ADDRESLINE", 2, 2, bi_addresline), C("DEBUGLOG", 1, 1, bi_debuglog),
 
-    F("IREADS", 3, 3, NULL), F("IREADN", 3, 3, NULL), F("BOOKS", 2, 2, NULL), F("WASSSPICKED", 2, 2, NULL),
-    F("PERSONALITY", 1, 1, NULL), F("OBJECTIVE", 1, 1, NULL), F("RETORT", 2, 2, NULL), F("MINERALS", 0, 0, NULL),
-    F("CLIMATE", 0, 0, NULL), F("HASSPELLCAT", 2, 2, NULL), F("HOMERACE", 1, 1, NULL), F("SPELLSTATE", 2, 2, NULL),
-    F("OVERLANDTURN", 0, 0, NULL), F("BASETURN", 0, 0, NULL), F("CONTACT", 2, 2, NULL), F("HOSTILITY", 2, 2, NULL),
-    F("RELATION", 2, 2, NULL), F("HREL", 2, 2, NULL), F("TREATY", 2, 2, NULL), F("SCORINGOPTION", 1, 1, NULL),
-    F("OWNEDLIGHTNINGRESIST", 1, 1, NULL), F("OWNEDFIREIMMUNITY", 1, 1, NULL), F("DEFEATED", 1, 1, NULL),
-    F("BANISHED", 1, 1, NULL), F("HASGLOBAL", 2, 2, NULL), F("CHAOSSURGEVALUE", 1, 1, NULL),
-    F("AISTRATEGY", 2, 2, NULL), F("SELECTBASEDON", 2, 2, NULL), F("GETSTAT", 3, 4, NULL), F("ISHERO", 1, 1, NULL),
+    F("IREADS", 3, 3, NULL), F("IREADN", 3, 3, NULL), G("BOOKS", 2, 2, CAS_Game_Books), F("WASSSPICKED", 2, 2, NULL),
+    F("PERSONALITY", 1, 1, NULL), F("OBJECTIVE", 1, 1, NULL), G("RETORT", 2, 2, CAS_Game_Retort), F("MINERALS", 0, 0, NULL),
+    F("CLIMATE", 0, 0, NULL), F("HASSPELLCAT", 2, 2, NULL), G("HOMERACE", 1, 1, CAS_Game_Homerace), G("SPELLSTATE", 2, 2, CAS_Game_Spellstate),
+    F("OVERLANDTURN", 0, 0, NULL), F("BASETURN", 0, 0, NULL), G("CONTACT", 2, 2, CAS_Game_Contact), F("HOSTILITY", 2, 2, NULL),
+    G("RELATION", 2, 2, CAS_Game_Relation), F("HREL", 2, 2, NULL), G("TREATY", 2, 2, CAS_Game_Treaty), G("SCORINGOPTION", 1, 1, CAS_Game_Scoringoption),
+    F("OWNEDLIGHTNINGRESIST", 1, 1, NULL), F("OWNEDFIREIMMUNITY", 1, 1, NULL), G("DEFEATED", 1, 1, CAS_Game_Defeated),
+    G("BANISHED", 1, 1, CAS_Game_Banished), G("HASGLOBAL", 2, 2, CAS_Game_Hasglobal), F("CHAOSSURGEVALUE", 1, 1, NULL),
+    F("AISTRATEGY", 2, 2, NULL), F("SELECTBASEDON", 2, 2, NULL), G("GETSTAT", 3, 4, CAS_Game_Getstat), F("ISHERO", 1, 1, NULL),
     F("FANTASTIC", 1, 1, NULL), F("BASEFANTASTIC", 1, 1, NULL), F("GETSP", 1, 1, NULL),
-    F("BUILDINGSOWNED", 3, 3, NULL), F("CITYENCHANT", 2, 2, NULL), F("POPULATION", 1, 1, NULL),
-    F("POPUNITS", 1, 1, NULL), F("OREINRANGE", 2, 2, NULL), F("TERRAININRANGE", 2, 2, NULL), F("GARRISON", 1, 1, NULL),
-    F("ISFORTRESS", 1, 1, NULL), F("EVENTTURN", 1, 1, NULL), F("EVENTVAL", 1, 1, NULL), F("RESEARCHING", 1, 1, NULL),
+    G("BUILDINGSOWNED", 3, 3, CAS_Game_Buildingsowned), G("CITYENCHANT", 2, 2, CAS_Game_Cityenchant), G("POPULATION", 1, 1, CAS_Game_Population),
+    G("POPUNITS", 1, 1, CAS_Game_Popunits), G("OREINRANGE", 2, 2, CAS_Game_Oreinrange), G("TERRAININRANGE", 2, 2, CAS_Game_Terraininrange), F("GARRISON", 1, 1, NULL),
+    G("ISFORTRESS", 1, 1, CAS_Game_Isfortress), G("EVENTTURN", 1, 1, CAS_Game_Eventturn), G("EVENTVAL", 1, 1, CAS_Game_Eventval), G("RESEARCHING", 1, 1, CAS_Game_Researching),
     F("CASTING", 1, 1, NULL), F("RANDOMARCANUSRACE", 1, 1, NULL), F("RANDOMMYRRANRACE", 1, 1, NULL),
     F("GETCOMBATENCHANTMENTFLAG", 3, 3, NULL), F("GETOLENCHANTMENTFLAG", 3, 3, NULL),
     F("GETENCHANTMENTFLAG", 3, 3, NULL), F("GETITEMPOWER", 2, 2, NULL), F("HASCOMBATGLOBAL", 3, 3, NULL),
-    F("ISCOMBAT", 0, 0, NULL), F("GETTERRAIN", 3, 3, NULL), F("CITYONTILE", 1, 3, NULL), F("NODEONTILE", 1, 3, NULL),
-    F("PLANESIZEX", 1, 1, NULL), F("PLANESIZEY", 1, 1, NULL), F("ALIVE", 1, 1, NULL), F("MAXUNIT", 0, 0, NULL),
+    F("ISCOMBAT", 0, 0, NULL), F("GETTERRAIN", 3, 3, NULL), G("CITYONTILE", 1, 3, CAS_Game_Cityontile), F("NODEONTILE", 1, 3, NULL),
+    G("PLANESIZEX", 1, 1, CAS_Game_Planesizex), G("PLANESIZEY", 1, 1, CAS_Game_Planesizey), F("ALIVE", 1, 1, NULL), F("MAXUNIT", 0, 0, NULL),
     F("ATTACKER", 0, 0, NULL), F("DEFENDER", 0, 0, NULL), F("HASTREE", 1, 1, NULL), F("INCOMBAT", 1, 1, NULL),
     F("COMBATP", 0, 0, NULL), F("COMBATX", 0, 0, NULL), F("COMBATY", 0, 0, NULL), F("GETDAMAGE", 2, 2, NULL),
     F("GETHEAB", 2, 2, NULL), F("GETDIPVAR", 3, 3, NULL), F("PORTRAIT", 1, 1, NULL), F("WIZNAME", 1, 1, NULL),
-    F("NOFUNITSONTILE", 3, 3, NULL), F("UNITONTILE", 4, 4, NULL), F("GETCITYDATA", 2, 2, NULL),
-    F("GETWIZARDDATA", 2, 2, NULL), F("PRIMARYREALM", 1, 1, NULL),
+    G("NOFUNITSONTILE", 3, 3, CAS_Game_Nofunitsontile), G("UNITONTILE", 4, 4, CAS_Game_Unitontile), G("GETCITYDATA", 2, 2, CAS_Game_Getcitydata),
+    G("GETWIZARDDATA", 2, 2, CAS_Game_Getwizarddata), F("PRIMARYREALM", 1, 1, NULL),
 
     C("IWRITE", 4, 4, NULL), C("ADDAISPELL", 2, 2, NULL), C("SETPERSONALITY", 2, 2, NULL), C("SETOBJECTIVE", 2, 2, NULL),
     C("DEALCOMBATDAMAGE", 4, 4, NULL), C("DEALDAMAGE", 2, 4, NULL), C("SETCOMBATENCHANTMENTFLAG", 4, 4, NULL),
     C("SETOLENCHANTMENTFLAG", 4, 4, NULL), C("SETENCHANTMENTFLAG", 4, 4, NULL), C("SETRETORT", 3, 3, NULL),
     C("SETBOOK", 3, 3, NULL), C("SETSTAT", 4, 5, NULL), C("APPLYCHAOSCHANNEL", 1, 1, NULL),
-    C("SETCITYDATA", 3, 3, NULL), C("SETWIZARDDATA", 3, 3, NULL), C("ADDABILITYLINE", 4, 4, NULL),
+    GC("SETCITYDATA", 3, 3, CAS_Game_Setcitydata), GC("SETWIZARDDATA", 3, 3, CAS_Game_Setwizarddata), C("ADDABILITYLINE", 4, 4, NULL),
     C("SETTERRAIN", 4, 4, NULL), C("SETHEAB", 4, 4, NULL), C("GAINEXP", 2, 2, NULL), C("SETBUILDINGSTATE", 3, 3, NULL),
     C("SETCITYENCHANTOWNER", 3, 3, NULL), C("SETCOMBATGLOBAL", 4, 4, NULL), C("SETGLOBAL", 3, 3, NULL),
     C("OVERLANDHEAL", 2, 2, NULL), C("COMBATHEAL", 4, 4, NULL), C("GETNODEDATA", 2, 5, NULL), C("SETDIPVAR", 4, 4, NULL),
@@ -864,6 +838,8 @@ static const struct s_CAS_BUILTIN cas_builtins[] =
 
 #undef F
 #undef C
+#undef G
+#undef GC
 
 #define CAS_BUILTIN_COUNT ((int)(sizeof(cas_builtins) / sizeof(cas_builtins[0])))
 
@@ -886,7 +862,7 @@ int CAS_Builtin_Implemented(const char * name)
     cas_upper(upper);
     idx = builtin_index(upper);
     if(idx < 0) { return -1; }
-    return cas_builtins[idx].fn != NULL;
+    return (cas_builtins[idx].fn != NULL) || (cas_builtins[idx].game != NULL);
 }
 
 /* Calls built-in `idx` with arguments already parsed, or records the use (check mode). */
@@ -901,6 +877,22 @@ static cas_value call_builtin(struct s_CAS_RUN * r, int idx, cas_value * args, i
     {
         if(r->builtin_uses != NULL) { r->builtin_uses[idx]++; }
         return make_int(0);
+    }
+    if(b->game != NULL)
+    {
+        int32_t ints[CAS_MAX_ARGS];
+        int32_t result = 0;
+        char error[200];
+        int itr;
+        for(itr = 0; itr < nargs; itr++)
+        {
+            int64_t v = int_value(r, &args[itr]);
+            if(v < INT32_MIN || v > INT32_MAX) { cas_fail(r, "%s: argument %d (%lld) is outside 32-bit range", b->name, itr + 1, (long long)v); }
+            ints[itr] = (int32_t)v;
+        }
+        error[0] = '\0';
+        if(b->game(ints, nargs, &result, error, sizeof(error)) != 0) { cas_fail(r, "%s: %s", b->name, error); }
+        return make_int(result);
     }
     if(b->fn == NULL) { cas_fail(r, "%s is not implemented in ReMoM yet", b->name); }
     return b->fn(r, args, nargs);
@@ -1584,7 +1576,7 @@ void CAS_Builtins_Used(CAS_Script * script, CAS_Builtin_Use_Fn callback, void * 
     run_free(&r);
     for(itr = 0; itr < CAS_BUILTIN_COUNT; itr++)
     {
-        if(uses[itr] > 0) { callback(cas_builtins[itr].name, uses[itr], cas_builtins[itr].fn != NULL, user_data); }
+        if(uses[itr] > 0) { callback(cas_builtins[itr].name, uses[itr], (cas_builtins[itr].fn != NULL) || (cas_builtins[itr].game != NULL), user_data); }
     }
 }
 

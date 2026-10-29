@@ -18,6 +18,7 @@
 #include <string.h>
 
 #define SAVEFILE_MAX_SECTIONS 40
+#define SAVEFILE_MAX_EXTRA_SECTIONS 8
 
 struct s_SAVE_SECTION
 {
@@ -26,7 +27,12 @@ struct s_SAVE_SECTION
     uint32_t record_size;
     uint32_t record_count;
     int found;
+    int optional;     /* registered by a mod: a save without it zeroes it instead of failing */
 };
+
+/* Sections added with Save_File_Register_Section(). */
+static struct s_SAVE_SECTION save_file_extra_sections[SAVEFILE_MAX_EXTRA_SECTIONS];
+static int save_file_extra_count;
 
 /* The game's scalar globals, saved as one section of eight int16_t (1.31 wrote them individually at 0x9D8). */
 static int16_t save_file_game_vars[8];
@@ -59,6 +65,7 @@ static void Save_File_Unpack_Game_Vars(void)
 static int Save_File_Sections(struct s_SAVE_SECTION * sections)
 {
     int count = 0;
+    int itr;
 
 #define SAVE_SECTION(_tag_, _data_, _size_, _count_)  \
     sections[count].tag = (_tag_);                    \
@@ -66,6 +73,7 @@ static int Save_File_Sections(struct s_SAVE_SECTION * sections)
     sections[count].record_size = (uint32_t)(_size_); \
     sections[count].record_count = (uint32_t)(_count_); \
     sections[count].found = 0;                        \
+    sections[count].optional = 0;                     \
     count++;
 
     SAVE_SECTION("HEROES_0", _HEROES2[0], sizeof(struct s_HERO), NUM_HERO_TYPES)
@@ -98,7 +106,52 @@ static int Save_File_Sections(struct s_SAVE_SECTION * sections)
 
 #undef SAVE_SECTION
 
+    for(itr = 0; itr < save_file_extra_count; itr++)
+    {
+        sections[count] = save_file_extra_sections[itr];
+        sections[count].found = 0;
+        count++;
+    }
+
     return count;
+}
+
+int Save_File_Register_Section(const char * tag, void * data, uint32_t record_size, uint32_t record_count)
+{
+    int itr;
+    if((tag == NULL) || (strlen(tag) != SAVEFILE_TAG_LEN) || (data == NULL))
+    {
+        LOG_ERROR(LOG_CAT_LOADSAVE, "[SAVEFILE] Save_File_Register_Section: tag must be %d characters", SAVEFILE_TAG_LEN);
+        return -1;
+    }
+    for(itr = 0; itr < save_file_extra_count; itr++)
+    {
+        if(strcmp(save_file_extra_sections[itr].tag, tag) == 0)
+        {
+            save_file_extra_sections[itr].data = data;                  /* re-registering replaces */
+            save_file_extra_sections[itr].record_size = record_size;
+            save_file_extra_sections[itr].record_count = record_count;
+            return 0;
+        }
+    }
+    if(save_file_extra_count >= SAVEFILE_MAX_EXTRA_SECTIONS)
+    {
+        LOG_ERROR(LOG_CAT_LOADSAVE, "[SAVEFILE] Save_File_Register_Section: more than %d extra sections; \"%s\" not added", SAVEFILE_MAX_EXTRA_SECTIONS, tag);
+        return -1;
+    }
+    save_file_extra_sections[save_file_extra_count].tag = tag;
+    save_file_extra_sections[save_file_extra_count].data = data;
+    save_file_extra_sections[save_file_extra_count].record_size = record_size;
+    save_file_extra_sections[save_file_extra_count].record_count = record_count;
+    save_file_extra_sections[save_file_extra_count].found = 0;
+    save_file_extra_sections[save_file_extra_count].optional = 1;
+    save_file_extra_count++;
+    return 0;
+}
+
+void Save_File_Unregister_Sections(void)
+{
+    save_file_extra_count = 0;
 }
 
 int Save_File_Is_ReMoM(FILE * fp)
@@ -221,7 +274,12 @@ int Save_File_Read(FILE * fp, const char * file_name)
 
     for(itr = 0; itr < count; itr++)
     {
-        if(!sections[itr].found)
+        if(!sections[itr].found && sections[itr].optional)
+        {
+            LOG_INFO(LOG_CAT_LOADSAVE, "[SAVEFILE] %s: no section \"%s\" (saved without the mod); starting it empty", file_name, sections[itr].tag);
+            memset(sections[itr].data, 0, (size_t)sections[itr].record_size * sections[itr].record_count);
+        }
+        else if(!sections[itr].found)
         {
             LOG_ERROR(LOG_CAT_LOADSAVE, "[SAVEFILE] %s: missing section \"%s\"", file_name, sections[itr].tag);
             return -1;

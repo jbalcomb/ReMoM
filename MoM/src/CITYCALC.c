@@ -20,7 +20,8 @@
 #include "../../MoX/src/Util.h"
 #include "../../MoX/src/EMS/EMS.h"  /* EMMDATAH_Map() used in Do_City_Calculations */
 
-#include "../../MOD/src/MOD_Hook.h"  /* CLAUDE: MOD_Hook_City_Value() used in Do_City_Calculations */
+#include "../../MOD/src/MOD_Hook.h"  /* CLAUDE: MOD_HOOK_CITY_* used in Do_City_Calculations */
+#include "City_Hook_Inputs.h"  /* CLAUDE: City_Hook_Value() used in Do_City_Calculations */
 
 #include "AIDUDES.h"
 #include "Items.h"
@@ -80,14 +81,14 @@ void Do_City_Calculations(int16_t city_idx)
     // CITIES_BUILDING_MAINTENANCE(city_idx, (int8_t)City_Gold_Mainanence(city_idx));
     // CITIES_RESEARCH_UNITS(city_idx, (int8_t)City_Research_Production(city_idx));
     // CITIES_MANA_UNITS(city_idx, (int8_t)City_Mana_Production(city_idx));
-    /* CLAUDE: mod hooks (MOD/src/MOD_Hook.h).  Each per-resource result passes through its hook before the AI difficulty modifier below; with no mod loaded the value is unchanged.
+    /* CLAUDE: mod hooks (MOD/src/MOD_Hook.h, called through City_Hook_Value() with the CoM2 script inputs).  Each per-resource result passes through its hook before the AI difficulty modifier below; with no mod loaded the value is unchanged.
        The fields are int32_t now (1-byte in 1.31), so nothing is cast down; City_Value_OGBUG() logs where 1.31 would have wrapped the value. */
-    CITIES_FOOD_UNITS(city_idx, City_Value_OGBUG(city_idx, "food_units", MOD_Hook_City_Value(MOD_HOOK_CITY_FOOD, city_idx, City_Food_Production(city_idx)), INT8_MIN, INT8_MAX));
-    CITIES_PRODUCTION_UNITS(city_idx, City_Value_OGBUG(city_idx, "production_units", MOD_Hook_City_Value(MOD_HOOK_CITY_PRODUCTION, city_idx, City_Production_Production(city_idx)), INT8_MIN, INT8_MAX));
-    CITIES_GOLD_UNITS(city_idx, City_Value_OGBUG(city_idx, "gold_units", MOD_Hook_City_Value(MOD_HOOK_CITY_GOLD, city_idx, City_Gold_Production(city_idx)), 0, UINT8_MAX));
+    CITIES_FOOD_UNITS(city_idx, City_Value_OGBUG(city_idx, "food_units", City_Hook_Value(MOD_HOOK_CITY_FOOD, city_idx, City_Food_Production(city_idx)), INT8_MIN, INT8_MAX));
+    CITIES_PRODUCTION_UNITS(city_idx, City_Value_OGBUG(city_idx, "production_units", City_Hook_Value(MOD_HOOK_CITY_PRODUCTION, city_idx, City_Production_Production(city_idx)), INT8_MIN, INT8_MAX));
+    CITIES_GOLD_UNITS(city_idx, City_Value_OGBUG(city_idx, "gold_units", City_Hook_Value(MOD_HOOK_CITY_GOLD, city_idx, City_Gold_Production(city_idx)), 0, UINT8_MAX));
     CITIES_BUILDING_MAINTENANCE(city_idx, City_Value_OGBUG(city_idx, "building_maintenance", City_Gold_Mainanence(city_idx), INT8_MIN, INT8_MAX));
-    CITIES_RESEARCH_UNITS(city_idx, City_Value_OGBUG(city_idx, "research_units", MOD_Hook_City_Value(MOD_HOOK_CITY_RESEARCH, city_idx, City_Research_Production(city_idx)), INT8_MIN, INT8_MAX));
-    CITIES_MANA_UNITS(city_idx, City_Value_OGBUG(city_idx, "mana_units", MOD_Hook_City_Value(MOD_HOOK_CITY_POWER, city_idx, City_Mana_Production(city_idx)), 0, UINT8_MAX));  /* 1.31 cast to int8_t into a uint8_t field: same bits, so 0..255 */
+    CITIES_RESEARCH_UNITS(city_idx, City_Value_OGBUG(city_idx, "research_units", City_Hook_Value(MOD_HOOK_CITY_RESEARCH, city_idx, City_Research_Production(city_idx)), INT8_MIN, INT8_MAX));
+    CITIES_MANA_UNITS(city_idx, City_Value_OGBUG(city_idx, "mana_units", City_Hook_Value(MOD_HOOK_CITY_POWER, city_idx, City_Mana_Production(city_idx)), 0, UINT8_MAX));  /* 1.31 cast to int8_t into a uint8_t field: same bits, so 0..255 */
     if(
         (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
         &&

@@ -33,6 +33,7 @@ enum e_MOD_HOOK
 };
 
 #define MOD_HOOK_MAX_HANDLERS 8
+#define MOD_HOOK_MAX_INPUTS 8
 
 /* A handler: returns the new value for hook_id given the previous value.  subject_idx is the city/unit/player index. */
 typedef int32_t (*MOD_Hook_Fn)(int16_t hook_id, int16_t subject_idx, int32_t value, void * user_data);
@@ -48,6 +49,19 @@ int16_t MOD_Hook_Count(int16_t hook_id);
 
 /* Runs hook_id's chain over value and returns the result.  Fast path: no handler -> value unchanged. */
 int32_t MOD_Hook_City_Value(int16_t hook_id, int16_t city_idx, int32_t value);
+
+/* A named value the game passes along with a hook call (Caster of Magic's script inputs: FARMERS, BASEGOLD, ...). */
+struct s_MOD_HOOK_INPUT
+{
+    const char * name;
+    int32_t value;
+};
+
+/* MOD_Hook_City_Value() with named inputs; handlers read them with MOD_Hook_Inputs() while the call runs. */
+int32_t MOD_Hook_City_Value_Inputs(int16_t hook_id, int16_t city_idx, int32_t value, const struct s_MOD_HOOK_INPUT * inputs, int input_count);
+
+/* The inputs of the hook call in progress (NULL and 0 outside a call, or when it has none). */
+const struct s_MOD_HOOK_INPUT * MOD_Hook_Inputs(int * count);
 
 /* Script-facing name of a hook ("city_gold"), or NULL for an unknown hook. */
 const char * MOD_Hook_Name(int16_t hook_id);

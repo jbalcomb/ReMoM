@@ -9,6 +9,7 @@ set(LIBMOM_SOURCES
     ALLOC.c
     ArmyList.c
     CITYCALC.c
+    City_Hook_Inputs.c
     CityList.c
     CITYSCAP.c
     CityScr.c

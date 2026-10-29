@@ -2,6 +2,7 @@ include(GoogleTest)
 
 add_executable(MOD_tests
     test_CAS.cpp
+    test_CAS_Game.cpp
     test_MOD_Hook.cpp
     test_MOD_Lua.cpp
 )

@@ -243,7 +243,7 @@ TEST_F(MOD_Load_CAS_test, Binds_Hooks_With_Master_And_Com2_Names)
 TEST_F(MOD_Load_CAS_test, Script_Error_Keeps_Value)
 {
     Write("mod.ini", "[CAS]\ncity_gold=Gold.CAS\n");
-    Write("Gold.CAS", "RESULT = BOOKS(1,2);");                          /* not implemented in ReMoM yet */
+    Write("Gold.CAS", "RESULT = IREADN(1,2,3);");                        /* not implemented in ReMoM yet */
     ASSERT_EQ(MOD_Load_Directory(dir.c_str()), 0);
     EXPECT_EQ(MOD_Hook_City_Value(MOD_HOOK_CITY_GOLD, 0, 9), 9);
 }
@@ -253,4 +253,16 @@ TEST_F(MOD_Load_CAS_test, Broken_Script_Fails_To_Load)
     Write("mod.ini", "[CAS]\ncity_gold=Gold.CAS\n");
     Write("Gold.CAS", "IF 1 THEN RESULT = 2;");
     EXPECT_EQ(MOD_Load_Directory(dir.c_str()), -1);
+}
+
+TEST_F(MOD_Load_CAS_test, Hook_Inputs_Reach_The_Script)
+{
+    Write("mod.ini", "[CAS]\nEconomyGold=Gold.CAS\n");
+    Write("Gold.CAS", "ADDRESLINE \"Taxes\", BASEGOLD; ADDRESLINE \"Trade\", %I((BASEGOLD*(ROADBONUS+TERRAINGOLD))/100);");
+    ASSERT_EQ(MOD_Load_Directory(dir.c_str()), 0);
+    struct s_MOD_HOOK_INPUT inputs[] = { { "ROADBONUS", 20 }, { "TERRAINGOLD", 30 }, { "BASEGOLD", 10 } };
+    EXPECT_EQ(MOD_Hook_City_Value_Inputs(MOD_HOOK_CITY_GOLD, 0, 99, inputs, 3), 15);
+    int count = -1;
+    EXPECT_EQ(MOD_Hook_Inputs(&count), nullptr);                         /* only visible while the call runs */
+    EXPECT_EQ(count, 0);
 }

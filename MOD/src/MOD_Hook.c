@@ -18,6 +18,10 @@ struct s_MOD_HOOK_HANDLER
 static struct s_MOD_HOOK_HANDLER mod_hook_handlers[MOD_HOOK_COUNT][MOD_HOOK_MAX_HANDLERS];
 static int16_t mod_hook_handler_count[MOD_HOOK_COUNT];
 
+/* The inputs of the hook call in progress (see MOD_Hook_Inputs()). */
+static const struct s_MOD_HOOK_INPUT * mod_hook_inputs;
+static int mod_hook_input_count;
+
 static const char * mod_hook_names[MOD_HOOK_COUNT] =
 {
     "city_food",
@@ -70,6 +74,11 @@ int16_t MOD_Hook_Count(int16_t hook_id)
 
 int32_t MOD_Hook_City_Value(int16_t hook_id, int16_t city_idx, int32_t value)
 {
+    return MOD_Hook_City_Value_Inputs(hook_id, city_idx, value, NULL, 0);
+}
+
+int32_t MOD_Hook_City_Value_Inputs(int16_t hook_id, int16_t city_idx, int32_t value, const struct s_MOD_HOOK_INPUT * inputs, int input_count)
+{
     int16_t itr;
 
     if((hook_id < 0) || (hook_id >= MOD_HOOK_COUNT))
@@ -77,12 +86,22 @@ int32_t MOD_Hook_City_Value(int16_t hook_id, int16_t city_idx, int32_t value)
         return value;
     }
 
+    mod_hook_inputs = inputs;
+    mod_hook_input_count = (inputs != NULL) ? input_count : 0;
     for(itr = 0; itr < mod_hook_handler_count[hook_id]; itr++)
     {
         value = mod_hook_handlers[hook_id][itr].fn(hook_id, city_idx, value, mod_hook_handlers[hook_id][itr].user_data);
     }
+    mod_hook_inputs = NULL;
+    mod_hook_input_count = 0;
 
     return value;
+}
+
+const struct s_MOD_HOOK_INPUT * MOD_Hook_Inputs(int * count)
+{
+    *count = mod_hook_input_count;
+    return mod_hook_inputs;
 }
 
 const char * MOD_Hook_Name(int16_t hook_id)
