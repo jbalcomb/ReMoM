@@ -791,7 +791,8 @@ static cas_value bi_debuglog(struct s_CAS_RUN * r, cas_value * a, int n)
 #define GC(name, lo, hi, fn) { name, BI_CMD, lo, hi, NULL, fn }
 
 /* Every built-in Scripts.TXT documents, plus the ones Warlord uses that it does not (GETCITYDATA, GETWIZARDDATA,
-   PRIMARYREALM).  fn == NULL: not implemented in ReMoM yet. */
+   PRIMARYREALM).  Checked against the keyword table in Caster.exe 1.05.11, which also spells GETNODEDATA as NODEDATA.
+   fn and game both NULL: not implemented in ReMoM yet. */
 static const struct s_CAS_BUILTIN cas_builtins[] =
 {
     F("RND", 1, 1, bi_rnd), F("SGN", 1, 1, bi_sgn), F("ABS", 1, 1, bi_abs), F("EXPON", 2, 2, bi_expon),
@@ -826,14 +827,14 @@ static const struct s_CAS_BUILTIN cas_builtins[] =
     G("GETWIZARDDATA", 2, 2, CAS_Game_Getwizarddata), F("PRIMARYREALM", 1, 1, NULL),
 
     C("IWRITE", 4, 4, NULL), C("ADDAISPELL", 2, 2, NULL), C("SETPERSONALITY", 2, 2, NULL), C("SETOBJECTIVE", 2, 2, NULL),
-    C("DEALCOMBATDAMAGE", 4, 4, NULL), C("DEALDAMAGE", 2, 4, NULL), C("SETCOMBATENCHANTMENTFLAG", 4, 4, NULL),
+    C("DEALCOMBATDAMAGE", 4, 4, NULL), C("SETCOMBATENCHANTMENTFLAG", 4, 4, NULL),
     C("SETOLENCHANTMENTFLAG", 4, 4, NULL), C("SETENCHANTMENTFLAG", 4, 4, NULL), C("SETRETORT", 3, 3, NULL),
     C("SETBOOK", 3, 3, NULL), C("SETSTAT", 4, 5, NULL), C("APPLYCHAOSCHANNEL", 1, 1, NULL),
     GC("SETCITYDATA", 3, 3, CAS_Game_Setcitydata), GC("SETWIZARDDATA", 3, 3, CAS_Game_Setwizarddata), C("ADDABILITYLINE", 4, 4, NULL),
     C("SETTERRAIN", 4, 4, NULL), C("SETHEAB", 4, 4, NULL), C("GAINEXP", 2, 2, NULL), C("SETBUILDINGSTATE", 3, 3, NULL),
     C("SETCITYENCHANTOWNER", 3, 3, NULL), C("SETCOMBATGLOBAL", 4, 4, NULL), C("SETGLOBAL", 3, 3, NULL),
-    C("OVERLANDHEAL", 2, 2, NULL), C("COMBATHEAL", 4, 4, NULL), C("GETNODEDATA", 2, 5, NULL), C("SETDIPVAR", 4, 4, NULL),
-    C("SETSPELLDATA", 3, 3, NULL), C("SETSPELLSTATE", 3, 3, NULL),
+    C("OVERLANDHEAL", 2, 2, NULL), C("COMBATHEAL", 4, 4, NULL), C("GETNODEDATA", 2, 5, NULL), C("NODEDATA", 2, 5, NULL), C("SETDIPVAR", 4, 4, NULL),
+    C("SETSPELLDATA", 3, 3, NULL),
 };
 
 #undef F

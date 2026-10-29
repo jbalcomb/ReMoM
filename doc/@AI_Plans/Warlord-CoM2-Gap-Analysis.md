@@ -145,8 +145,29 @@ script slots when a new game starts.
 - **`CASTERWIN.odt`** — the manual; its Game Mechanics chapters describe the rule changes.
 - **`Scripts.TXT`** — the CAS reference (already used).
 
-Not obtained: `Caster.exe` (10.6 MB) and `Casapi.dll` (8.9 MB) are too large for the Drive connector. A zip of each,
-or of both, would let us read the exe's strings and the DLL's export table.
+- **`Caster.exe` 1.05.11** (SHA-256 `3cc24227…af8d1e`), from a parsed dump: section layout, ASCII and UTF-16 strings,
+  and the import, resource and section tables.
+  - **Debug symbols.** The exe carries a 7 MB Borland TD32 debug section, so every procedure and global has its
+    Delphi name: 26,142 `@Unit@Name` symbols. The gameplay units, with procedure counts: `Economy` 41, `City` 36,
+    `Map` 47, `Newgame` 18, `Neutrals` 9, `Combat` 69, `Automaticcombat` 30, `Spells` 60, `Units` 48, `Wizard` 34,
+    `Diplomacy` 58, `Ai` 98, `Aicombat` 26, `Game` 71, `Item` 16, `Heroes` 16, `Scripts` 75 (the CAS interpreter),
+    plus `Castercore` with 716 and `Vars` with 839 globals. These names are the work breakdown for §2.1. For example,
+    `Economy` has `citygoldproduction`, `cityroadbonus`, `cityterraingold`, `minimalfarmers`, `volcanopowerincome`, ...
+  - **Rule globals.** 468 of MODDING.INI's 667 keys are `Vars` globals with the same name, for example
+    `@Vars@NearShoreGoldBonus`. Most of the other 199 are script bindings (stored as `<Hook>Script`) or numbered keys
+    loaded into arrays (`ExpForLevel1..9` → `ExpToLevel`). `Vars` also has 371 globals that are not MODDING keys:
+    other INIs' tables (`RacialGrowth`, `OreTable`, `LevelBonus*`, `RetortPickCosts`, ...) and runtime state.
+  - **CAS keywords.** The interpreter's keyword table in `.data` matches ReMoM's built-in table, except two names
+    ReMoM had wrongly listed (`DEALDAMAGE`, `SETSPELLSTATE`, now removed) and `NODEDATA`, the exe's spelling of the
+    documented `GETNODEDATA` (both accepted now).
+  - **Asset names.** 259 image files are named literally in UTF-16 (`AlchemyBack.png`, `CityBackground.png`,
+    `Gold10.png`, ...); the numbered families from §2.3 are built at run time.
+
+  The TD32 data also maps each procedure to its code address and source line. With the `.text` bytes (the `regions/`
+  hex dumps of the same parse), any single rule can be disassembled and checked, procedure by procedure.
+
+Not obtained: `Casapi.dll` (8.9 MB) is under the connector's 10 MB file limit, but too large for its message size.
+A zip, or the same parse the exe got, would give its export table.
 
 ## 4. Suggested order
 
@@ -157,6 +178,6 @@ or of both, would let us read the exe's strings and the DLL's export table.
 4. **Asset override layer** and the CoM2 name tables.
 5. **Remaining hooks**, in order: the economy ones, the small numeric ones, unit stats, overland, combat, AI. Built-ins
    come with each hook.
-6. **CoM2 engine rules**, by subsystem (map generation, economy, combat, AI), checked against the CasApi oracle where
+6. **CoM2 engine rules**, by subsystem, following the exe's units (`Map`/`Newgame`, `Economy`/`City`, `Combat`, `Ai`), checked against the CasApi oracle and the exe's code where
    possible.
 7. **Converter** to the native ReMoM mod format, once 1–5 define that format.
