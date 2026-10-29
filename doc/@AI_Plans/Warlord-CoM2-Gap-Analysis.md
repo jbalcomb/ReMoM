@@ -166,8 +166,31 @@ script slots when a new game starts.
   The TD32 data also maps each procedure to its code address and source line. With the `.text` bytes (the `regions/`
   hex dumps of the same parse), any single rule can be disassembled and checked, procedure by procedure.
 
-Not obtained: `Casapi.dll` (8.9 MB) is under the connector's 10 MB file limit, but too large for its message size.
-A zip, or the same parse the exe got, would give its export table.
+- **`Casapi.dll`** (SHA-256 `9c88f0bc…6b0b`, linked 2025-11-11, three weeks before the 1.05.11 exe), from the same
+  kind of parse:
+  - **Exports.** It exports 912 functions. All 895 names `CasApi.pas` declares are among them (898 declarations,
+    three of them overloads), plus 17 undeclared ones (`unitpower`, `unitresearch`, `unitskill`, `OverlandDistance`,
+    `CanMeldunit`, ...). Calling convention is `stdcall`.
+  - **Same engine as the exe.** Its debug symbols contain the same gameplay units with the same procedure names:
+    `Economy` 41/41, `City`, `Map`, `Newgame`, `Neutrals`, `Combat`, `Spells`, `Wizard`, `Ai`, `Game`, `Scripts`,
+    `Vars` 839/839, ... The only differences are `Units.isotherranged` (DLL only) and
+    `Diplomacy.initiateaudience` (exe only), which fits the small version gap. The exe adds only the UI units
+    (`Render*`, `Ui*`, `Engine`, `Sound`, `Keys`) and `Castercore`, its counterpart of the DLL's `Casapi` wrapper.
+  - **Oracle use is practical.** The API covers a test run end to end:
+    1. `GameInitialize` loads the INI and DAT data.
+    2. `Loadgame2(filename)` loads a save.
+    3. `GetCityData`/`GetWizardData` read whole `CityT`/`WizardT` records; `CityGoldProduction`, `CityFoodProduction`,
+       ... read single results.
+    4. `EndTurnPressed` advances a turn.
+    5. `Savegame` writes the result; `MainSeed` reports the RNG seed.
+
+    Constraints:
+    - It is a 32-bit (i386) DLL, so the harness must be a 32-bit Windows program (or run under Wine).
+    - Delphi `shortstring` parameters (`str150`) are passed as pointers.
+    - Record results such as `CityT` come back through a hidden result pointer.
+    - The record layouts come from `Typedec.pas`.
+    - `CasApi.pas` and `SharedConstants.pas` are stamped 1.05.00 (2023), but their declarations still match the
+      exports. Check the layouts against the DLL before trusting them.
 
 ## 4. Suggested order
 
