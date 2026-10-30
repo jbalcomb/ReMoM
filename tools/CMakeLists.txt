@@ -14,6 +14,10 @@
 add_executable(cas_check cas_check.c)
 target_link_libraries(cas_check PRIVATE MOD MOX STU Platform_Headless)
 
+# rules_catalog -- writes the rules catalog (doc/rules-catalog/rules_catalog.ttl) from assets/rules/.
+add_executable(rules_catalog rules_catalog/rules_catalog.c)
+target_link_libraries(rules_catalog PRIVATE MOD MOX STU Platform_Headless)
+
 add_executable(savedump
     savedump.c
     ${PROJECT_SOURCE_DIR}/src/Game_Save_Dump.c

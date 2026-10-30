@@ -336,6 +336,15 @@ static void MOD_Rules_Bind(sol::state & lua, const std::string & profile)
     sol::table terrain = lua.create_named_table("terrain");
 
     rules["profile"] = profile;
+    rules["about_entries"] = lua.create_table();
+    /* rules.about(rule, { status = ..., source = ..., note = ... }): what the profile says about one of its rules, for
+       the rules catalog (tools/rules_catalog). */
+    rules.set_function("about", [](const std::string & rule, sol::table info, sol::this_state ts)
+    {
+        sol::state_view view(ts);
+        sol::table entries = view["rules"]["about_entries"];
+        entries[rule] = info;
+    });
     rules.set_function("load", [](sol::variadic_args args, sol::this_state ts)
     {
         sol::state_view view(ts);
@@ -517,4 +526,276 @@ int MOD_Rules_Call_Int(const char * name, const int32_t * args, int arg_count, i
         MOD_Lua_Set_Error(std::string("rules.") + name + " (profile \"" + mod_rules_profile + "\"): " + problem + "; using the C version" + ((count == max_logged_errors) ? " (further errors from this rule are not logged)" : ""));
     }
     return -1;
+}
+
+
+/* ---------------------------------------------------------------------------------------------------------------- */
+/*  Rules catalog (MOD_Rules_Write_Catalog)                                                                         */
+/* ---------------------------------------------------------------------------------------------------------------- */
+
+struct s_CATALOG_POINT
+{
+    std::string id;
+    std::string label;
+    std::vector<int32_t> args;
+};
+
+struct s_CATALOG_INPUT
+{
+    std::string name;
+    std::string description;
+};
+
+struct s_CATALOG_CALCULATION
+{
+    std::map<std::string, std::string> fields;     /* rule, label, description, unit, c_function, ... */
+    std::vector<s_CATALOG_INPUT> inputs;
+    std::vector<s_CATALOG_POINT> points;
+};
+
+static std::string Catalog_Literal(const std::string & text)
+{
+    std::string out = "\"";
+    for(char c : text)
+    {
+        if(c == '\\' || c == '"') { out += '\\'; out += c; }
+        else if(c == '\n') { out += "\\n"; }
+        else if(c == '\r') { }
+        else { out += c; }
+    }
+    return out + "\"";
+}
+
+static std::string Catalog_Profile_Id(const std::string & profile)
+{
+    size_t slash = profile.find_last_of("/\\");
+    return (slash == std::string::npos) ? profile : profile.substr(slash + 1);
+}
+
+/* Runs catalog.lua in the current state and reads its declarations. */
+static bool Catalog_Read(const std::string & path, std::vector<s_CATALOG_CALCULATION> & calculations)
+{
+    sol::state & lua = *mod_lua_state;
+    sol::table catalog = lua.create_named_table("catalog");
+    sol::table declared = lua.create_table();
+    catalog["declared"] = declared;
+    catalog.set_function("calculation", [](sol::table entry, sol::this_state ts)
+    {
+        sol::state_view view(ts);
+        sol::table list = view["catalog"]["declared"];
+        list.add(entry);
+    });
+    try
+    {
+        MOD_Rules_Run_File(lua, path);
+    }
+    catch(const std::exception & ex)
+    {
+        MOD_Lua_Set_Error(std::string("rules catalog \"") + path + "\": " + ex.what());
+        return false;
+    }
+
+    for(size_t itr = 1; itr <= declared.size(); itr++)
+    {
+        sol::table entry = declared[itr];
+        s_CATALOG_CALCULATION calc;
+        const char * keys[] = { "rule", "label", "description", "unit", "c_function", "c_original", "c_file", "wzd", "drake178" };
+        for(const char * key : keys)
+        {
+            sol::optional<std::string> value = entry[key];
+            if(value) { calc.fields[key] = *value; }
+        }
+        if(calc.fields["rule"].empty())
+        {
+            MOD_Lua_Set_Error("rules catalog: a calculation has no rule name");
+            return false;
+        }
+        sol::optional<sol::table> inputs = entry["inputs"];
+        if(inputs)
+        {
+            for(size_t i = 1; i <= inputs->size(); i++)
+            {
+                sol::table in = (*inputs)[i];
+                calc.inputs.push_back({ in.get_or<std::string>("name", ""), in.get_or<std::string>("description", "") });
+            }
+        }
+        sol::optional<sol::table> points = entry["data_points"];
+        if(points)
+        {
+            for(size_t i = 1; i <= points->size(); i++)
+            {
+                sol::table pt = (*points)[i];
+                s_CATALOG_POINT point;
+                point.id = pt.get_or<std::string>("id", "");
+                point.label = pt.get_or<std::string>("label", point.id);
+                sol::table args = pt["args"];
+                for(size_t a = 1; a <= args.size(); a++) { point.args.push_back(args.get<int32_t>(a)); }
+                if(point.id.empty() || (point.args.size() != calc.inputs.size()))
+                {
+                    MOD_Lua_Set_Error("rules catalog: " + calc.fields["rule"] + " data point \"" + point.id + "\" needs an id and one argument per input");
+                    return false;
+                }
+                calc.points.push_back(point);
+            }
+        }
+        calculations.push_back(calc);
+    }
+    return true;
+}
+
+int MOD_Rules_Write_Catalog(const char * catalog_path, const char * const * profiles, int profile_count, const char * out_path)
+{
+    std::vector<s_CATALOG_CALCULATION> calculations;
+    std::ostringstream ttl;
+    const std::string ns = "https://github.com/jbalcomb/remom/ns/rules";
+
+    if((profile_count < 1) || (MOD_Rules_Load(profiles[0]) != 0) || !Catalog_Read(catalog_path, calculations))
+    {
+        return -1;
+    }
+
+    ttl << "# ReMoM rules catalog: the game calculations rules profiles decide, and their results per profile.\n"
+        << "# Generated by tools/rules_catalog from " << "assets/rules/catalog.lua" << " and the profiles; do not edit.\n"
+        << "# One triple per line, so it also reads as a table (tools/rules_catalog/ttl_to_table.py).\n\n"
+        << "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
+        << "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n"
+        << "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n"
+        << "@prefix remom: <" << ns << "#> .\n"
+        << "@prefix calc: <" << ns << "/calculation/> .\n"
+        << "@prefix input: <" << ns << "/input/> .\n"
+        << "@prefix dp: <" << ns << "/datapoint/> .\n"
+        << "@prefix profile: <" << ns << "/profile/> .\n"
+        << "@prefix val: <" << ns << "/value/> .\n\n";
+
+    /* The vocabulary, so the file describes itself in any triple store. */
+    const char * vocabulary[][3] = {
+        { "remom:Calculation", "rdfs:Class", "A game calculation a rules profile decides." },
+        { "remom:Input", "rdfs:Class", "One argument of a calculation." },
+        { "remom:DataPoint", "rdfs:Class", "A named set of arguments whose result is compared across profiles." },
+        { "remom:Profile", "rdfs:Class", "A rules profile: a game version or mod (assets/rules/<id>/)." },
+        { "remom:Value", "rdfs:Class", "The result of one data point under one profile." },
+        { "remom:rule", "rdf:Property", "Name of the rule function in the profiles (rules.<rule>)." },
+        { "remom:cFunction", "rdf:Property", "C function that asks the rules profile." },
+        { "remom:cOriginal", "rdf:Property", "Faithful 1.31 C function the original profile is tested against." },
+        { "remom:cFile", "rdf:Property", "Source file of the C functions." },
+        { "remom:wzd", "rdf:Property", "Segment/procedure of the function in the 1.31 executable (WIZARDS.EXE)." },
+        { "remom:drake178", "rdf:Property", "drake178's name for the function." },
+        { "remom:unit", "rdf:Property", "Unit of the result." },
+        { "remom:input", "rdf:Property", "An input of the calculation." },
+        { "remom:position", "rdf:Property", "1-based position of an input among the arguments." },
+        { "remom:calculation", "rdf:Property", "The calculation a data point or value belongs to." },
+        { "remom:argument", "rdf:Property", "The data point's arguments, in input order, as text." },
+        { "remom:dataPoint", "rdf:Property", "The data point a value is for." },
+        { "remom:profile", "rdf:Property", "The profile a value is for." },
+        { "remom:value", "rdf:Property", "The result." },
+        { "remom:base", "rdf:Property", "The profile a profile starts from." },
+        { "remom:status", "rdf:Property", "How far a profile's version of a calculation is confirmed." },
+        { "remom:source", "rdf:Property", "Where a profile's version of a calculation comes from." },
+        { "remom:note", "rdf:Property", "Anything else a profile says about its version of a calculation." },
+        { "remom:about", "rdf:Property", "Links a profile's statement (status, source, note) to the calculation it is about." },
+    };
+    for(const auto & v : vocabulary)
+    {
+        ttl << v[0] << " rdf:type " << v[1] << " .\n";
+        ttl << v[0] << " rdfs:comment " << Catalog_Literal(v[2]) << " .\n";
+    }
+    ttl << "\n";
+
+    const std::map<std::string, std::string> predicates = {
+        { "label", "rdfs:label" }, { "description", "rdfs:comment" }, { "unit", "remom:unit" }, { "c_function", "remom:cFunction" },
+        { "c_original", "remom:cOriginal" }, { "c_file", "remom:cFile" }, { "wzd", "remom:wzd" }, { "drake178", "remom:drake178" } };
+    for(const auto & calc : calculations)
+    {
+        const std::string rule = calc.fields.at("rule");
+        const std::string c = "calc:" + rule;
+        ttl << c << " rdf:type remom:Calculation .\n";
+        ttl << c << " remom:rule " << Catalog_Literal(rule) << " .\n";
+        for(const auto & p : predicates)
+        {
+            auto it = calc.fields.find(p.first);
+            if(it != calc.fields.end()) { ttl << c << " " << p.second << " " << Catalog_Literal(it->second) << " .\n"; }
+        }
+        for(size_t i = 0; i < calc.inputs.size(); i++)
+        {
+            const std::string in = "input:" + rule + "-" + calc.inputs[i].name;
+            ttl << c << " remom:input " << in << " .\n";
+            ttl << in << " rdf:type remom:Input .\n";
+            ttl << in << " rdfs:label " << Catalog_Literal(calc.inputs[i].name) << " .\n";
+            ttl << in << " rdfs:comment " << Catalog_Literal(calc.inputs[i].description) << " .\n";
+            ttl << in << " remom:position " << (i + 1) << " .\n";
+        }
+        for(const auto & pt : calc.points)
+        {
+            const std::string d = "dp:" + rule + "-" + pt.id;
+            std::string args;
+            for(size_t a = 0; a < pt.args.size(); a++) { args += (a ? ", " : "") + calc.inputs[a].name + "=" + std::to_string(pt.args[a]); }
+            ttl << d << " rdf:type remom:DataPoint .\n";
+            ttl << d << " remom:calculation " << c << " .\n";
+            ttl << d << " rdfs:label " << Catalog_Literal(pt.label) << " .\n";
+            ttl << d << " remom:argument " << Catalog_Literal(args) << " .\n";
+        }
+        ttl << "\n";
+    }
+
+    for(int p = 0; p < profile_count; p++)
+    {
+        if((p > 0) && (MOD_Rules_Load(profiles[p]) != 0))
+        {
+            return -1;
+        }
+        const std::string pid = Catalog_Profile_Id(profiles[p]);
+        const std::string pr = "profile:" + pid;
+        sol::table rules = (*mod_lua_state)["rules"];
+        ttl << pr << " rdf:type remom:Profile .\n";
+        ttl << pr << " rdfs:label " << Catalog_Literal(rules.get_or<std::string>("label", pid)) << " .\n";
+        sol::optional<std::string> description = rules["description"];
+        if(description) { ttl << pr << " rdfs:comment " << Catalog_Literal(*description) << " .\n"; }
+        sol::optional<std::string> base = rules["base"];
+        if(base) { ttl << pr << " remom:base profile:" << *base << " .\n"; }
+
+        sol::table about = rules["about_entries"];
+        for(const auto & calc : calculations)
+        {
+            const std::string rule = calc.fields.at("rule");
+            sol::optional<sol::table> info = about[rule];
+            if(info)
+            {
+                const std::string a = "val:" + rule + "-about-" + pid;
+                ttl << a << " remom:profile " << pr << " .\n";
+                ttl << a << " remom:about calc:" << rule << " .\n";
+                const char * keys[] = { "status", "source", "note" };
+                for(const char * key : keys)
+                {
+                    sol::optional<std::string> text = (*info)[key];
+                    if(text) { ttl << a << " remom:" << key << " " << Catalog_Literal(*text) << " .\n"; }
+                }
+            }
+            for(const auto & pt : calc.points)
+            {
+                int32_t result = 0;
+                const std::string v = "val:" + rule + "-" + pt.id + "-" + pid;
+                int rc = MOD_Rules_Call_Int(rule.c_str(), pt.args.data(), (int)pt.args.size(), &result);
+                if(rc < 0)
+                {
+                    return -1;
+                }
+                ttl << v << " rdf:type remom:Value .\n";
+                ttl << v << " remom:dataPoint dp:" << rule << "-" << pt.id << " .\n";
+                ttl << v << " remom:profile " << pr << " .\n";
+                if(rc == 0) { ttl << v << " remom:value " << result << " .\n"; }
+                else        { ttl << v << " remom:status " << Catalog_Literal("not ported: the C version decides") << " .\n"; }
+            }
+        }
+        ttl << "\n";
+    }
+
+    std::ofstream out(out_path, std::ios::out | std::ios::binary);
+    if(!out)
+    {
+        MOD_Lua_Set_Error(std::string("rules catalog: cannot write \"") + out_path + "\"");
+        return -1;
+    }
+    out << ttl.str();
+    LOG_INFO(LOG_CAT_MOD, "[MOD] rules catalog written to \"%s\" (%d profiles, %d calculations)", out_path, profile_count, (int)calculations.size());
+    return 0;
 }

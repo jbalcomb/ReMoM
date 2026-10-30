@@ -17,6 +17,10 @@
         rules.profile               the profile's name
         rules.load(file)            runs another file of this profile
         rules.load(profile, file)   runs a file of another profile, e.g. to start from "original" and change one rule
+        rules.label, rules.description, rules.base
+                                    the profile's name, summary and the profile it starts from, for the rules catalog
+        rules.about(rule, { status = ..., source = ..., note = ... })
+                                    what the profile says about its version of a rule, for the rules catalog
         terrain                     1.31's terrain type constants (terrain.Mountain1, terrain.Desert_Lst, ...)
 */
 
@@ -39,6 +43,11 @@ const char * MOD_Rules_Profile(void);
 /* Calls rules.<name>(args...) and reads its integer result.  Returns 0 on success, 1 if the profile has no such rule
    (nothing logged; the caller uses its C version), -1 on a script error (logged; the caller uses its C version). */
 int MOD_Rules_Call_Int(const char * name, const int32_t * args, int arg_count, int32_t * result);
+
+/* Writes the rules catalog: runs catalog_path (assets/rules/catalog.lua) for the calculations and their data points,
+   then every data point through each profile, and writes the results as RDF triples (Turtle) to out_path.
+   Leaves the last profile loaded.  Returns 0 on success, -1 on error (logged). */
+int MOD_Rules_Write_Catalog(const char * catalog_path, const char * const * profiles, int profile_count, const char * out_path);
 
 #ifdef __cplusplus
 }

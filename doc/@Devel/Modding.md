@@ -149,6 +149,11 @@ reference the 1.31 script is tested against. The API is in [MOD/src/MOD_Rules.h]
 - **Errors.** A rule that errors, or returns something other than an integer, falls back to its C version. The first
   10 errors of each rule are logged.
 
+**Catalog.** Every ported calculation, with its data points and its result under each profile, is published as RDF
+triples and as a comparison table in [doc/rules-catalog/](../rules-catalog/). Both are generated from
+[assets/rules/catalog.lua](../../assets/rules/catalog.lua) and the profiles, and tests keep them in step with the code.
+A profile describes itself with `rules.label`, `rules.description`, `rules.base` and `rules.about(rule, {status, source, note})`.
+
 To port another rule:
 1. Rename the faithful C function `<Name>_Original`, unchanged.
 2. Add a `<Name>` that reads its inputs and calls `MOD_Rules_Call_Int("<rule>", ...)`, falling back to
@@ -156,6 +161,7 @@ To port another rule:
 3. Translate the C into `rules/original/`.
 4. Add the all-inputs equivalence test.
 5. Write the other profiles' versions.
+6. Declare the calculation and its data points in `assets/rules/catalog.lua`, and regenerate the catalog.
 
 ## Code
 

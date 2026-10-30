@@ -673,3 +673,49 @@ set_tests_properties(Perf_Baseline_Compare PROPERTIES
     TIMEOUT 30
     LABELS "perf;regression"
 )
+
+
+
+# =========================================================================
+#  Rules catalog up to date
+#
+#  doc/rules-catalog/rules_catalog.ttl (RDF triples) and rules_catalog.md (the comparison table) are generated from
+#  assets/rules/.  These tests regenerate them and fail if the committed files differ, so the catalog always says what
+#  the rules do.  To refresh:
+#      ./rules_catalog assets/rules/catalog.lua doc/rules-catalog/rules_catalog.ttl assets/rules/original assets/rules/community_patch assets/rules/com2
+#      python3 tools/rules_catalog/ttl_to_table.py doc/rules-catalog/rules_catalog.ttl > doc/rules-catalog/rules_catalog.md
+# =========================================================================
+
+add_test(
+    NAME RulesCatalog_Generate
+    COMMAND $<TARGET_FILE:rules_catalog>
+        "${PROJECT_SOURCE_DIR}/assets/rules/catalog.lua"
+        "${CMAKE_CURRENT_BINARY_DIR}/rules_catalog.ttl"
+        "${PROJECT_SOURCE_DIR}/assets/rules/original"
+        "${PROJECT_SOURCE_DIR}/assets/rules/community_patch"
+        "${PROJECT_SOURCE_DIR}/assets/rules/com2"
+)
+set_tests_properties(RulesCatalog_Generate PROPERTIES FIXTURES_SETUP RulesCatalog LABELS "rules")
+
+add_test(
+    NAME RulesCatalog_Triples_UpToDate
+    COMMAND "${CMAKE_COMMAND}" -E compare_files
+        "${CMAKE_CURRENT_BINARY_DIR}/rules_catalog.ttl"
+        "${PROJECT_SOURCE_DIR}/doc/rules-catalog/rules_catalog.ttl"
+)
+set_tests_properties(RulesCatalog_Triples_UpToDate PROPERTIES FIXTURES_REQUIRED RulesCatalog LABELS "rules")
+
+find_program(REMOM_PYTHON3 python3)
+if(REMOM_PYTHON3)
+    add_test(
+        NAME RulesCatalog_Table_UpToDate
+        COMMAND "${CMAKE_COMMAND}"
+            -DPYTHON=${REMOM_PYTHON3}
+            -DSCRIPT=${PROJECT_SOURCE_DIR}/tools/rules_catalog/ttl_to_table.py
+            -DTTL=${PROJECT_SOURCE_DIR}/doc/rules-catalog/rules_catalog.ttl
+            -DOUT=${CMAKE_CURRENT_BINARY_DIR}/rules_catalog.md
+            -DEXPECTED=${PROJECT_SOURCE_DIR}/doc/rules-catalog/rules_catalog.md
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/rules_catalog_table.cmake"
+    )
+    set_tests_properties(RulesCatalog_Table_UpToDate PROPERTIES LABELS "rules")
+endif()
