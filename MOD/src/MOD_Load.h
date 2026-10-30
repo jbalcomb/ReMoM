@@ -23,6 +23,12 @@ extern "C" {
 /* Loads the mod in mod_dir.  Returns 0 on success, -1 on error (logged). */
 int MOD_Load_Directory(const char * mod_dir);
 
+/* Loads the rules profile named by `--rules NAME` on the command line, or "original" without one (MOD_Rules.h).
+   `--rules none` loads no profile, so every rule runs its C version.  Call it before loading any mod.  Returns 0 on
+   success, -1 if a profile asked for with --rules failed to load.  If the default profile cannot be found the game
+   still runs on the C versions, which behave the same; that is logged as a warning and returns 0. */
+int MOD_Rules_Load_Command_Line(int argc, char * argv[]);
+
 /* Removes every hook handler, frees the CAS scripts and shuts Lua down. */
 void MOD_Unload(void);
 

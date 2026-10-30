@@ -15,6 +15,7 @@
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/Util.h"
+#include "../../MOD/src/MOD_Rules.h"  /* CLAUDE: MOD_Rules_Call_Int(), Square_Production_Bonus() asks the rules profile */
 
 #include "CITYCALC.h"
 #include "TerrType.h"
@@ -220,13 +221,33 @@ int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
     return food_units;
 }
 
+/* CLAUDE: the production bonus is a rule (MOD/src/MOD_Rules.h): the loaded rules profile decides it, in Lua
+   (assets/rules/<profile>/terrain.lua, rules.square_production_bonus).  The map reads stay here.  Without a profile,
+   or if the script fails, the faithful 1.31 code below decides it. */
+int16_t Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have_gaias_blessing)
+{
+    int32_t args[3];
+    int32_t production_bonus = 0;
+
+    args[0] = (uint16_t)TERRAIN_TYPE(wx, wy, wp);                      /* as the 1.31 code stores it */
+    args[1] = have_gaias_blessing;
+    args[2] = City_Area_Square_Is_Shared(wx, wy, wp);
+    if(MOD_Rules_Call_Int("square_production_bonus", args, 3, &production_bonus) == 0)
+    {
+        return (int16_t)production_bonus;
+    }
+    return Square_Production_Bonus_Original(wx, wy, wp, have_gaias_blessing);
+}
+
 // WZD s161p04
 // drake178: TILE_GetProd()
 /*
     Chaos Node ~== Mountain
     ¿ Volcano ?
 */
-int16_t Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have_gaias_blessing)
+/* CLAUDE: renamed from Square_Production_Bonus(); the body is unchanged.  assets/rules/original/terrain.lua is its
+   translation, and MoM/tests/test_Square_Production_Bonus_Rules.cpp checks the two agree for every input. */
+int16_t Square_Production_Bonus_Original(int16_t wx, int16_t wy, int16_t wp, int16_t have_gaias_blessing)
 {
     uint16_t terrain_type = 0;
     int16_t production_bonus = 0;

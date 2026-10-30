@@ -3,6 +3,7 @@ include(GoogleTest)
 
 add_executable(MOM_tests
     MOM_tests.cpp
+    test_Square_Production_Bonus_Rules.cpp
     test_AI_Evaluate_Continents.cpp
     test_AI_Stacks_Survey_Expedition_Forces.cpp
     test_BigBook_PageTurn.cpp
@@ -40,6 +41,9 @@ target_include_directories(MOM_tests PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GTEST_INCLUDE_DIRS}
 )
+
+# test_Square_Production_Bonus_Rules.cpp loads the rules profiles from the source tree.
+target_compile_definitions(MOM_tests PRIVATE REMOM_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 
 target_link_libraries(MOM_tests PUBLIC
     GTest::gtest

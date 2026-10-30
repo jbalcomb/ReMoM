@@ -1,0 +1,11 @@
+-- Terrain rules: Community Patch changes on top of rules/original/terrain.lua.
+--
+-- NOT YET CONFIRMED.  The Community Patch's change list for terrain production is not in the ReMoM repo, so nothing
+-- is overridden here yet and the production bonus is still 1.31's.  Candidate to check with drake178: 1.31 gives the
+-- base desert type (terrain.Desert1) no production bonus while the other desert types give 3% (see the OGBUG note in
+-- rules/original/terrain.lua).  When a change is confirmed, write it like this, replacing the original function:
+--
+--   local original_square_production_bonus = rules.square_production_bonus
+--   function rules.square_production_bonus(terrain_type, gaias_blessing, shared)
+--       ...
+--   end

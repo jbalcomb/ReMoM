@@ -360,6 +360,12 @@ int main(int argc, char * argv[])
        (currently --seed only; flags will migrate over incrementally). */
     Check_Command_Line_Parameters_(argc, argv);
 
+    /* CLAUDE: the rules profile (MOD/src/MOD_Rules.h) loads before any --mod, so a mod can build on it. */
+    if(MOD_Rules_Load_Command_Line(argc, argv) != 0)
+    {
+        LOG_ERROR(LOG_CAT_REMOM, "[ReMoM] --rules: the rules profile failed to load; continuing on the C rules (see the MOD log category)");
+    }
+
     /* --headless: set SDL video driver to offscreen before SDL init.
        Must be parsed before Startup_Platform() so the environment variable
        takes effect. */
@@ -511,6 +517,10 @@ int main(int argc, char * argv[])
                 argi++;
                 g_tst_patch_scenario = argv[argi];
                 LOG_INFO(LOG_CAT_REMOM, "[ReMoM] CLI: --patch \"%s\"", g_tst_patch_scenario);
+            }
+            else if(stu_strcmp(argv[argi], "--rules") == 0 && (argi + 1) < argc)
+            {
+                argi++;                                                /* CLAUDE: loaded earlier, by MOD_Rules_Load_Command_Line() */
             }
             else if(stu_strcmp(argv[argi], "--mod") == 0 && (argi + 1) < argc)
             {

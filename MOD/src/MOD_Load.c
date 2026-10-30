@@ -5,6 +5,7 @@
 #include "MOD_Load.h"
 #include "MOD_Hook.h"
 #include "MOD_Lua.h"
+#include "MOD_Rules.h"
 #include "CAS.h"
 #include "CAS_Game.h"
 
@@ -356,4 +357,32 @@ void MOD_Unload(void)
     mod_cas_script_count = 0;
     CAS_Clear_Master();
     Save_File_Unregister_Sections();
+}
+
+int MOD_Rules_Load_Command_Line(int argc, char * argv[])
+{
+    const char * profile = NULL;
+    int itr;
+
+    for(itr = 1; itr < argc - 1; itr++)
+    {
+        if(strcmp(argv[itr], "--rules") == 0)
+        {
+            profile = argv[itr + 1];
+        }
+    }
+    if((profile != NULL) && (strcmp(profile, "none") == 0))
+    {
+        LOG_INFO(LOG_CAT_MOD, "[MOD] --rules none: every rule runs its C version");
+        return 0;
+    }
+    if(profile != NULL)
+    {
+        return MOD_Rules_Load(profile);
+    }
+    if(MOD_Rules_Load("original") != 0)
+    {
+        LOG_WARN(LOG_CAT_MOD, "[MOD] default rules profile \"original\" not loaded; every rule runs its C version (same behaviour)");
+    }
+    return 0;
 }

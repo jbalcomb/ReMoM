@@ -90,6 +90,8 @@ int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p04
 int16_t Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have_gaias_blessing);
+/* CLAUDE: Square_Production_Bonus() asks the rules profile; this is the faithful 1.31 code it falls back to. */
+int16_t Square_Production_Bonus_Original(int16_t wx, int16_t wy, int16_t wp, int16_t have_gaias_blessing);
 
 // WZD s161p05
 int16_t Square_Gold_Bonus(int16_t wx, int16_t wy, int16_t wp);

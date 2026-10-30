@@ -1164,6 +1164,7 @@ static void Print_Usage(const char *program_name)
     LOG_INFO(LOG_CAT_HEMOM, "  --scenario FILE    Run artificial human player from scenario script (.hms)");
     LOG_INFO(LOG_CAT_HEMOM, "  --alias-points F   Named-action points table for `click Screen.Alias` (alias_points.fwv)");
     LOG_INFO(LOG_CAT_HEMOM, "  --mod DIR          Load the mod in DIR (runs DIR/scripts/main.lua); may be given more than once");
+    LOG_INFO(LOG_CAT_HEMOM, "  --rules NAME       Rules profile: original (default), community_patch, com2, a folder, or none (C only)");
     LOG_INFO(LOG_CAT_HEMOM, "  --replay FILE      Replay recorded input from .RMR file");
     LOG_INFO(LOG_CAT_HEMOM, "  --record FILE      Record input to .RMR file");
     LOG_INFO(LOG_CAT_HEMOM, "  --dump-save FILE   After Screen_Control returns, dump FILE.GAM to FILE.txt");
@@ -1247,6 +1248,14 @@ int main(int argc, char *argv[])
        parsed by the per-target loop below during the incremental migration. */
     Check_Command_Line_Parameters_(argc, argv);
 
+    /* CLAUDE: the rules profile (MOD/src/MOD_Rules.h) loads before any --mod, so a mod can build on it.  A profile asked
+       for with --rules that fails to load stops HeMoM, so a test never runs on rules it did not ask for. */
+    if(MOD_Rules_Load_Command_Line(argc, argv) != 0)
+    {
+        LOG_ERROR(LOG_CAT_HEMOM, "[HeMoM] --rules: the rules profile failed to load (see the MOD log category)");
+        return 1;
+    }
+
     for (argi = 1; argi < argc; argi++)
     {
         if(stu_strcmp(argv[argi], "--help") == 0 || stu_strcmp(argv[argi], "-h") == 0)
@@ -1317,6 +1326,10 @@ int main(int argc, char *argv[])
             argi++;
             HeMoM_Player_Set_Alias_Points_Path(argv[argi]);
             LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --alias-points \"%s\"", argv[argi]);
+        }
+        else if(stu_strcmp(argv[argi], "--rules") == 0 && (argi + 1) < argc)
+        {
+            argi++;                                                    /* CLAUDE: loaded above, by MOD_Rules_Load_Command_Line() */
         }
         else if(stu_strcmp(argv[argi], "--mod") == 0 && (argi + 1) < argc)
         {
