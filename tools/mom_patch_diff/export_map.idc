@@ -1,12 +1,13 @@
 /*
     export_map.idc -- writes a function and data map of the open database for tools/mom_patch_diff.
 
-    Run in IDA 5.5 on the 1.31 WIZARDS.EXE (or MAGIC.EXE) database:  File > IDC file... > export_map.idc
-    It asks for the output file (e.g. wizards_map.csv).
+    Normally run through tools/mom_patch_diff/export_map.py, which starts IDA 5.5 from the command line on a copy of
+    the database, fills in the output path below, and closes IDA afterwards.  Run by hand (File > IDC file...) it asks
+    for the output file instead.
 
-    One line per function and per named data item:
+    One line per segment, function and named data item:
         kind,segment,proc,name,ea,size,bytes
-    kind     F (function) or D (named data item)
+    kind     S (segment: name = segment name, ea = start, size = length), F (function) or D (named data item)
     segment  IDA segment name (seg161, ovr142, dseg, ...)
     proc     1-based position of the function in its segment (the "p04" of ReMoM's "WZD s161p04"); 0 for data
     ea       start address, hex
@@ -77,16 +78,28 @@ static clean_name(name)
 
 static main()
 {
-    auto path, f, seg, seg_end, ea, end, proc, name, size, count_f, count_d;
+    auto path, f, seg, seg_end, ea, end, proc, name, size, count_f, count_d, batch;
 
-    path = AskFile(1, "*.csv", "Write the mom_patch_diff map to");
-    if(path == "")
+    path = "@@OUTPUT_PATH@@";                                   /* export_map.py writes the path here */
+    batch = 1;
+    if(substr(path, 0, 2) == "@@")
     {
-        return;
+        batch = 0;
+        path = AskFile(1, "*.csv", "Write the mom_patch_diff map to");
+        if(path == "")
+        {
+            return;
+        }
     }
+    Wait();                                                     /* let auto-analysis finish first */
     f = fopen(path, "w");
     if(f == 0)
     {
+        if(batch)
+        {
+            Message("export_map: cannot write %s\n", path);
+            Exit(1);
+        }
         Warning("Cannot write %s", path);
         return;
     }
@@ -98,6 +111,7 @@ static main()
     while(seg != BADADDR)
     {
         seg_end = SegEnd(seg);
+        fprintf(f, "S,%s,0,%s,%X,%d,\n", SegName(seg), SegName(seg), seg, seg_end - seg);
 
         /* functions, numbered in address order inside the segment */
         proc = 0;
@@ -134,4 +148,8 @@ static main()
 
     fclose(f);
     Message("export_map: %d functions, %d data items written to %s\n", count_f, count_d, path);
+    if(batch)
+    {
+        Exit(0);                                                /* command-line run: close IDA */
+    }
 }

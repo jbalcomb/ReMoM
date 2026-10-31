@@ -1,0 +1,121 @@
+"""
+test_address_table.py -- export_map.py with a stand-in for IDA, and address_table.py on synthetic sources, map,
+executable and another project's index.
+
+    python3 -m unittest tools.mom_patch_diff.tests.test_address_table
+"""
+
+import csv
+import os
+import stat
+import sys
+import tempfile
+import unittest
+
+from tools.mom_patch_diff import address_table, export_map
+from tools.mom_patch_diff.tests.test_diff import BASE_EA, build_exe, function_body, map_rows
+
+FAKE_IDA = '''#!{python}
+# Stand-in for idag.exe: checks the command line, then does what export_map.idc would: writes the map.
+import sys, re, os
+args = sys.argv[1:]
+assert args[0] == '-A', args
+script = next(a[2:] for a in args if a.startswith('-S'))
+log = next(a[2:] for a in args if a.startswith('-L'))
+db = args[-1]
+assert os.path.dirname(db) == os.path.dirname(script), 'IDA must run on the working copy'
+text = open(script, encoding='latin-1').read()
+assert '@@OUTPUT_PATH@@' not in text
+out = re.search(r'path = "([^"]+)";', text).group(1)
+open(out, 'w').write('kind,segment,proc,name,ea,size,bytes\\nS,seg001,0,seg001,10000,64,\\nF,seg001,1,f,10000,4,558BECCB\\n')
+open(log, 'w').write('export_map: 1 functions, 0 data items written\\n')
+'''
+
+
+class Export_Map_test(unittest.TestCase):
+
+    def test_runs_ida_on_a_copy_and_writes_the_map(self):
+        with tempfile.TemporaryDirectory() as root:
+            ida = os.path.join(root, 'idag')
+            with open(ida, 'w') as f:
+                f.write(FAKE_IDA.format(python=sys.executable))
+            os.chmod(ida, os.stat(ida).st_mode | stat.S_IEXEC)
+            idb = os.path.join(root, 'WIZARDS.idb')
+            with open(idb, 'wb') as f:
+                f.write(b'IDB')
+            out = os.path.join(root, 'wizards_map.csv')
+            self.assertEqual(export_map.main(['--ida', ida, '--idb', idb, '--out', out]), 0)
+            with open(out) as f:
+                self.assertIn('F,seg001,1,f,10000,4,558BECCB', f.read())
+            with open(idb, 'rb') as f:
+                self.assertEqual(f.read(), b'IDB')           # the original database is untouched
+
+
+class Address_Table_test(unittest.TestCase):
+
+    def setUp(self):
+        import random
+        rng = random.Random(3)
+        self.tmp = tempfile.TemporaryDirectory()
+        root = self.tmp.name
+        f1, f2 = function_body(rng, 40), function_body(rng, 60)
+        layout = [('F', 'seg001', 1, 'TILE_GetProd', 0, f1, None), ('F', 'ovr142', 2, 'CTY_GetResearch', 40, f2, None)]
+        self.map_path = os.path.join(root, 'map.csv')
+        with open(self.map_path, 'w') as f:
+            f.write(map_rows(layout).replace('kind,segment,proc,name,ea,size,bytes\n',
+                                             'kind,segment,proc,name,ea,size,bytes\nS,seg001,0,seg001,%X,40,\nS,ovr142,0,ovr142,%X,60,\n'
+                                             % (BASE_EA, BASE_EA + 40)))
+        for version, blocks in (('v131', [f1, f2]), ('v160', [f1, bytearray(f2[:-1]) + bytearray([0x90, 0xCB])])):
+            os.makedirs(os.path.join(root, version))
+            with open(os.path.join(root, version, 'WIZARDS.EXE'), 'wb') as f:
+                f.write(build_exe(blocks))
+        src = os.path.join(root, 'remom', 'MoM', 'src')
+        os.makedirs(src)
+        with open(os.path.join(src, 'Terrain.c'), 'w') as f:
+            f.write('// WZD s161p04\n// drake178: TILE_GetProd()\nint Unrelated_Helper(void)\n{\n}\n\n'
+                    '// WZD s1p1\nint16_t Square_Production_Bonus(int16_t wx)\n{\n    return 0;\n}\n'
+                    '// WZD o142p02\nint16_t City_Research_Production(int16_t city_idx);\n'
+                    '// WZD o142p03\n// not reconstructed yet\n')
+        with open(os.path.join(src, 'CITYCALC.c'), 'w') as f:
+            f.write('/* helper first */\nstatic int helper(void)\n{\n}\n\nint16_t City_Research_Production(int16_t city_idx)\n{\n}\n')
+        self.project = os.path.join(root, 'other.csv')
+        with open(self.project, 'w') as f:
+            f.write('exe,segment,proc,function,file,line\nWZD,s001,1,terrain_prod_bonus,wizards/seg001.c,12\n')
+        self.out = os.path.join(root, 'out')
+        self.assertEqual(address_table.main(['--remom', os.path.join(root, 'remom'), '--out', self.out,
+                                             '--map', 'WIZARDS.EXE=' + self.map_path,
+                                             '--exe', '1.31=' + os.path.join(root, 'v131'), '--exe', '1.60=' + os.path.join(root, 'v160'),
+                                             '--project', 'other=' + self.project]), 0)
+        with open(os.path.join(self.out, 'address_table.csv'), newline='') as f:
+            self.rows = {r['id']: r for r in csv.DictReader(f)}
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_function_row_joins_ida_exe_remom_and_the_other_project(self):
+        row = self.rows['WZD s001p01']
+        self.assertEqual(row['ida_name'], 'TILE_GetProd')
+        self.assertEqual(row['seg_off'], 'seg001:0000')
+        self.assertEqual(row['offset_1.31'], '0x20')         # after the 32-byte MZ header
+        self.assertEqual(row['offset_1.60'], '0x20')
+        self.assertEqual(row['remom_function'], 'Square_Production_Bonus')
+        self.assertEqual(row['remom_evidence'], 'definition')
+        self.assertEqual(row['other_function'], 'terrain_prod_bonus')
+
+    def test_changed_function_and_prototype_evidence(self):
+        row = self.rows['WZD o142p02']
+        self.assertEqual(row['seg_off'], 'ovr142:0000')
+        self.assertEqual(row['offset_1.31'], '0x48')
+        self.assertEqual(row['offset_1.60'], 'changed')
+        self.assertEqual(row['remom_function'], 'City_Research_Production')
+        self.assertEqual(row['remom_evidence'], 'prototype')
+        self.assertTrue(row['remom_location'].startswith('MoM/src/CITYCALC.c:'))
+
+    def test_ids_only_in_remom_are_listed(self):
+        self.assertEqual(self.rows['WZD o142p03']['remom_evidence'], 'comment')
+        self.assertEqual(self.rows['WZD o142p03']['ida_name'], '(not in the map)')
+        self.assertEqual(self.rows['WZD s161p04']['remom_function'], 'Unrelated_Helper')
+
+
+if __name__ == '__main__':
+    unittest.main()

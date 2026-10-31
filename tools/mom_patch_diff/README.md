@@ -21,9 +21,20 @@ cp -r MoM131 MoM140n;  cp -r MoM131 MoM150;  cp -r MoM131 MoM151;  cp -r MoM131 
 
 ## 2. Export the function maps from IDA (once)
 
-Open the **1.31** `WIZARDS.EXE` database in IDA 5.5, then *File > IDC file...* > `tools/mom_patch_diff/export_map.idc`,
-and save as `wizards_map.csv`. Do the same for `MAGIC.EXE` → `magic_map.csv`. The script has not been run in IDA yet;
-if IDA stops with an error, the message names the line.
+`export_map.py` runs `export_map.idc` through IDA Pro 5.5's command line: it copies the database to a temporary
+folder (so the original is never opened or saved), starts IDA autonomously (`-A`) with the script (`-S`) and a log
+(`-L`), and checks the CSV it wrote:
+
+```bash
+cd /c/STU/devel/ReMoM
+IDA="/c/Program Files/IDA 5.5/idag.exe"            # or idaw.exe, the text-mode IDA
+python3 tools/mom_patch_diff/export_map.py --ida "$IDA" --idb /c/STU/IDA/WIZARDS.idb --out /c/MoM/wizards_map.csv
+python3 tools/mom_patch_diff/export_map.py --ida "$IDA" --idb /c/STU/IDA/MAGIC.idb   --out /c/MoM/magic_map.csv
+```
+
+The map has one row per segment, function and named data item: IDA segment, procedure number in the segment (the
+`p04` of `WZD s161p04`), IDA name, address, size and bytes. `--keep` keeps the working folder and IDA's log for
+debugging. Neither script has been run against a real IDA yet; if IDA stops, the log names the IDC line.
 
 Without the maps the comparison still runs, but changes are reported by file offset instead of by function.
 
@@ -64,6 +75,34 @@ files. Start with `summary.md`; each changed file has its own folder or file:
 | `<LBX>.md` | changed entries; known data tables decoded field by field (`tools/dummy_lbx/tables.py`) |
 | `<FILE>.diff` | other text files, as a unified diff |
 
+## Address table
+
+`address_table.py` joins everything known about each function into one table: ReMoM id, IDA segment, address
+(`seg161:01A2` and linear) and name, the file offset in each version's `.EXE`, and the C function that
+reconstructs it in ReMoM (and in other reconstructions):
+
+```bash
+python3 -m tools.mom_patch_diff.address_table --remom . --out /c/MoM/address_table \
+    --map WIZARDS.EXE=/c/MoM/wizards_map.csv --map MAGIC.EXE=/c/MoM/magic_map.csv \
+    --exe 1.31=/c/MoM/MoM131 --exe 1.40n=/c/MoM/MoM140n --exe 1.60=/c/MoM/MoM160 \
+    --project other=/c/MoM/other_index.csv
+```
+
+A version's offset is where that function's 1.31 bytes are in that version's `.EXE`. It reads `changed` if the
+function's bytes differ there (see that version's `functions.md`), and `short` if the function is too short to place.
+
+ReMoM's side comes from its id comments (`// WZD s161p04` above a function). `remom_evidence` says how each id was
+resolved:
+- `definition`: the next function definition after the comment.
+- `prototype`: a prototype after the comment names the function. This wins when the two disagree.
+- `comment`: ReMoM has the id but no code yet.
+- a trailing `?`: another id of the same `.EXE` claims the same function (a helper placed between a comment and its
+  function, or a mistyped id); check those by hand.
+
+`--project NAME=CSV` adds another reconstruction from an index with the columns `exe,segment,proc,function,file,line`
+(`WZD` or `MGC`, `s161` or `o142`, procedure number). Without `--map` the table is ReMoM's index alone; that runs
+anywhere, without IDA.
+
 ## How functions are matched
 
 `export_map.idc` writes each function's bytes from the 1.31 database, with relocation fixups masked (`..`). The script
@@ -73,4 +112,4 @@ position, or a search for its first bytes) whose bytes match best, and the byte-
 the two bodies. Functions whose longest run of known bytes is under 6 bytes are too short to place; their count is
 reported.
 
-Tests: `python3 -m unittest tools.mom_patch_diff.tests.test_diff`
+Tests: `python3 -m unittest tools.mom_patch_diff.tests.test_diff tools.mom_patch_diff.tests.test_address_table`
