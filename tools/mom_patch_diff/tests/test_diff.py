@@ -34,10 +34,10 @@ def build_exe(blocks):
 
 def map_rows(layout):
     """layout: [(kind, segment, proc, name, offset_in_image, bytes, fixup_at)]"""
-    lines = ['kind,segment,proc,name,ea,size,bytes']
+    lines = ['kind\tsegment\tproc\tname\tea\tsize\tbytes']
     for kind, seg, proc, name, off, data, fixup_at in layout:
         hexs = ''.join('..' if fixup_at is not None and fixup_at <= i < fixup_at + 2 else '%02X' % b for i, b in enumerate(data))
-        lines.append('%s,%s,%d,%s,%X,%d,%s' % (kind, seg, proc, name, BASE_EA + off, len(data), hexs))
+        lines.append('%s\t%s\t%d\t%s\t%X\t%d\t%s' % (kind, seg, proc, name, BASE_EA + off, len(data), hexs))
     return '\n'.join(lines) + '\n'
 
 
@@ -104,7 +104,7 @@ class Mom_Patch_Diff_test(unittest.TestCase):
             f.write(build_exe(old_blocks))
         with open(os.path.join(self.new_dir, 'WIZARDS.EXE'), 'wb') as f:
             f.write(build_exe(new_blocks))
-        self.map_path = os.path.join(root, 'wizards_map.csv')
+        self.map_path = os.path.join(root, 'wizards_map.tsv')
         with open(self.map_path, 'w') as f:
             f.write(map_rows(layout))
 

@@ -5,8 +5,8 @@
     the database, fills in the output path below, and closes IDA afterwards.  Run by hand (File > IDC file...) it asks
     for the output file instead.
 
-    One line per segment, function and named data item:
-        kind,segment,proc,name,ea,size,bytes
+    One tab-separated line per segment, function and named data item:
+        kind  segment  proc  name  ea  size  bytes
     kind     S (segment: name = segment name, ea = start, size = length), F (function) or D (named data item)
     segment  IDA segment name (seg161, ovr142, dseg, ...)
     proc     1-based position of the function in its segment (the "p04" of ReMoM's "WZD s161p04"); 0 for data
@@ -61,15 +61,15 @@ static write_bytes(f, start, end)
 
 static clean_name(name)
 {
-    /* commas would break the CSV */
+    /* a tab would break the TSV */
     auto out, i, c;
     out = "";
     for(i = 0; i < strlen(name); i++)
     {
         c = substr(name, i, i + 1);
-        if(c == ",")
+        if(c == "\t")
         {
-            c = "_";
+            c = " ";
         }
         out = out + c;
     }
@@ -85,7 +85,7 @@ static main()
     if(substr(path, 0, 2) == "@@")
     {
         batch = 0;
-        path = AskFile(1, "*.csv", "Write the mom_patch_diff map to");
+        path = AskFile(1, "*.tsv", "Write the mom_patch_diff map to");
         if(path == "")
         {
             return;
@@ -103,7 +103,7 @@ static main()
         Warning("Cannot write %s", path);
         return;
     }
-    fprintf(f, "kind,segment,proc,name,ea,size,bytes\n");
+    fprintf(f, "kind\tsegment\tproc\tname\tea\tsize\tbytes\n");
     count_f = 0;
     count_d = 0;
 
@@ -111,7 +111,7 @@ static main()
     while(seg != BADADDR)
     {
         seg_end = SegEnd(seg);
-        fprintf(f, "S,%s,0,%s,%X,%d,\n", SegName(seg), SegName(seg), seg, seg_end - seg);
+        fprintf(f, "S\t%s\t0\t%s\t%X\t%d\t\n", SegName(seg), SegName(seg), seg, seg_end - seg);
 
         /* functions, numbered in address order inside the segment */
         proc = 0;
@@ -120,7 +120,7 @@ static main()
         {
             end = GetFunctionAttr(ea, FUNCATTR_END);
             proc = proc + 1;
-            fprintf(f, "F,%s,%d,%s,%X,%d,", SegName(ea), proc, clean_name(GetFunctionName(ea)), ea, end - ea);
+            fprintf(f, "F\t%s\t%d\t%s\t%X\t%d\t", SegName(ea), proc, clean_name(GetFunctionName(ea)), ea, end - ea);
             write_bytes(f, ea, end);
             fprintf(f, "\n");
             count_f = count_f + 1;
@@ -135,7 +135,7 @@ static main()
             if(name != "" && GetFunctionAttr(ea, FUNCATTR_START) == -1)
             {
                 size = ItemSize(ea);
-                fprintf(f, "D,%s,0,%s,%X,%d,", SegName(ea), clean_name(name), ea, size);
+                fprintf(f, "D\t%s\t0\t%s\t%X\t%d\t", SegName(ea), clean_name(name), ea, size);
                 write_bytes(f, ea, ea + size);
                 fprintf(f, "\n");
                 count_d = count_d + 1;

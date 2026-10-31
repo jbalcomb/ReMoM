@@ -3,7 +3,7 @@ diff.py -- compares two Master of Magic installs (for example 1.31 and a version
 MOMDP_32.EXE) and writes what changed, file by file, in a form ReMoM's code can be checked against.
 
     python3 -m tools.mom_patch_diff OLD_DIR NEW_DIR --out REPORT_DIR
-        [--map WIZARDS.EXE=wizards_map.csv] [--map MAGIC.EXE=magic_map.csv]
+        [--map WIZARDS.EXE=wizards_map.tsv] [--map MAGIC.EXE=magic_map.tsv]
         [--old-label 1.31] [--new-label 1.60] [--disasm]
 
 Run from the root of the ReMoM repository (it reuses tools/asset_catalog and tools/dummy_lbx).
@@ -19,7 +19,7 @@ What it writes into REPORT_DIR:
     <LBX>.md                     changed entries; data tables decoded field by field (tools/dummy_lbx/tables.py)
     <FILE>.diff                  other text files: a unified diff
 
-A --map is the CSV that tools/mom_patch_diff/export_map.idc writes from the 1.31 IDA database.  Each function is found
+A --map is the TSV that tools/mom_patch_diff/export_map.idc writes from the 1.31 IDA database.  Each function is found
 in both files by its bytes (relocation fixups masked), so moved and resized functions are still matched.
 --disasm needs the capstone Python package (optional; vet it per doc/@Devel/Dependency-Vetting.md before installing).
 Standard library only otherwise.
@@ -130,7 +130,7 @@ def parse_mz(data):
 
 
 class Item:
-    """A function or named data item from an export_map.idc CSV."""
+    """A segment, function or named data item from an export_map.idc TSV."""
 
     def __init__(self, row):
         self.kind = row['kind']
@@ -195,7 +195,7 @@ class Item:
 
 def load_map(path):
     with open(path, newline='', encoding='latin-1') as f:
-        return [Item(row) for row in csv.DictReader(f)]
+        return [Item(row) for row in csv.DictReader(f, delimiter='\t')]
 
 
 def most_common_delta(pairs):
@@ -496,7 +496,7 @@ def main(argv=None):
     p.add_argument('old_dir')
     p.add_argument('new_dir')
     p.add_argument('--out', required=True)
-    p.add_argument('--map', action='append', default=[], help='EXE=map.csv from export_map.idc (repeatable)')
+    p.add_argument('--map', action='append', default=[], help='EXE=map.tsv from export_map.idc (repeatable)')
     p.add_argument('--old-label')
     p.add_argument('--new-label')
     p.add_argument('--disasm', action='store_true', help='disassemble changed functions (needs capstone)')

@@ -23,8 +23,8 @@ the code. To regenerate both:
 python3 tools/rules_catalog/ttl_to_table.py doc/rules-catalog/rules_catalog.ttl > doc/rules-catalog/rules_catalog.md
 ```
 
-To add a mod's profile as a column, pass its rules folder as one more profile. `--csv` gives a spreadsheet instead of
-Markdown.
+To add a mod's profile as a column, pass its rules folder as one more profile. `--tsv` gives a tab-separated table
+(for a spreadsheet) instead of Markdown.
 
 ## Vocabulary
 

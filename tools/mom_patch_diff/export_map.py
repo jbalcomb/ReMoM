@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-export_map.py -- runs export_map.idc in IDA Pro 5.5 from the command line and writes the function/data map CSV that
+export_map.py -- runs export_map.idc in IDA Pro 5.5 from the command line and writes the function/data map TSV that
 mom_patch_diff and address_table read.
 
     python3 tools/mom_patch_diff/export_map.py --ida "/c/Program Files/IDA 5.5/idag.exe" \\
-        --idb /c/STU/IDA/WIZARDS.idb --out /c/MoM/wizards_map.csv
+        --idb /c/STU/IDA/WIZARDS.idb --out /c/MoM/wizards_map.tsv
 
 IDA works on a copy of the database (the .idb and any unpacked .id0/.id1/.nam/.til next to it), so the original is
 never opened or saved.  IDA runs autonomously (-A), the script is passed with -S, and IDA's messages go to a log
@@ -33,7 +33,7 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     p.add_argument('--ida', required=True, help='idag.exe (GUI) or idaw.exe (text mode) of IDA Pro 5.5')
     p.add_argument('--idb', required=True, help='the 1.31 database, e.g. WIZARDS.idb')
-    p.add_argument('--out', required=True, help='CSV to write')
+    p.add_argument('--out', required=True, help='TSV to write')
     p.add_argument('--timeout', type=int, default=1800, help='seconds to wait for IDA (default 1800)')
     p.add_argument('--keep', action='store_true', help='keep the working copy and the generated script')
     args = p.parse_args(argv)

@@ -5,7 +5,7 @@ one table per calculation, one row per data point, one column per rules profile.
 first profile's is shown in bold.
 
 Usage:  python3 tools/rules_catalog/ttl_to_table.py doc/rules-catalog/rules_catalog.ttl > doc/rules-catalog/rules_catalog.md
-        python3 tools/rules_catalog/ttl_to_table.py --csv doc/rules-catalog/rules_catalog.ttl > rules_catalog.csv
+        python3 tools/rules_catalog/ttl_to_table.py --tsv doc/rules-catalog/rules_catalog.ttl > rules_catalog.tsv
 
 Reads the one-triple-per-line Turtle that tools/rules_catalog writes and stops on anything else, so a hand edit that
 breaks the format is reported, not silently misread.  Any RDF tool can load the same file for other queries.
@@ -52,8 +52,8 @@ def of_type(subjects, cls):
 
 
 def main(argv):
-    as_csv = '--csv' in argv
-    paths = [a for a in argv[1:] if a != '--csv']
+    as_tsv = '--tsv' in argv
+    paths = [a for a in argv[1:] if a != '--tsv']
     if len(paths) != 1:
         sys.exit(__doc__)
     g = read(paths[0])
@@ -71,8 +71,8 @@ def main(argv):
         if 'remom:about' in p:
             about[(p['remom:about'][0], p['remom:profile'][0])] = p
 
-    if as_csv:
-        w = csv.writer(sys.stdout)
+    if as_tsv:
+        w = csv.writer(sys.stdout, delimiter='\t', lineterminator='\n')
         w.writerow(['calculation', 'data point', 'arguments'] + [first(g[p], 'rdfs:label', p) for p in profiles])
         for c in calculations:
             for d in points[c]:

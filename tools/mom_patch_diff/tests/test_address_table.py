@@ -27,7 +27,7 @@ assert os.path.dirname(db) == os.path.dirname(script), 'IDA must run on the work
 text = open(script, encoding='latin-1').read()
 assert '@@OUTPUT_PATH@@' not in text
 out = re.search(r'path = "([^"]+)";', text).group(1)
-open(out, 'w').write('kind,segment,proc,name,ea,size,bytes\\nS,seg001,0,seg001,10000,64,\\nF,seg001,1,f,10000,4,558BECCB\\n')
+open(out, 'w').write('kind\\tsegment\\tproc\\tname\\tea\\tsize\\tbytes\\nS\\tseg001\\t0\\tseg001\\t10000\\t64\\t\\nF\\tseg001\\t1\\tf\\t10000\\t4\\t558BECCB\\n')
 open(log, 'w').write('export_map: 1 functions, 0 data items written\\n')
 '''
 
@@ -43,10 +43,10 @@ class Export_Map_test(unittest.TestCase):
             idb = os.path.join(root, 'WIZARDS.idb')
             with open(idb, 'wb') as f:
                 f.write(b'IDB')
-            out = os.path.join(root, 'wizards_map.csv')
+            out = os.path.join(root, 'wizards_map.tsv')
             self.assertEqual(export_map.main(['--ida', ida, '--idb', idb, '--out', out]), 0)
             with open(out) as f:
-                self.assertIn('F,seg001,1,f,10000,4,558BECCB', f.read())
+                self.assertIn('F\tseg001\t1\tf\t10000\t4\t558BECCB', f.read())
             with open(idb, 'rb') as f:
                 self.assertEqual(f.read(), b'IDB')           # the original database is untouched
 
@@ -60,10 +60,10 @@ class Address_Table_test(unittest.TestCase):
         root = self.tmp.name
         f1, f2 = function_body(rng, 40), function_body(rng, 60)
         layout = [('F', 'seg001', 1, 'TILE_GetProd', 0, f1, None), ('F', 'ovr142', 2, 'CTY_GetResearch', 40, f2, None)]
-        self.map_path = os.path.join(root, 'map.csv')
+        self.map_path = os.path.join(root, 'map.tsv')
         with open(self.map_path, 'w') as f:
-            f.write(map_rows(layout).replace('kind,segment,proc,name,ea,size,bytes\n',
-                                             'kind,segment,proc,name,ea,size,bytes\nS,seg001,0,seg001,%X,40,\nS,ovr142,0,ovr142,%X,60,\n'
+            header = 'kind\tsegment\tproc\tname\tea\tsize\tbytes\n'
+            f.write(map_rows(layout).replace(header, header + 'S\tseg001\t0\tseg001\t%X\t40\t\nS\tovr142\t0\tovr142\t%X\t60\t\n'
                                              % (BASE_EA, BASE_EA + 40)))
         for version, blocks in (('v131', [f1, f2]), ('v160', [f1, bytearray(f2[:-1]) + bytearray([0x90, 0xCB])])):
             os.makedirs(os.path.join(root, version))
@@ -78,16 +78,16 @@ class Address_Table_test(unittest.TestCase):
                     '// WZD o142p03\n// not reconstructed yet\n')
         with open(os.path.join(src, 'CITYCALC.c'), 'w') as f:
             f.write('/* helper first */\nstatic int helper(void)\n{\n}\n\nint16_t City_Research_Production(int16_t city_idx)\n{\n}\n')
-        self.project = os.path.join(root, 'other.csv')
+        self.project = os.path.join(root, 'other.tsv')
         with open(self.project, 'w') as f:
-            f.write('exe,segment,proc,function,file,line\nWZD,s001,1,terrain_prod_bonus,wizards/seg001.c,12\n')
+            f.write('exe\tsegment\tproc\tfunction\tfile\tline\nWZD\ts001\t1\tterrain_prod_bonus\twizards/seg001.c\t12\n')
         self.out = os.path.join(root, 'out')
         self.assertEqual(address_table.main(['--remom', os.path.join(root, 'remom'), '--out', self.out,
                                              '--map', 'WIZARDS.EXE=' + self.map_path,
                                              '--exe', '1.31=' + os.path.join(root, 'v131'), '--exe', '1.60=' + os.path.join(root, 'v160'),
                                              '--project', 'other=' + self.project]), 0)
-        with open(os.path.join(self.out, 'address_table.csv'), newline='') as f:
-            self.rows = {r['id']: r for r in csv.DictReader(f)}
+        with open(os.path.join(self.out, 'address_table.tsv'), newline='') as f:
+            self.rows = {r['id']: r for r in csv.DictReader(f, delimiter='\t')}
 
     def tearDown(self):
         self.tmp.cleanup()

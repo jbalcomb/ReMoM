@@ -4,18 +4,19 @@ address and name, its file offset in each version's .EXE, and the C function tha
 other reconstruction given.
 
     python3 -m tools.mom_patch_diff.address_table --remom . --out /c/MoM/address_table \\
-        --map WIZARDS.EXE=/c/MoM/wizards_map.csv --map MAGIC.EXE=/c/MoM/magic_map.csv \\
+        --map WIZARDS.EXE=/c/MoM/wizards_map.tsv --map MAGIC.EXE=/c/MoM/magic_map.tsv \\
         --exe 1.31=/c/MoM/MoM131 --exe 1.60=/c/MoM/MoM160 \\
-        [--project OTHER=/c/MoM/other_index.csv]
+        [--project OTHER=/c/MoM/other_index.tsv]
 
-Writes address_table.csv (every column) and address_table.md (a summary and the table), plus remom_index.csv.
+Writes address_table.tsv (every column) and address_table.md (a summary and the table), plus remom_index.tsv.
+All tables are tab-separated, with a header row.
 
 Sources:
     --remom DIR    ReMoM's C sources: each function definition preceded by a "// WZD s161p04" / "// MGC o51p01" comment
-    --map EXE=CSV  export_map.py output for that EXE (1.31 database): IDA segment, procedure number, name, address, bytes
+    --map EXE=TSV  export_map.py output for that EXE (1.31 database): IDA segment, procedure number, name, address, bytes
     --exe LABEL=DIR  an install; each function is found in its WIZARDS.EXE / MAGIC.EXE by its 1.31 bytes, giving the
                    file offset in that version ("changed" if the bytes differ there, "short" if too few known bytes)
-    --project NAME=CSV  another reconstruction's index: columns exe,segment,proc,function,file,line
+    --project NAME=TSV  another reconstruction's index: columns exe, segment, proc, function, file, line
                    (exe = WZD or MGC, segment = sNNN or oNNN, proc = number)
 
 Without --map the table is ReMoM's index alone.  Standard library only.
@@ -124,7 +125,7 @@ def segment_key(exe, segment_name):
 def load_project(path):
     out = defaultdict(list)
     with open(path, newline='', encoding='utf-8') as f:
-        for row in csv.DictReader(f):
+        for row in csv.DictReader(f, delimiter='\t'):
             m = re.match(r'([so])0*(\d+)$', row['segment'].strip())
             if not m:
                 continue
@@ -144,8 +145,8 @@ def main(argv=None):
 
     remom = scan_remom(args.remom)
     os.makedirs(args.out, exist_ok=True)
-    with open(os.path.join(args.out, 'remom_index.csv'), 'w', newline='', encoding='utf-8') as f:
-        w = csv.writer(f)
+    with open(os.path.join(args.out, 'remom_index.tsv'), 'w', newline='', encoding='utf-8') as f:
+        w = csv.writer(f, delimiter='\t', lineterminator='\n')
         w.writerow(['id', 'function', 'file', 'line', 'evidence'])
         for k in sorted(remom):
             for fn, path, line, evidence in remom[k]:
@@ -234,8 +235,8 @@ def main(argv=None):
     columns = ['exe', 'id', 'ida_segment', 'proc', 'ida_name', 'ida_ea', 'seg_off', 'size'] + \
               ['offset_' + label for label, _ in versions] + ['remom_function', 'remom_location', 'remom_evidence'] + \
               [c for name, _ in projects for c in (name + '_function', name + '_location')]
-    with open(os.path.join(args.out, 'address_table.csv'), 'w', newline='', encoding='utf-8') as f:
-        w = csv.DictWriter(f, columns)
+    with open(os.path.join(args.out, 'address_table.tsv'), 'w', newline='', encoding='utf-8') as f:
+        w = csv.DictWriter(f, columns, delimiter='\t', lineterminator='\n')
         w.writeheader()
         for row in rows:
             w.writerow({c: row.get(c, '') for c in columns})

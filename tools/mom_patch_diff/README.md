@@ -23,16 +23,16 @@ cp -r MoM131 MoM140n;  cp -r MoM131 MoM150;  cp -r MoM131 MoM151;  cp -r MoM131 
 
 `export_map.py` runs `export_map.idc` through IDA Pro 5.5's command line: it copies the database to a temporary
 folder (so the original is never opened or saved), starts IDA autonomously (`-A`) with the script (`-S`) and a log
-(`-L`), and checks the CSV it wrote:
+(`-L`), and checks the TSV it wrote:
 
 ```bash
 cd /c/STU/devel/ReMoM
 IDA="/c/Program Files/IDA 5.5/idag.exe"            # or idaw.exe, the text-mode IDA
-python3 tools/mom_patch_diff/export_map.py --ida "$IDA" --idb /c/STU/IDA/WIZARDS.idb --out /c/MoM/wizards_map.csv
-python3 tools/mom_patch_diff/export_map.py --ida "$IDA" --idb /c/STU/IDA/MAGIC.idb   --out /c/MoM/magic_map.csv
+python3 tools/mom_patch_diff/export_map.py --ida "$IDA" --idb /c/STU/IDA/WIZARDS.idb --out /c/MoM/wizards_map.tsv
+python3 tools/mom_patch_diff/export_map.py --ida "$IDA" --idb /c/STU/IDA/MAGIC.idb   --out /c/MoM/magic_map.tsv
 ```
 
-The map has one row per segment, function and named data item: IDA segment, procedure number in the segment (the
+The map is tab-separated, one row per segment, function and named data item: IDA segment, procedure number in the segment (the
 `p04` of `WZD s161p04`), IDA name, address, size and bytes. `--keep` keeps the working folder and IDA's log for
 debugging. Neither script has been run against a real IDA yet; if IDA stops, the log names the IDC line.
 
@@ -44,7 +44,7 @@ Each version against the one before it shows what that release added. 1.31 again
 
 ```bash
 cd /c/STU/devel/ReMoM
-MAPS="--map WIZARDS.EXE=/c/MoM/wizards_map.csv --map MAGIC.EXE=/c/MoM/magic_map.csv"
+MAPS="--map WIZARDS.EXE=/c/MoM/wizards_map.tsv --map MAGIC.EXE=/c/MoM/magic_map.tsv"
 prev=131
 for v in 140n 150 151 15203 160; do
     python3 -m tools.mom_patch_diff /c/MoM/MoM$prev /c/MoM/MoM$v --out /c/MoM/diff_${prev}_to_${v} \
@@ -83,9 +83,9 @@ reconstructs it in ReMoM (and in other reconstructions):
 
 ```bash
 python3 -m tools.mom_patch_diff.address_table --remom . --out /c/MoM/address_table \
-    --map WIZARDS.EXE=/c/MoM/wizards_map.csv --map MAGIC.EXE=/c/MoM/magic_map.csv \
+    --map WIZARDS.EXE=/c/MoM/wizards_map.tsv --map MAGIC.EXE=/c/MoM/magic_map.tsv \
     --exe 1.31=/c/MoM/MoM131 --exe 1.40n=/c/MoM/MoM140n --exe 1.60=/c/MoM/MoM160 \
-    --project other=/c/MoM/other_index.csv
+    --project other=/c/MoM/other_index.tsv
 ```
 
 A version's offset is where that function's 1.31 bytes are in that version's `.EXE`. It reads `changed` if the
@@ -99,7 +99,7 @@ resolved:
 - a trailing `?`: another id of the same `.EXE` claims the same function (a helper placed between a comment and its
   function, or a mistyped id); check those by hand.
 
-`--project NAME=CSV` adds another reconstruction from an index with the columns `exe,segment,proc,function,file,line`
+`--project NAME=TSV` adds another reconstruction from a tab-separated index with the columns `exe`, `segment`, `proc`, `function`, `file`, `line`
 (`WZD` or `MGC`, `s161` or `o142`, procedure number). Without `--map` the table is ReMoM's index alone; that runs
 anywhere, without IDA.
 
