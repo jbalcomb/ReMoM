@@ -62,21 +62,20 @@ static void Demo_Restore_Writable_Files(void)
 }
 
 static const Demo_Effect * const g_effects[] =
-{
-    &effect_dissolve,
-    &effect_earthquake,
-    &effect_screen,
-    &effect_summon,
-    &effect_lose,
-    &effect_win,
-    &effect_collage,
-    &effect_score,
-    &effect_mastery,
-    &effect_vanish,
-    &effect_somlose,
-    &effect_somwin,
-    &effect_conquest
-};
+    {
+        &effect_dissolve,
+        &effect_earthquake,
+        &effect_screen,
+        &effect_summon,
+        &effect_lose,
+        &effect_win,
+        &effect_collage,
+        &effect_score,
+        &effect_mastery,
+        &effect_vanish,
+        &effect_somlose,
+        &effect_somwin,
+        &effect_conquest};
 #define DEMO_EFFECT_COUNT  ((int)(sizeof(g_effects) / sizeof(g_effects[0])))
 
 

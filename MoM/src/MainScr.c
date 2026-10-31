@@ -4345,39 +4345,39 @@ int16_t Active_Stack_On_Astral_Gate(void)
 int16_t Stack_Moves_Active(void)
 {
 /*
-XREFs
+    XREFs
+        j_Stack_Moves_Active()
+        Stack_Moves_Active()
+
     j_Stack_Moves_Active()
-    Stack_Moves_Active()
-
-j_Stack_Moves_Active()
-    Main_Screen()
-    Move_Stack_DirKey
-    Update_Stack_Active
+        Main_Screen()
+        Move_Stack_DirKey
+        Update_Stack_Active
 
 
-    loops through current stack
-        checks for active
-        checks if the unit type is/has/does transport/carries units
-            breaks and assigns units current moves2
-        checks for wind walking - ability or enchantment
-            does not break, but assigns units current moves2
-    Scenarios/Use-Cases:
-        stack does not have a 'carries units' and does not have a 'has wind walking'
-        stack does have a 'carries units' but does not have a 'has wind walking'
-        stack does not have a 'carries units' but does have a 'has wind walking'
-        
-        if stack does have a 'carries units', that is that and its are the movement points
-        ...
-        ? nay 'carries units', nay 'has wind walking' ?
-            returns lowest moves2 of 'active' units
+        loops through current stack
+            checks for active
+            checks if the unit type is/has/does transport/carries units
+                breaks and assigns units current moves2
+            checks for wind walking - ability or enchantment
+                does not break, but assigns units current moves2
+        Scenarios/Use-Cases:
+            stack does not have a 'carries units' and does not have a 'has wind walking'
+            stack does have a 'carries units' but does not have a 'has wind walking'
+            stack does not have a 'carries units' but does have a 'has wind walking'
 
-NOTE: you can have multiple transport units in a stack
+            if stack does have a 'carries units', that is that and its are the movement points
+            ...
+            ? nay 'carries units', nay 'has wind walking' ?
+                returns lowest moves2 of 'active' units
 
-almost the same code as in WZD ovr097 Army_Moves2()
-Army_Moves2() breaks after Unit_Has_WindWalking(); does not have stack_has_windwalker or windwalker_unit_idx
-OON XREF STK_Move() WZD o95p01
+    NOTE: you can have multiple transport units in a stack
 
-*/
+    almost the same code as in WZD ovr097 Army_Moves2()
+    Army_Moves2() breaks after Unit_Has_WindWalking(); does not have stack_has_windwalker or windwalker_unit_idx
+    OON XREF STK_Move() WZD o95p01
+
+    */
     int16_t stack_has_windwalker;
     int16_t windwalker_unit_idx;
     int16_t movement_points; // _SI_
@@ -6105,12 +6105,9 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
 
         // Unit is Trooper & Destination is Ocean
         if(
-            (_UNITS[itr_units].wx == src_wx)
-            &&
-            (_UNITS[itr_units].wy == src_wy)
-            &&
-            (_landmasses[((wp * WORLD_SIZE) + (dst_wy * WORLD_WIDTH) + dst_wx)] == tt_Ocean)
-        )
+            (_UNITS[itr_units].wx == src_wx) &&
+            (_UNITS[itr_units].wy == src_wy) &&
+            (_landmasses[((wp * WORLD_SIZE) + (dst_wy * WORLD_WIDTH) + dst_wx)] == tt_Ocean))
         {
             dst_troops_carry_capacity = 0;
             Player_Army_At_Square(dst_wx, dst_wy, wp, player_idx, &dst_troop_count, &dst_troops[0]);
@@ -6130,18 +6127,15 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
                         (Unit_Has_WaterTravel_Item(checked_troops[itr_troops]) == ST_TRUE) ||
                         (Unit_Has_Swimming(checked_troops[itr_troops]) == ST_TRUE) ||
                         (Unit_Has_WindWalking(checked_troops[itr_troops]) == ST_TRUE) ||
-                        (Unit_Has_AirTravel(checked_troops[itr_troops]) == ST_TRUE)
-                    )
+                        (Unit_Has_AirTravel(checked_troops[itr_troops]) == ST_TRUE))
                     {
                         checked_troops_boatriders_count--;
                     }
                 }
                 /*OGBUG  should be `(checked_troops_boatriders_count <= dst_troops_carry_capacity)`, not `((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity)` */
                 if(
-                    ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity)
-                    &&
-                    (checked_troops_boatriders_count <= MAX_STACK)
-                )
+                    ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity) &&
+                    (checked_troops_boatriders_count <= MAX_STACK))
                 {
                     ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = 2;
                 }
@@ -6184,18 +6178,15 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
                             (Unit_Has_WaterTravel_Item(checked_troops[itr_troops]) == ST_TRUE) ||
                             (Unit_Has_Swimming(checked_troops[itr_troops]) == ST_TRUE) ||
                             (Unit_Has_WindWalking(checked_troops[itr_troops]) == ST_TRUE) ||
-                            (Unit_Has_AirTravel(checked_troops[itr_troops]) == ST_TRUE)
-                        )
+                            (Unit_Has_AirTravel(checked_troops[itr_troops]) == ST_TRUE))
                         {
                             checked_troops_boatriders_count--;
                         }
                     }
                     /*OGBUG  should be `(checked_troops_boatriders_count <= dst_troops_carry_capacity)`, not `((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity)` */
                     if(
-                        ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity)
-                        &&
-                        (checked_troops_boatriders_count <= MAX_STACK)
-                    )
+                        ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity) &&
+                        (checked_troops_boatriders_count <= MAX_STACK))
                     {
                         ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = 2;
                     }
@@ -6555,8 +6546,7 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
                         (Unit_Has_WaterTravel_Item(Units[itr_troops]) == ST_TRUE) ||
                         (Unit_Has_Swimming(Units[itr_troops]) == ST_TRUE) ||
                         (Unit_Has_WindWalking(Units[itr_troops]) == ST_TRUE) ||
-                        (Unit_Has_AirTravel(Units[itr_troops]) == ST_TRUE)
-                    )
+                        (Unit_Has_AirTravel(Units[itr_troops]) == ST_TRUE))
                     {
                         dst_boatriders_count--;
                     }
@@ -6570,8 +6560,7 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
                         (Unit_Has_WaterTravel_Item(troops[itr_troops]) == ST_TRUE) ||
                         (Unit_Has_Swimming(troops[itr_troops]) == ST_TRUE) ||
                         (Unit_Has_WindWalking(troops[itr_troops]) == ST_TRUE) ||
-                        (Unit_Has_AirTravel(troops[itr_troops]) == ST_TRUE)
-                    )
+                        (Unit_Has_AirTravel(troops[itr_troops]) == ST_TRUE))
                     {
                         src_boatriders_count--;
                     }

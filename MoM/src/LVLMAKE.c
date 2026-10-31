@@ -345,10 +345,10 @@ void Hero_LevelUp_Popup_Draw(void)
     int16_t y = 0;
     int16_t value = 0;
     int16_t unit_level = 0;
-    char temp_string[6] = { 0, 0, 0, 0, 0, 0 };
+    char temp_string[6] = {0, 0, 0, 0, 0, 0};
     int16_t lvlmake_icon_y = 0;
     int16_t unit_owner_idx = 0;
-    uint8_t colors[5] = { 0, 0, 0, 0, 0 };
+    uint8_t colors[5] = {0, 0, 0, 0, 0};
     int16_t itr_effects = 0;
     int16_t lvlmake_icon_x = 0;
 

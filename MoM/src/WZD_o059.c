@@ -503,10 +503,8 @@ void All_Units_In_Towers(void)
         for(itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++)
         {
             if(
-                (_UNITS[itr_units].wx == _TOWERS[itr_towers].wx)
-                &&
-                (_UNITS[itr_units].wy == _TOWERS[itr_towers].wy)
-            )
+                (_UNITS[itr_units].wx == _TOWERS[itr_towers].wx) &&
+                (_UNITS[itr_units].wy == _TOWERS[itr_towers].wy))
             {
                 if(have_planar_seal == ST_TRUE)
                 {

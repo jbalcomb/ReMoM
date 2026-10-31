@@ -845,8 +845,8 @@ Combat_Figure_Effect(int16_t figure_effect)
 
 #define ST_DARK              3  /* DARKEN_SCREEN() */
 
-#define ST_LIGHT_GRAY        7  /* used for Nodes and Lairs on the Cartographer Screen */
-#define ST_GREEN           140  /* used for Towers on the Cartographer Screen */
+#define ST_LIGHT_GRAY 7  /* used for Nodes and Lairs on the Cartographer Screen */
+#define ST_GREEN 140  /* used for Towers on the Cartographer Screen */
 
 #define ST_GRAY              8
 

@@ -56,21 +56,21 @@
 /*  Constants                                                                */
 /* ========================================================================= */
 
-#define PALETTE_COLOR_COUNT          256
-#define PALETTE_BYTES                768     /* 256 colours x 3 components, 6-bit VGA */
-#define PALETTE_BLOCK_BYTES          1024    /* current_palette layout: 768 palette bytes + 256 change flags (Fonts.c allocates 64 paragraphs) */
-#define FONTS_PALETTE_ENTRY_BASE     2       /* Load_Palette(entry) reads FONTS.LBX entry (entry + 2), MoX/src/Fonts.c */
-#define VGA_TO_8BIT_SHIFT            2       /* Platform_Palette_Update(): component << 2 */
-#define PAGE_FILL_A                  0x00
-#define PAGE_FILL_B                  0xFF
-#define PAGE_PIXEL_COUNT             (SCREEN_WIDTH * SCREEN_HEIGHT)
-#define MAX_PATH_LEN                 1024
-#define MAX_STEM_LEN                 64
+#define PALETTE_COLOR_COUNT 256
+#define PALETTE_BYTES 768     /* 256 colours x 3 components, 6-bit VGA */
+#define PALETTE_BLOCK_BYTES 1024    /* current_palette layout: 768 palette bytes + 256 change flags (Fonts.c allocates 64 paragraphs) */
+#define FONTS_PALETTE_ENTRY_BASE 2       /* Load_Palette(entry) reads FONTS.LBX entry (entry + 2), MoX/src/Fonts.c */
+#define VGA_TO_8BIT_SHIFT 2       /* Platform_Palette_Update(): component << 2 */
+#define PAGE_FILL_A 0x00
+#define PAGE_FILL_B 0xFF
+#define PAGE_PIXEL_COUNT (SCREEN_WIDTH * SCREEN_HEIGHT)
+#define MAX_PATH_LEN 1024
+#define MAX_STEM_LEN 64
 
-#define PNG_COLOR_TYPE_INDEXED       3
-#define PNG_COLOR_TYPE_RGBA          6
-#define ZLIB_STORED_BLOCK_MAX        65535
-#define ADLER32_MODULUS              65521u
+#define PNG_COLOR_TYPE_INDEXED 3
+#define PNG_COLOR_TYPE_RGBA 6
+#define ZLIB_STORED_BLOCK_MAX 65535
+#define ADLER32_MODULUS 65521u
 
 
 
@@ -222,7 +222,7 @@ static uint8_t * Build_Zlib_Stored(const uint8_t * raw, size_t raw_length, size_
 */
 static int Write_Png(const char * path, int width, int height, int color_type, const uint8_t * pixels, const uint8_t * plte_rgb, const uint8_t * trns, int trns_count)
 {
-    static const uint8_t png_signature[8] = { 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A };
+    static const uint8_t png_signature[8] = {0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A};
     FILE * file_ptr;
     uint8_t ihdr[13];
     int bytes_per_pixel;

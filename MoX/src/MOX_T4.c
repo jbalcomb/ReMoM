@@ -401,7 +401,7 @@ void s01p16_empty_function(void)
 */
 
 /*
-seg009 is a set of thin wrappers around DOS system calls. 
+seg009 is a set of thin wrappers around DOS system calls.
 lbx_seek is mov ax, 4200h / int 21h (DOS "move file pointer"), and lbx_read_sgmt is mov ah, 3Fh / int 21h (DOS "read from file" into a memory segment).
 They exist only because Borland C on DOS needed help to read into far segments.
 
@@ -472,7 +472,7 @@ IMHO, SimTex's _fstrcpy() took known near and far pointers, and it took four par
 void _fstrcpy(char * dst, char * src)
 {
     char character;
-    // if(FP_SEG(dst) == 0) dst = MK_FP(_DS, FP_OFF(dst)); expresses exactly the same thing with far-pointer parameters. 
+    // if(FP_SEG(dst) == 0) dst = MK_FP(_DS, FP_OFF(dst)); expresses exactly the same thing with far-pointer parameters.
     while(1)
     {
         character = *src++;

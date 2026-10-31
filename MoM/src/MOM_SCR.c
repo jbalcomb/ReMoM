@@ -109,7 +109,6 @@ static void Reset_Game_State(void)
     memcpy(_LAIRS, lairs_samb_header, SAMB_HEADER_BYTES);
 
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-
 }
 
 // WZD s01p02
@@ -220,7 +219,7 @@ void Screen_Control(void)
                 // MGC  j_GAME_WizardsLaunch__WIP(e_SAVE9GAM)
                 // /* HACK */ Load_SAVE_GAM(-1);  // SAVETEST.GAM
                 // FU CLAUDE  /* HACK */  Load_WZD_Resources();
-                /* HACK */  Load_WZD_Resources_Once();  /* CLAUDE  L57 */
+                /* HACK */ Load_WZD_Resources_Once();  /* CLAUDE  L57 */
 
                 Load_SAVE_GAM(8);
 
@@ -270,7 +269,7 @@ void Screen_Control(void)
                 // TODO  WZD vs. MGC
                 /* WZD  GameState_01:  ; case 0x1 */
                 // FU CLAUDE  /* HACK */  Load_WZD_Resources();
-                /* HACK */  Load_WZD_Resources_Once();  /* CLAUDE  L57 */
+                /* HACK */ Load_WZD_Resources_Once();  /* CLAUDE  L57 */
                 prev__Settings_BG_Music = magic_set.background_music;
                 Load_Screen();  /* ... |-> Loaded_Game_Update() */
 #ifdef STU_DEBUG

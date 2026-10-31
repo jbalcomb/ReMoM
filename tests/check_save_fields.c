@@ -22,19 +22,19 @@
 #include <string.h>
 #include <ctype.h>
 
-#define MAX_LINE        512
+#define MAX_LINE 512
 
 /* Grown as the dump is read.  A fixed 50000-line table silently dropped everything past line 50000
    of a full save dump (66086 lines), so those fields always read as "not found". */
-static char **dump_keys = NULL;
-static char **dump_vals = NULL;
+static char ** dump_keys = NULL;
+static char ** dump_vals = NULL;
 static int    dump_count = 0;
-static int    dump_capacity = 0;
+static int dump_capacity = 0;
 
-static char *Copy_String(const char *s)
+static char * Copy_String(const char * s)
 {
     size_t len = strlen(s) + 1;
-    char  *copy = (char *)malloc(len);
+    char * copy = (char *)malloc(len);
     if(copy != NULL) { memcpy(copy, s, len); }
     return copy;
 }
@@ -83,7 +83,7 @@ static int Parse_Key_Value(char *line, char **key_out, char **val_out)
 static int Load_Dump(const char *filepath)
 {
     FILE *fp;
-    char  raw[MAX_LINE];
+    char raw[MAX_LINE];
 
     fp = fopen(filepath, "r");
     if(fp == NULL)
@@ -96,16 +96,16 @@ static int Load_Dump(const char *filepath)
     {
         char *line = Trim(raw);
         char *key;
-        char *val;
+        char * val;
 
         if(*line == '\0' || *line == '#') { continue; }
         if(Parse_Key_Value(line, &key, &val) != 0) { continue; }
 
         if(dump_count == dump_capacity)
         {
-            int    new_capacity = (dump_capacity == 0) ? 65536 : (dump_capacity * 2);
-            char **new_keys = (char **)realloc(dump_keys, (size_t)new_capacity * sizeof(char *));
-            char **new_vals;
+            int new_capacity = (dump_capacity == 0) ? 65536 : (dump_capacity * 2);
+            char ** new_keys = (char **)realloc(dump_keys, (size_t)new_capacity * sizeof(char *));
+            char ** new_vals;
             if(new_keys == NULL)
             {
                 fprintf(stderr, "check_save_fields: out of memory growing the dump table to %d lines (%s)\n", new_capacity, filepath);
@@ -148,7 +148,7 @@ static const char *Lookup_Dump_Field(const char *key)
     static int next_start = 0;
     int n;
     int i;
-    for (n = 0; n < dump_count; n++)
+    for(n = 0; n < dump_count; n++)
     {
         i = (next_start + n) % dump_count;
         if(strcmp(dump_keys[i], key) == 0)

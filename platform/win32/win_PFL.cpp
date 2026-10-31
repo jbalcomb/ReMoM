@@ -694,9 +694,9 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
                 mox_key = VK_to_MOX_KEY[vk_code];
             }
 
-            if(GetKeyState(VK_SHIFT)   & 0x8000)  { mox_mod |= MOX_MOD_SHIFT; }
-            if(GetKeyState(VK_CONTROL) & 0x8000)  { mox_mod |= MOX_MOD_CTRL; }
-            if(GetKeyState(VK_MENU)    & 0x8000)  { mox_mod |= MOX_MOD_ALT; }
+            if(GetKeyState(VK_SHIFT) & 0x8000) { mox_mod |= MOX_MOD_SHIFT; }
+            if(GetKeyState(VK_CONTROL) & 0x8000) { mox_mod |= MOX_MOD_CTRL; }
+            if(GetKeyState(VK_MENU) & 0x8000) { mox_mod |= MOX_MOD_ALT; }
 
             /* CLAUDE: diagnostic — trace raw WM_KEYDOWN before translation, to help find keys that are received but dropped. */
 #ifdef STU_DEBUG

@@ -96,7 +96,7 @@ void UU_Legacy_Startup(int input_type, int midi_driver, int sound_channels, char
 {
 
     /* NEWCODE */  // DBG_Open_ERROR_LOG();  // from MoO1
-    
+
     EMS_Startup();
 
     if(input_type == ST_UNDEFINED)

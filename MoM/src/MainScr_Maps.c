@@ -3401,104 +3401,118 @@ void Cartograph_Screen_Draw_Map_Terrain(int16_t cartograph_plane, SAMB_ptr carto
                     dst_sgmt = cartograph_pict;
                     switch(square_explored_flag - 1)
                     {
-                        case 0x0:
-                        {
-                            dst_sgmt[(dst_ofst +  16)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 176)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 336)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 497)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 498)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 337)] = ST_TRANSPARENT;
-                        } break;
-                        case 0x1:
-                        {
-                            dst_sgmt[(dst_ofst +  19)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 179)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 339)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 497)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 498)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 338)] = ST_TRANSPARENT;
-                        } break;
-                        case 0x2:
-                        {
-                            dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 497)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 498)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
-                        } break;
-                        case 0x3:
-                        {
-                            dst_sgmt[(dst_ofst +  16)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst +  17)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst +  18)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst +  19)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 179)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 339)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 178)] = ST_TRANSPARENT;
-                        } break;
-                        case 0x4:
-                        {
-                            dst_sgmt[(dst_ofst +  19)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
-                        } break;
-                        case 0x5:
-                        {
-                            dst_sgmt[(dst_ofst +  19)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 179)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 339)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
-                        } break;
-                        case 0x6:
-                        {
-                            dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
-                        } break;
-                        case 0x7:
-                        {
-                            dst_sgmt[(dst_ofst +  16)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst +  17)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst +  18)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst +  19)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 176)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 336)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 177)] = ST_TRANSPARENT;
-                        } break;
-                        case 0x8:
-                        {
-                            dst_sgmt[(dst_ofst +  16)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 176)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 336)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
-                        } break;
-                        case 0x9:
-                        {
-                            dst_sgmt[(dst_ofst +  16)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
-                        } break;
-                        case 0xA:
-                        {
-                            dst_sgmt[(dst_ofst +  19)] = ST_TRANSPARENT;
-                        } break;
-                        case 0xB:
-                        {
-                            dst_sgmt[(dst_ofst +  16)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst +  17)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst +  18)] = ST_TRANSPARENT;
-                            dst_sgmt[(dst_ofst +  19)] = ST_TRANSPARENT;
-                        } break;
-                        case 0xC:
-                        {
-                            dst_sgmt[(dst_ofst +  16)] = ST_TRANSPARENT;
-                        } break;
-                        case 0xD:
-                        {
-                            dst_sgmt[(dst_ofst +  496)] = ST_TRANSPARENT;
-                        } break;
+                    case 0x0:
+                    {
+                        dst_sgmt[(dst_ofst + 16)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 176)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 336)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 497)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 498)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 337)] = ST_TRANSPARENT;
+                    }
+                    break;
+                    case 0x1:
+                    {
+                        dst_sgmt[(dst_ofst + 19)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 179)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 339)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 497)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 498)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 338)] = ST_TRANSPARENT;
+                    }
+                    break;
+                    case 0x2:
+                    {
+                        dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 497)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 498)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
+                    }
+                    break;
+                    case 0x3:
+                    {
+                        dst_sgmt[(dst_ofst + 16)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 17)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 18)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 19)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 179)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 339)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 178)] = ST_TRANSPARENT;
+                    }
+                    break;
+                    case 0x4:
+                    {
+                        dst_sgmt[(dst_ofst + 19)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
+                    }
+                    break;
+                    case 0x5:
+                    {
+                        dst_sgmt[(dst_ofst + 19)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 179)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 339)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
+                    }
+                    break;
+                    case 0x6:
+                    {
+                        dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
+                    }
+                    break;
+                    case 0x7:
+                    {
+                        dst_sgmt[(dst_ofst + 16)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 17)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 18)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 19)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 176)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 336)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 177)] = ST_TRANSPARENT;
+                    }
+                    break;
+                    case 0x8:
+                    {
+                        dst_sgmt[(dst_ofst + 16)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 176)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 336)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
+                    }
+                    break;
+                    case 0x9:
+                    {
+                        dst_sgmt[(dst_ofst + 16)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
+                    }
+                    break;
+                    case 0xA:
+                    {
+                        dst_sgmt[(dst_ofst + 19)] = ST_TRANSPARENT;
+                    }
+                    break;
+                    case 0xB:
+                    {
+                        dst_sgmt[(dst_ofst + 16)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 17)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 18)] = ST_TRANSPARENT;
+                        dst_sgmt[(dst_ofst + 19)] = ST_TRANSPARENT;
+                    }
+                    break;
+                    case 0xC:
+                    {
+                        dst_sgmt[(dst_ofst + 16)] = ST_TRANSPARENT;
+                    }
+                    break;
+                    case 0xD:
+                    {
+                        dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
+                    }
+                    break;
                     }
                 }
             }
@@ -3530,7 +3544,7 @@ Terrain.c
     * /
     int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
 
-What is the difference, if any, between 
+What is the difference, if any, between
 // WZD s161p24  Terrain.c  Square_Is_Sailable()
 and
 // WZD o150p18  MainScr_Maps.c  Square_Is_Sailable__NIU()

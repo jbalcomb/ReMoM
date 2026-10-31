@@ -1084,16 +1084,11 @@ void Build_Moveable_Stack(int16_t * troop_count, int16_t troops[])
                 for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
                 {
                     if(
-                        (Unit_Has_AirTravel_Item(_unit_stack[itr_stack].unit_idx) == ST_TRUE)
-                        ||
-                        (Unit_Has_WaterTravel_Item(_unit_stack[itr_stack].unit_idx) == ST_TRUE)
-                        ||
-                        (Unit_Has_Swimming(_unit_stack[itr_stack].unit_idx) == ST_TRUE)
-                        ||
-                        (Unit_Has_WindWalking(_unit_stack[itr_stack].unit_idx) == ST_TRUE)
-                        ||
-                        (Unit_Has_AirTravel(_unit_stack[itr_stack].unit_idx) == ST_TRUE)
-                    )
+                        (Unit_Has_AirTravel_Item(_unit_stack[itr_stack].unit_idx) == ST_TRUE) ||
+                        (Unit_Has_WaterTravel_Item(_unit_stack[itr_stack].unit_idx) == ST_TRUE) ||
+                        (Unit_Has_Swimming(_unit_stack[itr_stack].unit_idx) == ST_TRUE) ||
+                        (Unit_Has_WindWalking(_unit_stack[itr_stack].unit_idx) == ST_TRUE) ||
+                        (Unit_Has_AirTravel(_unit_stack[itr_stack].unit_idx) == ST_TRUE))
                     {
                         if(_UNITS[_unit_stack[itr_stack].unit_idx].Status != us_GOTO)
                         {

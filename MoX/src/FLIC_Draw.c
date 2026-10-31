@@ -894,7 +894,7 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
     SET_2B_OFS(pict_seg,2,height);
     SET_2B_OFS(pict_seg,4,0xDE0A);  /* e_FLIC_Decoded */
     SET_2B_OFS(pict_seg,6,0);
-    SET_2B_OFS(pict_seg,8,0);
+    SET_2B_OFS(pict_seg, 8, 0);
     length = width * height;
     for(itr_length = 0; itr_length < length; itr_length++)
     {
@@ -2236,9 +2236,9 @@ Module: file_ani
 ; handle and data offset fields
 */
 /*
-You don't need NASM or MASM. Open_File_Animation is ordinary compiled C. 
-In seg030/Open_File_Animation.asm it's just strcpy → Load_File_Animation_Frame(0, 16300, 0, 0) → EMM_MapnRead(...) → two farpokew calls. 
-The original avoids holding big animations in memory by streaming: it reads each frame from the LBX file, when it's needed, into a single 16 KB EMM page. 
+You don't need NASM or MASM. Open_File_Animation is ordinary compiled C.
+In seg030/Open_File_Animation.asm it's just strcpy → Load_File_Animation_Frame(0, 16300, 0, 0) → EMM_MapnRead(...) → two farpokew calls.
+The original avoids holding big animations in memory by streaming: it reads each frame from the LBX file, when it's needed, into a single 16 KB EMM page.
 ReMoM's __HACK version loads the whole entry with LBX_Load instead, which carves a new pool arena on every call and never frees it. That's the leak.
 */
 /* HACK */  // void Open_File_Animation__HACK(char * file_name, int16_t entry_num)
@@ -2328,12 +2328,12 @@ XREF:
 */
 void Load_File_Animation_Frame(int32_t offset, int32_t size, int16_t logical_page)
 {
-    char file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char file_name[LEN_FILE_NAME] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     int32_t entry_start = 0;
     int32_t entry_length = 0;
     int32_t total_bytes_left = 0;
     uint16_t read_size = 0;
-    SAMB_ptr  page_frame = ST_NULL;
+    SAMB_ptr page_frame = ST_NULL;
     int16_t page_count = 0;
     FILE * lbx_fptr = NULL;
     int16_t current_page = 0;
@@ -2346,8 +2346,7 @@ void Load_File_Animation_Frame(int32_t offset, int32_t size, int16_t logical_pag
         file_animation_entry_num,
         &entry_start,
         &entry_length,
-        0
-    );
+        0);
     entry_start += offset;
     entry_length -= offset;
     if(entry_length <= 0L)

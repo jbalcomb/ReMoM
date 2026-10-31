@@ -81,7 +81,11 @@ void Platform_HW_Cursor_Refresh(void)
     if(image == 0)   /* crsr_None -> no cursor */
     {
         SetCursor(NULL);   /* hide before destroying the handle that was active */
-        if(hwcur_current != NULL) { DestroyIcon(hwcur_current); hwcur_current = NULL; }
+        if(hwcur_current != NULL)
+        {
+            DestroyIcon(hwcur_current);
+            hwcur_current = NULL;
+        }
         return;
     }
     if(mouse_palette == NULL)   /* sprite bank not loaded yet (pre-Load_Palette) -- retry next frame */

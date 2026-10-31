@@ -368,10 +368,8 @@ void Conquest_Animation(int16_t loser_Idx, int16_t winner_idx)
     SAMB_ptr wizlab_seg = 0;
     stu_strcpy(Space_String, str_SPACE__ovr093);  // char str_SPACE__ovr093[] = " ";
     if(
-        (winner_idx != NEUTRAL_PLAYER_IDX)
-        &&
-        (loser_Idx == NEUTRAL_PLAYER_IDX)
-    )
+        (winner_idx != NEUTRAL_PLAYER_IDX) &&
+        (loser_Idx == NEUTRAL_PLAYER_IDX))
     {
         return;
     }
@@ -747,7 +745,7 @@ void Conquest_Animation_Draw_Zap_Strike(void)
     }
     FLIC_Draw(69, 75, wizlab_wizard_seg__ovr093);
     Draw_File_Animation();
-    Clipped_Draw(208,  60, conquest_wizard_seg);
+    Clipped_Draw(208, 60, conquest_wizard_seg);
     Clipped_Draw(100, 120, conquest_conehead_seg);
 }
 

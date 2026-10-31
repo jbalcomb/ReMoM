@@ -37,11 +37,11 @@ Module: file_ani
 
     array (36 bytes) multi_file_animation_names
     Address: 02:001B42EC
-    Num elements:    3, Type:        unsigned integer (4 bytes) 
+    Num elements:    3, Type:        unsigned integer (4 bytes)
 
     array (12 bytes) file_animation_fptr_multi
     Address: 02:001B4310
-    Num elements:    3, Type:        unsigned integer (4 bytes) 
+    Num elements:    3, Type:        unsigned integer (4 bytes)
 
     pointer (4 bytes) file_lbx_header
     Address: 02:001B431C
@@ -57,25 +57,25 @@ Module: file_ani
 
     array (12 bytes) file_animation_end_multi
     Address: 02:001B432C
-    Num elements:    3, Type:        unsigned integer (4 bytes) 
+    Num elements:    3, Type:        unsigned integer (4 bytes)
 
     pointer (4 bytes) file_animation_fptr
     Address: 02:001B4338
 
     array (12 bytes) file_animation_length_multi
     Address: 02:001B433C
-    Num elements:    3, Type:        unsigned integer (4 bytes) 
+    Num elements:    3, Type:        unsigned integer (4 bytes)
 
     array (12 bytes) file_animation_start_multi
     Address: 02:001B4348
-    Num elements:    3, Type:        unsigned integer (4 bytes) 
+    Num elements:    3, Type:        unsigned integer (4 bytes)
 
     signed integer (4 bytes) file_animation_end
     Address: 02:001B4354
 
     array (6 bytes) file_animation_opened_flag_multi
     Address: 02:0017C5E2
-    Num elements:    3, Type:        unsigned integer (4 bytes) 
+    Num elements:    3, Type:        unsigned integer (4 bytes)
 
     signed integer (2 bytes) file_animation_opened_flag
     Address: 02:0017C5E0
@@ -83,9 +83,9 @@ Module: file_ani
     function (0 bytes) Open_File_Animation
     Address: 01:0012C607
         Num params: 2
-        Return type: void (1 bytes) 
-        pointer (4 bytes) 
-        signed integer (2 bytes) 
+        Return type: void (1 bytes)
+        pointer (4 bytes)
+        signed integer (2 bytes)
         Locals:
             pointer (4 bytes) file_name
             signed integer (2 bytes) entry_num
@@ -107,12 +107,12 @@ Module: file_ani
             signed integer (4 bytes) entry_end
             signed integer (4 bytes) entry_length
             array (60 bytes) full_file_path
-            Num elements:   60, Type:                unsigned integer (4 bytes) 
+            Num elements:   60, Type:                unsigned integer (4 bytes)
 
     function (0 bytes) Draw_File_Animation
     Address: 01:0012C7CC
         Num params: 0
-        Return type: void (1 bytes) 
+        Return type: void (1 bytes)
         Locals:
             signed integer (4 bytes) i
             signed integer (4 bytes) x
@@ -129,8 +129,8 @@ Module: file_ani
     function (0 bytes) Draw_Multi_File_Animation_Stencil
     Address: 01:0012CAD6
         Num params: 1
-        Return type: void (1 bytes) 
-        signed integer (2 bytes) 
+        Return type: void (1 bytes)
+        signed integer (2 bytes)
         Locals:
             signed integer (2 bytes) file_num
             signed integer (4 bytes) i
@@ -148,7 +148,7 @@ Module: file_ani
     function (0 bytes) Draw_File_Animation_Stencil
     Address: 01:0012CD2D
         Num params: 0
-        Return type: void (1 bytes) 
+        Return type: void (1 bytes)
         Locals:
             signed integer (4 bytes) i
             signed integer (4 bytes) x
@@ -166,7 +166,7 @@ Module: file_ani
     function (0 bytes) Draw_File_Animation_On
     Address: 01:0012CF6D
         Num params: 0
-        Return type: void (1 bytes) 
+        Return type: void (1 bytes)
         Locals:
             signed integer (4 bytes) i
             signed integer (4 bytes) x
@@ -184,10 +184,10 @@ Module: file_ani
     function (0 bytes) Open_Multi_File_Animation
     Address: 01:0012D1C5
         Num params: 3
-        Return type: void (1 bytes) 
-        pointer (4 bytes) 
-        signed integer (2 bytes) 
-        signed integer (2 bytes) 
+        Return type: void (1 bytes)
+        pointer (4 bytes)
+        signed integer (2 bytes)
+        signed integer (2 bytes)
         Locals:
             pointer (4 bytes) file_name
             signed integer (2 bytes) entry_num
@@ -210,13 +210,13 @@ Module: file_ani
             signed integer (4 bytes) entry_end
             signed integer (4 bytes) entry_length
             array (60 bytes) full_file_path
-            Num elements:   60, Type:                unsigned integer (4 bytes) 
+            Num elements:   60, Type:                unsigned integer (4 bytes)
 
     function (0 bytes) Draw_Multi_File_Animation
     Address: 01:0012D408
         Num params: 1
-        Return type: void (1 bytes) 
-        signed integer (2 bytes) 
+        Return type: void (1 bytes)
+        signed integer (2 bytes)
         Locals:
             signed integer (2 bytes) file_num
             signed integer (4 bytes) i
@@ -234,60 +234,60 @@ Module: file_ani
     function (0 bytes) Set_File_Animation_Frame
     Address: 01:0012D6B2
         Num params: 1
-        Return type: void (1 bytes) 
-        signed integer (2 bytes) 
+        Return type: void (1 bytes)
+        signed integer (2 bytes)
         Locals:
             signed integer (2 bytes) frame_num
 
     function (0 bytes) Get_File_Animation_Frame
     Address: 01:0012D70B
         Num params: 0
-        Return type: signed integer (2 bytes) 
-        void (1 bytes) 
+        Return type: signed integer (2 bytes)
+        void (1 bytes)
         Locals:
 
     function (0 bytes) Get_Multi_File_Animation_Frame
     Address: 01:0012D745
         Num params: 1
-        Return type: signed integer (2 bytes) 
-        signed integer (2 bytes) 
+        Return type: signed integer (2 bytes)
+        signed integer (2 bytes)
         Locals:
             signed integer (2 bytes) file_num
 
     function (0 bytes) Reset_File_Animation_Buffer
     Address: 01:0012D78E
         Num params: 0
-        Return type: void (1 bytes) 
+        Return type: void (1 bytes)
         Locals:
 
     function (0 bytes) Set_File_Animation_Buffer
     Address: 01:0012D7B7
         Num params: 1
-        Return type: void (1 bytes) 
-        pointer (4 bytes) 
+        Return type: void (1 bytes)
+        pointer (4 bytes)
         Locals:
             pointer (4 bytes) buffer
 
     function (0 bytes) Draw_Multi_File_Animation_Palette
     Address: 01:0012D7E3
         Num params: 1
-        Return type: void (1 bytes) 
-        signed integer (4 bytes) 
+        Return type: void (1 bytes)
+        signed integer (4 bytes)
         Locals:
             signed integer (4 bytes) file_num
 
     function (0 bytes) Draw_File_Animation_Palette
     Address: 01:0012D84E
         Num params: 0
-        Return type: void (1 bytes) 
+        Return type: void (1 bytes)
         Locals:
 
     function (0 bytes) Set_Multi_File_Animation_Frame
     Address: 01:0012D88F
         Num params: 2
-        Return type: void (1 bytes) 
-        signed integer (2 bytes) 
-        signed integer (2 bytes) 
+        Return type: void (1 bytes)
+        signed integer (2 bytes)
+        signed integer (2 bytes)
         Locals:
             signed integer (2 bytes) file_num
             signed integer (2 bytes) frame_num
@@ -455,7 +455,6 @@ void Draw_File_Animation_Frame_ASM(int16_t x, int16_t y, SAMB_ptr file_animation
         screen_start++;
 
     } while(--itr_width != 0);
-
 }
 
 
@@ -606,5 +605,4 @@ void Remap_Draw_File_Animation_Frame_ASM(int16_t x, int16_t y, SAMB_ptr file_ani
         screen_start++;
 
     } while(--itr_width != 0);
-
 }

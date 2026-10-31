@@ -869,7 +869,7 @@ XREF:
 */
 FILE * LBX_Get_Entry_Data(char * lbx_name, int16_t entry_num, int32_t * entry_start, int32_t * entry_length, int16_t format)
 {
-    char lbx_file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char lbx_file_name[LEN_FILE_NAME] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     int32_t entry_end = 0;
 
     if(lbxload_lbx_header_flag == ST_FALSE)
@@ -881,10 +881,8 @@ FILE * LBX_Get_Entry_Data(char * lbx_name, int16_t entry_num, int32_t * entry_st
     File_Name_Base(lbx_name);
 
     if(
-        (lbxload_fptr == NULL)
-        ||
-        (stu_stricmp(lbx_name, lbxload_file_name) != 0)
-    )
+        (lbxload_fptr == NULL) ||
+        (stu_stricmp(lbx_name, lbxload_file_name) != 0))
     {
         if(lbxload_fptr != NULL)
         {
@@ -912,8 +910,8 @@ FILE * LBX_Get_Entry_Data(char * lbx_name, int16_t entry_num, int32_t * entry_st
         Error_Handler(lbx_name, le_entries_exceeded, entry_num, ST_NULL);
     }
 
-    *entry_start  = GET_4B_OFS(lbxload_lbx_header, (8 + (entry_num * 4)));
-    entry_end     = GET_4B_OFS(lbxload_lbx_header, (8 + (entry_num * 4) + 4));
+    *entry_start = GET_4B_OFS(lbxload_lbx_header, (8 + (entry_num * 4)));
+    entry_end = GET_4B_OFS(lbxload_lbx_header, (8 + (entry_num * 4) + 4));
     *entry_length = (entry_end - *entry_start);
 
     return lbxload_fptr;

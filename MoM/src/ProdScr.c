@@ -670,10 +670,8 @@ void Building_Allows_List(int16_t bldg_idx, int16_t * allows_list_count, int16_t
         cant_build = ST_FALSE;
         /* Verify if the city's race is prohibited from constructing building 'itr' */
         if(
-            (bldg_data_table[itr].reqd_bldg_1 == bldg_idx)
-            ||
-            (bldg_data_table[itr].reqd_bldg_2 == bldg_idx)
-        )
+            (bldg_data_table[itr].reqd_bldg_1 == bldg_idx) ||
+            (bldg_data_table[itr].reqd_bldg_2 == bldg_idx))
         {
             for(itr_cantbuild = 0; itr_cantbuild < _race_type_table[city_race].cant_build_count; itr_cantbuild++)
             {
@@ -718,24 +716,18 @@ void Building_Allows_List(int16_t bldg_idx, int16_t * allows_list_count, int16_t
     {
         /* Unit must either be race-specific to the city or a standard unit (rt_Standard) */
         if(
-            (_unit_type_table[itr].race_type == city_race)
-            ||
-            (_unit_type_table[itr].race_type == rt_Standard)
-        )
+            (_unit_type_table[itr].race_type == city_race) ||
+            (_unit_type_table[itr].race_type == rt_Standard))
         {
             /* Check if the unit requires 'bldg_idx' */
             if(
-                (_unit_type_table[itr].reqd_bldg_1 == bldg_idx)
-                ||
-                (_unit_type_table[itr].reqd_bldg_2 == bldg_idx)
-            )
+                (_unit_type_table[itr].reqd_bldg_1 == bldg_idx) ||
+                (_unit_type_table[itr].reqd_bldg_2 == bldg_idx))
             {
                 /* either required building is not bs_NotBuilt (built, replaced, or removed) */
                 if(
-                    (_CITIES[_city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_NotBuilt)
-                    ||
-                    (_CITIES[_city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_NotBuilt)
-                )
+                    (_CITIES[_city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_NotBuilt) ||
+                    (_CITIES[_city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_NotBuilt))
                 {
                     /* Units are stored in the allows_list with an offset of 100 to distinguish them from buildings */
                     allows_list[*allows_list_count] = (100 + itr);
@@ -1215,7 +1207,7 @@ Likely left over from an "is bldg_idx the missing prerequisite" test: as written
 */
 int16_t City_Race_Can_Unlock_Building(int16_t uu_allowed_by_bldg_idx, int16_t building)
 {
-    int16_t bldg_list[NUM_BUILDINGS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t bldg_list[NUM_BUILDINGS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     int16_t city_race = 0;
     int16_t result = 0;
     int16_t itr = 0;
@@ -1227,10 +1219,8 @@ int16_t City_Race_Can_Unlock_Building(int16_t uu_allowed_by_bldg_idx, int16_t bu
     city_race = _CITIES[_city_idx].race;
     result = ST_UNDEFINED;
     if(
-        (_CITIES[_city_idx].bldg_status[bldg_data_table[building].reqd_bldg_1] != bs_Built)
-        ||
-        (_CITIES[_city_idx].bldg_status[bldg_data_table[building].reqd_bldg_2] != bs_Built)
-    )
+        (_CITIES[_city_idx].bldg_status[bldg_data_table[building].reqd_bldg_1] != bs_Built) ||
+        (_CITIES[_city_idx].bldg_status[bldg_data_table[building].reqd_bldg_2] != bs_Built))
     {
         for(j = 0; j < _race_type_table[city_race].cant_build_count; j++)
         {

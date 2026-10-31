@@ -1920,14 +1920,9 @@ void Cast_Spell_Overland(int16_t player_idx)
         */
         {
             if(
-                (MultiPurpose_Local_Var >= 0)
-                &&
-                (
-                    (spell_data_table[spell_idx].magic_realm == sbr_Chaos)
-                    ||
-                    (spell_data_table[spell_idx].magic_realm == sbr_Death)
-                )
-            )
+                (MultiPurpose_Local_Var >= 0) &&
+                ((spell_data_table[spell_idx].magic_realm == sbr_Chaos) ||
+                 (spell_data_table[spell_idx].magic_realm == sbr_Death)))
             {
                 g_ai_recompute_needed = ST_TRUE;
                 Call_Forth_The_Force_Of_Nature(player_idx);
@@ -1936,7 +1931,6 @@ void Cast_Spell_Overland(int16_t player_idx)
         /*
             END:  Nature's Wrath
         */
-
     }
 
     _players[player_idx].casting_cost_remaining = 0;

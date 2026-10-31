@@ -387,8 +387,8 @@ void Cast_Incarnation(int16_t player_idx)
 // WZD o132p04
 void WIZ_MeteorStorm(int Player_Index)
 {
-    int16_t Building_List[NUM_BUILDINGS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Unit_List[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Building_List[NUM_BUILDINGS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int16_t Unit_List[MAX_STACK] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     int16_t Items[3] = { 0, 0, 0 };
     int16_t Item_Count = 0;
     int16_t unit_owner_idx = 0;
@@ -511,7 +511,6 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
     {
 
         _players[player_idx].Heroes[hero_slot_idx].Items[itr] = ST_UNDEFINED;
-
     }
 
     if(saved_flag == ST_TRUE)

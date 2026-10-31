@@ -39,13 +39,13 @@
 #include <stdio.h>
 #include <string.h>
 
-#define CONQUEST_WIZARD_MAX  13
-#define CONQUEST_DATA_SPACE_PARAS  6100  /* same as ReMoM_Init_Engine's Allocate_Data_Space(6100) */
+#define CONQUEST_WIZARD_MAX 13
+#define CONQUEST_DATA_SPACE_PARAS 6100  /* same as ReMoM_Init_Engine's Allocate_Data_Space(6100) */
 
 extern int16_t m_conquest_anim_stage;  /* CONQUEST.c; not in CONQUEST.h */
 
-#define CONQUEST_WINNER_IDX  0
-#define CONQUEST_LOSER_IDX   1
+#define CONQUEST_WINNER_IDX 0
+#define CONQUEST_LOSER_IDX 1
 
 
 
@@ -110,8 +110,7 @@ static void Effect_Conquest_Run(void)
 
 
 const Demo_Effect effect_conquest =
-{
-    "conquest",
-    "Wizard-conquest animation (Conquest_Animation) incl. the ZAP file-animation; args <winner 0-13> <loser 0-13> [raiders]",
-    Effect_Conquest_Run
-};
+    {
+        "conquest",
+        "Wizard-conquest animation (Conquest_Animation) incl. the ZAP file-animation; args <winner 0-13> <loser 0-13> [raiders]",
+        Effect_Conquest_Run};

@@ -990,35 +990,35 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
     int16_t return_value = 0;
     uint16_t terrain_type = 0;
     terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
-    if (terrain_type >= _Tundra00001000)
+    if(terrain_type >= _Tundra00001000)
     {
         return ST_FALSE;
     }
-    if (terrain_type > _River1111_5)
+    if(terrain_type > _River1111_5)
     {
         return ST_TRUE;
     }
-    if (terrain_type > _Shore111R1110)
+    if(terrain_type > _Shore111R1110)
     {
         return ST_FALSE;
     }
-    if (terrain_type > _Desert10101111)
+    if(terrain_type > _Desert10101111)
     {
         return ST_TRUE;
     }
-    if (terrain_type > _Shore000R0000)
+    if(terrain_type > _Shore000R0000)
     {
         return ST_FALSE;
     }
-    if (terrain_type > _River1001_2)
+    if(terrain_type > _River1001_2)
     {
         return ST_TRUE;
     }
-    if (terrain_type > _Shore10101111)
+    if(terrain_type > _Shore10101111)
     {
         return ST_FALSE;
     }
-    if (terrain_type != tt_BugGrass)
+    if(terrain_type != tt_BugGrass)
     {
         return ST_TRUE;
     }

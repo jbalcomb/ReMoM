@@ -895,7 +895,7 @@ Powergraph_Screen()
 */
 void Powergraph_Draw_Wizard_History(int16_t player_idx, int16_t last_turn, int16_t first_turn)
 {
-    uint8_t banner_colors[5] = { 0, 0, 0, 0, 0 };
+    uint8_t banner_colors[5] = {0, 0, 0, 0, 0};
     int16_t var_B = 0;
     int16_t x2_itr = 0;
     int16_t turns_count = 0;
@@ -1078,7 +1078,7 @@ void Status_Screen_Draw(void)
             for(itr_scores = 0; itr_scores < 3; itr_scores++)
             {
                 SETMAX(scores[itr_scores], 200);
-                IDK_y = (var_12 * 7)+ (status_screen_y + var_8);
+                IDK_y = (var_12 * 7) + (status_screen_y + var_8);
                 Print((status_screen_x + 14), IDK_y, _players[itr_players].name);
                 Gradient_Fill((status_screen_x + 64), (IDK_y + 2), (status_screen_x + 65 + scores[itr_scores]), (IDK_y + 3), 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);
                 Fill((status_screen_x + 64), (IDK_y + 1), (status_screen_x + 64 + scores[itr_scores]), (IDK_y + 2), banner_colors[_players[itr_players].banner_id]);
@@ -1196,7 +1196,6 @@ void Cartographer_Screen(void)
     Reset_Window();
     Clear_Fields();
     _page_flip_effect = pfe_TogglePagesFadeIn;  /* DEDU: only usage ofpfe_TogglePagesFadeIn (2) in the whole game? */
-
 }
 
 
@@ -1285,7 +1284,6 @@ void Cartographer_Screen_Draw(void)
                 Print_Centered((city_dot_x + 2), (city_dot_y - 6), _CITIES[itr_cities].name);
 
                 return;
-
             }
 
         }
