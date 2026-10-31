@@ -1,0 +1,62 @@
+
+<!-- saved from url=(0057)https://dos-help.soulsphere.org/alang.hlp/x_at_L845a.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GetFileSize - Assembly Language Help</title>
+<link rel="stylesheet" href="./GetFileSize - Assembly Language Help_files/style.css">
+<link rel="shortcut icon" href="https://dos-help.soulsphere.org/helpicon.png">
+<link rel="icon" href="https://dos-help.soulsphere.org/helpicon.png">
+</head>
+
+<body>
+<div class="page-heading">
+<form action="https://www.google.com/search" method="GET">
+<input name="as_q" id="search-box" placeholder="Search">
+<input type="hidden" name="as_sitesearch" value="dos-help.soulsphere.org/*">
+</form>
+Assembly Language Help (alang.hlp) (<a href="https://dos-help.soulsphere.org/alang.hlp/index.html">Table of Contents</a>; <a href="https://dos-help.soulsphere.org/alang.hlp/TOPIC_LIST.html">Topic list</a>)</div>
+<div class="notice" data-nosnippet="">
+  <img src="./GetFileSize - Assembly Language Help_files/warning.png">
+  <div class="heading">
+    Important Notice
+  </div>
+  <div class="text">
+    The pages on this site contain documentation for very old MS-DOS software,
+    purely for historical purposes.
+
+    If you're looking for up-to-date documentation, particularly for programming,
+    you should not rely on the information found here, as it will be woefully
+    out of date.
+  </div>
+</div>
+<div class="page-title"> GetFileSize</div>
+<pre> <span class="grhilite">◄</span><a href="https://dos-help.soulsphere.org/alang.hlp/x_at_L83fe.html">Map</a><span class="grhilite">►</span>                                       <span class="grhilite">◄</span><a href="https://dos-help.soulsphere.org/alang.hlp/x_at_L843b.html">Up</a><span class="grhilite">►</span> <span class="grhilite">◄</span><a href="https://dos-help.soulsphere.org/pwb.hlp/hv.html">Contents</a><span class="grhilite">►</span> <span class="grhilite">◄</span><a href="https://dos-help.soulsphere.org/pwb.hlp/vx.html">Index</a><span class="grhilite">►</span> <span class="grhilite">◄</span><a href="javascript:history.back();">Back</a><span class="grhilite">►</span>
+────────────────────────────────────────────────────────────────────────────
+ 
+;* GetFileSize - Gets the size of an open file, specified by handle.
+;*
+;* Shows:   DOS Function - 42h (Set File Pointer)
+;*
+;* Params:  Handle - File handle
+;*
+;* Return:  Long integer with file size in bytes
+ 
+GetFileSize PROC,
+        Handle:WORD
+ 
+        mov     bx, Handle              ; BX = file handle
+        mov     ax, 4202h               ; AH = function #,
+                                        ; AL = move to end of
+        sub     cx, cx                  ;      file plus offset
+        sub     dx, dx                  ; CX:DX = offset (zero)
+        int     21h                     ; Set File Pointer
+        mov     ax, dx                  ; Set DX:AX = file size in
+        mov     dx, cx                  ;   bytes, return long int
+        ret
+ 
+GetFileSize ENDP
+                                    -♦-
+</pre>
+
+
+
+</body></html>

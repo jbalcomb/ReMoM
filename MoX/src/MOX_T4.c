@@ -36,6 +36,8 @@
 
 #include "MOX_T4.h"
 
+#include <stdio.h>  /* FILE, SEEK_SET */
+
 
 
 // WZD s01p03
@@ -398,16 +400,41 @@ void s01p16_empty_function(void)
     WIZARDS.EXE  seg009
 */
 
+/*
+seg009 is a set of thin wrappers around DOS system calls. 
+lbx_seek is mov ax, 4200h / int 21h (DOS "move file pointer"), and lbx_read_sgmt is mov ah, 3Fh / int 21h (DOS "read from file" into a memory segment).
+They exist only because Borland C on DOS needed help to read into far segments.
+
+These functions appear to have originated in the official Microsoft QuickAsm / MASM 5.1/6.0 Help Files (ALANG.HLP).
+The exact signature template PROC, Handle:WORD using 4202h was a boilerplate standard distributed in Microsoft’s programmer reference guides during the late 1980s and early 1990s.
+The SimTex variation introduced a unique artifact: USES si di es ds.
+• The F-Prototype / C-Binding Era: In early F-Prototypes, custom game modding toolkits, and early FidoNet / Usenet (comp.lang.asm.x86) distributions, programmers routinely added generic USES clauses to the top of functions if they planned to wrap the assembly inside a Turbo Pascal or Borland C/C++ wrapper.
+*/
+
 // WZD s09p01
 // lbx_open()
 // WZD s09p02
 // lbx_close()
+
 // WZD s09p03
 // lbx_seek()
+/* returns non-zero on success, as the original (Load_File_Animation_Frame tests `or ax, ax` / `jnz` for success) */
+int16_t lbx_seek(int32_t offset, FILE * file_handle)
+{
+    return (int16_t)(fseek(file_handle, offset, SEEK_SET) == 0);
+}
+
 // WZD s09p04
 // drake178: UU_DISK_GetFileSize()
+
 // WZD s09p05
+/* lbx_read_sgmt() seg 09, proc 05 */
 // lbx_read_sgmt()
+int16_t lbx_read_sgmt(SAMB_ptr dst, uint16_t nbytes, FILE * file_handle)
+{
+    return (int16_t)fread(dst, 1, nbytes, file_handle);
+}
+
 // WZD s09p06
 // lbx_read_ofst()
 
@@ -445,7 +472,7 @@ IMHO, SimTex's _fstrcpy() took known near and far pointers, and it took four par
 void _fstrcpy(char * dst, char * src)
 {
     char character;
-    // if (FP_SEG(dst) == 0) dst = MK_FP(_DS, FP_OFF(dst)); expresses exactly the same thing with far-pointer parameters. 
+    // if(FP_SEG(dst) == 0) dst = MK_FP(_DS, FP_OFF(dst)); expresses exactly the same thing with far-pointer parameters. 
     while(1)
     {
         character = *src++;

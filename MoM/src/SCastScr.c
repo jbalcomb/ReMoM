@@ -737,6 +737,8 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
             Release_Time(1);
         }
 
+        screen_changed = ST_FALSE;
+
     }
 
     Set_Mouse_List(1, mouse_list_default);

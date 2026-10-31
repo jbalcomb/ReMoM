@@ -44,29 +44,22 @@ void Production_Screen_Draw(void);
 void Production_Screen_Draw_(void);
 
 // WZD o56p07
-// drake178: BLD_GetAllowsList()
-void Building_Allows_List__WIP(int16_t bldg_idx, int16_t * allows_list_count, int16_t allows_list[]);
+void Building_Allows_List(int16_t bldg_idx, int16_t * allows_list_count, int16_t allows_list[]);
 
 // WZD o56p08
-// drake178: CTY_GetProducables()
 void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * depr_count, int16_t * unit_count, int16_t product_array[]);
 
 // WZD o56p09
-// CTY_CheckTerrainReq()
 int16_t City_Check_Terrain_Requisite(int16_t city_idx, int16_t btp_idx);
 
 // WZD o56p10
-// drake178: CTY_GetProduceCost()
 int16_t City_Production_Cost(int16_t production_idx, int16_t city_idx);
 
 // WZD o56p11
-// drake178: N/A
-// MoO2  Module: COLCALC  Colony_N_Turns_To_Produce_()
 int16_t City_N_Turns_To_Produce(int16_t production_cost, int16_t city_idx);
 
 // WZD o56p12
-// drake178: BLD_AllowedByRace()
-int16_t BLD_AllowedByRace__WIP_TRUE(int16_t UU_Bld1, int16_t Building);
+int16_t City_Race_Can_Unlock_Building(int16_t uu_allowed_by_bldg_idx, int16_t building);
 
 
 

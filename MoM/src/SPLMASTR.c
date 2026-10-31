@@ -1804,7 +1804,7 @@ static void Cast_Spell_Of_Mastery_Draw(void)
     Set_Page_Off();
     for(itr_frames = 0; itr_frames < frame_count; itr_frames++)
     {
-        Draw_File_Animation__HACK();
+        Draw_File_Animation();
     }
     Set_Outline_Color(0);
     Set_Font_Style_Outline(5, 5, 0, 0);
@@ -1825,7 +1825,7 @@ void Cast_Spell_Of_Mastery(int16_t player_idx)
     SND_Spell_Music = LBX_Reload(music_lbx_file__ovr138, MUSIC_SoM_Started, SND_Music_Segment);
     SND_Spell_Music_size = lbxload_entry_length;
     // SPELLSCR.LBX, 067  "VORTEX3" ""
-    Open_File_Animation__HACK(spellscr_lbx_file__ovr138, 67);
+    Open_File_Animation(spellscr_lbx_file__ovr138, 67);
     _temp_sint_4 = 67;  // ¿ DEDU ?
     Set_Mouse_List(1, mouse_list_none);
     Fade_Out();
@@ -1850,15 +1850,15 @@ void Cast_Spell_Of_Mastery(int16_t player_idx)
     {
         if(_combat_wx == 17)
         {
-            Open_File_Animation__HACK(spellscr_lbx_file__ovr138, 68);
+            Open_File_Animation(spellscr_lbx_file__ovr138, 68);
         }
         else if(_combat_wx == 33)
         {
-            Open_File_Animation__HACK(spellscr_lbx_file__ovr138, 69);
+            Open_File_Animation(spellscr_lbx_file__ovr138, 69);
         }
         else if(_combat_wx == 49)
         {
-            Open_File_Animation__HACK(spellscr_lbx_file__ovr138, 70);
+            Open_File_Animation(spellscr_lbx_file__ovr138, 70);
         }
         Mark_Time();
         Set_Page_Off();
@@ -1935,7 +1935,7 @@ static void Spell_Of_Mastery_Draw(void)
         FLIC_Draw(69, 75, spell_caster_figure_seg);
         if((6 + ((_num_players - 1) * 60)) > _osc_anim_ctr)
         {
-            Draw_File_Animation__HACK();
+            Draw_File_Animation();
             if(((_osc_anim_ctr - 6) % 60) < 9)
             {
                 FLIC_Draw(95, 55, som_twinkle_seg);
@@ -1997,7 +1997,7 @@ void Spell_Of_Mastery(int16_t player_idx)
         if((((int16_t)(_osc_anim_ctr + 65530)) % 60) == 0)
         {
             while(_players[++parade_player_idx].casting_spell_idx == spl_Spell_Of_Return) {}
-            Open_File_Animation__HACK(splmastr_lbx_file__ovr138, _players[parade_player_idx].wizard_id);
+            Open_File_Animation(splmastr_lbx_file__ovr138, _players[parade_player_idx].wizard_id);
             Reset_Animation_Frame(som_twinkle_seg);
         }
         if((parade_frame_total - 6) == _osc_anim_ctr)
@@ -2108,7 +2108,7 @@ void Undead_Animation(int16_t unit_type)
     fullscreen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr138[0], ST_UNDEFINED);
     leave_screen = ST_FALSE;
     _osc_anim_ctr = 0;
-    while ((_osc_anim_ctr < 100) && (leave_screen == ST_FALSE))
+    while((_osc_anim_ctr < 100) && (leave_screen == ST_FALSE))
     {
         Mark_Time();
         input_field_idx = Get_Input();

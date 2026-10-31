@@ -39,17 +39,17 @@ The second goal is the one that will shape every decision, exactly as timbre fid
 |---|---|
 | 103 `.LBX` archives ship in `assets/` | `ls assets/*.LBX` |
 | Graphics live in archives like `FIGURES1..16`, `UNITS1..2`, `MONSTER`, `TERRAIN`, `PORTRAIT`, `WIZARDS`, `CITYSCAP`, `CMB*` combat tilesets, `SPECFX`, `ITEMS`, `BOOK`, `MAIN`/`MAINSCRN` UI | `assets/` listing |
-| A sprite entry is `int16 width; int16 height;` then encoded, palette-indexed pixel data with transparency and (for some) multiple animation frames | `MoX/src/FLIC_Draw.c:1651-1654` — `Draw_Picture` reads w@0, h@2, then `Draw_Picture_ASM` decodes |
-| The engine **already decodes** these to draw them | `Draw_Picture` / `Draw_Picture_Windowed` / `Draw_Picture_ASM`, `MoX/src/FLIC_Draw.c:1646+` |
+| A graphic entry is a FLIC animation: a 16-byte header (`int16 width @0; int16 height @2;` frame count, loop frame, palette-header offset), a frame-type byte and remap flag at `0x10`/`0x11`, a table of 4-byte frame offsets, an optional palette, then column-major RLE frames (per column: `0xFF` skip, `0x80` decode with bytes ≥ 224 as repeat ops, `0x00` copy); pixels the RLE never writes are transparent | `s_FLIC_HDR` and the `FLIC_HDR_POS_*` offsets in `MoX/src/FLIC_Draw.h`; the RLE in `FLIC_Draw_Frame()` |
+| The engine **already decodes** these to draw them | `FLIC_Draw()` loads the entry's palette (`FLIC_Load_Palette()`), then decodes the current frame with `FLIC_Draw_Frame()`, or `FLIC_Remap_Draw_Frame()` when the remap flag is set (`MoX/src/FLIC_Draw.c`). `Draw_Picture()` / `Draw_Picture_ASM()` are a different path: they draw an already-decoded in-memory *bitmap* (raw column-major indices, `ST_TRANSPARENT` = 0 skipped), not an LBX entry |
 | There is **no offline image exporter** | `tools/lbx_extract.c` handles only the 0xDEAF sound wrapper (XMI/VOC); every graphic entry is dumped as opaque `.BIN` (`lbx_extract.c:426` default `extension = "BIN"`) |
 
-**Consequence:** we are about to choose an upscaling strategy for art nobody on this project can currently look at as images. That is backwards, and it is why Phase 1 is "build the library," not "pick a tool." The in-engine decoder (`Draw_Picture_ASM`) is the authority for the sprite format; the offline exporter should **reuse that decode, not re-derive it** from scratch.
+**Consequence:** we are about to choose an upscaling strategy for art nobody on this project can currently look at as images. That is backwards, and it is why Phase 1 is "build the library," not "pick a tool." The in-engine decoder (`FLIC_Draw()` → `FLIC_Draw_Frame()`) is the authority for the format; the offline exporter should **reuse that decode, not re-derive it** from scratch.
 
 ### 2.3 Sprites are recoloured at runtime — flattening to RGB throws that away
 
 Palette manipulation is pervasive, not incidental: `remap`/`colortbl`/tint code appears across ~20 `MoM/src/` files (`City_ovr55.c`, `MainScr.c`, `Combat.c`, `UnitView.c`, `SPLMASTR.c`, `INITGAME.c`, …), plus the palette-remap primitives `Gradient_Fill`, `Tint_Fill`, and the `remap_block` parameter in `MoX/src/Graphics.h:95,130`. Player/wizard banner colours, spell tints, night/day and terrain shading are all applied at draw time by swapping palette indices, not by storing recoloured copies.
 
-**This is the palette analogue of the audio BRA's GENMIDI misstep.** The instinct is to export each sprite as a finished RGB PNG and upscale that. But a finished RGB PNG has **already collapsed the index → colour mapping**, so it can no longer be recoloured. A blue unit and a red unit are the *same indexed sprite* under two palettes; flatten them and you must upscale N recolourings of every sprite instead of one, and lose the ability to add a new player colour later. Any asset-level path must decide, up front, whether it preserves the index space or abandons runtime recolouring — this is a hard requirement to pin, not a detail (see §9, Q2).
+**This is the palette analogue of the audio BRA's GENMIDI misstep.** The instinct is to export each sprite as a finished RGB PNG and upscale that. But a finished RGB PNG has **already collapsed the index → colour mapping**, so it can no longer be recoloured. A blue unit and a red unit are the *same indexed sprite* under two palettes; flatten them and you must upscale N recolourings of every sprite instead of one, and lose the ability to add a new player colour later. Any asset-level path must decide, up front, whether it preserves the index space or abandons runtime recolouring — this is a hard requirement to pin, not a detail. **It has now been pinned:** preserving recolouring is required, via the mask/region approach — see §11 for the mechanism and the decision.
 
 ---
 
@@ -131,7 +131,7 @@ The audio BRA's recurring lesson (`BRA-Native-Win32-Audio.md §9`, `BRA-Combat-T
 
 So Phase 1 produces the concrete thing to look at:
 
-1. A **graphic-LBX decoder/exporter** (reusing `Draw_Picture_ASM`'s format knowledge) that turns every graphic entry into viewable PNGs — per-frame images, animation sprite sheets, and index-preserving exports (see §2.3) — plus the palette(s) used.
+1. A **graphic-LBX decoder/exporter** (calling the engine's own `FLIC_Draw()`) that turns every graphic entry into viewable PNGs — per-frame images, animation sprite sheets, and index-preserving exports (see §2.3) — plus the palette(s) used.
 2. A **catalogue/manifest**: every archive, every entry, dimensions, frame count, whether it is recoloured at runtime, whether it tessellates, and a class tag (unit / terrain-tile / portrait / UI / fullscreen / effect / font).
 
 With that in hand, the questions in §9 become answerable from evidence — how many *distinct* sprites there really are, how much is recoloured, how much tessellates — and the Family (§4) and tool (§5) choices can be made by A/B-ing candidates on the actual worst-case content (dithered gradients, tiny UI text, seamed terrain), not on a cherry-picked hero sprite.
@@ -156,6 +156,7 @@ Stated as a leaning, not a decision, and explicitly revisable once Phase 1 exist
 - **Family A (output-frame) as the near-term shippable win.** A pixel-art shader (xBRZ/ScaleFX class) in place of the raw `SDL_RenderCopy` stretch upgrades *everything* with a tiny, contained risk surface and no asset pipeline. It is the highest ratio of visible improvement to engineering risk, and it is reversible.
 - **The asset library (Phase 1) regardless of Family.** Needed to evaluate, tune, and A/B any approach; a prerequisite for Family B; and independently useful (modding, documentation, the compat-hash work in `STU_GRAF`).
 - **Generative models scoped to bespoke one-off art**, hand-reviewed — not a batch sprite pipeline.
+- **Mask/region separation for recolouring (§11).** Keeps banner/team colours working with HD-RGB art and *any* upscaler family, so it preserves recolouring without forcing the Family decision. The preferred recolour approach.
 
 Provisionally does **not** fit:
 
@@ -168,11 +169,11 @@ Provisionally does **not** fit:
 ## 9. Open questions (to be answered by the Phase 1 library, or by the maintainer)
 
 1. **Family (§4): output-frame, asset-replacement, or hybrid?** The single decision everything else hangs on. Deferred until the library shows how far Family A alone gets.
-2. **Is preserving runtime recolouring a hard requirement?** (§2.3) If yes, any asset-level path must keep the index space, which constrains the upscaler and the export format. If the maintainer is willing to bake a fixed set of recolourings, the constraint relaxes.
+2. **~~Is preserving runtime recolouring a hard requirement?~~ Resolved:** yes, it is required, and the approach is mask/region separation (§11) rather than index-space preservation or baked recolourings. What remains open is the *mask fidelity* detail — for the general 256-entry remap LUT (spell tints, fog, shading), whether a per-pixel mask is needed or a global output-stage LUT pass suffices (§11 leans to the latter).
 3. **How many *distinct* sprites are there really?** Frame counts and cross-archive reuse are unknown until the catalogue exists. This sizes the entire effort and decides whether hand-review of generative output is even tractable.
 4. **What is the target internal resolution / scale factor(s)?** 2×, 3×, 4×, or a free hi-res? Integer scales keep pixel-art scalers and coordinate math clean; arbitrary scales do not.
 5. **Terrain tessellation and animation registration** — how much of the set has these constraints, and can a seam-aware / frame-coherent process handle them? (§5)
-6. **Where does the offline exporter live and what is authoritative?** `Draw_Picture_ASM` (`MoX/src/FLIC_Draw.c`) is the format authority. Does the exporter link the engine's decoder, or re-implement it standalone like `lbx_extract`? Reuse avoids a second, divergent format reader.
+6. **Where does the offline exporter live and what is authoritative?** `FLIC_Draw()` (`MoX/src/FLIC_Draw.c`) is the format authority. The Phase 1a tracer bullet settled the mechanism: `tools/lbx_image_export.c` links the engine (`STU MOX momlib Platform_Headless`, as `Extract_FONTS_LBX` already does) and calls `FLIC_Draw()` into its own 320×200 page, so there is no second format reader.
 7. **Fonts.** Excluded here (§3), but the eventual approach (raster upscale vs. vector replacement) should not be foreclosed by choices made for sprites.
 
 ---
@@ -182,3 +183,53 @@ Provisionally does **not** fit:
 `BRA-Native-Win32-Audio.md` recorded forcing MoM's 4-operator timbres into GENMIDI, a format they were never designed for, because it was the format the tool already accepted — and the loss was capped by the *format*, not by MoM. **The same shape is latent here:** flattening MoM's palette-indexed, runtime-recoloured sprites into finished RGB PNGs (because that is what OpenCV/ImageMagick/ML upscalers accept) would cap fidelity at the format's limits and silently discard runtime recolouring — a loss attributable to the intermediate format, not to the art.
 
 The rule this reinforces, again: **do not let the tool's preferred input format choose the fidelity ceiling.** Build the library first, look at the real art at real scale, and let MoM's data — not ImageMagick's or a model's convenient input — set the target.
+
+---
+
+## 11. Recoloring — mechanism and the mask approach (chosen direction)
+
+*(Conceptually this belongs with §2.3, which states the problem; it is placed last only to avoid renumbering the sections above.)*
+
+Recolouring is the one property that a naïve "export to RGB and upscale" pipeline silently destroys (§2.3). It is real, it is pervasive, and — importantly — it is **structured**, which is what makes it manageable at high resolution.
+
+### 11.1 How MoM recolours (two distinct mechanisms)
+
+| Mechanism | What it does | Evidence |
+|---|---|---|
+| **Reserved-index replacement — banner / team colour** | A unit's banner is **5 reserved palette indices (214–218)**, overwritten with the owning player's 5-colour ramp in a work area before the sprite is drawn | `MoM/src/UnitView.c:2683` — `Replace_Color(UnitDraw_WorkArea, 214 + i, COL_Banners[banner_id*5 + i])`, loop `i = 0..4` |
+| **256-entry remap LUT — general tint** | Every source index is mapped through a 256-entry lookup at blit time; the path for spell tints, fog/night dimming, and shading | `picture_remap_color_list[256]` (`MoX/src/FLIC_Draw.c:261`) via `Remap_Draw_Picture_ASM` (`:3521`) / `FLIC_Remap_Draw_Frame` (`:295`) |
+
+The two are different problems and want different solutions:
+
+- **Banner/team colour is a small, fixed, *spatial* region** — 5 known indices. Which pixels are "banner" is a property of the *sprite*, so it exports cleanly as a per-sprite mask.
+- **General tints are a *global*, whole-frame index→index transform** — not tied to particular pixels of one sprite, and often applied to the whole scene (fog, night). This is naturally an output-stage operation, not a per-sprite mask.
+
+### 11.2 The core tension this resolves
+
+HD detail wants **RGB** (what ML/generative upscalers emit); recolouring wants **indices or masks** (you cannot recolour a flattened RGB pixel). The four options considered:
+
+1. **Keep it indexed even at HD** — upscale the index map, recolour as today. Works only with deterministic pixel-art scalers (xBRZ/hqx); forecloses ML/generative output (which can't survive a snap back to 256 indices).
+2. **Mask / region separation** — export base RGB (banner pixels neutralised) + a mask of the recolourable region; tint the masked region by the player's ramp at draw time. Works with HD-RGB and *any* upscaler; standard modern team-colour technique; shader-friendly. **Chosen.**
+3. **Pre-bake every recolouring** — N copies per sprite. Explodes with tints, blocks adding a colour later. Rejected except as a last-resort fallback for a tiny fixed set.
+4. **Runtime palette-remap shader** — sprites as index-map textures, palette/LUT as a uniform, lookup in a fragment shader. Exact MoM semantics and free arbitrary recolour, but gives no *detail* unless paired with an upscaled index map (→ option 1's constraint).
+
+### 11.3 Decision — Option 2, split by recolour type
+
+- **Banner / team colour → per-sprite mask.** For each affected sprite the exporter emits (a) a base image with indices 214–218 neutralised and (b) a mask encoding *ramp position 0–4* per pixel. At draw time the masked region is tinted by looking up the owning player's 5-colour ramp (itself upscalable to a smooth gradient). Because the banner is only 5 known indices, generating the mask is nearly free and the technique composes with HD-RGB base art and any upscaler family.
+- **General tints (spells / fog / night / shading) → an output-stage LUT/shader pass**, independent of how sprites are stored. These are already a 256→256 index transform; re-expressing them as a shader uniform is the modern equivalent and avoids baking tint variants into assets at all.
+
+**Why this fits the "decide the Family after the library" stance:** the mask approach is compatible with output-frame upscaling *and* asset replacement *and* the hybrid — it does not force the Family choice (§4). It only rules *in* the HD-RGB upscaler classes while keeping banners working, and rules *out* Option 3's combinatorial baking.
+
+### 11.4 What Phase 1 must capture for this to be possible
+
+The mask approach needs data that only the exporter can produce, so it is folded into the Phase 1 library requirements (see the PRD/PLAN):
+
+1. **Reserved-index roles per sprite** — which pixels use indices 214–218 (banner), emitted as a mask alongside the base image.
+2. **The palette(s)** an entry is drawn under (already in scope), plus the banner ramp table `COL_Banners` for reference.
+3. **Which entries actually go through the remap LUT path at runtime** — best captured by an optional hook on both draw paths — `FLIC_Draw()` (LBX entries; `FLIC_Remap_Draw_Frame()` when remapped) and `Draw_Picture()` (decoded bitmaps; `Remap_Draw_Picture_ASM()` when remapped) — that logs the entry and the LUT in use. This answers the catalogue's `recoloured_runtime` column authoritatively instead of by heuristic, and tells us which sprites are tinted globally vs. recoloured by banner.
+
+### 11.5 Open sub-questions
+
+- **Ramp interpolation at HD.** The banner ramp is 5 discrete colours; at 4× do we want a smooth 5-stop gradient across the masked region, or keep hard bands? A fidelity call to make while looking at the library.
+- **Mask upscaling.** The base upscales as RGB; the mask must stay crisp (nearest-neighbour or a vector/SDF boundary) so the tinted region's edge matches the base. Verify no halo at the mask boundary.
+- **Do any non-banner sprites use the 214–218 range for non-banner pixels?** If an unrelated sprite legitimately uses those indices, the mask heuristic would false-positive. The runtime hook (11.4.3) plus a static scan settles this.

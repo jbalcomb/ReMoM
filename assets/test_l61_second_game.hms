@@ -1,0 +1,45 @@
+# test_l61_second_game.hms -- L61: the second game in the same process.
+#
+#   HeMoM --menu --seed1 12345 --scenario test_l61_second_game.hms --dump-save SAVE1.GAM
+#
+# Game 1: New Game through the UI, play 3 turns, then back to the Main Menu (Game -> Quit), as a player would.
+# Game 2: the same New Game, then save to slot 1 and quit.
+#
+# The turns are there so game 1 leaves turn-time state behind, not just New Game state.  After 3 turns the AI players'
+# _ai_landmass_war_targets (AF8) are non-zero on both planes (in game 1's Quit save, player[5].spells_list[0..23]).
+#
+# Original MoM restarted the program between games (Respawn MAGIC.EXE / launch WIZARDS.EXE), so
+# game 2 started from clean data.  Its SAVE1 dump must match test_l61_fresh.hms's; any difference
+# is state carried over from game 1 (L61).
+
+# === Game 1 ===
+wait 1s                   # let the Main Menu settle before the first click (see test_l61_fresh.hms)
+include test_l61_newgame_ui.hms
+
+# === Game 1: 3 turns ===
+# The stack is already patrolled, so there is no re-patrol click: clicking (290, 180) again lands on Next Turn and ends
+# an extra turn.
+next_turn
+wait 500ms
+click 54 38               # research picker (turn 1): top-left spell slot, as test_ai_5turns.hms
+wait_turn 1 30s
+wait 1s
+
+next_turn
+wait_turn 2 30s
+wait 1s
+
+next_turn
+wait_turn 3 30s
+wait 1s
+
+# === Back to the Main Menu: Game -> Save/Load screen -> Quit ===
+key G
+wait 1s
+click 62 177              # Quit button at (43,171)-(82,184)
+wait 1s
+
+# === Game 2 ===
+include test_l61_newgame_ui.hms
+
+include scenario_tail_save_and_quit.hms

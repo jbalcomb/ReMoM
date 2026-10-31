@@ -1125,36 +1125,25 @@ void Cast_Spell_Overland(int16_t player_idx)
                     }
 
                     // @@After_CastUnitEnch
-
-                    if(player_idx == HUMAN_PLAYER_IDX)
+                    if(cast_can_continue == ST_TRUE)
                     {
-                        
-                        Allocate_Reduced_Map();
-
-                        Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
-
-                        Spell_Animation_Load_Graphics(spell_idx);
-
-                        Spell_Animation_Screen__WIP(_UNITS[spell_target_idx].wx, _UNITS[spell_target_idx].wy, _UNITS[spell_target_idx].wp);
-
-                        Full_Draw_Main_Screen();
-
-                    }
-
-                    _UNITS[spell_target_idx].enchantments |= spell_data_table[spell_idx].enchantments;
-
-                    if(spell_idx == spl_Heroism)
-                    {
-
-                        _UNITS[spell_target_idx].Level = (int8_t)Calc_Unit_Level(spell_target_idx);
-
-                    }
-
-                    if(spell_idx == spl_Black_Channels)
-                    {
-
-                        _UNITS[spell_target_idx].mutations |= UM_UNDEAD;
-
+                        if(player_idx == HUMAN_PLAYER_IDX)
+                        {
+                            Allocate_Reduced_Map();
+                            Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
+                            Spell_Animation_Load_Graphics(spell_idx);
+                            Spell_Animation_Screen__WIP(_UNITS[spell_target_idx].wx, _UNITS[spell_target_idx].wy, _UNITS[spell_target_idx].wp);
+                            Full_Draw_Main_Screen();
+                        }
+                        _UNITS[spell_target_idx].enchantments |= spell_data_table[spell_idx].enchantments;
+                        if(spell_idx == spl_Heroism)
+                        {
+                            _UNITS[spell_target_idx].Level = (int8_t)Calc_Unit_Level(spell_target_idx);
+                        }
+                        if(spell_idx == spl_Black_Channels)
+                        {
+                            _UNITS[spell_target_idx].mutations |= UM_UNDEAD;
+                        }
                     }
 
                 } break;  /* case scc_Unit_Enchantment, scc_Unit_Enchantment_Normal_Only:*/
@@ -1926,31 +1915,29 @@ void Cast_Spell_Overland(int16_t player_idx)
 
         }
 
-    }
-
-
-    /*
+        /*
         BEGIN:  Nature's Wrath
-    */
-    {
-        if(
-            (MultiPurpose_Local_Var >= 0)
-            &&
-            (
-                (spell_data_table[spell_idx].magic_realm == sbr_Chaos)
-                ||
-                (spell_data_table[spell_idx].magic_realm == sbr_Death)
-            )
-        )
+        */
         {
-            g_ai_recompute_needed = ST_TRUE;
-            Call_Forth_The_Force_Of_Nature(player_idx);
+            if(
+                (MultiPurpose_Local_Var >= 0)
+                &&
+                (
+                    (spell_data_table[spell_idx].magic_realm == sbr_Chaos)
+                    ||
+                    (spell_data_table[spell_idx].magic_realm == sbr_Death)
+                )
+            )
+            {
+                g_ai_recompute_needed = ST_TRUE;
+                Call_Forth_The_Force_Of_Nature(player_idx);
+            }
         }
-    }
-    /*
-        END:  Nature's Wrath
-    */
+        /*
+            END:  Nature's Wrath
+        */
 
+    }
 
     _players[player_idx].casting_cost_remaining = 0;
     _players[player_idx].casting_cost_original = 0;

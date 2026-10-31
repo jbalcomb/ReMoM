@@ -178,7 +178,7 @@ char aWildGame[] = "Wild Game";
 // WZD dseg:55B6
 char a2Food_0[] = "+2 food";
 // WZD dseg:55BE
-char str_Nightshade__ovr094[] = "Nightshade',0 ; should use dseg:2";
+char str_Nightshade__ovr094[] = "Nightshade";
 // WZD dseg:55C9
 char aProtectsCityFr[] = "Protects city from spells";
 // WZD dseg:55E3

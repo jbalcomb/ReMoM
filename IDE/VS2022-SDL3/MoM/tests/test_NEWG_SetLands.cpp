@@ -211,7 +211,7 @@ TEST_F(NEWG_SetSpecLands_test, TopRows_ConvertToTundra)
     {
         for (int x = 0; x < WORLD_WIDTH; x++)
         {
-            if (GET_TERRAIN_TYPE(x, y, ARCANUS_PLANE) == tt_Tundra1)
+            if(GET_TERRAIN_TYPE(x, y, ARCANUS_PLANE) == tt_Tundra1)
             {
                 tundra_count++;
             }
@@ -231,7 +231,7 @@ TEST_F(NEWG_SetSpecLands_test, BottomRows_ConvertToTundra)
     {
         for (int x = 0; x < WORLD_WIDTH; x++)
         {
-            if (GET_TERRAIN_TYPE(x, y, ARCANUS_PLANE) == tt_Tundra1)
+            if(GET_TERRAIN_TYPE(x, y, ARCANUS_PLANE) == tt_Tundra1)
             {
                 tundra_count++;
             }
@@ -260,7 +260,7 @@ TEST_F(NEWG_SetSpecLands_test, CreatesDesertPatches)
     {
         for (int x = 0; x < WORLD_WIDTH; x++)
         {
-            if (GET_TERRAIN_TYPE(x, y, ARCANUS_PLANE) == tt_Desert1)
+            if(GET_TERRAIN_TYPE(x, y, ARCANUS_PLANE) == tt_Desert1)
             {
                 desert_count++;
             }
@@ -289,7 +289,7 @@ TEST_F(NEWG_SetSpecLands_test, CreatesSwampPatches)
     {
         for (int x = 0; x < WORLD_WIDTH; x++)
         {
-            if (GET_TERRAIN_TYPE(x, y, ARCANUS_PLANE) == tt_Swamp1)
+            if(GET_TERRAIN_TYPE(x, y, ARCANUS_PLANE) == tt_Swamp1)
             {
                 swamp_count++;
             }
@@ -318,7 +318,7 @@ TEST_F(NEWG_SetSpecLands_test, WorksOnMyrrorPlane)
     {
         for (int x = 0; x < WORLD_WIDTH; x++)
         {
-            if (GET_TERRAIN_TYPE(x, y, MYRROR_PLANE) == tt_Tundra1)
+            if(GET_TERRAIN_TYPE(x, y, MYRROR_PLANE) == tt_Tundra1)
             {
                 tundra_count++;
             }

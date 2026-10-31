@@ -36,8 +36,8 @@ TEST_F(Terrain_Special_test, Desert_Arcanus_ReturnsGems)
     {
         Seed_Random(i);
         int16_t special = Desert_Terrain_Special(ARCANUS_PLANE);
-        if (special == ts_Gems) gems_count++;
-        if (special == ts_QuorkCrystals) quork_count++;
+        if(special == ts_Gems) gems_count++;
+        if(special == ts_QuorkCrystals) quork_count++;
     }
     
     // Assert - Gems should be more common (6/9) than Quork (3/9)
@@ -58,9 +58,9 @@ TEST_F(Terrain_Special_test, Desert_Myrror_ReturnsValidSpecial)
         Seed_Random(i);
         int16_t special = Desert_Terrain_Special(MYRROR_PLANE);
         
-        if (special == ts_Gems) found_gems = true;
-        if (special == ts_QuorkCrystals) found_quork = true;
-        if (special == ts_CrysxCrystals) found_crysx = true;
+        if(special == ts_Gems) found_gems = true;
+        if(special == ts_QuorkCrystals) found_quork = true;
+        if(special == ts_CrysxCrystals) found_crysx = true;
     }
     
     // Assert - Myrror can return all three types
@@ -84,12 +84,12 @@ TEST_F(Terrain_Special_test, Hills_Arcanus_ReturnsValidSpecial)
         Seed_Random(i);
         int16_t special = Hills_Terrain_Special(ARCANUS_PLANE);
         
-        if (special == ts_Iron) found_iron = true;
-        if (special == ts_Coal) found_coal = true;
-        if (special == ts_Silver) found_silver = true;
-        if (special == ts_Gold) found_gold = true;
-        if (special == ts_Mithril) found_mithril = true;
-        if (special == ts_Adamantium) found_adamantium = true;
+        if(special == ts_Iron) found_iron = true;
+        if(special == ts_Coal) found_coal = true;
+        if(special == ts_Silver) found_silver = true;
+        if(special == ts_Gold) found_gold = true;
+        if(special == ts_Mithril) found_mithril = true;
+        if(special == ts_Adamantium) found_adamantium = true;
     }
     
     // Assert - Arcanus hills should have all except Adamantium
@@ -112,8 +112,8 @@ TEST_F(Terrain_Special_test, Hills_Myrror_ReturnsValidSpecial)
         Seed_Random(i + 1000);
         int16_t special = Hills_Terrain_Special(MYRROR_PLANE);
         
-        if (special == ts_Adamantium) found_adamantium = true;
-        if (special == ts_Mithril) found_mithril = true;
+        if(special == ts_Adamantium) found_adamantium = true;
+        if(special == ts_Mithril) found_mithril = true;
     }
     
     // Assert - Myrror can return Adamantium
@@ -136,12 +136,12 @@ TEST_F(Terrain_Special_test, Mountain_Arcanus_ReturnsValidSpecial)
         Seed_Random(i);
         int16_t special = Mountain_Terrain_Special(ARCANUS_PLANE);
         
-        if (special == ts_Iron) found_iron = true;
-        if (special == ts_Coal) found_coal = true;
-        if (special == ts_Silver) found_silver = true;
-        if (special == ts_Gold) found_gold = true;
-        if (special == ts_Mithril) found_mithril = true;
-        if (special == ts_Adamantium) found_adamantium = true;
+        if(special == ts_Iron) found_iron = true;
+        if(special == ts_Coal) found_coal = true;
+        if(special == ts_Silver) found_silver = true;
+        if(special == ts_Gold) found_gold = true;
+        if(special == ts_Mithril) found_mithril = true;
+        if(special == ts_Adamantium) found_adamantium = true;
     }
     
     // Assert - Arcanus mountains should have all except Adamantium
@@ -163,7 +163,7 @@ TEST_F(Terrain_Special_test, Mountain_Myrror_CanReturnAdamantium)
         Seed_Random(i + 2000);
         int16_t special = Mountain_Terrain_Special(MYRROR_PLANE);
         
-        if (special == ts_Adamantium) found_adamantium = true;
+        if(special == ts_Adamantium) found_adamantium = true;
     }
     
     // Assert
@@ -180,8 +180,8 @@ TEST_F(Terrain_Special_test, Mountain_Coal_MoreCommonThanSilver)
     {
         Seed_Random(i);
         int16_t special = Mountain_Terrain_Special(ARCANUS_PLANE);
-        if (special == ts_Coal) coal_count++;
-        if (special == ts_Silver) silver_count++;
+        if(special == ts_Coal) coal_count++;
+        if(special == ts_Silver) silver_count++;
     }
     
     // Assert - Coal (5/18) should be more common than Silver (2/18)

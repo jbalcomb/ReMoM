@@ -846,7 +846,7 @@ enum OVL_Tiles_Extended
     _Tundra10100111 = 0x2F8,
     _Tundra10101111 = 0x2F9,
 
-    _TerType_Count  = 0x2FA,    /* start of range for Tundra autotiling */
+    _TerType_Count  = 0x2FA,    /* 762 */  /* start of range for Tundra autotiling */
 
     tte_River_Placeholder = TT_RIVER_PLACEHOLDER
 

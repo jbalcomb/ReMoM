@@ -62,7 +62,7 @@ void Turn_Off_City_Enchantment(int16_t city_idx, int16_t ench_idx);
 int16_t City_Remove_Building(int16_t bldg_idx, int16_t city_idx);
 
 // WZD o55p13
-int16_t City_Sell_Building(int16_t city_idx, int16_t bldg_idx, int16_t gold_amount);
+int16_t City_Sell_Building(int16_t bldg_idx, int16_t city_idx, int16_t gold_amount);
 
 // WZD o55p14
 int16_t City_Building_Has_Requirement(int16_t bldg_idx, int16_t city_idx, int16_t * reqd_bldg_idx);

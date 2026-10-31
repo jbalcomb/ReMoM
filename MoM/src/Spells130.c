@@ -358,7 +358,7 @@ int16_t Cast_Earth_Lore(int16_t player_idx)
             Update_Remap_Color_Range(1, 4);
 
             // SPECFX.LBX, 045  "FULGRN2"   "Earth lore"
-            Open_File_Animation__HACK(specfx_lbx_file__ovr130, 45);
+            Open_File_Animation(specfx_lbx_file__ovr130, 45);
 
             Spell_Animation_Load_Sound_Effect__WIP(spl_Earth_Lore);
 
@@ -378,7 +378,7 @@ int16_t Cast_Earth_Lore(int16_t player_idx)
 
                 Main_Screen_Draw();
 
-                Draw_File_Animation__HACK();
+                Draw_File_Animation();
 
                 PageFlip_FX();
 
@@ -1660,7 +1660,7 @@ int16_t Cast_Enchant_Road(int16_t player_idx)
             Update_Remap_Color_Range(1, 4);
 
             // SPECFX.LBX, 046  "FULLBLUE"  "Enchant road"
-            Open_File_Animation__HACK(specfx_lbx_file__ovr130, 46);
+            Open_File_Animation(specfx_lbx_file__ovr130, 46);
 
             for(itr = 0; itr < 22; itr++)
             {
@@ -1675,7 +1675,7 @@ int16_t Cast_Enchant_Road(int16_t player_idx)
 
                 Main_Screen_Draw();
 
-                Draw_File_Animation__HACK();
+                Draw_File_Animation();
 
                 PageFlip_FX();
 

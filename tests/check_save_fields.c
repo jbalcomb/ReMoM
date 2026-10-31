@@ -23,12 +23,21 @@
 #include <ctype.h>
 
 #define MAX_LINE        512
-#define MAX_DUMP_LINES  50000
 
-static char  *dump_keys[MAX_DUMP_LINES];
-static char  *dump_vals[MAX_DUMP_LINES];
-static char   dump_storage[MAX_DUMP_LINES * MAX_LINE];
+/* Grown as the dump is read.  A fixed 50000-line table silently dropped everything past line 50000
+   of a full save dump (66086 lines), so those fields always read as "not found". */
+static char **dump_keys = NULL;
+static char **dump_vals = NULL;
 static int    dump_count = 0;
+static int    dump_capacity = 0;
+
+static char *Copy_String(const char *s)
+{
+    size_t len = strlen(s) + 1;
+    char  *copy = (char *)malloc(len);
+    if(copy != NULL) { memcpy(copy, s, len); }
+    return copy;
+}
 
 static char *Trim(char *s)
 {
@@ -75,7 +84,6 @@ static int Load_Dump(const char *filepath)
 {
     FILE *fp;
     char  raw[MAX_LINE];
-    char *storage_ptr = dump_storage;
 
     fp = fopen(filepath, "r");
     if(fp == NULL)
@@ -84,35 +92,46 @@ static int Load_Dump(const char *filepath)
         return 1;
     }
 
-    while(fgets(raw, sizeof(raw), fp) != NULL && dump_count < MAX_DUMP_LINES)
+    while(fgets(raw, sizeof(raw), fp) != NULL)
     {
         char *line = Trim(raw);
         char *key;
         char *val;
-        size_t key_len;
-        size_t val_len;
 
         if(*line == '\0' || *line == '#') { continue; }
         if(Parse_Key_Value(line, &key, &val) != 0) { continue; }
 
-        key_len = strlen(key) + 1;
-        val_len = strlen(val) + 1;
-
-        /* Bounds check on storage. */
-        if((size_t)((storage_ptr - dump_storage) + key_len + val_len) > sizeof(dump_storage))
+        if(dump_count == dump_capacity)
         {
-            fprintf(stderr, "check_save_fields: dump_storage exhausted\n");
+            int    new_capacity = (dump_capacity == 0) ? 65536 : (dump_capacity * 2);
+            char **new_keys = (char **)realloc(dump_keys, (size_t)new_capacity * sizeof(char *));
+            char **new_vals;
+            if(new_keys == NULL)
+            {
+                fprintf(stderr, "check_save_fields: out of memory growing the dump table to %d lines (%s)\n", new_capacity, filepath);
+                fclose(fp);
+                return 1;
+            }
+            dump_keys = new_keys;
+            new_vals = (char **)realloc(dump_vals, (size_t)new_capacity * sizeof(char *));
+            if(new_vals == NULL)
+            {
+                fprintf(stderr, "check_save_fields: out of memory growing the dump table to %d lines (%s)\n", new_capacity, filepath);
+                fclose(fp);
+                return 1;
+            }
+            dump_vals = new_vals;
+            dump_capacity = new_capacity;
+        }
+
+        dump_keys[dump_count] = Copy_String(key);
+        dump_vals[dump_count] = Copy_String(val);
+        if((dump_keys[dump_count] == NULL) || (dump_vals[dump_count] == NULL))
+        {
+            fprintf(stderr, "check_save_fields: out of memory at dump line %d (%s)\n", dump_count + 1, filepath);
             fclose(fp);
             return 1;
         }
-
-        memcpy(storage_ptr, key, key_len);
-        dump_keys[dump_count] = storage_ptr;
-        storage_ptr += key_len;
-
-        memcpy(storage_ptr, val, val_len);
-        dump_vals[dump_count] = storage_ptr;
-        storage_ptr += val_len;
 
         dump_count++;
     }
@@ -124,11 +143,17 @@ static int Load_Dump(const char *filepath)
 /* Find the value for a given key in the loaded dump, or NULL if not found. */
 static const char *Lookup_Dump_Field(const char *key)
 {
+    /* Assertions usually follow the dump's order (a whole dump used as the assertions file does
+       exactly), so search from just after the previous match and wrap around. */
+    static int next_start = 0;
+    int n;
     int i;
-    for (i = 0; i < dump_count; i++)
+    for (n = 0; n < dump_count; n++)
     {
+        i = (next_start + n) % dump_count;
         if(strcmp(dump_keys[i], key) == 0)
         {
+            next_start = i + 1;
             return dump_vals[i];
         }
     }

@@ -1,9 +1,11 @@
 # STUB and WIP Function TODO List
 
 ## AdvsrScr
-- [ ] Cartograph_Screen_Draw_Map__WIP
-- [ ] Cartographer_Screen__WIP
-- [ ] Cartographer_Screen_Draw__WIP
+## 'Cartograph Screen'
+- [x] Cartographer_Screen
+- [x] Cartographer_Screen_Draw
+- [x] Cartograph_Screen_Draw_Map
+- [x] Cartograph_Screen_Draw_Map_Terrain
 
 ## AIDATA
 - [ ] AI_Magic_Strategy__WIP

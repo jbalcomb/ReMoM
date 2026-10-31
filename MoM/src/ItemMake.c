@@ -1493,7 +1493,7 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
 
             if(Item_Type_Icon_Ranges[weapon_type_num].start > m_itemmake_item_icon_idx)
             {
-                m_itemmake_item_icon_idx = Item_Type_Icon_Ranges[weapon_type_num].count;
+                m_itemmake_item_icon_idx += Item_Type_Icon_Ranges[weapon_type_num].count;
             }
 
         }

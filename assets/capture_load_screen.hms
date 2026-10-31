@@ -1,0 +1,21 @@
+# capture_load_screen.hms -- drive ReMoM from the main menu to the Load screen and hold it there.
+#
+# Consumed by `ReMoM --capture DIR --scenario capture_load_screen.hms`: the capture records the
+# Load screen exactly as presented, which is the in-game oracle for tools/lbx_image_export
+# (LOAD.LBX entry 0 -- doc/@AI_Plans/PLAN-Graphics-Upscale.md, Phase 1a).
+#
+# Needs at least one SAVEn.GAM in the run directory: the main menu registers the L hotkey only
+# when a save exists (MoM/src/MainMenu.c, Check_For_Saved_Games).
+#
+# Actions (durations require an explicit unit suffix):
+#   wait_screen NAME   block until current_screen == scr_NAME (30s timeout)
+#   wait <N>s          wait N seconds (wall clock)
+#   key <char>         press a key
+#   quit               set quit flag
+
+wait_screen Main_Menu_Screen
+wait 2s
+key L
+wait_screen Load_Screen
+wait 3s
+quit

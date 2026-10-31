@@ -232,6 +232,19 @@ void Load_WZD_Resources(void)
 }
 
 
+/* CLAUDE  L57: the pool never frees; WIZARDS.EXE loaded these once per launch, ReMoM reaches this on every Continue/Load */
+int16_t g_wzd_resources_loaded = ST_FALSE;
+
+void Load_WZD_Resources_Once(void)
+{
+    if(g_wzd_resources_loaded == ST_FALSE)
+    {
+        Load_WZD_Resources();
+        g_wzd_resources_loaded = ST_TRUE;
+    }
+}
+
+
 // WZD o52p02
 // drake178: UNIT_Upkeep_Reset()
 /*

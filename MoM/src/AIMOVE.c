@@ -5581,9 +5581,19 @@ if we can move units off the current landmass, make sure the stage-square is the
             landmass_node_count++;
             landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
         }
-        /* OGBUG: possible division by 0, should `if(landmass_node_count > 0)` */
-        landmass_node_centroid_wx /= landmass_node_count;
-        landmass_node_centroid_wy /= landmass_node_count;
+        /* OGBUG: divide by zero, should `if(landmass_node_count > 0)` */
+        /* HACK */  /* landmass_node_centroid_wx /= landmass_node_count; */
+        /* HACK */  /* landmass_node_centroid_wy /= landmass_node_count; */
+        /* HACK */  if(landmass_node_count == 0)
+        /* HACK */  {
+        /* HACK */      landmass_node_centroid_wx = 0;
+        /* HACK */      landmass_node_centroid_wy = 0;
+        /* HACK */  }
+        /* HACK */  else
+        /* HACK */  {
+        /* HACK */      landmass_node_centroid_wx /= landmass_node_count;
+        /* HACK */      landmass_node_centroid_wy /= landmass_node_count;
+        /* HACK */  }
         min_delta_distance = 1000;
         landmass_node_index = _ai_landmass_dock_squares_heads[wp][landmass_idx];
         while(landmass_node_index != ST_UNDEFINED)
@@ -6808,8 +6818,18 @@ if we can move units off the current landmass, make sure the stage-square is the
                     landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
                 }
                 /* OGBUG: divide by zero, should `if(landmass_node_count > 0)` */
-                landmass_node_centroid_wx /= landmass_node_count;
-                landmass_node_centroid_wy /= landmass_node_count;
+                /* HACK */  /* landmass_node_centroid_wx /= landmass_node_count; */
+                /* HACK */  /* landmass_node_centroid_wy /= landmass_node_count; */
+                /* HACK */  if(landmass_node_count == 0)
+                /* HACK */  {
+                /* HACK */      landmass_node_centroid_wx = 0;
+                /* HACK */      landmass_node_centroid_wy = 0;
+                /* HACK */  }
+                /* HACK */  else
+                /* HACK */  {
+                /* HACK */      landmass_node_centroid_wx /= landmass_node_count;
+                /* HACK */      landmass_node_centroid_wy /= landmass_node_count;
+                /* HACK */  }
                 min_delta_distance = 1000;
                 landmass_node_index = _ai_landmass_dock_squares_heads[wp][landmass_idx];
                 while(landmass_node_index != ST_UNDEFINED)

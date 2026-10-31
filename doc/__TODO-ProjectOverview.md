@@ -1,4 +1,9 @@
 
+compare code, function by function, with binary AI replication
+incorporate bug list from https://github.com/angree/Amiga-68K-ReMoM
+
+
+
 Draw_Expanding_Bitmap is an animated screen transition effect — a "grow-out" or zoom-in reveal. It takes a source image and progressively scales it up from a starting point until it fills the full 320x200 screen.
 
 Here's how it works step by step:

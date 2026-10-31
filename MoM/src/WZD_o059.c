@@ -477,6 +477,7 @@ void Units_In_Tower(int16_t troop_count, int16_t troops[], int16_t map_p)
             unit_idx = troops[itr_units];
             if(_UNITS[unit_idx].in_tower == ST_TRUE)
             {
+                _UNITS[unit_idx].wp = (int8_t)map_p;
                 _UNITS[unit_idx].in_tower = ST_FALSE;
             }
         }
@@ -486,7 +487,6 @@ void Units_In_Tower(int16_t troop_count, int16_t troops[], int16_t map_p)
 
 
 // WZD o59p14
-// drake178: GAME_InTowerRefresh()
 /*
     updates all _UNITS[].in_tower
         including 'Planar Seal'
@@ -494,34 +494,31 @@ void Units_In_Tower(int16_t troop_count, int16_t troops[], int16_t map_p)
 void All_Units_In_Towers(void)
 {
     int16_t have_planar_seal = 0;
-    int16_t itr_units = 0; // _SI_
-    int16_t itr_towers = 0; // _DI_
-
+    int16_t itr_units = 0;
+    int16_t itr_towers = 0;
     have_planar_seal = Check_Planar_Seal();
-
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
         _UNITS[itr_units].in_tower = ST_FALSE;
-
         for(itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++)
         {
             if(
                 (_UNITS[itr_units].wx == _TOWERS[itr_towers].wx)
                 &&
                 (_UNITS[itr_units].wy == _TOWERS[itr_towers].wy)
-                &&
-                (have_planar_seal == ST_FALSE)
             )
             {
-                _UNITS[itr_units].in_tower = ST_TRUE;
-            }
-            else
-            {
-                _UNITS[itr_units].in_tower = ST_FALSE;
+                if(have_planar_seal == ST_TRUE)
+                {
+                    _UNITS[itr_units].in_tower = ST_FALSE;
+                }
+                else
+                {
+                    _UNITS[itr_units].in_tower = ST_TRUE;
+                }
             }
         }
     }
-
 }
 
 

@@ -2041,31 +2041,28 @@ void Add_Unit_Action_Fields(void)
         _done_button   = Add_Button_Field(246, 176, "", main_done_button, 'D', ST_UNDEFINED);
         _patrol_button = Add_Button_Field(280, 176, "", main_patrol_button, 0, ST_UNDEFINED);
         _wait_button   = Add_Button_Field(246, 186, "", main_wait_button, 'W', ST_UNDEFINED);
+        if(special_action_flag != ST_UNDEFINED)
+        {
+            if(special_action_flag == 2)
+            {
+                _special_button = Add_Button_Field(280, 186, "", main_purify_button, 0, ST_UNDEFINED);
+            }
+            else if(special_action_flag == 9)
+            {
+                _special_button = Add_Button_Field(280, 186, "", main_meld_button, 0, ST_UNDEFINED);
+            }
+            else
+            {
+                _special_button = Add_Button_Field(280, 186, "", main_build_button, 'B', ST_UNDEFINED);
+            }
+        }
     }
-
-    if(special_action_flag != ST_UNDEFINED)
-    {
-        if(special_action_flag == 2)
-        {
-            _special_button = Add_Button_Field(280, 186, "", main_purify_button, 0, ST_UNDEFINED);
-        }
-        else if(special_action_flag == 9)
-        {
-            _special_button = Add_Button_Field(280, 186, "", main_meld_button, 0, ST_UNDEFINED);
-        }
-        else
-        {
-            _special_button = Add_Button_Field(280, 186, "", main_build_button, 'B', ST_UNDEFINED);
-        }
-    }
-
     if(_unit_stack_count < 1)
     {
         _done_button = INVALID_FIELD;
         _patrol_button = INVALID_FIELD;
         _wait_button = INVALID_FIELD;
         _special_button = INVALID_FIELD;
-
         if(all_units_moved == ST_FALSE)
         {
             _wait_button = Add_Button_Field(246, 186, "", main_wait_button, 'W', ST_UNDEFINED);
@@ -2900,7 +2897,7 @@ void Build_Unit_Stack(int16_t player_idx, int16_t wp, int16_t wx, int16_t wy)
 
     }
 
-    for (itr_units = 0; itr_units < _units; itr_units++)
+    for(itr_units = 0; itr_units < _units; itr_units++)
     {
 
         unit_idx = itr_units;
@@ -3350,7 +3347,7 @@ int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp)
         goto Failure;
     }
 
-    dst_city_idx = City_At_Square__2(wx, wy, wp);
+    dst_city_idx = Square_Has_City_Dupe(wx, wy, wp);
 
     if(dst_city_idx == ST_UNDEFINED)
     {
@@ -3370,7 +3367,7 @@ int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp)
 
     unit_idx = _unit_stack[0].unit_idx;
 
-    src_city_idx = City_At_Square__2(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
+    src_city_idx = Square_Has_City_Dupe(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
 
     if(
         (dst_city_idx != ST_UNDEFINED)
@@ -4314,11 +4311,11 @@ int16_t Active_Stack_On_Astral_Gate(void)
 
     unit_idx = _unit_stack[0].unit_idx;
 
-    city_idx = City_At_Square__2(UNITX(), UNITY(), 0);
+    city_idx = Square_Has_City_Dupe(UNITX(), UNITY(), 0);
 
     if(city_idx == ST_UNDEFINED)
     {
-        city_idx = City_At_Square__2(UNITX(), UNITY(), 1);
+        city_idx = Square_Has_City_Dupe(UNITX(), UNITY(), 1);
     }
 
     if(
@@ -4355,7 +4352,7 @@ XREFs
 j_Stack_Moves_Active()
     Main_Screen()
     Move_Stack_DirKey
-    Move_Stack
+    Update_Stack_Active
 
 
     loops through current stack
@@ -4496,15 +4493,15 @@ int16_t Stack_Moves(void)
 
 
 // WZD o63p14
-// drake178: RP_TILE_HasCity2
-// functionally identical to TILE_HasCity, would be byte identical if it wasn't for the reversed order of checking the three parameters
-int16_t City_At_Square__2(int16_t wx, int16_t wy, int16_t wp)
+/*
+Square_Has_City_Dupe() === Square_Has_City()
+...different order of checking the three parameters
+*/
+int16_t Square_Has_City_Dupe(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t has_city;  // _SI_
-    int16_t itr;  // _CX_
-
+    int16_t has_city = 0;
+    int16_t itr = 0;
     has_city = ST_UNDEFINED;
-
     for(itr = 0; ((itr < _cities) && (has_city == ST_UNDEFINED)); itr++)
     {
         if(
@@ -4516,7 +4513,6 @@ int16_t City_At_Square__2(int16_t wx, int16_t wy, int16_t wp)
             has_city = itr;
         }
     }
-
     return has_city;
 }
 
@@ -6113,7 +6109,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
             &&
             (_UNITS[itr_units].wy == src_wy)
             &&
-            (_landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == tt_Ocean)
+            (_landmasses[((wp * WORLD_SIZE) + (dst_wy * WORLD_WIDTH) + dst_wx)] == tt_Ocean)
         )
         {
             dst_troops_carry_capacity = 0;
@@ -6124,12 +6120,12 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
             }
             if(dst_troops_carry_capacity > 0)
             {
-                Player_Army_At_Square(dst_wx, dst_wy, wp, player_idx, &checked_troop_count, &checked_troops[0]);
+                Player_Army_At_Square(unit_wx, unit_wy, wp, player_idx, &checked_troop_count, &checked_troops[0]);
                 checked_troops_boatriders_count = checked_troop_count;
                 for(itr_troops = 0; itr_troops < checked_troop_count; itr_troops++)
                 {
                     if(
-                        (_UNITS[checked_troops[itr_troops]].type > ut_Chosen) ||
+                        (_UNITS[checked_troops[itr_troops]].type <= ut_Chosen) ||
                         (Unit_Has_AirTravel_Item(checked_troops[itr_troops]) == ST_TRUE) ||
                         (Unit_Has_WaterTravel_Item(checked_troops[itr_troops]) == ST_TRUE) ||
                         (Unit_Has_Swimming(checked_troops[itr_troops]) == ST_TRUE) ||
@@ -6139,14 +6135,15 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
                     {
                         checked_troops_boatriders_count--;
                     }
-                    if(
-                        ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity)
-                        &&
-                        (checked_troops_boatriders_count <= MAX_STACK)
-                    )
-                    {
-                        ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = 2;
-                    }
+                }
+                /*OGBUG  should be `(checked_troops_boatriders_count <= dst_troops_carry_capacity)`, not `((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity)` */
+                if(
+                    ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity)
+                    &&
+                    (checked_troops_boatriders_count <= MAX_STACK)
+                )
+                {
+                    ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = 2;
                 }
             }
 
@@ -6168,7 +6165,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
         }
         else
         {
-            if(_landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == tt_Ocean)
+            if(_landmasses[((wp * WORLD_SIZE) + (dst_wy * WORLD_WIDTH) + dst_wx)] == tt_Ocean)
             {
                 dst_troops_carry_capacity = 0;
                 Player_Army_At_Square(dst_wx, dst_wy, wp, player_idx, &dst_troop_count, &dst_troops[0]);
@@ -6182,7 +6179,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
                     for(itr_troops = 0; itr_troops < checked_troop_count; itr_troops++)
                     {
                         if(
-                            (_UNITS[checked_troops[itr_troops]].type > ut_Chosen) ||
+                            (_UNITS[checked_troops[itr_troops]].type <= ut_Chosen) ||
                             (Unit_Has_AirTravel_Item(checked_troops[itr_troops]) == ST_TRUE) ||
                             (Unit_Has_WaterTravel_Item(checked_troops[itr_troops]) == ST_TRUE) ||
                             (Unit_Has_Swimming(checked_troops[itr_troops]) == ST_TRUE) ||
@@ -6192,14 +6189,15 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
                         {
                             checked_troops_boatriders_count--;
                         }
-                        if(
-                            ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity)
-                            &&
-                            (checked_troops_boatriders_count <= MAX_STACK)
-                        )
-                        {
-                            ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = 2;
-                        }
+                    }
+                    /*OGBUG  should be `(checked_troops_boatriders_count <= dst_troops_carry_capacity)`, not `((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity)` */
+                    if(
+                        ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity)
+                        &&
+                        (checked_troops_boatriders_count <= MAX_STACK)
+                    )
+                    {
+                        ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = 2;
                     }
                 }
             }
@@ -6552,7 +6550,7 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
                 for(itr_troops = 0; itr_troops < Unit_Count; itr_troops++)
                 {
                     if(
-                        (_UNITS[Units[itr_troops]].type > ut_Chosen) ||
+                        (_UNITS[Units[itr_troops]].type <= ut_Chosen) ||
                         (Unit_Has_AirTravel_Item(Units[itr_troops]) == ST_TRUE) ||
                         (Unit_Has_WaterTravel_Item(Units[itr_troops]) == ST_TRUE) ||
                         (Unit_Has_Swimming(Units[itr_troops]) == ST_TRUE) ||
@@ -6567,18 +6565,19 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
                 for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
                 {
                     if(
-                        (_UNITS[Units[itr_troops]].type > ut_Chosen) ||
-                        (Unit_Has_AirTravel_Item(Units[itr_troops]) == ST_TRUE) ||
-                        (Unit_Has_WaterTravel_Item(Units[itr_troops]) == ST_TRUE) ||
-                        (Unit_Has_Swimming(Units[itr_troops]) == ST_TRUE) ||
-                        (Unit_Has_WindWalking(Units[itr_troops]) == ST_TRUE) ||
-                        (Unit_Has_AirTravel(Units[itr_troops]) == ST_TRUE)
+                        (_UNITS[troops[itr_troops]].type <= ut_Chosen) ||
+                        (Unit_Has_AirTravel_Item(troops[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_WaterTravel_Item(troops[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_Swimming(troops[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_WindWalking(troops[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_AirTravel(troops[itr_troops]) == ST_TRUE)
                     )
                     {
                         src_boatriders_count--;
                     }
                 }
 
+                /*OGBUG  should be `((dst_boatriders_count + src_boatriders_count) > Transport_Capacity)`, not `((dst_boatriders_count + src_boatriders_count - 1) > Transport_Capacity)` */
                 if((dst_boatriders_count + src_boatriders_count - 1) > Transport_Capacity)
                 {
                     Path_Length = itr_Path_Length;                    
@@ -6647,26 +6646,18 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
 // sub_7E597()
 
 // WZD o97p03
-// drake178: TILE_HasCity()
 /*
+Square_Has_City() === Square_Has_City_Dupe()
+...different order of checking the three parameters
 */
-/*
-    returns city_idx or -1
 
-TODO  ¿ vs. City_At_Square__2() ?
-*/
 int16_t Square_Has_City(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t square_has_city = 0;
     int16_t itr_cities = 0;
-
-    itr_cities = 0;
-
     square_has_city = ST_UNDEFINED;
-
-    while((itr_cities++ < _cities) && (square_has_city == ST_UNDEFINED))
+    for(itr_cities = 0; (itr_cities < _cities) && (square_has_city == ST_UNDEFINED); itr_cities++)
     {
-
         if(
             (_CITIES[itr_cities].wp == wp)
             &&
@@ -6675,15 +6666,10 @@ int16_t Square_Has_City(int16_t wx, int16_t wy, int16_t wp)
             (_CITIES[itr_cities].wy == wy)
         )
         {
-
             square_has_city = itr_cities;
-
         }
-
     }
-
     return square_has_city;
-
 }
 
 

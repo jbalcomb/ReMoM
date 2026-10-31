@@ -1362,7 +1362,7 @@ void SmlBook_PageTurn(int16_t turn_type, int16_t combat_flag, int16_t player_idx
     Stage_Text_Widths[2] = 55;
     Stage_Text_Widths[1] = 55;
     Deactivate_Auto_Function();
-    Open_File_Animation__HACK(book_lbx_file__ovr117, 0);
+    Open_File_Animation(book_lbx_file__ovr117, 0);
     if(combat_flag == ST_FALSE)
     {
         Allocate_Reduced_Map();
@@ -1443,7 +1443,7 @@ void SmlBook_PageTurn(int16_t turn_type, int16_t combat_flag, int16_t player_idx
         {
             Set_File_Animation_Frame(3 - PageTurn_Stage);
         }
-        Draw_File_Animation__HACK();
+        Draw_File_Animation();
         if(PageTurn_Stage < 2)
         {
             if(turn_type == 1)
@@ -1801,7 +1801,7 @@ void BigBook_PageTurn(int16_t direction)
     stage_text_widths[3] = 90;
     Deactivate_Auto_Function();
     /* Load page turn animation from BOOK.LBX */
-    Open_File_Animation__HACK(book_lbx_file__ovr118, 1);
+    Open_File_Animation(book_lbx_file__ovr118, 1);
     Mark_Block(_screen_seg);
     /* Allocate buffer for composing the turning page */
     pict_seg = Allocate_Next_Block(_screen_seg, 1800);
@@ -1905,7 +1905,7 @@ void BigBook_PageTurn(int16_t direction)
             }
         }
         /* Draw the animation frame */
-        Draw_File_Animation__HACK();
+        Draw_File_Animation();
         /* Compose and transform the turning page bitmap */
         BigBook_Compose(page_index, pict_seg, left_page);
         Scale_Bitmap(pict_seg, stage_text_widths[page_turn_stage], 100);
@@ -2184,7 +2184,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
                         g_spellbook_mode = 1;
                         g_spellbook_left_page = (spellbook_page - 1);
                     }
-                    m_spell_list_count = itr_spellbook_page_spell_count;
+                    GUI_Multipurpose_Int = itr_spellbook_page_spell_count;  /* TODO  switch to m_spell_list_count, here and in Learn_Spell_Animation_Decode_Draw() */
                     spell_found = ST_TRUE;
                 }
             }
@@ -2213,7 +2213,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
                             g_spellbook_mode = 1;
                             g_spellbook_left_page = (spellbook_page - 1);
                         }
-                        m_spell_list_count = itr_spellbook_page_spell_count;
+                        GUI_Multipurpose_Int = itr_spellbook_page_spell_count;  /* TODO  switch to m_spell_list_count, here and in Learn_Spell_Animation_Decode_Draw() */
                         spell_found = ST_TRUE;
                     }
                 }

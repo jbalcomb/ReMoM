@@ -1061,11 +1061,9 @@ int16_t City_Remove_Building(int16_t bldg_idx, int16_t city_idx)
 
 
 // WZD o55p13
-// drake178: N/A
-int16_t City_Sell_Building(int16_t city_idx, int16_t bldg_idx, int16_t gold_amount)
+int16_t City_Sell_Building(int16_t bldg_idx, int16_t city_idx, int16_t gold_amount)
 {
     int16_t sold_building = 0;  // DNE in Dasm
-
     if(City_Remove_Building(bldg_idx, city_idx) != ST_TRUE)
     {
         sold_building = ST_FALSE;
@@ -1075,7 +1073,6 @@ int16_t City_Sell_Building(int16_t city_idx, int16_t bldg_idx, int16_t gold_amou
         Player_Add_Gold(_CITIES[city_idx].owner_idx, gold_amount);
         sold_building = ST_TRUE;
     }
-
     return sold_building;
 }
 

@@ -5,6 +5,7 @@
  *   --newgame [ReMoM.ini]   Create a new game from config (skip menus)
  *   --load SAVE3.GAM        Load a save file (skip menus)
  *   --continue              Same as 'Main Menu ' Continue (loads SAVE9.GAM)
+ *   --menu                  Start at the Main Menu with no game (a fresh process, as ReMoM starts)
  *   --replay game.RMR       Replay recorded input
  *   --record game.RMR       Record input to file
  *   --scenario gameplay.HMS play a scripted scenario (uses Artificial Human Player)
@@ -53,6 +54,7 @@
 #include "../MoX/src/random.h"
 #include "../MoX/src/MOX2.h"  /* CLAUDE: Check_Command_Line_Parameters_() */
 #include "../MoX/src/MOX_SET.h"   /* magic_set.Save_Names[] */
+#include "../MoX/src/Fonts.h"     /* Load_Palette(), Apply_Palette() -- --menu */
 
 #include "../MoM/src/SPLMASTR.h"  /* CLAUDE: m_magic_winner_idx -- reset on the --load path */
 #include "../MoM/src/NewGame.h"
@@ -1154,12 +1156,14 @@ static void Print_Usage(const char *program_name)
     LOG_INFO(LOG_CAT_HEMOM, "  %s --newgame [ReMoM.ini] [--scenario test.hms] [--record out.RMR]", program_name);
     LOG_INFO(LOG_CAT_HEMOM, "  %s --continue [--scenario test.hms] [--record out.RMR]", program_name);
     LOG_INFO(LOG_CAT_HEMOM, "  %s --load SAVE3.GAM [--scenario test.hms] [--record out.RMR]", program_name);
+    LOG_INFO(LOG_CAT_HEMOM, "  %s --menu --scenario test.hms [--record out.RMR]", program_name);
     LOG_INFO(LOG_CAT_HEMOM, "  %s --newgame [ReMoM.ini] [--replay game.RMR]", program_name);
     LOG_INFO(LOG_CAT_HEMOM, "  %s --combat DEFENDER_UNIT ATTACKER_UNITS [--seed1 N]", program_name);
     LOG_INFO(LOG_CAT_HEMOM, "\nOptions:");
     LOG_INFO(LOG_CAT_HEMOM, "  --newgame [FILE]   Create new game from config (default: ReMoM.ini)");
     LOG_INFO(LOG_CAT_HEMOM, "  --continue         Load SAVE9.GAM (continue from previous --newgame)");
     LOG_INFO(LOG_CAT_HEMOM, "  --load FILE        Load a save file (SAVE1.GAM .. SAVE9.GAM, SAVETEST.GAM)");
+    LOG_INFO(LOG_CAT_HEMOM, "  --menu             Start at the Main Menu with no game loaded (requires --scenario)");
     LOG_INFO(LOG_CAT_HEMOM, "  --scenario FILE    Run artificial human player from scenario script (.hms)");
     LOG_INFO(LOG_CAT_HEMOM, "  --alias-points F   Named-action points table for `click Screen.Alias` (alias_points.fwv)");
     LOG_INFO(LOG_CAT_HEMOM, "  --replay FILE      Replay recorded input from .RMR file");
@@ -1179,7 +1183,7 @@ static void Print_Usage(const char *program_name)
 
 int main(int argc, char *argv[])
 {
-    int hemom_mode = 0;  /* 0=none, 1=newgame, 2=load, 3=combat, 4=cast-summon */
+    int hemom_mode = 0;  /* 0=none, 1=newgame, 2=load, 3=combat, 4=cast-summon, 5=menu */
     char hemom_file[260] = { 0 };
     char hemom_scenario[260] = { 0 };
     char hemom_dump_save[260] = { 0 };
@@ -1300,6 +1304,15 @@ int main(int argc, char *argv[])
 #endif
             /* Handled after Startup_Platform() */
         }
+        else if(stu_strcmp(argv[argi], "--menu") == 0)
+        {
+            hemom_mode = 5;
+            LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] CLI: --menu (start at the Main Menu, no game)");
+#ifdef STU_DEBUG
+            LOG_DEBUG(LOG_CAT_GENERAL, "[HeMoM] CLI: --menu (start at the Main Menu, no game)");
+            LOG_TRACE(LOG_CAT_GENERAL, "[HeMoM] CLI: --menu (start at the Main Menu, no game)");
+#endif
+        }
         else if(stu_strcmp(argv[argi], "--scenario") == 0 && (argi + 1) < argc)
         {
             argi++;
@@ -1403,6 +1416,13 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    if((hemom_mode == 5) && (hemom_scenario[0] == '\0'))
+    {
+        Print_Usage(argv[0]);
+        LOG_INFO(LOG_CAT_HEMOM, "\nError: --menu requires --scenario (headless has no other input)");
+        return 1;
+    }
+
     Startup_Platform();
 
     /* Register replay callbacks */
@@ -1478,6 +1498,17 @@ int main(int argc, char *argv[])
            _turn++ and the whole post-Event_Twiddle half of the pipeline. */
         m_magic_winner_idx = ST_UNDEFINED;
         current_screen = scr_Main_Screen;
+    }
+    else if(hemom_mode == 5)
+    {
+        /* CLAUDE: --menu -- what ReMoM.c does when there is no --continue / --load: palette 0, then
+           Screen_Control() at the Main Menu (minus the logos, credits and menu music).  No game is
+           created or loaded, and no WZD resources are loaded -- scr_Continue does that itself
+           (Load_WZD_Resources_Once) when the scenario starts or continues a game. */
+        LOG_INFO(LOG_CAT_HEMOM, "[HeMoM] Starting at the Main Menu (no game)");
+        Load_Palette(0, ST_UNDEFINED, 0);
+        Apply_Palette();
+        current_screen = scr_Main_Menu_Screen;
     }
     else if(hemom_mode == 4)
     {
@@ -1577,7 +1608,7 @@ int main(int argc, char *argv[])
         /* Crossing from MAGIC.EXE-path (--newgame setup) or no-flag init into
            WIZARDS.EXE-path (gameplay).  Load WZD resources now if mode 2 didn't
            already (mode 1 + --scenario, or no-flag interactive). */
-        if(hemom_mode != 2)
+        if((hemom_mode != 2) && (hemom_mode != 5))
         {
             Load_WZD_Resources();
         }

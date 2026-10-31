@@ -1,0 +1,14 @@
+# test_l61_fresh.hms -- L61 baseline: the first game in a fresh process.
+#
+#   HeMoM --menu --seed1 12345 --scenario test_l61_fresh.hms --dump-save SAVE1.GAM
+#
+# New Game through the UI, then save to slot 1 and quit.  Its SAVE1 dump is the expected state
+# for test_l61_second_game.hms, whose second game must come out identical.
+
+# Let the Main Menu settle before the first click, as test_l61_second_game.hms does after its Quit.  A click at t=0 is
+# dropped on a slow start (MSVC Debug), and every later click then lands on the wrong screen.
+wait 1s
+
+include test_l61_newgame_ui.hms
+
+include scenario_tail_save_and_quit.hms

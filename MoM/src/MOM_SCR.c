@@ -5,6 +5,7 @@
 #include "../../STU/src/STU_PRN.h"
 // #endif
 
+#include "../../MoX/src/Allocate_Pool.h"  /* POOL_SENTINEL_BYTE */
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_BASE.h"
 #include "../../MoX/src/MOX_DAT.h"
@@ -16,6 +17,8 @@
 #include "../../MoX/src/LOADSAVE.h"
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
 #include "../../MoX/src/Mouse.h"
+#include "../../MoX/src/MOX2.h"     /* _cmd_line_seed */
+#include "../../MoX/src/random.h"   /* Set_Random_Seed(), Randomize() */
 #include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/Video.h"
 
@@ -40,16 +43,74 @@
 #include "SBookScr.h"
 #include "SCORE.h"      // Hall Of Fame (HoF)
 #include "SPLMASTR.h"
+#include "Spellbook.h"  /* spl_NONE */
 
 #include "../../ext/stu_compat.h"
 
 #include <stdio.h>
+#include <string.h> /* memset() */
 
 #include "../../platform/include/Platform.h"  /* CLAUDE: MOUSE_LOG for screen transition timestamps */
 
 #include "MOM_SCR.h"
 
 
+
+/* ST_TRUE once a game has reached the Main Screen; the globals then hold that game's state and need resetting before the next one */
+static int16_t dirty_game_state = ST_FALSE;
+/* Allocate_Space() returns its 16-byte header as element 0's first bytes; a fresh process still has it there, so a reset puts it back */
+#define SAMB_HEADER_BYTES 16
+static uint8_t units_samb_header[SAMB_HEADER_BYTES];
+static uint8_t items_samb_header[SAMB_HEADER_BYTES];
+static uint8_t lairs_samb_header[SAMB_HEADER_BYTES];
+static int16_t samb_headers_saved = ST_FALSE;
+
+
+
+/*
+clears the game state when starting a new 'New Game'
+*/
+static void Reset_Game_State(void)
+{
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
+    /* set the random seed for the new game path, with support for deterministic behavior */
+    if(_cmd_line_seed != 0)
+    {
+        Set_Random_Seed((uint32_t)_cmd_line_seed);
+    }
+    else
+    {
+        Randomize();
+    }
+
+    _turn = 0;
+
+    _given_chance_to_rename_home_city = ST_FALSE;
+
+    magic_master_idx = ST_UNDEFINED;
+
+    m_magic_winner_idx = ST_UNDEFINED;
+
+    memset(_players, 0, sizeof(_players));
+
+    memset(_UNITS, POOL_SENTINEL_BYTE, (NUM_UNITS * sizeof(struct s_UNIT)));
+
+    memset(_ITEMS, POOL_SENTINEL_BYTE, (NUM_ITEMS * sizeof(struct s_ITEM)));
+
+    /* new game doesn't init farmer_count */
+    memset(_CITIES, POOL_SENTINEL_BYTE, (NUM_CITIES * sizeof(struct s_CITY)));
+    /* new game fills lairs 0..98 only; restore the never-written slots to what a fresh process has (pool fill) */
+    memset(_LAIRS, POOL_SENTINEL_BYTE, (NUM_LAIRS * sizeof(struct s_LAIR)));
+
+    memcpy(_UNITS, units_samb_header, SAMB_HEADER_BYTES);
+    memcpy(_ITEMS, items_samb_header, SAMB_HEADER_BYTES);
+    memcpy(_LAIRS, lairs_samb_header, SAMB_HEADER_BYTES);
+
+    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+
+}
 
 // WZD s01p02
 // ~== MGC s01p03  Menu_Screen_Control()
@@ -102,12 +163,26 @@ void Screen_Control(void)
                 LOG_TRACE(LOG_CAT_GENERAL, "[SCR] ENTER scr_Main_Menu_Screen");
                 LOG_DEBUG(LOG_CAT_GENERAL, "[SCR] ENTER scr_Main_Menu_Screen");
 #endif
+                /* game-state reset for {New, Continue, Load}, from four paths; (NOTE: Load during a running game does not reset state) */
+                if(dirty_game_state == ST_TRUE)
+                {
+                    Reset_Game_State();
+                    dirty_game_state = ST_FALSE;
+                }
+                if(samb_headers_saved == ST_FALSE)
+                {
+                    memcpy(units_samb_header, _UNITS, SAMB_HEADER_BYTES);
+                    memcpy(items_samb_header, _ITEMS, SAMB_HEADER_BYTES);
+                    memcpy(lairs_samb_header, _LAIRS, SAMB_HEADER_BYTES);
+                    samb_headers_saved = ST_TRUE;
+                }
+
+
                 Load_Palette(2, -1, 0);
                 Apply_Palette();
                 // TODO  Main_Menu_Screen_Control();
                 Main_Menu_Screen();
-                // MoO2  previous_screen = scr_Main_Menu_Screen
-                previous_screen = scr_Main_Menu_Screen;
+                previous_screen = scr_Main_Menu_Screen;  // MoO2
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu LEAVE screen=Main_Menu next=%d\n", (unsigned long long)Platform_Get_Millies(), current_screen);
 #endif
@@ -144,7 +219,9 @@ void Screen_Control(void)
                 // MGC  Stop_Music__STUB()
                 // MGC  j_GAME_WizardsLaunch__WIP(e_SAVE9GAM)
                 // /* HACK */ Load_SAVE_GAM(-1);  // SAVETEST.GAM
-                /* HACK */  Load_WZD_Resources();
+                // FU CLAUDE  /* HACK */  Load_WZD_Resources();
+                /* HACK */  Load_WZD_Resources_Once();  /* CLAUDE  L57 */
+
                 Load_SAVE_GAM(8);
 
                 /* 300-series: snapshot every save-loaded array right after Load_SAVE_GAM
@@ -169,6 +246,12 @@ void Screen_Control(void)
                  * and 610 (AI_Reevaluate_Continent entry). */
                 gd_dump_ai_continents   ("314_Load_Continents");
 
+                Load_Palette(0, ST_UNDEFINED, ST_NULL);
+                Calculate_Remap_Colors();
+                Set_Button_Down_Offsets(1, 1);
+                Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
+                Apply_Palette();
+                Fade_In();
                 current_screen = scr_Main_Screen;
                 _players[NEUTRAL_PLAYER_IDX].banner_id = BNR_Brown;
                 Clear_Fields();
@@ -186,7 +269,8 @@ void Screen_Control(void)
 #endif
                 // TODO  WZD vs. MGC
                 /* WZD  GameState_01:  ; case 0x1 */
-                /* HACK */ Load_WZD_Resources();
+                // FU CLAUDE  /* HACK */  Load_WZD_Resources();
+                /* HACK */  Load_WZD_Resources_Once();  /* CLAUDE  L57 */
                 prev__Settings_BG_Music = magic_set.background_music;
                 Load_Screen();  /* ... |-> Loaded_Game_Update() */
 #ifdef STU_DEBUG
@@ -313,6 +397,7 @@ void Screen_Control(void)
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu ENTER screen=Main\n", (unsigned long long)Platform_Get_Millies());
 #endif
+                dirty_game_state = ST_TRUE;
                 // BEGIN: WZD main()
                 // Load_SAVE_GAM(8)
                 // Load_WZD_Resources()

@@ -10,6 +10,7 @@
 #include "../../STU/src/STU_DBG.h"
 
 #include "Allocate.h"
+#include "file_ani.h"
 #include "Fonts.h"
 #include "Graphics.h"
 #include "LBX_Load.h"
@@ -240,7 +241,7 @@ void Load_Font_File(char * font_file)
 
     remap_color_palettes = (uint8_t *)Allocate_Space(384);  // 384 PR, 6144 B  (24 * 256  ~'remap color tables')
 
-    // TODO  file_animation_header = (struct s_FLIC_HDR *)Allocate_Space(2);
+    file_animation_header = Allocate_Space(2);
 
     palette_intensity_remap_table = Allocate_Space(96);  // 96 PR, 1536 B  ...  allocation is 6× oversized, typo?
 

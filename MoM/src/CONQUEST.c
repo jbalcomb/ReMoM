@@ -370,7 +370,7 @@ void Conquest_Animation(int16_t loser_Idx, int16_t winner_idx)
     if(
         (winner_idx != NEUTRAL_PLAYER_IDX)
         &&
-        (loser_Idx != NEUTRAL_PLAYER_IDX)
+        (loser_Idx == NEUTRAL_PLAYER_IDX)
     )
     {
         return;
@@ -476,7 +476,7 @@ void Conquest_Animation(int16_t loser_Idx, int16_t winner_idx)
     // CONQUEST.LBX, 015    "AXEBOY"    ""
     conquest_axeboy_seg = LBX_Reload_Next(conquest_lbx_file__ovr093, 15, _screen_seg);
     // CONQUEST.LBX, 017    "ZAP"       ""
-    Open_File_Animation__HACK(conquest_lbx_file__ovr093, 17);
+    Open_File_Animation(conquest_lbx_file__ovr093, 17);
     if(magic_set.background_music == ST_TRUE)
     {
         itr_cities = 109;  /* MUSIC_WIN_Military */
@@ -697,12 +697,12 @@ void Conquest_Animation_Draw_Zapped_Wizard(int16_t flag)
     frame = FLIC_Get_CurrentFrame(IMG_GAME_GrowZap);
     if(flag == ST_TRUE)
     {
-        FLIC_Draw(0x45, 0x4B, wizlab_wizard_seg__ovr093);
-        FLIC_Draw(0xB1, 0x3E, IMG_GAME_GrowZap);
+        FLIC_Draw(69, 75, wizlab_wizard_seg__ovr093);
+        FLIC_Draw(177, 62, IMG_GAME_GrowZap);
     }
     else
     {
-        FLIC_Draw(0xB1, 0x3E, IMG_GAME_GrowZap);
+        FLIC_Draw(177, 62, IMG_GAME_GrowZap);
         Set_Animation_Frame(IMG_GAME_GrowZap, frame - 1);
         frame = FLIC_Get_CurrentFrame(conquest_effect_seg);
         if(frame <= 3)
@@ -711,30 +711,30 @@ void Conquest_Animation_Draw_Zapped_Wizard(int16_t flag)
             {
                 case 3:
                     Set_Animation_Frame(conquest_effect_seg, 0);
-                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
-                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
-                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
-                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
+                    FLIC_Draw(66, 16, conquest_effect_seg);
+                    FLIC_Draw(66, 16, conquest_effect_seg);
+                    FLIC_Draw(66, 16, conquest_effect_seg);
+                    FLIC_Draw(66, 16, conquest_effect_seg);
                     break;
                 case 2:
                     Set_Animation_Frame(conquest_effect_seg, 0);
-                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
-                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
-                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
+                    FLIC_Draw(66, 16, conquest_effect_seg);
+                    FLIC_Draw(66, 16, conquest_effect_seg);
+                    FLIC_Draw(66, 16, conquest_effect_seg);
                     break;
                 case 1:
                     Set_Animation_Frame(conquest_effect_seg, 0);
-                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
-                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
+                    FLIC_Draw(66, 16, conquest_effect_seg);
+                    FLIC_Draw(66, 16, conquest_effect_seg);
                     break;
                 case 0:
-                    FLIC_Draw(0x42, 0x10, conquest_effect_seg);
+                    FLIC_Draw(66, 16, conquest_effect_seg);
                     break;
             }
         }
     }
-    Clipped_Draw(0xD0, 0x3C, conquest_wizard_seg);
-    Clipped_Draw(0x64, 0x78, conquest_conehead_seg);
+    Clipped_Draw(208, 60, conquest_wizard_seg);
+    Clipped_Draw(100, 120, conquest_conehead_seg);
 }
 
 
@@ -745,10 +745,10 @@ void Conquest_Animation_Draw_Zap_Strike(void)
     {
         return;
     }
-    FLIC_Draw(0x45, 0x4B, wizlab_wizard_seg__ovr093);
-    Draw_File_Animation__HACK();
-    Clipped_Draw(0xD0, 0x3C, conquest_wizard_seg);
-    Clipped_Draw(0x64, 0x78, conquest_conehead_seg);
+    FLIC_Draw(69, 75, wizlab_wizard_seg__ovr093);
+    Draw_File_Animation();
+    Clipped_Draw(208,  60, conquest_wizard_seg);
+    Clipped_Draw(100, 120, conquest_conehead_seg);
 }
 
 
@@ -878,7 +878,7 @@ void Win_Animation(int16_t player_idx)
     // WIN.LBX, 001  "REDPOINT" "'
     IMG_GAME_RedSparkle = LBX_Reload(win_lbx_file__ovr093, 1, World_Data);
     // WIN.LBX, 002  "PLANETS"  ""
-    Open_File_Animation__HACK(win_lbx_file__ovr093, 2);
+    Open_File_Animation(win_lbx_file__ovr093, 2);
     if(magic_set.background_music == ST_TRUE)
     {
         sound_data_seg = LBX_Reload(music_lbx_file__ovr093, MUSIC_WIN_Military, SND_Music_Segment);
@@ -950,7 +950,7 @@ void Win_Animation_Draw(void)
         FLIC_Draw(93, 2, IMG_GAME_WizHandsUp);
     }
     FLIC_Draw(0, 0, IMG_GAME_RedSparkle);
-    Draw_File_Animation__HACK();
+    Draw_File_Animation();
     Set_Font_Style_Outline_Heavy(5, 5, 0, 0);
     Set_Outline_Color(0);
     if(m_conquest_anim_stage < 15)
@@ -1010,7 +1010,7 @@ void Lose_Animation(int16_t player_idx)
     IMG_GAME_WizHandsUp = LBX_Reload(lose_lbx_file__ovr093, (1 + _players[player_idx].wizard_id), _screen_seg);
     IMG_GAME_LimboFall = Allocate_Next_Block(_screen_seg, 0x190);
     // LOSE.LBX, 000    "VORTEX"    ""
-    Open_File_Animation__HACK(lose_lbx_file__ovr093, 0);
+    Open_File_Animation(lose_lbx_file__ovr093, 0);
     if(magic_set.background_music == 1)
     {
         music_data_seg = LBX_Reload(music_lbx_file__ovr093, MUSIC_LOSE_Military, SND_Music_Segment);
@@ -1067,7 +1067,7 @@ void Lose_Animation_Draw(void)
     int16_t y = 0;
     int16_t x = 0;
     Set_Page_Off();
-    Draw_File_Animation__HACK();
+    Draw_File_Animation();
     if(GAME_LimboFall_Stage < 27)
     {
         x = (int16_t)TBL_DefeatAnimSteps[GAME_LimboFall_Stage].x;

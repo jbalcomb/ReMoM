@@ -111,7 +111,10 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
 
 // WZD s10p13
 // ¿ MoO2: Get_Farload_Data_Record_Count() ?
+// WZD s10p13
+// MoO2: DNE -- no farload counterpart; MoO2's file_ani Open_File_Animation() does the entry lookup inline (entry_start / entry_end / entry_length locals)
 // LBX_GetEntryData()
+FILE * LBX_Get_Entry_Data(char * lbx_name, int16_t entry_num, int32_t * entry_start, int32_t * entry_length, int16_t format);
 
 // WZD s10p14
 /* CLAUDE */  /* static function — declaration belongs in LBX_Load.c, not the header */

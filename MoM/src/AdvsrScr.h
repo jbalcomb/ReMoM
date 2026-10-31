@@ -36,7 +36,7 @@ void Powergraph_Screen(void);
 void Powergraph_Screen_Draw(void);
 
 // WZD o76p05
-void IDK_Powergraph_Draw_Turn_Data(int16_t player_idx, int16_t turns, int16_t month);
+void Powergraph_Draw_Wizard_History(int16_t player_idx, int16_t last_turn, int16_t first_turn);
 
 // WZD o76p06
 void Status_Screen(void);
@@ -45,13 +45,13 @@ void Status_Screen(void);
 void Status_Screen_Draw(void);
 
 // WZD o76p08
-void Cartographer_Screen__WIP(void);
+void Cartographer_Screen(void);
 
 // WZD o76p09
-void Cartographer_Screen_Draw__WIP(void);
+void Cartographer_Screen_Draw(void);
 
 // WZD o76p10
-void Cartograph_Screen_Draw_Map__WIP(int16_t flag);
+void Cartograph_Screen_Draw_Map(int16_t flag);
 
 // WZD o76p11
 void Grand_Vizier_Window(void);

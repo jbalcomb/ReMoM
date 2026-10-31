@@ -853,6 +853,73 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
 
 }
 
+
+// WZD s10p12
+// WZD s10p13
+// LBX_Get_Entry_Data()
+/*
+    opens the LBX (if it is not already the current one), reads its header,
+    and returns the open file plus the entry's start offset and length
+    format, extended-header, and secondary-drive handling DNE in ReMoM
+XREF:
+    UU_EMM_LoadLBX_Fail()+B4
+    UU_EMM_CustomLBXLoad()+B4
+    Load_File_Animation_Frame()+35
+
+*/
+FILE * LBX_Get_Entry_Data(char * lbx_name, int16_t entry_num, int32_t * entry_start, int32_t * entry_length, int16_t format)
+{
+    char lbx_file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int32_t entry_end = 0;
+
+    if(lbxload_lbx_header_flag == ST_FALSE)
+    {
+        lbxload_lbx_header_flag = ST_TRUE;
+        lbxload_lbx_header = (SAMB_ptr)Allocate_Space_No_Header(SZ_LBX_HDR_PR);
+    }
+
+    File_Name_Base(lbx_name);
+
+    if(
+        (lbxload_fptr == NULL)
+        ||
+        (stu_stricmp(lbx_name, lbxload_file_name) != 0)
+    )
+    {
+        if(lbxload_fptr != NULL)
+        {
+            fclose(lbxload_fptr);
+            lbxload_fptr = NULL;
+        }
+        stu_strcpy(lbxload_file_name, lbx_name);
+        stu_strcpy(lbx_file_name, lbx_name);
+        stu_strcat(lbx_file_name, ".LBX");
+        lbxload_fptr = STU_GRAF_Open_Asset(lbx_file_name, "rb");
+        if(lbxload_fptr == NULL)
+        {
+            Error_Handler(lbx_name, le_not_found, entry_num, ST_NULL);
+        }
+        fread(lbxload_lbx_header, 1, SZ_LBX_HDR_B, lbxload_fptr);
+        if(LBX_GET_MAGIC_NUMBER(lbxload_lbx_header) != LBX_MAGSIG)
+        {
+            Error_Handler(lbx_name, le_bad_header, entry_num, ST_NULL);
+        }
+        lbxload_num_entries = LBX_GET_NUM_ENTRIES(lbxload_lbx_header);
+    }
+
+    if(lbxload_num_entries < entry_num)
+    {
+        Error_Handler(lbx_name, le_entries_exceeded, entry_num, ST_NULL);
+    }
+
+    *entry_start  = GET_4B_OFS(lbxload_lbx_header, (8 + (entry_num * 4)));
+    entry_end     = GET_4B_OFS(lbxload_lbx_header, (8 + (entry_num * 4) + 4));
+    *entry_length = (entry_end - *entry_start);
+
+    return lbxload_fptr;
+}
+
+
 // WZD s10p14
 // drake178: UU_LBX_SetPath()
 // MoO2  Module: farload  Set_Alternate_Path()

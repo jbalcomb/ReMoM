@@ -130,33 +130,24 @@ void Road_Build_Screen(void)
     int16_t itr_stack = 0;
     int16_t scanned_field = 0;
     int16_t leave_screen = 0;
-    int16_t input_field_idx = 0;  // _DI_
-    int16_t unit_idx = 0;  // _SI_
-
+    int16_t input_field_idx = 0;
+    int16_t unit_idx = 0;
     m_road_path_length = 0;
-
     m_turns_to_build_road = 0;
-
     m_multi_colored_line_start = 0;
-
     m_construction_points = 0;
-
     unit_idx = _unit_stack[0].unit_idx;
-
     unit_wx = _UNITS[unit_idx].wx;
     unit_wy = _UNITS[unit_idx].wy;
-
     if(Square_Is_Sailable(unit_wx, unit_wy, _UNITS[unit_idx].wp) == ST_TRUE)
     {
         return;
     }
-
     m_road_builder_unit_idx = unit_idx;
-
+    /* OGBUG  sums Construction over the whole stack, not just the selected road builders; Set_Army_Road_Building reuses this total, so unselected engineers speed up the road */
     for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
     {
         unit_idx = _unit_stack[itr_stack].unit_idx;
-
         if(_unit_type_table[_UNITS[_unit_stack[itr_stack].unit_idx].type].Construction > 0)
         {
             m_construction_points += _unit_type_table[_UNITS[unit_idx].type].Construction;
@@ -168,7 +159,6 @@ void Road_Build_Screen(void)
             }
         }
     }
-
     turns_to_build_road = Turns_To_Build_Road(unit_wx, unit_wy, _map_plane);
     // NOTE: can't be on ocean, so no check for -1
     if(m_construction_points > 0)
@@ -176,61 +166,36 @@ void Road_Build_Screen(void)
         turns_to_build_road /= m_construction_points;
         SETMIN(turns_to_build_road, 1);
     }
-
     m_turns_to_build_road = turns_to_build_road;
-
     m_road_dst_x = unit_wx;
     m_road_dst_y = unit_wy;
-
     Reset_Draw_Active_Stack();
-
     Set_Outline_Color(0);
-
     Deactivate_Auto_Function();
-
     Assign_Auto_Function(Road_Build_Screen_Draw, 1);
-
     _reduced_map_seg = Allocate_First_Block(_screen_seg, 153);
-
     GUI_String_1 = (char *)Near_Allocate_First(100);
-
     GUI_String_2 = (char *)Near_Allocate_Next(100);
-
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-
     Reset_Map_Draw();
-
     MainScr_Create_Reduced_Map_Picture();
-
     Deactivate_Help_List();
-
     Set_Road_Build_Screen_Help_List();
-
     Set_Input_Delay(1);
-
     leave_screen = ST_FALSE;
-
     while(leave_screen == ST_FALSE)
     {
-
         Mark_Time();
-
         Clear_Fields();
-
         Road_Build_Screen_Add_Fields();
-
         input_field_idx = Get_Input();
-
         scanned_field = Scan_Input();
-
         if(input_field_idx == main_cancel_button_field)
         {
             Play_Left_Click();
             current_screen = scr_Main_Screen;
             leave_screen = ST_UNDEFINED;
         }
-
-
         if(input_field_idx == roadbuild_ok_button_field)
         {
             Play_Left_Click();
@@ -249,8 +214,6 @@ void Road_Build_Screen(void)
             current_screen = scr_Main_Screen;
             leave_screen = ST_UNDEFINED;
         }
-
-
         if(input_field_idx == _main_map_grid_field)
         {
             Play_Left_Click();
@@ -259,7 +222,6 @@ void Road_Build_Screen(void)
             Reset_Map_Draw();
             Road_Build_Path(target_wx, target_wy);
         }
-
         if(input_field_idx == _minimap_grid_field)
         {
             /*
@@ -284,16 +246,12 @@ void Road_Build_Screen(void)
             Set_Mouse_List_Default();
             Reset_Map_Draw();
         }
-
-
         if(-(_main_map_grid_field) == input_field_idx)
         {
             _prev_world_x = (int16_t)(_main_map_grid_x - (MAP_WIDTH / 2));
             _prev_world_y = (int16_t)(_main_map_grid_y - (MAP_HEIGHT / 2));
             IDK_CheckSet_MapDisplay_XY();
         }
-
-
         if(leave_screen == ST_FALSE)
         {
             Road_Build_Screen_Draw();
@@ -301,12 +259,10 @@ void Road_Build_Screen(void)
             Release_Time(1);
         }
     }
-
     Clear_Fields();
     Deactivate_Auto_Function();
     Deactivate_Help_List();
     Reset_Window();
-
 }
 
 
@@ -705,52 +661,39 @@ void Active_Stack_Roadbuilders(int16_t * troop_count, int16_t troops[])
 // WZD o069p09
 /*
     sets Status, dst_wx, dst_wy, Rd_Constr_Left, Rd_From_X, Rd_From_Y, wp
-
 */
 void Set_Army_Road_Building(int16_t troop_count, int16_t troops[], int16_t dst_wx, int16_t dst_wy)
 {
-    int16_t src_wy;
-    int16_t src_wx;
-    int16_t path_distance;
-    int16_t itr_troops;
-    int16_t unit_idx;  // _SI_
-
+    int16_t src_wy = 0;
+    int16_t src_wx = 0;
+    int16_t path_distance = 0;
+    int16_t itr_troops = 0;
+    int16_t unit_idx = 0;
     src_wx = _UNITS[troops[0]].wx;
     src_wy = _UNITS[troops[0]].wy;
-
     path_distance = Path_Wrap(src_wx, src_wy, dst_wx, dst_wy, &movepath_x_array[1], &movepath_y_array[1], WORLD_WIDTH);
-
     if(Square_Is_Sailable(src_wx, src_wy, _map_plane) == ST_TRUE)
     {
         return;
     }
-
     for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
     {
         unit_idx = troops[itr_troops];
-
         _UNITS[unit_idx].Status = us_GOTO;
-
         _UNITS[unit_idx].dst_wx = (int8_t)dst_wx;
         _UNITS[unit_idx].dst_wy = (int8_t)dst_wy;
-
         if(_unit_type_table[_UNITS[unit_idx].type].Construction > 0)
         {
-            _UNITS[unit_idx].Rd_Constr_Left = (int8_t)Turns_To_Build_Road(_UNITS[unit_idx].wx, _UNITS[unit_idx].wx, _map_plane);
-
+            _UNITS[unit_idx].Rd_Constr_Left = (int8_t)Turns_To_Build_Road(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _map_plane);
             if(m_construction_points > 0)
             {
                 _UNITS[unit_idx].Rd_Constr_Left /= m_construction_points;
             }
-
             SETMIN(_UNITS[unit_idx].Rd_Constr_Left, 1);
-
             _UNITS[unit_idx].Rd_From_X = _UNITS[unit_idx].wx;
             _UNITS[unit_idx].Rd_From_Y = _UNITS[unit_idx].wy;
-
             _UNITS[unit_idx].wp = (int8_t)_map_plane;
         }
-
     }
 
 }

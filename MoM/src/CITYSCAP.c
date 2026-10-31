@@ -3028,9 +3028,9 @@ void Outpost_Cityscape_Draw(int16_t city_idx, int16_t x_start, int16_t y_start)
 
     race_house_type = _race_type_table[_CITIES[city_idx].race].house_type;
 
-    Set_Animation_Frame(cityscape_houses_seg[(race_house_type * 10)], 0);
+    Set_Animation_Frame(cityscape_houses_seg[(race_house_type * 5)], 0);
 
-    Clipped_Draw((x_start + 30), (y_start + 30), cityscape_houses_seg[(race_house_type * 10)]);
+    Clipped_Draw((x_start + 30), (y_start + 30), cityscape_houses_seg[(race_house_type * 5)]);
 
     Reset_Window();
 

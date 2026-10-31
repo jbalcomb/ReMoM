@@ -53,7 +53,7 @@
     used for Thing_View(); CalledFromFlag == 0, thing_idx < 100, view_type == 0
 */
 extern char * building_description;
-void Building_Allows_List__WIP(int16_t bldg_idx, int16_t * allows_list_count, int16_t allows_list[]);
+void Building_Allows_List(int16_t bldg_idx, int16_t * allows_list_count, int16_t allows_list[]);
 
 
 
@@ -991,7 +991,7 @@ if(_CITIES[_city_idx].construction > 298)
             }
         }
 
-        Building_Allows_List__WIP(bldg_idx, &Allows_Count, &Allows_List[0]);
+        Building_Allows_List(bldg_idx, &Allows_Count, &Allows_List[0]);
 
         colors[0] = 197;
         colors[1] = 14;

@@ -1,0 +1,9 @@
+# assert_l61_fresh.txt -- HeMoM_L61_Fresh_Assertions
+#
+# The fresh run's scripted New Game actually happened: the custom wizard (Rjak, Orc) and the renamed home city are in
+# SAVE1.  HeMoM exits 0 even when a dropped click sends the script onto the wrong screens, so without this the failure
+# only shows up later, as tens of thousands of HeMoM_L61_Compare diffs against an empty save.
+player[0].name = Rjak
+player[0].wizard_id = 6
+city[0].name = L61City
+city[0].race = 12

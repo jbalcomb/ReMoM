@@ -3081,7 +3081,6 @@ void Newgame_Screen_7_Draw__WIP(void)
 
     Set_Font_Colors_15(4, &text_colors[0]);
     Print_Centered(77, 119, _players[0].name);
-    Print_Centered(77, 120, _players[0].name);
 
     /*
         BEGIN: same on Screen 6 & 7

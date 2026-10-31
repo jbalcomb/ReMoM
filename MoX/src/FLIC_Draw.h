@@ -301,17 +301,16 @@ void Clear_Bitmap_Region(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_pt
 // UU_LBX_IMG_ExtGrayScale()
 
 // WZD s30p34
-// drake178: LBX_IMG_Resize()
 void Scale_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y);
 
 // WZD s30p35
-void Open_File_Animation__HACK(char * file_name, int16_t entry_num);
+void Open_File_Animation(char * file_name, int16_t entry_num);
 
 // WZD s30p36
-void Draw_File_Animation__HACK(void);
+void Draw_File_Animation(void);
 
 // WZD s30p37
-// void Load_File_Animation_Frame__STUB(int32_t offset, int32_t size, int16_t logical_page);
+void Load_File_Animation_Frame(int32_t offset, int32_t size, int16_t logical_page);
 
 // WZD s30p38
 int16_t Get_File_Animation_Frame(void);
@@ -320,7 +319,6 @@ int16_t Get_File_Animation_Frame(void);
 void Set_File_Animation_Frame(int16_t frame_num);
 
 // WZD s30p40
-// MoO2  Get_Full_Store_Flag()
 int16_t Get_Full_Store_Flag(SAMB_ptr p_FLIC_Header);
 
 // WZD s30p41

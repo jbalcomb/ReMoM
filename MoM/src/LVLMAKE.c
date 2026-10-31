@@ -224,7 +224,8 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
 
     GUI_String_1 = (char *)Near_Allocate_First(100);
 
-    uv_specials_list_array = (struct s_UV_List *)Near_Allocate_Next(1520);
+    /*HACK */  // picts[] pointer is 64-bit, ReMoM needs 1760;  uv_specials_list_array = (struct s_UV_List *)Near_Allocate_Next(1520);
+    uv_specials_list_array = (struct s_UV_List *)Near_Allocate_Next(sizeof(struct s_UV_List));
 
     uv_specials_list_count = 0;
 
@@ -341,15 +342,15 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
 // WZD o102p02
 void Hero_LevelUp_Popup_Draw(void)
 {
-    int16_t y;
-    int16_t value;
-    int16_t unit_level;
-    char temp_string[6];
-    int16_t lvlmake_icon_y;
-    int16_t unit_owner_idx;
-    uint8_t colors[5];
-    int16_t itr_effects;  // _SI_
-    int16_t lvlmake_icon_x;  // _DI_
+    int16_t y = 0;
+    int16_t value = 0;
+    int16_t unit_level = 0;
+    char temp_string[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t lvlmake_icon_y = 0;
+    int16_t unit_owner_idx = 0;
+    uint8_t colors[5] = { 0, 0, 0, 0, 0 };
+    int16_t itr_effects = 0;
+    int16_t lvlmake_icon_x = 0;
 
     unit_owner_idx = _UNITS[lvlmake_unit_idx].owner_idx;
 
@@ -357,7 +358,7 @@ void Hero_LevelUp_Popup_Draw(void)
 
     Set_Page_Off();
 
-    y = (lvlmake_base_y + 49 + ((uv_specials_list_count + 1) / 2));
+    y = (lvlmake_base_y + 49 + (((uv_specials_list_count + 1) / 2) * 17));
 
     Set_Window(lvlmake_base_x, lvlmake_base_y, (lvlmake_base_x + 250), y);
 

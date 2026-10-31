@@ -725,7 +725,7 @@ def scan_debt_body(body, sig=None):
             c['BUG'] += 1
         if 'DBG_' in l:
             c['DBG'] += 1
-        if (DEBT_CMT_CODE_RE.match(l)
+        if(DEBT_CMT_CODE_RE.match(l)
                 and not DEBT_CMT_ANNOT_RE.match(l)
                 and not _debt_is_preserved_original(body, i)):
             c['cmt'] += 1

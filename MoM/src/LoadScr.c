@@ -365,14 +365,14 @@ void Load_Screen(void)
         }
         else
         {
-            save_game_slots__ovr160[save_game_count__ovr160] = itr;
+            save_game_slots__ovr160[save_game_count__ovr160] = (itr - 1);
             save_game_count__ovr160++;
         }
     }
 
 
-    leave_screen_flag = ST_FALSE;    // BUG: set below
-    selected_load_game_slot_idx = ST_UNDEFINED;    // BUG: set below  // controls drawing of load_active : load_inactive
+    leave_screen_flag = ST_FALSE;    // OGBUG: set below
+    selected_load_game_slot_idx = ST_UNDEFINED;    // OGBUG: set below  // controls drawing of load_active : load_inactive
     selected_save_game_slot_idx = ST_UNDEFINED;  // controls drawing of save_active : save_inactive
     first_draw_done_flag = ST_FALSE;
 
@@ -398,9 +398,9 @@ void Load_Screen(void)
         save_slot_fields[itr_save_slot_fields] = Add_Continuous_String_Input_Field(x_start, (47 + (itr_save_slot_fields * 15)), 260, magic_set.Save_Names[itr_save_slot_fields], (LEN_SAVE_DESCRIPTION - 1), ST_TRANSPARENT, selection_marker, ST_UNDEFINED, ST_NULL);
     }
 
-    selected_load_game_slot_idx = ST_UNDEFINED;  // BUG: set above
+    selected_load_game_slot_idx = ST_UNDEFINED;  // OGBUG: set above
 
-    leave_screen_flag = ST_FALSE;  // BUG: set above
+    leave_screen_flag = ST_FALSE;  // OGBUG: set above
 
     Assign_Auto_Function(Load_Screen_Draw, 1);
 
@@ -498,7 +498,7 @@ void Load_Screen(void)
              * mirroring the 300-series (load) set so save-time state diffs
              * against load-time.  Matches OG's stub050:j_Save_SAVE_GAM trigger
              * gated on save_gam_idx==0. */
-            if (selected_save_game_slot_idx == 0)
+            if(selected_save_game_slot_idx == 0)
             {
                 gd_dump_heroes          ("401_Save_Heroes_H");
                 gd_dump_players         ("402_Save_Players_P");
@@ -518,7 +518,7 @@ void Load_Screen(void)
              * (selected_save_game_slot_idx 4 -> SAVE5.GAM) -- the post-Next-Turn
              * state.  Matches OG's stub050:j_Save_SAVE_GAM trigger gated on
              * save_gam_idx==4. */
-            if (selected_save_game_slot_idx == 4)
+            if(selected_save_game_slot_idx == 4)
             {
                 gd_dump_heroes          ("901_Save_Heroes_H");
                 gd_dump_players         ("902_Save_Players_P");

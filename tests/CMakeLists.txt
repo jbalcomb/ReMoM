@@ -250,6 +250,10 @@ add_executable(check_ai_metrics check_ai_metrics.c)
 
 add_test(
     NAME HeMoM_AIBehavior_Setup
+    # Debug-only: this fixture only feeds the Debug-config Run/Evaluate below, so
+    # gate it too -- otherwise it runs a dangling ~1.5s newgame in every other
+    # config for a fixture nothing there requires.
+    CONFIGURATIONS Debug
     COMMAND $<TARGET_FILE:HeMoM>
         --newgame "${HEMOM_TEST_ASSETS}/test_worldgen.ini"
     WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
@@ -262,10 +266,6 @@ add_test(
 # absorb slow-CI variance while still catching a real hang promptly.
 set_tests_properties(HeMoM_AIBehavior_Setup PROPERTIES
     TIMEOUT 60
-    # Debug-only: this fixture only feeds the Debug-config Run/Evaluate below, so
-    # gate it too -- otherwise it runs a dangling ~1.5s newgame in every other
-    # config for a fixture nothing there requires.
-    CONFIGURATIONS Debug
     FIXTURES_SETUP HeMoM_AIBehavior
     LABELS "hemom;integration;ai"
 )
@@ -284,7 +284,7 @@ set_tests_properties(HeMoM_AIBehavior_Setup PROPERTIES
 #      Root cause is in headless input dispatch, not in our metrics or
 #      the scenario itself.
 #
-# "Debug-only" is expressed via the CTest CONFIGURATIONS property, NOT a
+# "Debug-only" is expressed via add_test()'s CONFIGURATIONS argument, NOT a
 # configure-time `if(CMAKE_BUILD_TYPE STREQUAL "Debug")`.  Under a multi-config
 # generator (Ninja Multi-Config, Visual Studio) CMAKE_BUILD_TYPE is empty -- the
 # config is chosen at build/test time (`ctest -C Debug`) -- so that `if()` was
@@ -292,8 +292,13 @@ set_tests_properties(HeMoM_AIBehavior_Setup PROPERTIES
 # silently vanished; Setup became a dangling fixture).  CONFIGURATIONS Debug is
 # honored by both single- and multi-config generators: the test registers, and
 # runs only when the active config is Debug.
+#
+# It must be the add_test() argument.  There is no CONFIGURATIONS test property:
+# set_tests_properties(... CONFIGURATIONS Debug) is silently ignored, and the
+# three tests ran (and Evaluate failed) under MSVC-release.
 add_test(
     NAME HeMoM_AIBehavior_Run
+    CONFIGURATIONS Debug
     COMMAND $<TARGET_FILE:HeMoM>
         --continue
         --scenario "${HEMOM_TEST_ASSETS}/test_ai_5turns.hms"
@@ -304,7 +309,6 @@ add_test(
 )
 set_tests_properties(HeMoM_AIBehavior_Run PROPERTIES
     TIMEOUT 120
-    CONFIGURATIONS Debug
     FIXTURES_REQUIRED HeMoM_AIBehavior
     FIXTURES_SETUP HeMoM_AIBehavior_Done
     LABELS "hemom;integration;ai"
@@ -312,12 +316,12 @@ set_tests_properties(HeMoM_AIBehavior_Run PROPERTIES
 
 add_test(
     NAME HeMoM_AIBehavior_Evaluate
+    CONFIGURATIONS Debug
     COMMAND $<TARGET_FILE:check_ai_metrics>
         "${HEMOM_TEST_WORKDIR}"
         "${CMAKE_CURRENT_SOURCE_DIR}/assert_ai_5turns.txt"
 )
 set_tests_properties(HeMoM_AIBehavior_Evaluate PROPERTIES
-    CONFIGURATIONS Debug
     FIXTURES_REQUIRED HeMoM_AIBehavior_Done
     LABELS "hemom;integration;ai"
 )
@@ -395,6 +399,90 @@ add_test(
 set_tests_properties(HeMoM_Cast_Summon_Assertions PROPERTIES
     FIXTURES_REQUIRED HeMoM_Cast_Summon
     LABELS "hemom;integration;spells"
+)
+
+
+
+# =========================================================================
+#  L61: Second Game in One Process == First Game in a Fresh Process
+#
+#  The original restarted the program between games (Respawn MAGIC.EXE on the
+#  way to the menu, a fresh WIZARDS.EXE on the way into a game), so every game
+#  started from clean data.  ReMoM runs every game in one process.
+#
+#  Both runs start at the Main Menu (--menu) with the same --seed1 and create
+#  their games through the New Game screens with the same choices:
+#    - Fresh:  New Game -> save slot 1.
+#    - Second: New Game -> Game -> Quit -> Main Menu -> the same New Game ->
+#              save slot 1.
+#  The second run's whole SAVE1 dump is checked against the fresh run's, every
+#  field.  Any difference is state that game 1 left behind (L61, AF8, AF11).
+#  The fresh run is fully repeatable (66068 of 66068 fields match run to run).
+# =========================================================================
+
+add_test(
+    NAME HeMoM_L61_Fresh_Run
+    COMMAND $<TARGET_FILE:HeMoM>
+        --menu --seed1 12345
+        --scenario "${HEMOM_TEST_ASSETS}/test_l61_fresh.hms"
+        --dump-save SAVE1.GAM
+    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+)
+set_tests_properties(HeMoM_L61_Fresh_Run PROPERTIES
+    TIMEOUT 60
+    FIXTURES_SETUP HeMoM_L61_Fresh_Ran
+    LABELS "hemom;integration;l61"
+)
+
+# The scripted New Game really happened (a dropped click otherwise saves an empty game and exits 0).
+add_test(
+    NAME HeMoM_L61_Fresh_Assertions
+    COMMAND $<TARGET_FILE:check_save_fields>
+        ${HEMOM_TEST_WORKDIR}/SAVE1.txt
+        ${CMAKE_CURRENT_SOURCE_DIR}/assert_l61_fresh.txt
+)
+set_tests_properties(HeMoM_L61_Fresh_Assertions PROPERTIES
+    FIXTURES_REQUIRED HeMoM_L61_Fresh_Ran
+    FIXTURES_SETUP HeMoM_L61_Fresh_Checked
+    LABELS "hemom;integration;l61"
+)
+
+add_test(
+    NAME HeMoM_L61_Fresh_Keep
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${HEMOM_TEST_WORKDIR}/SAVE1.txt
+        ${HEMOM_TEST_WORKDIR}/L61_FRESH_SAVE1.txt
+)
+set_tests_properties(HeMoM_L61_Fresh_Keep PROPERTIES
+    FIXTURES_REQUIRED "HeMoM_L61_Fresh_Ran;HeMoM_L61_Fresh_Checked"
+    FIXTURES_SETUP HeMoM_L61_Fresh
+    LABELS "hemom;integration;l61"
+)
+
+add_test(
+    NAME HeMoM_L61_Second_Game_Run
+    COMMAND $<TARGET_FILE:HeMoM>
+        --menu --seed1 12345
+        --scenario "${HEMOM_TEST_ASSETS}/test_l61_second_game.hms"
+        --dump-save SAVE1.GAM
+    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+)
+set_tests_properties(HeMoM_L61_Second_Game_Run PROPERTIES
+    TIMEOUT 90
+    FIXTURES_REQUIRED HeMoM_L61_Fresh
+    FIXTURES_SETUP HeMoM_L61_Second_Game
+    LABELS "hemom;integration;l61"
+)
+
+add_test(
+    NAME HeMoM_L61_Compare
+    COMMAND $<TARGET_FILE:check_save_fields>
+        ${HEMOM_TEST_WORKDIR}/SAVE1.txt
+        ${HEMOM_TEST_WORKDIR}/L61_FRESH_SAVE1.txt
+)
+set_tests_properties(HeMoM_L61_Compare PROPERTIES
+    FIXTURES_REQUIRED HeMoM_L61_Second_Game
+    LABELS "hemom;integration;l61"
 )
 
 

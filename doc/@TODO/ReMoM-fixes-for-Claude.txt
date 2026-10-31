@@ -1,0 +1,61 @@
+Detailed list for an AI assistant reviewing ReMoM. Each item: file, function, what was wrong, what we changed, and whether we think it is a ReMoM or an original-game bug.
+
+Bugs fixed in ReMoM by the Amiga 68K port (https://github.com/angree/Amiga-68K-ReMoM)
+Base: jbalcomb/ReMoM a9cc082. All fixes live in build/remom-patch.py (search for "AMIGA 0.x.y").
+Reported by player Solo Kazuki; each fix was reproduced on a save and verified after the change.
+Platform-only issues (big-endian byte order, Amiga toolchain, memory layout, music) are NOT listed.
+"ReMoM" = most likely a reconstruction slip; "OG" = the original game does it too. This split is our judgement, not checked against the disassembly, except where noted.
+
+=== Movement, stacks, ships ===
+- Eval_Move_Path + Update_MovePathMap (MainScr.c), boarding a ship: hero test inverted ("type > ut_Chosen" exempted every NORMAL unit and counted only heroes), so any number of units could board and were left behind when the ship sailed. Fixed to "<= ut_Chosen". [ReMoM, still in current master]
+- Eval_Move_Path (MainScr.c): the loop counting the MOVING units read Units[] (units already on the square) instead of troops[]. [ReMoM, still in master]
+- Eval_Move_Path + Update_MovePathMap: "- 1" removes only one ship, while ships count as passengers, so 2 Triremes (2+2) carry 3 instead of 4. Fixed: units with Transport > 0 take no seat, no "- 1". [OG bug, documented on the MoM wiki "Transport" page; still in master]
+- Square_Has_City (MainScr.c): "while((itr_cities++ < _cities) ...)" checks cities 1.._cities, never city 0 (usually the human's capital), and reads one record past the end. A ship leaving city 0 took the garrison along; moves into city 0 were not seen as entering a city. City_At_Square__2 does it right. [ReMoM, still in master]
+- Build_Moveable_Stack (UNITSTK.c): second loop condition inverted ("== ST_FALSE &&" instead of "== ST_TRUE ||" as in Build_RoadBuilder_Stack), so passengers were added again; the list overran MAX_STACK and smashed the caller's stack -> crash after Next Turn. The no-passenger branch used _UNITS[itr_stack] instead of _UNITS[_unit_stack[itr_stack].unit_idx]. Added MAX_STACK limits. [ReMoM]
+- Build_RoadBuilder_Stack (UNITSTK.c), ships on Go To: "boatriders[i] != unit_idx" should be "==": the ship was added twice and counted as a passenger, so crew was left behind; heroes now outside the capacity limit as in Build_Moveable_Stack. [ReMoM]
+- Move_Stack (UNITSTK.c): after a move used Stack_Moves() (minimum over ALL units on the square) and finished the whole stack; the original calls Stack_Moves_Active() (XREF in MainScr.c). Fast units could not move on. [ReMoM]
+- Move_Units_Draw (MainScr.c): leaving a Tower of Wizardry while viewing Myrror kept wp = 0, the stack landed on Arcanus. Now wp = map_p. [ReMoM]
+- All_Units_In_Towers (WZD_o059.c): "else in_tower = FALSE" inside the loop over towers, so only the last tower ever kept the flag; you could enter a tower held by an enemy on the other plane. [ReMoM]
+- Set_Army_Road_Building (Roads.c): Turns_To_Build_Road(wx, wx, ...) instead of (wx, wy) - roads built in 1 turn on any terrain. [ReMoM]
+- Roads.c "It will take N turns": counted construction of ALL engineers on the square, not only the selected ones with moves (Active_Stack_Roadbuilders). [ReMoM]
+
+=== Combat, lairs, AI ===
+- Combat() (Combat.c): combat_defender_player_idx never set for lairs/towers/nodes/ruins (stayed 0 = human), so guardians were not collected: empty instant victory, guardians left on the map, later crash. Same for attacking cities (now = city owner). [ReMoM]
+- AI war targets (AIMOVE.c): _ai_landmass_war_targets not cleared on New Game (see "single process" below); a target pointing at a non-existent landmass gave divide by zero in the centroid code. Cleared in INITGAME.c, invalid target reset, both divisions guarded (both marked OGBUG in ReMoM). [ReMoM + OG]
+- Select_Unit_For_Enchantment (AISPELL.c): with no stack reads _ai_all_own_stacks[-1] (marked OGBUG) and picks by coordinates without checking the owner, so AI enchanted the human's units. Now: no stack -> no target, own units only. [OG]
+- Cast_Spell_Overland (OverSpel.c), unit enchantment: when AITP_Unit_Enchantment found no target, the enchantment was still applied to _UNITS[0] (usually the human's). Now guarded by cast_can_continue like the neighbouring cases. [ReMoM]
+- Cast_Spell_Overland (OverSpel.c): MultiPurpose_Local_Var (Nature's Wrath owner) reset to -1 only when the spell succeeded; on a failed/cancelled Chaos or Death spell the old value (>= 0) triggered Call_Forth_The_Force_Of_Nature even when nobody had Nature's Wrath. [ReMoM]
+- Generate_Home_Cities (MAPGEN.c): after six failed rounds minimum_site_distance drops to 1, 1/2 = 0, and the same square as a node/tower/lair is no longer excluded (ReMoM comment says so) - capital on a node. The same square is now always rejected; normal maps unchanged. [OG]
+
+=== Spells, items, heroes ===
+- WIZ_HireHero (Spells132.c): clears the item slots of _players[HUMAN_PLAYER_IDX] instead of _players[player_idx]; when an AI hires/summons a hero into slot N, the human's hero in slot N loses all items. [ReMoM]
+- Cast_Spell_Overland_Do (SBookScr.c), Enchant Item / Create Artifact for the human: also runs the AI path (random Make_Item, cost * var_8 where var_8 is never set = 0), so the spell is cancelled at once. Human now keeps the item designed on screen and its cost. [ReMoM]
+- Item_Make_Screen (ItemMake.c): left arrow below the first icon of a type set m_itemmake_item_icon_idx = count instead of start + count - 1 (Axe -> Mace, Misc -> Bow...). [ReMoM]
+- Spell_Casting_Screen__WIP (SCastScr.c): sets screen_changed on minimap/plane clicks but never clears it (Main_Screen does at the end of each loop); the targeting screen stopped redrawing ("freeze"). [ReMoM]
+- Spellbook new-spell animation (Spellbook.c): row stored in m_spell_list_count, but the animation reads GUI_Multipurpose_Int (same variable in the original, per ReMoM's own note) - wrong row revealed, runes stayed. [ReMoM]
+- After summoning (OverSpel.c): map position/plane taken from _UNITS[_units] (the slot AFTER the new unit) instead of _UNITS[_units - 1] - garbage plane, map drawing never finished (freeze). [ReMoM]
+- Hero_LevelUp_Popup_Draw (LVLMAKE.c): window bottom = base_y + 49 + (n+1)/2, missing "* 17" (row height, present in Hero_LevelUp_Popup) - abilities cut off. [ReMoM]
+
+=== City, screens, UI ===
+- Near_Allocate_Next(1520) for struct s_UV_List (ProdScr.c, UnitView.c, LVLMAKE.c): the original record array is 40 x 38 B = 1520, but ReMoM's struct of arrays with SAMB_INT picts[] is 1760 B; the tail overwrote product_fields[] - build list entries 6+ stopped responding. Now sizeof(struct s_UV_List). [ReMoM]
+- City screen (CityScr.c): City_Sell_Building called with city and building swapped - wrong building removed in another city, no gold. [ReMoM]
+- City screen farmers/workers (CityScr.c): clicking citizen i set i+1 farmers (first -> 0), so clicking any farmer but the first did nothing. Now: click farmer i -> i farmers; click worker i -> i+1 farmers; never below the minimum. [ReMoM, our reading of the intended rule]
+- Outpost_Cityscape_Draw (CITYSCAP.c): cityscape_houses_seg[type * 10] - 10 is the BYTE offset from the asm (words); should be * 5. Klackon outposts (type 2) indexed past the array -> freeze. [ReMoM]
+- Building_Allows_List__WIP (ProdScr.c): "reqd_bldg_1 == b && reqd_bldg_2 == b" should be "||" (list almost always empty); unit part was TODO - completed (race units + generic). [ReMoM, unfinished]
+- Load screen (LoadScr.c): list stored the FILE number (1..8) but compared/highlighted the ROW (0..7) - first slot unselectable, slot N loaded SAVE(N+1). [ReMoM]
+- Continue from the main menu (MOM_SCR.c): skips what Load_Screen does before Loaded_Game_Update (Fade_Out, clear pages, Load_Palette(0), Set_Palette_Changes, Calculate_Remap_Colors, Cycle_Palette_Color) - map drawn for seconds in the menu palette. [ReMoM]
+- Create_Reduced_Map_Picture (MainScr_Maps.c): city loop tested GET_SQUARE_EXPLORED(minimap_square_x, minimap_square_y) - leftovers from the terrain loop (minimap corner) - instead of the city square; unexplored enemy cities shown. [ReMoM]
+- Create_Blank_Picture (FLIC_Draw.c): fill loop wrote pixels 1..length instead of 0..length-1 - pixel (0,0) transparent (blinking dot on the minimap), one byte past the picture. [ReMoM]
+- Main_Screen Add_Unit_Action_Fields (MainScr.c): special button field (BUILD/PURIFY) added when special_action_flag != -1 even with an empty stack; after Settlers found a city, "BUILD" stayed drawn over Next Turn. Added _unit_stack_count > 0. [ReMoM]
+- Cartographer (AdvsrScr.c): units and cities y computed from m_cartograph_x instead of m_cartograph_y (11 px too high); terrain map was an unfinished HACK (we draw explored squares in minimap colours). [ReMoM]
+- History (AdvsrScr.c): header always months[8] ("September"); menu label "history" lowercase. [ReMoM]
+- New game race/banner screen (NewGame.c): wizard name printed again at y+1, covering its shadow. [ReMoM]
+- Surveyor (Surveyor.c): string literal "Nightshade',0 ; should use dseg:2" includes a disassembly comment. [ReMoM]
+- Notify2 (GENDRAW.c): with the Chaos mascot (x1 = -22) and a full-width text the box ran past x = 319 and wrapped to the left edge (FLIC_Draw does not clip). Box now shifted left to fit. [unclear, may be OG]
+
+=== Memory leaks (pool never freed) ===
+- MOM_SCR.c Load/Save screen calls Load_WZD_Resources() (marked HACK) on every visit; Terrain_Init, Main_Screen_Load_Pictures, Load_Combat_Background_Bottom, Load_Button_Sounds reload ~830 KB into the pool each time -> "Insufficient memory" after a few visits. Now loaded once. [ReMoM]
+- Open_File_Animation__HACK (FLIC_Draw.c): LBX_Load per call, never released (end-of-turn scroll 218 KB every turn, spellbook, conquest, spell animations) -> out of memory in long games. The original loaded into a fixed buffer; now one reusable buffer + LBX_Reload. [ReMoM]
+
+=== Single process vs. the original's fresh WIZARDS.EXE / MAGIC.EXE ===
+- New Game without restarting the program kept the previous game's data (History showed old wizards, old opponents returned, AI war targets from the old map -> crash). We snapshot every SAVE.GAM array before the first game and restore it on each New Game. Also _given_chance_to_rename_home_city reset so the capital name is asked every new game. [ReMoM architecture]

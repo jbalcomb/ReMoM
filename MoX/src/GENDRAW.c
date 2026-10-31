@@ -1593,6 +1593,7 @@ void Notify2(int16_t UU_box_center_x, int16_t box_top_y, int16_t type, char * me
 
     UU_max_para_width = Get_Paragraph_Max_Width(175, message_text, 0);
 
+    /* OGBUG  for the Chaos mascot (`x1 = -22`) and a full-width paragraph the box runs off the right edge; on DOS it wraps into the next scanline the same way. */
     if(notify2_mascot_x1[notify_magic_idx] < 0)
     {
         message_box_x = (6 - notify2_mascot_x1[notify_magic_idx]);  // { -2,   0, -22,   8,  2}
@@ -1623,7 +1624,7 @@ void Notify2(int16_t UU_box_center_x, int16_t box_top_y, int16_t type, char * me
     if(notify_draw_offscr == 1)
     {
         Set_Page_Off();
-        Notify1_Draw();  // BUGBUG  should be Notify2_Draw() - hot sloppy copy pasta
+        Notify1_Draw();  /* OGBUG  should be Notify2_Draw() - hot sloppy copy pasta */
     }
     else
     {

@@ -150,7 +150,7 @@ def build_catalog():
         g = resolve_geometry(r["add_func"], r["args"], folder)
         sig = SIGNATURES[r["add_func"]]
         hk_idx = sig.get("hotkey")
-        hk_raw = r["args"][hk_idx] if (hk_idx is not None and hk_idx < len(r["args"])) else ""
+        hk_raw = r["args"][hk_idx] if(hk_idx is not None and hk_idx < len(r["args"])) else ""
         hv, hn, hu = decode_hotkey(hk_raw, folder)
         row = {
             "file": r["file"], "line": r["line"], "function": r["function"],

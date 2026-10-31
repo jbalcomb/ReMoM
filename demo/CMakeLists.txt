@@ -27,6 +27,7 @@ add_executable(demo_vga
     effect_vanish.c
     effect_somlose.c
     effect_somwin.c
+    effect_conquest.c
     ${PROJECT_SOURCE_DIR}/src/ReMoM_Init.c   # full engine boot for the `score` / `mastery` effects
 )
 

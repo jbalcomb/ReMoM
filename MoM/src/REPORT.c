@@ -464,7 +464,7 @@ void Chancellor_Screen__WIP(int16_t flag)
     Clear_Fields();
 
     // SCROLL.LBX, 002      "SCROLOUT"  ""
-    Open_File_Animation__HACK(scroll_lbx_file__ovr126__2, 2);
+    Open_File_Animation(scroll_lbx_file__ovr126__2, 2);
 
     // IDGI  for(itr_msgs = 0; ((_scroll_text_height + 7) / 8) >= itr_msgs; itr_msgs++)
     for (itr_msgs = 0; itr_msgs < ((_scroll_text_height + 7) / 8); itr_msgs++)
@@ -484,7 +484,7 @@ void Chancellor_Screen__WIP(int16_t flag)
 
         Reset_Window();
 
-        Draw_File_Animation__HACK();
+        Draw_File_Animation();
 
         if(itr_msgs == 0)
         {

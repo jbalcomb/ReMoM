@@ -287,6 +287,7 @@ void Load_MGC_Resources(void);
 
 // WZD o52p01
 void Load_WZD_Resources(void);
+void Load_WZD_Resources_Once(void);
 
 // WZD o52p02
 // drake178: UNIT_Upkeep_Reset()

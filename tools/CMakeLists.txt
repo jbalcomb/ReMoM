@@ -106,6 +106,27 @@ target_link_libraries(Extract_FONTS_LBX PRIVATE
 set_target_properties(Extract_FONTS_LBX PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 
+# --- lbx_image_export: export LBX picture (FLIC) entries to PNG via the engine's own FLIC_Draw() ---
+# Links the engine on purpose: the export is the game's decode by construction, so there is one
+# authoritative FLIC reader.  Phase 1a of doc/@AI_Plans/PLAN-Graphics-Upscale.md.
+#   lbx_image_export -d assets -o out LOAD 0   -> out/LOAD_000_indexed.png, out/LOAD_000_rgba.png
+add_executable(lbx_image_export lbx_image_export.c)
+
+target_include_directories(lbx_image_export PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/src
+)
+
+target_link_libraries(lbx_image_export PRIVATE
+    STU
+    MOX
+    momlib
+    Platform_Headless
+)
+
+set_target_properties(lbx_image_export PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+
 # --- remom_video_probe: process-per-attempt SDL2 graphics-stack probe ---
 #  Diagnoses "crash on startup in SDL_CreateRenderer" reports (GLX-over-XWayland on Linux,
 #  a faulting D3D/OpenGL ICD on Windows) by testing every video x render driver combo in

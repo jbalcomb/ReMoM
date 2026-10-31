@@ -23,7 +23,7 @@ int Fixture_Screen(void)
     /* grid — inclusive last-pixel extent */
     grid_fld = Add_Grid_Field(0, 0, 20, 18, 12, 10, &gx, &gy, ST_UNDEFINED);
 
-    if (some_state > 0)
+    if(some_state > 0)
     {
         for (itr = 0; itr < 5; itr++)
         {

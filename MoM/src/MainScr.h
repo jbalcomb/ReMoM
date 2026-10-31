@@ -22,6 +22,8 @@
 
 // WZD dseg:2E12
 extern int16_t DBG_Alt_A_State;
+// WZD dseg:2E14
+extern int16_t _given_chance_to_rename_home_city;
 
 
 
@@ -486,7 +488,7 @@ int16_t Stack_Moves_Active(void);
 int16_t Stack_Moves(void);
 
 // WZD o63p14
-int16_t City_At_Square__2(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Has_City_Dupe(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o63p15
 int16_t Check_Planar_Seal(void);

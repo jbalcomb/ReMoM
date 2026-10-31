@@ -3098,6 +3098,7 @@ int16_t Combat(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t
     _unit_stack_count = 0;
     combat_attacker_player_idx = attacker_player_idx;
     defender_idx = defender_player_idx;
+    combat_defender_player_idx = defender_player_idx;
     for(itr = 0; itr < troop_count; itr++)
     {
         _UNITS[troops[itr]].wx = (int8_t)_combat_attacker_wx;

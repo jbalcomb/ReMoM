@@ -165,7 +165,7 @@ void Draw_Logos(void)
 #ifdef MOUSE_DEBUG
         MOUSE_LOG("SCR t=%llu INTRO scene=%d loading\n", (unsigned long long)Platform_Get_Millies(), itr_scenes);
 #endif
-        Open_File_Animation__HACK(intro_lbx_file__MGC_ovr058, itr_scenes);
+        Open_File_Animation(intro_lbx_file__MGC_ovr058, itr_scenes);
         leave_screen = ST_FALSE;
         if(itr_scenes == 0)      { Intro_Fade_Out_2();  }
         else if(itr_scenes == 1) { Intro_Fade_Out_20(); }
@@ -199,7 +199,7 @@ void Draw_Logos(void)
                 CLS();
             }
 
-            Draw_File_Animation__HACK();
+            Draw_File_Animation();
 
             if(
                 (itr_scenes == 2)

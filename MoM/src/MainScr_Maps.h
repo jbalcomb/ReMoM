@@ -256,9 +256,10 @@ void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 // WZD o150p16
 void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t mark_x, int16_t mark_y, int16_t mark_flag);
 // WZD o150p17
-void Cartograph_Screen_Draw_Map_Terrain__NOWORKIE(int16_t cartograph_plane, SAMB_ptr cartograph_seg);
+void Cartograph_Screen_Draw_Map_Terrain(int16_t cartograph_plane, SAMB_ptr cartograph_seg);
 // WZD o150p18
-// sub_DAFF4()
+int16_t Square_Is_Sailable__NIU(int16_t wx, int16_t wy, int16_t wp);
+
 
 
 #ifdef __cplusplus

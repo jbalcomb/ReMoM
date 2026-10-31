@@ -22,7 +22,7 @@ Make ReMoM present sharper than 320×200 without ceasing to look like Master of 
 ### The sprite format and its decoder
 
 - A graphic entry begins `int16 width @0; int16 height @2;` then encoded palette-indexed pixel data with transparency and, for some entries, multiple animation frames.
-- The authoritative decoder is **`Draw_Picture(x, y, pict_seg)`** → **`Draw_Picture_ASM(...)`** (`MoX/src/FLIC_Draw.c:1646-1654`); **`Draw_Picture_Windowed`** (`:1661+`) shows the header read and the clip-window handling. `Cache_Graphics_*` (`MoM/src/LOADER.c:1657+`) are the callers that load archives into memory for drawing.
+- LBX graphic entries are FLIC animations. The authoritative decoder is **`FLIC_Draw(x, y, picture)`**: it loads the entry's palette when it has one (`FLIC_Load_Palette()`), then decodes the current frame with **`FLIC_Draw_Frame()`** — column-major RLE, skipped pixels stay transparent — or `FLIC_Remap_Draw_Frame()` when the remap flag is set (`MoX/src/FLIC_Draw.c`). `Draw_Picture()` / `Draw_Picture_ASM()` are a separate path that draws already-decoded bitmaps. `Cache_Graphics_*` (`MoM/src/LOADER.c`) are the callers that load archives into memory for drawing.
 - Runtime recolouring is applied at draw time via palette remap primitives (`Gradient_Fill`, `Tint_Fill`, `remap_block` in `MoX/src/Graphics.h:95,130`) and `colortbl`/`remap` code across ~20 `MoM/src/` files — the sprite bytes are indices, not colours.
 
 ### The container reader and extraction tooling
@@ -37,11 +37,12 @@ Make ReMoM present sharper than 320×200 without ceasing to look like Master of 
 
 ## Decisions
 
-1. **Library before tool.** The architecture (BRA §4) and upscaler (BRA §5) choices are deferred until the library exists. Phase 1 builds no upscaler and changes no engine code.
-2. **One format reader.** The exporter reuses `Draw_Picture_ASM`'s decode rather than re-deriving it, so the project does not carry two divergent sprite readers (the failure `lbx_extract` half-fell into for images).
+1. **Library before tool.** The architecture (BRA §4) and upscaler (BRA §5) choices are deferred until the library exists. Phase 1 builds no upscaler and makes no change to *how* the game renders; its only engine touch is an optional read-only capture hook (decision 6).
+2. **One format reader.** The exporter calls the engine's `FLIC_Draw()` rather than re-deriving the format, so the project does not carry two divergent sprite readers (the failure `lbx_extract` half-fell into for images).
 3. **Index-preserving export is mandatory; RGB-under-palette is additive.** Protects runtime recolouring (BRA §2.3).
 4. **The catalogue is a first-class deliverable**, structured to answer BRA §9 quantitatively.
 5. **Family A (output-frame) is the first upscaling option to evaluate** once the decision phase opens — smallest risk surface, reversible, ships independently. Family B is not committed without evidence from the library that Family A is insufficient.
+6. **Recolouring is preserved by mask/region separation (BRA §11, chosen direction).** Banner/team colour is a fixed reserved-index range (214–218, `MoM/src/UnitView.c:2683`) exported as a base+ramp-position mask; general tints (256-entry LUT, `MoX/src/FLIC_Draw.c:261`) become an output-stage shader pass, not a per-sprite bake. Phase 1 captures the data this needs (the mask, and the recolour classification), including an optional runtime hook on `FLIC_Draw()` and `Draw_Picture()` (and their remap variants). The mask approach composes with any Family, so it does not pre-empt decision 5.
 
 ## Phase 1 — the asset library
 
@@ -50,19 +51,39 @@ Make ReMoM present sharper than 320×200 without ceasing to look like Master of 
 Prove the whole pipeline on the least-ambiguous content before scaling out.
 
 - Take the existing `lbx_extract` container reader; add a pixel decoder for **one** simple, single-frame archive (a full-screen UI/background like `MAINSCRN.LBX` or a portrait from `PORTRAIT.LBX` — fixed size, no animation, minimal recolouring).
-- Decide the reuse mechanism here: can `Draw_Picture_ASM`'s decode be lifted into a standalone tool, or must the tool link `momlib`/`MOX` and render into an off-screen 320×200 buffer via `Platform_Headless` (`platform/headless/`)? Both are viable; pick the one that keeps a **single** authoritative decoder.
+- Decide the reuse mechanism here: lift `FLIC_Draw_Frame()`'s decode into a standalone tool, or link `momlib`/`MOX` and render into an off-screen 320×200 buffer via `Platform_Headless` (`platform/headless/`)? Pick the one that keeps a **single** authoritative decoder.
 - Output: an index-map PNG (or index array + palette) **and** an RGB PNG under the entry's palette.
 - **Validation:** compare the RGB PNG against a screenshot of the same asset in-game; assert exported dimensions equal the `w@0 / h@2` header. This is the go/no-go for the approach.
+
+**1a outcome (2026-10-29).** `tools/lbx_image_export.c` (CMake-only, like every other tool) links `STU MOX momlib Platform_Headless` and calls the engine's `FLIC_Draw()` into its own 320×200 page — the reuse mechanism is "link the engine", and there is one FLIC reader. Built and run in WSL (`clang-nosound-debug`, no warnings); the MSVC presets are blocked while the Windows SDK is missing.
+
+- **Entry:** LOAD.LBX entry 0 — 320×200, one frame, its own full 0..255 palette, no remap flag. Exported image is the Load/Save screen with correct colours.
+- **Transparency** is recovered by drawing twice onto pages pre-filled `0x00` and `0xFF`: pixels that differ were never written. A write outside the declared box is counted as a decode error (none seen).
+- **PNG check:** an independent stdlib-`python3` reader verified every chunk CRC and the zlib stream, and that the indexed (+PLTE/tRNS) and RGBA files agree on every pixel, for LOAD 0/1, WIZARDS 0, BACKGRND 3, MAINSCRN 0/5.
+- **Refusals work:** empty entries (BACKGRND 1, 0 bytes) and remap-flagged entries exit non-zero with a reason; multi-frame entries export frame 0 and say so.
+- **Not yet done — in-game oracle.** `assets/capture_load_screen.hms` drives `ReMoM --capture` to the Load screen, but no runnable binary could execute it: the MSVC Debug exe needs `ucrtbased.dll` (gone with the SDK), the 2026-08-09 Release exe never registered the `L` hotkey from its saves, and WSL has no display (no WSLg, no Xvfb). Re-run once MSVC builds again.
+
+Findings that feed 1b/1c:
+
+- **Some entries take their palette from a sibling entry, not from FONTS.LBX.** MAINSCRN 5 has no palette and is drawn after MAINSCRN 0 (full 0..255 palette); under the main game palette it is garbage, under `-P MAINSCRN:0` it is the main-menu castle. The catalogue needs a "palette source" column, and the right source is a property of the *screen that draws the entry*, discoverable from the `FLIC_Draw` / `Load_Palette` call order in `MoM/src/`.
+- **Partial palettes are common.** WIZARDS portraits carry only 224..255 and BACKGRND 3 only 224..243; they are correct over base palette 0.
+- **Full-screen backgrounds have deliberate holes.** LOAD 0 has 2,259 never-written pixels inside (24,43)–(291,185), where the Load screen draws slot fills and buttons; MAINSCRN 5 has 83. These are cut-outs for overlays, so "transparent" in a background is meaningful, not a decode artefact.
+- **Index 0 was never drawn opaque** in the sampled entries, so `ST_TRANSPARENT` (0) + tRNS represents transparency losslessly in the indexed export so far. The tool reports the conflict if an entry ever breaks that.
 
 ### 1b. Handle the hard cases — frames, transparency, palettes
 
 - Multi-frame entries (unit walk cycles in `FIGURES*`/`UNITS*`): export each frame as a numbered PNG **and** a horizontal sprite sheet; record frame count and shared origin.
 - Transparency: preserve the transparent index as PNG alpha in the RGB export; keep it as its index value in the index-preserving export.
 - Palettes: capture which palette an entry is drawn under (embedded vs. a shared game palette). Where an entry is recoloured at runtime, note it — the catalogue flag in 1c depends on this.
+- **Banner/team-colour mask (BRA §11).** For entries that use the reserved banner indices 214–218, emit a base image with those indices neutralised plus a per-pixel ramp-position (0–4) mask. Reference the `COL_Banners` ramp table (`MoM/src/UnitView.c:2683`) for validation. Validation: base+mask re-tinted by a player ramp must reproduce the in-game banner colouring at native resolution (the go/no-go for the mask approach, before any upscaling is involved).
+
+### 1b-hook. Optional runtime remap-capture
+
+An optional, read-only, `/* CLAUDE */`-marked, env/debug-gated hook on `FLIC_Draw()` / `FLIC_Remap_Draw_Frame()` (LBX entries) and `Draw_Picture()` / `Remap_Draw_Picture_ASM()` (decoded bitmaps) that logs, per draw, the archive+entry and the active 256-entry `picture_remap_color_list` LUT. This turns the catalogue's recolour columns from heuristic to authoritative and separates banner-recoloured entries from globally-tinted ones. It changes nothing about what is drawn; it is the single permitted engine touch in Phase 1 (Decisions 1, 6).
 
 ### 1c. The catalogue
 
-One row per entry across all 103 archives: `archive, index, width, height, frame_count, class (unit|terrain|portrait|ui|fullscreen|effect|item|font|data|sound|unknown), recoloured_runtime (bool), tessellates (bool), notes`. Emit as CSV/JSON. The `class`, `recoloured_runtime`, and `tessellates` columns are what turn BRA §9's open questions into numbers.
+One row per entry across all 103 archives: `archive, index, width, height, frame_count, class (unit|terrain|portrait|ui|fullscreen|effect|item|font|data|sound|unknown), recoloured_runtime (bool), recolour_kind (none|banner|tint|both), uses_reserved_banner_indices (bool), tessellates (bool), notes`. Emit as CSV/JSON. The `class`, `recolour_*`, and `tessellates` columns are what turn BRA §9's open questions into numbers — in particular, `recolour_kind` quantifies exactly how much art needs a banner mask vs. a global tint pass (BRA §11).
 
 ### 1d. The gallery
 
@@ -87,7 +108,7 @@ With the library in hand, record the architecture decision in `BRA-Graphics-Upsc
 
 ### Option B — Asset replacement at higher resolution (if chosen)
 
-1. Bake upscaled sprites offline from the Phase 1 index-preserving exports, using the chosen scaler, preserving the index space (or an explicitly-approved fixed recolour set). Seam-aware for terrain; frame-coherent for animations.
+1. Bake upscaled sprites offline from the Phase 1 exports, using the chosen scaler. Recolouring is preserved by the mask/region approach (BRA §11): upscale the base RGB and its banner ramp-position mask together (mask kept crisp — nearest/vector — so its edge tracks the base), and apply general tints as an output-stage LUT pass rather than baking tint variants. Seam-aware for terrain; frame-coherent for animations.
 2. Rework the rendering model to a higher internal resolution — internal surface size, coordinate math, clip windows, hit-testing, layout constants — **or** a compositing hybrid (hi-res sprites over an upscaled low-res background at aligned coordinates). This is the large, invasive body of work; scope it in its own PLAN once committed.
 3. Original-game-code edit rules apply throughout (`/* CLAUDE */`, no deletion of faithful reconstruction).
 
@@ -98,7 +119,7 @@ Option A now (shippable), plus Option B for a curated high-value subset (portrai
 ## Build-out order (committed portion)
 
 1. **Phase 1a tracer bullet** — one archive, one entry class, decode to PNG, validate against the running game. Proves the decoder-reuse approach with the least ambiguity.
-2. **Phase 1b/1c** — frames/transparency/palette handling, then the catalogue over all 103 archives.
+2. **Phase 1b/1c** — frames/transparency/palette handling, the banner base+mask export with its re-tint validation, the optional runtime remap-capture hook, then the catalogue over all 103 archives.
 3. **Phase 1d/1e** — gallery + one-command regeneration + build-system wire-up.
 4. **Decision point** — architecture recorded in the BRA.
 5. Later phases scoped in their own follow-up plan once the Family is chosen. Family A is the first to evaluate.
@@ -107,5 +128,6 @@ Option A now (shippable), plus Option B for a curated high-value subset (portrai
 
 - **Decoder reuse mechanism** (standalone lift vs. link-the-engine) — resolved in 1a; getting it wrong risks a second divergent format reader.
 - **Compression/encoding variants across archives** — some archives (combat tilesets, effects) may use encoding the tracer-bullet entry does not exercise; the dimensions-invariant check across the full set surfaces these.
-- **Recolour detection** — deciding `recoloured_runtime` may need cross-referencing the `MoM/src/` draw call sites, not just the archive; the catalogue may start with a conservative heuristic and refine.
+- **Recolour detection** — deciding `recoloured_runtime` / `recolour_kind` from the archive alone is heuristic; the optional runtime remap-capture hook (Phase 1b-hook) makes it authoritative by logging which entries actually pass through the banner-index or LUT paths. Resolve early whether the hook is built now or the catalogue ships with a heuristic first pass.
+- **Reserved-index ambiguity** — confirm no non-banner sprite legitimately uses indices 214–218 for non-banner pixels, which would false-positive the banner mask (BRA §11.5). The runtime hook plus a static scan settles it.
 - **Fonts and FLIC** — explicitly deferred; the catalogue tags them so they are visibly out of scope rather than silently skipped.

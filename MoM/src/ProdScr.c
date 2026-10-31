@@ -407,7 +407,8 @@ void Production_Screen(void)
 void Production_Screen_Load(void)
 {
     GUI_String_1 = (char *)Near_Allocate_First(80);
-    prod_specials_list = (struct s_UV_List *)Near_Allocate_Next(1520);
+    /*HACK */  // picts[] pointer is 64-bit, ReMoM needs 1760;  prod_specials_list = (struct s_UV_List *)Near_Allocate_Next(1520);
+    prod_specials_list = (struct s_UV_List *)Near_Allocate_Next(sizeof(struct s_UV_List));
     IDK_ProdScr_w42A94 = Near_Allocate_Next(110);
     product_indexes = (int16_t *)Near_Allocate_Next(40);  // 20 2-Byte, Signed  bldg_idx/unit_type_idx
     product_fields = (int16_t *)Near_Allocate_Next(50);  // 20 2-Byte, Signed  field_idx
@@ -649,26 +650,28 @@ void Production_Screen_Draw_(void)
 
 
 // WZD o56p07
-// drake178: BLD_GetAllowsList()
-void Building_Allows_List__WIP(int16_t bldg_idx, int16_t * allows_list_count, int16_t allows_list[])
+void Building_Allows_List(int16_t bldg_idx, int16_t * allows_list_count, int16_t allows_list[])
 {
-    int16_t Building_Index = 0;
+    int16_t allowed_bldg_idx = 0;
     int16_t reqd_terrtype = 0;
-    int16_t Cant_Build = 0;
+    int16_t cant_build = 0;
     int16_t city_race = 0;
     int16_t itr_cantbuild = 0;
     int16_t itr = 0;
 
     *allows_list_count = 0;
 
+    /* Get the race of the current city being processed */
     city_race = _CITIES[_city_idx].race;
 
+    /* Part 1: Check which buildings are unlocked by bldg_idx */
     for(itr = 0; itr < NUM_BUILDINGS; itr++)
     {
-        Cant_Build = ST_FALSE;
+        cant_build = ST_FALSE;
+        /* Verify if the city's race is prohibited from constructing building 'itr' */
         if(
             (bldg_data_table[itr].reqd_bldg_1 == bldg_idx)
-            &&
+            ||
             (bldg_data_table[itr].reqd_bldg_2 == bldg_idx)
         )
         {
@@ -676,12 +679,12 @@ void Building_Allows_List__WIP(int16_t bldg_idx, int16_t * allows_list_count, in
             {
                 if(_race_type_table[city_race].cant_build[itr_cantbuild] == itr)
                 {
-                    Cant_Build = ST_TRUE;
+                    cant_build = ST_TRUE;
                     break;
                 }
             }
 
-            if(Cant_Build == ST_FALSE)
+            if(cant_build == ST_FALSE)
             {
                 if(bldg_data_table[itr].reqd_bldg_1 > 100)
                 {
@@ -698,10 +701,10 @@ void Building_Allows_List__WIP(int16_t bldg_idx, int16_t * allows_list_count, in
                 }
                 else
                 {
-                    Building_Index = BLD_AllowedByRace__WIP_TRUE(bldg_idx, itr);
-                    if(Building_Index != ST_UNDEFINED)
+                    allowed_bldg_idx = City_Race_Can_Unlock_Building(bldg_idx, itr);
+                    if(allowed_bldg_idx != ST_UNDEFINED)
                     {
-                        allows_list[*allows_list_count] = Building_Index;
+                        allows_list[*allows_list_count] = allowed_bldg_idx;
                         *allows_list_count += 1;
                     }
                 }
@@ -709,9 +712,37 @@ void Building_Allows_List__WIP(int16_t bldg_idx, int16_t * allows_list_count, in
         }
     }
 
+    /* Part 2: Check which units are unlocked by bldg_idx */
+    /* Unit IDs in the table range from 35 to 197 */
     for(itr = 35; itr < 198; itr++)
     {
-        // TODO  add allows units
+        /* Unit must either be race-specific to the city or a standard unit (rt_Standard) */
+        if(
+            (_unit_type_table[itr].race_type == city_race)
+            ||
+            (_unit_type_table[itr].race_type == rt_Standard)
+        )
+        {
+            /* Check if the unit requires 'bldg_idx' */
+            if(
+                (_unit_type_table[itr].reqd_bldg_1 == bldg_idx)
+                ||
+                (_unit_type_table[itr].reqd_bldg_2 == bldg_idx)
+            )
+            {
+                /* either required building is not bs_NotBuilt (built, replaced, or removed) */
+                if(
+                    (_CITIES[_city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_NotBuilt)
+                    ||
+                    (_CITIES[_city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_NotBuilt)
+                )
+                {
+                    /* Units are stored in the allows_list with an offset of 100 to distinguish them from buildings */
+                    allows_list[*allows_list_count] = (100 + itr);
+                    *allows_list_count += 1;
+                }
+            }
+        }
     }
 
 }
@@ -1177,14 +1208,62 @@ int16_t City_N_Turns_To_Produce(int16_t production_cost, int16_t city_idx)
 
 
 // WZD o56p12
-// drake178: BLD_AllowedByRace()
-int16_t BLD_AllowedByRace__WIP_TRUE(int16_t UU_Bld1, int16_t Building)
+/*
+//CLAUDE
+uu_allowed_by_bldg_idx is the building whose Allows list is being built; never read.
+Likely left over from an "is bldg_idx the missing prerequisite" test: as written, any building with at least one unbuilt prerequisite qualifies, even if its other prerequisite is also missing.
+*/
+int16_t City_Race_Can_Unlock_Building(int16_t uu_allowed_by_bldg_idx, int16_t building)
 {
-    // TODO  int16_t Building_List = 0;
-    // TODO  int16_t City_Screen_Race = 0;
-    int16_t Result = 0;
-
-    Result = Building;
-
-    return Result;
+    int16_t bldg_list[NUM_BUILDINGS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t city_race = 0;
+    int16_t result = 0;
+    int16_t itr = 0;
+    int16_t j = 0;  // _CX_
+    for(itr = 0; itr < NUM_BUILDINGS; itr++)
+    {
+        bldg_list[itr] = ST_TRUE;
+    }
+    city_race = _CITIES[_city_idx].race;
+    result = ST_UNDEFINED;
+    if(
+        (_CITIES[_city_idx].bldg_status[bldg_data_table[building].reqd_bldg_1] != bs_Built)
+        ||
+        (_CITIES[_city_idx].bldg_status[bldg_data_table[building].reqd_bldg_2] != bs_Built)
+    )
+    {
+        for(j = 0; j < _race_type_table[city_race].cant_build_count; j++)
+        {
+            bldg_list[_race_type_table[city_race].cant_build[j]] = ST_FALSE;
+        }
+        for(itr = 0; itr < 50; itr++)
+        {
+            for(j = 0; j < NUM_BUILDINGS; j++)
+            {
+                if(bldg_data_table[j].reqd_bldg_1 > 100)
+                {
+                    if(bldg_list[bldg_data_table[j].reqd_bldg_2] == ST_FALSE)
+                    {
+                        bldg_list[j] = ST_FALSE;
+                    }
+                }
+                else
+                {
+                    if(bldg_list[bldg_data_table[j].reqd_bldg_1] == ST_FALSE)
+                    {
+                        bldg_list[j] = ST_FALSE;
+                    }
+                    if(bldg_list[bldg_data_table[j].reqd_bldg_2] == ST_FALSE)
+                    {
+                        bldg_list[j] = ST_FALSE;
+                    }
+                }
+            }
+        }
+        if(bldg_list[building] == ST_TRUE)
+        {
+            result = building;
+        }
+    }
+    return result;
 }

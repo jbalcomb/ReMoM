@@ -4525,13 +4525,9 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
     int16_t itr_stacks = 0;
     int16_t itr_units = 0;
     int16_t itr_cities = 0;
-
-
     /* Phase 1: Init */
     best_stack_idx = ST_UNDEFINED;
     max_score = 0;
-
-
     /* Phase 2: Select Non-Garrisoned Stack */
     for(itr_stacks = 0; itr_stacks < _ai_all_own_stack_count; itr_stacks++)
     {
@@ -4550,7 +4546,6 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
                 break;
             }
         }
-
         if(found_city_at_stack == ST_FALSE)
         {
             if(_ai_all_own_stacks[itr_stacks].value > max_score)
@@ -4560,7 +4555,6 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
             }
         }
     }
-
     /* Phase 3: Fortress Fallback */
     if(best_stack_idx == ST_UNDEFINED)
     {
@@ -4578,15 +4572,11 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
             }
         }
     }
-
-
     /* Phase 4: */
     best_unit_idx = ST_UNDEFINED;
     max_score = 0;
-
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-
         /* OGBUG: could OOB `_ai_all_own_stacks[-1]` */
         if(
             _UNITS[itr_units].wx != _ai_all_own_stacks[best_stack_idx].wx
@@ -4604,37 +4594,31 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
         {
             continue;
         }
-
         /* exclude non-Fantastic Units*/
         /* spl_Spell_Lock */
         if(flag2 != ST_FALSE && _UNITS[itr_units].type < ut_Magic_Spirit)
         {
             continue;
         }
-
         /* If the unit has Attribs_2 set (e.g. Ab_Summoned), it is skipped. */
         if(_unit_type_table[_UNITS[itr_units].type].Attribs_2 != 0)
         {
             continue;
         }
-
         /* exclude Settlers */
         if(_unit_type_table[_UNITS[itr_units].type].Abilities & UA_CREATEOUTPOST)
         {
             continue;
         }
-
         /* exclude Melders */
         if(_unit_type_table[_UNITS[itr_units].type].Abilities & UA_MELD)
         {
             continue;
         }
-
         if(flag3 != ST_FALSE && _UNITS[itr_units].type <= ut_BarbSwordsmen)  /* OGBUG: should be ut_Warship, ut_BarbSwordsmen */
         {
             continue;
         }
-
         /* don't, if it already has it */
         if(
             (_UNITS[itr_units].enchantments & unit_enchantment)
@@ -4642,19 +4626,14 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
         {
             continue;
         }
-
         /* Phase ?: Movement Enchantments */
         if(flag4 != ST_TRUE && _UNITS[itr_units].type == ut_Floating_Island)
         {
             continue;
         }
-
-        /* 
-         * We initialize the unit score to its upkeep value.
-         */
+        /* initialize the unit score to its upkeep value */
         current_unit_score = _unit_type_table[_UNITS[itr_units].type].Upkeep;
         unit_plane = _UNITS[itr_units].wp;
-
         if(flag4 == ST_TRUE)
         {
             /* OGBUG: Settlers were already excluded */
@@ -4662,7 +4641,6 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
             {
                 current_unit_score *= 20;
             }
-
             if(
                 (_unit_type_table[_UNITS[itr_units].type].Move_Flags & MV_FLYING)
                 ||
@@ -4672,15 +4650,12 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
                 current_unit_score = 0;
             }
         }
-
         if(current_unit_score > max_score)
         {
             best_unit_idx = itr_units;
             max_score = current_unit_score;
         }
     }
-
-
     /* Phase 5: */
     if(best_unit_idx == ST_UNDEFINED)
     {
@@ -4691,7 +4666,6 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
         *targeted_unit_idx = best_unit_idx;
         return ST_TRUE;
     }
-
 }
 
 

@@ -61,7 +61,7 @@ TEST_F(Generate_Nodes_test, Creates30Nodes)
     int active_nodes = 0;
     for (int i = 0; i < NUM_NODES; i++)
     {
-        if (_NODES[i].power > 0)
+        if(_NODES[i].power > 0)
         {
             active_nodes++;
         }

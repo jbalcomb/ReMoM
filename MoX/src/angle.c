@@ -437,7 +437,7 @@ void VGA_DrawTexture(TextureRenderParams * params)
     int dest_pixel_index      = (params->start_y * SCREEN_WIDTH) + params->start_x;
     int source_pixel_index    = params->read_off;
 
-    while (current_width > 0) {
+    while(current_width > 0) {
         int col_dest_index   = dest_pixel_index;
         int col_source_index = source_pixel_index;
         

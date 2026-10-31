@@ -77,11 +77,11 @@ TEST_F(NEWG_EqualizeNodes_test, BalancedDistribution_NoChange)
     int sorcery = 0, chaos = 0, nature = 0;
     for (int i = 0; i < 16; i++)
     {
-        if (_NODES[i].wp == ARCANUS_PLANE)
+        if(_NODES[i].wp == ARCANUS_PLANE)
         {
-            if (_NODES[i].type == nt_Sorcery) sorcery++;
-            if (_NODES[i].type == nt_Chaos) chaos++;
-            if (_NODES[i].type == nt_Nature) nature++;
+            if(_NODES[i].type == nt_Sorcery) sorcery++;
+            if(_NODES[i].type == nt_Chaos) chaos++;
+            if(_NODES[i].type == nt_Nature) nature++;
         }
     }
     
@@ -108,11 +108,11 @@ TEST_F(NEWG_EqualizeNodes_test, ExcessSorcery_ConvertsToOthers)
     int sorcery = 0, chaos = 0, nature = 0;
     for (int i = 0; i < 16; i++)
     {
-        if (_NODES[i].wp == ARCANUS_PLANE)
+        if(_NODES[i].wp == ARCANUS_PLANE)
         {
-            if (_NODES[i].type == nt_Sorcery) sorcery++;
-            if (_NODES[i].type == nt_Chaos) chaos++;
-            if (_NODES[i].type == nt_Nature) nature++;
+            if(_NODES[i].type == nt_Sorcery) sorcery++;
+            if(_NODES[i].type == nt_Chaos) chaos++;
+            if(_NODES[i].type == nt_Nature) nature++;
         }
     }
     
@@ -140,10 +140,10 @@ TEST_F(NEWG_EqualizeNodes_test, Myrror_MinimumThreeEach)
     int chaos = 0, nature = 0;
     for (int i = 16; i < NUM_NODES; i++)
     {
-        if (_NODES[i].wp == MYRROR_PLANE)
+        if(_NODES[i].wp == MYRROR_PLANE)
         {
-            if (_NODES[i].type == nt_Chaos) chaos++;
-            if (_NODES[i].type == nt_Nature) nature++;
+            if(_NODES[i].type == nt_Chaos) chaos++;
+            if(_NODES[i].type == nt_Nature) nature++;
         }
     }
     
@@ -199,21 +199,21 @@ TEST_F(NEWG_EqualizeNodes_test, UpdatesTerrainType)
     // Assert - verify terrain types match node types
     for (int i = 0; i < 16; i++)
     {
-        if (_NODES[i].wp == ARCANUS_PLANE)
+        if(_NODES[i].wp == ARCANUS_PLANE)
         {
             int16_t wx = _NODES[i].wx;
             int16_t wy = _NODES[i].wy;
             int16_t terrain = GET_TERRAIN_TYPE(wx, wy, ARCANUS_PLANE);
             
-            if (_NODES[i].type == nt_Chaos)
+            if(_NODES[i].type == nt_Chaos)
             {
                 EXPECT_EQ(terrain, tt_ChaosNode) << "Chaos node terrain mismatch at " << i;
             }
-            else if (_NODES[i].type == nt_Nature)
+            else if(_NODES[i].type == nt_Nature)
             {
                 EXPECT_EQ(terrain, tt_NatureNode) << "Nature node terrain mismatch at " << i;
             }
-            else if (_NODES[i].type == nt_Sorcery)
+            else if(_NODES[i].type == nt_Sorcery)
             {
                 EXPECT_EQ(terrain, tt_SorceryNode) << "Sorcery node terrain mismatch at " << i;
             }
@@ -261,13 +261,13 @@ TEST_F(NEWG_CreateNodeAura_test, PowerDeterminesAuraSize)
         bool is_unique = true;
         for (int j = 0; j < i; j++)
         {
-            if (aura_xs[i] == aura_xs[j] && aura_ys[i] == aura_ys[j])
+            if(aura_xs[i] == aura_xs[j] && aura_ys[i] == aura_ys[j])
             {
                 is_unique = false;
                 break;
             }
         }
-        if (is_unique) unique_count++;
+        if(is_unique) unique_count++;
     }
     EXPECT_EQ(unique_count, power) << "Should have unique aura squares equal to power";
 }

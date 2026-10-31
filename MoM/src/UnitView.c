@@ -2533,11 +2533,10 @@ void Prod_Load_Battle_Unit(int16_t unit_type, struct s_BATTLE_UNIT * battle_unit
 */
 void Unit_View_Allocate(void)
 {
-
     GUI_String_1 = (char *)Near_Allocate_First(100);  // 100 bytes
-    uv_specials_list_array = (struct s_UV_List *)Near_Allocate_Next(1520);  // 1,520 bytes  40 * sizeof(s_UV_List)
+    /*HACK */  // picts[] pointer is 64-bit, ReMoM needs 1760;  uv_specials_list_array = (struct s_UV_List *)Near_Allocate_Next(1520);  // 1,520 bytes  40 * sizeof(s_UV_List)
+    uv_specials_list_array = (struct s_UV_List *)Near_Allocate_Next(sizeof(struct s_UV_List));
     UV_item_icon_pict_seg = Allocate_Next_Block(_screen_seg, 30);  // 30 paragraphs, 480 bytes  19 x 19 pict
-
 }
 
 // WZD o89p03

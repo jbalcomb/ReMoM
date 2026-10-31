@@ -153,7 +153,7 @@ TEST_F(GenerateHomeCityTest, HumanFortressHasSufficientMaxPop)
         {
             for (int16_t wx = 0; wx < WORLD_WIDTH; wx++)
             {
-                if (wy < 20)
+                if(wy < 20)
                 {
                     SET_TERRAIN_TYPE(wx, wy, wp, tt_Desert1);
                 }
@@ -198,7 +198,7 @@ TEST_F(GenerateHomeCityTest, AllFortressesHaveSufficientMaxPop)
         {
             for (int16_t wx = 0; wx < WORLD_WIDTH; wx++)
             {
-                if (wy < 20)
+                if(wy < 20)
                 {
                     SET_TERRAIN_TYPE(wx, wy, wp, tt_Desert1);
                 }

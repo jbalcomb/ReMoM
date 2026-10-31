@@ -1141,12 +1141,11 @@ Loop_Location_1:
                         }
                     }
 
-                    /* ¿ OGBUG: because the distance is halved, same map square is not excluded ? */
                     for(bldg_idx = 0; bldg_idx < NUM_NODES; bldg_idx++)
                     {
                         if(_NODES[bldg_idx].wp == wp)
                         {
-
+                            /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */
                             if(Delta_XY_With_Wrap(wx, wy, _NODES[bldg_idx].wx, _NODES[bldg_idx].wy, WORLD_WIDTH) < (minimum_site_distance / 2))
                             {
                                 Invalid = ST_TRUE;
@@ -1156,27 +1155,22 @@ Loop_Location_1:
                         }
                     }
 
-                    /* ¿ OGBUG: because the distance is halved, same map square is not excluded ? */
                     for(bldg_idx = 0; bldg_idx < NUM_TOWERS; bldg_idx++)
                     {
-
+                        /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */
                         if(Range(wx, wy, _TOWERS[bldg_idx].wx, _TOWERS[bldg_idx].wy) < (minimum_site_distance / 2))
                         {
-
                             Invalid = ST_TRUE;
                             DBG_Invalid_Reason = 4;
                             DBG_Invalid_Reason_4_Count++;
-
                         }
-
                     }
 
-                    /* ¿ OGBUG: because the distance is halved, same map square is not excluded ? */
                     for(bldg_idx = 0; bldg_idx < NUM_LAIRS; bldg_idx++)
                     {
                         if(_LAIRS[bldg_idx].wp == wp)
                         {
-
+                            /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */
                             if(Delta_XY_With_Wrap(wx, wy, _LAIRS[bldg_idx].wx, _LAIRS[bldg_idx].wy, WORLD_WIDTH) < (minimum_site_distance / 2))
                             {
                                 Invalid = ST_TRUE;
@@ -1553,6 +1547,7 @@ void Generate_Home_City__GEMINI(void)
             {
                 if(_NODES[bldg_idx].wp == wp)
                 {
+                    /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */
                     if(Delta_XY_With_Wrap(wx, wy, _NODES[bldg_idx].wx, _NODES[bldg_idx].wy, WORLD_WIDTH) < (minimum_site_distance / 2))
                     {
                         Invalid = e_ST_TRUE;
@@ -1568,6 +1563,7 @@ void Generate_Home_City__GEMINI(void)
             for(bldg_idx = 0; bldg_idx < NUM_TOWERS; bldg_idx++)
             {
                 /* Towers exist on both planes, no wp check? */
+                /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */
                 if(Range(wx, wy, _TOWERS[bldg_idx].wx, _TOWERS[bldg_idx].wy) < (minimum_site_distance / 2))
                 {
                     Invalid = e_ST_TRUE;
@@ -1583,6 +1579,7 @@ void Generate_Home_City__GEMINI(void)
             {
                 if(_LAIRS[bldg_idx].wp == wp)
                 {
+                    /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */
                     if(Delta_XY_With_Wrap(wx, wy, _LAIRS[bldg_idx].wx, _LAIRS[bldg_idx].wy, WORLD_WIDTH) < (minimum_site_distance / 2))
                     {
                         Invalid = e_ST_TRUE;
@@ -5697,6 +5694,7 @@ void Generate_Neutral_Cities(int16_t wp)
         _CITIES[_cities].wy = (int8_t)wy;
         _CITIES[_cities].wp = (int8_t)wp;
         _CITIES[_cities].owner_idx = NEUTRAL_PLAYER_IDX;
+        /* OGBUG  farmer_count is uninitialized */
         _CITIES[_cities].population = (1 + ((_difficulty + 1) / 3) + Random(4));  /* OGBUG: ignores terrain */
         if((_difficulty > god_Normal) && (Random(5) == 1))
         {

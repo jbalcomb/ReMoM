@@ -31,7 +31,7 @@ static std::vector<std::string> split_lines(const std::string & s)
 	std::vector<std::string> out;
 	std::istringstream iss(s);
 	std::string line;
-	while (std::getline(iss, line))
+	while(std::getline(iss, line))
 	{
 		out.push_back(line);
 	}
@@ -57,12 +57,12 @@ TEST(stu_log_test, RoundTripNMessagesAppearInOrder)
 	for (const std::string & line : split_lines(contents))
 	{
 		std::string::size_type p = line.find("round_trip_msg ");
-		if (p == std::string::npos)
+		if(p == std::string::npos)
 		{
 			continue;
 		}
 		int idx = -1;
-		if (std::sscanf(line.c_str() + p, "round_trip_msg %d", &idx) == 1)
+		if(std::sscanf(line.c_str() + p, "round_trip_msg %d", &idx) == 1)
 		{
 			EXPECT_GT(idx, last_idx);
 			last_idx = idx;
@@ -169,7 +169,7 @@ TEST(stu_log_test, DISABLED_PumpCapsDrainAt4KB)
 	int found = 0;
 	for (const std::string & line : split_lines(contents))
 	{
-		if (line.find("pump_cap_msg ") != std::string::npos)
+		if(line.find("pump_cap_msg ") != std::string::npos)
 		{
 			++found;
 		}
@@ -333,7 +333,7 @@ TEST(stu_log_test, LogFatalDrainsEntireRingPastPumpCap)
 	int info_count = 0;
 	for (const std::string & line : split_lines(contents))
 	{
-		if (line.find("fatal_drain_msg ") != std::string::npos)
+		if(line.find("fatal_drain_msg ") != std::string::npos)
 		{
 			++info_count;
 		}

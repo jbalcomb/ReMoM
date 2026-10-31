@@ -69,7 +69,7 @@ def blank_noncode(text):
                 if i + 1 < n and text[i + 1] != "\n":
                     out[i + 1] = " "
                 i += 2; continue
-            if (state == "str" and c == '"') or (state == "chr" and c == "'"):
+            if(state == "str" and c == '"') or (state == "chr" and c == "'"):
                 out[i] = " "; state = None; i += 1; continue
             if c != "\n":
                 out[i] = " "
@@ -166,7 +166,7 @@ def _guard_before(blanked, text, brace_idx):
         return ""
     if blanked[j] != ")":
         word = _FUNC_NAME_RE.search(blanked[max(0, brace_idx - 64):brace_idx])
-        return "else" if (word and word.group(1) == "else") else ""
+        return "else" if(word and word.group(1) == "else") else ""
     # Backward paren-match from the ')' to its '('.
     depth = 0
     k = j

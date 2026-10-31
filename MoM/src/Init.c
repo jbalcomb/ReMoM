@@ -20,7 +20,7 @@ MoO2  Module: fonts     Load_Font_File()
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/random.h"
-#include "../../MoX/src/MOX2.h"  /* CLAUDE 2026-05-27: _cmd_line_seed for the MAGIC-side new-game Randomize bypass */
+#include "../../MoX/src/MOX2.h"
 #include "../../STU/src/STU_LOG.h"  /* CALL_TRACE */
 #include "../../platform/include/Platform.h"
 #include "../../MoX/src/Video2.h"
@@ -35,19 +35,12 @@ char DEFAULT_FONT_FILE[] = "FONTS.LBX";
 
 
 // WZD s014p01
-// drake178: ¿ ?
 // MoO2  Module: init  void Init_Drivers()
-/*
-; performs various startup functions, such as
-; initializing EMS, VGA, Audio, and Mouse, also
-; loads the fonts and sets the time as random seed
-*/
-// void Init_Drivers(int input_type, char * font_file)
 void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi_driver, int MIDI_IO, int MIDI_IRQ, int MIDI_DMA, int digi_driver, int Digi_IO, int Digi_IRQ, int Digi_DMA)
 {
     LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
 
-    /* NEWCODE */  // DBG_Open_ERROR_LOG();
+    /* NEWCODE */  // DBG_Open_ERROR_LOG();  // from MoO1
 
     EMS_Startup();
 
@@ -79,13 +72,7 @@ void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi
 
     }
 
-    /* CLAUDE 2026-05-27: mirror the MoO2 pattern that PreInit_Overland
-     * already uses (LoadScr.c:1003) -- if a deterministic seed was
-     * provided on the command line, honour it here in MAGIC's new-game
-     * setup; otherwise call Randomize() as the original code did.  This
-     * is the MAGIC-side equivalent so the new-game path is reproducible
-     * (the existing _cmd_line_seed plumbing only affected the
-     * Loaded_Game_Update / continue path). */
+    /* set the random seed for the new game path, with support for deterministic behavior */
     if(_cmd_line_seed != 0)
     {
         Set_Random_Seed((uint32_t)_cmd_line_seed);
@@ -104,13 +91,11 @@ void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi
 /*
 also in MoO1, but also unused
 seems like maybe a debug init, without video or audio ... headless?
-
-drake178: Unused in MoM  most likely a leftover from a previous game, that either didn't use AIL, or set it up differently
 */
 void UU_Legacy_Startup(int input_type, int midi_driver, int sound_channels, char * font_file)
 {
 
-    /* NEWCODE */  // DBG_Open_ERROR_LOG();
+    /* NEWCODE */  // DBG_Open_ERROR_LOG();  // from MoO1
     
     EMS_Startup();
 
@@ -135,9 +120,7 @@ void UU_Legacy_Startup(int input_type, int midi_driver, int sound_channels, char
 
     }
 
-    /* CLAUDE 2026-05-27: same _cmd_line_seed bypass as Init_Drivers.
-     * (UU_Legacy_Startup is annotated "Unused in MoM" above, but we
-     * mirror the pattern so the file is consistent.) */
+    /* set the random seed for the new game path, with support for deterministic behavior */
     if(_cmd_line_seed != 0)
     {
         Set_Random_Seed((uint32_t)_cmd_line_seed);

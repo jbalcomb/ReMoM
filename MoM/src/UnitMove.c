@@ -962,7 +962,7 @@ int Make_Move_Path__GEMINI(int MvMd_0, int MvMd_1, int MvMd_2, int MvMd_3, int M
 
     ai_move_path_idx = e_ST_UNDEFINED;
 
-    if (player_idx == e_HUMAN_PLAYER_IDX)
+    if(player_idx == e_HUMAN_PLAYER_IDX)
     {
         UU_flag = e_ST_FALSE;
         goto loc_D5B50;
@@ -970,7 +970,7 @@ int Make_Move_Path__GEMINI(int MvMd_0, int MvMd_1, int MvMd_2, int MvMd_3, int M
 
     for (_SI_itr = 0; _SI_itr < 140 && ai_move_path_table[_SI_itr].src_wx != e_ST_UNDEFINED; _SI_itr++)
     {
-        if (ai_move_path_table[_SI_itr].src_wx == src_wx &&
+        if(ai_move_path_table[_SI_itr].src_wx == src_wx &&
             ai_move_path_table[_SI_itr].src_wy == src_wy &&
             ai_move_path_table[_SI_itr].dst_wx == dst_wx &&
             ai_move_path_table[_SI_itr].dst_wy == dst_wy &&
@@ -980,7 +980,7 @@ int Make_Move_Path__GEMINI(int MvMd_0, int MvMd_1, int MvMd_2, int MvMd_3, int M
         }
     }
 
-    if (ai_move_path_idx != e_ST_UNDEFINED)
+    if(ai_move_path_idx != e_ST_UNDEFINED)
     {
         _fmemcpy(mvpth_x, ai_move_path_table[ai_move_path_idx].wx_array, ai_move_path_table[ai_move_path_idx].Length);
         _fmemcpy(mvpth_y, ai_move_path_table[ai_move_path_idx].wy_array, ai_move_path_table[ai_move_path_idx].Length);
@@ -998,15 +998,15 @@ int Make_Move_Path__GEMINI(int MvMd_0, int MvMd_1, int MvMd_2, int MvMd_3, int M
 loc_D5B50:
     Init_MovePathMap(MvMd_0, MvMd_1, MvMd_2, MvMd_3, MvMd_4, MvMd_5, wp);
 
-    if (player_idx == e_HUMAN_PLAYER_IDX && UU_moves2 == 1)
+    if(player_idx == e_HUMAN_PLAYER_IDX && UU_moves2 == 1)
     {
         for (itr_wy = 0; itr_wy < e_WORLD_HEIGHT; itr_wy++)
         {
             for (itr_wx = 0; itr_wx < e_WORLD_WIDTH; itr_wx++)
             {
-                if (movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] != e_ST_UNDEFINED_DB)
+                if(movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] != e_ST_UNDEFINED_DB)
                 {
-                    if (movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] > 2)
+                    if(movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] > 2)
                     {
                         movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] = 2;
                     }
@@ -1017,12 +1017,12 @@ loc_D5B50:
 
     Update_MovePathMap((int8_t far *)movepath_cost_map, boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
 
-    if (movepath_cost_map->moves2[dst_wy * e_WORLD_WIDTH + dst_wx] == e_ST_UNDEFINED_DB)
+    if(movepath_cost_map->moves2[dst_wy * e_WORLD_WIDTH + dst_wx] == e_ST_UNDEFINED_DB)
     {
         return 0;
     }
 
-    if (UU_flag == e_ST_TRUE)
+    if(UU_flag == e_ST_TRUE)
     {
         TILE_ExtendRange(src_wx, src_wy, dst_wx, dst_wy, &ext_x1, &ext_y1, &ext_x2, &ext_y2);
 
@@ -1042,7 +1042,7 @@ loc_D5B50:
             }
         }
 
-        if (ext_x1 < ext_x2)
+        if(ext_x1 < ext_x2)
         {
             for (itr_wy = ext_y1; itr_wy <= ext_y2; itr_wy++)
             {
@@ -1071,7 +1071,7 @@ loc_D5B50:
 
         _DI_path_length = 0;
         dst_world_map_idx = dst_wy * e_WORLD_WIDTH + dst_wx;
-        while (movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
+        while(movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
         {
             movepath_cost_map->Reverse_Path[_DI_path_length] = dst_world_map_idx;
             dst_world_map_idx = movepath_cost_map->Reach_From[dst_world_map_idx];
@@ -1088,7 +1088,7 @@ loc_D5B50:
             mvpth_c[_SI_itr] = movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx];
         }
 
-        if (_DI_path_length == 0)
+        if(_DI_path_length == 0)
         {
             UU_flag = e_ST_FALSE;
             goto loc_D5B50;
@@ -1100,7 +1100,7 @@ loc_D5B50:
 
         _DI_path_length = 0;
         dst_world_map_idx = dst_wy * e_WORLD_WIDTH + dst_wx;
-        while (movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
+        while(movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
         {
             movepath_cost_map->Reverse_Path[_DI_path_length] = dst_world_map_idx;
             dst_world_map_idx = movepath_cost_map->Reach_From[dst_world_map_idx];

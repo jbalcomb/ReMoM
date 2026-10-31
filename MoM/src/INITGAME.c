@@ -58,42 +58,42 @@ int gd_ci_load(void)
     char  line[8192];
     int   nc = 0, i;
 
-    if (gd_ci_loaded != 0) {
+    if(gd_ci_loaded != 0) {
         return (gd_ci_loaded == 1) ? gd_ci_nrecs : -1;
     }
 
     env = getenv("OG_CI_FWV");
-    if (env && *env) { cands[nc++] = env; }
+    if(env && *env) { cands[nc++] = env; }
     cands[nc++] = "og-game-data-capture.fwv";   /* cwd (build dir, if run there) */
     cands[nc++] = "/home/jbalcomb/STU/devel/ReMoM/out/build/clang-debug/bin/Debug/og-game-data-capture.fwv";
 
     for (i = 0; i < nc; i++) {
         f = fopen(cands[i], "r");
-        if (f) { used = cands[i]; break; }
+        if(f) { used = cands[i]; break; }
     }
-    if (!f) {
+    if(!f) {
         LOG_INFO(LOG_CAT_GENERAL, "[CI] load FAILED: og-game-data-capture.fwv not found (cwd or build dir). No injection.");
         gd_ci_loaded = -1;
         return -1;
     }
 
     gd_ci_nrecs = 0;
-    while (fgets(line, sizeof(line), f)) {
+    while(fgets(line, sizeof(line), f)) {
         char  key[32], site[24];
         int   count = 0, consumed = 0, n = 0;
         char* p = line;
         char* endp;
         gd_ci_rec_t* r;
 
-        while (*p == ' ' || *p == '\t') { p++; }
-        if (*p == '#' || *p == '\n' || *p == '\r' || *p == 0) { continue; }
-        if (gd_ci_nrecs >= GD_CI_MAX_RECS) {
+        while(*p == ' ' || *p == '\t') { p++; }
+        if(*p == '#' || *p == '\n' || *p == '\r' || *p == 0) { continue; }
+        if(gd_ci_nrecs >= GD_CI_MAX_RECS) {
             LOG_INFO(LOG_CAT_GENERAL, "[CI] WARNING: >%d records; rest ignored.", GD_CI_MAX_RECS);
             break;
         }
         /* sscanf widths kept in sync with r->key[32] / r->site[24] so the
            subsequent copies can't possibly truncate (GCC -Wformat-truncation). */
-        if (sscanf(p, "%31s %23s %d%n", key, site, &count, &consumed) != 3) {
+        if(sscanf(p, "%31s %23s %d%n", key, site, &count, &consumed) != 3) {
             LOG_INFO(LOG_CAT_GENERAL, "[CI] WARNING: malformed record skipped.");
             continue;
         }
@@ -104,12 +104,12 @@ int gd_ci_load(void)
         p += consumed;
         for (;;) {
             long v = strtol(p, &endp, 10);
-            if (endp == p) { break; }       /* no more numbers on the line */
-            if (n < GD_CI_MAX_VALS) { r->vals[n] = v; }
+            if(endp == p) { break; }       /* no more numbers on the line */
+            if(n < GD_CI_MAX_VALS) { r->vals[n] = v; }
             n++;
             p = endp;
         }
-        if (n != count) {
+        if(n != count) {
             LOG_INFO(LOG_CAT_GENERAL, "[CI] WARNING: %s %s declared %d values but found %d.", r->key, r->site, count, n);
         }
         r->count = (n < GD_CI_MAX_VALS) ? n : GD_CI_MAX_VALS;
@@ -125,12 +125,12 @@ int gd_ci_load(void)
 int gd_ci_get(const char* key, const char* site, long* out, int max)
 {
     int i, k, n;
-    if (gd_ci_loaded == 0) { gd_ci_load(); }
+    if(gd_ci_loaded == 0) { gd_ci_load(); }
     for (i = 0; i < gd_ci_nrecs; i++) {
-        if (strcmp(gd_ci_recs[i].key, key) == 0 &&
+        if(strcmp(gd_ci_recs[i].key, key) == 0 &&
             strcmp(gd_ci_recs[i].site, site) == 0) {
             n = gd_ci_recs[i].count;
-            if (n > max) { n = max; }
+            if(n > max) { n = max; }
             for (k = 0; k < n; k++) { out[k] = gd_ci_recs[i].vals[k]; }
             return n;
         }
@@ -367,15 +367,15 @@ void gd_dump_cities(const char* point) {
             const gd_field_t* f = &city_fields[i];
             const uint8_t* fp = base + f->off;
             int q = 0;
-            if (f->kind == GD_STR) {
+            if(f->kind == GD_STR) {
                 val[q++] = '"';
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
                     uint8_t c = fp[k];
-                    if (c == 0) break;
+                    if(c == 0) break;
                     val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
                 }
                 val[q++] = '"'; val[q] = 0;
-            } else if (f->kind == GD_BYTES) {
+            } else if(f->kind == GD_BYTES) {
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
                     q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
                 val[q] = 0;
@@ -384,7 +384,7 @@ void gd_dump_cities(const char* point) {
                 for (k = 0; k < f->count; k++) {
                     long v = gd_rd(fp + k * es, f->kind);
                     q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if (q > (int)sizeof(val) - 16) break;
+                    if(q > (int)sizeof(val) - 16) break;
                 }
             }
             LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _CITIES[%d].%s = %s", point, n, f->name, val);
@@ -403,20 +403,20 @@ void gd_dump_heroes(const char* point) {
     char val[1100];
     for (p = 0; p < NUM_PLAYERS; p++) {
         const uint8_t* base = (const uint8_t*)_HEROES2[p];
-        if (!base) continue;   /* unallocated player slot */
+        if(!base) continue;   /* unallocated player slot */
         for (i = 0; i < HEROES_FIELD_COUNT; i++) {
             const gd_field_t* f = &heroes_fields[i];
             const uint8_t* fp = base + f->off;
             int q = 0;
-            if (f->kind == GD_STR) {
+            if(f->kind == GD_STR) {
                 val[q++] = '"';
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
                     uint8_t c = fp[k];
-                    if (c == 0) break;
+                    if(c == 0) break;
                     val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
                 }
                 val[q++] = '"'; val[q] = 0;
-            } else if (f->kind == GD_BYTES) {
+            } else if(f->kind == GD_BYTES) {
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
                     q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
                 val[q] = 0;
@@ -425,7 +425,7 @@ void gd_dump_heroes(const char* point) {
                 for (k = 0; k < f->count; k++) {
                     long v = gd_rd(fp + k * es, f->kind);
                     q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if (q > (int)sizeof(val) - 16) break;
+                    if(q > (int)sizeof(val) - 16) break;
                 }
             }
             LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _HEROES2[%d].%s = %s", point, p, f->name, val);
@@ -449,15 +449,15 @@ void gd_dump_units(const char* point) {
             const gd_field_t* f = &unit_fields[i];
             const uint8_t* fp = base + f->off;
             int q = 0;
-            if (f->kind == GD_STR) {
+            if(f->kind == GD_STR) {
                 val[q++] = '"';
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
                     uint8_t c = fp[k];
-                    if (c == 0) break;
+                    if(c == 0) break;
                     val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
                 }
                 val[q++] = '"'; val[q] = 0;
-            } else if (f->kind == GD_BYTES) {
+            } else if(f->kind == GD_BYTES) {
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
                     q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
                 val[q] = 0;
@@ -466,7 +466,7 @@ void gd_dump_units(const char* point) {
                 for (k = 0; k < f->count; k++) {
                     long v = gd_rd(fp + k * es, f->kind);
                     q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if (q > (int)sizeof(val) - 16) break;
+                    if(q > (int)sizeof(val) - 16) break;
                 }
             }
             LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _UNITS[%d].%s = %s", point, n, f->name, val);
@@ -488,15 +488,15 @@ void gd_dump_items(const char* point) {
             const gd_field_t* f = &item_fields[i];
             const uint8_t* fp = base + f->off;
             int q = 0;
-            if (f->kind == GD_STR) {
+            if(f->kind == GD_STR) {
                 val[q++] = '"';
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
                     uint8_t c = fp[k];
-                    if (c == 0) break;
+                    if(c == 0) break;
                     val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
                 }
                 val[q++] = '"'; val[q] = 0;
-            } else if (f->kind == GD_BYTES) {
+            } else if(f->kind == GD_BYTES) {
                 for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
                     q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
                 val[q] = 0;
@@ -505,7 +505,7 @@ void gd_dump_items(const char* point) {
                 for (k = 0; k < f->count; k++) {
                     long v = gd_rd(fp + k * es, f->kind);
                     q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if (q > (int)sizeof(val) - 16) break;
+                    if(q > (int)sizeof(val) - 16) break;
                 }
             }
             LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ITEMS[%d].%s = %s", point, n, f->name, val);

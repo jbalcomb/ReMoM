@@ -1778,7 +1778,6 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
 
 
 // WZD o142p09
-// drake178: CTY_GetFood()
 int16_t City_Food_Production(int16_t city_idx)
 {
     int16_t city_area_food_units = 0;
@@ -3463,7 +3462,7 @@ int16_t Astrologer_Research(int16_t player_idx)
     {
         for(itr_spell_in_realm = 0; itr_spell_in_realm < NUM_SPELLS_PER_MAGIC_REALM; itr_spell_in_realm++)
         {
-            if (_players[player_idx].spells_list[(itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spell_in_realm] == sls_Known)
+            if(_players[player_idx].spells_list[(itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spell_in_realm] == sls_Known)
             {
                 research_total += (itr_spell_in_realm + 1);
             }

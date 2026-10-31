@@ -447,7 +447,7 @@ XREF:
 */
 int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t spellbook_page_spell_index)
 {
-    int16_t var_8 = 0;
+    int16_t cost_reduction = 0;
     int16_t item_idx = 0;
     int16_t did_cast_spell__iff_human_player = 0;
     int16_t instant_mana = 0;
@@ -474,41 +474,33 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
                     _players[player_idx].casting_cost_remaining = Item_Make_Screen(0, 0);
-                    _players[player_idx].casting_cost_original = _ITEMS[MAX_ITEM_COUNT].cost;
+                    _players[player_idx].casting_cost_original = _ITEMS[136].cost;  /* OGBUG  should be MAX_ITEM_COUNT, not 136 */
                     Allocate_Reduced_Map();
-                    item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 1000);
-                    _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
-                    _players[player_idx].casting_cost_remaining = ((_players[player_idx].casting_cost_remaining * var_8) / 100);
-                    memcpy(&_ITEMS[(136 - player_idx)], &_ITEMS[item_idx], sizeof(struct s_ITEM));
-                    Remove_Item(item_idx);
                 }
                 else
                 {
                     item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 1000);
                     _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
-                    _players[player_idx].casting_cost_remaining = ((_players[player_idx].casting_cost_remaining * var_8) / 100);
+                    /* OGBUG  cost_reduction is never written; the AI's remaining cost is reduced by an uninitialized percentage */
+                    _players[player_idx].casting_cost_remaining = (_players[player_idx].casting_cost_remaining - (int16_t)(((int32_t)_players[player_idx].casting_cost_remaining * (int32_t)cost_reduction) / 100));
                     memcpy(&_ITEMS[(136 - player_idx)], &_ITEMS[item_idx], sizeof(struct s_ITEM));
                     Remove_Item(item_idx);
                 }
             }
-            else if(spell_idx == spl_Create_Artifact)
+            if(spell_idx == spl_Create_Artifact)
             {
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
                     _players[player_idx].casting_cost_remaining = Item_Make_Screen(0, 1);
-                    _players[player_idx].casting_cost_original = _ITEMS[MAX_ITEM_COUNT].cost;
+                    _players[player_idx].casting_cost_original = _ITEMS[136].cost;  /* OGBUG  should be MAX_ITEM_COUNT, not 136 */
                     Allocate_Reduced_Map();
-                    item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 30000);
-                    _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
-                    _players[player_idx].casting_cost_remaining = ((_players[player_idx].casting_cost_remaining * var_8) / 100);
-                    memcpy(&_ITEMS[(136 - player_idx)], &_ITEMS[item_idx], sizeof(struct s_ITEM));
-                    Remove_Item(item_idx);
                 }
                 else
                 {
                     item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 30000);
                     _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
-                    _players[player_idx].casting_cost_remaining = ((_players[player_idx].casting_cost_remaining * var_8) / 100);
+                    /* OGBUG  cost_reduction is never written; the AI's remaining cost is reduced by an uninitialized percentage */
+                    _players[player_idx].casting_cost_remaining = (_players[player_idx].casting_cost_remaining - (int16_t)(((int32_t)_players[player_idx].casting_cost_remaining * (int32_t)cost_reduction) / 100));
                     memcpy(&_ITEMS[(136 - player_idx)], &_ITEMS[item_idx], sizeof(struct s_ITEM));
                     Remove_Item(item_idx);
                 }

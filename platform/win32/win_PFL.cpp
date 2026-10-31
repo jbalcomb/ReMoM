@@ -133,11 +133,11 @@ void Startup_Platform(void)
        Mirrors sdl2_Init.c.  See doc/#AI_Plans/{BRA,PRD,PLAN}-Platform-Input.md. */
     {
         const char * im_env = getenv("REMOM_INPUT_METRICS");
-        if (im_env != NULL && im_env[0] != '\0' && strcmp(im_env, "0") != 0)
+        if(im_env != NULL && im_env[0] != '\0' && strcmp(im_env, "0") != 0)
         {
             const char * im_path = (strcmp(im_env, "1") == 0) ? "remom_input_metrics.fwv" : im_env;
             int im_scale = Platform_Get_Scale();
-            if (im_scale < 1) { im_scale = 1; }
+            if(im_scale < 1) { im_scale = 1; }
             /* Win32 has no cheap refresh-rate query here; 0 = unknown (recorded in the header). */
             Input_Metrics_Init(im_path, "Win32", "gdi", im_scale, 0);
             LOG_INFO(LOG_CAT_WIN_PFL, "CLAUDE: input metrics ENABLED -> %s", im_path);
@@ -159,7 +159,7 @@ void Shutdown_Platform(void)
     Input_Metrics_Shutdown();  /* CLAUDE: flush the input-metrics .fwv (also runs via atexit) */
     ShowCursor(TRUE);
     timeEndPeriod(1);
-    if (win_window)
+    if(win_window)
     {
         DestroyWindow(win_window);
         win_window = NULL;
@@ -172,7 +172,7 @@ void Shutdown_Platform(void)
 
 int Platform_Get_Scale(void)
 {
-    if (win_window_width <= 0)
+    if(win_window_width <= 0)
     {
         return 1;
     }
@@ -269,7 +269,7 @@ void Platform_Video_Update(void)
     assert(win_video_back_buffer.Memory != NULL);
 
     /* CLAUDE: demo capture -- submit the finished frame before presenting it. */
-    if (Platform_Capture_Active())
+    if(Platform_Capture_Active())
     {
         Platform_Capture_Video_Frame(video_page_buffer[draw_page_num], screen_pixel_width, screen_pixel_height, platform_palette_buffer);
     }
@@ -278,7 +278,7 @@ void Platform_Video_Update(void)
 
     /* CLAUDE: metrics -- bracket the present (StretchDIBits blit) so block time and inter-present
        interval are measured.  Off path is one branch; the two clock reads only run when enabled. */
-    if (Input_Metrics_Active())
+    if(Input_Metrics_Active())
     {
         uint64_t im_t0 = Platform_Get_Millies();
         Win_Blit_Back_Buffer(&win_video_back_buffer, win_device_context, win_window_width, win_window_height);
@@ -319,7 +319,7 @@ void Platform_Video_Update(void)
 
 void Platform_Event_Handler(void)
 {
-    if (Input_Metrics_Active()) { Input_Metrics_Note_Tick(Platform_Get_Millies()); }  /* CLAUDE: metrics tick */
+    if(Input_Metrics_Active()) { Input_Metrics_Note_Tick(Platform_Get_Millies()); }  /* CLAUDE: metrics tick */
 #ifdef MOUSE_DEBUG
     MOUSE_LOG("MOUSEt=%llu HANDLER_START ptr=%d,%d\n", (unsigned long long)Platform_Get_Millies(), pointer_x, pointer_y);
 #endif
@@ -327,24 +327,24 @@ void Platform_Event_Handler(void)
     /* CLAUDE: do NOT reset platform_frame_mouse_buttons here.  Clicks that arrive during Release_Time's Platform_Pump_Events spin-wait are OR'd into this flag between frames.  Resetting at the top would clobber them before Replay_Capture_Frame could read them.  Reset is now done at the END of this function, after capture. */
 
     /* CLAUDE: Replay — if active, inject recorded frame instead of pumping OS events.  Matches sdl2/sdl3/headless backends.  Without this, --replay on win32 opens the RMR but never injects any frames. */
-    if (Platform_Replay_Active())
+    if(Platform_Replay_Active())
     {
         MSG cancel_msg;
         int cancelled = 0;
-        if (PeekMessageA(&cancel_msg, 0, WM_KEYDOWN, WM_KEYDOWN, PM_NOREMOVE))
+        if(PeekMessageA(&cancel_msg, 0, WM_KEYDOWN, WM_KEYDOWN, PM_NOREMOVE))
         {
             cancelled = 1;
         }
-        else if (PeekMessageA(&cancel_msg, 0, WM_LBUTTONDOWN, WM_LBUTTONDOWN, PM_NOREMOVE))
+        else if(PeekMessageA(&cancel_msg, 0, WM_LBUTTONDOWN, WM_LBUTTONDOWN, PM_NOREMOVE))
         {
             cancelled = 1;
         }
-        else if (PeekMessageA(&cancel_msg, 0, WM_RBUTTONDOWN, WM_RBUTTONDOWN, PM_NOREMOVE))
+        else if(PeekMessageA(&cancel_msg, 0, WM_RBUTTONDOWN, WM_RBUTTONDOWN, PM_NOREMOVE))
         {
             cancelled = 1;
         }
 
-        if (cancelled)
+        if(cancelled)
         {
             LOG_INFO(LOG_CAT_WIN_PFL, "REPLAY: cancelled by user input");
             Platform_Replay_Stop();
@@ -352,7 +352,7 @@ void Platform_Event_Handler(void)
         }
         else
         {
-            if (Replay_Inject_Frame())
+            if(Replay_Inject_Frame())
             {
                 /* Frame injected successfully — skip pump/capture this tick. */
                 platform_frame_mouse_buttons = 0;
@@ -365,7 +365,7 @@ void Platform_Event_Handler(void)
     Win_Pump_Messages();
 
     /* Artificial human player: inject scripted input. */
-    if (platform_frame_callback != NULL)
+    if(platform_frame_callback != NULL)
     {
         platform_frame_callback();
     }
@@ -373,7 +373,7 @@ void Platform_Event_Handler(void)
     STU_Log_Pump();
 
     /* CLAUDE: Record — capture input state after processing OS events.  Matches sdl2/sdl3/headless backends.  Without this, --record produces an empty RMR on win32. */
-    if (Platform_Record_Active())
+    if(Platform_Record_Active())
     {
         Replay_Capture_Frame();
     }
@@ -385,7 +385,7 @@ void Platform_Event_Handler(void)
 /* CLAUDE: Pump events AND refresh cursor, matching SDL backends. */
 void Platform_Pump_Events(void)
 {
-    if (Input_Metrics_Active()) { Input_Metrics_Note_Tick(Platform_Get_Millies()); }  /* CLAUDE: metrics tick */
+    if(Input_Metrics_Active()) { Input_Metrics_Note_Tick(Platform_Get_Millies()); }  /* CLAUDE: metrics tick */
     Win_Pump_Messages();
     Platform_Maybe_Move_Mouse();
 }
@@ -394,9 +394,9 @@ void Win_Pump_Messages(void)
 {
     MSG message;
 
-    while (PeekMessageA(&message, 0, 0, 0, PM_REMOVE))
+    while(PeekMessageA(&message, 0, 0, 0, PM_REMOVE))
     {
-        if (message.message == WM_QUIT)
+        if(message.message == WM_QUIT)
         {
             quit_game_flag = ST_TRUE;
         }
@@ -430,7 +430,7 @@ void Pump_Paints(void)
 {
     InvalidateRect(win_window, NULL, FALSE);
     MSG message;
-    while (PeekMessageA(&message, 0, WM_PAINT, WM_PAINT, PM_REMOVE))
+    while(PeekMessageA(&message, 0, WM_PAINT, WM_PAINT, PM_REMOVE))
     {
         TranslateMessage(&message);
         DispatchMessageA(&message);
@@ -446,8 +446,8 @@ void Pump_Paints(void)
 int16_t Platform_Get_Mouse_Button_State(void)
 {
     int16_t buttons = 0;
-    if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) { buttons |= ST_LEFT_BUTTON; }
-    if (GetAsyncKeyState(VK_RBUTTON) & 0x8000) { buttons |= ST_RIGHT_BUTTON; }
+    if(GetAsyncKeyState(VK_LBUTTON) & 0x8000) { buttons |= ST_LEFT_BUTTON; }
+    if(GetAsyncKeyState(VK_RBUTTON) & 0x8000) { buttons |= ST_RIGHT_BUTTON; }
     return buttons;
 }
 
@@ -480,7 +480,7 @@ void Platform_Get_Mouse_Position_XY(int *mx, int *my)
     GetCursorPos(&cursor);
     ScreenToClient(win_window, &cursor);
 
-    if (scale < 1) { scale = 1; }
+    if(scale < 1) { scale = 1; }
     *mx = (int)(cursor.x / scale);
     *my = (int)(cursor.y / scale);
 
@@ -493,39 +493,39 @@ void Platform_Maybe_Move_Mouse(void)
     int mx, my;
     int16_t smx, smy;
 
-    if (platform_mouse_input_enabled == ST_FALSE) { return; }
+    if(platform_mouse_input_enabled == ST_FALSE) { return; }
 
     Platform_Get_Mouse_Position_XY(&mx, &my);
     smx = (int16_t)mx;
     smy = (int16_t)my;
 
     /* CLAUDE: metrics -- note every sample (moved or not) so net motion between presents is correct. */
-    if (Input_Metrics_Active()) { Input_Metrics_Note_Poll(smx, smy); }
+    if(Input_Metrics_Active()) { Input_Metrics_Note_Poll(smx, smy); }
 
     /* CLAUDE: HW-cursor prototype -- the OS cursor tracks natively, so skip the software redraw/present
        entirely; just keep the engine's pointer position and cursor shape current for hit-testing.
        Mirrors sdl2_PFL.c Platform_Maybe_Move_Mouse. */
-    if (Platform_HW_Cursor_Active())
+    if(Platform_HW_Cursor_Active())
     {
         pointer_x = smx;
         pointer_y = smy;
-        if (current_mouse_list_count >= 2) { Check_Mouse_Shape(smx, smy); }
+        if(current_mouse_list_count >= 2) { Check_Mouse_Shape(smx, smy); }
         Platform_HW_Cursor_Refresh();
         return;
     }
 
-    if (smx != pointer_x || smy != pointer_y)
+    if(smx != pointer_x || smy != pointer_y)
     {
 #ifdef MOUSE_DEBUG
         MOUSE_LOG("MOUSEt=%llu MAYBE_MOVE ptr=%d,%d -> %d,%d\n", (unsigned long long)Platform_Get_Millies(), pointer_x, pointer_y, smx, smy);
 #endif
-        if (mouse_enabled == ST_TRUE)
+        if(mouse_enabled == ST_TRUE)
         {
             Restore_Mouse_On_Page();
         }
         pointer_x = smx;
         pointer_y = smy;
-        if (mouse_enabled == ST_TRUE)
+        if(mouse_enabled == ST_TRUE)
         {
             Check_Mouse_Shape(smx, smy);
             Save_Mouse_On_Page(smx, smy);
@@ -567,7 +567,7 @@ static void Win_Init_Back_Buffer(struct win32_offscreen_buffer *buffer, int widt
 {
     int bitmap_memory_size;
 
-    if (buffer->Memory != NULL)
+    if(buffer->Memory != NULL)
     {
         VirtualFree(buffer->Memory, 0, MEM_RELEASE);
     }
@@ -658,14 +658,14 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
 
         case WM_MOUSEMOVE:
         {
-            if (platform_mouse_input_enabled)
+            if(platform_mouse_input_enabled)
             {
                 /* CLAUDE: User_Mouse_Handler() expects window-space coords and divides by scale internally.  Passing pre-scaled (game-space) coords double-scales and causes the cursor to jump up-left before Platform_Maybe_Move_Mouse() corrects it. */
                 int16_t win_x = (int16_t)GET_X_LPARAM(lParam);
                 int16_t win_y = (int16_t)GET_Y_LPARAM(lParam);
 #ifdef MOUSE_DEBUG
                 int scale = Platform_Get_Scale();
-                if (scale < 1) { scale = 1; }
+                if(scale < 1) { scale = 1; }
                 MOUSE_LOG("MOUSEt=%llu WM_MOUSEMOVE wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (int)(win_x / scale), (int)(win_y / scale));
 #endif
                 User_Mouse_Handler(0, win_x, win_y);
@@ -689,14 +689,14 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
             uint32_t mox_mod = 0;
             char mox_character = 0;
 
-            if (vk_code >= 0 && vk_code < 256)
+            if(vk_code >= 0 && vk_code < 256)
             {
                 mox_key = VK_to_MOX_KEY[vk_code];
             }
 
-            if (GetKeyState(VK_SHIFT)   & 0x8000)  { mox_mod |= MOX_MOD_SHIFT; }
-            if (GetKeyState(VK_CONTROL) & 0x8000)  { mox_mod |= MOX_MOD_CTRL; }
-            if (GetKeyState(VK_MENU)    & 0x8000)  { mox_mod |= MOX_MOD_ALT; }
+            if(GetKeyState(VK_SHIFT)   & 0x8000)  { mox_mod |= MOX_MOD_SHIFT; }
+            if(GetKeyState(VK_CONTROL) & 0x8000)  { mox_mod |= MOX_MOD_CTRL; }
+            if(GetKeyState(VK_MENU)    & 0x8000)  { mox_mod |= MOX_MOD_ALT; }
 
             /* CLAUDE: diagnostic — trace raw WM_KEYDOWN before translation, to help find keys that are received but dropped. */
 #ifdef STU_DEBUG
@@ -704,31 +704,31 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
 #endif
 
             /* Ctrl+Alt+Q to quit */
-            if ((mox_mod & MOX_MOD_CTRL) && (mox_mod & MOX_MOD_ALT) && vk_code == 'Q')
+            if((mox_mod & MOX_MOD_CTRL) && (mox_mod & MOX_MOD_ALT) && vk_code == 'Q')
             {
                 PostQuitMessage(0);
             }
 
             /* Generate character code for printable keys */
-            if (vk_code >= 'A' && vk_code <= 'Z')
+            if(vk_code >= 'A' && vk_code <= 'Z')
             {
                 mox_character = (char)(vk_code + 32);  /* lowercase */
-                if (mox_mod & MOX_MOD_SHIFT) { mox_character = (char)vk_code; }  /* uppercase */
+                if(mox_mod & MOX_MOD_SHIFT) { mox_character = (char)vk_code; }  /* uppercase */
             }
-            else if (vk_code >= '0' && vk_code <= '9')
+            else if(vk_code >= '0' && vk_code <= '9')
             {
                 mox_character = (char)vk_code;
             }
-            else if (vk_code == VK_OEM_MINUS || vk_code == VK_SUBTRACT)
+            else if(vk_code == VK_OEM_MINUS || vk_code == VK_SUBTRACT)
             {
                 mox_character = '-';
             }
-            else if (vk_code == VK_OEM_PLUS || vk_code == VK_ADD)
+            else if(vk_code == VK_OEM_PLUS || vk_code == VK_ADD)
             {
                 mox_character = '+';
-                if (vk_code == VK_OEM_PLUS && !(mox_mod & MOX_MOD_SHIFT)) { mox_character = '='; }
+                if(vk_code == VK_OEM_PLUS && !(mox_mod & MOX_MOD_SHIFT)) { mox_character = '='; }
             }
-            else if (vk_code == VK_SPACE)
+            else if(vk_code == VK_SPACE)
             {
                 mox_character = ' ';
             }
@@ -737,20 +737,20 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
                character (e.g., '\b' = 0x08). Setup_Input_Box_Popup() and other input
                loops switch on the MoX key code, not the ASCII byte.
                Escape happens to work either way: ST_KEY_ESCAPE == 0x1B == ASCII ESC. */
-            else if (vk_code == VK_ESCAPE)
+            else if(vk_code == VK_ESCAPE)
             {
                 mox_character = 0x1B;
             }
 
             /* Also set legacy scan_code_char_code for backwards compatibility */
-            if (vk_code >= 0 && vk_code < 256)
+            if(vk_code >= 0 && vk_code < 256)
             {
                 /* CLAUDE */  /* Legacy: populate scan_code_char_code from the old VK_to_SCCS table pattern */
                 /* The packed_key / keyboard buffer system is the primary path now */
             }
 
             /* CLAUDE: diagnostic — log whether the key survived translation and reached the keyboard buffer, or was dropped (and why). */
-            if (mox_key != MOX_KEY_UNKNOWN && mox_key < MOX_KEY_OVERRUN)
+            if(mox_key != MOX_KEY_UNKNOWN && mox_key < MOX_KEY_OVERRUN)
             {
 #ifdef STU_DEBUG
                 LOG_TRACE(LOG_CAT_PFL, "WIN_KEY t=%llu BUFFERED vk=0x%02X mox_key=0x%X mox_mod=0x%X mox_char=0x%02X ('%c')", (unsigned long long)Platform_Get_Millies(), vk_code, (unsigned)mox_key, (unsigned)mox_mod, (unsigned char)mox_character, (mox_character >= 0x20 && mox_character < 0x7F) ? mox_character : '.');
@@ -768,14 +768,14 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
 
         case WM_LBUTTONDOWN:
         {
-            if (platform_mouse_input_enabled)
+            if(platform_mouse_input_enabled)
             {
                 /* CLAUDE: pass window-space coords; User_Mouse_Handler divides by scale internally.  See WM_MOUSEMOVE note. */
                 int16_t win_x = (int16_t)GET_X_LPARAM(lParam);
                 int16_t win_y = (int16_t)GET_Y_LPARAM(lParam);
 #ifdef MOUSE_DEBUG
                 int scale = Platform_Get_Scale();
-                if (scale < 1) { scale = 1; }
+                if(scale < 1) { scale = 1; }
                 MOUSE_LOG("MOUSEt=%llu BTN_DOWN btn=1 wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (int)(win_x / scale), (int)(win_y / scale));
 #endif
 #ifdef STU_DEBUG
@@ -788,14 +788,14 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
 
         case WM_RBUTTONDOWN:
         {
-            if (platform_mouse_input_enabled)
+            if(platform_mouse_input_enabled)
             {
                 /* CLAUDE: pass window-space coords; User_Mouse_Handler divides by scale internally.  See WM_MOUSEMOVE note. */
                 int16_t win_x = (int16_t)GET_X_LPARAM(lParam);
                 int16_t win_y = (int16_t)GET_Y_LPARAM(lParam);
 #ifdef MOUSE_DEBUG
                 int scale = Platform_Get_Scale();
-                if (scale < 1) { scale = 1; }
+                if(scale < 1) { scale = 1; }
                 MOUSE_LOG("MOUSEt=%llu BTN_DOWN btn=2 wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (int)(win_x / scale), (int)(win_y / scale));
 #endif
 #ifdef STU_DEBUG
@@ -819,7 +819,7 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
         {
             /* CLAUDE: Match SDL behavior — enable/disable mouse input on focus change.
                wParam is TRUE when the window is being activated, FALSE on deactivation. */
-            if (wParam)
+            if(wParam)
             {
                 Platform_Mouse_Input_Enable();
             }
@@ -834,7 +834,7 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
             /* CLAUDE: HW-cursor prototype -- Windows resets to the class cursor (NULL) on every move
                over the client area; re-assert our cursor and swallow the message so it isn't cleared.
                Inactive -> fall through to default (software cursor is hidden, class cursor NULL). */
-            if (Platform_HW_Cursor_Active() && LOWORD(lParam) == HTCLIENT)
+            if(Platform_HW_Cursor_Active() && LOWORD(lParam) == HTCLIENT)
             {
                 Win_HW_Cursor_Apply();
                 return TRUE;
@@ -848,7 +848,7 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
                (WM_ACTIVATEAPP also enables it on focus, but that may not fire before first input). */
             Platform_Mouse_Input_Enable();
             /* CLAUDE: HW-cursor prototype shows the OS cursor; the default path hides it and software-draws. */
-            if (!Platform_HW_Cursor_Active())
+            if(!Platform_HW_Cursor_Active())
             {
                 ShowCursor(FALSE);
             }

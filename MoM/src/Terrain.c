@@ -989,97 +989,40 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t return_value = 0;
     uint16_t terrain_type = 0;
-
     terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
-
-    // if(terrain_type > 0x25A)  /* _Tundra00001000 */
-    if(terrain_type > tt_Tundra_1st)  /* _Tundra00001000 */
+    if (terrain_type >= _Tundra00001000)
     {
-        goto Return_False;
+        return ST_FALSE;
     }
-    else
+    if (terrain_type > _River1111_5)
     {
-        // <= tt_OceanAnim      = 0x259,
-        if(terrain_type > 0x1D8)  /* _River1111_5 */
-        {
-            goto Return_True;
-        }
-        else
-        {
-            // <= tt_4WRiver5    = 0x1D8,
-            if(terrain_type > 0x1D3)  /* _Shore111R1110 */
-            {
-                goto Return_False;
-            }
-            else
-            {
-                // <= tt_Shore2_end  = 0x1D3,
-                if(terrain_type > 0x1C3)  /* _Desert10101111 */
-                {
-                    // >= tt_Shore2_1st  = 0x1C4,
-                    goto Return_True;
-                }
-                else
-                {
-                    // <= tt_Desert_Lst  = 0x1C3,
-                    if(terrain_type > 0xE8)  /* _Shore000R0000 */
-                    {
-                        // >= tt_Rivers_1st  = 0x0E9,
-                        goto Return_False;
-                    }
-                    else
-                    {
-                        // <= tt_Shore2F_end = 0xE8,
-                        if(terrain_type > 0xC4)  /* _River1001_2 */
-                        {
-                            // >= tt_Lake1       = 0x0C5,
-                            goto Return_True;
-                        }
-                        else
-                        {
-                            // <= tt_RiverM_end  = 0x0C4,
-                            if(terrain_type > _Shore10101111)  /* _Shore10101111 */
-                            {
-                                // >= tt_Grasslands1      = 0x0A2,
-                                goto Return_False;
-                            }
-                            else
-                            {
-                                // <= tt_Shore1_Lst  = 0x0A1,
-                                if(terrain_type == tt_BugGrass)  /* tt_BugGrass */
-                                {
-                                    goto Return_False;
-                                }
-                                else
-                                {
-                                    // _Ocean          = 0x0,
-                                    // _Land           = 0x1,
-                                    // _Shore00001000  = 0x2,
-                                    // ...
-                                    // _1Lake          = 0x12,
-                                    // ...
-                                    // _Shore10101111  = 0xA1,
-                                    goto Return_True;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        return ST_TRUE;
     }
-
-Return_False:
-    return_value = ST_FALSE;
-    goto Done;
-
-Return_True:
-    return_value = ST_TRUE;
-    goto Done;
-
-Done:
-
-    return return_value;
+    if (terrain_type > _Shore111R1110)
+    {
+        return ST_FALSE;
+    }
+    if (terrain_type > _Desert10101111)
+    {
+        return ST_TRUE;
+    }
+    if (terrain_type > _Shore000R0000)
+    {
+        return ST_FALSE;
+    }
+    if (terrain_type > _River1001_2)
+    {
+        return ST_TRUE;
+    }
+    if (terrain_type > _Shore10101111)
+    {
+        return ST_FALSE;
+    }
+    if (terrain_type != tt_BugGrass)
+    {
+        return ST_TRUE;
+    }
+    return ST_FALSE;
 }
 
 // WZD s161p25

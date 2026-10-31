@@ -268,7 +268,7 @@ TEST_F(Get_Useable_City_Area_NewGame_test, IncludesCenterSquare)
     bool found_center = false;
     for (int i = 0; i < count; i++)
     {
-        if (wx_array[i] == 30 && wy_array[i] == 20)
+        if(wx_array[i] == 30 && wy_array[i] == 20)
         {
             found_center = true;
             break;

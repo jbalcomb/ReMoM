@@ -38,7 +38,7 @@ static int     hwcur_last_image = -1;
 
 int Platform_HW_Cursor_Active(void)
 {
-    if (hwcur_gate < 0)
+    if(hwcur_gate < 0)
     {
         const char * env = getenv("REMOM_HW_CURSOR");
         /* CLAUDE: default ON -- the hardware cursor is the shipped behaviour; only REMOM_HW_CURSOR=0 forces the software cursor. */
@@ -52,7 +52,7 @@ int Platform_HW_Cursor_Active(void)
    would erase the SetCursor() done in Refresh, so it must be set again there. */
 void Win_HW_Cursor_Apply(void)
 {
-    if (!Platform_HW_Cursor_Active()) { return; }
+    if(!Platform_HW_Cursor_Active()) { return; }
     SetCursor(hwcur_current);
 }
 
@@ -72,26 +72,26 @@ void Platform_HW_Cursor_Refresh(void)
     ICONINFO        ii;
     HCURSOR         newcur;
 
-    if (!Platform_HW_Cursor_Active()) { return; }
+    if(!Platform_HW_Cursor_Active()) { return; }
 
     image = Get_Pointer_Image_Number();
-    if (image == hwcur_last_image) { return; }   /* no shape change since the last build */
+    if(image == hwcur_last_image) { return; }   /* no shape change since the last build */
     hwcur_last_image = image;
 
-    if (image == 0)   /* crsr_None -> no cursor */
+    if(image == 0)   /* crsr_None -> no cursor */
     {
         SetCursor(NULL);   /* hide before destroying the handle that was active */
-        if (hwcur_current != NULL) { DestroyIcon(hwcur_current); hwcur_current = NULL; }
+        if(hwcur_current != NULL) { DestroyIcon(hwcur_current); hwcur_current = NULL; }
         return;
     }
-    if (mouse_palette == NULL)   /* sprite bank not loaded yet (pre-Load_Palette) -- retry next frame */
+    if(mouse_palette == NULL)   /* sprite bank not loaded yet (pre-Load_Palette) -- retry next frame */
     {
         hwcur_last_image = -1;
         return;
     }
 
     scale = Platform_Get_Scale();
-    if (scale < 1) { scale = 1; }
+    if(scale < 1) { scale = 1; }
     dim = HWCUR_DIM * scale;
 
     /* 32-bit top-down BGRA DIB with per-pixel alpha (BI_BITFIELDS masks match the
@@ -111,9 +111,9 @@ void Platform_HW_Cursor_Refresh(void)
     screen_dc = GetDC(NULL);
     color_bmp = CreateDIBSection(screen_dc, (BITMAPINFO *)&bi, DIB_RGB_COLORS, &bits, NULL, 0);
     ReleaseDC(NULL, screen_dc);
-    if (color_bmp == NULL || bits == NULL)
+    if(color_bmp == NULL || bits == NULL)
     {
-        if (color_bmp != NULL) { DeleteObject(color_bmp); }
+        if(color_bmp != NULL) { DeleteObject(color_bmp); }
         return;
     }
 
@@ -126,7 +126,7 @@ void Platform_HW_Cursor_Refresh(void)
         {
             uint8_t  idx = sprite[px * HWCUR_DIM + py];   /* column-major, matching Draw_Mouse_On_Page_ */
             uint32_t argb;
-            if (idx == HWCUR_TRANSPARENT)
+            if(idx == HWCUR_TRANSPARENT)
             {
                 argb = 0x00000000u;
             }
@@ -150,7 +150,7 @@ void Platform_HW_Cursor_Refresh(void)
        per-pixel alpha, but CreateIconIndirect still requires a mask of matching
        size; an all-zero mask lets the alpha channel decide every pixel. */
     mask_bmp = CreateBitmap(dim, dim, 1, 1, NULL);
-    if (mask_bmp == NULL)
+    if(mask_bmp == NULL)
     {
         DeleteObject(color_bmp);
         return;
@@ -167,10 +167,10 @@ void Platform_HW_Cursor_Refresh(void)
     DeleteObject(color_bmp);
     DeleteObject(mask_bmp);
 
-    if (newcur != NULL)
+    if(newcur != NULL)
     {
         SetCursor(newcur);
-        if (hwcur_current != NULL) { DestroyIcon(hwcur_current); }
+        if(hwcur_current != NULL) { DestroyIcon(hwcur_current); }
         hwcur_current = newcur;
     }
 }

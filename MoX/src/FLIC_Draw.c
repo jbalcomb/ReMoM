@@ -17,6 +17,8 @@ MoO2 Module: shear
 
 #include "../../ext/stu_compat.h"
 
+#include "EMS/EMS.h"
+
 #include "angle.h"
 #include "file_ani.h"
 #include "Fonts.h"
@@ -880,30 +882,24 @@ void Shear_Array_Bitmap_X(int8_t * shear_array, SAMB_ptr bitmap)
 // WZD s30p06
 void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint8_t color)
 {
-    int16_t length;
-    int16_t itr_length;
-
+    int16_t length = 0;
+    int16_t itr_length = 0;
     // TODO(JimBalcomb,20230701): fix up the Macros
     // FLIC_SET_WIDTH(pict_seg, width);
     // FLIC_SET_HEIGHT(pict_seg, height);
     // FLIC_SET_CURRENT_FRAME(pict_seg,0xDE0A);  // LBX_DecodedIMG
     // FLIC_SET_FRAME_COUNT(pict_seg, 0);
     // FLIC_SET_LOOP_FRAME(pict_seg,0);
-
     SET_2B_OFS(pict_seg,0,width);
     SET_2B_OFS(pict_seg,2,height);
     SET_2B_OFS(pict_seg,4,0xDE0A);  /* e_FLIC_Decoded */
     SET_2B_OFS(pict_seg,6,0);
     SET_2B_OFS(pict_seg,8,0);
-
     length = width * height;
-    
-    itr_length = 0;
-    while(itr_length++ < length)
+    for(itr_length = 0; itr_length < length; itr_length++)
     {
         *(pict_seg + SZ_FLIC_HDR + itr_length) = color;
     }
-
 }
 
 
@@ -1041,6 +1037,7 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
     }
 
 }
+
 
 // WZD s30p12
 // MoO2  
@@ -2234,88 +2231,87 @@ Module: file_ani
             Num elements:   60, Type:                unsigned integer (4 bytes) 
 */
 /*
-; loads up to 16300 bytes from the beginning of an LBX
-; file entry into the first (index 0) logical page of
-; the VGAFILEH EMM handle, and copies the image header
-; into the VGA_FILE_H_Hdr allocation, filling out the
+; loads up to 16300 bytes from the beginning of an LBX file entry into the first (index 0) logical page of
+; the VGAFILEH EMM handle, and copies the image header into the VGA_FILE_H_Hdr allocation, filling out the
 ; handle and data offset fields
 */
-void Open_File_Animation__HACK(char * file_name, int16_t entry_num)
+/*
+You don't need NASM or MASM. Open_File_Animation is ordinary compiled C. 
+In seg030/Open_File_Animation.asm it's just strcpy → Load_File_Animation_Frame(0, 16300, 0, 0) → EMM_MapnRead(...) → two farpokew calls. 
+The original avoids holding big animations in memory by streaming: it reads each frame from the LBX file, when it's needed, into a single 16 KB EMM page. 
+ReMoM's __HACK version loads the whole entry with LBX_Load instead, which carves a new pool arena on every call and never frees it. That's the leak.
+*/
+/* HACK */  // void Open_File_Animation__HACK(char * file_name, int16_t entry_num)
+/* HACK */  // {
+/* HACK */  //     stu_strcpy(file_animation_file_name, file_name);
+/* HACK */  //     file_animation_entry_num = entry_num;
+/* HACK */  //     file_animation_header = LBX_Load(file_animation_file_name, file_animation_entry_num);
+/* HACK */  // }
+void Open_File_Animation(char /* near */ * file_name, int16_t entry_num)
 {
-
-    stu_strcpy(file_animation_file_name, file_name);
-
+    strcpy(file_animation_file_name, file_name);
     file_animation_entry_num = entry_num;
-
-    // file_animation_header = (struct s_FLIC_HDR *)LBX_Reload(file_animation_file_name, file_animation_entry_num, _VGAFILEH_seg);
-    file_animation_header = LBX_Load(file_animation_file_name, file_animation_entry_num);
-
+    Load_File_Animation_Frame(0L, 16300L, 0);
+    // EMM_MapnRead(0, file_animation_header, 0L, 16, _VGAFILEH_seg);
+    // farpokew(file_animation_header, &((struct s_FLIC_HDR *)0)->emm_handle_number, _VGAFILEH_seg);
+    // farpokew(file_animation_header, &((struct s_FLIC_HDR *)0)->EMM_Logical_Page_Offset, 0);
+    memcpy(file_animation_header, _VGAFILEH_seg, 16);
+    SET_2B_OFS(file_animation_header, FLIC_HDR_POS_EMM_HANDLE_NUMBER, 1);
+    SET_2B_OFS(file_animation_header, FLIC_HDR_POS_EMM_LOGICAL_PAGE_OFFSET, 0);
 }
-// void Open_File_Animation__STUB(char * file_name, int16_t entry_num)
-// {
-// 
-//     stu_strcpy(file_animation_file_name, file_name);
-// 
-//     file_animation_entry_num = entry_num;
-// 
-// 
-// // xor     ax, ax
-// // push    ax                              ; logical_page
-// // xor     ax, ax
-// // mov     dx, 16300
-// // push    ax
-// // push    dx                              ; size
-// // xor     ax, ax
-// // xor     dx, dx
-// // push    ax
-// // push    dx                              ; offset
-// // nop
-// // push    cs
-// // Load_File_Animation_Frame__STUB();
-// // // Open_File_Animation__STUB() pushes are 32-bit value
-//     Load_File_Animation_Frame__STUB(0, 16300, 0, 0);
-// 
-// 
-// // push    [EmmHndlNbr_VGAFILEH]           ; EMM_Handle
-// // mov     ax, 16
-// // push    ax                              ; Amt_Bytes
-// // xor     ax, ax
-// // xor     dx, dx
-// // push    ax
-// // push    dx                              ; Data_Offset
-// // push    [file_animation_header]         ; Target_Seg
-// // xor     ax, ax
-// // push    ax                              ; Target_Off
-// // EMM_MapnRead();
-// // // Open_File_Animation__STUB() pushes are 32-bit value
-// 
-// 
-//     // farpokew(file_animation_header, FLIC_HDR_POS_EMM_HANDLE_NUMBER, EmmHndlNbr_VGAFILEH);
-//     // farpokew(file_animation_header, FLIC_HDR_POS_EMM_LOGICAL_PAGE_OFFSET, 0);
-// 
-// 
-// }
 
 
 // WZD s30p36
-// drake178: VGA_FILEH_DrawFrame()
 /*
-; loads an image frame from the current VGA_Source_File
-; into the VGAFILEH EMM handle starting at page index
-; 1, and then draws it into the current draw frame
+; loads an image frame from the current VGA_Source_File into the VGAFILEH EMM handle starting at page index 1, and then draws it into the current draw frame
 */
-// Draw_File_Animation()
-void Draw_File_Animation__HACK(void)
+void Draw_File_Animation(void)
 {
-
-    FLIC_Draw(0, 0, file_animation_header);
-
+    int32_t frame_length = 0;
+    int32_t frame_end = 0;
+    int32_t value_to_write = 0;
+    int32_t frame_start = 0;
+    int16_t current_frame_idx = 0;
+    int16_t next_frame_idx = 0;
+    current_frame_idx = FLIC_GET_CURRENT_FRAME(file_animation_header);
+    next_frame_idx = current_frame_idx + 1;
+    /* Note: Borland tail-merges the farpokew call across both branches (or compiles a ternary expression) */
+    if(FLIC_GET_FRAME_COUNT(file_animation_header) > next_frame_idx)
+    {
+        FLIC_SET_CURRENT_FRAME(file_animation_header, next_frame_idx);
+    }
+    else
+    {
+        FLIC_SET_CURRENT_FRAME(file_animation_header, FLIC_GET_LOOP_FRAME(file_animation_header));
+    }
+    if(FLIC_GET_PALETTE_HEADER_OFFSET(file_animation_header) != 0)
+    {
+        FLIC_Load_Palette(file_animation_header, current_frame_idx);
+    }
+    // EMM_MapnRead(&frame_start, 0, (int32_t)((current_frame_idx << 2) + FLIC_HDR_FRAME_OFFSETS), 4, _VGAFILEH_seg);
+    // EMM_MapnRead(&frame_end, 0, (int32_t)((current_frame_idx << 2) + FLIC_HDR_NEXT_FRAME_OFFSETS), 4, _VGAFILEH_seg);
+    frame_start = GET_4B_OFS(_VGAFILEH_seg, ((current_frame_idx * 4) + 18));
+    frame_end = GET_4B_OFS(_VGAFILEH_seg, ((current_frame_idx * 4) + 22));
+    frame_length = frame_end - frame_start;
+    /* NOTE:  The asm errors as soon as the high word of frame_length is 1 or more: cmp [frame_length+2], 1 / jl / jg, then the low word is tested with jbe. A frame of exactly 65536 bytes is therefore an error. */
+    if(frame_length >= 65536L)
+    {
+        /* db 83h, 0C4h, 06h following call is `add sp, 6` (cdecl stack cleanup) */
+        Error_Handler(file_animation_file_name, le_anim_over_64k, file_animation_entry_num, ST_NULL);
+    }
+    value_to_write = 16384L;
+    // EMM_MapnWrite(&value_to_write, 0, (int32_t)((current_frame_idx << 2) + FLIC_HDR_FRAME_OFFSETS), 4, _VGAFILEH_seg);
+    SET_4B_OFS(_VGAFILEH_seg, ((current_frame_idx * 4) + 18), value_to_write);
+    /* `nop; push cs; call near ptr` is a same-segment far call */
+    Load_File_Animation_Frame(frame_start, frame_length, 1);
+    Draw_File_Animation_Frame_ASM(0, 0, file_animation_header, current_frame_idx);
+    // EMM_MapnWrite(&frame_start, 0, (int32_t)((current_frame_idx << 2) + FLIC_HDR_FRAME_OFFSETS), 4, _VGAFILEH_seg);
+    SET_4B_OFS(_VGAFILEH_seg, ((current_frame_idx * 4) + 18), frame_start);
 }
 
 
 // WZD s30p37
 // drake178: VGA_FILEH_Loader()
-// Load_File_Animation_Frame()
 /*
 ; loads data from a specific entry of an LBX file to
 ; the specified logical page in the VGAFILEH EMM handle
@@ -2326,86 +2322,81 @@ void Draw_File_Animation__HACK(void)
 ; has a minor bug about error reporting
 */
 /*
-
 XREF:
     Open_File_Animation__WIP()
     Draw_File_Animation__WIP()
-
 */
-// void Load_File_Animation_Frame__STUB(int32_t offset, int32_t size, int16_t logical_page)
-// {
-//     char file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-//     int32_t entry_start = 0;
-//     int32_t entry_length = 0;
-//     int32_t Total_Bytes_Left = 0;
-//     int16_t read_size = 0;
-//     int16_t Page_Frame_Segment = 0;
-//     int16_t Page_Count = 0;
-//     int16_t current_page = 0;  // _SI_
-//     int16_t lbx_fptr = 0;  // _DI_
-//     // ; BUG: should not allocate a local string
-// 
-//     // if(_VGAFILEH_seg == ST_NULL)
-//     {
-//         // Error_Handler(file_animation_file_name, le_low_emm, 0);
-//         Error_Handler(file_animation_file_name, le_low_emm, 0, ST_NULL);
-//     }
-// 
-//     // ; finds and opens the LBX file if it wasn't already,
-//     // ; loads its header data, and fills out the 32bit
-//     // ; returns values pointed to by the arguments
-//     // ; returns the file handle (unclosed), quits on errors
-//     lbx_fptr = LBX_GetEntryData__WIP(file_animation_file_name, file_animation_entry_num, &entry_start, &entry_length, 0);
-// 
-//     entry_start += offset;
-// 
-//     entry_length -= offset;
-// 
-//     if(entry_length <= 0)
-//     {
-//         // ; BUG: should use the global variable
-//         // Error_Handler(file_name, le_corrupted, file_animation_entry_num);
-//         Error_Handler(file_name, le_corrupted, file_animation_entry_num, ST_NULL);
-//     }
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-// }
+void Load_File_Animation_Frame(int32_t offset, int32_t size, int16_t logical_page)
+{
+    char file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int32_t entry_start = 0;
+    int32_t entry_length = 0;
+    int32_t total_bytes_left = 0;
+    uint16_t read_size = 0;
+    SAMB_ptr  page_frame = ST_NULL;
+    int16_t page_count = 0;
+    FILE * lbx_fptr = NULL;
+    int16_t current_page = 0;
+    if(_VGAFILEH_seg == 0)
+    {
+        Error_Handler(file_animation_file_name, le_low_emm, 0, ST_NULL);
+    }
+    lbx_fptr = LBX_Get_Entry_Data(
+        file_animation_file_name,
+        file_animation_entry_num,
+        &entry_start,
+        &entry_length,
+        0
+    );
+    entry_start += offset;
+    entry_length -= offset;
+    if(entry_length <= 0L)
+    {
+        /* OGBUG  file_name is uninitialized on the stack here in the original binary */
+        Error_Handler(file_name, le_corrupted, file_animation_entry_num, ST_NULL);
+    }
+    if(size < entry_length)
+    {
+        entry_length = size;
+    }
+    // if(lbx_seek(entry_start, lbx_fptr) == 0)
+    if(fseek(lbx_fptr, entry_start, SEEK_SET) != 0)
+    {
+        Error_Handler(file_name, le_corrupted, file_animation_entry_num, ST_NULL);
+    }
+    page_count = (int16_t)(entry_length / 16384L);
+    if((entry_length % 16384L) != 0L)
+    {
+        page_count++;
+    }
+    current_page = logical_page;
+    total_bytes_left = entry_length;
+    read_size = 16384;
+    while(total_bytes_left >= 16384L)
+    {
+        total_bytes_left -= 16384L;
+        EMM_MapFourPages(current_page, _VGAFILEH_seg);
+        // lbx_read_sgmt(page_frame, read_size, lbx_fptr);
+        page_frame = EMM_GetPageFrame();
+        fread(page_frame, 1, read_size, lbx_fptr);
+        current_page++;
+    }
+    if(total_bytes_left > 0L)
+    {
+        read_size = (unsigned int)total_bytes_left;
+        EMM_MapFourPages(current_page, _VGAFILEH_seg);
+        // lbx_read_sgmt(page_frame, read_size, lbx_fptr);
+        page_frame = EMM_GetPageFrame();
+        fread(page_frame, 1, read_size, lbx_fptr);
+    }
+}
 
 
 // WZD s30p38
-// drake178: VGA_FILEH_GetFrame()
-/*
-; returns the index of the next frame that will be
-; displayed by a VGA_FILEH_DrawFrame call
-; Attributes: bp-based frame
-*/
-/*
-proc Get_File_Animation_Frame far
-push    bp
-mov     bp, sp
-mov     ax, s_FLIC_HDR.current_frame
-push    ax                              ; Offset
-push    [file_animation_header]         ; Segment
-call    GET_2B_OFS
-pop     cx
-pop     cx
-jmp     short $+2
-pop     bp
-retf
-endp Get_File_Animation_Frame
-*/
 int16_t Get_File_Animation_Frame(void)
 {
-    int16_t file_animation_frame = 0;  // DNE in Dasm
-
-    file_animation_frame = GET_2B_OFS(file_animation_header, FLIC_HDR_POS_CURRENT_FRAME);
-
-    return file_animation_frame;
+    // return farpeekw(file_animation_header, offsetof(struct s_FLIC_HDR, current_frame));
+    return FLIC_GET_CURRENT_FRAME(file_animation_header);
 }
 
 
@@ -2428,9 +2419,7 @@ endp Set_File_Animation_Frame
 */
 void Set_File_Animation_Frame(int16_t frame_num)
 {
-
     SET_2B_OFS(file_animation_header, FLIC_HDR_POS_CURRENT_FRAME, frame_num);
-
 }
 
 

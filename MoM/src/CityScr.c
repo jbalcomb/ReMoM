@@ -937,74 +937,46 @@ void City_Screen__WIP(void)
         */
         for(itr_job_fields = 0; ((_CITIES[_city_idx].population - City_Rebel_Count(_city_idx)) > itr_job_fields); itr_job_fields++)
         {
-
             if(city_population_row_fields[itr_job_fields] == input_field_idx)
             {
-
                 Play_Left_Click();
-
                 required_farmer_count = City_Minimum_Farmers(_city_idx);
-
-                city_rebel_count = City_Rebel_Count(_city_idx);  // BUGBUG unused
-
+                city_rebel_count = City_Rebel_Count(_city_idx);  /* OGBUG  this city_rebel_count is never used */
                 if(required_farmer_count == 0)
                 {
-
                     if(_CITIES[_city_idx].farmer_count == 0)
                     {
-
                         CITIES_FARMER_COUNT(_city_idx, (itr_job_fields + 1));
-
                     }
                     else
                     {
-
                         if(itr_job_fields == 0)
                         {
-
                             CITIES_FARMER_COUNT(_city_idx, 0);
-
                         }
                         else
                         {
-
                             CITIES_FARMER_COUNT(_city_idx, (itr_job_fields + 1));
-
                         }
-
                     }
-
                 }
                 else
                 {
-
                     if(itr_job_fields < required_farmer_count)
                     {
-
                         CITIES_FARMER_COUNT(_city_idx, (int8_t)required_farmer_count);
-
                     }
                     else
                     {
-
                         CITIES_FARMER_COUNT(_city_idx, (itr_job_fields + 1));
-
                     }
-
                 }
-
                 Do_City_Calculations(_city_idx);
-
                 m_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
-
                 m_city_n_turns_to_produce = City_N_Turns_To_Produce(m_city_production_cost, _city_idx);
-
                 Do_City_Calculations(_city_idx);
-
                 City_Can_Buy_Product();
-
             }
-
         }
 
         /*

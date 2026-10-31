@@ -30,5 +30,6 @@ extern const Demo_Effect effect_mastery;
 extern const Demo_Effect effect_vanish;
 extern const Demo_Effect effect_somlose;
 extern const Demo_Effect effect_somwin;
+extern const Demo_Effect effect_conquest;
 
 #endif /* DEMO_EFFECTS_H */

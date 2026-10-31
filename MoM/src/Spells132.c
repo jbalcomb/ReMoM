@@ -387,8 +387,8 @@ void Cast_Incarnation(int16_t player_idx)
 // WZD o132p04
 void WIZ_MeteorStorm(int Player_Index)
 {
-    int16_t Building_List[36] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Unit_List[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Building_List[NUM_BUILDINGS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Unit_List[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Items[3] = { 0, 0, 0 };
     int16_t Item_Count = 0;
     int16_t unit_owner_idx = 0;
@@ -412,14 +412,14 @@ void WIZ_MeteorStorm(int Player_Index)
         {
             if(_CITIES[itr_units].owner_idx != Player_Index)
             {
-                for(i = 0; i < 36; i++)
+                for(i = 0; i < NUM_BUILDINGS; i++)
                 {
                     Building_List[i] = 0;
                 }
                 Apply_Damage_To_City(itr_units, 0, 1, Building_List);
                 if(_CITIES[itr_units].owner_idx == HUMAN_PLAYER_IDX)
                 {
-                    for(i = 0; i < 36; i++)
+                    for(i = 0; i < NUM_BUILDINGS; i++)
                     {
                         if(Building_List[i] > 0 && MSG_BldLost_Count < 20)
                         {
@@ -510,7 +510,7 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
     for(itr = 0; itr < NUM_HERO_ITEM_SLOTS; itr++)
     {
 
-        _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].Items[itr] = ST_UNDEFINED;
+        _players[player_idx].Heroes[hero_slot_idx].Items[itr] = ST_UNDEFINED;
 
     }
 

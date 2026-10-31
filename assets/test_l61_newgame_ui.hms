@@ -1,0 +1,129 @@
+# test_l61_newgame_ui.hms -- shared fragment for the L61 per-game-reset test.
+#
+# From the Main Menu: New Game through every New Game screen (the same choices as Stage_0.hms --
+# Rjak, Artificer, Life 2 / Chaos 2 / Nature 2 / Sorcery 4, Orc, Yellow), then the home-city rename
+# popup, then patrol the starting stack.  Ends on the Main Screen at turn 0.
+#
+# Included by test_l61_fresh.hms and test_l61_second_game.hms.  Coordinates and comments for the
+# New Game screens are Stage_0.hms's (from the Add_*_Field definitions in NewGame.c).
+
+# BEGIN: Main Menu
+
+# _new_button = Add_Hidden_Field(108, 162, 211, 173, 0, ST_UNDEFINED);
+# main menu buttons are 12 pixels tall, variable bytes wide
+click 160 168
+wait 500ms
+
+# END: Main Menu
+
+
+# BEGIN:  New Game
+
+# New Game Screen 0 - Game Options
+# OK button
+# _ok_button = Add_Button_Field(252, 179, &empty_string__ovr050[0], newgame_ok_button_seg, empty_string__ovr050[0], ST_UNDEFINED);
+click 257 189
+wait 500ms
+
+# New Game Screen 1 - Wizard Profile
+# Custom button
+# m_newgame_fields[(7+itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+# 244, 26 + 22 * 7 = 180
+click 249 180
+wait 500ms
+
+# New Game Screen 2 - Wizard Portrait (Custom)
+# Rjak button
+# m_newgame_fields[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+# 168, 26 + 22 * 6
+click 173 158
+wait 500ms
+
+# New Game Screen - Wizard Name (Custom)
+# Enter or Full Screen Window or Escape
+enter
+wait 500ms
+
+# New Game Screen 4 - Abilities & Books (Custom)
+# Pulled from NewGame.c:3946-3956. The picklist signature is Add_Scroll_Field(xmin, ymin, min_value, max_value, min_valid, max_valid, width, height, *value, …) — so book scroll fields are 96 px wide × 22 px tall at the given (xmin, ymin), value-range 0–96.
+# Artificer — wsa_picklist_fields[4] per wsa_picklist_order. Column 0, row 4:
+# rect (164, 33) – (202, 38)
+# First book of each realm — leftmost edge of each scroll field. Each row is 22 px tall and rows are spaced 26 px apart starting at y=47. Vertical center of the strip is ymin + 11. For "first book" I'd click a few px past the left edge to hit the slot that corresponds to spellranks=1 (need to confirm by experimentation, since the 0–96 value range divided by 11 max books ≈ 8.5 px per book):
+# Realm	scroll field rect	first-book click
+# Life	    (190,  47) – (286,  69)	click 198  58
+# Death	    (190,  73) – (286,  95)	click 198  84
+# Chaos	    (190,  99) – (286, 121)	click 198 110
+# Nature	(190, 125) – (286, 147)	click 198 136
+# Sorcery	(190, 151) – (286, 173)	click 198 162
+# Test with matchup_hemom.ini set books_sorcery = 4 (etc.) — if a single click at x=198 only adds one book, you'll need 3 more clicks marching right by ~8 px each (≈ 206, 214, 222). Easier alternative: click on the target position directly — at x = 190 + book_count * 8, so for 4 books click x=222 once.
+# Layout sanity check: WSA picklist is the upper-right block (y ≈ 5–45), bookshelves are the right-middle block below it (y ≈ 47–173), portrait + name on the left half. That matches the coords above and the actual screen.
+
+# Artificer button
+click 183 35
+wait 500ms
+
+# Life book #2
+click 210 58
+wait 500ms
+
+# Chaos book #2
+click 210 110
+wait 500ms
+
+# Nature book #2
+click 210 136
+wait 500ms
+
+# Sorcery book #4
+click 226 162
+wait 500ms
+
+# OK button
+# _ok_button = Add_Hidden_Field(251, 181, 282, 196, empty_string__ovr050[0], ST_UNDEFINED);
+click 256 186
+wait 500ms
+
+
+# New Game Screen 5 - Select Life Spells 
+# OK button
+click 256 186
+wait 500ms
+# New Game Screen 5 - Select Chaos Spells 
+# OK button
+click 256 186
+wait 500ms
+# New Game Screen 5 - Select Nature Spells 
+# OK button
+click 256 186
+wait 500ms
+# New Game Screen 5 - Select Sorcery Spells 
+# OK button
+click 256 186
+wait 500ms
+
+# New Game Screen 6 - Race
+# m_newgame_fields[itr] = Add_Hidden_Field(211, (38 + (itr * 10)), 270, (45 + (itr * 10)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+# Orc
+# 211, 38 + 8 * 10 = 118
+click 216 123
+wait 500ms
+
+# New Game Screen 7 - Banner
+# Yellow
+# m_newgame_fields[4] = Add_Hidden_Field(175, 163, 313, 199, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+click 180 168
+wait 500ms
+
+# END:  New Game
+
+
+# === Home city naming popup (turn 0) ===
+wait 500ms
+backspace
+type L61City
+enter
+wait 500ms
+
+# === Patrol the starting stack ===
+click 290 180
+wait 300ms

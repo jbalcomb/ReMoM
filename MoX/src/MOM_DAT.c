@@ -899,7 +899,6 @@ uint8_t * _ai_landmass_settler_targets[NUM_PLANES];
 // WZD dseg:8FB0
 /*
 landmass_idx
-
 12 values
 2 planes * 6 players
 */

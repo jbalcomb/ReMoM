@@ -1010,13 +1010,10 @@ void Build_Moveable_Stack(int16_t * troop_count, int16_t troops[])
     int16_t stack_has_transport = 0;
     int16_t moveable_troop_count = 0;
     int16_t l_troop_count = 0;
-
     int16_t itr_stack = 0;
     int16_t itr_boatriders = 0;
-
     stack_has_transport = ST_FALSE;
     transport_capacity = 0;
-
     for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
     {
         if(
@@ -1031,12 +1028,10 @@ void Build_Moveable_Stack(int16_t * troop_count, int16_t troops[])
             transport_capacity += _unit_type_table[_UNITS[_unit_stack[itr_stack].unit_idx].type].Transport;
         }
     }
-
     if(stack_has_transport == ST_TRUE)
     {
         l_troop_count = 0;
         moveable_troop_count = 0;
-
         for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
         {
             if(
@@ -1053,24 +1048,19 @@ void Build_Moveable_Stack(int16_t * troop_count, int16_t troops[])
             moveable_troops[l_troop_count] = _unit_stack[itr_stack].unit_idx;  // all, active, non-goto
             l_troop_count++;
         }
-
         l_troop_count = moveable_troop_count;
-        
         if(Square_Has_City(_UNITS[_unit_stack[0].unit_idx].wx, _UNITS[_unit_stack[0].unit_idx].wy, _UNITS[_unit_stack[0].unit_idx].wp) == ST_UNDEFINED)
         {
             for(itr_boatriders = 0; itr_boatriders < MAX_STACK; itr_boatriders++)
             {
                 boatriders[itr_boatriders] = ST_UNDEFINED;
             }
-
             boatrider_count = Army_Boatriders(_unit_stack_count, &moveable_troops[0], &boatriders[0]);
-
             if(boatrider_count > 0)
             {
                 l_troop_count = moveable_troop_count;
                 boatriders_idx = 0;
                 transport_load = 0;
-
                 for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
                 {
                     if(boatriders[boatriders_idx] == _unit_stack[itr_stack].unit_idx)
@@ -1090,15 +1080,19 @@ void Build_Moveable_Stack(int16_t * troop_count, int16_t troops[])
                         }
                     }
                 }
-
+                /* the same shape as Build_RoadBuilder_Stack */
                 for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
                 {
                     if(
-                        (Unit_Has_AirTravel_Item(_unit_stack[itr_stack].unit_idx) == ST_FALSE) &&
-                        (Unit_Has_WaterTravel_Item(_unit_stack[itr_stack].unit_idx) == ST_FALSE) &&
-                        (Unit_Has_Swimming(_unit_stack[itr_stack].unit_idx) == ST_FALSE) &&
-                        (Unit_Has_WindWalking(_unit_stack[itr_stack].unit_idx) == ST_FALSE) &&
-                        (Unit_Has_AirTravel(_unit_stack[itr_stack].unit_idx) == ST_FALSE)
+                        (Unit_Has_AirTravel_Item(_unit_stack[itr_stack].unit_idx) == ST_TRUE)
+                        ||
+                        (Unit_Has_WaterTravel_Item(_unit_stack[itr_stack].unit_idx) == ST_TRUE)
+                        ||
+                        (Unit_Has_Swimming(_unit_stack[itr_stack].unit_idx) == ST_TRUE)
+                        ||
+                        (Unit_Has_WindWalking(_unit_stack[itr_stack].unit_idx) == ST_TRUE)
+                        ||
+                        (Unit_Has_AirTravel(_unit_stack[itr_stack].unit_idx) == ST_TRUE)
                     )
                     {
                         if(_UNITS[_unit_stack[itr_stack].unit_idx].Status != us_GOTO)
@@ -1108,9 +1102,6 @@ void Build_Moveable_Stack(int16_t * troop_count, int16_t troops[])
                         }
                     }
                 }
-
-                goto Done;
-
             }
             else  /* !(boatrider_count > 0) */
             {
@@ -1119,34 +1110,20 @@ void Build_Moveable_Stack(int16_t * troop_count, int16_t troops[])
                 {
                     for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
                     {
-                        if((_UNITS[itr_stack].Status != us_GOTO) && (_unit_type_table[_UNITS[itr_stack].type].Transport < 1))
+                        if((_UNITS[_unit_stack[itr_stack].unit_idx].Status != us_GOTO) && (_unit_type_table[_UNITS[_unit_stack[itr_stack].unit_idx].type].Transport < 1))
                         {
                             troops[l_troop_count] = _unit_stack[itr_stack].unit_idx;
                             l_troop_count++;
                         }
                     }
                 }
-                else
-                {
-                    // HERE: ¿ we're on the ocean and all stack units are transports ?
-                    goto Done;
-                }
-
-
             }
-
         }
-        else  /* Square_Has_City() != ST_UNDEFINED */
-        {
-            goto Done;
-        }
-
     }
     else  /* (stack_has_transport != ST_TRUE) */
     {
         // HERE:  no boats means we're on land
         l_troop_count = 0;
-
         for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
         {
             if((_unit_stack[itr_stack].active == ST_TRUE) && (_UNITS[_unit_stack[itr_stack].unit_idx].Status != us_GOTO))
@@ -1155,12 +1132,8 @@ void Build_Moveable_Stack(int16_t * troop_count, int16_t troops[])
                 l_troop_count++;
             }
         }
-
     }
-
-Done:
     *troop_count = l_troop_count;
-
 }
 
 
@@ -1330,28 +1303,20 @@ void Build_RoadBuilder_Stack(int16_t * troop_count, int16_t troops[], int16_t ds
 
                 for(itr = 0; itr < entire_stack_count; itr++)
                 {
-
                     unit_idx = entire_stack[itr];
-
-                    if((boatriders[boatrider_idx] != unit_idx) && (passenger_count < transport_capacity))
+                    /* OGBUG  heroes are tested against transport capacity before the hero test; once the boats are full a hero is left behind, though it never takes a seat */
+                    /* OGBUG  lets one more passenger board on Go To than the ship's capacity */
+                    if((boatriders[boatrider_idx] == unit_idx) && (passenger_count <= transport_capacity))
                     {
-
                         troops[l_troop_count] = unit_idx;
-
                         l_troop_count++;
-
                         boatrider_idx++;
-
                         // drake178: ; BUG: incorrect order of operations - heroes should be checked for before evaluating the passenger count
                         if(_UNITS[unit_idx].type > ut_Chosen)
                         {
-
                             passenger_count++;
-
                         }
-
                     }
-
                 }
 
                 for(itr = 0; itr < entire_stack_count; itr++)
