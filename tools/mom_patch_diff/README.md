@@ -110,12 +110,19 @@ comment:
 - `remom_drake178`: the name in that comment.
 - `name_check`:
   - `same`: the IDB's name for that id equals the comment;
+  - `prefix`: the same apart from the prefix. drake178 changed the prefix of functions he later patched or found
+    unused;
   - `differs`: it doesn't;
   - blank: there is no comment, or IDA's default `sub_...` name.
 - `name_elsewhere`: other ids whose comment carries the IDB's name.
 
 The summary counts each. Many `differs` with matching `name_elsewhere` mean that the IDB numbers a segment's
 functions differently from ReMoM (a function split or merged), not that the names are wrong.
+
+Segments renamed in the IDB (drake178's `_AIL_` for seg035) get their number back from their neighbours in
+address order. That happens only when the IDA-named segments before and after have the same prefix and leave
+exactly the right gap. The summary lists every segment numbered this way, and every one left without a number,
+whose functions then get no id.
 
 `--project NAME=TSV` adds another reconstruction from a tab-separated index with the columns `exe`, `segment`, `proc`, `function`, `file`, `line`
 (`WZD` or `MGC`, `s161` or `o142`, procedure number). Without `--map` the table is ReMoM's index alone; that runs

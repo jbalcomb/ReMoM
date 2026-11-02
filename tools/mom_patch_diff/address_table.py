@@ -159,13 +159,26 @@ def drake178_comments(root):
     return dict(out)
 
 
+def same_but_prefix(a, b):
+    """drake178 marks functions he later patched or found unused by changing the prefix before the name
+    (CTY_GetResearch -> UU_CTY_GetResearch, or -> RP_GetResearch).  True when the names differ only so."""
+    core = lambda n: n.split('_', 1)[-1]
+    return a != b and (core(a) == core(b) or a.endswith('_' + b) or b.endswith('_' + a))
+
+
 def name_check(ida_name, k, drake, by_name):
-    """Compare the IDB's name with ReMoM's drake178 comment for the same id: same / differs / (blank: no comment, or
-    IDA's default name).  Also every other id whose drake178 comment carries this IDB name (a numbering offset)."""
+    """Compare the IDB's name with ReMoM's drake178 comment for the same id: same / prefix (same apart from the
+    prefix) / differs / (blank: no comment, or IDA's default name).  Also every other id whose drake178 comment carries this IDB name (a numbering offset)."""
     if not ida_name or re.match(r'(sub|nullsub|unknown_libname)_', ida_name):
         return '', ''
     names = drake.get(k, [])
-    check = ('same' if ida_name in names else 'differs') if names else ''
+    check = ''
+    if ida_name in names:
+        check = 'same'
+    elif any(same_but_prefix(ida_name, n) for n in names):
+        check = 'prefix'
+    elif names:
+        check = 'differs'
     elsewhere = sorted(key_text(o) for o in by_name.get(ida_name, ()) if o != k)
     return check, ', '.join(elsewhere)
 
@@ -210,6 +223,7 @@ def main(argv=None):
         versions.append((label, files))
 
     rows = []
+    renamed, unnumbered = [], []
     seen = set()
     stats = defaultdict(lambda: defaultdict(int))
     for spec in args.map:
@@ -218,8 +232,12 @@ def main(argv=None):
         exe = EXES.get(exe_file, exe_file)
         items = load_map(path)
         seg_start = {i.name: i.ea for i in items if i.kind == 'S'}
+        for s in (i for i in items if i.kind == 'S' and i.seg_id and i.seg_id != i.name.lower()):
+            renamed.append('%s %s = %s' % (exe, s.seg_id, s.name))
+        for s in (i for i in items if i.kind == 'S' and not i.seg_id):
+            unnumbered.append('%s %s' % (exe, s.name))
         for item in (i for i in items if i.kind == 'F'):
-            sk = segment_key(exe, item.segment)
+            sk = segment_key(exe, item.seg_id)
             k = (sk + (item.proc,)) if sk else None
             seen.add(k)
             start = seg_start.get(item.segment)
@@ -295,6 +313,10 @@ def main(argv=None):
           % ''.join(' and ' + n for n, _ in projects), '']
     for exe in sorted(stats):
         md.append('- **%s**: ' % exe + ', '.join('%s %d' % (k, v) for k, v in sorted(stats[exe].items())))
+    if renamed:
+        md.append('- Segments renamed in the IDB, numbered from their neighbours: ' + ', '.join(renamed))
+    if unnumbered:
+        md.append('- Segments with no number (their functions have no id): ' + ', '.join(unnumbered))
     if not args.map:
         evidence = defaultdict(int)
         for v in remom.values():

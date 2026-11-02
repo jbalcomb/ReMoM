@@ -159,6 +159,21 @@ class Address_Table_test(unittest.TestCase):
         self.assertIn('name at another id 1', summary)
         self.assertIn('name same 1', summary)
 
+    def test_renamed_segment_is_numbered_from_its_neighbours(self):
+        from tools.mom_patch_diff.diff import Item, segment_ids
+        seg = lambda name, ea: Item({'kind': 'S', 'segment': name, 'proc': '0', 'name': name, 'ea': '%X' % ea, 'size': '16', 'bytes': ''})
+        ids = segment_ids([seg('seg034', 0x100), seg('_AIL_', 0x200), seg('seg036', 0x300), seg('dseg', 0x400),
+                           seg('ovr050', 0x500), seg('_GUI_', 0x600)])
+        self.assertEqual(ids['_AIL_'], 'seg035')
+        self.assertEqual(ids['dseg'], '')                    # between seg036 and ovr050: no number to give
+        self.assertEqual(ids['_GUI_'], '')                   # after the last named segment: no neighbour to check
+
+    def test_prefix_changes_are_told_apart(self):
+        self.assertTrue(address_table.same_but_prefix('UU_CTY_GetResearch', 'CTY_GetResearch'))
+        self.assertTrue(address_table.same_but_prefix('RP_GetResearch', 'CTY_GetResearch'))
+        self.assertFalse(address_table.same_but_prefix('CTY_GetGold', 'CTY_GetResearch'))
+        self.assertEqual(address_table.name_check('UU_CTY_GetResearch', 'k', {'k': ['CTY_GetResearch']}, {})[0], 'prefix')
+
     def test_ids_only_in_remom_are_listed(self):
         self.assertEqual(self.rows['WZD o142p03']['remom_evidence'], 'comment')
         self.assertEqual(self.rows['WZD o142p03']['ida_name'], '(not in the map)')

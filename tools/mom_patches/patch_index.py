@@ -119,7 +119,7 @@ class FunctionLocator:
             hits = item.find(exe_bytes)
             if hits:
                 label = ''
-                m = re.match(r'(seg|ovr)0*(\d+)$', item.segment, re.I)
+                m = re.match(r'(seg|ovr)0*(\d+)$', item.seg_id, re.I)
                 if item.kind == 'F' and m:
                     label = key_text((exe_code, 's' if m.group(1).lower() == 'seg' else 'o', int(m.group(2)), item.proc))
                 self.spans.append((hits[0], hits[0] + item.size, item.kind, label, item.name))
