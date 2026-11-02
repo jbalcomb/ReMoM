@@ -81,6 +81,22 @@ files. Start with `summary.md`; each changed file has its own folder or file:
 | `<LBX>.md` | changed entries; known data tables decoded field by field (`tools/dummy_lbx/tables.py`) |
 | `<FILE>.diff` | other text files, as a unified diff |
 
+## Segment and procedure addresses
+
+`map_addresses.py` turns one map into one row per segment and procedure:
+- **IDA side:** name, procedure number, IDA address (`ida_ea`), `segment:offset` (`seg161:0005`) and
+  `paragraph:offset` (`1A00:0005`).
+- **File side** (when given the `.EXE`): `paragraph:offset` relative to the load module, and the file offset.
+  - Load-module offsets are computed, and the bytes there are checked.
+  - Overlay offsets are found by the procedure's bytes.
+
+Two databases of the same `.EXE` give the same file offset for the same procedure however they name or number
+their segments, so join them on `file_offset`:
+
+```bash
+python3 -m tools.mom_patch_diff.map_addresses --map drake_wizards_map.tsv --exe /c/MoM/MoM131/WIZARDS.EXE --out drake_wizards_addresses.tsv
+```
+
 ## Address table
 
 `address_table.py` joins everything known about each function into one table: ReMoM id, IDA segment, address
