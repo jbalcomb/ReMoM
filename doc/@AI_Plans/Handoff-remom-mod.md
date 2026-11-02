@@ -78,6 +78,8 @@ install. On Ubuntu, run the Windows one under Wine.
    python3 tools/mom_patch_diff/export_map.py --wine --ida "$IDA" --idb ~/MoM/ida/MAGIC.idb   --out ~/MoM/magic_map.tsv
    ```
    - `export_map.idc` has never run in a real IDA. If it stops, `--keep` keeps `ida.log`, which names the IDC line.
+   - Alternative: run IDA natively on the Coder Workstation (Windows 10) as a REST service under NSSM, per
+     [Plan-IDA-Service.md](Plan-IDA-Service.md) (plan only).
    - Check: `python3 -m tools.mom_patch_diff.address_table --remom . --out ~/MoM/address_table --map WIZARDS.EXE=... --exe 1.31=~/MoM/MoM131`.
      Nearly every `seg*`/`ovr*` function should show a 1.31 offset.
 2. **Index every patch file** (whole folder, with base and maps):
