@@ -58,6 +58,8 @@ def main(argv=None):
     args = p.parse_args(argv)
 
     ida, idb, out = native(args.ida), os.path.abspath(native(args.idb)), os.path.abspath(native(args.out))
+    if not os.path.isfile(ida):
+        sys.exit('export_map: no IDA at %s (--ida must name idag.exe or idaw.exe)' % ida)
     if not os.path.isfile(idb):
         sys.exit('export_map: no database at %s' % idb)
     if os.path.exists(out):
