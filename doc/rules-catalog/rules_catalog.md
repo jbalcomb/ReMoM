@@ -9,7 +9,7 @@ A **bold** value differs from the first profile's.
 |---|---|---|---|
 | `original` | Master of Magic 1.31 |  | 1.31 as reconstructed in ReMoM; ReMoM's default. |
 | `community_patch` | Community Patch | `original` | 1.31 with drake178's Community Patch. |
-| `com2` | Caster of Magic for Windows 1.05.11 | `original` | Seravy's Caster of Magic for Windows, with the values of its own Data/ folder. |
+| `caster_of_magic_2` | Caster of Magic for Windows 1.05.11 | `original` | Seravy's Caster of Magic for Windows, with the values of its own Data/ folder. |
 
 ## Square production bonus (`rules.square_production_bonus`)
 

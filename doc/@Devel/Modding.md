@@ -124,7 +124,7 @@ asks the loaded profile for each rule's result. The faithful C version of each r
 reference the 1.31 script is tested against. The API is in [MOD/src/MOD_Rules.h](../../MOD/src/MOD_Rules.h).
 
 ```bash
-./HeMoM --rules com2 --newgame          # original (default), community_patch, com2, a folder path, or none (C only)
+./HeMoM --rules caster_of_magic_2 --newgame          # original (default), community_patch, caster_of_magic_2, a folder path, or none (C only)
 ./ReMoM --rules community_patch
 ```
 
@@ -132,7 +132,7 @@ reference the 1.31 script is tested against. The API is in [MOD/src/MOD_Rules.h]
 |---|---|
 | `original` | 1.31: a line-for-line translation of the reconstructed C. The default. |
 | `community_patch` | Starts from `original` and overrides what the Community Patch changes (no change confirmed for the ported rules yet). |
-| `com2` | Caster of Magic for Windows 1.05.11, with values from its `Data/TERRAIN.INI`. |
+| `caster_of_magic_2` | Caster of Magic for Windows 1.05.11, with values from its `Data/TERRAIN.INI`. |
 
 - **Profile layout.** A profile is `rules/<name>/profile.lua`, which loads its files with `rules.load("file.lua")`, or
   another profile's with `rules.load("original", "file.lua")`. That makes "1.31 plus these changes" a two-line profile.
@@ -171,7 +171,7 @@ To port another rule:
 | [MOD/src/MOD_Lua.cpp](../../MOD/src/MOD_Lua.cpp) | Lua runtime through sol2 (the only C++ in the game) |
 | [MOD/src/MOD_Load.c](../../MOD/src/MOD_Load.c) | Mod folder loader, `[CAS]` hook bindings, `--rules` |
 | [MOD/src/MOD_Rules.h](../../MOD/src/MOD_Rules.h) | Rules profiles (implemented in `MOD_Lua.cpp`) |
-| [assets/rules/](../../assets/rules/) | The rules profiles: `original`, `community_patch`, `com2` |
+| [assets/rules/](../../assets/rules/) | The rules profiles: `original`, `community_patch`, `caster_of_magic_2` |
 | [MOD/src/CAS.c](../../MOD/src/CAS.c) | CAS interpreter |
 | [MOD/src/CAS_Game.c](../../MOD/src/CAS_Game.c) | CAS built-ins that read and change the game; CoM2 → ReMoM ID tables |
 | [MoM/src/City_Hook_Inputs.c](../../MoM/src/City_Hook_Inputs.c) | Economy hooks with CoM2's script inputs |
@@ -184,7 +184,7 @@ To port another rule:
 - The other 65 CAS built-ins Warlord uses (unit, spell, wizard and map queries and commands), and the other Caster of Magic hooks (unit stats, combat, spells, AI).
 - CAS→Lua converter.
 - More rules ported to profiles; the loaded profile recorded in the save; CoM2 values read from a mod's TERRAIN.INI
-  instead of written into `rules/com2/terrain.lua`; volcano owner production for CoM2.
+  instead of written into `rules/caster_of_magic_2/terrain.lua`; volcano owner production for CoM2.
 - Data tables (units, spells, buildings) loaded from mod files; asset overrides.
 - Recording the loaded mods in save files. The CAS slots are not cleared when a new game starts in the same session.
 - An end-to-end test that runs a game with a mod (needs the original LBX files, so it belongs with the HeMoM integration tests).

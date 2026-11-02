@@ -682,7 +682,7 @@ set_tests_properties(Perf_Baseline_Compare PROPERTIES
 #  doc/rules-catalog/rules_catalog.ttl (RDF triples) and rules_catalog.md (the comparison table) are generated from
 #  assets/rules/.  These tests regenerate them and fail if the committed files differ, so the catalog always says what
 #  the rules do.  To refresh:
-#      ./rules_catalog assets/rules/catalog.lua doc/rules-catalog/rules_catalog.ttl assets/rules/original assets/rules/community_patch assets/rules/com2
+#      ./rules_catalog assets/rules/catalog.lua doc/rules-catalog/rules_catalog.ttl assets/rules/original assets/rules/community_patch assets/rules/caster_of_magic_2
 #      python3 tools/rules_catalog/ttl_to_table.py doc/rules-catalog/rules_catalog.ttl > doc/rules-catalog/rules_catalog.md
 # =========================================================================
 
@@ -693,7 +693,7 @@ add_test(
         "${CMAKE_CURRENT_BINARY_DIR}/rules_catalog.ttl"
         "${PROJECT_SOURCE_DIR}/assets/rules/original"
         "${PROJECT_SOURCE_DIR}/assets/rules/community_patch"
-        "${PROJECT_SOURCE_DIR}/assets/rules/com2"
+        "${PROJECT_SOURCE_DIR}/assets/rules/caster_of_magic_2"
 )
 set_tests_properties(RulesCatalog_Generate PROPERTIES FIXTURES_SETUP RulesCatalog LABELS "rules")
 

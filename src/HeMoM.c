@@ -1164,7 +1164,7 @@ static void Print_Usage(const char *program_name)
     LOG_INFO(LOG_CAT_HEMOM, "  --scenario FILE    Run artificial human player from scenario script (.hms)");
     LOG_INFO(LOG_CAT_HEMOM, "  --alias-points F   Named-action points table for `click Screen.Alias` (alias_points.fwv)");
     LOG_INFO(LOG_CAT_HEMOM, "  --mod DIR          Load the mod in DIR (runs DIR/scripts/main.lua); may be given more than once");
-    LOG_INFO(LOG_CAT_HEMOM, "  --rules NAME       Rules profile: original (default), community_patch, com2, a folder, or none (C only)");
+    LOG_INFO(LOG_CAT_HEMOM, "  --rules NAME       Rules profile: original (default), community_patch, caster_of_magic_2, a folder, or none (C only)");
     LOG_INFO(LOG_CAT_HEMOM, "  --replay FILE      Replay recorded input from .RMR file");
     LOG_INFO(LOG_CAT_HEMOM, "  --record FILE      Record input to .RMR file");
     LOG_INFO(LOG_CAT_HEMOM, "  --dump-save FILE   After Screen_Control returns, dump FILE.GAM to FILE.txt");

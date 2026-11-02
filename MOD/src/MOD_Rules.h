@@ -8,9 +8,9 @@
 
     Profiles:  <search dir>/rules/<profile>/profile.lua, searched in the current directory, then beside the executable.
                A profile name containing '/' or '\' is a folder path instead.
-        original          1.31, translated from the reconstructed C
-        community_patch   1.31 plus the Community Patch's changes
-        com2              Caster of Magic for Windows
+        original           1.31, translated from the reconstructed C
+        community_patch    1.31 plus the Community Patch's changes
+        caster_of_magic_2  Caster of Magic for Windows
 
     Script API, in addition to MOD_Lua's:
         rules                       the table profiles put their rule functions in (rules.square_production_bonus, ...)

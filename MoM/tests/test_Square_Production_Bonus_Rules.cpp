@@ -138,7 +138,7 @@ TEST_F(Square_Production_Bonus_Rules_test, Community_Patch_Profile_Is_Still_The_
 
 TEST_F(Square_Production_Bonus_Rules_test, Com2_Profile_Uses_CoM2_Terrain_Values)
 {
-    Load("com2");
+    Load("caster_of_magic_2");
     EXPECT_EQ(Bonus(tt_Mountain1), 7);                     /* 1.31: 5 */
     EXPECT_EQ(Bonus(tt_Mountains_Fst + 3), 7);             /* mountain range */
     EXPECT_EQ(Bonus(tt_ChaosNode), 7);

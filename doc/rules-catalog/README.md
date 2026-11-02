@@ -19,7 +19,7 @@ the code. To regenerate both:
 
 ```bash
 ./out/build/clang-debug/bin/Debug/rules_catalog assets/rules/catalog.lua doc/rules-catalog/rules_catalog.ttl \
-    assets/rules/original assets/rules/community_patch assets/rules/com2
+    assets/rules/original assets/rules/community_patch assets/rules/caster_of_magic_2
 python3 tools/rules_catalog/ttl_to_table.py doc/rules-catalog/rules_catalog.ttl > doc/rules-catalog/rules_catalog.md
 ```
 
