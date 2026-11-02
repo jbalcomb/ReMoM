@@ -105,6 +105,18 @@ resolved:
 - a trailing `?`: another id of the same `.EXE` claims the same function (a helper placed between a comment and its
   function, or a mistyped id); check those by hand.
 
+Three columns check the join against drake178's names, which ReMoM records as `// drake178: NAME()` under an id
+comment:
+- `remom_drake178`: the name in that comment.
+- `name_check`:
+  - `same`: the IDB's name for that id equals the comment;
+  - `differs`: it doesn't;
+  - blank: there is no comment, or IDA's default `sub_...` name.
+- `name_elsewhere`: other ids whose comment carries the IDB's name.
+
+The summary counts each. Many `differs` with matching `name_elsewhere` mean that the IDB numbers a segment's
+functions differently from ReMoM (a function split or merged), not that the names are wrong.
+
 `--project NAME=TSV` adds another reconstruction from a tab-separated index with the columns `exe`, `segment`, `proc`, `function`, `file`, `line`
 (`WZD` or `MGC`, `s161` or `o142`, procedure number). Without `--map` the table is ReMoM's index alone; that runs
 anywhere, without IDA.

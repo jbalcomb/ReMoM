@@ -30,7 +30,7 @@ import re
 import sys
 from collections import Counter, defaultdict
 
-from tools.mom_patch_diff.address_table import ID_COMMENT, key, key_text, scan_remom
+from tools.mom_patch_diff.address_table import ID_COMMENT, drake178_comments, key, key_text, scan_remom
 from tools.mom_patch_diff.diff import load_map
 
 KINDS = {
@@ -102,22 +102,9 @@ def parse_patch(text):
 def drake178_index(root):
     """drake178 function name -> ReMoM id, from a "// drake178: NAME()" comment within a few lines of an id comment."""
     out = {}
-    for top in ('MoM', 'MoX', 'src', 'STU'):
-        for folder, _, names in os.walk(os.path.join(root, top)):
-            for name in names:
-                if not name.endswith('.c'):
-                    continue
-                with open(os.path.join(folder, name), encoding='utf-8', errors='replace') as f:
-                    lines = f.read().splitlines()
-                last = None
-                for number, line in enumerate(lines):
-                    m = ID_COMMENT.match(line)
-                    if m:
-                        last = (key(*m.groups()), number)
-                        continue
-                    d = re.match(r'^\s*//\s*drake178:?\s+([A-Za-z_][A-Za-z0-9_]*)\(', line)
-                    if d and last and number - last[1] <= 4:
-                        out.setdefault(d.group(1), last[0])
+    for k, names in sorted(drake178_comments(root).items()):
+        for n in names:
+            out.setdefault(n, k)
     return out
 
 

@@ -111,7 +111,7 @@ class Address_Table_test(unittest.TestCase):
         with open(os.path.join(src, 'Terrain.c'), 'w') as f:
             f.write('// WZD s161p04\n// drake178: TILE_GetProd()\nint Unrelated_Helper(void)\n{\n}\n\n'
                     '// WZD s1p1\nint16_t Square_Production_Bonus(int16_t wx)\n{\n    return 0;\n}\n'
-                    '// WZD o142p02\nint16_t City_Research_Production(int16_t city_idx);\n'
+                    '// WZD o142p02\n// drake178: CTY_GetResearch()\nint16_t City_Research_Production(int16_t city_idx);\n'
                     '// WZD o142p03\n// not reconstructed yet\n')
         with open(os.path.join(src, 'CITYCALC.c'), 'w') as f:
             f.write('/* helper first */\nstatic int helper(void)\n{\n}\n\nint16_t City_Research_Production(int16_t city_idx)\n{\n}\n')
@@ -147,6 +147,17 @@ class Address_Table_test(unittest.TestCase):
         self.assertEqual(row['remom_function'], 'City_Research_Production')
         self.assertEqual(row['remom_evidence'], 'prototype')
         self.assertTrue(row['remom_location'].startswith('MoM/src/CITYCALC.c:'))
+
+    def test_drake178_names_are_checked_against_the_idb(self):
+        same = self.rows['WZD o142p02']                      # ReMoM's comment and the IDB agree on the name
+        self.assertEqual((same['remom_drake178'], same['name_check'], same['name_elsewhere']), ('CTY_GetResearch', 'same', ''))
+        moved = self.rows['WZD s001p01']                     # the IDB's TILE_GetProd is s001p01; ReMoM says s161p04
+        self.assertEqual((moved['remom_drake178'], moved['name_check'], moved['name_elsewhere']), ('', '', 'WZD s161p04'))
+        self.assertEqual(self.rows['WZD s161p04']['remom_drake178'], 'TILE_GetProd')
+        with open(os.path.join(self.out, 'address_table.md')) as f:
+            summary = f.read()
+        self.assertIn('name at another id 1', summary)
+        self.assertIn('name same 1', summary)
 
     def test_ids_only_in_remom_are_listed(self):
         self.assertEqual(self.rows['WZD o142p03']['remom_evidence'], 'comment')

@@ -134,6 +134,42 @@ def load_project(path):
     return out
 
 
+DRAKE178_COMMENT = re.compile(r'^\s*//\s*drake178:?\s+([A-Za-z_][A-Za-z0-9_]*)\(')
+
+
+def drake178_comments(root):
+    """{key: [names]} from "// drake178: NAME()" comments within 4 lines after an id comment ("// WZD s161p04")."""
+    out = defaultdict(list)
+    for top in ('MoM', 'MoX', 'src', 'STU'):
+        for folder, _, names in os.walk(os.path.join(root, top)):
+            for name in sorted(names):
+                if not name.endswith('.c'):
+                    continue
+                with open(os.path.join(folder, name), encoding='utf-8', errors='replace') as f:
+                    lines = f.read().splitlines()
+                last = None
+                for number, line in enumerate(lines):
+                    m = ID_COMMENT.match(line)
+                    if m:
+                        last = (key(*m.groups()), number)
+                        continue
+                    d = DRAKE178_COMMENT.match(line)
+                    if d and last and number - last[1] <= 4 and d.group(1) not in out[last[0]]:
+                        out[last[0]].append(d.group(1))
+    return dict(out)
+
+
+def name_check(ida_name, k, drake, by_name):
+    """Compare the IDB's name with ReMoM's drake178 comment for the same id: same / differs / (blank: no comment, or
+    IDA's default name).  Also every other id whose drake178 comment carries this IDB name (a numbering offset)."""
+    if not ida_name or re.match(r'(sub|nullsub|unknown_libname)_', ida_name):
+        return '', ''
+    names = drake.get(k, [])
+    check = ('same' if ida_name in names else 'differs') if names else ''
+    elsewhere = sorted(key_text(o) for o in by_name.get(ida_name, ()) if o != k)
+    return check, ', '.join(elsewhere)
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     p.add_argument('--remom', default='.')
@@ -144,6 +180,11 @@ def main(argv=None):
     args = p.parse_args(argv)
 
     remom = scan_remom(args.remom)
+    drake = drake178_comments(args.remom)
+    by_name = defaultdict(set)
+    for k, names in drake.items():
+        for n in names:
+            by_name[n].add(k)
     os.makedirs(args.out, exist_ok=True)
     with open(os.path.join(args.out, 'remom_index.tsv'), 'w', newline='', encoding='utf-8') as f:
         w = csv.writer(f, delimiter='\t', lineterminator='\n')
@@ -205,6 +246,12 @@ def main(argv=None):
             row['remom_function'] = '; '.join(fn for fn, _, _, _ in impl)
             row['remom_location'] = '; '.join('%s:%d' % (path, line) for _, path, line, _ in impl)
             row['remom_evidence'] = '; '.join(e for _, _, _, e in impl)
+            row['remom_drake178'] = ', '.join(drake.get(k, [])) if k else ''
+            row['name_check'], row['name_elsewhere'] = name_check(item.name, k, drake, by_name)
+            if row['name_check']:
+                stats[exe]['name ' + row['name_check']] += 1
+            if row['name_elsewhere']:
+                stats[exe]['name at another id'] += 1
             for name, index in projects:
                 hits = index.get(k, []) if k else []
                 row[name + '_function'] = '; '.join(fn for fn, _, _ in hits)
@@ -222,7 +269,7 @@ def main(argv=None):
         impl = remom[k]
         row = {'exe': k[0], 'id': key_text(k), 'remom_function': '; '.join(fn for fn, _, _, _ in impl),
                'remom_location': '; '.join('%s:%d' % (path, line) for _, path, line, _ in impl),
-               'remom_evidence': '; '.join(e for _, _, _, e in impl)}
+               'remom_evidence': '; '.join(e for _, _, _, e in impl), 'remom_drake178': ', '.join(drake.get(k, []))}
         if args.map:
             row['ida_name'] = '(not in the map)'
             stats[k[0]]['ReMoM ids not in the map'] += 1
@@ -234,6 +281,7 @@ def main(argv=None):
 
     columns = ['exe', 'id', 'ida_segment', 'proc', 'ida_name', 'ida_ea', 'seg_off', 'size'] + \
               ['offset_' + label for label, _ in versions] + ['remom_function', 'remom_location', 'remom_evidence'] + \
+              ['remom_drake178', 'name_check', 'name_elsewhere'] + \
               [c for name, _ in projects for c in (name + '_function', name + '_location')]
     with open(os.path.join(args.out, 'address_table.tsv'), 'w', newline='', encoding='utf-8') as f:
         w = csv.DictWriter(f, columns, delimiter='\t', lineterminator='\n')
