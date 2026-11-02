@@ -12,6 +12,14 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 - **VERIFY against the asm before classifying anything as phantom.** Faithful-but-ugly code, `; `-style asm-derived comments, and reconstruction notes are NOT phantom — preserve them. When you cannot verify no-asm-counterpart, do NOT delete — ask.
 - **Deleting and style-matching are two COMPLETELY DIFFERENT concerns.** Style conformance (renaming a reconstructed local to `lower_snake_case`, whitespace/formatting) removes nothing — allowed. Deleting faithful code is forbidden.
 
+### Exception: branch `remom-mod` only
+- **Scope:** this exception applies only when the checked-out branch is `remom-mod` (check with `git branch --show-current`). On every other branch — including `main` and any branch this text is merged into — the hard rule above applies with no exception.
+- **What changes:** on `remom-mod`, the faithful 1.31 reconstruction is the *reference*, not untouchable. It may be restructured to make rules moddable (for example, moving a rule into a Lua rules profile).
+- **What does not change:**
+  - Every restructured rule must keep 1.31 behaviour, and a test must prove the new code equals the 1.31 C for every input.
+  - Mark changes `/* CLAUDE */`.
+  - Code outside that moddable-rules work stays under the hard rule above.
+
 ## Style Guide
 - Use Allman style braces
 - Wrap block comments at 180 characters
