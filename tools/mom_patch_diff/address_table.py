@@ -27,7 +27,7 @@ import csv
 import os
 import re
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 from tools.mom_patch_diff.diff import load_map
 
@@ -166,9 +166,10 @@ def same_but_prefix(a, b):
     return a != b and (core(a) == core(b) or a.endswith('_' + b) or b.endswith('_' + a))
 
 
-def name_check(ida_name, k, drake, by_name):
+def name_check(ida_name, k, drake, by_name, exe=None):
     """Compare the IDB's name with ReMoM's drake178 comment for the same id: same / prefix (same apart from the
-    prefix) / differs / (blank: no comment, or IDA's default name).  Also every other id whose drake178 comment carries this IDB name (a numbering offset)."""
+    prefix) / differs / (blank: no comment, or IDA's default name).  Also every other id whose drake178 comment carries
+    this IDB name, in the same EXE (a numbering offset).  drake178 copied his WIZARDS.EXE engine names into MAGIC.EXE, so names shared across EXEs are not counted."""
     if not ida_name or re.match(r'(sub|nullsub|unknown_libname)_', ida_name):
         return '', ''
     names = drake.get(k, [])
@@ -179,7 +180,7 @@ def name_check(ida_name, k, drake, by_name):
         check = 'prefix'
     elif names:
         check = 'differs'
-    elsewhere = sorted(key_text(o) for o in by_name.get(ida_name, ()) if o != k)
+    elsewhere = sorted(key_text(o) for o in by_name.get(ida_name, ()) if o != k and o[0] == (exe or (k[0] if k else None)))
     return check, ', '.join(elsewhere)
 
 
@@ -242,7 +243,8 @@ def main(argv=None):
             seen.add(k)
             start = seg_start.get(item.segment)
             row = {
-                'exe': exe, 'id': key_text(k) if k else '', 'ida_segment': item.segment, 'proc': item.proc,
+                '_key': k, '_segkey': (exe, item.segment), '_proc': item.proc,
+                'exe': exe, 'id': key_text(k) if k else '', 'ida_segment': item.segment, 'ida_segment_id': item.seg_id, 'proc': item.proc,
                 'ida_name': item.name, 'ida_ea': '%X' % item.ea,
                 'seg_off': ('%s:%04X' % (item.segment, item.ea - start)) if start is not None else '', 'size': item.size,
             }
@@ -265,7 +267,7 @@ def main(argv=None):
             row['remom_location'] = '; '.join('%s:%d' % (path, line) for _, path, line, _ in impl)
             row['remom_evidence'] = '; '.join(e for _, _, _, e in impl)
             row['remom_drake178'] = ', '.join(drake.get(k, [])) if k else ''
-            row['name_check'], row['name_elsewhere'] = name_check(item.name, k, drake, by_name)
+            row['name_check'], row['name_elsewhere'] = name_check(item.name, k, drake, by_name, exe)
             if row['name_check']:
                 stats[exe]['name ' + row['name_check']] += 1
             if row['name_elsewhere']:
@@ -279,6 +281,52 @@ def main(argv=None):
             for name, _ in projects:
                 stats[exe]['in ' + name] += bool(row[name + '_function'])
             rows.append(row)
+
+    # Line the IDB's segments up with ReMoM's by name, not by number: every function whose IDB name is the drake178
+    # comment of exactly one ReMoM id says "this segment is that ReMoM segment, with procedures shifted by d".
+    evidence = defaultdict(Counter)
+    for row in rows:
+        if '_segkey' not in row or row['ida_name'] not in by_name or len(by_name[row['ida_name']]) != 1:
+            continue
+        (r_exe, r_kind, r_seg, r_proc), = by_name[row['ida_name']]
+        if r_exe == row['exe']:
+            evidence[row['_segkey']][(r_kind, r_seg, r_proc - row['_proc'])] += 1
+    alignment = {}
+    for segkey, votes in evidence.items():
+        (best, n), total = votes.most_common(1)[0], sum(votes.values())
+        if n == total:
+            quality = 'names %d/%d' % (n, total) + (' (one name only)' if total == 1 else '')
+        elif n >= 2 and n * 5 >= total * 4:
+            quality = 'names %d/%d (others differ)' % (n, total)
+        else:
+            quality = ''                                 # no clear winner: leave the segment unaligned
+        alignment[segkey] = (best, n, total, quality, votes)
+    for row in rows:
+        a = alignment.get(row.get('_segkey'))
+        if not a or not a[3]:
+            continue
+        (kind, seg, delta), _, _, quality, _ = a
+        k2 = (row['exe'], kind, seg, row['_proc'] + delta)
+        impl = remom.get(k2, [])
+        row['aligned_id'] = key_text(k2)
+        row['aligned_remom_function'] = '; '.join(fn for fn, _, _, _ in impl)
+        row['aligned_remom_location'] = '; '.join('%s:%d' % (path, line) for _, path, line, _ in impl)
+        row['alignment'] = quality
+        stats[row['exe']]['aligned to a ReMoM id'] += 1
+        stats[row['exe']]['aligned, ReMoM has code'] += any(e != 'comment' for _, _, _, e in impl)
+    with open(os.path.join(args.out, 'segment_alignment.tsv'), 'w', newline='', encoding='utf-8') as f:
+        w = csv.writer(f, delimiter='\t', lineterminator='\n')
+        w.writerow(['exe', 'ida_segment', 'numbered_as', 'remom_segment', 'proc_shift', 'names_agreeing', 'names_total',
+                    'aligned', 'all_votes'])
+        numbered = {r['_segkey']: r['ida_segment_id'] for r in rows if '_segkey' in r}
+        for (exe, seg), ((kind, rseg, delta), n, total, quality, votes) in sorted(alignment.items()):
+            w.writerow([exe, seg, numbered.get((exe, seg), ''), '%s%03d' % (kind, rseg), '%+d' % delta, n, total,
+                        'yes' if quality else 'no',
+                        ', '.join('%s%03d %+d x%d' % (k, s, d, c) for (k, s, d), c in votes.most_common())])
+    for exe in {e for e, _ in alignment}:
+        segs = [a for (e, _), a in alignment.items() if e == exe]
+        stats[exe]['segments aligned by names'] = sum(1 for a in segs if a[3])
+        stats[exe]['segments with conflicting names'] = sum(1 for a in segs if not a[3])
 
     # ids ReMoM uses that no map has (or every id, without maps)
     for k in sorted(remom):
@@ -300,6 +348,7 @@ def main(argv=None):
     columns = ['exe', 'id', 'ida_segment', 'proc', 'ida_name', 'ida_ea', 'seg_off', 'size'] + \
               ['offset_' + label for label, _ in versions] + ['remom_function', 'remom_location', 'remom_evidence'] + \
               ['remom_drake178', 'name_check', 'name_elsewhere'] + \
+              ['aligned_id', 'aligned_remom_function', 'aligned_remom_location', 'alignment'] + \
               [c for name, _ in projects for c in (name + '_function', name + '_location')]
     with open(os.path.join(args.out, 'address_table.tsv'), 'w', newline='', encoding='utf-8') as f:
         w = csv.DictWriter(f, columns, delimiter='\t', lineterminator='\n')

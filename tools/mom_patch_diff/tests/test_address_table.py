@@ -159,6 +159,17 @@ class Address_Table_test(unittest.TestCase):
         self.assertIn('name at another id 1', summary)
         self.assertIn('name same 1', summary)
 
+    def test_segments_are_aligned_by_names(self):
+        # the IDB's TILE_GetProd is seg001 proc 1; ReMoM's drake178 comment puts it at s161p04: seg001 is s161, shifted +3
+        row = self.rows['WZD s001p01']
+        self.assertEqual((row['aligned_id'], row['aligned_remom_function']), ('WZD s161p04', 'Unrelated_Helper'))
+        self.assertEqual(row['alignment'], 'names 1/1 (one name only)')
+        same = self.rows['WZD o142p02']                      # names agree in place: shift 0
+        self.assertEqual((same['aligned_id'], same['alignment']), ('WZD o142p02', 'names 1/1 (one name only)'))
+        with open(os.path.join(self.out, 'segment_alignment.tsv'), newline='') as f:
+            seg = {r['ida_segment']: r for r in csv.DictReader(f, delimiter='\t')}
+        self.assertEqual((seg['seg001']['remom_segment'], seg['seg001']['proc_shift'], seg['seg001']['aligned']), ('s161', '+3', 'yes'))
+
     def test_renamed_segment_is_numbered_from_its_neighbours(self):
         from tools.mom_patch_diff.diff import Item, segment_ids
         seg = lambda name, ea: Item({'kind': 'S', 'segment': name, 'proc': '0', 'name': name, 'ea': '%X' % ea, 'size': '16', 'bytes': ''})

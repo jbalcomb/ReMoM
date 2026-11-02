@@ -119,6 +119,17 @@ comment:
 The summary counts each. Many `differs` with matching `name_elsewhere` mean that the IDB numbers a segment's
 functions differently from ReMoM (a function split or merged), not that the names are wrong.
 
+An IDB whose segments are numbered differently from ReMoM's (another author's database, with a different number of
+stub or overlay segments) is lined up by names instead.
+- **How:** each function whose IDB name is the drake178 comment of exactly one ReMoM id in the same `.EXE` votes
+  "this segment is that ReMoM segment, procedures shifted by *d*".
+- **`segment_alignment.tsv`** lists, for every segment with votes: the winning ReMoM segment and shift, how many
+  names agree, every vote, and whether it was used.
+- **When a segment is used:** all its votes agree, or at least 2 and at least 80% of them do.
+- **What it adds:** every function in a used segment, named or not, gets `aligned_id`, `aligned_remom_function`,
+  `aligned_remom_location` and `alignment` (how many names agreed).
+- **One vote only:** a segment aligned on a single name is marked `(one name only)`. Check those by hand.
+
 Segments renamed in the IDB (drake178's `_AIL_` for seg035) get their number back from their neighbours in
 address order. That happens only when the IDA-named segments before and after have the same prefix and leave
 exactly the right gap. The summary lists every segment numbered this way, and every one left without a number,
