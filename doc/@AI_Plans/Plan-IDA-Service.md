@@ -1,4 +1,4 @@
-# Plan: IDA Pro 5.5 as a REST service on the Coder Workstation (Windows 10), run by NSSM
+# Plan: IDA Pro 5.5 as a REST service on the Coder Workstation (Windows 10), run by Servy
 
 Status: plan, nothing built. Branch `remom-mod`.
 
@@ -62,75 +62,93 @@ does: it copies the database, runs `idag.exe`/`idaw.exe -A -S<script> -L<log>` o
   `main()` and the service both call it.
 - The script-file handling (the `@@OUTPUT_PATH@@` placeholder) stays as it is.
 
-## Running it as a Windows service with NSSM
+## Running it as a Windows service with Servy
 
-NSSM (the Non-Sucking Service Manager) runs any program as a Windows service. It restarts the program when it
-exits, rotates its stdout/stderr logs, and stops it with Ctrl+C and then by killing its process tree.
+[Servy](https://github.com/aelassas/servy) (MIT, Akram El Assas) runs any program as a Windows service. It handles
+start at boot, restart on failure, stdout/stderr logs with rotation, a service account, and pre/post start and stop
+hooks. It has a GUI, a CLI (`servy-cli`) and a PowerShell module. Only the CLI is used here.
+
+Servy replaces NSSM, which the first draft of this plan used. "Superseded" is the author's own claim, but on this
+project's [vetting policy](../@Devel/Dependency-Vetting.md) the comparison favours Servy for two reasons:
+
+- **Build transparency** (the check that would have caught xz).
+  - Servy: built in public GitHub Actions; binaries signed through the SignPath Foundation, which signs builds from
+    a project's own CI.
+  - NSSM: last released in 2017, unsigned, no public build.
+- **Maintenance.** Servy is active (6,684 commits, 2.1k stars when checked); NSSM is unmaintained.
+
+WinSW stays the fallback if Servy fails vetting.
 
 ### Vetting (do this first, on the workstation)
 
-- **Tier C:** dev-only, never ships, never builds the product. Note that it is *not* "offline scratch". It starts
-  a program at boot, under a service account, that listens on the network. The blast radius is that account and
-  whatever that account can reach. The measures below keep it small.
-- **Facts recalled from memory, not verified.** This cloud session could not reach `nssm.cc`, and the GitHub API
-  lookups failed. Verify each of these on the workstation:
-  - author Iain Patterson; public domain;
-  - the last release is 2.24 (2014);
-  - the pre-release 2.24-101-g897c7ad (2017) is the one recommended for Windows 10 (Creators Update and later),
-    where 2.24 services can fail to start;
-  - source at `git.nssm.cc`;
-  - the binaries are not code-signed;
-  - some antivirus products flag it, because malware uses it for persistence.
+- **Tier C:** dev-only, never ships, never builds the product. It is *not* offline scratch, though. It runs a
+  program at boot, under a service account, that listens on the network.
+- **Verified 2026-11-02 from the repository page and wiki:**
+  - MIT licence;
+  - GitHub Actions builds;
+  - "all releases feature signed binaries" (SignPath);
+  - the CLI options used below, including `--user`, which supports custom accounts per service from v10.2.
+- **Not checked.** This cloud session's GitHub API calls were refused, so `tools/vet_dependency.py` got nothing.
+  Run it on the workstation with a `GITHUB_TOKEN` and record:
+  - the repository's age and the date of the first release;
+  - the maintainer's tenure, against the date the signing channel was set up;
+  - the release you install, and that its signature names the SignPath Foundation;
+  - the .NET runtime it needs.
 - **Gaps that stay open:**
-  - The project is unmaintained since 2017.
-  - Nobody publishes reproducible builds.
-  - No signature ties the binary to its author.
-
-  Record these with the decision, as the [vetting policy](../@Devel/Dependency-Vetting.md) requires.
-- If NSSM is rejected, WinSW (MIT-licensed, maintained on GitHub, builds in public CI) is the replacement. It
-  fills the same role with an XML config, and nothing else in this plan changes.
+  - **Single maintainer:** a stolen account or signing setup is not covered by tenure.
+  - **Much bigger than NSSM:** a GUI, email and notification code, an external heartbeat URL. Use only the CLI,
+    and leave the notification, email and heartbeat-URL options unset, so none of that code has a job to do.
+  - **Stop behaviour not documented:** the wiki says nothing on whether Servy sends Ctrl+C or kills the process
+    tree on stop. `--stopTimeout` is the only stop setting. The service must not depend on either (see below).
 
 ### Containing it
 
-- **Location:** not installed system-wide and not on `PATH`. `nssm.exe` lives at
-  `tools/ida_service/bin/nssm.exe` (git-ignored). Its SHA-256 is recorded in the tracked
-  `tools/ida_service/nssm_manifest.tsv`. `install_service.sh` refuses to run if the hash differs.
-- **Account:** the service runs as a dedicated local account (`idasvc`), not LocalSystem. That account can read
-  only the IDA install, the database folder and the repo checkout, and write only the service's data folder.
+- **Install:** the pinned, signed release. Record its version and SHA-256 in the tracked
+  `tools/ida_service/servy_manifest.tsv`. `install_service.sh` refuses to run if the installed `servy-cli.exe`
+  differs.
+- **Account:** a dedicated local account (`idasvc`), not Local System, which is what Servy uses when `--user` is
+  omitted.
+  - `idasvc` can read the IDA install, the database folder and the repo checkout, and write only the service's
+    data folder.
   - Log in as `idasvc` once, interactively, and start IDA by hand. IDA 5.5 asks its first-run questions (licence
     agreement) per user. In a service those dialogs would hang where nobody can see them.
 - **Use `idaw.exe` (text mode), not `idag.exe`.** Services run in session 0 and have no visible desktop, so any
   dialog IDA opens there waits until the job's timeout. The text-mode IDA has less to open.
-- **Interpreter:** use the absolute path of the **Python 3** interpreter. On this project's Windows boxes `python`
-  is 2.7 (see [AGENTS.md](../../AGENTS.md)). The service also checks `sys.version_info` and exits with an error
-  under Python 2.
+- **Python 3:** use the absolute path of the Python 3 interpreter. On this project's Windows boxes `python` is 2.7
+  (see [AGENTS.md](../../AGENTS.md)). The service also checks `sys.version_info` and exits with an error under
+  Python 2.
+- **IDA cannot outlive the service:**
+  - The service starts each IDA in a Windows Job Object with `JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE` (through
+    `ctypes`, standard library). However Servy stops the Python process, the IDA it started dies with it.
+  - On startup, the service marks jobs left `running` as `failed`.
+- **Leave health checks off:** Servy's `--heartbeatUrl` pings an *outside* URL. It does not call the service's own
+  `/health`, so leave it unset. `--recoveryAction RestartProcess` covers crashes.
 
-### Install (elevated Git Bash; `install_service.sh` will do these steps after the hash check)
+### Install (elevated Git Bash; `install_service.sh` will do this after the hash check)
 
 ```bash
-NSSM=/c/STU/devel/ReMoM/tools/ida_service/bin/nssm.exe
 PY3='C:/Users/<you>/AppData/Local/Programs/Python/Python312/python.exe'   # the Python 3 interpreter, absolute
-SVC=ReMoM-IDA
-"$NSSM" install $SVC "$PY3"
-"$NSSM" set $SVC AppParameters 'C:/STU/devel/ReMoM/tools/ida_service/ida_service.py --config C:/STU/ida_service/config.json'
-"$NSSM" set $SVC AppDirectory 'C:/STU/ida_service'
-"$NSSM" set $SVC ObjectName '.\idasvc' '<password>'
-"$NSSM" set $SVC Start SERVICE_DELAYED_AUTO_START
-"$NSSM" set $SVC AppStdout 'C:/STU/ida_service/logs/service_stdout.log'
-"$NSSM" set $SVC AppStderr 'C:/STU/ida_service/logs/service_stderr.log'
-"$NSSM" set $SVC AppRotateFiles 1
-"$NSSM" set $SVC AppRotateBytes 10485760
-"$NSSM" set $SVC AppExit Default Restart
-"$NSSM" set $SVC AppThrottle 5000
-"$NSSM" set $SVC AppKillProcessTree 1
-"$NSSM" start $SVC
+export SERVY_PASSWORD='<idasvc password>'                                # keeps the password off the command line
+servy-cli install --name="ReMoM-IDA" --displayName="ReMoM IDA service" \
+    --path="$PY3" \
+    --params="C:/STU/devel/ReMoM/tools/ida_service/ida_service.py --config C:/STU/ida_service/config.json" \
+    --startupDir="C:/STU/ida_service" \
+    --startupType="AutomaticDelayedStart" \
+    --user='.\idasvc' \
+    --stdout="C:/STU/ida_service/logs/service_stdout.log" \
+    --stderr="C:/STU/ida_service/logs/service_stderr.log" \
+    --enableSizeRotation --rotationSize=10 --maxRotations=10 \
+    --recoveryAction="RestartProcess" --maxRestartAttempts=5 \
+    --stopTimeout=30
+unset SERVY_PASSWORD
+servy-cli start --name="ReMoM-IDA"
 curl -s http://127.0.0.1:8765/health
 ```
 
-- Arguments that hold Windows paths use the `C:/...` form in single quotes. Git Bash rewrites `/c/...` only when
-  the whole argument is one path, and `AppParameters` holds several.
-- On stop, NSSM sends Ctrl+C. The service catches it, kills the running IDA, marks that job `failed` and exits.
-  `AppKillProcessTree` covers the case where the service does not exit in time.
+- `--params` uses `=` as the wiki requires when the value holds `--` arguments.
+- Windows paths use the `C:/...` form, because Git Bash rewrites `/c/...` only when the whole argument is one path.
+- The exact boolean-flag syntax (`--enableSizeRotation` alone or `=true`) is unverified. Check it against
+  `servy-cli install --help` for the installed version.
 
 ## Phases
 
@@ -144,10 +162,11 @@ curl -s http://127.0.0.1:8765/health
 2. **By hand on the Coder Workstation.** Run `python3 tools/ida_service/ida_service.py` in a console with the real
    IDA 5.5 and `WIZARDS.idb`.
    - This is also the first real run of `export_map.idc`, which has only ever run against the fake.
-3. **NSSM.**
+3. **Servy.**
    - Vet it and record the decision.
    - Create `idasvc` and do its first IDA run.
    - Run `install_service.sh`, reboot, and check that `/health` answers.
+   - Stop the service during a job and check that no `idaw.exe` is left running.
 4. **From the AI Workstation.**
    - Add the token and the firewall rule (or the SSH tunnel).
    - Run `export_map.py --service` for both databases, then the address table.
