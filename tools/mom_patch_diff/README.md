@@ -32,6 +32,12 @@ python3 tools/mom_patch_diff/export_map.py --ida "$IDA" --idb /c/STU/IDA/WIZARDS
 python3 tools/mom_patch_diff/export_map.py --ida "$IDA" --idb /c/STU/IDA/MAGIC.idb   --out /c/MoM/magic_map.tsv
 ```
 
+On Linux, run IDA 5.5 under Wine with `--wine`; every path IDA sees is converted to its Windows form:
+
+```bash
+python3 tools/mom_patch_diff/export_map.py --wine --ida ~/.wine/drive_c/IDA55/idag.exe --idb ~/MoM/ida/WIZARDS.idb --out ~/MoM/wizards_map.tsv
+```
+
 The map is tab-separated, one row per segment, function and named data item: IDA segment, procedure number in the segment (the
 `p04` of `WZD s161p04`), IDA name, address, size and bytes. `--keep` keeps the working folder and IDA's log for
 debugging. Neither script has been run against a real IDA yet; if IDA stops, the log names the IDC line.

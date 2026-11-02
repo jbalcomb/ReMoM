@@ -51,6 +51,43 @@ class Export_Map_test(unittest.TestCase):
                 self.assertEqual(f.read(), b'IDB')           # the original database is untouched
 
 
+FAKE_WINE = '''#!{python}
+# Stand-in for wine: every path argument must arrive in Windows form (Z:\\\\...); map them back and run the program.
+import os, subprocess, sys
+def linux(arg):
+    for prefix in ('-S', '-L', ''):
+        if arg.startswith(prefix + 'Z:\\\\'):
+            return prefix + arg[len(prefix) + 2:].replace('\\\\', '/')
+    return arg
+args = sys.argv[1:]
+assert all(a.startswith(('Z:', '-SZ:', '-LZ:')) for a in args[2:]) and args[1] == '-A', args
+script = args[2][2:]
+text = open(linux('-S' + script)[2:], encoding='latin-1').read()
+assert 'path = "Z:/' in text, 'the output path inside the IDC must be a Windows path'
+open(linux('-S' + script)[2:], 'w', encoding='latin-1').write(text.replace('path = "Z:/', 'path = "/'))
+sys.exit(subprocess.call([args[0]] + [linux(a) for a in args[1:]]))
+'''
+
+
+class Export_Map_Wine_test(unittest.TestCase):
+
+    def test_runs_ida_under_wine_with_windows_paths(self):
+        with tempfile.TemporaryDirectory() as root:
+            ida = os.path.join(root, 'idag.exe')
+            wine = os.path.join(root, 'fakewine')
+            for path, text in ((ida, FAKE_IDA), (wine, FAKE_WINE)):
+                with open(path, 'w') as f:
+                    f.write(text.format(python=sys.executable))
+                os.chmod(path, os.stat(path).st_mode | stat.S_IEXEC)
+            idb = os.path.join(root, 'WIZARDS.idb')
+            with open(idb, 'wb') as f:
+                f.write(b'IDB')
+            out = os.path.join(root, 'wizards_map.tsv')
+            self.assertEqual(export_map.main(['--wine', '--wine-command', wine, '--ida', ida, '--idb', idb, '--out', out]), 0)
+            with open(out) as f:
+                self.assertIn('F\tseg001\t1\tf', f.read())
+
+
 class Address_Table_test(unittest.TestCase):
 
     def setUp(self):
