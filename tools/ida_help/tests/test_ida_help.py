@@ -22,6 +22,12 @@ long    GetSegmentAttr  (long segea,long attr);
 <p>Returns the   attribute of
 a segment.</p>
 <pre>long    SegStart        (long ea);              // returns start of the segment</pre>
+<pre>
+// Ask the user to choose a file
+string  AskFile         (bool forsave,string mask,string prompt);
+// Ask the user to enter an address
+long    AskAddr         (long defval,string prompt);
+</pre>
 <p>Start &amp; end of the segment; see the file offset of a byte.</p>
 </body></html>'''
 
@@ -55,7 +61,9 @@ class Ida_Help_test(unittest.TestCase):
         with open(os.path.join(self.out, 'idc_functions.tsv'), newline='') as f:
             rows = {r['function']: r for r in csv.DictReader(f, delimiter='\t')}
         self.assertEqual((rows['GetSegmentAttr']['returns'], rows['GetSegmentAttr']['arguments']), ('long', 'long segea,long attr'))
-        self.assertEqual(rows['GetSegmentAttr']['description'], 'Returns the attribute of a segment.')
+        self.assertEqual(rows['GetSegmentAttr']['description'], 'get segment attribute')        # the comment above
+        self.assertEqual(rows['SegStart']['description'], 'returns start of the segment')       # the comment beside
+        self.assertEqual(rows['AskFile']['description'], 'Ask the user to choose a file')        # not the next one's
         self.assertEqual(rows['SegStart']['page'], 'idc/segments.htm')
 
     def test_grep(self):

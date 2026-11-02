@@ -11,7 +11,7 @@ Writes into --out:
     text/<page>.txt     each page as plain text
     pages.tsv           page, title, number of lines
     idc_functions.tsv   every IDC declaration found in the pages ("long GetSegmentAttr(long segea,long attr);"):
-                        function, returns, arguments, page, and the first line of text after it
+                        function, returns, arguments, page, and its description (the // comment above it)
 
 The .chm is decompiled with Windows' own hh.exe ("hh.exe -decompile"), which needs no install.  On Linux, 7z (if
 installed) is used instead; or decompile the .chm elsewhere and pass the folder with --html.  Standard library only.
@@ -107,6 +107,24 @@ class Text(html.parser.HTMLParser):
         return '\n'.join(out).strip() + '\n'
 
 
+def describe(lines, i, m):
+    """The description of the declaration on line i.  IDA's help (like idc.idc) puts it in the // comment lines just
+    above the declaration; otherwise it is a comment on the declaration's own line, or else the next line of text."""
+    above = []
+    for line in reversed(lines[max(0, i - 8):i]):
+        s = line.strip()
+        if not s.startswith('//'):
+            break
+        above.insert(0, s.lstrip('/').strip())
+    above = [a for a in above if a]
+    if above:
+        return ' '.join(above)
+    same = lines[i][m.end():].strip()
+    if same.startswith('//'):
+        return same.lstrip('/').strip()
+    return next((l.strip() for l in lines[i + 1:i + 6] if l.strip() and not DECLARATION.match(l) and not l.strip().startswith('//')), '')
+
+
 def convert(html_folder, out):
     text_folder = os.path.join(out, 'text')
     pages, functions = [], []
@@ -127,8 +145,7 @@ def convert(html_folder, out):
         for i, line in enumerate(lines):
             m = DECLARATION.match(line)
             if m:
-                after = next((l.strip() for l in lines[i + 1:i + 6] if l.strip() and not DECLARATION.match(l)), '')
-                functions.append((m.group(2), m.group(1), re.sub(r'\s+', ' ', m.group(3)).strip(), page, after))
+                functions.append((m.group(2), m.group(1), re.sub(r'\s+', ' ', m.group(3)).strip(), page, describe(lines, i, m)))
     with open(os.path.join(out, 'pages.tsv'), 'w', newline='', encoding='utf-8') as f:
         w = csv.writer(f, delimiter='\t', lineterminator='\n')
         w.writerow(['page', 'title', 'lines'])
