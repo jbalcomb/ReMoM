@@ -11,8 +11,8 @@ the function gives the right segment and procedure number.  An id with no functi
 its segment's named ids got, when they all moved the same way.  The new id is written as WZD s034p49 / WZD o161p04:
 s for a segNNN segment, o for an ovrNNN overlay.
 
-Refused, and reported instead: a function the database has under no name or under several; a new id another ReMoM id
-already holds; a comment-only id whose segment's named ids moved in different ways.
+Refused, and reported instead: a function the database has under no name or under several; a new id another ReMoM
+function already holds (the same function under the right id is fine: the wrong id is a duplicate with a typo); a comment-only id whose segment's named ids moved in different ways.
 
 --apply replaces every occurrence of each wrong id in ReMoM's .c and .h files (MoM, MoX, src, STU), in any zero-padding
 (s34p49, s034p49), keeping each file's bytes and line endings otherwise.  Standard library only.
@@ -64,7 +64,7 @@ def plan(linked):
         target = new_id(exe, h['remom_segment'], h['remom_proc'])
         if target is None:
             problems.append((w['remom_id'], '%s is in %s, which has no number' % (w['remom_function'], h['remom_segment'])))
-        elif h['remom_id'] and h['remom_id'] != w['remom_id']:
+        elif h['remom_id'] and h['remom_id'] != w['remom_id'] and w['remom_function'] not in h['remom_function'].split('; '):
             problems.append((w['remom_id'], '%s is %s, which ReMoM already uses for %s' % (w['remom_function'], target, h['remom_id'])))
         else:
             fixes[w['remom_id']] = (target, 'named: %s %s p%s' % (w['remom_function'], h['remom_segment'], h['remom_proc']))

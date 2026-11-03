@@ -22,6 +22,8 @@ LINKED = ('match\tfile_offset\tremom_segment\tremom_proc\tremom_name\tdrake178_n
           'only in ReMoM\t\t\t\t\t\tWZD s034p50\t\tMoX/src/Fields.c\t9\tcomment\t\n'
           'only in ReMoM\t\t\t\t\t\tWZD s034p51\tGUI_AddGrid\tMoX/src/Fields.c\t11\tprototype\t\n'
           'only in ReMoM\t\t\t\t\t\tWZD s034p56\tTaken\tMoX/src/Fields.c\t20\tdefinition\t\n'
+          'file offset\t0x6\tseg036\t49\tAdd_Grid_Field\tAdd_Grid_Field\tWZD s036p49\tAdd_Grid_Field\tMoX/src/Fields.c\t1\tprototype\t\n'
+          'only in ReMoM\t\t\t\t\t\tWZD s034p60\tAdd_Grid_Field\tMoX/src/Fields.c\t30\tdefinition\t\n'
           'only in ReMoM\t\t\t\t\t\tWZD s034p57\tTwice\tMoX/src/Fields.c\t25\tdefinition\t\n')
 
 
@@ -50,6 +52,7 @@ class Fix_Remom_Ids_test(unittest.TestCase):
             self.assertIn('WZD s034p51 -> WZD s035p04', text)                   # found by drake178's name
             self.assertIn('WZD s034p50 -> WZD s035p03', text)                   # comment only: same shift (-47)
             self.assertIn('NOT FIXED WZD s034p56\tTaken is WZD s035p09, which ReMoM already uses for WZD s035p09', text.replace('which ReMoM already uses for WZD s035p09', 'which ReMoM already uses for WZD s035p09'))
+            self.assertIn('WZD s034p60 -> WZD s036p49', text)                   # the right id holds the same function
             self.assertIn('NOT FIXED WZD s034p57\tTwice: the database has it at 2 places', text)
             with contextlib.redirect_stdout(io.StringIO()):
                 fix_remom_ids.main(['--linked', linked, '--remom', os.path.join(root, 'remom'), '--apply'])
