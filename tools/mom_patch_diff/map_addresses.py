@@ -20,6 +20,8 @@ Columns:
     file_offset     offset in the .EXE file (0x...)
     file_offset_from how file_offset was found:
                     "load module"           header size + (ida_ea - load module start), and the bytes there match
+                    "load module, overlay stub"  computed the same way: a Borland overlay stub entry, INT 3Fh in the
+                                            file, which IDA shows as a far JMP to the overlay, so only CD 3F is checked
                     "bytes (computed 0x...)" computed the same way, but the bytes there do not match, so it was found
                                             by its bytes instead; <out>_segments.tsv shows, per segment, how far off
                                             the computation was
@@ -85,6 +87,11 @@ def rows_for(items, exe):
                 row['file_offset_from'] = 'load module'
                 if item.kind == 'F':
                     check[item.segment]['computed'] += 1
+            elif exe[file_offset:file_offset + 2] == b'\xCD\x3F' and item.pattern[:1] == b'\xEA':
+                # a Borland overlay (VROOMM) stub entry: INT 3Fh in the file, which IDA's loader rewrites into a far
+                # JMP to the overlay's code, so IDA's bytes never match the file.  The offset is right.
+                row['file_offset_from'] = 'load module, overlay stub'
+                check[item.segment]['computed'] += 1
             else:
                 hits = item.find(exe)
                 if hits and len(hits) == 1:

@@ -70,6 +70,23 @@ class Map_Addresses_test(unittest.TestCase):
         self.assertEqual((seg['_AIL_']['found_by_bytes'], seg['_AIL_']['shifts']), ('1', '+54 x1'))
         self.assertEqual(self.rows['start']['file_offset_from'], 'load module')
 
+    def test_overlay_stub_entry_keeps_its_computed_offset(self):
+        # the file has INT 3Fh + offset; IDA shows the same 5 bytes as JMP FAR to the overlay
+        with open(self.exe, 'rb') as f:
+            exe = bytearray(f.read())
+        exe[HEADER:HEADER + 5] = b'\xCD\x3F\x10\x00\x00'
+        with open(self.exe, 'wb') as f:
+            f.write(exe)
+        with open(self.map) as f:
+            lines = f.read().splitlines()
+        lines[2] = 'F\tstub050\t1\tTILE_Stub\t%X\t5\tEA00002A50' % BASE_EA
+        with open(self.map, 'w') as f:
+            f.write('\n'.join(lines) + '\n')
+        self.assertEqual(map_addresses.main(['--map', self.map, '--exe', self.exe, '--out', self.out]), 0)
+        with open(self.out, newline='') as f:
+            r = {r['name']: r for r in csv.DictReader(f, delimiter='\t')}['TILE_Stub']
+        self.assertEqual((r['file_offset'], r['file_offset_from']), ('0x%06X' % HEADER, 'load module, overlay stub'))
+
     def test_overlay_procedure_is_found_by_bytes(self):
         r = self.rows['AIL_startup']
         self.assertEqual((r['segment'], r['ida_seg_off'], r['exe_para_off']), ('_AIL_', '_AIL_:0000', ''))
