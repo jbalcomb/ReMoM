@@ -6,7 +6,7 @@ patch folder. Read this first, then the documents it links. Branch: **`remom-mod
 ## Starting the session
 
 ```bash
-cd ~/devel/ReMoM                         # wherever the repo is cloned
+cd ~/STU/devel/ReMoM-Mod
 git fetch origin remom-mod && git checkout remom-mod
 claude
 ```
@@ -15,8 +15,24 @@ On Ubuntu this session can also be offered to cloud sessions through Remote Cont
 repo folder). The cloud session that wrote this note could not attach, because the other computer that offers
 `ReMoM` (Velociraptor) runs Windows.
 
-Paths below use `~/MoM` for game data and outputs; substitute the real locations. [AGENTS.md](../../AGENTS.md)'s
-shell rules were written for the Windows boxes (Git Bash, `/c/STU/...`). On this machine, use plain Linux paths and
+**Paths mirror the Coder Workstation (Velociraptor, Windows 10):** `C:\X` there is `/home/jbalcomb/X` here.
+
+| Velociraptor | AI Workstation | What |
+|---|---|---|
+| `C:\STU\devel\ReMoM-Mod\` | `~/STU/devel/ReMoM-Mod/` | this repo, branch `remom-mod` |
+| `C:\STU\devel\ReMoM\` | `~/STU/devel/ReMoM/` | the repo on `main` |
+| `C:\STU\devel\mom131-source-map\play\` | `~/STU/devel/mom131-source-map/play/` | the 1.31 `WIZARDS.EXE` and `MAGIC.EXE` |
+| `C:\STU_DASM\IDA55\` | (Windows only) | IDA Pro 5.5 |
+| `C:\STU_DASM\IDA55_MOM131\` | (Windows only) | the ReMoM 1.31 IDA databases |
+| `C:\STU_DASM\mom131_export\` | `~/STU_DASM/mom131_export/` | maps, address, joined and linked tables of the ReMoM databases; `remom_index.tsv` |
+| `C:\STU_DASM\drake178\export\` | `~/STU_DASM/drake178/export/` | the same for drake178's databases |
+| `C:\STU_DASM\IDA55_help\` | `~/STU_DASM/IDA55_help/` | IDA's help as text, `idc_functions.tsv` |
+| `C:\STU_WD\GoG Master of Magic Patches\` | `~/STU_WD/GoG Master of Magic Patches/` | drake178's FILESET patch files |
+
+The `STU_DASM` and `STU_WD` folders are copied by hand from Velociraptor and are never committed (drake178's names,
+IDA's help, the patch files). A folder missing here has not been copied yet.
+
+[AGENTS.md](../../AGENTS.md)'s shell rules were written for the Windows boxes (Git Bash, `/c/STU/...`). On this machine, use plain Linux paths and
 the `clang-debug` preset (`cmake --preset clang-debug && cmake --build --preset clang-debug`); MSVC is Windows only.
 Scripts are `python3`.
 
@@ -71,22 +87,17 @@ install. On Ubuntu, run the Windows one under Wine.
 
 ## Next steps, in order
 
-1. **Export the 1.31 function maps.** IDA 5.5 under Wine:
-   ```bash
-   IDA=~/.wine/drive_c/IDA55/idag.exe     # wherever IDA 5.5 is installed under Wine
-   python3 tools/mom_patch_diff/export_map.py --wine --ida "$IDA" --idb ~/MoM/ida/WIZARDS.idb --out ~/MoM/wizards_map.tsv
-   python3 tools/mom_patch_diff/export_map.py --wine --ida "$IDA" --idb ~/MoM/ida/MAGIC.idb   --out ~/MoM/magic_map.tsv
-   ```
-   - `export_map.idc` has never run in a real IDA. If it stops, `--keep` keeps `ida.log`, which names the IDC line.
-   - Alternative: run IDA natively on the Coder Workstation (Windows 10) as a REST service under Servy, per
-     [Plan-IDA-Service.md](Plan-IDA-Service.md) (plan only).
-   - Check: `python3 -m tools.mom_patch_diff.address_table --remom . --out ~/MoM/address_table --map WIZARDS.EXE=... --exe 1.31=~/MoM/MoM131`.
-     Nearly every `seg*`/`ovr*` function should show a 1.31 offset.
+1. **Done (2026-11-03, on Velociraptor):** the 1.31 maps of both the ReMoM and drake178's databases are exported,
+   given file offsets (`map_addresses.py`), joined on file offset (`join_addresses.py`) and linked to ReMoM's ids
+   (`remom_index.py`, `link_remom.py`); see [tools/mom_patch_diff/README.md](../../tools/mom_patch_diff/README.md).
+   With the id fixes made in Velociraptor's `main` checkout (not yet committed as of 2026-11-03; until they are, a
+   checkout here still has the old ids), every ReMoM id names a real procedure. Results are in `~/STU_DASM/mom131_export/` and `~/STU_DASM/drake178/export/`.
 2. **Index every patch file** (whole folder, with base and maps):
    ```bash
-   python3 -m tools.mom_patches.patch_index ~/MoM/patches --out ~/MoM/patch_index --remom . \
-       --base WIZARDS.EXE=~/MoM/MoM131/WIZARDS.EXE --base MAGIC.EXE=~/MoM/MoM131/MAGIC.EXE \
-       --map WIZARDS.EXE=~/MoM/wizards_map.tsv --map MAGIC.EXE=~/MoM/magic_map.tsv
+   M=~/STU_DASM/mom131_export && EXE=~/STU/devel/mom131-source-map/play && \
+   python3 -m tools.mom_patches.patch_index ~/"STU_WD/GoG Master of Magic Patches" --out $M/patch_index --remom ~/STU/devel/ReMoM \
+       --base WIZARDS.EXE=$EXE/WIZARDS.EXE --base MAGIC.EXE=$EXE/MAGIC.EXE \
+       --map WIZARDS.EXE=$M/wizards_map.tsv --map MAGIC.EXE=$M/magic_map.tsv
    ```
    - Copy `todo_140.md`, `todo_151.md`, `todo_152.md` and `todo_Optional.md` into the repo, under
      `doc/@AI_Plans/patches/`.
@@ -96,8 +107,8 @@ install. On Ubuntu, run the Windows one under Wine.
    `mom_patch_diff` loop in its README. This gives function-level and data-table changes per release, and confirms
    the patch index.
 4. **Function tags:** write `tools/mom_tags/` per the plan (report, apply with dry-run, `Tags_Valid` CTest, docs).
-   - Resolve the 9 doubtful ids first. `gd_dump_units` picks up 5 ids; `Add_Hot_Key` and `Draw_Fields` each have two
-     `WZD` ids.
+   - The ids are all valid once Velociraptor's fixes are committed on `main`; the linked tables hold every field a
+     tag needs.
 5. **Port patches as rules profiles:** `unofficial_140n` → `151` → `152` → `community_patch_160`, each starting
    from the previous one. Follow *Rules profiles → To port another rule* in [Modding.md](../@Devel/Modding.md), and
    add each calculation to `assets/rules/catalog.lua` so the catalog gains a column per version.
