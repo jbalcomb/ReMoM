@@ -22,25 +22,25 @@ extern "C" {
     WIZARDS.EXE  ovr082
 */
 
-// WZD o82p01
+// WZD s82p01
 void Item_View_Popup(int16_t item_idx, int16_t start_x, int16_t start_y);
 
-// WZD o82p02
+// WZD s82p02
 void Item_View_Popup_Draw(void);
 
-// WZD o82p03
+// WZD s82p02
 void Item_View_Prepare(int16_t item_idx, SAMB_ptr item_bitmap_seg, SAMB_ptr item_icon_pict_seg);
 
-// WZD o82p04
+// WZD s82p04
 void Item_Pool_View(void);
 
-// WZD o82p05
+// WZD s82p05
 void Item_Pool_View_Draw(void);
 
-// WZD o82p06
+// WZD s82p06
 void Draw_Item_Icon_With_Enchantment_Outline(int16_t item_idx, SAMB_ptr item_icon_pict_seg);
 
-// WZD o82p07
+// WZD s82p07
 void Cycle_Item_Enchantment_Animation(void);
 
 

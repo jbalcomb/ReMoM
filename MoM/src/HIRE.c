@@ -154,7 +154,7 @@ int16_t GAME_AssetCost;
     WIZARDS.EXE  ovr127
 */
 
-// WZD o127p01
+// WZD s127p01
 // drake178: EVNT_LoadMerchantWnd()
 /*
 ; redraws the overland map, saves it to the third VGA
@@ -188,7 +188,7 @@ void Merchant_Popup_Load(void)
 }
 
 
-// WZD o127p02
+// WZD s127p02
 // drake178: EVNT_DrawMerchantWnd()
 void Merchant_Popup_Draw(void)
 {
@@ -234,7 +234,7 @@ void Merchant_Popup_Draw(void)
 }
 
 
-// WZD o127p03
+// WZD s127p03
 // drake178: EVNT_MerchantDialog()
 void Merchant_Popup(void)
 {
@@ -317,7 +317,7 @@ void Merchant_Popup(void)
 }
 
 
-// WZD o127p04
+// WZD s127p04
 void Hire_Hero_Load(int16_t unit_type)
 {
 
@@ -356,7 +356,7 @@ void Hire_Hero_Load(int16_t unit_type)
 }
 
 
-// WZD o127p05
+// WZD s127p05
 /*
 
 ; redraws the hero hiring screen onto a background
@@ -432,7 +432,7 @@ void Hire_Hero_Popup_Draw(void)
 }
 
 
-// WZD o127p06
+// WZD s127p06
 /*
 
 ; displays and processes the hero hiring screen,
@@ -723,7 +723,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 }
 
 
-// WZD o127p07
+// WZD s127p07
 // drake178: EVNT_DrawMercHire()
 void Hire_Merc_Popup_Draw(void)
 {
@@ -767,7 +767,7 @@ void Hire_Merc_Popup_Draw(void)
 }
 
 
-// WZD o127p08
+// WZD s127p08
 // drake178: EVNT_MercHireDialog()
 /*
 ; displays and processes the mercenary hire dialog
@@ -906,7 +906,7 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
 }
 
 
-// WZD o127p09
+// WZD s127p09
 // drake178: AI_OfferHero()
 /*
 ; checks whether the player can afford the hero (cost

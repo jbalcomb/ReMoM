@@ -50,7 +50,7 @@ SAMB_ptr item_view_popup_bitm;
     WIZARDS.EXE  ovr082
 */
 
-// WZD o82p01
+// WZD s82p0
 void Item_View_Popup(int16_t item_idx, int16_t start_x, int16_t start_y)
 {
     int16_t hotkey_ESC;
@@ -102,7 +102,7 @@ void Item_View_Popup(int16_t item_idx, int16_t start_x, int16_t start_y)
 }
 
 
-// WZD o82p02
+// WZD s82p0
 /*
 
 Item_Screen()
@@ -134,7 +134,7 @@ void Item_View_Popup_Draw(void)
 }
 
 
-// WZD o82p03
+// WZD s82p0
 /*
 
 XREF:
@@ -196,7 +196,7 @@ void Item_View_Prepare(int16_t item_idx, SAMB_ptr item_bitmap_seg, SAMB_ptr item
 }
 
 
-// WZD o82p04
+// WZD s82p0
 /*
 ; shows the description of the item being awarded as a
 ; dialogue window, kept on screen until clicked away
@@ -235,7 +235,7 @@ void Item_Pool_View(void)
 }
 
 
-// WZD o82p05
+// WZD s82p0
 /*
 ; prepares and draws the description window of the item
 ; being awarded into the current draw segment onto a
@@ -250,7 +250,7 @@ void Item_Pool_View_Draw(void)
     Cycle_Item_Enchantment_Animation();
 }
 
-// WZD o82p06
+// WZD s82p0
 /*
     ...Draw Item, with Enchantment Outline
     ~ Draw_Unit_Picture()
@@ -361,7 +361,7 @@ void Draw_Item_Icon_With_Enchantment_Outline(int16_t item_idx, SAMB_ptr item_ico
 }
 
 
-// WZD o82p07
+// WZD s82p0
 // drake178: GAME_Animate_Items()
 void Cycle_Item_Enchantment_Animation(void)
 {

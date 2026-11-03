@@ -1413,7 +1413,7 @@ int16_t attacker_on_floating_island;
     WIZARDS.EXE  ovr090
 */
 
-// WZD o90p01
+// WZD s90p01
 // MoO2  Module: COMBINIT  Combat_Screen_()
 // MoO2  Module: COMBINIT  Tactical_Combat_()
 // 1oom
@@ -2261,7 +2261,7 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
     WIZARDS.EXE  ovr091
 */
 
-// WZD o91p01
+// WZD s91p01
 void NIU_Battle_Unit_Load_Figure_Pictures(int16_t battle_unit_idx)
 {
     int16_t unit_type = 0;
@@ -2272,7 +2272,7 @@ void NIU_Battle_Unit_Load_Figure_Pictures(int16_t battle_unit_idx)
 }
 
 
-// WZD o91p02
+// WZD s91p02
 /*
 
     increments _combat_turn  [MoO2: incremented at end of Tactical_Combat_()]
@@ -2483,7 +2483,7 @@ void Begin_Combat_Turn(void)
 }
 
 
-// WZD o91p03
+// WZD s91p03
 void Set_Movement_Cost_Map(int16_t battle_unit_idx)
 {
     int16_t battle_unit_movement_mode = 0;
@@ -2541,7 +2541,7 @@ void Set_Movement_Cost_Map(int16_t battle_unit_idx)
 }
 
 
-// WZD o91p04
+// WZD s91p04
 /*
 ~ Combat.c   Auto_Move_Unit()
 ~ MainScr.c  Move_Units_Draw()
@@ -2704,7 +2704,7 @@ void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t targe
 }
 
 
-// WZD o91p05
+// WZD s91p05
 // ¿ MoO2  Module: COMBAT1  Set_Cur_Ship_To_() ?
 void Switch_Active_Battle_Unit(int16_t battle_unit_idx)
 {
@@ -2713,7 +2713,7 @@ void Switch_Active_Battle_Unit(int16_t battle_unit_idx)
 }
 
 
-// WZD o91p06
+// WZD s91p06
 void Battle_Unit_Action(int16_t acting_battle_unit_idx, int16_t cgx, int16_t cgy)
 {
     int16_t battle_unit_idx = 0;
@@ -2825,7 +2825,7 @@ loc_MoveCheck:
 }
 
 
-// WZD o91p07
+// WZD s91p07
 void Assign_Combat_Grids(void)
 {
     int16_t has_instant_movement_mode = 0;
@@ -2953,7 +2953,7 @@ void Assign_Combat_Grids(void)
 }
 
 
-// WZD o91p08
+// WZD s91p08
 int16_t Target_Is_Visible(int16_t battle_unit_idx)
 {
     int16_t distance = 0;
@@ -3026,7 +3026,7 @@ int16_t Target_Is_Visible(int16_t battle_unit_idx)
 }
 
 
-// WZD o91p09
+// WZD s91p09
 void Add_City_Damage_From_Battle_Units_Within(void)
 {
     int16_t battle_unit_idx = 0;
@@ -3050,7 +3050,7 @@ void Add_City_Damage_From_Battle_Units_Within(void)
 }
 
 
-// WZD o91p10
+// WZD s91p10
 int16_t Battle_Unit_Instant_Movement_Mode(int16_t battle_unit_idx)
 {
     if((battle_units[battle_unit_idx].Move_Flags & MV_TELEPORT) != 0)
@@ -3073,7 +3073,7 @@ int16_t Battle_Unit_Instant_Movement_Mode(int16_t battle_unit_idx)
     WIZARDS.EXE  ovr096
 */
 
-// WZD o96p01
+// WZD s96p01
 /*
 Move_Units() |-> Combat()
 Lair_Combat() |-> ... |-> Combat()
@@ -3425,7 +3425,7 @@ Done:
 }
 
 
-// WZD o96p02
+// WZD s96p02
 // MoO2: DNE
 void Lair_Make_Guardians(int16_t lair_idx)
 {
@@ -3460,7 +3460,7 @@ void Lair_Make_Guardians(int16_t lair_idx)
 }
 
 
-// WZD o96p03
+// WZD s96p03
 /*
     wrapper for combat for lair
     rebuilds troop array
@@ -3478,7 +3478,7 @@ int16_t Lair_Combat_Do(int16_t lair_idx, int16_t player_idx)
 }
 
 
-// WZD o96p04
+// WZD s96p04
 /*
 How different from overland combat init or Lair_Combat_Do()?
 rebuilds troop array
@@ -3510,7 +3510,7 @@ void NIU_Enemy_Stack_Combat(int16_t defender_unit_idx, int16_t attacker_unit_idx
 }
 
 
-// WZD o96p05
+// WZD s96p05
 void Update_Defender_Hostility(int16_t attacker_player_idx, int16_t defender_player_idx)
 {
     _players[defender_player_idx].Hostility[attacker_player_idx] = 2;
@@ -3526,7 +3526,7 @@ void Update_Defender_Hostility(int16_t attacker_player_idx, int16_t defender_pla
 }
 
 
-// WZD o96p06
+// WZD s96p06
 /*
 ¿ ~== MainScr.c  Move_Units_Draw() ?
     if(display_moves == ST_TRUE)
@@ -5755,7 +5755,7 @@ void Draw_Active_Unit_Damage_Bar(int16_t battle_unit_idx, int16_t x, int16_t y)
     WIZARDS.EXE  ovr103
 */
 
-// WZD o103p01
+// WZD s103p01
 /* OGBUG: INCONSISTENT: excludes Evil Omens and Spell Wards */
 void Combat_Information_Window(void)
 {
@@ -5866,7 +5866,7 @@ void Combat_Information_Window(void)
 }
 
 
-// WZD o103p02
+// WZD s103p02
 void Combat_Information_Window_Draw(void)
 {
     int16_t in_per_side_section = 0;
@@ -5983,7 +5983,7 @@ void Combat_Information_Window_Draw(void)
 }
 
 
-// WZD o103p03
+// WZD s103p03
 /* OGBUG: INCONSISTENT: excludes Evil Omens and Spell Wards */
 void Combat_Info_Effects(void)
 {
@@ -6051,7 +6051,7 @@ void Combat_Info_Effects(void)
 }
 
 
-// WZD o103p04
+// WZD s103p04
 /*
 handles
 node dispel - Sorcery, Chaos, Nature
@@ -6159,7 +6159,7 @@ void Combat_Info_Effects_Base(void)
 }
 
 
-// WZD o103p05
+// WZD s103p05
 /* OGBUG: missing Evil Omens */
 int16_t Combat_Info_Effects_Count(void)
 {
@@ -6243,7 +6243,7 @@ int16_t Combat_Info_Effects_Count(void)
 }
 
 
-// WZD o103p06
+// WZD s103p06
 // ¿ MoO2  Point_Is_In_Some_Nebula_() |-> Point_Is_In_Nebula_N_() ?
 void Combat_Node_Type(void)
 {
@@ -6273,7 +6273,7 @@ void Combat_Node_Type(void)
 }
 
 
-// WZD o103p07
+// WZD s103p07
 /*
 ~ Combat_Figure_Compose()
 ¿ vs. Combat_Screen_Map_Compose_Figures() ?
@@ -6364,7 +6364,7 @@ void Battle_Unit_Compose_Bitmap(int16_t battle_unit_idx)
 }
 
 
-// WZD o103p08
+// WZD s103p08
 /*
 sets _active_battle_unit, via Next_Battle_Unit_Nearest_Available(player_idx)
 ¿ ~== WIZ_NextIdleStack() ?
@@ -6418,7 +6418,7 @@ void Next_Battle_Unit(int16_t player_idx)
 }
 
 
-// WZD o103p09
+// WZD s103p09
 // drake178: WIZ_BU_SelectClosest()
 /*
 ; selects from the specified player's active battle
@@ -6586,7 +6586,7 @@ int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx)
 }
 
 
-// WZD o103p10
+// WZD s103p10
 void Combat_Cast_Spell_Error(int16_t type)
 {
     Clear_Fields();
@@ -6604,7 +6604,7 @@ void Combat_Cast_Spell_Error(int16_t type)
 }
 
 
-// WZD o103p11
+// WZD s103p11
 /**
  * @brief Executes the movement phase for a confused battle unit.
  *
@@ -6652,7 +6652,7 @@ void Move_Confused(int16_t battle_unit_idx)
 }
 
 
-// WZD o103p12
+// WZD s103p12
 /*
 ~== Strategic_Combat_Allocate()
 */
@@ -6782,7 +6782,7 @@ void Combat_Screen_Load_Resources(void)
 }
 
 
-// WZD o103p13
+// WZD s103p13
 void Allocate_Combat_Near_Buffers(void)
 {
     int16_t itr = 0;
@@ -6800,7 +6800,7 @@ void Allocate_Combat_Near_Buffers(void)
 }
 
 
-// WZD o103p14
+// WZD s103p14
 void Combat_Cast_Spell_With_Caster(int16_t caster_id)
 {
     char * selection_list_text[4] = { 0, 0, 0, 0 };

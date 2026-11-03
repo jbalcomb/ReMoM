@@ -23,7 +23,7 @@
 
 
 
-// WZD o161p01
+// WZD s161p01
 /*
     ~ "Purify"
 */
@@ -33,7 +33,7 @@ void Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p02
+// WZD s161p02
 int16_t Square_Is_Node(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t niu_variable = 0;
@@ -60,7 +60,7 @@ int16_t Square_Is_Node(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p03
+// WZD s161p03
 /**
  * @brief Computes terrain food yield in doubled-food units for one map square.
  *
@@ -239,7 +239,7 @@ int16_t Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have
     return Square_Production_Bonus_Original(wx, wy, wp, have_gaias_blessing);
 }
 
-// WZD o161p04
+// WZD s161p04
 // drake178: TILE_GetProd()
 /*
     Chaos Node ~== Mountain
@@ -332,7 +332,7 @@ int16_t Square_Production_Bonus_Original(int16_t wx, int16_t wy, int16_t wp, int
     return production_bonus;
 }
 
-// WZD o161p05
+// WZD s161p05
 // drake178: TILE_GetWaterGold()
 int16_t Square_Gold_Bonus(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -403,7 +403,7 @@ int16_t Square_Gold_Bonus(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p06
+// WZD s161p06
 // drake178: CTY_GetRoadGold()
 int16_t City_Road_Trade_Bonus(int16_t city_idx)
 {
@@ -451,7 +451,7 @@ int16_t City_Road_Trade_Bonus(int16_t city_idx)
 }
 
 
-// WZD o161p07
+// WZD s161p07
 /*
 used to decide on river for cityscape  (not ocean, not *water*)
 */
@@ -515,7 +515,7 @@ int16_t Square_Is_River(int16_t wx, int16_t wy, int16_t wp)
 
 
 
-// WZD o161p08
+// WZD s161p08
 int16_t Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf)
 {
     int16_t terrain_special = 0;
@@ -549,16 +549,16 @@ int16_t Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_mine
     return gold_units;
 }
 
-// WZD o161p08
+// WZD s161p08
 // TILE_GetSilverGold   
 
-// WZD o161p09
+// WZD s161p09
 // TILE_GetGoldOreGold  
 
-// WZD o161p10
+// WZD s161p10
 // TILE_GetGemGold      
 
-// WZD o161p11
+// WZD s161p11
 // drake178: TILE_GetSpecialPower()
 int16_t Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf)
 {
@@ -607,7 +607,7 @@ int16_t Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_mine
     return mana_units;
 }
 
-// WZD o161p12
+// WZD s161p12
 // drake178: TILE_GetMithrilPower()
 /*
     Terrain Special
@@ -640,7 +640,7 @@ int16_t Square_Mithril_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_mi
     return power;
 }
 
-// WZD o161p13
+// WZD s161p13
 // drake178: TILE_GetAdamntmPower()
 /*
     Terrain Special
@@ -673,13 +673,13 @@ int16_t Square_Adamantium_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have
     return power;
 }
 
-// WZD o161p14
+// WZD s161p14
 // drake178: TILE_GetQuorkPower   
 
-// WZD o161p15
+// WZD s161p15
 // drake178: TILE_GetCrysxPower   
 
-// WZD o161p16
+// WZD s161p16
 // drake178: TILE_HasMithril()
 /*
 ; returns 1 if the square has Mithril Ore terrain special
@@ -707,7 +707,7 @@ int16_t Square_Has_Mithril(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p17
+// WZD s161p17
 // drake178: TILE_HasAdamantium()
 /*
 
@@ -730,7 +730,7 @@ int16_t Square_Has_Adamantium(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p18
+// WZD s161p18
 // drake178: TILE_GetNUCostReduce()
 /*
     
@@ -789,7 +789,7 @@ int16_t Square_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t h
 }
 
 
-// WZD o161p19
+// WZD s161p19
 // drake178: CTY_GetWeaponQuality()
 // MoO2  Module: INITSHIP  Best_..._Weapon_()
 int16_t City_Best_Weapon(int16_t city_idx)
@@ -842,7 +842,7 @@ int16_t City_Best_Weapon(int16_t city_idx)
 }
 
 
-// WZD o161p20
+// WZD s161p20
 /*
 TABLE F
 ROAD BUILDING
@@ -922,19 +922,19 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p21
+// WZD s161p21
 // UU_TILE_GetUnsdMPCost
 
-// WZD o161p22
+// WZD s161p22
 /*
 INCONSISTENT: returns 0 for the single square no-river lake, which means it should also return 0 for its river outlet versions (0xC5 - 0xC8)
 */
 /*
-WZD o161p22
+WZD s161p22
 TILE_IsAISailable()
-WZD o161p24
+WZD s161p24
 TILE_IsSailable()
-WZD o161p39
+WZD s161p39
 Square_Is_OceanLike()
 */
 int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp)
@@ -956,7 +956,7 @@ int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p23
+// WZD s161p23
 // drake178: TILE_IsVisibleForest()
 // AKA Square_Is_Explored_Forest()
 /*
@@ -991,17 +991,17 @@ int16_t Square_Is_Forest(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p24
+// WZD s161p24
 // drake178: TILE_IsSailable()
 /*
     regularly used as 'Square is Ocean-Terrain'
     also used as 'Square is Shore'
 
-WZD o161p22
+WZD s161p22
 TILE_IsAISailable()
-WZD o161p24
+WZD s161p24
 TILE_IsSailable()
-WZD o161p39
+WZD s161p39
 Square_Is_OceanLike()
 BUGBUG  only checks tt_AnimOcean?
 TODO  DEDU  what 'water' squares not sailable?
@@ -1103,7 +1103,7 @@ Done:
     return return_value;
 }
 
-// WZD o161p25
+// WZD s161p25
 /*
     DEDU  Why only tt_OceanAnim?
 */
@@ -1125,7 +1125,7 @@ int16_t Square_Is_Ocean(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p26
+// WZD s161p26
 /*
 vs. Square_Is_Sailable()?
 vs. Square_Is_OceanLike()?
@@ -1166,7 +1166,7 @@ int16_t Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p27
+// WZD s161p27
 /**
  * @brief Maps a world-map terrain square to a building terrain prerequisite ID.
  *
@@ -1242,7 +1242,7 @@ int16_t Building_Terrain_Type_Prerequisite(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p28
+// WZD s161p28
 int16_t Square_Is_Hills(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
@@ -1273,7 +1273,7 @@ int16_t Square_Is_Hills(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p29
+// WZD s161p29
 int16_t Square_Is_Mountain(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;
@@ -1308,7 +1308,7 @@ int16_t Square_Is_Mountain(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p30
+// WZD s161p30
 int16_t Square_Is_Desert(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
@@ -1345,7 +1345,7 @@ int16_t Square_Is_Desert(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p31
+// WZD s161p31
 int16_t Square_Is_Tundra(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
@@ -1376,7 +1376,7 @@ int16_t Square_Is_Tundra(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p32
+// WZD s161p32
 int16_t Square_Is_Swamp(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
@@ -1405,7 +1405,7 @@ int16_t Square_Is_Swamp(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p33
+// WZD s161p33
 int16_t Square_Is_Grasslands(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
@@ -1438,7 +1438,7 @@ int16_t Square_Is_Grasslands(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p34
+// WZD s161p34
 int16_t Square_Is_Volcano(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;
@@ -1461,7 +1461,7 @@ int16_t Square_Is_Volcano(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p35
+// WZD s161p35
 int16_t Square_Has_Corruption(int16_t wx, int16_t wy, int16_t wp)
 {
     uint8_t map_square_flag = 0;  // DNE in Dasm
@@ -1480,7 +1480,7 @@ int16_t Square_Has_Corruption(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p36
+// WZD s161p36
 // drake178: UU_TILE_IsRes_40h()
 /*
 wild game?
@@ -1507,7 +1507,7 @@ int16_t UU_Square_Has_MSF_UNKNOWN_40H(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p37
+// WZD s161p37
 // drake178: CTY_CountNightshades()
 /*
 // ; counts and sets the amount of Nightshades affecting
@@ -1600,7 +1600,7 @@ void All_City_Nightshade_Count(void)
 }
 
 
-// WZD o161p38
+// WZD s161p38
 int16_t Square_Is_Land(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
@@ -1631,7 +1631,7 @@ int16_t Square_Is_Land(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD o161p39
+// WZD s161p39
 /*
 used to decide on ocean for cityscape  (not river, not *water*)
 
@@ -1646,11 +1646,11 @@ used to decide on ocean for cityscape  (not river, not *water*)
 used by AI_Move_Out_Boats(), so ~== "Sailable"
 should also be equivalent to Square_Is_Shoreline(), used to build the shoreline linked-list array
 
-WZD o161p22
+WZD s161p22
     TILE_IsAISailable()
-WZD o161p24
+WZD s161p24
     TILE_IsSailable()
-WZD o161p39
+WZD s161p39
     Square_Is_OceanLike() AKA TILE_IsAISailable2()
 
 */
@@ -1747,7 +1747,7 @@ int16_t Square_Is_OceanLike(int16_t wx, int16_t wy, int16_t wp)
 
 
 
-// WZD o161p40
+// WZD s161p40
 // drake178: UU_TILE_BotchedResFn()
 /*
 ; Unused in MoM, no wonder since its totally botched

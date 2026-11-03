@@ -71,13 +71,13 @@ extern "C" {
     WIZARDS.EXE  ovr080
 */
 
-// WZD o080p01
+// WZD s080p01
 void Determine_Event(void);
 
-// WZD o080p02
+// WZD s080p02
 void Event_Twiddle(void);
 
-// WZD o080p03
+// WZD s080p03
 int16_t Any_Overland_Enchantments(void);
 
 
@@ -86,16 +86,16 @@ int16_t Any_Overland_Enchantments(void);
     WIZARDS.EXE  ovr081
 */
 
-// WZD o081p01
+// WZD s081p01
 void Show_Event_Message(void);
 
-// WZD o081p02
+// WZD s081p02
 void Get_Event_Message(void);
 
-// WZD o081p03
+// WZD s081p03
 int16_t Get_Event_Victim(int16_t event_type);
 
-// WZD o081p04
+// WZD s081p04
 int16_t Pick_Random_City(int16_t player_idx);
 
 
