@@ -7120,7 +7120,7 @@ int16_t Square_Has_Tower_NewGame(int16_t wx, int16_t wy)
 
 ~==
 Terrain.c
-// WZD s161p23
+// WZD o161p23
 // drake178: TILE_IsVisibleForest()
 // AKA Square_Is_Explored_Forest()
 int16_t Square_Is_Forest(int16_t wx, int16_t wy, int16_t wp)
@@ -7350,7 +7350,7 @@ int16_t Square_Is_Grassland_NewGame(int16_t wx, int16_t wy, int16_t wp)
 returns food, not food2
 
 Terrain.c
-// WZD s161p03
+// WZD o161p03
 int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
 
 traced with terrain_type == tt_Grasslands1
@@ -7475,7 +7475,7 @@ int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
 
             case tt_NatureNode:
             {
-                food_units = 4;  // BUGBUG  is 5 in Terrain.c // WZD s161p03  int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
+                food_units = 4;  // BUGBUG  is 5 in Terrain.c // WZD o161p03  int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
             } break;
 
             case tt_ChaosNode:

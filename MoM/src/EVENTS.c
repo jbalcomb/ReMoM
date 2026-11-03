@@ -220,7 +220,7 @@ char * m_event_message;
     WIZARDS.EXE  ovr080
 */
 
-// WZD s080p01
+// WZD o080p01
 void Determine_Event(void)
 {
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -623,7 +623,7 @@ Done:
 }
 
 
-// WZD s080p02
+// WZD o080p02
 // MoO2  Module: Events  Event_Twiddle_()
 /**
  * @brief Advances and resolves all currently active world events for the turn.
@@ -1320,7 +1320,7 @@ void Event_Twiddle(void)
 }
 
 
-// WZD s080p03
+// WZD o080p03
 // drake178: WIZ_HaveAnyGlobals()
 /*
     returns {F,T} - any player has an overland enchantment in effect
@@ -1356,7 +1356,7 @@ int16_t Any_Overland_Enchantments(void)
     WIZARDS.EXE  ovr081
 */
 
-// WZD s081p01
+// WZD o081p01
 // drake178: EVNT_ShowMessage()
 void Show_Event_Message(void)
 {
@@ -1461,7 +1461,7 @@ void Show_Event_Message(void)
 }
 
 
-// WZD s081p02
+// WZD o081p02
 // drake178: EVNT_ComposeMessage()
 // MoO2  Module: EVENTS  Get_Event_Message_()
 /*
@@ -1642,7 +1642,7 @@ void Get_Event_Message(void)
 }
 
 
-// WZD s081p03
+// WZD o081p03
 // MoO2  Module: EVENTS  Get_Event_Victim_()
 /**
  * @brief Selects a target wizard for a random event using weighted power.
@@ -1750,7 +1750,7 @@ int16_t Get_Event_Victim(int16_t event_type)
 }
 
 
-// WZD s081p04
+// WZD o081p04
 // drake178: EVNT_PickCity()
 // MoO2  Module: Events  ~ Pick_Random_Colony_No_Outpost_()  || Pick_Random_Colony_No_Capitol_()
 /*

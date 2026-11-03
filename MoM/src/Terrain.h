@@ -79,129 +79,129 @@ Meh. I put stuff in MoX_DEF.H that is meant to have access to this.
 
 
 
-// WZD s161p01
+// WZD o161p01
 void Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p02
+// WZD o161p02
 int16_t Square_Is_Node(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p03
+// WZD o161p03
 int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p04
+// WZD o161p04
 int16_t Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have_gaias_blessing);
 /* CLAUDE: Square_Production_Bonus() asks the rules profile; this is the faithful 1.31 code it falls back to. */
 int16_t Square_Production_Bonus_Original(int16_t wx, int16_t wy, int16_t wp, int16_t have_gaias_blessing);
 
-// WZD s161p05
+// WZD o161p05
 int16_t Square_Gold_Bonus(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p06
+// WZD o161p06
 int16_t City_Road_Trade_Bonus(int16_t city_idx);
 
-// WZD s161p07
+// WZD o161p07
 int16_t Square_Is_River(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p08
+// WZD o161p08
 int16_t Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf);
 
-// WZD s161p08
+// WZD o161p08
 // TILE_GetSilverGold   
 
-// WZD s161p09
+// WZD o161p09
 // TILE_GetGoldOreGold  
 
-// WZD s161p10
+// WZD o161p10
 // TILE_GetGemGold      
 
-// WZD s161p11
+// WZD o161p11
 int16_t Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf);
 
-// WZD s161p12
+// WZD o161p12
 int16_t Square_Mithril_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_minersguild, int16_t are_dwarves);
 
-// WZD s161p13
+// WZD o161p13
 int16_t Square_Adamantium_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_minersguild, int16_t are_dwarves);
 
-// WZD s161p14
+// WZD o161p14
 // TILE_GetQuorkPower   
 
-// WZD s161p15
+// WZD o161p15
 // TILE_GetCrysxPower   
 
-// WZD s161p16
+// WZD o161p16
 int16_t Square_Has_Mithril(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p17
+// WZD o161p17
 int16_t Square_Has_Adamantium(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p18
+// WZD o161p18
 int16_t Square_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t have_minersguild, int16_t are_dwarves);
 
-// WZD s161p19
+// WZD o161p19
 int16_t City_Best_Weapon(int16_t city_idx);
 
-// WZD s161p20
+// WZD o161p20
 int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p21
+// WZD o161p21
 // UU_TILE_GetUnsdMPCost
 
-// WZD s161p22
+// WZD o161p22
 int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p23
+// WZD o161p23
 int16_t Square_Is_Forest(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p24
+// WZD o161p24
 int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p25
+// WZD o161p25
 int16_t Square_Is_Ocean(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p26
+// WZD o161p26
 int16_t Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p27
+// WZD o161p27
 int16_t Building_Terrain_Type_Prerequisite(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p28
+// WZD o161p28
 int16_t Square_Is_Hills(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p29
+// WZD o161p29
 int16_t Square_Is_Mountain(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p30
+// WZD o161p30
 int16_t Square_Is_Desert(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p31
+// WZD o161p31
 int16_t Square_Is_Tundra(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p32
+// WZD o161p32
 int16_t Square_Is_Swamp(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p33
+// WZD o161p33
 int16_t Square_Is_Grasslands(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p34
+// WZD o161p34
 int16_t Square_Is_Volcano(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p35
+// WZD o161p35
 int16_t Square_Has_Corruption(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p36
+// WZD o161p36
 // int16_t UU_Square_Has_MSF_UNKNOWN_40H(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p37
+// WZD o161p37
 void All_City_Nightshade_Count(void);
 
-// WZD s161p38
+// WZD o161p38
 int16_t Square_Is_Land(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p39
+// WZD o161p39
 int16_t Square_Is_OceanLike(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD s161p40
+// WZD o161p40
 // int16_t UU_Square_Provides_Some_Amount(int16_t wx, int16_t wy, int16_t wp);
 
 

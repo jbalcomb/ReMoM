@@ -501,18 +501,18 @@ int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax,
 // UU_GUI_CreateWndLabel
 // WZD s36p49
 int16_t Add_Hot_Key(int16_t select_char);
-// WZD s34p50
+// WZD s36p50
 // UU_GUI_CreateHelpLink
-// WZD s34p51
+// WZD s36p51
 int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int64_t *xpos, int64_t *ypos, int16_t help);
-// WZD s34p52
-// WZD s34p53
+// WZD s36p52
+// WZD s36p53
 int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, int16_t hotkey, int16_t help);
-// WZD s34p54
+// WZD s36p54
 int16_t Find_Bar_Position(int16_t field_num);
-// WZD s34p55
+// WZD s36p55
 void Increment_Scroll_Bar(int16_t field_num);
-// WZD s34p56
+// WZD s36p56
 void Decrement_Scroll_Bar(int16_t field_num);
 // WZD s36p57
 void Clear_Fields(void);
@@ -1018,7 +1018,7 @@ int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax,
     return (fields_count - 1);
 }
 
-// WZD s34p49
+// WZD s36p49
 int16_t Add_Hot_Key(int16_t select_char)
 {
     p_fields[fields_count].x1 = OFF_SCREEN;
@@ -1036,7 +1036,7 @@ int16_t Add_Hot_Key(int16_t select_char)
     return (fields_count - 1);
 }
 
-// WZD s34p51
+// WZD s36p51
 // DEDUCE: What happens with the xpos,ypos here? How does it get used? How does that work?
 // int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int16_t *xpos, int16_t *ypos, int16_t help)
 int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int64_t *xpos, int64_t *ypos, int16_t help)
@@ -1066,8 +1066,8 @@ int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t bo
 }
 
 
-// WZD s34p52
-// WZD s34p53
+// WZD s36p52
+// WZD s36p53
 // 1oom  uiobj.c  uiobj_add_slider_int() / uiobj_add_slider_func()
 // 1oom: int16_t uiobj_add_slider_func(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t w, uint16_t h, int16_t *vptr, void (*cb)(void *ctx, uint8_t slideri, int16_t value), void *ctx, uint8_t slideri)
 // STARMAP.EXE: uiobj_add_slider_noseg(); uiobj_add_slider();
@@ -1123,7 +1123,7 @@ int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t 
 }
 
 
-// WZD s34p54
+// WZD s36p54
 // GUI_SliderUpdate()
 // 1oom  uiobj_handle_t6_slider_input()
 /*
@@ -1191,7 +1191,7 @@ int16_t Find_Bar_Position(int16_t field_num)
     return bar_value;
 }
 
-// WZD s34p55
+// WZD s36p55
 // GUI_SlideUp();
 // uiobj_slider_plus()
 /*
@@ -1243,7 +1243,7 @@ void Increment_Scroll_Bar(int16_t field_num)
 
 }
 
-// WZD s34p56
+// WZD s36p56
 // GUI_SlideDown();
 // 1oom  uiobj_slider_minus()
 /*

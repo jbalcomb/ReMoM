@@ -1489,7 +1489,7 @@ extern "C" {
     WIZARDS.EXE  ovr090
 */
 
-// WZD s90p01
+// WZD o90p01
 int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defender_player_idx, int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[]);
 
 
@@ -1498,34 +1498,34 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
     WIZARDS.EXE  ovr091
 */
 
-// WZD s91p01
+// WZD o91p01
 void NIU_Battle_Unit_Load_Figure_Pictures(int16_t battle_unit_idx);
 
-// WZD s91p02
+// WZD o91p02
 void Begin_Combat_Turn(void);
 
-// WZD s91p03
+// WZD o91p03
 void Set_Movement_Cost_Map(int16_t battle_unit_idx);
 
-// WZD s91p04
+// WZD o91p04
 void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t target_cgy);
 
-// WZD s91p05
+// WZD o91p05
 void Switch_Active_Battle_Unit(int16_t battle_unit_idx);
 
-// WZD s91p06
+// WZD o91p06
 void Battle_Unit_Action(int16_t acting_battle_unit_idx, int16_t cgx, int16_t cgy);
 
-// WZD s91p07
+// WZD o91p07
 void Assign_Combat_Grids(void);
 
-// WZD s91p08
+// WZD o91p08
 int16_t Target_Is_Visible(int16_t battle_unit_idx);
 
-// WZD s91p09
+// WZD o91p09
 void Add_City_Damage_From_Battle_Units_Within(void);
 
-// WZD s91p10
+// WZD o91p10
 int16_t Battle_Unit_Instant_Movement_Mode(int16_t battle_unit_idx);
 
 
@@ -1534,22 +1534,22 @@ int16_t Battle_Unit_Instant_Movement_Mode(int16_t battle_unit_idx);
     WIZARDS.EXE  ovr096
 */
 
-// WZD s96p01
+// WZD o96p01
 int16_t Combat(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t troop_count, int16_t troops[]);
 
-// WZD s96p02
+// WZD o96p02
 void Lair_Make_Guardians(int16_t lair_idx);
 
-// WZD s96p03
+// WZD o96p03
 int16_t Lair_Combat_Do(int16_t lair_idx, int16_t player_idx);
 
-// WZD s96p04
+// WZD o96p04
 void NIU_Enemy_Stack_Combat(int16_t defender_unit_idx, int16_t attacker_unit_idx, int16_t plane);
 
-// WZD s96p05
+// WZD o96p05
 void Update_Defender_Hostility(int16_t attacker_player_idx, int16_t defender_player_idx);
 
-// WZD s96p06
+// WZD o96p06
 void NIU_Combat_Redraw_Main_Screen(void);
 
 
@@ -1658,46 +1658,46 @@ void Draw_Active_Unit_Damage_Bar(int16_t battle_unit_idx, int16_t x, int16_t y);
     WIZARDS.EXE  ovr103
 */
 
-// WZD s103p01
+// WZD o103p01
 void Combat_Information_Window(void);
 
-// WZD s103p02
+// WZD o103p02
 void Combat_Information_Window_Draw(void);
 
-// WZD s103p03
+// WZD o103p03
 void Combat_Info_Effects(void);
 
-// WZD s103p04
+// WZD o103p04
 void Combat_Info_Effects_Base(void);
 
-// WZD s103p05
+// WZD o103p05
 int16_t Combat_Info_Effects_Count(void);
 
-// WZD s103p06
+// WZD o103p06
 void Combat_Node_Type(void);
 
-// WZD s103p07
+// WZD o103p07
 void Battle_Unit_Compose_Bitmap(int16_t battle_unit_idx);
 
-// WZD s103p08
+// WZD o103p08
 void Next_Battle_Unit(int16_t player_idx);
 
-// WZD s103p09
+// WZD o103p09
 int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx);
 
-// WZD s103p10
+// WZD o103p10
 void Combat_Cast_Spell_Error(int16_t type);
 
-// WZD s103p11
+// WZD o103p11
 void Move_Confused(int16_t battle_unit_idx);
 
-// WZD s103p12
+// WZD o103p12
 void Combat_Screen_Load_Resources(void);
 
-// WZD s103p13
+// WZD o103p13
 void Allocate_Combat_Near_Buffers(void);
 
-// WZD s103p14
+// WZD o103p14
 void Combat_Cast_Spell_With_Caster(int16_t caster_id);
 
 

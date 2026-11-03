@@ -689,24 +689,24 @@ int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax,
 // WZD s36p49
 int16_t Add_Hot_Key(int16_t select_char);
 
-// WZD s34p50
+// WZD s36p50
 // UU_GUI_CreateHelpLink                          seg036     00004FED 0000013A R F . . B T .
 
-// WZD s34p51
+// WZD s36p51
 // int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int16_t *xpos, int16_t *ypos, int16_t help);
 int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int64_t *xpos, int64_t *ypos, int16_t help);
 
-// WZD s34p52
-// WZD s34p53
+// WZD s36p52
+// WZD s36p53
 int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, int16_t hotkey, int16_t help);
 
-// WZD s34p54
+// WZD s36p54
 int16_t Find_Bar_Position(int16_t field_num);
 
-// WZD s34p55
+// WZD s36p55
 void Increment_Scroll_Bar(int16_t field_num);
 
-// WZD s34p56
+// WZD s36p56
 void Decrement_Scroll_Bar(int16_t field_num);
 
 // WZD s36p57
