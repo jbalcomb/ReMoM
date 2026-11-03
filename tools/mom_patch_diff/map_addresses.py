@@ -20,8 +20,11 @@ Columns:
     file_offset     offset in the .EXE file (0x...)
     file_offset_from how file_offset was found:
                     "load module"           header size + (ida_ea - load module start), and the bytes there match
-                    "load module, differs"  computed the same way, but the bytes there do not match: the database is
-                                            not of this .EXE, or the procedure was patched
+                    "bytes (computed 0x...)" computed the same way, but the bytes there do not match, so it was found
+                                            by its bytes instead; <out>_segments.tsv shows, per segment, how far off
+                                            the computation was
+                    "load module, differs"  the bytes match neither at the computed offset nor anywhere else: the
+                                            database is not of this .EXE, or the procedure was patched
                     "bytes"                 found by its bytes (overlays), at one place
                     "bytes, N places"       found at N places; the first is given
                     "not found"             its bytes are nowhere in the file
@@ -33,8 +36,10 @@ their segments are named or numbered, so file_offset is the column to join them 
 
 import argparse
 import csv
+import os
 import struct
 import sys
+from collections import Counter, defaultdict
 
 from tools.mom_patch_diff.diff import load_map
 
@@ -59,6 +64,7 @@ def rows_for(items, exe):
     load_ea = segments[0].ea
     header, module_size = load_module(exe) if exe is not None else (0, 0)
     seg_start = {s.name: s.ea for s in segments}
+    check = defaultdict(Counter)            # segment -> how its procedures' file offsets were found
     rows = []
     for item in sorted((i for i in items if i.kind in ('S', 'F')), key=lambda i: (i.ea, i.kind != 'S')):
         start = seg_start.get(item.segment, item.ea)
@@ -77,8 +83,18 @@ def rows_for(items, exe):
             row['file_offset'] = '0x%06X' % file_offset
             if item.kind == 'S' or not item.runs or item.matches_at(exe, file_offset):
                 row['file_offset_from'] = 'load module'
+                if item.kind == 'F':
+                    check[item.segment]['computed'] += 1
             else:
-                row['file_offset_from'] = 'load module, differs'
+                hits = item.find(exe)
+                if hits and len(hits) == 1:
+                    row['file_offset'] = '0x%06X' % hits[0]
+                    row['file_offset_from'] = 'bytes (computed 0x%06X)' % file_offset
+                    check[item.segment]['found by bytes'] += 1
+                    check[item.segment]['shift %+X' % (hits[0] - file_offset)] += 1
+                else:
+                    row['file_offset_from'] = 'load module, differs'
+                    check[item.segment]['differs, not found'] += 1
         elif item.kind == 'F':
             hits = item.find(exe)
             if hits is None:
@@ -89,7 +105,7 @@ def rows_for(items, exe):
                 row['file_offset'] = '0x%06X' % hits[0]
                 row['file_offset_from'] = 'bytes' if len(hits) == 1 else 'bytes, %d places' % len(hits)
         rows.append(row)
-    return rows
+    return rows, check, (load_ea, header, module_size)
 
 
 def main(argv=None):
@@ -103,17 +119,39 @@ def main(argv=None):
     if args.exe:
         with open(args.exe, 'rb') as f:
             exe = f.read()
-    rows = rows_for(load_map(args.map), exe)
+    items = load_map(args.map)
+    rows, check, (load_ea, header, module_size) = rows_for(items, exe)
     with open(args.out, 'w', newline='', encoding='utf-8') as f:
         w = csv.DictWriter(f, COLUMNS, delimiter='\t', lineterminator='\n')
         w.writeheader()
         for row in rows:
             w.writerow({c: row.get(c, '') for c in COLUMNS})
+    if exe is not None:
+        seg_ea = {i.name: i.ea for i in items if i.kind == 'S'}
+        path = os.path.splitext(args.out)[0] + '_segments.tsv'
+        with open(path, 'w', newline='', encoding='utf-8') as f:
+            w = csv.writer(f, delimiter='\t', lineterminator='\n')
+            w.writerow(['segment', 'ida_ea', 'computed_ok', 'found_by_bytes', 'differs_not_found', 'shifts'])
+            for seg in sorted(check, key=lambda s: seg_ea.get(s, 0)):
+                c = check[seg]
+                shifts = ', '.join('%s x%d' % (k[6:], v) for k, v in c.most_common() if k.startswith('shift '))
+                w.writerow([seg, '%X' % seg_ea.get(seg, 0), c['computed'], c['found by bytes'], c['differs, not found'], shifts])
+        print('map_addresses: load module: IDA %X-%X, header 0x%X bytes, %d bytes long; per-segment check in %s'
+              % (load_ea, load_ea + module_size, header, module_size, path))
+        bad = [s for s in sorted(check, key=lambda s: seg_ea.get(s, 0)) if check[s]['found by bytes'] or check[s]['differs, not found']]
+        for seg in bad[:25]:
+            c = check[seg]
+            print('  %-10s %6X  computed ok %3d, by bytes %3d, not found %3d  %s' % (
+                seg, seg_ea.get(seg, 0), c['computed'], c['found by bytes'], c['differs, not found'],
+                ', '.join('%s x%d' % (k[6:], v) for k, v in c.most_common(3) if k.startswith('shift '))))
+        if len(bad) > 25:
+            print('  ... and %d more segments; see %s' % (len(bad) - 25, path))
     procs = [r for r in rows if r['kind'] == 'F']
     counts = {}
     for r in procs:
         how = r.get('file_offset_from', '') or '(no --exe)'
         how = 'bytes, several places' if how.startswith('bytes, ') else how
+        how = 'bytes (computed was wrong)' if how.startswith('bytes (computed') else how
         counts[how] = counts.get(how, 0) + 1
     print('map_addresses: %s: %d segments, %d procedures; file offset: %s' % (
         args.out, len(rows) - len(procs), len(procs), ', '.join('%s %d' % kv for kv in sorted(counts.items()))))

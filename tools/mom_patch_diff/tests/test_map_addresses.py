@@ -50,6 +50,24 @@ class Map_Addresses_test(unittest.TestCase):
         self.assertEqual((r['ida_ea'], r['ida_seg_off'], r['ida_para_off'], r['exe_para_off']),
                          ('10028', 'seg000:0028', '1000:0028', '0000:0028'))
         self.assertEqual((r['file_offset'], r['file_offset_from']), ('0x%06X' % (HEADER + 40), 'load module, differs'))
+        with open(self.out.replace('.tsv', '_segments.tsv'), newline='') as f:
+            seg = {r['segment']: r for r in csv.DictReader(f, delimiter='\t')}
+        self.assertEqual((seg['seg000']['computed_ok'], seg['seg000']['differs_not_found']), ('1', '1'))
+
+    def test_wrong_computed_offset_is_found_by_bytes(self):
+        # an "overlay" that IDA placed inside the load module's address range: computed offset wrong, bytes elsewhere
+        with open(self.map) as f:
+            text = f.read().replace('%X\t30\t' % (BASE_EA + 0x2000), '%X\t30\t' % (BASE_EA + 0x10), 1)
+        text = text.replace('AIL_startup\t%X' % (BASE_EA + 0x2000), 'AIL_startup\t%X' % (BASE_EA + 0x10))
+        with open(self.map, 'w') as f:
+            f.write(text)
+        self.assertEqual(map_addresses.main(['--map', self.map, '--exe', self.exe, '--out', self.out]), 0)
+        with open(self.out, newline='') as f:
+            r = {r['name']: r for r in csv.DictReader(f, delimiter='\t')}['AIL_startup']
+        self.assertEqual((r['file_offset'], r['file_offset_from']), ('0x%06X' % (HEADER + 100), 'bytes (computed 0x%06X)' % (HEADER + 0x10)))
+        with open(self.out.replace('.tsv', '_segments.tsv'), newline='') as f:
+            seg = {r['segment']: r for r in csv.DictReader(f, delimiter='\t')}
+        self.assertEqual((seg['_AIL_']['found_by_bytes'], seg['_AIL_']['shifts']), ('1', '+54 x1'))
         self.assertEqual(self.rows['start']['file_offset_from'], 'load module')
 
     def test_overlay_procedure_is_found_by_bytes(self):
