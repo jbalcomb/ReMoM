@@ -136,7 +136,7 @@ class Item:
         self.kind = row['kind']
         self.segment = row['segment']
         m = re.match(r'(seg|ovr)0*(\d+)$', self.segment, re.I)
-        self.seg_id = ('%s%03d' % (m.group(1).lower(), int(m.group(2)))) if m else ''   # load_map() also numbers renamed ones
+        self.seg_id = ('%s%03d' % (m.group(1).lower(), int(m.group(2)))) if m else ''   # '' for a renamed segment
         self.proc = int(row['proc'] or 0)
         self.name = row['name']
         self.ea = int(row['ea'], 16)
@@ -195,42 +195,9 @@ class Item:
         return hits
 
 
-SEGMENT_NAME = re.compile(r'(seg|ovr)0*(\d+)$', re.I)
-
-
-def segment_ids(segments):
-    """{IDA segment name: 'seg035' / 'ovr142' / ''} for the S rows of a map.
-
-    IDA names an MZ's segments seg000, seg001, ... and its Borland overlays ovrNNN, in address order.  A database
-    whose author renamed some of them (drake178's "_AIL_" for seg035) loses the number, so a renamed segment gets it
-    back from its neighbours: the nearest IDA-named segments before and after it must have the same prefix and leave
-    exactly enough numbers for the renamed ones between them.  Otherwise (the data segment "dseg", a run at either
-    end) it stays '' and its functions get no ReMoM id."""
-    ordered = sorted(segments, key=lambda s: s.ea)
-    ids = {}
-    known = []                                          # (index in ordered, prefix, number)
-    for i, s in enumerate(ordered):
-        m = SEGMENT_NAME.match(s.name)
-        if m:
-            ids[s.name] = '%s%03d' % (m.group(1).lower(), int(m.group(2)))
-            known.append((i, m.group(1).lower(), int(m.group(2))))
-        else:
-            ids[s.name] = ''
-    for (i, prefix, number), (j, next_prefix, next_number) in zip(known, known[1:]):
-        if j - i > 1 and prefix == next_prefix and next_number - number == j - i:
-            for step, s in enumerate(ordered[i + 1:j], 1):
-                ids[s.name] = '%s%03d' % (prefix, number + step)
-    return ids
-
-
 def load_map(path):
     with open(path, newline='', encoding='latin-1') as f:
-        items = [Item(row) for row in csv.DictReader(f, delimiter='\t')]
-    ids = segment_ids([i for i in items if i.kind == 'S'])
-    for item in items:
-        m = SEGMENT_NAME.match(item.segment)
-        item.seg_id = ids.get(item.segment, ('%s%03d' % (m.group(1).lower(), int(m.group(2)))) if m else '')
-    return items
+        return [Item(row) for row in csv.DictReader(f, delimiter='\t')]
 
 
 def most_common_delta(pairs):
