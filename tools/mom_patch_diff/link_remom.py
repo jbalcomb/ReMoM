@@ -9,7 +9,7 @@ were taken from is looked up in remom_index.py's list by EXE, segment number and
 The segment number comes from IDA's segment name (seg036 -> 36, ovr161 -> 161).  ReMoM ids use s for segNNN and o for
 ovrNNN, but some are written with the wrong letter (WZD s161p04 is ovr161), so ids are looked up by number and a wrong
 letter is reported in id_letter.  Segments renamed in the database (_AIL_, SOUND, dseg) carry no number and are not
-linked.  --addresses (that database's map_addresses.py table) supplies the segment names.
+linked, unless given one with --segment SOUND=38.  --addresses (that database's map_addresses.py table) supplies the segment names.
 
 Output: the joined table's columns, then remom_id, remom_function, remom_file, remom_line, remom_evidence, and
 id_letter ("s for an overlay" or "o for a segment" when ReMoM's comment uses the other letter).  Then one row per
@@ -39,10 +39,15 @@ def main(argv=None):
     p.add_argument('--side', default='remom', help='the joined table side whose names ReMoM ids follow (default remom)')
     p.add_argument('--addresses', required=True, help="that side's map_addresses.py TSV (for the segment numbers)")
     p.add_argument('--index', required=True, help='TSV from remom_index.py')
+    p.add_argument('--segment', action='append', default=[], metavar='NAME=NUMBER',
+                   help='the number of a segment renamed in the database, e.g. SOUND=38 (repeatable)')
     p.add_argument('--out', required=True, help='TSV to write')
     args = p.parse_args(argv)
 
     numbers = segment_numbers(args.addresses)
+    for spec in args.segment:
+        name, _, number = spec.partition('=')
+        numbers[name] = int(number)
     index = {}
     with open(args.index, newline='', encoding='utf-8') as f:
         for r in csv.DictReader(f, delimiter='\t'):

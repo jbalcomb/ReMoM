@@ -23,7 +23,8 @@ class Link_Remom_test(unittest.TestCase):
             with open(os.path.join(src, 'Terrain.c'), 'w') as f:
                 f.write('// WZD s161p04\nint16_t Square_Production_Bonus(int16_t wx)\n{\n}\n'
                         '// WZD s36p01\nvoid Thirty_Six(void)\n{\n}\n'
-                        '// WZD o050p01\n// not reconstructed yet\n')
+                        '// WZD o050p01\n// not reconstructed yet\n'
+                        '// WZD s037p01\nvoid AIL_Startup(void)\n{\n}\n')
             index = os.path.join(root, 'index.tsv')
             joined = os.path.join(root, 'joined.tsv')
             addresses = os.path.join(root, 'addresses.tsv')
@@ -42,12 +43,22 @@ class Link_Remom_test(unittest.TestCase):
                                                   '--index', index, '--out', out]), 0)
             with open(out, newline='') as f:
                 rows = list(csv.DictReader(f, delimiter='\t'))
+            self.check(rows, joined, addresses, index, out)
+
+    def check(self, rows, joined, addresses, index, out):
         by = {r['remom_name'] or r['remom_id']: r for r in rows}
         r = by['Map_Square_Production_Bonus']
         self.assertEqual((r['remom_id'], r['remom_function'], r['id_letter']), ('WZD s161p04', 'Square_Production_Bonus', 's for an overlay'))
         self.assertEqual((by['Thirty_Six']['remom_id'], by['Thirty_Six']['id_letter']), ('WZD s036p01', ''))
         self.assertEqual(by['AIL_startup']['remom_id'], '')                 # renamed segment: no number, not linked
         self.assertEqual(by['WZD o050p01']['match'], 'only in ReMoM')
+        self.assertEqual(by['WZD s037p01']['match'], 'only in ReMoM')
+        with contextlib.redirect_stdout(io.StringIO()):                     # told its number, the renamed segment links
+            link_remom.main(['--exe', 'WZD', '--joined', joined, '--addresses', addresses, '--index', index,
+                             '--segment', '_AIL_=37', '--out', out])
+        with open(out, newline='') as f:
+            rows = {r['remom_name'] or r['remom_id']: r for r in csv.DictReader(f, delimiter='\t')}
+        self.assertEqual((rows['AIL_startup']['remom_id'], rows['AIL_startup']['remom_function']), ('WZD s037p01', 'AIL_Startup'))
 
 
 if __name__ == '__main__':
