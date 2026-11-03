@@ -22,18 +22,13 @@ Workstation (Velociraptor). The tables `link_remom.py` wrote there found the ids
 | `WZD s34p49`–`s34p56` | `s36p49`–`s36p56` | [Fields.c](../../MoX/src/Fields.c), [Fields.h](../../MoX/src/Fields.h) | segment 36 (`Add_Hot_Key` and the field and scroll-bar functions) |
 | `WZD s34p22` | `s36p22` | [Keyboard.c](../../MoX/src/Keyboard.c) (`Interpret_Keyboard_Input`) | segment 36 |
 | `WZD s82p0` (×7, truncated) | `o82p01`–`o82p07`, in order | [ItemView.c](../../MoM/src/ItemView.c); [ItemView.h](../../MoM/src/ItemView.h) lists `p02` twice and no `p03` | truncated |
-| `WZD o115p17` (`Make_Item`) | `o115p16` | [ItemMake.c](../../MoM/src/ItemMake.c), [ItemMake.h](../../MoM/src/ItemMake.h) | per the user; see *Open* |
+| `WZD o115p11`–`o115p17` | `o115p10`–`o115p16` (each one less) | [ItemMake.c](../../MoM/src/ItemMake.c), [ItemMake.h](../../MoM/src/ItemMake.h) | there is no `p10`: `p11` is the 10th procedure of `ovr115`, and the database has 16. So `Make_Item` is `o115p16` and `Create_Random_Item` `o115p15` |
 | `WZD s24p09` | (comment line removed) | [FLIC_Draw.c](../../MoX/src/FLIC_Draw.c) | stale comment (the function moved to capture.c) |
 | `WZD o145p0` | (comment line removed) | [AIDATA.c](../../MoM/src/AIDATA.c) | stale comment |
 
 ReMoM's convention, confirmed by the databases: `s` for `segNNN` (load module), `o` for `ovrNNN` (overlays). IDA
 numbers every segment of an `.EXE` once, so the number alone identifies the segment. `stubNNN` is the overlay stub of
 `ovrNNN`.
-
-## Open
-
-- **`Make_Item` → `o115p16`:** `o115p16` is also on `Create_Random_Item` (ItemMake.c lines 79 and 2256, ItemMake.h
-  line 69). Ask the user whether `Create_Random_Item` changed too, before relying on either id.
 
 ## The merge (the user, on Velociraptor)
 
