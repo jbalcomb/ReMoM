@@ -90,8 +90,11 @@ install. On Ubuntu, run the Windows one under Wine.
 1. **Done (2026-11-03, on Velociraptor):** the 1.31 maps of both the ReMoM and drake178's databases are exported,
    given file offsets (`map_addresses.py`), joined on file offset (`join_addresses.py`) and linked to ReMoM's ids
    (`remom_index.py`, `link_remom.py`); see [tools/mom_patch_diff/README.md](../../tools/mom_patch_diff/README.md).
-   With the id fixes made in Velociraptor's `main` checkout (not yet committed as of 2026-11-03; until they are, a
-   checkout here still has the old ids), every ReMoM id names a real procedure. Results are in `~/STU_DASM/mom131_export/` and `~/STU_DASM/drake178/export/`.
+   With the id fixes made in Velociraptor's `main` checkout, every ReMoM id names a real procedure. Commit 115cd052
+   makes the same fixes on `remom-mod` (overlay ids written with `s`, `s34p49`-`p56`, the truncated `s82p0`), except
+   four whose right ids are only in Velociraptor's tables: `s24p09` (FLIC_Draw.c), `s34p22` (Keyboard.c),
+   `o115p17` (ItemMake.c), `o145p0` (AIDATA.c). Merging `main` into `remom-mod` later needs one hand-resolved conflict
+   in `MoM/src/Terrain.c`: keep `remom-mod`'s rules dispatcher, with the id line `// WZD o161p04`. Results are in `~/STU_DASM/mom131_export/` and `~/STU_DASM/drake178/export/`.
 2. **Index every patch file** (whole folder, with base and maps):
    ```bash
    M=~/STU_DASM/mom131_export && EXE=~/STU/devel/mom131-source-map/play && \
@@ -107,8 +110,7 @@ install. On Ubuntu, run the Windows one under Wine.
    `mom_patch_diff` loop in its README. This gives function-level and data-table changes per release, and confirms
    the patch index.
 4. **Function tags:** write `tools/mom_tags/` per the plan (report, apply with dry-run, `Tags_Valid` CTest, docs).
-   - The ids are all valid once Velociraptor's fixes are committed on `main`; the linked tables hold every field a
-     tag needs.
+   - The ids are valid on `remom-mod` except the four above; the linked tables hold every field a tag needs.
 5. **Port patches as rules profiles:** `unofficial_140n` → `151` → `152` → `community_patch_160`, each starting
    from the previous one. Follow *Rules profiles → To port another rule* in [Modding.md](../@Devel/Modding.md), and
    add each calculation to `assets/rules/catalog.lua` so the catalog gains a column per version.
