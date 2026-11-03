@@ -8,8 +8,10 @@ were taken from is looked up in remom_index.py's list by EXE, segment number and
 
 The segment number comes from IDA's segment name (seg036 -> 36, ovr161 -> 161).  ReMoM ids use s for segNNN and o for
 ovrNNN, but some are written with the wrong letter (WZD s161p04 is ovr161), so ids are looked up by number and a wrong
-letter is reported in id_letter.  Segments renamed in the database (_AIL_, SOUND, dseg) carry no number and are not
-linked, unless given one with --segment SOUND=38.  --addresses (that database's map_addresses.py table) supplies the segment names.
+letter is reported in id_letter.  A segment renamed in the database (_AIL_, SOUND) that follows segNNN in address order is numbered on from it
+(_AIL_ = 37, SOUND = 38 in WIZARDS.EXE); counting stops at the overlay stubs, so dseg gets no number and is not linked.
+--segment NAME=NUMBER overrides.  --addresses (that database's map_addresses.py table) supplies the segment names and
+addresses.
 
 Output: the joined table's columns, then remom_id, remom_function, remom_file, remom_line, remom_evidence, and
 id_letter ("s for an overlay" or "o for a segment" when ReMoM's comment uses the other letter).  Then one row per
@@ -22,14 +24,29 @@ import re
 import sys
 
 NUMBERED = re.compile(r'(seg|ovr)0*(\d+)$', re.I)
+STUB = re.compile(r'stub\d+$', re.I)
 
 
 def segment_numbers(addresses):
-    """{IDA segment name: number} for segNNN and ovrNNN.  Renamed segments (_AIL_, SOUND, dseg) get none: IDA's numbers
-    are not their position in address order (stubNNN and ovrNNN share NNN), so a renamed segment's number is unknown."""
+    """{IDA segment name: number}.  segNNN and ovrNNN carry their number.  A renamed segment (_AIL_, SOUND) that follows
+    segNNN in address order is NNN+1, the next renamed one NNN+2, and so on; counting stops at the first segment whose
+    name carries a number (segNNN, ovrNNN, stubNNN), because past the overlay stubs a segment's place in address order
+    is not its number (stubNNN and ovrNNN share NNN).  So dseg, after the stubs, gets none."""
     with open(addresses, newline='', encoding='utf-8') as f:
-        names = {r['segment'] for r in csv.DictReader(f, delimiter='\t') if r['kind'] == 'S'}
-    return {n: int(m.group(2)) for n in names for m in [NUMBERED.match(n)] if m}
+        segments = sorted((r for r in csv.DictReader(f, delimiter='\t') if r['kind'] == 'S'), key=lambda r: int(r['ida_ea'], 16))
+    numbers, counting = {}, None
+    for s in segments:
+        name = s['segment']
+        m = NUMBERED.match(name)
+        if m:
+            numbers[name] = int(m.group(2))
+            counting = int(m.group(2)) if m.group(1).lower() == 'seg' else None
+        elif STUB.match(name):
+            counting = None
+        elif counting is not None:
+            counting += 1
+            numbers[name] = counting
+    return numbers
 
 
 def main(argv=None):
@@ -40,7 +57,7 @@ def main(argv=None):
     p.add_argument('--addresses', required=True, help="that side's map_addresses.py TSV (for the segment numbers)")
     p.add_argument('--index', required=True, help='TSV from remom_index.py')
     p.add_argument('--segment', action='append', default=[], metavar='NAME=NUMBER',
-                   help='the number of a segment renamed in the database, e.g. SOUND=38 (repeatable)')
+                   help='override the number of a segment renamed in the database, e.g. SOUND=38 (repeatable)')
     p.add_argument('--out', required=True, help='TSV to write')
     args = p.parse_args(argv)
 
