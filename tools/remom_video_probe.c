@@ -432,7 +432,10 @@ static int probe_Spawn_Child(const char * mode, const char * arg1, const char * 
 
     if(self == NULL) { return -1; }
 
-    argv[0] = self;
+    /* CLAUDE: _spawnv() does not quote arguments automatically.  Keep the image path
+       out of argv[0], so spaces in the installation path cannot shift --child and
+       its driver arguments and recursively start the full probe again. */
+    argv[0] = "remom_video_probe";
     argv[1] = mode;
     argv[2] = arg1;
     argv[3] = arg2;
