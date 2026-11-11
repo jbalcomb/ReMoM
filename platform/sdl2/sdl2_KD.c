@@ -77,6 +77,16 @@ void Platform_Keyboard_Event(SDL_Event * sdl2_event)
                 SDL_PushEvent(&sdl2_push_event);
             }
 
+            /* CLAUDE: present stage -- Alt+Enter toggles full screen; the game doesn't see it */
+            if((sdl2_key_modifiers & KMOD_ALT) && (sdl2_key_code == SDLK_RETURN || sdl2_key_code == SDLK_KP_ENTER))
+            {
+                if(!sdl2_event->key.repeat)
+                {
+                    sdl2_Toggle_Fullscreen();
+                }
+                break;
+            }
+
             // 1oom  if(!(Platform_Hotkey(sym, smod, c)))
             {
                 if(sdl2_key_code & SDLK_SCANCODE_MASK)

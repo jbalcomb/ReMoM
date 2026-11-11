@@ -96,6 +96,24 @@ The path may contain spaces (no quotes needed). Put the file here:
 same folder as the executable — no config needed. (`CONFIG.MOM` is optional —
 it's the old DOS sound config; without it ReMoM just uses defaults.)
 
+## Screen shape, size and full screen
+
+Master of Magic was drawn for 4:3 monitors: its 320×200 picture was stretched to fill a 4:3 screen, so every pixel was a
+little taller than wide. ReMoM shows it the same way, as large as the window allows, with black bars on the sides of a
+widescreen display. Resize the window freely; the picture keeps its shape.
+
+- **Alt+Enter** switches between full screen and a window.
+- `REMOM_FULLSCREEN=1` starts full screen.
+- `REMOM_ASPECT=square` shows square pixels instead (a 16:10 picture; circles look slightly flat).
+- `REMOM_SCALING` picks how the picture is enlarged:
+  - `sharp` (default): crisp pixels, all the same size, at any window size.
+  - `smooth`: softer, slightly blurred.
+  - `nearest`: crisp, but some pixel rows and columns come out wider than others when the size isn't a whole multiple.
+  - `integer`: only whole multiples, with a black border around the picture. For perfectly even pixels use it with
+    `REMOM_ASPECT=square`; at 4:3 the rows can't all be the same height.
+
+Set these the same way as `REMOM_DATA_DIR` above. The SDL2 build (the default) supports them so far.
+
 ## Where ReMoM keeps your saves and settings
 
 ReMoM never writes into your original Master of Magic folder — it keeps its own

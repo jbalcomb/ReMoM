@@ -178,12 +178,15 @@ void Platform_Maybe_Move_Mouse(void)
         SDL_GetMouseState(&ix, &iy);
         wx = ix;
         wy = iy;
-        screen_scale = sdl2_window_width / PLATFORM_SCREEN_WIDTH;
-        if(screen_scale < 1) { screen_scale = 1; }
-        gx = wx / screen_scale;
-        gy = wy / screen_scale;
-        SETRANGE(gx, PLATFORM_SCREEN_XMIN, PLATFORM_SCREEN_XMAX);
-        SETRANGE(gy, PLATFORM_SCREEN_YMIN, PLATFORM_SCREEN_YMAX);
+        /* CLAUDE: present stage -- map through the shown frame (aspect, letterbox), not a whole-window scale */
+        // screen_scale = sdl2_window_width / PLATFORM_SCREEN_WIDTH;
+        // if(screen_scale < 1) { screen_scale = 1; }
+        // gx = wx / screen_scale;
+        // gy = wy / screen_scale;
+        // SETRANGE(gx, PLATFORM_SCREEN_XMIN, PLATFORM_SCREEN_XMAX);
+        // SETRANGE(gy, PLATFORM_SCREEN_YMIN, PLATFORM_SCREEN_YMAX);
+        (void)screen_scale;
+        sdl2_Window_To_Game(wx, wy, &gx, &gy);
     }
 
     /* CLAUDE: metrics -- note every sample (moved or not) so net motion between presents is correct. */
@@ -382,9 +385,13 @@ static void pfl_mouse_move(int dx, int dy)
 static void Platform_Update_Mouse_Position(int l_mx, int l_my)
 {
     /* OG: int screen_scale = 2; */
-    int screen_scale = sdl2_window_width / PLATFORM_SCREEN_WIDTH;
-    int gx = l_mx / screen_scale;
-    int gy = l_my / screen_scale;
+    // int screen_scale = sdl2_window_width / PLATFORM_SCREEN_WIDTH;
+    // int gx = l_mx / screen_scale;
+    // int gy = l_my / screen_scale;
+    /* CLAUDE: present stage -- map through the shown frame (aspect, letterbox); outside it the pointer stays on the edge */
+    int gx;
+    int gy;
+    sdl2_Window_To_Game(l_mx, l_my, &gx, &gy);
 
     if(l_mx < PLATFORM_SCREEN_XMIN || l_my < PLATFORM_SCREEN_YMIN || gx > PLATFORM_SCREEN_XMAX || gy > PLATFORM_SCREEN_YMAX)
     {
@@ -426,6 +433,16 @@ void Platform_Window_Event(SDL_WindowEvent *sdl2_window_event)
         case SDL_WINDOWEVENT_RESIZED:
         {
             // hw_video_resize(0, 0);
+        } break;
+
+        /* CLAUDE: present stage -- new window size (or full screen): re-fit the frame and redraw */
+        case SDL_WINDOWEVENT_SIZE_CHANGED:
+        {
+            if(sdl2_Viewport_Update())
+            {
+                sdl2_HW_Cursor_Rebuild();
+            }
+            Platform_Video_Update();
         } break;
 
         case SDL_WINDOWEVENT_EXPOSED:
@@ -596,16 +613,27 @@ void Platform_Event_Handler(void)
                     }
                 }
                 // if(SDL_BUTTON(e.button.button) == SDL_BUTTON_LEFT)
-                if(sdl2_event.button.button == SDL_BUTTON_LEFT)
+                /* CLAUDE: present stage -- User_Mouse_Handler() takes coordinates in a uniform 320*scale x 200*scale space
+                   (it divides by Platform_Get_Window_Width() / 320, as the replay and HeMoM callers expect); map the window
+                   position through the shown frame into that space. Clicks on the black bars are ignored. */
+                {
+                    int click_gx, click_gy;
+                    int on_frame = sdl2_Window_To_Game(sdl2_event.button.x, sdl2_event.button.y, &click_gx, &click_gy);
+                    int16_t click_vx = (int16_t)(click_gx * (sdl2_window_width / PLATFORM_SCREEN_WIDTH));
+                    int16_t click_vy = (int16_t)(click_gy * (sdl2_window_width / PLATFORM_SCREEN_WIDTH));
+                if(on_frame && sdl2_event.button.button == SDL_BUTTON_LEFT)
                 {
                     platform_frame_mouse_buttons |= 1;
-                    User_Mouse_Handler(1 /*0b00000001*/, sdl2_event.button.x, sdl2_event.button.y);
+                    // User_Mouse_Handler(1 /*0b00000001*/, sdl2_event.button.x, sdl2_event.button.y);
+                    User_Mouse_Handler(1 /*0b00000001*/, click_vx, click_vy);
                 }
                 // if(SDL_BUTTON(e.button.button) == SDL_BUTTON_RIGHT)
-                if(sdl2_event.button.button == SDL_BUTTON_RIGHT)
+                if(on_frame && sdl2_event.button.button == SDL_BUTTON_RIGHT)
                 {
                     platform_frame_mouse_buttons |= 2;
-                    User_Mouse_Handler(2 /*0b00000010*/, sdl2_event.button.x, sdl2_event.button.y);
+                    // User_Mouse_Handler(2 /*0b00000010*/, sdl2_event.button.x, sdl2_event.button.y);
+                    User_Mouse_Handler(2 /*0b00000010*/, click_vx, click_vy);
+                }
                 }
                 if(sdl2_event.button.button == SDL_BUTTON_MIDDLE)
                 {

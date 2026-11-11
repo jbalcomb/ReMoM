@@ -249,7 +249,22 @@ void Startup_Platform(void)
     assert(w >= PLATFORM_SCREEN_WIDTH && "window width must be >= PLATFORM_SCREEN_WIDTH");
     assert(h >= PLATFORM_SCREEN_HEIGHT && "window height must be >= PLATFORM_SCREEN_HEIGHT");
 
+    /* CLAUDE: present stage -- open the window at the frame's shown shape (4:3 by default: 1280x960, not 1280x800) */
+    sdl2_Present_Options();
+    if(sdl2_aspect_4x3)
+    {
+        h = (w * 3) / 4;
+    }
+
     sdl2_window_flags = SDL_WINDOW_RESIZABLE;
+    /* CLAUDE: present stage -- REMOM_FULLSCREEN=1 starts full screen at the desktop's resolution */
+    {
+        const char * fs_env = getenv("REMOM_FULLSCREEN");
+        if(fs_env != NULL && fs_env[0] != '\0' && strcmp(fs_env, "0") != 0)
+        {
+            sdl2_window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+        }
+    }
 
     sdl2_window = SDL_CreateWindow(
         sdl2_window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, sdl2_window_flags
@@ -262,12 +277,14 @@ void Startup_Platform(void)
         int actual_w, actual_h;
         SDL_GetWindowSize(sdl2_window, &actual_w, &actual_h);
         LOG_INFO(LOG_CAT_SDL2_INIT, "CLAUDE: requested window %dx%d, got %dx%d", w, h, actual_w, actual_h);
-        assert(actual_w == w && "SDL created window with wrong width");
-        assert(actual_h == h && "SDL created window with wrong height");
+        /* CLAUDE: a full screen window takes the desktop's size */
+        assert(((sdl2_window_flags & SDL_WINDOW_FULLSCREEN) || actual_w == w) && "SDL created window with wrong width");
+        assert(((sdl2_window_flags & SDL_WINDOW_FULLSCREEN) || actual_h == h) && "SDL created window with wrong height");
     }
 
     sdl2_renderer = sdl2_Create_Renderer_With_Fallback(sdl2_window);  /* CLAUDE: logs + software fallback */
     assert(sdl2_renderer != NULL);
+    sdl2_Viewport_Update();  /* CLAUDE: present stage -- mouse mapping is valid before the first frame */
 
     // Create the 8-bit paletted and the 32-bit RGBA screenbuffer surfaces.
 

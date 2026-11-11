@@ -124,6 +124,21 @@ extern uint64_t sdl2_performance_counter;
 extern int sdl2_window_width;
 extern int sdl2_window_height;
 
+/* CLAUDE: present stage -- aspect ratio, fit to window, full screen (sdl2_Video.c) */
+#define SDL2_SCALING_SHARP    0
+#define SDL2_SCALING_SMOOTH   1
+#define SDL2_SCALING_NEAREST  2
+#define SDL2_SCALING_INTEGER  3
+extern int sdl2_aspect_4x3;
+extern int sdl2_scaling;
+extern SDL_Rect sdl2_viewport;
+void sdl2_Present_Options(void);
+int sdl2_Viewport_Update(void);
+int sdl2_Window_To_Game(int wx, int wy, int * gx, int * gy);
+void sdl2_Game_To_Window(int gx, int gy, int * wx, int * wy);
+void sdl2_Toggle_Fullscreen(void);
+void sdl2_HW_Cursor_Rebuild(void);  /* sdl2_MD.c */
+
 
 
 // MOM_PFL.H  extern int platform_mouse_button_status;

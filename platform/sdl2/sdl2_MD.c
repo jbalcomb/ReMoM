@@ -63,9 +63,13 @@ int16_t Platform_Get_Mouse_Button_State(void)
 
 void Platform_Warp_Mouse(int16_t game_x, int16_t game_y)
 {
-    float screen_scale = (float)sdl2_window_width / (float)PLATFORM_SCREEN_WIDTH;
+    // float screen_scale = (float)sdl2_window_width / (float)PLATFORM_SCREEN_WIDTH;
+    int wx, wy;
     /* CLAUDE */  Platform_Set_Warp_Guard();  /* prevent Platform_Maybe_Move_Mouse() from reading stale OS position */
-    SDL_WarpMouseInWindow(sdl2_window, (int)(game_x * screen_scale), (int)(game_y * screen_scale));
+    // SDL_WarpMouseInWindow(sdl2_window, (int)(game_x * screen_scale), (int)(game_y * screen_scale));
+    /* CLAUDE: present stage -- through the shown frame (aspect, letterbox) */
+    sdl2_Game_To_Window(game_x, game_y, &wx, &wy);
+    SDL_WarpMouseInWindow(sdl2_window, wx, wy);
 }
 
 
@@ -115,6 +119,7 @@ void Platform_HW_Cursor_Refresh(void)
     int image;
     int scale;
     int px, py, sx, sy;
+    int cw, ch;  /* CLAUDE: present stage -- cursor size in window coordinates, as shown on the frame */
     const uint8_t * sprite;
     SDL_Surface * surf;
     SDL_Cursor * newcur;
@@ -140,8 +145,15 @@ void Platform_HW_Cursor_Refresh(void)
 
     scale = sdl2_window_width / PLATFORM_SCREEN_WIDTH;
     if(scale < 1) { scale = 1; }
+    /* CLAUDE: present stage -- the frame's scale is no longer whole or the same both ways: size the cursor to the shown frame */
+    cw = (HWCUR_DIM * sdl2_viewport.w + PLATFORM_SCREEN_WIDTH / 2) / PLATFORM_SCREEN_WIDTH;
+    ch = (HWCUR_DIM * sdl2_viewport.h + PLATFORM_SCREEN_HEIGHT / 2) / PLATFORM_SCREEN_HEIGHT;
+    if(cw < HWCUR_DIM) { cw = HWCUR_DIM; }
+    if(ch < HWCUR_DIM) { ch = HWCUR_DIM; }
+    (void)scale;
 
-    surf = SDL_CreateRGBSurfaceWithFormat(0, HWCUR_DIM * scale, HWCUR_DIM * scale, 32, SDL_PIXELFORMAT_ARGB8888);
+    // surf = SDL_CreateRGBSurfaceWithFormat(0, HWCUR_DIM * scale, HWCUR_DIM * scale, 32, SDL_PIXELFORMAT_ARGB8888);
+    surf = SDL_CreateRGBSurfaceWithFormat(0, cw, ch, 32, SDL_PIXELFORMAT_ARGB8888);
     if(surf == NULL) { return; }
 
     sprite = mouse_palette + ((image - 1) * (HWCUR_DIM * HWCUR_DIM));
@@ -164,11 +176,19 @@ void Platform_HW_Cursor_Refresh(void)
                 argb = ((uint32_t)0xFFu << 24) | ((uint32_t)c.r << 16) | ((uint32_t)c.g << 8) | (uint32_t)c.b;
             }
             /* nearest-neighbour upscale by the window scale so the OS cursor matches the drawn size */
-            for(sy = 0; sy < scale; sy++)
+            // for(sy = 0; sy < scale; sy++)
+            // {
+            //     for(sx = 0; sx < scale; sx++)
+            //     {
+            //         dst[(py * scale + sy) * pitch_px + (px * scale + sx)] = argb;
+            //     }
+            // }
+            /* CLAUDE: present stage -- the cursor pixel's block at the frame's (possibly non-whole) scale */
+            for(sy = py * ch / HWCUR_DIM; sy < (py + 1) * ch / HWCUR_DIM; sy++)
             {
-                for(sx = 0; sx < scale; sx++)
+                for(sx = px * cw / HWCUR_DIM; sx < (px + 1) * cw / HWCUR_DIM; sx++)
                 {
-                    dst[(py * scale + sy) * pitch_px + (px * scale + sx)] = argb;
+                    dst[sy * pitch_px + sx] = argb;
                 }
             }
         }
@@ -185,4 +205,11 @@ void Platform_HW_Cursor_Refresh(void)
         if(hwcur_current != NULL) { SDL_FreeCursor(hwcur_current); }
         hwcur_current = newcur;
     }
+}
+
+/* CLAUDE: present stage -- the frame changed size: build the cursor again at the new size */
+void sdl2_HW_Cursor_Rebuild(void)
+{
+    hwcur_last_image = -1;
+    Platform_HW_Cursor_Refresh();
 }
