@@ -1,0 +1,36 @@
+# assert_spell_of_return.txt -- Field-level assertions for DeMoM_Spell_Of_Return.
+#
+# Each non-comment, non-blank line is a "field = expected_value" assertion, checked by check_save_fields
+# against the dump of the SAVE1.GAM that test_spell_of_return.hms saves from the Main Screen.
+#
+# Start state (assets/SAVE_SPELL_OF_RETURN.GAM, made by tools/save_layout.py --make-spell-of-return):
+#   fortress[0] at Banbury (20,7,0), active = 0; Banbury (city 0) owned by player 1;
+#   player[0] casting Spell of Return (214), 1 mana remaining.
+# The scenario ends the turn, the spell completes, and the human picks Cantebury (city 54, at 18,17,0).
+#
+# game.turn is deliberately not asserted: while the human is banished, Get_Winner() names an AI, and an
+# EOG_HACK early return in Next_Turn_Calc() (NEXTTURN.c) cuts that turn short before _turn++.
+
+# --- The save happened from the Main Screen, so the game did not end ---
+player[0].name = Rjak
+
+# --- Cast_Spell_Of_Return(): the fortress moves to the chosen city and is active again ---
+fortress[0].wx = 18
+fortress[0].wy = 17
+fortress[0].wp = 0
+fortress[0].active = 1
+
+# --- Cast_Spell_Of_Return(): summoning point and capital race follow the chosen city ---
+player[0].summon_wx = 18
+player[0].summon_wy = 17
+player[0].summon_wp = 0
+player[0].capital_race = 8
+
+# --- The spell is finished ---
+player[0].casting_spell_idx = 0
+player[0].casting_cost_remaining = 0
+
+# --- Cities: the chosen city is still the human's; the fallen fortress city is not ---
+city[54].name = Cantebury
+city[54].owner_idx = 0
+city[0].owner_idx = 1

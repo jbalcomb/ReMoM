@@ -1,0 +1,47 @@
+# test_spell_of_return.hms
+#
+# Regression test: a banished human wizard completes Spell of Return and picks the city to return to.
+#
+# Usage:
+#   DeMoM --load SAVE_SPELL_OF_RETURN.GAM --seed1 12345 --scenario test_spell_of_return.hms --dump-save SAVE1.GAM
+#
+# SAVE_SPELL_OF_RETURN.GAM is SAVE6.GAM patched by tools/save_layout.py --make-spell-of-return into the state
+# Banish_Wizard() leaves: the fortress city Banbury (20,7) belongs to player 1 and its units are dead,
+# _FORTRESSES[0].active = 0, and the human is casting Spell of Return (214) with 1 mana left.
+#
+# Checked by tests/assert_spell_of_return.txt: the spell completes, the fortress moves to Cantebury (18,17)
+# and is active again, and the game carries on (the save below happens on the Main Screen).
+# Coordinates are game-space (320x200).
+
+wait 1s                   # let the Main Screen settle after --load
+
+# === Patrol the three idle stacks: once every unit has moved, the turn ends by itself ===
+click 290 180             # Patrol button (rect ~280,176 - 313,186)
+wait 300ms
+click 290 180
+wait 300ms
+click 290 180
+wait 1s                   # let the end-of-turn food check open its box
+
+# === "Some units do not have enough food and will die ... allow them to die?" ===
+# Losing Banbury left the human short of food.  Y = Yes (N would decline the end of turn).
+key Y
+
+# === Next Turn: Cast_Spell_Overland -> Cast_Spell_Of_Return -> Spell_Casting_Screen(stt_Friendly_City) ===
+# The picker opens on the overland map with the view origin at (8,12): Cantebury (18,17) is
+# map square (10,5) = screen (10*20+10, 20+5*18+9).
+wait 3s                   # let Next_Turn_Calc run and the picker open
+click 210 119             # Cantebury -- the smallest human city (size 2)
+
+# The cast animation plays.  Its second half (City_Enchantment_Anim_2__WIP) holds the city view for
+# up to 250 frames (~27s) or until any input -- click anywhere to dismiss it.
+wait 4s
+click 160 100
+
+# Next_Turn_Proc returns to the Main Screen.
+# Without the fortress reactivation, Get_Winner() named an AI and the game went to the Main Menu instead.
+wait_screen Main_Screen 30s
+wait 500ms
+
+# === Save the game and quit (shared tail) ===
+include scenario_tail_save_and_quit.hms

@@ -2062,21 +2062,16 @@ int16_t Cast_Spell_Of_Return(int16_t player_idx)
 
     if(return_value == ST_TRUE)
     {
-
         City_Enchantment_Anim_1__WIP(scsv1, spl_Spell_Of_Return, player_idx);
-
         _players[player_idx].summon_wx = _CITIES[scsv1].wx;
         _players[player_idx].summon_wy = _CITIES[scsv1].wy;
         _players[player_idx].summon_wp = _CITIES[scsv1].wp;
-
         _FORTRESSES[player_idx].wx = _CITIES[scsv1].wx;
         _FORTRESSES[player_idx].wy = _CITIES[scsv1].wy;
         _FORTRESSES[player_idx].wp = _CITIES[scsv1].wp;
-
+        _FORTRESSES[player_idx].active = ST_TRUE;
         _players[player_idx].capital_race = _CITIES[scsv1].race;
-
         City_Enchantment_Anim_2__WIP(scsv1, spl_Spell_Of_Return, player_idx);
-
     }
 
     Release_Block(_screen_seg);

@@ -504,6 +504,53 @@ set_tests_properties(DeMoM_AI_Dead_Units_Assertions PROPERTIES
 
 
 # =========================================================================
+#  Spell of Return: a banished human wizard returns
+#
+#  SAVE_SPELL_OF_RETURN.GAM is SAVE6.GAM patched by
+#  tools/save_layout.py --make-spell-of-return into the state Banish_Wizard()
+#  leaves: the fortress city Banbury belongs to player 1 and its units are
+#  dead, _FORTRESSES[0].active = 0, and the human casts Spell of Return with
+#  1 mana left.  test_spell_of_return.hms ends the turn, picks Cantebury in
+#  the Spell of Return city picker, then saves from the Main Screen.
+#
+#  Guards: Cast_Spell_Of_Return() setting _FORTRESSES[].active back to
+#  ST_TRUE (without it Get_Winner() named an AI and the game went to the
+#  Main Menu), and choosing the city in the picker.
+# =========================================================================
+
+demom_stage_workdir(Spell_Of_Return FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET" "${DEMOM_TEST_ASSETS}/SAVE_SPELL_OF_RETURN.GAM")
+
+add_test(
+    NAME DeMoM_Spell_Of_Return_Run
+    COMMAND $<TARGET_FILE:DeMoM>
+        --load SAVE_SPELL_OF_RETURN.GAM
+        --seed1 12345
+        --scenario "${DEMOM_TEST_ASSETS}/test_spell_of_return.hms"
+        --dump-save SAVE1.GAM
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/Spell_Of_Return"
+)
+set_tests_properties(DeMoM_Spell_Of_Return_Run PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
+    TIMEOUT 90
+    FIXTURES_REQUIRED DeMoM_Spell_Of_Return_Workdir
+    FIXTURES_SETUP DeMoM_Spell_Of_Return
+    LABELS "demom;integration;spells"
+)
+
+add_test(
+    NAME DeMoM_Spell_Of_Return_Assertions
+    COMMAND $<TARGET_FILE:check_save_fields>
+        ${DEMOM_WORK_ROOT}/Spell_Of_Return/SAVE1.txt
+        ${CMAKE_CURRENT_SOURCE_DIR}/assert_spell_of_return.txt
+)
+set_tests_properties(DeMoM_Spell_Of_Return_Assertions PROPERTIES
+    FIXTURES_REQUIRED DeMoM_Spell_Of_Return
+    LABELS "demom;integration;spells"
+)
+
+
+
+# =========================================================================
 #  L61: Second Game in One Process == First Game in a Fresh Process
 #
 #  The original restarted the program between games (Respawn MAGIC.EXE on the

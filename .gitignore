@@ -99,6 +99,8 @@ FATV10.BNK
 # Track committed test goldens despite the broad *.gam exclusion above.
 !tests/golden_*.GAM
 !tests/golden_*.gam
+# Test fixture save made by tools/save_layout.py --make-spell-of-return (DeMoM_Spell_Of_Return).
+!assets/SAVE_SPELL_OF_RETURN.GAM
 *.LBX
 *.lbx
 *.MOM
