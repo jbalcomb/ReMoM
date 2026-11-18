@@ -33,7 +33,7 @@ extern "C" {
 // _main
 
 // MGC s01p02
-// SND_Empty_FN
+// Play_Standard_Click_MGC
 
 // MGC s01p03
 void Main_Menu_Screen_Control(void);

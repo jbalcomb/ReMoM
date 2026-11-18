@@ -238,6 +238,17 @@ int16_t Platform_Audio_Play_Sound(void *sound_buffer, uint32_t sound_buffer_size
     Mix_Chunk * sdl3_audio_data_chunk = NULL;
     int sdl3_play_channel_result = 0;
 
+    /* CLAUDE: a sound that was never loaded is "nothing to play", like a buffer without the SNDMAGSIG header below.
+       ReMoM links MAGIC.EXE and WIZARDS.EXE into one program: the shared Warn() / Play_*_Click() call sites play the
+       button clicks, which only Load_WZD_Resources() -> Load_Button_Sounds() loads.  MAGIC.EXE's Warning_Message
+       calls Play_Standard_Click_MGC there instead (MAGIC ovr053), so on the New Game screens -- before any game is loaded --
+       snd_standard_button_click is still NULL, and the header read below faulted on an invalid custom-wizard pick. */
+    if(sound_buffer == NULL)
+    {
+        LOG_DEBUG(LOG_CAT_SDL3_AUDIO, "Platform_Audio_Play_Sound(): NULL sound buffer (size %u) -- sound not loaded, nothing played", (unsigned int)sound_buffer_size);
+        return 1;
+    }
+
     if(GET_2B_OFS(sound_buffer, 0) != SNDMAGSIG)
     {
         return 1;

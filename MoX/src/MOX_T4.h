@@ -141,6 +141,11 @@ void s01p12_empty_function(void);
 // WZD s01p13
 void Play_Left_Click(void);
 
+/* HACK */  extern int16_t g_magic_exe_context;
+
+// MGC s001p02
+void Play_Standard_Click_MGC(void);
+
 // WZD s01p14
 void Play_Standard_Click(void);
 

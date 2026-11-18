@@ -101,7 +101,7 @@ OON XREF:
     MAGIC.EXE
     seg001
         _main                
-        SND_Empty_Fn         
+        Play_Standard_Click_MGC         
         Menu_Screen_Control  
         Load_MGC_Resources   
         Main_Menu_Screen     
@@ -357,29 +357,30 @@ void Play_Left_Click(void)
 }
 
 
-// MGC s001p02
-// WZD s01p14
-// drake178: SND_PlayClickSound()
-// BinAlgo: Play_Message_Sound
 /*
-...in MAGIC.EXE...
-// SND_Empty_Fn()
-// ; used in place of WIZARDS.EXE's SND_PlayClickSound
-void SND_Empty_Fn(void)
+HACK  ReMoM runs MAGIC.EXE (Main Menu, New Game, ...) and WIZARDS.EXE (the game) as one program, and shares code the
+two executables each had their own copy of.  ST_TRUE while the OG would be running MAGIC.EXE: at startup and from
+scr_Main_Menu_Screen on; ST_FALSE from scr_Main_Screen on (every game passes through it).  Set in Screen_Control().
+Lets a shared call site do what the executable it is running for did, e.g. Warn(): MAGIC's Warning_Message calls
+Play_Standard_Click_MGC() where WIZARDS' calls Play_Standard_Click().
+*/
+int16_t g_magic_exe_context = ST_TRUE;
+
+// MGC s001p02
+void Play_Standard_Click_MGC(void)
 {
-/ *
-proc SND_Empty_Fn far
+/*
+proc Play_Standard_Click_MGC far
 push    bp
 mov     bp, sp
 pop     bp
 retf
-endp SND_Empty_Fn
-* /
+endp Play_Standard_Click_MGC
+*/
 }
-*/
-/*
-; if sound effects are enabled, plays the standard mouse click sound
-*/
+// WZD s01p14
+// drake178: SND_PlayClickSound()
+// BinAlgo: Play_Message_Sound
 void Play_Standard_Click(void)
 {
     if(magic_set.sound_effects == ST_TRUE)

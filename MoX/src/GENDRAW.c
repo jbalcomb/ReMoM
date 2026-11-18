@@ -548,9 +548,10 @@ void Warn(char * msg)
     Assign_Auto_Function(Warn_Draw, 1);
 
     UU_var3 = 0;
-
-    Play_Standard_Click();
-
+    // Play_Standard_Click();
+    /* CLAUDE */ /* HACK */
+    /* MAGIC.EXE's Warning_Message (MGC ovr053) calls Play_Standard_Click_MGC here, WIZARDS.EXE's Warn calls Play_Standard_Click; the button sounds are only loaded on the WIZARDS side */
+    if(g_magic_exe_context == ST_TRUE) { Play_Standard_Click_MGC(); } else { Play_Standard_Click(); }
     Wait_For_Input();
 
     Restore_Alias_Colors();

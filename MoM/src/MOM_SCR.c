@@ -198,6 +198,7 @@ void Screen_Control(void)
                     Reset_Game_State();
                     dirty_game_state = ST_FALSE;
                 }
+                /* HACK */  g_magic_exe_context = ST_TRUE;  /* MAGIC.EXE: OG Respawned MAGIC.EXE to show the Main Menu */
                 if(samb_headers_saved == ST_FALSE)
                 {
                     memcpy(units_samb_header, _UNITS, SAMB_HEADER_BYTES);
@@ -433,6 +434,7 @@ void Screen_Control(void)
                 MOUSE_LOG("SCR t=%llu ENTER screen=Main\n", (unsigned long long)Platform_Get_Millies());
 #endif
                 dirty_game_state = ST_TRUE;
+                /* HACK */  g_magic_exe_context = ST_FALSE;  /* WIZARDS.EXE: a game is running */
                 // BEGIN: WZD main()
                 // Load_SAVE_GAM(8)
                 // Load_WZD_Resources()
