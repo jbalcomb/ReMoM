@@ -173,7 +173,7 @@ Provisionally does **not** fit:
 3. **How many *distinct* sprites are there really?** Frame counts and cross-archive reuse are unknown until the catalogue exists. This sizes the entire effort and decides whether hand-review of generative output is even tractable.
 4. **What is the target internal resolution / scale factor(s)?** 2×, 3×, 4×, or a free hi-res? Integer scales keep pixel-art scalers and coordinate math clean; arbitrary scales do not.
 5. **Terrain tessellation and animation registration** — how much of the set has these constraints, and can a seam-aware / frame-coherent process handle them? (§5)
-6. **Where does the offline exporter live and what is authoritative?** `FLIC_Draw()` (`MoX/src/FLIC_Draw.c`) is the format authority. The Phase 1a tracer bullet settled the mechanism: `tools/lbx_image_export.c` links the engine (`STU MOX momlib Platform_Headless`, as `Extract_FONTS_LBX` already does) and calls `FLIC_Draw()` into its own 320×200 page, so there is no second format reader.
+6. **Where does the offline exporter live and what is authoritative?** `FLIC_Draw()` (`MoX/src/FLIC_Draw.c`) is the format authority. The Phase 1a tracer bullet settled the mechanism: `tools/lbx_image_export.c` links the engine (`STU MOX momlib Platform_Windowless`, as `Extract_FONTS_LBX` already does) and calls `FLIC_Draw()` into its own 320×200 page, so there is no second format reader.
 7. **Fonts.** Excluded here (§3), but the eventual approach (raster upscale vs. vector replacement) should not be foreclosed by choices made for sprites.
 
 ---

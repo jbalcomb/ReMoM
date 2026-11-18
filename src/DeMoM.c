@@ -1,7 +1,7 @@
 /**
- * DeMoM.c — Headless ReMoM
+ * DeMoM.c — Windowless ReMoM
  *
- * An entry point for headless/automated operation:
+ * An entry point for windowless/automated operation:
  *   --newgame [ReMoM.ini]   Create a new game from config (skip menus)
  *   --load SAVE3.GAM        Load a save file (skip menus)
  *   --continue              Same as 'Main Menu ' Continue (loads SAVE9.GAM)
@@ -13,7 +13,7 @@
  * No logos, no credits, no main menu music. Initializes the engine,
  * creates or loads a game, and enters Screen_Control().
  *
- * DeMoM is hardwired to the headless platform library — no display, no
+ * DeMoM is hardwired to the windowless platform library — no display, no
  * audio, no external dependencies — regardless of which windowed backend
  * the build's preset chose for ReMoM.
  */
@@ -37,7 +37,7 @@
 #include "../STU/src/STU_GRAF.h"
 
 #include "../platform/include/Platform.h"
-#include "../platform/include/Platform_Perf.h"  /* Perf_Init() -- Mode A headless logic timing */
+#include "../platform/include/Platform_Perf.h"  /* Perf_Init() -- Mode A windowless logic timing */
 #include "../platform/include/Platform_Replay.h"
 #include "../platform/include/Platform_Keys.h"
 
@@ -95,7 +95,7 @@ extern char str_wb__ovr050[];
 
 
 
-/* DeMoM is always headless — no SDL_main / SDL header pull-in needed. */
+/* DeMoM is always windowless — no SDL_main / SDL header pull-in needed. */
 
 
 
@@ -579,7 +579,7 @@ static void New_Game_Settings(struct s_DeMoM_Config *cfg)
 /*
     BEGIN: Game Settings Load
 */
-    if((STU_GRAF_User_DIR(str_MAGIC_SET__ovr050, file_found) == 0) || (STU_GRAF_User_LOF(str_MAGIC_SET__ovr050) == 0))  /* CLAUDE: -> user-data (HEADLESS: CWD) */
+    if((STU_GRAF_User_DIR(str_MAGIC_SET__ovr050, file_found) == 0) || (STU_GRAF_User_LOF(str_MAGIC_SET__ovr050) == 0))  /* CLAUDE: -> user-data (WINDOWLESS: CWD) */
     {
         Set_Default_Game_Settings();
     }
@@ -848,7 +848,7 @@ static void DeMoM_Replay_Log_Field_Hit(void *log, int mouse_x, int mouse_y)
 /*  results as `key = value` text for the CTest assertion step.              */
 /*                                                                           */
 /*  Both combatants must be computer players: the dispatcher then routes to  */
-/*  Strategic_Combat() (auto-resolve), which runs headlessly.  A human  */
+/*  Strategic_Combat() (auto-resolve), which runs windowless.  A human  */
 /*  combatant would route to the tactical battle screen, which this tracer   */
 /*  does not support yet.                                                    */
 /* ========================================================================= */
@@ -968,7 +968,7 @@ static int DeMoM_Combat_Run(int16_t defender_unit_idx, int16_t troop_count, int1
 
     if(tactical == 1)
     {
-        /* Cosmetic-only settings the tactical battle screen honors; disabling them skips per-frame draw/sleep loops (movement animations especially) that make a headless AI-vs-AI battle enormously slow without affecting the combat outcome. */
+        /* Cosmetic-only settings the tactical battle screen honors; disabling them skips per-frame draw/sleep loops (movement animations especially) that make a windowless AI-vs-AI battle enormously slow without affecting the combat outcome. */
         magic_set.movement_animations = ST_FALSE;
         magic_set.sound_effects = ST_FALSE;
         magic_set.background_music = ST_FALSE;
@@ -1582,12 +1582,12 @@ int main(int argc, char *argv[])
        Catches abort()/failed assertions as well as CPU faults; see STU/src/STU_BRAK.h. */
     STU_BRAK_Install();
 
-    /* CLAUDE: performance capture (Mode A -- headless logic timing).  Must come AFTER
+    /* CLAUDE: performance capture (Mode A -- windowless logic timing).  Must come AFTER
        STU_Log_Startup() so the .fwv header can record the severity/CALL_TRACE state the capture ran
        under: numbers taken with tracing on measure the logger, not the game.  No-ops unless
        REMOM_PERF (or the REMOM_INPUT_METRICS alias) is set, and records nothing unless the build
        has PERF_INSTRUMENT.  Perf_Shutdown() runs via atexit(). */
-    Perf_Init("headless",
+    Perf_Init("windowless",
 #ifdef STU_DEBUG
               "Debug"
 #else
@@ -1595,11 +1595,11 @@ int main(int argc, char *argv[])
 #endif
               );
 
-    /* Headless profile: data resolves from CWD (plus REMOM_DATA_DIR override),
+    /* Windowless profile: data resolves from CWD (plus REMOM_DATA_DIR override),
        matching the existing test / matchup harness behavior. */
-    STU_GRAF_Init(STU_GRAF_HEADLESS);
+    STU_GRAF_Init(STU_GRAF_WINDOWLESS);
 
-    /* Fail soft (to stderr, via the headless Platform_Show_Error) if the game
+    /* Fail soft (to stderr, via the windowless Platform_Show_Error) if the game
        data isn't present. */
     if(ReMoM_Preflight_Game_Data() != 0)
     {
@@ -1793,7 +1793,7 @@ int main(int argc, char *argv[])
     if((demom_mode == 5) && (demom_scenario[0] == '\0'))
     {
         Print_Usage(argv[0]);
-        LOG_INFO(LOG_CAT_DEMOM, "\nError: --menu requires --scenario (headless has no other input)");
+        LOG_INFO(LOG_CAT_DEMOM, "\nError: --menu requires --scenario (windowless has no other input)");
         return 1;
     }
 
@@ -2051,7 +2051,7 @@ int main(int argc, char *argv[])
 
     LOG_INFO(LOG_CAT_GENERAL, "[POOL] peak bytes used = %u  (vs POOL_ARENA_CAPACITY)", Pool_Bytes_Peak());  /* CLAUDE: static-pool high-water mark; informs POOL_ARENA_CAPACITY sizing (PLAN-Static-Pool-Allocator Phase 2b) */
     LOG_INFO(LOG_CAT_INTEGRITY, "[POOL] guard mode = %d, arenas carved = %u, tracked = %u", Pool_Guards_Enabled(), Pool_Arena_Count(), Pool_Tracked_Arena_Count());  /* CLAUDE: proves whether the guard check below had anything to check */
-    /* CLAUDE: final integrity checkpoint -- headless runs (next-turn, AI, world-gen) may never reach Main_Screen_Draw(), so check once here; with REMOM_POOL_GUARDS=1 this catches any overrun the run caused */
+    /* CLAUDE: final integrity checkpoint -- windowless runs (next-turn, AI, world-gen) may never reach Main_Screen_Draw(), so check once here; with REMOM_POOL_GUARDS=1 this catches any overrun the run caused */
     LOG_INFO(LOG_CAT_INTEGRITY, "[INTEGRITY] DeMoM shutdown: %d checks failing", Integrity_Checkpoint("DeMoM shutdown"));
 
     LOG_TRACE(LOG_CAT_GENERAL, "TRACE: [%s, %d]: END: DeMoM  main()", __FILE__, __LINE__);

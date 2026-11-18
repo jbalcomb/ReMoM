@@ -100,7 +100,7 @@ target_link_libraries(Extract_FONTS_LBX PRIVATE
     STU
     MOX
     momlib
-    Platform_Headless
+    Platform_Windowless
 )
 
 set_target_properties(Extract_FONTS_LBX PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -121,7 +121,7 @@ target_link_libraries(lbx_image_export PRIVATE
     STU
     MOX
     momlib
-    Platform_Headless
+    Platform_Windowless
 )
 
 set_target_properties(lbx_image_export PROPERTIES POSITION_INDEPENDENT_CODE ON)

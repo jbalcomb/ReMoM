@@ -11,9 +11,9 @@ DeMoM is a separate executable that runs the full Master of Magic game engine wi
 |-----------|------|---------|
 | **DeMoM executable** | `src/DeMoM.c` | Lean entry point — parse CLI, init engine, create/load game, run |
 | **Shared engine init** | `src/ReMoM_Init.c` + `.h` | CONFIG.MOM, sound config, `Init_Drivers()`, `Allocate_Data_Space()`, resource loading — shared by both ReMoM and DeMoM |
-| **Windowless platform backend** | `platform/headless/` | Zero-dependency platform implementation: no SDL, no Win32, no display |
+| **Windowless platform backend** | `platform/windowless/` | Zero-dependency platform implementation: no SDL, no Win32, no display |
 | **Game config file** | `assets/ReMoM.ini` | INI file specifying new game parameters (difficulty, wizard, books, retorts, race, banner) |
-| **SDL offscreen flag** | `--headless` on ReMoM | Sets `SDL_VIDEODRIVER=offscreen` (SDL3) or `dummy` (SDL2) before SDL init |
+| **SDL offscreen flag** | `--offscreen` on ReMoM | Sets `SDL_VIDEODRIVER=offscreen` (SDL3) or `dummy` (SDL2) before SDL init |
 
 
 ## Why We Did It This Way
@@ -30,9 +30,9 @@ The platform abstraction layer (`Platform.h`) was already clean: MoM and MoX nev
 
 ### Two Windowless Approaches
 
-**1. Pure windowless backend (`USE_HEADLESS`)** — A new `platform/headless/` directory with stub implementations.  Zero external dependencies.  Best for CI pipelines, build servers, Docker containers, and platforms where SDL is not installed.
+**1. Pure windowless backend (`USE_WINDOWLESS`)** — A new `platform/windowless/` directory with stub implementations.  Zero external dependencies.  Best for CI pipelines, build servers, Docker containers, and platforms where SDL is not installed.
 
-**2. SDL offscreen mode (`--headless` flag / `SDL_VIDEODRIVER=offscreen`)** — An environment variable trick that tells SDL to create an offscreen rendering surface.  Audio still works.  No code changes to the platform backend.  Best for local testing and replay where you want the full SDL stack but no visible window.
+**2. SDL offscreen mode (`--offscreen` flag / `SDL_VIDEODRIVER=offscreen`)** — An environment variable trick that tells SDL to create an offscreen rendering surface.  Audio still works.  No code changes to the platform backend.  Best for local testing and replay where you want the full SDL stack but no visible window.
 
 DeMoM automatically selects the right approach based on how it was built.
 
@@ -102,15 +102,14 @@ The `.RMR` file format is human-readable CSV:
 
 | Preset | Backend | Use case |
 |--------|---------|----------|
-| `MSVC-headless-debug` | Pure windowless (no SDL) | CI, build servers, no display needed |
-| `clang-headless-debug` | Pure windowless (no SDL) | Linux CI, Docker containers |
+| (none) | Pure windowless (no SDL) | No windowless-only preset exists: DeMoM links `Platform_Windowless` in every preset, so `MSVC-debug` / `clang-debug` build it |
 | `MSVC-debug` | Win32 | Local dev (DeMoM auto-sets SDL_VIDEODRIVER) |
 | Any SDL preset | SDL2/SDL3 | Local dev (DeMoM auto-sets SDL_VIDEODRIVER) |
 
 ```bash
 # Build windowless (zero dependencies)
-cmake --preset MSVC-headless-debug
-cmake --build out/build/MSVC-headless-debug --config Debug --target DeMoM
+cmake --preset MSVC-debug
+cmake --build out/build/MSVC-debug --config Debug --target DeMoM
 
 # Or build alongside the normal game (DeMoM will use SDL offscreen)
 cmake --preset MSVC-debug
@@ -194,7 +193,7 @@ Nature Mastery = T
 ### Step 2: Run DeMoM to create the game
 
 ```bash
-cd out/build/MSVC-headless-debug/bin/Debug/
+cd out/build/MSVC-debug/bin/Debug/
 
 # Create a new game from config — no display, no menus
 ./DeMoM --newgame test_worldgen.ini
@@ -203,7 +202,7 @@ cd out/build/MSVC-headless-debug/bin/Debug/
 Expected output:
 ```
 [DeMoM] SDL video driver set to offscreen
-[headless] Platform started (no display, no audio)
+[windowless] Platform started (no display, no audio)
 [DeMoM] Initializing engine...
 [DeMoM] Loading config: test_worldgen.ini
 [DeMoM] Creating new game: difficulty=3 magic=2 landsize=2 opponents=4 wizard=Freya race=7 banner=1
@@ -256,10 +255,10 @@ After replay completes, `SAVE9.GAM` contains the game state after 5 turns.  You 
 
 set -e
 
-cmake --preset MSVC-headless-debug
-cmake --build out/build/MSVC-headless-debug --config Debug --target DeMoM
+cmake --preset MSVC-debug
+cmake --build out/build/MSVC-debug --config Debug --target DeMoM
 
-cd out/build/MSVC-headless-debug/bin/Debug/
+cd out/build/MSVC-debug/bin/Debug/
 
 # Create configs for each difficulty
 for diff in Intro Easy Normal Hard Impossible; do
@@ -306,13 +305,13 @@ src/
 └── DeMoM.c          Windowless executable entry point
 
 platform/
-├── headless/
-│   ├── headless_PFL.c     Lifecycle + video no-ops + input/mouse stubs
-│   ├── headless_KD.c      Keyboard buffer (no OS key translation)
-│   ├── headless_Timer.c   Portable timer (Win32 + POSIX)
-│   ├── headless_EMM.c     EMS malloc stub
-│   ├── headless_Audio.c   Audio no-op
-│   └── headless_State.c   Platform shared state globals
+├── windowless/
+│   ├── windowless_PFL.c     Lifecycle + video no-ops + input/mouse stubs
+│   ├── windowless_KD.c      Keyboard buffer (no OS key translation)
+│   ├── windowless_Timer.c   Portable timer (Win32 + POSIX)
+│   ├── windowless_EMM.c     EMS malloc stub
+│   ├── windowless_Audio.c   Audio no-op
+│   └── windowless_State.c   Platform shared state globals
 ├── sdl2/                  (existing, unchanged)
 ├── sdl3/                  (existing, unchanged)
 ├── win32/                 (existing, unchanged)

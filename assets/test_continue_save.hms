@@ -11,7 +11,7 @@
 #
 # Notes:
 #   - The save slot name comes from the $SAVE_NAME built-in (expanded to
-#     "AHP-YYYYMMDDHHMM" by Automation_Driver at scenario-load time).
+#     "AD-YYYYMMDDHHMM" by Automation_Driver at scenario-load time).
 #   - Coordinates are game-space (320x200).
 
 # === Home city naming popup (fires immediately on Continue, turn 0) ===

@@ -8,7 +8,7 @@
 #   ./tools/record_next_turn.sh
 #
 # What it does:
-#   1. Generates a fresh deterministic SAVE9.GAM using the headless newgame
+#   1. Generates a fresh deterministic SAVE9.GAM using the windowless newgame
 #      path (seed=12345 from test_worldgen.ini).
 #   2. Dumps SAVE9.GAM to SAVE9.txt as the baseline.
 #   3. Copies SAVE9.GAM into the MSVC-debug (ReMoM) build directory.
@@ -29,7 +29,7 @@
 set -euo pipefail
 
 REPO_ROOT="c:/STU/devel/ReMoM"
-DEMOM_DIR="${REPO_ROOT}/out/build/MSVC-headless-debug/bin/Debug"
+DEMOM_DIR="${REPO_ROOT}/out/build/MSVC-debug/bin/Debug"
 REMOM_DIR="${REPO_ROOT}/out/build/MSVC-debug/bin/Debug"
 ASSETS="${REPO_ROOT}/assets"
 
@@ -37,21 +37,21 @@ PRE_SCENARIO="${ASSETS}/test_continue_pre_next_turn.hms"
 NEWGAME_CONFIG="${ASSETS}/test_worldgen.ini"
 NEWGAME_SCENARIO="${ASSETS}/test_worldgen_smoke.hms"
 
-echo "=== Step 0/5: Rebuild MSVC-headless-debug (DeMoM) and MSVC-debug (ReMoM) ==="
+echo "=== Step 0/5: Rebuild MSVC-debug (DeMoM and ReMoM) ==="
 # Both presets consume shared sources (Artificial_Human_Player.c, platform/*, etc.).  A
 # stale build on either side silently breaks this workflow, so rebuild both
 # before doing anything else.
-cmake --build "${REPO_ROOT}/out/build/MSVC-headless-debug" --config Debug --target DeMoM     >/dev/null
-cmake --build "${REPO_ROOT}/out/build/MSVC-headless-debug" --config Debug --target savedump  >/dev/null || true
+cmake --build "${REPO_ROOT}/out/build/MSVC-debug" --config Debug --target DeMoM     >/dev/null
+cmake --build "${REPO_ROOT}/out/build/MSVC-debug" --config Debug --target savedump  >/dev/null || true
 cmake --build "${REPO_ROOT}/out/build/MSVC-debug"          --config Debug --target ReMoM  >/dev/null
 cmake --build "${REPO_ROOT}/out/build/MSVC-debug"          --config Debug --target savedump  >/dev/null
-echo "  rebuilt: DeMoM (MSVC-headless-debug), ReMoM + savedump (MSVC-debug)"
+echo "  rebuilt: DeMoM (MSVC-debug), ReMoM + savedump (MSVC-debug)"
 
 echo
-echo "=== Step 1/5: Generate fresh SAVE9.GAM (headless, seed=12345) ==="
+echo "=== Step 1/5: Generate fresh SAVE9.GAM (windowless, seed=12345) ==="
 if [ ! -x "${DEMOM_DIR}/DeMoM.exe" ]; then
     echo "FAIL: DeMoM.exe not found at ${DEMOM_DIR}"
-    echo "      Build the MSVC-headless-debug preset first."
+    echo "      Build the MSVC-debug preset first."
     exit 1
 fi
 cd "${DEMOM_DIR}"

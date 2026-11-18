@@ -22,7 +22,7 @@ AC_ARG_ENABLE([static-sdl],
     [], [enable_static_sdl=no])
 
 AC_ARG_WITH([sdl3],
-    AS_HELP_STRING([--with-sdl3], [Use SDL3 instead of SDL2 for ReMoM (default: SDL2). DeMoM is always headless.]),
+    AS_HELP_STRING([--with-sdl3], [Use SDL3 instead of SDL2 for ReMoM (default: SDL2). DeMoM is always windowless.]),
     [], [with_sdl3=no])
 
 # Performance instrumentation -- the Autotools twin of the PERF_INSTRUMENT CMake option
@@ -42,7 +42,7 @@ AM_CONDITIONAL([USE_SDL3], [test "x$with_sdl3" = "xyes"])
 #  SDL detection (SDL2 default, SDL3 opt-in with --with-sdl3)
 #
 #  ReMoM links SDL for the plaform-layer.
-#  DeMoM links a headless version of the platform-layer.
+#  DeMoM links a windowless version of the platform-layer.
 #
 #  PKG_CHECK_MODULES must be at the top level (not nested inside AS_IF)
 #  because autoconf's M4 tracer cannot expand macros through shell quoting.
@@ -138,7 +138,7 @@ echo ""
 echo "  ReMoM $PACKAGE_VERSION"
 echo ""
 echo "  ReMoM backend: $sdl_backend"
-echo "  DeMoM backend:    headless (always)"
+echo "  DeMoM backend:    windowless (always)"
 echo "  Audio support:    $have_mixer"
 echo "  Static SDL:       $enable_static_sdl"
 echo ""

@@ -1,5 +1,5 @@
 /**
- * headless_Timer.c — Headless timer / clock functions.
+ * windowless_Timer.c — Windowless timer / clock functions.
  *
  * Implements Platform_Get_Millies(), Platform_Sleep_Millies(), and
  * Read_System_Clock_Timer() using portable C / OS APIs.
@@ -14,21 +14,21 @@
 #include <unistd.h>
 #endif
 
-static uint64_t headless_ticks_startup = 0;
-static uint64_t headless_micros_startup = 0;
+static uint64_t windowless_ticks_startup = 0;
+static uint64_t windowless_micros_startup = 0;
 
 
 
 #ifdef _WIN32
 
-static uint64_t Headless_Get_Ticks_Ms(void)
+static uint64_t Windowless_Get_Ticks_Ms(void)
 {
     return (uint64_t)GetTickCount64();
 }
 
 /* High-resolution counter for perf instrumentation.  GetTickCount64() above quantizes to the
  * ~15.6 ms system timer interval, which cannot resolve a sub-frame zone; QPC is sub-microsecond. */
-static uint64_t Headless_Get_Ticks_Us(void)
+static uint64_t Windowless_Get_Ticks_Us(void)
 {
     static LARGE_INTEGER freq = { 0 };
     LARGE_INTEGER now;
@@ -36,7 +36,7 @@ static uint64_t Headless_Get_Ticks_Us(void)
     if(freq.QuadPart == 0)
     {
         QueryPerformanceFrequency(&freq);
-        if(freq.QuadPart == 0) { return Headless_Get_Ticks_Ms() * 1000u; }  /* no QPC: fall back, coarse but monotonic */
+        if(freq.QuadPart == 0) { return Windowless_Get_Ticks_Ms() * 1000u; }  /* no QPC: fall back, coarse but monotonic */
     }
     QueryPerformanceCounter(&now);
     /* Split the division so a multi-hour session cannot overflow the numerator. */
@@ -51,14 +51,14 @@ void Platform_Sleep_Millies(uint64_t ms)
 
 #else  /* POSIX */
 
-static uint64_t Headless_Get_Ticks_Ms(void)
+static uint64_t Windowless_Get_Ticks_Ms(void)
 {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
 }
 
-static uint64_t Headless_Get_Ticks_Us(void)
+static uint64_t Windowless_Get_Ticks_Us(void)
 {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -79,20 +79,20 @@ void Platform_Sleep_Millies(uint64_t ms)
 
 uint64_t Platform_Get_Millies(void)
 {
-    if(headless_ticks_startup == 0)
+    if(windowless_ticks_startup == 0)
     {
-        headless_ticks_startup = Headless_Get_Ticks_Ms();
+        windowless_ticks_startup = Windowless_Get_Ticks_Ms();
     }
-    return Headless_Get_Ticks_Ms() - headless_ticks_startup;
+    return Windowless_Get_Ticks_Ms() - windowless_ticks_startup;
 }
 
 uint64_t Platform_Get_Micros(void)
 {
-    if(headless_micros_startup == 0)
+    if(windowless_micros_startup == 0)
     {
-        headless_micros_startup = Headless_Get_Ticks_Us();
+        windowless_micros_startup = Windowless_Get_Ticks_Us();
     }
-    return Headless_Get_Ticks_Us() - headless_micros_startup;
+    return Windowless_Get_Ticks_Us() - windowless_micros_startup;
 }
 
 /*
@@ -101,6 +101,6 @@ uint64_t Platform_Get_Micros(void)
 */
 uint64_t Read_System_Clock_Timer(void)
 {
-    uint64_t ms = Headless_Get_Ticks_Ms();
+    uint64_t ms = Windowless_Get_Ticks_Ms();
     return ms / 55;  /* ~54.925 ms per BIOS timer tick */
 }

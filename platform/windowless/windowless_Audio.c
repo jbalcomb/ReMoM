@@ -1,7 +1,7 @@
 /**
- * headless_Audio.c — Audio stub (headless).
+ * windowless_Audio.c — Audio stub (windowless).
  *
- * No audio output in headless mode.
+ * No audio output in windowless mode.
  */
 
 #include "../../platform/include/Platform.h"

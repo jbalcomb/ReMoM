@@ -56,7 +56,7 @@ set_target_properties(ReMoM PROPERTIES
 
 # =========================================================================
 #  DeMoM — Driven Master of Magic (windowless).
-#  Always built, always headless.  Links Platform_Headless directly so it
+#  Always built, always windowless.  Links Platform_Windowless directly so it
 #  is not affected by which windowed backend the preset chose for ReMoM.
 # =========================================================================
 
@@ -72,7 +72,7 @@ target_link_libraries(DeMoM PUBLIC
     momlib
     MOX
     STU
-    Platform_Headless
+    Platform_Windowless
 )
 
 target_include_directories(DeMoM PUBLIC

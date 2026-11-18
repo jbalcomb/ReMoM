@@ -5,7 +5,7 @@
 # the executables link the appropriate platform implementation themselves.
 #
 # Two distinct libraries are always produced:
-#   Platform_Headless — no display, no audio, no external deps.  DeMoM and
+#   Platform_Windowless — no display, no audio, no external deps.  DeMoM and
 #                       the test executables link this.
 #   Platform          — the windowed backend (SDL2 default, or USE_SDL3 /
 #                       USE_WIN32).  ReMoM links this.
@@ -17,31 +17,31 @@ option(MOUSE_DEBUG "Enable verbose mouse input debug logging to stderr" OFF)
 
 
 # =========================================================================
-#  Platform_Headless — always built, no external dependencies.
+#  Platform_Windowless — always built, no external dependencies.
 # =========================================================================
 
-add_library(Platform_Headless STATIC
-    headless/headless_PFL.c
-    headless/headless_KD.c
-    headless/headless_Timer.c
-    headless/headless_EMM.c
-    headless/headless_Audio.c
-    headless/headless_State.c
+add_library(Platform_Windowless STATIC
+    windowless/windowless_PFL.c
+    windowless/windowless_KD.c
+    windowless/windowless_Timer.c
+    windowless/windowless_EMM.c
+    windowless/windowless_Audio.c
+    windowless/windowless_State.c
     replay/Replay.c
     metrics/PFL_Perf.c
 )
 
-target_include_directories(Platform_Headless PUBLIC
+target_include_directories(Platform_Windowless PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-target_include_directories(Platform_Headless PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/headless
+target_include_directories(Platform_Windowless PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/windowless
 )
 
-target_compile_definitions(Platform_Headless PUBLIC NO_SOUND_LIBRARY)
+target_compile_definitions(Platform_Windowless PUBLIC NO_SOUND_LIBRARY)
 
 if(MOUSE_DEBUG)
-    target_compile_definitions(Platform_Headless PUBLIC MOUSE_DEBUG)
+    target_compile_definitions(Platform_Windowless PUBLIC MOUSE_DEBUG)
 endif()
 
 
@@ -117,7 +117,7 @@ list(APPEND PLATFORM_SOURCES capture/PFL_Capture.c)
 list(APPEND PLATFORM_SOURCES metrics/PFL_Input_Metrics.c)
 
 # Performance layer: the PERF_ZONE/PERF_CALL zone recorder and percentile reporter.  Also built
-# into Platform_Headless above, because the headless DeMoM runner is where logic timing (Mode A)
+# into Platform_Windowless above, because the windowless DeMoM runner is where logic timing (Mode A)
 # is measured.  The zone macros are compiled out unless the PERF_INSTRUMENT build option is ON;
 # this file is always compiled so the runtime gate and reporter link either way.
 list(APPEND PLATFORM_SOURCES metrics/PFL_Perf.c)

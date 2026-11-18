@@ -49,15 +49,15 @@ target_include_directories(MOX PRIVATE
 
 # MoX needs the platform/include path for Platform.h / Platform_Keys.h /
 # Platform_Replay.h, but does NOT link any platform library.  The actual
-# implementation library (Platform_Headless or Platform) is linked by the
+# implementation library (Platform_Windowless or Platform) is linked by the
 # executables (DeMoM, ReMoM, tests) — keeping MoX library-agnostic lets
-# the same MoX object code be linked into both headless and windowed builds.
+# the same MoX object code be linked into both windowless and windowed builds.
 target_include_directories(MOX PUBLIC
     ${PROJECT_SOURCE_DIR}/platform/include
 )
 
 # When the windowed backend is win32, MoX uses Pump_Events()/Pump_Paints()
-# under #ifdef _STU_WIN.  The headless backend provides stubs for these so
+# under #ifdef _STU_WIN.  The windowless backend provides stubs for these so
 # DeMoM still links cleanly.
 if(USE_WIN32)
     target_compile_definitions(MOX PUBLIC _STU_WIN)

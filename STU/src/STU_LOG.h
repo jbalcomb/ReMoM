@@ -39,7 +39,7 @@ extern "C" {
         LOG_CAT_IKI = 5,
         LOG_CAT_LOADSAVE = 6,
         LOG_CAT_AIDUDES = 7,
-        LOG_CAT_HEADLESS_PFL = 8,
+        LOG_CAT_WINDOWLESS_PFL = 8,
         LOG_CAT_REPLAY = 9,
         LOG_CAT_SDL2_AUDIO = 10,
         LOG_CAT_SDL2_INIT = 11,

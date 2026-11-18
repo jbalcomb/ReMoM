@@ -15,7 +15,7 @@ AM_CFLAGS = -Wall -Wno-array-bounds -Wno-maybe-uninitialized -Wno-missing-braces
 noinst_LIBRARIES = \
     libstu.a \
     libplatform.a \
-    libplatform_headless.a \
+    libplatform_windowless.a \
     libmox.a \
     libmom.a
 
@@ -117,24 +117,24 @@ libplatform_a_CFLAGS += $(SDL_MIXER_CFLAGS)
 endif
 
 # -------------------------------------------------------------------------
-#  Platform_Headless — always built, no external dependencies.
+#  Platform_Windowless — always built, no external dependencies.
 #  DeMoM links this regardless of the ReMoM backend choice.
 # -------------------------------------------------------------------------
 
-libplatform_headless_a_SOURCES = \
-    platform/headless/headless_PFL.c \
-    platform/headless/headless_KD.c \
-    platform/headless/headless_Timer.c \
-    platform/headless/headless_EMM.c \
-    platform/headless/headless_Audio.c \
-    platform/headless/headless_State.c \
+libplatform_windowless_a_SOURCES = \
+    platform/windowless/windowless_PFL.c \
+    platform/windowless/windowless_KD.c \
+    platform/windowless/windowless_Timer.c \
+    platform/windowless/windowless_EMM.c \
+    platform/windowless/windowless_Audio.c \
+    platform/windowless/windowless_State.c \
     platform/metrics/PFL_Perf.c \
     platform/replay/Replay.c
 
-libplatform_headless_a_CFLAGS = $(AM_CFLAGS) \
+libplatform_windowless_a_CFLAGS = $(AM_CFLAGS) \
     -DNO_SOUND_LIBRARY \
     -I$(srcdir)/platform/include \
-    -I$(srcdir)/platform/headless
+    -I$(srcdir)/platform/windowless
 
 # -------------------------------------------------------------------------
 #  MoX
@@ -324,7 +324,7 @@ bin_PROGRAMS += DeMoM
 DeMoM_SOURCES = \
     src/DeMoM.c \
     src/ReMoM_Init.c \
-    src/Game_Save_Dump.c \ 
+    src/Game_Save_Dump.c \
     src/Automation_Driver.c
 
 DeMoM_CFLAGS = $(AM_CFLAGS) \
@@ -342,6 +342,6 @@ DeMoM_LDFLAGS = -rdynamic
 DeMoM_LDADD = \
     libmom.a \
     libmox.a \
-    libplatform_headless.a \
+    libplatform_windowless.a \
     libstu.a \
     -lm

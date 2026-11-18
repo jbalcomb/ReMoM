@@ -91,7 +91,7 @@ never-satisfied condition advances instead of hanging a CI run; `NAME` maps to `
 
 ### Variables
 
-Only `$SAVE_NAME` exists today — `AHP-YYYYMMDDHHMM`, populated at load. Substitution runs **only inside `type`**.
+Only `$SAVE_NAME` exists today — `AD-YYYYMMDDHHMM`, populated at load. Substitution runs **only inside `type`**.
 Max 4 variables.
 
 ## Named actions — clicking fields by name

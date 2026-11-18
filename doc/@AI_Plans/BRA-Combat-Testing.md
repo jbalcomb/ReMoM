@@ -51,9 +51,9 @@ The mistake this document exists to record: an early, unstated decision collapse
 The decisive criterion turned out to be **fidelity of substrate**: does the code run where it was designed to run?
 
 - `Strategic_Combat__WIP` (auto-resolve) is **pure computation** — no battle screen. It was *designed* to run without rendering. Windowless is its native substrate.
-- `Combat_Screen__WIP` (tactical) is a **rendering, interactive screen** — animations, palette cycling, LBX graphic reloads, a per-frame draw loop, and an input loop. It was *designed* to run windowed against a real display. `demo_vga` is the existing precedent: a windowed harness that links the real `Platform` (not `Platform_Headless`) precisely because video effects are visual.
+- `Combat_Screen__WIP` (tactical) is a **rendering, interactive screen** — animations, palette cycling, LBX graphic reloads, a per-frame draw loop, and an input loop. It was *designed* to run windowed against a real display. `demo_vga` is the existing precedent: a windowed harness that links the real `Platform` (not `Platform_Windowless`) precisely because video effects are visual.
 
-Forcing the tactical screen through `Platform_Headless` violated substrate fidelity. Every failure encountered while doing so was a symptom of running a renderer with no renderer, **not** a combat bug:
+Forcing the tactical screen through `Platform_Windowless` violated substrate fidelity. Every failure encountered while doing so was a symptom of running a renderer with no renderer, **not** a combat bug:
 
 - empty-tileset LBX loader hang on shore/water terrain,
 - `_getch()` blocking on fatal-exit under a non-interactive console,
@@ -68,7 +68,7 @@ The one genuine combat finding surfaced during the detour was substrate-independ
 ## 4. Options considered
 
 ### Option A — Everything windowless (DeMoM + CTest), tactical included
-Drive `Combat_Screen__WIP` under `Platform_Headless` with forced auto-combat so the AI plays both sides with no input.
+Drive `Combat_Screen__WIP` under `Platform_Windowless` with forced auto-combat so the AI plays both sides with no input.
 
 - **Pros:** maximal reuse of DeMoM fixtures and assertion tooling; one harness; CI-friendly.
 - **Cons:** wrong substrate for the tactical screen; fought animation/draw/palette machinery; nondeterministic; converts presentation bugs into test-harness bugs; grinding each symptom is open-ended reconstruction work.
@@ -112,7 +112,7 @@ Guiding principle: **test code on the substrate it was designed for.** Strategic
 
 **Did not fit the goal:**
 
-- Tactical combat under `Platform_Headless`: failed the substrate-fidelity criterion. It produced nondeterministic hangs/crashes that are presentation-layer artifacts, not combat regressions — noise that would erode trust in the suite. Rejected.
+- Tactical combat under `Platform_Windowless`: failed the substrate-fidelity criterion. It produced nondeterministic hangs/crashes that are presentation-layer artifacts, not combat regressions — noise that would erode trust in the suite. Rejected.
 - Treating "combat testing" as a single automated-assertion deliverable: conflated three distinct goals with three distinct substrates. Rejected.
 
 ---

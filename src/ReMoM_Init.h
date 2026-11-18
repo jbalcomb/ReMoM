@@ -2,7 +2,7 @@
  * ReMoM_Init.h — Shared engine initialization for ReMoM and DeMoM.
  *
  * ReMoM_Init_Engine() performs the core initialization sequence needed by
- * both the full game (ReMoM) and the headless tool (DeMoM):
+ * both the full game (ReMoM) and the windowless tool (DeMoM):
  *   - Load CONFIG.MOM and MAGIC.SET
  *   - Configure sound driver IDs
  *   - Validate save files
@@ -28,7 +28,7 @@ void ReMoM_Init_Engine(void);
  * Fail-soft check for the presence of the original Master of Magic game data.
  * Resolves a small set of required .LBX files via the STU_GRAF search path.
  * If any are missing, shows a clear, actionable error (GUI box on player
- * builds, stderr on headless) and returns non-zero; the caller should exit.
+ * builds, stderr on windowless) and returns non-zero; the caller should exit.
  * Returns 0 when the data is present.  Call after STU_GRAF_Init() and before
  * the first asset load.
  */
@@ -38,7 +38,7 @@ int ReMoM_Preflight_Game_Data(void);
  * First-run seeding of the writable per-user files.  Copies CONFIG.MOM (and
  * MAGIC.SET, if the install ships one) from the discovered game-data dir into
  * the user-data dir the first time; thereafter the engine reads/writes those
- * copies and the originals are never modified.  A no-op under the HEADLESS
+ * copies and the originals are never modified.  A no-op under the WINDOWLESS
  * profile (DeMoM keeps CWD).  Call after ReMoM_Preflight_Game_Data() succeeds
  * and before ReMoM_Init_Engine().
  */

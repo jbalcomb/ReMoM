@@ -97,7 +97,7 @@ void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi
 // WZD s014p02
 /*
 also in MoO1, but also unused
-seems like maybe a debug init, without video or audio ... headless?
+seems like maybe a debug init, without video or audio ... windowless?
 */
 void UU_Legacy_Startup(int input_type, int midi_driver, int sound_channels, char * font_file)
 {

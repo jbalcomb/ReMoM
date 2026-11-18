@@ -5,7 +5,7 @@
 #   - Opens the Game menu (G hotkey)
 #   - Clicks save slot 1 to activate its name input
 #   - Clears any existing slot name (20 backspaces — harmless if already empty)
-#   - Types the value of $SAVE_NAME (built-in: `AHP-YYYYMMDDHHMM`)
+#   - Types the value of $SAVE_NAME (built-in: `AD-YYYYMMDDHHMM`)
 #   - Clicks the Save button to commit SAVE1.GAM
 #   - Returns to Main Menu via the Quit button on the Save/Load screen
 #   - Hits Q on the Main Menu to reach scr_Quit_To_DOS
@@ -48,7 +48,7 @@ backspace
 backspace
 
 # Type the run-specific save name.  $SAVE_NAME expands at parse time to
-# something like "AHP-202604081435".
+# something like "AD-202604081435".
 type $SAVE_NAME
 
 wait 300ms

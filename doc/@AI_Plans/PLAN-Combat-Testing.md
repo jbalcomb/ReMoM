@@ -15,12 +15,12 @@ Test combat all the way through — both tactical (battle screen, turn-by-turn) 
 
 ### Test infrastructure
 
-- **DeMoM** (`src/DeMoM.c`) is the windowless integration harness: `--newgame [ReMoM.ini]`, `--load SAVEn.GAM`, `--continue`, `--scenario FILE.hms`, `--record`/`--replay FILE.RMR`, `--dump-save`, `--seed`. It links `momlib MOX STU Platform_Headless` and replicates the ReMoM menu path's RNG draws (e.g. the 66-draw `Randomize_Book_Heights()`) so seed streams align between windowless and windowed runs.
+- **DeMoM** (`src/DeMoM.c`) is the windowless integration harness: `--newgame [ReMoM.ini]`, `--load SAVEn.GAM`, `--continue`, `--scenario FILE.hms`, `--record`/`--replay FILE.RMR`, `--dump-save`, `--seed`. It links `momlib MOX STU Platform_Windowless` and replicates the ReMoM menu path's RNG draws (e.g. the 66-draw `Randomize_Book_Heights()`) so seed streams align between windowless and windowed runs.
 - **Scenario scripts** (`assets/*.hms`, parsed by `src/Automation_Driver.c`) inject one input action per frame (clicks, keys, `next_turn`, `wait`) through the same path the replay system uses.
 - **CTest fixtures** (`tests/CMakeLists.txt`) chain Setup → Run → Assertions so validation only runs after a successful setup (see the `DeMoM_Continue_*` and `DeMoM_AIBehavior_*` groups). Run with `ctest -R "DeMoM_"` — always the whole DeMoM suite, never a single scoped test.
 - **Checkers:** `tests/check_save_fields.c` compares a `Game_Save_Dump` text dump against an `assert_*.txt` file of exact `key = value` expectations, with `# NONDET`-commented opt-outs for fields that are not yet deterministic. `tests/check_ai_metrics.c` evaluates `LIVENESS`/`BOUNDS` range rules against CSV metrics.
 - **Determinism:** `Random(n)` is a pure function of the global `random_seed` (`MoX/src/random.c`). `--seed N` is parsed centrally by `Check_Command_Line_Parameters_` (`MoX/src/MOX2.c`) into `_cmd_line_seed`; INI `seed=` goes through `Set_Random_Seed()`. Byte-level golden saves are invalid (uninitialized padding regions); curated field assertions are the working pattern.
-- **GTest unit targets:** `MOM_tests` (`MoM/tests/`) links `momlib + MOX + STU + Platform_Headless` and runs windowless; the worldgen tests (`test_Create_Lair.cpp`, `test_Init_New_Game.cpp`, …) are the pattern for seeded module tests.
+- **GTest unit targets:** `MOM_tests` (`MoM/tests/`) links `momlib + MOX + STU + Platform_Windowless` and runs windowless; the worldgen tests (`test_Create_Lair.cpp`, `test_Init_New_Game.cpp`, …) are the pattern for seeded module tests.
 - **Record & replay** (`platform/replay/Replay.c`, `.RMR` files) exists but has no CTest wiring; it is frame/coordinate-based and is the wrong tool for combat logic (right tool for input-path/pixel regressions).
 
 ### Combat code
@@ -52,7 +52,7 @@ Synthesize `s_BATTLE_UNIT` fixtures directly, call `Set_Random_Seed()`, test the
 New mode: load a crafted save, call `Set_Random_Seed()` *immediately before* combat entry (so overland history cannot shift the rolls), set `_combat_wx/wy/wp` and the troop list, call `Combat__WIP()` directly.
 
 - **Strategic:** both sides AI → `Strategic_Combat__WIP` runs as-is, windowless today.
-- **Tactical AI-vs-AI:** force the tactical path with `_auto_combat_flag = ST_TRUE`. Unproven piece: the tactical alloc/draw path (`Allocate_Combat_Base_Blocks`, `Combat_Screen_Load_Resources`, `Cache_Graphics_Combat`, `PageFlip_FX`) under `Platform_Headless` — this is the tracer bullet.
+- **Tactical AI-vs-AI:** force the tactical path with `_auto_combat_flag = ST_TRUE`. Unproven piece: the tactical alloc/draw path (`Allocate_Combat_Base_Blocks`, `Combat_Screen_Load_Resources`, `Cache_Graphics_Combat`, `PageFlip_FX`) under `Platform_Windowless` — this is the tracer bullet.
 
 After `End_Of_Combat`, write the `Combat_Dump` and assert. Scenario matrix: open-field stack fight, city assault with walls, lair, flee/retreat, turn-50 timeout — several seeds each.
 
@@ -74,4 +74,4 @@ Reuse the fixture chain: `DeMoM_Combat_Setup` (seeded newgame + positioning writ
 
 ## Open risk
 
-The single unverified premise is step 2: that `Combat_Screen__WIP` runs to completion under `Platform_Headless` with `_auto_combat_flag` set. Other full screens run windowless in DeMoM, but the combat screen has never been driven that way. Everything else assembles parts that demonstrably work today.
+The single unverified premise is step 2: that `Combat_Screen__WIP` runs to completion under `Platform_Windowless` with `_auto_combat_flag` set. Other full screens run windowless in DeMoM, but the combat screen has never been driven that way. Everything else assembles parts that demonstrably work today.

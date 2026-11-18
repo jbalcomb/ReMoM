@@ -286,7 +286,7 @@ void Quit_With_Message(char * string)
     // _getch();  // 6031 Return value ignored
     // char ch = _getch();
     /* CLAUDE: only pause for a keypress at an interactive console.  Under a
-       headless / redirected-stdin run (DeMoM, CTest, CI) _getch() blocks
+       windowless / redirected-stdin run (DeMoM, CTest, CI) _getch() blocks
        forever waiting for a key that never arrives, turning every fatal
        error into a hang instead of a clean exit-with-message. */
     if(_isatty(_fileno(stdin)))

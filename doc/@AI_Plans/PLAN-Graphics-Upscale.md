@@ -51,11 +51,11 @@ Make ReMoM present sharper than 320×200 without ceasing to look like Master of 
 Prove the whole pipeline on the least-ambiguous content before scaling out.
 
 - Take the existing `lbx_extract` container reader; add a pixel decoder for **one** simple, single-frame archive (a full-screen UI/background like `MAINSCRN.LBX` or a portrait from `PORTRAIT.LBX` — fixed size, no animation, minimal recolouring).
-- Decide the reuse mechanism here: lift `FLIC_Draw_Frame()`'s decode into a standalone tool, or link `momlib`/`MOX` and render into an off-screen 320×200 buffer via `Platform_Headless` (`platform/headless/`)? Pick the one that keeps a **single** authoritative decoder.
+- Decide the reuse mechanism here: lift `FLIC_Draw_Frame()`'s decode into a standalone tool, or link `momlib`/`MOX` and render into an off-screen 320×200 buffer via `Platform_Windowless` (`platform/windowless/`)? Pick the one that keeps a **single** authoritative decoder.
 - Output: an index-map PNG (or index array + palette) **and** an RGB PNG under the entry's palette.
 - **Validation:** compare the RGB PNG against a screenshot of the same asset in-game; assert exported dimensions equal the `w@0 / h@2` header. This is the go/no-go for the approach.
 
-**1a outcome (2026-10-29).** `tools/lbx_image_export.c` (CMake-only, like every other tool) links `STU MOX momlib Platform_Headless` and calls the engine's `FLIC_Draw()` into its own 320×200 page — the reuse mechanism is "link the engine", and there is one FLIC reader. Built and run in WSL (`clang-nosound-debug`, no warnings); the MSVC presets are blocked while the Windows SDK is missing.
+**1a outcome (2026-10-29).** `tools/lbx_image_export.c` (CMake-only, like every other tool) links `STU MOX momlib Platform_Windowless` and calls the engine's `FLIC_Draw()` into its own 320×200 page — the reuse mechanism is "link the engine", and there is one FLIC reader. Built and run in WSL (`clang-nosound-debug`, no warnings); the MSVC presets are blocked while the Windows SDK is missing.
 
 - **Entry:** LOAD.LBX entry 0 — 320×200, one frame, its own full 0..255 palette, no remap flag. Exported image is the Load/Save screen with correct colours.
 - **Transparency** is recovered by drawing twice onto pages pre-filled `0x00` and `0xFF`: pixels that differ were never written. A write outside the declared box is counted as a decode error (none seen).

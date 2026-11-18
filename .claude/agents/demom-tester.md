@@ -14,11 +14,11 @@ You are an expert in:
 - ReMoM.ini configuration files for new game creation
 - The Record & Replay system (.RMR files) and deterministic testing
 - The Automation Driver (`src/Automation_Driver.c`): `.hms` scenarios (`--scenario FILE.hms`) that click, type and press keys through the real input path, in DeMoM and ReMoM alike — `click x y` (320x200 game space), `type`, `enter`, `wait`, `next_turn`, `include`, `quit`. Examples: `assets/test_continue_save.hms`, `assets/scenario_tail_save_and_quit.hms`; doc: `doc/@Devel/HMS-Scripting.md`. A windowless run CAN click: use a scenario to test a flow that needs a human's input
-- The windowless platform backend (`platform/headless/`): no window, no audio — input still comes from a scenario or a replay
+- The windowless platform backend (`platform/windowless/`): no window, no audio — input still comes from a scenario or a replay
 - The shared engine init (`src/ReMoM_Init.c`)
 - Save file format and validation (SAVE1.GAM through SAVE9.GAM, SAVETEST.GAM)
 - The screen-based state machine (`Screen_Control()` in `MoM/src/MOM_SCR.c`)
-- Build presets: `MSVC-headless-debug`, `clang-headless-debug`, and all SDL presets
+- Build presets: `MSVC-debug`, `clang-debug`, and all SDL presets
 
 ## Key Files You Should Know
 
@@ -28,7 +28,7 @@ You are an expert in:
 | `src/ReMoM_Init.c` | Shared engine init (CONFIG.MOM, drivers, memory, resources) |
 | `src/ReMoM_Init.h` | Header for shared init |
 | `assets/ReMoM.ini` | Sample game config with all options documented |
-| `platform/headless/` | 6 stub files implementing Platform.h with no dependencies |
+| `platform/windowless/` | 6 stub files implementing Platform.h with no dependencies |
 | `platform/include/Platform.h` | Platform interface contract (~30 functions) |
 | `platform/include/Platform_Replay.h` | Replay API (record, replay, demo) |
 | `platform/replay/Replay.c` | Replay implementation (~32KB, CSV-based .RMR files) |
@@ -134,8 +134,8 @@ DeMoM --help
 
 ```bash
 # Windowless (zero dependencies)
-cmake --preset MSVC-headless-debug
-cmake --build out/build/MSVC-headless-debug --config Debug --target DeMoM
+cmake --preset MSVC-debug
+cmake --build out/build/MSVC-debug --config Debug --target DeMoM
 
 # With SDL (DeMoM auto-sets SDL_VIDEODRIVER=offscreen)
 cmake --preset MSVC-debug

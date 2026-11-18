@@ -2,7 +2,7 @@
  * ReMoM_Init.c — Shared engine initialization for ReMoM and DeMoM.
  *
  * Extracted from MOM_main() in ReMoM.c. This is the core init sequence
- * that both the full game and the headless tool need:
+ * that both the full game and the windowless tool need:
  *   CONFIG.MOM -> sound config -> Init_Drivers -> Allocate_Data_Space -> resources
  */
 
@@ -132,7 +132,7 @@ void ReMoM_Seed_User_Files(void)
     char name[32];
 
     /* Copy-if-absent from the discovered game data into the user data dir; the
-       originals are never modified and this is a no-op under HEADLESS.  Covers
+       originals are never modified and this is a no-op under WINDOWLESS.  Covers
        CONFIG.MOM, MAGIC.SET, and any existing SAVE1-9.GAM that live alongside the
        game data (so saved games aren't orphaned on the move to per-user dirs). */
     for(i = 0; i < REMOM_USER_FILE_COUNT; i++)

@@ -13,7 +13,7 @@ gtest_discover_tests(hello_test
 # =========================================================================
 #  DeMoM Integration Tests
 #
-#  These tests use the DeMoM headless executable to run game scenarios
+#  These tests use the DeMoM windowless executable to run game scenarios
 #  and validate results. Each test is a pair:
 #    1. Run DeMoM with a config + scenario (must exit 0)
 #    2. Validate the output (save file exists, correct size)
@@ -238,7 +238,7 @@ set_tests_properties(DeMoM_NextTurn_Assertions PROPERTIES
 # =========================================================================
 #  AI Behavior Test
 #
-#  Runs 5 turns headlessly with --ai-metrics enabled, then evaluates the
+#  Runs 5 turns windowless with --ai-metrics enabled, then evaluates the
 #  resulting CSV files against behavioral assertions using check_ai_metrics.
 #
 #  Assertions cover:
@@ -277,11 +277,11 @@ set_tests_properties(DeMoM_AIBehavior_Setup PROPERTIES
 #      ignored (not a debug build)" under Release), so the Evaluate step
 #      has nothing to assert against in Release builds.
 #   2. The scenario_tail_save_and_quit.hms tail's click (62,177) on the
-#      Save/Load Quit button is flaky under MSVC-release headless --
+#      Save/Load Quit button is flaky under MSVC-release windowless --
 #      ~1-of-3 runs hang because the click doesn't fire the screen
 #      transition back to Main Menu, so quit_game_flag never gets set
 #      and the game idles until TIMEOUT. Under Debug it always works.
-#      Root cause is in headless input dispatch, not in our metrics or
+#      Root cause is in windowless input dispatch, not in our metrics or
 #      the scenario itself.
 #
 # "Debug-only" is expressed via add_test()'s CONFIGURATIONS argument, NOT a
@@ -536,9 +536,9 @@ set_tests_properties(DeMoM_L61_Compare PROPERTIES
 #
 #  The full scenario runs WINDOWED -- ReMoM drives the real tactical screen
 #  from combat_s1.hms, which needs a display.  So the replay is gated behind
-#  ENABLE_WINDOWED_COMBAT_TESTS and executed on demand.  There is no headless
+#  ENABLE_WINDOWED_COMBAT_TESTS and executed on demand.  There is no windowless
 #  CI check: tactical combat is a rendering screen and cannot run under
-#  Platform_Headless (see BRA-Combat-Testing.md), so the assertions in
+#  Platform_Windowless (see BRA-Combat-Testing.md), so the assertions in
 #  assert_combat_s1.txt can only be produced and checked through the windowed
 #  replay below.
 # =========================================================================
@@ -611,8 +611,8 @@ endif()
 #  razed, one attacker survives at the city square.  See assert_combat_s2.txt.
 #
 #  Same structure as scenario 1: on-demand windowed replay gated by
-#  ENABLE_WINDOWED_COMBAT_TESTS.  No headless CI check -- tactical combat
-#  cannot run under Platform_Headless (see BRA-Combat-Testing.md).
+#  ENABLE_WINDOWED_COMBAT_TESTS.  No windowless CI check -- tactical combat
+#  cannot run under Platform_Windowless (see BRA-Combat-Testing.md).
 # =========================================================================
 
 # --- On-demand windowed replay (needs a display; OFF by default) ---
@@ -675,7 +675,7 @@ endif()
 
 # --- Fail-soft: missing game data ---
 # DeMoM with nothing on its search path must print the actionable message and
-# exit cleanly (headless Platform_Show_Error -> stderr), not crash.  Runs in an
+# exit cleanly (windowless Platform_Show_Error -> stderr), not crash.  Runs in an
 # empty working dir with REMOM_DATA_DIR cleared so nothing resolves.
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/no_data")
 add_test(

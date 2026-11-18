@@ -8,7 +8,7 @@ Defaults to the matchup workflow:
                                        Automation Driver or replay to fire
                                        past the new-game save step)
     cwd   bin/Debug/                  (SAVE*.GAM writes land here)
-    headless                          (SDL_VIDEODRIVER=offscreen)
+    windowless                          (SDL_VIDEODRIVER=offscreen)
 
 Output:
     bin/Debug/SAVE<save_slot+1>.GAM   (verified rewritten this run)
@@ -46,7 +46,7 @@ def main(argv: list[str]) -> int:
                     help="MoM save_slot (0..8) the --newgame INI writes to; "
                          "used to verify SAVE<N+1>.GAM was rewritten (default: 1)")
     ap.add_argument("--gui", action="store_true",
-                    help="run windowed (default: headless via SDL_VIDEODRIVER=offscreen)")
+                    help="run windowed (default: windowless via SDL_VIDEODRIVER=offscreen)")
     ap.add_argument("demom_args", nargs="*",
                     help="extra args forwarded to DeMoM after --")
     args = ap.parse_args(argv)
@@ -66,7 +66,7 @@ def main(argv: list[str]) -> int:
     print(f"  seed      : {seed}")
     print(f"  save_slot : {args.save_slot}  (expects {L.slot_to_save_filename(args.save_slot)})")
     print(f"  cwd       : {L.BUILD_DIR}")
-    print(f"  headless  : {not args.gui}")
+    print(f"  windowless  : {not args.gui}")
     print()
 
     try:
@@ -77,7 +77,7 @@ def main(argv: list[str]) -> int:
             rmr=args.rmr,
             save_slot=args.save_slot,
             extra_args=args.demom_args,
-            headless=not args.gui,
+            windowless=not args.gui,
         )
     except FileNotFoundError as e:
         print(f"ERROR: {e}", file=sys.stderr)

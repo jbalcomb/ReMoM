@@ -112,7 +112,7 @@ Supporting decisions taken with the same stroke:
 
 1. **SDL2 is the reference backend.** It is what shipped and what users are reporting on ([`PRD-SDL2-Platform-Backend.md`](PRD-SDL2-Platform-Backend.md)). Instrument at the seams so SDL3 inherits the same hooks, but validate against SDL2 first.
 2. **Latency and jitter are reported separately, as distributions, never as a mean.** A 60 fps *average* with a fat tail of 40 ms gaps is exactly the "stutter" being reported; percentiles (p50/p95/p99) expose it, the mean hides it.
-3. **Windowed is the only valid substrate.** Input measurement links the real `Platform`, not `Platform_Headless` — same principle as the tactical-combat harness: test on the substrate the code was designed for.
+3. **Windowed is the only valid substrate.** Input measurement links the real `Platform`, not `Platform_Windowless` — same principle as the tactical-combat harness: test on the substrate the code was designed for.
 4. **The instrument must not perturb what it measures.** Measurement is behind a debug flag and buffers in memory (ring buffer flushed at exit), not per-event `fprintf` — unlike the existing `MOUSE_LOG`, whose per-line disk writes make it trustworthy for *ordering* but not for *absolute timing*.
 5. **The fidelity rule holds for the fix phase.** Responsiveness work lives in `platform/` by default; any change to reconstructed pacing code (`Release_Time`, `Get_Input`) is a deliberate, marked, justified divergence.
 

@@ -1,5 +1,5 @@
 /**
- * headless_KD.c — Headless keyboard handling.
+ * windowless_KD.c — Windowless keyboard handling.
  *
  * Provides the keyboard buffer functions without any OS key translation.
  */

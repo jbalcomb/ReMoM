@@ -36,7 +36,7 @@
                 ║                                                                   ║
                 ║   ┌─────────┐  ┌─────────┐  ┌─────────┐    ┌─────────────────┐    ║
                 ║   │  SDL2   │  │  SDL3   │  │  Win32  │    │  Windowless [4] │    ║
-                ║   │ /sdl2/  │  │ /sdl3/  │  │ /win32/ │    │   /headless/    │    ║
+                ║   │ /sdl2/  │  │ /sdl3/  │  │ /win32/ │    │  /windowless/   │    ║
                 ║   │ window, │  │ window, │  │ window, │    │   no video,     │    ║
                 ║   │ audio,  │  │ audio,  │  │ GDI,    │    │   no audio,     │    ║
                 ║   │ input   │  │ input   │  │ input   │    │   stub timer    │    ║
@@ -65,11 +65,11 @@
 
  * [1] ReMoM — the windowed game executable (the user-facing build of the ReMoM project). Linked against momlib + MOX + STU + Platform where Platform is whichever windowed backend the preset chose (SDL2 / SDL3 / Win32).
 
- * [2] DeMoM — Driven Master of Magic: windowless, driven by a scenario, a replay or (later) an agent. Formerly HeMoM. A lean entry point hardwired to Platform_Headless, regardless of which windowed backend the preset selected. Supports --newgame, --load SAVE.GAM, --record game.RMR, --replay game.RMR.
+ * [2] DeMoM — Driven Master of Magic: windowless, driven by a scenario, a replay or (later) an agent. Formerly HeMoM. A lean entry point hardwired to Platform_Windowless, regardless of which windowed backend the preset selected. Supports --newgame, --load SAVE.GAM, --record game.RMR, --replay game.RMR.
 
  * [3] Platform layer — a single contract (Platform.h / Platform_Keys.h / Platform_Replay.h) with four implementations under /platform/{sdl2,sdl3,win32,windowless}/. The engine never talks to SDL/Win32 directly; everything funnels through the contract.
 
- * [4] Windowless mode — Platform_Headless provides no-op video/audio, a stub timer/EMM, and a programmatic input source. It's what makes deterministic CI runs and --continue save tests possible.
+ * [4] Windowless mode — Platform_Windowless provides no-op video/audio, a stub timer/EMM, and a programmatic input source. It's what makes deterministic CI runs and --continue save tests possible.
 
  * [5] Record & Replay — sits at the Platform_Event_Handler() boundary. On record, every engine-visible input frame is appended to a human-readable .RMR file (with a header line # random_seed=<seed> so the run is reproducible). On replay, the file is the input source — OS events are ignored. platform/replay/Replay.c:1-13
 
@@ -94,7 +94,7 @@ DeMoM.exe --newgame ReMoM.ini --seed N  (+ optional --record game.RMR or Automat
    →  ReMoM_Init  (no logos, no menu, no music)
    →  Skip menus, fabricate NewGame state, jump into Screen_Control()
    →  Frame loop:
-        Platform_Headless.Event_Handler()
+        Platform_Windowless.Event_Handler()
           → AHP_Frame()         injects scripted key/click  [6]
           → Replay (record)     appends frame to .RMR        [5]
           → MoX → MoM advances turns / screens

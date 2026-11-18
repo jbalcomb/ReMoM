@@ -48,11 +48,11 @@ static char g_search_dirs[STU_GRAF_MAX_DIRS][STU_GRAF_PATH_MAX];
 static int  g_search_dir_count = 0;
 
 /* Selected by STU_GRAF_Init(); gates the writable user-family.  Defaults to
-   HEADLESS so any code that never calls STU_GRAF_Init() -- DeMoM, the unit-test
+   WINDOWLESS so any code that never calls STU_GRAF_Init() -- DeMoM, the unit-test
    binaries, the matchup harness -- keeps the original CWD-relative behavior.
    The user-data redirect is therefore inert until ReMoM opts in with
    STU_GRAF_Init(STU_GRAF_PLAYER). */
-static STU_GRAF_Profile g_profile = STU_GRAF_HEADLESS;
+static STU_GRAF_Profile g_profile = STU_GRAF_WINDOWLESS;
 
 /* ReMoM.ini [Paths] save_dir override for the per-user data dir.  Empty = use the platform
    default.  See STU_GRAF_Set_User_Data_Dir(). */
@@ -670,9 +670,9 @@ FILE * STU_GRAF_Open_User(const char * name, const char * mode)
         return file_pointer;
     }
 
-    /* HEADLESS (DeMoM / tests / matchup) keeps the original CWD-relative
+    /* WINDOWLESS (DeMoM / tests / matchup) keeps the original CWD-relative
        behavior so the determinism tooling is byte-for-byte unaffected. */
-    if(g_profile == STU_GRAF_HEADLESS)
+    if(g_profile == STU_GRAF_WINDOWLESS)
     {
         return stu_fopen_ci(name, mode);
     }
@@ -771,8 +771,8 @@ int STU_GRAF_Seed_User_File(const char * name)
     FILE * dst;
     int ok;
 
-    /* No seeding under HEADLESS: reads already resolve to the CWD copy. */
-    if(g_profile == STU_GRAF_HEADLESS)
+    /* No seeding under WINDOWLESS: reads already resolve to the CWD copy. */
+    if(g_profile == STU_GRAF_WINDOWLESS)
     {
         return 1;
     }
@@ -829,7 +829,7 @@ int STU_GRAF_Backup_And_Reseed_User_File(const char * name, const char * backup_
     FILE * dst;
     int ok;
 
-    if(g_profile == STU_GRAF_HEADLESS)
+    if(g_profile == STU_GRAF_WINDOWLESS)
     {
         return 0;
     }
@@ -1165,12 +1165,12 @@ void STU_GRAF_Init(STU_GRAF_Profile profile)
     }
 
     /* Current working directory (legacy default; last so it never shadows an
-       explicit override).  For HEADLESS this is the only entry besides an
+       explicit override).  For WINDOWLESS this is the only entry besides an
        optional REMOM_DATA_DIR -- keeps the test / matchup harness deterministic. */
     STU_GRAF_Add_Search_Dir(".");
 
     LOG_INFO(LOG_CAT_GENERAL, "STU_GRAF: %s profile, %d search dir(s)",
-             (profile == STU_GRAF_PLAYER) ? "PLAYER" : "HEADLESS",
+             (profile == STU_GRAF_PLAYER) ? "PLAYER" : "WINDOWLESS",
              g_search_dir_count);
 }
 

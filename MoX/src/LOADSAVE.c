@@ -62,7 +62,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
         stu_strcat(file_name,".GAM");
     }
 
-    file_pointer = STU_GRAF_Open_User(file_name, "wb");  /* CLAUDE: save -> user-data (HEADLESS: CWD) */
+    file_pointer = STU_GRAF_Open_User(file_name, "wb");  /* CLAUDE: save -> user-data (WINDOWLESS: CWD) */
     assert(file_pointer != NULL);
     /* CLAUDE */  /* no asm counterpart: the OG (gfopen: int 21h / mov [_gf_fhandle], ax, no carry test) writes to the DOS error code used as a handle; ReMoM would pass NULL to the writes */
     if(file_pointer == NULL)
@@ -274,7 +274,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     /* CLAUDE: the filename actually resolved, and the index it will be carried alongside. */
     LOG_INFO(LOG_CAT_LOADSAVE, "[--load] RESOLVED Load_SAVE_GAM: file_name=\"%s\"  save_gam_idx=%d  (override now %s)", file_name, save_gam_idx, (g_load_save_gam_name_override == NULL) ? "consumed/NULL" : "STILL SET");
 
-    file_size = STU_GRAF_User_LOF(file_name);  /* CLAUDE: save -> user-data (HEADLESS: CWD) */
+    file_size = STU_GRAF_User_LOF(file_name);  /* CLAUDE: save -> user-data (WINDOWLESS: CWD) */
     // DONT  assert(file_size != 0);  crashes if there are no game-save files, like on first run
     
     // dx 1, ax 57764 === 65536 + 57764 = 123300
@@ -285,7 +285,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
 
     // TODO  gfile_pointer = gfopen(file_name, "rb");
-    file_pointer = STU_GRAF_Open_User(file_name, "rb");  /* CLAUDE: save -> user-data (HEADLESS: CWD) */
+    file_pointer = STU_GRAF_Open_User(file_name, "rb");  /* CLAUDE: save -> user-data (WINDOWLESS: CWD) */
     if(file_pointer == NULL)
     {
         LOG_FATAL(LOG_CAT_LOADSAVE, "FATAL: Load_SAVE_GAM() failed to open file \"%s\"", file_name);

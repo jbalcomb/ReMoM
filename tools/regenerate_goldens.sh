@@ -9,7 +9,7 @@
 #   hero ability assignment, or save layout.
 #
 # What it does:
-#   1. Builds DeMoM and savedump under MSVC-headless-debug.
+#   1. Builds DeMoM and savedump under MSVC-debug.
 #   2. Runs DeMoM in --newgame mode with the deterministic seed=12345 config
 #      (assets/test_worldgen.ini + assets/test_worldgen_smoke.hms).
 #   3. Dumps the resulting SAVE9.GAM to text via savedump.

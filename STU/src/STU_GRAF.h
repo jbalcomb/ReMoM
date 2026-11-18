@@ -40,7 +40,7 @@ extern "C" {
 typedef enum
 {
     STU_GRAF_PLAYER   = 0,  /* installed player build: env -> exe-dir -> CWD */
-    STU_GRAF_HEADLESS = 1   /* DeMoM / tests / matchup: env -> CWD          */
+    STU_GRAF_WINDOWLESS = 1   /* DeMoM / tests / matchup: env -> CWD          */
 } STU_GRAF_Profile;
 
 /* Build the standard ordered read search path for the given profile.  Resets
@@ -102,7 +102,7 @@ int STU_GRAF_User_State_Dir(char * out, size_t cap);
    resolved into the user-data dir (created on demand for write modes).  Same
    signature as stu_fopen_ci, so the reconstructed write sites swap
    stu_fopen_ci -> this.  A name that already carries a path is opened directly.
-   Under the HEADLESS profile (DeMoM / tests / matchup) this degrades to a plain
+   Under the WINDOWLESS profile (DeMoM / tests / matchup) this degrades to a plain
    CWD-relative open -- byte-identical to the pre-swap behavior -- as does a
    PLAYER build that cannot resolve a user-data dir. */
 FILE * STU_GRAF_Open_User(const char * name, const char * mode);
@@ -120,7 +120,7 @@ FILE * STU_GRAF_Open_User(const char * name, const char * mode);
 
 /* User-data-aware equivalents of MoX's DIR()/LOF(), so an existence / length
    check beside a swapped open resolves to the same place the open uses (the
-   user-data dir for PLAYER, the CWD for HEADLESS) rather than always the CWD.
+   user-data dir for PLAYER, the CWD for WINDOWLESS) rather than always the CWD.
    STU_GRAF_User_DIR fills found (name on hit, "" on miss) and returns
    STU_GRAF_DIR_FOUND / STU_GRAF_DIR_ABSENT.  STU_GRAF_User_LOF returns the byte
    length, or 0 when absent -- identical to LOF(). */
@@ -135,7 +135,7 @@ int STU_GRAF_Seed_User_File(const char * name);
 
 /* Re-copy a per-user file from its read-only original, first backing up any
    existing user copy into <user-data>/<backup_subdir>/.  Returns 1 if re-copied,
-   0 if there was no original (existing copy left as-is).  No-op under HEADLESS. */
+   0 if there was no original (existing copy left as-is).  No-op under WINDOWLESS. */
 int STU_GRAF_Backup_And_Reseed_User_File(const char * name, const char * backup_subdir);
 
 /* Read the [Paths] game_data value from the given INI file.  Returns 1 and

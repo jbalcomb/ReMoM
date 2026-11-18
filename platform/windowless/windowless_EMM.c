@@ -1,5 +1,5 @@
 /**
- * headless_EMM.c — EMS memory allocation (headless implementation).
+ * windowless_EMM.c — EMS memory allocation (windowless implementation).
  *
  * Allocates the VGA file buffer using malloc, replacing the DOS EMS page frame.
  */

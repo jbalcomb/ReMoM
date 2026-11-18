@@ -2,7 +2,7 @@
  * Platform.h — The formal contract between the game engine (MoX) and the platform layer.
  *
  * This header defines the complete platform interface. It contains NO platform-specific types
- * (no SDL, no Win32). All platform implementations (SDL3, Win32, headless) must provide
+ * (no SDL, no Win32). All platform implementations (SDL3, Win32, windowless) must provide
  * definitions for every function declared here.
  *
  * Include hierarchy:
@@ -118,7 +118,7 @@ void Startup_Platform(void);
  * Set the window title at runtime.  Titles are otherwise fixed at window creation; this exists so
  * the live frame-time readout can show fps and worst-frame in the title bar (PRD FR9).
  *
- * Safe to call before the window exists and on the headless backend -- both no-op.  Cheap, but it
+ * Safe to call before the window exists and on the windowless backend -- both no-op.  Cheap, but it
  * is an OS call, so callers should rate-limit (the perf layer updates ~1 Hz).
  */
 void Platform_Set_Window_Title(const char * title);
@@ -126,7 +126,7 @@ void Platform_Set_Window_Title(const char * title);
 /**
  * Show a modal error message to the user, then return.  On graphical backends
  * this is a simple message box (safe to call before Startup_Platform / with no
- * window); on the headless backend it writes to stderr.  Used for fail-soft
+ * window); on the windowless backend it writes to stderr.  Used for fail-soft
  * startup errors such as missing game data.
  */
 void Platform_Show_Error(const char * title, const char * message);
@@ -437,7 +437,7 @@ uint64_t Platform_Get_Millies(void);
  * Return the number of MICROseconds since platform startup, from the highest-resolution monotonic
  * counter the backend has (QueryPerformanceCounter / clock_gettime / SDL_GetPerformanceCounter).
  *
- * Why this exists alongside Platform_Get_Millies(): the headless and Win32 backends implement
+ * Why this exists alongside Platform_Get_Millies(): the windowless and Win32 backends implement
  * Platform_Get_Millies() with GetTickCount64(), whose resolution is the system timer interval
  * (~15.6 ms by default).  That is adequate for pacing a 55 ms frame but useless for timing a
  * sub-frame perf zone -- a 3 ms stage reads as 0 or 15 ms.  Perf instrumentation therefore

@@ -20,7 +20,7 @@ overwritten on each run.  Nothing is committed.
 
 Phases:
     1. Collect : build both binaries; run DeMoM --newgame; run
-                 ReMoM --replay (headless); gather artifacts.
+                 ReMoM --replay (windowless); gather artifacts.
     2. Compare : a battery of comparators (RNG stream, save files,
                  MAGIC.SET, save-dump text, state-summary anchors).
     3. Report  : per-section PASS/FAIL with evidence; overall verdict.
@@ -52,7 +52,7 @@ def pick_preset(explicit: Optional[str]) -> str:
     """Mirror the bash scripts: prefer an existing build dir; else clang-debug."""
     if explicit:
         return explicit
-    candidates = ["MSVC-headless-debug", "clang-debug", "MSVC-debug"]
+    candidates = ["clang-debug", "MSVC-debug"]
     for name in candidates:
         if(BUILD_ROOT / name / "bin" / "Debug").is_dir():
             return name
@@ -373,7 +373,7 @@ def run_remom(layout: BuildLayout, seed: int,
     """Launch ReMoM via lib_run (HMS by default, RMR if given), then snapshot."""
     print()
     drv_label = "--scenario HMS" if hms else "--replay RMR"
-    print(f"  Run ReMoM {drv_label} (headless)")
+    print(f"  Run ReMoM {drv_label} (windowless)")
     if hms is None and rmr is None:
         raise Phase1Error("run_remom needs hms= or rmr= to drive ReMoM non-interactively")
     if hms is not None and not hms.exists():
@@ -444,12 +444,12 @@ def phase1_collect(args: argparse.Namespace, layout: BuildLayout) -> tuple[dict[
         try:
             remom_artifacts = run_remom(layout, args.seed, hms=hms, rmr=rmr)
         except Phase1Error as e:
-            print(f"    {YELLOW}headless ReMoM failed: {e}{RESET}")
+            print(f"    {YELLOW}windowless ReMoM failed: {e}{RESET}")
             print(f"    falling back to whatever is already in {relpath(layout.remom_out)}/")
             remom_artifacts = _scan_existing(layout.remom_out)
     else:
         print()
-        print("  (default mode — using pre-captured ReMoM artifacts; pass --run-remom to try headless)")
+        print("  (default mode — using pre-captured ReMoM artifacts; pass --run-remom to try windowless)")
         remom_artifacts = _scan_existing(layout.remom_out)
 
     # stderr is the minimum — the RNG trace lives there and is foundational.
@@ -1344,11 +1344,11 @@ def parse_args() -> argparse.Namespace:
                    help="RMR recorded-input for ReMoM --replay "
                         "(if set, overrides --hms)")
     p.add_argument("--preset", default=None,
-                   help="CMake preset (auto-detected: clang-debug on Linux, MSVC-headless-debug on Windows)")
+                   help="CMake preset (auto-detected: clang-debug on Linux, MSVC-debug on Windows)")
     p.add_argument("--skip-build", action="store_true",
                    help="Skip cmake --build; use existing binaries")
     p.add_argument("--run-remom", action="store_true",
-                   help="Launch ReMoM headlessly via --scenario --hms (or --replay --rmr); "
+                   help="Launch ReMoM windowless via --scenario --hms (or --replay --rmr); "
                         "default is to use the most recent ReMoM output already in bin/Debug/.")
     p.add_argument("--skip-demom", action="store_true",
                    help="Skip running DeMoM; reuse existing analysis/demom/ artifacts")

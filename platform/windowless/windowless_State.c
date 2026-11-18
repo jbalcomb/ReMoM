@@ -1,5 +1,5 @@
 /**
- * headless_State.c — Platform shared state variable definitions (headless).
+ * windowless_State.c — Platform shared state variable definitions (windowless).
  *
  * These globals are declared as extern in Platform.h and defined here.
  * They form the data boundary between the engine and the platform layer.

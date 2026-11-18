@@ -374,14 +374,14 @@ TEST(STU_GRAF, SeedMissingOriginalReturnsZero)
     unset_env("XDG_DATA_HOME");
 }
 
-// HEADLESS profile must keep the user-family CWD-relative (DeMoM / matchup
-// determinism): a swapped open/DIR under HEADLESS behaves like the original
+// WINDOWLESS profile must keep the user-family CWD-relative (DeMoM / matchup
+// determinism): a swapped open/DIR under WINDOWLESS behaves like the original
 // stu_fopen_ci, regardless of XDG_DATA_HOME.
-TEST(STU_GRAF, HeadlessUserFamilyUsesCwd)
+TEST(STU_GRAF, WindowlessUserFamilyUsesCwd)
 {
-    TempTree data("headlessxdg");
+    TempTree data("windowlessxdg");
     set_env("XDG_DATA_HOME", data.dir().c_str());
-    STU_GRAF_Init(STU_GRAF_HEADLESS);
+    STU_GRAF_Init(STU_GRAF_WINDOWLESS);
 
     FILE * fp = STU_GRAF_Open_User("GRAFHDL.DAT", "wb");
     ASSERT_NE(fp, nullptr);

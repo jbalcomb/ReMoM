@@ -29,7 +29,7 @@
  *
  * TIME BASE
  * ---------
- * Zones timestamp with Platform_Get_Micros(), NOT Platform_Get_Millies().  The headless and Win32
+ * Zones timestamp with Platform_Get_Micros(), NOT Platform_Get_Millies().  The windowless and Win32
  * backends implement the millisecond clock with GetTickCount64(), whose ~15.6 ms granularity
  * cannot resolve a sub-frame stage.  Rows are emitted in microseconds; the reporter also prints
  * milliseconds against the 55 ms budget, which is the unit every perf conversation uses.
@@ -62,7 +62,7 @@ extern "C" {
  * leaves the layer inactive.  Call once, early, after STU_Log_Startup() so the header can record
  * the active log severity.
  *
- * @param backend  "SDL2" / "SDL3" / "win32" / "headless" -- recorded in the header.
+ * @param backend  "SDL2" / "SDL3" / "win32" / "windowless" -- recorded in the header.
  * @param build    "Debug" / "Release" -- recorded in the header.  Numbers from a Debug build do
  *                 not transfer to a Release build and the header must say which one this was.
  * @return 0 if recording is now active, non-zero if it is not (gate unset, or the path failed).

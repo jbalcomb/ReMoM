@@ -91,8 +91,8 @@ The same gate is also wired up as the VS Code task `check: safe-to-push` (`Tasks
 - ofst stands for Offset
 - OG-MoM stand for Original Master of Magic (1994)
 - DeMoM — Driven Master of Magic: the windowless game (`src/DeMoM.c`), driven by an Automation Driver scenario, an `.RMR` replay, or (planned) an RL agent; used for tests, CI and replay. Formerly HeMoM
-- Automation Driver — scripted user input: reads a `.hms` scenario and injects clicks, typing and keys through the real input path (`src/Automation_Driver.c`; `--scenario FILE.hms`; doc `doc/@Devel/HMS-Scripting.md`). Works in DeMoM and ReMoM. Formerly "Artificial Human Player" (AHP) and, before that, `HeMoM_Player`; renamed in the code too (2026-11-17) — only the `AHP-YYYYMMDDHHMM` save names it generates keep the old letters
-- windowless — runs with no window and no audio (DeMoM, the `platform/headless/` backend), but still takes input from an Automation Driver scenario or an `.RMR` replay. Do not say "headless": it reads as "no input at all". Code names (`platform/headless/`, `Platform_Headless`, `--headless`, the `*-headless-debug` presets) keep the old word.
+- Automation Driver — scripted user input: reads a `.hms` scenario and injects clicks, typing and keys through the real input path (`src/Automation_Driver.c`; `--scenario FILE.hms`; doc `doc/@Devel/HMS-Scripting.md`). Works in DeMoM and ReMoM. Formerly "Artificial Human Player" (AHP) and, before that, `HeMoM_Player`; renamed in the code too (2026-11-17) — its scenario save names are `AD-YYYYMMDDHHMM`
+- windowless — runs with no window and no audio (DeMoM, the `platform/windowless/` backend, `Platform_Windowless`), but still takes input from an Automation Driver scenario or an `.RMR` replay. Avoid the old word "head-less" (written without the hyphen): it reads as "no input at all". Renamed in the code too (2026-11-18); ReMoM's offscreen-SDL flag is `--offscreen`, with the old flag name kept as an alias
 
 ## Vetting third-party dependencies (all agents)
 Before recommending, installing, or adding ANY external binary, library, package, or tool — including

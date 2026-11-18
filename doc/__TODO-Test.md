@@ -19,10 +19,10 @@ DeMoM  (windowless ReMoM)
 
 Testing needs to be deterministic, so the INI file holds a random number seed
 
-cd c:/STU/devel/ReMoM/out/build/MSVC-headless-debug/bin/Debug
+cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug
 ./DeMoM.exe --newgame c:/STU/devel/ReMoM/assets/test_worldgen.ini --scenario c:/STU/devel/ReMoM/assets/test_worldgen_smoke.hms
 
-cd c:/STU/devel/ReMoM/out/build/MSVC-headless-debug/bin/Debug
+cd c:/STU/devel/ReMoM/out/build/MSVC-debug/bin/Debug
 ./DeMoM.exe --newgame c:/STU/devel/ReMoM/assets/test_worldgen.ini --scenario c:/STU/devel/ReMoM/assets/test_worldgen_smoke.hms
 
 --record
@@ -159,7 +159,7 @@ rmr2hms test-gameplay.rmr test-gameplay.hms
 
 #   ReMoM --continue --scenario test_continue_save.hms
 # Used with:  ReMoM --newgame [ReMoM.ini]
-#             ReMoM --headless --newgame ReMoM.ini --replay game.RMR
+#             ReMoM --offscreen --newgame ReMoM.ini --replay game.RMR
 
 ### test_continue_.hms
 used to launch a new-game continue game-save and start from turn 0
@@ -174,7 +174,7 @@ used to test from --continue through save-and-quit; post-op test uses output fro
 ### scenario_tail_save_and_quit.hms
 assumes 'Main Screen'; saves the current game in save-slot-1
 Notes:
-  - The save slot name comes from the $SAVE_NAME built-in (expanded to "AHP-YYYYMMDDHHMM" by Automation_Driver at scenario-load time).
+  - The save slot name comes from the $SAVE_NAME built-in (expanded to "AD-YYYYMMDDHHMM" by Automation_Driver at scenario-load time).
   - Coordinates are game-space (320x200).
 
 
@@ -672,8 +672,8 @@ All of them spin their own local input loop, so the Automation Driver's only lev
 
 Here are a few ways to manage this in windowless tests. Two concrete, two for context:
 
-Idea 1 — Suppress at the source with a headless_mode gate.
-Wrap each interactive end-of-turn call in if (headless_mode == ST_FALSE) (or a dedicated demom_suppress_popups flag set by DeMoM at init). The bookkeeping around them (advancing MSG_Building_Complete, setting current_screen, _map_plane restore) still runs; only the modal UI call is skipped. Pros: deterministic, no input-timing dependency, test runs in ~1 second. Cons: we're no longer exercising the popup code paths — the test proves the turn calculation but not that popups would have rendered.
+Idea 1 — Suppress at the source with a windowless_mode gate.
+Wrap each interactive end-of-turn call in if (windowless_mode == ST_FALSE) (or a dedicated demom_suppress_popups flag set by DeMoM at init). The bookkeeping around them (advancing MSG_Building_Complete, setting current_screen, _map_plane restore) still runs; only the modal UI call is skipped. Pros: deterministic, no input-timing dependency, test runs in ~1 second. Cons: we're no longer exercising the popup code paths — the test proves the turn calculation but not that popups would have rendered.
 
 Idea 2 — Turn the flags off in the .ini / save.
 magic_set.end_of_turn_summary = ST_FALSE kills Chancellor immediately. Most "spam" popups are gated by magic_set.* or game-state conditions (new building, hired hero, city alert). A test-only magic_set preset + a known-quiet save (no buildings completing turn 1, no heroes offered, no merchants) makes the whole block a no-op by construction. Pros: zero code change, purely data-driven. Cons: fragile — any later save drift can silently resurrect a popup, and you can't test any popup path this way.

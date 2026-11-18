@@ -13,7 +13,7 @@ and a working scratchpad for open questions, not an implementation plan (that wi
 `PLAN-Endgame-Testing.md`).
 
 It inherits one principle wholesale from `BRA-Combat-Testing.md`: **test code on the substrate it was
-designed for.** State-transition logic is screen-free → headless/assertable; cutscenes render →
+designed for.** State-transition logic is screen-free → windowless/assertable; cutscenes render →
 windowed/observed.
 
 ---
@@ -95,7 +95,7 @@ work will turn green.
 |---|---|
 | **Determinism** | A win/lose test that varies run-to-run under a fixed seed is not a regression test. Endgame paths draw RNG (banishment forfeit rolls, spell awards) — seed pinning is mandatory. |
 | **Automatability** | Can it run pass/fail in CI / pre-push without a human? |
-| **Substrate fidelity** | Logic windowless, cutscenes windowed. Do not force a victory animation through `Platform_Headless` (the exact mistake `BRA-Combat-Testing.md` records). |
+| **Substrate fidelity** | Logic windowless, cutscenes windowed. Do not force a victory animation through `Platform_Windowless` (the exact mistake `BRA-Combat-Testing.md` records). |
 | **Reachability** | *New for endgame:* how do you get the game into a near-defeat / mid-banishment / about-to-win state cheaply and deterministically? This is the crux (§4). |
 | **Reuse** | DeMoM fixtures, `savedump` + `check_save_fields`, `.hms`/`.RMR`, `refresh_asserts.py`. |
 | **Observability** | Can a developer *watch* the banishment/victory sequence, not just read a field diff? |

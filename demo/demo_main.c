@@ -99,7 +99,7 @@ int main(int argc, char * argv[])
     const Demo_Effect * selected;
     int i;
 
-    /* Unbuffered stdout so progress prints survive if the process is killed (headless smoke). */
+    /* Unbuffered stdout so progress prints survive if the process is killed (windowless smoke). */
     setvbuf(stdout, NULL, _IONBF, 0);
 
     /* Report faults with a symbolized stack rather than a bare "Segmentation fault". */

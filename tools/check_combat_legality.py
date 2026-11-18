@@ -31,7 +31,7 @@ Three invariants:
                         - pacing: too few frames drawn per cell, so the figure
                           leaps a large fraction of a cell between frames.  That
                           is the visible "streak" when the MOVE logic is clean.
-                      Headless (--combat-tactical / animations off) draws each
+                      Windowless (--combat-tactical / animations off) draws each
                       step exactly once at ctr=cnt-1; that single-frame signature
                       is reported as "animations off -- pacing not assessed", not
                       flagged, because no animation actually ran.
@@ -114,7 +114,7 @@ def analyze_episode(ep, max_frac):
     n_steps = len(steps)
     n_frames = len(ep)
 
-    # headless / animations-off signature: every frame at ctr == cnt-1 (the
+    # windowless / animations-off signature: every frame at ctr == cnt-1 (the
     # MOVE_ANIM_MAX single-frame draw).  No animation ran -> pacing is N/A.
     animated = any(f['ctr'] != (f['cnt'] - 1) for f in ep)
     if not animated:

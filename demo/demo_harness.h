@@ -11,7 +11,7 @@
         can then load real MoM screens via Demo_Load_Screen().
       - Otherwise it falls back to a minimal manual boot with a synthetic palette, and
         Demo_Load_Screen() reports failure so effects use Demo_Fill_Pattern() instead.  This keeps
-        the demo building, headless-smoke-running, and working with no data files.
+        the demo building, windowless-smoke-running, and working with no data files.
 */
 
 #ifndef DEMO_HARNESS_H

@@ -366,21 +366,21 @@ int main(int argc, char * argv[])
        (currently --seed only; flags will migrate over incrementally). */
     Check_Command_Line_Parameters_(argc, argv);
 
-    /* --headless: set SDL video driver to offscreen before SDL init.
+    /* --offscreen: set SDL video driver to offscreen before SDL init (--headless, its old name, is kept as an alias for older scripts).
        Must be parsed before Startup_Platform() so the environment variable
        takes effect. */
     {
         int argi;
         for (argi = 1; argi < argc; argi++)
         {
-            if(stu_strcmp(argv[argi], "--headless") == 0)
+            if((stu_strcmp(argv[argi], "--offscreen") == 0) || (stu_strcmp(argv[argi], "--headless") == 0))
             {
 #ifdef USE_SDL3
                 stu_putenv("SDL_VIDEODRIVER=offscreen");
 #else
                 stu_putenv("SDL_VIDEODRIVER=dummy");
 #endif
-                LOG_INFO(LOG_CAT_REMOM, "[headless] SDL video driver set to offscreen");
+                LOG_INFO(LOG_CAT_REMOM, "[offscreen] SDL video driver set to offscreen");
                 break;
             }
         }

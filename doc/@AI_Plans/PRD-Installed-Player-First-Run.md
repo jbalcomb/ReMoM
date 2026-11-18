@@ -77,7 +77,7 @@ Two distinct resolution rules follow from this:
    5. **Auto-detected common install locations** (GOG/Steam/CD) — see note below.
    6. CWD (legacy/default).
 
-   > **Zero-config auto-detect (implemented, post-plan enhancement):** the PLAYER profile probes a built-in candidate list and adds the first dir containing the signature `FONTS.LBX` — a dev checkout (`./assets` and parents) first, then well-known installs (`~/GOG Games/Master of Magic`, Steam `…/steamapps/common/Master of Magic Classic`, `C:\MPS\MAGIC`, …). A standard install, or a dev running from the repo, boots with **no configuration at all**; this is the recommended, lowest-effort path in PLAYING.md, with `REMOM_DATA_DIR` / `[Paths] game_data` as fallbacks for non-standard locations. HEADLESS (DeMoM/tests/matchup) never probes.
+   > **Zero-config auto-detect (implemented, post-plan enhancement):** the PLAYER profile probes a built-in candidate list and adds the first dir containing the signature `FONTS.LBX` — a dev checkout (`./assets` and parents) first, then well-known installs (`~/GOG Games/Master of Magic`, Steam `…/steamapps/common/Master of Magic Classic`, `C:\MPS\MAGIC`, …). A standard install, or a dev running from the repo, boots with **no configuration at all**; this is the recommended, lowest-effort path in PLAYING.md, with `REMOM_DATA_DIR` / `[Paths] game_data` as fallbacks for non-standard locations. WINDOWLESS (DeMoM/tests/matchup) never probes.
 2. **Population API** in the support layer (`stu_data_path_reset()` / `stu_data_path_add(dir)`), called **once** by ReMoM at startup.
 3. **Default = CWD only** when unpopulated (DeMoM, tests, matchup) — `stu_fopen_ci` behaves exactly as today.
 4. **Bare filenames unchanged;** resolution happens entirely inside `stu_fopen_ci`. No `MoM/src` or `MoX/src` game-logic edits.
@@ -119,7 +119,7 @@ Two distinct resolution rules follow from this:
 - [x] No data discoverable anywhere → GUI dialog names the missing files + fix, exits non-zero, no crash; DeMoM prints the same to stderr. *(P2 — verified end-to-end on both builds; ctest `DeMoM_Preflight_Missing_Data`)*
 - [x] Data files whose checksums don't match any manifest entry → a non-blocking "unrecognized/……" warning (presence still passing). *(P5 — `STU_GRAF_Check_Data_Compat` over the **compiled-in** `g_lbx_manifest` on a verified SHA-256; unit-proven; silent until the manifest is authored via the `lbx_hashes` generator)*
 - [x] `DeMoM`/`ctest`/matchup still resolve data from CWD and write `remom_log_*.txt` to CWD ([tools/log-tools/log_triage.py](../../tools/log-tools/log_triage.py), [tools/parity_check.py](../../tools/parity_check.py) unaffected). *(P1/P6 — end-to-end: DeMoM with `XDG_STATE_HOME` set still logged to CWD, 0 in the state dir; `STU_LOG` default (no `Set_Base_Dir`) = CWD, byte-identical)*
-- [x] Player-build logs land under `~/.local/state/ReMoM/`, not CWD. *(P6 — end-to-end: ReMoM `--headless` wrote its log under `XDG_STATE_HOME/ReMoM/`, 0 in its CWD; unit-tested)*
+- [x] Player-build logs land under `~/.local/state/ReMoM/`, not CWD. *(P6 — end-to-end: ReMoM `--offscreen` wrote its log under `XDG_STATE_HOME/ReMoM/`, 0 in its CWD; unit-tested)*
 - [x] No `MoM/src` / `MoX/src` game-logic file is modified for discovery. *(git-verified: only `MoX/src/LBX_Load.c` open-call plumbing changed)*
 
 ## Implementation Notes
@@ -160,7 +160,7 @@ Per-executable at runtime, not a build macro (shared `libstu`). ReMoM populates 
 
 ## Dependencies
 
-- New platform APIs: `Platform_Show_Error()`, `Platform_Get_User_Data_Dir()`, exe-dir resolver — across sdl2/sdl3/win32/headless.
+- New platform APIs: `Platform_Show_Error()`, `Platform_Get_User_Data_Dir()`, exe-dir resolver — across sdl2/sdl3/win32/windowless.
 - `stu_fopen_ci` search-path extension + population API in `ext/stu_compat.h`.
 - Shared **checksum manifest** with [PRD-Installer-Game-Data-Setup.md](PRD-Installer-Game-Data-Setup.md).
 - Builds on `STU_LOG` ([PRD-Logging-System-And-Curator-Agent.md](PRD-Logging-System-And-Curator-Agent.md)).

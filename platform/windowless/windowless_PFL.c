@@ -1,7 +1,7 @@
 /**
- * headless_PFL.c — Headless platform lifecycle, video, input, and mouse.
+ * windowless_PFL.c — Windowless platform lifecycle, video, input, and mouse.
  *
- * Implements Platform.h functions as no-ops or minimal stubs for headless
+ * Implements Platform.h functions as no-ops or minimal stubs for windowless
  * operation. No window, no renderer, no audio. Suitable for CI, testing,
  * and replay-driven execution.
  */
@@ -17,7 +17,7 @@
 
 void Platform_Show_Error(const char * title, const char * message)
 {
-    /* No GUI in headless mode -- stderr is the channel DeMoM / CI observes. */
+    /* No GUI in windowless mode -- stderr is the channel DeMoM / CI observes. */
     fprintf(stderr, "%s: %s\n", title, message);
 }
 
@@ -46,12 +46,12 @@ void Platform_Register_Frame_Callback(void (*callback)(void))
 
 void Startup_Platform(void)
 {
-    LOG_INFO(LOG_CAT_HEADLESS_PFL, "[headless] Platform started (no display, no audio)");
+    LOG_INFO(LOG_CAT_WINDOWLESS_PFL, "[windowless] Platform started (no display, no audio)");
 }
 
 void Shutdown_Platform(void)
 {
-    LOG_INFO(LOG_CAT_HEADLESS_PFL, "[headless] Platform shutdown");
+    LOG_INFO(LOG_CAT_WINDOWLESS_PFL, "[windowless] Platform shutdown");
 }
 
 int Platform_Get_Scale(void)
@@ -104,25 +104,25 @@ void Platform_Video_Update(void)
 /*  Events / Input                                                           */
 /* ========================================================================= */
 
-static int headless_event_handler_first_call = 1;
+static int windowless_event_handler_first_call = 1;
 
 void Platform_Event_Handler(void)
 {
     /* Log input mode on first call so we can see which path is active. */
-    if(headless_event_handler_first_call)
+    if(windowless_event_handler_first_call)
     {
-        headless_event_handler_first_call = 0;
+        windowless_event_handler_first_call = 0;
         if(Platform_Replay_Active())
         {
-            LOG_INFO(LOG_CAT_HEADLESS_PFL, "[headless] Platform_Event_Handler: input mode = REPLAY (.RMR)");
+            LOG_INFO(LOG_CAT_WINDOWLESS_PFL, "[windowless] Platform_Event_Handler: input mode = REPLAY (.RMR)");
         }
         else if(platform_frame_callback != NULL)
         {
-            LOG_INFO(LOG_CAT_HEADLESS_PFL, "[headless] Platform_Event_Handler: input mode = SCENARIO (.hms artificial human player)");
+            LOG_INFO(LOG_CAT_WINDOWLESS_PFL, "[windowless] Platform_Event_Handler: input mode = SCENARIO (.hms artificial human player)");
         }
         else
         {
-            LOG_INFO(LOG_CAT_HEADLESS_PFL, "[headless] Platform_Event_Handler: input mode = NONE (no input source)");
+            LOG_INFO(LOG_CAT_WINDOWLESS_PFL, "[windowless] Platform_Event_Handler: input mode = NONE (no input source)");
         }
     }
 
@@ -136,7 +136,7 @@ void Platform_Event_Handler(void)
             platform_frame_mouse_buttons = 0;
             return;
         }
-        /* Replay ended — fall through (no live input in headless). */
+        /* Replay ended — fall through (no live input in windowless). */
     }
 
     /* Artificial human player: inject scripted input when no replay is active. */
@@ -172,7 +172,7 @@ void Platform_Set_Window_Title(const char * title)
 /* CLAUDE: Stubs for the Win32-only pump entry points referenced from MoX
  * Input.c / Video.c under #ifdef _STU_WIN.  These are needed when MoX is
  * built with _STU_WIN defined (because the windowed backend in this build is
- * Win32) but DeMoM links against the headless platform — without these the
+ * Win32) but DeMoM links against the windowless platform — without these the
  * link of DeMoM fails on unresolved Pump_Events / Pump_Paints. */
 void Pump_Events(void) { /* no-op */ }
 void Pump_Paints(void) { /* no-op */ }
@@ -189,12 +189,12 @@ void Platform_Mouse_Input_Disable(void)
 
 void Hw_Textinput_Start(void)
 {
-    /* No IME in headless mode. */
+    /* No IME in windowless mode. */
 }
 
 void Hw_Textinput_Stop(void)
 {
-    /* No IME in headless mode. */
+    /* No IME in windowless mode. */
 }
 
 
@@ -204,29 +204,29 @@ void Hw_Textinput_Stop(void)
 /* ========================================================================= */
 
 /* CLAUDE: synthetic (injected) mouse button for HMS/replay click playback — see Platform.h.
-   Headless has no real mouse, so the synthetic press is the only button source. */
-static int16_t headless_synthetic_mouse_button = 0;
-static int16_t headless_synthetic_mouse_button_hold = 0;
+   Windowless has no real mouse, so the synthetic press is the only button source. */
+static int16_t windowless_synthetic_mouse_button = 0;
+static int16_t windowless_synthetic_mouse_button_hold = 0;
 
 void Platform_Set_Synthetic_Mouse_Button(int16_t buttons)
 {
-    headless_synthetic_mouse_button = buttons;
-    headless_synthetic_mouse_button_hold = (buttons != 0) ? PLATFORM_SYNTHETIC_MOUSE_HOLD : 0;
+    windowless_synthetic_mouse_button = buttons;
+    windowless_synthetic_mouse_button_hold = (buttons != 0) ? PLATFORM_SYNTHETIC_MOUSE_HOLD : 0;
 }
 
 int16_t Platform_Get_Mouse_Button_State(void)
 {
     int16_t l_mouse_button = 0;
 
-    if(headless_synthetic_mouse_button != 0)
+    if(windowless_synthetic_mouse_button != 0)
     {
-        l_mouse_button |= headless_synthetic_mouse_button;
-        if(headless_synthetic_mouse_button_hold > 0)
+        l_mouse_button |= windowless_synthetic_mouse_button;
+        if(windowless_synthetic_mouse_button_hold > 0)
         {
-            headless_synthetic_mouse_button_hold--;
-            if(headless_synthetic_mouse_button_hold == 0)
+            windowless_synthetic_mouse_button_hold--;
+            if(windowless_synthetic_mouse_button_hold == 0)
             {
-                headless_synthetic_mouse_button = 0;
+                windowless_synthetic_mouse_button = 0;
             }
         }
     }
@@ -242,9 +242,9 @@ void Platform_Warp_Mouse(int16_t game_x, int16_t game_y)
 
 int Platform_Get_Window_Width(void)
 {
-    /* Headless has no window.  Return the game's native screen width so that
+    /* Windowless has no window.  Return the game's native screen width so that
        User_Mouse_Handler's scale calculation (window_width / SCREEN_WIDTH) comes
-       out to 1.  This matches Platform_Get_Scale() == 1 for the headless backend. */
+       out to 1.  This matches Platform_Get_Scale() == 1 for the windowless backend. */
     return PLATFORM_SCREEN_WIDTH;
 }
 
@@ -256,11 +256,11 @@ void Platform_Get_Mouse_Position_XY(int *mx, int *my)
 
 void Platform_Maybe_Move_Mouse(void)
 {
-    /* No cursor to draw in headless mode. */
+    /* No cursor to draw in windowless mode. */
 }
 
 /* CLAUDE: HW-cursor prototype interface (Platform-Input follow-on).  MoX's Draw_Mouse_On_Page_ now
-   asks the platform whether the OS renders the cursor; headless has no OS cursor, so it never does. */
+   asks the platform whether the OS renders the cursor; windowless has no OS cursor, so it never does. */
 int Platform_HW_Cursor_Active(void)
 {
     return 0;
@@ -268,5 +268,5 @@ int Platform_HW_Cursor_Active(void)
 
 void Platform_HW_Cursor_Refresh(void)
 {
-    /* No OS cursor in headless mode. */
+    /* No OS cursor in windowless mode. */
 }

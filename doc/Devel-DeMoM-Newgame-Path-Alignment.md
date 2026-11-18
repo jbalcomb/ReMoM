@@ -181,7 +181,7 @@ Reference walk-through of the ReMoM new-game path from `main()` to written `SAVE
 |---|---|---|---|
 | 1.1 | [main()](../src/ReMoM.c#L211) | 0 | Program entry. Calls `STU_Log_Startup()`, logs argc/argv, then proceeds to CLI parsing. |
 | 1.2 | [Check_Command_Line_Parameters_()](../src/ReMoM.c#L280) | 0 | Shared CLI parser (MoO2 pattern). Sets `_cmd_line_seed` from `--seed S` if present. *No `Random()` draws yet — seed isn't applied here.* |
-| 1.3 | [Startup_Platform()](../src/ReMoM.c#L305) | 0 | SDL init (or `SDL_VIDEODRIVER=offscreen` if `--headless`). |
+| 1.3 | [Startup_Platform()](../src/ReMoM.c#L305) | 0 | SDL init (or `SDL_VIDEODRIVER=offscreen` if `--offscreen`). |
 | 1.4 | `Platform_Replay_Register_Random_Seed_Callbacks(Get_Random_Seed, Set_Random_Seed)` | 0 | Wires the record/replay machinery to the seed accessors so `.RMR` capture can persist RNG state. |
 | 1.5 | `--record` / `--replay` / `--scenario` / `--demo` flag loop | 0 | Starts a recording or attaches a replay/scenario if requested. Does not touch RNG. |
 | 1.6 | [MOM_main()](../src/ReMoM.c#L449) | (delegates) | Main MoM-side entry point. Composition: engine init → optional logos → main-menu music load → `Screen_Control()` loop. |

@@ -303,12 +303,12 @@ static void Populate_Builtin_Vars(void)
     char save_name[DRIVER_MAX_VARVALUE];
     if(lt != NULL)
     {
-        /* AHP-YYYYMMDDHHMM — 16 chars, fits in LEN_SAVE_DESCRIPTION (20) */
-        snprintf(save_name, sizeof(save_name), "AHP-%04d%02d%02d%02d%02d", lt->tm_year + 1900, lt->tm_mon + 1, lt->tm_mday, lt->tm_hour, lt->tm_min);
+        /* AD-YYYYMMDDHHMM — 15 chars, fits in LEN_SAVE_DESCRIPTION (20) */
+        snprintf(save_name, sizeof(save_name), "AD-%04d%02d%02d%02d%02d", lt->tm_year + 1900, lt->tm_mon + 1, lt->tm_mday, lt->tm_hour, lt->tm_min);
     }
     else
     {
-        stu_strcpy(save_name, "AHP-00000000");
+        stu_strcpy(save_name, "AD-00000000");
     }
     Set_Var("SAVE_NAME", save_name);
     LOG_DEBUG(LOG_CAT_GENERAL, "[Automation Driver] $SAVE_NAME = %s", save_name);

@@ -3,7 +3,7 @@
 # verify_rng_alignment.sh — Layer-A determinism check for DeMoM --newgame.
 #
 # What it does:
-#   1. Builds DeMoM under clang-debug (Linux) or MSVC-headless-debug (Windows
+#   1. Builds DeMoM under clang-debug (Linux) or MSVC-debug (Windows
 #      via Git Bash / MSYS).
 #   2. Runs DeMoM in --newgame mode with --seed ${SEED}, capturing stderr.
 #   3. Filters the [RNG-CALL] stream emitted by Random_at()
@@ -15,7 +15,7 @@
 # Why this works:
 #   Every Random() call is the dominant source of game-state divergence after
 #   the seed is set.  If the per-call seed-before/seed-after/result triple
-#   matches between ReMoM-via-menus and DeMoM-headless, the worlds are
+#   matches between ReMoM-via-menus and DeMoM-windowless, the worlds are
 #   identical by construction.  See doc/Devel-DeMoM-Newgame-Path-Alignment.md
 #   for the full audit.
 #
@@ -49,9 +49,9 @@ cd "${REPO_ROOT}"
 
 # === Platform selection =====================================================
 # Match the existing tools/ convention: Linux uses clang-debug, Windows uses
-# MSVC-headless-debug.  If both exist, prefer the one already built.
-if [ -d "${REPO_ROOT}/out/build/MSVC-headless-debug/bin/Debug" ]; then
-    BUILD_PRESET="MSVC-headless-debug"
+# MSVC-debug.  If both exist, prefer the one already built.
+if [ -d "${REPO_ROOT}/out/build/MSVC-debug/bin/Debug" ]; then
+    BUILD_PRESET="MSVC-debug"
     BUILD_DIR="${REPO_ROOT}/out/build/${BUILD_PRESET}"
     BIN_DIR="${BUILD_DIR}/bin/Debug"
     DEMOM_EXE="${BIN_DIR}/DeMoM.exe"
@@ -63,7 +63,7 @@ elif [ -d "${REPO_ROOT}/out/build/clang-debug/bin/Debug" ] || command -v clang >
     DEMOM_EXE="${BIN_DIR}/DeMoM"
     CMAKE_CONFIG=""
 else
-    echo "FAIL: no usable build preset found (need clang-debug or MSVC-headless-debug)"
+    echo "FAIL: no usable build preset found (need clang-debug or MSVC-debug)"
     exit 1
 fi
 
@@ -135,7 +135,7 @@ echo "=== Step 4/5: Verify baseline freshness ==="
 RMR_FILE="${ASSETS}/menu_baseline_seed${SEED}.RMR"
 
 # Locate ReMoM.  On Linux clang-debug it shares the bin dir with DeMoM.
-# On Windows MSVC-headless-debug only builds DeMoM, so fall back to MSVC-debug
+# On Windows MSVC-debug only builds DeMoM, so fall back to MSVC-debug
 # where the capture script keeps ReMoM.
 REMOM_EXE=""
 REMOM_PRESET=""

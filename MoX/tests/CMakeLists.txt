@@ -1,7 +1,7 @@
 
 include(GoogleTest)
 
-# Tests run headless (no display).
+# Tests run windowless (no display).
 add_executable(MOX_tests
     MOX_tests.cpp
     test_Util.cpp
@@ -22,7 +22,7 @@ target_link_libraries(MOX_tests PUBLIC
     GTest::gmock
     MOX
     STU
-    Platform_Headless
+    Platform_Windowless
 )
 
 gtest_discover_tests(MOX_tests)

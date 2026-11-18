@@ -3,7 +3,7 @@
 Scope (deliberately narrow): run a binary, capture stderr, verify the
 expected SAVE*.GAM was rewritten this run. Both binaries accept either
 `--scenario HMS` or `--replay RMR` as the input-driver (mutually
-exclusive). Headless by default; pass `headless=False` to run windowed.
+exclusive). Windowless by default; pass `windowless=False` to run windowed.
 
 Out of scope — stays in parity_check.py:
     - snapshotting bin/Debug → analysis/{demom,remom}/
@@ -135,14 +135,14 @@ def _driver_args(hms: Optional[Path], rmr: Optional[Path]) -> list[str]:
 
 
 def _spawn(cmd: list[str], cwd: Path, stderr_path: Path,
-           headless: bool) -> tuple[int, float, float]:
+           windowless: bool) -> tuple[int, float, float]:
     """subprocess wrapper: capture stderr to file, time the run,
-    set SDL_VIDEODRIVER=offscreen iff `headless`, and turn on [GD] game-data
+    set SDL_VIDEODRIVER=offscreen iff `windowless`, and turn on [GD] game-data
     capture (REMOM_GD_CAPTURE=1; Debug builds only, see STU/src/STU_GD.h)
     unless the caller's environment already sets it."""
     env = os.environ.copy()
     env.setdefault("REMOM_GD_CAPTURE", "1")
-    if headless:
+    if windowless:
         env.setdefault("SDL_VIDEODRIVER", "offscreen")
     stderr_path.parent.mkdir(parents=True, exist_ok=True)
     t_start = time.time()
@@ -171,7 +171,7 @@ def run_demom(*,
               stderr_path: Optional[Path] = None,
               save_slot: Optional[int] = None,
               extra_args: Iterable[str] = (),
-              headless: bool = True) -> RunResult:
+              windowless: bool = True) -> RunResult:
     """Drive DeMoM --newgame against `ini`, with an optional input driver.
 
     Args:
@@ -187,7 +187,7 @@ def run_demom(*,
             and reports whether it was rewritten this run via
             `RunResult.save_written_fresh`.
         extra_args: forwarded to DeMoM verbatim.
-        headless: when True, sets SDL_VIDEODRIVER=offscreen.
+        windowless: when True, sets SDL_VIDEODRIVER=offscreen.
     """
     if not DEMOM_EXE.is_file():
         raise FileNotFoundError(f"DeMoM binary missing: {DEMOM_EXE}")
@@ -206,7 +206,7 @@ def run_demom(*,
     expected_save = (cwd / slot_to_save_filename(save_slot)
                      if save_slot is not None else None)
 
-    rc, t_start, t_end = _spawn(cmd, cwd, stderr_path, headless=headless)
+    rc, t_start, t_end = _spawn(cmd, cwd, stderr_path, windowless=windowless)
     fresh = verify_save_fresh(expected_save, t_start) if expected_save else False
 
     return RunResult(
@@ -229,7 +229,7 @@ def run_remom(*,
                  stderr_path: Optional[Path] = None,
                  save_slot: Optional[int] = None,
                  extra_args: Iterable[str] = (),
-                 headless: bool = True) -> RunResult:
+                 windowless: bool = True) -> RunResult:
     """Drive ReMoM with `--seed N` and an input driver.
 
     ReMoM needs an HMS or RMR to be useful in automation (without one
@@ -252,7 +252,7 @@ def run_remom(*,
     expected_save = (cwd / slot_to_save_filename(save_slot)
                      if save_slot is not None else None)
 
-    rc, t_start, t_end = _spawn(cmd, cwd, stderr_path, headless=headless)
+    rc, t_start, t_end = _spawn(cmd, cwd, stderr_path, windowless=windowless)
     fresh = verify_save_fresh(expected_save, t_start) if expected_save else False
 
     return RunResult(

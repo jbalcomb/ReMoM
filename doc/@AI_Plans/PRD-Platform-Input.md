@@ -44,7 +44,7 @@ All three report **latency and jitter as separate distributions** (p50/p95/p99),
 - **Wrap `SDL_RenderPresent` with tick timing** at [`sdl2_Video.c:132`](../../platform/sdl2/sdl2_Video.c#L132) to capture present-block time and count presents between displayed frames — the direct test of the "stacked vsync presents" hypothesis.
 - **Layer 2 reuses `.RMR` replay + `--capture` verbatim.** No new injection path. The replay CSV header [`Replay.c:172`](../../platform/replay/Replay.c#L172) already carries `timestamp_ms,delta_ms,mouse_x,mouse_y`; `--capture` [`ReMoM.c:415-440`](../../src/ReMoM.c#L415-L440) already emits fixed-fps RGB. The new artifact is an **offline analysis script** (Python) that reads the capture's `video_rgb24.raw` + `capture_info.txt`, finds the cursor centroid per frame, and joins it against the replay timeline.
 - **Metrics are latency percentiles + interval jitter.** Latency = frames between an injected position change and the captured frame that shows it, scaled by capture fps. Jitter = p95−p50 and stddev of inter-present intervals and of cursor step size.
-- **Windowed substrate only.** The harness links the real `Platform` (SDL2), not `Platform_Headless` — input has no meaning windowless.
+- **Windowed substrate only.** The harness links the real `Platform` (SDL2), not `Platform_Windowless` — input has no meaning windowless.
 - **No original pacing code is touched in the measurement phase.** All Layer 1 hooks are additive, `/* CLAUDE */`-marked, and compiled only under the measurement flag. The observer-effect rule (BRA §6.4) means the metrics file buffers in memory and flushes at exit — never per-event `fprintf`.
 - **Both build systems** (CMake and Autotools) list any new sources; the measurement flag is wired in both.
 

@@ -326,7 +326,7 @@ void Platform_Event_Handler(void)
 
     /* CLAUDE: do NOT reset platform_frame_mouse_buttons here.  Clicks that arrive during Release_Time's Platform_Pump_Events spin-wait are OR'd into this flag between frames.  Resetting at the top would clobber them before Replay_Capture_Frame could read them.  Reset is now done at the END of this function, after capture. */
 
-    /* CLAUDE: Replay — if active, inject recorded frame instead of pumping OS events.  Matches sdl2/sdl3/headless backends.  Without this, --replay on win32 opens the RMR but never injects any frames. */
+    /* CLAUDE: Replay — if active, inject recorded frame instead of pumping OS events.  Matches sdl2/sdl3/windowless backends.  Without this, --replay on win32 opens the RMR but never injects any frames. */
     if(Platform_Replay_Active())
     {
         MSG cancel_msg;
@@ -372,7 +372,7 @@ void Platform_Event_Handler(void)
 
     STU_Log_Pump();
 
-    /* CLAUDE: Record — capture input state after processing OS events.  Matches sdl2/sdl3/headless backends.  Without this, --record produces an empty RMR on win32. */
+    /* CLAUDE: Record — capture input state after processing OS events.  Matches sdl2/sdl3/windowless backends.  Without this, --record produces an empty RMR on win32. */
     if(Platform_Record_Active())
     {
         Replay_Capture_Frame();

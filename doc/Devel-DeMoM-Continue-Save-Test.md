@@ -28,7 +28,7 @@ The test is a chain of three CTest steps with `FIXTURES_SETUP` / `FIXTURES_REQUI
 4. **Save / Load screen — save to slot 1 with custom name**
    - Clicks save slot 1 at (80, 54) to activate the name input field
    - 20 backspaces to clear whatever name was there
-   - Types `AHP-202604071014` (dashes because the input field rejects underscore)
+   - Types `AD-202604071014` (dashes because the input field rejects underscore)
    - Clicks the Save button at (140, 177) — this calls `Save_SAVE_GAM(0)` → writes `SAVE1.GAM`
 5. **Return to Main Screen → Main Menu**
    - Hits `G` again, clicks the Quit button on the Save/Load screen at (62, 177)
@@ -103,7 +103,7 @@ Getting this test working required several fixes to the DeMoM tooling and the wi
 
 ### Platform layer
 
-**`platform/headless/headless_PFL.c` — `Platform_Get_Window_Width()`**
+**`platform/windowless/windowless_PFL.c` — `Platform_Get_Window_Width()`**
 
 Previously returned `PLATFORM_WINDOW_WIDTH` (1280), but `Platform_Get_Scale()` on windowless returns 1. `User_Mouse_Handler()` in [MoX/src/Mouse.c](../MoX/src/Mouse.c) computes its own scale as `window_width / SCREEN_WIDTH`, so incoming window coords were being divided by 4 — clicks at `(62, 177)` became game coords `(15, 44)`, missing every button. Fixed by returning `PLATFORM_SCREEN_WIDTH` (320) so the computed scale is 1, matching `Platform_Get_Scale()`.
 
