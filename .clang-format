@@ -55,3 +55,15 @@ AlignTrailingComments:
 AlignConsecutiveMacros:        None
 AlignConsecutiveAssignments:   None
 AlignConsecutiveDeclarations:  None
+
+# Vertical multi-condition ifs: one condition per line, && / || at the END of
+# the line, the closing ) on its own line (tested 2026-11-18, clang-format 20):
+#     if(
+#         (a == 1) &&
+#         (b == 2)
+#     )
+# BlockIndent only covers the if( parenthesis: a vertical (...) group nested
+# inside the condition is compacted to ((x) &&\n (y)).
+BreakBeforeBinaryOperators:    None
+AlignAfterOpenBracket:         BlockIndent
+AlignOperands:                 DontAlign
