@@ -62,6 +62,7 @@
 #include "../MoM/src/INITGAME.h"
 #include "../MoM/src/LoadScr.h"
 #include "../MoM/src/LOADER.h"   /* Load_WZD_Resources */
+#include "../MoM/src/CREDITS.h"  /* Init_Credits() */
 #include "../MoM/src/MOM_SCR.h"
 #include "../MoM/src/Settings.h"
 #include "../STU/src/STU_DBG_MoM.h"  /* DBG_Print_MAGIC_SET(), DBG_Compare_MAGIC_SET() */
@@ -1843,6 +1844,12 @@ int main(int argc, char *argv[])
     LOG_INFO(LOG_CAT_DEMOM, "[DeMoM] Initializing engine...");
     ReMoM_Init_Engine();
 
+    /* The Main Menu draws its credits scroll into _credits_pict_seg (Draw_Credits), which only Init_Credits() allocates;
+       ReMoM.c calls it at startup, after ReMoM_Init_Engine().  DeMoM reaches the Main Menu in --menu mode and whenever a
+       game ends or is quit to the menu, and without this Draw_Credits() wrote through the never-allocated picture
+       (Create_Picture crash) once the menu had been up for 70 frames. */
+    Init_Credits();
+
     /* Create or load game */
     if(demom_mode == 1)
     {
@@ -1895,7 +1902,7 @@ int main(int argc, char *argv[])
     else if(demom_mode == 5)
     {
         /* CLAUDE: --menu -- what ReMoM.c does when there is no --continue / --load: palette 0, then
-           Screen_Control() at the Main Menu (minus the logos, credits and menu music).  No game is
+           Screen_Control() at the Main Menu (minus the logos and menu music; the credits are initialized above, after ReMoM_Init_Engine()).  No game is
            created or loaded, and no WZD resources are loaded -- scr_Continue does that itself
            (Load_WZD_Resources_Once) when the scenario starts or continues a game. */
         LOG_INFO(LOG_CAT_DEMOM, "[DeMoM] Starting at the Main Menu (no game)");

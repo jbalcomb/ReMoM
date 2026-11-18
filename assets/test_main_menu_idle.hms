@@ -1,0 +1,13 @@
+# test_main_menu_idle.hms
+#
+# Regression test: the Main Menu stays up long enough for the credits scroll to start, then quits.
+#
+# Usage:
+#   DeMoM --menu --seed1 12345 --scenario test_main_menu_idle.hms
+#
+# Draw_Credits() returns early for the first 70 frames, then draws into _credits_pict_seg every frame.
+# DeMoM never called Init_Credits(), so that picture was never allocated and Create_Picture() crashed.
+
+wait 10s                  # well past 70 frames (55ms each) of Main Menu drawing
+key Q                     # Main Menu: Quit to DOS
+wait 2s

@@ -553,6 +553,34 @@ set_tests_properties(DeMoM_Spell_Of_Return_Assertions PROPERTIES
 
 
 # =========================================================================
+#  Main Menu idle: the credits scroll
+#
+#  Draw_Credits() returns early for the first 70 frames on the Main Menu,
+#  then draws into _credits_pict_seg every frame.  DeMoM never called
+#  Init_Credits(), so that picture was never allocated and the scroll
+#  crashed in Create_Picture().  Sits on the menu for 10s, then quits;
+#  must exit 0.
+# =========================================================================
+
+demom_stage_workdir(Main_Menu_Idle FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET")
+
+add_test(
+    NAME DeMoM_Main_Menu_Idle_Run
+    COMMAND $<TARGET_FILE:DeMoM>
+        --menu --seed1 12345
+        --scenario "${DEMOM_TEST_ASSETS}/test_main_menu_idle.hms"
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/Main_Menu_Idle"
+)
+set_tests_properties(DeMoM_Main_Menu_Idle_Run PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
+    TIMEOUT 60
+    FIXTURES_REQUIRED DeMoM_Main_Menu_Idle_Workdir
+    LABELS "demom;integration;menu"
+)
+
+
+
+# =========================================================================
 #  L61: Second Game in One Process == First Game in a Fresh Process
 #
 #  The original restarted the program between games (Respawn MAGIC.EXE on the
