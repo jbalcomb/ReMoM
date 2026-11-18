@@ -107,6 +107,8 @@ FATV10.BNK
 *.mom
 *.SET
 *.set
+# MAGIC.SET with "Strategic Combat Only" on, made by tools/save_layout.py --make-strategic-combat-set (DeMoM_Spell_Of_Return).
+!assets/MAGIC_STRATEGIC_COMBAT.SET
 *.TMP
 *.tmp
 !assets/CONFIG.MOM

@@ -7,12 +7,13 @@
 #   fortress[0] at Banbury (20,7,0), active = 0; Banbury (city 0) owned by player 1;
 #   player[0] casting Spell of Return (214), 1 mana remaining.
 # The scenario ends the turn, the spell completes, and the human picks Cantebury (city 54, at 18,17,0).
-#
-# game.turn is deliberately not asserted: while the human is banished, Get_Winner() names an AI, and an
-# EOG_HACK early return in Next_Turn_Calc() (NEXTTURN.c) cuts that turn short before _turn++.
 
 # --- The save happened from the Main Screen, so the game did not end ---
 player[0].name = Rjak
+
+# --- The whole turn ran: a banished human is not "dead", so no AI overland cast or rebellion during the
+#     banishment may end the game and cut Next_Turn_Calc() short before _turn++ (g_conquest_winner_idx) ---
+game.turn = 616
 
 # --- Cast_Spell_Of_Return(): the fortress moves to the chosen city and is active again ---
 fortress[0].wx = 18

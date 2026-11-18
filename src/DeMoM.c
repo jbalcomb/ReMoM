@@ -1458,6 +1458,7 @@ static int DeMoM_AI_Dead_Units_Run(int16_t dead_count, int16_t dead_units[])
     /* scr_Continue clears m_magic_winner_idx after Loaded_Game_Update(); this mode skips Screen_Control(), so do the same.  Left at its zero-initialized value, Get_Winner() reports player 0 and AI_Next_Turn()'s EOG_HACK stops after the first AI overland cast. */
     m_magic_winner_idx = ST_UNDEFINED;
     magic_master_idx = ST_UNDEFINED;
+    g_conquest_winner_idx = ST_UNDEFINED;
     for(itr = 1; itr < _num_players; itr++)
     {
         if(_FORTRESSES[itr].active == ST_TRUE)
@@ -1888,6 +1889,7 @@ int main(int argc, char *argv[])
            the EOG_HACK early-return at NEXTTURN.c:774 then truncates every later turn -- skipping
            _turn++ and the whole post-Event_Twiddle half of the pipeline. */
         m_magic_winner_idx = ST_UNDEFINED;
+        g_conquest_winner_idx = ST_UNDEFINED;
         current_screen = scr_Main_Screen;
     }
     else if(demom_mode == 5)
@@ -1910,6 +1912,7 @@ int main(int argc, char *argv[])
         Loaded_Game_Update();
         /* CLAUDE: same reset as the --load path and scr_Continue (MoM/src/MOM_SCR.c:258); m_magic_winner_idx has no initializer, so 0 would read as "player 0 has won" and stop AI_Next_Turn() at the EOG_HACK. */
         m_magic_winner_idx = ST_UNDEFINED;
+        g_conquest_winner_idx = ST_UNDEFINED;
         current_screen = scr_Main_Screen;
         if(DeMoM_Summon_Run(summon_spell_idx) != 0)
         {
@@ -1945,6 +1948,7 @@ int main(int argc, char *argv[])
         Loaded_Game_Update();
         /* CLAUDE: same reset as the --load path and scr_Continue (MoM/src/MOM_SCR.c:258); m_magic_winner_idx has no initializer, so 0 would read as "player 0 has won" and stop AI_Next_Turn() at the EOG_HACK. */
         m_magic_winner_idx = ST_UNDEFINED;
+        g_conquest_winner_idx = ST_UNDEFINED;
         current_screen = scr_Main_Screen;
         if(DeMoM_Combat_Run(combat_defender_unit_idx, combat_troop_count, combat_troops, combat_tactical) != 0)
         {

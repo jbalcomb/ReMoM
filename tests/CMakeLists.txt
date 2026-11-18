@@ -518,7 +518,9 @@ set_tests_properties(DeMoM_AI_Dead_Units_Assertions PROPERTIES
 #  Main Menu), and choosing the city in the picker.
 # =========================================================================
 
-demom_stage_workdir(Spell_Of_Return FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET" "${DEMOM_TEST_ASSETS}/SAVE_SPELL_OF_RETURN.GAM")
+# MAGIC_STRATEGIC_COMBAT.SET (staged as MAGIC.SET) has "Strategic Combat Only" on: the full AI turn includes an AI
+# attack on a human stack, which would otherwise open the tactical battle screen and wait for orders.
+demom_stage_workdir(Spell_Of_Return FILES "${DEMOM_TEST_ASSETS}/MAGIC_STRATEGIC_COMBAT.SET=MAGIC.SET" "${DEMOM_TEST_ASSETS}/SAVE_SPELL_OF_RETURN.GAM")
 
 add_test(
     NAME DeMoM_Spell_Of_Return_Run

@@ -8,6 +8,8 @@
 # SAVE_SPELL_OF_RETURN.GAM is SAVE6.GAM patched by tools/save_layout.py --make-spell-of-return into the state
 # Banish_Wizard() leaves: the fortress city Banbury (20,7) belongs to player 1 and its units are dead,
 # _FORTRESSES[0].active = 0, and the human is casting Spell of Return (214) with 1 mana left.
+# The test stages MAGIC_STRATEGIC_COMBAT.SET as MAGIC.SET: an AI attacks a human stack during the AI turn, and
+# "Strategic Combat Only" resolves it without the tactical battle screen (which would wait for orders).
 #
 # Checked by tests/assert_spell_of_return.txt: the spell completes, the fortress moves to Cantebury (18,17)
 # and is active again, and the game carries on (the save below happens on the Main Screen).
@@ -27,10 +29,21 @@ wait 1s                   # let the end-of-turn food check open its box
 # Losing Banbury left the human short of food.  Y = Yes (N would decline the end of turn).
 key Y
 
-# === Next Turn: Cast_Spell_Overland -> Cast_Spell_Of_Return -> Spell_Casting_Screen(stt_Friendly_City) ===
+# === Next Turn: the AI turn, then the Chancellor's end-of-turn report (Chancellor_Screen__WIP) ===
+# The report closes on a click anywhere outside its scroll strips (y 9-25 and 170-190).  Click (160,100) a few
+# times: once the report is gone, the Spell of Return picker is up, and there (160,100) is map square (8,4) =
+# world (16,16), not a friendly city, so the picker ignores the extra clicks.
+wait 3s
+click 160 100
+wait 1500ms
+click 160 100
+wait 1500ms
+click 160 100
+wait 1500ms
+
+# === Cast_Spell_Overland -> Cast_Spell_Of_Return -> Spell_Casting_Screen(stt_Friendly_City) ===
 # The picker opens on the overland map with the view origin at (8,12): Cantebury (18,17) is
 # map square (10,5) = screen (10*20+10, 20+5*18+9).
-wait 3s                   # let Next_Turn_Calc run and the picker open
 click 210 119             # Cantebury -- the smallest human city (size 2)
 
 # The cast animation plays.  Its second half (City_Enchantment_Anim_2__WIP) holds the city view for

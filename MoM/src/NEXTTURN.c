@@ -94,6 +94,16 @@ Claude Code suggested "g_game_over", but I already had "magic_master_idx" in-min
 */
 /* EOG_HACK */  int16_t magic_master_idx = ST_UNDEFINED;
 
+/*
+EOG_HACK  The winner of a conquest game-over: set in Resolve_Wizard_Conquest() exactly where the OG Respawns MAGIC.EXE
+(the human conquered or resigned -> the conqueror; every computer player dead -> the human).  Get_Winner() reports it.
+Get_Winner() used to infer this from _FORTRESSES[].active, but a banished wizard (Spell of Return pending) has an inactive
+fortress too, so every AI overland cast or rebellion during the human's banishment "ended the game" and Next_Turn_Calc()
+returned early, skipping the rest of the turn.  The OG never infers it: CP_Is_Dead() counts a fortress-less wizard that
+still owns a city as alive.
+*/
+/* EOG_HACK */  int16_t g_conquest_winner_idx = ST_UNDEFINED;
+
 
 
 // WZD dseg:5E92                                                 BEGIN:  ovr119 - Initialized Data
@@ -5280,7 +5290,7 @@ e.g., `magic_master_idx = Get_Winner();`
 int16_t Get_Winner(void)
 {
     int16_t winner_idx = 0;
-    int16_t player_idx = 0;
+    // int16_t player_idx = 0;  /* CLAUDE: only the commented-out fortress scan below used it */
     winner_idx = ST_UNDEFINED;
     if(m_magic_winner_idx != ST_UNDEFINED)
     {
@@ -5288,20 +5298,24 @@ int16_t Get_Winner(void)
     }
     else
     {
-        if((N_Living_Human_Players() == 0) || (N_Living_Players() == 1))  /* Human Player is Dead or Alone */
-        {
-            for(player_idx = 0; player_idx < _num_players; player_idx++)
-            {
-                if(_FORTRESSES[player_idx].active)
-                {
-                    winner_idx = player_idx;
-                }
-            }
-        }
+        // if((N_Living_Human_Players() == 0) || (N_Living_Players() == 1))  /* Human Player is Dead or Alone */
+        // {
+        //     for(player_idx = 0; player_idx < _num_players; player_idx++)
+        //     {
+        //         if(_FORTRESSES[player_idx].active)
+        //         {
+        //             winner_idx = player_idx;
+        //         }
+        //     }
+        // }
+        /* CLAUDE: the recorded conquest end, not an inference from fortress flags -- see g_conquest_winner_idx */
+        winner_idx = g_conquest_winner_idx;
     }
     return winner_idx;
 }
 
+
+// DNE in MoM
 // MoO2  COLCALC  N_Living_Players_()
 int16_t N_Living_Players(void)
 {
@@ -5317,6 +5331,8 @@ int16_t N_Living_Players(void)
     return n_living_players;
 }
 
+
+// DNE in MoM
 // MoO2  COLCALC  N_Living_Human_Players_()
 int16_t N_Living_Human_Players(void)
 {

@@ -334,6 +334,7 @@ void Resolve_Wizard_Conquest(int16_t loser_Idx, int16_t winner_idx, int16_t city
         End_Of_Game_Score();
         s01p16_empty_function();
         /* EOG_HACK */  // DONT  Respawn(magic_exe_file__ovr093, str_JENNY__ovr093, str_empty_string__ovr093, str_empty_string__ovr093);
+        /* EOG_HACK */  g_conquest_winner_idx = winner_idx;  /* the game ends here: Get_Winner() reports it */
     }
     else
     {
@@ -343,6 +344,7 @@ void Resolve_Wizard_Conquest(int16_t loser_Idx, int16_t winner_idx, int16_t city
             End_Of_Game_Score();
             s01p16_empty_function();
             /* EOG_HACK */  // DONT  Respawn(magic_exe_file__ovr093, str_JENNY__ovr093, str_empty_string__ovr093, str_empty_string__ovr093);
+            /* EOG_HACK */  g_conquest_winner_idx = _current_player_idx;  /* the game ends here: Get_Winner() reports it */
         }
     }
 }

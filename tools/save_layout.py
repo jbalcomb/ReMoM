@@ -8,6 +8,7 @@ save's human cities and the human wizard's fortress / casting state:
 
     python3 tools/save_layout.py assets/SAVE3.GAM [...]
     python3 tools/save_layout.py --make-spell-of-return assets/SAVE6.GAM assets/SAVE_SPELL_OF_RETURN.GAM
+    python3 tools/save_layout.py --make-strategic-combat-set assets/MAGIC.SET assets/MAGIC_STRATEGIC_COMBAT.SET
 """
 import struct
 import sys
@@ -131,7 +132,27 @@ def make_spell_of_return(src, dst, winner_idx=1):
         src, dst, fallen[0]['name'], fallen[0]['idx'], winner_idx, killed))
 
 
+MAGIC_SET_SIZE = 466                    # MoX/src/MOX_SET.h SETTINGS_FILE_SIZE
+MAGIC_SET_STRATEGIC_COMBAT_ONLY = 0x14  # MoX/src/MOX_SET.h s_MAGIC_SET.strategic_combat_only
+
+
+def make_strategic_combat_set(src, dst):
+    """
+    Copy a MAGIC.SET with "Strategic Combat Only" on, so an AI attack on a human stack resolves without the
+    tactical battle screen (which waits for orders) -- what DeMoM's fixture modes set in code.
+    """
+    b = bytearray(open(src, 'rb').read())
+    if len(b) != MAGIC_SET_SIZE:
+        sys.exit('%s: %d bytes, expected %d' % (src, len(b), MAGIC_SET_SIZE))
+    struct.pack_into('<H', b, MAGIC_SET_STRATEGIC_COMBAT_ONLY, 1)
+    open(dst, 'wb').write(b)
+    print('%s -> %s: strategic_combat_only = 1' % (src, dst))
+
+
 if __name__ == '__main__':
+    if len(sys.argv) == 4 and sys.argv[1] == '--make-strategic-combat-set':
+        make_strategic_combat_set(sys.argv[2], sys.argv[3])
+        sys.exit(0)
     if len(sys.argv) == 4 and sys.argv[1] == '--make-spell-of-return':
         make_spell_of_return(sys.argv[2], sys.argv[3])
         summary(sys.argv[3])

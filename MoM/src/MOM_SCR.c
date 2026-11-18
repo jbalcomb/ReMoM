@@ -101,6 +101,8 @@ static void Reset_Game_State(void)
 
     magic_master_idx = ST_UNDEFINED;
 
+    /* EOG_HACK */  g_conquest_winner_idx = ST_UNDEFINED;
+
     m_magic_winner_idx = ST_UNDEFINED;
 
     memset(_players, 0, sizeof(_players));
@@ -285,6 +287,7 @@ void Screen_Control(void)
                 Clear_Fields();
                 Loaded_Game_Update();
                 m_magic_winner_idx = ST_UNDEFINED;
+                /* EOG_HACK */  g_conquest_winner_idx = ST_UNDEFINED;
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu LEAVE screen=Continue next=%d\n", (unsigned long long)Platform_Get_Millies(), current_screen);
 #endif
@@ -322,6 +325,7 @@ void Screen_Control(void)
 #endif
 
                 m_magic_winner_idx = ST_UNDEFINED;
+                /* EOG_HACK */  g_conquest_winner_idx = ST_UNDEFINED;
                 destroy_combat_city = ST_FALSE;
                 if(prev__Settings_BG_Music != magic_set.background_music)
                 {

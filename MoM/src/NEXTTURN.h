@@ -21,7 +21,10 @@ extern "C" {
 
 
 
-/* EOG_HACK */  extern int16_t magic_master_idx;
+/* BEGIN:   EOG_HACK */
+extern int16_t magic_master_idx;
+extern int16_t g_conquest_winner_idx;
+/* END:     EOG_HACK */
 
 
 

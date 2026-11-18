@@ -93,6 +93,7 @@ All sites wired (`/* EOG_HACK */` markers) and `momlib` compiles/links clean:
 - **GUARD ×2** — `Resolve_Wizard_Conquest` (CONQUEST.c:206), `Spell_Of_Mastery` (SPLMASTR.c:2215).
 - **Prompt-stop ×4** — SETTLE.c:164, AIDUDES.c:218/339/381.
 - **`Get_Winner()`** — NEXTTURN.c:4762, using `N_Living_Players()`/`N_Living_Human_Players()`; SoM short-circuit via `GAME_SoM_Cast_By != ST_UNDEFINED`, else `(N_Living_Human_Players() == 0) || (N_Living_Players() == 1)` ⇒ human eliminated (loss) or sole survivor (win). Idempotent (state-derived).
+  - **Changed 2026-11-18:** the fortress-count inference is gone. A banished wizard (Spell of Return pending) also has an inactive fortress, so it read as "human eliminated", and every AI overland cast or rebellion during the banishment cut `Next_Turn_Calc` short (no `_turn++`). `Resolve_Wizard_Conquest` now records `g_conquest_winner_idx` beside its two commented-out `Respawn`s (the OG's actual conquest game-over), and `Get_Winner()` returns `m_magic_winner_idx` (Spell of Mastery) or that. Test: `DeMoM_Spell_Of_Return` (`game.turn = 616`).
 - **State** — `magic_master_idx` defined at NEXTTURN.c:87, declared `extern` in NEXTTURN.h:24; the four OG `Respawn(…)` calls commented `// DONT`.
 
 **Open (behavioral verification, not wiring):**
